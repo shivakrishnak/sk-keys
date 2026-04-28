@@ -1,6 +1,10 @@
 # ⚡ Quick Reference: Adding New Markdown Files
+{: .no_toc }
 
 **50-second workflow for adding markdown files to GitHub Pages**
+
+## Table of Contents
+{:toc}
 
 ---
 

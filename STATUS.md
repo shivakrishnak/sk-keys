@@ -7,8 +7,12 @@ permalink: /status/
 ---
 
 # ✅ Implementation Status & Deployment Guide
+{: .no_toc }
 
 Complete implementation ready for GitHub Pages deployment.
+
+## Table of Contents
+{:toc}
 
 ---
 

@@ -9,7 +9,10 @@ permalink: /
 # Technical Dictionary
 {: .no_toc }
 
-## 📖 Quick Resources
+## Table of Contents
+{:toc}
+
+---
 
 - **[Quick Reference](./QUICK_REFERENCE.md)** - 50-second workflow for adding files
 - **[Setup Status](./STATUS.md)** - Current implementation and deployment info
