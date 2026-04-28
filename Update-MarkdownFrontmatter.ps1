@@ -23,8 +23,10 @@ function Get-FileNumber {
 function Get-TitleFromFilename {
     param([string]$Filename)
     $filename = $Filename -replace '\.md$', ''
-    $title = $filename -replace '^[^\s]*\s+', ''  # Remove emoji
-    $title = $title -replace '^\d+\s*-\s*', ''     # Remove numbers
+    # Remove leading emoji (any non-ASCII non-space sequence followed by space)
+    $title = $filename -replace '^.{1,3}\s+', ''
+    # Remove leading number block: e.g. "012 — " or "012 - " or "012—"
+    $title = $title -replace '^\d{3}\s*.?\s*', ''
     return $title.Trim()
 }
 
@@ -47,24 +49,32 @@ function Test-HasFrontmatter {
     return $content -match '^---'
 }
 
-# Remove existing frontmatter
+# Remove ALL leading frontmatter blocks (handles multiple --- blocks like custom metadata)
 function Remove-ExistingFrontmatter {
     param([string]$FilePath)
     $lines = @(Get-Content -Path $FilePath)
-    $start = -1
-    $end = -1
 
-    for ($i = 0; $i -lt $lines.Count; $i++) {
-        if ($lines[$i] -eq '---') {
-            if ($start -eq -1) { $start = $i }
-            elseif ($end -eq -1) { $end = $i; break }
+    # Remove all consecutive frontmatter-style blocks at the top (--- ... ---)
+    $i = 0
+    while ($i -lt $lines.Count) {
+        # Skip blank lines between blocks
+        while ($i -lt $lines.Count -and $lines[$i].Trim() -eq '') { $i++ }
+        # If next non-blank line starts a --- block, remove it
+        if ($i -lt $lines.Count -and $lines[$i].Trim() -eq '---') {
+            $i++  # skip opening ---
+            while ($i -lt $lines.Count -and $lines[$i].Trim() -ne '---') { $i++ }
+            $i++  # skip closing ---
+        } else {
+            break  # no more frontmatter blocks
         }
     }
 
-    if ($start -ge 0 -and $end -gt $start) {
-        return ($lines[($end+1)..($lines.Count-1)] -join "`n")
+    # Return remaining content (skip leading blank lines)
+    while ($i -lt $lines.Count -and $lines[$i].Trim() -eq '') { $i++ }
+    if ($i -lt $lines.Count) {
+        return ($lines[$i..($lines.Count-1)] -join "`n")
     }
-    return (Get-Content -Path $FilePath -Raw)
+    return ''
 }
 
 # Add frontmatter to file

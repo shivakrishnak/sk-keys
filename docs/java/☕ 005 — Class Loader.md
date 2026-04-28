@@ -1,41 +1,48 @@
-🏷️ Tags — #java #jvm #internals #classloading #intermediate 
+﻿---
+layout: default
+title: "Class Loader"
+parent: "Java Fundamentals"
+nav_order: 5
+permalink: /java/class-loader/
+---
+ðŸ·ï¸ Tags â€” #java #jvm #internals #classloading #intermediate 
 
-⚡ TL;DR — The JVM component that finds, loads, and links `.class` files into memory before execution begins.
+âš¡ TL;DR â€” The JVM component that finds, loads, and links `.class` files into memory before execution begins.
 
 
 ```
-┌──────────────────────────────────────────────────────┐
-│ #005  │ Category: JVM Internals  │ Difficulty: ★★☆   │
-│ Depends on: JVM, Bytecode         │ Used by: JIT,    │
-│ Spring, Hibernate, OSGi, Tomcat   │                  │
-└──────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ #005  â”‚ Category: JVM Internals  â”‚ Difficulty: â˜…â˜…â˜†   â”‚
+â”‚ Depends on: JVM, Bytecode         â”‚ Used by: JIT,    â”‚
+â”‚ Spring, Hibernate, OSGi, Tomcat   â”‚                  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
 
-#### 📘 Textbook Definition
+#### ðŸ“˜ Textbook Definition
 
-A Class Loader is a component of the JVM responsible for **loading compiled `.class` files into memory**, verifying their bytecode, preparing static fields, and resolving symbolic references — following a strict **parent-delegation model** to ensure class uniqueness and security.
-
----
-
-#### 🟢 Simple Definition (Easy)
-
-The Class Loader is the JVM's **file finder and loader** — when your code references a class, the Class Loader finds the `.class` file and brings it into memory so the JVM can use it.
+A Class Loader is a component of the JVM responsible for **loading compiled `.class` files into memory**, verifying their bytecode, preparing static fields, and resolving symbolic references â€” following a strict **parent-delegation model** to ensure class uniqueness and security.
 
 ---
 
-#### 🔵 Simple Definition (Elaborated)
+#### ðŸŸ¢ Simple Definition (Easy)
 
-When your program says `new ArrayList()`, the JVM doesn't magically know what `ArrayList` is — the Class Loader has to find `ArrayList.class`, load its bytecode into memory, verify it's safe, and set it up before any instance can be created. This happens **lazily** — classes are loaded on first use, not all at startup. And it follows a strict hierarchy to prevent malicious code from overriding core Java classes.
+The Class Loader is the JVM's **file finder and loader** â€” when your code references a class, the Class Loader finds the `.class` file and brings it into memory so the JVM can use it.
 
 ---
 
-#### 🔩 First Principles Explanation
+#### ðŸ”µ Simple Definition (Elaborated)
+
+When your program says `new ArrayList()`, the JVM doesn't magically know what `ArrayList` is â€” the Class Loader has to find `ArrayList.class`, load its bytecode into memory, verify it's safe, and set it up before any instance can be created. This happens **lazily** â€” classes are loaded on first use, not all at startup. And it follows a strict hierarchy to prevent malicious code from overriding core Java classes.
+
+---
+
+#### ðŸ”© First Principles Explanation
 
 **The problem:**
 
-The JVM starts with nothing loaded except itself. Your program references hundreds of classes — `String`, `ArrayList`, your own classes, third-party libraries. Someone needs to:
+The JVM starts with nothing loaded except itself. Your program references hundreds of classes â€” `String`, `ArrayList`, your own classes, third-party libraries. Someone needs to:
 
 1. Find the `.class` file for each referenced class
 2. Load the raw bytes into memory
@@ -43,117 +50,117 @@ The JVM starts with nothing loaded except itself. Your program references hundre
 4. Set up static memory (fields, constants)
 5. Resolve references between classes
 
-**The deeper problem — security:**
+**The deeper problem â€” security:**
 
 What stops someone from shipping a fake `java.lang.String` class that steals data? The Class Loader hierarchy.
 
-**The solution — Parent Delegation:**
+**The solution â€” Parent Delegation:**
 
 > "Before loading a class yourself, always ask your parent first. Only load it yourself if the parent can't find it."
 
-This guarantees core Java classes always come from trusted sources — never from application code.
+This guarantees core Java classes always come from trusted sources â€” never from application code.
 
 ```
 Request: "Load java.lang.String"
-        ↓
-Application ClassLoader → asks parent first
-        ↓
-Platform ClassLoader → asks parent first
-        ↓
-Bootstrap ClassLoader → "I have it" ✅
-        ↑
-Result bubbles back up — String loaded from JDK, not your code
+        â†“
+Application ClassLoader â†’ asks parent first
+        â†“
+Platform ClassLoader â†’ asks parent first
+        â†“
+Bootstrap ClassLoader â†’ "I have it" âœ…
+        â†‘
+Result bubbles back up â€” String loaded from JDK, not your code
 ```
 
 ---
 
-#### 🧠 Mental Model / Analogy
+#### ðŸ§  Mental Model / Analogy
 
 > Think of Class Loaders as a **chain of librarians**, each responsible for a specific section.
 > 
-> When you request a book (class), the junior librarian (Application) doesn't search their shelf first — they ask the senior librarian (Platform), who asks the head librarian (Bootstrap).
+> When you request a book (class), the junior librarian (Application) doesn't search their shelf first â€” they ask the senior librarian (Platform), who asks the head librarian (Bootstrap).
 > 
 > Only if the head librarian says "I don't have it" does it come back down the chain for the junior to handle.
 > 
-> This ensures the **official, trusted edition** of every core book is always served — nobody can slip a fake copy of `java.lang.Object` onto the shelf.
+> This ensures the **official, trusted edition** of every core book is always served â€” nobody can slip a fake copy of `java.lang.Object` onto the shelf.
 
 ---
 
-#### ⚙️ How It Works — The Three Built-in Class Loaders
+#### âš™ï¸ How It Works â€” The Three Built-in Class Loaders
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│              CLASS LOADER HIERARCHY                     │
-│                                                         │
-│  ┌──────────────────────────────────────────────────┐   │
-│  │         Bootstrap ClassLoader                    │   │
-│  │  • Built into JVM (written in C/C++)             │   │
-│  │  • Loads: java.lang.*, java.util.*, etc.         │   │
-│  │  • Source: $JAVA_HOME/lib/modules (Java 9+)      │   │
-│  │  • Parent: none (root of hierarchy)              │   │
-│  │  • Returns NULL when asked for parent            │   │
-│  └────────────────────┬─────────────────────────────┘   │
-│                       │ parent of                       │
-│  ┌────────────────────▼─────────────────────────────┐   │
-│  │         Platform ClassLoader                     │   │
-│  │  • (was Extension ClassLoader pre Java 9)        │   │
-│  │  • Loads: java.sql.*, java.xml.*, etc.           │   │
-│  │  • Source: JDK platform modules                  │   │
-│  └────────────────────┬─────────────────────────────┘   │
-│                       │ parent of                       │
-│  ┌────────────────────▼─────────────────────────────┐   │
-│  │         Application ClassLoader                  │   │
-│  │  • (aka System ClassLoader)                      │   │
-│  │  • Loads: YOUR code + third-party jars           │   │
-│  │  • Source: -classpath / -cp / CLASSPATH env var  │   │
-│  └──────────────────────────────────────────────────┘   │
-│                       │ parent of                       │
-│  ┌────────────────────▼─────────────────────────────┐   │
-│  │         Custom ClassLoaders                      │   │
-│  │  • Tomcat, Spring, OSGi, JPA — all use these     │   │
-│  │  • Load from DB, network, encrypted jars, etc.   │   │
-│  └──────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚              CLASS LOADER HIERARCHY                     â”‚
+â”‚                                                         â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚         Bootstrap ClassLoader                    â”‚   â”‚
+â”‚  â”‚  â€¢ Built into JVM (written in C/C++)             â”‚   â”‚
+â”‚  â”‚  â€¢ Loads: java.lang.*, java.util.*, etc.         â”‚   â”‚
+â”‚  â”‚  â€¢ Source: $JAVA_HOME/lib/modules (Java 9+)      â”‚   â”‚
+â”‚  â”‚  â€¢ Parent: none (root of hierarchy)              â”‚   â”‚
+â”‚  â”‚  â€¢ Returns NULL when asked for parent            â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                       â”‚ parent of                       â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚         Platform ClassLoader                     â”‚   â”‚
+â”‚  â”‚  â€¢ (was Extension ClassLoader pre Java 9)        â”‚   â”‚
+â”‚  â”‚  â€¢ Loads: java.sql.*, java.xml.*, etc.           â”‚   â”‚
+â”‚  â”‚  â€¢ Source: JDK platform modules                  â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                       â”‚ parent of                       â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚         Application ClassLoader                  â”‚   â”‚
+â”‚  â”‚  â€¢ (aka System ClassLoader)                      â”‚   â”‚
+â”‚  â”‚  â€¢ Loads: YOUR code + third-party jars           â”‚   â”‚
+â”‚  â”‚  â€¢ Source: -classpath / -cp / CLASSPATH env var  â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                       â”‚ parent of                       â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚         Custom ClassLoaders                      â”‚   â”‚
+â”‚  â”‚  â€¢ Tomcat, Spring, OSGi, JPA â€” all use these     â”‚   â”‚
+â”‚  â”‚  â€¢ Load from DB, network, encrypted jars, etc.   â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
 
-#### ⚙️ The Three Phases of Class Loading
+#### âš™ï¸ The Three Phases of Class Loading
 
 ```
-LOADING → LINKING → INITIALIZATION
+LOADING â†’ LINKING â†’ INITIALIZATION
 ```
 
-**Phase 1 — Loading**
+**Phase 1 â€” Loading**
 
 ```
-- Find the .class file (classpath, jar, network, DB — anywhere)
+- Find the .class file (classpath, jar, network, DB â€” anywhere)
 - Read raw bytes into memory
 - Create a java.lang.Class object representing it
 ```
 
-**Phase 2 — Linking (3 sub-phases)**
+**Phase 2 â€” Linking (3 sub-phases)**
 
 ```
-┌─────────────────────────────────────────────────┐
-│  2a. VERIFICATION                               │
-│  • Is bytecode structurally valid?              │
-│  • No stack overflows? Valid opcodes?           │
-│  • Type safety checks                           │
-│  • Security: prevents malformed bytecode attack │
-│                                                 │
-│  2b. PREPARATION                                │
-│  • Allocate memory for static fields            │
-│  • Set default values (0, null, false)          │
-│  • NOT your initial values yet                  │
-│                                                 │
-│  2c. RESOLUTION                                 │
-│  • Replace symbolic references with direct refs │
-│  • "java/util/ArrayList" → actual memory pointer│
-└─────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  2a. VERIFICATION                               â”‚
+â”‚  â€¢ Is bytecode structurally valid?              â”‚
+â”‚  â€¢ No stack overflows? Valid opcodes?           â”‚
+â”‚  â€¢ Type safety checks                           â”‚
+â”‚  â€¢ Security: prevents malformed bytecode attack â”‚
+â”‚                                                 â”‚
+â”‚  2b. PREPARATION                                â”‚
+â”‚  â€¢ Allocate memory for static fields            â”‚
+â”‚  â€¢ Set default values (0, null, false)          â”‚
+â”‚  â€¢ NOT your initial values yet                  â”‚
+â”‚                                                 â”‚
+â”‚  2c. RESOLUTION                                 â”‚
+â”‚  â€¢ Replace symbolic references with direct refs â”‚
+â”‚  â€¢ "java/util/ArrayList" â†’ actual memory pointerâ”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
-**Phase 3 — Initialization**
+**Phase 3 â€” Initialization**
 
 ```
 - Execute static initializers (static {} blocks)
@@ -163,25 +170,25 @@ LOADING → LINKING → INITIALIZATION
 
 ---
 
-#### 🔄 How It Connects
+#### ðŸ”„ How It Connects
 
 ```
 .class file on disk
-      ↓
-[Class Loader] ← you are here
-      ↓
+      â†“
+[Class Loader] â† you are here
+      â†“
 Bytecode in JVM memory (Method Area / Metaspace)
-      ↓
+      â†“
 Bytecode Verifier (part of Linking)
-      ↓
+      â†“
 JIT Compiler / Interpreter
-      ↓
+      â†“
 Execution
 ```
 
 ---
 
-#### 💻 Code Example
+#### ðŸ’» Code Example
 
 **Inspecting Class Loaders at runtime:**
 
@@ -191,15 +198,15 @@ java
 public class ClassLoaderInspect {
     public static void main(String[] args) {
 
-        // Your class — loaded by Application ClassLoader
+        // Your class â€” loaded by Application ClassLoader
         ClassLoader appCL = ClassLoaderInspect.class.getClassLoader();
         System.out.println("App CL: " + appCL);
         // Output: jdk.internal.loader.ClassLoaders$AppClassLoader@...
 
-        // Standard library class — loaded by Bootstrap
+        // Standard library class â€” loaded by Bootstrap
         ClassLoader stringCL = String.class.getClassLoader();
         System.out.println("String CL: " + stringCL);
-        // Output: null  ← Bootstrap returns null (it's native/C++)
+        // Output: null  â† Bootstrap returns null (it's native/C++)
 
         // Walk the parent chain
         ClassLoader cl = appCL;
@@ -228,7 +235,7 @@ public class CustomClassLoader extends ClassLoader {
     private final Path classDirectory;
 
     public CustomClassLoader(Path classDirectory) {
-        // Crucial: pass parent explicitly — preserves delegation
+        // Crucial: pass parent explicitly â€” preserves delegation
         super(ClassLoader.getSystemClassLoader());
         this.classDirectory = classDirectory;
     }
@@ -242,7 +249,7 @@ public class CustomClassLoader extends ClassLoader {
 
         try {
             byte[] bytes = Files.readAllBytes(classFile);
-            // Hand raw bytes to JVM → triggers Linking + Initialization
+            // Hand raw bytes to JVM â†’ triggers Linking + Initialization
             return defineClass(name, bytes, 0, bytes.length);
         } catch (IOException e) {
             throw new ClassNotFoundException(name, e);
@@ -256,7 +263,7 @@ Class<?> clazz = loader.loadClass("com.example.Plugin");
 Object instance = clazz.getDeclaredConstructor().newInstance();
 ```
 
-**The isolation trick — same class, two loaders = two different types:**
+**The isolation trick â€” same class, two loaders = two different types:**
 
 java
 
@@ -267,69 +274,69 @@ ClassLoader loader2 = new CustomClassLoader(path);
 Class<?> class1 = loader1.loadClass("com.example.Service");
 Class<?> class2 = loader2.loadClass("com.example.Service");
 
-System.out.println(class1 == class2);           // false ← different Class objects
+System.out.println(class1 == class2);           // false â† different Class objects
 System.out.println(class1.equals(class2));      // false
 System.out.println(class1.isInstance(          
-    class2.newInstance()));                      // false ← ClassCastException territory!
+    class2.newInstance()));                      // false â† ClassCastException territory!
 ```
 
-> This is how **Tomcat isolates webapps** — each webapp gets its own ClassLoader, so `com.example.Service` in App1 is a completely different type from `com.example.Service` in App2 — even if the bytecode is identical.
+> This is how **Tomcat isolates webapps** â€” each webapp gets its own ClassLoader, so `com.example.Service` in App1 is a completely different type from `com.example.Service` in App2 â€” even if the bytecode is identical.
 
 ---
 
-#### 🔁 How Spring Uses Class Loaders
+#### ðŸ” How Spring Uses Class Loaders
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│              SPRING BOOT CLASS LOADING                   │
-│                                                          │
-│  Spring Boot Fat JAR:                                    │
-│  myapp.jar/                                              │
-│    BOOT-INF/classes/     ← your code                     │
-│    BOOT-INF/lib/*.jar    ← dependencies                  │
-│    org/springframework/  ← Spring loader                 │
-│                                                          │
-│  LaunchedURLClassLoader (Spring's custom CL)             │
-│    • Knows how to read nested jars                       │
-│    • Standard AppClassLoader can't do this               │
-│    • Spring Boot Loader bridges the gap                  │
-│                                                          │
-│  Flow:                                                   │
-│  java -jar myapp.jar                                     │
-│    → JarLauncher.main()                                  │
-│    → Creates LaunchedURLClassLoader                      │
-│    → Loads your Application class through it             │
-│    → Spring context boots                                │
-└──────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚              SPRING BOOT CLASS LOADING                   â”‚
+â”‚                                                          â”‚
+â”‚  Spring Boot Fat JAR:                                    â”‚
+â”‚  myapp.jar/                                              â”‚
+â”‚    BOOT-INF/classes/     â† your code                     â”‚
+â”‚    BOOT-INF/lib/*.jar    â† dependencies                  â”‚
+â”‚    org/springframework/  â† Spring loader                 â”‚
+â”‚                                                          â”‚
+â”‚  LaunchedURLClassLoader (Spring's custom CL)             â”‚
+â”‚    â€¢ Knows how to read nested jars                       â”‚
+â”‚    â€¢ Standard AppClassLoader can't do this               â”‚
+â”‚    â€¢ Spring Boot Loader bridges the gap                  â”‚
+â”‚                                                          â”‚
+â”‚  Flow:                                                   â”‚
+â”‚  java -jar myapp.jar                                     â”‚
+â”‚    â†’ JarLauncher.main()                                  â”‚
+â”‚    â†’ Creates LaunchedURLClassLoader                      â”‚
+â”‚    â†’ Loads your Application class through it             â”‚
+â”‚    â†’ Spring context boots                                â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
 
-#### ⚠️ Common Misconceptions
+#### âš ï¸ Common Misconceptions
 
 |Misconception|Reality|
 |---|---|
-|"All classes load at startup"|Classes load **lazily** — on first reference|
-|"Bootstrap CL is a Java class"|It's written in C/C++ — returns `null` for `.getClassLoader()`|
+|"All classes load at startup"|Classes load **lazily** â€” on first reference|
+|"Bootstrap CL is a Java class"|It's written in C/C++ â€” returns `null` for `.getClassLoader()`|
 |"Same bytecode = same class"|Same bytecode loaded by **different loaders** = different types|
 |"Class Loader just reads files"|It also **verifies, prepares, resolves, and initializes**|
 |"Custom CLs are rare/advanced"|Tomcat, Spring, OSGi, JPA all use them heavily|
 
 ---
 
-#### 🔥 Pitfalls in Production
+#### ðŸ”¥ Pitfalls in Production
 
 **1. ClassNotFoundException vs NoClassDefFoundError**
 
 ```
-ClassNotFoundException  → Class not found at LOAD time
+ClassNotFoundException  â†’ Class not found at LOAD time
                           (wrong classpath, missing jar)
 
-NoClassDefFoundError    → Class WAS found at compile time
+NoClassDefFoundError    â†’ Class WAS found at compile time
                           but MISSING at runtime
                           (jar in compile scope but not runtime scope)
 
-// NoClassDefFoundError is trickier — your code compiled fine
+// NoClassDefFoundError is trickier â€” your code compiled fine
 // but the runtime classpath is incomplete
 ```
 
@@ -347,7 +354,7 @@ java
 // Diagnostic:
 System.out.println(obj.getClass().getClassLoader());
 System.out.println(TargetType.class.getClassLoader());
-// If different → ClassCastException regardless of type name match
+// If different â†’ ClassCastException regardless of type name match
 ```
 
 **3. Memory leak via ClassLoader**
@@ -357,8 +364,8 @@ Custom ClassLoader holds reference to Class objects
 Class objects hold reference to ClassLoader
 ClassLoader holds references to all loaded classes
 
-If ClassLoader is not GC'd → ALL its classes stay in Metaspace
-→ Metaspace grows → eventually OutOfMemoryError: Metaspace
+If ClassLoader is not GC'd â†’ ALL its classes stay in Metaspace
+â†’ Metaspace grows â†’ eventually OutOfMemoryError: Metaspace
 
 Common cause: Hot redeploy in Tomcat without proper cleanup
 Diagnostic: jmap -clstats <pid> | grep ClassLoader
@@ -369,13 +376,13 @@ Diagnostic: jmap -clstats <pid> | grep ClassLoader
 java
 
 ```java
-// The thread's ClassLoader ≠ the class's ClassLoader
+// The thread's ClassLoader â‰  the class's ClassLoader
 // JDBC, JNDI, logging frameworks use TCCL to find implementations
 
 // If you spawn threads manually, TCCL may be wrong:
 Thread t = new Thread(() -> {
-    // TCCL might be Bootstrap here — can't find your classes
-    Class.forName("com.example.MyDriver"); // ← fails
+    // TCCL might be Bootstrap here â€” can't find your classes
+    Class.forName("com.example.MyDriver"); // â† fails
 });
 
 // Fix: explicitly set TCCL
@@ -384,46 +391,47 @@ t.setContextClassLoader(Thread.currentThread().getContextClassLoader());
 
 ---
 
-#### 🔗 Related Keywords
+#### ðŸ”— Related Keywords
 
-- `JVM` — Class Loader is a core JVM subsystem
-- `Bytecode` — what Class Loader loads into memory
-- `Metaspace` — where loaded class metadata lives
-- `ClassNotFoundException` — Class Loader failure at load time
-- `NoClassDefFoundError` — Class Loader failure at runtime
-- `CGLIB` — generates and loads new bytecode at runtime
-- `Spring Boot Loader` — custom CL for nested jars
-- `OSGi` — extreme ClassLoader isolation per bundle
-- `Hot Reload` — new ClassLoader instance per redeploy
-- `Reflection` — operates on Class objects that CL produced
-
----
-
-#### 📌 Quick Reference Card
-
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Finds, loads, verifies, and links .class  │
-│              │ files into JVM memory via parent          │
-│              │ delegation for safety and isolation       │
-├──────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Plugin systems, hot reload, multi-tenant  │
-│              │ apps, custom class sources (DB, network)  │
-├──────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Don't bypass parent delegation unless     │
-│              │ you fully understand isolation effects    │
-├──────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Class Loader is the JVM's gatekeeper —  │
-│              │  nothing runs until it says so"           │
-├──────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Metaspace → JIT Compiler → Reflection →  │
-│              │ Spring Proxy → CGLIB → Hot Reload         │
-└──────────────────────────────────────────────────────────┘
-```
+- `JVM` â€” Class Loader is a core JVM subsystem
+- `Bytecode` â€” what Class Loader loads into memory
+- `Metaspace` â€” where loaded class metadata lives
+- `ClassNotFoundException` â€” Class Loader failure at load time
+- `NoClassDefFoundError` â€” Class Loader failure at runtime
+- `CGLIB` â€” generates and loads new bytecode at runtime
+- `Spring Boot Loader` â€” custom CL for nested jars
+- `OSGi` â€” extreme ClassLoader isolation per bundle
+- `Hot Reload` â€” new ClassLoader instance per redeploy
+- `Reflection` â€” operates on Class objects that CL produced
 
 ---
-#### 🧠 Think About This Before We Continue
 
-**Q1.** Tomcat runs multiple webapps in one JVM. Each webapp has its own `ClassLoader`. What happens when two webapps both use `log4j` but different versions — and how does ClassLoader isolation solve this?
+#### ðŸ“Œ Quick Reference Card
 
-**Q2.** Spring's `@Transactional` works via a CGLIB proxy — a subclass generated and loaded at runtime by a custom ClassLoader. What does that mean for `final` classes and `final` methods — and why does `@Transactional` silently fail on them?
+```
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ KEY IDEA     â”‚ Finds, loads, verifies, and links .class  â”‚
+â”‚              â”‚ files into JVM memory via parent          â”‚
+â”‚              â”‚ delegation for safety and isolation       â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ USE WHEN     â”‚ Plugin systems, hot reload, multi-tenant  â”‚
+â”‚              â”‚ apps, custom class sources (DB, network)  â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ AVOID WHEN   â”‚ Don't bypass parent delegation unless     â”‚
+â”‚              â”‚ you fully understand isolation effects    â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ ONE-LINER    â”‚ "Class Loader is the JVM's gatekeeper â€”  â”‚
+â”‚              â”‚  nothing runs until it says so"           â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ NEXT EXPLORE â”‚ Metaspace â†’ JIT Compiler â†’ Reflection â†’  â”‚
+â”‚              â”‚ Spring Proxy â†’ CGLIB â†’ Hot Reload         â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+```
+
+---
+#### ðŸ§  Think About This Before We Continue
+
+**Q1.** Tomcat runs multiple webapps in one JVM. Each webapp has its own `ClassLoader`. What happens when two webapps both use `log4j` but different versions â€” and how does ClassLoader isolation solve this?
+
+**Q2.** Spring's `@Transactional` works via a CGLIB proxy â€” a subclass generated and loaded at runtime by a custom ClassLoader. What does that mean for `final` classes and `final` methods â€” and why does `@Transactional` silently fail on them?
+
