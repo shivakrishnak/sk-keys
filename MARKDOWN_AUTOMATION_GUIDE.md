@@ -6,12 +6,9 @@ nav_order: 18
 permalink: /markdown-automation-guide/
 ---
 # 🤖 Markdown Automation Guide
-{: .no_toc }
 
 Complete guide to automatically generate Jekyll frontmatter for new markdown files without manual entry.
 
-## Table of Contents
-{:toc}
 
 ---
 

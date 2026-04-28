@@ -1,12 +1,7 @@
 # 📚 Technical Mastery System
-{: .no_toc }
 
 Complete knowledge base for software engineering and computer science, organized by domain with 12 major sections and 500+ technical terms.
 
-## Table of Contents
-{:toc}
-
----
 
 ## 🚀 Quick Start
 

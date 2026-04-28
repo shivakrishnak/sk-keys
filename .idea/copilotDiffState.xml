@@ -12,6 +12,15 @@
             </PendingDiffInfo>
           </value>
         </entry>
+        <entry key="/_config (snapshot).yml">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="/_config (snapshot).yml" />
+              <option name="originalContent" value="title: Dictionary&#10;description: comprehensive, categorized keyword list — covering every layer of the stack a senior/staff engineer should deeply know.&#10;&#10;remote_theme: just-the-docs/just-the-docs&#10;&#10;plugins:&#10;  - jekyll-remote-theme&#10;&#10;url: https://shivakrishnak.github.io&#10;baseurl: /sk-keys&#10;&#10;search_enabled: true&#10;heading_anchors: true&#10;nav_sort: case_insensitive&#10;&#10;aux_links:&#10;  Repository: https://github.com/shivakrishnak/sk-keys&#10;&#10;aux_links_new_tab: true&#10;&#10;color_scheme: light&#10;&#10;back_to_top: true&#10;back_to_top_text: &quot;Back to top&quot;&#10;" />
+              <option name="updatedContent" value="title: Dictionary&#10;description: comprehensive, categorized keyword list — covering every layer of the stack a senior/staff engineer should deeply know.&#10;&#10;remote_theme: just-the-docs/just-the-docs&#10;&#10;plugins:&#10;  - jekyll-remote-theme&#10;&#10;url: https://shivakrishnak.github.io&#10;baseurl: /sk-keys&#10;&#10;search_enabled: true&#10;heading_anchors: true&#10;nav_sort: case_insensitive&#10;&#10;# Enable table of contents sidebar&#10;toc:&#10;  min_header_level: 2&#10;  max_header_level: 3&#10;&#10;aux_links:&#10;  Repository: https://github.com/shivakrishnak/sk-keys&#10;&#10;aux_links_new_tab: true&#10;&#10;color_scheme: light&#10;&#10;back_to_top: true&#10;back_to_top_text: &quot;Back to top&quot;&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
         <entry key="/index (snapshot).md">
           <value>
             <PendingDiffInfo>

@@ -3,8 +3,6 @@
 
 **50-second workflow for adding markdown files to GitHub Pages**
 
-## Table of Contents
-{:toc}
 
 ---
 
