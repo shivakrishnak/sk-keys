@@ -3,6 +3,7 @@ layout: default
 title: "DevOps & SDLC"
 parent: "Documentation"
 nav_order: 13
+has_toc: true
 permalink: /devops-sdlc/
 ---
 # DevOps & SDLC
