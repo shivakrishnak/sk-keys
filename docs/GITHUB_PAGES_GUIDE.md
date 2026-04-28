@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: GitHub Pages Navigation Guide
 parent: Documentation

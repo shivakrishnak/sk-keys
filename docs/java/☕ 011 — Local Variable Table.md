@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Local Variable Table"
 parent: "Java Fundamentals"

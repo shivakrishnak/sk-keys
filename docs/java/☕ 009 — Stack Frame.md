@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Stack Frame"
 parent: "Java Fundamentals"

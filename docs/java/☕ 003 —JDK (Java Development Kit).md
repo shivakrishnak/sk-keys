@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "JDK (Java Development Kit)"
 parent: "Java Fundamentals"

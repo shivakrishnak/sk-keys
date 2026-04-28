@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: Setup Summary
 parent: Documentation

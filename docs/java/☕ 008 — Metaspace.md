@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Metaspace"
 parent: "Java Fundamentals"

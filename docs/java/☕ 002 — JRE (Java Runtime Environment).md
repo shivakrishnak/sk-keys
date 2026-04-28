@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "JRE (Java Runtime Environment)"
 parent: "Java Fundamentals"

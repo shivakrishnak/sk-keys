@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Stack Memory"
 parent: "Java Fundamentals"

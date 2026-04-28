@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Heap Memory"
 parent: "Java Fundamentals"

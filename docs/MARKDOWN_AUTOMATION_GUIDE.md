@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: Markdown Automation Guide
 parent: Documentation

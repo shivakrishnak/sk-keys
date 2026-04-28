@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "JVM (Java Virtual Machine)"
 parent: "Java Fundamentals"

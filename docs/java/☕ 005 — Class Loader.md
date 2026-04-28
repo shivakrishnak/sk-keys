@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Class Loader"
 parent: "Java Fundamentals"

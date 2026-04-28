@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Operand Stack"
 parent: "Java Fundamentals"
