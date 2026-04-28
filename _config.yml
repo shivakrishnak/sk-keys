@@ -13,6 +13,11 @@ search_enabled: true
 heading_anchors: true
 nav_sort: case_insensitive
 
+# Enable table of contents sidebar
+toc:
+  min_header_level: 2
+  max_header_level: 3
+
 aux_links:
   Repository: https://github.com/shivakrishnak/sk-keys
 
