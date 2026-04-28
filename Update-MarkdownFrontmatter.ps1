@@ -1,150 +1,71 @@
+# ============================================================
 # GitHub Pages Auto-Frontmatter Generator
 # Usage: .\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\java" -ParentTitle "Java Fundamentals"
-
+# SAFE: Uses .NET UTF-8 I/O - preserves all emojis and special characters
+# ONLY replaces the top frontmatter block, body is written back unchanged
+# ============================================================
 param(
     [Parameter(Mandatory=$true)][string]$SectionPath,
     [Parameter(Mandatory=$true)][string]$ParentTitle,
     [Parameter(Mandatory=$false)][string]$BasePermalink = $null
 )
-
-$ErrorActionPreference = "Stop"
-
-Write-Host "`n=== GitHub Pages Auto-Frontmatter Generator ===" -ForegroundColor Cyan
-Write-Host "Processing: $SectionPath`n" -ForegroundColor Cyan
-
-# Extract number from filename
-function Get-FileNumber {
-    param([string]$Filename)
-    if ($Filename -match '(\d{3})') { return [int]$matches[1] }
-    return $null
-}
-
-# Extract title from filename
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
+function Get-FileNumber { param([string]$Filename); if ($Filename -match "(\d{3})") { return [int]$matches[1] }; return $null }
 function Get-TitleFromFilename {
     param([string]$Filename)
-    $filename = $Filename -replace '\.md$', ''
-    # Remove leading emoji (any non-ASCII non-space sequence followed by space)
-    $title = $filename -replace '^.{1,3}\s+', ''
-    # Remove leading number block: e.g. "012 — " or "012 - " or "012—"
-    $title = $title -replace '^\d{3}\s*.?\s*', ''
-    return $title.Trim()
+    $t = $Filename -replace "\.md$", ""
+    $t = [regex]::Replace($t, "^[^\x00-\x7F]+\s*", "")
+    $t = $t -replace "^\d{3}\s*[^\w\s]?\s*", ""
+    return $t.Trim()
 }
-
-# Create permalink from title
 function New-Permalink {
     param([string]$Title, [string]$Section)
-    $slug = $Title.ToLower()
-    $slug = $slug -replace '[^\w\s-]', ''
-    $slug = $slug -replace '\s+', '-'
-    $slug = $slug -replace '-+', '-'
-    $slug = $slug -replace '-$', ''
-    if ($Section) { return "/$Section/$slug/" }
-    return "/$slug/"
+    $slug = $Title.ToLower() -replace "[^\w\s-]", "" -replace "\s+", "-" -replace "-+", "-"
+    $slug = $slug.Trim("-")
+    if ($Section) { return "/$Section/$slug/" }; return "/$slug/"
 }
-
-# Check if file has frontmatter
-function Test-HasFrontmatter {
+function Get-BodyContent {
     param([string]$FilePath)
-    $content = Get-Content -Path $FilePath -Raw
-    return $content -match '^---'
+    $raw = [System.IO.File]::ReadAllText($FilePath, (New-Object System.Text.UTF8Encoding $false))
+    $lines = $raw -split "`r?`n"
+    $i = 0; $total = $lines.Count
+    while ($i -lt $total -and $lines[$i].Trim() -eq "") { $i++ }
+    while ($i -lt $total -and $lines[$i].Trim() -eq "---") {
+        $i++
+        while ($i -lt $total -and $lines[$i].Trim() -ne "---") { $i++ }
+        if ($i -lt $total) { $i++ }
+        while ($i -lt $total -and $lines[$i].Trim() -eq "") { $i++ }
+    }
+    if ($i -lt $total) { return ($lines[$i..($total-1)] -join "`n") }
+    return ""
 }
-
-# Remove ALL leading frontmatter blocks (handles multiple --- blocks like custom metadata)
-function Remove-ExistingFrontmatter {
-    param([string]$FilePath)
-    $lines = @(Get-Content -Path $FilePath)
-
-    # Remove all consecutive frontmatter-style blocks at the top (--- ... ---)
-    $i = 0
-    while ($i -lt $lines.Count) {
-        # Skip blank lines between blocks
-        while ($i -lt $lines.Count -and $lines[$i].Trim() -eq '') { $i++ }
-        # If next non-blank line starts a --- block, remove it
-        if ($i -lt $lines.Count -and $lines[$i].Trim() -eq '---') {
-            $i++  # skip opening ---
-            while ($i -lt $lines.Count -and $lines[$i].Trim() -ne '---') { $i++ }
-            $i++  # skip closing ---
-        } else {
-            break  # no more frontmatter blocks
-        }
-    }
-
-    # Return remaining content (skip leading blank lines)
-    while ($i -lt $lines.Count -and $lines[$i].Trim() -eq '') { $i++ }
-    if ($i -lt $lines.Count) {
-        return ($lines[$i..($lines.Count-1)] -join "`n")
-    }
-    return ''
+function Set-Frontmatter {
+    param([string]$FilePath, [string]$Title, [string]$Parent, [int]$NavOrder, [string]$Permalink)
+    $body = Get-BodyContent -FilePath $FilePath
+    $fm = "---`nlayout: default`ntitle: `"$Title`"`nparent: `"$Parent`"`nnav_order: $NavOrder`npermalink: $Permalink`n---`n`n"
+    [System.IO.File]::WriteAllText($FilePath, ($fm + $body.TrimStart()), (New-Object System.Text.UTF8Encoding $false))
 }
-
-# Add frontmatter to file
-function Add-Frontmatter {
-    param([string]$FilePath, [string]$Title, [string]$ParentTitle, [int]$NavOrder, [string]$Permalink)
-
-    if (Test-HasFrontmatter -FilePath $FilePath) {
-        $content = Remove-ExistingFrontmatter -FilePath $FilePath
-    } else {
-        $content = Get-Content -Path $FilePath -Raw
+Write-Host "`n=== GitHub Pages Frontmatter Generator ===" -ForegroundColor Cyan
+Write-Host "Section : $SectionPath" -ForegroundColor Cyan
+Write-Host "Parent  : $ParentTitle`n" -ForegroundColor Cyan
+if (-not (Test-Path $SectionPath)) { Write-Host "ERROR: Path not found: $SectionPath" -ForegroundColor Red; exit 1 }
+if (-not $BasePermalink) { $BasePermalink = (Split-Path -Leaf $SectionPath).ToLower() -replace "\s+", "-" }
+$mdFiles = Get-ChildItem -Path $SectionPath -Filter "*.md" -File | Where-Object { $_.Name -ne "index.md" } | Sort-Object Name
+if ($mdFiles.Count -eq 0) { Write-Host "No markdown files found.`n" -ForegroundColor Yellow; exit 0 }
+Write-Host "Files found: $($mdFiles.Count)`n" -ForegroundColor Yellow
+$ok = 0
+foreach ($file in $mdFiles) {
+    try {
+        $num = Get-FileNumber -Filename $file.Name
+        $title = Get-TitleFromFilename -Filename $file.Name
+        $order = if ($num) { $num } else { $ok + 1 }
+        $link = New-Permalink -Title $title -Section $BasePermalink
+        Set-Frontmatter -FilePath $file.FullName -Title $title -Parent $ParentTitle -NavOrder $order -Permalink $link
+        Write-Host "[OK] $($file.Name)" -ForegroundColor Green
+        Write-Host "     title: $title  |  nav_order: $order  |  url: $link"
+        $ok++
+    } catch {
+        Write-Host "[ERR] $($file.Name) - $_" -ForegroundColor Red
     }
-
-    $fm = @"
----
-layout: default
-title: "$Title"
-parent: "$ParentTitle"
-nav_order: $NavOrder
-permalink: $Permalink
----
-
-"@
-
-    Set-Content -Path $FilePath -Value ($fm + $content.TrimStart()) -Encoding UTF8
 }
-
-# Main
-try {
-    if (-not (Test-Path -Path $SectionPath)) {
-        Write-Host "ERROR: Path not found: $SectionPath`n" -ForegroundColor Red
-        exit 1
-    }
-
-    if (-not $BasePermalink) {
-        $PathSegment = Split-Path -Leaf $SectionPath
-        $BasePermalink = $PathSegment.ToLower() -replace '\s+', '-'
-    }
-
-    $mdFiles = Get-ChildItem -Path $SectionPath -Filter "*.md" -File | Where-Object { $_.Name -ne "index.md" } | Sort-Object Name
-
-    if ($mdFiles.Count -eq 0) {
-        Write-Host "No markdown files found.`n" -ForegroundColor Yellow
-        exit 0
-    }
-
-    Write-Host "Found: $($mdFiles.Count) files`n" -ForegroundColor Yellow
-
-    $processed = 0
-    foreach ($file in $mdFiles) {
-        try {
-            $fileNumber = Get-FileNumber -Filename $file.Name
-            $title = Get-TitleFromFilename -Filename $file.Name
-            $navOrder = if ($fileNumber) { $fileNumber } else { $processed + 1 }
-            $permalink = New-Permalink -Title $title -Section $BasePermalink
-
-            Add-Frontmatter -FilePath $file.FullName -Title $title -ParentTitle $ParentTitle -NavOrder $navOrder -Permalink $permalink
-
-            Write-Host "[OK] $($file.Name)" -ForegroundColor Green
-            Write-Host "     Title: $title | Order: $navOrder | URL: $permalink"
-            $processed++
-        }
-        catch {
-            Write-Host "[ERROR] $($file.Name): $_" -ForegroundColor Red
-        }
-    }
-
-    Write-Host "`nDone! Processed $processed files`n" -ForegroundColor Green
-}
-catch {
-    Write-Host "`nERROR: $_`n" -ForegroundColor Red
-    exit 1
-}
-
+Write-Host "`nDone - $ok / $($mdFiles.Count) files updated.`n" -ForegroundColor Green
