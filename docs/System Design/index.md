@@ -1,12 +1,10 @@
-﻿---
+---
 layout: default
-title: System Design
-parent: Documentation
+title: "System Design"
+parent: "Documentation"
 nav_order: 9
-has_children: true
 permalink: /system-design/
 ---
-
 # System Design
 
 ## Architecting Large-Scale Systems

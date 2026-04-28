@@ -1,77 +1,56 @@
-﻿---
+---
 layout: default
-title: Documentation
+title: "Documentation"
 nav_order: 1
 has_children: true
 permalink: /
 ---
-
-# Complete Mastery System
+# Technical Documentation
 
 {: .no_toc }
 
-> One document. Everything you need. No external references.
->
-> A self-contained system for becoming an exceptional thinker, communicator, and professional
-
----
-
-## 📖 Quick Access
-
-### [🗂️ Technical Dictionary](./TECHNICAL_DICTIONARY.md)
-Master keyword reference for all 12 domains with 500+ technical terms organized by category.
-
-### [🌐 GitHub Pages Navigation Guide](./GITHUB_PAGES_GUIDE.md)
-Learn how files are organized and accessible in GitHub Pages with complete navigation hierarchy.
-
-### [📋 Setup Summary](./SETUP_SUMMARY.md)
-Complete checklist of what's configured and ready for deployment to GitHub Pages.
-
-### [✅ Implementation Complete](./IMPLEMENTATION_COMPLETE.md)
-Final summary of all tasks completed and ready-for-deployment status.
+Comprehensive reference guide for software engineering, architecture, and system design across 12 core domains.
 
 ---
 
 ## 📚 Documentation Sections
 
-### [Java](./java/)
+### [Java](./Java/)
 Core JVM concepts, bytecode, memory management, and Java fundamentals.
 
-### [Spring](./spring/)
+### [Spring](./Spring/)
 Enterprise application development with the Spring Framework.
 
-### [Distributed Systems](./distributed-systems/)
+### [Distributed Systems](./Distributed%20Systems/)
 Building scalable and reliable systems at scale.
 
-### [Databases](./databases/)
+### [Databases](./Databases/)
 Data persistence, query optimization, and database design.
 
-### [Messaging & Streaming](./messaging-streaming/)
+### [Messaging & Streaming](./Messaging%20&%20Streaming/)
 Event-driven architecture and real-time processing.
 
-### [Networking & HTTP](./networking-http/)
+### [Networking & HTTP](./Networking%20&%20HTTP/)
 Communication protocols and network fundamentals.
 
-### [OS & Systems](./os-systems/)
+### [OS & Systems](./OS%20&%20Systems/)
 Operating system concepts and system-level programming.
 
-### [System Design](./system-design/)
+### [System Design](./System%20Design/)
 Architecting large-scale systems and design patterns.
 
-### [DSA](./dsa/)
+### [DSA](./DSA/)
 Data structures, algorithms, and complexity analysis.
 
-### [Software Design](./software-design/)
+### [Software Design](./Software%20Design/)
 Design principles, patterns, and best practices.
 
-### [Cloud & Infrastructure](./cloud-infrastructure/)
+### [Cloud & Infrastructure](./Cloud%20&%20Infrastructure/)
 Cloud platforms and infrastructure management.
 
-### [DevOps & SDLC](./devops-sdlc/)
+### [DevOps & SDLC](./DevOps%20&%20SDLC/)
 Software development lifecycle and DevOps practices.
 
 ---
 
-## Navigation
-
-Use the navigation menu on the left to explore each section in detail. Each topic contains comprehensive guides, best practices, and actionable knowledge.
+Use the navigation menu on the left to explore each section in detail.

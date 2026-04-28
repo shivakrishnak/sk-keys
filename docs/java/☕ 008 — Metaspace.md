@@ -5,7 +5,6 @@ parent: "Java Fundamentals"
 nav_order: 8
 permalink: /java/metaspace/
 ---
-
 🏷️ Tags — #java #jvm #memory #internals #classloading #intermediate
 
 ⚡ TL;DR — Off-heap native memory region that stores class metadata, replacing PermGen in Java 8 — grows dynamically and lives outside GC-managed heap. 

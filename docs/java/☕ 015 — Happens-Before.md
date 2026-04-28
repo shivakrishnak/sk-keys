@@ -5,7 +5,6 @@ parent: "Java Fundamentals"
 nav_order: 15
 permalink: /java/happens-before/
 ---
-
 ⚡ TL;DR — The Java Memory Model's formal guarantee that all actions performed before a synchronisation point are fully visible to all actions after it — the only correct way to reason about visibility in concurrent Java code.
 
 ```

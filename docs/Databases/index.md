@@ -1,12 +1,10 @@
-﻿---
+---
 layout: default
-title: Databases
-parent: Documentation
+title: "Databases"
+parent: "Documentation"
 nav_order: 5
-has_children: true
 permalink: /databases/
 ---
-
 # Databases
 
 ## Data Persistence and Query Optimization

@@ -6,14 +6,9 @@ has_children: true
 permalink: /
 ---
 
-# Complete Mastery System
+# Technical Dictionary
 {: .no_toc }
 
-> One document. Everything you need. No external references.
->
-> A self-contained system for becoming an exceptional thinker, communicator, and professional
-
----
 
 ## 📖 Quick Resources
 

@@ -5,7 +5,6 @@ parent: "Java Fundamentals"
 nav_order: 13
 permalink: /java/escape-analysis/
 ---
-
 ⚡ TL;DR — A JIT compiler optimisation that determines if an object's lifetime is confined to a method, allowing stack allocation or scalar replacement — eliminating heap allocation and GC pressure entirely.
 
 ```

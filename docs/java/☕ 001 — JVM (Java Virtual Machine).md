@@ -5,7 +5,6 @@ parent: "Java Fundamentals"
 nav_order: 1
 permalink: /java/jvm-java-virtual-machine/
 ---
-
 ⚡ TL;DR — The runtime engine that executes Java bytecode on any platform.
 
 ---

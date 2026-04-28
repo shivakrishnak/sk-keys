@@ -5,7 +5,6 @@ parent: "Java Fundamentals"
 nav_order: 3
 permalink: /java/jdk-java-development-kit/
 ---
-
 🏷️ Tags — #java #jvm #internals #foundational
 
 ⚡ TL;DR — The complete Java toolkit: compile, run, debug, and diagnose.

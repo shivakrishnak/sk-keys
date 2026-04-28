@@ -1,12 +1,10 @@
-﻿---
+---
 layout: default
-title: DSA
-parent: Documentation
+title: "DSA"
+parent: "Documentation"
 nav_order: 10
-has_children: true
 permalink: /dsa/
 ---
-
 # DSA
 
 ## Data Structures and Algorithms

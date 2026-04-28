@@ -5,7 +5,6 @@ parent: "Java Fundamentals"
 nav_order: 11
 permalink: /java/local-variable-table/
 ---
-
 🏷️ Tags — #java #jvm #internals #memory #bytecode #deep-dive
 
 ⚡ TL;DR — The indexed slot array inside every stack frame that stores a method's parameters and local variables — fixed at compile time, zero GC overhead, lives and dies with its frame. 

@@ -5,7 +5,6 @@ parent: "Java Fundamentals"
 nav_order: 2
 permalink: /java/jre-java-runtime-environment/
 ---
-
 🏷️ Tags — #java #jvm #internals #foundational 
 
 ⚡ TL;DR — JVM + standard library = everything needed to run a Java program.

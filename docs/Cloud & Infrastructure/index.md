@@ -1,12 +1,10 @@
-﻿---
+---
 layout: default
-title: Cloud & Infrastructure
-parent: Documentation
+title: "Cloud & Infrastructure"
+parent: "Documentation"
 nav_order: 12
-has_children: true
 permalink: /cloud-infrastructure/
 ---
-
 # Cloud & Infrastructure
 
 ## Cloud Computing and Infrastructure Management

@@ -5,7 +5,6 @@ parent: "Java Fundamentals"
 nav_order: 4
 permalink: /java/bytecode/
 ---
-
 🏷️ Tags — #java #jvm #internals #deep-dive`
 
 ⚡ TL;DR — Platform-neutral instructions javac produces and the JVM executes.

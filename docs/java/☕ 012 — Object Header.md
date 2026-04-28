@@ -5,7 +5,6 @@ parent: "Java Fundamentals"
 nav_order: 12
 permalink: /java/object-header/
 ---
-
 ⚡ TL;DR — The hidden metadata prepended to every heap object containing identity, locking state, GC age, and type pointer — invisible in Java source but costs memory on every single object you create.
 
 ```
