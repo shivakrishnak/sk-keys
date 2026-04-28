@@ -1,12 +1,12 @@
 ---
 layout: default
-title: The Complete Mastery System
+title: Complete Mastery System
 nav_order: 1
-has_toc: true
+has_children: true
 permalink: /
 ---
 
-# The Complete Mastery System
+# Complete Mastery System
 {: .no_toc }
 
 > One document. Everything you need. No external references.
@@ -15,15 +15,33 @@ permalink: /
 
 ---
 
-## Welcome
+## 📚 Navigation
 
-This is your complete reference guide for mastery across communication, thinking, and professional development.
+Explore the Complete Mastery System through the sections below:
 
-**Structure:**
-- **Part I** = The Science (WHY things work)
-- **Part II** = The Skills (WHAT to develop)
-- **Part III** = The Drills (HOW to practice)
-- **Part IV** = The Execution Plan (WHEN to do what)
-- **Part V** = Resources & Reference
+### Part I: The Science
+Understanding the foundational principles of why things work.
 
-Read Part I once for understanding. Use Parts II–III as reference. Live in Part IV daily.
+### Part II: The Skills
+Developing the core competencies for excellence.
+
+### Part III: The Drills
+Practical exercises to master each skill.
+
+### Part IV: The Execution Plan
+Daily implementation framework and progress tracking.
+
+### Part V: Resources & Reference
+Essential tools, templates, and reference materials.
+
+---
+
+## Quick Links
+
+Use the navigation menu on the left to explore each section. Each part contains detailed content, examples, and actionable guidance.
+
+**How to use this system:**
+1. Read Part I once for foundational understanding
+2. Use Parts II–III as your reference guide
+3. Live in Part IV daily for consistent execution
+4. Reference Part V as needed for tools and templates
