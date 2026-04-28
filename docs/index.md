@@ -7,6 +7,7 @@ permalink: /
 ---
 
 # Complete Mastery System
+
 {: .no_toc }
 
 > One document. Everything you need. No external references.
@@ -15,55 +16,53 @@ permalink: /
 
 ---
 
-## 📖 Quick Resources
+## 📖 Quick Access
 
-### [🗂️ Technical Dictionary](./docs/TECHNICAL_DICTIONARY.md)
-A comprehensive master keyword reference covering all 12 domains with 500+ technical terms.
+### [🗂️ Technical Dictionary](./TECHNICAL_DICTIONARY.md)
+Master keyword reference for all 12 domains with 500+ technical terms organized by category.
 
 ---
 
-## 📚 Navigation
+## 📚 Documentation Sections
 
-Explore the Complete Mastery System through the sections below:
-
-### [Java](./docs/java/)
+### [Java](./java/)
 Core JVM concepts, bytecode, memory management, and Java fundamentals.
 
-### [Spring](./docs/spring/)
+### [Spring](./spring/)
 Enterprise application development with the Spring Framework.
 
-### [Distributed Systems](./docs/distributed-systems/)
+### [Distributed Systems](./distributed-systems/)
 Building scalable and reliable systems at scale.
 
-### [Databases](./docs/databases/)
+### [Databases](./databases/)
 Data persistence, query optimization, and database design.
 
-### [Messaging & Streaming](./docs/messaging-streaming/)
+### [Messaging & Streaming](./messaging-streaming/)
 Event-driven architecture and real-time processing.
 
-### [Networking & HTTP](./docs/networking-http/)
+### [Networking & HTTP](./networking-http/)
 Communication protocols and network fundamentals.
 
-### [OS & Systems](./docs/os-systems/)
+### [OS & Systems](./os-systems/)
 Operating system concepts and system-level programming.
 
-### [System Design](./docs/system-design/)
+### [System Design](./system-design/)
 Architecting large-scale systems and design patterns.
 
-### [DSA](./docs/dsa/)
+### [DSA](./dsa/)
 Data structures, algorithms, and complexity analysis.
 
-### [Software Design](./docs/software-design/)
+### [Software Design](./software-design/)
 Design principles, patterns, and best practices.
 
-### [Cloud & Infrastructure](./docs/cloud-infrastructure/)
+### [Cloud & Infrastructure](./cloud-infrastructure/)
 Cloud platforms and infrastructure management.
 
-### [DevOps & SDLC](./docs/devops-sdlc/)
+### [DevOps & SDLC](./devops-sdlc/)
 Software development lifecycle and DevOps practices.
 
 ---
 
-## Quick Links
+## Navigation
 
-Use the navigation menu on the left to explore each section. Each topic contains comprehensive guides, best practices, and actionable knowledge.
+Use the navigation menu on the left to explore each section in detail. Each topic contains comprehensive guides, best practices, and actionable knowledge.
