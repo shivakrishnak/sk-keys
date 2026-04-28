@@ -1,3 +1,13 @@
+---
+layout: default
+title: "Stack Frame"
+parent: "Java Fundamentals"
+nav_order: 9
+permalink: /java/stack-frame/
+---
+
+# ☕ Stack Frame
+
 🏷️ Tags — #java #jvm #memory #internals #deep-dive
 
 ⚡ TL;DR — The per-method execution unit pushed onto the thread stack, containing everything a method needs to run: local variables, working memory, and return context. 

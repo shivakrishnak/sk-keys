@@ -1,3 +1,13 @@
+---
+layout: default
+title: "Bytecode"
+parent: "Java Fundamentals"
+nav_order: 4
+permalink: /java/bytecode/
+---
+
+# ☕ Bytecode
+
 🏷️ Tags — #java #jvm #internals #deep-dive`
 
 ⚡ TL;DR — Platform-neutral instructions javac produces and the JVM executes.

@@ -1,3 +1,13 @@
+---
+layout: default
+title: "Class Loader"
+parent: "Java Fundamentals"
+nav_order: 5
+permalink: /java/class-loader/
+---
+
+# ☕ Class Loader
+
 🏷️ Tags — #java #jvm #internals #classloading #intermediate 
 
 ⚡ TL;DR — The JVM component that finds, loads, and links `.class` files into memory before execution begins.

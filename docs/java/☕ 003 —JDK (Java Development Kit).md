@@ -1,3 +1,13 @@
+---
+layout: default
+title: "JDK (Java Development Kit)"
+parent: "Java Fundamentals"
+nav_order: 3
+permalink: /java/jdk/
+---
+
+# ☕ JDK (Java Development Kit)
+
 🏷️ Tags — #java #jvm #internals #foundational
 
 ⚡ TL;DR — The complete Java toolkit: compile, run, debug, and diagnose.

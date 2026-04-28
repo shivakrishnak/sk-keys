@@ -1,3 +1,13 @@
+---
+layout: default
+title: "JRE (Java Runtime Environment)"
+parent: "Java Fundamentals"
+nav_order: 2
+permalink: /java/jre/
+---
+
+# ☕ JRE (Java Runtime Environment)
+
 🏷️ Tags — #java #jvm #internals #foundational 
 
 ⚡ TL;DR — JVM + standard library = everything needed to run a Java program.

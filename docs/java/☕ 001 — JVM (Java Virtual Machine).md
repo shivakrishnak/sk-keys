@@ -1,3 +1,13 @@
+---
+layout: default
+title: "JVM (Java Virtual Machine)"
+parent: "Java Fundamentals"
+nav_order: 1
+permalink: /java/jvm/
+---
+
+# ☕ JVM (Java Virtual Machine)
+
 🏷️ Tags — #java #jvm #internals #foundational
 
 ⚡ TL;DR — The runtime engine that executes Java bytecode on any platform.

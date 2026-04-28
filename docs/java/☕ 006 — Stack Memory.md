@@ -1,3 +1,13 @@
+---
+layout: default
+title: "Stack Memory"
+parent: "Java Fundamentals"
+nav_order: 6
+permalink: /java/stack-memory/
+---
+
+# ☕ Stack Memory
+
 🏷️ Tags —  #java #jvm #memory #internals #intermediate
 
 ⚡ TL;DR — Per-thread memory that stores method call frames, local variables, and return addresses — automatically managed, fast, and fixed in size. 
