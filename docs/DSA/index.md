@@ -4,7 +4,7 @@ title: DSA
 parent: Documentation
 nav_order: 10
 has_children: true
-permalink: /docs/dsa/
+permalink: /dsa/
 ---
 
 # DSA

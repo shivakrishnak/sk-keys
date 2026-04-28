@@ -3,7 +3,7 @@ layout: default
 title: "Stack Memory"
 parent: "Java Fundamentals"
 nav_order: 6
-permalink: /docs/java/stack-memory/
+permalink: /java/stack-memory/
 ---
 # â˜• Stack Memory
 

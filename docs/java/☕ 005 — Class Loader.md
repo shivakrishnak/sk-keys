@@ -3,7 +3,7 @@ layout: default
 title: "Class Loader"
 parent: "Java Fundamentals"
 nav_order: 5
-permalink: /docs/java/class-loader/
+permalink: /java/class-loader/
 ---
 # â˜• Class Loader
 

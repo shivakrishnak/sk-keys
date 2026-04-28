@@ -3,7 +3,7 @@ layout: default
 title: "Bytecode"
 parent: "Java Fundamentals"
 nav_order: 4
-permalink: /docs/java/bytecode/
+permalink: /java/bytecode/
 ---
 # â˜• Bytecode
 

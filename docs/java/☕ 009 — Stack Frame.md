@@ -3,7 +3,7 @@ layout: default
 title: "Stack Frame"
 parent: "Java Fundamentals"
 nav_order: 9
-permalink: /docs/java/stack-frame/
+permalink: /java/stack-frame/
 ---
 # â˜• Stack Frame
 

@@ -3,7 +3,7 @@ layout: default
 title: "Metaspace"
 parent: "Java Fundamentals"
 nav_order: 8
-permalink: /docs/java/metaspace/
+permalink: /java/metaspace/
 ---
 # â˜• Metaspace
 

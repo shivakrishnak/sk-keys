@@ -3,7 +3,7 @@ layout: default
 title: "JVM (Java Virtual Machine)"
 parent: "Java Fundamentals"
 nav_order: 1
-permalink: /docs/java/jvm/
+permalink: /java/jvm/
 ---
 # â˜• JVM (Java Virtual Machine)
 

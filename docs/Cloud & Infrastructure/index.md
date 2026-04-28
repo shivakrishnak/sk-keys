@@ -4,7 +4,7 @@ title: Cloud & Infrastructure
 parent: Documentation
 nav_order: 12
 has_children: true
-permalink: /docs/cloud-infrastructure/
+permalink: /cloud-infrastructure/
 ---
 
 # Cloud & Infrastructure

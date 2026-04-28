@@ -4,7 +4,7 @@ title: Networking & HTTP
 parent: Documentation
 nav_order: 7
 has_children: true
-permalink: /docs/networking-http/
+permalink: /networking-http/
 ---
 
 # Networking & HTTP

@@ -3,7 +3,7 @@ layout: default
 title: GitHub Pages Navigation Guide
 parent: Documentation
 nav_order: 15
-permalink: /docs/github-pages-guide/
+permalink: /github-pages-guide/
 ---
 
 # GitHub Pages Navigation & Accessibility Guide

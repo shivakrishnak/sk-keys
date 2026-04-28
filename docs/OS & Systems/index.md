@@ -4,7 +4,7 @@ title: OS & Systems
 parent: Documentation
 nav_order: 8
 has_children: true
-permalink: /docs/os-systems/
+permalink: /os-systems/
 ---
 
 # OS & Systems

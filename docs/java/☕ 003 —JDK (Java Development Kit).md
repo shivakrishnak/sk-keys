@@ -3,7 +3,7 @@ layout: default
 title: "JDK (Java Development Kit)"
 parent: "Java Fundamentals"
 nav_order: 3
-permalink: /docs/java/jdk/
+permalink: /java/jdk/
 ---
 # â˜• JDK (Java Development Kit)
 

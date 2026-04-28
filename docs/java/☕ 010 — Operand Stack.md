@@ -3,7 +3,7 @@ layout: default
 title: "Operand Stack"
 parent: "Java Fundamentals"
 nav_order: 10
-permalink: /docs/java/operand-stack/
+permalink: /java/operand-stack/
 ---
 # â˜• Operand Stack
 

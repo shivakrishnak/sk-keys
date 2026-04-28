@@ -3,7 +3,7 @@ layout: default
 title: Setup Summary
 parent: Documentation
 nav_order: 16
-permalink: /docs/setup-summary/
+permalink: /setup-summary/
 ---
 
 # ✅ GitHub Pages Setup - Completion Summary

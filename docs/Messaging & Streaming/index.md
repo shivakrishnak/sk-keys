@@ -4,7 +4,7 @@ title: Messaging & Streaming
 parent: Documentation
 nav_order: 6
 has_children: true
-permalink: /docs/messaging-streaming/
+permalink: /messaging-streaming/
 ---
 
 # Messaging & Streaming

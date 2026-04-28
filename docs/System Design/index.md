@@ -4,7 +4,7 @@ title: System Design
 parent: Documentation
 nav_order: 9
 has_children: true
-permalink: /docs/system-design/
+permalink: /system-design/
 ---
 
 # System Design

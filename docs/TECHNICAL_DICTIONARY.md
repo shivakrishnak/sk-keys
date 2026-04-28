@@ -4,7 +4,7 @@ title: Technical Dictionary
 parent: Documentation
 nav_order: 14
 has_children: false
-permalink: /docs/technical-dictionary/
+permalink: /technical-dictionary/
 ---
 
 # 🗂️ Software Engineering & CS Technical Dictionary

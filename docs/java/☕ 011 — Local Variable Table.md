@@ -3,7 +3,7 @@ layout: default
 title: "Local Variable Table"
 parent: "Java Fundamentals"
 nav_order: 11
-permalink: /docs/java/local-variable-table/
+permalink: /java/local-variable-table/
 ---
 # â˜• Local Variable Table
 

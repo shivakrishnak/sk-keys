@@ -3,7 +3,7 @@ layout: default
 title: Copilot Markdown Integration
 parent: Documentation
 nav_order: 18
-permalink: /docs/copilot-markdown-integration/
+permalink: /copilot-markdown-integration/
 ---
 
 # 🤖 Using Copilot with Markdown Automation

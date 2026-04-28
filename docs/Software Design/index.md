@@ -4,7 +4,7 @@ title: Software Design
 parent: Documentation
 nav_order: 11
 has_children: true
-permalink: /docs/software-design/
+permalink: /software-design/
 ---
 
 # Software Design

@@ -3,7 +3,7 @@ layout: default
 title: "Heap Memory"
 parent: "Java Fundamentals"
 nav_order: 7
-permalink: /docs/java/heap-memory/
+permalink: /java/heap-memory/
 ---
 # â˜• Heap Memory
 

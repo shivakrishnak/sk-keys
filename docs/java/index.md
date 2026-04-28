@@ -4,7 +4,7 @@ title: Java Fundamentals
 parent: Documentation
 nav_order: 2
 has_children: true
-permalink: /docs/java/
+permalink: /java/
 ---
 
 # Java Fundamentals
