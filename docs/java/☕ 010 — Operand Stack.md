@@ -1,9 +1,9 @@
 ﻿---
 layout: default
-title: "010 — Operand Stack"
+title: "Operand Stack"
 parent: "Java Fundamentals"
 nav_order: 10
-permalink: /java/010-operand-stack/
+permalink: /docs/java/operand-stack/
 ---
 # â˜• Operand Stack
 

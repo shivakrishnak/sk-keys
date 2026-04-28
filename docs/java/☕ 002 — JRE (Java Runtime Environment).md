@@ -1,9 +1,9 @@
 ﻿---
 layout: default
-title: "002 — JRE (Java Runtime Environment)"
+title: "JRE (Java Runtime Environment)"
 parent: "Java Fundamentals"
 nav_order: 2
-permalink: /java/002-jre-java-runtime-environment/
+permalink: /docs/java/jre/
 ---
 # â˜• JRE (Java Runtime Environment)
 

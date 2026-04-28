@@ -1,9 +1,10 @@
 ---
 layout: default
 title: Distributed Systems
+parent: Documentation
 nav_order: 4
 has_children: true
-permalink: /distributed-systems/
+permalink: /docs/distributed-systems/
 ---
 
 # Distributed Systems

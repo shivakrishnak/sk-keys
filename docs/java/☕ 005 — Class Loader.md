@@ -1,9 +1,9 @@
 ﻿---
 layout: default
-title: "005 — Class Loader"
+title: "Class Loader"
 parent: "Java Fundamentals"
 nav_order: 5
-permalink: /java/005-class-loader/
+permalink: /docs/java/class-loader/
 ---
 # â˜• Class Loader
 

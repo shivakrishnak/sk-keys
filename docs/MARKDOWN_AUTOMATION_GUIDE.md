@@ -1,8 +1,9 @@
 ---
 layout: default
-title: "Markdown Automation Guide"
-nav_order: 18
-permalink: /markdown-automation-guide/
+title: Markdown Automation Guide
+parent: Documentation
+nav_order: 17
+permalink: /docs/markdown-automation-guide/
 ---
 
 # 🤖 Markdown Automation Guide

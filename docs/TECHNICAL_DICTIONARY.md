@@ -1,9 +1,10 @@
 ---
 layout: default
 title: Technical Dictionary
+parent: Documentation
 nav_order: 14
 has_children: false
-permalink: /technical-dictionary/
+permalink: /docs/technical-dictionary/
 ---
 
 # 🗂️ Software Engineering & CS Technical Dictionary

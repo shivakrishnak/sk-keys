@@ -1,9 +1,9 @@
 ﻿---
 layout: default
-title: "008 — Metaspace"
+title: "Metaspace"
 parent: "Java Fundamentals"
 nav_order: 8
-permalink: /java/008-metaspace/
+permalink: /docs/java/metaspace/
 ---
 # â˜• Metaspace
 

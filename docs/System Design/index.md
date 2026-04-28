@@ -1,9 +1,10 @@
 ---
 layout: default
 title: System Design
+parent: Documentation
 nav_order: 9
 has_children: true
-permalink: /system-design/
+permalink: /docs/system-design/
 ---
 
 # System Design

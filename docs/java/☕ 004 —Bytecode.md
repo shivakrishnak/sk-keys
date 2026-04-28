@@ -1,9 +1,9 @@
 ﻿---
 layout: default
-title: "004 —Bytecode"
+title: "Bytecode"
 parent: "Java Fundamentals"
 nav_order: 4
-permalink: /java/004-bytecode/
+permalink: /docs/java/bytecode/
 ---
 # â˜• Bytecode
 

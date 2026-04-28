@@ -1,9 +1,10 @@
 ---
 layout: default
 title: Cloud & Infrastructure
+parent: Documentation
 nav_order: 12
 has_children: true
-permalink: /cloud-infrastructure/
+permalink: /docs/cloud-infrastructure/
 ---
 
 # Cloud & Infrastructure

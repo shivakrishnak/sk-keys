@@ -1,9 +1,10 @@
 ---
 layout: default
 title: Databases
+parent: Documentation
 nav_order: 5
 has_children: true
-permalink: /databases/
+permalink: /docs/databases/
 ---
 
 # Databases

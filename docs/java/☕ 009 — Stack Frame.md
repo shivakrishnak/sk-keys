@@ -1,9 +1,9 @@
 ﻿---
 layout: default
-title: "009 — Stack Frame"
+title: "Stack Frame"
 parent: "Java Fundamentals"
 nav_order: 9
-permalink: /java/009-stack-frame/
+permalink: /docs/java/stack-frame/
 ---
 # â˜• Stack Frame
 

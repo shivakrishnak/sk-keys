@@ -1,9 +1,10 @@
 ---
 layout: default
 title: Java Fundamentals
+parent: Documentation
 nav_order: 2
 has_children: true
-permalink: /java/
+permalink: /docs/java/
 ---
 
 # Java Fundamentals

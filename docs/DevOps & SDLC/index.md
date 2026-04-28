@@ -1,9 +1,10 @@
 ---
 layout: default
 title: DevOps & SDLC
+parent: Documentation
 nav_order: 13
 has_children: true
-permalink: /devops-sdlc/
+permalink: /docs/devops-sdlc/
 ---
 
 # DevOps & SDLC

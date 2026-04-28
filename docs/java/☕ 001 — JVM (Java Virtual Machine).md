@@ -1,9 +1,9 @@
 ﻿---
 layout: default
-title: "001 — JVM (Java Virtual Machine)"
+title: "JVM (Java Virtual Machine)"
 parent: "Java Fundamentals"
 nav_order: 1
-permalink: /java/001-jvm-java-virtual-machine/
+permalink: /docs/java/jvm/
 ---
 # â˜• JVM (Java Virtual Machine)
 

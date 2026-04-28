@@ -1,9 +1,9 @@
 ---
 layout: default
-title: Complete Mastery System
+title: Documentation
 nav_order: 1
 has_children: true
-permalink: /
+permalink: /docs/
 ---
 
 # Complete Mastery System

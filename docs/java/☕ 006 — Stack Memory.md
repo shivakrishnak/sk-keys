@@ -1,9 +1,9 @@
 ﻿---
 layout: default
-title: "006 — Stack Memory"
+title: "Stack Memory"
 parent: "Java Fundamentals"
 nav_order: 6
-permalink: /java/006-stack-memory/
+permalink: /docs/java/stack-memory/
 ---
 # â˜• Stack Memory
 

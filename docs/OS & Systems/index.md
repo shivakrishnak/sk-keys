@@ -1,9 +1,10 @@
 ---
 layout: default
 title: OS & Systems
+parent: Documentation
 nav_order: 8
 has_children: true
-permalink: /os-systems/
+permalink: /docs/os-systems/
 ---
 
 # OS & Systems

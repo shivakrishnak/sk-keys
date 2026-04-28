@@ -1,9 +1,10 @@
 ---
 layout: default
 title: DSA
+parent: Documentation
 nav_order: 10
 has_children: true
-permalink: /dsa/
+permalink: /docs/dsa/
 ---
 
 # DSA
