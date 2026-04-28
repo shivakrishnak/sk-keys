@@ -1,12 +1,10 @@
-﻿---
+---
 layout: default
-title: Networking & HTTP
-parent: Documentation
+title: "Networking & HTTP"
+parent: "Documentation"
 nav_order: 7
-has_children: true
 permalink: /networking-http/
 ---
-
 # Networking & HTTP
 
 ## Communication Protocols and Network Fundamentals

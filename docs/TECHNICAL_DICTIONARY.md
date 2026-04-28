@@ -1,12 +1,10 @@
-﻿---
+---
 layout: default
-title: Technical Dictionary
-parent: Documentation
+title: "Technical Dictionary"
+parent: "Documentation"
 nav_order: 14
-has_children: false
 permalink: /technical-dictionary/
 ---
-
 # 🗂️ Software Engineering & CS Technical Dictionary
 
 A comprehensive master keyword list organized by domain for quick reference and learning.

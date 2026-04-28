@@ -1,12 +1,10 @@
-﻿---
+---
 layout: default
-title: Messaging & Streaming
-parent: Documentation
+title: "Messaging & Streaming"
+parent: "Documentation"
 nav_order: 6
-has_children: true
 permalink: /messaging-streaming/
 ---
-
 # Messaging & Streaming
 
 ## Event-Driven Architecture and Real-Time Processing

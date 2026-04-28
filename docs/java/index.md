@@ -1,12 +1,11 @@
-﻿---
+---
 layout: default
-title: Java Fundamentals
-parent: Documentation
+title: "Java Fundamentals"
+parent: "Documentation"
 nav_order: 2
 has_children: true
 permalink: /java/
 ---
-
 # Java Fundamentals
 
 ## Core Concepts and JVM Deep Dive

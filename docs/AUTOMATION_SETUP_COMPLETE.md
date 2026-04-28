@@ -1,10 +1,10 @@
-﻿---
+---
 layout: default
 title: "Automation Setup Complete"
+parent: "Documentation"
 nav_order: 20
 permalink: /automation-setup-complete/
 ---
-
 # ✅ Automation Setup - 100% Complete
 
 Everything is now set up for you to add thousands of markdown files to your GitHub Pages documentation **without manual YAML frontmatter work**.
@@ -16,15 +16,11 @@ Everything is now set up for you to add thousands of markdown files to your GitH
 ### 1. PowerShell Automation Scripts ✅
 
 **`Update-MarkdownFrontmatter.ps1`**
-- Automatically adds Jekyll YAML frontmatter to markdown files
-- Extracts title and number from filenames
-- Generates clean URLs
+- Recursively updates all folders and markdown files under `docs`
+- Adds or updates the Jekyll navigation frontmatter only
+- Extracts title and number from filenames when needed
+- Generates clean URLs and parent-child relationships automatically
 - Tested and working ✅
-
-**`Bulk-Update-All-Sections.ps1`**
-- Updates all 12 documentation sections at once
-- Processes all folders in batch
-- Perfect for large document additions
 
 ### 2. Complete Guides ✅
 
@@ -60,7 +56,7 @@ New-Item "docs\java\☕ 016 — Your Topic 5.md"
 # (Use Copilot or write manually)
 
 # 3. Run automation
-.\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\java" -ParentTitle "Java Fundamentals"
+.\Update-MarkdownFrontmatter.ps1
 
 # 4. Commit & push
 git add docs/java/
@@ -85,11 +81,11 @@ docs/java/
 ### Processing
 ```
 Running: Update-MarkdownFrontmatter.ps1
-Found: 3 files
+Found markdown files across docs/
 Processing...
-Adding frontmatter to each file
-Setting nav_order from file numbers
-Generating clean URLs
+Updating navigation frontmatter
+Setting nav_order from file numbers or existing values
+Generating clean URLs and parent relationships
 ```
 
 ### Output
@@ -201,7 +197,7 @@ Create these files:
 - ☕ 016 — GC Tuning.md
 
 Then run:
-.\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\java" -ParentTitle "Java Fundamentals"
+.\Update-MarkdownFrontmatter.ps1
 ```
 
 ### Content Generation
@@ -224,7 +220,7 @@ Copilot: [Provides complete organization...]
 
 Then:
 1. Create all files
-2. Run: .\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\DSA" -ParentTitle "DSA"
+2. Run: .\Update-MarkdownFrontmatter.ps1
 3. Push to GitHub
 ```
 
@@ -238,7 +234,7 @@ Then:
 Step 1: Decide on topics (Ask Copilot)
 Step 2: Create files with proper names
 Step 3: Add content (Write or ask Copilot)
-Step 4: Run single-section automation
+Step 4: Run the recursive docs automation
 Step 5: Commit and push
 Step 6: Done! Files live in 1-2 minutes
 ```
@@ -249,7 +245,7 @@ Step 6: Done! Files live in 1-2 minutes
 
 ```
 Step 1: Prepare files in multiple sections
-Step 2: Run bulk update script
+Step 2: Run the recursive docs updater
 Step 3: Commit all sections
 Step 4: Push once
 Step 5: All sections updated!
@@ -308,8 +304,8 @@ With this setup, you can:
 | Scenario | Time | Tools |
 |----------|------|-------|
 | Add 5 Java topics | 5 min | Copilot + script |
-| Add 50 topics across 5 sections | 20 min | Bulk script |
-| Add 100 topics across all sections | 30 min | Bulk script |
+| Add 50 topics across 5 sections | 20 min | Recursive updater |
+| Add 100 topics across all sections | 30 min | Recursive updater |
 | Maintain 1000+ page docs | Ongoing | Script + Git |
 
 ---
@@ -321,7 +317,6 @@ Located in your repository:
 ```
 Root/
 ├── Update-MarkdownFrontmatter.ps1      ← Main automation script
-├── Bulk-Update-All-Sections.ps1        ← Bulk update script
 ├── QUICK_REFERENCE.md                  ← One-page cheat sheet
 ├── CUSTOM_INSTRUCTIONS.md              ← Share with team/Copilot
 └── docs/
@@ -339,7 +334,7 @@ Root/
 New-Item "docs\java\☕ 012 — Test Topic.md" -Value "# Test"
 
 # Run automation
-.\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\java" -ParentTitle "Java Fundamentals"
+.\Update-MarkdownFrontmatter.ps1
 
 # Check result
 Get-Content "docs\java\☕ 012 — Test Topic.md" -Head 20
@@ -394,17 +389,12 @@ Everything is configured and tested. You can now:
 
 ### Update Java
 ```powershell
-.\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\java" -ParentTitle "Java Fundamentals"
+.\Update-MarkdownFrontmatter.ps1
 ```
 
-### Update Any Section
+### Update All Docs Navigation
 ```powershell
-.\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\[SECTION]" -ParentTitle "[PARENT]"
-```
-
-### Update All Sections
-```powershell
-.\Bulk-Update-All-Sections.ps1
+.\Update-MarkdownFrontmatter.ps1
 ```
 
 ### Check Script Help

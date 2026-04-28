@@ -1,11 +1,10 @@
-﻿---
-layout: default
-title: GitHub Pages Navigation Guide
-parent: Documentation
-nav_order: 15
-permalink: /github-pages-guide/
 ---
-
+layout: default
+title: "GitHub Pages Navigation Guide"
+parent: "Documentation"
+nav_order: 15
+permalink: /github-pages-navigation-guide/
+---
 # GitHub Pages Navigation & Accessibility Guide
 
 ## ✅ How Files Are Now Accessible in GitHub Pages

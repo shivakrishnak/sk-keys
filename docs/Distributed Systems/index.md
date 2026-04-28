@@ -1,12 +1,10 @@
-﻿---
+---
 layout: default
-title: Distributed Systems
-parent: Documentation
+title: "Distributed Systems"
+parent: "Documentation"
 nav_order: 4
-has_children: true
 permalink: /distributed-systems/
 ---
-
 # Distributed Systems
 
 ## Building Scalable and Reliable Systems

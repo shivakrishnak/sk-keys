@@ -5,7 +5,6 @@ parent: "Java Fundamentals"
 nav_order: 14
 permalink: /java/memory-barrier/
 ---
-
 ⚡ TL;DR — A CPU and compiler instruction that prevents reordering of memory operations across a boundary, ensuring all threads see a consistent view of memory at synchronisation points.
 
 ```

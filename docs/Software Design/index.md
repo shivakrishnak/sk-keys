@@ -1,12 +1,10 @@
-﻿---
+---
 layout: default
-title: Software Design
-parent: Documentation
+title: "Software Design"
+parent: "Documentation"
 nav_order: 11
-has_children: true
 permalink: /software-design/
 ---
-
 # Software Design
 
 ## Design Principles and Patterns

@@ -1,4 +1,4 @@
-# 📌 Custom Instructions for GitHub Pages Markdown Automation
+ # 📌 Custom Instructions for GitHub Pages Markdown Automation
 
 These instructions can be added to your GitHub repository documentation or shared with team members.
 
@@ -19,7 +19,7 @@ When helping with markdown files in the `sk-keys` repository:
    - Replace NNN with sequential numbers
 
 2. **Never Manually Add Frontmatter**
-   - Instead, tell user: "Run `Update-MarkdownFrontmatter.ps1` to add frontmatter automatically"
+ou   - Instead, tell user: "Run `Update-MarkdownFrontmatter.ps1` to update navigation automatically across the entire `docs` tree"
    - If frontmatter is needed, provide the script command
 
 3. **Emoji Prefixes by Section**
@@ -46,7 +46,7 @@ When helping with markdown files in the `sk-keys` repository:
       ☕ NNN — Your Title Here.md
    
    2. Run automation script:
-      .\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\[section]" -ParentTitle "[Parent Name]"
+      .\Update-MarkdownFrontmatter.ps1
    
    3. Files automatically get:
       - Jekyll YAML frontmatter
@@ -66,19 +66,10 @@ When helping with markdown files in the `sk-keys` repository:
    - No permalink creation needed
    - No nav_order counting needed
 
-6. **Supported Sections & Parent Titles**
-   - docs\java → "Java Fundamentals"
-   - docs\spring → "Spring"
-   - docs\Distributed Systems → "Distributed Systems"
-   - docs\Databases → "Databases"
-   - docs\Messaging & Streaming → "Messaging & Streaming"
-   - docs\Networking & HTTP → "Networking & HTTP"
-   - docs\OS & Systems → "OS & Systems"
-   - docs\System Design → "System Design"
-   - docs\DSA → "DSA"
-   - docs\Software Design → "Software Design"
-   - docs\Cloud & Infrastructure → "Cloud & Infrastructure"
-   - docs\DevOps & SDLC → "DevOps & SDLC"
+6. **Scope of the Script**
+   - It scans every folder and markdown file under `docs`
+   - It updates section indexes and child pages together
+   - It computes parents, nav order, `has_children`, and permalinks automatically
 
 ---
 
@@ -100,9 +91,7 @@ Step 1: Create your markdown files with proper naming pattern
 Step 2: Add your content to each file
 
 Step 3: Run the automation script
-   .\Update-MarkdownFrontmatter.ps1 `
-       -SectionPath "docs\java" `
-       -ParentTitle "Java Fundamentals"
+   .\Update-MarkdownFrontmatter.ps1
 
 Step 4: Commit and push
    git add docs/java/
@@ -119,7 +108,7 @@ Done! Files will appear in GitHub Pages in 1-2 minutes.
 For [SECTION]:
 
 1. Create file: [SECTION]/☕ NNN — Your Title.md
-2. Run: .\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\[section]" -ParentTitle "[Parent]"
+2. Run: .\Update-MarkdownFrontmatter.ps1
 3. Git: git add docs/ && git commit -m "Add [title]" && git push
 
 The script automatically handles:
@@ -133,11 +122,11 @@ The script automatically handles:
 
 **Your Response:**
 ```
-Yes! Use the bulk update script:
+Yes! Use the recursive docs updater:
 
-.\Bulk-Update-All-Sections.ps1
+.\Update-MarkdownFrontmatter.ps1
 
-This updates all 12 sections:
+This updates all folders and markdown pages under `docs`, including:
 ✓ Java Fundamentals (11 topics)
 ✓ Spring
 ✓ Distributed Systems

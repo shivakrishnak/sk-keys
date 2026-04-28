@@ -5,7 +5,6 @@ parent: "Java Fundamentals"
 nav_order: 7
 permalink: /java/heap-memory/
 ---
-
 🏷️ Tags — #java #jvm #memory #gc #internals #intermediate
 
 ⚡ TL;DR — The JVM's shared memory region where all objects live, managed automatically by the Garbage Collector across generational spaces. 

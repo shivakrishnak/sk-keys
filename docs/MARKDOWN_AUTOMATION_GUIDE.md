@@ -1,11 +1,10 @@
-﻿---
-layout: default
-title: Markdown Automation Guide
-parent: Documentation
-nav_order: 17
-permalink: /markdown-automation-guide/
 ---
-
+layout: default
+title: "Markdown Automation Guide"
+parent: "Documentation"
+nav_order: 18
+epermalink: /markdown-automation-guide/
+---
 # 🤖 Markdown Automation Guide
 
 Complete guide to automatically generate Jekyll frontmatter for new markdown files without manual entry.
@@ -14,10 +13,9 @@ Complete guide to automatically generate Jekyll frontmatter for new markdown fil
 
 ## 📋 Overview
 
-Two PowerShell scripts are provided to automatically add Jekyll YAML frontmatter to your markdown files:
+One PowerShell script is provided to automatically add or update Jekyll navigation frontmatter across the entire `docs` tree:
 
-1. **`Update-MarkdownFrontmatter.ps1`** - Process a single section
-2. **`Bulk-Update-All-Sections.ps1`** - Update all sections at once
+1. **`Update-MarkdownFrontmatter.ps1`** - Recursively update all folders and markdown files under `docs`
 
 ---
 
@@ -30,7 +28,7 @@ Two PowerShell scripts are provided to automatically add Jekyll YAML frontmatter
 New-Item -Path "docs/java/☕ 012 — Garbage Collection.md"
 
 # 2. Run the update script
-.\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\java" -ParentTitle "Java Fundamentals"
+.\Update-MarkdownFrontmatter.ps1
 
 # 3. File automatically gets Jekyll frontmatter!
 ```
@@ -78,51 +76,21 @@ Follow this pattern for automatic number and title extraction:
 
 ## 🛠️ Usage Examples
 
-### Single Section Update
+### Update All Docs Navigation
 
 ```powershell
-# Update Java section
-.\Update-MarkdownFrontmatter.ps1 `
-    -SectionPath "docs\java" `
-    -ParentTitle "Java Fundamentals"
+# Update all folders and markdown files under docs
+.\Update-MarkdownFrontmatter.ps1
 ```
 
 **What it does:**
-- Scans `docs/java/` for all `.md` files (except index.md)
-- Extracts number and title from each filename
-- Adds Jekyll YAML frontmatter
-- Generates clean permalinks
-- Sets sequential nav_order values
-
-### Update Specific Section
-
-```powershell
-# Update Distributed Systems
-.\Update-MarkdownFrontmatter.ps1 `
-    -SectionPath "docs\Distributed Systems" `
-    -ParentTitle "Distributed Systems"
-```
-
-### Bulk Update All Sections
-
-```powershell
-# Update all sections at once
-.\Bulk-Update-All-Sections.ps1
-```
-
-**Processes:**
-- Java Fundamentals
-- Spring
-- Distributed Systems
-- Databases
-- Messaging & Streaming
-- Networking & HTTP
-- OS & Systems
-- System Design
-- DSA
-- Software Design
-- Cloud & Infrastructure
-- DevOps & SDLC
+- Scans the entire `docs/` folder recursively
+- Updates folder `index.md` files and child markdown pages
+- Extracts number and title from filenames when needed
+- Adds Jekyll YAML navigation frontmatter
+- Generates canonical permalinks
+- Sets or preserves stable `nav_order` values
+- Computes parent-child relationships automatically
 
 ---
 
@@ -168,9 +136,7 @@ New-Item -Path "docs/java/☕ 016 — GC Tuning.md" -Value "# Your content here"
 
 ### Step 2: Run Automation Script
 ```powershell
-.\Update-MarkdownFrontmatter.ps1 `
-    -SectionPath "docs\java" `
-    -ParentTitle "Java Fundamentals"
+.\Update-MarkdownFrontmatter.ps1
 ```
 
 ### Step 3: Verify Output
@@ -217,7 +183,7 @@ git push origin main
 
 ## 🎯 Supported Sections
 
-All 12 documentation sections are configured:
+The recursive updater automatically handles all configured sections under `docs`, including:
 
 | Section | Path | Parent Title |
 |---------|------|--------------|
@@ -261,15 +227,13 @@ All 12 documentation sections are configured:
 
 ## 🔧 Custom Arguments
 
-The script supports custom arguments:
+The script works out of the box with no arguments:
 
 ```powershell
-# Use custom base permalink
-.\Update-MarkdownFrontmatter.ps1 `
-    -SectionPath "docs\java" `
-    -ParentTitle "Java Fundamentals" `
-    -BasePermalink "java-internals"  # Custom instead of auto-generated
+.\Update-MarkdownFrontmatter.ps1
 ```
+
+It automatically scans `docs/`, updates section indexes and leaf pages, and computes parent/title/permalink metadata.
 
 ---
 
@@ -279,8 +243,8 @@ The script supports custom arguments:
 
 ```powershell
 # 1. Create content files with proper naming
-# 2. Run bulk update
-.\Bulk-Update-All-Sections.ps1
+# 2. Run the docs navigation updater
+.\Update-MarkdownFrontmatter.ps1
 
 # 3. Review changes
 git diff docs/
@@ -300,17 +264,13 @@ git push origin main
 
 ## 🚀 Advanced: Custom Section
 
-To add automation for a new section:
+To add a new section, create a new folder under `docs/` with an `index.md`, then run:
 
 ```powershell
-# Edit Bulk-Update-All-Sections.ps1
-# Add to $sections array:
-
-@{ Path = "docs\My New Section"; Parent = "My New Section" }
-
-# Then run:
-.\Bulk-Update-All-Sections.ps1
+.\Update-MarkdownFrontmatter.ps1
 ```
+
+The script discovers the new folder automatically.
 
 ---
 
@@ -348,13 +308,13 @@ To add automation for a new section:
 ```powershell
 # 1. Create files 012-021
 # 2. Run script
-.\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\java" -ParentTitle "Java Fundamentals"
+.\Update-MarkdownFrontmatter.ps1
 # 3. Done!
 ```
 
 **Update entire docs folder:**
 ```powershell
-.\Bulk-Update-All-Sections.ps1
+.\Update-MarkdownFrontmatter.ps1
 ```
 
 **Check what will be generated (preview):**

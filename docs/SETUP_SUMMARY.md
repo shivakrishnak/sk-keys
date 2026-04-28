@@ -1,11 +1,10 @@
-﻿---
+---
 layout: default
-title: Setup Summary
-parent: Documentation
+title: "Setup Summary"
+parent: "Documentation"
 nav_order: 16
 permalink: /setup-summary/
 ---
-
 # ✅ GitHub Pages Setup - Completion Summary
 
 ## Overview

@@ -1,11 +1,9 @@
-﻿---
-layout: default
-title: Copilot Markdown Integration
-parent: Documentation
-nav_order: 18
-permalink: /copilot-markdown-integration/
 ---
-
+layout: default
+title: "Copilot Markdown Integration"
+parent: "Documentation"
+nav_order: permalink: /copilot-markdown-integration/
+---
 # 🤖 Using Copilot with Markdown Automation
 
 Complete guide to using GitHub Copilot with automated frontmatter generation for seamless GitHub Pages updates.
@@ -44,8 +42,8 @@ Here's how:
 2. Add content to each file
 
 3. Run automation:
-   .\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\java" -ParentTitle "Java Fundamentals"
-
+   .\Update-MarkdownFrontmatter.ps1
+   .\Update-MarkdownFrontmatter.ps1
 4. Commit:
    git add docs/java/ && git commit -m "Add GC topics" && git push
 
@@ -71,8 +69,8 @@ I'll help! Here's the complete workflow:
 
 Now:
 - Save as: docs/java/☕ 012 — Garbage Collection.md
-- Run: .\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\java" -ParentTitle "Java Fundamentals"
-- Push to GitHub
+- Run: .\Update-MarkdownFrontmatter.ps1
+- Run: .\Update-MarkdownFrontmatter.ps1
 ```
 
 ### Method 3: Ask for Naming Suggestions
@@ -88,8 +86,8 @@ Your next topics should be:
 - ☕ 014 — [Your Third Topic]
 
 Follow the naming pattern, add content, then run:
-.\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\java" -ParentTitle "Java Fundamentals"
-```
+.\Update-MarkdownFrontmatter.ps1
+.\Update-MarkdownFrontmatter.ps1
 
 ---
 
@@ -127,8 +125,8 @@ Ask Copilot to help plan multiple sections:
 🤖 Copilot:
 [Provides organized list with all file names]
 Then you create them and run the bulk update:
-.\Bulk-Update-All-Sections.ps1
-```
+Then you create them and run the docs updater:
+.\Update-MarkdownFrontmatter.ps1
 
 ---
 
@@ -144,21 +142,21 @@ When discussing markdown files for the sk-keys repository:
 2. Match emoji to section (see emoji reference)
 3. Use 3-digit sequential numbers
 4. After content generation, remind user to run automation:
-   .\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\[section]" -ParentTitle "[Parent]"
-5. Mention these are automatically processed for GitHub Pages
+   .\Update-MarkdownFrontmatter.ps1
+   .\Update-MarkdownFrontmatter.ps1
 6. Suggest committing after running script
 ```
 
 ### Prompt B: Bulk Operations
-```
+### Prompt B: Recursive Operations
 For bulk updates across multiple files:
 
 1. Suggest organization by section
 2. Use consistent numbering
 3. After file creation, recommend bulk script:
-   .\Bulk-Update-All-Sections.ps1
-4. Explain this updates all sections at once
-5. Remind about git commit and push workflow
+3. After file creation, recommend the recursive docs updater:
+   .\Update-MarkdownFrontmatter.ps1
+4. Explain this updates all folders and markdown pages under docs at once
 ```
 
 ### Prompt C: GitHub Pages Integration
@@ -193,8 +191,8 @@ Always remember:
 2. I can generate content for each if you'd like
 
 3. After creating files, run:
-   .\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\Distributed Systems" -ParentTitle "Distributed Systems"
-
+   .\Update-MarkdownFrontmatter.ps1
+   .\Update-MarkdownFrontmatter.ps1
 4. Then:
    git add docs/
    git commit -m "Add consensus algorithm topics"
@@ -243,8 +241,8 @@ Your files will be live in GitHub Pages in 1-2 minutes!
 ...and so on.
 
 Once you create these files and add content, just run:
-.\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\DSA" -ParentTitle "DSA"
-
+.\Update-MarkdownFrontmatter.ps1
+.\Update-MarkdownFrontmatter.ps1
 Would you like me to generate content for any of these?
 ```
 
@@ -255,11 +253,11 @@ Would you like me to generate content for any of these?
      How do I process them all?"
 
 🤖: Simple! Run the bulk update script:
-
-.\Bulk-Update-All-Sections.ps1
-
+🤖: Simple! Run the recursive docs updater:
+.\Update-MarkdownFrontmatter.ps1
+.\Update-MarkdownFrontmatter.ps1
 This will process all 12 sections:
-✓ Java Fundamentals
+This will process all folders and markdown files under `docs`, including:
 ✓ Spring
 ✓ Distributed Systems
 ✓ Databases
@@ -295,8 +293,8 @@ All files will appear in GitHub Pages in 1-2 minutes!
        → Use Copilot to help refine content if needed
 
 5:00  - Run automation script
-       .\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\DSA" -ParentTitle "DSA"
-
+       .\Update-MarkdownFrontmatter.ps1
+       .\Update-MarkdownFrontmatter.ps1
 6:00  - Commit and push
        git add docs/
        git commit -m "Add DSA topics 001-010"
@@ -316,8 +314,7 @@ All files will appear in GitHub Pages in 1-2 minutes!
 
 ### Scripts
 - `Update-MarkdownFrontmatter.ps1` - Single section update
-- `Bulk-Update-All-Sections.ps1` - All sections at once
-
+- `Update-MarkdownFrontmatter.ps1` - Recursive docs-wide navigation update
 ### Guides
 - `MARKDOWN_AUTOMATION_GUIDE.md` - Full documentation
 - `QUICK_REFERENCE.md` - Quick lookup tables
@@ -395,9 +392,9 @@ Ask Copilot → Create files → Run script → Commit → Push
    - Scripts: Auto-generate frontmatter
 
 2. **Batch Operations with Bulk Script**
-   - Don't run single-section script multiple times
-   - Use `Bulk-Update-All-Sections.ps1` for >1 section
-
+2. **Batch Operations with the Recursive Script**
+   - You do not need a separate bulk wrapper
+   - Use `Update-MarkdownFrontmatter.ps1` for the whole `docs` tree
 3. **Ask Copilot for File Names First**
    - Let it suggest naming
    - Consistency is key for automation

@@ -22,7 +22,7 @@ Edit your markdown file and add content
 
 ### Step 3: Run Automation (20 seconds)
 ```powershell
-.\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\java" -ParentTitle "Java Fundamentals"
+.\Update-MarkdownFrontmatter.ps1
 ```
 
 **What happens automatically:**
@@ -64,24 +64,19 @@ Copy-paste the correct emoji for your section:
 
 ---
 
-## Parent Title Reference
+## Parent Titles
 
-Use these exact parent titles in the automation script:
+You no longer need to pass parent titles manually.
 
 ```powershell
--ParentTitle "Java Fundamentals"           # for java/
--ParentTitle "Spring"                       # for spring/
--ParentTitle "Distributed Systems"         # for Distributed Systems/
--ParentTitle "Databases"                    # for Databases/
--ParentTitle "Messaging & Streaming"       # for Messaging & Streaming/
--ParentTitle "Networking & HTTP"           # for Networking & HTTP/
--ParentTitle "OS & Systems"                # for OS & Systems/
--ParentTitle "System Design"               # for System Design/
--ParentTitle "DSA"                         # for DSA/
--ParentTitle "Software Design"             # for Software Design/
--ParentTitle "Cloud & Infrastructure"      # for Cloud & Infrastructure/
--ParentTitle "DevOps & SDLC"               # for DevOps & SDLC/
+.\Update-MarkdownFrontmatter.ps1
 ```
+
+The script now scans the entire `docs` tree recursively and computes:
+- parent relationships
+- `nav_order`
+- `has_children`
+- canonical permalinks
 
 ---
 
@@ -96,7 +91,7 @@ New-Item -Path "docs\java\☕ 013 — Finalization.md" -Value "# Content"
 New-Item -Path "docs\java\☕ 014 — Memory Leak Detection.md" -Value "# Content"
 
 # 2. Run automation
-.\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\java" -ParentTitle "Java Fundamentals"
+.\Update-MarkdownFrontmatter.ps1
 
 # 3. Push
 git add docs/java/
@@ -109,8 +104,8 @@ git push origin main
 ### Adding to Multiple Sections
 
 ```powershell
-# Update all sections at once
-.\Bulk-Update-All-Sections.ps1
+# Update all docs folders and files at once
+.\Update-MarkdownFrontmatter.ps1
 
 git add docs/
 git commit -m "Update all documentation sections"
@@ -188,22 +183,22 @@ https://your-site.com/java/garbage-collection/
 
 ### Add Single File to Java
 ```powershell
-.\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\java" -ParentTitle "Java Fundamentals"
+.\Update-MarkdownFrontmatter.ps1
 ```
 
 ### Add to Spring
 ```powershell
-.\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\spring" -ParentTitle "Spring"
+.\Update-MarkdownFrontmatter.ps1
 ```
 
 ### Add to Distributed Systems
 ```powershell
-.\Update-MarkdownFrontmatter.ps1 -SectionPath "docs\Distributed Systems" -ParentTitle "Distributed Systems"
+.\Update-MarkdownFrontmatter.ps1
 ```
 
 ### Update All Sections
 ```powershell
-.\Bulk-Update-All-Sections.ps1
+.\Update-MarkdownFrontmatter.ps1
 ```
 
 ### Check What Will Be Processed

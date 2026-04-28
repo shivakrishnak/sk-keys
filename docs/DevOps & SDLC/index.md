@@ -1,12 +1,10 @@
-﻿---
-layout: default
-title: DevOps & SDLC
-parent: Documentation
-nav_order: 13
-has_children: true
-permalink: /docs/devops-sdlc/
 ---
-
+layout: default
+title: "DevOps & SDLC"
+parent: "Documentation"
+nav_order: 13
+permalink: /devops-sdlc/
+---
 # DevOps & SDLC
 
 ## Software Development Lifecycle and Operations

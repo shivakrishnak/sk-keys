@@ -5,7 +5,6 @@ parent: "Java Fundamentals"
 nav_order: 10
 permalink: /java/operand-stack/
 ---
-
 🏷️ Tags — #java #jvm #internals #bytecode #deep-dive
 
 ⚡ TL;DR — The per-frame LIFO working memory where bytecode instructions push operands, perform operations, and pass results — the JVM's calculation scratch pad. 
