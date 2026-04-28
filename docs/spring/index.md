@@ -4,6 +4,7 @@ title: "Spring Framework"
 parent: "Documentation"
 nav_order: 3
 has_children: true
+has_toc: true
 permalink: /spring/
 ---
 # Spring Framework

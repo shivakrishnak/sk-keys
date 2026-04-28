@@ -3,6 +3,7 @@ layout: default
 title: "Software Design"
 parent: "Documentation"
 nav_order: 11
+has_toc: true
 permalink: /software-design/
 ---
 # Software Design
