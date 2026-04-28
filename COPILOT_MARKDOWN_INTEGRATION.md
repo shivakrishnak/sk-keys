@@ -2,7 +2,8 @@
 layout: default
 title: "Copilot Markdown Integration"
 parent: "Documentation"
-nav_order: permalink: /copilot-markdown-integration/
+nav_order: 13
+permalink: /copilot-markdown-integration/
 ---
 # 🤖 Using Copilot with Markdown Automation
 

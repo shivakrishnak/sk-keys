@@ -9,11 +9,11 @@ permalink: /
 # Technical Dictionary
 {: .no_toc }
 
-
 ## 📖 Quick Resources
 
-### [🗂️ Technical Dictionary](./docs/TECHNICAL_DICTIONARY.md)
-A comprehensive master keyword reference covering all 12 domains with 500+ technical terms.
+- **[Quick Reference](./QUICK_REFERENCE.md)** - 50-second workflow for adding files
+- **[Setup Status](./STATUS.md)** - Current implementation and deployment info
+- **[Technical Dictionary](./docs/TECHNICAL_DICTIONARY.md)** - 500+ technical terms
 
 ---
 
