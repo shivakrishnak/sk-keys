@@ -406,3 +406,28 @@ Software development lifecycle and DevOps practices.
 ## Quick Links
 
 Use the navigation menu on the left to explore each section. Each topic contains comprehensive guides, best practices, and actionable knowledge.
+
+---
+
+## 📊 Coverage Stats
+
+| Category | Range | Count |
+|---|---|---|
+| Java & JVM Internals | 001–050 | 50 |
+| Java Language | 051–065 | 15 |
+| Java Concurrency | 066–102 | 37 |
+| Spring & Spring Boot | 103–138 | 36 |
+| Distributed Systems | 139–194 | 56 |
+| Databases | 195–240 | 46 |
+| Messaging & Streaming | 241–260 | 20 |
+| Networking & HTTP | 261–286 | 26 |
+| OS & Systems | 287–306 | 20 |
+| System Design | 307–340 | 34 |
+| Data Structures & Algorithms | 341–376 | 36 |
+| Software Design | 377–411 | 35 |
+| Testing | 412–423 | 12 |
+| Clean Code | 424–433 | 10 |
+| Cloud & Infrastructure | 434–449 | 16 |
+| DevOps & SDLC | 450–460 | 11 |
+| **Total** | **001–460** | **460** |
+
