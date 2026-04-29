@@ -3,7 +3,6 @@ layout: default
 title: "OS & Systems"
 parent: "Documentation"
 nav_order: 8
-has_toc: true
 permalink: /os-systems/
 ---
 # OS & Systems

@@ -1,4 +1,4 @@
- # 📌 Custom Instructions for GitHub Pages Markdown Automation
+# 📌 Custom Instructions for GitHub Pages Markdown Automation
 
 These instructions can be added to your GitHub repository documentation or shared with team members.
 
@@ -13,30 +13,15 @@ When helping with markdown files in the `sk-keys` repository:
 **IMPORTANT RULES:**
 
 1. **File Naming Convention**
-   - Always use format: `☕ NNN — Title Here.md` (for Java)
+   - Always use format: `NNN — Title Here.md`
    - Use numeric prefix: 001, 002, 003 (3 digits)
-   - Use emoji prefix relevant to section
    - Replace NNN with sequential numbers
 
 2. **Never Manually Add Frontmatter**
 ou   - Instead, tell user: "Run `Update-MarkdownFrontmatter.ps1` to update navigation automatically across the entire `docs` tree"
    - If frontmatter is needed, provide the script command
 
-3. **Emoji Prefixes by Section**
-   - Java: ☕
-   - Spring: 🌱
-   - Distributed Systems: 🔗
-   - Databases: 💾
-   - Messaging & Streaming: 📨
-   - Networking & HTTP: 🌐
-   - OS & Systems: 🖥️
-   - System Design: 🏗️
-   - DSA: 🔧
-   - Software Design: 🧩
-   - Cloud & Infrastructure: ☁️
-   - DevOps & SDLC: 🔄
-
-4. **When User Asks About Adding New Files**
+3. **When User Asks About Adding New Files**
    
    Respond with:
    ```
@@ -82,11 +67,11 @@ ou   - Instead, tell user: "Run `Update-MarkdownFrontmatter.ps1` to update navig
 Great! Here's the quickest way:
 
 Step 1: Create your markdown files with proper naming pattern
-   ☕ 012 — Garbage Collection.md
-   ☕ 013 — Finalization.md
-   ☕ 014 — Reference Queue.md
-   ☕ 015 — Memory Leak Detection.md
-   ☕ 016 — GC Tuning.md
+   012 — Garbage Collection.md
+   013 — Finalization.md
+   014 — Reference Queue.md
+   015 — Memory Leak Detection.md
+   016 — GC Tuning.md
 
 Step 2: Add your content to each file
 
@@ -107,7 +92,7 @@ Done! Files will appear in GitHub Pages in 1-2 minutes.
 ```
 For [SECTION]:
 
-1. Create file: [SECTION]/☕ NNN — Your Title.md
+1. Create file: [SECTION]/NNN — Your Title.md
 2. Run: .\Update-MarkdownFrontmatter.ps1
 3. Git: git add docs/ && git commit -m "Add [title]" && git push
 
@@ -157,7 +142,7 @@ Then commit and push normally.
 
 ## What TO Do
 
-✅ **Do** use proper file naming: `☕ 001 — Title.md`  
+✅ **Do** use proper file naming: `001 — Title.md`  
 ✅ **Do** run the automation script after creating files  
 ✅ **Do** commit files after automation completes  
 ✅ **Do** use the filename to set nav_order (numbers in filename)  
@@ -165,4 +150,97 @@ Then commit and push normally.
 
 ---
 
+## 📖 Dictionary Entry Template (Technical Dictionary)
+
+When creating any dictionary entry for this repository, **always** use the template below.
+Every field is mandatory unless the concept has no code equivalent.
+
+```markdown
+---
+number: NNN
+category: Category Name
+difficulty: ★★☆
+depends_on: Concept1, Concept2
+used_by: Consumer1, Consumer2
+tags: #tag1, #tag2, #tag3
+---
+
+# NNN — KEYWORD NAME
+
+⚡ TL;DR — one sentence.
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│ #NNN         │ Category: ...                        │ Difficulty: ★★☆          │
+├──────────────┼──────────────────────────────────────┼──────────────────────────┤
+│ Depends on:  │ Concept1, Concept2                   │                          │
+│ Used by:     │ Consumer1, Consumer2                 │                          │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+---
+
+## 📘 Textbook Definition
+
+## 🟢 Simple Definition (Easy)
+
+## 🔵 Simple Definition (Elaborated)
+
+## 🔩 First Principles Explanation
+
+## ❓ Why Does This Exist (Why Before What)
+
+## 🧠 Mental Model / Analogy
+
+## ⚙️ How It Works (Mechanism)
+
+## 🔄 How It Connects (Mini-Map)
+
+## 💻 Code Example
+
+## 🔁 Flow / Lifecycle (if applicable)
+
+## ⚠️ Common Misconceptions
+
+## 🔥 Pitfalls in Production
+
+## 🔗 Related Keywords
+
+## 📌 Quick Reference Card
+
+---
+## 🧠 Think About This Before We Continue
+Q1. ...
+Q2. ...
+```
+
+### Section Purpose Guide
+
+| Section | What to Write |
+|---|---|
+| `TL;DR` | One crisp sentence — what this thing IS |
+| `Textbook Definition` | Formal, spec/standard definition |
+| `Simple (Easy)` | Explain to a junior dev or non-programmer |
+| `Simple (Elaborated)` | Explain to a mid-level developer |
+| `First Principles` | Build the idea from scratch — why was it invented? |
+| `Why Does This Exist` | The pain it solves; what world looks like without it |
+| `Mental Model / Analogy` | Real-world metaphor that makes it stick |
+| `How It Works` | Internal mechanism — data flow, algorithm, lifecycle |
+| `How It Connects` | ASCII mini map showing related concepts |
+| `Code Example` | Minimal, runnable code showing the concept |
+| `Flow / Lifecycle` | If it's a process: numbered flow diagram |
+| `Common Misconceptions` | Table: Wrong belief → Correct reality |
+| `Pitfalls in Production` | What breaks in real systems; with fix |
+| `Related Keywords` | Bullet list with one-line description each |
+| `Quick Reference Card` | Box summary for fast lookup |
+| `Think About This` | 2-3 Socratic questions to deepen understanding |
+
+### Difficulty Scale
+
+| Stars | Meaning |
+|---|---|
+| ★☆☆ | Beginner — need no prior knowledge |
+| ★★☆ | Intermediate — requires prerequisites |
+| ★★★ | Advanced — deep internals or distributed systems |
+
+
+---
 

@@ -7,41 +7,43 @@ used_by: TODO_Consumer1, TODO_Consumer2
 tags: #TODO_tag1, #TODO_tag2
 ---
 
-# TEMPLATE_EMOJI TEMPLATE_NUM -- TEMPLATE_NAME
+# TEMPLATE_NUM — TEMPLATE_NAME
+tags: #TODO_tag1, #TODO_tag2, #TODO_tag3
 
-TL;DR -- TODO: one sentence that captures the essence.
+⚡ TL;DR — TODO: one sentence that captures the essence.
 
 ```
-+------------------------------------------+-----------------------------+--------------------+
-| #TEMPLATE_NUM  | Category: TEMPLATE_CATEGORY         | Difficulty: TEMPLATE_DIFFICULTY  |
-+----------------+-------------------------------------+----------------------------------+
-| Depends on:    | TODO_Concept1, TODO_Concept2                                           |
-| Used by:       | TODO_Consumer1, TODO_Consumer2                                         |
-+------------------------------------------+-----------------------------+--------------------+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│ #TEMPLATE_NUM  │ Category: TEMPLATE_CATEGORY          │ Difficulty: TEMPLATE_DIFFICULTY │
+├────────────────┼──────────────────────────────────────┼─────────────────────────────────┤
+│ Depends on:    │ TODO_Concept1, TODO_Concept2                                           │
+├────────────────┼──────────────────────────────────────┼─────────────────────────────────┤
+│ Used by:       │ TODO_Consumer1, TODO_Consumer2                                         │
+└─────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Textbook Definition
+## 📘 Textbook Definition
 
 > TODO: Formal, precise definition -- as you would find it in a spec, RFC, or textbook.
 
 ---
 
-## Simple Definition (Easy)
+## 🟢 Simple Definition (Easy)
 
 > TODO: One short paragraph. Explain to a complete beginner or non-developer.
 
 ---
 
-## Simple Definition (Elaborated)
+## 🔵 Simple Definition (Elaborated)
 
 > TODO: 2-3 paragraphs. Explain to a mid-level developer.
 > Include what it does, how it's used, and why it matters.
 
 ---
 
-## First Principles Explanation
+## 🔩 First Principles Explanation
 
 > TODO: Start from zero. What problem existed first? What insight led to this solution?
 > Build the concept bottom-up.
@@ -52,14 +54,14 @@ Problem -> Insight -> Solution
 
 ---
 
-## Why Does This Exist (Why Before What)
+## ❓ Why Does This Exist (Why Before What)
 
 > TODO: What would the world look like WITHOUT this concept?
 > What pain does it remove? What was impossible before it?
 
 ---
 
-## Mental Model / Analogy
+## 🧠 Mental Model / Analogy
 
 > TODO: A real-world metaphor that makes this concept stick in memory.
 >
@@ -67,7 +69,7 @@ Problem -> Insight -> Solution
 
 ---
 
-## How It Works (Mechanism)
+## ⚙️ How It Works (Mechanism)
 
 > TODO: Internal details. Data flow, algorithm, state machine, or architecture diagram.
 
@@ -79,7 +81,7 @@ Step 1 -> Step 2 -> Step 3
 
 ---
 
-## How It Connects (Mini-Map)
+## 🔄 How It Connects (Mini-Map)
 
 > TODO: Show how this concept links to others in the same ecosystem.
 
@@ -93,7 +95,7 @@ Step 1 -> Step 2 -> Step 3
 
 ---
 
-## Code Example
+## 💻 Code Example
 
 > TODO: Minimal, runnable code that demonstrates the concept.
 > Add comments to highlight the key lines.
@@ -104,7 +106,7 @@ Step 1 -> Step 2 -> Step 3
 
 ---
 
-## Flow / Lifecycle (if applicable)
+## 🔁 Flow / Lifecycle (if applicable)
 
 > TODO: If this concept involves a sequence of steps or state changes, show the full flow.
 > Delete this section if not applicable.
@@ -119,9 +121,9 @@ Step 1 -> Step 2 -> Step 3
 
 ---
 
-## Common Misconceptions
+## ⚠️ Common Misconceptions
 
-| Wrong Belief | Correct Reality |
+| ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | TODO misconception 1 | TODO correction 1 |
 | TODO misconception 2 | TODO correction 2 |
@@ -129,7 +131,7 @@ Step 1 -> Step 2 -> Step 3
 
 ---
 
-## Pitfalls in Production
+## 🔥 Pitfalls in Production
 
 **Pitfall 1: TODO Name**
 > TODO: What breaks and how to fix it.
@@ -139,7 +141,7 @@ Step 1 -> Step 2 -> Step 3
 
 ---
 
-## Related Keywords
+## 🔗 Related Keywords
 
 - **[TODO Keyword A]** -- one-line description of the relationship
 - **[TODO Keyword B]** -- one-line description of the relationship
@@ -147,27 +149,26 @@ Step 1 -> Step 2 -> Step 3
 
 ---
 
-## Quick Reference Card
+## 📌 Quick Reference Card
 
 ```
-+----------------------------------------------------------------------+
-| KEY IDEA     | TODO: one-line essence                                |
-+----------------------------------------------------------------------+
-| USE WHEN     | TODO: when to apply this                             |
-+----------------------------------------------------------------------+
-| AVOID WHEN   | TODO: when NOT to use this                           |
-+----------------------------------------------------------------------+
-| ONE-LINER    | "TODO: memorable summary"                            |
-+----------------------------------------------------------------------+
-| NEXT EXPLORE | TODO: ConceptA -> ConceptB -> ConceptC               |
-+----------------------------------------------------------------------+
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ TODO: one-line essence                       │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ TODO: when to apply this                    │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ TODO: when NOT to use this                  │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "TODO: memorable summary"                   │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ TODO: ConceptA -> ConceptB -> ConceptC      │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Think About This Before We Continue
+## 🧠 Think About This Before We Continue
 
 **Q1.** TODO: question 1
 **Q2.** TODO: question 2
 **Q3.** TODO: question 3
-

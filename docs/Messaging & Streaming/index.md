@@ -3,7 +3,6 @@ layout: default
 title: "Messaging & Streaming"
 parent: "Documentation"
 nav_order: 6
-has_toc: true
 permalink: /messaging-streaming/
 ---
 # Messaging & Streaming

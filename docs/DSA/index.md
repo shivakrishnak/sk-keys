@@ -3,7 +3,6 @@ layout: default
 title: "DSA"
 parent: "Documentation"
 nav_order: 10
-has_toc: true
 permalink: /dsa/
 ---
 # DSA

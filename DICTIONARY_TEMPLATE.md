@@ -8,23 +8,23 @@
 ## 🗂️ File Naming Convention
 
 ```
-EMOJI NNN — KEYWORD NAME.md
+NNN — KEYWORD NAME.md
 ```
 
 Examples:
 ```
-☕ 016 — GC Roots.md
-🌱 103 — IoC (Inversion of Control).md
-🔗 139 — CAP Theorem.md
-💾 195 — ACID.md
-📨 241 — Topic.md
-🌐 261 — OSI Model.md
-🖥️ 287 — Process vs Thread.md
-🏗️ 307 — Monolith.md
-🔧 341 — Array.md
-🧩 377 — SOLID.md
-☁️ 434 — Docker.md
-🔄 450 — CI/CD Pipeline.md
+016 — GC Roots.md
+103 — IoC (Inversion of Control).md
+139 — CAP Theorem.md
+195 — ACID.md
+241 — Topic.md
+261 — OSI Model.md
+287 — Process vs Thread.md
+307 — Monolith.md
+341 — Array.md
+377 — SOLID.md
+434 — Docker.md
+450 — CI/CD Pipeline.md
 ```
 
 ---
@@ -41,14 +41,16 @@ used_by: Consumer1, Consumer2
 tags: #tag1, #tag2, #tag3
 ---
 
-# EMOJI NNN — KEYWORD NAME
+# NNN — KEYWORD NAME
+tags: #tag1, #tag2, #tag3
 
 ⚡ TL;DR — one sentence that captures the essence.
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #NNN         │ Category: ...                        │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
+├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Depends on:  │ Concept1, Concept2                                               │
+├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Consumer1, Consumer2                                             │
 └─────────────────────────────────────────────────────────────────────────────────┘
 

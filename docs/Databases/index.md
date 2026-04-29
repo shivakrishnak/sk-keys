@@ -3,7 +3,6 @@ layout: default
 title: "Databases"
 parent: "Documentation"
 nav_order: 5
-has_toc: true
 permalink: /databases/
 ---
 # Databases

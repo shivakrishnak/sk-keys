@@ -3,7 +3,6 @@ layout: default
 title: "Distributed Systems"
 parent: "Documentation"
 nav_order: 4
-has_toc: true
 permalink: /distributed-systems/
 ---
 # Distributed Systems

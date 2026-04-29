@@ -3,7 +3,6 @@ layout: default
 title: "System Design"
 parent: "Documentation"
 nav_order: 9
-has_toc: true
 permalink: /system-design/
 ---
 # System Design

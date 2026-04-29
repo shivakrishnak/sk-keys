@@ -3,7 +3,6 @@ layout: default
 title: "Networking & HTTP"
 parent: "Documentation"
 nav_order: 7
-has_toc: true
 permalink: /networking-http/
 ---
 # Networking & HTTP
