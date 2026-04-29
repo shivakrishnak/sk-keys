@@ -60,6 +60,7 @@ Software development lifecycle and DevOps practices.
 ## 📚 Complete Dictionary — All Keywords by Category
 
 ### Java & JVM Internals (50 keywords)
+
 | # | Keyword | # | Keyword |
 |---|---|---|---|
 | 001 | JVM | 026 | Parallel GC |
@@ -89,6 +90,7 @@ Software development lifecycle and DevOps practices.
 | 025 | Serial GC | 050 | String Pool / String Interning |
 
 ### Java Language & Concurrency (52 keywords)
+
 | # | Keyword | # | Keyword |
 |---|---|---|---|
 | 051 | Autoboxing / Unboxing | 077 | ReadWriteLock |
@@ -118,30 +120,32 @@ Software development lifecycle and DevOps practices.
 | 075 | wait / notify / notifyAll | 101 | CopyOnWriteArrayList |
 | 076 | ReentrantLock | 102 | Java Memory Model (JMM) |
 
-### Spring & Spring Boot (37 keywords)
+### Spring & Spring Boot (39 keywords)
+
 | # | Keyword | # | Keyword |
 |---|---|---|---|
-| 103 | IoC (Inversion of Control) | 120 | Advice |
-| 104 | DI (Dependency Injection) | 121 | Pointcut |
-| 105 | ApplicationContext | 122 | JoinPoint |
-| 106 | BeanFactory | 123 | Weaving |
-| 107 | Bean | 124 | DispatcherServlet |
-| 108 | Bean Lifecycle | 125 | HandlerMapping |
-| 109 | Bean Scope | 126 | Filter vs Interceptor |
-| 110 | BeanPostProcessor | 127 | @Transactional |
-| 111 | BeanFactoryPostProcessor | 128 | Transaction Propagation |
-| 112 | @Autowired | 129 | Transaction Isolation Levels |
-| 113 | @Qualifier / @Primary | 130 | N+1 Problem |
-| 114 | @Configuration / @Bean | 131 | Lazy vs Eager Loading |
-| 115 | Circular Dependency | 132 | HikariCP |
-| 116 | CGLIB Proxy | 133 | Auto-Configuration |
-| 117 | JDK Dynamic Proxy | 134 | Spring Boot Actuator |
-| 118 | AOP (Aspect-Oriented Programming) | 135 | Spring Boot Startup Lifecycle |
-| 119 | Aspect | 136 | WebFlux / Reactive |
-|  |  | 137 | Mono / Flux |
-|  |  | 138 | Backpressure |
+| 103 | IoC (Inversion of Control) | 122 | JoinPoint |
+| 104 | DI (Dependency Injection) | 123 | Weaving |
+| 105 | ApplicationContext | 124 | DispatcherServlet |
+| 106 | BeanFactory | 125 | HandlerMapping |
+| 107 | Bean | 126 | Filter vs Interceptor |
+| 108 | Bean Lifecycle | 127 | @Transactional |
+| 109 | Bean Scope | 128 | Transaction Propagation |
+| 110 | BeanPostProcessor | 129 | Transaction Isolation Levels |
+| 111 | BeanFactoryPostProcessor | 130 | N+1 Problem |
+| 112 | @Autowired | 131 | Lazy vs Eager Loading |
+| 113 | @Qualifier / @Primary | 132 | HikariCP |
+| 114 | @Configuration / @Bean | 133 | Auto-Configuration |
+| 115 | Circular Dependency | 134 | Spring Boot Actuator |
+| 116 | CGLIB Proxy | 135 | Spring Boot Startup Lifecycle |
+| 117 | JDK Dynamic Proxy | 136 | WebFlux / Reactive |
+| 118 | AOP (Aspect-Oriented Programming) | 137 | Mono / Flux |
+| 119 | Aspect | 138 | Backpressure |
+| 120 | Advice | 139 | |
+| 121 | Pointcut | 140 | |
 
 ### Distributed Systems (57 keywords)
+
 | # | Keyword | # | Keyword |
 |---|---|---|---|
 | 139 | CAP Theorem | 169 | Circuit Breaker |
@@ -170,200 +174,215 @@ Software development lifecycle and DevOps practices.
 | 162 | Quorum | 192 | Choreography vs Orchestration |
 | 163 | Split Brain | 193 | Outbox Pattern |
 | 164 | Fencing / Epoch | 194 | Two-Phase Commit (2PC) |
-| 165 | Failure Modes |  |  |
-| 166 | Timeout |  |  |
-| 167 | Retry |  |  |
-| 168 | Idempotency |  |  |
+| 165 | Failure Modes | 195 | |
+| 166 | Timeout | 196 | |
+| 167 | Retry | 197 | |
+| 168 | Idempotency | 198 | |
 
 ### Databases (46 keywords)
-| # | Keyword | # | Keyword |
-|---|---|---|---|
-| 195 | ACID | 220 | Prepared Statements |
-| 196 | Atomicity | 221 | Read Replica |
-| 197 | Consistency (DB) | 222 | Write Amplification |
-| 198 | Isolation | 223 | Partitioning (DB) |
-| 199 | Durability | 224 | Materialized View |
-| 200 | Transaction | 225 | Stored Procedure / Trigger |
-| 201 | Commit / Rollback / Savepoint | 226 | Document Store |
-| 202 | Isolation Levels | 227 | Key-Value Store |
-| 203 | Dirty Read | 228 | Column Family |
-| 204 | Non-Repeatable Read | 229 | Graph DB |
-| 205 | Phantom Read | 230 | Eventual Consistency in NoSQL |
-| 206 | MVCC | 231 | CRDTs |
-| 207 | WAL (Write-Ahead Log) | 232 | Cache-Aside |
-| 208 | Redo Log / Undo Log | 233 | Read-Through |
-| 209 | B-Tree | 234 | Write-Through |
-| 210 | B+ Tree | 235 | Write-Behind |
-| 211 | LSM Tree | 236 | Cache Invalidation |
-| 212 | Index Types | 237 | TTL |
-| 213 | Query Planner / Execution Plan | 238 | Eviction Policies (LRU, LFU, FIFO) |
-| 214 | EXPLAIN | 239 | Cache Stampede / Thundering Herd |
-| 215 | Normalization / Denormalization | 240 | Negative Caching |
-| 216 | Foreign Key / Referential Integrity |  |  |
-| 217 | Locking (Row, Table, Gap, Next-Key) |  |  |
-| 218 | Deadlock Detection |  |  |
-| 219 | Connection Pooling |  |  |
 
-### Messaging & Streaming (21 keywords)
 | # | Keyword | # | Keyword |
 |---|---|---|---|
-| 241 | Topic | 252 | Consumer Lag |
-| 242 | Partition (Kafka) | 253 | Idempotent Producer |
-| 243 | Offset | 254 | Transactional Producer |
-| 244 | Consumer Group | 255 | Kafka Streams |
-| 245 | Producer | 256 | Point-to-Point vs Pub-Sub |
-| 246 | Consumer | 257 | Message Broker vs Event Bus |
-| 247 | Broker | 258 | Competing Consumers |
-| 248 | Replication Factor (Kafka) | 259 | Fan-Out |
-| 249 | ISR (In-Sync Replicas) | 260 | Message Ordering |
-| 250 | Log Compaction |  |  |
-| 251 | Retention Policy |  |  |
+| 199 | ACID | 222 | Write Amplification |
+| 200 | Atomicity | 223 | Partitioning (DB) |
+| 201 | Consistency (DB) | 224 | Materialized View |
+| 202 | Isolation | 225 | Stored Procedure / Trigger |
+| 203 | Durability | 226 | Document Store |
+| 204 | Transaction | 227 | Key-Value Store |
+| 205 | Commit / Rollback / Savepoint | 228 | Column Family |
+| 206 | Isolation Levels | 229 | Graph DB |
+| 207 | Dirty Read | 230 | Eventual Consistency in NoSQL |
+| 208 | Non-Repeatable Read | 231 | CRDTs |
+| 209 | Phantom Read | 232 | Cache-Aside |
+| 210 | MVCC | 233 | Read-Through |
+| 211 | WAL (Write-Ahead Log) | 234 | Write-Through |
+| 212 | Redo Log / Undo Log | 235 | Write-Behind |
+| 213 | B-Tree | 236 | Cache Invalidation |
+| 214 | B+ Tree | 237 | TTL |
+| 215 | LSM Tree | 238 | Eviction Policies (LRU, LFU, FIFO) |
+| 216 | Index Types | 239 | Cache Stampede / Thundering Herd |
+| 217 | Query Planner / Execution Plan | 240 | Negative Caching |
+| 218 | EXPLAIN | 241 | |
+| 219 | Normalization / Denormalization | 242 | |
+| 220 | Foreign Key / Referential Integrity | 243 | |
+| 221 | Locking (Row, Table, Gap, Next-Key) | 244 | |
+
+### Messaging & Streaming (20 keywords)
+
+| # | Keyword | # | Keyword |
+|---|---|---|---|
+| 241 | Topic | 253 | Idempotent Producer |
+| 242 | Partition (Kafka) | 254 | Transactional Producer |
+| 243 | Offset | 255 | Kafka Streams |
+| 244 | Consumer Group | 256 | Point-to-Point vs Pub-Sub |
+| 245 | Producer | 257 | Message Broker vs Event Bus |
+| 246 | Consumer | 258 | Competing Consumers |
+| 247 | Broker | 259 | Fan-Out |
+| 248 | Replication Factor (Kafka) | 260 | Message Ordering |
+| 249 | ISR (In-Sync Replicas) | 261 | |
+| 250 | Log Compaction | 262 | |
+| 251 | Retention Policy | 263 | |
+| 252 | Consumer Lag | 264 | |
 
 ### Networking & HTTP (26 keywords)
+
 | # | Keyword | # | Keyword |
 |---|---|---|---|
-| 261 | OSI Model | 274 | REST |
-| 262 | TCP | 275 | gRPC |
-| 263 | UDP | 276 | Protocol Buffers |
-| 264 | QUIC | 277 | WebSocket |
-| 265 | TCP Handshake (3-Way) | 278 | Server-Sent Events (SSE) |
-| 266 | TCP Teardown | 279 | Long Polling |
-| 267 | Congestion Control | 280 | TLS/SSL |
-| 268 | Flow Control | 281 | mTLS |
-| 269 | DNS | 282 | OAuth2 |
-| 270 | CDN | 283 | JWT |
-| 271 | HTTP/1.1 | 284 | OIDC |
-| 272 | HTTP/2 | 285 | CORS |
-| 273 | HTTP/3 | 286 | XSS / CSRF / SQL Injection / SSRF |
+| 265 | OSI Model | 280 | REST |
+| 266 | TCP | 281 | gRPC |
+| 267 | UDP | 282 | Protocol Buffers |
+| 268 | QUIC | 283 | WebSocket |
+| 269 | TCP Handshake (3-Way) | 284 | Server-Sent Events (SSE) |
+| 270 | TCP Teardown | 285 | Long Polling |
+| 271 | Congestion Control | 286 | TLS/SSL |
+| 272 | Flow Control | 287 | mTLS |
+| 273 | DNS | 288 | OAuth2 |
+| 274 | CDN | 289 | JWT |
+| 275 | HTTP/1.1 | 290 | OIDC |
+| 276 | HTTP/2 | 291 | CORS |
+| 277 | HTTP/3 | 292 | XSS / CSRF / SQL Injection / SSRF |
+| 278 | | 293 | |
+| 279 | | 294 | |
 
 ### OS & Systems (20 keywords)
+
 | # | Keyword | # | Keyword |
 |---|---|---|---|
-| 287 | Process vs Thread | 297 | Blocking I/O |
-| 288 | Context Switch | 298 | Non-Blocking I/O |
-| 289 | Scheduler / Preemption | 299 | Async I/O |
-| 290 | User Space vs Kernel Space | 300 | epoll / kqueue |
-| 291 | System Call (syscall) | 301 | File Descriptor |
-| 292 | Virtual Memory | 302 | Page Cache |
-| 293 | Paging | 303 | Zero-Copy (sendfile) |
-| 294 | Page Fault | 304 | NUMA |
-| 295 | TLB | 305 | Cache Line |
-| 296 | Memory-Mapped File (mmap) | 306 | False Sharing |
+| 295 | Process vs Thread | 308 | Async I/O |
+| 296 | Context Switch | 309 | epoll / kqueue |
+| 297 | Scheduler / Preemption | 310 | File Descriptor |
+| 298 | User Space vs Kernel Space | 311 | Page Cache |
+| 299 | System Call (syscall) | 312 | Zero-Copy (sendfile) |
+| 300 | Virtual Memory | 313 | NUMA |
+| 301 | Paging | 314 | Cache Line |
+| 302 | Page Fault | 315 | False Sharing |
+| 303 | TLB | 316 | |
+| 304 | Memory-Mapped File (mmap) | 317 | |
+| 305 | Blocking I/O | 318 | |
+| 306 | Non-Blocking I/O | 319 | |
 
 ### System Design (34 keywords)
+
 | # | Keyword | # | Keyword |
 |---|---|---|---|
-| 307 | Monolith | 325 | Sticky Sessions |
-| 308 | Microservices | 326 | Token Bucket / Leaky Bucket |
-| 309 | Modular Monolith | 327 | Autoscaling |
-| 310 | Service Mesh | 328 | SLA / SLO / SLI |
-| 311 | Sidecar Pattern | 329 | MTTR / MTBF |
-| 312 | API Gateway | 330 | RTO / RPO |
-| 313 | BFF (Backend for Frontend) | 331 | Redundancy / Failover |
-| 314 | CQRS | 332 | Active-Active / Active-Passive |
-| 315 | Event Sourcing | 333 | Chaos Engineering |
-| 316 | Hexagonal Architecture | 334 | Graceful Shutdown |
-| 317 | Clean Architecture | 335 | Logging (Structured) |
-| 318 | Domain-Driven Design (DDD) | 336 | Metrics |
-| 319 | Aggregate | 337 | Distributed Tracing |
-| 320 | Bounded Context | 338 | Span / Trace ID |
-| 321 | Ubiquitous Language | 339 | OpenTelemetry |
-| 322 | Vertical Scaling | 340 | Alerting / Error Budget |
-| 323 | Horizontal Scaling |  |  |
-| 324 | Load Balancing |  |  |
+| 320 | Monolith | 339 | Span / Trace ID |
+| 321 | Microservices | 340 | OpenTelemetry |
+| 322 | Modular Monolith | 341 | Alerting / Error Budget |
+| 323 | Service Mesh | 342 | |
+| 324 | Sidecar Pattern | 343 | |
+| 325 | API Gateway | 344 | |
+| 326 | BFF (Backend for Frontend) | 345 | |
+| 327 | CQRS | 346 | |
+| 328 | Event Sourcing | 347 | |
+| 329 | Hexagonal Architecture | 348 | |
+| 330 | Clean Architecture | 349 | |
+| 331 | Domain-Driven Design (DDD) | 350 | |
+| 332 | Aggregate | 351 | |
+| 333 | Bounded Context | 352 | |
+| 334 | Ubiquitous Language | 353 | |
+| 335 | Vertical Scaling | 354 | |
+| 336 | Horizontal Scaling | 355 | |
+| 337 | Load Balancing | 356 | |
+| 338 | Sticky Sessions | 357 | |
 
 ### Data Structures & Algorithms (36 keywords)
+
 | # | Keyword | # | Keyword |
 |---|---|---|---|
-| 341 | Array | 359 | Memoization |
-| 342 | LinkedList | 360 | Tabulation |
-| 343 | Stack | 361 | Divide and Conquer |
-| 344 | Queue / Deque | 362 | Greedy |
-| 345 | HashMap | 363 | Dynamic Programming |
-| 346 | TreeMap | 364 | BFS |
-| 347 | Heap (Min/Max) | 365 | DFS |
-| 348 | Trie | 366 | Topological Sort |
-| 349 | Graph | 367 | Dijkstra |
-| 350 | Segment Tree | 368 | Union-Find |
-| 351 | Fenwick Tree (BIT) | 369 | Quicksort |
-| 352 | Skip List | 370 | Mergesort |
-| 353 | Bloom Filter | 371 | Timsort |
-| 354 | Consistent Hash Ring | 372 | Two Pointer |
-| 355 | Time Complexity / Big-O | 373 | Sliding Window |
-| 356 | Space Complexity | 374 | Binary Search |
-| 357 | Amortized Analysis | 375 | Backtracking |
-| 358 | Recursion | 376 | Bit Manipulation |
+| 358 | Array | 378 | DFS |
+| 359 | LinkedList | 379 | Topological Sort |
+| 360 | Stack | 380 | Dijkstra |
+| 361 | Queue / Deque | 381 | Union-Find |
+| 362 | HashMap | 382 | Quicksort |
+| 363 | TreeMap | 383 | Mergesort |
+| 364 | Heap (Min/Max) | 384 | Timsort |
+| 365 | Trie | 385 | Two Pointer |
+| 366 | Graph | 386 | Sliding Window |
+| 367 | Segment Tree | 387 | Binary Search |
+| 368 | Fenwick Tree (BIT) | 388 | Backtracking |
+| 369 | Skip List | 389 | Bit Manipulation |
+| 370 | Bloom Filter | 390 | |
+| 371 | Consistent Hash Ring | 391 | |
+| 372 | Time Complexity / Big-O | 392 | |
+| 373 | Space Complexity | 393 | |
+| 374 | Amortized Analysis | 394 | |
+| 375 | Recursion | 395 | |
+| 376 | Memoization | 396 | |
+| 377 | Tabulation | 397 | |
 
 ### Software Design (35 keywords)
+
 | # | Keyword | # | Keyword |
 |---|---|---|---|
-| 377 | SOLID | 401 | Strategy |
-| 378 | SRP (Single Responsibility) | 402 | Observer |
-| 379 | OCP (Open/Closed) | 403 | Command |
-| 380 | LSP (Liskov Substitution) | 404 | Template Method |
-| 381 | ISP (Interface Segregation) | 405 | Chain of Responsibility |
-| 382 | DIP (Dependency Inversion) | 406 | State |
-| 383 | DRY | 407 | Iterator |
-| 384 | KISS | 408 | Mediator |
-| 385 | YAGNI | 409 | Memento |
-| 386 | Law of Demeter | 410 | Double-Checked Locking |
-| 387 | Tell Don't Ask | 411 | Producer-Consumer |
-| 388 | Composition over Inheritance |  |  |
-| 389 | Fail Fast |  |  |
-| 390 | Singleton |  |  |
-| 391 | Factory |  |  |
-| 392 | Abstract Factory |  |  |
-| 393 | Builder |  |  |
-| 394 | Prototype |  |  |
-| 395 | Adapter |  |  |
-| 396 | Decorator |  |  |
-| 397 | Facade |  |  |
-| 398 | Proxy |  |  |
-| 399 | Composite |  |  |
-| 400 | Flyweight |  |  |
+| 398 | SOLID | 418 | Chain of Responsibility |
+| 399 | SRP (Single Responsibility) | 419 | State |
+| 400 | OCP (Open/Closed) | 420 | Iterator |
+| 401 | LSP (Liskov Substitution) | 421 | Mediator |
+| 402 | ISP (Interface Segregation) | 422 | Memento |
+| 403 | DIP (Dependency Inversion) | 423 | Double-Checked Locking |
+| 404 | DRY | 424 | Producer-Consumer |
+| 405 | KISS | 425 | |
+| 406 | YAGNI | 426 | |
+| 407 | Law of Demeter | 427 | |
+| 408 | Tell Don't Ask | 428 | |
+| 409 | Composition over Inheritance | 429 | |
+| 410 | Fail Fast | 430 | |
+| 411 | Singleton | 431 | |
+| 412 | Factory | 432 | |
+| 413 | Abstract Factory | 433 | |
+| 414 | Builder | 434 | |
+| 415 | Prototype | 435 | |
+| 416 | Adapter | 436 | |
+| 417 | Decorator | 437 | |
 
 ### Testing & Clean Code (18 keywords)
+
 | # | Keyword | # | Keyword |
 |---|---|---|---|
-| 412 | Unit Test | 423 | Mutation Testing |
-| 413 | Integration Test | 424 | Cohesion |
-| 414 | Contract Test | 425 | Coupling |
-| 415 | E2E Test | 426 | Abstraction |
-| 416 | TDD | 427 | Encapsulation |
-| 417 | BDD | 428 | Polymorphism |
-| 418 | Mocking | 429 | Inheritance |
-| 419 | Stubbing | 430 | Command-Query Separation (CQS) |
-| 420 | Faking / Spying | 431 | Feature Flags |
-| 421 | Test Pyramid | 432 | Technical Debt |
-| 422 | Property-Based Testing | 433 | Refactoring |
+| 438 | Unit Test | 450 | Abstraction |
+| 439 | Integration Test | 451 | Encapsulation |
+| 440 | Contract Test | 452 | Polymorphism |
+| 441 | E2E Test | 453 | Inheritance |
+| 442 | TDD | 454 | Command-Query Separation (CQS) |
+| 443 | BDD | 455 | Feature Flags |
+| 444 | Mocking | 456 | Technical Debt |
+| 445 | Stubbing | 457 | Refactoring |
+| 446 | Faking / Spying | 458 | |
+| 447 | Test Pyramid | 459 | |
+| 448 | Property-Based Testing | 460 | |
+| 449 | Mutation Testing | 461 | |
 
 ### Cloud & Infrastructure (17 keywords)
+
 | # | Keyword | # | Keyword |
 |---|---|---|---|
-| 434 | Docker | 443 | IaaS / PaaS / SaaS / FaaS |
-| 435 | Container / Image / Layer | 444 | Serverless / Cold Start |
-| 436 | Namespace / Cgroups | 445 | Object Storage |
-| 437 | Kubernetes Pod | 446 | Multi-Region / Multi-AZ |
-| 438 | Deployment / Service / Ingress | 447 | VPC / Subnet / Security Group |
-| 439 | ConfigMap / Secret | 448 | Service Mesh (Istio) |
-| 440 | HPA / VPA | 449 | mTLS / East-West Traffic |
-| 441 | StatefulSet / DaemonSet |  |  |
-| 442 | Service Discovery |  |  |
+| 462 | Docker | 473 | Multi-Region / Multi-AZ |
+| 463 | Container / Image / Layer | 474 | VPC / Subnet / Security Group |
+| 464 | Namespace / Cgroups | 475 | Service Mesh (Istio) |
+| 465 | Kubernetes Pod | 476 | mTLS / East-West Traffic |
+| 466 | Deployment / Service / Ingress | 477 | |
+| 467 | ConfigMap / Secret | 478 | |
+| 468 | HPA / VPA | 479 | |
+| 469 | StatefulSet / DaemonSet | 480 | |
+| 470 | Service Discovery | 481 | |
+| 471 | IaaS / PaaS / SaaS / FaaS | 482 | |
+| 472 | Serverless / Cold Start | 483 | |
 
-### DevOps & SDLC (10 keywords)
+### DevOps & SDLC (11 keywords)
+
 | # | Keyword |
 |---|---|
-| 450 | CI/CD Pipeline |
-| 451 | Blue-Green Deployment |
-| 452 | Canary Deployment |
-| 453 | Rolling Update |
-| 454 | GitOps |
-| 455 | Infrastructure as Code (IaC) |
-| 456 | Immutable Infrastructure |
-| 457 | Twelve-Factor App |
-| 458 | SRE |
-| 459 | Error Budget |
-| 460 | Toil |
+| 484 | CI/CD Pipeline |
+| 485 | Blue-Green Deployment |
+| 486 | Canary Deployment |
+| 487 | Rolling Update |
+| 488 | GitOps |
+| 489 | Infrastructure as Code (IaC) |
+| 490 | Immutable Infrastructure |
+| 491 | Twelve-Factor App |
+| 492 | SRE |
+| 493 | Error Budget |
+| 494 | Toil |
 
 ---
 
