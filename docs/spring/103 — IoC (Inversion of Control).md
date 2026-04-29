@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "IoC (Inversion of Control)"
 parent: "Spring Framework"
 nav_order: 103
 permalink: /spring/ioc-inversion-of-control/
 ---
+
+`#spring` `#springboot` `#internals` `#pattern` `#foundational`
+
 ⚡ TL;DR — IoC flips who controls object creation: instead of your code creating its own dependencies, a container creates and wires them for you.
 
 ---

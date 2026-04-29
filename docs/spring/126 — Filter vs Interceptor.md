@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Filter vs Interceptor"
 parent: "Spring Framework"
 nav_order: 126
 permalink: /spring/filter-vs-interceptor/
 ---
+
+`#spring` `#networking` `#pattern` `#intermediate`
+
 ⚡ TL;DR — Filters (Servlet API) run before DispatcherServlet and can intercept any request; Interceptors (Spring MVC) run inside DispatcherServlet and have access to handler metadata.
 ## 📘 Textbook Definition
 **Filter** is a Java Servlet API component (`javax.servlet.Filter`) that intercepts HTTP requests/responses before they reach any Servlet (including DispatcherServlet), operating at the web container level with access to raw request/response. **HandlerInterceptor** is a Spring MVC component that intercepts requests within the DispatcherServlet lifecycle — after handler resolution — providing pre-handle, post-handle, and after-completion hooks with access to the handler and ModelAndView.

@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Auto-Configuration"
 parent: "Spring Framework"
 nav_order: 133
 permalink: /spring/auto-configuration/
 ---
+
+`#springboot` `#spring` `#internals` `#foundational`
+
 ⚡ TL;DR — Auto-Configuration is Spring Boot's mechanism that automatically configures beans and settings based on what's on the classpath and what you haven't already configured — "convention over configuration."
 ## 📘 Textbook Definition
 Spring Boot Auto-Configuration is a mechanism driven by `@EnableAutoConfiguration` (included in `@SpringBootApplication`) that automatically creates and configures Spring beans by processing classes listed in `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` (Boot 3+) or `spring.factories` (Boot 2.x). Each auto-configuration class uses `@Conditional` annotations to activate only when specific classes, beans, or properties are present.

@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "BeanFactory"
 parent: "Spring Framework"
 nav_order: 106
 permalink: /spring/beanfactory/
 ---
+
+`#spring` `#internals` `#foundational`
+
 ⚡ TL;DR — BeanFactory is Spring's root IoC container interface — the minimal core that creates beans on demand; ApplicationContext extends it with enterprise features.
 
 ---

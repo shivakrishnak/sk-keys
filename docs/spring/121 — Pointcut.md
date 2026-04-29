@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Pointcut"
 parent: "Spring Framework"
 nav_order: 121
 permalink: /spring/pointcut/
 ---
+
+`#spring` `#internals` `#intermediate`
+
 ⚡ TL;DR — A Pointcut is an expression that selects which method executions (join points) an advice should apply to — the "WHERE" of AOP.
 ## 📘 Textbook Definition
 In Spring AOP, a Pointcut is a predicate that matches join points. Pointcut expressions use AspectJ pointcut language and select method executions based on class name, method name, parameter types, annotations, access modifiers, and return types.

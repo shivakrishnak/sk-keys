@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "WebFlux / Reactive"
 parent: "Spring Framework"
 nav_order: 136
 permalink: /spring/webflux-reactive/
 ---
+
+`#spring` `#springboot` `#concurrency` `#advanced`
+
 ⚡ TL;DR — Spring WebFlux is Spring's reactive web framework that handles thousands of concurrent connections with minimal threads using non-blocking I/O and the Reactor library.
 ## 📘 Textbook Definition
 Spring WebFlux is Spring's reactive-stack web framework, introduced in Spring 5. Built on Project Reactor and Reactive Streams specification, it uses non-blocking I/O (Netty or Servlet 3.1 async) to process requests without blocking threads while waiting for I/O. It enables high-concurrency scenarios with a small, fixed thread pool — contrasted with Spring MVC's thread-per-request model.

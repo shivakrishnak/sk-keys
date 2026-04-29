@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "@Transactional"
 parent: "Spring Framework"
 nav_order: 127
 permalink: /spring/transactional/
 ---
+
+`#spring` `#database` `#internals` `#intermediate`
+
 ⚡ TL;DR — @Transactional tells Spring to wrap a method in a database transaction — automatically beginning before the method and committing (or rolling back on exception) after.
 ## 📘 Textbook Definition
 `@Transactional` is a Spring annotation that declaratively manages database transaction boundaries. When applied to a method or class, Spring's `PlatformTransactionManager` (via AOP proxy) starts a transaction before execution, commits on successful return, and rolls back on unchecked exceptions (or checked exceptions if `rollbackFor` is specified) — eliminating manual `beginTransaction()`/`commit()`/`rollback()` calls.

@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "AOP (Aspect-Oriented Programming)"
 parent: "Spring Framework"
 nav_order: 118
 permalink: /spring/aop-aspect-oriented-programming/
 ---
+
+`#spring` `#internals` `#pattern` `#intermediate`
+
 ⚡ TL;DR — AOP separates cross-cutting concerns (logging, security, transactions) from business logic by applying them declaratively via aspects — without modifying the business code.
 ## 📘 Textbook Definition
 Aspect-Oriented Programming (AOP) is a programming paradigm that aims to increase modularity by allowing the separation of cross-cutting concerns. In Spring AOP, aspects are defined using pointcut expressions to select join points (method executions), and advice to define what runs at those join points. Spring AOP is proxy-based — it uses JDK Dynamic Proxy or CGLIB to weave advice at runtime.

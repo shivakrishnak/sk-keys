@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Spring Boot Actuator"
 parent: "Spring Framework"
 nav_order: 134
 permalink: /spring/spring-boot-actuator/
 ---
+
+`#springboot` `#spring` `#observability` `#intermediate`
+
 ⚡ TL;DR — Spring Boot Actuator exposes production-ready HTTP endpoints for health checks, metrics, environment inspection, and more — with zero extra code.
 ## 📘 Textbook Definition
 Spring Boot Actuator is a sub-project that adds production-ready features to Spring Boot applications. It provides built-in HTTP and JMX endpoints for monitoring and managing applications — including health checks (`/actuator/health`), metrics (`/actuator/metrics`), environment properties (`/actuator/env`), bean listing (`/actuator/beans`), and condition reports (`/actuator/conditions`).

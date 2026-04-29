@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "ApplicationContext"
 parent: "Spring Framework"
 nav_order: 105
 permalink: /spring/applicationcontext/
 ---
+
+`#spring` `#springboot` `#internals` `#foundational`
+
 ⚡ TL;DR — ApplicationContext is Spring's full-featured IoC container — it manages beans, resolves dependencies, fires events, handles AOP, and provides environment abstraction all in one.
 
 ---

@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "DI (Dependency Injection)"
 parent: "Spring Framework"
 nav_order: 104
 permalink: /spring/di-dependency-injection/
 ---
+
+`#spring` `#springboot` `#internals` `#pattern` `#foundational`
+
 ⚡ TL;DR — Dependency Injection is the mechanism where a container *pushes* dependencies into an object rather than the object *pulling* (creating) them itself.
 
 ---

@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "JDK Dynamic Proxy"
 parent: "Spring Framework"
 nav_order: 117
 permalink: /spring/jdk-dynamic-proxy/
 ---
+
+`#spring` `#jvm` `#internals` `#advanced`
+
 ⚡ TL;DR — JDK Dynamic Proxy uses Java's built-in reflection API to create an interface-implementing proxy at runtime, which Spring uses to intercept method calls on interface-based beans.
 ## 📘 Textbook Definition
 A JDK Dynamic Proxy is a runtime-generated proxy class created by `java.lang.reflect.Proxy` that implements one or more interfaces, delegating method invocations through an `InvocationHandler`. Spring uses JDK dynamic proxies when the target bean implements at least one interface and `proxyTargetClass=false` (the default for interface-based beans).

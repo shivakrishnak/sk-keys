@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Weaving"
 parent: "Spring Framework"
 nav_order: 123
 permalink: /spring/weaving/
 ---
+
+`#spring` `#internals` `#intermediate`
+
 ⚡ TL;DR — Weaving is the process of applying aspect code to the target objects — Spring AOP weaves at runtime via proxies; AspectJ weaves at compile-time or load-time.
 ## 📘 Textbook Definition
 Weaving is the process of linking aspects with other application types or objects to create an advised object. Spring AOP uses **runtime weaving** — creating proxy objects that intercept method calls. AspectJ supports **compile-time weaving** (bytecode modification during compilation) and **load-time weaving** (bytecode modification when class is loaded by classloader).

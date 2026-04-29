@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "@Autowired"
 parent: "Spring Framework"
 nav_order: 112
 permalink: /spring/autowired/
 ---
+
+`#spring` `#internals` `#foundational`
+
 ⚡ TL;DR — @Autowired tells Spring to inject a matching bean into a field, constructor parameter, or setter method — resolving the dependency by type.
 ## 📘 Textbook Definition
 `@Autowired` is a Spring annotation that marks a dependency injection point. When placed on a constructor, setter method, or field, Spring's `AutowiredAnnotationBeanPostProcessor` resolves and injects the appropriate bean by type. If multiple beans of the same type exist, `@Qualifier` or `@Primary` is needed to disambiguate.

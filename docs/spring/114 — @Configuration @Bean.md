@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "@Configuration / @Bean"
 parent: "Spring Framework"
 nav_order: 114
 permalink: /spring/configuration-bean/
 ---
+
+`#spring` `#internals` `#foundational`
+
 ⚡ TL;DR — @Configuration marks a class as a source of bean definitions; @Bean marks a method inside it as a factory that produces a Spring-managed bean.
 ## 📘 Textbook Definition
 `@Configuration` is a class-level annotation indicating that the class declares one or more `@Bean` methods and may be processed by the Spring container to generate bean definitions and service requests at runtime. `@Bean` is a method-level annotation indicating that the annotated method produces a bean to be managed by the Spring container, with the method name serving as the default bean name.

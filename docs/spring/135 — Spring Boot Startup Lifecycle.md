@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Spring Boot Startup Lifecycle"
 parent: "Spring Framework"
 nav_order: 135
 permalink: /spring/spring-boot-startup-lifecycle/
 ---
+
+`#springboot` `#spring` `#internals` `#intermediate`
+
 ⚡ TL;DR — Spring Boot's startup lifecycle orchestrates environment setup, ApplicationContext creation, auto-configuration, bean initialization, and web server startup in a defined sequence.
 ## 📘 Textbook Definition
 The Spring Boot application startup lifecycle encompasses the phases from `SpringApplication.run()` invocation through publishing `ApplicationReadyEvent`. It includes: creating and preparing the `SpringApplication`, preparing the environment (`Environment`), creating the `ApplicationContext`, loading bean definitions (including auto-configuration), refreshing the context (instantiating all singletons), starting the embedded server, and publishing lifecycle events.

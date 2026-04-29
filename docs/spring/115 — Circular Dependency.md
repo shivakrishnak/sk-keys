@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Circular Dependency"
 parent: "Spring Framework"
 nav_order: 115
 permalink: /spring/circular-dependency/
 ---
+
+`#spring` `#internals` `#intermediate`
+
 ⚡ TL;DR — A circular dependency occurs when Bean A depends on Bean B and Bean B depends on Bean A, creating a dependency loop Spring cannot resolve with constructor injection.
 ## 📘 Textbook Definition
 A circular dependency in Spring occurs when two or more beans mutually depend on each other, directly or transitively, creating a cycle in the dependency graph. Constructor injection circular dependencies are unsolvable and throw `BeanCurrentlyInCreationException`. Setter/field injection cycles can sometimes be resolved by Spring using a three-level cache (singletons only).

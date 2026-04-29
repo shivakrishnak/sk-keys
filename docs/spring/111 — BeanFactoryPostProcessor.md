@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "BeanFactoryPostProcessor"
 parent: "Spring Framework"
 nav_order: 111
 permalink: /spring/beanfactorypostprocessor/
 ---
+
+`#spring` `#internals` `#advanced`
+
 ⚡ TL;DR — BeanFactoryPostProcessor runs after bean definitions are loaded but BEFORE any bean is instantiated — letting you modify, add, or remove bean definitions programmatically.
 ## 📘 Textbook Definition
 `BeanFactoryPostProcessor` is a Spring extension interface that allows modification of the application context's bean definitions (BeanDefinition objects) after they have been loaded into the container but before any bean instances are created. The most important built-in implementation is `PropertySourcesPlaceholderConfigurer` which resolves `${...}` placeholders.

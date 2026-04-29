@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "@Qualifier / @Primary"
 parent: "Spring Framework"
 nav_order: 113
 permalink: /spring/qualifier-primary/
 ---
+
+`#spring` `#internals` `#foundational`
+
 ⚡ TL;DR — @Primary marks the default bean to use when multiple candidates match; @Qualifier explicitly names which bean to inject.
 ## 📘 Textbook Definition
 `@Primary` is a class-level annotation designating a bean as the preferred candidate when multiple beans of the same type exist. `@Qualifier` is a parameterized annotation used at the injection point (or on the bean definition) to select a specific bean by name, narrowing the injection when type-based resolution is ambiguous.

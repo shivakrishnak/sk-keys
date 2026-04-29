@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Aspect"
 parent: "Spring Framework"
 nav_order: 119
 permalink: /spring/aspect/
 ---
+
+`#spring` `#internals` `#intermediate`
+
 ⚡ TL;DR — An Aspect is a class (annotated @Aspect) that encapsulates a cross-cutting concern — it packages pointcuts and advice together into a named, reusable module.
 ## 📘 Textbook Definition
 In Spring AOP, an Aspect is a modularization of a cross-cutting concern. Declared via the `@Aspect` annotation on a Spring-managed class, it contains one or more advice methods annotated with `@Before`, `@After`, `@AfterReturning`, `@AfterThrowing`, or `@Around`, and pointcut declarations scoping which join points each advice applies to.

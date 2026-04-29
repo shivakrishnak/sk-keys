@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Bean Scope"
 parent: "Spring Framework"
 nav_order: 109
 permalink: /spring/bean-scope/
 ---
+
+`#spring` `#internals` `#foundational`
+
 ⚡ TL;DR — Bean Scope defines how many instances of a bean Spring creates: singleton (one ever), prototype (one per injection), request (one per HTTP request), session (one per HTTP session).
 ---
 ## 📘 Textbook Definition

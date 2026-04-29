@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Mono / Flux"
 parent: "Spring Framework"
 nav_order: 137
 permalink: /spring/mono-flux/
 ---
+
+`#spring` `#springboot` `#concurrency` `#advanced`
+
 ⚡ TL;DR — Mono represents an async 0-or-1 result; Flux represents an async 0-to-N stream of results — Project Reactor's core reactive types used throughout Spring WebFlux.
 ## 📘 Textbook Definition
 `Mono<T>` is a Reactive Streams `Publisher` that emits at most one item then completes (or errors). `Flux<T>` is a `Publisher` that emits zero to N items, then completes (or errors). Both are **lazy** — the pipeline only executes when something subscribes (or the framework subscribes on your behalf in WebFlux). They are the primary types of Project Reactor, Spring's reactive library.

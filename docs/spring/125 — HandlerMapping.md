@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "HandlerMapping"
 parent: "Spring Framework"
 nav_order: 125
 permalink: /spring/handlermapping/
 ---
+
+`#spring` `#networking` `#internals` `#intermediate`
+
 ⚡ TL;DR — HandlerMapping is the Spring MVC component that maps an incoming HTTP request (URL + method + headers) to the correct controller method.
 ## 📘 Textbook Definition
 `HandlerMapping` is a strategy interface in Spring MVC that determines which handler (controller method) processes a given HTTP request. The primary implementation, `RequestMappingHandlerMapping`, scans `@Controller` classes for `@RequestMapping`, `@GetMapping`, `@PostMapping`, etc. annotations and builds a mapping registry at startup.

@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Bean Lifecycle"
 parent: "Spring Framework"
 nav_order: 108
 permalink: /spring/bean-lifecycle/
 ---
+
+`#spring` `#internals` `#intermediate`
+
 ⚡ TL;DR — A Spring Bean's lifecycle spans instantiation → dependency injection → initialization callbacks → active use → destruction callbacks — all orchestrated by the container.
 ---
 ## 📘 Textbook Definition

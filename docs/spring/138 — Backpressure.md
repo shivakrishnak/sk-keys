@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Backpressure"
 parent: "Spring Framework"
 nav_order: 138
 permalink: /spring/backpressure/
 ---
+
+`#spring` `#distributed` `#performance` `#reliability` `#advanced`
+
 ⚡ TL;DR — Backpressure is the mechanism in reactive streams where a slow consumer signals the producer to slow down or buffer — preventing overwhelm when data arrives faster than it can be processed.
 ## 📘 Textbook Definition
 Backpressure is a flow control mechanism defined in the Reactive Streams specification. A subscriber communicates to the publisher how many items it can currently handle via `Subscription.request(n)`. The publisher emits at most `n` items, preventing the subscriber from being overwhelmed. Project Reactor's `Flux` and `Mono` implement the full Reactive Streams protocol including backpressure.

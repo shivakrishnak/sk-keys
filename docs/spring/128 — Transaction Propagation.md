@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Transaction Propagation"
 parent: "Spring Framework"
 nav_order: 128
 permalink: /spring/transaction-propagation/
 ---
+
+`#spring` `#database` `#internals` `#intermediate`
+
 ⚡ TL;DR — Transaction Propagation defines what Spring does when a @Transactional method is called while a transaction is already active: join it, start a new one, suspend it, or fail.
 ## 📘 Textbook Definition
 `Propagation` is an attribute of `@Transactional` that controls the transaction boundaries when a transactional method is invoked in the context of an existing transaction. The seven propagation types define whether the method joins the caller's transaction, creates its own, suspends the caller's, or throws an exception.

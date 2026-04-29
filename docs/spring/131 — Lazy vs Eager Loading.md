@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Lazy vs Eager Loading"
 parent: "Spring Framework"
 nav_order: 131
 permalink: /spring/lazy-vs-eager-loading/
 ---
+
+`#spring` `#database` `#performance` `#intermediate`
+
 ⚡ TL;DR — Lazy loading fetches associated entities only when accessed; Eager loading fetches them immediately in the same query — trading upfront cost for potential N+1 risk.
 ## 📘 Textbook Definition
 In JPA/Hibernate, **Lazy Loading** (`FetchType.LAZY`) defers loading of an association until it is first accessed at runtime, using a proxy. **Eager Loading** (`FetchType.EAGER`) fetches the associated entities immediately as part of the parent query using a JOIN. The JPA defaults are: `@ManyToOne` and `@OneToOne` → EAGER; `@OneToMany` and `@ManyToMany` → LAZY.

@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "N+1 Problem"
 parent: "Spring Framework"
 nav_order: 130
 permalink: /spring/n1-problem/
 ---
+
+`#spring` `#database` `#performance` `#intermediate`
+
 ⚡ TL;DR — The N+1 problem occurs when loading a parent entity also triggers N separate queries to load each child entity — instead of one efficient JOIN query.
 ## 📘 Textbook Definition
 The N+1 select problem is a performance anti-pattern in ORM frameworks where fetching N parent entities results in N additional queries to fetch their associated child entities — one query per parent — instead of a single query using a JOIN or IN clause. It causes significant database load and latency at scale.

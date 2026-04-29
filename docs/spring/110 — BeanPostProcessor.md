@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "BeanPostProcessor"
 parent: "Spring Framework"
 nav_order: 110
 permalink: /spring/beanpostprocessor/
 ---
+
+`#spring` `#internals` `#advanced`
+
 ⚡ TL;DR — BeanPostProcessor is a hook that intercepts every bean after construction, letting you wrap, transform, or validate beans before they are used — how AOP proxies and @Autowired validation are applied.
 ## 📘 Textbook Definition
 `BeanPostProcessor` is a Spring extension interface that allows custom modification of new bean instances after instantiation and dependency injection, but before the bean is put into service. It exposes two methods: `postProcessBeforeInitialization()` (runs before `@PostConstruct`) and `postProcessAfterInitialization()` (runs after — where AOP proxies are created).

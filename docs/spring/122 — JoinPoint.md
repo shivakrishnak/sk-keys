@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "JoinPoint"
 parent: "Spring Framework"
 nav_order: 122
 permalink: /spring/joinpoint/
 ---
+
+`#spring` `#internals` `#intermediate`
+
 ⚡ TL;DR — JoinPoint is the runtime context object passed to advice methods — providing access to the intercepted method's name, arguments, target object, and signature.
 ## 📘 Textbook Definition
 In Spring AOP, a JoinPoint represents a point during program execution at which an aspect can be plugged in. It is the runtime handle passed to `@Before`, `@After`, `@AfterReturning`, and `@AfterThrowing` advice methods, containing metadata about the intercepted method invocation. `ProceedingJoinPoint` (used in `@Around`) extends JoinPoint with the ability to control method execution via `proceed()`.

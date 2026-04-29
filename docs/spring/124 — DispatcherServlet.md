@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "DispatcherServlet"
 parent: "Spring Framework"
 nav_order: 124
 permalink: /spring/dispatcherservlet/
 ---
+
+`#spring` `#networking` `#internals` `#intermediate`
+
 ⚡ TL;DR — DispatcherServlet is Spring MVC's front controller — it receives all HTTP requests and orchestrates routing to handlers, view resolution, and response rendering.
 ## 📘 Textbook Definition
 `DispatcherServlet` is the central `Servlet` of the Spring Web MVC framework. It acts as a **Front Controller**, delegating HTTP requests to Spring-configured handler components (controllers) via `HandlerMapping`, executing handler methods, resolving views via `ViewResolver`, and handling exceptions via `HandlerExceptionResolver`. In Spring Boot, it is auto-configured and registered automatically.

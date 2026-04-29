@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Transaction Isolation Levels"
 parent: "Spring Framework"
 nav_order: 129
 permalink: /spring/transaction-isolation-levels/
 ---
+
+`#spring` `#database` `#internals` `#advanced`
+
 ⚡ TL;DR — Transaction Isolation Levels control how much concurrent transactions can "see" each other's uncommitted data — trading consistency for performance/concurrency.
 ## 📘 Textbook Definition
 Transaction isolation levels define the degree to which one transaction must be isolated from changes made by concurrent transactions. SQL standard defines four levels: READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ, and SERIALIZABLE, each preventing different concurrency anomalies (dirty reads, non-repeatable reads, phantom reads).

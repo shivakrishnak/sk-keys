@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "Bean"
 parent: "Spring Framework"
 nav_order: 107
 permalink: /spring/bean/
 ---
+
+`#spring` `#internals` `#foundational`
+
 ⚡ TL;DR — A Bean is any object whose lifecycle (creation, wiring, and destruction) is managed by the Spring IoC container.
 
 ---

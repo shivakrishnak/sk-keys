@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "HikariCP"
 parent: "Spring Framework"
 nav_order: 132
 permalink: /spring/hikaricp/
 ---
+
+`#spring` `#database` `#performance` `#internals` `#intermediate`
+
 ⚡ TL;DR — HikariCP is the ultra-fast connection pool Spring Boot uses by default — it maintains a pre-warmed pool of JDBC connections for instant database access without per-request connection overhead.
 ## 📘 Textbook Definition
 HikariCP is a high-performance JDBC connection pooling library. Instead of creating a new TCP connection to the database for each request (expensive: 10-200ms), HikariCP maintains a pool of pre-created, ready-to-use connections. Spring Boot auto-configures HikariCP as the default connection pool since Spring Boot 2.

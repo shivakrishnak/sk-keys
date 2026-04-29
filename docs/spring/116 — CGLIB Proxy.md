@@ -1,10 +1,13 @@
----
+﻿---
 layout: default
 title: "CGLIB Proxy"
 parent: "Spring Framework"
 nav_order: 116
 permalink: /spring/cglib-proxy/
 ---
+
+`#spring` `#jvm` `#internals` `#advanced`
+
 ⚡ TL;DR — CGLIB Proxy is a subclass-based proxy Spring uses to add behavior (AOP, @Transactional) to classes that don't implement interfaces — by generating a subclass at runtime.
 ## 📘 Textbook Definition
 CGLIB (Code Generation Library) Proxy is a runtime code generation technique used by Spring to create proxy objects by subclassing the target class. Unlike JDK Dynamic Proxies which require an interface, CGLIB creates a byte-code-level subclass that overrides all non-final methods to intercept calls — enabling AOP advice, transaction management, and `@Configuration` singleton enforcement.
