@@ -73,13 +73,20 @@ number:
 category:
   - Exact category name from the master list
   - Valid values:
+    CS Fundamentals | Data Structures & Algorithms | Operating Systems |
+    Linux | Networking | HTTP & APIs |
     Java & JVM Internals | Java Language | Java Concurrency |
-    Spring & Spring Boot | Distributed Systems | Databases |
-    Messaging & Streaming | Networking & HTTP | OS & Systems |
-    System Design | Data Structures & Algorithms | Software Design |
-    Testing | Clean Code | Cloud & Infrastructure | DevOps & SDLC |
+    Spring & Spring Boot | Databases | NoSQL & Distributed Databases |
+    Caching | Data Engineering | Big Data & Streaming |
+    Distributed Systems | Microservices | System Design |
+    Software Architecture Patterns | Design Patterns |
+    Containers | Kubernetes | Cloud — AWS | Cloud — Azure |
+    CI/CD | Git & Branching Strategy | Maven & Build Tools |
+    Code Quality | Testing | Observability & SRE |
     HTML | CSS | JavaScript | TypeScript | React | Node.js |
-    npm | Webpack & Build Tools
+    npm & Package Management | Webpack & Build Tools |
+    AI Foundations | LLMs & Prompt Engineering | RAG & Agents |
+    Platform & Modern SWE | Behavioral & Leadership
 
 difficulty:
   - Use EXACTLY one of three values:
@@ -786,5 +793,42 @@ FORMATTING:
 ═══════════════════════════════════════════════════════════════════════════
 END OF PROMPT
 ═══════════════════════════════════════════════════════════════════════════
+```
+
+---
+
+## 💡 How to Use This Prompt in Your IDE
+
+**IntelliJ / VS Code with AI plugin (Copilot, Continue, Cursor):**
+
+Open your AI chat panel and paste the entire prompt above as the **system prompt or context**. Then invoke with:
+
+```
+Generate dictionary entry for keyword: Event Loop
+Number: 1293
+Category: JavaScript
+Difficulty: ★★★
+
+Follow the Technical Dictionary Generator prompt exactly.
+```
+
+**For batch generation:**
+```
+Generate dictionary entries for keywords 1291–1295:
+- JavaScript Engine (V8) (1291)
+- Call Stack (JS) (1292)
+- Event Loop (1293)
+- Task Queue (Macrotask) (1294)
+- Microtask Queue (1295)
+
+Follow the Technical Dictionary Generator prompt exactly.
+Generate each as a separate markdown file.
+```
+
+**To continue from last generated entry:**
+```
+Continue dictionary generation from entry [NNN].
+Next batch: [KEYWORD 1] through [KEYWORD 5].
+Follow the Technical Dictionary Generator prompt exactly.
 ```
 
