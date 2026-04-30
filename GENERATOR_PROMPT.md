@@ -832,3 +832,170 @@ Next batch: [KEYWORD 1] through [KEYWORD 5].
 Follow the Technical Dictionary Generator prompt exactly.
 ```
 
+---
+
+## 🔁 Batch Workflow — Generate 10, Commit, Repeat
+
+### Step 1 — Detect missing keywords and generate next batch of 10
+
+Paste this prompt into your IDE AI chat (GitHub Copilot, Cursor, Continue, etc.):
+
+```
+You are generating dictionary entries for the sk-keys Technical Dictionary.
+
+STEP 1 — FIND WHAT'S MISSING:
+Scan all .md files inside docs/ (excluding index.md files).
+Extract the keyword number from each filename prefix (e.g. "347 — CAS..." → 347).
+Cross-reference against the Complete Master Table in TECHNICAL_DICTIONARY.md.
+Find the first 10 keyword numbers that do NOT yet have a generated file.
+Start from the lowest missing number.
+
+STEP 2 — CONFIRM BEFORE GENERATING:
+List the 10 missing keywords you found:
+  #NNN — Keyword Name  (Category, ★ Difficulty)
+Then ask: "Shall I generate these 10 entries now?"
+
+STEP 3 — GENERATE ALL 10 ENTRIES:
+For each of the 10 keywords, generate a complete entry following the
+Technical Dictionary Generator spec (GENERATOR_PROMPT.md) exactly.
+
+Output each entry as a separate markdown file:
+  File path: docs/<Category Folder>/<NNN> — <Keyword Name>.md
+
+Front matter rules:
+  - layout: default
+  - title: "<Keyword Name>"
+  - parent: "<Category Title>"         ← must match category folder's index.md title exactly
+  - nav_order: <NNN>                   ← the global keyword number (integer)
+  - permalink: /<category-slug>/<keyword-slug>/
+  - number: "<NNN>"
+  - category: <Category Title>
+  - difficulty: ★☆☆ | ★★☆ | ★★★
+  - depends_on: Keyword1, Keyword2
+  - used_by: Keyword1, Keyword2
+  - tags: #tag1, #tag2, #tag3
+
+Category folder name and title mapping reference (docs/ folder):
+  CS Fundamentals — Paradigms    | parent: "CS Fundamentals — Paradigms"    | /cs-fundamentals/
+  Data Structures & Algorithms   | parent: "Data Structures & Algorithms"   | /dsa/
+  Operating Systems              | parent: "Operating Systems"              | /operating-systems/
+  Linux                          | parent: "Linux"                          | /linux/
+  Networking                     | parent: "Networking"                     | /networking/
+  HTTP & APIs                    | parent: "HTTP & APIs"                    | /http-apis/
+  Java & JVM Internals           | parent: "Java & JVM Internals"           | /java/
+  Java Language                  | parent: "Java Language"                  | /java-language/
+  Java Concurrency               | parent: "Java Concurrency"               | /java-concurrency/
+  Spring Core                    | parent: "Spring Core"                    | /spring/
+  Database Fundamentals          | parent: "Database Fundamentals"          | /databases/
+  NoSQL & Distributed Databases  | parent: "NoSQL & Distributed Databases"  | /nosql/
+  Caching                        | parent: "Caching"                        | /caching/
+  Data Fundamentals              | parent: "Data Fundamentals"              | /data-fundamentals/
+  Big Data & Streaming           | parent: "Big Data & Streaming"           | /big-data-streaming/
+  Distributed Systems            | parent: "Distributed Systems"            | /distributed-systems/
+  Microservices                  | parent: "Microservices"                  | /microservices/
+  System Design                  | parent: "System Design"                  | /system-design/
+  Software Architecture Patterns | parent: "Software Architecture Patterns" | /software-architecture/
+  Design Patterns                | parent: "Design Patterns"                | /design-patterns/
+  Containers                     | parent: "Containers"                     | /containers/
+  Kubernetes                     | parent: "Kubernetes"                     | /kubernetes/
+  Cloud — AWS                    | parent: "Cloud — AWS"                    | /cloud-aws/
+  Cloud — Azure                  | parent: "Cloud — Azure"                  | /cloud-azure/
+  CI-CD (folder)                 | parent: "CI/CD"                          | /ci-cd/
+  Git & Branching Strategy       | parent: "Git & Branching Strategy"       | /git/
+  Maven & Build Tools (Java)     | parent: "Maven & Build Tools (Java)"     | /maven-build/
+  Code Quality                   | parent: "Code Quality"                   | /code-quality/
+  Testing                        | parent: "Testing"                        | /testing/
+  Observability & SRE            | parent: "Observability & SRE"            | /observability/
+  HTML                           | parent: "HTML"                           | /html/
+  CSS                            | parent: "CSS"                            | /css/
+  JavaScript                     | parent: "JavaScript"                     | /javascript/
+  TypeScript                     | parent: "TypeScript"                     | /typescript/
+  React                          | parent: "React"                          | /react/
+  Node.js                        | parent: "Node.js"                        | /nodejs/
+  npm & Package Management       | parent: "npm & Package Management"       | /npm/
+  Webpack & Build Tools          | parent: "Webpack & Build Tools"          | /webpack-build/
+  AI Foundations                 | parent: "AI Foundations"                 | /ai-foundations/
+  LLMs & Prompt Engineering      | parent: "LLMs & Prompt Engineering"      | /llms/
+  RAG & Agents & LLMOps          | parent: "RAG & Agents & LLMOps"          | /rag-agents/
+  Platform & Modern SWE          | parent: "Platform & Modern SWE"          | /platform-engineering/
+  Behavioral & Leadership        | parent: "Behavioral & Leadership"        | /leadership/
+
+STEP 4 — CREATE ALL 10 FILES:
+Create each file in its correct docs/<Category Folder>/ directory.
+Do not skip any of the 10 entries.
+Do not push to remote.
+
+Follow GENERATOR_PROMPT.md spec exactly for every entry.
+```
+
+---
+
+### Step 2 — Commit the batch (without pushing)
+
+After all 10 files are created, run this in your terminal:
+
+```powershell
+# Stage all new keyword files
+git add docs/
+
+# Show what was added
+git status
+
+# Commit with a descriptive message
+# Replace NNN-MMM with the actual range you just generated
+git commit -m "feat: add keywords NNN–MMM — [Category or brief description]"
+
+# Example:
+# git commit -m "feat: add keywords 261–270 — Java & JVM Internals batch 1"
+```
+
+---
+
+### Step 3 — Repeat from Step 1
+
+Go back to **Step 1** and run the detection prompt again.
+It will automatically find the next 10 missing keywords and start from there.
+
+**Keep repeating until all 1,770 keywords are generated.**
+
+---
+
+## 🚀 Quick One-Shot Workflow Prompt (for IDE Agent Mode)
+
+Use this as a single agent-mode prompt to handle detect → generate → commit in one go:
+
+```
+You are an automated keyword generation agent for the sk-keys Technical Dictionary.
+
+YOUR WORKFLOW — repeat until I say stop:
+
+LOOP:
+  1. DETECT: Scan docs/ for existing keyword files. Extract numbers from filenames.
+             Cross-reference TECHNICAL_DICTIONARY.md master table.
+             Find next 10 missing keyword numbers (starting from lowest gap).
+
+  2. REPORT: Print the 10 keywords you will generate:
+             "#NNN — Keyword Name  (Category | ★ Difficulty)"
+
+  3. GENERATE: Create all 10 files using GENERATOR_PROMPT.md spec exactly.
+               Place each in: docs/<correct Category Folder>/<NNN> — <Keyword Name>.md
+               Use correct parent, nav_order, permalink, category per front matter rules.
+
+  4. COMMIT: After all 10 files are created, run:
+               git add docs/
+               git commit -m "feat: add keywords NNN–MMM — <Category> batch <N>"
+             Do NOT run git push.
+
+  5. CONFIRM: Say "✅ Batch complete. Generated NNN–MMM. Committed.
+               Next missing keyword: #NNN. Continue? (yes/stop)"
+
+Wait for my confirmation before starting the next loop.
+
+RULES:
+- Never regenerate a keyword that already has a file
+- Keep all existing files untouched
+- One commit per batch of 10
+- Follow the full GENERATOR_PROMPT.md spec for every single entry
+- If a category folder doesn't exist yet, create it with an appropriate index.md
+```
+
