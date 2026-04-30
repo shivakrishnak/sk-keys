@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Java & JVM Internals"
 parent: "Documentation"
@@ -46,11 +46,11 @@ and low-level JVM mechanisms.
 | 013 | [Escape Analysis](./013%20—%20Escape%20Analysis.md) | 038 | Tiered Compilation |
 | 014 | [Memory Barrier](./014%20—%20Memory%20Barrier.md) | 039 | Method Inlining |
 | 015 | [Happens-Before](./015%20—%20Happens-Before.md) | 040 | Deoptimization |
-| 016 | GC Roots | 041 | OSR (On-Stack Replacement) |
-| 017 | Reference Types | 042 | AOT (Ahead-of-Time Compilation) |
-| 018 | Young Generation | 043 | GraalVM |
-| 019 | Eden Space | 044 | Native Image |
-| 020 | Survivor Space | 045 | TLAB (Thread Local Allocation Buffer) |
+| 016 | [GC Roots](./016%20—%20GC%20Roots.md) | 041 | OSR (On-Stack Replacement) |
+| 017 | [Reference Types](./017%20—%20Reference%20Types%20(Strong%2C%20Soft%2C%20Weak%2C%20Phantom).md) | 042 | AOT (Ahead-of-Time Compilation) |
+| 018 | [Young Generation](./018%20—%20Young%20Generation.md) | 043 | GraalVM |
+| 019 | [Eden Space](./019%20—%20Eden%20Space.md) | 044 | Native Image |
+| 020 | [Survivor Space](./020%20—%20Survivor%20Space.md) | 045 | TLAB (Thread Local Allocation Buffer) |
 | 021 | [Minor GC](./021%20—%20Minor%20GC.md) | 046 | Safepoint |
 | 022 | [Major GC](./022%20—%20Major%20GC.md) | 047 | Card Table |
 | 023 | [Full GC](./023%20—%20Full%20GC.md) | 048 | Write Barrier |
