@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Stubbing"
 parent: "Testing"
@@ -25,25 +25,25 @@ tags: #testing #foundational #java #mockito
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Stubbing is the practice of configuring a test double (stub) to return a predetermined response when a specific method is called, without recording interactions. A stub's sole purpose is to provide controlled input data to the system under test. Unlike mocks, stubs are not verified — their invocation is not asserted.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Stubbing means **telling a fake dependency what to return** when your code calls it. You don't care if it was called — you just need it to return the right data so your test can proceed.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Stubs are the most common and simplest form of test double. When you write `when(userRepo.findById(1)).thenReturn(user)`, you are stubbing — telling the fake repository to return a specific user when called with ID 1. The test uses this data to verify what the code under test produces, not whether or how the repository was called.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Your code calls a repository or external service that you can't run in a test. You need the code to receive controlled data to test your logic.
@@ -68,19 +68,19 @@ Stub vs Mock distinction:
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without stubs, your code gets null or exceptions when it calls dependencies — you can't test the happy path. Stubs provide the controlled, predictable input data needed to put the code into the exact state required for each test scenario.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > A stub is like a recorded answering machine response. When your code "calls" the dependency, the stub plays back the pre-recorded message you configured. It doesn't matter who called, when, or how many times — the message is always the same. The caller (code under test) receives the controlled data and proceeds.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Mockito stubbing API:
@@ -107,7 +107,7 @@ Mockito stubbing API:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Stub]: when(repo.findById(1)).thenReturn(user)
@@ -121,7 +121,7 @@ Mockito stubbing API:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Pure stubbing — testing business logic with controlled data
@@ -163,7 +163,7 @@ class PricingServiceTest {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -174,7 +174,7 @@ class PricingServiceTest {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Stubbing Too Specifically**
 `when(repo.findById(1L)).thenReturn(user)` — test breaks for any other ID.
@@ -190,7 +190,7 @@ Fix: always create fresh objects in each test or use immutable data.
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Mocking** — mocks use stubbing AND verify interactions
 - **Faking / Spying** — other test double variants
@@ -200,7 +200,7 @@ Fix: always create fresh objects in each test or use immutable data.
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #419 | Category: Testing | Difficulty: ★☆☆ |
 |:---|:---|:---|
@@ -209,7 +209,7 @@ Fix: always create fresh objects in each test or use immutable data.
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** When should you use a stub vs a full mock — what guides that decision?  
 **Q2.** Why does Mockito's strict stubbing mode (default in JUnit 5) throw on unused stubs?  

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Unit Test"
 parent: "Testing"
@@ -25,25 +25,25 @@ tags: #testing #foundational #java
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 A unit test is an automated test that verifies the smallest testable part of an application — typically a single method or class — in isolation from the rest of the system. All external dependencies (databases, services, file systems) are replaced with test doubles (mocks, stubs). Unit tests are fast, deterministic, and run thousands per second.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 A unit test checks that **one small piece of code does exactly what you expect** — completely disconnected from databases, networks, or other services.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Unit tests are the foundation of the Test Pyramid. They are fast (milliseconds each), cheap to run, and pinpoint exactly which code is broken when they fail. By replacing real dependencies with mocks, unit tests test the logic of a single class without any external noise. They should form the majority of your test suite.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 You want to verify a specific algorithm or business rule in isolation. Running the full system to test one method is slow, brittle, and doesn't tell you which piece broke.
@@ -64,19 +64,19 @@ Unit test verifies:
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without unit tests, you only discover bugs when the whole system is assembled — by then, finding the source is like finding a needle in a haystack. Unit tests give you fast, precise feedback: this specific method, with this specific input, produces the wrong output.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > A unit test is like testing a light switch in isolation before installing it in a house. You connect it to a power supply and a test bulb — not to the actual circuit. If the switch works in isolation, you can trust it when it's part of the larger system.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Unit test structure — AAA pattern:
@@ -95,7 +95,7 @@ Unit test structure — AAA pattern:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Unit Test]  <-- fastest; tests logic in isolation
@@ -108,7 +108,7 @@ Unit test structure — AAA pattern:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Class under test
@@ -163,7 +163,7 @@ class DiscountServiceTest {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -174,7 +174,7 @@ class DiscountServiceTest {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Testing Implementation, Not Behavior**
 Tests that break when you refactor internals (even though behavior is unchanged).
@@ -192,7 +192,7 @@ Fix: always have at least one `assertThat`; use `verify()` for void methods.
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Mocking** — replacing dependencies with controlled doubles in unit tests
 - **TDD** — writing unit tests before implementing the code
@@ -202,7 +202,7 @@ Fix: always have at least one `assertThat`; use `verify()` for void methods.
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #412 | Category: Testing | Difficulty: ★☆☆ |
 |:---|:---|:---|
@@ -211,7 +211,7 @@ Fix: always have at least one `assertThat`; use `verify()` for void methods.
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between a mock and a stub in unit testing?  
 **Q2.** Why does 100% line coverage not guarantee a good test suite?  

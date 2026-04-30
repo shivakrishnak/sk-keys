@@ -1,19 +1,35 @@
-﻿---
+---
 layout: default
 title: "Spring Boot Startup Lifecycle"
 parent: "Spring Framework"
 nav_order: 135
 permalink: /spring/spring-boot-startup-lifecycle/
+number: "135"
+category: Spring & Spring Boot
+difficulty: ★★☆
+depends_on: ApplicationContext, Auto-Configuration
+used_by: Spring Boot initialization, ApplicationRunner
+tags: #springboot, #spring, #internals, #intermediate
 ---
+
+# 135 — Spring Boot Startup Lifecycle
 
 `#springboot` `#spring` `#internals` `#intermediate`
 
 ⚡ TL;DR — Spring Boot's startup lifecycle orchestrates environment setup, ApplicationContext creation, auto-configuration, bean initialization, and web server startup in a defined sequence.
-## 📘 Textbook Definition
+
+| #135 | Category: Spring & Spring Boot | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | ApplicationContext, Auto-Configuration | |
+| **Used by:** | Spring Boot initialization, ApplicationRunner | |
+
+---
+
+### 📘 Textbook Definition
 The Spring Boot application startup lifecycle encompasses the phases from `SpringApplication.run()` invocation through publishing `ApplicationReadyEvent`. It includes: creating and preparing the `SpringApplication`, preparing the environment (`Environment`), creating the `ApplicationContext`, loading bean definitions (including auto-configuration), refreshing the context (instantiating all singletons), starting the embedded server, and publishing lifecycle events.
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 When you call `SpringApplication.run()`, Spring Boot goes through a sequence of steps: set up properties, create the container, load all beans, start Tomcat, then announce "I'm ready." Hook into any of these steps with listeners.
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 **Complete startup sequence:**
 ```
 SpringApplication.run(MyApp.class)
@@ -42,7 +58,7 @@ SpringApplication.run(MyApp.class)
      ↓
 9. ApplicationReadyEvent published ← APPLICATION IS READY
 ```
-## 💻 Code Example
+### 💻 Code Example
 ```java
 // Hook 1: ApplicationContextInitializer — before context refresh
 public class MyInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
@@ -81,11 +97,11 @@ public void onFailed(ApplicationFailedEvent event) {
     // alert, cleanup
 }
 ```
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 - **[ApplicationContext](./105 — ApplicationContext.md)** — the container created during startup
 - **[Auto-Configuration](./133 — Auto-Configuration.md)** — runs during startup BeanDefinition loading
 - **[Bean Lifecycle](./108 — Bean Lifecycle.md)** — happens during ApplicationContext refresh
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+
 | EARLY HOOKS | ApplicationContextInitializer (before context)       |

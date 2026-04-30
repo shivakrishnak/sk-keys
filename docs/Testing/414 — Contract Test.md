@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Contract Test"
 parent: "Testing"
@@ -25,25 +25,25 @@ tags: #testing #advanced #microservices #contracts
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 A Contract Test verifies that a service (provider) fulfills the expectations defined by its consumers. In Consumer-Driven Contract Testing (CDCT), each consumer defines the subset of the provider's API it depends on as a "contract" (Pact file). The provider runs these contracts as tests in its own pipeline — catching breaking changes before deployment, without needing both services running simultaneously.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Contract tests ensure **Service A's API still matches what Service B expects** — catching integration breaks automatically, without spinning up both services at the same time.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 In microservices, E2E tests require all services running together — slow and brittle. Contract tests split this: the consumer defines what it needs (the contract), and the provider verifies it can satisfy that contract independently. When the provider changes its API, contract tests fail immediately in CI — long before any E2E test or deployment would catch it.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Service A calls Service B. Service B changes its response structure. Service A breaks in production because nobody tested the integration point directly.
@@ -66,19 +66,19 @@ Provider changes email → name:
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without contract tests, API breaking changes are discovered only in E2E tests or production. With contract tests, the provider's pipeline fails the moment a breaking change is introduced — no E2E environment needed, no services started together, fast feedback.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Contract tests are like a written rental agreement. The tenant (consumer) specifies exactly what the apartment (provider) must include — working heating, internet. The landlord (provider) can renovate the apartment however they like, as long as the contract terms are still met. If they remove the heating, the contract fails before the tenant moves in.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Pact (Consumer-Driven Contract Testing) workflow:
@@ -102,7 +102,7 @@ Pact (Consumer-Driven Contract Testing) workflow:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Consumer writes interaction]
@@ -118,7 +118,7 @@ Pact (Consumer-Driven Contract Testing) workflow:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Consumer side — Order Service (Java + Pact)
@@ -173,7 +173,7 @@ class UserServicePactVerificationTest {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -184,7 +184,7 @@ class UserServicePactVerificationTest {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Provider-Driven Contracts**
 Team writes contracts from the provider's perspective — misses what consumers actually use.
@@ -200,7 +200,7 @@ Fix: use a Pact Broker (or PactFlow); it tracks which consumer/provider version 
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Integration Test** — contract tests are a specialized form targeting service-to-service boundaries
 - **Pact** — the most widely used consumer-driven contract testing framework
@@ -210,7 +210,7 @@ Fix: use a Pact Broker (or PactFlow); it tracks which consumer/provider version 
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #414 | Category: Testing | Difficulty: ★★★ |
 |:---|:---|:---|
@@ -219,7 +219,7 @@ Fix: use a Pact Broker (or PactFlow); it tracks which consumer/provider version 
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why is consumer-driven contract testing more effective than provider-defined contract testing?  
 **Q2.** How does the "can-i-deploy" check in Pact Broker prevent breaking deployments?  

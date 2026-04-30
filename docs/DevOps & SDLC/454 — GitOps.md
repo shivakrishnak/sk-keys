@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "GitOps"
 parent: "DevOps & SDLC"
@@ -25,25 +25,25 @@ tags: #devops #sdlc #intermediate #gitops
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 GitOps is an operational framework that takes DevOps best practices (version control, collaboration, compliance, CI/CD) and applies them to infrastructure automation. The desired state of the entire system — applications, configuration, and infrastructure — is declared in git. An automated operator continuously watches git and reconciles the live environment to match, making git the single source of truth.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 GitOps means **"git is the source of truth for what's running in production"**. You commit a change to git; an automated agent reads it and makes production match — no manual `kubectl apply` or `terraform apply` needed.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Traditional CD pushes changes to production (pipeline triggers deploy). GitOps inverts this: an agent running inside the cluster continuously pulls the desired state from git and reconciles any divergence. If someone manually changes a pod in production, the agent detects the drift and reverts it to match git. This creates an immutable, auditable, and self-healing system.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 CI/CD pipelines need credentials to push changes to production (push model). This creates a large blast radius if the pipeline is compromised. Manual changes to production diverge from the intended state and are not tracked.
@@ -63,19 +63,19 @@ PULL model (GitOps):
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without GitOps, production state drifts from git over time (manual patches, hotfixes). Auditing what's actually running is hard. Security requires giving CI pipelines cluster credentials. GitOps eliminates all three problems by using a pull-based reconciliation loop.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > GitOps is like a thermostat for your infrastructure. The thermostat has a desired state (e.g., 22°C = what's in git). If the room temperature drifts (manual change, failure), the thermostat automatically corrects it — without anyone manually turning on the heater. Git declares the desired temperature; the GitOps operator is the thermostat.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 GitOps reconciliation loop:
@@ -99,7 +99,7 @@ GitOps reconciliation loop:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Developer git push]
@@ -115,7 +115,7 @@ GitOps reconciliation loop:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```yaml
 # ArgoCD Application — watches git repo, syncs to cluster
@@ -162,7 +162,7 @@ git push origin main
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Developer pushes desired state to git
@@ -182,7 +182,7 @@ git push origin main
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -193,7 +193,7 @@ git push origin main
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Secrets in Git**
 Storing application secrets directly in git is a critical security error.
@@ -209,7 +209,7 @@ Fix: treat OutOfSync as an incident; alert on-call; investigate and resolve imme
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **CI/CD Pipeline** — CI builds; GitOps handles the CD (pull-based)
 - **IaC (Infrastructure as Code)** — GitOps applies IaC principles to application delivery
@@ -219,7 +219,7 @@ Fix: treat OutOfSync as an incident; alert on-call; investigate and resolve imme
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #454 | Category: DevOps & SDLC | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -228,7 +228,7 @@ Fix: treat OutOfSync as an incident; alert on-call; investigate and resolve imme
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** How does the pull-based GitOps model improve security compared to the push-based CI/CD model?  
 **Q2.** What is the "drift detection and self-healing" property of GitOps, and why is it valuable in production?  

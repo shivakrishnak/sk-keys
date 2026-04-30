@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Twelve-Factor App"
 parent: "DevOps & SDLC"
@@ -25,25 +25,25 @@ tags: #devops #sdlc #intermediate #architecture
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 The Twelve-Factor App is a methodology (created by Heroku engineers) for building software-as-a-service applications that are portable across execution environments, deployable on modern cloud platforms, take advantage of horizontal scaling, and minimise divergence between development and production. It defines 12 concrete practices covering code, config, dependencies, processes, and operations.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 The Twelve-Factor App is a **set of 12 rules for building apps that run cleanly in the cloud** — they can be deployed anywhere, scaled easily, and don't have hidden dependencies or config buried in the code.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 The Twelve Factors address the most common mistakes that prevent apps from scaling in the cloud: config hardcoded in source, state stored on disk, assumptions about the server environment, tight coupling to specific services. Each factor is a concrete, actionable practice that makes an app disposable, horizontally scalable, and environment-agnostic.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Apps built for a single server break when moved to the cloud. They store files locally, have config embedded in code, connect to hardcoded database hostnames, and assume a specific directory structure.
@@ -53,19 +53,19 @@ Apps built for a single server break when moved to the cloud. They store files l
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without these practices, apps become "pets" — unique, irreplaceable, hand-configured servers. With twelve-factor practices, apps become "cattle" — disposable, identical instances that can be created and destroyed at will, enabling auto-scaling and cloud-native deployment.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > The Twelve-Factor App is like the ISO standard for shipping containers. Before shipping containers were standardised, every ship was custom-built around its cargo. After standardisation, any container could go on any ship, truck, or train. The Twelve Factors standardise app configuration, making any app deployable on any cloud platform without special handling.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 The 12 Factors:
@@ -86,7 +86,7 @@ The 12 Factors:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Factor III: Config in env]  -->  [Immutable Infrastructure]
@@ -98,7 +98,7 @@ The 12 Factors:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Factor III: Config in environment, not code
@@ -152,7 +152,7 @@ DATABASE_URL=jdbc:postgresql://myapp.xyz.us-east-1.rds.amazonaws.com:5432/myapp
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 Factor V — Build/Release/Run separation:
@@ -168,7 +168,7 @@ Rule: releases are immutable — cannot change release config without a new buil
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -179,7 +179,7 @@ Rule: releases are immutable — cannot change release config without a new buil
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Config in Code (Violates Factor III)**
 Environment-specific values (DB URLs, API keys) committed to source code.
@@ -195,7 +195,7 @@ Fix: use Docker Compose in dev to run the same PostgreSQL version as production.
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Immutable Infrastructure** — the runtime embodiment of Factor VI (stateless processes)
 - **IaC** — the tooling that enforces Factor V (separate build/release/run)
@@ -205,7 +205,7 @@ Fix: use Docker Compose in dev to run the same PostgreSQL version as production.
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #457 | Category: DevOps & SDLC | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -214,7 +214,7 @@ Fix: use Docker Compose in dev to run the same PostgreSQL version as production.
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What specific problem does Factor III (config in environment) solve, and how does it enable the same image to run in dev, staging, and prod?  
 **Q2.** Why does Factor VI (stateless processes) make horizontal scaling straightforward?  

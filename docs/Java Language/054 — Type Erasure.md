@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Type Erasure"
 parent: "Java Language"
@@ -25,25 +25,25 @@ tags: #java #intermediate #generics #jvm #internals
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Type erasure is the process by which the Java compiler removes all generic type information during compilation, replacing type parameters with their **erasure** — `Object` for unbounded parameters, or the **upper bound** for bounded ones. The compiler also injects synthetic **bridge methods** to handle method overriding in generic subclasses. This design maintains binary compatibility with pre-Java-5 JVMs.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 The compiler uses `List<String>` to check your code — but the `.class` file it produces is just `List`. At runtime, the JVM sees no difference between `List<String>` and `List<Integer>`. All the type safety happens at compile time and then disappears.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Java generics were designed to be backwards-compatible: code compiled with Java 5 generics had to run on existing JVMs without changes to the class format. The solution was erasure — type params are a compile-time fiction. The JVM never knows about them. This is why you can't `new T[]`, can't do `instanceof List<String>`, and can't catch a generic exception.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **What the compiler does:**
 
@@ -74,19 +74,19 @@ class StringBox extends Box<String> {
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Java had to add generics in Java 5 without breaking the billions of lines of pre-generics code already deployed. Reification (keeping type info at runtime) would have broken JVM binary compatibility. Erasure was the pragmatic choice — perfect backwards compatibility at the cost of runtime type information.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Type erasure is like writing a strict contract in pencil for an architect (compiler), who checks everything is correct and then erases the contract details when handing the blueprint to the construction crew (JVM). The crew builds exactly what the architect verified — they just don't need to know the original constraints.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Erasure rules:
@@ -116,7 +116,7 @@ What survives erasure (accessible via Reflection):
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Source: List<String>]
@@ -132,7 +132,7 @@ What survives erasure (accessible via Reflection):
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Demonstrating erasure effects
@@ -170,7 +170,7 @@ Type listOfString = new TypeToken<List<String>>(){}.getType();    // preserved
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -181,7 +181,7 @@ Type listOfString = new TypeToken<List<String>>(){}.getType();    // preserved
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Heap pollution**
 ```java
@@ -207,7 +207,7 @@ List<MyType> result = objectMapper.readValue(json,
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Generics (#053)** — the feature that type erasure implements
 - **Bounded Wildcards (#055)** — wildcards interact with erasure's `?`-to-Object substitution
@@ -217,7 +217,7 @@ List<MyType> result = objectMapper.readValue(json,
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #054 | Category: Java Language | Difficulty: ★★★ |
 |:---|:---|:---|
@@ -226,7 +226,7 @@ List<MyType> result = objectMapper.readValue(json,
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why does `new T[10]` fail at compile time even though the compiler knows `T` — what would go wrong if it allowed it?
 **Q2.** How does Jackson's `TypeReference<List<String>>` trick work to "circumvent" type erasure?

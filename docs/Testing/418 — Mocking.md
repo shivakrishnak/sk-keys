@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Mocking"
 parent: "Testing"
@@ -25,25 +25,25 @@ tags: #testing #intermediate #java #mockito
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 A mock is a test double that both stubs return values AND records interactions — allowing tests to verify that specific methods were called with specific arguments. Mocks are typically created using a framework (Mockito in Java) and are configured with expectations about how the code under test should interact with its dependencies.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 A mock is a **fake object that pretends to be a real dependency** and also **records what your code did with it** — so you can verify "was this method called? with what arguments?"
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Test doubles are objects that stand in for real dependencies during testing. A mock is the most powerful kind: it can be configured to return specific values (like a stub) AND it records all method calls so you can verify behavior. You use mocks when the real dependency would be slow (database), non-deterministic (external API), or impossible to set up in a test (payment gateway).
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 The class under test depends on a database, email service, or payment gateway. You can't run those in a unit test. You need something that behaves like the dependency — returns what you tell it to — without the real infrastructure.
@@ -67,19 +67,19 @@ Mocks answer two questions:
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without mocks, unit tests require real infrastructure — a database, a running email server, a payment API. This makes tests slow, non-deterministic, and expensive to set up. Mocks eliminate external dependencies from unit tests entirely.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > A mock is like a flight simulator. A pilot trains in the simulator — it behaves like the real plane but is safe, controllable, and recordable. You can say "fly through a storm" and see exactly what the pilot (code) does. You couldn't train in a real storm safely.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Mockito lifecycle:
@@ -102,7 +102,7 @@ Mockito lifecycle:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Unit Test]
@@ -117,7 +117,7 @@ Mockito lifecycle:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Class under test
@@ -174,7 +174,7 @@ class OrderServiceTest {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -185,7 +185,7 @@ class OrderServiceTest {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Mocking What You Don't Own**
 `mock(HttpClient.class)` — your mock won't behave like the real client; breaks when client updates.
@@ -201,7 +201,7 @@ Fix: simplify the class; split responsibilities; the test smell reveals a produc
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Stubbing** — configuring a mock to return a specific value (a simpler kind of test double)
 - **Mockito** — the leading Java mocking framework
@@ -211,7 +211,7 @@ Fix: simplify the class; split responsibilities; the test smell reveals a produc
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #418 | Category: Testing | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -220,7 +220,7 @@ Fix: simplify the class; split responsibilities; the test smell reveals a produc
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between `verify()` and `assertThat()` in a test — when do you need both?  
 **Q2.** Why should you mock interfaces you own rather than third-party implementations?  

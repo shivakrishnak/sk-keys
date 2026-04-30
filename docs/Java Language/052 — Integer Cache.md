@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Integer Cache"
 parent: "Java Language"
@@ -25,25 +25,25 @@ tags: #java #internals #intermediate #jvm
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 The Integer Cache is a JVM optimization where `Integer.valueOf(int)` returns cached `Integer` instances for values in the range -128 to 127 (inclusive). For values in this range, repeated calls return the same object reference. For values outside this range, a new `Integer` object is created each time. The upper bound of the cache can be extended via the JVM flag `-XX:AutoBoxCacheMax=<size>`.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Java pre-creates and reuses `Integer` objects for small numbers (-128 to 127). So `Integer.valueOf(100)` always returns the **same object** — but `Integer.valueOf(200)` creates a **new object** every time.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 This optimization exists because small integers are extremely common in programs (loop counters, flags, indices). By caching them, autoboxing small values becomes nearly free (no allocation). But this creates a subtle trap: `==` comparison works for cached values (same object) and silently fails for values outside the cache (different objects with same value).
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The code behind it (`Integer.java` source):**
 ```java
@@ -63,13 +63,13 @@ public static Integer valueOf(int i) {
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > The Integer cache is like a post office that pre-stamps the most common envelope sizes (small numbers). If you need a #10 envelope (value under 127), they hand you one from the shelf — same physical envelope every time. If you need a custom size (128+), they make a new one on the spot. Two people asking for a #10 get the identical envelope; two people asking for custom size get different envelopes that look the same.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Integer cache in JVM memory:
@@ -95,7 +95,7 @@ Extend cache (at JVM startup):
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Cache range: identity comparison works
@@ -138,7 +138,7 @@ public static void main(String[] args) {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -149,7 +149,7 @@ public static void main(String[] args) {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Using == on Integer in business logic**
 `if (order.getStatus() == OrderStatus.ACTIVE)` where status is `Integer` — works in test (small values), breaks in prod with large IDs.
@@ -161,7 +161,7 @@ Fix: use `.equals()` everywhere; never depend on `==` for correctness.
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Autoboxing** — calls `Integer.valueOf()` which uses the cache
 - **String Pool** — analogous concept for String literals
@@ -170,7 +170,7 @@ Fix: use `.equals()` everywhere; never depend on `==` for correctness.
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #052 | Category: Java Language | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -179,7 +179,7 @@ Fix: use `.equals()` everywhere; never depend on `==` for correctness.
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why does `Integer.valueOf(100) == Integer.valueOf(100)` return `true` but `new Integer(100) == new Integer(100)` return `false`?
 **Q2.** Besides Integer, which other wrapper types have a similar cache?

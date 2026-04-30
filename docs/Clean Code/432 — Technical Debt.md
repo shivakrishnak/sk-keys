@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Technical Debt"
 parent: "Clean Code"
@@ -25,25 +25,25 @@ tags: #cleancode #architecture #intermediate
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Technical debt is a metaphor coined by Ward Cunningham for the implied future cost of rework caused by choosing an easy or quick solution now instead of a better approach that would take longer. Like financial debt, it accrues compounding interest — the longer it is unaddressed, the harder and costlier it becomes to work around.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Technical debt is the **price you pay later for moving fast today**. A quick hack that works now may cost double the time to fix later, plus all the bugs and slowdowns along the way.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Some technical debt is deliberate (a known shortcut to meet a deadline) and some is accidental (poor design only discovered later). Both compound over time: working around bad code takes longer, understanding it takes longer, testing it is harder, and onboarding new developers becomes painful. The interest rate compounds the longer the debt goes unpaid.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Fast shortcuts now create slow, painful future work. A 2-hour hack today may consume 20 hours of debugging, rework, and coordination pain over the next 6 months.
@@ -65,19 +65,19 @@ Goal: eliminate reckless debt; manage prudent debt consciously.
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without awareness of technical debt, teams perpetually "move fast" while actually slowing down — each shortcut adds to a mountain of complexity that makes every future change harder, riskier, and slower. Eventually velocity collapses entirely.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Technical debt is like a credit card. Borrowing a little to move fast is fine — that is the purpose of the card. But if you never pay it off, the interest (bugs, rework, onboarding pain, slow releases) eventually exceeds the original amount borrowed. At maximum debt, every change is a risk.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Debt accumulation:
@@ -99,7 +99,7 @@ Debt accumulation:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Quick Fix / Shortcut]
@@ -113,7 +113,7 @@ Debt accumulation:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // TECHNICAL DEBT: magic values, duplication, no abstraction
@@ -141,7 +141,7 @@ if (permissionService.isAdmin(user)) { /* ... */ }
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Shortcut taken (deliberate or accidental)
@@ -159,7 +159,7 @@ if (permissionService.isAdmin(user)) { /* ... */ }
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -170,7 +170,7 @@ if (permissionService.isAdmin(user)) { /* ... */ }
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Debt Blindness**
 Teams don't track debt explicitly — it is invisible until velocity collapses.
@@ -186,7 +186,7 @@ Fix: refactor the structure; use tests as the safety net to enable that refactor
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Refactoring** — the activity of paying down technical debt incrementally
 - **Code Smells** — indicators that tell you where technical debt lives in a codebase
@@ -196,7 +196,7 @@ Fix: refactor the structure; use tests as the safety net to enable that refactor
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #432 | Category: Clean Code | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -205,7 +205,7 @@ Fix: refactor the structure; use tests as the safety net to enable that refactor
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between deliberate/prudent debt and reckless/inadvertent debt?  
 **Q2.** How do you identify and quantify technical debt in a codebase you have just joined?  

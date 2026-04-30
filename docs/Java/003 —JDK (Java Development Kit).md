@@ -4,31 +4,46 @@ title: "JDK (Java Development Kit)"
 parent: "Java Fundamentals"
 nav_order: 3
 permalink: /java/jdk-java-development-kit/
+number: "003"
+category: Java & JVM Internals
+difficulty: ★☆☆
+depends_on: JRE, JVM
+used_by: javac, javadoc, jdb, Maven, Gradle
+tags: #java, #jvm, #internals, #foundational
 ---
-🏷️ Tags — #java #jvm #internals #foundational
+
+# 003 — JDK (Java Development Kit)
+
+`#java` `#jvm` `#internals` `#foundational`
 
 ⚡ TL;DR — The complete Java toolkit: compile, run, debug, and diagnose.
 
+| #003 | Category: Java & JVM Internals | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | JRE, JVM | |
+| **Used by:** | javac, javadoc, jdb, Maven, Gradle | |
+
 ---
-#### 📘 Textbook Definition
+
+### 📘 Textbook Definition
 
 The JDK is a full-featured software development kit for building Java applications. It is a superset of the JRE — containing the JVM, standard library, and additionally: the Java compiler (`javac`), debugger (`jdb`), profiler, documentation generator (`javadoc`), and other development tools.
 
 ---
 
-#### 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 The JDK is **everything you need to write, compile, debug, and run Java programs**. It's the complete developer toolkit.
 
 ---
 
-#### 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 The JDK is what you install on your development machine. It contains the JRE (to run programs) plus the tools to build them — most importantly `javac` to compile `.java` → `.class`. Without the JDK, you can run Java programs but you can't create them.
 
 ---
 
-#### 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The problem:**
 
@@ -44,40 +59,15 @@ Running Java needs JRE. But building Java needs more:
 
 Bundle all of that together → JDK.
 
-```
-┌─────────────────────────────────────────┐
-│                  JDK                    │
-│                                         │
-│   ┌─────────────────────────────────┐   │
-│   │             JRE                 │   │
-│   │   ┌─────────────────────────┐   │   │
-│   │   │          JVM            │   │   │
-│   │   └─────────────────────────┘   │   │
-│   │   + Standard Library            │   │
-│   └─────────────────────────────────┘   │
-│                                         │
-│   + javac    (compiler)                 │
-│   + jdb      (debugger)                 │
-│   + javadoc  (doc generator)            │
-│   + jar      (archive tool)             │
-│   + jshell   (REPL)                     │
-│   + jmap     (heap dump)                │
-│   + jstack   (thread dump)              │
-│   + jconsole (visual monitor)           │
-│   + jlink    (custom runtime builder)   │
-│   + jpackage (native installer)         │
-└─────────────────────────────────────────┘
-```
-
 ---
 
-#### 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > JVM = engine. JRE = engine + car body (can drive). JDK = engine + car body + full mechanic's workshop (can drive AND build/fix cars).
 
 ---
 
-#### ⚙️ Key JDK Tools — What They Actually Do
+### ⚙️ Key JDK Tools — What They Actually Do
 
 |Tool|Purpose|When You Use It|
 |---|---|---|
@@ -97,7 +87,7 @@ Bundle all of that together → JDK.
 
 ---
 
-#### 💻 Code Example — JDK Tools in Action
+### 💻 Code Example — JDK Tools in Action
 
 **Compile and run:**
 
@@ -185,32 +175,11 @@ $2 ==> 6
 
 ---
 
-#### 🔁 JDK in the Full Development Flow
-
-```
-┌──────────────────────────────────────────────────────┐
-│                DEVELOPMENT LIFECYCLE                 │
-│                                                      │
-│  Write Code (.java)                                  │
-│       ↓                                              │
-│  javac → .class files        [JDK: compiler]         │
-│       ↓                                              │
-│  jar → .jar / .war           [JDK: packager]         │
-│       ↓                                              │
-│  Unit Tests (JUnit)          [JDK: runs tests]       │
-│       ↓                                              │
-│  javadoc → HTML docs         [JDK: doc gen]          │
-│       ↓                                              │
-│  Deploy to server            [JRE sufficient]        │
-│       ↓                                              │
-│  Production issue?                                   │
-│    jstack / jmap / jcmd      [JDK tools diagnose]    │
-└──────────────────────────────────────────────────────┘
-```
+### 🔁 JDK in the Full Development Flow
 
 ---
 
-#### ⚙️ JDK Distributions — This Matters in Production
+### ⚙️ JDK Distributions — This Matters in Production
 
 The JDK is a **specification** (OpenJDK). Multiple vendors ship it:
 
@@ -228,7 +197,7 @@ The JDK is a **specification** (OpenJDK). Multiple vendors ship it:
 
 ---
 
-#### ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 |Misconception|Reality|
 |---|---|
@@ -240,7 +209,7 @@ The JDK is a **specification** (OpenJDK). Multiple vendors ship it:
 
 ---
 
-#### 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **1. Using JRE-only image and losing diagnostic tools**
 
@@ -279,7 +248,7 @@ Fix: switch to Eclipse Temurin or Amazon Corretto (free, production-grade)
 
 ---
 
-#### 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - `JRE` — subset of JDK; runtime only
 - `JVM` — the execution engine inside both
@@ -292,52 +261,10 @@ Fix: switch to Eclipse Temurin or Amazon Corretto (free, production-grade)
 
 ---
 
-#### 📌 Quick Reference Card
-
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Complete Java toolchain: compile, run,    │
-│              │ debug, profile, package                   │
-├──────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Developing Java; diagnosing production    │
-├──────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Pure runtime containers (use slim JRE or  │
-│              │ jlink-built custom runtime)               │
-├──────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "JDK = JRE + the tools to build and       │
-│              │  diagnose Java systems"                   │
-├──────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Bytecode → javap → Class Loader →         │
-│              │ JIT Compiler → GraalVM Native Image       │
-└──────────────────────────────────────────────────────────┘
-```
+### 📌 Quick Reference Card
 
 ---
 
 ### 🧩 JVM / JRE / JDK — The Complete Picture Together
-
-```
-┌─────────────────────────────────────────────────────┐
-│                      JDK                           │
-│  ┌──────────────────────────────────────────────┐  │
-│  │                   JRE                        │  │
-│  │  ┌─────────────────────────────────────────┐ │  │
-│  │  │                JVM                      │ │  │
-│  │  │  ClassLoader + Runtime Areas +          │ │  │
-│  │  │  Execution Engine + GC                  │ │  │
-│  │  └─────────────────────────────────────────┘ │  │
-│  │  + Java Standard Library (java.base, etc.)   │  │
-│  └──────────────────────────────────────────────┘  │
-│  + javac, jar, jshell, jdb, javadoc                │
-│  + jstack, jmap, jstat, jcmd, jconsole             │
-│  + jlink, jpackage, javap                          │
-└─────────────────────────────────────────────────────┘
-
-WHO NEEDS WHAT:
-  End user running your app  →  JRE (or custom jlink runtime)
-  Developer building Java    →  JDK
-  Production server          →  JDK recommended (for diagnostics)
-  Docker container           →  jlink minimal runtime (leanest)
-```
 
 ---

@@ -4,40 +4,46 @@ title: "Heap Memory"
 parent: "Java Fundamentals"
 nav_order: 7
 permalink: /java/heap-memory/
----
-🏷️ Tags — #java #jvm #memory #gc #internals #intermediate
-
-⚡ TL;DR — The JVM's shared memory region where all objects live, managed automatically by the Garbage Collector across generational spaces. 
-
-```
-┌──────────────────────────────────────────────────────┐
-│ #007  │ Category: JVM Memory     │ Difficulty: ★★☆   │
-│ Depends on: JVM, GC, Stack Memory │ Used by: Every   │
-│ object allocation, GC, Spring,    │ Hibernate        │
-└──────────────────────────────────────────────────────┘
-```
-
+number: "007"
+category: JVM Memory
+difficulty: ★★☆
+depends_on: JVM, GC, Stack Memory
+used_by: Every object allocation, GC, Spring, Hibernate
+tags: #java, #jvm, #memory, #gc, #internals, #intermediate
 ---
 
-#### 📘 Textbook Definition
+# 007 — Heap Memory
+
+`#java` `#jvm` `#memory` `#gc` `#internals` `#intermediate`
+
+⚡ TL;DR — The JVM's shared memory region where all objects live, managed automatically by the Garbage Collector across generational spaces.
+
+| #007 | Category: JVM Memory | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, GC, Stack Memory | |
+| **Used by:** | Every object allocation, GC, Spring, Hibernate | |
+
+---
+
+### 📘 Textbook Definition
 
 The Java Heap is a **shared, runtime memory region** managed by the JVM where all object instances and arrays are allocated. It is divided into generational spaces — Young Generation (Eden + Survivor spaces) and Old Generation — based on object lifetime. Memory is reclaimed automatically by the Garbage Collector when objects become unreachable.
 
 ---
 
-#### 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 The heap is **where all your objects live**. Every time you write `new Something()`, that object goes on the heap. The JVM's Garbage Collector periodically cleans up objects that are no longer needed.
 
 ---
 
-#### 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Unlike stack memory which is per-thread and self-cleaning, the heap is a **single shared pool** across all threads — every object created by any thread lands here. Because objects have unpredictable lifetimes (you can't know at method-exit time if an object is still referenced elsewhere), the JVM needs a dedicated system — the Garbage Collector — to find and reclaim unreachable objects. The heap is structured into regions based on how long objects typically live, which makes GC dramatically more efficient.
 
 ---
 
-#### 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The problem:**
 
@@ -81,7 +87,7 @@ Objects surviving: ██                    (very low)
 
 ---
 
-#### 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of the heap as a **city with two districts**:
 > 
@@ -93,47 +99,11 @@ Objects surviving: ██                    (very low)
 
 ---
 
-#### ⚙️ How It Works — Heap Structure
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        JVM HEAP                             │
-│                                                             │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │                  YOUNG GENERATION                    │   │
-│  │                                                      │   │
-│  │  ┌─────────────────┐  ┌──────────┐  ┌──────────┐    │   │
-│  │  │      EDEN       │  │Survivor 0│  │Survivor 1│    │   │
-│  │  │                 │  │  (From)  │  │   (To)   │    │   │
-│  │  │ new objects     │  │          │  │          │    │   │
-│  │  │ allocated here  │  │ age 1-N  │  │ (empty)  │    │   │
-│  │  │                 │  │ objects  │  │          │    │   │
-│  │  └─────────────────┘  └──────────┘  └──────────┘    │   │
-│  │         ~80%               ~10%          ~10%        │   │
-│  └──────────────────────────────────────────────────────┘   │
-│                           ↓ promotion                       │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │                  OLD GENERATION                      │   │
-│  │              (Tenured Space)                         │   │
-│  │                                                      │   │
-│  │  Long-lived objects promoted from Young Gen          │   │
-│  │  Large objects allocated directly here               │   │
-│  │  Collected by Major GC / Full GC                     │   │
-│  └──────────────────────────────────────────────────────┘   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-
-SEPARATE (not heap):
-┌──────────────────────────────────────────────────────────┐
-│  METASPACE (off-heap, native memory)                     │
-│  Class metadata, method bytecode, static variables       │
-│  (replaced PermGen in Java 8)                            │
-└──────────────────────────────────────────────────────────┘
-```
+### ⚙️ How It Works — Heap Structure
 
 ---
 
-#### ⚙️ Object Allocation Flow — What Happens on `new`
+### ⚙️ Object Allocation Flow — What Happens on `new`
 
 ```
 new Order(42)
@@ -176,7 +146,7 @@ new Order(42)
 
 ---
 
-#### 🔄 How It Connects
+### 🔄 How It Connects
 
 ```
 new Object()
@@ -195,7 +165,7 @@ new Object()
 
 ---
 
-#### 💻 Code Example
+### 💻 Code Example
 
 **Visualizing allocation and GC:**
 
@@ -323,7 +293,7 @@ public Point createPoint() {
 
 ---
 
-#### ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 |Misconception|Reality|
 |---|---|
@@ -336,7 +306,7 @@ public Point createPoint() {
 
 ---
 
-#### 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **1. Memory leak — references held unintentionally**
 
@@ -413,7 +383,7 @@ bash
 
 ---
 
-#### 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - `Stack Memory` — holds references to heap objects
 - `GC (Garbage Collector)` — reclaims unreachable heap objects
@@ -429,34 +399,13 @@ bash
 
 ---
 
-#### 📌 Quick Reference Card
-
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Shared memory region for all objects,     │
-│              │ generationally structured for GC          │
-│              │ efficiency                                │
-├──────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Always — every object lives here          │
-├──────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Avoid heap for large buffers in           │
-│              │ latency-critical paths — use off-heap     │
-│              │ DirectByteBuffer instead                  │
-├──────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Heap = shared object city; GC = the      │
-│              │  cleanup crew; generations = the          │
-│              │  efficiency trick"                        │
-├──────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ GC Roots → Minor GC → Major GC →          │
-│              │ G1GC → ZGC → Metaspace → TLAB             │
-└──────────────────────────────────────────────────────────┘
-```
+### 📌 Quick Reference Card
 
 ---
 
 **Entry 007 complete.**
 
-#### 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** You have a Spring Boot app with a memory leak. Heap usage climbs steadily over 6 hours then OOM. You take a heap dump. Walk me through — step by step — how you would diagnose which objects are leaking and what's holding them alive.
 

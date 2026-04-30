@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Varargs"
 parent: "Java Language"
@@ -25,25 +25,25 @@ tags: #java #foundational #varargs #methods
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Varargs (variable-length argument lists) is a Java feature (since Java 5) that allows a method to accept zero or more arguments of a specified type via the `type... paramName` syntax. The compiler converts varargs calls into array creation at the call site; the method receives a standard array. A varargs parameter must be the **last** parameter in the method signature.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Varargs lets you call `log("Hello")`, `log("Hello", "World")`, or `log("a", "b", "c", "d")` with the same method signature `void log(String... messages)` — no method overloading needed.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Before varargs, you'd write `void log(String[] messages)` and callers would write `log(new String[]{"a","b"})`. With varargs, callers write `log("a","b")` and the compiler wraps it into an array automatically. The method sees a normal `String[]`. You can also pass an actual array directly.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **What the compiler does:**
 ```
@@ -63,19 +63,19 @@ Zero args:
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Before varargs, APIs like `printf`, `EnumSet.of`, `List.of` would need dozens of overloads for different argument counts. Varargs enables clean APIs like `String.format(String fmt, Object... args)` and `List.of(T... elements)` with a single method declaration.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Varargs is like a supermarket self-checkout with a "put any items here" conveyor belt. Whether you bring 1 item or 20, you just place them on the belt and the system counts them. Behind the scenes, everything ends up in a standard basket (array) — you just don't have to create the basket yourself.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Rules:
@@ -103,7 +103,7 @@ Overload resolution with varargs:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [varargs method declaration]
@@ -118,7 +118,7 @@ Overload resolution with varargs:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // 1. Basic varargs
@@ -159,7 +159,7 @@ sum(null);   // passes null as the array → NullPointerException inside method
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -170,7 +170,7 @@ sum(null);   // passes null as the array → NullPointerException inside method
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Heap pollution with generic varargs**
 ```java
@@ -201,7 +201,7 @@ for (int i = 0; i < 1_000_000; i++) {
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Arrays** — varargs is syntactic sugar over arrays
 - **Generics / Type Erasure (#053, #054)** — generic varargs cause heap pollution warnings
@@ -211,7 +211,7 @@ for (int i = 0; i < 1_000_000; i++) {
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #057 | Category: Java Language | Difficulty: ★☆☆ |
 |:---|:---|:---|
@@ -220,7 +220,7 @@ for (int i = 0; i < 1_000_000; i++) {
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why must a varargs parameter always be the last parameter in a method signature?
 **Q2.** What is the difference between calling `sum(null)` and `sum()` for a method `int sum(int... nums)`?

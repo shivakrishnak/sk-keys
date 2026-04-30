@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Infrastructure as Code (IaC)"
 parent: "DevOps & SDLC"
@@ -25,25 +25,25 @@ tags: #devops #sdlc #intermediate #iac
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Infrastructure as Code (IaC) is the practice of managing and provisioning computing infrastructure through machine-readable definition files rather than through manual configuration or interactive tools. Infrastructure is described declaratively or imperatively in code, stored in version control, and applied through automated pipelines — enabling repeatable, consistent, and auditable infrastructure management.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 IaC means **writing code to create your servers, networks, and databases** instead of clicking through a cloud console. Run the code, get the infrastructure — repeatable every time.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Before IaC, spinning up infrastructure meant clicking through cloud consoles, following runbooks, or SSHing into servers and running commands. This was slow, error-prone, inconsistent across environments, and impossible to audit. IaC treats infrastructure like application code: version-controlled, reviewed via pull requests, tested, and deployed automatically. Creating a new environment is as simple as running a tool against the code.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Manually configured infrastructure is a "snowflake" — every server is subtly different. You cannot reproduce it exactly. Runbooks become stale. "It works in staging but not in prod" because they diverged.
@@ -65,19 +65,19 @@ With IaC:
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without IaC, infrastructure is undocumented, non-reproducible, and owned by individuals with tribal knowledge. Disaster recovery means manually rebuilding what was running — facing memory errors and missing steps. IaC makes infrastructure reproducible, reviewable, and recoverable.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > IaC is like an architectural blueprint for infrastructure. A blueprint lets you build the same building in any city — the construction team follows the same plan every time, producing identical buildings. Without blueprints, every building would be slightly different based on who built it that day.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Two main approaches:
@@ -111,7 +111,7 @@ Terraform lifecycle:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [IaC Code in Git]
@@ -126,7 +126,7 @@ Terraform lifecycle:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```hcl
 # Terraform — provision AWS infrastructure
@@ -173,7 +173,7 @@ resource "aws_db_instance" "main" {
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Write IaC configuration files (Terraform, CloudFormation, etc.)
@@ -193,7 +193,7 @@ resource "aws_db_instance" "main" {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -204,7 +204,7 @@ resource "aws_db_instance" "main" {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Secrets Hardcoded in IaC**
 Passwords or API keys committed to git in IaC files.
@@ -220,7 +220,7 @@ Fix: enforce IaC-only changes via policy; use GitOps to detect and revert drift.
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **GitOps** — extends IaC principles; git is the source of truth for infra
 - **Immutable Infrastructure** — IaC enables rebuilding infra from scratch instead of patching
@@ -230,7 +230,7 @@ Fix: enforce IaC-only changes via policy; use GitOps to detect and revert drift.
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #455 | Category: DevOps & SDLC | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -239,7 +239,7 @@ Fix: enforce IaC-only changes via policy; use GitOps to detect and revert drift.
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between declarative and imperative IaC approaches? When would you choose each?  
 **Q2.** Why is remote state management with locking critical for team-based Terraform usage?  

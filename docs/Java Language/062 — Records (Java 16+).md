@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Records (Java 16+)"
 parent: "Java Language"
@@ -25,13 +25,13 @@ tags: #java #intermediate #records #immutability #java16
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 A **record** (Java 16, finalised from preview in Java 14/15) is a special kind of class — an immutable, transparent aggregate of its **components** (the declared fields). The compiler automatically generates: a public canonical constructor, private `final` fields, a public accessor method per component (named after the component), and implementations of `equals()`, `hashCode()`, and `toString()` based on all components.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Records replace verbose POJOs for data-only classes. Instead of writing 40 lines of getters, setters, equals, hashCode, and toString, you write:
 ```java
@@ -41,13 +41,13 @@ Done. All the methods are generated.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Records enforce **immutability**: all fields are `private final`. You get accessors but no setters. This models **value semantics** — two `Point(1, 2)` are equal regardless of whether they're the same object. Records are ideal for DTOs, command/event objects, value objects, and method return values where immutability is desirable.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **What the compiler generates:**
 ```java
@@ -78,19 +78,19 @@ final class Point {
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Java has always been verbose for data classes. Lombok's `@Data` was the community workaround. Records are the language-level answer — not via code generation, but as a first-class Java feature. They also integrate with **sealed classes** and **pattern matching** (Java 21+ switch patterns).
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > A record is a **named tuple** in Java. In Python you'd write `Point = namedtuple('Point', ['x', 'y'])`. In Java 16+, `record Point(int x, int y) {}` does the same — a named container for a fixed set of values, where the values define identity and equality.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Record restrictions:
@@ -124,7 +124,7 @@ Serialization: Records implement Serializable if specified
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Records] ──immutable data carriers──► [Value Objects / DTOs]
@@ -141,7 +141,7 @@ Serialization: Records implement Serializable if specified
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // 1. Basic record
@@ -195,7 +195,7 @@ record Transfer(String from, String to, BigDecimal amount)
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -206,7 +206,7 @@ record Transfer(String from, String to, BigDecimal amount)
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Mutable components create mutable records**
 ```java
@@ -227,7 +227,7 @@ Records and Lombok `@Data` on the same class causes compilation issues. Pick one
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Sealed Classes (#063)** — combine with records to create algebraic data types (ADTs)
 - **Pattern Matching (#064)** — deconstruct record components in `switch`/`instanceof`
@@ -237,7 +237,7 @@ Records and Lombok `@Data` on the same class causes compilation issues. Pick one
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #062 | Category: Java Language | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -246,7 +246,7 @@ Records and Lombok `@Data` on the same class causes compilation issues. Pick one
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why are records unsuitable as JPA/Hibernate `@Entity` classes?
 **Q2.** If a record component is a `List`, why is the record not deeply immutable, and how do you fix it?

@@ -4,39 +4,46 @@ title: "Object Header"
 parent: "Java Fundamentals"
 nav_order: 12
 permalink: /java/object-header/
+number: "012"
+category: JVM Internals
+difficulty: ★★★
+depends_on: JVM, Heap Memory, Bytecode
+used_by: GC, Synchronized, JIT Compiler
+tags: #java, #jvm, #memory, #internals, #deep-dive
 ---
+
+# 012 — Object Header
+
+`#java` `#jvm` `#memory` `#internals` `#deep-dive`
+
 ⚡ TL;DR — The hidden metadata prepended to every heap object containing identity, locking state, GC age, and type pointer — invisible in Java source but costs memory on every single object you create.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #012         │ Category: JVM Internals              │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ [[JVM]] [[Heap Memory]] [[Bytecode]] │                          │
-│ Used by:     │ [[GC]] [[Synchronized]] [[JIT]]      │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #012 | Category: JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Heap Memory, Bytecode | |
+| **Used by:** | GC, Synchronized, JIT Compiler | |
 
 ---
 
-#### 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Every Java object on the heap is prepended with an **Object Header** — a JVM-managed metadata block invisible to Java source code. It consists of two machine-word fields: the **Mark Word** (stores identity hashcode, GC age, locking state, and GC flags) and the **Klass Pointer** (reference to the class metadata in Metaspace). Arrays additionally carry a third field: the **array length**. On a 64-bit JVM with compressed OOPs, the header is typically 12 bytes; without compression, 16 bytes.
 
 ---
 
-#### 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Every object you create has a **hidden preamble** attached by the JVM — before your fields even start — that stores bookkeeping information the JVM needs for locking, GC, and type checking. You never see it in Java code, but it's always there.
 
 ---
 
-#### 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 When you write `new Order()`, you think about the fields inside `Order`. But the JVM prepends extra bytes to every object — a header containing: what class this object belongs to, how old it is for GC purposes, what its identity hashcode is, and whether any thread currently holds a lock on it. This header enables `synchronized`, `instanceof`, GC age tracking, and identity hashCode — all without you doing anything. The cost: every object pays this overhead regardless of how small it is.
 
 ---
 
-#### 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The problem:**
 
@@ -77,7 +84,7 @@ JVM overhead: 12 bytes (60% overhead for small objects!)
 
 ---
 
-#### ❓ Why Does This Exist — Why Before What
+### ❓ Why Does This Exist — Why Before What
 
 **Without the Object Header:**
 
@@ -128,7 +135,7 @@ instanceof / virtual method dispatch
 
 ---
 
-#### 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of every Java object as a **filed document in a government office**.
 > 
@@ -145,81 +152,17 @@ instanceof / virtual method dispatch
 
 ---
 
-#### ⚙️ How It Works — Mark Word Deep Dive
+### ⚙️ How It Works — Mark Word Deep Dive
 
 The Mark Word is the most complex part — it's **multipurpose**, meaning the same 64 bits mean different things depending on object state:
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                    MARK WORD (64-bit JVM)                        │
-│                    8 bytes — always present                      │
-├──────────────────────────────────────────────────────────────────┤
-│ State           │ Bit layout (simplified)                        │
-├─────────────────┼──────────────────────────────────────────────  │
-│ Unlocked        │ [identity hashcode: 31b][unused:25b][age:4b]   │
-│                 │ [biased:1b=0][lock:2b=01]                      │
-├─────────────────┼────────────────────────────────────────────────│
-│ Biased Locked   │ [thread_id:54b][epoch:2b][age:4b]              │
-│                 │ [biased:1b=1][lock:2b=01]                      │
-├─────────────────┼────────────────────────────────────────────────│
-│ Lightweight     │ [ptr_to_lock_record:62b][lock:2b=00]           │
-│ Locked          │ (points to stack-allocated lock record)        │
-├─────────────────┼────────────────────────────────────────────────│
-│ Heavyweight     │ [ptr_to_monitor:62b][lock:2b=10]               │
-│ Locked          │ (points to OS mutex — ObjectMonitor)           │
-├─────────────────┼────────────────────────────────────────────────│
-│ GC Marked       │ [forwarding_ptr:62b][lock:2b=11]               │
-│ (during GC)     │ (points to new location during copying GC)     │
-└──────────────────────────────────────────────────────────────────┘
-
-Last 2 bits = lock state indicator:
-  00 → lightweight locked
-  01 → unlocked or biased
-  10 → heavyweight locked (inflated)
-  11 → GC mark (forwarding pointer)
-```
-
 **Klass Pointer:**
-
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                   KLASS POINTER                                  │
-│                                                                  │
-│  Points to class metadata in Metaspace                          │
-│                                                                  │
-│  64-bit JVM, no compression: 8 bytes                            │
-│  64-bit JVM, compressed OOPs (-XX:+UseCompressedOops):          │
-│    4 bytes (default on heaps ≤ 32GB)                            │
-│                                                                  │
-│  Used by:                                                        │
-│  • instanceof checks → follow klass ptr → check type hierarchy  │
-│  • Virtual method dispatch → klass has vtable                   │
-│  • GC → klass knows object size for correct copying             │
-└──────────────────────────────────────────────────────────────────┘
-```
 
 **Array Header — extra field:**
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                    ARRAY OBJECT HEADER                           │
-│                                                                  │
-│  Mark Word      8 bytes                                          │
-│  Klass Pointer  4 bytes (compressed)                            │
-│  Array Length   4 bytes  ← EXTRA field for arrays only          │
-│  ─────────────────────                                           │
-│  Total:        16 bytes                                          │
-│                                                                  │
-│  Why needed: GC must know array size to copy it correctly        │
-│  int[] arr = new int[100]                                        │
-│  → header stores length=100                                      │
-│  → GC knows: copy 16 + (100 × 4) = 416 bytes                    │
-└──────────────────────────────────────────────────────────────────┘
-```
-
 ---
 
-#### 🔄 How It Connects
+### 🔄 How It Connects
 
 ```
 new Order()
@@ -238,7 +181,7 @@ Heap allocates: [Mark Word][Klass Ptr][fields...]
 
 ---
 
-#### 💻 Code Example
+### 💻 Code Example
 
 **Measuring object header cost with JOL (Java Object Layout):**
 
@@ -413,7 +356,7 @@ java -Xmx33g myapp
 
 ---
 
-#### 🔁 Locking State Transitions via Mark Word
+### 🔁 Locking State Transitions via Mark Word
 
 ```
 Object created
@@ -450,7 +393,7 @@ Lock released
 
 ---
 
-#### ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 |Misconception|Reality|
 |---|---|
@@ -462,7 +405,7 @@ Lock released
 |"Header is part of your class"|Header is **JVM-managed** — invisible to Java reflection|
 |"Biased locking is still used"|**Removed in Java 21** — don't rely on biased lock behaviour|
 
-#### 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **1. The 32GB heap cliff**
 
@@ -557,7 +500,7 @@ Integer[] boxed = new Integer[1000];
 
 ---
 
-#### 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - `Heap Memory` — where object headers live
 - `Mark Word` — first field of header; locking + GC + hash
@@ -573,35 +516,11 @@ Integer[] boxed = new Integer[1000];
 
 ---
 
-#### 📌 Quick Reference Card
-
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Hidden 12-16 byte JVM metadata block on   │
-│              │ every heap object — enables locking, GC,  │
-│              │ type checking, identity hash              │
-├──────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Always present — understand it to reason  │
-│              │ about memory costs, locking behaviour,    │
-│              │ and GC efficiency                         │
-├──────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Avoid many tiny objects in               │
-│              │ memory-sensitive paths — header overhead  │
-│              │ dominates small objects                   │
-├──────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Every object pays a 12-byte JVM tax —   │
-│              │  the smaller the object, the heavier      │
-│              │  the tax"                                 │
-├──────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Mark Word → Compressed OOPs →             │
-│              │ synchronized internals → GC Forwarding →  │
-│              │ Project Valhalla → JOL                    │
-└──────────────────────────────────────────────────────────┘
-```
+### 📌 Quick Reference Card
 
 ---
 
-#### 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** A `Boolean` object (wrapping a single `true`/`false` bit) takes **16 bytes** on the heap — 12 bytes header, 1 byte field, 3 bytes padding. Yet a `boolean` primitive takes 1 byte. Now consider a `List<Boolean>` with 1 million entries vs a `boolean[]` with 1 million entries. Calculate the exact memory difference — and what does this tell you about the real cost of autoboxing in high-throughput systems?
 

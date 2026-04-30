@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "E2E Test"
 parent: "Testing"
@@ -25,25 +25,25 @@ tags: #testing #intermediate #e2e #quality
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 End-to-End (E2E) tests verify the complete behavior of an application from a user's perspective. They exercise the full stack — UI, API gateway, backend services, and database — in a realistic environment, simulating real user interactions. E2E tests are the most expensive, slowest, and most brittle tests in the Test Pyramid, but they provide the highest confidence that the system works as users experience it.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 E2E tests simulate a real user: **open the browser, click through the app, verify the result** — the whole system working end-to-end, just like a user would experience it.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 E2E tests sit at the top of the Test Pyramid — fewest in number, highest in cost. They require a complete environment (all services running), are slow (seconds to minutes each), and are fragile to UI changes. But they are the only tests that confirm the entire user journey works — login to checkout, search to purchase, signup to first task. Use them for critical happy paths only.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 All unit and integration tests pass, but the user still can't complete a checkout because the backend and frontend are integrated incorrectly. No lower-level test exercised the full path.
@@ -66,19 +66,19 @@ All layers exercised: browser → frontend → API → DB → email
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Unit and integration tests verify individual components and pairs of components. E2E tests verify the complete chain. They catch bugs that only emerge from the combination of all parts — routing issues, auth token passing, UI form validation missing on backend, etc.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > E2E tests are like a mystery shopper. They walk in the front door, go through every step of the customer journey, and verify the experience matches expectations — from first impression to final receipt. Unlike unit tests (checking the kitchen) or integration tests (checking the kitchen + dining room), mystery shoppers test the complete restaurant visit.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 E2E test execution:
@@ -101,7 +101,7 @@ E2E test execution:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Unit Test]  <-- 100s of tests, milliseconds
@@ -112,7 +112,7 @@ E2E test execution:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Playwright Java — E2E test for checkout flow
@@ -151,7 +151,7 @@ class CheckoutE2ETest {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -162,7 +162,7 @@ class CheckoutE2ETest {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Too Many E2E Tests**
 Hundreds of E2E tests = 2-hour build that blocks deployment.
@@ -178,7 +178,7 @@ Fix: isolated test environments per run; reset state between test runs; use sepa
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Test Pyramid** — E2E tests are the narrow top; keep them few
 - **Integration Test** — catches component-level issues before E2E
@@ -188,7 +188,7 @@ Fix: isolated test environments per run; reset state between test runs; use sepa
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #415 | Category: Testing | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -197,7 +197,7 @@ Fix: isolated test environments per run; reset state between test runs; use sepa
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why should E2E tests only cover critical happy paths rather than all scenarios?  
 **Q2.** What makes E2E tests inherently more brittle than unit tests?  

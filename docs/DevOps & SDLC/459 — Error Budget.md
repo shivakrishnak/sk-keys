@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Error Budget"
 parent: "DevOps & SDLC"
@@ -25,25 +25,25 @@ tags: #devops #sdlc #advanced #sre #reliability
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 An Error Budget is the maximum amount of unreliability permitted by a Service Level Objective (SLO) over a given time window. It is calculated as `Error Budget = 100% - SLO target`. The error budget provides a data-driven mechanism to balance the competing goals of shipping velocity and system reliability — when the budget is healthy, teams deploy freely; when it is exhausted, reliability work takes priority.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Error budget is **how much failure you're allowed**. If your SLO is 99.9% uptime, your error budget is 0.1% downtime (about 43 minutes per month). Spend it wisely — on incidents, deployments, and experiments. When it's gone, stop deploying until next month.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 The error budget converts an abstract reliability goal (SLO) into a concrete resource that teams manage collaboratively. Dev teams want to spend budget on deployments (every deploy risks breaking something). SRE teams want to keep budget for incidents. When both teams share responsibility for managing the budget, the incentive conflict between "ship fast" and "stay stable" dissolves — they're working from the same data.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 "100% uptime" is impossible and too costly. But "be as reliable as possible" is unmeasurable and leads to perpetual conflict between dev (wants to ship) and ops (wants stability). Neither side has a principled way to say when enough is enough.
@@ -65,19 +65,19 @@ Month scenario:
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without error budgets, reliability goals are either aspirational (ignored) or create permanent conflict between teams. Error budgets make reliability a measurable, shared resource — creating alignment instead of finger-pointing.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Error budget is like a fuel tank for a race car. The SLO sets the tank size (how much fuel = unreliability you can afford). Every incident, every risky deployment, and every planned maintenance burns fuel. When the tank is full, race freely. As it empties, become more conservative. When it reaches zero, pit stop: refuel (fix the system) before racing again.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Error Budget Calculation:
@@ -105,7 +105,7 @@ Burn Rate Alert:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [SLO defined] --> [Error Budget calculated]
@@ -121,7 +121,7 @@ Burn Rate Alert:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```python
 # Error budget tracking — Python calculation
@@ -184,7 +184,7 @@ groups:
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Define SLO → calculate error budget for the month
@@ -204,7 +204,7 @@ groups:
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -215,7 +215,7 @@ groups:
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: SLO Too Strict (Budget Always Exhausted)**
 100% error budgets consumed every month → perpetual deploy freeze.
@@ -231,7 +231,7 @@ Fix: error budget policies are agreed cross-functionally before any incident; it
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **SRE** — the practice that invented and uses error budgets
 - **SLO (Service Level Objective)** — defines the budget size
@@ -241,7 +241,7 @@ Fix: error budget policies are agreed cross-functionally before any incident; it
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #459 | Category: DevOps & SDLC | Difficulty: ★★★ |
 |:---|:---|:---|
@@ -250,7 +250,7 @@ Fix: error budget policies are agreed cross-functionally before any incident; it
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** How does the burn rate of an error budget differ from the absolute remaining balance, and why do you need both?  
 **Q2.** What happens organizationally when a team's error budget is policy-enforced vs not enforced?  

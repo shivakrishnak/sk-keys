@@ -1,19 +1,35 @@
-﻿---
+---
 layout: default
 title: "Transaction Isolation Levels"
 parent: "Spring Framework"
 nav_order: 129
 permalink: /spring/transaction-isolation-levels/
+number: "129"
+category: Spring & Spring Boot
+difficulty: ★★★
+depends_on: @Transactional, Database Transactions
+used_by: Concurrency control, dirty read prevention
+tags: #spring, #database, #internals, #advanced
 ---
+
+# 129 — Transaction Isolation Levels
 
 `#spring` `#database` `#internals` `#advanced`
 
 ⚡ TL;DR — Transaction Isolation Levels control how much concurrent transactions can "see" each other's uncommitted data — trading consistency for performance/concurrency.
-## 📘 Textbook Definition
+
+| #129 | Category: Spring & Spring Boot | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | @Transactional, Database Transactions | |
+| **Used by:** | Concurrency control, dirty read prevention | |
+
+---
+
+### 📘 Textbook Definition
 Transaction isolation levels define the degree to which one transaction must be isolated from changes made by concurrent transactions. SQL standard defines four levels: READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ, and SERIALIZABLE, each preventing different concurrency anomalies (dirty reads, non-repeatable reads, phantom reads).
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 Isolation level answers: "If another transaction is changing data right now, can my transaction see those in-progress changes?" Higher isolation = more consistency; lower isolation = better performance.
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 **Concurrency anomalies:**
 ```
 Dirty Read     — reading uncommitted changes (another tx might rollback)
@@ -29,7 +45,7 @@ READ_COMMITTED     |    ✓        |    ✗        |   ✗   ← Postgres defaul
 REPEATABLE_READ    |    ✓        |    ✓        |   ✗   ← MySQL InnoDB default
 SERIALIZABLE       |    ✓        |    ✓        |   ✓   ← Full isolation (slowest)
 ```
-## 💻 Code Example
+### 💻 Code Example
 ```java
 // Set isolation level with @Transactional
 @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -47,16 +63,16 @@ public BigDecimal calculateBalance(Long accountId) {
     return credits.subtract(debits); // no non-repeatable read possible
 }
 ```
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | Higher isolation = always better | Higher isolation = more locking = less concurrency = slower |
 | SERIALIZABLE prevents all anomalies | Yes, but at the cost of effectively serializing all transactions |
 | Isolation level is set in Spring | Spring passes it to the DB; the DB enforces it |
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 - **[@Transactional](./127 — @Transactional.md)** — annotation that sets isolation level
 - **[Transaction Propagation](./128 — Transaction Propagation.md)** — how transactions compose
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+
 | READ_UNCOMMITTED | Sees uncommitted changes — avoid in production  |

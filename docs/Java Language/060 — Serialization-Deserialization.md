@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Serialization / Deserialization"
 parent: "Java Language"
@@ -25,25 +25,25 @@ tags: #java #intermediate #serialization #io #security
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Java serialization is the process of converting an object's state to a byte sequence (`ObjectOutputStream`), and deserialization is the reverse — reconstructing the object from bytes (`ObjectInputStream`). A class must implement `java.io.Serializable` (a marker interface). Fields marked `transient` are excluded. The process is defined by `serialVersionUID` for version control.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Serialization is **saving an object to bytes**. Deserialization is **loading it back**. Think of it as freezing an object (serialize) and thawing it (deserialize) — to store to disk, send over a network, or put in a cache.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Java serialization is automatic — implement `Serializable`, use `ObjectOutputStream.writeObject()`, done. But this automatic nature is dangerous: deserializing untrusted bytes can execute **arbitrary code** (gadget chains). Modern systems use JSON (Jackson), binary formats (Protobuf, Avro), or explicit DTOs rather than Java native serialization.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **What the JVM serializes:**
 ```
@@ -67,19 +67,19 @@ readObject() can call custom readResolve(), readObject() methods
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Pre-1990s distributed systems needed to pass objects between JVMs — over RMI, JMS, CORBA. Java's built-in serialization was the solution: automatic, no schema needed, handles object graphs (circular references). It was convenient — and that convenience became a security liability.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Serialization is like **cryogenics**: you freeze a person (object) completely — all their memories, state, connections. The frozen state can be stored or transported. Thawing (deserializing) restores them exactly. But if an attacker tampers with the cryo-pod (the byte stream) before thawing, strange things happen when they wake up — that's the deserialization vulnerability.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Serialize:
@@ -106,7 +106,7 @@ Object graph handling:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Java Serialization] ─uses─► [Serializable marker interface]
@@ -123,7 +123,7 @@ Object graph handling:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // 1. Basic serialization
@@ -179,7 +179,7 @@ ois.setObjectInputFilter(filter);
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -190,7 +190,7 @@ ois.setObjectInputFilter(filter);
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Critical: Never deserialize untrusted bytes**
 CVE-2015-4852 (WebLogic), CVE-2015-7501 (Apache Commons Collections) — real RCE exploits via Java deserialization gadget chains. Affected JBoss, WebSphere, WebLogic.
@@ -216,7 +216,7 @@ class Service implements Serializable {
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **SerialVersionUID (#061)** — version control for serialization compatibility
 - **Reflection (#058)** — serialization uses reflection internally
@@ -227,7 +227,7 @@ class Service implements Serializable {
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #060 | Category: Java Language | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -236,7 +236,7 @@ class Service implements Serializable {
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why can deserializing untrusted bytes lead to Remote Code Execution — what mechanism makes this possible?
 **Q2.** What happens if you accidentally add a field to a `Serializable` class and there is no explicit `serialVersionUID`?

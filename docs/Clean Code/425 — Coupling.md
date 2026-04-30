@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Coupling"
 parent: "Clean Code"
@@ -25,25 +25,25 @@ tags: #cleancode #architecture #foundational
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Coupling is the measure of interdependence between software modules. Tight (high) coupling means modules depend heavily on each other's internal details, making changes risky. Loose (low) coupling means modules interact through stable interfaces, making them independently changeable and testable.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Coupling is about **how much modules know about each other**. Tight coupling = change one thing, break another. Loose coupling = change freely without fear.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 When modules are tightly coupled, a change in one ripples through many others. Loose coupling is achieved by depending on abstractions (interfaces) rather than concrete implementations, minimizing the number of dependencies, and keeping what each module exposes to a minimum. The goal is that modules can evolve independently.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Systems where classes directly instantiate and call other concrete classes become rigid. You cannot change one module without changing all its callers.
@@ -66,19 +66,19 @@ Loose coupling:
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without loose coupling, you cannot unit test in isolation (can't mock), cannot swap implementations (PayPal to Stripe), and cannot reuse modules independently. Every change becomes a system-wide risk.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of electrical outlets and plugs. The outlet (module) doesn't know what device is plugged in — it only exposes a standard interface (socket). Any device with the right plug works. That's loose coupling via a stable interface.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 Coupling types (loosest to tightest):
 
@@ -94,7 +94,7 @@ Content       — one directly modifies another's internals       (tightest)
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
         [DIP]
@@ -106,7 +106,7 @@ Content       — one directly modifies another's internals       (tightest)
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // TIGHT coupling — OrderService depends on concrete PayPalGateway
@@ -143,7 +143,7 @@ OrderService svc = new OrderService(new StripeGateway());
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Module A needs Module B
@@ -158,7 +158,7 @@ OrderService svc = new OrderService(new StripeGateway());
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -169,7 +169,7 @@ OrderService svc = new OrderService(new StripeGateway());
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Circular Dependencies**
 A depends on B, B depends on A — even through interfaces. The build or wiring fails.
@@ -185,7 +185,7 @@ Fix: split the god object; route communication through interfaces or events.
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Cohesion** — the twin dimension; aim for high cohesion + low coupling
 - **DIP (Dependency Inversion Principle)** — the principle that enforces loose coupling
@@ -195,7 +195,7 @@ Fix: split the god object; route communication through interfaces or events.
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #425 | Category: Clean Code | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -204,7 +204,7 @@ Fix: split the god object; route communication through interfaces or events.
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between afferent coupling (Ca) and efferent coupling (Ce)?  
 **Q2.** How does event-driven architecture reduce coupling compared to direct method calls?  

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Encapsulation"
 parent: "Clean Code"
@@ -25,25 +25,25 @@ tags: #cleancode #oop #foundational
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Encapsulation is the OOP principle of bundling data (fields) and the behavior that operates on it (methods) into a single unit (class), and controlling access to the internal state through visibility modifiers. It enforces invariants by ensuring state can only be changed through controlled methods that validate preconditions.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Encapsulation means **keeping the inside of a class private and only allowing access through defined doors (methods)**. It prevents external code from putting the object into an invalid state.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Without encapsulation, any code anywhere can read and modify an object's fields directly — creating invalid states, hard-to-find bugs, and fragile code. Encapsulation enforces invariants by putting all state changes through methods that validate preconditions before mutating data.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 If fields are public, anyone can set `name = null`, `age = -5`, `balance = -1000000`. Invariants cannot be enforced from outside.
@@ -65,19 +65,19 @@ public void withdraw(int amount) {
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without encapsulation, objects cannot enforce the rules about what values they hold. Every caller must remember to validate — and eventually someone will forget, leading to data corruption and production incidents.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of a vending machine. You interact with it through buttons and a coin slot — the internal mechanism is completely hidden. You cannot directly grab items from the shelf or reach into the cash box. The machine controls its own state and enforces its own rules.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Visibility levels in Java (most restrictive to least):
@@ -93,7 +93,7 @@ Only expose what callers strictly need via public methods.
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
      [External Code]
@@ -105,7 +105,7 @@ Only expose what callers strictly need via public methods.
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // BAD — no encapsulation, state can be corrupted externally
@@ -145,7 +145,7 @@ class BankAccount {
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Define object's invariants (rules that must always hold)
@@ -161,7 +161,7 @@ class BankAccount {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -172,7 +172,7 @@ class BankAccount {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Anemic Domain Model**
 Classes with all-public getters/setters and no behavior. Any caller can build invalid state externally.
@@ -193,7 +193,7 @@ Fix: wrap in a DTO, record, or interface that represents the caller's view.
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Abstraction** — encapsulation implements abstraction for state management
 - **Cohesion** — encapsulated classes tend to be more cohesive
@@ -203,7 +203,7 @@ Fix: wrap in a DTO, record, or interface that represents the caller's view.
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #427 | Category: Clean Code | Difficulty: ★☆☆ |
 |:---|:---|:---|
@@ -212,7 +212,7 @@ Fix: wrap in a DTO, record, or interface that represents the caller's view.
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why is a class with only public getters/setters considered to have broken encapsulation?  
 **Q2.** How do Java Records handle encapsulation differently from regular mutable classes?  

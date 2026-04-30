@@ -1,19 +1,35 @@
-﻿---
+---
 layout: default
 title: "Lazy vs Eager Loading"
 parent: "Spring Framework"
 nav_order: 131
 permalink: /spring/lazy-vs-eager-loading/
+number: "131"
+category: Spring & Spring Boot
+difficulty: ★★☆
+depends_on: JPA, N+1 Problem
+used_by: @OneToMany, @FetchType, Hibernate SQL optimization
+tags: #spring, #database, #performance, #intermediate
 ---
+
+# 131 — Lazy vs Eager Loading
 
 `#spring` `#database` `#performance` `#intermediate`
 
 ⚡ TL;DR — Lazy loading fetches associated entities only when accessed; Eager loading fetches them immediately in the same query — trading upfront cost for potential N+1 risk.
-## 📘 Textbook Definition
+
+| #131 | Category: Spring & Spring Boot | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JPA, N+1 Problem | |
+| **Used by:** | @OneToMany, @FetchType, Hibernate SQL optimization | |
+
+---
+
+### 📘 Textbook Definition
 In JPA/Hibernate, **Lazy Loading** (`FetchType.LAZY`) defers loading of an association until it is first accessed at runtime, using a proxy. **Eager Loading** (`FetchType.EAGER`) fetches the associated entities immediately as part of the parent query using a JOIN. The JPA defaults are: `@ManyToOne` and `@OneToOne` → EAGER; `@OneToMany` and `@ManyToMany` → LAZY.
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 Lazy = "load only when I ask for it." Eager = "load everything right now when loading the parent." Lazy is usually faster but requires an open session; Eager is simpler but may load data you don't need.
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 ```sql
 -- LAZY: only fires when you call order.getCustomer().getName()
 SELECT * FROM orders;                    -- initial
@@ -28,7 +44,7 @@ SELECT o.*, c.* FROM orders o JOIN customers c ON o.customer_id = c.id
 @OneToMany       → LAZY  (good default)
 @ManyToMany      → LAZY  (good default)
 ```
-## 💻 Code Example
+### 💻 Code Example
 ```java
 @Entity
 public class Order {
@@ -53,16 +69,16 @@ public OrderDto getOrderDetails(Long id) {
 Order order = orderRepo.findById(1L).get();  // transaction ends here
 order.getCustomer().getName();  // LazyInitializationException!
 ```
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | EAGER is always safer | EAGER always joins — causes unnecessary data loading and slows every query |
 | LAZY causes LazyInitializationException always | Only when accessed OUTSIDE an active Hibernate session/transaction |
 | @ManyToOne default is LAZY | JPA default for @ManyToOne is EAGER — explicitly change to LAZY |
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 - **[N+1 Problem](./130 — N+1 Problem.md)** — the main risk of LAZY loading naively
 - **[@Transactional](./127 — @Transactional.md)** — Hibernate session must be open for LAZY loading
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+
 | LAZY        | Load on first access — efficient, N+1 risk          |

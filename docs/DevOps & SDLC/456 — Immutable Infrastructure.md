@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Immutable Infrastructure"
 parent: "DevOps & SDLC"
@@ -25,25 +25,25 @@ tags: #devops #sdlc #intermediate #reliability
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Immutable Infrastructure is a deployment paradigm where infrastructure components (servers, containers, VM images) are never modified after they are deployed. Any change requires building a new artifact from scratch, deploying it, and replacing the old one. The old infrastructure is discarded rather than patched, ensuring every running instance is a known, version-controlled artifact.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Immutable infrastructure means: **never patch a running server — replace it**. Instead of SSH-ing in and installing a fix, you build a new server image with the fix, deploy it, and kill the old one.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 The alternative to immutable infrastructure is mutable infrastructure — patching running servers over time. Over months, every server accumulates small differences: a package here, a config change there. They become "snowflakes" — unique, unreproducible, and fragile. Immutable infrastructure prevents drift by making servers disposable artifacts, like Docker images: every version is a clean build from a known baseline.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Patching servers over time creates configuration drift. Two servers that started identical diverge over months of patching. You cannot reproduce a server exactly. "It worked on the staging server" becomes meaningless.
@@ -64,19 +64,19 @@ Immutable (good):
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without immutable infrastructure, configuration drift makes environments unreliable and hard to reproduce. Debugging production is harder because you can't be sure the server is in the state you expect. Security patches applied inconsistently across servers leave some unpatched.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of deployed servers like printed documents. You don't correct a mistake by scribbling on the printed page — you fix the template and reprint. Similarly, you don't fix a running server by SSHing in — you fix the Dockerfile or image configuration and rebuild. The running instance is immutable; the template is where changes happen.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Immutable server approach:
@@ -100,7 +100,7 @@ Immutable server approach:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [IaC + Dockerfile declares state]
@@ -116,7 +116,7 @@ Immutable server approach:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```dockerfile
 # Immutable Docker image — every change = new image version
@@ -160,7 +160,7 @@ spec:
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Requirement: update Java version in all app servers
@@ -182,7 +182,7 @@ spec:
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -193,7 +193,7 @@ spec:
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: App State Written to Instance Disk**
 Log files, uploads, or database files stored on the instance disk are lost on replacement.
@@ -209,7 +209,7 @@ Fix: enforce read-only SSH or bastion host with session recording; any fix must 
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **IaC (Infrastructure as Code)** — the tooling that builds immutable images
 - **GitOps** — enforces immutability by reverting any manual cluster changes
@@ -219,7 +219,7 @@ Fix: enforce read-only SSH or bastion host with session recording; any fix must 
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #456 | Category: DevOps & SDLC | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -228,7 +228,7 @@ Fix: enforce read-only SSH or bastion host with session recording; any fix must 
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** How does immutable infrastructure change the approach to debugging production issues?  
 **Q2.** What must be externalised from an application before it can be deployed as truly immutable infrastructure?  

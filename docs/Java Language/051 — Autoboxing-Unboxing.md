@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Autoboxing / Unboxing"
 parent: "Java Language"
@@ -25,25 +25,25 @@ tags: #java #foundational #internals
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 **Autoboxing** is the automatic conversion of a primitive type to its corresponding wrapper class (`int` → `Integer`, `double` → `Double`, etc.) when required by the context (e.g., adding to a collection). **Unboxing** is the reverse: automatic extraction of the primitive value from a wrapper object. Both are performed by the Java compiler, which inserts the necessary conversion calls transparently.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Java can automatically wrap an `int` into an `Integer` (autoboxing) and unwrap an `Integer` back into an `int` (unboxing) — so you can put primitives into collections without manual conversion.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Since generic collections like `List<Integer>` cannot hold primitives directly (generics are erased to `Object`), Java transparently calls `Integer.valueOf(42)` when you write `list.add(42)`. The convenience is real, but the cost is real too: each autoboxing creates a heap object, which means GC pressure and potential `NullPointerException` when unboxing a null wrapper.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Java has both primitives (`int`, `double`) for performance and object wrappers (`Integer`, `Double`) for use with generics and collections. Manually converting between them is verbose.
@@ -62,13 +62,13 @@ int val = list.get(0).intValue();   // unboxing
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Autoboxing is like an automatic coin wrapper at a bank. You pour in loose coins (primitives), the machine wraps them into rolls (wrapper objects). Unboxing is opening the roll to get the coins back. The bank (JVM) handles the wrapping automatically — but every wrap/unwrap takes a small amount of time.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Autoboxing: primitive → wrapper
@@ -90,7 +90,7 @@ Integer Cache (important!):
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Autoboxing in action
@@ -130,7 +130,7 @@ System.out.println(x.equals(y)); // true (use equals for values)
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -141,7 +141,7 @@ System.out.println(x.equals(y)); // true (use equals for values)
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Autoboxing in hot loop**
 Using `Long` (wrapper) instead of `long` (primitive) in a loop that runs millions of times.
@@ -157,7 +157,7 @@ Fix: always use `.equals()` for `Integer`, `Long`, `Double` comparisons.
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Integer Cache** — the JVM caches Integer values -128 to 127 to avoid repeated allocation
 - **Generics** — require wrapper types, making autoboxing necessary for collections
@@ -166,7 +166,7 @@ Fix: always use `.equals()` for `Integer`, `Long`, `Double` comparisons.
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #051 | Category: Java Language | Difficulty: ★☆☆ |
 |:---|:---|:---|
@@ -175,7 +175,7 @@ Fix: always use `.equals()` for `Integer`, `Long`, `Double` comparisons.
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why does unboxing a null `Integer` cause a `NullPointerException`?
 **Q2.** Why does `Integer a = 127; Integer b = 127; a == b` return `true` but not for 128?

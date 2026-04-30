@@ -4,19 +4,24 @@ title: "Happens-Before"
 parent: "Java Fundamentals"
 nav_order: 15
 permalink: /java/happens-before/
+number: "015"
+category: JVM Internals
+difficulty: ★★★
+depends_on: Java Memory Model, Memory Barrier, volatile, synchronized, Thread
+used_by: volatile, synchronized, final, Thread.start, Thread.join
+tags: #java, #jvm, #concurrency, #internals, #deep-dive
 ---
+
+# 015 — Happens-Before
+
+`#java` `#jvm` `#concurrency` `#internals` `#deep-dive`
+
 ⚡ TL;DR — The Java Memory Model's formal guarantee that all actions performed before a synchronisation point are fully visible to all actions after it — the only correct way to reason about visibility in concurrent Java code.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #015         │ Category: JVM Internals              │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ Java Memory Model, Memory Barrier,   │                          │
-│              │ volatile, synchronized, Thread        │                          │
-│ Used by:     │ volatile, synchronized, final,        │                          │
-│              │ Thread.start, Thread.join             │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #015 | Category: JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Java Memory Model, Memory Barrier, volatile, synchronized, Thread | |
+| **Used by:** | volatile, synchronized, final, Thread.start, Thread.join | |
 
 ---
 
@@ -41,26 +46,6 @@ In a multi-threaded program, without any synchronisation, there is zero guarante
 ### 🔩 First Principles Explanation
 
 **The core problem — visibility is not free:**
-
-```
-┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                          THE VISIBILITY PROBLEM                                                  │
-│                                                                                                  │
-│  CPU1 (Thread A)              CPU2 (Thread B)                                                    │
-│  ───────────────              ───────────────                                                    │
-│  write x = 1                  read x → sees 0 ???                                               │
-│  write y = 2                  read y → sees 0 ???                                               │
-│                                                                                                  │
-│  Why? Because:                                                                                   │
-│  1. CPU1's writes sit in store buffer — not yet in memory                                        │
-│  2. CPU2's reads come from its own L1 cache — stale                                              │
-│  3. Compiler reordered the writes entirely                                                       │
-│  4. JIT hoisted reads out of loops — cached in register                                          │
-│                                                                                                  │
-│  There is NO guarantee Thread B ever sees Thread A's writes                                      │
-│  without an explicit synchronisation relationship between them                                   │
-└──────────────────────────────────────────────────────────────────────────────────────────────────┘
-```
 
 **The naive solution — "just use time":**
 
@@ -99,32 +84,6 @@ If NOT (A hb→ B) AND NOT (B hb→ A):
 ### ❓ Why Does This Exist — Why Before What
 
 **Without Happens-Before:**
-
-```
-┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                     WITHOUT HAPPENS-BEFORE                                                       │
-│                                                                                                  │
-│  Problem 1: No portable concurrency model                                                        │
-│    x86 has strong memory model → code "works"                                                    │
-│    ARM has weak memory model  → same code breaks                                                 │
-│    Developer has no portable rules to follow                                                     │
-│    → write for x86, ship to ARM, random failures                                                 │
-│                                                                                                  │
-│  Problem 2: No reasoning tool                                                                    │
-│    "I wrote x before y" means nothing without HB                                                 │
-│    "I used synchronized" — but where? how?                                                       │
-│    No formal model → no way to prove code correct                                                │
-│                                                                                                  │
-│  Problem 3: Compiler optimisations become unsafe                                                 │
-│    JIT can't know which reorderings break your code                                              │
-│    → either reorder nothing (slow) or reorder everything (broken)                                │
-│    HB tells JIT exactly where it cannot reorder                                                  │
-│                                                                                                  │
-│  Problem 4: Tool vendors have no contract                                                        │
-│    Static analysers, race detectors need a formal model                                          │
-│    Without HB → can't define what a "data race" even is                                          │
-└──────────────────────────────────────────────────────────────────────────────────────────────────┘
-```
 
 **What breaks without it:**
 
@@ -169,55 +128,6 @@ If NOT (A hb→ B) AND NOT (B hb→ A):
 ### ⚙️ How It Works — The Eight HB Rules
 
 The JMM defines exactly **eight rules** that establish happens-before. These are the ONLY ways to establish HB in Java:
-
-```
-┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                        THE EIGHT HAPPENS-BEFORE RULES                                            │
-│                                                                                                  │
-│  RULE 1: PROGRAM ORDER                                                                           │
-│  Within a single thread, every action happens-before                                             │
-│  every subsequent action in that thread                                                          │
-│  a = 1; hb→ b = 2; (within same thread)                                                         │
-│  Note: only within ONE thread — no cross-thread guarantee                                        │
-│                                                                                                  │
-│  RULE 2: MONITOR LOCK (synchronized)                                                             │
-│  Unlocking a monitor happens-before every subsequent                                             │
-│  lock of that SAME monitor                                                                       │
-│  synchronized exit hb→ synchronized entry (same lock)                                           │
-│  Everything written before unlock visible after next lock                                        │
-│                                                                                                  │
-│  RULE 3: VOLATILE VARIABLE                                                                       │
-│  A write to a volatile field happens-before every                                                │
-│  subsequent read of that SAME volatile field                                                     │
-│  volatile write hb→ volatile read (same variable)                                               │
-│  Everything written before volatile write visible                                                │
-│  after volatile read                                                                             │
-│                                                                                                  │
-│  RULE 4: THREAD START                                                                            │
-│  Thread.start() on a thread T happens-before any                                                 │
-│  action in thread T                                                                              │
-│  Everything written before start() visible to new thread                                         │
-│                                                                                                  │
-│  RULE 5: THREAD TERMINATION (join)                                                               │
-│  All actions in thread T happen-before Thread.join(T)                                            │
-│  returns                                                                                         │
-│  Everything T wrote is visible to thread that called join                                        │
-│                                                                                                  │
-│  RULE 6: THREAD INTERRUPTION                                                                     │
-│  A call to interrupt(T) happens-before thread T                                                  │
-│  detects the interrupt (via InterruptedException or                                              │
-│  isInterrupted())                                                                                │
-│                                                                                                  │
-│  RULE 7: FINALIZER                                                                               │
-│  Completion of constructor happens-before start                                                  │
-│  of finalizer for that object                                                                    │
-│                                                                                                  │
-│  RULE 8: TRANSITIVITY                                                                            │
-│  If A hb→ B and B hb→ C then A hb→ C                                                            │
-│  This is what makes HB chains work across multiple                                               │
-│  synchronisation points                                                                          │
-└──────────────────────────────────────────────────────────────────────────────────────────────────┘
-```
 
 ---
 
@@ -276,25 +186,6 @@ public class HappensBeforeVolatile {
 ```
 
 **The transitivity chain — this is the key insight:**
-
-```
-┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                     TRANSITIVITY IN ACTION                                                       │
-│                                                                                                  │
-│  Thread A:                          Thread B:                                                    │
-│  ─────────                          ─────────                                                    │
-│  data = 42   ──(Rule 1)──→  ready=true ──(Rule 3)──→  read ready ──(Rule 1)──→  read data       │
-│                                                                                                  │
-│  Full chain:                                                                                     │
-│  data=42  hb→  ready=true  hb→  read(ready)  hb→  read(data)                                    │
-│                                                                                                  │
-│  By Rule 8 (transitivity):                                                                       │
-│  data=42  hb→  read(data)                                                                        │
-│                                                                                                  │
-│  Conclusion: Thread B's read of data MUST see 42                                                 │
-│  This is NOT about timing — it's about the HB chain                                              │
-└──────────────────────────────────────────────────────────────────────────────────────────────────┘
-```
 
 **Example 2 — HB via synchronized (Rule 2):**
 
@@ -420,37 +311,6 @@ public class HBNotAtomicity {
 ---
 
 ### 🔁 HB Relationship Map — All Establishes
-
-```
-┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                    WHAT ESTABLISHES HAPPENS-BEFORE                                               │
-│                                                                                                  │
-│  Action                          →  Happens-Before  →  Action                                   │
-│  ──────────────────────────────────────────────────────────────────                              │
-│  Any action in thread            →                  →  Next action in same thread                │
-│                                                                                                  │
-│  volatile WRITE of field X       →                  →  volatile READ of field X                 │
-│                                                                                                  │
-│  synchronized UNLOCK of M        →                  →  synchronized LOCK of M                   │
-│                                                                                                  │
-│  Thread.start() call             →                  →  First action in new thread                │
-│                                                                                                  │
-│  Last action in thread T         →                  →  Thread.join(T) return                    │
-│                                                                                                  │
-│  Static initializer completes    →                  →  Any thread accessing the class            │
-│                                                                                                  │
-│  Constructor completes           →                  →  Finalizer starts                          │
-│                                                                                                  │
-│  Writing to final field          →                  →  Any read after constructor exit           │
-│  in constructor                                                                                  │
-│                                                                                                  │
-│  Future.get() return             →                  →  Caller of get()                           │
-│                                                                                                  │
-│  CountDownLatch.countDown()      →                  →  CountDownLatch.await() return             │
-│                                                                                                  │
-│  CyclicBarrier.await() complete  →                  →  Actions after barrier in all threads      │
-└──────────────────────────────────────────────────────────────────────────────────────────────────┘
-```
 
 ---
 
@@ -627,31 +487,6 @@ synchronized (lock) {
 
 ### 📌 Quick Reference Card
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Formal JMM rule: if A hb→ B, everything          │
-│              │ A wrote is guaranteed visible to B —             │
-│              │ the only safe foundation for concurrent code     │
-├──────────────┼───────────────────────────────────────────────────┤
-│ USE WHEN     │ Reasoning about any cross-thread visibility:      │
-│              │ flags, shared state, object publication,         │
-│              │ result passing between threads                   │
-├──────────────┼───────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Don't assume wall-clock ordering establishes      │
-│              │ HB — it doesn't. Don't confuse HB with           │
-│              │ atomicity — volatile is not enough for           │
-│              │ compound operations like counter++               │
-├──────────────┼───────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Happens-Before is Java's contract:              │
-│              │  establish the relationship and I guarantee      │
-│              │  visibility; skip it and you're on your own"     │
-├──────────────┼───────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Java Memory Model → volatile → synchronized →    │
-│              │ Data Race → VarHandle → AtomicInteger →          │
-│              │ CompletableFuture HB chain                       │
-└──────────────────────────────────────────────────────────────────┘
-```
-
 ---
 
 ### 🧠 Think About This Before We Continue
@@ -681,4 +516,3 @@ Spring initialises beans single-threaded at startup, then serves requests on mul
 ---
 
 Next up: **016 — GC Roots** — the starting points of the garbage collector's reachability graph, what qualifies as a root, and why understanding them is essential for diagnosing memory leaks.
-

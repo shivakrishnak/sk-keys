@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Faking / Spying"
 parent: "Testing"
@@ -25,25 +25,25 @@ tags: #testing #intermediate #java #mockito
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 A **Fake** is a test double with a working but simplified implementation — an in-memory implementation of a repository, for example. A **Spy** is a test double that wraps a real object and delegates calls to it by default, while also recording calls for selective verification. Unlike mocks, spies call the real method unless explicitly stubbed.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 A **fake** is a simplified working substitute (like an in-memory database). A **spy** is a real object with recording attached — it does real work AND records what was called.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Fakes and spies occupy different positions in the test double spectrum. Fakes are handwritten implementations that work correctly but are simplified (e.g., HashMap instead of real DB). Spies are Mockito-created wrappers around real objects — the real method runs, but you can also verify specific interactions. Spies are risky: the real code runs in tests, which can cause unintended side effects.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The problem with mocks:**
 Mocks return null by default — if you forget to stub a method, the code gets null silently. This can create unrealistic test scenarios.
@@ -67,13 +67,13 @@ Test Double Spectrum:
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Fakes exist when a stub is too simplistic (needs to actually store and retrieve data) but a real implementation is too expensive. Spies exist when you need to run real code but also want to verify specific behaviors — common for legacy code where full mocking is impractical.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > **Fake**: A stage prop car that actually drives (simplified, no engine, no safety features) but allows filming real driving scenes. Works for the specific test scenario, not full production use.
 
@@ -81,7 +81,7 @@ Fakes exist when a stub is too simplistic (needs to actually store and retrieve 
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 FAKE — handwritten implementation:
@@ -109,7 +109,7 @@ SPY — Mockito wrapping real object:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Test doubles taxonomy]
@@ -122,7 +122,7 @@ SPY — Mockito wrapping real object:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // FAKE: in-memory repository for fast, realistic tests
@@ -190,7 +190,7 @@ class DiscountCalculatorSpyTest {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -201,7 +201,7 @@ class DiscountCalculatorSpyTest {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Spy Leaking Real Behavior**
 You spied a class expecting to stub one method, but forgot — the real method ran and sent 100 emails.
@@ -217,7 +217,7 @@ Fix: fakes enable fast unit/service tests; integration tests (Testcontainers) va
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Mocking** — mocks control and record interactions; fakes provide working implementations
 - **Stubbing** — configuring return values; simpler than fakes for state
@@ -227,7 +227,7 @@ Fix: fakes enable fast unit/service tests; integration tests (Testcontainers) va
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #420 | Category: Testing | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -236,7 +236,7 @@ Fix: fakes enable fast unit/service tests; integration tests (Testcontainers) va
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** When is a fake preferable to a mock + stubs for testing a repository?  
 **Q2.** What is the key risk when using `@Spy` in Mockito — and how do you mitigate it?  

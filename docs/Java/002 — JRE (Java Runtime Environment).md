@@ -4,31 +4,46 @@ title: "JRE (Java Runtime Environment)"
 parent: "Java Fundamentals"
 nav_order: 2
 permalink: /java/jre-java-runtime-environment/
+number: "002"
+category: Java & JVM Internals
+difficulty: ★☆☆
+depends_on: JVM
+used_by: JDK, Application Deployment
+tags: #java, #jvm, #internals, #foundational
 ---
-🏷️ Tags — #java #jvm #internals #foundational 
+
+# 002 — JRE (Java Runtime Environment)
+
+`#java` `#jvm` `#internals` `#foundational`
 
 ⚡ TL;DR — JVM + standard library = everything needed to run a Java program.
 
+| #002 | Category: Java & JVM Internals | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM | |
+| **Used by:** | JDK, Application Deployment | |
+
 ---
-#### 📘 Textbook Definition
+
+### 📘 Textbook Definition
 
 The JRE is a software package that provides the minimum environment required to **run** a compiled Java application. It consists of the JVM, the Java Class Library (standard library), and supporting files — but does **not** include development tools like the compiler.
 
 ---
 
-#### 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 The JRE is **everything you need to run a Java program** — but not to write or compile one. It's the "player" without the "studio."
 
 ---
 
-#### 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 When someone just wants to **run** your `.jar` file — not develop Java — they need the JRE. It bundles the JVM (the engine) with the standard Java libraries (`java.lang`, `java.util`, `java.io`, etc.) that your program depends on at runtime. Without it, the JVM wouldn't know what `ArrayList` or `String` is.
 
 ---
 
-#### 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The problem:**
 
@@ -58,7 +73,7 @@ The JRE is the **complete runtime contract** — JVM executes, standard library 
 
 ---
 
-#### 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of your Java app as a **movie file**. The JRE is the **media player + codec pack**. The player (JVM) runs the file, the codecs (standard library) decode the content. Without both, nothing plays.
 
@@ -66,7 +81,7 @@ You don't need a video editing suite (JDK) just to watch a movie.
 
 ---
 
-#### ⚙️ What's Inside the JRE
+### ⚙️ What's Inside the JRE
 
 ```
 JRE/
@@ -100,7 +115,7 @@ This allows **custom minimal JREs** via `jlink` — ship only what you use.
 
 ---
 
-#### 🔁 Where JRE Fits in the Execution Flow
+### 🔁 Where JRE Fits in the Execution Flow
 
 ```
 Developer Machine                 User / Server
@@ -118,7 +133,7 @@ Developer Machine                 User / Server
 
 ---
 
-#### 💻 Code Example — What JRE Provides at Runtime
+### 💻 Code Example — What JRE Provides at Runtime
 
 java
 
@@ -153,7 +168,6 @@ javac MyApp.java        # ❌ javac not available — needs JDK
 
 ---
 
-#### 💡 Java 9+ : JRE Is No Longer Distributed Separately
 
 This is a **critical modern reality:**
 
@@ -176,7 +190,7 @@ This is how **Docker images** for Java apps are kept lean.
 
 ---
 
-#### ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 |Misconception|Reality|
 |---|---|
@@ -187,7 +201,7 @@ This is how **Docker images** for Java apps are kept lean.
 
 ---
 
-#### 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **1. Shipping fat Docker images**
 
@@ -227,7 +241,7 @@ javac --release 11 MyApp.java   # compile for Java 11 compatibility
 
 ---
 
-#### 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - `JVM` — the execution engine inside JRE
 - `JDK` — superset of JRE; adds compiler + dev tools
@@ -239,21 +253,6 @@ javac --release 11 MyApp.java   # compile for Java 11 compatibility
 
 ---
 
-#### 📌 Quick Reference Card
-
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ JVM + Standard Library = everything       │
-│              │ needed to RUN (not develop) Java apps     │
-├──────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Deploying Java apps to servers/containers │
-├──────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ You need to compile — use JDK instead     │
-├──────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "JRE = the player; JDK = player + studio" │
-├──────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ JDK → jlink → Module System → Class Loader│
-└──────────────────────────────────────────────────────────┘
-```
+### 📌 Quick Reference Card
 
 ---

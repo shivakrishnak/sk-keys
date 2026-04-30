@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Blue-Green Deployment"
 parent: "DevOps & SDLC"
@@ -25,25 +25,25 @@ tags: #devops #sdlc #intermediate #reliability
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Blue-Green Deployment is a release strategy that maintains two identical production environments — "blue" (current live version) and "green" (new version). After deploying and validating the new version in the green environment, traffic is switched from blue to green via a load balancer or DNS change. Rollback is instant: switch traffic back to blue.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Blue-Green means you have **two identical environments**. One is live (blue), one has the new version (green). When green is ready, you flip the switch. If something breaks, you flip back immediately — zero downtime.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 The key insight is that deployment and release are separated. You can deploy the new version to the green environment at any time while blue continues serving all production traffic. Only after green is fully validated does the load balancer switch traffic. Rollback is always available and takes seconds — just point traffic back to blue.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Traditional "in-place" deployment takes the running version down, deploys the new version, and brings it back up. If the new version is broken, you're stuck halfway and need to redeploy the old version under pressure.
@@ -63,19 +63,19 @@ Rollback if needed: Blue (v1) <-- all traffic  (instant)
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without blue-green, a bad deployment means downtime while you scramble to revert. With blue-green, rollback is frictionless — flip the switch and the old version is live again in seconds, buying time to diagnose the issue.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of a runway at an airport. While planes land on runway A (blue), workers prepare runway B (green) for new conditions. When B is ready and inspected, air traffic control switches all landings to B. If B has a problem, they switch back to A immediately — no planes were disrupted.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Load Balancer / Router
@@ -96,7 +96,7 @@ Steps:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [CI/CD Pipeline]
@@ -112,7 +112,7 @@ Steps:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```yaml
 # Kubernetes blue-green with service selector swap
@@ -185,7 +185,7 @@ kubectl patch service myapp -p '{"spec":{"selector":{"version":"blue"}}}'
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. New version built and pushed to registry
@@ -204,7 +204,7 @@ kubectl patch service myapp -p '{"spec":{"selector":{"version":"blue"}}}'
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -215,7 +215,7 @@ kubectl patch service myapp -p '{"spec":{"selector":{"version":"blue"}}}'
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Database Schema Migrations**
 If green requires a new DB schema that blue is incompatible with, you cannot roll back.
@@ -231,7 +231,7 @@ Fix: automate blue teardown after green is validated stable (e.g., 1 hour after 
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Canary Deployment** — gradual shift vs blue-green's instant switch
 - **Rolling Update** — in-place gradual replacement, no parallel environment needed
@@ -241,7 +241,7 @@ Fix: automate blue teardown after green is validated stable (e.g., 1 hour after 
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #451 | Category: DevOps & SDLC | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -250,7 +250,7 @@ Fix: automate blue teardown after green is validated stable (e.g., 1 hour after 
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** How does the expand-contract database migration pattern enable safe blue-green deployments?  
 **Q2.** What is the difference between blue-green deployment and a canary release?  

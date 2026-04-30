@@ -1,21 +1,37 @@
-﻿---
+---
 layout: default
 title: "Pointcut"
 parent: "Spring Framework"
 nav_order: 121
 permalink: /spring/pointcut/
+number: "121"
+category: Spring & Spring Boot
+difficulty: ★★☆
+depends_on: Aspect, JoinPoint
+used_by: Advice, Weaving, @Pointcut expression
+tags: #spring, #internals, #intermediate
 ---
+
+# 121 — Pointcut
 
 `#spring` `#internals` `#intermediate`
 
 ⚡ TL;DR — A Pointcut is an expression that selects which method executions (join points) an advice should apply to — the "WHERE" of AOP.
-## 📘 Textbook Definition
+
+| #121 | Category: Spring & Spring Boot | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Aspect, JoinPoint | |
+| **Used by:** | Advice, Weaving, @Pointcut expression | |
+
+---
+
+### 📘 Textbook Definition
 In Spring AOP, a Pointcut is a predicate that matches join points. Pointcut expressions use AspectJ pointcut language and select method executions based on class name, method name, parameter types, annotations, access modifiers, and return types.
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 A Pointcut is the targeting rule. "Apply this advice to all methods named `save` in any `Repository` class." The pointcut is that rule.
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 Pointcuts are written in AspectJ expression language. The most common expression type is `execution(...)` which matches method calls by signature pattern. You can also match by annotation (`@annotation()`), by type (`within()`), by bean name (`bean()`), or combine expressions with `&&`, `||`, `!`.
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 **Pointcut Expression Patterns:**
 ```
 execution(modifiers? return-type declaring-type? name(params) throws?)
@@ -33,7 +49,7 @@ Examples:
  bean(orderService)
  — methods on the "orderService" bean
 ```
-## 💻 Code Example
+### 💻 Code Example
 ```java
 @Aspect @Component
 public class AuditAspect {
@@ -53,16 +69,16 @@ public class AuditAspect {
     }
 }
 ```
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | Pointcut patterns use regex | They use AspectJ expression language — different syntax |
 | `execution(* *.*(..))` matches all methods | Only matches Spring beans' public methods (proxy limitation) |
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 - **[Advice](./120 — Advice.md)** — what runs at matched join points
 - **[JoinPoint](./122 — JoinPoint.md)** — the runtime execution context
 - **[Aspect](./119 — Aspect.md)** — class that contains pointcuts and advice
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+
 | KEY IDEA    | Expression selecting which methods advice applies to |

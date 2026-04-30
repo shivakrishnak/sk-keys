@@ -1,21 +1,37 @@
-﻿---
+---
 layout: default
 title: "@Configuration / @Bean"
 parent: "Spring Framework"
 nav_order: 114
 permalink: /spring/configuration-bean/
+number: "114"
+category: Spring & Spring Boot
+difficulty: ★☆☆
+depends_on: Bean, ApplicationContext
+used_by: Auto-Configuration, Spring Boot, BeanFactory
+tags: #spring, #internals, #foundational
 ---
+
+# 114 — @Configuration @Bean
 
 `#spring` `#internals` `#foundational`
 
 ⚡ TL;DR — @Configuration marks a class as a source of bean definitions; @Bean marks a method inside it as a factory that produces a Spring-managed bean.
-## 📘 Textbook Definition
+
+| #114 | Category: Spring & Spring Boot | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Bean, ApplicationContext | |
+| **Used by:** | Auto-Configuration, Spring Boot, BeanFactory | |
+
+---
+
+### 📘 Textbook Definition
 `@Configuration` is a class-level annotation indicating that the class declares one or more `@Bean` methods and may be processed by the Spring container to generate bean definitions and service requests at runtime. `@Bean` is a method-level annotation indicating that the annotated method produces a bean to be managed by the Spring container, with the method name serving as the default bean name.
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 `@Configuration` is "this class is Spring's recipe book." `@Bean` is "this method is one recipe." Spring calls the `@Bean` methods at startup and registers what they return as beans.
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 `@Configuration` + `@Bean` is the Java-based alternative to XML bean configuration. It enables type-safe, IDE-friendly bean registration with full refactoring support. The `@Configuration` class is itself a Spring bean (a CGLIB-enhanced proxy), so calling one `@Bean` method from another returns the container-managed singleton — not a new instance.
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 **Why @Configuration classes are proxied:**
 ```java
 @Configuration
@@ -30,7 +46,7 @@ public class AppConfig {
 // Without @Configuration (using @Component instead), serviceB() would
 // create a NEW ServiceB each time — breaking singleton contract!
 ```
-## 💻 Code Example
+### 💻 Code Example
 ```java
 @Configuration
 @PropertySource("classpath:app.properties")
@@ -56,18 +72,18 @@ public class DatabaseConfig {
     public DataSource readonlyDataSource() { ... }
 }
 ```
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | @Component and @Configuration are the same | @Configuration generates a CGLIB proxy; @Component does not |
 | Calling @Bean method = new instance each time | In @Configuration class, Spring intercepts the call and returns the singleton |
 | @Bean must have unique name | Multiple @Bean methods can share a name; the last one registered wins (risky) |
 | @Configuration must import @ComponentScan | @Configuration and @ComponentScan are independent annotations |
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 - **[Bean](./107 — Bean.md)** — what @Bean methods produce
 - **[CGLIB Proxy](./116 — CGLIB Proxy.md)** — @Configuration classes are CGLIB-proxied
 - **[ApplicationContext](./105 — ApplicationContext.md)** — processes @Configuration classes
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+
 | @CONFIGURATION | Source of bean definitions — class level        |
@@ -79,7 +95,7 @@ public class DatabaseConfig {
 | ONE-LINER      | "Java-code XML — readable, type-safe bean config" |
 +------------------------------------------------------------------+
 ```
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 **Q1.** What happens if you replace `@Configuration` with `@Component` on a config class that has `@Bean` methods calling each other? What breaks?
 **Q2.** Can a `@Bean` method have parameters? How does Spring resolve them?
 **Q3.** What is `@Import` and how does it complement `@Configuration`?

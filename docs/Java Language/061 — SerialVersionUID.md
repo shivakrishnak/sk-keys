@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "SerialVersionUID"
 parent: "Java Language"
@@ -25,25 +25,25 @@ tags: #java #foundational #serialization #versioning
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 `serialVersionUID` is a `private static final long` field in a `Serializable` class that acts as a version identifier. During deserialization, the JVM compares the UID in the byte stream to the UID in the loaded class. If they differ, a `java.io.InvalidClassException` is thrown. If no UID is explicitly declared, the JVM computes one automatically based on class structure — making it fragile to any class change.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 `serialVersionUID` is the **version stamp** on serialized objects. When you serialize a `User` object, the stamp is baked into the bytes. When you deserialize, Java checks if the stamp matches the current class. Different stamp = exception. Same stamp = proceed (even if the class changed slightly).
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 The UID is your explicit contract with the serialized format. If you add a non-breaking field and keep the UID the same, old serialized data still deserializes — the new field just gets its default value. If you change the UID (or don't have one and the auto-computed UID changes), old data becomes unreadable. This is the primary migration tool for evolving serialized classes.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **Without explicit serialVersionUID:**
 ```
@@ -71,19 +71,19 @@ Change serialVersionUID to 2L only when you want to REJECT old data
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Serialized objects may be stored in databases, caches, message queues, or files and read back much later when the class has changed. Without a versioning mechanism, any class change would corrupt all stored objects. `serialVersionUID` gives you explicit control over compatibility.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > `serialVersionUID` is like a **passport version number**. When you scan someone's passport, the reader checks if the format version matches what it understands. If the government released a new passport format but you have an old reader — mismatch. The UID is your way of saying "I'm changing the format, old passports no longer valid" (increment UID) or "I added an optional field, old passports still work" (keep UID).
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Serialization writes to stream:
@@ -109,7 +109,7 @@ Auto-computed UID (if not declared):
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Serializable class] ── has ──► [serialVersionUID]
@@ -124,7 +124,7 @@ Auto-computed UID (if not declared):
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Version 1 — initial class
@@ -171,7 +171,7 @@ System.out.println(restored.email);  // null (v2 field, not in v1 bytes)
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -182,7 +182,7 @@ System.out.println(restored.email);  // null (v2 field, not in v1 bytes)
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall: Silent data loss on field removal**
 ```java
@@ -198,7 +198,7 @@ Each class in a hierarchy needs its own `serialVersionUID`. If a parent class ch
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Serialization / Deserialization (#060)** — the mechanism serialVersionUID versions
 - **InvalidClassException** — the exception thrown on UID mismatch
@@ -207,7 +207,7 @@ Each class in a hierarchy needs its own `serialVersionUID`. If a parent class ch
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #061 | Category: Java Language | Difficulty: ★☆☆ |
 |:---|:---|:---|
@@ -216,7 +216,7 @@ Each class in a hierarchy needs its own `serialVersionUID`. If a parent class ch
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** If you keep `serialVersionUID = 1L` across two versions of a class but remove a field in v2, what happens when you deserialize v1 bytes? Is there an exception?
 **Q2.** Why is relying on the auto-computed `serialVersionUID` considered dangerous?

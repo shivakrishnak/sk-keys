@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Property-Based Testing"
 parent: "Testing"
@@ -25,25 +25,25 @@ tags: #testing #advanced #property-based #quality
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Property-Based Testing (PBT) is a testing approach where instead of writing specific example inputs and expected outputs, you define invariant properties that must hold for ALL valid inputs. A PBT framework (jqwik, QuickCheck) generates hundreds or thousands of random inputs, runs the code against each, and reports any input that falsifies the property — the "shrunk" minimal failing example.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Instead of "test that sort([3,1,2]) returns [1,2,3]", you write: **"for any list, sorted output is always in ascending order"** — and the framework generates 1000 random lists to try to break that property.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Example-based tests (unit tests) verify specific cases — only the cases you thought to write. Properties describe universal truths about your code. PBT finds edge cases you never thought to write — empty lists, negative numbers, Unicode strings, extremely large inputs, boundary values — by generating them automatically. When it finds a failure, it "shrinks" the input to the minimal failing example for easy debugging.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Unit tests only test what you think to test. The bug is always in the case you didn't think to test. "I tested positive numbers; the bug was in negative numbers." "I tested normal strings; the bug was in empty strings."
@@ -70,19 +70,19 @@ Property-Based Test:
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Example-based tests are limited by imagination. Properties eliminate this limitation — the framework is an adversary trying to break your property with creative inputs. This discovers bugs in edge cases humans naturally avoid when writing examples.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > PBT is like hiring 1000 quality assurance testers at once, each choosing random but valid inputs to try to break your system. They don't follow a test script — they creatively try anything the specification allows. When one of them breaks it, they hand you the simplest possible reproduction case.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 PBT execution flow:
@@ -105,7 +105,7 @@ Good properties to write:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // jqwik — Java property-based testing framework
@@ -156,7 +156,7 @@ class SortingProperties {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -167,7 +167,7 @@ class SortingProperties {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Weak Properties**
 `@Property void always_returns_non_null(@ForAll String s) { assertThat(service.process(s)).isNotNull(); }`
@@ -184,7 +184,7 @@ Fix: configure fewer iterations in CI (`tries = 100`); run full suite nightly or
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Unit Test** — example-based testing; PBT complements it
 - **jqwik** — the leading Java PBT framework (JUnit 5 compatible)
@@ -194,7 +194,7 @@ Fix: configure fewer iterations in CI (`tries = 100`); run full suite nightly or
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #422 | Category: Testing | Difficulty: ★★★ |
 |:---|:---|:---|
@@ -203,7 +203,7 @@ Fix: configure fewer iterations in CI (`tries = 100`); run full suite nightly or
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What is "shrinking" in property-based testing and why is it essential for usability?  
 **Q2.** Give three examples of properties you could write for a stack data structure.  

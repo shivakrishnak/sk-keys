@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Cohesion"
 parent: "Clean Code"
@@ -25,25 +25,25 @@ tags: #cleancode #architecture #foundational
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Cohesion is the degree to which the elements of a module (class, method, package) belong together — how logically related and focused they are on a single purpose or concept. High cohesion means all parts contribute directly to the module's single responsibility.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Cohesion is about **how well a module sticks to one job**. High cohesion = everything inside the class belongs together. Low cohesion = class does many unrelated things.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 High cohesion means a class has a clear, single purpose. Every method and field directly supports that purpose. Low cohesion means the class juggles unrelated responsibilities — it becomes hard to understand, test, and change. Cohesion and coupling are the two fundamental dimensions of module quality. They work together: higher cohesion naturally leads to lower coupling.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Classes that grew over time by adding unrelated responsibilities become hard to understand and maintain.
@@ -63,19 +63,19 @@ High cohesion:
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without cohesion, changes to one feature accidentally break unrelated features in the same class. Tests become enormous. Reuse becomes impossible — you cannot take just the email logic without pulling in the user logic.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of a Swiss Army knife vs a chef's knife. The chef's knife does one thing perfectly — that's high cohesion. The Swiss Army knife does many things adequately — that's low cohesion. In software, the chef's knife is easier to maintain, sharpen, and reason about.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 Types of cohesion (weakest → strongest):
 
@@ -91,7 +91,7 @@ Functional     — all elements contribute to a single task (IDEAL)
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
          [SRP]
@@ -103,7 +103,7 @@ Functional     — all elements contribute to a single task (IDEAL)
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // LOW cohesion — class does too many unrelated things
@@ -129,7 +129,7 @@ class UserEmailService {
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Class starts with one responsibility
@@ -145,7 +145,7 @@ class UserEmailService {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -156,7 +156,7 @@ class UserEmailService {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: God Classes**
 Gradually adding methods to an existing class is the most common cause of low cohesion. A class that does "everything" is the hardest to test and change.
@@ -172,7 +172,7 @@ Fix: balance — group things that change together.
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **SRP (Single Responsibility Principle)** — formal principle that enforces high cohesion
 - **Coupling** — the opposite dimension; reduce both for clean modules
@@ -182,7 +182,7 @@ Fix: balance — group things that change together.
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #424 | Category: Clean Code | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -191,7 +191,7 @@ Fix: balance — group things that change together.
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Can a class have high cohesion but also high coupling? What would that look like?  
 **Q2.** What is the difference between functional cohesion and sequential cohesion?  

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Integration Test"
 parent: "Testing"
@@ -25,25 +25,25 @@ tags: #testing #intermediate #java #spring
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 An integration test verifies that multiple components interact correctly when combined — testing the integration points between modules, services, and external systems (databases, message queues, caches). Unlike unit tests, integration tests use real or realistic implementations of dependencies rather than test doubles.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Integration tests check that **different pieces of your system work together correctly** — your service actually talks to a real database and the data comes back as expected.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Where unit tests verify logic in isolation, integration tests verify that the connections between components work. A Spring Boot integration test boots the full application context, connects to a real (or containerized) database, and exercises the full stack from controller to repository. They are slower than unit tests but catch a different class of bugs — wiring, query, and configuration errors that mocks cannot reveal.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 All unit tests pass, but the system fails in production. Why? The integration points — database queries, HTTP clients, message consumers — were mocked in unit tests and never tested with real implementations.
@@ -59,19 +59,19 @@ Integration test: real DB query returns { userId: 1, name: "alice" }
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Unit tests cannot catch: SQL query bugs, JPA mapping errors, Spring bean wiring failures, serialization mismatches, or cache/queue configuration problems. Integration tests exist to catch the class of bugs that only emerge at the boundaries between components.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Integration tests are like a test drive of a newly assembled car. Unit tests verified each part (engine OK, brakes OK, steering OK). The test drive confirms the parts actually work together — the gear shift connects to the transmission, the brakes respond to the pedal, the car is complete.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Spring Boot Integration Test scope:
@@ -92,7 +92,7 @@ Spring Boot Integration Test scope:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Unit Test]  <-- tests logic in isolation
@@ -106,7 +106,7 @@ Spring Boot Integration Test scope:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Spring Boot integration test with Testcontainers
@@ -149,7 +149,7 @@ class OrderServiceIntegrationTest {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -160,7 +160,7 @@ class OrderServiceIntegrationTest {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Using H2 Instead of the Real Database**
 H2 SQL dialect differs from PostgreSQL — tests pass but the same query fails in production.
@@ -176,7 +176,7 @@ Fix: annotate integration tests with `@Transactional` to roll back after each te
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Unit Test** — faster, more isolated; integration tests complement them
 - **Testcontainers** — the library that provides real Docker-based dependencies for tests
@@ -186,7 +186,7 @@ Fix: annotate integration tests with `@Transactional` to roll back after each te
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #413 | Category: Testing | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -195,7 +195,7 @@ Fix: annotate integration tests with `@Transactional` to roll back after each te
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What class of bugs can integration tests catch that unit tests with mocks cannot?  
 **Q2.** Why should you use the same database engine (PostgreSQL) in tests as in production?  

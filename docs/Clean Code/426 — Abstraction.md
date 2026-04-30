@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Abstraction"
 parent: "Clean Code"
@@ -25,25 +25,25 @@ tags: #cleancode #oop #foundational
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Abstraction is the process of hiding internal complexity and exposing only a relevant interface to the outside world. It allows users to interact with concepts at a higher level without needing to understand underlying implementations. In OOP, it is realized through interfaces, abstract classes, and method signatures.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Abstraction means **showing what a thing does, not how it does it**. You use a car without knowing how the engine works — the steering wheel and pedals are the abstraction.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Abstraction occurs at many levels in software: a method hides lines of code, a class hides data and logic, an interface hides implementations, a microservice hides an entire subsystem. Each layer lets you work at the right level of detail without getting lost in lower-level concerns. The key benefit: you can change the implementation as long as the abstraction (interface) stays the same.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Without abstraction, every caller must understand all implementation details. Any internal change breaks all callers.
@@ -59,19 +59,19 @@ HOW it does it --> private implementation (hidden)
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without abstraction, you cannot change how something is implemented without rewriting all its callers. Code becomes tightly coupled to implementation details, making every refactoring dangerous.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > A TV remote is an abstraction. You press "Volume Up" without knowing whether the TV uses IR, RF, or Bluetooth. The interface (button) is stable; the implementation can change completely. Your finger never needs to change.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Levels of abstraction in a typical system:
@@ -88,7 +88,7 @@ A change at one level does not ripple upward.
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Implementation Details]
@@ -100,7 +100,7 @@ A change at one level does not ripple upward.
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Without abstraction: caller sorts manually — knows the HOW
@@ -146,7 +146,7 @@ class NotificationService {
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Identify what callers actually need (define the contract)
@@ -162,7 +162,7 @@ class NotificationService {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -173,7 +173,7 @@ class NotificationService {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Leaky Abstractions**
 An abstraction that forces callers to know implementation details (e.g., `IOException` from a high-level business service).
@@ -189,7 +189,7 @@ Fix: abstract at natural, stable seams in the system — not everywhere as a hab
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Encapsulation** — hides state; abstraction hides behavior complexity
 - **Polymorphism** — multiple implementations of one abstraction
@@ -199,7 +199,7 @@ Fix: abstract at natural, stable seams in the system — not everywhere as a hab
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #426 | Category: Clean Code | Difficulty: ★☆☆ |
 |:---|:---|:---|
@@ -208,7 +208,7 @@ Fix: abstract at natural, stable seams in the system — not everywhere as a hab
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What makes an abstraction "leaky"? Give an example from a standard library you use daily.  
 **Q2.** How does the Repository pattern use abstraction to isolate business logic from database details?  

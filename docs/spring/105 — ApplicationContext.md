@@ -1,36 +1,49 @@
-﻿---
+---
 layout: default
 title: "ApplicationContext"
 parent: "Spring Framework"
 nav_order: 105
 permalink: /spring/applicationcontext/
+number: "105"
+category: Spring & Spring Boot
+difficulty: ★★☆
+depends_on: BeanFactory, IoC, DI
+used_by: Spring Boot, Spring MVC, AOP, @Configuration
+tags: #spring, #springboot, #internals, #foundational
 ---
+
+# 105 — ApplicationContext
 
 `#spring` `#springboot` `#internals` `#foundational`
 
 ⚡ TL;DR — ApplicationContext is Spring's full-featured IoC container — it manages beans, resolves dependencies, fires events, handles AOP, and provides environment abstraction all in one.
 
+| #105 | Category: Spring & Spring Boot | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | BeanFactory, IoC, DI | |
+| **Used by:** | Spring Boot, Spring MVC, AOP, @Configuration | |
+
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 `ApplicationContext` is the central interface in Spring's IoC implementation. It extends `BeanFactory` and adds enterprise features including event publication, internationalization (i18n), resource loading, transparent AOP integration, and environment/profile abstraction. It is the primary entry point to Spring's container in production applications.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 ApplicationContext is the Spring container — the box that holds all your application's objects (beans), wires them together, and manages their life from startup to shutdown.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 When your Spring application starts, an `ApplicationContext` is created. It scans your code for `@Component`, `@Service`, `@Repository`, and `@Configuration` classes; creates objects (beans) for each; injects their dependencies; applies AOP proxies; and makes them available for use. It also handles events (`ApplicationEvent`), environment properties (`@Value`, `@Profile`), and resource loading (files, classpath, URLs). In Spring Boot, `SpringApplication.run()` creates and returns an `ApplicationContext` automatically.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **Why is BeanFactory not enough?**
 
@@ -56,19 +69,19 @@ BeanFactory creates beans lazily (on first `getBean()` call). ApplicationContext
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Before Spring, managing an enterprise application's objects meant complex factories, service locators, and manual wiring — thousands of lines of boilerplate. ApplicationContext provides a unified, configuration-driven object lifecycle manager that eliminates all of this. It's the single "table of truth" for what exists in your application.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of ApplicationContext as the **city government** of your application. All citizens (beans) are registered with city hall (context). The government knows who needs what services (dependencies), provides utilities (events, messaging, resources), and handles birth (instantiation) and death certificates (destruction). No citizen manages themselves — the government coordinates everything.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 ApplicationContext.refresh() sequence:
@@ -89,7 +102,7 @@ ApplicationContext.refresh() sequence:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
           [ApplicationContext]
@@ -109,7 +122,7 @@ Common implementations:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // ── Standalone (non-Boot) application ────────────────────────────────────────
@@ -162,7 +175,7 @@ public class StartupListener implements ApplicationListener<ContextRefreshedEven
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. ApplicationContext created (new / SpringApplication.run)
@@ -188,7 +201,7 @@ public class StartupListener implements ApplicationListener<ContextRefreshedEven
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -200,7 +213,7 @@ public class StartupListener implements ApplicationListener<ContextRefreshedEven
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Using ApplicationContext as a service locator**
 ```java
@@ -229,7 +242,7 @@ try (ConfigurableApplicationContext ctx =
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **[IoC (Inversion of Control)](./103 — IoC (Inversion of Control).md)** — the principle ApplicationContext implements
 - **[BeanFactory](./106 — BeanFactory.md)** — the interface ApplicationContext extends
@@ -239,7 +252,7 @@ try (ConfigurableApplicationContext ctx =
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +------------------------------------------------------------------+
@@ -258,11 +271,10 @@ try (ConfigurableApplicationContext ctx =
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between `ApplicationContext.refresh()` and `ApplicationContext.start()`? When would you call each?
 
 **Q2.** In a Spring MVC app (non-Boot), there are typically *two* ApplicationContexts — the root context and the web (DispatcherServlet) context. What beans live in each? Why?
 
 **Q3.** If `ApplicationContext` eagerly initializes all singletons at startup, what happens when a bean's required dependency is missing? At what point does the error surface — startup or first use?
-

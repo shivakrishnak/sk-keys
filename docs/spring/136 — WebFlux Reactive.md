@@ -1,21 +1,37 @@
-﻿---
+---
 layout: default
 title: "WebFlux / Reactive"
 parent: "Spring Framework"
 nav_order: 136
 permalink: /spring/webflux-reactive/
+number: "136"
+category: Spring & Spring Boot
+difficulty: ★★★
+depends_on: Reactive Streams, Project Reactor, Non-blocking I/O
+used_by: Mono Flux, Backpressure, reactive APIs
+tags: #spring, #springboot, #concurrency, #advanced
 ---
+
+# 136 — WebFlux Reactive
 
 `#spring` `#springboot` `#concurrency` `#advanced`
 
 ⚡ TL;DR — Spring WebFlux is Spring's reactive web framework that handles thousands of concurrent connections with minimal threads using non-blocking I/O and the Reactor library.
-## 📘 Textbook Definition
+
+| #136 | Category: Spring & Spring Boot | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Reactive Streams, Project Reactor, Non-blocking I/O | |
+| **Used by:** | Mono Flux, Backpressure, reactive APIs | |
+
+---
+
+### 📘 Textbook Definition
 Spring WebFlux is Spring's reactive-stack web framework, introduced in Spring 5. Built on Project Reactor and Reactive Streams specification, it uses non-blocking I/O (Netty or Servlet 3.1 async) to process requests without blocking threads while waiting for I/O. It enables high-concurrency scenarios with a small, fixed thread pool — contrasted with Spring MVC's thread-per-request model.
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 Traditional Spring MVC blocks a thread while waiting for the database. With WebFlux, when the app waits for DB or HTTP, that thread is freed to handle other requests. This lets a small number of threads serve millions of concurrent requests.
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 WebFlux uses the Reactor library's `Mono` (0-1 items) and `Flux` (0-N items) as its primary types. Controllers return these reactive types instead of plain objects. The framework pipelines the data through a chain of operators without blocking any thread — ideal for high-concurrency microservices, real-time streaming, and event-driven systems.
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 ```
 Spring MVC (Blocking):
 Thread 1: Request → Block waiting for DB (10ms) → Response
@@ -27,7 +43,7 @@ Thread 2: Request → Register DB callback → FREE (handles next request)
 ... DB responds → Thread 1 picks up the callback → sends response
 Same 2 threads handle 100 concurrent requests!
 ```
-## 💻 Code Example
+### 💻 Code Example
 ```java
 // WebFlux controller — returns Mono/Flux instead of plain objects
 @RestController
@@ -60,16 +76,16 @@ public Flux<String> streamEvents() {
         .take(100);
 }
 ```
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | WebFlux is always faster than MVC | WebFlux shines under HIGH concurrency — for low concurrency, MVC is simpler |
 | You can mix blocking code in WebFlux | Blocking in WebFlux stalls the entire event loop — use `subscribeOn(Schedulers.boundedElastic())` |
 | WebFlux replaces Spring MVC | They coexist — choose based on use case; WebFlux needs reactive drivers (R2DBC, reactive MongoDB) |
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 - **[Mono / Flux](./137 — Mono Flux.md)** — reactive types used in WebFlux
 - **[Backpressure](./138 — Backpressure.md)** — flow control in reactive streams
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+
 | KEY IDEA    | Non-blocking request handling — high concurrency     |

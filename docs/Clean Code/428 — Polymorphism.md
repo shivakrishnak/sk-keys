@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Polymorphism"
 parent: "Clean Code"
@@ -25,25 +25,25 @@ tags: #cleancode #oop #foundational #pattern
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Polymorphism allows objects of different classes to be treated uniformly through a shared supertype (interface or abstract class). At runtime, the JVM selects the correct implementation dynamically via virtual dispatch — enabling extensibility without modifying existing code.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Polymorphism means **one interface, many implementations**. You call the same method on different objects and each responds in its own way — the right behavior is selected automatically at runtime.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Polymorphism enables replacing `if-else` / `switch` type-checking chains with a clean type hierarchy. Instead of asking what type something is, you call the same method and let each class decide what to do. This is the mechanism that makes the Open/Closed Principle possible: you extend behavior by adding new types, not by modifying existing code.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Code littered with type-checking breaks whenever a new type is added — every `if-else` must be found and updated.
@@ -63,19 +63,19 @@ shape.draw();  // each type handles it via override
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without polymorphism, adding a new type means finding and updating every `if-else` chain that checks for types — a maintenance burden that grows linearly with new types. Polymorphism makes extensions additive (open/closed).
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of a power outlet. A phone charger, laptop charger, or lamp — they all plug into the same outlet (same interface). The outlet just delivers power; each device handles it differently. The outlet code never changes when new devices are invented.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Types of polymorphism:
@@ -93,7 +93,7 @@ Runtime dispatch (vtable):
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Interface / Abstract Class]  <-- contract
@@ -105,7 +105,7 @@ Runtime dispatch (vtable):
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Define the abstraction
@@ -144,7 +144,7 @@ class Triangle implements Shape { /* ... */ }
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Define interface / abstract class with method contract
@@ -160,7 +160,7 @@ class Triangle implements Shape { /* ... */ }
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -171,7 +171,7 @@ class Triangle implements Shape { /* ... */ }
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: `instanceof` checks defeat polymorphism**
 ```java
@@ -190,7 +190,7 @@ Fix: follow the Liskov Substitution Principle — a subtype must be substitutabl
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Abstraction** — polymorphism is how abstraction is fulfilled at runtime
 - **Inheritance** — one mechanism for achieving subtype polymorphism
@@ -201,7 +201,7 @@ Fix: follow the Liskov Substitution Principle — a subtype must be substitutabl
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #428 | Category: Clean Code | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -210,7 +210,7 @@ Fix: follow the Liskov Substitution Principle — a subtype must be substitutabl
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between compile-time (static) and runtime (dynamic) polymorphism?  
 **Q2.** How does the Strategy pattern use polymorphism to replace conditional logic?  

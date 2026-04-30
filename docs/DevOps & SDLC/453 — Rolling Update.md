@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Rolling Update"
 parent: "DevOps & SDLC"
@@ -25,25 +25,25 @@ tags: #devops #sdlc #foundational #reliability
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 A Rolling Update is a deployment strategy where instances of the running version are incrementally replaced with instances of the new version, one at a time or in configurable batches. At no point is the full application taken offline — a mix of old and new versions serves traffic during the transition window.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Rolling update means **swapping pods one by one** — the old version goes down, the new one comes up, repeat until all pods are updated. The service stays up the whole time.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Rolling updates are the default deployment strategy in Kubernetes. They balance simplicity (no separate environment needed) with availability (never takes all instances offline). The cost is that old and new versions run side-by-side briefly — APIs must be backward-compatible during this window. If the new version fails, Kubernetes stops the rollout and can automatically roll back.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Taking all servers offline to deploy a new version causes downtime. Deploying to all servers simultaneously with a bad version crashes everything at once.
@@ -64,19 +64,19 @@ If v2 fails at step 2: stop. Still 2 healthy v1 pods serve traffic.
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without rolling updates, you either take downtime (replace all-at-once) or run separate environments (blue-green, which costs more). Rolling updates are the practical middle ground: zero downtime with minimal infrastructure overhead.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of replacing floor tiles in a busy restaurant. You don't close the restaurant — you replace one tile at a time while people walk around the area being worked on. The restaurant stays open throughout. If a new tile is defective, you stop and only one tile is bad.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Kubernetes Rolling Update parameters:
@@ -95,7 +95,7 @@ Example with 4 replicas, maxUnavailable=1, maxSurge=1:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [CI/CD Pipeline]
@@ -113,7 +113,7 @@ Example with 4 replicas, maxUnavailable=1, maxSurge=1:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```yaml
 # Kubernetes Deployment with rolling update strategy
@@ -167,7 +167,7 @@ kubectl rollout history deployment/myapp
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. New image tag available in registry
@@ -189,7 +189,7 @@ kubectl rollout history deployment/myapp
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -200,7 +200,7 @@ kubectl rollout history deployment/myapp
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Missing Readiness Probes**
 Without a readiness probe, Kubernetes sends traffic to pods that aren't ready yet.
@@ -216,7 +216,7 @@ Fix: use maxUnavailable=1 or 25% for production; save aggressive settings for de
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Blue-Green Deployment** — instant full switch; no version overlap
 - **Canary Deployment** — gradual % shift with monitoring gates
@@ -226,7 +226,7 @@ Fix: use maxUnavailable=1 or 25% for production; save aggressive settings for de
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #453 | Category: DevOps & SDLC | Difficulty: ★☆☆ |
 |:---|:---|:---|
@@ -235,7 +235,7 @@ Fix: use maxUnavailable=1 or 25% for production; save aggressive settings for de
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why is a readiness probe critical for rolling updates, and what happens without one?  
 **Q2.** How does `maxUnavailable=0, maxSurge=1` differ from `maxUnavailable=1, maxSurge=0` in practice?  

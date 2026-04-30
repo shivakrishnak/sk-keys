@@ -1,36 +1,49 @@
-﻿---
+---
 layout: default
 title: "DI (Dependency Injection)"
 parent: "Spring Framework"
 nav_order: 104
 permalink: /spring/di-dependency-injection/
+number: "104"
+category: Spring & Spring Boot
+difficulty: ★★☆
+depends_on: IoC
+used_by: @Autowired, ApplicationContext, BeanFactory
+tags: #spring, #springboot, #internals, #pattern, #foundational
 ---
+
+# 104 — DI (Dependency Injection)
 
 `#spring` `#springboot` `#internals` `#pattern` `#foundational`
 
 ⚡ TL;DR — Dependency Injection is the mechanism where a container *pushes* dependencies into an object rather than the object *pulling* (creating) them itself.
 
+| #104 | Category: Spring & Spring Boot | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | IoC | |
+| **Used by:** | @Autowired, ApplicationContext, BeanFactory | |
+
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Dependency Injection (DI) is a specific form of Inversion of Control in which an object's dependencies are supplied by an external entity (the injector/container) rather than created by the object itself. The three standard injection styles are **constructor injection**, **setter injection**, and **field injection**.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Instead of writing `new DatabaseService()` inside your class, you just say "I need a DatabaseService" in the constructor parameter, and Spring hands one to you automatically. Your class never creates its dependencies — it just receives them.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 DI separates the creation of dependencies from their use. A class declares what it needs (via constructor parameters, setter methods, or annotated fields), and the Spring IoC container reads those declarations, creates the required objects, and injects them. This makes classes easier to test (inject mocks), reuse (inject any compatible implementation), and configure (swap implementations in config, not code).
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core tension: using vs. creating**
 
@@ -82,19 +95,19 @@ Container has ONE job: create and inject dependencies
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without DI, unit testing requires spinning up real databases, HTTP servers, and external services. A simple `UserService` test ends up being an integration test because `UserService` hardwires `new JdbcUserRepository()`. DI makes each class independently testable by allowing mock implementations to be injected.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of DI like a **restaurant kitchen vs. a home cook**. A home cook (no DI) buys their own ingredients from the store every time they cook. A restaurant cook (with DI) just receives prepped ingredients from the prep team — the cook focuses only on cooking. The prep team (container) handles sourcing and preparing all ingredients (dependencies).
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 Spring resolves injection in this order:
 
@@ -116,7 +129,7 @@ Bean is fully initialized and ready
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
         [IoC Principle]
@@ -134,7 +147,7 @@ Bean is fully initialized and ready
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // ── Constructor Injection (BEST PRACTICE) ─────────────────────────────────
@@ -187,7 +200,7 @@ class UserServiceTest {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -199,7 +212,7 @@ class UserServiceTest {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Field injection makes testing painful**
 ```java
@@ -228,7 +241,7 @@ public UserService(Cache required, ...) { this.cache = required; }
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **[IoC (Inversion of Control)](./103 — IoC (Inversion of Control).md)** — the principle DI implements
 - **[@Autowired](./112 — @Autowired.md)** — Spring's annotation to trigger DI
@@ -238,7 +251,7 @@ public UserService(Cache required, ...) { this.cache = required; }
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +------------------------------------------------------------------+
@@ -258,11 +271,10 @@ public UserService(Cache required, ...) { this.cache = required; }
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why is constructor injection preferred over field injection? Give at least three concrete reasons.
 
 **Q2.** What happens when Spring finds two beans of the same type during injection with no `@Qualifier`? What exception is thrown?
 
 **Q3.** How does DI relate to the Liskov Substitution Principle (LSP)? Why does DI naturally encourage coding to interfaces?
-

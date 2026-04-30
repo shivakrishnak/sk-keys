@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Feature Flags"
 parent: "Clean Code"
@@ -25,25 +25,25 @@ tags: #cleancode #devops #intermediate
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Feature flags (also called feature toggles or feature switches) are a technique that decouples code deployment from feature release. A feature's visibility and behavior is controlled through configuration at runtime — without requiring a new code deployment.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Feature flags are **on/off switches for features in running software**. Deploy the code today, flip the switch when you're ready to release — no redeployment needed.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Feature flags decouple deployment from release. Code can be deployed to production at any time (even if not ready), hidden behind a flag. When ready, the flag is flipped for a subset of users, then gradually rolled out. This enables trunk-based development, dark launches, A/B testing, canary releases, and instant kill switches for broken features.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Feature branches diverge from main for weeks. Merging is painful. You cannot test a feature in production before full release. When something breaks in prod, you need a redeployment to revert.
@@ -63,19 +63,19 @@ if (featureFlags.isEnabled("new-checkout-flow", user)) {
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without feature flags, every incomplete feature needs its own long-lived branch — diverging from main, hard to merge, hidden integration issues. Flags allow continuous integration with all code on main, with features hidden until they're ready.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of a light switch that someone installed but left off. The wiring (code) is in the wall (production), fully installed. The switch (flag) controls whether the light (feature) is visible. You can inspect and test the wiring without turning on the light for users.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Types of feature flags:
@@ -93,7 +93,7 @@ Lifecycle:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Code deployed to prod]
@@ -108,7 +108,7 @@ Lifecycle:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Feature flag wiring — Spring Boot example
@@ -150,7 +150,7 @@ public Payment processPayment(PaymentRequest req) {
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Wrap new feature code in flag check (flag=OFF for all)
@@ -168,7 +168,7 @@ public Payment processPayment(PaymentRequest req) {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -179,7 +179,7 @@ public Payment processPayment(PaymentRequest req) {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Flag Technical Debt**
 Accumulating old, dead flags nobody dares to remove. Each flag means 2 code paths that must both be tested.
@@ -195,7 +195,7 @@ Fix: keep flags at entry points; the feature implementation itself should be fla
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Canary Deployment** — gradual rollout at infrastructure level; flags achieve this at code level
 - **A/B Testing** — experiment toggles used for measuring user behavior differences
@@ -205,7 +205,7 @@ Fix: keep flags at entry points; the feature implementation itself should be fla
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #431 | Category: Clean Code | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -214,7 +214,7 @@ Fix: keep flags at entry points; the feature implementation itself should be fla
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** How do feature flags enable trunk-based development for large teams with many parallel features?  
 **Q2.** What is the difference between a release toggle and a kill switch (ops toggle)?  

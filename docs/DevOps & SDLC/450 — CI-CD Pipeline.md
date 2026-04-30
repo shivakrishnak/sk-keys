@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "CI/CD Pipeline"
 parent: "DevOps & SDLC"
@@ -25,25 +25,25 @@ tags: #devops #sdlc #cicd #intermediate
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 A CI/CD Pipeline is an automated sequence of stages that transforms source code into a deployed, running application. **CI (Continuous Integration)** automatically builds and tests every code change. **CD (Continuous Delivery/Deployment)** automatically delivers tested code to production or a production-like environment, ensuring software is always in a releasable state.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 CI/CD is an **automated assembly line for software**. Every time a developer commits code, the pipeline automatically builds it, tests it, and (if everything passes) ships it to production — no manual steps needed.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Without CI/CD, developers integrate code infrequently, leading to "integration hell" when merging. With CI, every commit triggers an automated build and test run — catching bugs immediately in the context that introduced them. CD extends this by automating the release to staging and production environments, making deployment a routine, low-risk event rather than a stressful manual operation.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Manual integration and deployment are slow, error-prone, and create long feedback loops. Bugs discovered days later are expensive to fix.
@@ -63,19 +63,19 @@ With CI/CD:
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without CI/CD, teams avoid deploying frequently because deployments are risky. This creates a vicious cycle: infrequent deploys → large batches of changes → higher risk → even more reluctance to deploy. CI/CD breaks this cycle by making every deploy small and automated.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of a car assembly line. Each station does one specific job automatically — weld, paint, inspect — in the same order every time. No car leaves the line uninspected. CI/CD is the assembly line for software: build → test → package → deploy, every time, automatically.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Typical pipeline stages:
@@ -103,7 +103,7 @@ Typical pipeline stages:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Git Push]
@@ -117,7 +117,7 @@ Typical pipeline stages:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```yaml
 # GitHub Actions CI/CD pipeline — .github/workflows/pipeline.yml
@@ -171,7 +171,7 @@ jobs:
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Developer pushes code to feature branch
@@ -196,7 +196,7 @@ jobs:
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -207,7 +207,7 @@ jobs:
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Slow Pipeline (> 30 minutes)**
 Developers stop waiting for feedback and push more changes, defeating the purpose.
@@ -227,7 +227,7 @@ Fix: trunk-based development with feature flags; independent pipeline per servic
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Blue-Green Deployment** — zero-downtime deployment strategy enabled by CD
 - **Canary Deployment** — gradual rollout strategy used in CD
@@ -238,7 +238,7 @@ Fix: trunk-based development with feature flags; independent pipeline per servic
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #450 | Category: DevOps & SDLC | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -247,7 +247,7 @@ Fix: trunk-based development with feature flags; independent pipeline per servic
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between Continuous Delivery and Continuous Deployment?  
 **Q2.** How do you measure the health of a CI/CD pipeline? What metrics matter?  

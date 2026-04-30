@@ -1,36 +1,49 @@
-﻿---
+---
 layout: default
 title: "BeanFactory"
 parent: "Spring Framework"
 nav_order: 106
 permalink: /spring/beanfactory/
+number: "106"
+category: Spring & Spring Boot
+difficulty: ★☆☆
+depends_on: IoC
+used_by: ApplicationContext, Bean, Spring Container
+tags: #spring, #internals, #foundational
 ---
+
+# 106 — BeanFactory
 
 `#spring` `#internals` `#foundational`
 
 ⚡ TL;DR — BeanFactory is Spring's root IoC container interface — the minimal core that creates beans on demand; ApplicationContext extends it with enterprise features.
 
+| #106 | Category: Spring & Spring Boot | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | IoC | |
+| **Used by:** | ApplicationContext, Bean, Spring Container | |
+
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 `BeanFactory` is the root interface of Spring's IoC container hierarchy. It provides the foundational contract for object configuration, creation, and dependency injection. It follows a lazy initialization strategy — beans are instantiated only when first requested via `getBean()`.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 BeanFactory is the simplest possible version of Spring's container. It's a factory that knows how to create and configure objects (beans). Think of it as the stripped-down core that ApplicationContext builds on top of.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 BeanFactory reads configuration metadata (XML, annotations, Java config), maintains a registry of bean definitions, and creates beans lazily when requested. It handles basic dependency injection, but none of the advanced features: no events, no AOP support, no `@PostConstruct`, no environment/profile abstraction. These extras are in `ApplicationContext`. In modern Spring (especially Spring Boot), you almost always work with `ApplicationContext` — but knowing `BeanFactory` helps you understand what's really happening under the hood.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **BeanFactory is the core contract:**
 
@@ -60,19 +73,19 @@ Memory: lower until first use    Memory: all singletons loaded upfront
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 BeanFactory exists as the minimal interface so that alternative IoC containers, test utilities, and framework internals can operate with the minimal contract without pulling in all the enterprise features of ApplicationContext. It's the lean core of the IoC engine.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > BeanFactory is like a **bare-bones recipe book** — it knows how to cook every dish (create every bean) but only when you explicitly ask for a dish. ApplicationContext is the full restaurant — it has the recipe book, plus staff (event system), a menu board (environment/properties), a dining room (web support), and everything else.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 BeanDefinition Registry (DefaultListableBeanFactory)
@@ -94,7 +107,7 @@ BeanDefinition Registry (DefaultListableBeanFactory)
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [BeanFactory] ← root interface
@@ -110,7 +123,7 @@ BeanDefinition Registry (DefaultListableBeanFactory)
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Low-level BeanFactory usage (rare in practice, useful for understanding)
@@ -134,7 +147,7 @@ ConfigurableListableBeanFactory underlying = ctx.getBeanFactory();
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -145,7 +158,7 @@ ConfigurableListableBeanFactory underlying = ctx.getBeanFactory();
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Using BeanFactory directly in production**
 ```java
@@ -161,7 +174,7 @@ ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class)
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **[ApplicationContext](./105 — ApplicationContext.md)** — extends BeanFactory with enterprise features
 - **[Bean](./107 — Bean.md)** — objects created by BeanFactory
@@ -170,7 +183,7 @@ ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class)
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +------------------------------------------------------------------+
@@ -188,11 +201,10 @@ ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class)
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** `BeanFactory` is lazy; `ApplicationContext` is eager. Give a real-world scenario where each behavior is preferable.
 
 **Q2.** `DefaultListableBeanFactory` is the main implementation of BeanFactory — it also implements `BeanDefinitionRegistry`. Why is this dual role important for Spring's startup process?
 
 **Q3.** If `ApplicationContext` extends `BeanFactory`, is an `ApplicationContext` usable anywhere a `BeanFactory` is expected? What design pattern does this represent?
-

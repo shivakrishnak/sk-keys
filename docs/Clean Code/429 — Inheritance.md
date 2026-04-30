@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Inheritance"
 parent: "Clean Code"
@@ -25,25 +25,25 @@ tags: #cleancode #oop #foundational
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Inheritance is the OOP mechanism by which a class (subclass/child) extends another class (superclass/parent), inheriting its fields and methods. It establishes an IS-A relationship and enables subtype polymorphism. Java supports single class inheritance and multiple interface inheritance.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Inheritance means **one class gets the capabilities of its parent for free**, then adds to or customizes them. It's how you say "a Dog IS-A Animal."
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Inheritance creates a compile-time relationship between classes. The subclass IS-A superclass — it can be used anywhere the superclass is expected (Liskov Substitution). However, inheritance is a strong coupling: changing the superclass can break all subclasses. Modern practice: "Favor composition over inheritance" — use inheritance only for genuine, stable IS-A relationships.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Duplicating methods across multiple similar classes leads to maintenance pain — fix a bug in one, forget the others.
@@ -60,19 +60,19 @@ Inheritance couples the subclass to the superclass's internals forever. Any chan
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without inheritance, you'd duplicate code across every similar class. But overusing inheritance creates fragile hierarchies where a superclass change silently breaks every subclass below it.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of an employee hierarchy: Manager IS-A Employee — every Manager IS genuinely an Employee with all Employee capabilities. But a ContractEmployee IS-A Employee only for payroll — it should NOT inherit "apply for promotion" behavior. The IS-A must hold for ALL behavior, not just some.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Class hierarchy and method resolution:
@@ -92,7 +92,7 @@ Method Resolution Order (MRO):
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
      [Animal]  <-- superclass
@@ -104,7 +104,7 @@ Method Resolution Order (MRO):
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Superclass
@@ -141,7 +141,7 @@ System.out.println(v.status());  // ElectricCar.status() called — "Speed: 60 k
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Subclass declared: class Dog extends Animal
@@ -157,7 +157,7 @@ System.out.println(v.status());  // ElectricCar.status() called — "Speed: 60 k
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -168,7 +168,7 @@ System.out.println(v.status());  // ElectricCar.status() called — "Speed: 60 k
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Fragile Base Class**
 Changing a protected or public method in a superclass silently breaks all subclasses.
@@ -184,7 +184,7 @@ Fix: flatten hierarchies; use interfaces + composition to share behavior without
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Polymorphism** — inheritance enables subtype (runtime) polymorphism
 - **LSP (Liskov Substitution Principle)** — defines the correct use of inheritance
@@ -195,7 +195,7 @@ Fix: flatten hierarchies; use interfaces + composition to share behavior without
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #429 | Category: Clean Code | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -204,7 +204,7 @@ Fix: flatten hierarchies; use interfaces + composition to share behavior without
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What is the Fragile Base Class problem and how does marking a class `final` partially address it?  
 **Q2.** Why does Java disallow multiple class inheritance, and how do interface default methods partially address this?  

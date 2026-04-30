@@ -1,21 +1,37 @@
-﻿---
+---
 layout: default
 title: "@Autowired"
 parent: "Spring Framework"
 nav_order: 112
 permalink: /spring/autowired/
+number: "112"
+category: Spring & Spring Boot
+difficulty: ★☆☆
+depends_on: DI, Bean
+used_by: @Qualifier, @Primary, Constructor Injection
+tags: #spring, #internals, #foundational
 ---
+
+# 112 — @Autowired
 
 `#spring` `#internals` `#foundational`
 
 ⚡ TL;DR — @Autowired tells Spring to inject a matching bean into a field, constructor parameter, or setter method — resolving the dependency by type.
-## 📘 Textbook Definition
+
+| #112 | Category: Spring & Spring Boot | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | DI, Bean | |
+| **Used by:** | @Qualifier, @Primary, Constructor Injection | |
+
+---
+
+### 📘 Textbook Definition
 `@Autowired` is a Spring annotation that marks a dependency injection point. When placed on a constructor, setter method, or field, Spring's `AutowiredAnnotationBeanPostProcessor` resolves and injects the appropriate bean by type. If multiple beans of the same type exist, `@Qualifier` or `@Primary` is needed to disambiguate.
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 `@Autowired` is the "please give me this bean" annotation. Put it on a constructor or field, and Spring automatically finds and provides the matching object from its container.
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 `@Autowired` works by type-matching: Spring looks in its bean registry for a bean assignable to the declared type. For constructors, a single constructor in Spring 4.3+ doesn't even need the annotation — Spring infers injection automatically. For ambiguous multi-bean situations, combine with `@Qualifier("beanName")` or mark one bean `@Primary`.
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 **Resolution algorithm:**
 ```
 1. Find all beans matching the declared type
@@ -26,9 +42,9 @@ permalink: /spring/autowired/
 6. If still ambiguous → NoUniqueBeanDefinitionException
 → Fix: add @Qualifier("specificBeanName")
 ```
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 > `@Autowired` is like a **job posting listing required skills** (type). HR (Spring) searches all employees (beans) for someone with those skills. If one person matches, they're assigned. If multiple match, you need to specify the name (`@Qualifier`).
-## 💻 Code Example
+### 💻 Code Example
 ```java
 // ── Constructor injection (PREFERRED — no @Autowired needed in Spring 4.3+) ──
 @Service
@@ -69,14 +85,14 @@ public class NotificationDispatcher {
     private List<NotificationChannel> channels; // injects ALL beans of this type
 }
 ```
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | @Autowired injects by name | Default is by type; falls back to name only for disambiguation |
 | Must use @Autowired on every constructor | Single-constructor classes don't need @Autowired since Spring 4.3 |
 | @Autowired always required=true | Can pass `required=false` or use `Optional<T>` for optional beans |
 | Field injection is as good as constructor | Field injection is hidden coupling, breaks immutability, harder to test |
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 **Pitfall: NoUniqueBeanDefinitionException**
 ```java
 // Two beans of same type:
@@ -89,11 +105,11 @@ public class NotificationDispatcher {
 // Fix B: @Qualifier to be explicit
 @Autowired @Qualifier("stripePaymentService") PaymentService paymentService;
 ```
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 - **[DI (Dependency Injection)](./104 — DI (Dependency Injection).md)** — the mechanism @Autowired implements
 - **[@Qualifier / @Primary](./113 — @Qualifier @Primary.md)** — disambiguation for multiple matching beans
 - **[BeanPostProcessor](./110 — BeanPostProcessor.md)** — @Autowired processed by AutowiredAnnotationBeanPostProcessor
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+
 | KEY IDEA    | Inject a matching bean by type                      |
@@ -105,7 +121,7 @@ public class NotificationDispatcher {
 | OPTIONAL    | @Autowired(required=false) or Optional<T>            |
 +------------------------------------------------------------------+
 ```
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 **Q1.** Spring resolves `@Autowired` by type first, then by name. What exact field/parameter name does it use for name-based fallback resolution?
 **Q2.** You have `@Autowired List<PaymentService>`. What does Spring inject? In what order are the elements sorted?
 **Q3.** What is `@Inject` (JSR-330) and how does it differ from `@Autowired`?

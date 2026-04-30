@@ -1,36 +1,49 @@
-﻿---
+---
 layout: default
 title: "Bean"
 parent: "Spring Framework"
 nav_order: 107
 permalink: /spring/bean/
+number: "107"
+category: Spring & Spring Boot
+difficulty: ★☆☆
+depends_on: IoC, DI
+used_by: Bean Lifecycle, Bean Scope, @Autowired
+tags: #spring, #internals, #foundational
 ---
+
+# 107 — Bean
 
 `#spring` `#internals` `#foundational`
 
 ⚡ TL;DR — A Bean is any object whose lifecycle (creation, wiring, and destruction) is managed by the Spring IoC container.
 
+| #107 | Category: Spring & Spring Boot | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | IoC, DI | |
+| **Used by:** | Bean Lifecycle, Bean Scope, @Autowired | |
+
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 In Spring, a **bean** is an object that is instantiated, assembled, and otherwise managed by the Spring IoC container. Beans are defined through configuration metadata — annotations (`@Component`, `@Bean`), XML, or Java configuration — and the container is responsible for their lifecycle, dependency injection, and scope management.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 A Bean is simply a Java object that Spring knows about and takes care of. Instead of you writing `new MyService()`, Spring creates the `MyService` object and registers it as a bean — making it available throughout your application.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Most objects in a Spring application are beans — services, repositories, controllers, configuration classes. What makes an object a "bean" is that Spring created it (via `new` internally), holds a reference to it, has wired all its dependencies, and will clean it up on shutdown. You declare beans using `@Component` (and its specializations `@Service`, `@Repository`, `@Controller`) or `@Bean` factory methods in `@Configuration` classes.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **Three ways to register a bean:**
 
@@ -67,19 +80,19 @@ No scope management        Singleton / Prototype / Request etc.
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without beans, every component must manage its own instantiation and dependencies. As applications grow, this creates a tightly coupled "new-new-new" mess. Beans let the container handle all object management; your code focuses only on business logic.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > A Bean is like an **employee registered with HR (the container)**. HR hired them (instantiation), knows who they report to (dependencies), gave them an employee ID (`beanName`), assigned a role (scope), and will process their termination (destroy). Self-employed contractors (regular objects via `new`) have none of that management — they're invisible to HR.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Config metadata scanned
@@ -101,7 +114,7 @@ On shutdown: @PreDestroy → bean discarded
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
          [Bean] ← registered in
@@ -117,7 +130,7 @@ On shutdown: @PreDestroy → bean discarded
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // ── Declaring beans ───────────────────────────────────────────────────────────
@@ -168,7 +181,7 @@ void listBeans() {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -180,7 +193,7 @@ void listBeans() {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Mixing `new` and Spring beans**
 ```java
@@ -206,7 +219,7 @@ private final AtomicInteger count = new AtomicInteger(0);
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **[Bean Lifecycle](./108 — Bean Lifecycle.md)** — how Spring manages bean init to destroy
 - **[Bean Scope](./109 — Bean Scope.md)** — singleton, prototype, request, session
@@ -216,7 +229,7 @@ private final AtomicInteger count = new AtomicInteger(0);
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +------------------------------------------------------------------+
@@ -234,11 +247,10 @@ private final AtomicInteger count = new AtomicInteger(0);
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between `@Component` and `@Bean`? When would you use one over the other?
 
 **Q2.** If a singleton bean holds a reference to a prototype-scoped bean, how many instances of the prototype bean will exist? Is this a problem?
 
 **Q3.** Spring beans are by default not thread-safe. What strategies would you use to make a singleton bean safe for concurrent access?
-

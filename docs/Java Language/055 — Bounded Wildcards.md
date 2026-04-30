@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Bounded Wildcards"
 parent: "Java Language"
@@ -25,26 +25,26 @@ tags: #java #advanced #generics #wildcards #pecs
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Bounded wildcards parameterize generic types with an unknown type that is constrained either to be a **subtype of T** (`? extends T` — upper bound / covariant) or a **supertype of T** (`? super T` — lower bound / contravariant). The unbounded wildcard `?` means any type. The **PECS principle** (Producer Extends, Consumer Super) governs when to use each.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 - `List<? extends Number>` — a list of **some number subtype** (Integer, Double…); you can **read** Numbers out, but can't **add** anything.
 - `List<? super Integer>` — a list of **some Integer supertype** (Integer, Number, Object); you can **add** Integers, but reads come back as `Object`.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Wildcards solve the problem that `List<Integer>` is NOT a `List<Number>` (generics are invariant). You need them to write utility methods that work across a family of related types. The restriction on reads/writes is not arbitrary — it's the only way to guarantee type safety while allowing flexibility.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **Why generics are invariant:**
 ```
@@ -70,20 +70,20 @@ Object o = list.get(0);  // returns Object — can't know the exact type
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without wildcards, you'd have to write separate methods for `List<Integer>`, `List<Double>`, etc. With wildcards, one method handles all numeric lists. They're the mechanism that makes the Collections API's sort/copy/fill methods work generically.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > `? extends T` is a **read-only dispenser** — you know everything coming out is at least a `T`, but you can't put anything in (you don't know the exact type of the container).
 > `? super T` is a **write-only funnel** — you can pour `T`s in because any super-container of T can hold them, but what you pull out is just "something" (Object).
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 PECS rule: Producer Extends, Consumer Super
@@ -105,7 +105,7 @@ Unbounded wildcard List<?>:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Generics invariant] → can't use List<Dog> as List<Animal>
@@ -119,7 +119,7 @@ Unbounded wildcard List<?>:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // 1. Upper bound (extends) — read-only producer
@@ -160,7 +160,7 @@ printList(List.of("a", "b"));    // ✓
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -171,7 +171,7 @@ printList(List.of("a", "b"));    // ✓
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Confusing extends and super**
 Using `? extends T` when you need to write = compile errors that look mysterious.
@@ -194,7 +194,7 @@ private <T> void swap(List<T> list, int i, int j) {
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Generics (#053)** — wildcards extend generic type parameterization
 - **Type Erasure (#054)** — `?` is erased to `Object`/bound at runtime
@@ -204,7 +204,7 @@ private <T> void swap(List<T> list, int i, int j) {
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #055 | Category: Java Language | Difficulty: ★★★ |
 |:---|:---|:---|
@@ -213,7 +213,7 @@ private <T> void swap(List<T> list, int i, int j) {
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why is it safe to read from `List<? extends Number>` but not write to it?
 **Q2.** Why does `Collections.sort` take `Comparator<? super T>` instead of `Comparator<T>`?

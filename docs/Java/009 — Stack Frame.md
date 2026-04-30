@@ -4,41 +4,46 @@ title: "Stack Frame"
 parent: "Java Fundamentals"
 nav_order: 9
 permalink: /java/stack-frame/
----
-🏷️ Tags — #java #jvm #memory #internals #deep-dive
-
-⚡ TL;DR — The per-method execution unit pushed onto the thread stack, containing everything a method needs to run: local variables, working memory, and return context. 
-
-```
-┌──────────────────────────────────────────────────────┐
-│ #009  │ Category: JVM Memory     │ Difficulty: ★★★   │
-│ Depends on: Stack Memory, JVM,   │ Used by: Every    │
-│ Bytecode, Thread                 │ method invocation │
-│                                  │ JIT, Debugger     │
-└──────────────────────────────────────────────────────┘
-```
-
+number: "009"
+category: JVM Memory
+difficulty: ★★★
+depends_on: Stack Memory, JVM, Bytecode, Thread
+used_by: Every method invocation, JIT Compiler, Debugger
+tags: #java, #jvm, #memory, #internals, #deep-dive
 ---
 
-#### 📘 Textbook Definition
+# 009 — Stack Frame
+
+`#java` `#jvm` `#memory` `#internals` `#deep-dive`
+
+⚡ TL;DR — The per-method execution unit pushed onto the thread stack, containing everything a method needs to run: local variables, working memory, and return context.
+
+| #009 | Category: JVM Memory | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Stack Memory, JVM, Bytecode, Thread | |
+| **Used by:** | Every method invocation, JIT Compiler, Debugger | |
+
+---
+
+### 📘 Textbook Definition
 
 A Stack Frame is a **data structure created on the thread stack for each method invocation**, containing three components: the **Local Variable Table** (stores parameters and local vars), the **Operand Stack** (working memory for bytecode execution), and **Frame Data** (return address, reference to runtime constant pool, exception table). It is pushed on method entry and popped on method exit or exception propagation.
 
 ---
 
-#### 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 A stack frame is **one method's private workspace** — everything that method needs to execute, allocated when called, destroyed when it returns.
 
 ---
 
-#### 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Every time a method is called, the JVM creates a stack frame and pushes it onto the thread's stack. That frame holds the method's parameters, any local variables it declares, a working scratch pad for calculations (operand stack), and the address to return to when done. The method executes entirely within this frame. When it returns — or throws an uncaught exception — the frame is popped, and the calling method's frame becomes active again with execution resuming exactly where it left off.
 
 ---
 
-#### 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The problem:**
 
@@ -83,7 +88,7 @@ Each `x` is completely isolated. Return addresses are baked into each frame.
 
 ---
 
-#### 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of the thread stack as a **desk with stacking paper trays**.
 > 
@@ -97,65 +102,11 @@ Each `x` is completely isolated. Return addresses are baked into each frame.
 
 ---
 
-#### ⚙️ Stack Frame — Full Anatomy
-
-```
-┌────────────────────────────────────────────────────────────┐
-│                      STACK FRAME                           │
-│                   (one per method call)                    │
-│                                                            │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │              LOCAL VARIABLE TABLE                    │  │
-│  │                                                      │  │
-│  │  Slot │ Content                    │ Type            │  │
-│  │  ──── │ ──────────────────────     │ ──────────────  │  │
-│  │   0   │ this (instance methods)    │ reference       │  │
-│  │   1   │ first parameter            │ int/ref/etc     │  │
-│  │   2   │ second parameter           │ int/ref/etc     │  │
-│  │   3   │ first local variable       │ int/ref/etc     │  │
-│  │   4   │ second local variable      │ int/ref/etc     │  │
-│  │  ...  │ ...                        │ ...             │  │
-│  │                                    │                 │  │
-│  │  Notes:                                              │  │
-│  │  • long/double occupy TWO slots                      │  │
-│  │  • static methods: no slot 0 (no 'this')            │  │
-│  │  • references store heap address, not object         │  │
-│  │  • size fixed at compile time (javac calculates)     │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                            │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │                 OPERAND STACK                        │  │
-│  │                                                      │  │
-│  │  • LIFO stack for intermediate calculations          │  │
-│  │  • Bytecode instructions push/pop values here        │  │
-│  │  • Max depth fixed at compile time                   │  │
-│  │  • Empty at start of method                          │  │
-│  │  • Must be empty before method returns               │  │
-│  │                                                      │  │
-│  │  Example: computing (a + b) * c                      │  │
-│  │  iload_1  → [a]                                      │  │
-│  │  iload_2  → [a, b]                                   │  │
-│  │  iadd     → [a+b]                                    │  │
-│  │  iload_3  → [a+b, c]                                 │  │
-│  │  imul     → [(a+b)*c]                                │  │
-│  │  ireturn  → []  (value returned to caller's stack)   │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                            │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │                   FRAME DATA                         │  │
-│  │                                                      │  │
-│  │  • Return address: PC of next instruction in caller  │  │
-│  │  • Constant Pool reference: for symbolic resolution  │  │
-│  │  • Exception table: maps bytecode ranges to          │  │
-│  │    catch handlers — used when exception thrown       │  │
-│  │  • Method reference: which method this frame is for  │  │
-│  └──────────────────────────────────────────────────────┘  │
-└────────────────────────────────────────────────────────────┘
-```
+### ⚙️ Stack Frame — Full Anatomy
 
 ---
 
-#### ⚙️ How Frames Interact — Method Call Protocol
+### ⚙️ How Frames Interact — Method Call Protocol
 
 ```
 CALLER frame active:
@@ -177,7 +128,7 @@ FRAME popped:
 
 ---
 
-#### 🔄 How It Connects
+### 🔄 How It Connects
 
 ```
 Thread created → Stack allocated
@@ -200,7 +151,7 @@ Exception thrown → Frame Data's exception table checked
 
 ---
 
-#### 💻 Code Example — Frame by Frame Execution Trace
+### 💻 Code Example — Frame by Frame Execution Trace
 
 **Source:**
 
@@ -368,7 +319,7 @@ public static void twoSlotDemo(long x, double y) {
 
 ---
 
-#### ⚙️ Frame Size — Fixed at Compile Time
+### ⚙️ Frame Size — Fixed at Compile Time
 
 A key JVM optimization: javac calculates the **exact** size of each frame at compile time:
 
@@ -389,7 +340,7 @@ public static int multiply(int, int);
 
 ---
 
-#### ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 |Misconception|Reality|
 |---|---|
@@ -402,7 +353,7 @@ public static int multiply(int, int);
 
 ---
 
-#### 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **1. Stack trace truncation — losing frame history**
 
@@ -471,7 +422,7 @@ Optional<StackWalker.StackFrame> frame = walker
 
 ---
 
-#### 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - `Stack Memory` — the region that holds all stack frames
 - `Operand Stack` — working scratch area inside each frame
@@ -486,36 +437,13 @@ Optional<StackWalker.StackFrame> frame = walker
 
 ---
 
-#### 📌 Quick Reference Card
-
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Per-method execution context: local vars  │
-│              │ + operand scratch pad + return context    │
-├──────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Always — every method call creates one;   │
-│              │ understanding frames = understanding       │
-│              │ bytecode, exceptions, and debuggers       │
-├──────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Don't manually inspect frames in prod     │
-│              │ hot paths — StackWalker is fast but       │
-│              │ getStackTrace() is expensive              │
-├──────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "A frame is a method's universe — born    │
-│              │  on call, destroyed on return, isolated   │
-│              │  from every other method's universe"      │
-├──────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Operand Stack → Local Variable Table →    │
-│              │ JIT Inlining → StackWalker →              │
-│              │ Virtual Thread Continuations              │
-└──────────────────────────────────────────────────────────┘
-```
+### 📌 Quick Reference Card
 
 ---
 
 **Entry 009 complete.**
 
-#### 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** The JIT compiler's most powerful optimization is **method inlining** — replacing a method call with the method's body directly in the caller. What happens to stack frames when inlining occurs? Does a frame still get created? What does this mean for stack traces in profilers?
 

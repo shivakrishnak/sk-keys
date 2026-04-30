@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Refactoring"
 parent: "Clean Code"
@@ -25,25 +25,25 @@ tags: #cleancode #intermediate #pattern
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Refactoring (Martin Fowler) is the process of changing a software system in a way that does not alter the external behavior of the code yet improves its internal structure. It transforms working-but-messy code into cleaner design through a series of small, safe, behavior-preserving transformations — each followed by a passing test suite.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Refactoring is **improving the inside of code without changing what it does**. You make it cleaner, simpler, and easier to understand — while every test keeps passing throughout.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Refactoring is not rewriting. Each refactoring step is tiny — extract a method, rename a variable, introduce an abstraction — and after every step the test suite is green. The safety net of tests is what makes refactoring possible without fear. Without tests, you cannot refactor safely.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Code that worked fine 6 months ago is now painful to work with. Features take longer, bugs appear in unexpected places. The code must improve — but you cannot stop and rewrite everything.
@@ -61,19 +61,19 @@ Rule: NEVER change behavior and structure in the same step.
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without refactoring, code can only degrade over time. The only way to improve a codebase safely — without introducing new bugs — is through systematic, test-backed refactoring as an ongoing practice.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Refactoring is like reorganizing your kitchen while still cooking meals every day. You move things step-by-step — each meal still comes out right. The kitchen works better after the reorganization, but no recipes changed. You never closed the restaurant to do it.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Common refactoring catalog (Martin Fowler):
@@ -90,7 +90,7 @@ Common refactoring catalog (Martin Fowler):
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Code Smell Identified]
@@ -106,7 +106,7 @@ Common refactoring catalog (Martin Fowler):
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // ===== BEFORE REFACTORING =====
@@ -152,7 +152,7 @@ private double calculateTax(double taxableAmount) {
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Ensure test coverage exists — write characterization tests if needed
@@ -170,7 +170,7 @@ private double calculateTax(double taxableAmount) {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -181,7 +181,7 @@ private double calculateTax(double taxableAmount) {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Refactoring Without Tests**
 Changing structure without a safety net — you will not know what broke.
@@ -197,7 +197,7 @@ Fix: timebox refactoring; apply the Boy Scout Rule (leave it a little better, no
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Technical Debt** — what refactoring pays down incrementally
 - **Code Smells** — indicators (long method, magic number, duplication) that guide where to refactor
@@ -208,7 +208,7 @@ Fix: timebox refactoring; apply the Boy Scout Rule (leave it a little better, no
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #433 | Category: Clean Code | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -217,7 +217,7 @@ Fix: timebox refactoring; apply the Boy Scout Rule (leave it a little better, no
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why must refactoring and feature development always be in separate commits?  
 **Q2.** What is the difference between Extract Method and Extract Class refactoring — when do you use each?  

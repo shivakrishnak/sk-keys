@@ -1,36 +1,49 @@
-﻿---
+---
 layout: default
 title: "IoC (Inversion of Control)"
 parent: "Spring Framework"
 nav_order: 103
 permalink: /spring/ioc-inversion-of-control/
+number: "103"
+category: Spring & Spring Boot
+difficulty: ★★☆
+depends_on: Design Principles, OOP
+used_by: DI, ApplicationContext, BeanFactory
+tags: #spring, #springboot, #internals, #pattern, #foundational
 ---
+
+# 103 — IoC (Inversion of Control)
 
 `#spring` `#springboot` `#internals` `#pattern` `#foundational`
 
 ⚡ TL;DR — IoC flips who controls object creation: instead of your code creating its own dependencies, a container creates and wires them for you.
 
+| #103 | Category: Spring & Spring Boot | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Design Principles, OOP | |
+| **Used by:** | DI, ApplicationContext, BeanFactory | |
+
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Inversion of Control (IoC) is a design principle in which the control of object creation, lifecycle, and dependency resolution is transferred from application code to an external container or framework. Rather than the application directing the framework, the framework directs the application — inverting the traditional flow of control.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Normally, you write `new DatabaseService()` yourself when you need a database. With IoC, you just say "I need a DatabaseService," and a container magically hands one to you. You no longer manage the creation — the container does.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 In traditional object-oriented code, each class creates and manages its own dependencies: `this.repo = new UserRepository()`. This tightly couples classes together and makes testing and refactoring painful. IoC inverts this — a container reads your application's configuration, creates all the objects (beans), wires their dependencies together, and manages their lifecycles. Your code just declares what it needs; the container figures out how to provide it. Spring's `ApplicationContext` is the most well-known IoC container.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The Problem: Tight Coupling**
 
@@ -66,7 +79,7 @@ Your classes become simple declarations of needs. The container handles everythi
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without IoC, large applications become unmaintainable "new-hell" — every class instantiating its own dependencies, creating deeply nested object graphs, making testing impossible without running the whole application, and making environment switching (dev/test/prod) a nightmare requiring code changes.
 
@@ -74,13 +87,13 @@ IoC removes all of this. Your class declares an interface, the container decides
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of IoC like a **staffing agency for objects**. Normally you'd hire (create) your own employees (objects). With IoC, you tell the agency "I need a developer with Spring skills" — the agency finds, creates, and delivers that person to you. You just use them. The agency manages contracts (lifecycle), not you.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Application Startup
@@ -106,7 +119,7 @@ Application runs
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
          [IoC Container]
@@ -122,7 +135,7 @@ Application runs
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Without IoC — tight coupling
@@ -175,7 +188,7 @@ public class Main {
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. JVM starts → Spring IoC container initializes
@@ -199,7 +212,7 @@ public class Main {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -211,7 +224,7 @@ public class Main {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Circular Dependencies**
 ```java
@@ -237,7 +250,7 @@ UserService us = new UserService(); // Spring doesn't manage this!
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **[DI (Dependency Injection)](./104 — DI (Dependency Injection).md)** — the primary mechanism IoC uses to provide dependencies
 - **[ApplicationContext](./105 — ApplicationContext.md)** — Spring's full-featured IoC container
@@ -247,7 +260,7 @@ UserService us = new UserService(); // Spring doesn't manage this!
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +------------------------------------------------------------------+
@@ -265,11 +278,10 @@ UserService us = new UserService(); // Spring doesn't manage this!
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** If IoC is just a principle, what are three different *mechanisms* a container could use to "invert control" — besides constructor injection?
 
 **Q2.** If every object is created by the container, how do you handle objects that need runtime data (e.g., a `Request` object that's created per HTTP call)?
 
 **Q3.** What's the difference between a framework inverting control vs. a callback inverting control? Are they the same IoC concept?
-

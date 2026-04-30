@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Reflection"
 parent: "Java Language"
@@ -25,25 +25,25 @@ tags: #java #advanced #reflection #jvm #internals
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Java Reflection is the ability of code to examine and modify its own structure and behavior at runtime. Through the `java.lang.reflect` package, you can inspect class metadata (fields, methods, constructors, annotations), instantiate objects without knowing their class at compile time, invoke methods by name, and access or modify private members — bypassing Java's normal access control.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Reflection lets you ask a class: "What fields do you have?" or "Do you have a method called 'save'?" at runtime — and then call that method even if you didn't know its name when you wrote the code. This is how Spring knows which fields to inject `@Autowired` into.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Normal Java code is static — you call `obj.save()` and the compiler verifies `save()` exists. Reflection bypasses this: you can call `method.invoke(obj)` where `method` was looked up by name at runtime. This enables frameworks to work with **any** class — Spring introspects your classes to find `@Autowired` fields, Jackson reads field names to populate JSON, JUnit finds methods annotated `@Test`.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core: Class is a class**
 ```
@@ -65,19 +65,19 @@ User.class.getDeclaredConstructors() → Constructor[]
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Java frameworks need to work with classes they've never seen before — a user's `Order` class, a plugin loaded at runtime, a class read from a config file. Without reflection, a framework would need to know every class at compile time — impossible for general-purpose tools. Reflection is what makes IoC containers, ORMs, serializers, and testing frameworks possible.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Reflection is like having an **X-ray machine for objects**. Normal code looks at the surface: "I see a Door, I'll open it." Reflection looks inside: "What materials is this Door made of? Does it have a lock? How do I unlock it programmatically, even if it's marked private?" Powerful — but you need to know what you're doing, or you'll break things.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Key classes in java.lang.reflect:
@@ -117,7 +117,7 @@ Key operations:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Reflection] ──powers──► [Spring @Autowired injection]
@@ -133,7 +133,7 @@ Key operations:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // 1. Basic class inspection
@@ -177,7 +177,7 @@ Object service = serviceClass.getDeclaredConstructor().newInstance();
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -188,7 +188,7 @@ Object service = serviceClass.getDeclaredConstructor().newInstance();
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Performance without caching**
 ```java
@@ -218,7 +218,7 @@ Reflection calls are checked against the security manager in constrained environ
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Class Loader (#005)** — loads classes whose `Class` objects reflection introspects
 - **Annotation Processing (#059)** — compile-time alternative; often faster than runtime reflection
@@ -228,7 +228,7 @@ Reflection calls are checked against the security manager in constrained environ
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #058 | Category: Java Language | Difficulty: ★★★ |
 |:---|:---|:---|
@@ -237,7 +237,7 @@ Reflection calls are checked against the security manager in constrained environ
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** How does Spring use reflection to implement `@Autowired` without knowing your class at compile time?
 **Q2.** Why does Java 9's module system restrict `setAccessible(true)` — what security concern does it address?

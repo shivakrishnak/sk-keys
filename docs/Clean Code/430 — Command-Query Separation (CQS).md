@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Command-Query Separation (CQS)"
 parent: "Clean Code"
@@ -25,25 +25,25 @@ tags: #cleancode #pattern #intermediate
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Command-Query Separation (CQS) is a design principle by Bertrand Meyer stating that every method in a class should be either a **Command** (changes state, returns void) or a **Query** (returns data, produces no observable side effects). Mixing both makes behavior unpredictable and harder to reason about.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 CQS says: **a method should either DO something or ANSWER something — never both**. If it returns a value, it shouldn't change the world. If it changes the world, it shouldn't return a value.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 CQS makes code predictable. Queries can be called multiple times safely — they are side-effect free and idempotent. Commands always change state. When a method BOTH modifies state AND returns a value, callers cannot safely call it twice, cannot cache the result, and cannot reason about call order without understanding internals.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 `user = userRepository.findAndMarkAccessed(id)` — did it return the user? Did it increment a counter? Is it safe to call twice? The caller cannot know without reading the implementation.
@@ -58,19 +58,19 @@ Query:   Optional<User> findById(long id)    --> returns data, no state change
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without CQS, calling a "query" method has invisible side effects. Tests become order-dependent (calling a method twice changes the result). Caching is impossible (caching a "query" would block state changes). Concurrency reasoning breaks down.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Like asking a librarian for a book vs returning a book. "Where is book X?" (query — no change to library state). "Return this book" (command — changes library state). If asking "where is book X?" automatically checked it out to you, that would be surprising and dangerous.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Classification:
@@ -98,7 +98,7 @@ void remove() { queue.removeFirst(); }   // command - explicit intent
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Query]  --> reads  --> [State]   (State unchanged after call)
@@ -107,7 +107,7 @@ void remove() { queue.removeFirst(); }   // command - explicit intent
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // VIOLATES CQS — method changes state AND returns data
@@ -145,7 +145,7 @@ User alice = userService.findByUsername("alice")           // query
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Look at each method: does it mutate state? Does it return data?
@@ -160,7 +160,7 @@ User alice = userService.findByUsername("alice")           // query
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -171,7 +171,7 @@ User alice = userService.findByUsername("alice")           // query
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Incrementing Counters Inside Queries**
 `findUser()` that also updates `lastAccessedAt` — now you cannot call queries freely in tests without accumulating state changes.
@@ -187,7 +187,7 @@ Document the exception explicitly; keep it at the data layer, not business logic
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **CQRS (Command Query Responsibility Segregation)** — architectural extension of CQS at the system/service level
 - **Idempotency** — queries must be idempotent; CQS enforces this structurally
@@ -197,7 +197,7 @@ Document the exception explicitly; keep it at the data layer, not business logic
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #430 | Category: Clean Code | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -206,7 +206,7 @@ Document the exception explicitly; keep it at the data layer, not business logic
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** How does CQS enable safe caching of query results?  
 **Q2.** What is the difference between CQS (method level) and CQRS (architectural level)?  

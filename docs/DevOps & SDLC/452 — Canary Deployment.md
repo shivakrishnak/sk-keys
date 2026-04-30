@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Canary Deployment"
 parent: "DevOps & SDLC"
@@ -25,25 +25,25 @@ tags: #devops #sdlc #intermediate #reliability
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Canary Deployment is a release strategy where the new version is deployed to a small subset of production infrastructure and receives a fraction of live traffic first. If metrics remain healthy, traffic is progressively shifted to the new version. At any point, traffic can be routed back to the stable version if issues emerge.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Canary means **releasing to 1% of users first, watching, then slowly rolling out to everyone**. If those 1% hit errors, you stop and roll back — before 99% of users are affected.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 The name comes from the "canary in a coal mine" — an early warning system. A small slice of real production traffic tests the new version before it reaches all users. Unlike blue-green (full switch), canary gives you real production signal with limited blast radius. Automated monitoring controls the progression; if error rates or latency breach thresholds, the canary is automatically rolled back.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Even after extensive testing, some bugs only appear under real production load, data, or user behavior. Blue-green exposes 100% of users to the new version immediately — if it's broken, everyone is affected.
@@ -65,19 +65,19 @@ v1: 95%, v2: 5%   <-- anomaly detected → rollback to v1: 100%
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without canary, every deployment is a binary risk: all users get the new version immediately. Canary converts a binary risk into a graduated exposure, limiting the blast radius of failures and providing real production signal before full commitment.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Historically, miners brought canary birds into coal mines. If the canary showed signs of distress from toxic gas, miners evacuated before breathing the gas themselves. In software, the "canary" users (small %) hit the new version first — if they experience issues, the rollout is stopped before all users are affected.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Traffic splitting at load balancer / service mesh:
@@ -99,7 +99,7 @@ Auto-rollback:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [CI/CD Pipeline]
@@ -115,7 +115,7 @@ Auto-rollback:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```yaml
 # Istio VirtualService — canary traffic splitting
@@ -165,7 +165,7 @@ spec:
 
 ---
 
-## 🔁 Flow / Lifecycle
+### 🔁 Flow / Lifecycle
 
 ```
 1. Build and push new version (v2)
@@ -184,7 +184,7 @@ spec:
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -195,7 +195,7 @@ spec:
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: No Automated Analysis**
 Manual monitoring of canary — engineers forget or don't watch closely enough.
@@ -211,7 +211,7 @@ Fix: use header-based routing or ensure stateless sessions for accurate canary s
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Blue-Green Deployment** — instant full switch vs gradual canary shift
 - **Rolling Update** — in-place gradual replacement of pods (simpler but less control)
@@ -221,7 +221,7 @@ Fix: use header-based routing or ensure stateless sessions for accurate canary s
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #452 | Category: DevOps & SDLC | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -230,7 +230,7 @@ Fix: use header-based routing or ensure stateless sessions for accurate canary s
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** What is the key difference between a canary deployment and a blue-green deployment in terms of risk profile?  
 **Q2.** Why is monitoring business metrics (not just technical metrics) critical for automated canary analysis?  

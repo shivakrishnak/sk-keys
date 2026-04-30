@@ -4,41 +4,46 @@ title: "Operand Stack"
 parent: "Java Fundamentals"
 nav_order: 10
 permalink: /java/operand-stack/
----
-🏷️ Tags — #java #jvm #internals #bytecode #deep-dive
-
-⚡ TL;DR — The per-frame LIFO working memory where bytecode instructions push operands, perform operations, and pass results — the JVM's calculation scratch pad. 
-
-```
-┌──────────────────────────────────────────────────────┐
-│ #010  │ Category: JVM Internals  │ Difficulty: ★★★   │
-│ Depends on: Stack Frame,         │ Used by: Every    │
-│ Bytecode, Local Variable Table   │ bytecode instr,   │
-│                                  │ JIT Compiler      │
-└──────────────────────────────────────────────────────┘
-```
-
+number: "010"
+category: JVM Internals
+difficulty: ★★★
+depends_on: Stack Frame, Bytecode, Local Variable Table
+used_by: Every bytecode instruction, JIT Compiler
+tags: #java, #jvm, #internals, #bytecode, #deep-dive
 ---
 
-#### 📘 Textbook Definition
+# 010 — Operand Stack
+
+`#java` `#jvm` `#internals` `#bytecode` `#deep-dive`
+
+⚡ TL;DR — The per-frame LIFO working memory where bytecode instructions push operands, perform operations, and pass results — the JVM's calculation scratch pad.
+
+| #010 | Category: JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Stack Frame, Bytecode, Local Variable Table | |
+| **Used by:** | Every bytecode instruction, JIT Compiler | |
+
+---
+
+### 📘 Textbook Definition
 
 The Operand Stack is a **LIFO stack structure within each stack frame** that serves as the working memory for bytecode instruction execution. Instructions load values onto it from the Local Variable Table or constants, perform operations that consume and produce values on it, and pass return values or method arguments through it. Its maximum depth is determined at compile time and stored in the class file.
 
 ---
 
-#### 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 The Operand Stack is the JVM's **calculator display** — values get pushed on, operations consume them and push results back, all within a single method's execution.
 
 ---
 
-#### 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Every bytecode instruction either pushes values onto the Operand Stack, pops values off it, or both. It's the only place arithmetic, comparisons, and method argument passing actually happen. Unlike the Local Variable Table which has named slots, the Operand Stack is positional — you push, operate, pop. It's completely separate from other frames' operand stacks, making every method's calculations fully isolated.
 
 ---
 
-#### 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The problem:**
 
@@ -71,7 +76,7 @@ The JIT compiler then maps these stack operations to the actual CPU registers of
 
 ---
 
-#### ❓ Why Does This Exist — Why Before What
+### ❓ Why Does This Exist — Why Before What
 
 **Without the Operand Stack:**
 
@@ -111,7 +116,7 @@ Single unified mechanism handles ALL of: arithmetic, comparisons, method argumen
 
 ---
 
-#### 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of the Operand Stack as an **RPN calculator** (Reverse Polish Notation — like old HP calculators).
 > 
@@ -133,53 +138,13 @@ Single unified mechanism handles ALL of: arithmetic, comparisons, method argumen
 
 ---
 
-#### ⚙️ How It Works — Instruction Categories
+### ⚙️ How It Works — Instruction Categories
 
 Every bytecode instruction has a **precise contract** with the operand stack — defined number of values consumed (popped) and produced (pushed):
 
-```
-┌─────────────────────────────────────────────────────────┐
-│           BYTECODE → OPERAND STACK CONTRACT             │
-│                                                         │
-│  LOAD instructions (LVT → OS):                         │
-│  iload_N    pops: 0  pushes: 1 (int from slot N)        │
-│  aload_N    pops: 0  pushes: 1 (ref from slot N)        │
-│  lload_N    pops: 0  pushes: 2 (long = 2 stack slots)   │
-│  iconst_N   pops: 0  pushes: 1 (constant int)           │
-│                                                         │
-│  STORE instructions (OS → LVT):                        │
-│  istore_N   pops: 1  pushes: 0 (store int to slot N)    │
-│  astore_N   pops: 1  pushes: 0 (store ref to slot N)    │
-│                                                         │
-│  ARITHMETIC instructions:                              │
-│  iadd        pops: 2  pushes: 1  (int + int)            │
-│  isub        pops: 2  pushes: 1  (int - int)            │
-│  imul        pops: 2  pushes: 1  (int * int)            │
-│  idiv        pops: 2  pushes: 1  (int / int)            │
-│  ineg        pops: 1  pushes: 1  (negate int)           │
-│                                                         │
-│  COMPARISON instructions:                              │
-│  if_icmpeq   pops: 2  pushes: 0  (branch if equal)      │
-│  if_icmplt   pops: 2  pushes: 0  (branch if less than)  │
-│                                                         │
-│  STACK manipulation:                                   │
-│  dup         pops: 0  pushes: 1  (duplicate top)        │
-│  pop         pops: 1  pushes: 0  (discard top)          │
-│  swap        pops: 2  pushes: 2  (swap top two)         │
-│                                                         │
-│  METHOD invocation:                                    │
-│  invokevirtual  pops: N+1  pushes: 0 or 1              │
-│    (pops objectref + N args, pushes return value)       │
-│                                                         │
-│  RETURN:                                               │
-│  ireturn     pops: 1  pushes: 0  (returns int to caller)│
-│  return      pops: 0  pushes: 0  (void return)          │
-└─────────────────────────────────────────────────────────┘
-```
-
 ---
 
-#### 🔄 How It Connects
+### 🔄 How It Connects
 
 ```
 Local Variable Table          Operand Stack
@@ -198,7 +163,7 @@ Local Variable Table          Operand Stack
 
 ---
 
-#### 💻 Code Example — Deep Execution Traces
+### 💻 Code Example — Deep Execution Traces
 
 **Example 1 — Compound arithmetic expression:**
 
@@ -358,7 +323,7 @@ javap -verbose Example | grep stack
 
 ---
 
-#### ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 |Misconception|Reality|
 |---|---|
@@ -371,7 +336,7 @@ javap -verbose Example | grep stack
 
 ---
 
-#### 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **1. Bytecode manipulation libraries getting stack depths wrong**
 
@@ -439,7 +404,7 @@ Fix: use async profilers (async-profiler, JFR)
 
 ---
 
-#### 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - `Stack Frame` — the container that holds the Operand Stack
 - `Local Variable Table` — the named storage counterpart to OS
@@ -454,37 +419,13 @@ Fix: use async profilers (async-profiler, JFR)
 
 ---
 
-#### 📌 Quick Reference Card
-
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Per-frame LIFO working memory — the JVM's │
-│              │ calculation engine, CPU-register-         │
-│              │ independent by design                     │
-├──────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Always present — understanding it unlocks │
-│              │ bytecode reading, JIT behaviour,          │
-│              │ and bytecode generation tools             │
-├──────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Don't manually track operand stack in     │
-│              │ bytecode manipulation — let ASM/ByteBuddy │
-│              │ compute maxStack automatically            │
-├──────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Operand Stack = the JVM's RPN calculator │
-│              │  — push values, apply operations,         │
-│              │  collect result"                          │
-├──────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Local Variable Table → JIT Register       │
-│              │ Allocation → invokedynamic →              │
-│              │ ASM Bytecode Generation                   │
-└──────────────────────────────────────────────────────────┘
-```
+### 📌 Quick Reference Card
 
 ---
 
 **Entry 010 complete.**
 
-#### 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** The JIT compiler's job is to map JVM stack-based bytecode onto real CPU register-based instructions. What fundamentally has to happen during that translation — and why does the JIT produce **faster** code than the interpreter even though they both start from the same bytecode?
 

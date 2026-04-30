@@ -1,21 +1,37 @@
-﻿---
+---
 layout: default
 title: "N+1 Problem"
 parent: "Spring Framework"
 nav_order: 130
 permalink: /spring/n1-problem/
+number: "130"
+category: Spring & Spring Boot
+difficulty: ★★☆
+depends_on: JPA, Lazy vs Eager Loading
+used_by: Fetch optimization, @EntityGraph, JOIN FETCH
+tags: #spring, #database, #performance, #intermediate
 ---
+
+# 130 — N+1 Problem
 
 `#spring` `#database` `#performance` `#intermediate`
 
 ⚡ TL;DR — The N+1 problem occurs when loading a parent entity also triggers N separate queries to load each child entity — instead of one efficient JOIN query.
-## 📘 Textbook Definition
+
+| #130 | Category: Spring & Spring Boot | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JPA, Lazy vs Eager Loading | |
+| **Used by:** | Fetch optimization, @EntityGraph, JOIN FETCH | |
+
+---
+
+### 📘 Textbook Definition
 The N+1 select problem is a performance anti-pattern in ORM frameworks where fetching N parent entities results in N additional queries to fetch their associated child entities — one query per parent — instead of a single query using a JOIN or IN clause. It causes significant database load and latency at scale.
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 You load 100 orders (1 query). Each order has a customer. Instead of loading all customers in one query, the ORM fires 100 separate customer queries. 1 + 100 = 101 queries total. That's the N+1 problem.
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 JPA/Hibernate by default uses LAZY loading on associations — it doesn't fetch related entities until they're accessed. When you iterate over a list and access a lazy-loaded field on each entity, Hibernate fires a separate SQL query per entity. In production with thousands of records, this creates a query avalanche that can overwhelm the database.
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 ```
 // N orders loaded
 List<Order> orders = orderRepo.findAll();  // Query 1: SELECT * FROM orders
@@ -29,7 +45,7 @@ for (Order order : orders) {
 List<Order> findAllWithCustomer();
 // Just 1 query with JOIN — no lazy loading triggered
 ```
-## 💻 Code Example
+### 💻 Code Example
 ```java
 // Entity definition (LAZY by default for @ManyToOne in Hibernate)
 @Entity
@@ -62,13 +78,13 @@ private Customer customer;
        "FROM Order o JOIN o.customer c")
 List<OrderCustomerDto> findOrdersWithCustomerName();
 ```
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | Eager loading prevents N+1 | EAGER loading causes a JOIN for EVERY query, even when association isn't needed |
 | N+1 only happens with LAZY loading | N+1 can also occur with EAGER loading through certain query patterns |
 | JOIN FETCH solves all N+1 | Joining multiple collections with FETCH can cause Cartesian product explosion |
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 **Pitfall: JPA N+1 in REST endpoint**
 ```java
 // Bad: controller triggers N+1 without noticeable warning in tests
@@ -80,11 +96,11 @@ public List<OrderDto> getOrders() {
 }
 // Fix: use DTO projection query or @EntityGraph on the repository method
 ```
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 - **[@Transactional](./127 — @Transactional.md)** — required context for lazy loading to work
 - **[Lazy vs Eager Loading](./131 — Lazy vs Eager Loading.md)** — the mechanism behind N+1
 - **[HikariCP](./132 — HikariCP.md)** — N+1 exhausts connection pool quickly
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+
 | PROBLEM     | 1 + N queries instead of 1 JOIN query               |
@@ -98,7 +114,7 @@ public List<OrderDto> getOrders() {
 | FIX 3       | DTO projection — don't load entities at all          |
 +------------------------------------------------------------------+
 ```
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 **Q1.** You use `JOIN FETCH` for both `order.customer` and `order.items` where items is a collection. What performance problem can arise?
 **Q2.** `OpenSessionInViewFilter` is a common Spring pattern that keeps the Hibernate session open for the entire HTTP request. How does this relate to N+1?
 **Q3.** You have a Spring Data repository using `@EntityGraph`. Does this work with `Page<Order>` (pagination)? What limitation exists?

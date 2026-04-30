@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Test Pyramid"
 parent: "Testing"
@@ -25,25 +25,25 @@ tags: #testing #intermediate #strategy #quality
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 The Test Pyramid (Mike Cohn) is a framework for structuring a test suite. It prescribes three layers: a wide base of unit tests (fast, cheap, numerous), a narrower middle layer of integration tests (slower, moderate), and a narrow apex of E2E tests (slowest, most expensive, fewest). The pyramid shape reflects the ideal ratio — invert it (and you get the brittle "inverted pyramid" or "ice cream cone") and the test suite becomes slow and unreliable.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 The Test Pyramid means: **write lots of fast unit tests, some integration tests, and very few E2E tests**. The lower in the pyramid, the faster, cheaper, and more numerous the tests should be.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Each layer of the pyramid tests different things and has different properties. Unit tests are milliseconds each and test individual logic. Integration tests are seconds each and test component interactions. E2E tests are minutes each and test full user journeys. Violating the pyramid (too many E2E tests, too few unit tests) creates a slow, fragile, expensive test suite — the inverse "ice cream cone" anti-pattern.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 Teams that rely only on E2E tests have a slow, brittle test suite — 2+ hours per build, random failures, and poor localization of bugs. Teams with no E2E tests miss integration failures.
@@ -70,19 +70,19 @@ Ideal ratio (rough guideline):
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without the pyramid model, teams default to E2E tests (they feel most realistic) and end up with a slow, fragile suite that blocks releases. The pyramid provides a principled framework for investing in the right test type at the right level.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of the pyramid as a cost-to-value ratio of tests. Unit tests are like automated factory robots — cheap, fast, run thousands per second. Integration tests are like quality checkpoints — verify the assembly is correct. E2E tests are like acceptance tests — verify the final product works for the customer. You can't run acceptance tests 10,000 times per day; but robots run continuously.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Decision tree for each test:
@@ -108,7 +108,7 @@ Modern evolution — Honeycomb (microservices):
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Unit Test]  ---> tests logic, fast, many
@@ -121,7 +121,7 @@ Modern evolution — Honeycomb (microservices):
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```
 Calculating your pyramid health:
@@ -161,7 +161,7 @@ Ratio: 50 : 80 : 500 ← ice cream cone — build takes 25 hours
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -172,7 +172,7 @@ Ratio: 50 : 80 : 500 ← ice cream cone — build takes 25 hours
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Ice Cream Cone (Inverted Pyramid)**
 Team relies on E2E tests → 2-hour builds → developers skip running tests locally → CI backlog.
@@ -188,7 +188,7 @@ Fix: move boundary/edge-case tests to unit tests; keep E2E only for happy paths.
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Unit Test** — the base of the pyramid; most numerous and fastest
 - **Integration Test** — the middle layer; tests component interactions
@@ -198,7 +198,7 @@ Fix: move boundary/edge-case tests to unit tests; keep E2E only for happy paths.
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #421 | Category: Testing | Difficulty: ★★☆ |
 |:---|:---|:---|
@@ -207,7 +207,7 @@ Fix: move boundary/edge-case tests to unit tests; keep E2E only for happy paths.
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why does inverting the pyramid (mostly E2E) create a "slow and fragile" test suite?  
 **Q2.** How does the "testing honeycomb" model adapt the pyramid for microservices architectures?  

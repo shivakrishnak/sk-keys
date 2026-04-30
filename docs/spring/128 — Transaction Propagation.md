@@ -1,19 +1,35 @@
-﻿---
+---
 layout: default
 title: "Transaction Propagation"
 parent: "Spring Framework"
 nav_order: 128
 permalink: /spring/transaction-propagation/
+number: "128"
+category: Spring & Spring Boot
+difficulty: ★★☆
+depends_on: @Transactional
+used_by: Nested transactions, service layer design
+tags: #spring, #database, #internals, #intermediate
 ---
+
+# 128 — Transaction Propagation
 
 `#spring` `#database` `#internals` `#intermediate`
 
 ⚡ TL;DR — Transaction Propagation defines what Spring does when a @Transactional method is called while a transaction is already active: join it, start a new one, suspend it, or fail.
-## 📘 Textbook Definition
+
+| #128 | Category: Spring & Spring Boot | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | @Transactional | |
+| **Used by:** | Nested transactions, service layer design | |
+
+---
+
+### 📘 Textbook Definition
 `Propagation` is an attribute of `@Transactional` that controls the transaction boundaries when a transactional method is invoked in the context of an existing transaction. The seven propagation types define whether the method joins the caller's transaction, creates its own, suspends the caller's, or throws an exception.
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 Propagation answers: "If someone is already in a transaction when they call my method, what should I do?" Should I join their transaction? Start my own? Refuse to run inside one?
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 **Seven propagation types:**
 ```
 REQUIRED (DEFAULT)   — Join existing tx; create new if none
@@ -38,7 +54,7 @@ Method A (@Transactional REQUIRED)
       → if B throws and rolls back, only TX-B rolls back
       → TX-A continues after B (success or failure)
 ```
-## 💻 Code Example
+### 💻 Code Example
 ```java
 @Service
 public class OrderService {
@@ -65,16 +81,16 @@ public class OrderService {
     }
 }
 ```
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | REQUIRES_NEW works with self-invocation | Must call through proxy; self-invocation bypasses propagation entirely |
 | NESTED = REQUIRES_NEW | NESTED uses savepoints — rollback goes to savepoint, not full rollback |
 | SUPPORTS always uses a transaction | SUPPORTS joins if exists, but runs non-transactionally if none |
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 - **[@Transactional](./127 — @Transactional.md)** — the annotation that uses propagation
 - **[Transaction Isolation Levels](./129 — Transaction Isolation Levels.md)** — concurrency behavior within a transaction
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+
 | REQUIRED     | Join existing or create new (DEFAULT)              |

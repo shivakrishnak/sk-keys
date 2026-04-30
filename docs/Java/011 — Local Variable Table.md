@@ -4,41 +4,46 @@ title: "Local Variable Table"
 parent: "Java Fundamentals"
 nav_order: 11
 permalink: /java/local-variable-table/
----
-🏷️ Tags — #java #jvm #internals #memory #bytecode #deep-dive
-
-⚡ TL;DR — The indexed slot array inside every stack frame that stores a method's parameters and local variables — fixed at compile time, zero GC overhead, lives and dies with its frame. 
-
-```
-┌──────────────────────────────────────────────────────┐
-│ #011  │ Category: JVM Internals  │ Difficulty: ★★★   │
-│ Depends on: Stack Frame,         │ Used by: Every    │
-│ Bytecode, Operand Stack          │ method execution, │
-│                                  │ Debugger, JIT     │
-└──────────────────────────────────────────────────────┘
-```
-
+number: "011"
+category: JVM Internals
+difficulty: ★★★
+depends_on: Stack Frame, Bytecode, Operand Stack
+used_by: Every method execution, Debugger, JIT Compiler
+tags: #java, #jvm, #internals, #memory, #bytecode, #deep-dive
 ---
 
-#### 📘 Textbook Definition
+# 011 — Local Variable Table
+
+`#java` `#jvm` `#internals` `#memory` `#bytecode` `#deep-dive`
+
+⚡ TL;DR — The indexed slot array inside every stack frame that stores a method's parameters and local variables — fixed at compile time, zero GC overhead, lives and dies with its frame.
+
+| #011 | Category: JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Stack Frame, Bytecode, Operand Stack | |
+| **Used by:** | Every method execution, Debugger, JIT Compiler | |
+
+---
+
+### 📘 Textbook Definition
 
 The Local Variable Table (LVT) is a **fixed-size, indexed array of variable slots within a stack frame** that stores a method's parameters and locally declared variables. Slot 0 holds `this` for instance methods. Each slot holds a primitive value or object reference. `long` and `double` occupy two consecutive slots. The table's size is determined at compile time by `javac` and stored in the `.class` file's `Code` attribute.
 
 ---
 
-#### 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 The Local Variable Table is the method's **named storage cabinet** — every parameter and local variable gets a numbered drawer, and bytecode reads and writes to those drawers by number.
 
 ---
 
-#### 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 When `javac` compiles a method, it assigns every parameter and local variable a slot number — like locker numbers. The JVM uses these numbers, not names, at runtime. `iload_2` means "push the integer from slot 2 onto the operand stack" — it doesn't know or care that slot 2 is called `total`. Names are debug metadata, not runtime reality. The table is pre-sized exactly right at compile time — no dynamic resizing, no GC, instant allocation when the frame is pushed.
 
 ---
 
-#### 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The problem:**
 
@@ -84,7 +89,7 @@ JVM at runtime:
 
 ---
 
-#### ❓ Why Does This Exist — Why Before What
+### ❓ Why Does This Exist — Why Before What
 
 **Without the Local Variable Table:**
 
@@ -145,7 +150,7 @@ Problem:
 
 ---
 
-#### 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of a method call as renting a **safety deposit box room** at a bank.
 > 
@@ -161,50 +166,11 @@ Problem:
 
 ---
 
-#### ⚙️ How It Works — Slot Assignment Rules
-
-```
-┌─────────────────────────────────────────────────────────┐
-│            SLOT ASSIGNMENT BY JAVAC                     │
-│                                                         │
-│  INSTANCE METHOD:                                       │
-│  ┌──────┬──────────────────────────────────────────┐   │
-│  │ Slot │ Content                                  │   │
-│  ├──────┼──────────────────────────────────────────┤   │
-│  │  0   │ this  (always — implicit first param)    │   │
-│  │  1   │ first declared parameter                 │   │
-│  │  2   │ second declared parameter                │   │
-│  │  3   │ third declared parameter (or 3+4 if long)│   │
-│  │  N   │ first local variable declared in method  │   │
-│  │ N+1  │ second local variable                    │   │
-│  │ ...  │ ...                                      │   │
-│  └──────┴──────────────────────────────────────────┘   │
-│                                                         │
-│  STATIC METHOD:                                         │
-│  ┌──────┬──────────────────────────────────────────┐   │
-│  │ Slot │ Content                                  │   │
-│  ├──────┼──────────────────────────────────────────┤   │
-│  │  0   │ first declared parameter (no 'this')     │   │
-│  │  1   │ second declared parameter                │   │
-│  │  2   │ first local variable                     │   │
-│  │ ...  │ ...                                      │   │
-│  └──────┴──────────────────────────────────────────┘   │
-│                                                         │
-│  TYPE RULES:                                            │
-│  • int, float, reference → 1 slot                      │
-│  • long, double           → 2 consecutive slots        │
-│  • boolean, byte, char, short → stored as int (1 slot) │
-│                                                         │
-│  SCOPE REUSE:                                           │
-│  • If variable goes out of scope, its slot can be      │
-│    reused by a later variable in the same method       │
-│  • javac optimises slot count by reusing slots         │
-└─────────────────────────────────────────────────────────┘
-```
+### ⚙️ How It Works — Slot Assignment Rules
 
 ---
 
-#### 🔄 How It Connects
+### 🔄 How It Connects
 
 ```
 javac compiles method
@@ -230,7 +196,7 @@ Method returns → Frame popped
 
 ---
 
-#### 💻 Code Example — Slot Assignment in Detail
+### 💻 Code Example — Slot Assignment in Detail
 
 **Instance method — full slot trace:**
 
@@ -412,7 +378,7 @@ javap -verbose TwoSlots | grep locals
 
 ---
 
-#### ⚙️ LVT Size Calculation — How javac Does It
+### ⚙️ LVT Size Calculation — How javac Does It
 
 ```
 javac performs LIVENESS ANALYSIS:
@@ -438,7 +404,7 @@ Example:
 
 ---
 
-#### ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 |Misconception|Reality|
 |---|---|
@@ -452,7 +418,7 @@ Example:
 
 ---
 
-#### 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **1. Missing debug info — blind debugging**
 
@@ -541,7 +507,7 @@ public void process() {
 
 ---
 
-#### 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - `Stack Frame` — the container holding the LVT
 - `Operand Stack` — the working counterpart to LVT
@@ -557,37 +523,13 @@ public void process() {
 
 ---
 
-#### 📌 Quick Reference Card
-
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Fixed-size indexed slot array in each     │
-│              │ frame — stores params + locals by number  │
-│              │ not by name; names are debug-only         │
-├──────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Always present — understanding LVT        │
-│              │ unlocks bytecode reading, debugger        │
-│              │ behaviour, and JIT optimisation           │
-├──────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Don't assume variable names survive to    │
-│              │ runtime — strip-debug builds break        │
-│              │ name-based reflection assumptions         │
-├──────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "LVT = method's numbered locker room —    │
-│              │  slot 0 is always 'this', names are       │
-│              │  labels for humans, numbers for JVM"      │
-├──────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Operand Stack → JIT Register Allocation → │
-│              │ Escape Analysis → javap -l →              │
-│              │ JDWP Debugger Protocol                    │
-└──────────────────────────────────────────────────────────┘
-```
+### 📌 Quick Reference Card
 
 ---
 
 **Entry 011 complete.**
 
-#### 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** `javac` reuses LVT slots when variables go out of scope. Now consider this scenario: you're writing a security-sensitive method that stores a password in a local `char[]` variable, zeroes it out, then the variable goes out of scope. The slot gets reused by another variable. What are the implications — and does zeroing actually guarantee the sensitive data is gone?
 

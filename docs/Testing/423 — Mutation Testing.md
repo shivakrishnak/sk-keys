@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Mutation Testing"
 parent: "Testing"
@@ -25,25 +25,25 @@ tags: #testing #advanced #quality #mutation
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Mutation Testing is a technique that evaluates the quality of a test suite by systematically introducing small syntactic changes (mutations) to the source code and verifying whether the existing tests fail (kill the mutant). A test suite is considered strong if it kills most mutants — weak if many mutants survive. The mutation score is `killed mutants / total mutants`.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Mutation testing **introduces small bugs into your code and checks if your tests catch them**. If your tests don't detect a bug, you know the tests are missing something. It measures test quality, not just coverage.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Code coverage tells you which lines were executed by tests — but a line can be executed without being verified. A test that runs the code but asserts nothing can achieve 100% coverage. Mutation testing goes deeper: it changes `>` to `>=`, removes a method return, swaps `+` to `-`, and checks whether THOSE specific changes break your tests. If not, the tests weren't actually verifying the behavior.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 100% line coverage can coexist with useless tests. You can reach every line without asserting anything. Coverage measures test execution, not test quality.
@@ -70,19 +70,19 @@ Test suite kills M2, M3, M4 but NOT M1
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Coverage metrics are gamed easily and don't measure test value. Mutation testing provides an objective measure: how many bugs would your tests catch? A mutation score of 90%+ means 90% of the small, realistic bugs introduced were detected by the test suite.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Mutation testing is like a security audit for your test suite. You hire a "red team" (the mutation framework) to deliberately introduce small vulnerabilities (mutants) into your code. If your security system (test suite) doesn't catch them, you know where your defenses are weak. A high mutation score means you caught most red team attacks.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Mutation Testing Lifecycle:
@@ -112,7 +112,7 @@ Mutation Testing Lifecycle:
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Test Coverage: which lines ran?]
@@ -127,7 +127,7 @@ Mutation Testing Lifecycle:
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // Source code with subtle boundary bug
@@ -185,7 +185,7 @@ class PremiumChecker {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -196,7 +196,7 @@ class PremiumChecker {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Running on Full Codebase in CI**
 10,000 classes × 500 mutants each = hours per run.
@@ -212,7 +212,7 @@ Fix: review mutant kills by adding meaningful assertions; mutation score is a gu
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Unit Test** — mutation testing evaluates unit test quality
 - **Code Coverage** — what mutation testing goes beyond
@@ -222,7 +222,7 @@ Fix: review mutant kills by adding meaningful assertions; mutation score is a gu
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #423 | Category: Testing | Difficulty: ★★★ |
 |:---|:---|:---|
@@ -231,7 +231,7 @@ Fix: review mutant kills by adding meaningful assertions; mutation score is a gu
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why does 100% line coverage not guarantee that tests will catch mutations?  
 **Q2.** What is an "equivalent mutant" and why is it impossible to kill?  

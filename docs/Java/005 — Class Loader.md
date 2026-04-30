@@ -4,41 +4,46 @@ title: "Class Loader"
 parent: "Java Fundamentals"
 nav_order: 5
 permalink: /java/class-loader/
+number: "005"
+category: JVM Internals
+difficulty: ★★☆
+depends_on: JVM, Bytecode
+used_by: JIT Compiler, Spring, Hibernate, OSGi, Tomcat
+tags: #java, #jvm, #internals, #classloading, #intermediate
 ---
-🏷️ Tags — #java #jvm #internals #classloading #intermediate 
+
+# 005 — Class Loader
+
+`#java` `#jvm` `#internals` `#classloading` `#intermediate`
 
 ⚡ TL;DR — The JVM component that finds, loads, and links `.class` files into memory before execution begins.
 
-
-```
-┌──────────────────────────────────────────────────────┐
-│ #005  │ Category: JVM Internals  │ Difficulty: ★★☆   │
-│ Depends on: JVM, Bytecode         │ Used by: JIT,    │
-│ Spring, Hibernate, OSGi, Tomcat   │                  │
-└──────────────────────────────────────────────────────┘
-```
+| #005 | Category: JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Bytecode | |
+| **Used by:** | JIT Compiler, Spring, Hibernate, OSGi, Tomcat | |
 
 ---
 
-#### 📘 Textbook Definition
+### 📘 Textbook Definition
 
 A Class Loader is a component of the JVM responsible for **loading compiled `.class` files into memory**, verifying their bytecode, preparing static fields, and resolving symbolic references — following a strict **parent-delegation model** to ensure class uniqueness and security.
 
 ---
 
-#### 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 The Class Loader is the JVM's **file finder and loader** — when your code references a class, the Class Loader finds the `.class` file and brings it into memory so the JVM can use it.
 
 ---
 
-#### 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 When your program says `new ArrayList()`, the JVM doesn't magically know what `ArrayList` is — the Class Loader has to find `ArrayList.class`, load its bytecode into memory, verify it's safe, and set it up before any instance can be created. This happens **lazily** — classes are loaded on first use, not all at startup. And it follows a strict hierarchy to prevent malicious code from overriding core Java classes.
 
 ---
 
-#### 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The problem:**
 
@@ -74,7 +79,7 @@ Result bubbles back up — String loaded from JDK, not your code
 
 ---
 
-#### 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of Class Loaders as a **chain of librarians**, each responsible for a specific section.
 > 
@@ -86,46 +91,11 @@ Result bubbles back up — String loaded from JDK, not your code
 
 ---
 
-#### ⚙️ How It Works — The Three Built-in Class Loaders
-
-```
-┌─────────────────────────────────────────────────────────┐
-│              CLASS LOADER HIERARCHY                     │
-│                                                         │
-│  ┌──────────────────────────────────────────────────┐   │
-│  │         Bootstrap ClassLoader                    │   │
-│  │  • Built into JVM (written in C/C++)             │   │
-│  │  • Loads: java.lang.*, java.util.*, etc.         │   │
-│  │  • Source: $JAVA_HOME/lib/modules (Java 9+)      │   │
-│  │  • Parent: none (root of hierarchy)              │   │
-│  │  • Returns NULL when asked for parent            │   │
-│  └────────────────────┬─────────────────────────────┘   │
-│                       │ parent of                       │
-│  ┌────────────────────▼─────────────────────────────┐   │
-│  │         Platform ClassLoader                     │   │
-│  │  • (was Extension ClassLoader pre Java 9)        │   │
-│  │  • Loads: java.sql.*, java.xml.*, etc.           │   │
-│  │  • Source: JDK platform modules                  │   │
-│  └────────────────────┬─────────────────────────────┘   │
-│                       │ parent of                       │
-│  ┌────────────────────▼─────────────────────────────┐   │
-│  │         Application ClassLoader                  │   │
-│  │  • (aka System ClassLoader)                      │   │
-│  │  • Loads: YOUR code + third-party jars           │   │
-│  │  • Source: -classpath / -cp / CLASSPATH env var  │   │
-│  └──────────────────────────────────────────────────┘   │
-│                       │ parent of                       │
-│  ┌────────────────────▼─────────────────────────────┐   │
-│  │         Custom ClassLoaders                      │   │
-│  │  • Tomcat, Spring, OSGi, JPA — all use these     │   │
-│  │  • Load from DB, network, encrypted jars, etc.   │   │
-│  └──────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────┘
-```
+### ⚙️ How It Works — The Three Built-in Class Loaders
 
 ---
 
-#### ⚙️ The Three Phases of Class Loading
+### ⚙️ The Three Phases of Class Loading
 
 ```
 LOADING → LINKING → INITIALIZATION
@@ -141,25 +111,6 @@ LOADING → LINKING → INITIALIZATION
 
 **Phase 2 — Linking (3 sub-phases)**
 
-```
-┌─────────────────────────────────────────────────┐
-│  2a. VERIFICATION                               │
-│  • Is bytecode structurally valid?              │
-│  • No stack overflows? Valid opcodes?           │
-│  • Type safety checks                           │
-│  • Security: prevents malformed bytecode attack │
-│                                                 │
-│  2b. PREPARATION                                │
-│  • Allocate memory for static fields            │
-│  • Set default values (0, null, false)          │
-│  • NOT your initial values yet                  │
-│                                                 │
-│  2c. RESOLUTION                                 │
-│  • Replace symbolic references with direct refs │
-│  • "java/util/ArrayList" → actual memory pointer│
-└─────────────────────────────────────────────────┘
-```
-
 **Phase 3 — Initialization**
 
 ```
@@ -170,7 +121,7 @@ LOADING → LINKING → INITIALIZATION
 
 ---
 
-#### 🔄 How It Connects
+### 🔄 How It Connects
 
 ```
 .class file on disk
@@ -188,7 +139,7 @@ Execution
 
 ---
 
-#### 💻 Code Example
+### 💻 Code Example
 
 **Inspecting Class Loaders at runtime:**
 
@@ -284,35 +235,11 @@ System.out.println(class1.isInstance(
 
 ---
 
-#### 🔁 How Spring Uses Class Loaders
-
-```
-┌──────────────────────────────────────────────────────────┐
-│              SPRING BOOT CLASS LOADING                   │
-│                                                          │
-│  Spring Boot Fat JAR:                                    │
-│  myapp.jar/                                              │
-│    BOOT-INF/classes/     ← your code                     │
-│    BOOT-INF/lib/*.jar    ← dependencies                  │
-│    org/springframework/  ← Spring loader                 │
-│                                                          │
-│  LaunchedURLClassLoader (Spring's custom CL)             │
-│    • Knows how to read nested jars                       │
-│    • Standard AppClassLoader can't do this               │
-│    • Spring Boot Loader bridges the gap                  │
-│                                                          │
-│  Flow:                                                   │
-│  java -jar myapp.jar                                     │
-│    → JarLauncher.main()                                  │
-│    → Creates LaunchedURLClassLoader                      │
-│    → Loads your Application class through it             │
-│    → Spring context boots                                │
-└──────────────────────────────────────────────────────────┘
-```
+### 🔁 How Spring Uses Class Loaders
 
 ---
 
-#### ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 |Misconception|Reality|
 |---|---|
@@ -324,7 +251,7 @@ System.out.println(class1.isInstance(
 
 ---
 
-#### 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **1. ClassNotFoundException vs NoClassDefFoundError**
 
@@ -391,7 +318,7 @@ t.setContextClassLoader(Thread.currentThread().getContextClassLoader());
 
 ---
 
-#### 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - `JVM` — Class Loader is a core JVM subsystem
 - `Bytecode` — what Class Loader loads into memory
@@ -406,30 +333,10 @@ t.setContextClassLoader(Thread.currentThread().getContextClassLoader());
 
 ---
 
-#### 📌 Quick Reference Card
-
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Finds, loads, verifies, and links .class  │
-│              │ files into JVM memory via parent          │
-│              │ delegation for safety and isolation       │
-├──────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Plugin systems, hot reload, multi-tenant  │
-│              │ apps, custom class sources (DB, network)  │
-├──────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Don't bypass parent delegation unless     │
-│              │ you fully understand isolation effects    │
-├──────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Class Loader is the JVM's gatekeeper —  │
-│              │  nothing runs until it says so"           │
-├──────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Metaspace → JIT Compiler → Reflection →  │
-│              │ Spring Proxy → CGLIB → Hot Reload         │
-└──────────────────────────────────────────────────────────┘
-```
+### 📌 Quick Reference Card
 
 ---
-#### 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Tomcat runs multiple webapps in one JVM. Each webapp has its own `ClassLoader`. What happens when two webapps both use `log4j` but different versions — and how does ClassLoader isolation solve this?
 

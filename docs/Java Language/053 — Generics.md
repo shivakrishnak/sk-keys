@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Generics"
 parent: "Java Language"
@@ -25,25 +25,25 @@ tags: #java #intermediate #generics #typesystem
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Generics enable types (classes and interfaces) to be parameterized — you write code that works with different types while retaining type safety checked at compile time. Introduced in Java 5, they are implemented via **type erasure**: the compiler enforces type constraints and then removes the type information, producing the same bytecode as pre-generics code.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 Generics let you write a `Box<T>` once and use it as `Box<String>`, `Box<Integer>`, or `Box<MyClass>` — the compiler checks you put the right thing in and you never need to cast when taking it out.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Before generics (Java 1.4), `List` stored `Object` and every retrieval required an explicit cast — which could fail at runtime. Generics move that error to **compile time**: `List<String>` tells the compiler every element is a `String`, so no cast is needed and a wrong type inserted is caught immediately. The cost: type info is erased at runtime (see Type Erasure #054).
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **The core problem:**
 ```
@@ -67,19 +67,19 @@ String s = names.get(0);  // no cast needed, always safe
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Runtime `ClassCastException` is the worst kind of bug — invisible until code runs in production. Generics turn a runtime crash into a compile-time error. They also eliminate cast noise, making code cleaner and expressing intent clearly.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Generics are like a typed filing cabinet. A plain `List` is an unlabelled drawer — you can put anything in, but when you reach in, you don't know what you'll find. A `List<String>` is a drawer labelled "Strings only" — the clerk (compiler) rejects anything else, and you always know exactly what you're getting.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Generic constructs:
@@ -108,7 +108,7 @@ Type inference (Java 7+ diamond):
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Generics] ──defines type params──► [Type Parameter T, E, K, V]
@@ -122,7 +122,7 @@ Type inference (Java 7+ diamond):
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // 1. Generic class
@@ -164,7 +164,7 @@ Pair<String, Integer> p = Pair.of("age", 30);
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -175,7 +175,7 @@ Pair<String, Integer> p = Pair.of("age", 30);
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Raw types**
 ```java
@@ -201,7 +201,7 @@ Fix: use wrapper types (`Integer`, `Long`), accept autoboxing overhead.
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Type Erasure (#054)** — why generic type info disappears at runtime; root of all generic limitations
 - **Bounded Wildcards (#055)** — `? extends T` / `? super T` — real-world generics flexibility
@@ -211,7 +211,7 @@ Fix: use wrapper types (`Integer`, `Long`), accept autoboxing overhead.
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #053 | Category: Java Language | Difficulty: ★★★ |
 |:---|:---|:---|
@@ -220,7 +220,7 @@ Fix: use wrapper types (`Integer`, `Long`), accept autoboxing overhead.
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why can't you write `new T[10]` inside a generic class, even though `T` feels like a type at compile time?
 **Q2.** What is the "diamond problem" that the diamond operator `<>` (Java 7) solves?

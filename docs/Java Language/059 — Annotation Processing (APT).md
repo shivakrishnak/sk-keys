@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Annotation Processing (APT)"
 parent: "Java Language"
@@ -25,25 +25,25 @@ tags: #java #advanced #annotations #apt #codegen
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 Annotation Processing (APT — Annotation Processing Tool) is a Java compiler feature that allows custom code to run during compilation. Processors extend `AbstractProcessor` and are invoked by `javac` when their supported annotation types are found. They can generate new source files, resource files, or emit compiler errors/warnings — all before the final `.class` files are produced. Processors operate on the AST via the `javax.annotation.processing` and `javax.lang.model` APIs.
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 APT is about writing code that **writes code**. You put `@Builder` on your class, and at compile time a processor generates a `UserBuilder` class for you — before your code even finishes compiling. The generated class is real Java that the compiler then also compiles.
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Unlike runtime reflection (which reads class structure at runtime), APT happens **before** bytecode is produced. Processors are plugins to the compiler itself. This gives them access to the full source code model, lets them validate annotations with compile-time errors, and generates boilerplate with zero runtime overhead — the generated code is just regular Java classes.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 **Compilation pipeline with APT:**
 ```
@@ -63,19 +63,19 @@ Annotations in new files → processors run again (until stable)
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Repetitive boilerplate (getters, setters, builders, mappers, DI wiring) wastes developer time and clutters codebases. Runtime alternatives (reflection) add overhead and defer errors. APT eliminates the boilerplate at source level with **zero runtime cost** and **compile-time error detection**.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > APT is like a **ghostwriter hired by the compiler**. You write notes (`@Builder`), and before the publisher (JVM) gets the final manuscript, the ghostwriter fills in all the chapters (builder code). The publisher only ever sees the complete, filled-in manuscript — they don't know anyone added boilerplate.
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 1. Register processor in META-INF/services/javax.annotation.processing.Processor
@@ -105,7 +105,7 @@ Repetitive boilerplate (getters, setters, builders, mappers, DI wiring) wastes d
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [@Getter annotation in source]
@@ -119,7 +119,7 @@ Repetitive boilerplate (getters, setters, builders, mappers, DI wiring) wastes d
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // 1. Using Lombok (APT under the hood)
@@ -179,7 +179,7 @@ interface AppComponent {
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -190,7 +190,7 @@ interface AppComponent {
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Incremental compilation issues**
 Some processors don't work well with incremental compilation (Gradle). Generated files may not regenerate when they should.
@@ -206,7 +206,7 @@ Fix: use multiple compilation rounds (`RoundEnvironment.processingOver()`); desi
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Reflection (#058)** — runtime equivalent; more flexible but slower
 - **Annotations** — the mechanism APT hooks into
@@ -216,7 +216,7 @@ Fix: use multiple compilation rounds (`RoundEnvironment.processingOver()`); desi
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #059 | Category: Java Language | Difficulty: ★★★ |
 |:---|:---|:---|
@@ -225,7 +225,7 @@ Fix: use multiple compilation rounds (`RoundEnvironment.processingOver()`); desi
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why does Dagger 2 (APT-based DI) start faster than Spring (reflection-based DI)?
 **Q2.** How does Lombok modify existing class bodies when the standard APT API only allows creating new files?

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Covariance / Contravariance"
 parent: "Java Language"
@@ -25,7 +25,7 @@ tags: #java #advanced #generics #variance #covariance
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
 **Variance** describes how subtyping of parameterized types relates to subtyping of their type arguments. A type constructor `F<T>` is:
 - **Covariant** in T: If `A <: B` then `F<A> <: F<B>` — subtypes stay subtypes (`? extends`)
@@ -34,7 +34,7 @@ tags: #java #advanced #generics #variance #covariance
 
 ---
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
 - **Covariant**: A `List<Dog>` can be treated as a `List<? extends Animal>` — safe to **read** Animals out.
 - **Contravariant**: A `Comparator<Animal>` can be used as a `Comparator<? super Dog>` — can **compare** any Dog.
@@ -42,13 +42,13 @@ tags: #java #advanced #generics #variance #covariance
 
 ---
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
 Java arrays are **covariant** (design mistake): `Dog[]` is a `Animal[]`. This is type-unsafe — you can write a Cat into a Dog[] through an Animal[] reference. Java generics are deliberately **invariant** to prevent this. Wildcards (`extends`/`super`) opt into covariance/contravariance explicitly where needed.
 
 ---
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
 ```
 Subtype relationship: Integer <: Number <: Object
@@ -77,13 +77,13 @@ Arrays covariance (broken):
 
 ---
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 Without variance, generics would be completely rigid. You couldn't write a `max()` method that works for any `Comparable` subtype, or a sort that accepts any `Comparator` of supertypes. Variance is what makes generic APIs composable and reusable.
 
 ---
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of variance in terms of **vending machines**:
 > **Covariant (extends)** = a machine that only **dispenses** items. If it dispenses Dogs, you can use it wherever Animal dispensers are expected.
@@ -92,7 +92,7 @@ Without variance, generics would be completely rigid. You couldn't write a `max(
 
 ---
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 Java variance summary:
@@ -113,7 +113,7 @@ Declaration-site variance (Kotlin / Scala):
 
 ---
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 [Subtyping: Dog <: Animal]
@@ -128,7 +128,7 @@ Declaration-site variance (Kotlin / Scala):
 
 ---
 
-## 💻 Code Example
+### 💻 Code Example
 
 ```java
 // 1. Array covariance — compiles, crashes at runtime
@@ -164,7 +164,7 @@ public static <T extends Comparable<? super T>> void sort(List<T> list)
 
 ---
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
@@ -175,7 +175,7 @@ public static <T extends Comparable<? super T>> void sort(List<T> list)
 
 ---
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Pitfall 1: Arrays vs Lists — different safety guarantees**
 ```java
@@ -199,7 +199,7 @@ void fillList(List<? extends Number> list, Number n) {
 
 ---
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
 - **Generics (#053)** — the parameterization system variance operates on
 - **Bounded Wildcards (#055)** — `? extends` (covariant) and `? super` (contravariant)
@@ -209,7 +209,7 @@ void fillList(List<? extends Number> list, Number n) {
 
 ---
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
 | #056 | Category: Java Language | Difficulty: ★★★ |
 |:---|:---|:---|
@@ -218,7 +218,7 @@ void fillList(List<? extends Number> list, Number n) {
 
 ---
 
-## 🧠 Think About This Before We Continue
+### 🧠 Think About This Before We Continue
 
 **Q1.** Why does `String[]` being assignable to `Object[]` create a runtime safety hole that `List<String>` → `List<Object>` does not?
 **Q2.** Given `class Animal` and `class Dog extends Animal`, which of these compiles: `Comparator<Animal> c = (a,b) -> 0; dogs.sort(c);`?
