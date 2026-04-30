@@ -1,96 +1,173 @@
 ---
 layout: default
 title: "ApplicationContext"
-parent: "Spring Framework"
+parent: "Spring & Spring Boot"
 nav_order: 105
-permalink: /spring/applicationcontext/
+permalink: /spring/application-context/
+number: "105"
+category: Spring & Spring Boot
+difficulty: ★★☆
+depends_on: IoC, Bean, BeanFactory, Dependency Injection
+used_by: Bean Lifecycle, AOP Proxy, Spring MVC, Spring Boot, @EventListener
+tags: #java, #spring, #springboot, #intermediate, #architecture
 ---
+
 # 105 — ApplicationContext
 
-`#spring` `#springboot` `#internals` `#foundational`
+`#java` `#spring` `#springboot` `#intermediate` `#architecture`
 
-⚡ TL;DR — ApplicationContext is Spring's full-featured IoC container — it manages beans, resolves dependencies, fires events, handles AOP, and provides environment abstraction all in one.
+⚡ TL;DR — Spring's full-featured IoC container that holds all beans, wires them, publishes events, manages lifecycle, and integrates AOP, internationalisation, and resource loading.
 
 | #105 | Category: Spring & Spring Boot | Difficulty: ★★☆ |
 |:---|:---|:---|
-| **Depends on:** | BeanFactory, IoC, DI | |
-| **Used by:** | Spring Boot, Spring MVC, AOP, @Configuration | |
+| **Depends on:** | IoC, Bean, BeanFactory, Dependency Injection | |
+| **Used by:** | Bean Lifecycle, AOP Proxy, Spring MVC, Spring Boot, @EventListener | |
 
 ---
 
 ### 📘 Textbook Definition
 
-`ApplicationContext` is the central interface in Spring's IoC implementation. It extends `BeanFactory` and adds enterprise features including event publication, internationalization (i18n), resource loading, transparent AOP integration, and environment/profile abstraction. It is the primary entry point to Spring's container in production applications.
+The **ApplicationContext** is Spring's central IoC container — a superset of `BeanFactory` that adds enterprise features including event publication, declarative transaction support, AOP integration, internationalisation, and resource loading abstraction. It implements several interfaces simultaneously: `BeanFactory` (bean management), `MessageSource` (i18n), `ApplicationEventPublisher` (event bus), and `ResourcePatternResolver` (classpath/filesystem/URL resources). On startup, the context eagerly initialises all singleton beans, runs `BeanPostProcessor`s to apply AOP proxies, calls lifecycle callbacks, and publishes `ContextRefreshedEvent`. In Spring Boot, it is created and auto-configured by `SpringApplication.run()`.
 
 ---
 
 ### 🟢 Simple Definition (Easy)
 
-ApplicationContext is the Spring container — the box that holds all your application's objects (beans), wires them together, and manages their life from startup to shutdown.
+The ApplicationContext is Spring's "main memory" — it holds every object (bean) your application needs, knows how they connect, and provides them on demand to any part of the app.
 
 ---
 
 ### 🔵 Simple Definition (Elaborated)
 
-When your Spring application starts, an `ApplicationContext` is created. It scans your code for `@Component`, `@Service`, `@Repository`, and `@Configuration` classes; creates objects (beans) for each; injects their dependencies; applies AOP proxies; and makes them available for use. It also handles events (`ApplicationEvent`), environment properties (`@Value`, `@Profile`), and resource loading (files, classpath, URLs). In Spring Boot, `SpringApplication.run()` creates and returns an `ApplicationContext` automatically.
+When your Spring application starts, the ApplicationContext is the first major thing created. It scans your codebase for annotated classes, reads configuration, creates all beans, connects them together, wraps them in AOP proxies for transactions and security, and keeps them alive for the application lifetime. Any code that needs another object asks the container — either through injection or (rarely) via `getBean()`. The ApplicationContext is also an event bus: beans can publish and subscribe to application events without coupling to each other directly.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**Why is BeanFactory not enough?**
+**The problem — who orchestrates the application?**
 
-`BeanFactory` is the minimal IoC container — it just creates beans on demand. But enterprise applications need more:
+In a large application, hundreds of objects must be created, ordered, connected, and shut down cleanly. Without a central orchestrator:
+
+- Who creates the `DataSource` before the `UserRepository`?
+- Who calls `init()` on each component in the right order?
+- Who closes connection pools on shutdown?
+- Who creates AOP proxies for `@Transactional` methods?
+
+**ApplicationContext vs BeanFactory:**
 
 ```
-BeanFactory (minimal)         ApplicationContext (enterprise)
-─────────────────────         ──────────────────────────────
-Bean creation               + Event publishing/listening
-Bean lookup                 + Environment/profiles
-Dependency injection        + i18n / MessageSource
-                            + Resource loading
-                            + Eager initialization
-                            + AOP integration
-                            + @PostConstruct support
+┌─────────────────────────────────────────────────────┐
+│  APPLICATION CONTEXT = BEAN FACTORY +               │
+│                                                     │
+│  ✅ Eager singleton initialisation on startup       │
+│  ✅ Automatic BeanPostProcessor registration        │
+│  ✅ AOP proxy creation (via BPP)                    │
+│  ✅ MessageSource (i18n text resolution)            │
+│  ✅ ApplicationEventPublisher (decoupled events)    │
+│  ✅ Environment (profiles, properties, secrets)     │
+│  ✅ ResourceLoader (files, classpath, URLs)         │
+│  ✅ ContextRefreshed/Closed lifecycle events        │
+└─────────────────────────────────────────────────────┘
 ```
 
-`ApplicationContext` wraps `BeanFactory` and adds all the above.
-
-**Eager vs. Lazy initialization:**
-
-BeanFactory creates beans lazily (on first `getBean()` call). ApplicationContext creates all singleton beans eagerly at startup, surfacing all misconfiguration errors immediately rather than at runtime.
+BeanFactory is lazy-init only with no events or AOP auto-application. Always use ApplicationContext in production.
 
 ---
 
 ### ❓ Why Does This Exist (Why Before What)
 
-Before Spring, managing an enterprise application's objects meant complex factories, service locators, and manual wiring — thousands of lines of boilerplate. ApplicationContext provides a unified, configuration-driven object lifecycle manager that eliminates all of this. It's the single "table of truth" for what exists in your application.
+**WITHOUT ApplicationContext:**
+
+```
+Without a central container:
+
+  Bean wiring: manual factory code
+    → Hundreds of new statements in main()
+    → Dependency order resolved by hand
+    → One missed dep → NullPointerException at runtime
+
+  No @Transactional:
+    Proxies require BeanPostProcessor
+    → No container = no proxy = @Transactional does nothing
+
+  No events:
+    @EventListener impossible
+    → Services call all listeners directly → tight coupling
+
+  No profiles:
+    Can't swap dev vs prod @Bean implementations
+    → Hardcoded config, no environment separation
+```
+
+**WITH ApplicationContext:**
+
+```
+→ Fully wired beans on startup in correct order
+→ @Transactional, @Async, @Cacheable all work
+  (BeanPostProcessor creates AOP proxies)
+→ Events: publish(new OrderPlaced(order))
+  → zero coupling to subscribers
+→ @Profile("prod"): different beans per environment
+→ Graceful shutdown: context.close() calls
+  all @PreDestroy and closes resource beans
+```
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> Think of ApplicationContext as the **city government** of your application. All citizens (beans) are registered with city hall (context). The government knows who needs what services (dependencies), provides utilities (events, messaging, resources), and handles birth (instantiation) and death certificates (destruction). No citizen manages themselves — the government coordinates everything.
+> The ApplicationContext is like a **city's civil infrastructure system**. Before citizens can live in the city, infrastructure is built: roads (wiring), utilities (shared DataSource beans), buildings (singleton beans). Each building connects to utilities automatically. The city has an emergency broadcast system (event publisher) and a building registry (bean registry). On shutdown, all utilities are properly turned off.
+
+"Infrastructure built before citizens move in" = eager singleton init
+"Roads connecting buildings" = dependency injection
+"Shared utilities" = singleton beans (one DataSource for all repos)
+"Emergency broadcast" = ApplicationEventPublisher
+"Utilities off on shutdown" = @PreDestroy / ContextClosedEvent
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
+**Context startup sequence:**
+
 ```
-ApplicationContext.refresh() sequence:
-────────────────────────────────────────
-1. prepareRefresh()         — set startDate, active flag
-2. obtainFreshBeanFactory() — create/reload BeanFactory, load BeanDefinitions
-3. prepareBeanFactory()     — configure ClassLoader, BeanPostProcessors
-4. postProcessBeanFactory() — hook for subclasses
-5. invokeBeanFactoryPostProcessors() — run BeanFactoryPostProcessors (@PropertySource etc.)
-6. registerBeanPostProcessors()      — register BeanPostProcessors (AOP, @Autowired etc.)
-7. initMessageSource()      — i18n support
-8. initApplicationEventMulticaster() — event system
-9. onRefresh()              — hook for subclasses
-10. registerListeners()     — wire ApplicationListeners
-11. finishBeanFactoryInitialization() — instantiate ALL singleton beans
-12. finishRefresh()         — publish ContextRefreshedEvent
+┌─────────────────────────────────────────────────────┐
+│  ApplicationContext STARTUP SEQUENCE                │
+├─────────────────────────────────────────────────────┤
+│  1. Parse @Configuration / classpath scan           │
+│  2. Register BeanDefinitions (metadata, not beans)  │
+│  3. Run BeanFactoryPostProcessors                   │
+│     (PropertySourcesPlaceholderConfigurer, etc.)    │
+│  4. Instantiate BeanPostProcessors (special order)  │
+│  5. Eagerly instantiate all singleton beans:        │
+│     a. Constructor injection                        │
+│     b. Setter / field injection                     │
+│     c. BPP.postProcessBefore (pre-init hooks)       │
+│     d. @PostConstruct / afterPropertiesSet          │
+│     e. BPP.postProcessAfter (AOP proxy here)        │
+│  6. Publish ContextRefreshedEvent                   │
+│  7. Application runs                                │
+│  8. Shutdown: @PreDestroy, ContextClosedEvent       │
+└─────────────────────────────────────────────────────┘
+```
+
+**Context implementations in Spring Boot:**
+
+```java
+// Spring Boot auto-selects based on classpath:
+// Web MVC present → AnnotationConfigServletWebServerAppContext
+// WebFlux present → AnnotationConfigReactiveWebServerAppContext
+// None → AnnotationConfigApplicationContext
+
+@SpringBootApplication
+public class App {
+  public static void main(String[] args) {
+    // Returns ConfigurableApplicationContext
+    ConfigurableApplicationContext ctx =
+        SpringApplication.run(App.class, args);
+  }
+}
 ```
 
 ---
@@ -98,176 +175,166 @@ ApplicationContext.refresh() sequence:
 ### 🔄 How It Connects (Mini-Map)
 
 ```
-          [ApplicationContext]
-                 |
-    ┌────────────┼────────────┐
-    ↓            ↓             ↓
-[BeanFactory] [Events]  [Environment]
-    ↓            ↓             ↓
-[Beans/DI] [Listeners] [Profiles/@Value]
-
-Common implementations:
-  AnnotationConfigApplicationContext  ← Java config / annotations
-  AnnotationConfigWebApplicationContext ← Web apps
-  ClassPathXmlApplicationContext      ← XML config (legacy)
-  GenericWebApplicationContext        ← Spring Boot default
+IoC Principle (103) + DI Mechanism (104)
+        ↓
+  APPLICATION CONTEXT (105)  ← you are here
+  (full IoC container — creates + wires + manages)
+        │
+        ├── bean registry: name → instance
+        ├── fires: BeanPostProcessors
+        │         (BPP creates AOP proxies)
+        ├── publishes: ApplicationEvents
+        └── provides: Environment / profiles
+        ↓
+  Used by everything:
+  Spring MVC (124), @Transactional (127),
+  Auto-Configuration (133), Actuator (134)
 ```
 
 ---
 
 ### 💻 Code Example
 
+**Example 1 — ApplicationEvent for decoupled communication:**
+
 ```java
-// ── Standalone (non-Boot) application ────────────────────────────────────────
-@Configuration
-@ComponentScan("com.example")
-public class AppConfig { }
+// Publisher — zero knowledge of who listens
+@Service
+public class UserRegistrationService {
+  private final ApplicationEventPublisher events;
 
-public class Main {
-    public static void main(String[] args) {
-        // Create and refresh the ApplicationContext
-        ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
+  public UserRegistrationService(
+      ApplicationEventPublisher events) {
+    this.events = events;
+  }
 
-        // Get a bean
-        UserService userService = ctx.getBean(UserService.class);
-        userService.doWork();
-
-        // Inspect beans
-        System.out.println("All beans: " + Arrays.toString(ctx.getBeanDefinitionNames()));
-
-        // Access environment
-        Environment env = ctx.getEnvironment();
-        System.out.println("Profile: " + Arrays.toString(env.getActiveProfiles()));
-
-        // Publish a custom event
-        ctx.publishEvent(new UserRegisteredEvent("alice"));
-
-        // Close context (triggers @PreDestroy)
-        ((ConfigurableApplicationContext) ctx).close();
-    }
+  public User register(RegisterRequest req) {
+    User user = createUser(req);
+    events.publishEvent(new UserRegisteredEvent(user));
+    return user;
+  }
 }
 
-// ── Spring Boot (context created automatically) ───────────────────────────────
-@SpringBootApplication
-public class MyApp {
-    public static void main(String[] args) {
-        ApplicationContext ctx = SpringApplication.run(MyApp.class, args);
-        // ctx is a GenericWebApplicationContext (or GenericApplicationContext if non-web)
-    }
-}
-
-// ── Listening to context events ───────────────────────────────────────────────
+// Listeners — completely decoupled from publisher
 @Component
-public class StartupListener implements ApplicationListener<ContextRefreshedEvent> {
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        System.out.println("Application fully started: " + event.getTimestamp());
-    }
+class WelcomeEmailListener {
+  @EventListener
+  void onRegistered(UserRegisteredEvent e) {
+    mailer.sendWelcome(e.getUser());
+  }
+}
+
+@Component
+class AnalyticsListener {
+  @EventListener
+  void onRegistered(UserRegisteredEvent e) {
+    analytics.track("user.registered", e.getUser().getId());
+  }
 }
 ```
 
----
+**Example 2 — Profile-based bean switching:**
 
-### 🔁 Flow / Lifecycle
+```java
+@Configuration
+public class StorageConfig {
+  @Bean
+  @Profile("production")
+  public FileStorage s3Storage(S3Properties props) {
+    return new S3FileStorage(props.getBucket());
+  }
 
-```
-1. ApplicationContext created (new / SpringApplication.run)
-       ↓
-2. refresh() called
-       ↓
-3. BeanDefinitions loaded (scan @Component, process @Configuration)
-       ↓
-4. BeanFactoryPostProcessors run (e.g., PropertySourcesPlaceholderConfigurer)
-       ↓
-5. BeanPostProcessors registered
-       ↓
-6. All singleton beans eagerly instantiated + dependencies injected
-       ↓
-7. BeanPostProcessors run (AOP proxies created, @Autowired validated)
-       ↓
-8. @PostConstruct methods called
-       ↓
-9. ContextRefreshedEvent published — app is LIVE
-       ↓
-10. On shutdown: ContextClosedEvent → @PreDestroy → beans destroyed
+  @Bean
+  @Profile({"development", "test"})
+  public FileStorage localStorage() {
+    return new LocalFileStorage("/tmp/uploads");
+  }
+}
+// spring.profiles.active=production → s3Storage created
+// spring.profiles.active=test → localStorage created
 ```
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| ❌ Wrong Belief | ✅ Correct Reality |
+| Misconception | Reality |
 |---|---|
-| ApplicationContext = BeanFactory | ApplicationContext *extends* BeanFactory with many enterprise features |
-| There's always one ApplicationContext | Spring MVC has parent (root) + child (web) contexts; Boot usually has one |
-| `getBean()` is the right way to get beans | Use `@Autowired` / DI; `getBean()` is only for bootstrap / integration code |
-| ApplicationContext is lazy like BeanFactory | ApplicationContext eagerly initializes ALL singletons at startup |
-| Closing context is unnecessary | Always close in standalone apps: triggers `@PreDestroy` and cleanup |
+| ApplicationContext and BeanFactory are interchangeable | BeanFactory is lazy-init only with no AOP auto-application or events. ApplicationContext adds critical enterprise features |
+| getBean() is the recommended way to access beans | Direct getBean() is the Service Locator anti-pattern. Constructor injection is always preferred |
+| The context is recreated per HTTP request | ApplicationContext is created once on startup and lives for the JVM lifetime. Request-scoped beans are proxied within the singleton context |
+| Multiple ApplicationContexts are unusual | Spring MVC creates a child WebApplicationContext for the web layer — parent-child hierarchies are standard |
 
 ---
 
 ### 🔥 Pitfalls in Production
 
-**Pitfall 1: Using ApplicationContext as a service locator**
-```java
-// Bad: ApplicationContext as service locator — breaks DI benefits
-@Autowired ApplicationContext ctx;
-UserService us = ctx.getBean(UserService.class); // anti-pattern
+**1. Circular dependency on startup**
 
-// Good: declare the direct dependency
-@Autowired UserService userService;
+```java
+// BeanCurrentlyInCreationException on startup
+@Service class A { public A(B b) {...} }
+@Service class B { public B(A a) {...} }
+// Fix: redesign to remove cycle, or extract shared service
 ```
 
-**Pitfall 2: Multiple context refresh causing duplicate initialization**
-```java
-// In tests: if you don't cache the context, Spring creates a new one per test class
-// Fix: use @DirtiesContext carefully; Spring Test caches contexts by default
-```
+**2. @MockBean invalidating the test context cache**
 
-**Pitfall 3: Forgetting to close standalone contexts**
 ```java
-// Fix: use try-with-resources
-try (ConfigurableApplicationContext ctx =
-        new AnnotationConfigApplicationContext(AppConfig.class)) {
-    ctx.getBean(MyService.class).run();
-} // auto-closes: @PreDestroy methods invoked
+// BAD: different @MockBean per test class → new context each
+@SpringBootTest
+class TestA { @MockBean PaymentGateway pg; /* 5s start */ }
+@SpringBootTest
+class TestB { @MockBean EmailService es; /* 5s start again */ }
+
+// GOOD: centralise all @MockBeans in a shared base class
+@SpringBootTest
+abstract class BaseIT {
+  @MockBean PaymentGateway pg;
+  @MockBean EmailService es;
+  // All subclasses share ONE context → test suite 5× faster
+}
 ```
 
 ---
 
 ### 🔗 Related Keywords
 
-- **[IoC (Inversion of Control)](./103 — IoC (Inversion of Control).md)** — the principle ApplicationContext implements
-- **[BeanFactory](./106 — BeanFactory.md)** — the interface ApplicationContext extends
-- **[Bean Lifecycle](./108 — Bean Lifecycle.md)** — the lifecycle ApplicationContext manages
-- **[BeanPostProcessor](./110 — BeanPostProcessor.md)** — hooks ApplicationContext provides for bean customization
-- **[Spring Boot Startup Lifecycle](./135 — Spring Boot Startup Lifecycle.md)** — how Boot bootstraps the ApplicationContext
+- `IoC` — the principle; ApplicationContext is its Spring implementation
+- `BeanFactory` — the minimal parent interface; ApplicationContext extends it
+- `Bean` — the objects ApplicationContext creates, manages, and provides
+- `Bean Lifecycle` — the full initialisation and destruction sequence orchestrated by the context
+- `BeanPostProcessor` — hooks fired by context to modify/proxy beans after creation
+- `Spring Boot` — auto-creates and configures ApplicationContext via `SpringApplication.run()`
 
 ---
 
 ### 📌 Quick Reference Card
 
 ```
-+------------------------------------------------------------------+
-| KEY IDEA    | Full-featured IoC container — manages all beans    |
-+------------------------------------------------------------------+
-| USE WHEN    | Always — it IS the Spring container                 |
-+------------------------------------------------------------------+
-| MAIN IMPL   | AnnotationConfigApplicationContext (non-web)        |
-|             | SpringApplication.run() result (Spring Boot)        |
-+------------------------------------------------------------------+
-| ONE-LINER   | "The Spring container that knows everything"        |
-+------------------------------------------------------------------+
-| NEXT EXPLORE| BeanFactory → Bean Lifecycle → BeanPostProcessor    |
-+------------------------------------------------------------------+
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Central container: creates beans, wires   │
+│              │ them, publishes events, manages lifecycle  │
+├──────────────┼───────────────────────────────────────────┤
+│ USE WHEN     │ Inject ApplicationEventPublisher for      │
+│              │ events; access Environment for profiles   │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Never use getBean() for normal access —   │
+│              │ that's the Service Locator anti-pattern   │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "ApplicationContext is the city —         │
+│              │  beans are the buildings it manages."     │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ BeanFactory (106) → Bean Lifecycle (108)  │
+│              │ → Auto-Configuration (133)                │
+└──────────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** What is the difference between `ApplicationContext.refresh()` and `ApplicationContext.start()`? When would you call each?
+**Q1.** Spring Boot 3's AOT (Ahead-of-Time) compilation for GraalVM native images moves ApplicationContext startup work — bean discovery, condition evaluation, proxy generation — from runtime to build time. Explain what the ApplicationContext normally does at runtime startup that cannot happen in a GraalVM native image, why static analysis at build time cannot fully replicate dynamic classpath scanning, and what the `@ImportRuntimeHints` mechanism exists to solve.
 
-**Q2.** In a Spring MVC app (non-Boot), there are typically *two* ApplicationContexts — the root context and the web (DispatcherServlet) context. What beans live in each? Why?
+**Q2.** `@SpringBootTest` caches the ApplicationContext between test classes to avoid repeated 3–5 second startup overhead. The cache key is based on the test configuration. Explain exactly what test-configuration elements invalidate the cache — listing at least four specific annotations or settings — and describe why a single out-of-place `@DirtiesContext(classMode = AFTER_CLASS)` in a commonly-extended base class can silently double the test suite runtime.
 
-**Q3.** If `ApplicationContext` eagerly initializes all singletons at startup, what happens when a bean's required dependency is missing? At what point does the error surface — startup or first use?
