@@ -119,6 +119,73 @@ When helping with markdown files in the `sk-keys` repository:
    - It updates section indexes and child pages together
    - It computes parents, nav order, `has_children`, and permalinks automatically
 
+7. **Section Spacing — Mandatory Blank Lines**
+
+   Every `### ` heading and `---` divider **must be surrounded by exactly one blank line** (one before, one after).
+
+   ❌ Wrong:
+   ```markdown
+   ### 📘 Textbook Definition
+   The definition text starts here immediately.
+   ---
+   ### 🟢 Simple Definition (Easy)
+   ```
+
+   ✅ Correct:
+   ```markdown
+   ### 📘 Textbook Definition
+
+   The definition text starts here.
+
+   ---
+
+   ### 🟢 Simple Definition (Easy)
+   ```
+
+   **Rules:**
+   - Apply to ALL `### ` headings and ALL `---` horizontal rules
+   - **Skip content inside ` ``` ` code fences** — never inject blank lines inside a code block
+   - **Skip the frontmatter block** (between opening `---` and closing `---`)
+   - Collapse 3+ consecutive blank lines down to 2 maximum
+   - Use `Fix-SectionSpacing` PowerShell function (see Automation Scripts section) to fix files in bulk
+
+8. **File Encoding — Always UTF-8 No BOM**
+
+   All markdown files MUST be saved as **UTF-8 without BOM**.
+
+   When writing files in PowerShell:
+   ```powershell
+   # ✅ Correct — UTF-8 No BOM
+   [System.IO.File]::WriteAllText($path, $content, [System.Text.UTF8Encoding]::new($false))
+
+   # ❌ Wrong — adds BOM, breaks Jekyll/GitHub Pages
+   Set-Content -Path $path -Value $content -Encoding UTF8
+   $content | Out-File -FilePath $path -Encoding UTF8
+   ```
+
+9. **Script Safety When Processing Unicode Content**
+
+   Scripts that process markdown files MUST respect two boundaries:
+
+   - **Code fence boundary**: track `$inFence` — toggle on/off when line matches `` ^``` ``
+   - **Frontmatter boundary**: track `$inFrontmatter` — between opening `---` (line 1) and closing `---`
+
+   Any regex that targets Unicode box-drawing characters (`┌─┤└│├`) **must only match content OUTSIDE code fences**. Targeting all Unicode boxes blindly will destroy Quick Reference Cards.
+
+   **Safe pattern (PowerShell):**
+   ```powershell
+   $inFence = $false
+   $inFrontmatter = $true  # assume frontmatter first
+   foreach ($line in $lines) {
+       if ($line -match '^---' -and $inFrontmatter) { $inFrontmatter = $false; continue }
+       if ($inFrontmatter) { continue }
+       if ($line -match '^```') { $inFence = -not $inFence }
+       if (-not $inFence) {
+           # safe to apply regex transforms here
+       }
+   }
+   ```
+
 ---
 
 ## Example Interactions
@@ -210,6 +277,9 @@ Then commit and push normally.
 ❌ **Don't** use non-standard file naming  
 ❌ **Don't** use single or double-digit numbers (use 001, 002, etc.)  
 ❌ **Don't** push files without running automation script  
+❌ **Don't** write scripts that blindly replace ALL Unicode box-drawing content — this will destroy Quick Reference Cards  
+❌ **Don't** omit blank lines before/after `### ` headings or `---` dividers  
+❌ **Don't** save files with BOM (use UTF-8 No BOM encoding always)  
 
 ---
 
@@ -220,6 +290,9 @@ Then commit and push normally.
 ✅ **Do** commit files after automation completes  
 ✅ **Do** use the filename to set nav_order (numbers in filename)  
 ✅ **Do** test locally if possible before pushing  
+✅ **Do** add exactly one blank line before AND after every `### ` heading and `---` divider  
+✅ **Do** always write files with `[System.IO.File]::WriteAllText(path, content, [System.Text.UTF8Encoding]::new($false))` to avoid BOM  
+✅ **Do** skip code fences (```` ``` ````) and frontmatter when applying any regex or text processing to markdown files  
 
 ---
 
@@ -353,6 +426,104 @@ Each file should be **400–500 lines** of rich content:
   └──────────────────────────────────────────────┘
   ```
 
+---
+
+## 🔧 Automation Scripts Reference
+
+| Script | Purpose |
+|---|---|
+| `Update-MarkdownFrontmatter.ps1` | Regenerates YAML frontmatter for all files under `docs/` |
+| `Fix-JavaFiles001-015.ps1` | One-time fix for early Java files |
+| `Fix-KeywordFiles.ps1` | Bulk keyword file formatting fixes |
+| `Generate-CleanCode.ps1` | Generates Clean Code category entries |
+| `New-DictionaryEntry.ps1` | Interactive wizard to create a new dictionary entry |
+
+### Fix-SectionSpacing (inline function — run as needed)
+
+Fixes missing blank lines before/after `### ` headings and `---` dividers across all files:
+
+```powershell
+function Fix-SectionSpacing {
+    param([string]$content)
+    $lines = $content -split "`n"
+    $result = [System.Collections.Generic.List[string]]::new()
+    $inFence = $false
+    $inFrontmatter = $true
+
+    for ($i = 0; $i -lt $lines.Count; $i++) {
+        $line = $lines[$i]
+
+        # Track frontmatter
+        if ($inFrontmatter) {
+            $result.Add($line)
+            if ($i -gt 0 -and $line -match '^---\s*$') { $inFrontmatter = $false }
+            continue
+        }
+
+        # Track code fences
+        if ($line -match '^```') { $inFence = -not $inFence }
+
+        if (-not $inFence) {
+            $isHeading = $line -match '^### '
+            $isDivider = $line -match '^---\s*$'
+
+            if ($isHeading -or $isDivider) {
+                # Ensure blank line BEFORE
+                if ($result.Count -gt 0 -and $result[$result.Count - 1] -ne '') {
+                    $result.Add('')
+                }
+                $result.Add($line)
+                # Ensure blank line AFTER
+                if (($i + 1) -lt $lines.Count -and $lines[$i + 1] -ne '' -and $lines[$i + 1] -notmatch '^```') {
+                    $result.Add('')
+                }
+                continue
+            }
+        }
+        $result.Add($line)
+    }
+
+    # Collapse 3+ blank lines to 2
+    $output = ($result -join "`n") -replace "(`n){3,}", "`n`n"
+    return $output
+}
+
+# Apply to all docs
+Get-ChildItem -Path "docs" -Recurse -Filter "*.md" | ForEach-Object {
+    $raw = [System.IO.File]::ReadAllText($_.FullName)
+    $fixed = Fix-SectionSpacing $raw
+    if ($fixed -ne $raw) {
+        [System.IO.File]::WriteAllText($_.FullName, $fixed, [System.Text.UTF8Encoding]::new($false))
+        Write-Host "Fixed: $($_.Name)"
+    }
+}
+```
 
 ---
 
+## 🚨 Lessons Learned — Incidents & Root Causes
+
+### Incident 1 — Quick Reference Card Corruption (49 files)
+
+**What happened:** All 49 files in Clean Code, DevOps & SDLC, Java (016-025), Java Language (051-062), and Testing (412-423) had their `### 📌 Quick Reference Card` content replaced with the entry metadata table.
+
+**Root cause:** A script converting Unicode metadata bars used a regex `(?s)(```\n)?\u250C.*?\u2514[^\n]*(```)?` that matched ALL Unicode box-drawing content including the QRC boxes inside code fences.
+
+**Fix applied:**
+- 44 files restored from git history (`git show <commit>:<path>`)
+- 5 files (021-025) had no prior git history — content reconstructed manually
+- `CUSTOM_INSTRUCTIONS.md` updated with the TWO-SECTION warning (Rule 4)
+
+**Prevention:** Scripts targeting the metadata bar must match ONLY the content directly after `⚡ TL;DR` and before the first `---`. Never use a broad Unicode-box regex across the whole file.
+
+### Incident 2 — Missing Section Spacing (91 files)
+
+**What happened:** Files created over multiple sessions had no blank lines before/after `### ` headings and `---` dividers, causing visual compression in rendered markdown.
+
+**Root cause:** Content generation templates didn't enforce spacing consistently; no automated check existed.
+
+**Fix applied:** `Fix-SectionSpacing` function written and applied to 91 files (commit `470f385`).
+
+**Prevention:** Rule 7 (Section Spacing) added to these instructions. Always add blank lines in generated files at creation time — don't rely on post-processing.
+
+---
