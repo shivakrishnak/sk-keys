@@ -12,20 +12,16 @@ used_by: GC, Minor GC, Object Aging, Young Generation
 tags: #java, #jvm, #memory, #gc, #internals, #intermediate
 ---
 
-# ☕ 019 — Eden Space
+# 019 — Eden Space
+
+`#java` `#jvm` `#memory` `#gc` `#internals` `#intermediate`
 
 ⚡ TL;DR — The allocation-fast birth region within Young Generation where every new object is created via TLAB pointer bumping — wiped completely clean on every Minor GC.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #019         │ Category: JVM Internals              │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ JVM, Young Generation, GC Roots      │                          │
-│              │ Object Allocation, TLAB              │                          │
-│ Used by:     │ GC, Minor GC, Object Aging           │                          │
-│              │ Young Generation                     │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #019 | Category: JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Young Generation, GC Roots, Object Allocation, TLAB | |
+| **Used by:** | GC, Minor GC, Object Aging, Young Generation | |
 
 ---
 
@@ -151,32 +147,10 @@ Without bulk wipe (Eden's key property):
 
 ### ⚙️ How It Works — TLAB + Eden Allocation
 
-```
-┌─────────────────────────────────────────────────────────┐
-│              EDEN + TLAB ALLOCATION FLOW                │
-│                                                         │
-│  EDEN SPACE (e.g. 512MB)                                │
-│  ┌──────┬──────┬──────┬──────────────────────────────┐  │
-│  │TLAB-1│TLAB-2│TLAB-3│     Unallocated Eden         │  │
-│  │Thread│Thread│Thread│                              │  │
-│  │  1   │  2   │  3   │                              │  │
-│  └──────┴──────┴──────┴──────────────────────────────┘  │
-│                                                         │
-│  Each TLAB (e.g. 512KB per thread):                     │
-│  ┌────────────────────────────────────────────────┐     │
-│  │obj1│obj2│obj3│obj4│   free   │                 │     │
-│  └──▲──────────────────────────▲──────────────────┘     │
-│  tlab_start              tlab_top (bump here)           │
-│                                                         │
-│  Allocation steps (NO LOCK needed):                     │
-│  1. Check: tlab_top + size <= tlab_end?                 │
-│  2. YES: object_ptr = tlab_top                          │
-│          tlab_top += size                               │
-│          return object_ptr                              │
-│  3. NO: request new TLAB from Eden                      │
-│         (synchronized, but rare)                        │
-└─────────────────────────────────────────────────────────┘
-```
+| #019 | Category: JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Young Generation, GC Roots, Object Allocation, TLAB | |
+| **Used by:** | GC, Minor GC, Object Aging, Young Generation | |
 
 **What happens during Minor GC:**
 
@@ -373,27 +347,10 @@ java -XX:NewSize=1g MyApp
 
 ### 📌 Quick Reference Card
 
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Birth region for all objects — fast TLAB  │
-│              │ bump allocation, bulk wipe on GC —        │
-│              │ cost proportional to survivors not garbage │
-├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Monitor Eden fill rate and GC frequency   │
-│              │ in allocation-heavy applications          │
-├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Don't let allocation rate exceed          │
-│              │ Eden refill capacity — reduce object      │
-│              │ creation in hot paths before tuning       │
-├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Eden = the world's fastest allocator:    │
-│              │  bump a pointer to create, reset a        │
-│              │  pointer to destroy 98% of objects"       │
-├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ TLAB → Survivor Space → Minor GC →        │
-│              │ Bump Pointer Allocation → G1GC Regions    │
-└──────────────────────────────────────────────────────────┘
-```
+| #019 | Category: JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Young Generation, GC Roots, Object Allocation, TLAB | |
+| **Used by:** | GC, Minor GC, Object Aging, Young Generation | |
 
 ---
 ### 🧠 Think About This Before We Continue

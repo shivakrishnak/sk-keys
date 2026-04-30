@@ -13,6 +13,8 @@ tags: #java #jvm #gc #concurrency #internals #deep-dive
 ---
 # 024 — Stop-The-World (STW)
 
+`#java` `#jvm` `#gc` `#concurrency` `#internals` `#deep-dive`
+
 ⚡ TL;DR — A JVM pause where all application threads are suspended simultaneously at safe points so GC (or other JVM operations) can safely inspect and modify the heap without concurrent interference.
 
 | #024 | Category: Java & JVM Internals | Difficulty: ★★★ |

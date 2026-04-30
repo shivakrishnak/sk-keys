@@ -12,20 +12,16 @@ used_by: GC, Minor GC, Object Aging, Object Promotion, Young Generation
 tags: #java, #jvm, #memory, #gc, #internals, #intermediate
 ---
 
-# ☕ 020 — Survivor Space
+# 020 — Survivor Space
+
+`#java` `#jvm` `#memory` `#gc` `#internals` `#intermediate`
 
 ⚡ TL;DR — The two equal Young Generation regions (S0 and S1) that act as a temporary aging buffer between Eden and Old Generation — objects bounce between them, gaining age on each Minor GC until promoted.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #020         │ Category: JVM Internals              │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ JVM, Young Generation, Eden Space    │                          │
-│              │ GC Roots, Minor GC                   │                          │
-│ Used by:     │ GC, Minor GC, Object Aging           │                          │
-│              │ Object Promotion, Young Generation   │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #020 | Category: JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Young Generation, Eden Space, GC Roots, Minor GC | |
+| **Used by:** | GC, Minor GC, Object Aging, Object Promotion, Young Generation | |
 
 ---
 
@@ -150,37 +146,10 @@ Without staging area between Eden and Old Gen:
 
 ### ⚙️ How It Works — The Ping-Pong Cycle
 
-```
-┌─────────────────────────────────────────────────────────┐
-│             SURVIVOR SPACE PING-PONG                    │
-│                                                         │
-│  INITIAL STATE:                                         │
-│  Eden: [A][B][C][D][E][F]  (full)                       │
-│  S0 (From): [X(age=2)][Y(age=1)]                        │
-│  S1 (To):   [empty]                                     │
-│                                                         │
-│  MINOR GC RUNS:                                         │
-│  1. Trace GC roots                                      │
-│     Live in Eden: B, D  (A,C,E,F dead)                  │
-│     Live in S0:   X, Y  (all alive)                     │
-│                                                         │
-│  2. Copy B → S1 (age=1)                                 │
-│     Copy D → S1 (age=1)                                 │
-│     Copy Y → S1 (age=2) [was age=1, now age=2]          │
-│     X age=3 → exceeds threshold → promote to OLD GEN    │
-│                                                         │
-│  3. Wipe Eden (bulk)                                     │
-│     Wipe S0 (bulk)                                      │
-│                                                         │
-│  4. SWAP ROLES: S1 becomes "From", S0 becomes "To"      │
-│                                                         │
-│  AFTER GC:                                              │
-│  Eden: [empty]                                          │
-│  S0 (now To): [empty]                                   │
-│  S1 (now From): [B(age=1)][D(age=1)][Y(age=2)]          │
-│  Old Gen: received X                                    │
-└─────────────────────────────────────────────────────────┘
-```
+| #020 | Category: JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Young Generation, Eden Space, GC Roots, Minor GC | |
+| **Used by:** | GC, Minor GC, Object Aging, Object Promotion, Young Generation | |
 
 **Object age tracking in Mark Word:**
 
@@ -417,30 +386,10 @@ jstat -gcnew <pid> 1000
 
 ### 📌 Quick Reference Card
 
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Two-space ping-pong aging buffer —        │
-│              │ one always empty for copy-collect,        │
-│              │ objects age here before Old Gen           │
-├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Tune when Old Gen fills too fast          │
-│              │ (Survivor too small) or when Survivor     │
-│              │ space is mostly unused (too large)        │
-├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Don't ignore tenuring threshold changes   │
-│              │ in GC logs — dynamic threshold drop       │
-│              │ signals Survivor overflow and             │
-│              │ premature promotion                       │
-├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Survivor = the proving ground between    │
-│              │  born (Eden) and permanent (Old Gen) —    │
-│              │  die here or earn your promotion"         │
-├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Minor GC → Object Promotion →             │
-│              │ Old Generation → Tenuring Threshold →     │
-│              │ G1GC Regions → Copy Collector Algorithm   │
-└──────────────────────────────────────────────────────────┘
-```
+| #020 | Category: JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Young Generation, Eden Space, GC Roots, Minor GC | |
+| **Used by:** | GC, Minor GC, Object Aging, Object Promotion, Young Generation | |
 
 ---
 ### 🧠 Think About This Before We Continue

@@ -12,20 +12,16 @@ used_by: GC, Memory Leak Diagnosis, jmap, Eclipse MAT
 tags: #java, #jvm, #memory, #gc, #internals, #deep-dive
 ---
 
-# ☕ 016 — GC Roots
+# 016 — GC Roots
+
+`#java` `#jvm` `#memory` `#gc` `#internals` `#deep-dive`
 
 ⚡ TL;DR — The fixed set of starting points the Garbage Collector uses to determine which objects are reachable — anything not reachable from a GC root is dead and eligible for collection.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #016         │ Category: JVM Internals              │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ JVM, Heap Memory, Garbage Collector  │                          │
-│              │ Class Loader                         │                          │
-│ Used by:     │ GC, Memory Leak Diagnosis            │                          │
-│              │ jmap, Eclipse MAT                    │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #016 | Category: JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Heap Memory, Garbage Collector, Class Loader | |
+| **Used by:** | GC, Memory Leak Diagnosis, jmap, Eclipse MAT | |
 
 ---
 
@@ -160,43 +156,10 @@ Problem 4: Memory leak diagnosis impossible
 
 ### ⚙️ How It Works — What Qualifies as a GC Root
 
-```
-┌─────────────────────────────────────────────────────────┐
-│              THE SIX GC ROOT TYPES                      │
-│                                                         │
-│  1. ACTIVE THREAD STACKS                                │
-│     Every local variable and parameter in every         │
-│     stack frame of every live thread                    │
-│     → Most common root type                             │
-│     → References to objects currently in use           │
-│                                                         │
-│  2. STATIC FIELDS                                       │
-│     All static variables of all loaded classes          │
-│     → Live as long as the class is loaded               │
-│     → Most common source of memory leaks               │
-│     static Map<K,V> cache = new HashMap<>()             │
-│     → cache is a root → all entries stay alive         │
-│                                                         │
-│  3. JNI REFERENCES                                      │
-│     Objects passed to or from native code via JNI       │
-│     → Native code holds references outside JVM          │
-│     → Must be treated as roots (GC can't see native)   │
-│                                                         │
-│  4. ACTIVE JAVA THREADS                                 │
-│     The Thread objects themselves                       │
-│     → A running thread object is always live            │
-│     → Its stack variables make other objects live       │
-│                                                         │
-│  5. SYSTEM CLASS LOADER CLASSES                         │
-│     Classes loaded by bootstrap/system class loader     │
-│     → java.lang.String, java.util.ArrayList etc.        │
-│     → Always alive for JVM lifetime                    │
-│                                                         │
-│  6. SYNCHRONISATION MONITORS                            │
-│     Objects used as monitors in synchronized blocks     │
-│     → Object being locked on must stay alive            │
-└─────────────────────────────────────────────────────────┘
-```
+| #016 | Category: JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Heap Memory, Garbage Collector, Class Loader | |
+| **Used by:** | GC, Memory Leak Diagnosis, jmap, Eclipse MAT | |
 
 ---
 
@@ -433,28 +396,10 @@ try {
 
 ### 📌 Quick Reference Card
 
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Fixed live anchors the GC traces from —  │
-│              │ reachable = live, unreachable = garbage   │
-├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Diagnosing memory leaks — always ask:     │
-│              │ "What root path is keeping this alive?"   │
-├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Never store long-lived objects in static  │
-│              │ collections without expiry — static       │
-│              │ fields are permanent GC roots             │
-├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "If the GC can walk from any root to      │
-│              │  your object — it lives. If not —         │
-│              │  it dies. Memory leaks are surprise       │
-│              │  root paths you forgot about"             │
-├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Mark Phase → Weak References →            │
-│              │ Minor GC → Major GC → Eclipse MAT →       │
-│              │ Memory Leak Patterns                      │
-└──────────────────────────────────────────────────────────┘
-```
+| #016 | Category: JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Heap Memory, Garbage Collector, Class Loader | |
+| **Used by:** | GC, Memory Leak Diagnosis, jmap, Eclipse MAT | |
 
 ---
 ### 🧠 Think About This Before We Continue

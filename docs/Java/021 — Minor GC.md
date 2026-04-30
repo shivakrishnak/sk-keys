@@ -13,6 +13,8 @@ tags: #java #jvm #memory #gc #internals #intermediate
 ---
 # 021 — Minor GC
 
+`#java` `#jvm` `#memory` `#gc` `#internals` `#intermediate`
+
 ⚡ TL;DR — The frequent, fast garbage collection that reclaims dead objects exclusively from the Young Generation — triggered by Eden filling up, typically pausing for 1–50ms.
 
 | #021 | Category: Java & JVM Internals | Difficulty: ★★☆ |

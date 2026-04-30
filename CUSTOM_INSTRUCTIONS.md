@@ -219,12 +219,29 @@ Then commit and push normally.
 
 ## 📖 Dictionary Entry Template (Technical Dictionary)
 
+**Canonical reference files:** `docs/Java/016 — GC Roots.md` through `docs/Java/025 — Serial GC.md`
+
 When creating any dictionary entry for this repository, **always** use the template below.
 Every field is mandatory unless the concept has no code equivalent.
 
+### ❗ Strict Format Rules
+
+| Rule | ✅ Correct | ❌ Wrong |
+|---|---|---|
+| **File name** | `016 — GC Roots.md` | `☕ 016 — GC Roots.md` |
+| **H1 title** | `# 016 — GC Roots` | `# ☕ 016 — GC Roots` |
+| **Section headings** | `### 📘 Textbook Definition` | `## 📘 Textbook Definition` |
+| **Metadata bar** | Markdown table (see below) | Unicode box ┌─┤└ chars |
+| **Inline tags** | `` `#java` `#jvm` `` after H1 | tags embedded only in frontmatter |
+
 ```markdown
 ---
-number: NNN
+layout: default
+title: "KEYWORD NAME"
+parent: "Category Name"
+nav_order: NNN
+permalink: /category-slug/keyword-slug/
+number: "NNN"
 category: Category Name
 difficulty: ★★☆
 depends_on: Concept1, Concept2
@@ -233,6 +250,8 @@ tags: #tag1, #tag2, #tag3
 ---
 
 # NNN — KEYWORD NAME
+
+`#tag1` `#tag2` `#tag3`
 
 ⚡ TL;DR — one sentence.
 
@@ -243,60 +262,60 @@ tags: #tag1, #tag2, #tag3
 
 ---
 
-## 📘 Textbook Definition
+### 📘 Textbook Definition
 
-## 🟢 Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
-## 🔵 Simple Definition (Elaborated)
+### 🔵 Simple Definition (Elaborated)
 
-## 🔩 First Principles Explanation
+### 🔩 First Principles Explanation
 
-## ❓ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist — Why Before What
 
-## 🧠 Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
-## ⚙️ How It Works (Mechanism)
+### ⚙️ How It Works
 
-## 🔄 How It Connects (Mini-Map)
+### 🔄 How It Connects
 
-## 💻 Code Example
+### 💻 Code Example
 
-## 🔁 Flow / Lifecycle (if applicable)
+### 🔁 Flow / Lifecycle (if applicable)
 
-## ⚠️ Common Misconceptions
+### ⚠️ Common Misconceptions
 
-## 🔥 Pitfalls in Production
+### 🔥 Pitfalls in Production
 
-## 🔗 Related Keywords
+### 🔗 Related Keywords
 
-## 📌 Quick Reference Card
+### 📌 Quick Reference Card
 
----
-## 🧠 Think About This Before We Continue
-Q1. ...
-Q2. ...
+### 🧠 Think About This Before We Continue
+
+**Q1.** ...
+**Q2.** ...
 ```
 
 ### Section Purpose Guide
 
-| Section | What to Write |
-|---|---|
-| `TL;DR` | One crisp sentence — what this thing IS |
-| `Textbook Definition` | Formal, spec/standard definition |
-| `Simple (Easy)` | Explain to a junior dev or non-programmer |
-| `Simple (Elaborated)` | Explain to a mid-level developer |
-| `First Principles` | Build the idea from scratch — why was it invented? |
-| `Why Does This Exist` | The pain it solves; what world looks like without it |
-| `Mental Model / Analogy` | Real-world metaphor that makes it stick |
-| `How It Works` | Internal mechanism — data flow, algorithm, lifecycle |
-| `How It Connects` | ASCII mini map showing related concepts |
-| `Code Example` | Minimal, runnable code showing the concept |
-| `Flow / Lifecycle` | If it's a process: numbered flow diagram |
-| `Common Misconceptions` | Table: Wrong belief → Correct reality |
-| `Pitfalls in Production` | What breaks in real systems; with fix |
-| `Related Keywords` | Bullet list with one-line description each |
-| `Quick Reference Card` | Box summary for fast lookup |
-| `Think About This` | 2-3 Socratic questions to deepen understanding |
+| Section | What to Write | Required |
+|---|---|---|
+| `TL;DR` | One crisp sentence — what this thing IS | ✅ Always |
+| `Textbook Definition` | Formal, spec/standard definition | ✅ Always |
+| `Simple (Easy)` | Explain to a junior dev or non-programmer | ✅ Always |
+| `Simple (Elaborated)` | Explain to a mid-level developer | ✅ Always |
+| `First Principles` | Build the idea from scratch — why was it invented? | ✅ Always |
+| `Why Does This Exist` | The pain it solves; what world looks like without it | ✅ Always |
+| `Mental Model / Analogy` | Real-world metaphor that makes it stick | ✅ Always |
+| `How It Works` | Internal mechanism — data flow, algorithm, lifecycle. Use ASCII diagrams | ✅ Always |
+| `How It Connects` | ASCII mini-map showing related concepts | ✅ Always |
+| `Code Example` | Minimal, runnable code showing the concept | ✅ Always |
+| `Flow / Lifecycle` | If it's a process: numbered flow diagram | ⚠️ If applicable |
+| `Common Misconceptions` | Table: Wrong belief → Correct reality (min 3 rows) | ✅ Always |
+| `Pitfalls in Production` | What breaks in real systems; with fix (min 2) | ✅ Always |
+| `Related Keywords` | Bullet list with one-line description each | ✅ Always |
+| `Quick Reference Card` | Structured summary box for fast lookup | ✅ Always |
+| `Think About This` | 2-3 Socratic questions to deepen understanding | ✅ Always |
 
 ### Difficulty Scale
 
@@ -305,6 +324,28 @@ Q2. ...
 | ★☆☆ | Beginner — need no prior knowledge |
 | ★★☆ | Intermediate — requires prerequisites |
 | ★★★ | Advanced — deep internals or distributed systems |
+
+### Content Depth Standard (based on 016-025)
+
+Each file should be **400–500 lines** of rich content:
+- **First Principles**: include "problem → insight → solution" narrative with ASCII code blocks showing the reasoning
+- **How It Works**: include step-by-step ASCII diagram of the mechanism
+- **How It Connects**: include ASCII flow diagram showing relationships to other concepts
+- **Code Example**: include 3-5 working code examples covering common + edge cases
+- **Quick Reference Card**: use ASCII box format inside a code fence:
+  ```
+  ┌──────────────────────────────────────────────┐
+  │ KEY IDEA     │ one-line essence               │
+  ├──────────────┼────────────────────────────────┤
+  │ USE WHEN     │ when to apply this             │
+  ├──────────────┼────────────────────────────────┤
+  │ AVOID WHEN   │ when NOT to use                │
+  ├──────────────┼────────────────────────────────┤
+  │ ONE-LINER    │ "memorable quote"              │
+  ├──────────────┼────────────────────────────────┤
+  │ NEXT EXPLORE │ Concept A → Concept B          │
+  └──────────────────────────────────────────────┘
+  ```
 
 
 ---

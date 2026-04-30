@@ -12,20 +12,16 @@ used_by: GC, G1GC, ZGC, Parallel GC, Memory Leak Diagnosis
 tags: #java, #jvm, #memory, #gc, #internals, #deep-dive
 ---
 
-# ☕ 017 — Reference Types (Strong, Soft, Weak, Phantom)
+# 017 — Reference Types (Strong, Soft, Weak, Phantom)
+
+`#java` `#jvm` `#memory` `#gc` `#internals` `#deep-dive`
 
 ⚡ TL;DR — Four reference strengths that give developers control over how aggressively the GC can collect an object — from "never collect" to "collect immediately" to "notify me after collection."
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #017         │ Category: JVM Internals              │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ JVM, Heap Memory, GC Roots           │                          │
-│              │ Object Header, Young Generation      │                          │
-│ Used by:     │ GC, G1GC, ZGC, Parallel GC           │                          │
-│              │ Memory Leak Diagnosis                │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #017 | Category: JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Heap Memory, GC Roots, Object Header, Young Generation | |
+| **Used by:** | GC, G1GC, ZGC, Parallel GC, Memory Leak Diagnosis | |
 
 ---
 
@@ -136,39 +132,10 @@ Problem 4: Observer pattern leaks
 
 ### ⚙️ How It Works — Collection Behaviour
 
-```
-┌─────────────────────────────────────────────────────────┐
-│           REFERENCE STRENGTH vs GC BEHAVIOUR            │
-│                                                         │
-│  STRONG REFERENCE                                       │
-│  Object reachable via strong ref                        │
-│  → NEVER collected by GC                               │
-│  → Collected only when no strong ref exists             │
-│  MyObj obj = new MyObj(); ← strong ref                  │
-│                                                         │
-│  SOFT REFERENCE                                         │
-│  Object reachable ONLY via SoftReference                │
-│  → NOT collected while memory is sufficient             │
-│  → Collected before OutOfMemoryError thrown             │
-│  → JVM may collect least-recently-used first            │
-│  SoftReference<MyObj> sr = new SoftReference<>(obj)     │
-│                                                         │
-│  WEAK REFERENCE                                         │
-│  Object reachable ONLY via WeakReference                │
-│  → Collected at NEXT GC cycle (Minor or Major)          │
-│  → No memory pressure needed — always eligible          │
-│  WeakReference<MyObj> wr = new WeakReference<>(obj)     │
-│                                                         │
-│  PHANTOM REFERENCE                                      │
-│  Object reachable ONLY via PhantomReference             │
-│  → Already considered dead by GC                        │
-│  → PhantomReference.get() always returns null           │
-│  → Enqueued in ReferenceQueue AFTER finalization        │
-│  → Used for post-collection cleanup actions             │
-│  PhantomReference<MyObj> pr =                           │
-│    new PhantomReference<>(obj, queue)                   │
-└─────────────────────────────────────────────────────────┘
-```
+| #017 | Category: JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Heap Memory, GC Roots, Object Header, Young Generation | |
+| **Used by:** | GC, G1GC, ZGC, Parallel GC, Memory Leak Diagnosis | |
 
 ---
 
@@ -460,29 +427,10 @@ k = null;
 
 ### 📌 Quick Reference Card
 
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Four GC collection strengths: Strong      │
-│              │ (never), Soft (memory pressure), Weak     │
-│              │ (next GC), Phantom (after collection)     │
-├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Soft: memory-sensitive cache              │
-│              │ Weak: canonical maps, observers           │
-│              │ Phantom: native resource cleanup          │
-├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Don't use SoftReference as primary cache  │
-│              │ strategy — use Caffeine with defined      │
-│              │ eviction policy instead                   │
-├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Reference types let you say how much you │
-│              │  care — GC respects that and collects     │
-│              │  when your interest level allows it"      │
-├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ ReferenceQueue → Cleaner API →            │
-│              │ WeakHashMap → Caffeine Cache →            │
-│              │ DirectByteBuffer cleanup                  │
-└──────────────────────────────────────────────────────────┘
-```
+| #017 | Category: JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Heap Memory, GC Roots, Object Header, Young Generation | |
+| **Used by:** | GC, G1GC, ZGC, Parallel GC, Memory Leak Diagnosis | |
 
 ---
 ### 🧠 Think About This Before We Continue

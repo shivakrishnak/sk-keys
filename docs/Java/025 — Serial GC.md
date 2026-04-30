@@ -13,6 +13,8 @@ tags: #java #jvm #gc #memory #internals #intermediate
 ---
 # 025 — Serial GC
 
+`#java` `#jvm` `#gc` `#memory` `#internals` `#intermediate`
+
 ⚡ TL;DR — The simplest JVM garbage collector using a single thread for all GC work — Stop-The-World for every collection, lowest overhead, appropriate only for small single-core or memory-constrained environments.
 
 | #025 | Category: Java & JVM Internals | Difficulty: ★★☆ |

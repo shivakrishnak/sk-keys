@@ -13,6 +13,8 @@ tags: #java #jvm #memory #gc #internals #deep-dive
 ---
 # 023 — Full GC
 
+`#java` `#jvm` `#memory` `#gc` `#internals` `#deep-dive`
+
 ⚡ TL;DR — The most expensive JVM garbage collection event that simultaneously collects Young Generation, Old Generation, and Metaspace in a single Stop-The-World pause — a symptom of a problem, not a normal operation.
 
 | #023 | Category: Java & JVM Internals | Difficulty: ★★★ |

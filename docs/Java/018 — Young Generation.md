@@ -12,20 +12,16 @@ used_by: GC, Minor GC, Object Promotion, TLAB, G1GC
 tags: #java, #jvm, #memory, #gc, #internals, #intermediate
 ---
 
-# ☕ 018 — Young Generation
+# 018 — Young Generation
+
+`#java` `#jvm` `#memory` `#gc` `#internals` `#intermediate`
 
 ⚡ TL;DR — The heap region where all new objects are born, divided into Eden and two Survivor spaces, designed around the observation that most objects die young — enabling fast, frequent, cheap garbage collection.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #018         │ Category: JVM Internals              │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ JVM, Heap Memory, GC Roots           │                          │
-│              │ Object Allocation                    │                          │
-│ Used by:     │ GC, Minor GC, Object Promotion       │                          │
-│              │ TLAB, G1GC                           │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #018 | Category: JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Heap Memory, GC Roots, Object Allocation | |
+| **Used by:** | GC, Minor GC, Object Promotion, TLAB, G1GC | |
 
 ---
 
@@ -151,28 +147,10 @@ Without generational hypothesis exploitation:
 
 ### ⚙️ How It Works — Eden and Survivor Spaces
 
-```
-┌─────────────────────────────────────────────────────────┐
-│              YOUNG GENERATION LAYOUT                    │
-│                                                         │
-│  ┌──────────────────────────────────────────────────┐   │
-│  │                    EDEN                          │   │
-│  │          (~80% of Young Gen)                     │   │
-│  │                                                  │   │
-│  │  new Object()  → TLAB → Eden                     │   │
-│  │  Fast allocation (pointer bump)                  │   │
-│  │  When full → triggers Minor GC                   │   │
-│  └──────────────────────────────────────────────────┘   │
-│                                                         │
-│  ┌────────────────────┐  ┌────────────────────────┐     │
-│  │   SURVIVOR 0 (S0)  │  │   SURVIVOR 1 (S1)      │     │
-│  │   (~10% each)      │  │   (~10% each)          │     │
-│  │                    │  │                        │     │
-│  │  One is "From"     │  │  One is "To" (empty)   │     │
-│  │  One is "To"       │  │  Roles swap each GC    │     │
-│  └────────────────────┘  └────────────────────────┘     │
-└─────────────────────────────────────────────────────────┘
-```
+| #018 | Category: JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Heap Memory, GC Roots, Object Allocation | |
+| **Used by:** | GC, Minor GC, Object Promotion, TLAB, G1GC | |
 
 **The Minor GC cycle — step by step:**
 
@@ -427,29 +405,10 @@ java -XX:SurvivorRatio=6 MyApp
 
 ### 📌 Quick Reference Card
 
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Heap nursery for new objects —            │
-│              │ Eden → Survivor → Old Gen pipeline,       │
-│              │ exploiting "most objects die young"       │
-├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Tune when: high allocation rate,          │
-│              │ frequent Minor GC, premature promotion,   │
-│              │ Survivor space overflow                   │
-├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Don't make Young Gen too large — longer   │
-│              │ Minor GC pauses; don't make too small —   │
-│              │ GC thrashing and premature promotion      │
-├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Young Gen is the cheap part of GC —      │
-│              │ most objects die here, fast and free;     │
-│              │ tune it and Old Gen rarely fills"         │
-├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Eden Space → Survivor Space →             │
-│              │ Minor GC → Object Promotion →             │
-│              │ Old Generation → TLAB → G1GC regions      │
-└──────────────────────────────────────────────────────────┘
-```
+| #018 | Category: JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Heap Memory, GC Roots, Object Allocation | |
+| **Used by:** | GC, Minor GC, Object Promotion, TLAB, G1GC | |
 
 ---
 ### 🧠 Think About This Before We Continue

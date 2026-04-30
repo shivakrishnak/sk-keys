@@ -13,6 +13,8 @@ tags: #java #jvm #memory #gc #internals #deep-dive
 ---
 # 022 — Major GC
 
+`#java` `#jvm` `#memory` `#gc` `#internals` `#deep-dive`
+
 ⚡ TL;DR — The expensive, infrequent garbage collection of the Old Generation — triggered when long-lived objects fill the tenured space, causing longer Stop-The-World pauses measured in tens to hundreds of milliseconds.
 
 | #022 | Category: Java & JVM Internals | Difficulty: ★★★ |
