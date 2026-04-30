@@ -1,9 +1,9 @@
 ﻿---
 layout: default
 title: "Varargs"
-parent: "Java Fundamentals"
+parent: "Java Language"
 nav_order: 57
-permalink: /java/varargs/
+permalink: /java-language/varargs/
 number: "057"
 category: Java Language
 difficulty: ★☆☆

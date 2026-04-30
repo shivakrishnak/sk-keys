@@ -19,8 +19,14 @@ permalink: /
 
 Explore the Complete Mastery System through the sections below:
 
-### [Java](./docs/java/)
-Core JVM concepts, bytecode, memory management, and Java fundamentals.
+### [Java & JVM Internals](./docs/Java/)
+JVM architecture, bytecode, class loading, memory management, GC algorithms, JIT compilation.
+
+### [Java Language](./docs/Java%20Language/)
+Generics, type erasure, reflection, records, sealed classes, and modern Java language features.
+
+### [Java Concurrency](./docs/Java%20Concurrency/)
+Threads, locks, synchronization primitives, executors, virtual threads (Project Loom), and the Java Memory Model.
 
 ### [Spring](./docs/spring/)
 Enterprise application development with the Spring Framework.
@@ -123,18 +129,18 @@ Bundling, code splitting, transpilation, and build optimization.
 
 | # | Keyword |
 |---|---|
-| 051 | [Autoboxing / Unboxing](<docs/Java/051 — Autoboxing-Unboxing.md>) |
-| 052 | [Integer Cache](<docs/Java/052 — Integer Cache.md>) |
-| 053 | [Generics](<docs/Java/053 — Generics.md>) |
-| 054 | [Type Erasure](<docs/Java/054 — Type Erasure.md>) |
-| 055 | [Bounded Wildcards](<docs/Java/055 — Bounded Wildcards.md>) |
-| 056 | [Covariance / Contravariance](<docs/Java/056 — Covariance-Contravariance.md>) |
-| 057 | [Varargs](<docs/Java/057 — Varargs.md>) |
-| 058 | [Reflection](<docs/Java/058 — Reflection.md>) |
-| 059 | [Annotation Processing (APT)](<docs/Java/059 — Annotation Processing (APT).md>) |
-| 060 | [Serialization / Deserialization](<docs/Java/060 — Serialization-Deserialization.md>) |
-| 061 | [SerialVersionUID](<docs/Java/061 — SerialVersionUID.md>) |
-| 062 | [Records (Java 16+)](<docs/Java/062 — Records (Java 16+).md>) |
+| 051 | [Autoboxing / Unboxing](<docs/Java Language/051 — Autoboxing-Unboxing.md>) |
+| 052 | [Integer Cache](<docs/Java Language/052 — Integer Cache.md>) |
+| 053 | [Generics](<docs/Java Language/053 — Generics.md>) |
+| 054 | [Type Erasure](<docs/Java Language/054 — Type Erasure.md>) |
+| 055 | [Bounded Wildcards](<docs/Java Language/055 — Bounded Wildcards.md>) |
+| 056 | [Covariance / Contravariance](<docs/Java Language/056 — Covariance-Contravariance.md>) |
+| 057 | [Varargs](<docs/Java Language/057 — Varargs.md>) |
+| 058 | [Reflection](<docs/Java Language/058 — Reflection.md>) |
+| 059 | [Annotation Processing (APT)](<docs/Java Language/059 — Annotation Processing (APT).md>) |
+| 060 | [Serialization / Deserialization](<docs/Java Language/060 — Serialization-Deserialization.md>) |
+| 061 | [SerialVersionUID](<docs/Java Language/061 — SerialVersionUID.md>) |
+| 062 | [Records (Java 16+)](<docs/Java Language/062 — Records (Java 16+).md>) |
 | 063 | Sealed Classes (Java 17+) |
 | 064 | Pattern Matching (Java 21+) |
 | 065 | invokedynamic |

@@ -1,9 +1,9 @@
 ﻿---
 layout: default
 title: "SerialVersionUID"
-parent: "Java Fundamentals"
+parent: "Java Language"
 nav_order: 61
-permalink: /java/serialversionuid/
+permalink: /java-language/serialversionuid/
 number: "061"
 category: Java Language
 difficulty: ★☆☆

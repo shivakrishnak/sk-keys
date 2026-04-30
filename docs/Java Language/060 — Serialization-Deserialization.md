@@ -1,9 +1,9 @@
 ﻿---
 layout: default
 title: "Serialization / Deserialization"
-parent: "Java Fundamentals"
+parent: "Java Language"
 nav_order: 60
-permalink: /java/serialization-deserialization/
+permalink: /java-language/serialization-deserialization/
 number: "060"
 category: Java Language
 difficulty: ★★☆

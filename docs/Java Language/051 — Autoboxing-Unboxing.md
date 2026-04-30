@@ -1,9 +1,9 @@
 ﻿---
 layout: default
 title: "Autoboxing / Unboxing"
-parent: "Java Fundamentals"
+parent: "Java Language"
 nav_order: 51
-permalink: /java/autoboxing-unboxing/
+permalink: /java-language/autoboxing-unboxing/
 number: "051"
 category: Java Language
 difficulty: ★☆☆

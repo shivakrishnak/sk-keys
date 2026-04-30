@@ -1,9 +1,9 @@
 ﻿---
 layout: default
 title: "Bounded Wildcards"
-parent: "Java Fundamentals"
+parent: "Java Language"
 nav_order: 55
-permalink: /java/bounded-wildcards/
+permalink: /java-language/bounded-wildcards/
 number: "055"
 category: Java Language
 difficulty: ★★★

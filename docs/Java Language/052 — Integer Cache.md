@@ -1,9 +1,9 @@
 ﻿---
 layout: default
 title: "Integer Cache"
-parent: "Java Fundamentals"
+parent: "Java Language"
 nav_order: 52
-permalink: /java/integer-cache/
+permalink: /java-language/integer-cache/
 number: "052"
 category: Java Language
 difficulty: ★★☆

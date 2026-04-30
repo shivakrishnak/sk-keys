@@ -1,9 +1,9 @@
 ﻿---
 layout: default
 title: "Reflection"
-parent: "Java Fundamentals"
+parent: "Java Language"
 nav_order: 58
-permalink: /java/reflection/
+permalink: /java-language/reflection/
 number: "058"
 category: Java Language
 difficulty: ★★★

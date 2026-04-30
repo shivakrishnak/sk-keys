@@ -1,9 +1,9 @@
 ﻿---
 layout: default
 title: "Annotation Processing (APT)"
-parent: "Java Fundamentals"
+parent: "Java Language"
 nav_order: 59
-permalink: /java/annotation-processing-apt/
+permalink: /java-language/annotation-processing-apt/
 number: "059"
 category: Java Language
 difficulty: ★★★

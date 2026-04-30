@@ -1,9 +1,9 @@
 ﻿---
 layout: default
 title: "Type Erasure"
-parent: "Java Fundamentals"
+parent: "Java Language"
 nav_order: 54
-permalink: /java/type-erasure/
+permalink: /java-language/type-erasure/
 number: "054"
 category: Java Language
 difficulty: ★★★

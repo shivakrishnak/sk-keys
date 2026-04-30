@@ -15,8 +15,14 @@ Comprehensive reference guide for software engineering, architecture, and system
 
 ## 📚 Documentation Sections
 
-### [Java](./Java/)
-Core JVM concepts, bytecode, memory management, and Java fundamentals. **Keywords: 001–102**
+### [Java & JVM Internals](./Java/)
+JVM architecture, bytecode, class loading, GC algorithms, JIT compilation. **Keywords: 001–050**
+
+### [Java Language](./Java%20Language/)
+Generics, type system, reflection, records, sealed classes, modern Java features. **Keywords: 051–065**
+
+### [Java Concurrency](./Java%20Concurrency/)
+Threads, locks, synchronization, executors, virtual threads, ConcurrentCollections. **Keywords: 066–102**
 
 ### [Spring](./Spring/)
 Enterprise application development with the Spring Framework. **Keywords: 103–138**

@@ -1,9 +1,9 @@
 ﻿---
 layout: default
 title: "Generics"
-parent: "Java Fundamentals"
+parent: "Java Language"
 nav_order: 53
-permalink: /java/generics/
+permalink: /java-language/generics/
 number: "053"
 category: Java Language
 difficulty: ★★★

@@ -1,9 +1,9 @@
 ﻿---
 layout: default
 title: "Records (Java 16+)"
-parent: "Java Fundamentals"
+parent: "Java Language"
 nav_order: 62
-permalink: /java/records-java-16/
+permalink: /java-language/records-java-16/
 number: "062"
 category: Java Language
 difficulty: ★★☆

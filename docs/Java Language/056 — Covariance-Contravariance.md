@@ -1,9 +1,9 @@
 ﻿---
 layout: default
 title: "Covariance / Contravariance"
-parent: "Java Fundamentals"
+parent: "Java Language"
 nav_order: 56
-permalink: /java/covariance-contravariance/
+permalink: /java-language/covariance-contravariance/
 number: "056"
 category: Java Language
 difficulty: ★★★
