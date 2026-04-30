@@ -190,13 +190,23 @@ Fix: isolated test environments per run; reset state between test runs; use sepa
 
 ### 📌 Quick Reference Card
 
-| #415 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Integration Test, Selenium, Playwright, Cypress | |
-| **Used by:** | Test Pyramid, CI/CD, QA | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Simulate real user journeys through the full  │
+│              │ stack — browser to database                   │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Critical user flows: login, checkout, signup  │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Testing edge cases or error paths — use       │
+│              │ unit/integration tests for those              │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Test what the user sees — the full journey,  │
+│              │  not the individual parts"                    │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Test Pyramid --> Playwright --> Smoke Testing  │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why should E2E tests only cover critical happy paths rather than all scenarios?  

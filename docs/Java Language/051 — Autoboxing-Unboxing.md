@@ -168,13 +168,24 @@ Fix: always use `.equals()` for `Integer`, `Long`, `Double` comparisons.
 
 ### 📌 Quick Reference Card
 
-| #051 | Category: Java Language | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Primitive Types, Wrapper Classes | |
-| **Used by:** | Collections, Generics, Streams | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Automatic int↔Integer conversion — convenient │
+│              │ but has allocation cost and NPE risk          │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Working with collections/generics that        │
+│              │ require wrapper types                         │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Hot loops; performance-critical code — use    │
+│              │ primitive arrays or primitive streams          │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Convenient conversion between int and Integer│
+│              │  — transparent but not free"                  │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Integer Cache --> Generics --> Type Erasure    │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why does unboxing a null `Integer` cause a `NullPointerException`?

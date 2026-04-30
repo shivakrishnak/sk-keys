@@ -202,13 +202,24 @@ Fix: always create fresh objects in each test or use immutable data.
 
 ### 📌 Quick Reference Card
 
-| #419 | Category: Testing | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, Mocking | |
-| **Used by:** | Unit Test, Mocking, TDD | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Configure a fake dependency to return         │
+│              │ controlled data — no interaction verification │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Providing test data to the system under test  │
+│              │ without real infrastructure                   │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ You need to verify HOW the dependency was     │
+│              │ used — use full mock with verify() instead   │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Tell the fake what to return — then test      │
+│              │  what your code does with that data"         │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Mocking --> Faking --> Test Doubles taxonomy   │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** When should you use a stub vs a full mock — what guides that decision?  

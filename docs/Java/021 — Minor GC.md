@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Minor GC"
 parent: "Java & JVM Internals"
@@ -402,12 +402,22 @@ Scenario:
 ---
 
 ### 📌 Quick Reference Card
-
-| #021 | Category: Java & JVM Internals | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JVM, Young Generation, Eden Space, Survivor Space, GC Roots | |
-| **Used by:** | GC, Object Promotion, Old Generation, JVM Performance | |
-
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Fast Young Gen collection — copy live objects    │
+│              │ out, wipe Eden in bulk; triggers on Eden full    │
+├──────────────┼──────────────────────────────────────────────────┤
+│ USE WHEN     │ Always — every JVM app does Minor GC             │
+├──────────────┼──────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Minimise frequency: tune Eden size to balance    │
+│              │ GC frequency vs pause length                     │
+├──────────────┼──────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Fast and frequent — live objects out,           │
+│              │  dead Eden wiped in one shot"                    │
+├──────────────┼──────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Major GC → Full GC → Stop-The-World → G1GC       │
+└─────────────────────────────────────────────────────────────────┘
+```
 ---
 
 ### 🧠 Think About This Before We Continue

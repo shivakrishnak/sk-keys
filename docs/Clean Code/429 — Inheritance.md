@@ -197,13 +197,23 @@ Fix: flatten hierarchies; use interfaces + composition to share behavior without
 
 ### 📌 Quick Reference Card
 
-| #429 | Category: Clean Code | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Polymorphism, Abstraction | |
-| **Used by:** | LSP, Composition over Inheritance, Subtype Polymorphism | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ IS-A relationship: subclass acquires and      │
+│              │ specializes parent behavior                   │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ True IS-A relationship that is stable and     │
+│              │ behavioral, not just conceptual               │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Just reusing code (use composition instead)   │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Inherit for IS-A relationships; compose for  │
+│              │  HAS-A and code reuse"                        │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ LSP → Composition over Inheritance → Mixins   │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the Fragile Base Class problem and how does marking a class `final` partially address it?  

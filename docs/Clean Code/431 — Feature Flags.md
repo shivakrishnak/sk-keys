@@ -207,13 +207,24 @@ Fix: keep flags at entry points; the feature implementation itself should be fla
 
 ### 📌 Quick Reference Card
 
-| #431 | Category: Clean Code | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | CI/CD, Canary Deployment, Trunk-Based Development | |
-| **Used by:** | A/B Testing, Canary Releases, Kill Switches | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Decouple code deployment from feature release  │
+│              │ using runtime configuration switches           │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ CI/CD, gradual rollouts, A/B tests, kill      │
+│              │ switches, dark launches                        │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Using flags to permanently hide dead code or  │
+│              │ to replace proper API versioning              │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Ship code continuously; release features      │
+│              │  deliberately and safely"                      │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Canary Deployment --> A/B Testing --> CI/CD    │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** How do feature flags enable trunk-based development for large teams with many parallel features?  

@@ -172,13 +172,24 @@ Fix: use `.equals()` everywhere; never depend on `==` for correctness.
 
 ### 📌 Quick Reference Card
 
-| #052 | Category: Java Language | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Autoboxing, Integer.valueOf | |
-| **Used by:** | Autoboxing, String Pool, Performance Analysis | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Integer.valueOf() caches -128 to 127;        │
+│              │ == works in this range only                   │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Understanding autoboxing performance;        │
+│              │ debugging == comparison bugs                  │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Never rely on cache for correctness;         │
+│              │ always use .equals() for value comparison     │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Small integers are shared objects; large ones│
+│              │  are not — never use == on Integer"           │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Autoboxing --> String Pool --> == vs equals() │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why does `Integer.valueOf(100) == Integer.valueOf(100)` return `true` but `new Integer(100) == new Integer(100)` return `false`?

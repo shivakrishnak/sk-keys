@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Reference Types (Strong, Soft, Weak, Phantom)"
 parent: "Java & JVM Internals"
@@ -427,11 +427,30 @@ k = null;
 
 ### 📌 Quick Reference Card
 
-| #017 | Category: JVM Internals | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | JVM, Heap Memory, GC Roots, Object Header, Young Generation | |
-| **Used by:** | GC, G1GC, ZGC, Parallel GC, Memory Leak Diagnosis | |
 
+```
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Four GC collection strengths: Strong      │
+│              │ (never), Soft (memory pressure), Weak     │
+│              │ (next GC), Phantom (after collection)     │
+├──────────────┼───────────────────────────────────────────┤
+│ USE WHEN     │ Soft: memory-sensitive cache              │
+│              │ Weak: canonical maps, observers           │
+│              │ Phantom: native resource cleanup          │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Don't use SoftReference as primary cache  │
+│              │ strategy — use Caffeine with defined      │
+│              │ eviction policy instead                   │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Reference types let you say how much you │
+│              │  care — GC respects that and collects     │
+│              │  when your interest level allows it"      │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ ReferenceQueue → Cleaner API →            │
+│              │ WeakHashMap → Caffeine Cache →            │
+│              │ DirectByteBuffer cleanup                  │
+└──────────────────────────────────────────────────────────┘
+```
 ---
 ### 🧠 Think About This Before We Continue
 

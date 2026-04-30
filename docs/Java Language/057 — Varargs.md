@@ -213,13 +213,24 @@ for (int i = 0; i < 1_000_000; i++) {
 
 ### 📌 Quick Reference Card
 
-| #057 | Category: Java Language | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Arrays, Method Signatures, Autoboxing | |
-| **Used by:** | String.format, MessageFormat, Logging APIs | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Zero-or-more args; compiler wraps in array;   │
+│              │ must be last parameter; empty ≠ null          │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Method needs to accept variable number of     │
+│              │ same-type args without forcing caller to array │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Hot loops (heap allocation); generic varargs  │
+│              │ without @SafeVarargs                          │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "type... param = last position array sugar;   │
+│              │  zero args = empty array, not null"           │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ @SafeVarargs → Heap Pollution → Type Erasure  │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why must a varargs parameter always be the last parameter in a method signature?

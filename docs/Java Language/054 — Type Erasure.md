@@ -219,13 +219,23 @@ List<MyType> result = objectMapper.readValue(json,
 
 ### 📌 Quick Reference Card
 
-| #054 | Category: Java Language | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Generics, Bytecode, JVM | |
-| **Used by:** | Reflection, Generics Limitations, Heap Pollution | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Generic types enforce safety at compile time  │
+│              │ then are erased; JVM sees only raw types      │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Explaining why generic arrays fail, why       │
+│              │ instanceof fails with type params             │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ N/A — it is always in effect                  │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Generic type checks happen at compile time;  │
+│              │  the JVM sees only Object/bound at runtime"   │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Generics → Heap Pollution → Reflection        │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why does `new T[10]` fail at compile time even though the compiler knows `T` — what would go wrong if it allowed it?

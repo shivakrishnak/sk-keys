@@ -210,13 +210,23 @@ Fix: timebox refactoring; apply the Boy Scout Rule (leave it a little better, no
 
 ### 📌 Quick Reference Card
 
-| #433 | Category: Clean Code | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Technical Debt, Unit Tests, Code Smells | |
-| **Used by:** | Technical Debt, Clean Code, Boy Scout Rule | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Improve internal structure without changing    │
+│              │ external behavior — tests stay green always   │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Continuously — especially before adding a     │
+│              │ new feature to messy existing code            │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ No tests exist yet — write them first         │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Small, safe, behavior-preserving steps that  │
+│              │  accumulate into a fundamentally cleaner design"│
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Code Smells --> TDD --> Boy Scout Rule         │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why must refactoring and feature development always be in separate commits?  

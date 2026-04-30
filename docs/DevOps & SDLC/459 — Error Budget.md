@@ -243,13 +243,24 @@ Fix: error budget policies are agreed cross-functionally before any incident; it
 
 ### 📌 Quick Reference Card
 
-| #459 | Category: DevOps & SDLC | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | SRE, SLO, SLI | |
-| **Used by:** | SRE, Release Decisions, CI/CD Gates | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Error Budget = 100% - SLO = quantified        │
+│              │ permission to be unreliable                   │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Making deployment or reliability investment    │
+│              │ decisions; aligning dev and ops               │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ N/A — every production system should have     │
+│              │ an error budget, even if informal             │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Spend your unreliability budget deliberately  │
+│              │  — on features, not accidents"                │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ SLO --> SLI --> SLA --> Burn Rate Alerts       │
+└───────────────────────────────��─────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** How does the burn rate of an error budget differ from the absolute remaining balance, and why do you need both?  

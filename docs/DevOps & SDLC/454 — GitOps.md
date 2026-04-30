@@ -221,13 +221,24 @@ Fix: treat OutOfSync as an incident; alert on-call; investigate and resolve imme
 
 ### 📌 Quick Reference Card
 
-| #454 | Category: DevOps & SDLC | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | CI/CD Pipeline, IaC, Kubernetes | |
-| **Used by:** | CI/CD Pipeline, IaC, Kubernetes | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Git is the single source of truth; an agent  │
+│              │ continuously reconciles the cluster to match  │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Kubernetes environments; need auditability,   │
+│              │ drift detection, secure CD                    │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Stateful systems where git state alone is     │
+│              │ insufficient to describe the full system      │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Don't deploy to production — declare what    │
+│              │  should be there and let git enforce it"      │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ ArgoCD --> Flux --> IaC --> Sealed Secrets    │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** How does the pull-based GitOps model improve security compared to the push-based CI/CD model?  

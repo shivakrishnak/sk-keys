@@ -205,13 +205,22 @@ Fix: wrap in a DTO, record, or interface that represents the caller's view.
 
 ### 📌 Quick Reference Card
 
-| #427 | Category: Clean Code | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Abstraction, Class Design | |
-| **Used by:** | Cohesion, Information Hiding, Invariants | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Bundle data + behavior; protect state via     │
+│              │ controlled access and invariant enforcement   │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Always in OOP — make fields private by default│
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ DTOs / value objects: expose all, change none │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "An object owns its state; callers interact   │
+│              │  through methods that enforce the rules"       │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Abstraction → Polymorphism → Immutability     │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why is a class with only public getters/setters considered to have broken encapsulation?  

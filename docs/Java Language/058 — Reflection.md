@@ -230,13 +230,24 @@ Reflection calls are checked against the security manager in constrained environ
 
 ### 📌 Quick Reference Card
 
-| #058 | Category: Java Language | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Class Loader, JVM, Type Erasure | |
-| **Used by:** | Spring Framework, Jackson, JUnit, Mockito, Lombok | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Runtime introspection of class structure;     │
+│              │ invoke methods, access fields, read annotations│
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Framework code; plugin systems; serialization; │
+│              │ testing utilities; never in business logic     │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Hot paths; when annotation processing works;  │
+│              │ in untrusted environments                      │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "X-ray for objects: inspect any class, invoke │
+│              │  any method, read any field — at runtime cost"│
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ APT → Spring DI → Jackson → Java Modules      │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** How does Spring use reflection to implement `@Autowired` without knowing your class at compile time?

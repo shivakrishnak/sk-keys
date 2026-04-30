@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Survivor Space"
 parent: "Java & JVM Internals"
@@ -386,11 +386,31 @@ jstat -gcnew <pid> 1000
 
 ### 📌 Quick Reference Card
 
-| #020 | Category: JVM Internals | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JVM, Young Generation, Eden Space, GC Roots, Minor GC | |
-| **Used by:** | GC, Minor GC, Object Aging, Object Promotion, Young Generation | |
 
+```
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Two-space ping-pong aging buffer —        │
+│              │ one always empty for copy-collect,        │
+│              │ objects age here before Old Gen           │
+├──────────────┼───────────────────────────────────────────┤
+│ USE WHEN     │ Tune when Old Gen fills too fast          │
+│              │ (Survivor too small) or when Survivor     │
+│              │ space is mostly unused (too large)        │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Don't ignore tenuring threshold changes   │
+│              │ in GC logs — dynamic threshold drop       │
+│              │ signals Survivor overflow and             │
+│              │ premature promotion                       │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Survivor = the proving ground between    │
+│              │  born (Eden) and permanent (Old Gen) —    │
+│              │  die here or earn your promotion"         │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Minor GC → Object Promotion →             │
+│              │ Old Generation → Tenuring Threshold →     │
+│              │ G1GC Regions → Copy Collector Algorithm   │
+└──────────────────────────────────────────────────────────┘
+```
 ---
 ### 🧠 Think About This Before We Continue
 

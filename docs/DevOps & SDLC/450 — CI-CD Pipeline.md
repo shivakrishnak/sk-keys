@@ -240,13 +240,23 @@ Fix: trunk-based development with feature flags; independent pipeline per servic
 
 ### 📌 Quick Reference Card
 
-| #450 | Category: DevOps & SDLC | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Version Control, Build Tools, Automated Testing | |
-| **Used by:** | Blue-Green Deployment, Canary Deployment, GitOps | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Automate the entire path from commit to       │
+│              │ production — build, test, deploy, monitor     │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Always — any software project benefits        │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Skipping stages to "go faster" — that defeats │
+│              │ the purpose and creates risk                  │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Every commit is a potential release —         │
+│              │  the pipeline decides, not a person"          │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Blue-Green --> Canary --> GitOps --> IaC       │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between Continuous Delivery and Continuous Deployment?  

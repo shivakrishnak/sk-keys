@@ -243,13 +243,23 @@ Fix: automate blue teardown after green is validated stable (e.g., 1 hour after 
 
 ### 📌 Quick Reference Card
 
-| #451 | Category: DevOps & SDLC | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | CI/CD Pipeline, Load Balancer | |
-| **Used by:** | CI/CD Pipeline, Zero-Downtime Deployment | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Two identical envs; switch traffic instantly;  │
+│              │ rollback in seconds                           │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Zero-downtime releases; high-risk deployments  │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ State/DB migration incompatibilities not       │
+│              │ resolved with expand-contract pattern          │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Deploy first, release second — keep the       │
+│              │  old version warm for instant rollback"        │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Canary --> Rolling Update --> Feature Flags    │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** How does the expand-contract database migration pattern enable safe blue-green deployments?  

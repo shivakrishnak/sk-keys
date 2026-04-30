@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Eden Space"
 parent: "Java & JVM Internals"
@@ -347,11 +347,28 @@ java -XX:NewSize=1g MyApp
 
 ### 📌 Quick Reference Card
 
-| #019 | Category: JVM Internals | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JVM, Young Generation, GC Roots, Object Allocation, TLAB | |
-| **Used by:** | GC, Minor GC, Object Aging, Young Generation | |
 
+```
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Birth region for all objects — fast TLAB  │
+│              │ bump allocation, bulk wipe on GC —        │
+│              │ cost proportional to survivors not garbage │
+├──────────────┼───────────────────────────────────────────┤
+│ USE WHEN     │ Monitor Eden fill rate and GC frequency   │
+│              │ in allocation-heavy applications          │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Don't let allocation rate exceed          │
+│              │ Eden refill capacity — reduce object      │
+│              │ creation in hot paths before tuning       │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Eden = the world's fastest allocator:    │
+│              │  bump a pointer to create, reset a        │
+│              │  pointer to destroy 98% of objects"       │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ TLAB → Survivor Space → Minor GC →        │
+│              │ Bump Pointer Allocation → G1GC Regions    │
+└──────────────────────────────────────────────────────────┘
+```
 ---
 ### 🧠 Think About This Before We Continue
 

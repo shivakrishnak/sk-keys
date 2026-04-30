@@ -238,13 +238,24 @@ Fix: audit alerts; delete non-actionable ones; reduce signal-to-noise ruthlessly
 
 ### 📌 Quick Reference Card
 
-| #460 | Category: DevOps & SDLC | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | SRE, Error Budget, Automation | |
-| **Used by:** | SRE, Error Budget, Operational Excellence | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Manual, repetitive, automatable work that     │
+│              │ scales with traffic — must be eliminated      │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Auditing operational work; building SRE       │
+│              │ roadmap; justifying automation investment     │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ N/A — all toil should be reduced; > 50%      │
+│              │ is an organizational red flag                 │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "If you do it twice, automate it.             │
+│              │  If you don't, it will eat you alive at scale"│
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ SRE --> Error Budget --> Automation --> IaC   │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between toil and "valuable operational work" — where is the line?  

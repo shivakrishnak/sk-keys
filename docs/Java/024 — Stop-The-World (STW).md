@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Stop-The-World (STW)"
 parent: "Java & JVM Internals"
@@ -399,12 +399,23 @@ java -agentpath:/path/to/async-profiler.so=\
 ---
 
 ### 📌 Quick Reference Card
-
-| #024 | Category: Java & JVM Internals | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | JVM, GC, Minor GC, Major GC, Full GC, Thread | |
-| **Used by:** | GC, JIT Compiler, Deoptimization, Debugger, Thread Dump | |
-
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ All application threads paused while JVM        │
+│              │ performs an operation requiring a safe state     │
+├──────────────┼──────────────────────────────────────────────────┤
+│ USE WHEN     │ Inevitable — every GC has some STW; minimise     │
+│              │ with low-pause GCs (G1, ZGC, Shenandoah)        │
+├──────────────┼──────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Long STW pauses in latency-sensitive apps —      │
+│              │ switch to ZGC for sub-millisecond STW            │
+├──────────────┼──────────────────────────────────────────────────┤
+│ ONE-LINER    │ "The whole world stops so the JVM can            │
+│              │  work in consistent, single-threaded peace"      │
+├──────────────┼──────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ G1GC → ZGC → Shenandoah → GC Safepoint           │
+└─────────────────────────────────────────────────────────────────┘
+```
 ---
 
 ### 🧠 Think About This Before We Continue

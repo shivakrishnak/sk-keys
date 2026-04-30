@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Young Generation"
 parent: "Java & JVM Internals"
@@ -405,11 +405,30 @@ java -XX:SurvivorRatio=6 MyApp
 
 ### 📌 Quick Reference Card
 
-| #018 | Category: JVM Internals | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JVM, Heap Memory, GC Roots, Object Allocation | |
-| **Used by:** | GC, Minor GC, Object Promotion, TLAB, G1GC | |
 
+```
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Heap nursery for new objects —            │
+│              │ Eden → Survivor → Old Gen pipeline,       │
+│              │ exploiting "most objects die young"       │
+├──────────────┼───────────────────────────────────────────┤
+│ USE WHEN     │ Tune when: high allocation rate,          │
+│              │ frequent Minor GC, premature promotion,   │
+│              │ Survivor space overflow                   │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Don't make Young Gen too large — longer   │
+│              │ Minor GC pauses; don't make too small —   │
+│              │ GC thrashing and premature promotion      │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Young Gen is the cheap part of GC —      │
+│              │ most objects die here, fast and free;     │
+│              │ tune it and Old Gen rarely fills"         │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Eden Space → Survivor Space →             │
+│              │ Minor GC → Object Promotion →             │
+│              │ Old Generation → TLAB → G1GC regions      │
+└──────────────────────────────────────────────────────────┘
+```
 ---
 ### 🧠 Think About This Before We Continue
 

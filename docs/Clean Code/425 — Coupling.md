@@ -197,13 +197,21 @@ Fix: split the god object; route communication through interfaces or events.
 
 ### 📌 Quick Reference Card
 
-| #425 | Category: Clean Code | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Cohesion, Module Design | |
-| **Used by:** | Dependency Injection, DIP, Refactoring | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Modules should know as little as possible     │
+│              │ about each other's internals                   │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Always — loose coupling is the constant goal  │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Over-engineering tiny scripts with interfaces  │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Depend on interfaces, not implementations"    │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Cohesion → DIP → Dependency Injection         │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between afferent coupling (Ca) and efferent coupling (Ce)?  

@@ -224,13 +224,24 @@ Fix: review mutant kills by adding meaningful assertions; mutation score is a gu
 
 ### 📌 Quick Reference Card
 
-| #423 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, Code Coverage, TDD | |
-| **Used by:** | Unit Test, Test Quality, CI/CD | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Introduce small bugs; verify tests catch them │
+│              │ — mutation score measures test effectiveness  │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Evaluating test suite quality; finding missing │
+│              │ assertions in critical domain code            │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Generated/boilerplate code; configuration     │
+│              │ classes with no logic to mutate               │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Test your tests — if introducing a bug        │
+│              │  doesn't break them, the tests are too weak"  │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ PIT --> Code Coverage --> Property-Based Tests │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why does 100% line coverage not guarantee that tests will catch mutations?  

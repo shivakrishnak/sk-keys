@@ -196,13 +196,24 @@ Fix: configure fewer iterations in CI (`tries = 100`); run full suite nightly or
 
 ### 📌 Quick Reference Card
 
-| #422 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, QuickCheck, jqwik | |
-| **Used by:** | Unit Test, TDD, Fuzzing | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Specify invariants; let the framework find    │
+│              │ the inputs that break them                    │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Encoding domain invariants; roundtrip tests;  │
+│              │ algorithms with clear properties              │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Testing specific business rules with exact    │
+│              │ required outputs — use examples there         │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Let the machine find the edge case you       │
+│              │  didn't think to write"                      │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ jqwik --> QuickCheck concepts --> Fuzzing      │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is "shrinking" in property-based testing and why is it essential for usability?  

@@ -199,13 +199,23 @@ Document the exception explicitly; keep it at the data layer, not business logic
 
 ### 📌 Quick Reference Card
 
-| #430 | Category: Clean Code | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | CQRS, API Design, Side Effects | |
-| **Used by:** | CQRS, Functional Programming, Idempotency, Testing | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Methods either change state (void) or return  │
+│              │ data (no side effects) — never both           │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Designing service, repository, domain methods │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Known pragmatic exceptions: pop(), iterators, │
+│              │ SELECT FOR UPDATE                             │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Asking a question should not change          │
+│              │  the answer"                                  │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ CQRS --> Event Sourcing --> Idempotency        │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** How does CQS enable safe caching of query results?  

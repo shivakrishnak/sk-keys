@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "GC Roots"
 parent: "Java & JVM Internals"
@@ -396,11 +396,29 @@ try {
 
 ### 📌 Quick Reference Card
 
-| #016 | Category: JVM Internals | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | JVM, Heap Memory, Garbage Collector, Class Loader | |
-| **Used by:** | GC, Memory Leak Diagnosis, jmap, Eclipse MAT | |
 
+```
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Fixed live anchors the GC traces from —  │
+│              │ reachable = live, unreachable = garbage   │
+├──────────────┼───────────────────────────────────────────┤
+│ USE WHEN     │ Diagnosing memory leaks — always ask:     │
+│              │ "What root path is keeping this alive?"   │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Never store long-lived objects in static  │
+│              │ collections without expiry — static       │
+│              │ fields are permanent GC roots             │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "If the GC can walk from any root to      │
+│              │  your object — it lives. If not —         │
+│              │  it dies. Memory leaks are surprise       │
+│              │  root paths you forgot about"             │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Mark Phase → Weak References →            │
+│              │ Minor GC → Major GC → Eclipse MAT →       │
+│              │ Memory Leak Patterns                      │
+└──────────────────────────────────────────────────────────┘
+```
 ---
 ### 🧠 Think About This Before We Continue
 

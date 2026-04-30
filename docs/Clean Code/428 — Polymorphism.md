@@ -203,13 +203,23 @@ Fix: follow the Liskov Substitution Principle — a subtype must be substitutabl
 
 ### 📌 Quick Reference Card
 
-| #428 | Category: Clean Code | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Abstraction, Inheritance, Interface | |
-| **Used by:** | Strategy Pattern, OCP, Runtime Dispatch | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ One interface, many implementations; runtime  │
+│              │ dispatch selects the right behavior           │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Multiple types share behavior, or type-check  │
+│              │ if-else chains are growing                    │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Only 1 implementation exists (no benefit yet) │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Same call, different behavior: the type      │
+│              │  decides at runtime, not the caller"          │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Strategy Pattern → OCP → LSP                  │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between compile-time (static) and runtime (dynamic) polymorphism?  

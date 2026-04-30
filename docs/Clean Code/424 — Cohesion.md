@@ -184,13 +184,21 @@ Fix: balance — group things that change together.
 
 ### 📌 Quick Reference Card
 
-| #424 | Category: Clean Code | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | SRP, Module Design | |
-| **Used by:** | Coupling, Refactoring | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Everything inside a module belongs together   │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Designing or reviewing class responsibilities  │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Don't over-split — tiny 1-liner classes hurt  │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Cohesion = how much a module sticks to one   │
+│              │  single, clear purpose"                        │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Coupling → SRP → Refactoring                  │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Can a class have high cohesion but also high coupling? What would that look like?  

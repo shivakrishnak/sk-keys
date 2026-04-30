@@ -239,13 +239,24 @@ Records and Lombok `@Data` on the same class causes compilation issues. Pick one
 
 ### 📌 Quick Reference Card
 
-| #062 | Category: Java Language | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Classes, Immutability, equals/hashCode | |
-| **Used by:** | DTOs, Value Objects, Pattern Matching, Domain Models | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Immutable data carrier: components → final    │
+│              │ fields + canonical ctor + equals/hash/toString│
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ DTOs, return values, value objects, simple    │
+│              │ domain aggregates, ADT leaf nodes             │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Need mutability; need OOP hierarchy;          │
+│              │ Hibernate entities (mutable, need no-arg ctor)│
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Named tuple: data defines identity;          │
+│              │  all boilerplate is generated"                │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Sealed Classes → Pattern Matching → ADTs      │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why are records unsuitable as JPA/Hibernate `@Entity` classes?

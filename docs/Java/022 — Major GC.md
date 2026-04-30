@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Major GC"
 parent: "Java & JVM Internals"
@@ -409,12 +409,22 @@ public void returnBuffer(byte[] buf) {
 ---
 
 ### 📌 Quick Reference Card
-
-| #022 | Category: Java & JVM Internals | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | JVM, Old Generation, Minor GC, GC Roots, Heap Memory | |
-| **Used by:** | GC, Full GC, Stop-The-World, JVM Performance, G1GC | |
-
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Old Generation collection — less frequent,       │
+│              │ longer pause; triggered when Old Gen fills       │
+├──────────────┼──────────────────────────────────────────────────┤
+│ USE WHEN     │ Unavoidable — Old Gen fills from promoted objects │
+├──────────────┼──────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Avoid frequent Major GC: fix promotion rates     │
+│              │ and right-size Old Gen                           │
+├──────────────┼──────────────────────────────────────────────────┤
+│ ONE-LINER    │ "The expensive clean-up of the long-lived        │
+│              │  objects warehouse"                              │
+├──────────────┼──────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Full GC → Stop-The-World → G1GC → ZGC            │
+└─────────────────────────────────────────────────────────────────┘
+```
 ---
 
 ### 🧠 Think About This Before We Continue

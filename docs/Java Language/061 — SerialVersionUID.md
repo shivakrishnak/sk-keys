@@ -209,13 +209,23 @@ Each class in a hierarchy needs its own `serialVersionUID`. If a parent class ch
 
 ### 📌 Quick Reference Card
 
-| #061 | Category: Java Language | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Serialization, Class Evolution | |
-| **Used by:** | Serializable classes, RMI, JMS, Caching systems | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Version ID for serialized class; must match   │
+│              │ between writer and reader                     │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Every Serializable class — always declare it  │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ N/A; if you avoid Java serialization entirely,│
+│              │ you don't need it                             │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Your class's passport number — mismatch with │
+│              │  stored bytes throws InvalidClassException"   │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Serialization → Externalizable → Protobuf     │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** If you keep `serialVersionUID = 1L` across two versions of a class but remove a field in v2, what happens when you deserialize v1 bytes? Is there an exception?

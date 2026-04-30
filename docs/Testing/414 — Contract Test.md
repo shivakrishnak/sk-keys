@@ -212,13 +212,23 @@ Fix: use a Pact Broker (or PactFlow); it tracks which consumer/provider version 
 
 ### 📌 Quick Reference Card
 
-| #414 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Integration Test, Consumer-Driven Contracts | |
-| **Used by:** | Microservices, CI/CD, API Versioning | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Consumer defines what it needs; provider      │
+│              │ verifies it can deliver — independently       │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Microservices with multiple teams; API changes │
+│              │ that could break consumers                    │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Monoliths with in-process calls (no API boundary)│
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Consumer owns the contract; provider verifies │
+│              │  it — no shared environment needed"           │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Pact --> Pact Broker --> Consumer-Driven CDCs  │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why is consumer-driven contract testing more effective than provider-defined contract testing?  

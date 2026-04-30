@@ -213,13 +213,23 @@ Fix: use wrapper types (`Integer`, `Long`), accept autoboxing overhead.
 
 ### 📌 Quick Reference Card
 
-| #053 | Category: Java Language | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Type System, Object, Collections | |
-| **Used by:** | Collections Framework, Streams API, Optional, Spring Framework | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Type-safe parameterization at compile time;   │
+│              │ erased to Object at runtime                   │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Creating reusable containers, algorithms,     │
+│              │ utility classes that work with any type       │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Raw types (legacy) — always parameterize      │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Write once; compile-time safety for all types│
+│              │  — no casts, no ClassCastException"           │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Type Erasure → Bounded Wildcards → PECS       │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why can't you write `new T[10]` inside a generic class, even though `T` feels like a type at compile time?

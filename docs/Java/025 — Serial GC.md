@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Serial GC"
 parent: "Java & JVM Internals"
@@ -346,12 +346,23 @@ CMD java $JAVA_OPTS -jar app.jar
 ---
 
 ### 📌 Quick Reference Card
-
-| #025 | Category: Java & JVM Internals | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JVM, GC, Stop-The-World, Heap Memory, Young Generation, Old Generation | |
-| **Used by:** | Small applications, Single-core environments, GC baseline understanding | |
-
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Single-threaded GC — simple, low overhead,       │
+│              │ default for small heaps and single-CPU JVMs     │
+├──────────────┼──────────────────────────────────────────────────┤
+│ USE WHEN     │ Small standalone apps (<512MB heap), single core │
+│              │ or constrained containers (detect with jinfo)   │
+├──────────────┼──────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Multi-core servers, large heaps, latency-        │
+│              │ sensitive services — use G1GC or ZGC             │
+├──────────────┼──────────────────────────────────────────────────┤
+│ ONE-LINER    │ "One thread, sequential, simple — right for      │
+│              │  tiny apps, wrong for everything else"           │
+├──────────────┼──────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Parallel GC → G1GC → ZGC → GC Tuning             │
+└─────────────────────────────────────────────────────────────────┘
+```
 ---
 
 ### 🧠 Think About This Before We Continue

@@ -232,13 +232,24 @@ Fix: enforce IaC-only changes via policy; use GitOps to detect and revert drift.
 
 ### 📌 Quick Reference Card
 
-| #455 | Category: DevOps & SDLC | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Version Control, CI/CD Pipeline | |
-| **Used by:** | GitOps, Immutable Infrastructure, Cloud Provisioning | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Describe infrastructure in code; apply it     │
+│              │ automatically; version control everything      │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Any cloud or on-prem environment that needs   │
+│              │ to be repeatable and auditable                │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ One-off experiments (use console); but        │
+│              │ always enshrine the result in IaC afterward   │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Your infrastructure is a codebase too —      │
+│              │  version it, review it, automate it"          │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Terraform --> GitOps --> Immutable Infra       │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between declarative and imperative IaC approaches? When would you choose each?  

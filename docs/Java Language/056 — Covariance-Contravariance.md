@@ -211,13 +211,24 @@ void fillList(List<? extends Number> list, Number n) {
 
 ### 📌 Quick Reference Card
 
-| #056 | Category: Java Language | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Generics, Bounded Wildcards, Subtyping | |
-| **Used by:** | Comparable, Comparator, Collections API, TypeScript Variance | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Covariant = safe to produce/read (extends)    │
+│              │ Contravariant = safe to consume/write (super) │
+│              │ Invariant = default; both directions forbidden │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Designing generic APIs; understanding why     │
+│              │ List<Dog> ≠ List<Animal>                      │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ N/A — always applies; use wildcards explicitly │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Out = covariant (extends); In = contravariant │
+│              │  (super); both = invariant (exact type)"      │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Bounded Wildcards → Comparator design → Kotlin │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why does `String[]` being assignable to `Object[]` create a runtime safety hole that `List<String>` → `List<Object>` does not?

@@ -201,13 +201,21 @@ Fix: abstract at natural, stable seams in the system — not everywhere as a hab
 
 ### 📌 Quick Reference Card
 
-| #426 | Category: Clean Code | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Interface, Polymorphism | |
-| **Used by:** | Encapsulation, Coupling, API Design | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Show WHAT, hide HOW                          │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Defining boundaries between modules/layers    │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Over-abstracting trivial one-off code        │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Abstractions let you change the HOW without  │
+│              │  touching the WHO uses it"                    │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Encapsulation → Polymorphism → Interface      │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What makes an abstraction "leaky"? Give an example from a standard library you use daily.  

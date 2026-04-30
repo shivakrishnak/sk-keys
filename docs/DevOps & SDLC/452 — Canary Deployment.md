@@ -223,13 +223,24 @@ Fix: use header-based routing or ensure stateless sessions for accurate canary s
 
 ### 📌 Quick Reference Card
 
-| #452 | Category: DevOps & SDLC | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | CI/CD Pipeline, Load Balancer, Monitoring | |
-| **Used by:** | CI/CD Pipeline, Risk Reduction, Feature Validation | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Expose a small % of real production traffic   │
+│              │ to new version; roll back fast if it breaks   │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ High-risk changes; validating with real       │
+│              │ production traffic before full rollout        │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Changes that cannot be partially live         │
+│              │ (e.g., breaking DB migration)                 │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Let 5% of users test it; protect the 95%    │
+│              │  until you're confident"                      │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Blue-Green --> Rolling Update --> Argo Rollouts│
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the key difference between a canary deployment and a blue-green deployment in terms of risk profile?  

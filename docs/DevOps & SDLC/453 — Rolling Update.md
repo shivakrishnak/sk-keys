@@ -228,13 +228,23 @@ Fix: use maxUnavailable=1 or 25% for production; save aggressive settings for de
 
 ### 📌 Quick Reference Card
 
-| #453 | Category: DevOps & SDLC | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | CI/CD Pipeline, Kubernetes | |
-| **Used by:** | CI/CD Pipeline, Kubernetes Deployments | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Replace pods one-by-one; service stays up;    │
+│              │ pause automatically if new version is unhealthy│
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Default strategy for most Kubernetes services │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Changes that can't tolerate mixed v1/v2       │
+│              │ serving simultaneously                        │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "One pod at a time — never fully down,        │
+│              │  never fully untested"                        │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Canary --> Blue-Green --> Readiness Probes     │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why is a readiness probe critical for rolling updates, and what happens without one?  

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Full GC"
 parent: "Java & JVM Internals"
@@ -404,12 +404,23 @@ java -XX:MetaspaceSize=256m \
 ---
 
 ### 📌 Quick Reference Card
-
-| #023 | Category: Java & JVM Internals | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | JVM, Heap Memory, Young Generation, Old Generation, Metaspace, Minor GC, Major GC | |
-| **Used by:** | GC, OutOfMemoryError, JVM Performance, Memory Leak Diagnosis | |
-
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Entire heap + Metaspace collected at once —      │
+│              │ longest STW pause; a production emergency        │
+├──────────────┼──────────────────────────────────────────────────┤
+│ USE WHEN     │ Unavoidable — but should be rare; frequent       │
+│              │ Full GC signals a memory or tuning problem       │
+├──────────────┼──────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Never call System.gc() in production; fix        │
+│              │ memory leaks to prevent Full GC triggers         │
+├──────────────┼──────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Full GC = the entire heap paused — the          │
+│              │  symptom of a broken memory profile"             │
+├──────────────┼──────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Stop-The-World → OutOfMemoryError → GC Tuning    │
+└─────────────────────────────────────────────────────────────────┘
+```
 ---
 
 ### 🧠 Think About This Before We Continue

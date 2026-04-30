@@ -229,13 +229,25 @@ class Service implements Serializable {
 
 ### 📌 Quick Reference Card
 
-| #060 | Category: Java Language | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JVM, Object, Streams | |
-| **Used by:** | RMI, JMS, Caching, Persistence, Network Protocols | |
 
----
-
+```
+┌─────────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Implements Serializable → auto byte             │
+│              │ conversion; transient = skip; UID = version    │
+├─────────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Legacy JMS/RMI; caching (Hazelcast/Redis)       │
+│              │ ONLY with trusted sources + filters           │
+├─────────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Any new design — use Jackson/Protobuf instead  │
+│              │ Never deserialize untrusted bytes              │
+├─────────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Object-to-bytes and back; powerful but        │
+│              │  dangerous with untrusted input — avoid in new │
+│              │  designs, use JSON/Protobuf"                   │
+├─────────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ SerialVersionUID → Jackson → Protobuf          │
+└─────────────────────────────────────────────────────────────┘
+```
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why can deserializing untrusted bytes lead to Remote Code Execution — what mechanism makes this possible?
