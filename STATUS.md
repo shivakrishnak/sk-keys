@@ -32,20 +32,20 @@ Complete implementation ready for GitHub Pages deployment.
 
 ### 1. Java Fundamentals (11 Topics) ✅
 
-All files in `docs/java/` now have proper Jekyll frontmatter:
+All files in `docs/Java/` now have proper Jekyll frontmatter:
 
 ```
-✅ ☕ 001 — JVM (Java Virtual Machine)
-✅ ☕ 002 — JRE (Java Runtime Environment)
-✅ ☕ 003 — JDK (Java Development Kit)
-✅ ☕ 004 — Bytecode
-✅ ☕ 005 — Class Loader
-✅ ☕ 006 — Stack Memory
-✅ ☕ 007 — Heap Memory
-✅ ☕ 008 — Metaspace
-✅ ☕ 009 — Stack Frame
-✅ ☕ 010 — Operand Stack
-✅ ☕ 011 — Local Variable Table
+✅ 001 — JVM (Java Virtual Machine)
+✅ 002 — JRE (Java Runtime Environment)
+✅ 003 — JDK (Java Development Kit)
+✅ 004 — Bytecode
+✅ 005 — Class Loader
+✅ 006 — Stack Memory
+✅ 007 — Heap Memory
+✅ 008 — Metaspace
+✅ 009 — Stack Frame
+✅ 010 — Operand Stack
+✅ 011 — Local Variable Table
 ```
 
 Each file includes:
@@ -288,19 +288,19 @@ sk-keys/
     ├── TECHNICAL_DICTIONARY.md
     ├── GITHUB_PAGES_GUIDE.md
     ├── SETUP_SUMMARY.md
-    ├── java/
+    ├── Java/
     │   ├── index.md        # Java parent
-    │   ├── ☕ 001 — JVM.md
-    │   ├── ☕ 002 — JRE.md
-    │   ├── ☕ 003 — JDK.md
-    │   ├── ☕ 004 — Bytecode.md
-    │   ├── ☕ 005 — Class Loader.md
-    │   ├── ☕ 006 — Stack Memory.md
-    │   ├── ☕ 007 — Heap Memory.md
-    │   ├── ☕ 008 — Metaspace.md
-    │   ├── ☕ 009 — Stack Frame.md
-    │   ├── ☕ 010 — Operand Stack.md
-    │   └── ☕ 011 — Local Variable Table.md
+    │   ├── 001 — JVM.md
+    │   ├── 002 — JRE.md
+    │   ├── 003 — JDK.md
+    │   ├── 004 — Bytecode.md
+    │   ├── 005 — Class Loader.md
+    │   ├── 006 — Stack Memory.md
+    │   ├── 007 — Heap Memory.md
+    │   ├── 008 — Metaspace.md
+    │   ├── 009 — Stack Frame.md
+    │   ├── 010 — Operand Stack.md
+    │   └── 011 — Local Variable Table.md
     ├── spring/index.md
     ├── Distributed Systems/index.md
     ├── Databases/index.md

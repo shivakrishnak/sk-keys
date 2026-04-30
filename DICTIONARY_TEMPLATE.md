@@ -286,7 +286,7 @@ Step 1 → Step 2 → Step 3
 
 ## 📝 Filled Example — JVM (for reference)
 
-See: `docs/Java/☕ 001 — JVM (Java Virtual Machine).md`
+See: `docs/Java/001 — JVM (Java Virtual Machine).md`
 
 This entry demonstrates all sections fully populated.
 
