@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "CI/CD"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 25
 has_children: true
 permalink: /ci-cd/

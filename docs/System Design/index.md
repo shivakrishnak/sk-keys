@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "System Design"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 18
 has_children: true
 permalink: /system-design/

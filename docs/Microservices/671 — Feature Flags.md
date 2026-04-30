@@ -1,24 +1,24 @@
----
+﻿---
 layout: default
 title: "Feature Flags"
-parent: "Clean Code"
-nav_order: 431
+parent: "Microservices"
+nav_order: 671
 permalink: /clean-code/feature-flags/
-number: "431"
-category: Clean Code
+number: "671"
+category: Microservices
 difficulty: ★★☆
 depends_on: Configuration Management, Deployment, CI-CD Pipeline
 used_by: Canary Deployment, A/B Testing, Trunk-Based Development, Blue-Green Deployment
 tags: #devops, #architecture, #intermediate, #reliability
 ---
 
-# 431 — Feature Flags
+# 671 — Feature Flags
 
 `#devops` `#architecture` `#intermediate` `#reliability`
 
 ⚡ TL;DR — Runtime configuration switches that enable or disable features without deploying new code, decoupling feature release from code deployment.
 
-| #431 | Category: Clean Code | Difficulty: ★★☆ |
+| #671 | category: Microservices
 |:---|:---|:---|
 | **Depends on:** | Configuration Management, Deployment, CI-CD Pipeline | |
 | **Used by:** | Canary Deployment, A/B Testing, Trunk-Based Development, Blue-Green Deployment | |

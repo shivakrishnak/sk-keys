@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "volatile"
 parent: "Java Concurrency"
-nav_order: 70
+nav_order: 339
 permalink: /java-concurrency/volatile/
 ---
-# 070 — volatile
+# 339 — volatile
 
 `#java` `#concurrency` `#memory-model` `#visibility`
 
 ⚡ TL;DR — `volatile` guarantees that writes to a field are immediately visible to all other threads (no CPU cache staleness), and establishes a happens-before relationship — but it does NOT provide atomicity for compound operations like `i++`.
 
-| #070 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #339 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Thread, Java Memory Model, CPU Caches, Happens-Before | |
 | **Used by:** | synchronized, Atomic Variables, Race Condition, Double-Checked Locking | |

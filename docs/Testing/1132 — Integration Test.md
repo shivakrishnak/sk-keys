@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Integration Test"
 parent: "Testing"
-nav_order: 413
+nav_order: 1132
 permalink: /testing/integration-test/
 ---
-# 413 — Integration Test
+# 1132 — Integration Test
 
 `#testing` `#intermediate` `#java` `#spring`
 
 ⚡ TL;DR — A test that verifies multiple components working together, using real or near-real dependencies.
 
-| #413 | Category: Testing | Difficulty: ★★☆ |
+| #1132 | category: Testing
 |:---|:---|:---|
 | **Depends on:** | Unit Test, Spring Boot Test, Testcontainers | |
 | **Used by:** | Test Pyramid, CI/CD, Contract Test | |

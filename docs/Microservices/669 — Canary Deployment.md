@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Canary Deployment"
-parent: "DevOps & SDLC"
-nav_order: 452
+parent: "Microservices"
+nav_order: 669
 permalink: /devops-sdlc/canary-deployment/
 ---
-# 452 — Canary Deployment
+# 669 — Canary Deployment
 
 `#devops` `#sdlc` `#intermediate` `#reliability`
 
 ⚡ TL;DR — Gradually shift traffic from the old version to the new version, monitoring at each step, and rolling back immediately if metrics degrade.
 
-| #452 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+| #669 | category: Microservices
 |:---|:---|:---|
 | **Depends on:** | CI/CD Pipeline, Load Balancer, Monitoring | |
 | **Used by:** | CI/CD Pipeline, Risk Reduction, Feature Validation | |

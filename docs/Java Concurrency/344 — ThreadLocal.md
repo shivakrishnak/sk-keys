@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "ThreadLocal"
 parent: "Java Concurrency"
-nav_order: 73
+nav_order: 344
 permalink: /java-concurrency/threadlocal/
 ---
-# 073 — ThreadLocal
+# 344 — ThreadLocal
 
 `#java` `#concurrency` `#threading` `#memory` `#thread-safety`
 
 ⚡ TL;DR — ThreadLocal gives each thread its own independent copy of a variable — eliminating sharing without synchronization — but causes memory leaks in thread pools if not explicitly removed after use.
 
-| #073 | Category: Java Concurrency | Difficulty: ★★★ |
+| #344 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Thread, Race Condition, GC Roots, Thread Pool | |
 | **Used by:** | Security Context, DB Connections, Request Scoping, MDC | |

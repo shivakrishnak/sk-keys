@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "RAG & Agents & LLMOps"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 41
 has_children: true
 permalink: /rag-agents/

@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "CountDownLatch"
 parent: "Java Concurrency"
-nav_order: 78
+nav_order: 357
 permalink: /java-concurrency/countdownlatch/
-number: "078"
+number: "357"
 category: Java Concurrency
 difficulty: ★★☆
 depends_on: Thread, ExecutorService, Thread Lifecycle
@@ -12,13 +12,13 @@ used_by: Test Synchronisation, Startup Barriers, Fan-in
 tags: #java, #concurrency, #synchronizer, #coordination
 ---
 
-# 078 — CountDownLatch
+# 357 — CountDownLatch
 
 `#java` `#concurrency` `#synchronizer` `#coordination`
 
 ⚡ TL;DR — CountDownLatch makes one (or more) threads wait until a countdown of N events reaches zero — it is a single-use gate: once open, it stays open and cannot be reset.
 
-| #078 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #357 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Thread, ExecutorService, Thread Lifecycle | |
 | **Used by:** | Test Synchronisation, Startup Barriers, Fan-in | |

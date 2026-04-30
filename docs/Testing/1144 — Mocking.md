@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Mocking"
 parent: "Testing"
-nav_order: 418
+nav_order: 1144
 permalink: /testing/mocking/
 ---
-# 418 — Mocking
+# 1144 — Mocking
 
 `#testing` `#intermediate` `#java` `#mockito`
 
 ⚡ TL;DR — Replacing a real dependency with a controlled fake that records interactions, allowing you to verify how the unit under test uses it.
 
-| #418 | Category: Testing | Difficulty: ★★☆ |
+| #1144 | category: Testing
 |:---|:---|:---|
 | **Depends on:** | Unit Test, Mockito, Dependency Injection | |
 | **Used by:** | Unit Test, TDD, Integration Test | |

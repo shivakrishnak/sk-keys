@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "CyclicBarrier"
 parent: "Java Concurrency"
-nav_order: 79
+nav_order: 358
 permalink: /java-concurrency/cyclicbarrier/
-number: "079"
+number: "358"
 category: Java Concurrency
 difficulty: ★★☆
 depends_on: Thread, CountDownLatch, Thread Lifecycle
@@ -12,13 +12,13 @@ used_by: Parallel Algorithms, Iterative Simulations, Batch Processing
 tags: #java, #concurrency, #synchronizer, #barrier, #coordination
 ---
 
-# 079 — CyclicBarrier
+# 358 — CyclicBarrier
 
 `#java` `#concurrency` `#synchronizer` `#barrier` `#coordination`
 
 ⚡ TL;DR — CyclicBarrier makes N threads wait for each other at a common meeting point (barrier), then releases all simultaneously — and unlike CountDownLatch, it resets automatically for the next round.
 
-| #079 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #358 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Thread, CountDownLatch, Thread Lifecycle | |
 | **Used by:** | Parallel Algorithms, Iterative Simulations, Batch Processing | |

@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Closure"
 parent: "JavaScript"
-nav_order: 552
+nav_order: 1300
 permalink: /javascript/closure/
-number: "552"
+number: "1300"
 category: JavaScript
 difficulty: ★★★
 depends_on: Scope, Lexical Environment, Execution Context, var / let / const, Functions
@@ -12,13 +12,13 @@ used_by: Memoization, Module Pattern, Currying, React Hooks, Callbacks, Event Ha
 tags: #javascript, #advanced, #browser, #nodejs, #internals, #deep-dive
 ---
 
-# 552 — Closure
+# 1300 — Closure
 
 `#javascript` `#advanced` `#browser` `#nodejs` `#internals` `#deep-dive`
 
 ⚡ TL;DR — A function that retains a live reference to the variables of its enclosing lexical scope even after that scope has finished executing.
 
-| #552 | Category: JavaScript | Difficulty: ★★★ |
+| #1300 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | Scope, Lexical Environment, Execution Context, var / let / const, Functions | |
 | **Used by:** | Memoization, Module Pattern, Currying, React Hooks, Callbacks, Event Handlers | |

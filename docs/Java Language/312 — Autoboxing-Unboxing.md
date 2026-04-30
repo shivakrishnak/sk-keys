@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Autoboxing / Unboxing"
 parent: "Java Language"
-nav_order: 51
+nav_order: 312
 permalink: /java-language/autoboxing-unboxing/
 ---
-# 051 — Autoboxing / Unboxing
+# 312 — Autoboxing / Unboxing
 
 `#java` `#foundational` `#internals`
 
 ⚡ TL;DR — Automatic conversion between primitive types (`int`) and their wrapper classes (`Integer`) — transparent but carries hidden performance costs.
 
-| #051 | Category: Java Language | Difficulty: ★☆☆ |
+| #312 | category: Java Language
 |:---|:---|:---|
 | **Depends on:** | Primitive Types, Wrapper Classes | |
 | **Used by:** | Collections, Generics, Streams | |

@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "ReadWriteLock"
 parent: "Java Concurrency"
-nav_order: 83
+nav_order: 342
 permalink: /java-concurrency/readwritelock/
-number: "083"
+number: "342"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: ReentrantLock, synchronized, Race Condition
@@ -12,13 +12,13 @@ used_by: Read-Heavy Caches, Configuration Stores, Reference Data
 tags: #java, #concurrency, #locks, #read-write, #performance
 ---
 
-# 083 — ReadWriteLock
+# 342 — ReadWriteLock
 
 `#java` `#concurrency` `#locks` `#read-write` `#performance`
 
 ⚡ TL;DR — ReadWriteLock allows unlimited concurrent readers OR exactly one writer (never both) — maximising throughput for read-heavy workloads where writes are rare and reads dominate.
 
-| #083 | Category: Java Concurrency | Difficulty: ★★★ |
+| #342 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | ReentrantLock, synchronized, Race Condition | |
 | **Used by:** | Read-Heavy Caches, Configuration Stores, Reference Data | |

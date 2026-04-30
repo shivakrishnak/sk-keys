@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Semaphore"
 parent: "Java Concurrency"
-nav_order: 80
+nav_order: 356
 permalink: /java-concurrency/semaphore/
-number: "080"
+number: "356"
 category: Java Concurrency
 difficulty: ★★☆
 depends_on: Thread, synchronized, Thread Lifecycle
@@ -12,13 +12,13 @@ used_by: Connection Pools, Rate Limiting, Resource Throttling
 tags: #java, #concurrency, #synchronizer, #resource-control
 ---
 
-# 080 — Semaphore
+# 356 — Semaphore
 
 `#java` `#concurrency` `#synchronizer` `#resource-control`
 
 ⚡ TL;DR — A Semaphore maintains N permits; threads must acquire a permit before accessing a resource and release it after — limiting concurrent access to at most N threads at once; unlike synchronized, it is not tied to a specific object.
 
-| #080 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #356 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Thread, synchronized, Thread Lifecycle | |
 | **Used by:** | Connection Pools, Rate Limiting, Resource Throttling | |

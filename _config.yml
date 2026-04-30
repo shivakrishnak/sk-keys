@@ -6,6 +6,14 @@ remote_theme: just-the-docs/just-the-docs
 plugins:
   - jekyll-remote-theme
 
+exclude:
+  - GENERATOR_PROMPT.md
+  - TECHNICAL_DICTIONARY.md
+  - README.md
+  - Update-MarkdownFrontmatter.ps1
+  - Gemfile
+  - Gemfile.lock
+
 url: https://shivakrishnak.github.io
 baseurl: /sk-keys
 

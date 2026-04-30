@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Prototypal Inheritance"
 parent: "JavaScript"
-nav_order: 555
+nav_order: 1302
 permalink: /javascript/prototypal-inheritance/
-number: "555"
+number: "1302"
 category: JavaScript
 difficulty: ★★☆
 depends_on: Prototype Chain, Object.create, Functions, var / let / const
@@ -12,13 +12,13 @@ used_by: Class (ES6+), Mixins, Object.assign, instanceof, Factory Functions
 tags: #javascript, #intermediate, #browser, #nodejs, #pattern
 ---
 
-# 555 — Prototypal Inheritance
+# 1302 — Prototypal Inheritance
 
 `#javascript` `#intermediate` `#browser` `#nodejs` `#pattern`
 
 ⚡ TL;DR — JavaScript's native inheritance model where objects inherit directly from other objects via the prototype chain, without requiring class hierarchies.
 
-| #555 | Category: JavaScript | Difficulty: ★★☆ |
+| #1302 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | Prototype Chain, Object.create, Functions, var / let / const | |
 | **Used by:** | Class (ES6+), Mixins, Object.assign, instanceof, Factory Functions | |

@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Reflection"
 parent: "Java Language"
-nav_order: 58
+nav_order: 319
 permalink: /java-language/reflection/
 ---
-# 058 — Reflection
+# 319 — Reflection
 
 `#java` `#advanced` `#reflection` `#jvm` `#internals`
 
 ⚡ TL;DR — Inspect and manipulate classes, methods, fields, and constructors at runtime — the backbone of Spring DI, Jackson serialization, JUnit, and any framework that must work with unknown types.
 
-| #058 | Category: Java Language | Difficulty: ★★★ |
+| #319 | category: Java Language
 |:---|:---|:---|
 | **Depends on:** | Class Loader, JVM, Type Erasure | |
 | **Used by:** | Spring Framework, Jackson, JUnit, Mockito, Lombok | |

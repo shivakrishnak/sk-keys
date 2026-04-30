@@ -1,24 +1,24 @@
----
+﻿---
 layout: default
 title: "Polymorphism"
-parent: "Clean Code"
-nav_order: 428
+parent: "CS Fundamentals — Paradigms"
+nav_order: 18
 permalink: /clean-code/polymorphism/
-number: "428"
-category: Clean Code
+number: "18"
+category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Inheritance, Encapsulation, Abstraction, Interfaces
 used_by: Design Patterns, Strategy Pattern, Open-Closed Principle, Refactoring
 tags: #architecture, #pattern, #intermediate, #java
 ---
 
-# 428 — Polymorphism
+# 18 — Polymorphism
 
 `#architecture` `#pattern` `#intermediate` `#java`
 
 ⚡ TL;DR — The ability of different types to respond to the same interface in their own way, eliminating type-checking conditionals and enabling open/closed extensibility.
 
-| #428 | Category: Clean Code | Difficulty: ★★☆ |
+| #18 | category: CS Fundamentals — Paradigms
 |:---|:---|:---|
 | **Depends on:** | Inheritance, Encapsulation, Abstraction, Interfaces | |
 | **Used by:** | Design Patterns, Strategy Pattern, Open-Closed Principle, Refactoring | |

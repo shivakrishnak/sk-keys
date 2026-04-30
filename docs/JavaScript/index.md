@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "JavaScript"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 33
 has_children: true
 permalink: /javascript/

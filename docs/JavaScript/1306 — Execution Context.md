@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Execution Context"
 parent: "JavaScript"
-nav_order: 559
+nav_order: 1306
 permalink: /javascript/execution-context/
-number: "559"
+number: "1306"
 category: JavaScript
 difficulty: ★★★
 depends_on: Call Stack, Lexical Environment, this keyword, Scope, Hoisting
@@ -12,13 +12,13 @@ used_by: Closure, Hoisting, this binding, Variable resolution, async/await
 tags: #javascript, #internals, #advanced, #deep-dive, #browser, #nodejs
 ---
 
-# 559 — Execution Context
+# 1306 — Execution Context
 
 `#javascript` `#internals` `#advanced` `#deep-dive` `#browser` `#nodejs`
 
 ⚡ TL;DR — The internal runtime container created for each code execution unit (global, function, eval) that holds the this binding, variable environment, and lexical environment.
 
-| #559 | Category: JavaScript | Difficulty: ★★★ |
+| #1306 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | Call Stack, Lexical Environment, this keyword, Scope, Hoisting | |
 | **Used by:** | Closure, Hoisting, this binding, Variable resolution, async/await | |

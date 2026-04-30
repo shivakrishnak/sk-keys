@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Race Condition"
 parent: "Java Concurrency"
-nav_order: 72
+nav_order: 346
 permalink: /java-concurrency/race-condition/
 ---
-# 072 — Race Condition
+# 346 — Race Condition
 
 `#java` `#concurrency` `#threading` `#bugs` `#correctness`
 
 ⚡ TL;DR — A race condition is a bug where the program's outcome depends on the unpredictable relative timing of threads — caused by unsynchronized access to shared mutable state, producing intermittent and hard-to-reproduce failures.
 
-| #072 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #346 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Thread, synchronized, volatile, Java Memory Model | |
 | **Used by:** | Deadlock, Atomic Variables, Thread Safety | |

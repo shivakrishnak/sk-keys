@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "StampedLock"
 parent: "Java Concurrency"
-nav_order: 87
+nav_order: 343
 permalink: /java-concurrency/stampedlock/
-number: "087"
+number: "343"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: ReadWriteLock, ReentrantLock, volatile, CAS
@@ -12,13 +12,13 @@ used_by: High-throughput Read-Heavy Structures, Optimistic Reads
 tags: #java, #java8, #concurrency, #locks, #optimistic, #performance
 ---
 
-# 087 — StampedLock
+# 343 — StampedLock
 
 `#java` `#java8` `#concurrency` `#locks` `#optimistic` `#performance`
 
 ⚡ TL;DR — StampedLock is Java 8's highest-throughput lock for read-heavy workloads, adding an **optimistic read** mode that requires no lock acquisition at all — just validate the stamp after the read; only upgrade to a real lock on conflict.
 
-| #087 | Category: Java Concurrency | Difficulty: ★★★ |
+| #343 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | ReadWriteLock, ReentrantLock, volatile, CAS | |
 | **Used by:** | High-throughput Read-Heavy Structures, Optimistic Reads | |

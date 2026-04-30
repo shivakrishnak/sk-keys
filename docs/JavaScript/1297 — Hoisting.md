@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Hoisting"
 parent: "JavaScript"
-nav_order: 549
+nav_order: 1297
 permalink: /javascript/hoisting/
-number: "549"
+number: "1297"
 category: JavaScript
 difficulty: ★★☆
 depends_on: var / let / const, Execution Context, Scope
@@ -12,13 +12,13 @@ used_by: Temporal Dead Zone, Closure, Function Declarations, var scoping
 tags: #javascript, #intermediate, #browser, #nodejs, #internals
 ---
 
-# 549 — Hoisting
+# 1297 — Hoisting
 
 `#javascript` `#intermediate` `#browser` `#nodejs` `#internals`
 
 ⚡ TL;DR — JavaScript's pre-execution phase that registers all declarations (var, function, let, const) in their scope before any code runs, with different initialisation rules per declaration type.
 
-| #549 | Category: JavaScript | Difficulty: ★★☆ |
+| #1297 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | var / let / const, Execution Context, Scope | |
 | **Used by:** | Temporal Dead Zone, Closure, Function Declarations, var scoping | |

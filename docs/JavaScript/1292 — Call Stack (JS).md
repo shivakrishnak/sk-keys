@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Call Stack"
 parent: "JavaScript"
-nav_order: 542
+nav_order: 1292
 permalink: /javascript/call-stack/
-number: "542"
+number: "1292"
 category: JavaScript
 difficulty: ★☆☆
 depends_on: JavaScript Engine (V8)
@@ -12,13 +12,13 @@ used_by: Event Loop, Execution Context, Stack Overflow, async/await, Debugger
 tags: #javascript, #internals, #browser, #nodejs, #foundational
 ---
 
-# 542 — Call Stack
+# 1292 — Call Stack
 
 `#javascript` `#internals` `#browser` `#nodejs` `#foundational`
 
 ⚡ TL;DR — The LIFO data structure that tracks which function is currently executing and where to return when it finishes.
 
-| #542 | Category: JavaScript | Difficulty: ★☆☆ |
+| #1292 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | JavaScript Engine (V8) | |
 | **Used by:** | Event Loop, Execution Context, Stack Overflow, async/await, Debugger | |

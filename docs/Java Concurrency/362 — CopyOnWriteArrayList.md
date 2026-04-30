@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "CopyOnWriteArrayList"
 parent: "Java Concurrency"
-nav_order: 91
+nav_order: 362
 permalink: /java-concurrency/copyonwritearraylist/
-number: "091"
+number: "362"
 category: Java Concurrency
 difficulty: ★★☆
 depends_on: Thread, Race Condition, ArrayList, volatile
@@ -12,13 +12,13 @@ used_by: Event Listeners, Observer Pattern, Read-Heavy Lists
 tags: #java, #concurrency, #collections, #copy-on-write, #read-heavy
 ---
 
-# 091 — CopyOnWriteArrayList
+# 362 — CopyOnWriteArrayList
 
 `#java` `#concurrency` `#collections` `#copy-on-write` `#read-heavy`
 
 ⚡ TL;DR — CopyOnWriteArrayList is a thread-safe List where every write (add, remove, set) creates a full copy of the underlying array — reads are lock-free and never throw ConcurrentModificationException, making it ideal for rarely-written, frequently-read lists.
 
-| #091 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #362 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Thread, Race Condition, ArrayList, volatile | |
 | **Used by:** | Event Listeners, Observer Pattern, Read-Heavy Lists | |

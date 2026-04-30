@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Records (Java 16+)"
 parent: "Java Language"
-nav_order: 62
+nav_order: 322
 permalink: /java-language/records-java-16/
 ---
-# 062 — Records (Java 16+)
+# 322 — Records (Java 16+)
 
 `#java` `#intermediate` `#records` `#immutability` `#java16`
 
 ⚡ TL;DR — Transparent, immutable data carriers: `record Point(int x, int y) {}` gives you a canonical constructor, accessors `x()` and `y()`, plus `equals`, `hashCode`, and `toString` — all generated.
 
-| #062 | Category: Java Language | Difficulty: ★★☆ |
+| #322 | category: Java Language
 |:---|:---|:---|
 | **Depends on:** | Classes, Immutability, equals/hashCode | |
 | **Used by:** | DTOs, Value Objects, Pattern Matching, Domain Models | |

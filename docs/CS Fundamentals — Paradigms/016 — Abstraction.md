@@ -1,24 +1,24 @@
----
+﻿---
 layout: default
 title: "Abstraction"
-parent: "Clean Code"
-nav_order: 426
+parent: "CS Fundamentals — Paradigms"
+nav_order: 16
 permalink: /clean-code/abstraction/
-number: "426"
-category: Clean Code
+number: "16"
+category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Encapsulation, Interfaces, Polymorphism, Cohesion
 used_by: Coupling, Design Patterns, Clean Architecture, Dependency Inversion
 tags: #architecture, #pattern, #intermediate
 ---
 
-# 426 — Abstraction
+# 16 — Abstraction
 
 `#architecture` `#pattern` `#intermediate`
 
 ⚡ TL;DR — Hiding complexity behind a simplified interface so callers work with the "what" without needing to know the "how."
 
-| #426 | Category: Clean Code | Difficulty: ★★☆ |
+| #16 | category: CS Fundamentals — Paradigms
 |:---|:---|:---|
 | **Depends on:** | Encapsulation, Interfaces, Polymorphism, Cohesion | |
 | **Used by:** | Coupling, Design Patterns, Clean Architecture, Dependency Inversion | |

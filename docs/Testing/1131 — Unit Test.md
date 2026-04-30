@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Unit Test"
 parent: "Testing"
-nav_order: 412
+nav_order: 1131
 permalink: /testing/unit-test/
 ---
-# 412 — Unit Test
+# 1131 — Unit Test
 
 `#testing` `#foundational` `#java`
 
 ⚡ TL;DR — A test that verifies a single unit of code (method or class) in complete isolation from all external dependencies.
 
-| #412 | Category: Testing | Difficulty: ★☆☆ |
+| #1131 | category: Testing
 |:---|:---|:---|
 | **Depends on:** | JUnit, Assertion Libraries | |
 | **Used by:** | TDD, Test Pyramid, CI/CD | |

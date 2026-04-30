@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Phaser"
 parent: "Java Concurrency"
-nav_order: 96
+nav_order: 359
 permalink: /java-concurrency/phaser/
-number: "096"
+number: "359"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: CyclicBarrier, CountDownLatch, Thread
@@ -12,13 +12,13 @@ used_by: Multi-phase Algorithms, Dynamic Party Registration
 tags: #java, #concurrency, #synchronizer, #phaser, #barrier
 ---
 
-# 096 — Phaser
+# 359 — Phaser
 
 `#java` `#concurrency` `#synchronizer` `#phaser` `#barrier`
 
 ⚡ TL;DR — Phaser is a flexible, reusable synchronisation barrier for multi-phase concurrent algorithms that supports dynamic registration and deregistration of parties — a generalisation of both CyclicBarrier and CountDownLatch.
 
-| #096 | Category: Java Concurrency | Difficulty: ★★★ |
+| #359 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | CyclicBarrier, CountDownLatch, Thread | |
 | **Used by:** | Multi-phase Algorithms, Dynamic Party Registration | |

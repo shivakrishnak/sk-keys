@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "Networking"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 5
 has_children: true
 permalink: /networking/

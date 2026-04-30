@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Future and CompletableFuture"
 parent: "Java Concurrency"
-nav_order: 75
+nav_order: 335
 permalink: /java-concurrency/future-and-completablefuture/
 ---
-# 075 — Future & CompletableFuture
+# 335 — Future & CompletableFuture
 
 `#java` `#concurrency` `#async` `#future` `#completablefuture`
 
 ⚡ TL;DR — `Future<T>` is a promise of an async result, retrieved by blocking `.get()`; `CompletableFuture<T>` extends it with non-blocking composition pipelines (thenApply, thenCompose, allOf) and explicit completion, enabling true async programming without blocking threads.
 
-| #075 | Category: Java Concurrency | Difficulty: ★★★ |
+| #335 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | ExecutorService, Callable, Thread, Runnable vs Callable | |
 | **Used by:** | Async APIs, Spring Async, Reactive Streams, Non-blocking IO | |

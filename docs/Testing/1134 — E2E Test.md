@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "E2E Test"
 parent: "Testing"
-nav_order: 415
+nav_order: 1134
 permalink: /testing/e2e-test/
 ---
-# 415 — E2E Test
+# 1134 — E2E Test
 
 `#testing` `#intermediate` `#e2e` `#quality`
 
 ⚡ TL;DR — A test that exercises the entire system from the user's perspective — browser, API, database — verifying complete user journeys.
 
-| #415 | Category: Testing | Difficulty: ★★☆ |
+| #1134 | category: Testing
 |:---|:---|:---|
 | **Depends on:** | Integration Test, Selenium, Playwright, Cypress | |
 | **Used by:** | Test Pyramid, CI/CD, QA | |

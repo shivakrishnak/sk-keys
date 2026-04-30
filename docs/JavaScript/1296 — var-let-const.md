@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "var / let / const"
 parent: "JavaScript"
-nav_order: 548
+nav_order: 1296
 permalink: /javascript/var-let-const/
-number: "548"
+number: "1296"
 category: JavaScript
 difficulty: ★☆☆
 depends_on: Scope, Hoisting, JavaScript Engine (V8)
@@ -12,13 +12,13 @@ used_by: Closure, Temporal Dead Zone, Hoisting, Block Scoping, Module pattern
 tags: #javascript, #foundational, #browser, #nodejs
 ---
 
-# 548 — var / let / const
+# 1296 — var / let / const
 
 `#javascript` `#foundational` `#browser` `#nodejs`
 
 ⚡ TL;DR — Three variable declaration keywords differing in scope (function vs block), hoisting behaviour, and mutability of the binding.
 
-| #548 | Category: JavaScript | Difficulty: ★☆☆ |
+| #1296 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | Scope, Hoisting, JavaScript Engine (V8) | |
 | **Used by:** | Closure, Temporal Dead Zone, Hoisting, Block Scoping, Module pattern | |

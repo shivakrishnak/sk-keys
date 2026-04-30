@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "Design Patterns"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 20
 has_children: true
 permalink: /design-patterns/

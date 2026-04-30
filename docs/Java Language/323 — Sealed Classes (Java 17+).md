@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Sealed Classes"
 parent: "Java Language"
-nav_order: 63
+nav_order: 323
 permalink: /java-language/sealed-classes/
 ---
-# 063 — Sealed Classes (Java 17+)
+# 323 — Sealed Classes (Java 17+)
 
 `#java` `#java17` `#oop` `#type-system`
 
 ⚡ TL;DR — Sealed classes let you explicitly list which classes are permitted to extend or implement a type, closing the inheritance hierarchy and enabling exhaustive pattern matching.
 
-| #063 | Category: Java Language | Difficulty: ★★☆ |
+| #323 | category: Java Language
 |:---|:---|:---|
 | **Depends on:** | Inheritance, Abstract Classes, Interfaces, Pattern Matching | |
 | **Used by:** | Pattern Matching, Switch Expressions, Domain Modelling | |

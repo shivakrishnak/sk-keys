@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "ThreadPoolExecutor"
 parent: "Java Concurrency"
-nav_order: 100
+nav_order: 351
 permalink: /java-concurrency/threadpoolexecutor/
-number: "100"
+number: "351"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: ExecutorService, BlockingQueue, Thread, Semaphore
@@ -12,13 +12,13 @@ used_by: Custom Thread Pools, Backpressure, Rejection Policies
 tags: #java, #concurrency, #thread-pool, #executor, #advanced
 ---
 
-# 100 — ThreadPoolExecutor
+# 351 — ThreadPoolExecutor
 
 `#java` `#concurrency` `#thread-pool` `#executor` `#advanced`
 
 ⚡ TL;DR — ThreadPoolExecutor is the full-control implementation behind `Executors` factory pools — exposing corePoolSize, maximumPoolSize, keepAlive, work queue, thread factory, and rejection policy for precise production tuning.
 
-| #100 | Category: Java Concurrency | Difficulty: ★★★ |
+| #351 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | ExecutorService, BlockingQueue, Thread, Semaphore | |
 | **Used by:** | Custom Thread Pools, Backpressure, Rejection Policies | |

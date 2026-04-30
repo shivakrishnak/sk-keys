@@ -1,24 +1,24 @@
----
+﻿---
 layout: default
 title: "Refactoring"
-parent: "Clean Code"
-nav_order: 433
+parent: "Code Quality"
+nav_order: 1121
 permalink: /clean-code/refactoring/
-number: "433"
-category: Clean Code
+number: "1121"
+category: Code Quality
 difficulty: ★★☆
 depends_on: Technical Debt, Unit Tests, Code Smells, Cohesion, Coupling
 used_by: Technical Debt, CI-CD Pipeline, Code Review, Clean Architecture
 tags: #architecture, #pattern, #intermediate, #testing
 ---
 
-# 433 — Refactoring
+# 1121 — Refactoring
 
 `#architecture` `#pattern` `#intermediate` `#testing`
 
 ⚡ TL;DR — Restructuring existing code to improve its internal design without changing its observable external behaviour — each transformation is small, safe, and backed by a green test suite.
 
-| #433 | Category: Clean Code | Difficulty: ★★☆ |
+| #1121 | category: Code Quality
 |:---|:---|:---|
 | **Depends on:** | Technical Debt, Unit Tests, Code Smells, Cohesion, Coupling | |
 | **Used by:** | Technical Debt, CI-CD Pipeline, Code Review, Clean Architecture | |

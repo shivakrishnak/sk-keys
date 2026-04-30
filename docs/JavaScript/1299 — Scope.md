@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Scope"
 parent: "JavaScript"
-nav_order: 551
+nav_order: 1299
 permalink: /javascript/scope/
-number: "551"
+number: "1299"
 category: JavaScript
 difficulty: ★★☆
 depends_on: var / let / const, Execution Context, JavaScript Engine (V8)
@@ -12,13 +12,13 @@ used_on: Closure, Hoisting, Temporal Dead Zone, IIFE, Module pattern, Lexical En
 tags: #javascript, #intermediate, #browser, #nodejs, #internals
 ---
 
-# 551 — Scope (Global, Function, Block)
+# 1299 — Scope (Global, Function, Block)
 
 `#javascript` `#intermediate` `#browser` `#nodejs` `#internals`
 
 ⚡ TL;DR — The set of rules determining where a variable is accessible; JavaScript has three scope types — global, function, and block — resolved using the lexical scope chain at compile time.
 
-| #551 | Category: JavaScript | Difficulty: ★★☆ |
+| #1299 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | var / let / const, Execution Context, JavaScript Engine (V8) | |
 | **Used by:** | Closure, Hoisting, Temporal Dead Zone, IIFE, Module pattern, Lexical Environment | |

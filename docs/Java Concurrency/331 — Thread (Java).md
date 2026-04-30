@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Thread"
 parent: "Java Concurrency"
-nav_order: 66
+nav_order: 331
 permalink: /java-concurrency/thread/
 ---
-# 066 — Thread
+# 331 — Thread
 
 `#java` `#concurrency` `#threading` `#jvm`
 
 ⚡ TL;DR — A Thread is an independent path of execution within a JVM process; each thread has its own stack, program counter, and native thread mapping, sharing the heap with all other threads in the process.
 
-| #066 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #331 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | JVM, Stack Memory, Heap Memory, OS Scheduling | |
 | **Used by:** | Concurrency, ExecutorService, Thread Lifecycle, Runnable | |

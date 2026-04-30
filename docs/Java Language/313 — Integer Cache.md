@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Integer Cache"
 parent: "Java Language"
-nav_order: 52
+nav_order: 313
 permalink: /java-language/integer-cache/
 ---
-# 052 — Integer Cache
+# 313 — Integer Cache
 
 `#java` `#internals` `#intermediate` `#jvm`
 
 ⚡ TL;DR — The JVM caches `Integer` objects for values -128 to 127; `Integer.valueOf()` returns the same cached instance for these values, making `==` work — but only in this range.
 
-| #052 | Category: Java Language | Difficulty: ★★☆ |
+| #313 | category: Java Language
 |:---|:---|:---|
 | **Depends on:** | Autoboxing, Integer.valueOf | |
 | **Used by:** | Autoboxing, String Pool, Performance Analysis | |

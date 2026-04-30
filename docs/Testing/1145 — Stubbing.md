@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Stubbing"
 parent: "Testing"
-nav_order: 419
+nav_order: 1145
 permalink: /testing/stubbing/
 ---
-# 419 — Stubbing
+# 1145 — Stubbing
 
 `#testing` `#foundational` `#java` `#mockito`
 
 ⚡ TL;DR — Configuring a test double to return a specific value when called, without recording or verifying interactions.
 
-| #419 | Category: Testing | Difficulty: ★☆☆ |
+| #1145 | category: Testing
 |:---|:---|:---|
 | **Depends on:** | Unit Test, Mocking | |
 | **Used by:** | Unit Test, Mocking, TDD | |

@@ -1,24 +1,24 @@
----
+﻿---
 layout: default
 title: "Technical Debt"
-parent: "Clean Code"
-nav_order: 432
+parent: "Code Quality"
+nav_order: 1120
 permalink: /clean-code/technical-debt/
-number: "432"
-category: Clean Code
+number: "1120"
+category: Code Quality
 difficulty: ★★☆
 depends_on: Refactoring, Code Quality, Software Architecture
 used_by: Refactoring, Sprint Planning, Code Review, Engineering Culture
 tags: #architecture, #pattern, #intermediate, #performance
 ---
 
-# 432 — Technical Debt
+# 1120 — Technical Debt
 
 `#architecture` `#pattern` `#intermediate` `#performance`
 
 ⚡ TL;DR — The implied cost of rework caused by choosing a quick, suboptimal solution today instead of a better one that would take longer — principal accrues interest over time.
 
-| #432 | Category: Clean Code | Difficulty: ★★☆ |
+| #1120 | category: Code Quality
 |:---|:---|:---|
 | **Depends on:** | Refactoring, Code Quality, Software Architecture | |
 | **Used by:** | Refactoring, Sprint Planning, Code Review, Engineering Culture | |

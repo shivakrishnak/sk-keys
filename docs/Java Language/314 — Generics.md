@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Generics"
 parent: "Java Language"
-nav_order: 53
+nav_order: 314
 permalink: /java-language/generics/
 ---
-# 053 — Generics
+# 314 — Generics
 
 `#java` `#intermediate` `#generics` `#typesystem`
 
 ⚡ TL;DR — Compile-time type parameters that eliminate casts, prevent ClassCastException at runtime, and allow reusable, type-safe data structures and algorithms.
 
-| #053 | Category: Java Language | Difficulty: ★★★ |
+| #314 | category: Java Language
 |:---|:---|:---|
 | **Depends on:** | Type System, Object, Collections | |
 | **Used by:** | Collections Framework, Streams API, Optional, Spring Framework | |

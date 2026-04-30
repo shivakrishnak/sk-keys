@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Varargs"
 parent: "Java Language"
-nav_order: 57
+nav_order: 318
 permalink: /java-language/varargs/
 ---
-# 057 — Varargs
+# 318 — Varargs
 
 `#java` `#foundational` `#varargs` `#methods`
 
 ⚡ TL;DR — Variable-argument methods (`type... name`) accept zero or more values of a type without the caller creating an array; the compiler creates the array automatically.
 
-| #057 | Category: Java Language | Difficulty: ★☆☆ |
+| #318 | category: Java Language
 |:---|:---|:---|
 | **Depends on:** | Arrays, Method Signatures, Autoboxing | |
 | **Used by:** | String.format, MessageFormat, Logging APIs | |

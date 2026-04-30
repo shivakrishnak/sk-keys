@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "this keyword"
 parent: "JavaScript"
-nav_order: 556
+nav_order: 1303
 permalink: /javascript/this-keyword/
-number: "556"
+number: "1303"
 category: JavaScript
 difficulty: ★★★
 depends_on: Execution Context, Scope, Functions, Prototype Chain
@@ -12,13 +12,13 @@ used_by: Binding (call/apply/bind), Arrow Functions, Class, Event Handlers, Meth
 tags: #javascript, #advanced, #deep-dive, #browser, #nodejs, #internals
 ---
 
-# 556 — this keyword
+# 1303 — this keyword
 
 `#javascript` `#advanced` `#deep-dive` `#browser` `#nodejs` `#internals`
 
 ⚡ TL;DR — A context-sensitive reference resolved at call time (not definition time) that points to the object a function is called upon, with four distinct binding rules.
 
-| #556 | Category: JavaScript | Difficulty: ★★★ |
+| #1303 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | Execution Context, Scope, Functions, Prototype Chain | |
 | **Used by:** | Binding (call/apply/bind), Arrow Functions, Class, Event Handlers, Methods | |

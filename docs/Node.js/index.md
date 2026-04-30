@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "Node.js"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 36
 has_children: true
 permalink: /nodejs/

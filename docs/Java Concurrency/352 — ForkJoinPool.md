@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "ForkJoinPool"
 parent: "Java Concurrency"
-nav_order: 84
+nav_order: 352
 permalink: /java-concurrency/forkjoinpool/
-number: "084"
+number: "352"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: ExecutorService, RecursiveTask, Thread, Parallel Streams
@@ -12,13 +12,13 @@ used_by: Parallel Streams, CompletableFuture, Arrays.parallelSort
 tags: #java, #concurrency, #fork-join, #parallel, #work-stealing
 ---
 
-# 084 — ForkJoinPool
+# 352 — ForkJoinPool
 
 `#java` `#concurrency` `#fork-join` `#parallel` `#work-stealing`
 
 ⚡ TL;DR — ForkJoinPool is a thread pool optimised for divide-and-conquer recursive tasks via work-stealing: idle threads steal subtasks from busy threads' queues, maximising CPU utilisation for decomposable parallel workloads.
 
-| #084 | Category: Java Concurrency | Difficulty: ★★★ |
+| #352 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | ExecutorService, RecursiveTask, Thread, Parallel Streams | |
 | **Used by:** | Parallel Streams, CompletableFuture, Arrays.parallelSort | |

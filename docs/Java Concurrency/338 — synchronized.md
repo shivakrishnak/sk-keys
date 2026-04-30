@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "synchronized"
 parent: "Java Concurrency"
-nav_order: 69
+nav_order: 338
 permalink: /java-concurrency/synchronized/
 ---
-# 069 — synchronized
+# 338 — synchronized
 
 `#java` `#concurrency` `#threading` `#locks` `#monitor`
 
 ⚡ TL;DR — `synchronized` is Java's built-in mutual exclusion mechanism — it ensures only one thread at a time executes a block of code by acquiring an object's monitor lock, establishing both atomicity and happens-before visibility.
 
-| #069 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #338 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Thread, Thread Lifecycle, Java Memory Model, Monitor | |
 | **Used by:** | Deadlock, Race Condition, ReentrantLock, volatile | |

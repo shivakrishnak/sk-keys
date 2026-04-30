@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Task Queue (Macrotask)"
 parent: "JavaScript"
-nav_order: 545
+nav_order: 1294
 permalink: /javascript/task-queue-macrotask/
-number: "545"
+number: "1294"
 category: JavaScript
 difficulty: ★★☆
 depends_on: Event Loop, Web APIs, Call Stack
@@ -12,13 +12,13 @@ used_by: setTimeout, setInterval, I/O callbacks, MessageChannel, Web Workers
 tags: #javascript, #browser, #nodejs, #concurrency, #internals, #intermediate
 ---
 
-# 545 — Task Queue (Macrotask)
+# 1294 — Task Queue (Macrotask)
 
 `#javascript` `#browser` `#nodejs` `#concurrency` `#internals` `#intermediate`
 
 ⚡ TL;DR — The queue holding async callbacks (setTimeout, I/O, events) that the event loop processes one per tick, always after draining the microtask queue.
 
-| #545 | Category: JavaScript | Difficulty: ★★☆ |
+| #1294 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | Event Loop, Web APIs, Call Stack | |
 | **Used by:** | setTimeout, setInterval, I/O callbacks, MessageChannel, Web Workers | |

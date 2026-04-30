@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Deadlock"
 parent: "Java Concurrency"
-nav_order: 71
+nav_order: 368
 permalink: /java-concurrency/deadlock/
 ---
-# 071 — Deadlock
+# 368 — Deadlock
 
 `#java` `#concurrency` `#threading` `#locks` `#diagnosis`
 
 ⚡ TL;DR — Deadlock occurs when two or more threads permanently block each other, each holding a lock the other needs — diagnosed via thread dumps (jstack) and prevented by consistent lock ordering or tryLock with timeout.
 
-| #071 | Category: Java Concurrency | Difficulty: ★★★ |
+| #368 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Thread, synchronized, Thread Lifecycle, ReentrantLock | |
 | **Used by:** | Lock Ordering, tryLock, Deadlock Detection, jstack | |

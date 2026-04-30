@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "BlockingQueue"
 parent: "Java Concurrency"
-nav_order: 81
+nav_order: 360
 permalink: /java-concurrency/blockingqueue/
-number: "081"
+number: "360"
 category: Java Concurrency
 difficulty: ★★☆
 depends_on: Thread, ExecutorService, Producer-Consumer Pattern
@@ -12,13 +12,13 @@ used_by: Producer-Consumer, Thread Pools, Task Queues
 tags: #java, #concurrency, #queue, #producer-consumer, #blocking
 ---
 
-# 081 — BlockingQueue
+# 360 — BlockingQueue
 
 `#java` `#concurrency` `#queue` `#producer-consumer` `#blocking`
 
 ⚡ TL;DR — BlockingQueue is a thread-safe queue that blocks producers when full and consumers when empty — the idiomatic Java mechanism for producer-consumer decoupling without manual wait/notify.
 
-| #081 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #360 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Thread, ExecutorService, Producer-Consumer Pattern | |
 | **Used by:** | Producer-Consumer, Thread Pools, Task Queues | |

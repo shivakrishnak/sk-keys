@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Event Loop"
 parent: "JavaScript"
-nav_order: 541
+nav_order: 1293
 permalink: /javascript/event-loop/
-number: "541"
+number: "1293"
 category: JavaScript
 difficulty: ★★☆
 depends_on: JavaScript Engine (V8), Call Stack, Web APIs, Task Queue, Microtask Queue
@@ -12,13 +12,13 @@ used_by: Promise, async/await, setTimeout, Web Workers, Node.js I/O
 tags: #javascript, #browser, #nodejs, #concurrency, #internals, #intermediate
 ---
 
-# 541 — Event Loop
+# 1293 — Event Loop
 
 `#javascript` `#browser` `#nodejs` `#concurrency` `#internals` `#intermediate`
 
 ⚡ TL;DR — The mechanism enabling single-threaded JavaScript to handle async I/O non-blocking by cycling between the call stack, microtask queue, and task queue.
 
-| #541 | Category: JavaScript | Difficulty: ★★☆ |
+| #1293 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | JavaScript Engine (V8), Call Stack, Web APIs, Task Queue, Microtask Queue | |
 | **Used by:** | Promise, async/await, setTimeout, Web Workers, Node.js I/O | |

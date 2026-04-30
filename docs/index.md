@@ -18,9 +18,9 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 
 | # | Category | Keywords | Range |
 |---|---|---|---|
-| 1 | [CS Fundamentals](./CS%20Fundamentals/) | 30 | 001–030 |
-| 2 | [DSA](./DSA/) | 60 | 031–090 |
-| 3 | [Operating Systems](./OS%20&%20Systems/) | 35 | 091–125 |
+| 1 | [CS Fundamentals — Paradigms](./CS%20Fundamentals%20—%20Paradigms/) | 30 | 001–030 |
+| 2 | [Data Structures & Algorithms](./Data%20Structures%20&%20Algorithms/) | 60 | 031–090 |
+| 3 | [Operating Systems](./Operating%20Systems/) | 35 | 091–125 |
 | 4 | [Linux](./Linux/) | 40 | 126–165 |
 
 ### 🔵 Tier 2 — Networking & Protocols
@@ -34,7 +34,7 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 
 | # | Category | Keywords | Range |
 |---|---|---|---|
-| 7 | [Java & JVM Internals](./Java/) | 50 | 261–310 |
+| 7 | [Java & JVM Internals](./Java%20&%20JVM%20Internals/) | 50 | 261–310 |
 | 8 | [Java Language](./Java%20Language/) | 20 | 311–330 |
 | 9 | [Java Concurrency](./Java%20Concurrency/) | 40 | 331–370 |
 
@@ -42,21 +42,21 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 
 | # | Category | Keywords | Range |
 |---|---|---|---|
-| 10 | [Spring](./Spring/) | 40 | 371–410 |
+| 10 | [Spring Core](./Spring%20Core/) | 40 | 371–410 |
 
 ### 🔵 Tier 5 — Databases
 
 | # | Category | Keywords | Range |
 |---|---|---|---|
-| 11 | [Databases](./Databases/) | 40 | 411–450 |
-| 12 | [NoSQL](./NoSQL/) | 25 | 451–475 |
+| 11 | [Database Fundamentals](./Database%20Fundamentals/) | 40 | 411–450 |
+| 12 | [NoSQL & Distributed Databases](./NoSQL%20&%20Distributed%20Databases/) | 25 | 451–475 |
 | 13 | [Caching](./Caching/) | 20 | 476–495 |
 
 ### 🔵 Tier 6 — Data Engineering & Big Data
 
 | # | Category | Keywords | Range |
 |---|---|---|---|
-| 14 | [Data Engineering](./Data%20Engineering/) | 35 | 496–530 |
+| 14 | [Data Fundamentals](./Data%20Fundamentals/) | 35 | 496–530 |
 | 15 | [Big Data & Streaming](./Big%20Data%20&%20Streaming/) | 40 | 531–570 |
 
 ### 🔵 Tier 7 — Distributed Systems
@@ -76,7 +76,7 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 | # | Category | Keywords | Range |
 |---|---|---|---|
 | 18 | [System Design](./System%20Design/) | 45 | 681–725 |
-| 19 | [Software Architecture](./Software%20Architecture/) | 40 | 726–765 |
+| 19 | [Software Architecture Patterns](./Software%20Architecture%20Patterns/) | 40 | 726–765 |
 
 ### 🔵 Tier 10 — Design Patterns
 
@@ -90,11 +90,11 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 |---|---|---|---|
 | 21 | [Containers](./Containers/) | 35 | 821–855 |
 | 22 | [Kubernetes](./Kubernetes/) | 60 | 856–915 |
-| 23 | [Cloud - AWS](./Cloud%20-%20AWS/) | 40 | 916–955 |
-| 24 | [Cloud - Azure](./Cloud%20-%20Azure/) | 35 | 956–990 |
-| 25 | [CI-CD](./CI-CD/) | 40 | 991–1030 |
-| 26 | [Git](./Git/) | 35 | 1031–1065 |
-| 27 | [Maven & Build Tools](./Maven%20&%20Build%20Tools/) | 30 | 1066–1095 |
+| 23 | [Cloud — AWS](./Cloud%20—%20AWS/) | 40 | 916–955 |
+| 24 | [Cloud — Azure](./Cloud%20—%20Azure/) | 35 | 956–990 |
+| 25 | [CI/CD](./CI-CD/) | 40 | 991–1030 |
+| 26 | [Git & Branching Strategy](./Git%20&%20Branching%20Strategy/) | 35 | 1031–1065 |
+| 27 | [Maven & Build Tools (Java)](./Maven%20&%20Build%20Tools%20(Java)/) | 30 | 1066–1095 |
 
 ### 🔵 Tier 12 — Quality & Observability
 
@@ -102,7 +102,7 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 |---|---|---|---|
 | 28 | [Code Quality](./Code%20Quality/) | 35 | 1096–1130 |
 | 29 | [Testing](./Testing/) | 45 | 1131–1175 |
-| 30 | [Observability](./Observability/) | 35 | 1176–1210 |
+| 30 | [Observability & SRE](./Observability%20&%20SRE/) | 35 | 1176–1210 |
 
 ### 🔵 Tier 13 — Frontend
 
@@ -114,7 +114,7 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 | 34 | [TypeScript](./TypeScript/) | 50 | 1371–1420 |
 | 35 | [React](./React/) | 60 | 1421–1480 |
 | 36 | [Node.js](./Node.js/) | 30 | 1481–1510 |
-| 37 | [npm](./npm/) | 20 | 1511–1530 |
+| 37 | [npm & Package Management](./npm%20&%20Package%20Management/) | 20 | 1511–1530 |
 | 38 | [Webpack & Build Tools](./Webpack%20&%20Build%20Tools/) | 50 | 1531–1580 |
 
 ### 🔵 Tier 14 — AI & LLMs
@@ -122,15 +122,15 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 | # | Category | Keywords | Range |
 |---|---|---|---|
 | 39 | [AI Foundations](./AI%20Foundations/) | 40 | 1581–1620 |
-| 40 | [LLMs](./LLMs/) | 40 | 1621–1660 |
-| 41 | [RAG & Agents](./RAG%20&%20Agents/) | 40 | 1661–1700 |
+| 40 | [LLMs & Prompt Engineering](./LLMs%20&%20Prompt%20Engineering/) | 40 | 1621–1660 |
+| 41 | [RAG & Agents & LLMOps](./RAG%20&%20Agents%20&%20LLMOps/) | 40 | 1661–1700 |
 
 ### 🔵 Tier 15 — Professional Skills
 
 | # | Category | Keywords | Range |
 |---|---|---|---|
-| 42 | [Platform Engineering](./Platform%20Engineering/) | 30 | 1701–1730 |
-| 43 | [Leadership](./Leadership/) | 40 | 1731–1770 |
+| 42 | [Platform & Modern SWE](./Platform%20&%20Modern%20SWE/) | 30 | 1701–1730 |
+| 43 | [Behavioral & Leadership](./Behavioral%20&%20Leadership/) | 40 | 1731–1770 |
 
 ---
 

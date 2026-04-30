@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "Data Fundamentals"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 14
 has_children: true
 permalink: /data-engineering/

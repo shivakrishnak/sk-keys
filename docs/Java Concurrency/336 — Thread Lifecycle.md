@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Thread Lifecycle"
 parent: "Java Concurrency"
-nav_order: 68
+nav_order: 336
 permalink: /java-concurrency/thread-lifecycle/
 ---
-# 068 — Thread Lifecycle
+# 336 — Thread Lifecycle
 
 `#java` `#concurrency` `#threading` `#lifecycle`
 
 ⚡ TL;DR — A Java thread moves through six states: NEW → RUNNABLE → (BLOCKED | WAITING | TIMED_WAITING) → TERMINATED; understanding each state and what causes transitions is essential for diagnosing deadlocks, starvation, and thread dumps.
 
-| #068 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #336 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Thread, synchronized, Object.wait, Thread.sleep | |
 | **Used by:** | Deadlock, Thread Monitoring, ExecutorService | |

@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Rolling Update"
-parent: "DevOps & SDLC"
-nav_order: 453
+parent: "Kubernetes"
+nav_order: 901
 permalink: /devops-sdlc/rolling-update/
 ---
-# 453 — Rolling Update
+# 901 — Rolling Update
 
 `#devops` `#sdlc` `#foundational` `#reliability`
 
 ⚡ TL;DR — Replace instances of the old version one-by-one (or in small batches) with the new version, keeping the service available throughout.
 
-| #453 | Category: DevOps & SDLC | Difficulty: ★☆☆ |
+| #901 | category: Kubernetes
 |:---|:---|:---|
 | **Depends on:** | CI/CD Pipeline, Kubernetes | |
 | **Used by:** | CI/CD Pipeline, Kubernetes Deployments | |

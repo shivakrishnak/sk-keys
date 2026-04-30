@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Faking / Spying"
 parent: "Testing"
-nav_order: 420
+nav_order: 1146
 permalink: /testing/faking-spying/
 ---
-# 420 — Faking / Spying
+# 1146 — Faking / Spying
 
 `#testing` `#intermediate` `#java` `#mockito`
 
 ⚡ TL;DR — Fakes are lightweight working implementations (e.g., in-memory DB). Spies are real objects that also record interactions for selective verification.
 
-| #420 | Category: Testing | Difficulty: ★★☆ |
+| #1146 | category: Testing
 |:---|:---|:---|
 | **Depends on:** | Unit Test, Mocking, Stubbing | |
 | **Used by:** | Unit Test, Mocking, TDD | |

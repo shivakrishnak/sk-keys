@@ -1,24 +1,24 @@
----
+﻿---
 layout: default
 title: "Inheritance"
-parent: "Clean Code"
-nav_order: 429
+parent: "CS Fundamentals — Paradigms"
+nav_order: 19
 permalink: /clean-code/inheritance/
-number: "429"
-category: Clean Code
+number: "19"
+category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Encapsulation, Abstraction, Polymorphism, Classes
 used_by: Polymorphism, Design Patterns, Liskov Substitution Principle, Composition
 tags: #architecture, #pattern, #intermediate, #java
 ---
 
-# 429 — Inheritance
+# 19 — Inheritance
 
 `#architecture` `#pattern` `#intermediate` `#java`
 
 ⚡ TL;DR — A mechanism for creating a subtype that reuses and extends a parent type's implementation — powerful but overused; prefer composition when behaviour reuse is the goal.
 
-| #429 | Category: Clean Code | Difficulty: ★★☆ |
+| #19 | category: CS Fundamentals — Paradigms
 |:---|:---|:---|
 | **Depends on:** | Encapsulation, Abstraction, Polymorphism, Classes | |
 | **Used by:** | Polymorphism, Design Patterns, Liskov Substitution Principle, Composition | |

@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "CI/CD Pipeline"
-parent: "DevOps & SDLC"
-nav_order: 450
+parent: "CI/CD"
+nav_order: 991
 permalink: /devops-sdlc/cicd-pipeline/
 ---
-# 450 — CI/CD Pipeline
+# 991 — CI/CD Pipeline
 
 `#devops` `#sdlc` `#cicd` `#intermediate`
 
 ⚡ TL;DR — An automated pipeline that integrates code changes continuously and deploys them to production reliably and repeatedly.
 
-| #450 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+| #991 | category: CI/CD
 |:---|:---|:---|
 | **Depends on:** | Version Control, Build Tools, Automated Testing | |
 | **Used by:** | Blue-Green Deployment, Canary Deployment, GitOps | |

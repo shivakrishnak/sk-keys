@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "Distributed Systems"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 16
 has_children: true
 permalink: /distributed-systems/

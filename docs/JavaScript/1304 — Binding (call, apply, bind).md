@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Binding (call, apply, bind)"
 parent: "JavaScript"
-nav_order: 557
+nav_order: 1304
 permalink: /javascript/binding-call-apply-bind/
-number: "557"
+number: "1304"
 category: JavaScript
 difficulty: ★★☆
 depends_on: this keyword, Functions, Prototype Chain
@@ -12,13 +12,13 @@ used_by: Method borrowing, Partial application, Event handlers, Arrow Functions
 tags: #javascript, #intermediate, #browser, #nodejs
 ---
 
-# 557 — Binding (call, apply, bind)
+# 1304 — Binding (call, apply, bind)
 
 `#javascript` `#intermediate` `#browser` `#nodejs`
 
 ⚡ TL;DR — Three Function.prototype methods that explicitly control what `this` refers to when a function is invoked: call and apply invoke immediately, bind returns a new function with this locked.
 
-| #557 | Category: JavaScript | Difficulty: ★★☆ |
+| #1304 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | this keyword, Functions, Prototype Chain | |
 | **Used by:** | Method borrowing, Partial application, Event handlers, Arrow Functions | |

@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Arrow Functions"
 parent: "JavaScript"
-nav_order: 558
+nav_order: 1305
 permalink: /javascript/arrow-functions/
-number: "558"
+number: "1305"
 category: JavaScript
 difficulty: ★★☆
 depends_on: this keyword, Scope, Lexical Environment, Functions
@@ -12,13 +12,13 @@ used_by: Callbacks, Array methods, Higher-Order Functions, React Hooks, async/aw
 tags: #javascript, #intermediate, #browser, #nodejs
 ---
 
-# 558 — Arrow Functions
+# 1305 — Arrow Functions
 
 `#javascript` `#intermediate` `#browser` `#nodejs`
 
 ⚡ TL;DR — A concise function syntax that lexically binds this from the enclosing context and lacks its own arguments object, prototype, or new.target.
 
-| #558 | Category: JavaScript | Difficulty: ★★☆ |
+| #1305 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | this keyword, Scope, Lexical Environment, Functions | |
 | **Used by:** | Callbacks, Array methods, Higher-Order Functions, React Hooks, async/await | |

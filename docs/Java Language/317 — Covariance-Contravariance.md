@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Covariance / Contravariance"
 parent: "Java Language"
-nav_order: 56
+nav_order: 317
 permalink: /java-language/covariance-contravariance/
 ---
-# 056 — Covariance / Contravariance
+# 317 — Covariance / Contravariance
 
 `#java` `#advanced` `#generics` `#variance` `#covariance`
 
 ⚡ TL;DR — Covariance (out/extends) means subtype flows out safely; contravariance (in/super) means supertype flows in safely; Java arrays are covariant (broken), generics are invariant by default.
 
-| #056 | Category: Java Language | Difficulty: ★★★ |
+| #317 | category: Java Language
 |:---|:---|:---|
 | **Depends on:** | Generics, Bounded Wildcards, Subtyping | |
 | **Used by:** | Comparable, Comparator, Collections API, TypeScript Variance | |

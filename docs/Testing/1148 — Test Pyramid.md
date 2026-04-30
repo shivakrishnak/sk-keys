@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Test Pyramid"
 parent: "Testing"
-nav_order: 421
+nav_order: 1148
 permalink: /testing/test-pyramid/
 ---
-# 421 — Test Pyramid
+# 1148 — Test Pyramid
 
 `#testing` `#intermediate` `#strategy` `#quality`
 
 ⚡ TL;DR — A model prescribing many fast unit tests at the base, fewer integration tests in the middle, and very few slow E2E tests at the top.
 
-| #421 | Category: Testing | Difficulty: ★★☆ |
+| #1148 | category: Testing
 |:---|:---|:---|
 | **Depends on:** | Unit Test, Integration Test, E2E Test | |
 | **Used by:** | Testing Strategy, CI/CD, QA | |

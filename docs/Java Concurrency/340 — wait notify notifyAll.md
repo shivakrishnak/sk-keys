@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "wait / notify / notifyAll"
 parent: "Java Concurrency"
-nav_order: 103
+nav_order: 340
 permalink: /java-concurrency/wait-notify-notifyall/
-number: "103"
+number: "340"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: synchronized, Thread, Object Monitor, Java Memory Model
@@ -12,13 +12,13 @@ used_by: Producer-Consumer Pattern, Condition Variables, BlockingQueue (internal
 tags: #java, #concurrency, #synchronization, #wait, #notify, #monitor
 ---
 
-# 103 — wait / notify / notifyAll
+# 340 — wait / notify / notifyAll
 
 `#java` `#concurrency` `#synchronization` `#wait` `#notify` `#monitor`
 
 ⚡ TL;DR — `wait()` releases a monitor lock and suspends the calling thread until another thread calls `notify()` or `notifyAll()` on the same object; the thread re-acquires the lock before returning — Java's built-in condition variable mechanism.
 
-| #103 | Category: Java Concurrency | Difficulty: ★★★ |
+| #340 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | synchronized, Thread, Object Monitor, Java Memory Model | |
 | **Used by:** | Producer-Consumer Pattern, Condition Variables, BlockingQueue (internal) | |

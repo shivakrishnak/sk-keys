@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Annotation Processing (APT)"
 parent: "Java Language"
-nav_order: 59
+nav_order: 320
 permalink: /java-language/annotation-processing-apt/
 ---
-# 059 — Annotation Processing (APT)
+# 320 — Annotation Processing (APT)
 
 `#java` `#advanced` `#annotations` `#apt` `#codegen`
 
 ⚡ TL;DR — A compile-time code generation hook: `@Getter` on a class triggers Lombok to write the getter source before javac finishes — zero runtime cost, all errors caught at compile time.
 
-| #059 | Category: Java Language | Difficulty: ★★★ |
+| #320 | category: Java Language
 |:---|:---|:---|
 | **Depends on:** | Annotations, Reflection, Compiler API | |
 | **Used by:** | Lombok, MapStruct, Dagger 2, Spring (compile-time), Auto-Value | |

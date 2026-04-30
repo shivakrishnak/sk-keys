@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Mutation Testing"
 parent: "Testing"
-nav_order: 423
+nav_order: 1111
 permalink: /testing/mutation-testing/
 ---
-# 423 — Mutation Testing
+# 1111 — Mutation Testing
 
 `#testing` `#advanced` `#quality` `#mutation`
 
 ⚡ TL;DR — Automatically introduce small bugs (mutations) into source code and verify that your tests catch them — measuring test suite effectiveness, not just coverage.
 
-| #423 | Category: Testing | Difficulty: ★★★ |
+| #1111 | category: Testing
 |:---|:---|:---|
 | **Depends on:** | Unit Test, Code Coverage, TDD | |
 | **Used by:** | Unit Test, Test Quality, CI/CD | |

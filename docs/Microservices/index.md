@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "Microservices"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 17
 has_children: true
 permalink: /microservices/

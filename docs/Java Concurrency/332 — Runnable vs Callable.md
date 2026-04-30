@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Runnable vs Callable"
 parent: "Java Concurrency"
-nav_order: 67
+nav_order: 332
 permalink: /java-concurrency/runnable-vs-callable/
 ---
-# 067 — Runnable vs Callable
+# 332 — Runnable vs Callable
 
 `#java` `#concurrency` `#threading` `#functional`
 
 ⚡ TL;DR — Runnable defines a task with no return value and no checked exception; Callable<T> defines a task that returns a result and can throw a checked exception — use Runnable for fire-and-forget, Callable when you need the result.
 
-| #067 | Category: Java Concurrency | Difficulty: ★☆☆ |
+| #332 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Thread, Generics, Checked Exceptions | |
 | **Used by:** | ExecutorService, Thread, Future, CompletableFuture | |

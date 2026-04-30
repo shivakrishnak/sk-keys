@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Twelve-Factor App"
-parent: "DevOps & SDLC"
-nav_order: 457
+parent: "Microservices"
+nav_order: 677
 permalink: /devops-sdlc/twelve-factor-app/
 ---
-# 457 — Twelve-Factor App
+# 677 — Twelve-Factor App
 
 `#devops` `#sdlc` `#intermediate` `#architecture`
 
 ⚡ TL;DR — A methodology of 12 practices for building portable, cloud-native, scalable software-as-a-service applications.
 
-| #457 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+| #677 | category: Microservices
 |:---|:---|:---|
 | **Depends on:** | Cloud-Native Architecture, Microservices | |
 | **Used by:** | IaC, Immutable Infrastructure, CI/CD | |

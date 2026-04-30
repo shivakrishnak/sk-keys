@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Java Memory Model"
 parent: "Java Concurrency"
-nav_order: 95
+nav_order: 345
 permalink: /java-concurrency/java-memory-model/
-number: "095"
+number: "345"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: volatile, synchronized, Happens-Before, Memory Barrier
@@ -12,13 +12,13 @@ used_by: All Concurrency Features, JIT Compiler, CPU Reordering
 tags: #java, #concurrency, #jmm, #memory-model, #advanced
 ---
 
-# 095 — Java Memory Model (JMM)
+# 345 — Java Memory Model (JMM)
 
 `#java` `#concurrency` `#jmm` `#memory-model` `#advanced`
 
 ⚡ TL;DR — The Java Memory Model defines the rules under which one thread's writes are visible to another thread's reads — it specifies happens-before relationships established by synchronized, volatile, final, and thread start/join.
 
-| #095 | Category: Java Concurrency | Difficulty: ★★★ |
+| #345 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | volatile, synchronized, Happens-Before, Memory Barrier | |
 | **Used by:** | All Concurrency Features, JIT Compiler, CPU Reordering | |

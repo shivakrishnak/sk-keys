@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "GitOps"
-parent: "DevOps & SDLC"
-nav_order: 454
+parent: "CI/CD"
+nav_order: 1020
 permalink: /devops-sdlc/gitops/
 ---
-# 454 — GitOps
+# 1020 — GitOps
 
 `#devops` `#sdlc` `#intermediate` `#gitops`
 
 ⚡ TL;DR — Use git as the single source of truth for both application code and infrastructure; automated agents reconcile the running system to match the git state.
 
-| #454 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+| #1020 | category: CI/CD
 |:---|:---|:---|
 | **Depends on:** | CI/CD Pipeline, IaC, Kubernetes | |
 | **Used by:** | CI/CD Pipeline, IaC, Kubernetes | |

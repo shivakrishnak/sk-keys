@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Bounded Wildcards"
 parent: "Java Language"
-nav_order: 55
+nav_order: 316
 permalink: /java-language/bounded-wildcards/
 ---
-# 055 — Bounded Wildcards
+# 316 — Bounded Wildcards
 
 `#java` `#advanced` `#generics` `#wildcards` `#pecs`
 
 ⚡ TL;DR — `? extends T` (upper-bounded, read-only) and `? super T` (lower-bounded, write-only) enable flexible generic APIs; remember **PECS: Producer Extends, Consumer Super**.
 
-| #055 | Category: Java Language | Difficulty: ★★★ |
+| #316 | category: Java Language
 |:---|:---|:---|
 | **Depends on:** | Generics, Type Erasure, Subtyping | |
 | **Used by:** | Collections API, Stream API, Utility Methods | |

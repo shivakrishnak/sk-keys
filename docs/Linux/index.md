@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "Linux"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 4
 has_children: true
 permalink: /linux/

@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Structured Concurrency"
 parent: "Java Concurrency"
-nav_order: 94
+nav_order: 365
 permalink: /java-concurrency/structured-concurrency/
-number: "094"
+number: "365"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: Virtual Threads, ExecutorService, Thread, Future
@@ -12,13 +12,13 @@ used_by: Parallel Service Calls, Fan-out/Fan-in, Error Propagation
 tags: #java, #java21, #concurrency, #structured-concurrency, #loom
 ---
 
-# 094 — Structured Concurrency (Java 21)
+# 365 — Structured Concurrency (Java 21)
 
 `#java` `#java21` `#concurrency` `#structured-concurrency` `#loom`
 
 ⚡ TL;DR — Structured Concurrency (Java 21 preview) ensures that child threads spawned within a task don't outlive their parent scope — a `StructuredTaskScope` auto-cancels siblings on first failure or success, preventing thread leaks and simplifying error handling.
 
-| #094 | Category: Java Concurrency | Difficulty: ★★★ |
+| #365 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Virtual Threads, ExecutorService, Thread, Future | |
 | **Used by:** | Parallel Service Calls, Fan-out/Fan-in, Error Propagation | |

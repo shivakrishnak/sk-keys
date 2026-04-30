@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "CS Fundamentals — Paradigms"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 1
 has_children: true
 permalink: /cs-fundamentals/

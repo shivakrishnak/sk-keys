@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "ReentrantLock"
 parent: "Java Concurrency"
-nav_order: 76
+nav_order: 341
 permalink: /java-concurrency/reentrantlock/
 ---
-# 076 — ReentrantLock
+# 341 — ReentrantLock
 
 `#java` `#concurrency` `#locks` `#threading` `#advanced`
 
 ⚡ TL;DR — ReentrantLock is an explicit java.util.concurrent lock offering the same mutual exclusion as `synchronized` plus `tryLock` (non-blocking acquisition), timed waits, interruptible lock acquisition, fairness, and `Condition` variables for fine-grained wait/notify.
 
-| #076 | Category: Java Concurrency | Difficulty: ★★★ |
+| #341 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | synchronized, Thread Lifecycle, Deadlock, Condition | |
 | **Used by:** | Deadlock Prevention, tryLock, ReadWriteLock, Condition | |

@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "Operating Systems"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 3
 has_children: true
 permalink: /operating-systems/

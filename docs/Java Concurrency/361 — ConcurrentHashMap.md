@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "ConcurrentHashMap"
 parent: "Java Concurrency"
-nav_order: 82
+nav_order: 361
 permalink: /java-concurrency/concurrenthashmap/
-number: "082"
+number: "361"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: HashMap, Race Condition, volatile, CAS
@@ -12,13 +12,13 @@ used_by: Caching, Shared Registries, Counters, Concurrent State
 tags: #java, #concurrency, #collections, #lock-free, #hashmap
 ---
 
-# 082 — ConcurrentHashMap
+# 361 — ConcurrentHashMap
 
 `#java` `#concurrency` `#collections` `#lock-free` `#hashmap`
 
 ⚡ TL;DR — ConcurrentHashMap is a fully thread-safe HashMap that uses lock-striping (Java 7) or CAS + synchronized-on-bucket (Java 8+) to allow concurrent reads with zero locking and concurrent writes with minimal contention.
 
-| #082 | Category: Java Concurrency | Difficulty: ★★★ |
+| #361 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | HashMap, Race Condition, volatile, CAS | |
 | **Used by:** | Caching, Shared Registries, Counters, Concurrent State | |

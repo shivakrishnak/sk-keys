@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Higher-Order Functions"
 parent: "JavaScript"
-nav_order: 562
+nav_order: 1308
 permalink: /javascript/higher-order-functions/
-number: "562"
+number: "1308"
 category: JavaScript
 difficulty: ★★☆
 depends_on: First-Class Functions, Closure, Arrow Functions, Array methods
@@ -12,13 +12,13 @@ used_by: Functional Programming, Currying, Memoization, Callbacks, React pattern
 tags: #javascript, #intermediate, #browser, #nodejs, #pattern, #algorithm
 ---
 
-# 562 — Higher-Order Functions
+# 1308 — Higher-Order Functions
 
 `#javascript` `#intermediate` `#browser` `#nodejs` `#pattern` `#algorithm`
 
 ⚡ TL;DR — Functions that accept other functions as arguments, return functions, or both — enabling abstraction over actions, not just values.
 
-| #562 | Category: JavaScript | Difficulty: ★★☆ |
+| #1308 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | First-Class Functions, Closure, Arrow Functions, Array methods | |
 | **Used by:** | Functional Programming, Currying, Memoization, Callbacks, React patterns | |

@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "ExecutorService"
 parent: "Java Concurrency"
-nav_order: 74
+nav_order: 350
 permalink: /java-concurrency/executorservice/
 ---
-# 074 — ExecutorService
+# 350 — ExecutorService
 
 `#java` `#concurrency` `#threading` `#thread-pool` `#executor`
 
 ⚡ TL;DR — ExecutorService is a managed thread pool that decouples task submission from thread management — submit Runnable/Callable tasks; the pool handles thread lifecycle, queuing, and shutdown, returning Future for async results.
 
-| #074 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #350 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Thread, Runnable vs Callable, Future, Thread Pool | |
 | **Used by:** | Future, CompletableFuture, Spring Async, Scheduled Tasks | |

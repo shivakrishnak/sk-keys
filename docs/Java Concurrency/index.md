@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "Java Concurrency"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 9
 has_children: true
 permalink: /java-concurrency/

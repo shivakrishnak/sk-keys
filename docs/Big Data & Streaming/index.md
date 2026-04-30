@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "Big Data & Streaming"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 15
 has_children: true
 permalink: /big-data-streaming/

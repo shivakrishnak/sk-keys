@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Virtual Threads"
 parent: "Java Concurrency"
-nav_order: 85
+nav_order: 353
 permalink: /java-concurrency/virtual-threads/
-number: "085"
+number: "353"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: Thread, ExecutorService, Platform Threads, ForkJoinPool
@@ -12,13 +12,13 @@ used_by: I/O-bound Services, High-concurrency HTTP, JDBC blocking
 tags: #java, #java21, #concurrency, #virtual-threads, #loom
 ---
 
-# 085 — Virtual Threads (Java 21)
+# 353 — Virtual Threads (Java 21)
 
 `#java` `#java21` `#concurrency` `#virtual-threads` `#loom`
 
 ⚡ TL;DR — Virtual threads are JVM-managed lightweight threads (megabytes → kilobytes; millions possible) designed to make blocking I/O cheap — a virtual thread that blocks on I/O is unmounted from its carrier platform thread, freeing it for other virtual threads.
 
-| #085 | Category: Java Concurrency | Difficulty: ★★★ |
+| #353 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Thread, ExecutorService, Platform Threads, ForkJoinPool | |
 | **Used by:** | I/O-bound Services, High-concurrency HTTP, JDBC blocking | |

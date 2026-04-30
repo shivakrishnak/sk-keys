@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Property-Based Testing"
 parent: "Testing"
-nav_order: 422
+nav_order: 1152
 permalink: /testing/property-based-testing/
 ---
-# 422 — Property-Based Testing
+# 1152 — Property-Based Testing
 
 `#testing` `#advanced` `#property-based` `#quality`
 
 ⚡ TL;DR — Instead of specifying specific examples, define properties that must hold for all inputs — and let the framework generate hundreds of random test cases automatically.
 
-| #422 | Category: Testing | Difficulty: ★★★ |
+| #1152 | category: Testing
 |:---|:---|:---|
 | **Depends on:** | Unit Test, QuickCheck, jqwik | |
 | **Used by:** | Unit Test, TDD, Fuzzing | |

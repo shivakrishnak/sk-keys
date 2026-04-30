@@ -1,24 +1,24 @@
----
+﻿---
 layout: default
 title: "Encapsulation"
-parent: "Clean Code"
-nav_order: 427
+parent: "CS Fundamentals — Paradigms"
+nav_order: 17
 permalink: /clean-code/encapsulation/
-number: "427"
-category: Clean Code
+number: "17"
+category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Abstraction, Access Modifiers, Cohesion, Classes
 used_by: Polymorphism, Coupling, Refactoring, Immutability
 tags: #architecture, #pattern, #intermediate, #java
 ---
 
-# 427 — Encapsulation
+# 17 — Encapsulation
 
 `#architecture` `#pattern` `#intermediate` `#java`
 
 ⚡ TL;DR — Bundling data and behaviour together while restricting direct access to internal state, forcing interaction through a controlled public interface.
 
-| #427 | Category: Clean Code | Difficulty: ★★☆ |
+| #17 | category: CS Fundamentals — Paradigms
 |:---|:---|:---|
 | **Depends on:** | Abstraction, Access Modifiers, Cohesion, Classes | |
 | **Used by:** | Polymorphism, Coupling, Refactoring, Immutability | |

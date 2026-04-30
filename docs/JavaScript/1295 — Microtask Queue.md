@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Microtask Queue"
 parent: "JavaScript"
-nav_order: 546
+nav_order: 1295
 permalink: /javascript/microtask-queue/
-number: "546"
+number: "1295"
 category: JavaScript
 difficulty: ★★☆
 depends_on: Event Loop, Promise, Call Stack, Task Queue (Macrotask)
@@ -12,13 +12,13 @@ used_by: async/await, Promise chaining, queueMicrotask, MutationObserver
 tags: #javascript, #browser, #nodejs, #concurrency, #internals, #intermediate
 ---
 
-# 546 — Microtask Queue
+# 1295 — Microtask Queue
 
 `#javascript` `#browser` `#nodejs` `#concurrency` `#internals` `#intermediate`
 
 ⚡ TL;DR — The high-priority async queue for Promise callbacks and queueMicrotask, drained completely after every task before the event loop picks the next macrotask.
 
-| #546 | Category: JavaScript | Difficulty: ★★☆ |
+| #1295 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | Event Loop, Promise, Call Stack, Task Queue (Macrotask) | |
 | **Used by:** | async/await, Promise chaining, queueMicrotask, MutationObserver | |

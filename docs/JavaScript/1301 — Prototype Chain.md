@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Prototype Chain"
 parent: "JavaScript"
-nav_order: 554
+nav_order: 1301
 permalink: /javascript/prototype-chain/
-number: "554"
+number: "1301"
 category: JavaScript
 difficulty: ★★★
 depends_on: JavaScript Engine (V8), Object, Heap (JS), Functions
@@ -12,13 +12,13 @@ used_by: Prototypal Inheritance, Class (ES6+), Object.create, instanceof, hasOwn
 tags: #javascript, #internals, #advanced, #deep-dive, #browser, #nodejs
 ---
 
-# 554 — Prototype Chain
+# 1301 — Prototype Chain
 
 `#javascript` `#internals` `#advanced` `#deep-dive` `#browser` `#nodejs`
 
 ⚡ TL;DR — The linked chain of objects through which JavaScript resolves property lookups, walking from an object up through its prototype references until found or reaching null.
 
-| #554 | Category: JavaScript | Difficulty: ★★★ |
+| #1301 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | JavaScript Engine (V8), Object, Heap (JS), Functions | |
 | **Used by:** | Prototypal Inheritance, Class (ES6+), Object.create, instanceof, hasOwnProperty | |

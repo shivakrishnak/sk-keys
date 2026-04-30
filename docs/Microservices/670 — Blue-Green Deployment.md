@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Blue-Green Deployment"
-parent: "DevOps & SDLC"
-nav_order: 451
+parent: "Microservices"
+nav_order: 670
 permalink: /devops-sdlc/blue-green-deployment/
 ---
-# 451 — Blue-Green Deployment
+# 670 — Blue-Green Deployment
 
 `#devops` `#sdlc` `#intermediate` `#reliability`
 
 ⚡ TL;DR — Run two identical production environments (blue and green); switch traffic instantly to the new version, with instant rollback by switching back.
 
-| #451 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+| #670 | category: Microservices
 |:---|:---|:---|
 | **Depends on:** | CI/CD Pipeline, Load Balancer | |
 | **Used by:** | CI/CD Pipeline, Zero-Downtime Deployment | |

@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Error Budget"
-parent: "DevOps & SDLC"
-nav_order: 459
+parent: "System Design"
+nav_order: 691
 permalink: /devops-sdlc/error-budget/
 ---
-# 459 — Error Budget
+# 691 — Error Budget
 
 `#devops` `#sdlc` `#advanced` `#sre` `#reliability`
 
 ⚡ TL;DR — The quantified amount of unreliability you are allowed before reliability must take priority over feature shipping.
 
-| #459 | Category: DevOps & SDLC | Difficulty: ★★★ |
+| #691 | category: System Design
 |:---|:---|:---|
 | **Depends on:** | SRE, SLO, SLI | |
 | **Used by:** | SRE, Release Decisions, CI/CD Gates | |

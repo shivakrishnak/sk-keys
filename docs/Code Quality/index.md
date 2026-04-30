@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "Code Quality"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 28
 has_children: true
 permalink: /code-quality/

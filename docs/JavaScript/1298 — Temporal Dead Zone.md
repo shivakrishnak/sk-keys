@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Temporal Dead Zone (TDZ)"
 parent: "JavaScript"
-nav_order: 550
+nav_order: 1298
 permalink: /javascript/temporal-dead-zone/
-number: "550"
+number: "1298"
 category: JavaScript
 difficulty: ★★☆
 depends_on: Hoisting, var / let / const, Scope, Execution Context
@@ -12,13 +12,13 @@ used_by: let / const initialisation, Class declarations, Block scoping
 tags: #javascript, #intermediate, #browser, #nodejs, #internals
 ---
 
-# 550 — Temporal Dead Zone (TDZ)
+# 1298 — Temporal Dead Zone (TDZ)
 
 `#javascript` `#intermediate` `#browser` `#nodejs` `#internals`
 
 ⚡ TL;DR — The period between a let or const binding being registered in scope and its initialisation line being executed, during which any access throws a ReferenceError.
 
-| #550 | Category: JavaScript | Difficulty: ★★☆ |
+| #1298 | category: JavaScript
 |:---|:---|:---|
 | **Depends on:** | Hoisting, var / let / const, Scope, Execution Context | |
 | **Used by:** | let / const initialisation, Class declarations, Block scoping | |

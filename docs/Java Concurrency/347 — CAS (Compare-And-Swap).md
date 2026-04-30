@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "CAS (Compare-And-Swap)"
 parent: "Java Concurrency"
-nav_order: 104
+nav_order: 347
 permalink: /java-concurrency/cas-compare-and-swap/
-number: "104"
+number: "347"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: Atomic Classes, Volatile, Java Memory Model, CPU Hardware
@@ -12,13 +12,13 @@ used_by: AtomicInteger, AtomicReference, ConcurrentHashMap, Lock-Free Data Struc
 tags: #java, #concurrency, #lock-free, #cas, #atomic, #hardware
 ---
 
-# 104 — CAS (Compare-And-Swap)
+# 347 — CAS (Compare-And-Swap)
 
 `#java` `#concurrency` `#lock-free` `#cas` `#atomic` `#hardware`
 
 ⚡ TL;DR — CAS is a single atomic CPU instruction: "if memory location holds expected value, swap it with new value; otherwise fail" — the hardware primitive that makes lock-free programming possible.
 
-| #104 | Category: Java Concurrency | Difficulty: ★★★ |
+| #347 | category: Java Concurrency
 |:---|:---|:---|
 | **Depends on:** | Atomic Classes, Volatile, Java Memory Model, CPU Hardware | |
 | **Used by:** | AtomicInteger, AtomicReference, ConcurrentHashMap, Lock-Free Data Structures | |

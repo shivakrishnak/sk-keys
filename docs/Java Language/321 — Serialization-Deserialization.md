@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Serialization / Deserialization"
 parent: "Java Language"
-nav_order: 60
+nav_order: 321
 permalink: /java-language/serialization-deserialization/
 ---
-# 060 — Serialization / Deserialization
+# 321 — Serialization / Deserialization
 
 `#java` `#intermediate` `#serialization` `#io` `#security`
 
 ⚡ TL;DR — Convert a Java object graph to bytes (serialize) and restore it (deserialize); Java's built-in mechanism is legacy and insecure — prefer JSON/Protobuf/Avro in modern code.
 
-| #060 | Category: Java Language | Difficulty: ★★☆ |
+| #321 | category: Java Language
 |:---|:---|:---|
 | **Depends on:** | JVM, Object, Streams | |
 | **Used by:** | RMI, JMS, Caching, Persistence, Network Protocols | |

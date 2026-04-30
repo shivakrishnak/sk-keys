@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Pattern Matching"
 parent: "Java Language"
-nav_order: 64
+nav_order: 324
 permalink: /java-language/pattern-matching/
 ---
-# 064 — Pattern Matching (Java 16+)
+# 324 — Pattern Matching (Java 16+)
 
 `#java` `#java16` `#java21` `#oop` `#type-system`
 
 ⚡ TL;DR — Pattern matching combines type testing, casting, and binding into a single expression, eliminating the verbose test-cast-use idiom and enabling powerful exhaustive switch dispatch over sealed hierarchies.
 
-| #064 | Category: Java Language | Difficulty: ★★☆ |
+| #324 | category: Java Language
 |:---|:---|:---|
 | **Depends on:** | Generics, Sealed Classes, instanceof, Switch Expressions | |
 | **Used by:** | Sealed Classes, Domain Modelling, Type-safe Dispatch | |
@@ -259,24 +259,13 @@ System.out.println(s); // ❌ compile error — s not in scope here
 ```java
 // ❌ Wrong — Integer case unreachable; Number catches it first
 switch (obj) {
-    case Number n  -> "number: " + n;
-    case Integer i -> "integer: " + i; // Compile error: dominated by prior pattern
+    case Number n  -> "number: "324"integer: " + i; // Compile error: dominated by prior pattern
 }
 
 // ✅ Correct — specific first
 switch (obj) {
     case Integer i -> "integer: " + i;
-    case Number n  -> "number: " + n;
-}
-```
-
-**Pitfall 3: Forgetting null handling in switch**
-
-```java
-// NullPointerException if obj is null — switch throws NPE before any case matches
-// Fix: add explicit null case
-switch (obj) {
-    case null    -> "null";
+    case Number n  -> "number: "324"null";
     case String s -> "string: " + s;
     default       -> "other";
 }

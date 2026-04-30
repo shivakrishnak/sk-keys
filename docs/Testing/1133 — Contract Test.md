@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Contract Test"
 parent: "Testing"
-nav_order: 414
+nav_order: 1133
 permalink: /testing/contract-test/
 ---
-# 414 — Contract Test
+# 1133 — Contract Test
 
 `#testing` `#advanced` `#microservices` `#contracts`
 
 ⚡ TL;DR — A test that verifies a service's API matches the expectations of its consumers — catching integration breaks without deploying both services together.
 
-| #414 | Category: Testing | Difficulty: ★★★ |
+| #1133 | category: Testing
 |:---|:---|:---|
 | **Depends on:** | Integration Test, Consumer-Driven Contracts | |
 | **Used by:** | Microservices, CI/CD, API Versioning | |

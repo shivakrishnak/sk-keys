@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "TypeScript"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 34
 has_children: true
 permalink: /typescript/

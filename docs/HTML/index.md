@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "HTML"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 31
 has_children: true
 permalink: /html/

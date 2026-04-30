@@ -1,7 +1,7 @@
----
+﻿---
 layout: default
 title: "HTTP & APIs"
-parent: "Documentation"
+parent: "Technical Dictionary"
 nav_order: 6
 has_children: true
 permalink: /http-apis/
