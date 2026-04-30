@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Command-Query Separation (CQS)"
+parent: "Clean Code"
+nav_order: 430
+permalink: /clean-code/command-query-separation-cqs/
 number: "430"
 category: Clean Code
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #cleancode #pattern #intermediate
 
 ⚡ TL;DR — Every method should either change state (command) OR return data (query) — never both at once.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #430         │ Category: Clean Code                 │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #cleancode #pattern #intermediate
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ CQRS, Functional Programming, Idempotency, Testing                │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Bounded Wildcards"
+parent: "Java Fundamentals"
+nav_order: 55
+permalink: /java/bounded-wildcards/
 number: "055"
 category: Java Language
 difficulty: ★★★
@@ -13,6 +18,7 @@ tags: #java #advanced #generics #wildcards #pecs
 
 ⚡ TL;DR — `? extends T` (upper-bounded, read-only) and `? super T` (lower-bounded, write-only) enable flexible generic APIs; remember **PECS: Producer Extends, Consumer Super**.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #055         │ Category: Java Language              │ Difficulty: ★★★           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #java #advanced #generics #wildcards #pecs
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Collections API, Stream API, Utility Methods                      │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

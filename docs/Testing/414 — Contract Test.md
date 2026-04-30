@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Contract Test"
+parent: "Testing"
+nav_order: 414
+permalink: /testing/contract-test/
 number: "414"
 category: Testing
 difficulty: ★★★
@@ -13,6 +18,7 @@ tags: #testing #advanced #microservices #contracts
 
 ⚡ TL;DR — A test that verifies a service's API matches the expectations of its consumers — catching integration breaks without deploying both services together.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #414         │ Category: Testing                    │ Difficulty: ★★★           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #testing #advanced #microservices #contracts
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Microservices, CI/CD, API Versioning                              │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

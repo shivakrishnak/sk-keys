@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Stubbing"
+parent: "Testing"
+nav_order: 419
+permalink: /testing/stubbing/
 number: "419"
 category: Testing
 difficulty: ★☆☆
@@ -13,6 +18,7 @@ tags: #testing #foundational #java #mockito
 
 ⚡ TL;DR — Configuring a test double to return a specific value when called, without recording or verifying interactions.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #419         │ Category: Testing                    │ Difficulty: ★☆☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #testing #foundational #java #mockito
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Unit Test, Mocking, TDD                                           │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

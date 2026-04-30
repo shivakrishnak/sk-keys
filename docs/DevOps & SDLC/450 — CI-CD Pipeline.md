@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "CI/CD Pipeline"
+parent: "DevOps & SDLC"
+nav_order: 450
+permalink: /devops-sdlc/cicd-pipeline/
 number: "450"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #devops #sdlc #cicd #intermediate
 
 ⚡ TL;DR — An automated pipeline that integrates code changes continuously and deploys them to production reliably and repeatedly.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #450         │ Category: DevOps & SDLC              │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #devops #sdlc #cicd #intermediate
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Blue-Green Deployment, Canary Deployment, GitOps                  │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

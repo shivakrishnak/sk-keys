@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Varargs"
+parent: "Java Fundamentals"
+nav_order: 57
+permalink: /java/varargs/
 number: "057"
 category: Java Language
 difficulty: ★☆☆
@@ -13,6 +18,7 @@ tags: #java #foundational #varargs #methods
 
 ⚡ TL;DR — Variable-argument methods (`type... name`) accept zero or more values of a type without the caller creating an array; the compiler creates the array automatically.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #057         │ Category: Java Language              │ Difficulty: ★☆☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #java #foundational #varargs #methods
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ String.format, MessageFormat, Logging APIs, EnumSet.of            │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

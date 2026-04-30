@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Mutation Testing"
+parent: "Testing"
+nav_order: 423
+permalink: /testing/mutation-testing/
 number: "423"
 category: Testing
 difficulty: ★★★
@@ -13,6 +18,7 @@ tags: #testing #advanced #quality #mutation
 
 ⚡ TL;DR — Automatically introduce small bugs (mutations) into source code and verify that your tests catch them — measuring test suite effectiveness, not just coverage.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #423         │ Category: Testing                    │ Difficulty: ★★★           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #testing #advanced #quality #mutation
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Unit Test, Test Quality, CI/CD                                    │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

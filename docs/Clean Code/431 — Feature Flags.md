@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Feature Flags"
+parent: "Clean Code"
+nav_order: 431
+permalink: /clean-code/feature-flags/
 number: "431"
 category: Clean Code
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #cleancode #devops #intermediate
 
 ⚡ TL;DR — Configuration-driven switches that enable or disable features at runtime without deploying new code.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #431         │ Category: Clean Code                 │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #cleancode #devops #intermediate
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ A/B Testing, Canary Releases, Kill Switches                       │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

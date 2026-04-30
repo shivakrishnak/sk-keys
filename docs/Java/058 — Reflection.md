@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Reflection"
+parent: "Java Fundamentals"
+nav_order: 58
+permalink: /java/reflection/
 number: "058"
 category: Java Language
 difficulty: ★★★
@@ -13,6 +18,7 @@ tags: #java #advanced #reflection #jvm #internals
 
 ⚡ TL;DR — Inspect and manipulate classes, methods, fields, and constructors at runtime — the backbone of Spring DI, Jackson serialization, JUnit, and any framework that must work with unknown types.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #058         │ Category: Java Language              │ Difficulty: ★★★           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #java #advanced #reflection #jvm #internals
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Spring Framework, Jackson, JUnit, Mockito, Lombok APT             │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

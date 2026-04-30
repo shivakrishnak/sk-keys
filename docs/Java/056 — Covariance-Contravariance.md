@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Covariance / Contravariance"
+parent: "Java Fundamentals"
+nav_order: 56
+permalink: /java/covariance-contravariance/
 number: "056"
 category: Java Language
 difficulty: ★★★
@@ -13,6 +18,7 @@ tags: #java #advanced #generics #variance #covariance
 
 ⚡ TL;DR — Covariance (out/extends) means subtype flows out safely; contravariance (in/super) means supertype flows in safely; Java arrays are covariant (broken), generics are invariant by default.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #056         │ Category: Java Language              │ Difficulty: ★★★           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #java #advanced #generics #variance #covariance
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Comparable, Comparator, Collections API                           │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

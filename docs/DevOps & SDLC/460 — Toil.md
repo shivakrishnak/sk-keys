@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Toil"
+parent: "DevOps & SDLC"
+nav_order: 460
+permalink: /devops-sdlc/toil/
 number: "460"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #devops #sdlc #intermediate #sre #reliability
 
 ⚡ TL;DR — Manual, repetitive, automatable operational work that scales linearly with service growth and provides no lasting value.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #460         │ Category: DevOps & SDLC              │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #devops #sdlc #intermediate #sre #reliability
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ SRE, Error Budget, Operational Excellence                         │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

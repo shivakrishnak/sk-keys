@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "SerialVersionUID"
+parent: "Java Fundamentals"
+nav_order: 61
+permalink: /java/serialversionuid/
 number: "061"
 category: Java Language
 difficulty: ★☆☆
@@ -13,6 +18,7 @@ tags: #java #foundational #serialization #versioning
 
 ⚡ TL;DR — A `long` constant that identifies a serializable class version; mismatched UID between serialized bytes and current class = `InvalidClassException`. Always declare it explicitly.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #061         │ Category: Java Language              │ Difficulty: ★☆☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #java #foundational #serialization #versioning
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Serializable classes, RMI, JMS, Caching systems                   │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

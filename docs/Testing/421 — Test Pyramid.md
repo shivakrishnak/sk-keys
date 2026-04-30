@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Test Pyramid"
+parent: "Testing"
+nav_order: 421
+permalink: /testing/test-pyramid/
 number: "421"
 category: Testing
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #testing #intermediate #strategy #quality
 
 ⚡ TL;DR — A model prescribing many fast unit tests at the base, fewer integration tests in the middle, and very few slow E2E tests at the top.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #421         │ Category: Testing                    │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #testing #intermediate #strategy #quality
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Testing Strategy, CI/CD, QA                                       │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

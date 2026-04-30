@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Encapsulation"
+parent: "Clean Code"
+nav_order: 427
+permalink: /clean-code/encapsulation/
 number: "427"
 category: Clean Code
 difficulty: ★☆☆
@@ -13,6 +18,7 @@ tags: #cleancode #oop #foundational
 
 ⚡ TL;DR — Bundling data and the methods that operate on it together, while restricting direct access to the internal state.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #427         │ Category: Clean Code                 │ Difficulty: ★☆☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #cleancode #oop #foundational
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Cohesion, Information Hiding, Invariants                          │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

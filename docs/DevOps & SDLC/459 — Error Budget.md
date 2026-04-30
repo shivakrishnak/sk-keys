@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Error Budget"
+parent: "DevOps & SDLC"
+nav_order: 459
+permalink: /devops-sdlc/error-budget/
 number: "459"
 category: DevOps & SDLC
 difficulty: ★★★
@@ -13,6 +18,7 @@ tags: #devops #sdlc #advanced #sre #reliability
 
 ⚡ TL;DR — The quantified amount of unreliability you are allowed before reliability must take priority over feature shipping.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #459         │ Category: DevOps & SDLC              │ Difficulty: ★★★           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #devops #sdlc #advanced #sre #reliability
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ SRE, Release Decisions, CI/CD Gates                               │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

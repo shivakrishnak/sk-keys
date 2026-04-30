@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Inheritance"
+parent: "Clean Code"
+nav_order: 429
+permalink: /clean-code/inheritance/
 number: "429"
 category: Clean Code
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #cleancode #oop #foundational
 
 ⚡ TL;DR — A mechanism where a class acquires the properties and behavior of a parent class, establishing an IS-A relationship.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #429         │ Category: Clean Code                 │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #cleancode #oop #foundational
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ LSP, Composition over Inheritance, Subtype Polymorphism           │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

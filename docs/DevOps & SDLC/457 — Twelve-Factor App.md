@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Twelve-Factor App"
+parent: "DevOps & SDLC"
+nav_order: 457
+permalink: /devops-sdlc/twelve-factor-app/
 number: "457"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #devops #sdlc #intermediate #architecture
 
 ⚡ TL;DR — A methodology of 12 practices for building portable, cloud-native, scalable software-as-a-service applications.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #457         │ Category: DevOps & SDLC              │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #devops #sdlc #intermediate #architecture
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ IaC, Immutable Infrastructure, CI/CD                              │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

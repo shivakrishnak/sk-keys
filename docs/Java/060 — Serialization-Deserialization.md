@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Serialization / Deserialization"
+parent: "Java Fundamentals"
+nav_order: 60
+permalink: /java/serialization-deserialization/
 number: "060"
 category: Java Language
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #java #intermediate #serialization #io #security
 
 ⚡ TL;DR — Convert a Java object graph to bytes (serialize) and restore it (deserialize); Java's built-in mechanism is legacy and insecure — prefer JSON/Protobuf/Avro in modern code.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #060         │ Category: Java Language              │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #java #intermediate #serialization #io #security
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ RMI, JMS, Caching (legacy), Persistence, Network Protocols        │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Autoboxing / Unboxing"
+parent: "Java Fundamentals"
+nav_order: 51
+permalink: /java/autoboxing-unboxing/
 number: "051"
 category: Java Language
 difficulty: ★☆☆
@@ -13,6 +18,7 @@ tags: #java #foundational #internals
 
 ⚡ TL;DR — Automatic conversion between primitive types (`int`) and their wrapper classes (`Integer`) — transparent but carries hidden performance costs.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #051         │ Category: Java Language              │ Difficulty: ★☆☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #java #foundational #internals
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Collections, Generics, Streams                                    │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

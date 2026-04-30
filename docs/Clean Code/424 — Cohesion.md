@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Cohesion"
+parent: "Clean Code"
+nav_order: 424
+permalink: /clean-code/cohesion/
 number: "424"
 category: Clean Code
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #cleancode #architecture #foundational
 
 ⚡ TL;DR — How focused and related the responsibilities inside a single module are.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #424         │ Category: Clean Code                 │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #cleancode #architecture #foundational
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Coupling, Refactoring                                             │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

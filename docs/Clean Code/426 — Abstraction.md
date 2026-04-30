@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Abstraction"
+parent: "Clean Code"
+nav_order: 426
+permalink: /clean-code/abstraction/
 number: "426"
 category: Clean Code
 difficulty: ★☆☆
@@ -13,6 +18,7 @@ tags: #cleancode #oop #foundational
 
 ⚡ TL;DR — Hiding implementation details and exposing only what is necessary through a simplified interface.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #426         │ Category: Clean Code                 │ Difficulty: ★☆☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #cleancode #oop #foundational
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Encapsulation, Coupling, API Design                               │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

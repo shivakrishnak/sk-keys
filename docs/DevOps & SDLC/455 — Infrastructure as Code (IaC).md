@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Infrastructure as Code (IaC)"
+parent: "DevOps & SDLC"
+nav_order: 455
+permalink: /devops-sdlc/infrastructure-as-code-iac/
 number: "455"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #devops #sdlc #intermediate #iac
 
 ⚡ TL;DR — Define and provision infrastructure (servers, networks, databases) through machine-readable configuration files instead of manual processes.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #455         │ Category: DevOps & SDLC              │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #devops #sdlc #intermediate #iac
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ GitOps, Immutable Infrastructure, Cloud Provisioning              │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

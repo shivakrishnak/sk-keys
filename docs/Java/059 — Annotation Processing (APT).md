@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Annotation Processing (APT)"
+parent: "Java Fundamentals"
+nav_order: 59
+permalink: /java/annotation-processing-apt/
 number: "059"
 category: Java Language
 difficulty: ★★★
@@ -13,6 +18,7 @@ tags: #java #advanced #annotations #apt #codegen
 
 ⚡ TL;DR — A compile-time code generation hook: `@Getter` on a class triggers Lombok to write the getter source before javac finishes — zero runtime cost, all errors caught at compile time.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #059         │ Category: Java Language              │ Difficulty: ★★★           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #java #advanced #annotations #apt #codegen
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Lombok, MapStruct, Dagger 2, Spring, Auto-Value, Record Builder   │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

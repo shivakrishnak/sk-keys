@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Blue-Green Deployment"
+parent: "DevOps & SDLC"
+nav_order: 451
+permalink: /devops-sdlc/blue-green-deployment/
 number: "451"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #devops #sdlc #intermediate #reliability
 
 ⚡ TL;DR — Run two identical production environments (blue and green); switch traffic instantly to the new version, with instant rollback by switching back.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #451         │ Category: DevOps & SDLC              │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #devops #sdlc #intermediate #reliability
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ CI/CD Pipeline, Zero-Downtime Deployment                          │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

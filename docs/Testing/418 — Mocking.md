@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Mocking"
+parent: "Testing"
+nav_order: 418
+permalink: /testing/mocking/
 number: "418"
 category: Testing
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #testing #intermediate #java #mockito
 
 ⚡ TL;DR — Replacing a real dependency with a controlled fake that records interactions, allowing you to verify how the unit under test uses it.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #418         │ Category: Testing                    │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #testing #intermediate #java #mockito
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Unit Test, TDD, Integration Test                                  │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

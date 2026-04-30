@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Property-Based Testing"
+parent: "Testing"
+nav_order: 422
+permalink: /testing/property-based-testing/
 number: "422"
 category: Testing
 difficulty: ★★★
@@ -13,6 +18,7 @@ tags: #testing #advanced #property-based #quality
 
 ⚡ TL;DR — Instead of specifying specific examples, define properties that must hold for all inputs — and let the framework generate hundreds of random test cases automatically.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #422         │ Category: Testing                    │ Difficulty: ★★★           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #testing #advanced #property-based #quality
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Unit Test, TDD, Fuzzing                                           │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

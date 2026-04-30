@@ -49,11 +49,17 @@ Data structures, algorithms, and complexity analysis.
 ### [Software Design](./docs/software-design/)
 Design principles, patterns, and best practices.
 
+### [Testing](./docs/Testing/)
+Testing strategies and methodologies — Unit, Integration, TDD, BDD, Mutation Testing.
+
+### [Clean Code](./docs/Clean Code/)
+Clean code principles — Cohesion, Coupling, Abstraction, Refactoring, Technical Debt.
+
 ### [Cloud & Infrastructure](./docs/cloud-infrastructure/)
 Cloud platforms and infrastructure management.
 
-### [DevOps & SDLC](./docs/devops-sdlc/)
-Software development lifecycle and DevOps practices.
+### [DevOps & SDLC](./docs/DevOps & SDLC/)
+Software development lifecycle and DevOps practices — CI/CD, GitOps, SRE, IaC.
 
 ### [HTML](./docs/HTML/)
 HTML document structure, semantics, accessibility, and browser rendering.

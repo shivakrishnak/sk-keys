@@ -33,7 +33,12 @@ Examples:
 
 ```markdown
 ---
-number: NNN
+layout: default
+title: "KEYWORD NAME"
+parent: "Category Name"
+nav_order: NNN
+permalink: /category-slug/keyword-slug/
+number: "NNN"
 category: Category Name
 difficulty: ★★☆
 depends_on: Concept1, Concept2
@@ -42,7 +47,8 @@ tags: #tag1, #tag2, #tag3
 ---
 
 # NNN — KEYWORD NAME
-tags: #tag1, #tag2, #tag3
+
+`#tag1` `#tag2` `#tag3`
 
 ⚡ TL;DR — one sentence that captures the essence.
 

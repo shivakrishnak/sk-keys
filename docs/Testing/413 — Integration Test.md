@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Integration Test"
+parent: "Testing"
+nav_order: 413
+permalink: /testing/integration-test/
 number: "413"
 category: Testing
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #testing #intermediate #java #spring
 
 ⚡ TL;DR — A test that verifies multiple components working together, using real or near-real dependencies.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #413         │ Category: Testing                    │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #testing #intermediate #java #spring
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Test Pyramid, CI/CD, Contract Test                                │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

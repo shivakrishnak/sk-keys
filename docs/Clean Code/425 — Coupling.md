@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Coupling"
+parent: "Clean Code"
+nav_order: 425
+permalink: /clean-code/coupling/
 number: "425"
 category: Clean Code
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #cleancode #architecture #foundational
 
 ⚡ TL;DR — The degree to which one module depends on the internals of another.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #425         │ Category: Clean Code                 │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #cleancode #architecture #foundational
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Dependency Injection, DIP, Refactoring                            │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

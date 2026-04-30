@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Unit Test"
+parent: "Testing"
+nav_order: 412
+permalink: /testing/unit-test/
 number: "412"
 category: Testing
 difficulty: ★☆☆
@@ -13,6 +18,7 @@ tags: #testing #foundational #java
 
 ⚡ TL;DR — A test that verifies a single unit of code (method or class) in complete isolation from all external dependencies.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #412         │ Category: Testing                    │ Difficulty: ★☆☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #testing #foundational #java
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ TDD, Test Pyramid, CI/CD                                          │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

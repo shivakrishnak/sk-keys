@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Canary Deployment"
+parent: "DevOps & SDLC"
+nav_order: 452
+permalink: /devops-sdlc/canary-deployment/
 number: "452"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #devops #sdlc #intermediate #reliability
 
 ⚡ TL;DR — Gradually shift traffic from the old version to the new version, monitoring at each step, and rolling back immediately if metrics degrade.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #452         │ Category: DevOps & SDLC              │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #devops #sdlc #intermediate #reliability
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ CI/CD Pipeline, Risk Reduction, Feature Validation                │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

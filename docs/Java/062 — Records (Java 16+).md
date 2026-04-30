@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Records (Java 16+)"
+parent: "Java Fundamentals"
+nav_order: 62
+permalink: /java/records-java-16/
 number: "062"
 category: Java Language
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #java #intermediate #records #immutability #java16
 
 ⚡ TL;DR — Transparent, immutable data carriers: `record Point(int x, int y) {}` gives you a canonical constructor, accessors `x()` and `y()`, plus `equals`, `hashCode`, and `toString` — all generated.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #062         │ Category: Java Language              │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #java #intermediate #records #immutability #java16
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ DTOs, Value Objects, Pattern Matching, Domain Models              │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

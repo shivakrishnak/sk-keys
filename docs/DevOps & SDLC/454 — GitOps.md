@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "GitOps"
+parent: "DevOps & SDLC"
+nav_order: 454
+permalink: /devops-sdlc/gitops/
 number: "454"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #devops #sdlc #intermediate #gitops
 
 ⚡ TL;DR — Use git as the single source of truth for both application code and infrastructure; automated agents reconcile the running system to match the git state.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #454         │ Category: DevOps & SDLC              │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #devops #sdlc #intermediate #gitops
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ CI/CD Pipeline, IaC, Kubernetes                                   │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

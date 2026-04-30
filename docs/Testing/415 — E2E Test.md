@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "E2E Test"
+parent: "Testing"
+nav_order: 415
+permalink: /testing/e2e-test/
 number: "415"
 category: Testing
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #testing #intermediate #e2e #quality
 
 ⚡ TL;DR — A test that exercises the entire system from the user's perspective — browser, API, database — verifying complete user journeys.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #415         │ Category: Testing                    │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #testing #intermediate #e2e #quality
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Test Pyramid, CI/CD, QA                                           │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

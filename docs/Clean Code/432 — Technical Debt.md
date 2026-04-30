@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Technical Debt"
+parent: "Clean Code"
+nav_order: 432
+permalink: /clean-code/technical-debt/
 number: "432"
 category: Clean Code
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #cleancode #architecture #intermediate
 
 ⚡ TL;DR — The accumulated cost of shortcuts and deferred decisions in a codebase — debt that compounds interest until it is paid down.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #432         │ Category: Clean Code                 │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #cleancode #architecture #intermediate
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Refactoring, Code Smells, Velocity, Architecture                  │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

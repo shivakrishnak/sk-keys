@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Type Erasure"
+parent: "Java Fundamentals"
+nav_order: 54
+permalink: /java/type-erasure/
 number: "054"
 category: Java Language
 difficulty: ★★★
@@ -13,6 +18,7 @@ tags: #java #intermediate #generics #jvm #internals
 
 ⚡ TL;DR — The compiler enforces generic type constraints then strips all type parameters from bytecode; `List<String>` and `List<Integer>` become identical `List` at runtime.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #054         │ Category: Java Language              │ Difficulty: ★★★           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #java #intermediate #generics #jvm #internals
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Reflection, Generics Limitations, Heap Pollution                  │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

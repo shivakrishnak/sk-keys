@@ -1,4 +1,9 @@
----
+﻿---
+layout: default
+title: "Generics"
+parent: "Java Fundamentals"
+nav_order: 53
+permalink: /java/generics/
 number: "053"
 category: Java Language
 difficulty: ★★★
@@ -13,6 +18,7 @@ tags: #java #intermediate #generics #typesystem
 
 ⚡ TL;DR — Compile-time type parameters that eliminate casts, prevent ClassCastException at runtime, and allow reusable, type-safe data structures and algorithms.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #053         │ Category: Java Language              │ Difficulty: ★★★          │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #java #intermediate #generics #typesystem
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Collections Framework, Streams API, Optional, Spring             │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

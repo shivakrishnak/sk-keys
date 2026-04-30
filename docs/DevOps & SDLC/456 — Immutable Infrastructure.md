@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Immutable Infrastructure"
+parent: "DevOps & SDLC"
+nav_order: 456
+permalink: /devops-sdlc/immutable-infrastructure/
 number: "456"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #devops #sdlc #intermediate #reliability
 
 ⚡ TL;DR — Never patch or modify running servers; instead, build a new image and replace the old instance entirely.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #456         │ Category: DevOps & SDLC              │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #devops #sdlc #intermediate #reliability
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ GitOps, IaC, Cloud-Native Architecture                            │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

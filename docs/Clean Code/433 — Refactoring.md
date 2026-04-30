@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Refactoring"
+parent: "Clean Code"
+nav_order: 433
+permalink: /clean-code/refactoring/
 number: "433"
 category: Clean Code
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #cleancode #intermediate #pattern
 
 ⚡ TL;DR — Restructuring existing code without changing its external behavior — improving design while keeping all tests green.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #433         │ Category: Clean Code                 │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #cleancode #intermediate #pattern
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Technical Debt, Clean Code, Boy Scout Rule                        │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Polymorphism"
+parent: "Clean Code"
+nav_order: 428
+permalink: /clean-code/polymorphism/
 number: "428"
 category: Clean Code
 difficulty: ★★☆
@@ -13,6 +18,7 @@ tags: #cleancode #oop #foundational #pattern
 
 ⚡ TL;DR — The ability of different types to be treated uniformly through a shared interface, each responding differently to the same call.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #428         │ Category: Clean Code                 │ Difficulty: ★★☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #cleancode #oop #foundational #pattern
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Strategy Pattern, OCP, Runtime Dispatch                           │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 

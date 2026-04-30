@@ -1,4 +1,9 @@
 ﻿---
+layout: default
+title: "Rolling Update"
+parent: "DevOps & SDLC"
+nav_order: 453
+permalink: /devops-sdlc/rolling-update/
 number: "453"
 category: DevOps & SDLC
 difficulty: ★☆☆
@@ -13,6 +18,7 @@ tags: #devops #sdlc #foundational #reliability
 
 ⚡ TL;DR — Replace instances of the old version one-by-one (or in small batches) with the new version, keeping the service available throughout.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #453         │ Category: DevOps & SDLC              │ Difficulty: ★☆☆           │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -20,6 +26,7 @@ tags: #devops #sdlc #foundational #reliability
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ CI/CD Pipeline, Kubernetes Deployments                            │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
