@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Metaspace"
 parent: "Java Fundamentals"
@@ -9,10 +9,14 @@ permalink: /java/metaspace/
 
 ⚡ TL;DR — Off-heap native memory region that stores class metadata, replacing PermGen in Java 8 — grows dynamically and lives outside GC-managed heap. 
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────┐
+│ #008  │ Category: JVM Memory     │ Difficulty: ★★☆   │
+│ Depends on: JVM, Class Loader,   │ Used by: Every    │
+│ Heap Memory                      │ loaded class,     │
+│                                  │ Spring, Hibernate │
+└──────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -74,10 +78,12 @@ Mixing them in the same memory region (heap) was conceptually wrong.
 
 ```
 Before Java 8:                After Java 8:
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+┌──────────────┐              ┌──────────────┐  ┌─────────────┐
+│     Heap     │              │     Heap     │  │  Metaspace  │
+│  ┌────────┐  │              │              │  │  (native)   │
+│  │PermGen │  │              │  Objects     │  │  Classes    │
+│  │Classes │  │              │  Arrays      │  │  Methods    │
+│  └────────┘  │              │              │  │  Constants  │
 │  Objects     │              └──────────────┘  └─────────────┘
 │  Arrays      │              bounded by -Xmx   grows into OS
 └──────────────┘                                memory
@@ -101,22 +107,38 @@ bounded by -Xmx
 
 #### ⚙️ What Lives in Metaspace
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌─────────────────────────────────────────────────────────┐
+│                     METASPACE                           │
+│                                                         │
+│  Per-class metadata:                                    │
+│  ┌─────────────────────────────────────────────────┐    │
+│  │  Class structure (klass)                        │    │
+│  │  • Field names, types, offsets                  │    │
+│  │  • Method signatures                            │    │
+│  │  • Method bytecode                              │    │
+│  │  • Constant pool (string literals, refs)        │    │
+│  │  • Access flags (public/private/final)          │    │
+│  │  • Annotations                                  │    │
+│  │  • Interface list                               │    │
+│  │  • vtable (virtual method dispatch table)       │    │
+│  │  • itable (interface method dispatch table)     │    │
+│  └─────────────────────────────────────────────────┘    │
 │                                                         │
 │  Runtime data:                                          │
-│| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+│  ┌─────────────────────────────────────────────────┐    │
+│  │  • JIT compiled code cache (Code Cache)         │    │
+│  │    (technically separate but also off-heap)     │    │
+│  │  • Interned strings (String Pool)               │    │
+│  │    (moved to heap in Java 7+)                   │    │
+│  └─────────────────────────────────────────────────┘    │
 │                                                         │
 │  NOT in Metaspace:                                      │
-│| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+│  ┌─────────────────────────────────────────────────┐    │
+│  │  ✗ Object instances → Heap                      │    │
+│  │  ✗ Static variable values → Heap (Java 8+)      │    │
+│  │  ✗ String literal values → Heap String Pool     │    │
+│  └─────────────────────────────────────────────────┘    │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -304,10 +326,28 @@ java -XX:MetaspaceSize=128m \
 
 #### ⚙️ PermGen vs Metaspace — Side by Side
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌────────────────────┬────────────────────┬────────────────────┐
+│ Aspect             │ PermGen (≤Java 7)  │ Metaspace (Java 8+)│
+├────────────────────┼────────────────────┼────────────────────┤
+│ Location           │ On heap            │ Native memory      │
+├────────────────────┼────────────────────┼────────────────────┤
+│ Size               │ Fixed              │ Dynamic            │
+├────────────────────┼────────────────────┼────────────────────┤
+│ Default max        │ 64MB-82MB          │ Unlimited          │
+├────────────────────┼────────────────────┼────────────────────┤
+│ GC trigger         │ Full GC            │ When threshold hit │
+├────────────────────┼────────────────────┼────────────────────┤
+│ OOM message        │ PermGen space      │ Metaspace          │
+├────────────────────┼────────────────────┼────────────────────┤
+│ Tuning flag        │ -XX:MaxPermSize    │ -XX:MaxMetaspace   │
+│                    │                   │       Size         │
+├────────────────────┼────────────────────┼────────────────────┤
+│ String pool        │ Stored here        │ Moved to heap      │
+├────────────────────┼────────────────────┼────────────────────┤
+│ Static variables   │ Stored here        │ Values on heap     │
+└────────────────────┴────────────────────┴────────────────────┘
+```
 
 ---
 
@@ -411,10 +451,26 @@ java -Xmx400m \
 
 #### 📌 Quick Reference Card
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Off-heap native memory for class          │
+│              │ metadata — lives and dies with its        │
+│              │ ClassLoader                               │
+├──────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Always present — every loaded class uses  │
+│              │ it; tune it for dynamic class-heavy apps  │
+├──────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Never leave MaxMetaspaceSize uncapped     │
+│              │ in production — native memory exhaustion  │
+│              │ is worse than heap OOM                    │
+├──────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Metaspace = class blueprint storage,     │
+│              │  off-heap, grows until you stop it"       │
+├──────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ PermGen → Code Cache → Class Loader GC →  │
+│              │ CGLIB → Hibernate Proxy → jcmd            │
+└──────────────────────────────────────────────────────────┘
+```
 
 ---
 

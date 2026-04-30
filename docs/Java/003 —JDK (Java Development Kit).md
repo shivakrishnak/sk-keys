@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "JDK (Java Development Kit)"
 parent: "Java Fundamentals"
@@ -44,10 +44,15 @@ Running Java needs JRE. But building Java needs more:
 
 Bundle all of that together → JDK.
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌─────────────────────────────────────────┐
+│                  JDK                    │
+│                                         │
+│   ┌─────────────────────────────────┐   │
+│   │             JRE                 │   │
+│   │   ┌─────────────────────────┐   │   │
+│   │   │          JVM            │   │   │
+│   │   └─────────────────────────┘   │   │
 │   │   + Standard Library            │   │
 │   └─────────────────────────────────┘   │
 │                                         │
@@ -182,10 +187,26 @@ $2 ==> 6
 
 #### 🔁 JDK in the Full Development Flow
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────┐
+│                DEVELOPMENT LIFECYCLE                 │
+│                                                      │
+│  Write Code (.java)                                  │
+│       ↓                                              │
+│  javac → .class files        [JDK: compiler]         │
+│       ↓                                              │
+│  jar → .jar / .war           [JDK: packager]         │
+│       ↓                                              │
+│  Unit Tests (JUnit)          [JDK: runs tests]       │
+│       ↓                                              │
+│  javadoc → HTML docs         [JDK: doc gen]          │
+│       ↓                                              │
+│  Deploy to server            [JRE sufficient]        │
+│       ↓                                              │
+│  Production issue?                                   │
+│    jstack / jmap / jcmd      [JDK tools diagnose]    │
+└──────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -273,19 +294,38 @@ Fix: switch to Eclipse Temurin or Amazon Corretto (free, production-grade)
 
 #### 📌 Quick Reference Card
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Complete Java toolchain: compile, run,    │
+│              │ debug, profile, package                   │
+├──────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Developing Java; diagnosing production    │
+├──────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Pure runtime containers (use slim JRE or  │
+│              │ jlink-built custom runtime)               │
+├──────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "JDK = JRE + the tools to build and       │
+│              │  diagnose Java systems"                   │
+├──────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Bytecode → javap → Class Loader →         │
+│              │ JIT Compiler → GraalVM Native Image       │
+└──────────────────────────────────────────────────────────┘
+```
 
 ---
 
 ### 🧩 JVM / JRE / JDK — The Complete Picture Together
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌─────────────────────────────────────────────────────┐
+│                      JDK                           │
+│  ┌──────────────────────────────────────────────┐  │
+│  │                   JRE                        │  │
+│  │  ┌─────────────────────────────────────────┐ │  │
+│  │  │                JVM                      │ │  │
+│  │  │  ClassLoader + Runtime Areas +          │ │  │
+│  │  │  Execution Engine + GC                  │ │  │
+│  │  └─────────────────────────────────────────┘ │  │
 │  │  + Java Standard Library (java.base, etc.)   │  │
 │  └──────────────────────────────────────────────┘  │
 │  + javac, jar, jshell, jdb, javadoc                │

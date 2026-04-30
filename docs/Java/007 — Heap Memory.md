@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Heap Memory"
 parent: "Java Fundamentals"
@@ -9,10 +9,13 @@ permalink: /java/heap-memory/
 
 ⚡ TL;DR — The JVM's shared memory region where all objects live, managed automatically by the Garbage Collector across generational spaces. 
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────┐
+│ #007  │ Category: JVM Memory     │ Difficulty: ★★☆   │
+│ Depends on: JVM, GC, Stack Memory │ Used by: Every   │
+│ object allocation, GC, Spring,    │ Hibernate        │
+└──────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -92,25 +95,41 @@ Objects surviving: ██                    (very low)
 
 #### ⚙️ How It Works — Heap Structure
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        JVM HEAP                             │
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │                  YOUNG GENERATION                    │   │
+│  │                                                      │   │
+│  │  ┌─────────────────┐  ┌──────────┐  ┌──────────┐    │   │
+│  │  │      EDEN       │  │Survivor 0│  │Survivor 1│    │   │
+│  │  │                 │  │  (From)  │  │   (To)   │    │   │
+│  │  │ new objects     │  │          │  │          │    │   │
+│  │  │ allocated here  │  │ age 1-N  │  │ (empty)  │    │   │
+│  │  │                 │  │ objects  │  │          │    │   │
+│  │  └─────────────────┘  └──────────┘  └──────────┘    │   │
 │  │         ~80%               ~10%          ~10%        │   │
 │  └──────────────────────────────────────────────────────┘   │
 │                           ↓ promotion                       │
-│| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │                  OLD GENERATION                      │   │
+│  │              (Tenured Space)                         │   │
+│  │                                                      │   │
+│  │  Long-lived objects promoted from Young Gen          │   │
+│  │  Large objects allocated directly here               │   │
+│  │  Collected by Major GC / Full GC                     │   │
+│  └──────────────────────────────────────────────────────┘   │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 
 SEPARATE (not heap):
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+┌──────────────────────────────────────────────────────────┐
+│  METASPACE (off-heap, native memory)                     │
+│  Class metadata, method bytecode, static variables       │
+│  (replaced PermGen in Java 8)                            │
+└──────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -119,30 +138,41 @@ SEPARATE (not heap):
 ```
 new Order(42)
       ↓
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+┌─────────────────────────────────────────────────────────┐
+│  Step 1: TLAB Check                                     │
+│  Each thread has a Thread Local Allocation Buffer        │
+│  (a private chunk of Eden)                              │
+│  → Allocate from TLAB — no synchronization needed       │
+│  → Just bump a pointer: ptr += objectSize               │
+│  → Extremely fast (~nanoseconds)                        │
+└─────────────────────────────────────────────────────────┘
       ↓ (TLAB full?)
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+┌─────────────────────────────────────────────────────────┐
+│  Step 2: New TLAB from Eden                             │
+│  Request fresh TLAB chunk from Eden space               │
+│  (synchronized but infrequent)                          │
+└─────────────────────────────────────────────────────────┘
       ↓ (Eden full?)
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+┌─────────────────────────────────────────────────────────┐
+│  Step 3: Minor GC triggered                             │
+│  • Scan Young Gen for live objects                      │
+│  • Dead objects → reclaimed immediately                 │
+│  • Live objects → copied to Survivor space              │
+│  • Age incremented per GC survived                      │
+└─────────────────────────────────────────────────────────┘
       ↓ (object age > threshold, default 15?)
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+┌─────────────────────────────────────────────────────────┐
+│  Step 4: Promotion to Old Gen                           │
+│  Object copied to Old Generation                        │
+│  Will only be collected by Major/Full GC now            │
+└─────────────────────────────────────────────────────────┘
       ↓ (object too large for Young Gen?)
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+┌─────────────────────────────────────────────────────────┐
+│  Step 5: Direct Old Gen allocation                      │
+│  Large objects (arrays, large strings) bypass           │
+│  Young Gen entirely → go straight to Old Gen            │
+└─────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -401,10 +431,26 @@ bash
 
 #### 📌 Quick Reference Card
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Shared memory region for all objects,     │
+│              │ generationally structured for GC          │
+│              │ efficiency                                │
+├──────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Always — every object lives here          │
+├──────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Avoid heap for large buffers in           │
+│              │ latency-critical paths — use off-heap     │
+│              │ DirectByteBuffer instead                  │
+├──────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Heap = shared object city; GC = the      │
+│              │  cleanup crew; generations = the          │
+│              │  efficiency trick"                        │
+├──────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ GC Roots → Minor GC → Major GC →          │
+│              │ G1GC → ZGC → Metaspace → TLAB             │
+└──────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Memory Barrier"
 parent: "Java Fundamentals"
@@ -7,10 +7,16 @@ permalink: /java/memory-barrier/
 ---
 ⚡ TL;DR — A CPU and compiler instruction that prevents reordering of memory operations across a boundary, ensuring all threads see a consistent view of memory at synchronisation points.
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│ #014         │ Category: JVM Internals              │ Difficulty: ★★★          │
+├──────────────┼──────────────────────────────────────┼──────────────────────────┤
+│ Depends on:  │ [[JVM]] [[Java Memory Model]]        │                          │
+│              │ [[volatile]] [[CPU Cache]]            │                          │
+│ Used by:     │ [[volatile]] [[synchronized]]         │                          │
+│              │ [[happens-before]] [[JIT Compiler]]  │                          │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -38,10 +44,33 @@ Modern CPUs and compilers aggressively reorder instructions for performance — 
 
 Modern CPUs don't execute instructions in the order you write them. They have:
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌─────────────────────────────────────────────────────────┐
+│              WHY CPUS REORDER                           │
+│                                                         │
+│  1. OUT-OF-ORDER EXECUTION                              │
+│     CPU executes instructions in whatever order         │
+│     maximises pipeline utilisation                      │
+│     x = 1; y = 2; → CPU may execute y=2 first          │
+│     if it's faster (cache hit vs cache miss)            │
+│                                                         │
+│  2. STORE BUFFERS                                       │
+│     Writes don't go directly to memory                  │
+│     They sit in a per-CPU store buffer first            │
+│     Other CPUs can't see them yet                       │
+│                                                         │
+│  3. CACHE HIERARCHY                                     │
+│     L1/L2 cache per core — not shared                   │
+│     L3 shared — but coherency has latency               │
+│     A write on CPU1 may not be in CPU2's L1 for         │
+│     hundreds of nanoseconds                             │
+│                                                         │
+│  4. COMPILER REORDERING                                 │
+│     JIT and javac both reorder instructions             │
+│     for performance — valid in single thread            │
+│     catastrophic in multi-thread without barriers       │
+└─────────────────────────────────────────────────────────┘
+```
 
 **The consequence — the classic broken example:**
 
@@ -157,10 +186,43 @@ everything)   "stop here, flush,       see consistent
 
 ### ⚙️ How It Works — Four Types of Barriers
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                  MEMORY BARRIER TYPES                           │
+│                                                                 │
+│  Operations: Load (read) and Store (write)                      │
+│  Barriers prevent reordering ACROSS the barrier                 │
+│                                                                 │
+│  LoadLoad Barrier                                               │
+│  ─────────────                                                  │
+│  Load1                                                          │
+│  [LoadLoad]  ← Load1 must complete before Load2                 │
+│  Load2                                                          │
+│  Use: ensure fresh reads in sequence                            │
+│                                                                 │
+│  StoreStore Barrier                                             │
+│  ──────────────────                                             │
+│  Store1                                                         │
+│  [StoreStore] ← Store1 visible before Store2                    │
+│  Store2                                                         │
+│  Use: safe object publication (fields before ref)               │
+│                                                                 │
+│  LoadStore Barrier                                              │
+│  ─────────────────                                              │
+│  Load1                                                          │
+│  [LoadStore] ← Load1 before Store2                              │
+│  Store2                                                         │
+│  Use: read-then-write sequences that must stay ordered          │
+│                                                                 │
+│  StoreLoad Barrier (most expensive — "full fence")              │
+│  ──────────────────────────────────────────────────            │
+│  Store1                                                         │
+│  [StoreLoad] ← flush store buffer AND invalidate load cache     │
+│  Load2                                                          │
+│  Use: volatile write followed by volatile read                  │
+│  Cost: forces complete memory synchronisation                   │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 **CPU-level instructions (what JIT actually emits):**
 
@@ -558,10 +620,29 @@ volatile long field2 = 0;
 
 ### 📌 Quick Reference Card
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ CPU + compiler instruction that prevents  │
+│              │ reordering across a boundary — the        │
+│              │ physical enforcement of happens-before    │
+├──────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Cross-thread communication, flag-based    │
+│              │ coordination, safe publication of objects │
+├──────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Don't insert barriers on every operation  │
+│              │ — use them at coordination points only;   │
+│              │ prefer acquire-release over full fences   │
+│              │ where possible                            │
+├──────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "A memory barrier is the JVM telling the  │
+│              │  CPU: stop speculating, flush everything, │
+│              │  let everyone catch up"                   │
+├──────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ volatile → Java Memory Model →            │
+│              │ happens-before → synchronized internals → │
+│              │ VarHandle → False Sharing → @Contended    │
+└──────────────────────────────────────────────────────────┘
+```
 
 ---
 

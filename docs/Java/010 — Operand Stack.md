@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Operand Stack"
 parent: "Java Fundamentals"
@@ -9,10 +9,14 @@ permalink: /java/operand-stack/
 
 ⚡ TL;DR — The per-frame LIFO working memory where bytecode instructions push operands, perform operations, and pass results — the JVM's calculation scratch pad. 
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────┐
+│ #010  │ Category: JVM Internals  │ Difficulty: ★★★   │
+│ Depends on: Stack Frame,         │ Used by: Every    │
+│ Bytecode, Local Variable Table   │ bytecode instr,   │
+│                                  │ JIT Compiler      │
+└──────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -133,10 +137,45 @@ Single unified mechanism handles ALL of: arithmetic, comparisons, method argumen
 
 Every bytecode instruction has a **precise contract** with the operand stack — defined number of values consumed (popped) and produced (pushed):
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌─────────────────────────────────────────────────────────┐
+│           BYTECODE → OPERAND STACK CONTRACT             │
+│                                                         │
+│  LOAD instructions (LVT → OS):                         │
+│  iload_N    pops: 0  pushes: 1 (int from slot N)        │
+│  aload_N    pops: 0  pushes: 1 (ref from slot N)        │
+│  lload_N    pops: 0  pushes: 2 (long = 2 stack slots)   │
+│  iconst_N   pops: 0  pushes: 1 (constant int)           │
+│                                                         │
+│  STORE instructions (OS → LVT):                        │
+│  istore_N   pops: 1  pushes: 0 (store int to slot N)    │
+│  astore_N   pops: 1  pushes: 0 (store ref to slot N)    │
+│                                                         │
+│  ARITHMETIC instructions:                              │
+│  iadd        pops: 2  pushes: 1  (int + int)            │
+│  isub        pops: 2  pushes: 1  (int - int)            │
+│  imul        pops: 2  pushes: 1  (int * int)            │
+│  idiv        pops: 2  pushes: 1  (int / int)            │
+│  ineg        pops: 1  pushes: 1  (negate int)           │
+│                                                         │
+│  COMPARISON instructions:                              │
+│  if_icmpeq   pops: 2  pushes: 0  (branch if equal)      │
+│  if_icmplt   pops: 2  pushes: 0  (branch if less than)  │
+│                                                         │
+│  STACK manipulation:                                   │
+│  dup         pops: 0  pushes: 1  (duplicate top)        │
+│  pop         pops: 1  pushes: 0  (discard top)          │
+│  swap        pops: 2  pushes: 2  (swap top two)         │
+│                                                         │
+│  METHOD invocation:                                    │
+│  invokevirtual  pops: N+1  pushes: 0 or 1              │
+│    (pops objectref + N args, pushes return value)       │
+│                                                         │
+│  RETURN:                                               │
+│  ireturn     pops: 1  pushes: 0  (returns int to caller)│
+│  return      pops: 0  pushes: 0  (void return)          │
+└─────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -417,10 +456,29 @@ Fix: use async profilers (async-profiler, JFR)
 
 #### 📌 Quick Reference Card
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Per-frame LIFO working memory — the JVM's │
+│              │ calculation engine, CPU-register-         │
+│              │ independent by design                     │
+├──────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Always present — understanding it unlocks │
+│              │ bytecode reading, JIT behaviour,          │
+│              │ and bytecode generation tools             │
+├──────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Don't manually track operand stack in     │
+│              │ bytecode manipulation — let ASM/ByteBuddy │
+│              │ compute maxStack automatically            │
+├──────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Operand Stack = the JVM's RPN calculator │
+│              │  — push values, apply operations,         │
+│              │  collect result"                          │
+├──────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Local Variable Table → JIT Register       │
+│              │ Allocation → invokedynamic →              │
+│              │ ASM Bytecode Generation                   │
+└──────────────────────────────────────────────────────────┘
+```
 
 ---
 

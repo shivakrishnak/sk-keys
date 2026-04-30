@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Object Header"
 parent: "Java Fundamentals"
@@ -7,10 +7,14 @@ permalink: /java/object-header/
 ---
 ⚡ TL;DR — The hidden metadata prepended to every heap object containing identity, locking state, GC age, and type pointer — invisible in Java source but costs memory on every single object you create.
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│ #012         │ Category: JVM Internals              │ Difficulty: ★★★          │
+├──────────────┼──────────────────────────────────────┼──────────────────────────┤
+│ Depends on:  │ [[JVM]] [[Heap Memory]] [[Bytecode]] │                          │
+│ Used by:     │ [[GC]] [[Synchronized]] [[JIT]]      │                          │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -56,10 +60,15 @@ Java source code doesn't store any of this. A `Point` class with `x` and `y
 ```
 HEAP MEMORY — what actually exists for 'new Point(3,4)':
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+┌─────────────────────────────────────┐
+│         OBJECT HEADER               │  ← JVM managed, invisible
+│  Mark Word      (8 bytes)           │
+│  Klass Pointer  (4 bytes compressed)│
+├─────────────────────────────────────┤
+│         INSTANCE DATA               │  ← your fields
+│  int x = 3     (4 bytes)            │
+│  int y = 4     (4 bytes)            │
+└─────────────────────────────────────┘
 
 Total: 20 bytes for a two-int object
 Your fields: 8 bytes
@@ -140,10 +149,28 @@ instanceof / virtual method dispatch
 
 The Mark Word is the most complex part — it's **multipurpose**, meaning the same 64 bits mean different things depending on object state:
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                    MARK WORD (64-bit JVM)                        │
+│                    8 bytes — always present                      │
+├──────────────────────────────────────────────────────────────────┤
+│ State           │ Bit layout (simplified)                        │
+├─────────────────┼──────────────────────────────────────────────  │
+│ Unlocked        │ [identity hashcode: 31b][unused:25b][age:4b]   │
+│                 │ [biased:1b=0][lock:2b=01]                      │
+├─────────────────┼────────────────────────────────────────────────│
+│ Biased Locked   │ [thread_id:54b][epoch:2b][age:4b]              │
+│                 │ [biased:1b=1][lock:2b=01]                      │
+├─────────────────┼────────────────────────────────────────────────│
+│ Lightweight     │ [ptr_to_lock_record:62b][lock:2b=00]           │
+│ Locked          │ (points to stack-allocated lock record)        │
+├─────────────────┼────────────────────────────────────────────────│
+│ Heavyweight     │ [ptr_to_monitor:62b][lock:2b=10]               │
+│ Locked          │ (points to OS mutex — ObjectMonitor)           │
+├─────────────────┼────────────────────────────────────────────────│
+│ GC Marked       │ [forwarding_ptr:62b][lock:2b=11]               │
+│ (during GC)     │ (points to new location during copying GC)     │
+└──────────────────────────────────────────────────────────────────┘
 
 Last 2 bits = lock state indicator:
   00 → lightweight locked
@@ -154,17 +181,41 @@ Last 2 bits = lock state indicator:
 
 **Klass Pointer:**
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                   KLASS POINTER                                  │
+│                                                                  │
+│  Points to class metadata in Metaspace                          │
+│                                                                  │
+│  64-bit JVM, no compression: 8 bytes                            │
+│  64-bit JVM, compressed OOPs (-XX:+UseCompressedOops):          │
+│    4 bytes (default on heaps ≤ 32GB)                            │
+│                                                                  │
+│  Used by:                                                        │
+│  • instanceof checks → follow klass ptr → check type hierarchy  │
+│  • Virtual method dispatch → klass has vtable                   │
+│  • GC → klass knows object size for correct copying             │
+└──────────────────────────────────────────────────────────────────┘
+```
 
 **Array Header — extra field:**
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                    ARRAY OBJECT HEADER                           │
+│                                                                  │
+│  Mark Word      8 bytes                                          │
+│  Klass Pointer  4 bytes (compressed)                            │
+│  Array Length   4 bytes  ← EXTRA field for arrays only          │
+│  ─────────────────────                                           │
+│  Total:        16 bytes                                          │
+│                                                                  │
+│  Why needed: GC must know array size to copy it correctly        │
+│  int[] arr = new int[100]                                        │
+│  → header stores length=100                                      │
+│  → GC knows: copy 16 + (100 × 4) = 416 bytes                    │
+└──────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -524,10 +575,29 @@ Integer[] boxed = new Integer[1000];
 
 #### 📌 Quick Reference Card
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Hidden 12-16 byte JVM metadata block on   │
+│              │ every heap object — enables locking, GC,  │
+│              │ type checking, identity hash              │
+├──────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Always present — understand it to reason  │
+│              │ about memory costs, locking behaviour,    │
+│              │ and GC efficiency                         │
+├──────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Avoid many tiny objects in               │
+│              │ memory-sensitive paths — header overhead  │
+│              │ dominates small objects                   │
+├──────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "Every object pays a 12-byte JVM tax —   │
+│              │  the smaller the object, the heavier      │
+│              │  the tax"                                 │
+├──────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Mark Word → Compressed OOPs →             │
+│              │ synchronized internals → GC Forwarding →  │
+│              │ Project Valhalla → JOL                    │
+└──────────────────────────────────────────────────────────┘
+```
 
 ---
 

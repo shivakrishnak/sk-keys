@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Stack Frame"
 parent: "Java Fundamentals"
@@ -9,10 +9,14 @@ permalink: /java/stack-frame/
 
 ⚡ TL;DR — The per-method execution unit pushed onto the thread stack, containing everything a method needs to run: local variables, working memory, and return context. 
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────┐
+│ #009  │ Category: JVM Memory     │ Difficulty: ★★★   │
+│ Depends on: Stack Memory, JVM,   │ Used by: Every    │
+│ Bytecode, Thread                 │ method invocation │
+│                                  │ JIT, Debugger     │
+└──────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -58,10 +62,13 @@ Three methods — each with their own `x`. They must not interfere. `b()` must k
 a() calls b() calls c():
 
 STACK (top = active):
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+┌─────────────────────┐
+│ c(): x=3            │ ← executing now
+├─────────────────────┤
+│ b(): x=2            │ ← frozen, waiting for c()
+├─────────────────────┤
+│ a(): x=1            │ ← frozen, waiting for b()
+└─────────────────────┘
 
 c() returns 3:
   → c()'s frame popped
@@ -92,20 +99,57 @@ Each `x` is completely isolated. Return addresses are baked into each frame.
 
 #### ⚙️ Stack Frame — Full Anatomy
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌────────────────────────────────────────────────────────────┐
+│                      STACK FRAME                           │
+│                   (one per method call)                    │
 │                                                            │
-│| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │              LOCAL VARIABLE TABLE                    │  │
+│  │                                                      │  │
+│  │  Slot │ Content                    │ Type            │  │
+│  │  ──── │ ──────────────────────     │ ──────────────  │  │
+│  │   0   │ this (instance methods)    │ reference       │  │
+│  │   1   │ first parameter            │ int/ref/etc     │  │
+│  │   2   │ second parameter           │ int/ref/etc     │  │
+│  │   3   │ first local variable       │ int/ref/etc     │  │
+│  │   4   │ second local variable      │ int/ref/etc     │  │
+│  │  ...  │ ...                        │ ...             │  │
+│  │                                    │                 │  │
+│  │  Notes:                                              │  │
+│  │  • long/double occupy TWO slots                      │  │
+│  │  • static methods: no slot 0 (no 'this')            │  │
+│  │  • references store heap address, not object         │  │
+│  │  • size fixed at compile time (javac calculates)     │  │
+│  └──────────────────────────────────────────────────────┘  │
 │                                                            │
-│| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │                 OPERAND STACK                        │  │
+│  │                                                      │  │
+│  │  • LIFO stack for intermediate calculations          │  │
+│  │  • Bytecode instructions push/pop values here        │  │
+│  │  • Max depth fixed at compile time                   │  │
+│  │  • Empty at start of method                          │  │
+│  │  • Must be empty before method returns               │  │
+│  │                                                      │  │
+│  │  Example: computing (a + b) * c                      │  │
+│  │  iload_1  → [a]                                      │  │
+│  │  iload_2  → [a, b]                                   │  │
+│  │  iadd     → [a+b]                                    │  │
+│  │  iload_3  → [a+b, c]                                 │  │
+│  │  imul     → [(a+b)*c]                                │  │
+│  │  ireturn  → []  (value returned to caller's stack)   │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │                   FRAME DATA                         │  │
+│  │                                                      │  │
+│  │  • Return address: PC of next instruction in caller  │  │
+│  │  • Constant Pool reference: for symbolic resolution  │  │
+│  │  • Exception table: maps bytecode ranges to          │  │
+│  │    catch handlers — used when exception thrown       │  │
+│  │  • Method reference: which method this frame is for  │  │
+│  └──────────────────────────────────────────────────────┘  │
 └────────────────────────────────────────────────────────────┘
 ```
 
@@ -444,10 +488,28 @@ Optional<StackWalker.StackFrame> frame = walker
 
 #### 📌 Quick Reference Card
 
-| #??? | Category: ??? | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | — | |
-| **Used by:** | — | |
+```
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Per-method execution context: local vars  │
+│              │ + operand scratch pad + return context    │
+├──────────────────────────────────────────────────────────┤
+│ USE WHEN     │ Always — every method call creates one;   │
+│              │ understanding frames = understanding       │
+│              │ bytecode, exceptions, and debuggers       │
+├──────────────────────────────────────────────────────────┤
+│ AVOID WHEN   │ Don't manually inspect frames in prod     │
+│              │ hot paths — StackWalker is fast but       │
+│              │ getStackTrace() is expensive              │
+├──────────────────────────────────────────────────────────┤
+│ ONE-LINER    │ "A frame is a method's universe — born    │
+│              │  on call, destroyed on return, isolated   │
+│              │  from every other method's universe"      │
+├──────────────────────────────────────────────────────────┤
+│ NEXT EXPLORE │ Operand Stack → Local Variable Table →    │
+│              │ JIT Inlining → StackWalker →              │
+│              │ Virtual Thread Continuations              │
+└──────────────────────────────────────────────────────────┘
+```
 
 ---
 
