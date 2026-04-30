@@ -17,7 +17,40 @@ When helping with markdown files in the `sk-keys` repository:
    - Use numeric prefix: 001, 002, 003 (3 digits)
    - Replace NNN with sequential numbers
 
-2. **Never Manually Add Frontmatter**
+2. **Folder Structure — One Folder Per Category**
+   - Every category from `index.md → Coverage Stats` MUST have its own folder under `docs/`
+   - Folder names must match exactly as listed below:
+
+   | Folder | Category | Keyword Range |
+   |---|---|---|
+   | `docs/Java/` | Java & JVM Internals + Java Language + Java Concurrency | 001–102 |
+   | `docs/Spring/` | Spring & Spring Boot | 103–138 |
+   | `docs/Distributed Systems/` | Distributed Systems | 139–194 |
+   | `docs/Databases/` | Databases | 195–240 |
+   | `docs/Messaging & Streaming/` | Messaging & Streaming | 241–260 |
+   | `docs/Networking & HTTP/` | Networking & HTTP | 261–292 |
+   | `docs/OS & Systems/` | OS & Systems | 295–315 |
+   | `docs/System Design/` | System Design | 320–341 |
+   | `docs/DSA/` | Data Structures & Algorithms | 358–389 |
+   | `docs/Software Design/` | Software Design | 398–423 |
+   | `docs/Testing/` | Testing | 412–423 |
+   | `docs/Clean Code/` | Clean Code | 424–433 |
+   | `docs/Cloud & Infrastructure/` | Cloud & Infrastructure | 434–449 |
+   | `docs/DevOps & SDLC/` | DevOps & SDLC | 450–460 |
+   | `docs/HTML/` | HTML | 461–490 |
+   | `docs/CSS/` | CSS | 491–540 |
+   | `docs/JavaScript/` | JavaScript | 541–620 |
+   | `docs/TypeScript/` | TypeScript | 621–670 |
+   | `docs/React/` | React | 671–730 |
+   | `docs/Node.js/` | Node.js | 731–790 |
+   | `docs/npm/` | npm | 791–820 |
+   | `docs/Webpack/` | Webpack & Build Tools | 821–870 |
+
+   - Each folder MUST contain an `index.md` listing all keywords for that category
+   - Each keyword file MUST be placed in its category folder: `docs/[Category]/NNN — Title.md`
+   - **Never** place keyword files in the wrong folder or in the root `docs/` directory
+
+3. **Never Manually Add Frontmatter**
 ou   - Instead, tell user: "Run `Update-MarkdownFrontmatter.ps1` to update navigation automatically across the entire `docs` tree"
    - If frontmatter is needed, provide the script command
 
@@ -112,18 +145,28 @@ Yes! Use the recursive docs updater:
 .\Update-MarkdownFrontmatter.ps1
 
 This updates all folders and markdown pages under `docs`, including:
-✓ Java Fundamentals (11 topics)
-✓ Spring
-✓ Distributed Systems
-✓ Databases
-✓ Messaging & Streaming
-✓ Networking & HTTP
-✓ OS & Systems
-✓ System Design
-✓ DSA
-✓ Software Design
-✓ Cloud & Infrastructure
-✓ DevOps & SDLC
+✓ Java (001–102)
+✓ Spring (103–138)
+✓ Distributed Systems (139–194)
+✓ Databases (195–240)
+✓ Messaging & Streaming (241–260)
+✓ Networking & HTTP (261–292)
+✓ OS & Systems (295–315)
+✓ System Design (320–341)
+✓ DSA (358–389)
+✓ Software Design (398–423)
+✓ Testing (412–423)
+✓ Clean Code (424–433)
+✓ Cloud & Infrastructure (434–449)
+✓ DevOps & SDLC (450–460)
+✓ HTML (461–490)
+✓ CSS (491–540)
+✓ JavaScript (541–620)
+✓ TypeScript (621–670)
+✓ React (671–730)
+✓ Node.js (731–790)
+✓ npm (791–820)
+✓ Webpack & Build Tools (821–870)
 
 Then commit and push normally.
 ```
