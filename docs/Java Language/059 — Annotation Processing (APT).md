@@ -18,15 +18,10 @@ tags: #java #advanced #annotations #apt #codegen
 
 ⚡ TL;DR — A compile-time code generation hook: `@Getter` on a class triggers Lombok to write the getter source before javac finishes — zero runtime cost, all errors caught at compile time.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #059         │ Category: Java Language              │ Difficulty: ★★★           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Annotations, Reflection, Compiler API                             │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Lombok, MapStruct, Dagger 2, Spring, Auto-Value, Record Builder   │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #059 | Category: Java Language | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Annotations, Reflection, Compiler API | |
+| **Used by:** | Lombok, MapStruct, Dagger 2, Spring (compile-time), Auto-Value | |
 
 ---
 
@@ -223,23 +218,10 @@ Fix: use multiple compilation rounds (`RoundEnvironment.processingOver()`); desi
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Compile-time code generation via annotation   │
-│              │ processors; zero runtime cost                 │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Generating boilerplate (builders, mappers,    │
-│              │ DI wiring) that would be error-prone manually │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ When Java Records / sealed classes solve the  │
-│              │ problem natively (Java 16+)                   │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Compile-time ghostwriter: annotations trigger │
-│              │  code generation before javac finishes"       │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Lombok → MapStruct → Dagger2 → JavaPoet       │
-└─────────────────────────────────────────────────────────────┘
-```
+| #059 | Category: Java Language | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Annotations, Reflection, Compiler API | |
+| **Used by:** | Lombok, MapStruct, Dagger 2, Spring (compile-time), Auto-Value | |
 
 ---
 

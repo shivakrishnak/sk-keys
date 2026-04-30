@@ -18,15 +18,10 @@ tags: #testing #advanced #microservices #contracts
 
 ⚡ TL;DR — A test that verifies a service's API matches the expectations of its consumers — catching integration breaks without deploying both services together.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #414         │ Category: Testing                    │ Difficulty: ★★★           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Integration Test, Consumer-Driven Contracts                       │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Microservices, CI/CD, API Versioning                              │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #414 | Category: Testing | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Integration Test, Consumer-Driven Contracts | |
+| **Used by:** | Microservices, CI/CD, API Versioning | |
 
 ---
 
@@ -217,22 +212,10 @@ Fix: use a Pact Broker (or PactFlow); it tracks which consumer/provider version 
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Consumer defines what it needs; provider      │
-│              │ verifies it can deliver — independently       │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Microservices with multiple teams; API changes │
-│              │ that could break consumers                    │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Monoliths with in-process calls (no API boundary)│
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Consumer owns the contract; provider verifies │
-│              │  it — no shared environment needed"           │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Pact --> Pact Broker --> Consumer-Driven CDCs  │
-└─────────────────────────────────────────────────────────────┘
-```
+| #414 | Category: Testing | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Integration Test, Consumer-Driven Contracts | |
+| **Used by:** | Microservices, CI/CD, API Versioning | |
 
 ---
 

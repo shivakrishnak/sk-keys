@@ -18,15 +18,10 @@ tags: #testing #advanced #quality #mutation
 
 ⚡ TL;DR — Automatically introduce small bugs (mutations) into source code and verify that your tests catch them — measuring test suite effectiveness, not just coverage.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #423         │ Category: Testing                    │ Difficulty: ★★★           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Unit Test, Code Coverage, TDD                                     │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Unit Test, Test Quality, CI/CD                                    │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #423 | Category: Testing | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Unit Test, Code Coverage, TDD | |
+| **Used by:** | Unit Test, Test Quality, CI/CD | |
 
 ---
 
@@ -229,23 +224,10 @@ Fix: review mutant kills by adding meaningful assertions; mutation score is a gu
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Introduce small bugs; verify tests catch them │
-│              │ — mutation score measures test effectiveness  │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Evaluating test suite quality; finding missing │
-│              │ assertions in critical domain code            │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Generated/boilerplate code; configuration     │
-│              │ classes with no logic to mutate               │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Test your tests — if introducing a bug        │
-│              │  doesn't break them, the tests are too weak"  │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ PIT --> Code Coverage --> Property-Based Tests │
-└─────────────────────────────────────────────────────────────┘
-```
+| #423 | Category: Testing | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Unit Test, Code Coverage, TDD | |
+| **Used by:** | Unit Test, Test Quality, CI/CD | |
 
 ---
 

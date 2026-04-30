@@ -18,15 +18,10 @@ tags: #cleancode #oop #foundational
 
 ⚡ TL;DR — Hiding implementation details and exposing only what is necessary through a simplified interface.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #426         │ Category: Clean Code                 │ Difficulty: ★☆☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Interface, Polymorphism                                           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Encapsulation, Coupling, API Design                               │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #426 | Category: Clean Code | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Interface, Polymorphism | |
+| **Used by:** | Encapsulation, Coupling, API Design | |
 
 ---
 
@@ -206,20 +201,10 @@ Fix: abstract at natural, stable seams in the system — not everywhere as a hab
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Show WHAT, hide HOW                          │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Defining boundaries between modules/layers    │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Over-abstracting trivial one-off code        │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Abstractions let you change the HOW without  │
-│              │  touching the WHO uses it"                    │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Encapsulation → Polymorphism → Interface      │
-└─────────────────────────────────────────────────────────────┘
-```
+| #426 | Category: Clean Code | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Interface, Polymorphism | |
+| **Used by:** | Encapsulation, Coupling, API Design | |
 
 ---
 

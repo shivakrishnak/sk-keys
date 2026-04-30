@@ -18,15 +18,10 @@ tags: #devops #sdlc #intermediate #reliability
 
 ⚡ TL;DR — Never patch or modify running servers; instead, build a new image and replace the old instance entirely.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #456         │ Category: DevOps & SDLC              │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ IaC, CI/CD Pipeline, Containers                                   │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ GitOps, IaC, Cloud-Native Architecture                            │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #456 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | IaC, CI/CD Pipeline, Containers | |
+| **Used by:** | GitOps, IaC, Cloud-Native Architecture | |
 
 ---
 
@@ -226,23 +221,10 @@ Fix: enforce read-only SSH or bastion host with session recording; any fix must 
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Never modify running infrastructure — build   │
-│              │ new, replace old, terminate old               │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Cloud-native, containerized, IaC-driven       │
-│              │ environments                                   │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Legacy systems with state on disk that cannot │
-│              │ yet be externalised                           │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Build, don't patch — every running instance  │
-│              │  is a known, version-controlled artifact"     │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Docker --> IaC --> GitOps --> Twelve-Factor App│
-└─────────────────────────────────────────────────────────────┘
-```
+| #456 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | IaC, CI/CD Pipeline, Containers | |
+| **Used by:** | GitOps, IaC, Cloud-Native Architecture | |
 
 ---
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "JVM (Java Virtual Machine)"
 parent: "Java Fundamentals"
@@ -60,40 +60,31 @@ The recipe doesn't change. The chef adapts it to the local kitchen.
 
 #### ⚙️ How It Works — JVM Internal Architecture
 
-```
-┌──────────────────────────────────────────────────────┐
-│                     JVM RUNTIME                      │
-│                                                      │
-│  ┌─────────────────────────────────────────────┐    │
-│  │           CLASS LOADER SUBSYSTEM            │    │
-│  │  Bootstrap → Extension → Application        │    │
-│  └──────────────────┬──────────────────────────┘    │
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 │                     ↓                                │
-│  ┌──────────────────────────────────────────────┐   │
-│  │            RUNTIME DATA AREAS                │   │
+│| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 │  │                                              │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌───────────┐  │   │
-│  │  │  Heap    │  │  Stack   │  │ Metaspace │  │   │
-│  │  │(Objects) │  │(Frames)  │  │ (Classes) │  │   │
-│  │  └──────────┘  └──────────┘  └───────────┘  │   │
-│  │                                              │   │
-│  │  ┌──────────────────┐  ┌──────────────────┐ │   │
-│  │  │   PC Register    │  │  Native Method   │ │   │
-│  │  │(current instr.)  │  │     Stack        │ │   │
-│  │  └──────────────────┘  └──────────────────┘ │   │
+│  │| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 │  └──────────────────────────────────────────────┘   │
 │                     ↓                                │
-│  ┌──────────────────────────────────────────────┐   │
-│  │          EXECUTION ENGINE                    │   │
-│  │                                              │   │
-│  │   Interpreter → JIT Compiler (C1/C2)         │   │
-│  │   Garbage Collector                          │   │
-│  └──────────────────────────────────────────────┘   │
+│| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 │                     ↓                                │
-│  ┌──────────────────────────────────────────────┐   │
-│  │        NATIVE INTERFACE (JNI)                │   │
-│  │   Bridges to native OS libraries             │   │
-│  └──────────────────────────────────────────────┘   │
+│| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 └──────────────────────────────────────────────────────┘
 ```
 
@@ -242,22 +233,9 @@ java -XX:MaxMetaspaceSize=256m MyApp
 
 #### 📌 Quick Reference Card
 
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Platform-independent bytecode executor     │
-│              │ with automatic memory & thread management  │
-├──────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Always — it IS the Java runtime           │
-├──────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Ultra-low latency (consider GraalVM       │
-│              │ Native Image to eliminate JVM overhead)    │
-├──────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "The JVM is a managed sandbox that turns  │
-│              │  bytecode into native execution"           │
-├──────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ JRE → JDK → Bytecode → Class Loader       │
-│              │ → JIT Compiler → Heap/GC                  │
-└──────────────────────────────────────────────────────────┘
-```
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 
 ---

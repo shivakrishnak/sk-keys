@@ -18,15 +18,10 @@ tags: #devops #sdlc #intermediate #gitops
 
 ⚡ TL;DR — Use git as the single source of truth for both application code and infrastructure; automated agents reconcile the running system to match the git state.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #454         │ Category: DevOps & SDLC              │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ CI/CD Pipeline, IaC, Kubernetes                                   │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ CI/CD Pipeline, IaC, Kubernetes                                   │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #454 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | CI/CD Pipeline, IaC, Kubernetes | |
+| **Used by:** | CI/CD Pipeline, IaC, Kubernetes | |
 
 ---
 
@@ -226,23 +221,10 @@ Fix: treat OutOfSync as an incident; alert on-call; investigate and resolve imme
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Git is the single source of truth; an agent  │
-│              │ continuously reconciles the cluster to match  │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Kubernetes environments; need auditability,   │
-│              │ drift detection, secure CD                    │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Stateful systems where git state alone is     │
-│              │ insufficient to describe the full system      │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Don't deploy to production — declare what    │
-│              │  should be there and let git enforce it"      │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ ArgoCD --> Flux --> IaC --> Sealed Secrets    │
-└─────────────────────────────────────────────────────────────┘
-```
+| #454 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | CI/CD Pipeline, IaC, Kubernetes | |
+| **Used by:** | CI/CD Pipeline, IaC, Kubernetes | |
 
 ---
 

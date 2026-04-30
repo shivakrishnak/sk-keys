@@ -18,15 +18,10 @@ tags: #cleancode #architecture #foundational
 
 ⚡ TL;DR — How focused and related the responsibilities inside a single module are.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #424         │ Category: Clean Code                 │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ SRP, Module Design                                                │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Coupling, Refactoring                                             │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #424 | Category: Clean Code | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | SRP, Module Design | |
+| **Used by:** | Coupling, Refactoring | |
 
 ---
 
@@ -189,20 +184,10 @@ Fix: balance — group things that change together.
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Everything inside a module belongs together   │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Designing or reviewing class responsibilities  │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Don't over-split — tiny 1-liner classes hurt  │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Cohesion = how much a module sticks to one   │
-│              │  single, clear purpose"                        │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Coupling → SRP → Refactoring                  │
-└─────────────────────────────────────────────────────────────┘
-```
+| #424 | Category: Clean Code | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | SRP, Module Design | |
+| **Used by:** | Coupling, Refactoring | |
 
 ---
 

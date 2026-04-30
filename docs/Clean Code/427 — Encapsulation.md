@@ -18,15 +18,10 @@ tags: #cleancode #oop #foundational
 
 ⚡ TL;DR — Bundling data and the methods that operate on it together, while restricting direct access to the internal state.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #427         │ Category: Clean Code                 │ Difficulty: ★☆☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Abstraction, Class Design                                         │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Cohesion, Information Hiding, Invariants                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #427 | Category: Clean Code | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Abstraction, Class Design | |
+| **Used by:** | Cohesion, Information Hiding, Invariants | |
 
 ---
 
@@ -210,21 +205,10 @@ Fix: wrap in a DTO, record, or interface that represents the caller's view.
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Bundle data + behavior; protect state via     │
-│              │ controlled access and invariant enforcement   │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Always in OOP — make fields private by default│
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ DTOs / value objects: expose all, change none │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "An object owns its state; callers interact   │
-│              │  through methods that enforce the rules"       │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Abstraction → Polymorphism → Immutability     │
-└─────────────────────────────────────────────────────────────┘
-```
+| #427 | Category: Clean Code | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Abstraction, Class Design | |
+| **Used by:** | Cohesion, Information Hiding, Invariants | |
 
 ---
 

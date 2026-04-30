@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "JRE (Java Runtime Environment)"
 parent: "Java Fundamentals"
@@ -41,13 +41,10 @@ Package the JVM + all standard library classes together → that bundle is the J
 ```
 Your App (.jar)
      ↓ needs
-┌─────────────────────────────┐
-│           JRE               │
-│  ┌───────┐  ┌────────────┐  │
-│  │  JVM  │  │  Java Std  │  │
-│  │       │  │  Library   │  │
-│  │       │  │(rt.jar /   │  │
-│  └───────┘  │ modules)   │  │
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 │             └────────────┘  │
 └─────────────────────────────┘
      ↓ runs on
@@ -241,19 +238,9 @@ javac --release 11 MyApp.java   # compile for Java 11 compatibility
 
 #### 📌 Quick Reference Card
 
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ JVM + Standard Library = everything       │
-│              │ needed to RUN (not develop) Java apps     │
-├──────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Deploying Java apps to servers/containers │
-├──────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ You need to compile — use JDK instead     │
-├──────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "JRE = the player; JDK = player + studio" │
-├──────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ JDK → jlink → Module System → Class Loader│
-└──────────────────────────────────────────────────────────┘
-```
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 
 ---

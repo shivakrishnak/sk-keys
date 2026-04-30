@@ -18,15 +18,10 @@ tags: #java #advanced #generics #variance #covariance
 
 ⚡ TL;DR — Covariance (out/extends) means subtype flows out safely; contravariance (in/super) means supertype flows in safely; Java arrays are covariant (broken), generics are invariant by default.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #056         │ Category: Java Language              │ Difficulty: ★★★           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Generics, Bounded Wildcards, Subtyping                            │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Comparable, Comparator, Collections API                           │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #056 | Category: Java Language | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Generics, Bounded Wildcards, Subtyping | |
+| **Used by:** | Comparable, Comparator, Collections API, TypeScript Variance | |
 
 ---
 
@@ -216,23 +211,10 @@ void fillList(List<? extends Number> list, Number n) {
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Covariant = safe to produce/read (extends)    │
-│              │ Contravariant = safe to consume/write (super) │
-│              │ Invariant = default; both directions forbidden │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Designing generic APIs; understanding why     │
-│              │ List<Dog> ≠ List<Animal>                      │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ N/A — always applies; use wildcards explicitly │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Out = covariant (extends); In = contravariant │
-│              │  (super); both = invariant (exact type)"      │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Bounded Wildcards → Comparator design → Kotlin │
-└─────────────────────────────────────────────────────────────┘
-```
+| #056 | Category: Java Language | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Generics, Bounded Wildcards, Subtyping | |
+| **Used by:** | Comparable, Comparator, Collections API, TypeScript Variance | |
 
 ---
 

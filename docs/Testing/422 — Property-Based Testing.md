@@ -18,15 +18,10 @@ tags: #testing #advanced #property-based #quality
 
 ⚡ TL;DR — Instead of specifying specific examples, define properties that must hold for all inputs — and let the framework generate hundreds of random test cases automatically.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #422         │ Category: Testing                    │ Difficulty: ★★★           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Unit Test, QuickCheck, jqwik                                      │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Unit Test, TDD, Fuzzing                                           │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #422 | Category: Testing | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Unit Test, QuickCheck, jqwik | |
+| **Used by:** | Unit Test, TDD, Fuzzing | |
 
 ---
 
@@ -201,23 +196,10 @@ Fix: configure fewer iterations in CI (`tries = 100`); run full suite nightly or
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Specify invariants; let the framework find    │
-│              │ the inputs that break them                    │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Encoding domain invariants; roundtrip tests;  │
-│              │ algorithms with clear properties              │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Testing specific business rules with exact    │
-│              │ required outputs — use examples there         │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Let the machine find the edge case you       │
-│              │  didn't think to write"                      │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ jqwik --> QuickCheck concepts --> Fuzzing      │
-└─────────────────────────────────────────────────────────────┘
-```
+| #422 | Category: Testing | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Unit Test, QuickCheck, jqwik | |
+| **Used by:** | Unit Test, TDD, Fuzzing | |
 
 ---
 

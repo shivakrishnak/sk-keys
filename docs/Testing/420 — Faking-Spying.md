@@ -18,15 +18,10 @@ tags: #testing #intermediate #java #mockito
 
 ⚡ TL;DR — Fakes are lightweight working implementations (e.g., in-memory DB). Spies are real objects that also record interactions for selective verification.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #420         │ Category: Testing                    │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Unit Test, Mocking, Stubbing                                      │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Unit Test, Mocking, TDD                                           │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #420 | Category: Testing | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Unit Test, Mocking, Stubbing | |
+| **Used by:** | Unit Test, Mocking, TDD | |
 
 ---
 
@@ -234,23 +229,10 @@ Fix: fakes enable fast unit/service tests; integration tests (Testcontainers) va
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     Fake: working lightweight impl (no infra)       │
-│              Spy: real object + interaction recording        │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     Fake: repository behavior more complex than     │
-│              stubs; Spy: wrapping legacy code / real object  │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   Spy with side effects (real code runs!);        │
-│              Fake when integration test is more appropriate  │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    "Fake does the real job cheaply;                │
-│              Spy watches the real job actually happen"       │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE Mocking --> Test Doubles --> Testcontainers      │
-└─────────────────────────────────────────────────────────────┘
-```
+| #420 | Category: Testing | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Unit Test, Mocking, Stubbing | |
+| **Used by:** | Unit Test, Mocking, TDD | |
 
 ---
 

@@ -18,15 +18,10 @@ tags: #cleancode #oop #foundational #pattern
 
 ⚡ TL;DR — The ability of different types to be treated uniformly through a shared interface, each responding differently to the same call.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #428         │ Category: Clean Code                 │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Abstraction, Inheritance, Interface                               │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Strategy Pattern, OCP, Runtime Dispatch                           │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #428 | Category: Clean Code | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Abstraction, Inheritance, Interface | |
+| **Used by:** | Strategy Pattern, OCP, Runtime Dispatch | |
 
 ---
 
@@ -208,22 +203,10 @@ Fix: follow the Liskov Substitution Principle — a subtype must be substitutabl
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ One interface, many implementations; runtime  │
-│              │ dispatch selects the right behavior           │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Multiple types share behavior, or type-check  │
-│              │ if-else chains are growing                    │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Only 1 implementation exists (no benefit yet) │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Same call, different behavior: the type      │
-│              │  decides at runtime, not the caller"          │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Strategy Pattern → OCP → LSP                  │
-└─────────────────────────────────────────────────────────────┘
-```
+| #428 | Category: Clean Code | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Abstraction, Inheritance, Interface | |
+| **Used by:** | Strategy Pattern, OCP, Runtime Dispatch | |
 
 ---
 

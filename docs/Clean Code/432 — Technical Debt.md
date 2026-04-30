@@ -18,15 +18,10 @@ tags: #cleancode #architecture #intermediate
 
 ⚡ TL;DR — The accumulated cost of shortcuts and deferred decisions in a codebase — debt that compounds interest until it is paid down.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #432         │ Category: Clean Code                 │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Refactoring, Code Quality, Architecture                           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Refactoring, Code Smells, Velocity, Architecture                  │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #432 | Category: Clean Code | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Refactoring, Code Quality, Architecture | |
+| **Used by:** | Refactoring, Code Smells, Velocity, Architecture | |
 
 ---
 
@@ -203,22 +198,10 @@ Fix: refactor the structure; use tests as the safety net to enable that refactor
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Shortcuts now = compounding cost later        │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ All teams carry some debt — manage it         │
-│              │ consciously rather than ignoring it           │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Never accumulate reckless debt without a plan │
-│              │ to address it within weeks                    │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Move fast now, pay double later — track it,  │
-│              │  name it, and plan to repay it"               │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Refactoring --> Code Smells --> Boy Scout Rule │
-└─────────────────────────────────────────────────────────────┘
-```
+| #432 | Category: Clean Code | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Refactoring, Code Quality, Architecture | |
+| **Used by:** | Refactoring, Code Smells, Velocity, Architecture | |
 
 ---
 

@@ -18,15 +18,10 @@ tags: #cleancode #oop #foundational
 
 ⚡ TL;DR — A mechanism where a class acquires the properties and behavior of a parent class, establishing an IS-A relationship.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #429         │ Category: Clean Code                 │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Polymorphism, Abstraction                                         │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ LSP, Composition over Inheritance, Subtype Polymorphism           │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #429 | Category: Clean Code | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Polymorphism, Abstraction | |
+| **Used by:** | LSP, Composition over Inheritance, Subtype Polymorphism | |
 
 ---
 
@@ -202,22 +197,10 @@ Fix: flatten hierarchies; use interfaces + composition to share behavior without
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ IS-A relationship: subclass acquires and      │
-│              │ specializes parent behavior                   │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ True IS-A relationship that is stable and     │
-│              │ behavioral, not just conceptual               │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Just reusing code (use composition instead)   │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Inherit for IS-A relationships; compose for  │
-│              │  HAS-A and code reuse"                        │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ LSP → Composition over Inheritance → Mixins   │
-└─────────────────────────────────────────────────────────────┘
-```
+| #429 | Category: Clean Code | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Polymorphism, Abstraction | |
+| **Used by:** | LSP, Composition over Inheritance, Subtype Polymorphism | |
 
 ---
 

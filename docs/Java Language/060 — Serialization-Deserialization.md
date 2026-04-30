@@ -18,15 +18,10 @@ tags: #java #intermediate #serialization #io #security
 
 ⚡ TL;DR — Convert a Java object graph to bytes (serialize) and restore it (deserialize); Java's built-in mechanism is legacy and insecure — prefer JSON/Protobuf/Avro in modern code.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #060         │ Category: Java Language              │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ JVM, Object, Streams                                              │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ RMI, JMS, Caching (legacy), Persistence, Network Protocols        │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #060 | Category: Java Language | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Object, Streams | |
+| **Used by:** | RMI, JMS, Caching, Persistence, Network Protocols | |
 
 ---
 
@@ -234,24 +229,10 @@ class Service implements Serializable {
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Implements Serializable → auto byte             │
-│              │ conversion; transient = skip; UID = version    │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Legacy JMS/RMI; caching (Hazelcast/Redis)       │
-│              │ ONLY with trusted sources + filters           │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Any new design — use Jackson/Protobuf instead  │
-│              │ Never deserialize untrusted bytes              │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Object-to-bytes and back; powerful but        │
-│              │  dangerous with untrusted input — avoid in new │
-│              │  designs, use JSON/Protobuf"                   │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ SerialVersionUID → Jackson → Protobuf          │
-└─────────────────────────────────────────────────────────────┘
-```
+| #060 | Category: Java Language | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Object, Streams | |
+| **Used by:** | RMI, JMS, Caching, Persistence, Network Protocols | |
 
 ---
 

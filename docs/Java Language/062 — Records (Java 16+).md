@@ -18,15 +18,10 @@ tags: #java #intermediate #records #immutability #java16
 
 ⚡ TL;DR — Transparent, immutable data carriers: `record Point(int x, int y) {}` gives you a canonical constructor, accessors `x()` and `y()`, plus `equals`, `hashCode`, and `toString` — all generated.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #062         │ Category: Java Language              │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Classes, Immutability, equals/hashCode                            │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ DTOs, Value Objects, Pattern Matching, Domain Models              │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #062 | Category: Java Language | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Classes, Immutability, equals/hashCode | |
+| **Used by:** | DTOs, Value Objects, Pattern Matching, Domain Models | |
 
 ---
 
@@ -244,23 +239,10 @@ Records and Lombok `@Data` on the same class causes compilation issues. Pick one
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Immutable data carrier: components → final    │
-│              │ fields + canonical ctor + equals/hash/toString│
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ DTOs, return values, value objects, simple    │
-│              │ domain aggregates, ADT leaf nodes             │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Need mutability; need OOP hierarchy;          │
-│              │ Hibernate entities (mutable, need no-arg ctor)│
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Named tuple: data defines identity;          │
-│              │  all boilerplate is generated"                │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Sealed Classes → Pattern Matching → ADTs      │
-└─────────────────────────────────────────────────────────────┘
-```
+| #062 | Category: Java Language | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Classes, Immutability, equals/hashCode | |
+| **Used by:** | DTOs, Value Objects, Pattern Matching, Domain Models | |
 
 ---
 

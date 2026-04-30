@@ -18,15 +18,10 @@ tags: #java #intermediate #generics #typesystem
 
 ⚡ TL;DR — Compile-time type parameters that eliminate casts, prevent ClassCastException at runtime, and allow reusable, type-safe data structures and algorithms.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #053         │ Category: Java Language              │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Type System, Object, Collections                                 │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Collections Framework, Streams API, Optional, Spring             │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #053 | Category: Java Language | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Type System, Object, Collections | |
+| **Used by:** | Collections Framework, Streams API, Optional, Spring Framework | |
 
 ---
 
@@ -218,22 +213,10 @@ Fix: use wrapper types (`Integer`, `Long`), accept autoboxing overhead.
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Type-safe parameterization at compile time;   │
-│              │ erased to Object at runtime                   │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Creating reusable containers, algorithms,     │
-│              │ utility classes that work with any type       │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Raw types (legacy) — always parameterize      │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Write once; compile-time safety for all types│
-│              │  — no casts, no ClassCastException"           │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Type Erasure → Bounded Wildcards → PECS       │
-└─────────────────────────────────────────────────────────────┘
-```
+| #053 | Category: Java Language | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Type System, Object, Collections | |
+| **Used by:** | Collections Framework, Streams API, Optional, Spring Framework | |
 
 ---
 

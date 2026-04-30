@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Bytecode"
 parent: "Java Fundamentals"
@@ -68,27 +68,10 @@ The sheet music is platform-independent. The performance is platform-specific.
 
 A `.class` file is a **precisely structured binary format**. Not random bytes — every position means something.
 
-```
-┌──────────────────────────────────────────┐
-│           .class FILE STRUCTURE          │
-│                                          │
-│  Magic Number: 0xCAFEBABE  (4 bytes)     │ ← "I am a Java class file"
-│  Minor Version            (2 bytes)      │
-│  Major Version            (2 bytes)      │ ← Java version (65 = Java 21)
-│                                          │
-│  Constant Pool Count      (2 bytes)      │
-│  Constant Pool[]          (variable)     │ ← all strings, class names,
-│                                          │   method refs, literals
-│  Access Flags             (2 bytes)      │ ← public? abstract? final?
-│  This Class               (2 bytes)      │ ← index into constant pool
-│  Super Class              (2 bytes)      │ ← parent class reference
-│                                          │
-│  Interfaces[]             (variable)     │ ← implemented interfaces
-│  Fields[]                 (variable)     │ ← field definitions
-│  Methods[]                (variable)     │ ← method bytecode lives here
-│  Attributes[]             (variable)     │ ← debug info, annotations
-└──────────────────────────────────────────┘
-```
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 
 **Magic Number `0xCAFEBABE`** — James Gosling (Java's creator) chose this. The JVM checks this first — if it's not present, the file is rejected immediately.
 
@@ -100,19 +83,10 @@ The JVM has ~200 instructions (opcodes). Each is **1 byte** — hence "byte-code
 
 They operate on a **stack-based virtual machine** — not register-based like real CPUs.
 
-```
-┌────────────────────────────────────────────────────┐
-│           JVM STACK-BASED EXECUTION                │
-│                                                    │
-│  Every operation:                                  │
-│    1. PUSH operands onto operand stack             │
-│    2. EXECUTE instruction (pops + pushes)          │
-│    3. RESULT sits on top of stack                  │
-│                                                    │
-│  No registers. No memory addresses.                │
-│  Pure stack manipulation.                          │
-└────────────────────────────────────────────────────┘
-```
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 
 **Key instruction categories:**
 
@@ -221,20 +195,10 @@ invokedynamic #2, 0   // Bootstrap method decides AT RUNTIME
                       // how to create the lambda implementation
 ```
 
-```
-┌────────────────────────────────────────────────────┐
-│           INVOKEDYNAMIC FLOW                       │
-│                                                    │
-│  First call:                                       │
-│    JVM → calls Bootstrap Method (LambdaMetafactory)│
-│    Bootstrap → generates implementation class      │
-│    Bootstrap → returns CallSite (cached)           │
-│                                                    │
-│  Subsequent calls:                                 │
-│    JVM → uses cached CallSite directly             │
-│    (no bootstrap overhead)                         │
-└────────────────────────────────────────────────────┘
-```
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 
 > `invokedynamic` is the foundation of lambdas, method references, and string concatenation (Java 9+). It defers method dispatch to **runtime** rather than compile time — making the JVM extensible without changing the language.
 
@@ -249,20 +213,10 @@ invokedynamic #2, 0   // Bootstrap method decides AT RUNTIME
      ↓ ClassLoader reads into JVM
 Bytecode in memory
      ↓
-┌────────────────────────────────────────┐
-│        EXECUTION ENGINE                │
-│                                        │
-│  Interpreter                           │
-│  (executes bytecode directly)          │
-│  Fast startup, slow sustained          │
-│         ↓                              │
-│  Profiler detects HOT methods          │
-│  (called > threshold, e.g. 10,000x)   │
-│         ↓                              │
-│  JIT Compiler (C1 → C2)               │
-│  Bytecode → Native Machine Code        │
-│  Cached — never interpreted again      │
-└────────────────────────────────────────┘
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
      ↓
 Native code runs at CPU speed
 ```
@@ -380,25 +334,10 @@ javac --release 11 MyApp.java
 
 #### 📌 Quick Reference Card
 
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Platform-independent instruction set that  │
-│              │ JVM executes — the "universal binary"      │
-├──────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Always present — you produce it every      │
-│              │ time you run javac                         │
-├──────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Direct bytecode manipulation is risky —    │
-│              │ use high-level frameworks (ByteBuddy)      │
-│              │ over raw ASM unless necessary              │
-├──────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Bytecode is Java's universal language —   │
-│              │  written once, run by any JVM anywhere"    │
-├──────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Class Loader → JIT Compiler →              │
-│              │ Stack Frame → invokedynamic → GraalVM      │
-└──────────────────────────────────────────────────────────┘
-```
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 
 ---
 #### 🧠 Think About This Before We Continue

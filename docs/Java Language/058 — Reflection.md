@@ -18,15 +18,10 @@ tags: #java #advanced #reflection #jvm #internals
 
 ⚡ TL;DR — Inspect and manipulate classes, methods, fields, and constructors at runtime — the backbone of Spring DI, Jackson serialization, JUnit, and any framework that must work with unknown types.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #058         │ Category: Java Language              │ Difficulty: ★★★           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Class Loader, JVM, Type Erasure                                   │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Spring Framework, Jackson, JUnit, Mockito, Lombok APT             │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #058 | Category: Java Language | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Class Loader, JVM, Type Erasure | |
+| **Used by:** | Spring Framework, Jackson, JUnit, Mockito, Lombok | |
 
 ---
 
@@ -235,23 +230,10 @@ Reflection calls are checked against the security manager in constrained environ
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Runtime introspection of class structure;     │
-│              │ invoke methods, access fields, read annotations│
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Framework code; plugin systems; serialization; │
-│              │ testing utilities; never in business logic     │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Hot paths; when annotation processing works;  │
-│              │ in untrusted environments                      │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "X-ray for objects: inspect any class, invoke │
-│              │  any method, read any field — at runtime cost"│
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ APT → Spring DI → Jackson → Java Modules      │
-└─────────────────────────────────────────────────────────────┘
-```
+| #058 | Category: Java Language | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Class Loader, JVM, Type Erasure | |
+| **Used by:** | Spring Framework, Jackson, JUnit, Mockito, Lombok | |
 
 ---
 

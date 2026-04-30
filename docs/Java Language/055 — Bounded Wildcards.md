@@ -18,15 +18,10 @@ tags: #java #advanced #generics #wildcards #pecs
 
 ⚡ TL;DR — `? extends T` (upper-bounded, read-only) and `? super T` (lower-bounded, write-only) enable flexible generic APIs; remember **PECS: Producer Extends, Consumer Super**.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #055         │ Category: Java Language              │ Difficulty: ★★★           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Generics, Type Erasure, Subtyping                                 │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Collections API, Stream API, Utility Methods                      │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #055 | Category: Java Language | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Generics, Type Erasure, Subtyping | |
+| **Used by:** | Collections API, Stream API, Utility Methods | |
 
 ---
 
@@ -211,23 +206,10 @@ private <T> void swap(List<T> list, int i, int j) {
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ PECS: Producer Extends, Consumer Super        │
-│              │ extends = safe read; super = safe write       │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Writing utility methods that must work with   │
-│              │ a family of related generic types             │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Don't use when a concrete type param works;   │
-│              │ wildcards reduce what you can do              │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "extends: I read from it; super: I write to it│
-│              │  — PECS is the rule"                          │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Covariance/Contravariance → PECS → JDK APIs   │
-└─────────────────────────────────────────────────────────────┘
-```
+| #055 | Category: Java Language | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Generics, Type Erasure, Subtyping | |
+| **Used by:** | Collections API, Stream API, Utility Methods | |
 
 ---
 

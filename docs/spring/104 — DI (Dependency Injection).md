@@ -56,29 +56,22 @@ Container has ONE job: create and inject dependencies
 
 ```
 1. Constructor Injection (PREFERRED)
-   ┌─────────────────────────────────┐
-   │ class Service {                  │
-   │   private final Repo repo;       │
-   │   Service(Repo r) { repo = r; }  │  ← Container calls this
-   │ }                                │
-   └─────────────────────────────────┘
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 
 2. Setter Injection (OPTIONAL dependencies)
-   ┌──────────────────────────────────┐
-   │ class Service {                   │
-   │   private Cache cache;            │
-   │   @Autowired void setCache(       │  ← Container calls this
-   │       Cache c) { cache = c; }     │
-   │ }                                 │
-   └──────────────────────────────────┘
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 
 3. Field Injection (AVOID in production)
-   ┌──────────────────────────────────┐
-   │ class Service {                   │
-   │   @Autowired Repo repo;           │  ← Container injects via reflection
-   │ }                                 │
-   └──────────────────────────────────┘
-```
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 
 ---
 

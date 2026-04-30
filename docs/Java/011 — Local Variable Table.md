@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Local Variable Table"
 parent: "Java Fundamentals"
@@ -9,14 +9,10 @@ permalink: /java/local-variable-table/
 
 ⚡ TL;DR — The indexed slot array inside every stack frame that stores a method's parameters and local variables — fixed at compile time, zero GC overhead, lives and dies with its frame. 
 
-```
-┌──────────────────────────────────────────────────────┐
-│ #011  │ Category: JVM Internals  │ Difficulty: ★★★   │
-│ Depends on: Stack Frame,         │ Used by: Every    │
-│ Bytecode, Operand Stack          │ method execution, │
-│                                  │ Debugger, JIT     │
-└──────────────────────────────────────────────────────┘
-```
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 
 ---
 
@@ -163,32 +159,16 @@ Problem:
 
 #### ⚙️ How It Works — Slot Assignment Rules
 
-```
-┌─────────────────────────────────────────────────────────┐
-│            SLOT ASSIGNMENT BY JAVAC                     │
-│                                                         │
-│  INSTANCE METHOD:                                       │
-│  ┌──────┬──────────────────────────────────────────┐   │
-│  │ Slot │ Content                                  │   │
-│  ├──────┼──────────────────────────────────────────┤   │
-│  │  0   │ this  (always — implicit first param)    │   │
-│  │  1   │ first declared parameter                 │   │
-│  │  2   │ second declared parameter                │   │
-│  │  3   │ third declared parameter (or 3+4 if long)│   │
-│  │  N   │ first local variable declared in method  │   │
-│  │ N+1  │ second local variable                    │   │
-│  │ ...  │ ...                                      │   │
-│  └──────┴──────────────────────────────────────────┘   │
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 │                                                         │
 │  STATIC METHOD:                                         │
-│  ┌──────┬──────────────────────────────────────────┐   │
-│  │ Slot │ Content                                  │   │
-│  ├──────┼──────────────────────────────────────────┤   │
-│  │  0   │ first declared parameter (no 'this')     │   │
-│  │  1   │ second declared parameter                │   │
-│  │  2   │ first local variable                     │   │
-│  │ ...  │ ...                                      │   │
-│  └──────┴──────────────────────────────────────────┘   │
+│| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 │                                                         │
 │  TYPE RULES:                                            │
 │  • int, float, reference → 1 slot                      │
@@ -559,29 +539,10 @@ public void process() {
 
 #### 📌 Quick Reference Card
 
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Fixed-size indexed slot array in each     │
-│              │ frame — stores params + locals by number  │
-│              │ not by name; names are debug-only         │
-├──────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Always present — understanding LVT        │
-│              │ unlocks bytecode reading, debugger        │
-│              │ behaviour, and JIT optimisation           │
-├──────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Don't assume variable names survive to    │
-│              │ runtime — strip-debug builds break        │
-│              │ name-based reflection assumptions         │
-├──────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "LVT = method's numbered locker room —    │
-│              │  slot 0 is always 'this', names are       │
-│              │  labels for humans, numbers for JVM"      │
-├──────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Operand Stack → JIT Register Allocation → │
-│              │ Escape Analysis → javap -l →              │
-│              │ JDWP Debugger Protocol                    │
-└──────────────────────────────────────────────────────────┘
-```
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 
 ---
 

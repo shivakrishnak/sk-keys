@@ -18,15 +18,10 @@ tags: #java #intermediate #generics #jvm #internals
 
 ⚡ TL;DR — The compiler enforces generic type constraints then strips all type parameters from bytecode; `List<String>` and `List<Integer>` become identical `List` at runtime.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #054         │ Category: Java Language              │ Difficulty: ★★★           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Generics, Bytecode, JVM                                           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Reflection, Generics Limitations, Heap Pollution                  │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #054 | Category: Java Language | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Generics, Bytecode, JVM | |
+| **Used by:** | Reflection, Generics Limitations, Heap Pollution | |
 
 ---
 
@@ -224,22 +219,10 @@ List<MyType> result = objectMapper.readValue(json,
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Generic types enforce safety at compile time  │
-│              │ then are erased; JVM sees only raw types      │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Explaining why generic arrays fail, why       │
-│              │ instanceof fails with type params             │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ N/A — it is always in effect                  │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Generic type checks happen at compile time;  │
-│              │  the JVM sees only Object/bound at runtime"   │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Generics → Heap Pollution → Reflection        │
-└─────────────────────────────────────────────────────────────┘
-```
+| #054 | Category: Java Language | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Generics, Bytecode, JVM | |
+| **Used by:** | Reflection, Generics Limitations, Heap Pollution | |
 
 ---
 

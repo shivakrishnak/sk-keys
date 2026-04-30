@@ -23,7 +23,9 @@ When helping with markdown files in the `sk-keys` repository:
 
    | Folder | Category | Keyword Range |
    |---|---|---|
-   | `docs/Java/` | Java & JVM Internals + Java Language + Java Concurrency | 001–102 |
+   | `docs/Java/` | Java & JVM Internals | 001–050 |
+   | `docs/Java Language/` | Java Language | 051–065 |
+   | `docs/Java Concurrency/` | Java Concurrency | 066–102 |
    | `docs/Spring/` | Spring & Spring Boot | 103–138 |
    | `docs/Distributed Systems/` | Distributed Systems | 139–194 |
    | `docs/Databases/` | Databases | 195–240 |
@@ -51,10 +53,32 @@ When helping with markdown files in the `sk-keys` repository:
    - **Never** place keyword files in the wrong folder or in the root `docs/` directory
 
 3. **Never Manually Add Frontmatter**
-ou   - Instead, tell user: "Run `Update-MarkdownFrontmatter.ps1` to update navigation automatically across the entire `docs` tree"
+   - Instead, tell user: "Run `Update-MarkdownFrontmatter.ps1` to update navigation automatically across the entire `docs` tree"
    - If frontmatter is needed, provide the script command
 
-3. **When User Asks About Adding New Files**
+4. **Entry Metadata Bar — Always Use Markdown Table**
+
+   Every keyword file MUST include this metadata bar immediately after the TL;DR line.
+   Use a **Markdown table** (NOT Unicode box-drawing characters — they misalign in browsers):
+
+   ```markdown
+   | #NNN | Category: Category Name | Difficulty: ★★☆ |
+   |:---|:---|:---|
+   | **Depends on:** | Concept1, Concept2 | |
+   | **Used by:** | Consumer1, Consumer2 | |
+   ```
+
+   **Why it exists:** At 700+ entries, readers need instant context — what category,
+   difficulty level, and which concepts to know before reading.
+   
+   **Rules:**
+   - Row 1: keyword number, category, difficulty stars
+   - Row 2: `Depends on` — prerequisite concepts
+   - Row 3: `Used by` — concepts that build on this one
+   - Values come from frontmatter fields: `depends_on`, `used_by`, `difficulty`, `category`, `number`
+   - ❌ Never use Unicode box-drawing chars (┌─┤└) — they don't align in proportional fonts
+
+5. **When User Asks About Adding New Files**
    
    Respond with:
    ```
@@ -212,12 +236,10 @@ tags: #tag1, #tag2, #tag3
 
 ⚡ TL;DR — one sentence.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #NNN         │ Category: ...                        │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ Concept1, Concept2                   │                          │
-│ Used by:     │ Consumer1, Consumer2                 │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #NNN | Category: Category Name | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Concept1, Concept2 | |
+| **Used by:** | Consumer1, Consumer2 | |
 
 ---
 

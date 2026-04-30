@@ -18,15 +18,10 @@ tags: #devops #sdlc #advanced #sre #reliability
 
 ⚡ TL;DR — The quantified amount of unreliability you are allowed before reliability must take priority over feature shipping.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #459         │ Category: DevOps & SDLC              │ Difficulty: ★★★           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ SRE, SLO, SLI                                                     │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ SRE, Release Decisions, CI/CD Gates                               │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #459 | Category: DevOps & SDLC | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | SRE, SLO, SLI | |
+| **Used by:** | SRE, Release Decisions, CI/CD Gates | |
 
 ---
 
@@ -248,23 +243,10 @@ Fix: error budget policies are agreed cross-functionally before any incident; it
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Error Budget = 100% - SLO = quantified        │
-│              │ permission to be unreliable                   │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Making deployment or reliability investment    │
-│              │ decisions; aligning dev and ops               │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ N/A — every production system should have     │
-│              │ an error budget, even if informal             │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Spend your unreliability budget deliberately  │
-│              │  — on features, not accidents"                │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ SLO --> SLI --> SLA --> Burn Rate Alerts       │
-└───────────────────────────────��─────────────────────────────┘
-```
+| #459 | Category: DevOps & SDLC | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | SRE, SLO, SLI | |
+| **Used by:** | SRE, Release Decisions, CI/CD Gates | |
 
 ---
 

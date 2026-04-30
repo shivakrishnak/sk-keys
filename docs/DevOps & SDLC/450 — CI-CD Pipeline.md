@@ -18,15 +18,10 @@ tags: #devops #sdlc #cicd #intermediate
 
 ⚡ TL;DR — An automated pipeline that integrates code changes continuously and deploys them to production reliably and repeatedly.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #450         │ Category: DevOps & SDLC              │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Version Control, Build Tools, Automated Testing                   │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Blue-Green Deployment, Canary Deployment, GitOps                  │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #450 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Version Control, Build Tools, Automated Testing | |
+| **Used by:** | Blue-Green Deployment, Canary Deployment, GitOps | |
 
 ---
 
@@ -245,22 +240,10 @@ Fix: trunk-based development with feature flags; independent pipeline per servic
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Automate the entire path from commit to       │
-│              │ production — build, test, deploy, monitor     │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Always — any software project benefits        │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Skipping stages to "go faster" — that defeats │
-│              │ the purpose and creates risk                  │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Every commit is a potential release —         │
-│              │  the pipeline decides, not a person"          │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Blue-Green --> Canary --> GitOps --> IaC       │
-└─────────────────────────────────────────────────────────────┘
-```
+| #450 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Version Control, Build Tools, Automated Testing | |
+| **Used by:** | Blue-Green Deployment, Canary Deployment, GitOps | |
 
 ---
 

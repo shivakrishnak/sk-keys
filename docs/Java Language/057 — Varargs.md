@@ -18,15 +18,10 @@ tags: #java #foundational #varargs #methods
 
 ⚡ TL;DR — Variable-argument methods (`type... name`) accept zero or more values of a type without the caller creating an array; the compiler creates the array automatically.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #057         │ Category: Java Language              │ Difficulty: ★☆☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Arrays, Method Signatures, Autoboxing                             │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ String.format, MessageFormat, Logging APIs, EnumSet.of            │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #057 | Category: Java Language | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Arrays, Method Signatures, Autoboxing | |
+| **Used by:** | String.format, MessageFormat, Logging APIs | |
 
 ---
 
@@ -218,23 +213,10 @@ for (int i = 0; i < 1_000_000; i++) {
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Zero-or-more args; compiler wraps in array;   │
-│              │ must be last parameter; empty ≠ null          │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Method needs to accept variable number of     │
-│              │ same-type args without forcing caller to array │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Hot loops (heap allocation); generic varargs  │
-│              │ without @SafeVarargs                          │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "type... param = last position array sugar;   │
-│              │  zero args = empty array, not null"           │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ @SafeVarargs → Heap Pollution → Type Erasure  │
-└─────────────────────────────────────────────────────────────┘
-```
+| #057 | Category: Java Language | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Arrays, Method Signatures, Autoboxing | |
+| **Used by:** | String.format, MessageFormat, Logging APIs | |
 
 ---
 

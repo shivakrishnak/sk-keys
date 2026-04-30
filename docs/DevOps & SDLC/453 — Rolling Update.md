@@ -18,15 +18,10 @@ tags: #devops #sdlc #foundational #reliability
 
 ⚡ TL;DR — Replace instances of the old version one-by-one (or in small batches) with the new version, keeping the service available throughout.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #453         │ Category: DevOps & SDLC              │ Difficulty: ★☆☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ CI/CD Pipeline, Kubernetes                                        │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ CI/CD Pipeline, Kubernetes Deployments                            │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #453 | Category: DevOps & SDLC | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | CI/CD Pipeline, Kubernetes | |
+| **Used by:** | CI/CD Pipeline, Kubernetes Deployments | |
 
 ---
 
@@ -233,22 +228,10 @@ Fix: use maxUnavailable=1 or 25% for production; save aggressive settings for de
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Replace pods one-by-one; service stays up;    │
-│              │ pause automatically if new version is unhealthy│
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Default strategy for most Kubernetes services │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Changes that can't tolerate mixed v1/v2       │
-│              │ serving simultaneously                        │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "One pod at a time — never fully down,        │
-│              │  never fully untested"                        │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Canary --> Blue-Green --> Readiness Probes     │
-└─────────────────────────────────────────────────────────────┘
-```
+| #453 | Category: DevOps & SDLC | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | CI/CD Pipeline, Kubernetes | |
+| **Used by:** | CI/CD Pipeline, Kubernetes Deployments | |
 
 ---
 

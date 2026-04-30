@@ -18,15 +18,10 @@ tags: #testing #intermediate #java #spring
 
 ⚡ TL;DR — A test that verifies multiple components working together, using real or near-real dependencies.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #413         │ Category: Testing                    │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Unit Test, Spring Boot Test, Testcontainers                       │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Test Pyramid, CI/CD, Contract Test                                │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #413 | Category: Testing | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Unit Test, Spring Boot Test, Testcontainers | |
+| **Used by:** | Test Pyramid, CI/CD, Contract Test | |
 
 ---
 
@@ -193,22 +188,10 @@ Fix: annotate integration tests with `@Transactional` to roll back after each te
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Verify that components work together using     │
-│              │ real dependencies, not mocks                  │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Testing DB queries, service wiring, HTTP      │
-│              │ clients, message consumers                    │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Testing pure logic — use a faster unit test   │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Mocks lie — integration tests tell the truth  │
-│              │  about how components work together"          │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Testcontainers --> Contract Test --> E2E Test  │
-└─────────────────────────────────────────────────────────────┘
-```
+| #413 | Category: Testing | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Unit Test, Spring Boot Test, Testcontainers | |
+| **Used by:** | Test Pyramid, CI/CD, Contract Test | |
 
 ---
 

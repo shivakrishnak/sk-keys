@@ -18,15 +18,10 @@ tags: #java #internals #intermediate #jvm
 
 ⚡ TL;DR — The JVM caches `Integer` objects for values -128 to 127; `Integer.valueOf()` returns the same cached instance for these values, making `==` work — but only in this range.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #052         │ Category: Java Language              │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Autoboxing, Integer.valueOf                                       │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Autoboxing, String Pool, Performance Analysis                     │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #052 | Category: Java Language | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Autoboxing, Integer.valueOf | |
+| **Used by:** | Autoboxing, String Pool, Performance Analysis | |
 
 ---
 
@@ -177,23 +172,10 @@ Fix: use `.equals()` everywhere; never depend on `==` for correctness.
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Integer.valueOf() caches -128 to 127;        │
-│              │ == works in this range only                   │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Understanding autoboxing performance;        │
-│              │ debugging == comparison bugs                  │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Never rely on cache for correctness;         │
-│              │ always use .equals() for value comparison     │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Small integers are shared objects; large ones│
-│              │  are not — never use == on Integer"           │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Autoboxing --> String Pool --> == vs equals() │
-└─────────────────────────────────────────────────────────────┘
-```
+| #052 | Category: Java Language | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Autoboxing, Integer.valueOf | |
+| **Used by:** | Autoboxing, String Pool, Performance Analysis | |
 
 ---
 

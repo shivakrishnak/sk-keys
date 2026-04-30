@@ -18,15 +18,10 @@ tags: #cleancode #intermediate #pattern
 
 ⚡ TL;DR — Restructuring existing code without changing its external behavior — improving design while keeping all tests green.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #433         │ Category: Clean Code                 │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Technical Debt, Unit Tests, Code Smells                           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Technical Debt, Clean Code, Boy Scout Rule                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #433 | Category: Clean Code | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Technical Debt, Unit Tests, Code Smells | |
+| **Used by:** | Technical Debt, Clean Code, Boy Scout Rule | |
 
 ---
 
@@ -215,22 +210,10 @@ Fix: timebox refactoring; apply the Boy Scout Rule (leave it a little better, no
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Improve internal structure without changing    │
-│              │ external behavior — tests stay green always   │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Continuously — especially before adding a     │
-│              │ new feature to messy existing code            │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ No tests exist yet — write them first         │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Small, safe, behavior-preserving steps that  │
-│              │  accumulate into a fundamentally cleaner design"│
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Code Smells --> TDD --> Boy Scout Rule         │
-└─────────────────────────────────────────────────────────────┘
-```
+| #433 | Category: Clean Code | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Technical Debt, Unit Tests, Code Smells | |
+| **Used by:** | Technical Debt, Clean Code, Boy Scout Rule | |
 
 ---
 

@@ -18,15 +18,10 @@ tags: #testing #intermediate #e2e #quality
 
 ⚡ TL;DR — A test that exercises the entire system from the user's perspective — browser, API, database — verifying complete user journeys.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #415         │ Category: Testing                    │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Integration Test, Selenium, Playwright, Cypress                   │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Test Pyramid, CI/CD, QA                                           │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #415 | Category: Testing | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Integration Test, Selenium, Playwright, Cypress | |
+| **Used by:** | Test Pyramid, CI/CD, QA | |
 
 ---
 
@@ -195,22 +190,10 @@ Fix: isolated test environments per run; reset state between test runs; use sepa
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Simulate real user journeys through the full  │
-│              │ stack — browser to database                   │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Critical user flows: login, checkout, signup  │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Testing edge cases or error paths — use       │
-│              │ unit/integration tests for those              │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Test what the user sees — the full journey,  │
-│              │  not the individual parts"                    │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Test Pyramid --> Playwright --> Smoke Testing  │
-└─────────────────────────────────────────────────────────────┘
-```
+| #415 | Category: Testing | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Integration Test, Selenium, Playwright, Cypress | |
+| **Used by:** | Test Pyramid, CI/CD, QA | |
 
 ---
 

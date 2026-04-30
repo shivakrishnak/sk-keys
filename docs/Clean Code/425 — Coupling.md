@@ -18,15 +18,10 @@ tags: #cleancode #architecture #foundational
 
 ⚡ TL;DR — The degree to which one module depends on the internals of another.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #425         │ Category: Clean Code                 │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Cohesion, Module Design                                           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Dependency Injection, DIP, Refactoring                            │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #425 | Category: Clean Code | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Cohesion, Module Design | |
+| **Used by:** | Dependency Injection, DIP, Refactoring | |
 
 ---
 
@@ -202,20 +197,10 @@ Fix: split the god object; route communication through interfaces or events.
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Modules should know as little as possible     │
-│              │ about each other's internals                   │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Always — loose coupling is the constant goal  │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Over-engineering tiny scripts with interfaces  │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Depend on interfaces, not implementations"    │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Cohesion → DIP → Dependency Injection         │
-└─────────────────────────────────────────────────────────────┘
-```
+| #425 | Category: Clean Code | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Cohesion, Module Design | |
+| **Used by:** | Dependency Injection, DIP, Refactoring | |
 
 ---
 

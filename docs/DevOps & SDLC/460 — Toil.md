@@ -18,15 +18,10 @@ tags: #devops #sdlc #intermediate #sre #reliability
 
 ⚡ TL;DR — Manual, repetitive, automatable operational work that scales linearly with service growth and provides no lasting value.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #460         │ Category: DevOps & SDLC              │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ SRE, Error Budget, Automation                                     │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ SRE, Error Budget, Operational Excellence                         │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #460 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | SRE, Error Budget, Automation | |
+| **Used by:** | SRE, Error Budget, Operational Excellence | |
 
 ---
 
@@ -243,23 +238,10 @@ Fix: audit alerts; delete non-actionable ones; reduce signal-to-noise ruthlessly
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Manual, repetitive, automatable work that     │
-│              │ scales with traffic — must be eliminated      │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Auditing operational work; building SRE       │
-│              │ roadmap; justifying automation investment     │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ N/A — all toil should be reduced; > 50%      │
-│              │ is an organizational red flag                 │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "If you do it twice, automate it.             │
-│              │  If you don't, it will eat you alive at scale"│
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ SRE --> Error Budget --> Automation --> IaC   │
-└─────────────────────────────────────────────────────────────┘
-```
+| #460 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | SRE, Error Budget, Automation | |
+| **Used by:** | SRE, Error Budget, Operational Excellence | |
 
 ---
 

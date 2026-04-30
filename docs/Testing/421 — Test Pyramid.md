@@ -18,15 +18,10 @@ tags: #testing #intermediate #strategy #quality
 
 ⚡ TL;DR — A model prescribing many fast unit tests at the base, fewer integration tests in the middle, and very few slow E2E tests at the top.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #421         │ Category: Testing                    │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Unit Test, Integration Test, E2E Test                             │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Testing Strategy, CI/CD, QA                                       │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #421 | Category: Testing | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Unit Test, Integration Test, E2E Test | |
+| **Used by:** | Testing Strategy, CI/CD, QA | |
 
 ---
 
@@ -205,22 +200,10 @@ Fix: move boundary/edge-case tests to unit tests; keep E2E only for happy paths.
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Many fast unit tests, fewer integration,      │
-│              │ very few E2E — match count to speed/cost      │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Designing a test strategy for any project     │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ N/A — the pyramid is a target, not a rule;   │
-│              │ adapt for microservices (honeycomb model)     │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Proportional to cost: most tests cheapest,   │
-│              │  fewest tests most expensive"                 │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Unit Test --> Integration Test --> E2E         │
-└─────────────────────────────────────────────────────────────┘
-```
+| #421 | Category: Testing | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Unit Test, Integration Test, E2E Test | |
+| **Used by:** | Testing Strategy, CI/CD, QA | |
 
 ---
 

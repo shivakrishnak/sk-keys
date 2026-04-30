@@ -18,15 +18,10 @@ tags: #java #foundational #internals
 
 ⚡ TL;DR — Automatic conversion between primitive types (`int`) and their wrapper classes (`Integer`) — transparent but carries hidden performance costs.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #051         │ Category: Java Language              │ Difficulty: ★☆☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Primitive Types, Wrapper Classes                                  │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Collections, Generics, Streams                                    │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #051 | Category: Java Language | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Primitive Types, Wrapper Classes | |
+| **Used by:** | Collections, Generics, Streams | |
 
 ---
 
@@ -173,23 +168,10 @@ Fix: always use `.equals()` for `Integer`, `Long`, `Double` comparisons.
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Automatic int↔Integer conversion — convenient │
-│              │ but has allocation cost and NPE risk          │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Working with collections/generics that        │
-│              │ require wrapper types                         │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Hot loops; performance-critical code — use    │
-│              │ primitive arrays or primitive streams          │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Convenient conversion between int and Integer│
-│              │  — transparent but not free"                  │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Integer Cache --> Generics --> Type Erasure    │
-└─────────────────────────────────────────────────────────────┘
-```
+| #051 | Category: Java Language | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Primitive Types, Wrapper Classes | |
+| **Used by:** | Collections, Generics, Streams | |
 
 ---
 

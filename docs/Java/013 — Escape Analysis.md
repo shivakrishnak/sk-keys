@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Escape Analysis"
 parent: "Java Fundamentals"
@@ -7,15 +7,10 @@ permalink: /java/escape-analysis/
 ---
 ⚡ TL;DR — A JIT compiler optimisation that determines if an object's lifetime is confined to a method, allowing stack allocation or scalar replacement — eliminating heap allocation and GC pressure entirely.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #013         │ Category: JVM Internals              │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ [[JVM]] [[Heap Memory]]              │                          │
-│              │ [[Stack Memory]] [[JIT Compiler]]    │                          │
-│ Used by:     │ [[GC]] [[JIT Compiler]] [[Stack Frame]]                         │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 
 ---
 ### 📘 Textbook Definition
@@ -143,39 +138,10 @@ Without escape analysis:
 ---
 ### ⚙️ How It Works — Three Optimisations
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│              ESCAPE ANALYSIS OUTCOMES                           │
-│                                                                 │
-│  JIT analyses object reference flow:                           │
-│                                                                 │
-│  Does the reference:                                            │
-│    • Get returned from the method?          → ESCAPES           │
-│    • Get stored in a field/static?          → ESCAPES           │
-│    • Get passed to an unknown method?       → ESCAPES           │
-│    • Get stored where another thread reads? → ESCAPES           │
-│                                                                 │
-│  If NONE of the above → object DOES NOT ESCAPE                 │
-│                                                                 │
-│  Three possible optimisations:                                  │
-│                                                                 │
-│  1. STACK ALLOCATION                                            │
-│     Object allocated on stack frame instead of heap            │
-│     Freed instantly when method returns                         │
-│     No GC involvement                                           │
-│                                                                 │
-│  2. SCALAR REPLACEMENT (most powerful)                          │
-│     Object decomposed into primitive local variables            │
-│     Object ceases to exist entirely                             │
-│     Fields become slots in Local Variable Table                 │
-│     No allocation whatsoever                                    │
-│                                                                 │
-│  3. LOCK ELISION                                                │
-│     If object doesn't escape → no other thread can access it   │
-│     → synchronized block on it is useless                      │
-│     → JIT removes the lock entirely                             │
-└─────────────────────────────────────────────────────────────────┘
-```
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 
 ---
 ### 🔄 How It Connects
@@ -189,18 +155,10 @@ JIT detects method is HOT
       ↓
 JIT runs Escape Analysis on all allocations
       ↓
-┌─────────────────────────────────────┐
-│ Does Point reference escape?        │
-│                                     │
-│ NO  → Scalar Replacement            │
-│       Point.x → local var           │
-│       Point.y → local var           │
-│       No allocation at all          │
-│                                     │
-│ YES → Normal heap allocation        │
-│       TLAB bump pointer             │
-│       GC tracks it                  │
-└─────────────────────────────────────┘
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
       ↓
 Native code generated
 (with or without allocation)
@@ -498,29 +456,10 @@ java -XX:StartFlightRecording=filename=recording.jfr MyApp
 
 ### 📌 Quick Reference Card
 
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ JIT proves object doesn't leave its       │
-│              │ method → eliminates heap allocation and   │
-│              │ GC entirely via scalar replacement        │
-├──────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Write clean OOP freely — EA works best    │
-│              │ with small methods, no reflection,        │
-│              │ no unnecessary object sharing             │
-├──────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Don't rely on EA for correctness —        │
-│              │ it's an optimisation hint, not a          │
-│              │ guarantee; always verify with JMH + JFR  │
-├──────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "EA = the JVM's promise: write clean      │
-│              │  objects freely, I'll make them free      │
-│              │  if they never leave home"                │
-├──────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ JIT Compiler → Method Inlining →          │
-│              │ Scalar Replacement → Lock Elision →       │
-│              │ Project Valhalla → JMH Benchmarking       │
-└──────────────────────────────────────────────────────────┘
-```
+| #??? | Category: ??? | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | — | |
+| **Used by:** | — | |
 
 ---
 

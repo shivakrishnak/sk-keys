@@ -18,15 +18,10 @@ tags: #devops #sdlc #intermediate #reliability
 
 ⚡ TL;DR — Gradually shift traffic from the old version to the new version, monitoring at each step, and rolling back immediately if metrics degrade.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #452         │ Category: DevOps & SDLC              │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ CI/CD Pipeline, Load Balancer, Monitoring                         │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ CI/CD Pipeline, Risk Reduction, Feature Validation                │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #452 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | CI/CD Pipeline, Load Balancer, Monitoring | |
+| **Used by:** | CI/CD Pipeline, Risk Reduction, Feature Validation | |
 
 ---
 
@@ -228,23 +223,10 @@ Fix: use header-based routing or ensure stateless sessions for accurate canary s
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Expose a small % of real production traffic   │
-│              │ to new version; roll back fast if it breaks   │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ High-risk changes; validating with real       │
-│              │ production traffic before full rollout        │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Changes that cannot be partially live         │
-│              │ (e.g., breaking DB migration)                 │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Let 5% of users test it; protect the 95%    │
-│              │  until you're confident"                      │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Blue-Green --> Rolling Update --> Argo Rollouts│
-└─────────────────────────────────────────────────────────────┘
-```
+| #452 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | CI/CD Pipeline, Load Balancer, Monitoring | |
+| **Used by:** | CI/CD Pipeline, Risk Reduction, Feature Validation | |
 
 ---
 

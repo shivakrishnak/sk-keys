@@ -18,15 +18,10 @@ tags: #devops #sdlc #intermediate #architecture
 
 ⚡ TL;DR — A methodology of 12 practices for building portable, cloud-native, scalable software-as-a-service applications.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #457         │ Category: DevOps & SDLC              │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Cloud-Native Architecture, Microservices                          │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ IaC, Immutable Infrastructure, CI/CD                              │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #457 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Cloud-Native Architecture, Microservices | |
+| **Used by:** | IaC, Immutable Infrastructure, CI/CD | |
 
 ---
 
@@ -212,22 +207,10 @@ Fix: use Docker Compose in dev to run the same PostgreSQL version as production.
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ 12 practices that make apps deployable,       │
-│              │ scalable, and portable across environments     │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Building any cloud-native SaaS application    │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ N/A — these are universal best practices;     │
-│              │ adopt progressively if needed                 │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "12 rules that make your app a cloud citizen, │
-│              │  not a cloud prisoner"                        │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ IaC --> Immutable Infra --> GitOps             │
-└─────────────────────────────────────────────────────────────┘
-```
+| #457 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Cloud-Native Architecture, Microservices | |
+| **Used by:** | IaC, Immutable Infrastructure, CI/CD | |
 
 ---
 

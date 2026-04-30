@@ -18,15 +18,10 @@ tags: #testing #foundational #java
 
 ⚡ TL;DR — A test that verifies a single unit of code (method or class) in complete isolation from all external dependencies.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #412         │ Category: Testing                    │ Difficulty: ★☆☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ JUnit, Assertion Libraries                                        │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ TDD, Test Pyramid, CI/CD                                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #412 | Category: Testing | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | JUnit, Assertion Libraries | |
+| **Used by:** | TDD, Test Pyramid, CI/CD | |
 
 ---
 
@@ -209,21 +204,10 @@ Fix: always have at least one `assertThat`; use `verify()` for void methods.
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Test one unit of logic in complete isolation  │
-│              │ — fast, deterministic, precise                │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Always — for every non-trivial method/class   │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ Testing framework glue code or trivial getters│
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Test the logic here, in isolation — not the  │
-│              │  whole system"                                │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Mocking --> TDD --> Test Pyramid               │
-└─────────────────────────────────────────────────────────────┘
-```
+| #412 | Category: Testing | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | JUnit, Assertion Libraries | |
+| **Used by:** | TDD, Test Pyramid, CI/CD | |
 
 ---
 

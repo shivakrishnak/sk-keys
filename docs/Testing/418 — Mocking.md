@@ -18,15 +18,10 @@ tags: #testing #intermediate #java #mockito
 
 ⚡ TL;DR — Replacing a real dependency with a controlled fake that records interactions, allowing you to verify how the unit under test uses it.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #418         │ Category: Testing                    │ Difficulty: ★★☆           │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Depends on:  │ Unit Test, Mockito, Dependency Injection                          │
-├──────────────┼──────────────────────────────────────┼───────────────────────────┤
-│ Used by:     │ Unit Test, TDD, Integration Test                                  │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+| #418 | Category: Testing | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Unit Test, Mockito, Dependency Injection | |
+| **Used by:** | Unit Test, TDD, Integration Test | |
 
 ---
 
@@ -218,23 +213,10 @@ Fix: simplify the class; split responsibilities; the test smell reveals a produc
 
 ## 📌 Quick Reference Card
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Replace real dependencies with controlled     │
-│              │ doubles that record interactions              │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Unit testing classes with external dependencies│
-│              │ (DB, HTTP, email, queues)                     │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ When real dependencies are fast and available  │
-│              │ (use integration tests instead)               │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Replace the real thing with something you     │
-│              │  control — then verify what happened"         │
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Mockito --> Stubbing --> Spy --> Test Doubles  │
-└─────────────────────────────────────────────────────────────┘
-```
+| #418 | Category: Testing | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Unit Test, Mockito, Dependency Injection | |
+| **Used by:** | Unit Test, TDD, Integration Test | |
 
 ---
 
