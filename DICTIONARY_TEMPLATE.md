@@ -46,6 +46,7 @@ tags: #tag1, #tag2, #tag3
 
 ⚡ TL;DR — one sentence that captures the essence.
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ #NNN         │ Category: ...                        │ Difficulty: ★★☆          │
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
@@ -53,6 +54,7 @@ tags: #tag1, #tag2, #tag3
 ├──────────────┼──────────────────────────────────────┼───────────────────────────┤
 │ Used by:     │ Consumer1, Consumer2                                             │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -156,11 +158,13 @@ Step 1 → Step 2 → Step 3
 
 ## ⚠️ Common Misconceptions
 
+```
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | Misconception 1 | Correction 1 |
 | Misconception 2 | Correction 2 |
 | Misconception 3 | Correction 3 |
+```
 
 ---
 
@@ -193,13 +197,13 @@ Step 1 → Step 2 → Step 3
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ [one-line essence]                           │
 ├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ [when to apply this]                        │
+│ USE WHEN     │ [when to apply this]                         │
 ├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ [when NOT to use this]                      │
+│ AVOID WHEN   │ [when NOT to use this]                       │
 ├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "[memorable summary]"                       │
+│ ONE-LINER    │ "[memorable summary]"                        │
 ├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Concept A → Concept B → Concept C           │
+│ NEXT EXPLORE │ Concept A → Concept B → Concept C            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
