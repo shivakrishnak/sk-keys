@@ -3,7 +3,7 @@ layout: default
 title: "Infrastructure as Code (IaC)"
 parent: "CI/CD"
 nav_order: 1016
-permalink: /devops-sdlc/infrastructure-as-code-iac/
+permalink: /ci-cd/infrastructure-as-code-iac/
 ---
 # 1016 — Infrastructure as Code (IaC)
 

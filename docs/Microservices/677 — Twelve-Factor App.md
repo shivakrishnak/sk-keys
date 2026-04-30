@@ -3,7 +3,7 @@ layout: default
 title: "Twelve-Factor App"
 parent: "Microservices"
 nav_order: 677
-permalink: /devops-sdlc/twelve-factor-app/
+permalink: /microservices/twelve-factor-app/
 ---
 # 677 — Twelve-Factor App
 

@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Web APIs"
 parent: "JavaScript"
-nav_order: 547
+nav_order: 1292
 permalink: /javascript/web-apis/
-number: "547"
+number: "1292"
 category: JavaScript
 difficulty: ★☆☆
 depends_on: JavaScript Engine (V8), Browser, Event Loop
@@ -12,13 +12,13 @@ used_by: setTimeout, fetch, DOM Events, Task Queue, Event Loop
 tags: #javascript, #browser, #frontend, #internals, #foundational
 ---
 
-# 547 — Web APIs
+# 1292 — Web APIs
 
 `#javascript` `#browser` `#frontend` `#internals` `#foundational`
 
 ⚡ TL;DR — The browser-provided C++ capabilities (timers, fetch, DOM, storage) that handle async work outside the JS engine, notifying it via the task queue when done.
 
-| #547 | Category: JavaScript | Difficulty: ★☆☆ |
+| #1292 | Category: JavaScript | Difficulty: ★☆☆ |
 |:---|:---|:---|
 | **Depends on:** | JavaScript Engine (V8), Browser, Event Loop | |
 | **Used by:** | setTimeout, fetch, DOM Events, Task Queue, Event Loop | |

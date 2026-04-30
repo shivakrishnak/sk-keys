@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Text Blocks"
 parent: "Java Language"
-nav_order: 65
+nav_order: 325
 permalink: /java-language/text-blocks/
 ---
-# 065 — Text Blocks (Java 15+)
+# 325 — Text Blocks (Java 15+)
 
 `#java` `#java15` `#string` `#readability`
 
 ⚡ TL;DR — Text blocks let you write multi-line strings with `"""` delimiters, automatically removing common leading whitespace — making embedded SQL, JSON, HTML, and XML readable without escape clutter.
 
-| #065 | Category: Java Language | Difficulty: ★☆☆ |
+| #325 | Category: Java Language | Difficulty: ★☆☆ |
 |:---|:---|:---|
 | **Depends on:** | String, String Literals | |
 | **Used by:** | SQL queries, JSON/XML templates, HTML snippets | |

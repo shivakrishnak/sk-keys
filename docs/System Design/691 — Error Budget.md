@@ -3,7 +3,7 @@ layout: default
 title: "Error Budget"
 parent: "System Design"
 nav_order: 691
-permalink: /devops-sdlc/error-budget/
+permalink: /system-design/error-budget/
 ---
 # 691 — Error Budget
 

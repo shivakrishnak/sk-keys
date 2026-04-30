@@ -3,7 +3,7 @@ layout: default
 title: "Canary Deployment"
 parent: "Microservices"
 nav_order: 669
-permalink: /devops-sdlc/canary-deployment/
+permalink: /microservices/canary-deployment/
 ---
 # 669 — Canary Deployment
 

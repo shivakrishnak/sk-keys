@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Lock-Free Data Structures"
 parent: "Java Concurrency"
-nav_order: 101
+nav_order: 347
 permalink: /java-concurrency/lock-free-data-structures/
-number: "101"
+number: "347"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: Atomic Variables, CAS, ConcurrentLinkedQueue, Memory Barrier
@@ -12,13 +12,13 @@ used_by: High-throughput Systems, Non-blocking Algorithms, LMAX Disruptor
 tags: #java, #concurrency, #lock-free, #non-blocking, #cas, #advanced
 ---
 
-# 101 — Lock-Free Data Structures
+# 347 — Lock-Free Data Structures
 
 `#java` `#concurrency` `#lock-free` `#non-blocking` `#cas` `#advanced`
 
 ⚡ TL;DR — Lock-free data structures use CAS loops instead of mutexes — threads never block each other; at least one thread always makes progress even when others fail their CAS, eliminating deadlock and reducing context-switching overhead.
 
-| #101 | Category: Java Concurrency | Difficulty: ★★★ |
+| #347 | Category: Java Concurrency | Difficulty: ★★★ |
 |:---|:---|:---|
 | **Depends on:** | Atomic Variables, CAS, ConcurrentLinkedQueue, Memory Barrier | |
 | **Used by:** | High-throughput Systems, Non-blocking Algorithms, LMAX Disruptor | |

@@ -3,7 +3,7 @@ layout: default
 title: "Refactoring"
 parent: "Code Quality"
 nav_order: 1121
-permalink: /clean-code/refactoring/
+permalink: /code-quality/refactoring/
 number: "1121"
 category: Code Quality
 difficulty: ★★☆

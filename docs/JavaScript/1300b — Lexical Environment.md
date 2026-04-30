@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Lexical Environment"
 parent: "JavaScript"
-nav_order: 553
+nav_order: 1300
 permalink: /javascript/lexical-environment/
-number: "553"
+number: "1300"
 category: JavaScript
 difficulty: ★★★
 depends_on: Scope, Closure, Execution Context, var / let / const
@@ -12,13 +12,13 @@ used_by: Closure, Hoisting, Temporal Dead Zone, Scope Chain, Module Scope
 tags: #javascript, #internals, #advanced, #deep-dive, #nodejs, #browser
 ---
 
-# 553 — Lexical Environment
+# 1300 — Lexical Environment
 
 `#javascript` `#internals` `#advanced` `#deep-dive` `#nodejs` `#browser`
 
 ⚡ TL;DR — The internal specification record that implements scope: a pairing of an environment record (variable bindings) and a reference to the outer lexical environment.
 
-| #553 | Category: JavaScript | Difficulty: ★★★ |
+| #1300 | Category: JavaScript | Difficulty: ★★★ |
 |:---|:---|:---|
 | **Depends on:** | Scope, Closure, Execution Context, var / let / const | |
 | **Used by:** | Closure, Hoisting, Temporal Dead Zone, Scope Chain, Module Scope | |

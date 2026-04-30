@@ -3,7 +3,7 @@ layout: default
 title: "GitOps"
 parent: "CI/CD"
 nav_order: 1020
-permalink: /devops-sdlc/gitops/
+permalink: /ci-cd/gitops/
 ---
 # 1020 — GitOps
 

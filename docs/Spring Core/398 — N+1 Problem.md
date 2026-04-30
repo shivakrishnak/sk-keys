@@ -3,7 +3,7 @@ layout: default
 title: "N+1 Problem"
 parent: "Spring Core"
 nav_order: 398
-permalink: /spring/n-plus-1-problem/
+permalink: /spring/n-1-problem/
 number: "398"
 category: Spring Core
 difficulty: ★★☆

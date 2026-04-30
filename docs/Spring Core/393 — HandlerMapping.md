@@ -3,7 +3,7 @@ layout: default
 title: "HandlerMapping"
 parent: "Spring Core"
 nav_order: 393
-permalink: /spring/handler-mapping/
+permalink: /spring/handlermapping/
 number: "393"
 category: Spring Core
 difficulty: ★★☆

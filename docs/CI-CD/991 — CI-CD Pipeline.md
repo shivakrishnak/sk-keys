@@ -3,7 +3,7 @@ layout: default
 title: "CI/CD Pipeline"
 parent: "CI/CD"
 nav_order: 991
-permalink: /devops-sdlc/cicd-pipeline/
+permalink: /ci-cd/ci-cd-pipeline/
 ---
 # 991 — CI/CD Pipeline
 

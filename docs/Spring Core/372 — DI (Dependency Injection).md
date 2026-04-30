@@ -3,7 +3,7 @@ layout: default
 title: "DI (Dependency Injection)"
 parent: "Spring Core"
 nav_order: 372
-permalink: /spring/dependency-injection/
+permalink: /spring/di-dependency-injection/
 number: "372"
 category: Spring Core
 difficulty: ★★☆

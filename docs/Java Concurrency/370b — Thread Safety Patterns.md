@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Thread Safety Patterns"
 parent: "Java Concurrency"
-nav_order: 102
+nav_order: 370
 permalink: /java-concurrency/thread-safety-patterns/
-number: "102"
+number: "370"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: synchronized, volatile, Immutability, ThreadLocal, ConcurrentHashMap
@@ -12,13 +12,13 @@ used_by: All Concurrent Code, API Design, Library Design
 tags: #java, #concurrency, #patterns, #thread-safety, #design
 ---
 
-# 102 — Thread Safety Patterns
+# 370 — Thread Safety Patterns
 
 `#java` `#concurrency` `#patterns` `#thread-safety` `#design`
 
 ⚡ TL;DR — Thread safety is achieved through six complementary strategies: immutability, confinement, synchronisation, lock-free operations, concurrent collections, and safe publication — choosing the right strategy for each data access pattern eliminates races without sacrificing performance.
 
-| #102 | Category: Java Concurrency | Difficulty: ★★★ |
+| #370 | Category: Java Concurrency | Difficulty: ★★★ |
 |:---|:---|:---|
 | **Depends on:** | synchronized, volatile, Immutability, ThreadLocal, ConcurrentHashMap | |
 | **Used by:** | All Concurrent Code, API Design, Library Design | |

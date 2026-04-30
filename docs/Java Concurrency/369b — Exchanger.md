@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Exchanger"
 parent: "Java Concurrency"
-nav_order: 97
+nav_order: 369
 permalink: /java-concurrency/exchanger/
-number: "097"
+number: "369"
 category: Java Concurrency
 difficulty: ★★☆
 depends_on: Thread, BlockingQueue, Semaphore
@@ -12,13 +12,13 @@ used_by: Pipeline Stages, Double Buffering, Genetic Algorithms
 tags: #java, #concurrency, #synchronizer, #exchanger, #handoff
 ---
 
-# 097 — Exchanger
+# 369 — Exchanger
 
 `#java` `#concurrency` `#synchronizer` `#exchanger` `#handoff`
 
 ⚡ TL;DR — Exchanger is a two-thread rendezvous point where both threads swap a data object atomically — each thread gives and receives one item; both block until the partner arrives, ensuring simultaneous handoff.
 
-| #097 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #369 | Category: Java Concurrency | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Thread, BlockingQueue, Semaphore | |
 | **Used by:** | Pipeline Stages, Double Buffering, Genetic Algorithms | |

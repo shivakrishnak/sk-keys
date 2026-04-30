@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Livelock"
 parent: "Java Concurrency"
-nav_order: 88
+nav_order: 119
 permalink: /java-concurrency/livelock/
-number: "088"
+number: "119"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: Deadlock, Thread, ReentrantLock, Race Condition
@@ -12,13 +12,13 @@ used_by: tryLock, Backoff Strategies, Retry Logic
 tags: #java, #concurrency, #livelock, #threading, #bugs
 ---
 
-# 088 — Livelock
+# 119 — Livelock
 
 `#java` `#concurrency` `#livelock` `#threading` #bugs`
 
 ⚡ TL;DR — Livelock is a concurrency hazard where threads are actively running and responding to each other but making zero progress — they continuously react to the other's actions without ever completing their work.
 
-| #088 | Category: Java Concurrency | Difficulty: ★★★ |
+| #119 | Category: Java Concurrency | Difficulty: ★★★ |
 |:---|:---|:---|
 | **Depends on:** | Deadlock, Thread, ReentrantLock, Race Condition | |
 | **Used by:** | tryLock, Backoff Strategies, Retry Logic | |

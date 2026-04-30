@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Producer-Consumer Pattern"
 parent: "Java Concurrency"
-nav_order: 86
-permalink: /java-concurrency/producer-consumer/
-number: "086"
+nav_order: 792
+permalink: /java-concurrency/producer-consumer-pattern/
+number: "792"
 category: Java Concurrency
 difficulty: ★★☆
 depends_on: BlockingQueue, Thread, ExecutorService
@@ -12,13 +12,13 @@ used_by: Task Queues, Pipeline Processing, Event Systems
 tags: #java, #concurrency, #pattern, #producer-consumer, #blocking-queue
 ---
 
-# 086 — Producer-Consumer Pattern
+# 792 — Producer-Consumer Pattern
 
 `#java` `#concurrency` `#pattern` `#producer-consumer` `#blocking-queue`
 
 ⚡ TL;DR — Producer-Consumer decouples work generation (producers) from work processing (consumers) via a shared buffer — producers add items when available; consumers take items when ready; the buffer absorbs rate differences between the two.
 
-| #086 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #792 | Category: Java Concurrency | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | BlockingQueue, Thread, ExecutorService | |
 | **Used by:** | Task Queues, Pipeline Processing, Event Systems | |

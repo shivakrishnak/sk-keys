@@ -3,7 +3,7 @@ layout: default
 title: "Temporal Dead Zone (TDZ)"
 parent: "JavaScript"
 nav_order: 1298
-permalink: /javascript/temporal-dead-zone/
+permalink: /javascript/temporal-dead-zone-tdz/
 number: "1298"
 category: JavaScript
 difficulty: ★★☆

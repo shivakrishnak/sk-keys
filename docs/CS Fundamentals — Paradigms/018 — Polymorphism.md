@@ -3,7 +3,7 @@ layout: default
 title: "Polymorphism"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 18
-permalink: /clean-code/polymorphism/
+permalink: /cs-fundamentals/polymorphism/
 number: "18"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆

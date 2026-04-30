@@ -1,25 +1,25 @@
-
+﻿
 ---
 layout: default
 title: "Backpressure"
-parent: "Spring & Spring Boot"
-nav_order: 138
+parent: "Spring Core"
+nav_order: 406
 permalink: /spring/backpressure/
-number: "138"
-category: Spring & Spring Boot
+number: "406"
+category: Spring Core
 difficulty: ★★★
 depends_on: "Mono / Flux, WebFlux, Reactive Streams, Non-blocking I/O"
 used_by: "Flux operators, R2DBC, WebClient streaming, Messaging consumers"
 tags: #java, #spring, #advanced, #deep-dive, #performance, #reliability
 ---
 
-# 138 — Backpressure
+# 406 — Backpressure
 
 `#java` `#spring` `#advanced` `#deep-dive` `#performance` `#reliability`
 
 ⚡ TL;DR — The mechanism by which a reactive subscriber controls how fast a publisher produces items — preventing a fast producer from overwhelming a slow consumer with unbounded data.
 
-| #138 | Category: Spring & Spring Boot | Difficulty: ★★★ |
+| #406 | category: Spring Core
 |:---|:---|:---|
 | **Depends on:** | Mono / Flux, WebFlux, Reactive Streams, Non-blocking I/O | |
 | **Used by:** | Flux operators, R2DBC, WebClient streaming, Messaging consumers | |

@@ -3,7 +3,7 @@ layout: default
 title: "BeanPostProcessor"
 parent: "Spring Core"
 nav_order: 378
-permalink: /spring/bean-post-processor/
+permalink: /spring/beanpostprocessor/
 number: "378"
 category: Spring Core
 difficulty: ★★★

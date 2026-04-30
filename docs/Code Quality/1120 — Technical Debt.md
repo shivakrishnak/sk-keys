@@ -3,7 +3,7 @@ layout: default
 title: "Technical Debt"
 parent: "Code Quality"
 nav_order: 1120
-permalink: /clean-code/technical-debt/
+permalink: /code-quality/technical-debt/
 number: "1120"
 category: Code Quality
 difficulty: ★★☆

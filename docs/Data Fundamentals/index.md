@@ -4,7 +4,7 @@ title: "Data Fundamentals"
 parent: "Technical Dictionary"
 nav_order: 14
 has_children: true
-permalink: /data-engineering/
+permalink: /data-fundamentals/
 ---
 
 # Data Fundamentals

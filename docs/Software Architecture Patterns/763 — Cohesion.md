@@ -3,7 +3,7 @@ layout: default
 title: "Cohesion"
 parent: "Software Architecture Patterns"
 nav_order: 763
-permalink: /clean-code/cohesion/
+permalink: /software-architecture/cohesion/
 number: "763"
 category: Software Architecture Patterns
 difficulty: ★★☆

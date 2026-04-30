@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Thread Interruption"
 parent: "Java Concurrency"
-nav_order: 90
+nav_order: 337
 permalink: /java-concurrency/thread-interruption/
-number: "090"
+number: "337"
 category: Java Concurrency
 difficulty: ★★☆
 depends_on: Thread, Thread Lifecycle, InterruptedException, ExecutorService
@@ -12,13 +12,13 @@ used_by: Cancellation, Shutdown, Timeouts, Task Cancellation
 tags: #java, #concurrency, #threading, #interruption, #cancellation
 ---
 
-# 090 — Thread Interruption
+# 337 — Thread Interruption
 
 `#java` `#concurrency` `#threading` `#interruption` `#cancellation`
 
 ⚡ TL;DR — Thread interruption is Java's cooperative cancellation mechanism: `thread.interrupt()` sets a flag; the thread must periodically check `isInterrupted()` or respond to `InterruptedException` from blocking methods to stop cleanly.
 
-| #090 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #337 | Category: Java Concurrency | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Thread, Thread Lifecycle, InterruptedException, ExecutorService | |
 | **Used by:** | Cancellation, Shutdown, Timeouts, Task Cancellation | |

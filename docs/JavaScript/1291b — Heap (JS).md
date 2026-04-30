@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Heap (JS)"
 parent: "JavaScript"
-nav_order: 543
+nav_order: 1291
 permalink: /javascript/heap-js/
-number: "543"
+number: "1291"
 category: JavaScript
 difficulty: ★☆☆
 depends_on: JavaScript Engine (V8)
@@ -12,13 +12,13 @@ used_by: Garbage Collection (JS), Memory Leaks (JS), WeakMap, WeakSet, Closure
 tags: #javascript, #memory, #internals, #browser, #nodejs, #foundational
 ---
 
-# 543 — Heap (JS)
+# 1291 — Heap (JS)
 
 `#javascript` `#memory` `#internals` `#browser` `#nodejs` `#foundational`
 
 ⚡ TL;DR — The unstructured memory region where JavaScript allocates all objects, arrays, closures, and strings at runtime.
 
-| #543 | Category: JavaScript | Difficulty: ★☆☆ |
+| #1291 | Category: JavaScript | Difficulty: ★☆☆ |
 |:---|:---|:---|
 | **Depends on:** | JavaScript Engine (V8) | |
 | **Used by:** | Garbage Collection (JS), Memory Leaks (JS), WeakMap, WeakSet, Closure | |

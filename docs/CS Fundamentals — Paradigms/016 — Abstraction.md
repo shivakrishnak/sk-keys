@@ -3,7 +3,7 @@ layout: default
 title: "Abstraction"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 16
-permalink: /clean-code/abstraction/
+permalink: /cs-fundamentals/abstraction/
 number: "16"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆

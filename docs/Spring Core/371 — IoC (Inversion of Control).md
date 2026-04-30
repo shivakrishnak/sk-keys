@@ -3,7 +3,7 @@ layout: default
 title: "IoC (Inversion of Control)"
 parent: "Spring Core"
 nav_order: 371
-permalink: /spring/ioc/
+permalink: /spring/ioc-inversion-of-control/
 number: "371"
 category: Spring Core
 difficulty: ★★☆

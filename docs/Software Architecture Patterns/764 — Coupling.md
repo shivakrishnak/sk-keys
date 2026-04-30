@@ -3,7 +3,7 @@ layout: default
 title: "Coupling"
 parent: "Software Architecture Patterns"
 nav_order: 764
-permalink: /clean-code/coupling/
+permalink: /software-architecture/coupling/
 number: "764"
 category: Software Architecture Patterns
 difficulty: ★★☆

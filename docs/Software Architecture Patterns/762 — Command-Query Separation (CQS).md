@@ -3,7 +3,7 @@ layout: default
 title: "Command-Query Separation (CQS)"
 parent: "Software Architecture Patterns"
 nav_order: 762
-permalink: /clean-code/command-query-separation/
+permalink: /software-architecture/command-query-separation-cqs/
 number: "762"
 category: Software Architecture Patterns
 difficulty: ★★☆

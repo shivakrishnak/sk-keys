@@ -3,7 +3,7 @@ layout: default
 title: "Feature Flags"
 parent: "Microservices"
 nav_order: 671
-permalink: /clean-code/feature-flags/
+permalink: /microservices/feature-flags/
 number: "671"
 category: Microservices
 difficulty: ★★☆

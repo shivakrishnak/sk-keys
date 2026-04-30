@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "DelayQueue"
 parent: "Java Concurrency"
-nav_order: 99
+nav_order: 360
 permalink: /java-concurrency/delayqueue/
-number: "099"
+number: "360"
 category: Java Concurrency
 difficulty: ★★☆
 depends_on: BlockingQueue, PriorityQueue, Delayed
@@ -12,13 +12,13 @@ used_by: Scheduled Tasks, Cache Expiry, Rate Limiting, Session Timeout
 tags: #java, #concurrency, #queue, #delay, #time-based
 ---
 
-# 099 — DelayQueue
+# 360 — DelayQueue
 
 `#java` `#concurrency` `#queue` `#delay` `#time-based`
 
 ⚡ TL;DR — DelayQueue is a BlockingQueue that only releases elements after their individual delay expires — elements implement `Delayed` to specify when they become available; consumers block until the earliest element's time arrives.
 
-| #099 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #360 | Category: Java Concurrency | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | BlockingQueue, PriorityQueue, Delayed | |
 | **Used by:** | Scheduled Tasks, Cache Expiry, Rate Limiting, Session Timeout | |

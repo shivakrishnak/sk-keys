@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "ConcurrentLinkedQueue"
 parent: "Java Concurrency"
-nav_order: 98
+nav_order: 360
 permalink: /java-concurrency/concurrentlinkedqueue/
-number: "098"
+number: "360"
 category: Java Concurrency
 difficulty: ★★★
 depends_on: Atomic Variables, CAS, Race Condition, Queue
@@ -12,13 +12,13 @@ used_by: Lock-free Queues, Message Passing, High-throughput Pipelines
 tags: #java, #concurrency, #lock-free, #queue, #cas
 ---
 
-# 098 — ConcurrentLinkedQueue
+# 360 — ConcurrentLinkedQueue
 
 `#java` `#concurrency` `#lock-free` `#queue` `#cas`
 
 ⚡ TL;DR — ConcurrentLinkedQueue is an unbounded, lock-free, thread-safe FIFO queue using CAS on head/tail nodes — offering high-throughput non-blocking enqueue/dequeue without the blocking semantics of BlockingQueue.
 
-| #098 | Category: Java Concurrency | Difficulty: ★★★ |
+| #360 | Category: Java Concurrency | Difficulty: ★★★ |
 |:---|:---|:---|
 | **Depends on:** | Atomic Variables, CAS, Race Condition, Queue | |
 | **Used by:** | Lock-free Queues, Message Passing, High-throughput Pipelines | |

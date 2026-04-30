@@ -3,7 +3,7 @@ layout: default
 title: "Rolling Update"
 parent: "Kubernetes"
 nav_order: 901
-permalink: /devops-sdlc/rolling-update/
+permalink: /kubernetes/rolling-update/
 ---
 # 901 — Rolling Update
 

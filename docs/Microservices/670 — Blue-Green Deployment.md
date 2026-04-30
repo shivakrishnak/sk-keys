@@ -3,7 +3,7 @@ layout: default
 title: "Blue-Green Deployment"
 parent: "Microservices"
 nav_order: 670
-permalink: /devops-sdlc/blue-green-deployment/
+permalink: /microservices/blue-green-deployment/
 ---
 # 670 — Blue-Green Deployment
 

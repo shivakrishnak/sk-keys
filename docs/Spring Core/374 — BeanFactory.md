@@ -3,7 +3,7 @@ layout: default
 title: "BeanFactory"
 parent: "Spring Core"
 nav_order: 374
-permalink: /spring/bean-factory/
+permalink: /spring/beanfactory/
 number: "374"
 category: Spring Core
 difficulty: ★☆☆

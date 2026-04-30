@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Parallel Streams"
 parent: "Java Concurrency"
-nav_order: 92
+nav_order: 327
 permalink: /java-concurrency/parallel-streams/
-number: "092"
+number: "327"
 category: Java Concurrency
 difficulty: ★★☆
 depends_on: ForkJoinPool, Stream API, Spliterator
@@ -12,13 +12,13 @@ used_by: Bulk Data Processing, CPU-bound Collections, Arrays.parallelSort
 tags: #java, #concurrency, #parallel-streams, #forkjoin, #streams
 ---
 
-# 092 — Parallel Streams
+# 327 — Parallel Streams
 
 `#java` `#concurrency` `#parallel-streams` `#forkjoin` `#streams`
 
 ⚡ TL;DR — `stream.parallel()` splits the stream's source, processes chunks in parallel across ForkJoinPool.commonPool() threads, then merges results — easy to add but only beneficial for CPU-bound work on large datasets with no shared state.
 
-| #092 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #327 | Category: Java Concurrency | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | ForkJoinPool, Stream API, Spliterator | |
 | **Used by:** | Bulk Data Processing, CPU-bound Collections, Arrays.parallelSort | |

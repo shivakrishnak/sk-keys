@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Toil"
-parent: "DevOps & SDLC"
-nav_order: 460
-permalink: /devops-sdlc/toil/
+parent: "Observability & SRE"
+nav_order: 1210
+permalink: /observability/toil/
 ---
-# 460 — Toil
+# 1210 — Toil
 
 `#devops` `#sdlc` `#intermediate` `#sre` `#reliability`
 
 ⚡ TL;DR — Manual, repetitive, automatable operational work that scales linearly with service growth and provides no lasting value.
 
-| #460 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+| #1210 | category: Observability & SRE
 |:---|:---|:---|
 | **Depends on:** | SRE, Error Budget, Automation | |
 | **Used by:** | SRE, Error Budget, Operational Excellence | |

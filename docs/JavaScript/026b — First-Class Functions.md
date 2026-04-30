@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "First-Class Functions"
 parent: "JavaScript"
-nav_order: 561
+nav_order: 26
 permalink: /javascript/first-class-functions/
-number: "561"
+number: "26"
 category: JavaScript
 difficulty: ★☆☆
 depends_on: Functions, var / let / const, Scope
@@ -12,13 +12,13 @@ used_by: Higher-Order Functions, Callbacks, Closure, Currying, Functional Progra
 tags: #javascript, #foundational, #browser, #nodejs, #pattern
 ---
 
-# 561 — First-Class Functions
+# 26 — First-Class Functions
 
 `#javascript` `#foundational` `#browser` `#nodejs` `#pattern`
 
 ⚡ TL;DR — Functions in JavaScript are values: they can be assigned to variables, passed as arguments, returned from other functions, and stored in data structures.
 
-| #561 | Category: JavaScript | Difficulty: ★☆☆ |
+| #26 | Category: JavaScript | Difficulty: ★☆☆ |
 |:---|:---|:---|
 | **Depends on:** | Functions, var / let / const, Scope | |
 | **Used by:** | Higher-Order Functions, Callbacks, Closure, Currying, Functional Programming | |

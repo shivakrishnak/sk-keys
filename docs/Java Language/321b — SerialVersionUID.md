@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "SerialVersionUID"
 parent: "Java Language"
-nav_order: 61
+nav_order: 321
 permalink: /java-language/serialversionuid/
 ---
-# 061 — SerialVersionUID
+# 321 — SerialVersionUID
 
 `#java` `#foundational` `#serialization` `#versioning`
 
 ⚡ TL;DR — A `long` constant that identifies a serializable class version; mismatched UID between serialized bytes and current class = `InvalidClassException`. Always declare it explicitly.
 
-| #061 | Category: Java Language | Difficulty: ★☆☆ |
+| #321 | Category: Java Language | Difficulty: ★☆☆ |
 |:---|:---|:---|
 | **Depends on:** | Serialization, Class Evolution | |
 | **Used by:** | Serializable classes, RMI, JMS, Caching systems | |

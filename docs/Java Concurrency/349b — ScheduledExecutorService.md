@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "ScheduledExecutorService"
 parent: "Java Concurrency"
-nav_order: 93
+nav_order: 349
 permalink: /java-concurrency/scheduledexecutorservice/
-number: "093"
+number: "349"
 category: Java Concurrency
 difficulty: ★★☆
 depends_on: ExecutorService, Thread, Runnable vs Callable
@@ -12,13 +12,13 @@ used_by: Health Checks, Polling, Cache Refresh, Cleanup Tasks
 tags: #java, #concurrency, #scheduled, #timer, #periodic
 ---
 
-# 093 — ScheduledExecutorService
+# 349 — ScheduledExecutorService
 
 `#java` `#concurrency` `#scheduled` `#timer` `#periodic`
 
 ⚡ TL;DR — ScheduledExecutorService extends ExecutorService to run tasks after a delay or at fixed intervals — replacing error-prone `Timer`/`TimerTask` with a thread-safe, recoverable scheduler backed by a thread pool.
 
-| #093 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #349 | Category: Java Concurrency | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | ExecutorService, Thread, Runnable vs Callable | |
 | **Used by:** | Health Checks, Polling, Cache Refresh, Cleanup Tasks | |

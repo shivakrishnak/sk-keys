@@ -3,7 +3,7 @@ layout: default
 title: "ApplicationContext"
 parent: "Spring Core"
 nav_order: 373
-permalink: /spring/application-context/
+permalink: /spring/applicationcontext/
 number: "373"
 category: Spring Core
 difficulty: ★★☆

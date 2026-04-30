@@ -3,7 +3,7 @@ layout: default
 title: "AOP (Aspect-Oriented Programming)"
 parent: "Spring Core"
 nav_order: 386
-permalink: /spring/aop/
+permalink: /spring/aop-aspect-oriented-programming/
 number: "386"
 category: Spring Core
 difficulty: ★★★

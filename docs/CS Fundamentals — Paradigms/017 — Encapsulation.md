@@ -3,7 +3,7 @@ layout: default
 title: "Encapsulation"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 17
-permalink: /clean-code/encapsulation/
+permalink: /cs-fundamentals/encapsulation/
 number: "17"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆

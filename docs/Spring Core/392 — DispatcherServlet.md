@@ -3,7 +3,7 @@ layout: default
 title: "DispatcherServlet"
 parent: "Spring Core"
 nav_order: 392
-permalink: /spring/dispatcher-servlet/
+permalink: /spring/dispatcherservlet/
 number: "392"
 category: Spring Core
 difficulty: ★★☆

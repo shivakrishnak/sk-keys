@@ -3,7 +3,7 @@ layout: default
 title: "Inheritance"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 19
-permalink: /clean-code/inheritance/
+permalink: /cs-fundamentals/inheritance/
 number: "19"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆

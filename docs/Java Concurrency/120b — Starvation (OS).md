@@ -1,10 +1,10 @@
----
+﻿---
 layout: default
 title: "Starvation"
 parent: "Java Concurrency"
-nav_order: 89
+nav_order: 120
 permalink: /java-concurrency/starvation/
-number: "089"
+number: "120"
 category: Java Concurrency
 difficulty: ★★☆
 depends_on: Thread, synchronized, ReentrantLock, Thread Priority
@@ -12,13 +12,13 @@ used_by: Fair Locks, Thread Scheduling, Executor Fairness
 tags: #java, #concurrency, #starvation, #fairness, #scheduling
 ---
 
-# 089 — Starvation
+# 120 — Starvation
 
 `#java` `#concurrency` `#starvation` `#fairness` #scheduling`
 
 ⚡ TL;DR — Starvation occurs when a thread is perpetually denied access to a shared resource because other threads always take priority — the thread is RUNNABLE but never progresses, not blocked, not livelocked.
 
-| #089 | Category: Java Concurrency | Difficulty: ★★☆ |
+| #120 | Category: Java Concurrency | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Thread, synchronized, ReentrantLock, Thread Priority | |
 | **Used by:** | Fair Locks, Thread Scheduling, Executor Fairness | |

@@ -1,17 +1,17 @@
----
+﻿---
 layout: default
 title: "Immutable Infrastructure"
-parent: "DevOps & SDLC"
-nav_order: 456
-permalink: /devops-sdlc/immutable-infrastructure/
+parent: "Cloud — AWS"
+nav_order: 955
+permalink: /cloud-aws/immutable-infrastructure/
 ---
-# 456 — Immutable Infrastructure
+# 955 — Immutable Infrastructure
 
 `#devops` `#sdlc` `#intermediate` `#reliability`
 
 ⚡ TL;DR — Never patch or modify running servers; instead, build a new image and replace the old instance entirely.
 
-| #456 | Category: DevOps & SDLC | Difficulty: ★★☆ |
+| #955 | category: Cloud — AWS
 |:---|:---|:---|
 | **Depends on:** | IaC, CI/CD Pipeline, Containers | |
 | **Used by:** | GitOps, IaC, Cloud-Native Architecture | |
