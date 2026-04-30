@@ -4,81 +4,180 @@ title: "Refactoring"
 parent: "Clean Code"
 nav_order: 433
 permalink: /clean-code/refactoring/
+number: "433"
+category: Clean Code
+difficulty: ★★☆
+depends_on: Technical Debt, Unit Tests, Code Smells, Cohesion, Coupling
+used_by: Technical Debt, CI-CD Pipeline, Code Review, Clean Architecture
+tags: #architecture, #pattern, #intermediate, #testing
 ---
+
 # 433 — Refactoring
 
-`#cleancode` `#intermediate` `#pattern`
+`#architecture` `#pattern` `#intermediate` `#testing`
 
-⚡ TL;DR — Restructuring existing code without changing its external behavior — improving design while keeping all tests green.
+⚡ TL;DR — Restructuring existing code to improve its internal design without changing its observable external behaviour — each transformation is small, safe, and backed by a green test suite.
 
 | #433 | Category: Clean Code | Difficulty: ★★☆ |
 |:---|:---|:---|
-| **Depends on:** | Technical Debt, Unit Tests, Code Smells | |
-| **Used by:** | Technical Debt, Clean Code, Boy Scout Rule | |
+| **Depends on:** | Technical Debt, Unit Tests, Code Smells, Cohesion, Coupling | |
+| **Used by:** | Technical Debt, CI-CD Pipeline, Code Review, Clean Architecture | |
 
 ---
 
 ### 📘 Textbook Definition
 
-Refactoring (Martin Fowler) is the process of changing a software system in a way that does not alter the external behavior of the code yet improves its internal structure. It transforms working-but-messy code into cleaner design through a series of small, safe, behavior-preserving transformations — each followed by a passing test suite.
+**Refactoring** (Martin Fowler, 1999) is the disciplined technique of restructuring existing code by applying a series of small, behaviour-preserving transformations called **refactorings**, each of which leaves the external observable behaviour identical while improving the internal structure. The cardinal rule: all tests remain green after every individual refactoring step. Refactoring is distinct from rewriting (changing observable behaviour), performance optimisation (changing resource usage), and bug fixing (changing incorrect behaviour). The catalogue of named refactorings (Extract Method, Move Method, Rename Variable, Replace Conditional with Polymorphism) transforms code systematically and safely.
 
 ---
 
 ### 🟢 Simple Definition (Easy)
 
-Refactoring is **improving the inside of code without changing what it does**. You make it cleaner, simpler, and easier to understand — while every test keeps passing throughout.
+Refactoring is tidying up code that works. You don't change what it does — you improve how it does it. Like reorganising a messy desk drawers without throwing anything away.
 
 ---
 
 ### 🔵 Simple Definition (Elaborated)
 
-Refactoring is not rewriting. Each refactoring step is tiny — extract a method, rename a variable, introduce an abstraction — and after every step the test suite is green. The safety net of tests is what makes refactoring possible without fear. Without tests, you cannot refactor safely.
+Refactoring is the ongoing activity of improving code structure as you work. After making something work, you make it clean. The discipline: do it in tiny, safe steps with tests passing after each one — not in one giant risky rewrite. The most important tools are named refactorings (Extract Method, Rename Variable, Introduce Parameter Object) — each has a clear recipe that transforms code safely. IDEs automate many of them. Without refactoring, code accumulates design problems until they're too expensive to fix — that's how technical debt compounds into an unworkable system.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**The core problem:**
-Code that worked fine 6 months ago is now painful to work with. Features take longer, bugs appear in unexpected places. The code must improve — but you cannot stop and rewrite everything.
-
-**Martin Fowler's insight:**
-> "Refactoring is a series of small behavior-preserving transformations, each leaving the system in a working state."
+**The two-hat model (Kent Beck):**
 
 ```
-Step 1: Extract Method         --> run tests --> all green --> commit
-Step 2: Rename Variable        --> run tests --> all green --> commit
-Step 3: Introduce Abstraction  --> run tests --> all green --> commit
+Adding functionality:
+  → You may add code
+  → You do NOT restructure existing code
+  → One "hat" at a time
 
-Rule: NEVER change behavior and structure in the same step.
+Refactoring:
+  → You restructure existing code
+  → You do NOT add functionality
+  → Tests are ALWAYS green
+
+Never wear both hats at once.
+If both mixed: "Am I done? Did I break anything?
+               Did I add more than I intended?"
+→ confusion, bugs, untestable progress
 ```
+
+**The rhythm of software development:**
+
+```
+┌─────────────────────────────────────────────┐
+│  RED-GREEN-REFACTOR CYCLE (TDD rhythm)      │
+│                                             │
+│  1. RED: Write failing test for new feature │
+│  2. GREEN: Write simplest code to pass test │
+│            (may be ugly/naive)              │
+│  3. REFACTOR: Clean up code                 │
+│               Tests still green throughout  │
+│  4. Repeat                                  │
+│                                             │
+│  Refactoring = step 3; happens every cycle  │
+│  Not a big-bang activity, a daily habit     │
+└─────────────────────────────────────────────┘
+```
+
+**Why tests are the prerequisite:**
+
+Refactoring without tests is just editing. You have no safety net — you can't know you haven't broken anything. The test suite is the behaviour specification that makes refactoring safe.
 
 ---
 
 ### ❓ Why Does This Exist (Why Before What)
 
-Without refactoring, code can only degrade over time. The only way to improve a codebase safely — without introducing new bugs — is through systematic, test-backed refactoring as an ongoing practice.
+**WITHOUT refactoring:**
+
+```
+Without ongoing refactoring:
+
+  Cycle 1: Feature A written quickly
+  Cycle 5: Feature E needed, but A, B, C, D are messy
+    → takes 3× as long as Cycle 1
+  
+  Cycle 20: Codebase is "legacy" — feared, untouched
+    → new features layered on top of messiness
+    → "working" code nobody dares change
+    → every change breaks something unrelated
+
+  Developers report:
+  "I'm spending 70% of time understanding existing code"
+  "I'm afraid to touch that class"
+  "We can't ship because of these bugs"
+  All symptoms of insufficient refactoring
+```
+
+**WITH ongoing refactoring:**
+
+```
+→ Code stays clean sprint to sprint
+→ Adding new features doesn't get progressively harder
+→ Debt is paid down as it's created
+→ Engineers understand the codebase fully
+→ Onboarding is fast — code is readable
+→ Velocity stays stable or improves over time
+```
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> Refactoring is like reorganizing your kitchen while still cooking meals every day. You move things step-by-step — each meal still comes out right. The kitchen works better after the reorganization, but no recipes changed. You never closed the restaurant to do it.
+> Refactoring is like **editing a book**. Writing a first draft is getting the ideas down — it's messy, but it exists. Editing improves clarity, structure, and flow without changing the story. You wouldn't publish the first draft; you wouldn't write the book backwards either — edit as you go, chapter by chapter. Code is the same: the first version that works is a draft. Refactoring is the editing pass that makes it publishable.
+
+"First draft" = working but messy code
+"Editing" = refactoring — improve structure, not story
+"Published book" = clean, maintainable production code
+"Never changing the story" = external behaviour unchanged
+"Edit as you go" = continuous refactoring, not big-bang cleanup
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-```
-Common refactoring catalog (Martin Fowler):
+**The refactoring catalogue — key examples:**
 
-  Extract Method           --> turn code block into named method
-  Inline Method            --> remove trivial method, inline its body
-  Rename Variable/Method   --> improve expressiveness of names
-  Extract Class            --> split class doing too many things
-  Move Method              --> method belongs in a different class
-  Replace Temp with Query  --> replace variable with method call
-  Introduce Parameter Obj  --> bundle related params into a value object
-  Replace Conditional with Polymorphism --> eliminate if/switch type checks
+```
+┌──────────────────────────────────────────────────────┐
+│  NAMED REFACTORINGS (Fowler's catalogue)             │
+├──────────────────────────────────────────────────────┤
+│  Extract Method   → pull code into named method      │
+│  Extract Class    → split low-cohesion class         │
+│  Move Method      → method belongs on another class  │
+│  Rename Variable  → express intent in name           │
+│  Introduce Parameter Object → replace long param list│
+│  Replace Conditional with Polymorphism               │
+│              → eliminate instanceof chains           │
+│  Inline Method    → remove unnecessary indirection   │
+│  Introduce Null Object → remove null checks          │
+│  Decompose Conditional → extract complex if branches │
+└──────────────────────────────────────────────────────┘
+```
+
+**Mechanics of a safe refactoring:**
+
+```
+1. Ensure tests are green (mandatory starting point)
+2. Apply ONE refactoring step (smallest possible)
+3. Run tests → must be green
+4. Commit (optional but recommended at each step)
+5. Repeat for next refactoring
+```
+
+**Code smells that indicate refactoring needs:**
+
+```
+Long Method       → Extract Method
+Large Class       → Extract Class
+Duplicate Code    → Extract + DRY
+Long Param List   → Introduce Param Object
+Feature Envy      → Move Method to the object it uses
+Data Clumps       → Extract Class for the cluster
+Switch by type    → Replace Conditional with Polymorphism
+Dead Code         → Delete It
 ```
 
 ---
@@ -86,143 +185,227 @@ Common refactoring catalog (Martin Fowler):
 ### 🔄 How It Connects (Mini-Map)
 
 ```
-[Code Smell Identified]
-         ↓
-[Write Tests if Missing]
-         ↓
-[Apply One Refactoring Technique]
-         ↓ run tests
-[All Green] <-- if NOT green, undo and try again
-         ↓
-[Commit] --> repeat for next smell
+Code Smells (detected)
+        ↓
+  REFACTORING  ← you are here
+  (small, safe, behaviour-preserving steps)
+  ↑ requires: test suite (safety net)
+  ↑ addresses: Technical Debt
+        ↓
+  Catalogue:
+  Extract Method, Extract Class, Move Method,
+  Rename, Replace Conditional, Introduce PO
+        ↓
+  IDE Support: IntelliJ, VS Code automate
+  many refactorings safely
+        ↓
+  Result: Higher Cohesion, Lower Coupling,
+          Paid Technical Debt
 ```
 
 ---
 
 ### 💻 Code Example
 
+**Example 1 — Extract Method:**
+
 ```java
-// ===== BEFORE REFACTORING =====
-// Problems: magic numbers, mixed concern, hard to read
-double price(Order o) {
-    double t = o.getItems().stream()
-        .mapToDouble(i -> i.getPrice() * i.getQty()).sum();
-    double d = o.getCustomer().isPremium() ? t * 0.15 : 0;
-    double x = (t - d) * 0.08;
-    return t - d + x;
+// BEFORE: Long method, hard to understand purpose
+void printOwing(double amount) {
+  // print banner
+  System.out.println("*****");
+  System.out.println("** Customer Owes **");
+  System.out.println("*****");
+
+  // calculate outstanding
+  double outstanding = 0.0;
+  for (Order o : orders) outstanding += o.getAmount();
+
+  // print details
+  System.out.println("name: " + name);
+  System.out.println("amount: " + outstanding);
 }
 
-// ===== AFTER REFACTORING =====
-// Each step was one named technique — no behavior changed
-
-private static final double TAX_RATE         = 0.08;
-private static final double PREMIUM_DISCOUNT = 0.15;
-
-// Extract Method x3, Rename Variable, Extract Constant
-double calculateFinalPrice(Order order) {
-    double subtotal  = calculateSubtotal(order);
-    double discount  = calculateDiscount(order, subtotal);
-    double tax       = calculateTax(subtotal - discount);
-    return subtotal - discount + tax;
+// AFTER: Extract Method — three clear purposes
+void printOwing(double amount) {
+  printBanner();
+  double outstanding = calculateOutstanding();
+  printDetails(outstanding);
 }
 
-private double calculateSubtotal(Order order) {
-    return order.getItems().stream()
-        .mapToDouble(item -> item.getPrice() * item.getQuantity())
-        .sum();
+void printBanner() {
+  System.out.println("*****");
+  System.out.println("** Customer Owes **");
+  System.out.println("*****");
 }
 
-private double calculateDiscount(Order order, double subtotal) {
-    return order.getCustomer().isPremium()
-        ? subtotal * PREMIUM_DISCOUNT
-        : 0.0;
+double calculateOutstanding() {
+  return orders.stream().mapToDouble(Order::getAmount).sum();
 }
 
-private double calculateTax(double taxableAmount) {
-    return taxableAmount * TAX_RATE;
+void printDetails(double outstanding) {
+  System.out.println("name: " + name);
+  System.out.println("amount: " + outstanding);
 }
 ```
 
----
+**Example 2 — Replace Conditional with Polymorphism:**
 
-### 🔁 Flow / Lifecycle
+```java
+// BEFORE: type-based switch (code smell: switch by type)
+double getSpeed() {
+  switch (type) {
+    case EUROPEAN: return baseSpeed();
+    case AFRICAN:  return baseSpeed() - loadFactor() * 3;
+    case NORWEGIAN_BLUE: return isNailed ? 0 : baseSpeed();
+  }
+  throw new RuntimeException("Unknown type");
+}
+
+// AFTER: polymorphic dispatch
+// Step 1: Create abstract base + subclasses
+abstract class Bird {
+  abstract double getSpeed();
+  double baseSpeed() { return 10.0; }
+}
+class EuropeanBird extends Bird {
+  double getSpeed() { return baseSpeed(); }
+}
+class AfricanBird extends Bird {
+  double getSpeed() { return baseSpeed() - loadFactor() * 3; }
+}
+class NorwegianBlue extends Bird {
+  double getSpeed() { return isNailed ? 0 : baseSpeed(); }
+}
+// Caller: bird.getSpeed() — no switch, extensible
+```
+
+**Example 3 — Safe refactoring with IntelliJ:**
 
 ```
-1. Ensure test coverage exists — write characterization tests if needed
-        ↓
-2. Identify one code smell (long method, magic number, duplication...)
-        ↓
-3. Apply ONE named refactoring technique
-        ↓
-4. Run full test suite — must stay GREEN
-        ↓
-5. Commit (small atomic commit: "refactor: extract calculateSubtotal")
-        ↓
-6. Repeat for next smell
+IntelliJ IDEA refactoring shortcuts:
+  Rename:               Shift+F6
+  Extract Method:       Ctrl+Alt+M
+  Extract Variable:     Ctrl+Alt+V
+  Extract Constant:     Ctrl+Alt+C
+  Inline:               Ctrl+Alt+N
+  Move:                 F6
+  Introduce Parameter:  Ctrl+Alt+P
+  Extract Interface:    (Refactor menu)
+
+Rule: Use IDE refactoring over manual edits
+→ IDE updates ALL references automatically
+→ No missed usages
+→ Tests still green by construction
 ```
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| ❌ Wrong Belief | ✅ Correct Reality |
+| Misconception | Reality |
 |---|---|
-| Refactoring = rewriting | Refactoring = small steps, behavior guaranteed unchanged |
-| Refactoring is a scheduled phase | It is continuous — every time you touch code (Boy Scout Rule) |
-| Tests slow down refactoring | Tests are what ENABLE safe refactoring; without them it is reckless |
-| Refactoring adds features | By definition, refactoring changes NO observable behavior |
+| Refactoring means rewriting | Refactoring preserves external behaviour. Rewriting changes it. You must never break a passing test during a refactoring |
+| You refactor when you have time | Refactoring is part of the development cycle, not a separate activity. "When you have time" means never |
+| Refactoring without tests is fine | Without tests you can't verify behaviour is preserved. Untested refactoring is just risky editing |
+| Big-bang rewrites are better than incremental refactoring | The "second-system effect" and "Big Rewrite" are well-documented failure modes. Incremental refactoring with continuous delivery is vastly safer |
+| Refactoring is only about clean code aesthetics | Refactoring directly reduces technical debt — it has measurable business impact on velocity and bug rates |
 
 ---
 
 ### 🔥 Pitfalls in Production
 
-**Pitfall 1: Refactoring Without Tests**
-Changing structure without a safety net — you will not know what broke.
-Fix: write characterization tests on legacy code before refactoring (record current behavior, even if it seems wrong).
+**1. Refactoring and adding features simultaneously**
 
-**Pitfall 2: Mixing Refactoring and Features in One Commit**
-Structural changes mixed with behavioral changes make bugs impossible to bisect.
-Fix: strict rule — refactoring commits and feature commits are ALWAYS separate.
+```java
+// DANGER: mixed refactoring + feature addition
+// In one commit: renamed method + added new parameter
+// + changed return type + added new field
 
-**Pitfall 3: Infinite Refactoring Loop**
-Perfecting code forever instead of delivering value — never-ending cleanup without shipping.
-Fix: timebox refactoring; apply the Boy Scout Rule (leave it a little better, not perfect).
+// If this breaks: impossible to tell if refactoring
+// or feature change caused the problem
+
+// GOOD: strict separation in commits
+// Commit 1: rename method (tests green)
+// Commit 2: extract class (tests green)
+// Commit 3: add new feature (on clean foundation)
+// Small commits + CI → each step verified
+```
+
+**2. Refactoring public APIs without deprecation strategy**
+
+```java
+// BAD: refactoring internal + public API in one step
+// Old: getUserData(long id)
+// New: findUserById(long id) — simple rename internally
+
+// If other services call getUserData:
+// → breaking change deployed without warning
+
+// GOOD: Expand-Contract (Parallel Change) pattern
+// Step 1: Add new method, keep old
+public User findUserById(long id) { ... } // new
+@Deprecated
+public User getUserData(long id) {         // kept for compat
+  return findUserById(id);
+}
+// Step 2: Update all callers to new method
+// Step 3 (next sprint): Remove deprecated method
+```
+
+**3. Breaking tests "to make them pass" during refactoring**
+
+```java
+// DANGEROUS: refactoring broke tests → edited the tests
+// to match new behaviour
+// "The tests were testing implementation details anyway"
+
+// The red flag: if tests break during refactoring,
+// either:
+// a) The refactoring changed behaviour (revert!)
+// b) Tests were testing implementation, not behaviour
+//    (fix by rewriting the tests to test behaviour)
+// c) You are also bug-fixing (two hats → stop)
+```
 
 ---
 
 ### 🔗 Related Keywords
 
-- **Technical Debt** — what refactoring pays down incrementally
-- **Code Smells** — indicators (long method, magic number, duplication) that guide where to refactor
-- **Unit Tests** — the safety net that makes refactoring possible without fear
-- **Boy Scout Rule** — "Leave the code better than you found it" — the habit of continuous micro-refactoring
-- **Strangler Fig** — a macro-level refactoring strategy for replacing legacy systems
-- **Extract Method** — the single most common refactoring technique
+- `Technical Debt` — refactoring is the primary mechanism for paying down technical debt
+- `Code Smells` — Long Method, Large Class, Feature Envy are the signals that trigger refactoring
+- `Unit Tests` — the prerequisite safety net without which refactoring is just risky editing
+- `Cohesion` — Extract Class is the key refactoring to improve cohesion
+- `Coupling` — Move Method and Introduce Interface are the key refactorings to reduce coupling
+- `Boy Scout Rule` — "leave the code better than you found it" — continuous micro-refactoring
 
 ---
 
 ### 📌 Quick Reference Card
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Improve internal structure without changing    │
-│              │ external behavior — tests stay green always   │
-├─────────────────────────────────────────────────────────────┤
-│ USE WHEN     │ Continuously — especially before adding a     │
-│              │ new feature to messy existing code            │
-├─────────────────────────────────────────────────────────────┤
-│ AVOID WHEN   │ No tests exist yet — write them first         │
-├─────────────────────────────────────────────────────────────┤
-│ ONE-LINER    │ "Small, safe, behavior-preserving steps that  │
-│              │  accumulate into a fundamentally cleaner design"│
-├─────────────────────────────────────────────────────────────┤
-│ NEXT EXPLORE │ Code Smells --> TDD --> Boy Scout Rule         │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Improve design without changing behaviour;│
+│              │ small steps, tests green after each step  │
+├──────────────┼───────────────────────────────────────────┤
+│ USE WHEN     │ After making something work (Red-Green-   │
+│              │ Refactor); before adding to messy code    │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ No test coverage — add tests first;       │
+│              │ never refactor + add feature simultaneously│
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Make it work. Make it right.             │
+│              │  Make it fast. In that order."            │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Code Smells → TDD → Boy Scout Rule        │
+└──────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** Why must refactoring and feature development always be in separate commits?  
-**Q2.** What is the difference between Extract Method and Extract Class refactoring — when do you use each?  
-**Q3.** What are characterization tests and how do they enable safe refactoring of legacy code that has no existing tests?
+**Q1.** Michael Feathers' book "Working Effectively with Legacy Code" defines legacy code as "code without tests." Before you can safely refactor a large legacy method, you need coverage, but the method is so entangled it's hard to test without running the entire application. Describe the sequence of techniques Feathers recommends for putting a legacy method "under test" — specifically: characterisation tests, seams, and the Sprout Method pattern — and explain why these techniques are themselves forms of refactoring even though they add tests.
+
+**Q2.** Martin Fowler's "Expand and Contract" (Parallel Change) pattern is used to refactor across service boundaries without downtime. Describe the full three-phase lifecycle for renaming a REST API field from `user_id` to `userId` across a consumer-producer service pair — including exactly what the producer and consumer JSON look like in each phase, how long each phase must run before the next begins, and what contract test (e.g. a Pact test) would automatically detect a premature field removal.
 
