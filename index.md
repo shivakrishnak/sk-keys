@@ -404,17 +404,17 @@ Software development lifecycle and DevOps practices.
 
 | # | Keyword |
 |---|---|
-| 484 | CI/CD Pipeline |
-| 485 | Blue-Green Deployment |
-| 486 | Canary Deployment |
-| 487 | Rolling Update |
-| 488 | GitOps |
-| 489 | Infrastructure as Code (IaC) |
-| 490 | Immutable Infrastructure |
-| 491 | Twelve-Factor App |
-| 492 | SRE |
-| 493 | Error Budget |
-| 494 | Toil |
+| 450 | [CI/CD Pipeline](<docs/DevOps & SDLC/450 — CI-CD Pipeline.md>) |
+| 451 | [Blue-Green Deployment](<docs/DevOps & SDLC/451 — Blue-Green Deployment.md>) |
+| 452 | [Canary Deployment](<docs/DevOps & SDLC/452 — Canary Deployment.md>) |
+| 453 | [Rolling Update](<docs/DevOps & SDLC/453 — Rolling Update.md>) |
+| 454 | [GitOps](<docs/DevOps & SDLC/454 — GitOps.md>) |
+| 455 | [Infrastructure as Code (IaC)](<docs/DevOps & SDLC/455 — Infrastructure as Code (IaC).md>) |
+| 456 | [Immutable Infrastructure](<docs/DevOps & SDLC/456 — Immutable Infrastructure.md>) |
+| 457 | [Twelve-Factor App](<docs/DevOps & SDLC/457 — Twelve-Factor App.md>) |
+| 458 | [SRE](<docs/DevOps & SDLC/458 — SRE.md>) |
+| 459 | [Error Budget](<docs/DevOps & SDLC/459 — Error Budget.md>) |
+| 460 | [Toil](<docs/DevOps & SDLC/460 — Toil.md>) |
 
 ---
 
