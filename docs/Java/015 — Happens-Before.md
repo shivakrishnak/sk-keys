@@ -682,4 +682,3 @@ Spring initialises beans single-threaded at startup, then serves requests on mul
 
 Next up: **016 — GC Roots** — the starting points of the garbage collector's reachability graph, what qualifies as a root, and why understanding them is essential for diagnosing memory leaks.
 
-Shall I continue?

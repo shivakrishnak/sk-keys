@@ -51,8 +51,8 @@ and low-level JVM mechanisms.
 | 018 | Young Generation | 043 | GraalVM |
 | 019 | Eden Space | 044 | Native Image |
 | 020 | Survivor Space | 045 | TLAB (Thread Local Allocation Buffer) |
-| 021 | Minor GC | 046 | Safepoint |
-| 022 | Major GC | 047 | Card Table |
-| 023 | Full GC | 048 | Write Barrier |
-| 024 | Stop-The-World (STW) | 049 | Remembered Set |
-| 025 | Serial GC | 050 | String Pool / String Interning |
+| 021 | [Minor GC](./021%20—%20Minor%20GC.md) | 046 | Safepoint |
+| 022 | [Major GC](./022%20—%20Major%20GC.md) | 047 | Card Table |
+| 023 | [Full GC](./023%20—%20Full%20GC.md) | 048 | Write Barrier |
+| 024 | [Stop-The-World (STW)](./024%20—%20Stop-The-World%20(STW).md) | 049 | Remembered Set |
+| 025 | [Serial GC](./025%20—%20Serial%20GC.md) | 050 | String Pool / String Interning |
