@@ -296,6 +296,21 @@ Then commit and push normally.
 
 ---
 
+## 🎯 Master Generation Prompt
+
+The **full Technical Dictionary Generator prompt** — with all 10 sections, the complete entry
+skeleton, the approved tag taxonomy, depth calibration rules, and the self-validation checklist
+— lives in:
+
+```
+GENERATOR_PROMPT.md
+```
+
+Paste the contents of that file into any AI assistant to generate entries that conform to the
+complete standard. Use the invocation commands in **Section 9** of that file.
+
+---
+
 ## 📖 Dictionary Entry Template (Technical Dictionary)
 
 **Canonical reference files:** `docs/Java/016 — GC Roots.md` through `docs/Java/025 — Serial GC.md`
