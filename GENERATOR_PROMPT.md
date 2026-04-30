@@ -107,11 +107,16 @@ used_by:
   - Example: JIT Compiler, Spring, Hibernate
 
 tags:
-  - Each tag prefixed with # symbol
-  - Comma-separated, NO brackets
+  - Each tag without # prefix
+  - Listed as YAML array items (one per line, using "-")
   - Choose from approved tag taxonomy (see Section 4)
   - 3–6 tags per entry
-  - Example: #java, #jvm, #memory, #internals, #deep-dive
+  - Example:
+    - java
+    - jvm
+    - memory
+    - internals
+    - deep-dive
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 4: APPROVED TAG TAXONOMY
@@ -960,11 +965,153 @@ It will automatically find the next 10 missing keywords and start from there.
 
 ---
 
+## 🎯 Generate Batch from a Specific Category
+
+Use this when you want to fill in all missing keywords from **one chosen category** — useful for completing a category in one focused session.
+
+### Prompt — Category-Focused Batch Generator
+
+Paste this into your IDE AI chat, filling in `[YOUR CATEGORY]`:
+
+```
+You are generating dictionary entries for the sk-keys Technical Dictionary.
+
+TARGET CATEGORY: [YOUR CATEGORY]
+Examples: Java Concurrency | Spring Core | JavaScript | System Design | Testing
+          (use exact category name from the mapping table below)
+
+STEP 1 — FIND MISSING KEYWORDS IN THIS CATEGORY:
+Scan all .md files inside docs/<Category Folder>/ (excluding index.md).
+Extract the keyword numbers already present in that folder.
+Cross-reference against TECHNICAL_DICTIONARY.md — find every keyword in the
+"[YOUR CATEGORY]" section that does NOT yet have a generated file.
+List them all with their number, name, and difficulty.
+
+STEP 2 — DECIDE BATCH SIZE:
+If ≤ 10 missing → generate ALL of them in one go.
+If > 10 missing → generate the first 10 (lowest numbers first).
+Report total missing count and how many you will generate now.
+
+STEP 3 — CONFIRM:
+Print the batch you will generate:
+  #NNN — Keyword Name  (★ Difficulty)
+Then ask: "Shall I generate these now?"
+
+STEP 4 — GENERATE ALL ENTRIES IN THE BATCH:
+For each keyword, generate a complete entry following GENERATOR_PROMPT.md spec.
+
+File path: docs/<Category Folder>/<NNN> — <Keyword Name>.md
+
+Front matter (use exact values for the chosen category):
+  layout: default
+  title: "<Keyword Name>"
+  parent: "<Category Title>"         ← exact title from mapping table below
+  nav_order: <NNN>                   ← global keyword number (integer)
+  permalink: /<category-slug>/<keyword-slug>/
+  number: "<NNN>"
+  category: <Category Title>
+  difficulty: ★☆☆ | ★★☆ | ★★★
+  depends_on: Keyword1, Keyword2
+  used_by: Keyword1, Keyword2
+  tags: #tag1, #tag2, #tag3
+
+Category folder → parent title → permalink slug mapping:
+  ┌─────────────────────────────────────┬──────────────────────────────────────┬────────────────────────┐
+  │ Folder Name                         │ parent: value                        │ permalink prefix       │
+  ├─────────────────────────────────────┼──────────────────────────────────────┼────────────────────────┤
+  │ CS Fundamentals — Paradigms         │ CS Fundamentals — Paradigms          │ /cs-fundamentals/      │
+  │ Data Structures & Algorithms        │ Data Structures & Algorithms         │ /dsa/                  │
+  │ Operating Systems                   │ Operating Systems                    │ /operating-systems/    │
+  │ Linux                               │ Linux                                │ /linux/                │
+  │ Networking                          │ Networking                           │ /networking/           │
+  │ HTTP & APIs                         │ HTTP & APIs                          │ /http-apis/            │
+  │ Java & JVM Internals                │ Java & JVM Internals                 │ /java/                 │
+  │ Java Language                       │ Java Language                        │ /java-language/        │
+  │ Java Concurrency                    │ Java Concurrency                     │ /java-concurrency/     │
+  │ Spring Core                         │ Spring Core                          │ /spring/               │
+  │ Database Fundamentals               │ Database Fundamentals                │ /databases/            │
+  │ NoSQL & Distributed Databases       │ NoSQL & Distributed Databases        │ /nosql/                │
+  │ Caching                             │ Caching                              │ /caching/              │
+  │ Data Fundamentals                   │ Data Fundamentals                    │ /data-fundamentals/    │
+  │ Big Data & Streaming                │ Big Data & Streaming                 │ /big-data-streaming/   │
+  │ Distributed Systems                 │ Distributed Systems                  │ /distributed-systems/  │
+  │ Microservices                       │ Microservices                        │ /microservices/        │
+  │ System Design                       │ System Design                        │ /system-design/        │
+  │ Software Architecture Patterns      │ Software Architecture Patterns       │ /software-architecture/│
+  │ Design Patterns                     │ Design Patterns                      │ /design-patterns/      │
+  │ Containers                          │ Containers                           │ /containers/           │
+  │ Kubernetes                          │ Kubernetes                           │ /kubernetes/           │
+  │ Cloud — AWS                         │ Cloud — AWS                          │ /cloud-aws/            │
+  │ Cloud — Azure                       │ Cloud — Azure                        │ /cloud-azure/          │
+  │ CI-CD                               │ CI/CD                                │ /ci-cd/                │
+  │ Git & Branching Strategy            │ Git & Branching Strategy             │ /git/                  │
+  │ Maven & Build Tools (Java)          │ Maven & Build Tools (Java)           │ /maven-build/          │
+  │ Code Quality                        │ Code Quality                         │ /code-quality/         │
+  │ Testing                             │ Testing                              │ /testing/              │
+  │ Observability & SRE                 │ Observability & SRE                  │ /observability/        │
+  │ HTML                                │ HTML                                 │ /html/                 │
+  │ CSS                                 │ CSS                                  │ /css/                  │
+  │ JavaScript                          │ JavaScript                           │ /javascript/           │
+  │ TypeScript                          │ TypeScript                           │ /typescript/           │
+  │ React                               │ React                                │ /react/                │
+  │ Node.js                             │ Node.js                              │ /nodejs/               │
+  │ npm & Package Management            │ npm & Package Management             │ /npm/                  │
+  │ Webpack & Build Tools               │ Webpack & Build Tools                │ /webpack-build/        │
+  │ AI Foundations                      │ AI Foundations                       │ /ai-foundations/       │
+  │ LLMs & Prompt Engineering           │ LLMs & Prompt Engineering            │ /llms/                 │
+  │ RAG & Agents & LLMOps               │ RAG & Agents & LLMOps                │ /rag-agents/           │
+  │ Platform & Modern SWE               │ Platform & Modern SWE                │ /platform-engineering/ │
+  │ Behavioral & Leadership             │ Behavioral & Leadership              │ /leadership/           │
+  └─────────────────────────────────────┴──────────────────────────────────────┴────────────────────────┘
+
+STEP 5 — CREATE ALL FILES:
+Write every generated entry to its correct file path.
+Do not skip any entry in the batch.
+Do not touch files in other category folders.
+Do not push to remote.
+
+STEP 6 — COMMIT:
+After all files are created, run:
+  git add docs/<Category Folder>/
+  git commit -m "feat: add [YOUR CATEGORY] keywords NNN–MMM"
+
+STEP 7 — REPORT:
+Print:
+  "✅ Done. Generated [N] entries for [YOUR CATEGORY].
+   Keywords NNN–MMM created.
+   Remaining in this category: [X].
+   Run again to continue."
+```
+
+### Quick-invocation examples
+
+**Fill all missing Java Concurrency keywords:**
+```
+TARGET CATEGORY: Java Concurrency
+[paste the full prompt above]
+```
+
+**Fill all missing Testing keywords:**
+```
+TARGET CATEGORY: Testing
+[paste the full prompt above]
+```
+
+**Fill all missing Kubernetes keywords:**
+```
+TARGET CATEGORY: Kubernetes
+[paste the full prompt above]
+```
+
+---
+
 ## 🚀 Quick One-Shot Workflow Prompt (for IDE Agent Mode)
 
 Use this as a single agent-mode prompt to handle detect → generate → commit in one go:
 
 ```
+TARGET CATEGORY: Java Concurrency
+
 You are an automated keyword generation agent for the sk-keys Technical Dictionary.
 
 YOUR WORKFLOW — repeat until I say stop:
