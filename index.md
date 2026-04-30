@@ -373,16 +373,16 @@ Software development lifecycle and DevOps practices.
 
 | # | Keyword |
 |---|---|
-| 424 | [Cohesion](<docs/Clean Code/🧹 424 — Cohesion.md>) |
-| 425 | [Coupling](<docs/Clean Code/🧹 425 — Coupling.md>) |
-| 426 | [Abstraction](<docs/Clean Code/🧹 426 — Abstraction.md>) |
-| 427 | [Encapsulation](<docs/Clean Code/🧹 427 — Encapsulation.md>) |
-| 428 | [Polymorphism](<docs/Clean Code/🧹 428 — Polymorphism.md>) |
-| 429 | [Inheritance](<docs/Clean Code/🧹 429 — Inheritance.md>) |
-| 430 | [Command-Query Separation (CQS)](<docs/Clean Code/🧹 430 — Command-Query Separation (CQS).md>) |
-| 431 | [Feature Flags](<docs/Clean Code/🧹 431 — Feature Flags.md>) |
-| 432 | [Technical Debt](<docs/Clean Code/🧹 432 — Technical Debt.md>) |
-| 433 | [Refactoring](<docs/Clean Code/🧹 433 — Refactoring.md>) |
+| 424 | [Cohesion](<docs/Clean Code/424 — Cohesion.md>) |
+| 425 | [Coupling](<docs/Clean Code/425 — Coupling.md>) |
+| 426 | [Abstraction](<docs/Clean Code/426 — Abstraction.md>) |
+| 427 | [Encapsulation](<docs/Clean Code/427 — Encapsulation.md>) |
+| 428 | [Polymorphism](<docs/Clean Code/428 — Polymorphism.md>) |
+| 429 | [Inheritance](<docs/Clean Code/429 — Inheritance.md>) |
+| 430 | [Command-Query Separation (CQS)](<docs/Clean Code/430 — Command-Query Separation (CQS).md>) |
+| 431 | [Feature Flags](<docs/Clean Code/431 — Feature Flags.md>) |
+| 432 | [Technical Debt](<docs/Clean Code/432 — Technical Debt.md>) |
+| 433 | [Refactoring](<docs/Clean Code/433 — Refactoring.md>) |
 
 ### Cloud & Infrastructure (17 keywords)
 
