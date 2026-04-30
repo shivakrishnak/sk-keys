@@ -58,6 +58,12 @@ When helping with markdown files in the `sk-keys` repository:
 
 4. **Entry Metadata Bar — Always Use Markdown Table**
 
+   > ⚠️ **CRITICAL — TWO DIFFERENT SECTIONS, DO NOT CONFUSE:**
+   > - **Entry Metadata Bar** (top of file, after TL;DR): uses a **Markdown table** — this is the one to write as a table
+   > - **Quick Reference Card** (bottom of file, `### 📌 Quick Reference Card`): uses a **Unicode box inside a ` ``` ` code fence** (KEY IDEA / USE WHEN / AVOID WHEN / ONE-LINER / NEXT EXPLORE) — this must **never** be replaced or modified by scripts
+   >
+   > A script that replaces ALL Unicode boxes will destroy the Quick Reference Card content. Only target the metadata bar: it appears immediately after the `⚡ TL;DR` line and before `---`.
+
    Every keyword file MUST include this metadata bar immediately after the TL;DR line.
    Use a **Markdown table** (NOT Unicode box-drawing characters — they misalign in browsers):
 
@@ -332,7 +338,7 @@ Each file should be **400–500 lines** of rich content:
 - **How It Works**: include step-by-step ASCII diagram of the mechanism
 - **How It Connects**: include ASCII flow diagram showing relationships to other concepts
 - **Code Example**: include 3-5 working code examples covering common + edge cases
-- **Quick Reference Card**: use ASCII box format inside a code fence:
+- **Quick Reference Card**: use Unicode box-drawing characters inside a ` ``` ` code fence (KEY IDEA / USE WHEN / AVOID WHEN / ONE-LINER / NEXT EXPLORE). **This section is PROTECTED — never replace it with the metadata table.** Format:
   ```
   ┌──────────────────────────────────────────────┐
   │ KEY IDEA     │ one-line essence               │
