@@ -113,36 +113,67 @@ Bundling, code splitting, transpilation, and build optimization.
 | 024 | Stop-The-World (STW) | 049 | Remembered Set |
 | 025 | Serial GC | 050 | String Pool / String Interning |
 
-### Java Language & Concurrency (52 keywords)
+### Java Language (15 keywords)
 
-| # | Keyword | # | Keyword |
-|---|---|---|---|
-| 051 | Autoboxing / Unboxing | 077 | ReadWriteLock |
-| 052 | Integer Cache | 078 | StampedLock |
-| 053 | Generics | 079 | ThreadLocal |
-| 054 | Type Erasure | 080 | InheritableThreadLocal |
-| 055 | Bounded Wildcards | 081 | Deadlock |
-| 056 | Covariance / Contravariance | 082 | Livelock |
-| 057 | Varargs | 083 | Starvation |
-| 058 | Reflection | 084 | Race Condition |
-| 059 | Annotation Processing (APT) | 085 | CAS (Compare-And-Swap) |
-| 060 | Serialization / Deserialization | 086 | Spin Lock |
-| 061 | SerialVersionUID | 087 | Optimistic Locking |
-| 062 | Records (Java 16+) | 088 | Executor |
-| 063 | Sealed Classes (Java 17+) | 089 | ExecutorService |
-| 064 | Pattern Matching (Java 21+) | 090 | ThreadPoolExecutor |
-| 065 | invokedynamic | 091 | ForkJoinPool |
-| 066 | Thread | 092 | Virtual Threads (Project Loom) |
-| 067 | Runnable | 093 | Carrier Thread |
-| 068 | Callable | 094 | Continuation |
-| 069 | Future | 095 | Semaphore |
-| 070 | CompletableFuture | 096 | CountDownLatch |
-| 071 | Thread Lifecycle | 097 | CyclicBarrier |
-| 072 | Thread States | 098 | Phaser |
-| 073 | synchronized | 099 | BlockingQueue |
-| 074 | volatile | 100 | ConcurrentHashMap |
-| 075 | wait / notify / notifyAll | 101 | CopyOnWriteArrayList |
-| 076 | ReentrantLock | 102 | Java Memory Model (JMM) |
+| # | Keyword |
+|---|---|
+| 051 | [Autoboxing / Unboxing](<docs/Java/051 — Autoboxing-Unboxing.md>) |
+| 052 | [Integer Cache](<docs/Java/052 — Integer Cache.md>) |
+| 053 | [Generics](<docs/Java/053 — Generics.md>) |
+| 054 | [Type Erasure](<docs/Java/054 — Type Erasure.md>) |
+| 055 | [Bounded Wildcards](<docs/Java/055 — Bounded Wildcards.md>) |
+| 056 | [Covariance / Contravariance](<docs/Java/056 — Covariance-Contravariance.md>) |
+| 057 | [Varargs](<docs/Java/057 — Varargs.md>) |
+| 058 | [Reflection](<docs/Java/058 — Reflection.md>) |
+| 059 | [Annotation Processing (APT)](<docs/Java/059 — Annotation Processing (APT).md>) |
+| 060 | [Serialization / Deserialization](<docs/Java/060 — Serialization-Deserialization.md>) |
+| 061 | [SerialVersionUID](<docs/Java/061 — SerialVersionUID.md>) |
+| 062 | [Records (Java 16+)](<docs/Java/062 — Records (Java 16+).md>) |
+| 063 | Sealed Classes (Java 17+) |
+| 064 | Pattern Matching (Java 21+) |
+| 065 | invokedynamic |
+
+### Java Concurrency (37 keywords)
+
+| # | Keyword |
+|---|---|
+| 066 | Thread |
+| 067 | Runnable |
+| 068 | Callable |
+| 069 | Future |
+| 070 | CompletableFuture |
+| 071 | Thread Lifecycle |
+| 072 | Thread States |
+| 073 | synchronized |
+| 074 | volatile |
+| 075 | wait / notify / notifyAll |
+| 076 | ReentrantLock |
+| 077 | ReadWriteLock |
+| 078 | StampedLock |
+| 079 | ThreadLocal |
+| 080 | InheritableThreadLocal |
+| 081 | Deadlock |
+| 082 | Livelock |
+| 083 | Starvation |
+| 084 | Race Condition |
+| 085 | CAS (Compare-And-Swap) |
+| 086 | Spin Lock |
+| 087 | Optimistic Locking |
+| 088 | Executor |
+| 089 | ExecutorService |
+| 090 | ThreadPoolExecutor |
+| 091 | ForkJoinPool |
+| 092 | Virtual Threads (Project Loom) |
+| 093 | Carrier Thread |
+| 094 | Continuation |
+| 095 | Semaphore |
+| 096 | CountDownLatch |
+| 097 | CyclicBarrier |
+| 098 | Phaser |
+| 099 | BlockingQueue |
+| 100 | ConcurrentHashMap |
+| 101 | CopyOnWriteArrayList |
+| 102 | Java Memory Model (JMM) |
 
 ### Spring & Spring Boot (36 keywords)
 
