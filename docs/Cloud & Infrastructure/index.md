@@ -1,29 +1,10 @@
----
+﻿---
 layout: default
-title: "Cloud & Infrastructure"
-parent: "Documentation"
-nav_order: 12
-permalink: /cloud-infrastructure/
+title: "Cloud & Infrastructure (Deprecated)"
+parent: Home
+nav_order: 999
 ---
-# Cloud & Infrastructure
-
-## Cloud Computing and Infrastructure Management
-
-This section covers cloud platforms, infrastructure as code, and cloud architecture.
-
-### Topics Covered
-
-- **Cloud Platforms** - AWS, Azure, GCP, and services overview
-- **Compute Services** - EC2, Lambda, and container orchestration
-- **Storage Solutions** - Object storage, databases, and data warehouses
-- **Networking** - VPCs, subnets, load balancers, and CDNs
-- **Infrastructure as Code** - Terraform, CloudFormation, and automation
-- **Cost Optimization** - Resource management and billing
-- **Security & Compliance** - AWS IAM, encryption, and compliance frameworks
-
----
-
-## Structure
-
-All cloud and infrastructure documentation is organized in this section. Use the navigation menu to explore specific topics.
-
+# Cloud & Infrastructure ⚠️ Deprecated
+> This category has been reorganised.
+Content split into **Cloud - AWS** and **Cloud - Azure**.
+Please navigate using the sidebar.

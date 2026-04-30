@@ -1,53 +1,57 @@
 ---
 layout: default
-title: "Spring & Spring Boot"
+title: "Spring Core"
 parent: "Documentation"
-nav_order: 3
+nav_order: 10
 has_children: true
 permalink: /spring/
 ---
 
-# Spring & Spring Boot
+# Spring Core
 
-Spring Framework fundamentals, AOP, MVC, data access, Boot internals, and reactive programming.
+Spring IoC/DI, AOP, MVC, data access, transactions, Boot auto-configuration, and reactive programming.
 
-**Keywords:** 103–138 (36 terms)
+**Keywords:** 371–410 (40 terms)
 
-| # | Keyword | # | Keyword |
-|---|---|---|---|
-| 103 | IoC (Inversion of Control) | 121 | Pointcut |
-| 104 | DI (Dependency Injection) | 122 | JoinPoint |
-| 105 | ApplicationContext | 123 | Weaving |
-| 106 | BeanFactory | 124 | DispatcherServlet |
-| 107 | Bean | 125 | HandlerMapping |
-| 108 | Bean Lifecycle | 126 | Filter vs Interceptor |
-| 109 | Bean Scope | 127 | @Transactional |
-| 110 | BeanPostProcessor | 128 | Transaction Propagation |
-| 111 | BeanFactoryPostProcessor | 129 | Transaction Isolation Levels |
-| 112 | @Autowired | 130 | N+1 Problem |
-| 113 | @Qualifier / @Primary | 131 | Lazy vs Eager Loading |
-| 114 | @Configuration / @Bean | 132 | HikariCP |
-| 115 | Circular Dependency | 133 | Auto-Configuration |
-| 116 | CGLIB Proxy | 134 | Spring Boot Actuator |
-| 117 | JDK Dynamic Proxy | 135 | Spring Boot Startup Lifecycle |
-| 118 | AOP (Aspect-Oriented Programming) | 136 | WebFlux / Reactive |
-| 119 | Aspect | 137 | Mono / Flux |
-| 120 | Advice | 138 | Backpressure |
-
-## Enterprise Application Development
-
-This section covers Spring Framework fundamentals and best practices for building enterprise applications.
-
-### Topics Covered
-
-- **Spring Core** - Dependency injection, application context, and core concepts
-- **Spring Web** - Building web applications and REST APIs
-- **Spring Data** - Data access and ORM integration
-- **Spring Security** - Authentication and authorization
-- **Spring Boot** - Rapid application development
-
----
-
-## Structure
-
-Spring-related documentation and guides are organized in this section. Use the navigation menu to explore specific topics.
+| # | Keyword | Difficulty |
+|---|---|---|
+| 371 | IoC (Inversion of Control) | ★☆☆ |
+| 372 | DI (Dependency Injection) | ★☆☆ |
+| 373 | ApplicationContext | ★★☆ |
+| 374 | BeanFactory | ★★☆ |
+| 375 | Bean | ★☆☆ |
+| 376 | Bean Lifecycle | ★★☆ |
+| 377 | Bean Scope | ★★☆ |
+| 378 | BeanPostProcessor | ★★★ |
+| 379 | BeanFactoryPostProcessor | ★★★ |
+| 380 | @Autowired | ★★☆ |
+| 381 | @Qualifier / @Primary | ★★☆ |
+| 382 | @Configuration / @Bean | ★★☆ |
+| 383 | Circular Dependency | ★★★ |
+| 384 | CGLIB Proxy | ★★★ |
+| 385 | JDK Dynamic Proxy | ★★★ |
+| 386 | AOP (Aspect-Oriented Programming) | ★★☆ |
+| 387 | Aspect | ★★☆ |
+| 388 | Advice | ★★☆ |
+| 389 | Pointcut | ★★☆ |
+| 390 | JoinPoint | ★★☆ |
+| 391 | Weaving | ★★★ |
+| 392 | DispatcherServlet | ★★☆ |
+| 393 | HandlerMapping | ★★★ |
+| 394 | Filter vs Interceptor | ★★☆ |
+| 395 | @Transactional | ★★☆ |
+| 396 | Transaction Propagation | ★★★ |
+| 397 | Transaction Isolation Levels | ★★★ |
+| 398 | N+1 Problem | ★★★ |
+| 399 | Lazy vs Eager Loading | ★★☆ |
+| 400 | HikariCP | ★★☆ |
+| 401 | Auto-Configuration | ★★★ |
+| 402 | Spring Boot Actuator | ★★☆ |
+| 403 | Spring Boot Startup Lifecycle | ★★★ |
+| 404 | WebFlux / Reactive | ★★★ |
+| 405 | Mono / Flux | ★★★ |
+| 406 | Backpressure (Spring) | ★★★ |
+| 407 | Spring Security | ★★★ |
+| 408 | Spring Data JPA | ★★☆ |
+| 409 | Spring Cloud | ★★★ |
+| 410 | Spring Boot Testing | ★★☆ |

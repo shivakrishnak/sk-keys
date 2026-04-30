@@ -2,45 +2,46 @@
 layout: default
 title: "Node.js"
 parent: "Documentation"
-nav_order: 22
+nav_order: 36
+has_children: true
 permalink: /nodejs/
 ---
+
 # Node.js
 
-Server-side JavaScript, event loop, streams, and Node ecosystem.
+Node.js event loop internals, streams, backpressure, worker threads, Express, Fastify, NestJS, and observability.
 
-**Keywords:** 731–790 (60 terms)
+**Keywords:** 1481–1510 (30 terms)
 
-| # | Keyword | # | Keyword |
-|---|---|---|---|
-| 731 | Node.js Architecture | 761 | CORS in Node |
-| 732 | V8 Engine in Node | 762 | Helmet.js (Security) |
-| 733 | libuv | 763 | Database Connections (Node + Postgres/Mongo) |
-| 734 | Node Event Loop | 764 | ORM / Query Builder (Prisma, Knex) |
-| 735 | Phases of Event Loop (Node) | 765 | Caching in Node (Redis) |
-| 736 | setImmediate vs setTimeout vs process.nextTick | 766 | WebSockets in Node |
-| 737 | Non-Blocking I/O | 767 | File Uploads (Multer) |
-| 738 | Streams | 768 | Process Management (PM2) |
-| 739 | Readable / Writable / Transform Streams | 769 | Graceful Shutdown (Node) |
-| 740 | Backpressure (Node Streams) | 770 | Memory Leaks in Node |
-| 741 | Buffer | 771 | Node.js Profiling (--inspect) |
-| 742 | EventEmitter | 772 | Fastify |
-| 743 | fs Module | 773 | NestJS |
-| 744 | path Module | 774 | Dependency Injection (NestJS) |
-| 745 | os Module | 775 | GraphQL (Node) |
-| 746 | http / https Module | 776 | tRPC |
-| 747 | process Object | 777 | Deno |
-| 748 | Environment Variables | 778 | Bun |
-| 749 | CommonJS vs ESM in Node | 779 | Node.js Security Best Practices |
-| 750 | Module Resolution | 780 | OpenTelemetry in Node |
-| 751 | Cluster Module | 781 | Testing Node (Jest, Supertest) |
-| 752 | Worker Threads (Node) | 782 | Microservices with Node |
-| 753 | Child Process | 783 | Message Queues (Bull, BullMQ) |
-| 754 | Express.js | 784 | Cron Jobs in Node |
-| 755 | Middleware (Express) | 785 | File System Watchers |
-| 756 | Error Handling (Express) | 786 | Hot Module Replacement (HMR) |
-| 757 | Request / Response Lifecycle | 787 | Node.js Release Versioning (LTS) |
-| 758 | REST API Design in Node | 788 | node:test (Native Test Runner) |
-| 759 | Authentication (JWT + Node) | 789 | Async Context Tracking (AsyncLocalStorage) |
-| 760 | Rate Limiting (Node) | 790 | REPL |
-
+| # | Keyword | Difficulty |
+|---|---|---|
+| 1481 | Node.js Architecture | ★★☆ |
+| 1482 | libuv | ★★★ |
+| 1483 | Node Event Loop | ★★★ |
+| 1484 | Phases of Node Event Loop | ★★★ |
+| 1485 | setImmediate vs setTimeout vs nextTick | ★★★ |
+| 1486 | Non-Blocking I/O (Node) | ★★☆ |
+| 1487 | Streams | ★★★ |
+| 1488 | Backpressure (Node) | ★★★ |
+| 1489 | Buffer | ★★☆ |
+| 1490 | EventEmitter | ★★☆ |
+| 1491 | CommonJS vs ESM in Node | ★★☆ |
+| 1492 | Cluster Module | ★★★ |
+| 1493 | Worker Threads | ★★★ |
+| 1494 | Child Process | ★★★ |
+| 1495 | Express.js | ★★☆ |
+| 1496 | Middleware (Express) | ★★☆ |
+| 1497 | Fastify | ★★★ |
+| 1498 | NestJS | ★★★ |
+| 1499 | GraphQL in Node | ★★★ |
+| 1500 | tRPC | ★★★ |
+| 1501 | Memory Leaks (Node) | ★★★ |
+| 1502 | Node.js Profiling | ★★★ |
+| 1503 | AsyncLocalStorage | ★★★ |
+| 1504 | BullMQ (Job Queues) | ★★★ |
+| 1505 | Graceful Shutdown (Node) | ★★★ |
+| 1506 | Deno | ★★★ |
+| 1507 | Bun | ★★★ |
+| 1508 | OpenTelemetry in Node | ★★★ |
+| 1509 | node:test | ★★★ |
+| 1510 | Node.js Security | ★★★ |

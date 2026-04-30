@@ -2,60 +2,56 @@
 layout: default
 title: "Java Concurrency"
 parent: "Documentation"
-nav_order: 3
+nav_order: 9
 has_children: true
 permalink: /java-concurrency/
 ---
+
 # Java Concurrency
-## Threads, Locks, and Concurrent Programming
-This section covers Java concurrency: threads, synchronisation primitives, locks,
-the Java Memory Model, virtual threads (Project Loom), and concurrent data structures.
-### Topics Covered
-- **Threads & Lifecycle** — Thread, Runnable, Callable, Future, CompletableFuture
-- **Synchronisation** — synchronized, volatile, wait/notify, ReentrantLock
-- **Concurrency Problems** — Deadlock, Livelock, Starvation, Race Condition
-- **Executors** — Executor, ThreadPoolExecutor, ForkJoinPool
-- **Virtual Threads** — Project Loom, Carrier Thread, Continuation
-- **Concurrent Collections** — BlockingQueue, ConcurrentHashMap, CopyOnWriteArrayList
-- **Java Memory Model** — JMM, CAS, Spin Lock, Optimistic Locking
----
-## Keywords (066–102)
-| # | Keyword |
-|---|---------|
-| 066 | Thread |
-| 067 | Runnable |
-| 068 | Callable |
-| 069 | Future |
-| 070 | CompletableFuture |
-| 071 | Thread Lifecycle |
-| 072 | Thread States |
-| 073 | synchronized |
-| 074 | volatile |
-| 075 | wait / notify / notifyAll |
-| 076 | ReentrantLock |
-| 077 | ReadWriteLock |
-| 078 | StampedLock |
-| 079 | ThreadLocal |
-| 080 | InheritableThreadLocal |
-| 081 | Deadlock |
-| 082 | Livelock |
-| 083 | Starvation |
-| 084 | Race Condition |
-| 085 | CAS (Compare-And-Swap) |
-| 086 | Spin Lock |
-| 087 | Optimistic Locking |
-| 088 | Executor |
-| 089 | ExecutorService |
-| 090 | ThreadPoolExecutor |
-| 091 | ForkJoinPool |
-| 092 | Virtual Threads (Project Loom) |
-| 093 | Carrier Thread |
-| 094 | Continuation |
-| 095 | Semaphore |
-| 096 | CountDownLatch |
-| 097 | CyclicBarrier |
-| 098 | Phaser |
-| 099 | BlockingQueue |
-| 100 | ConcurrentHashMap |
-| 101 | CopyOnWriteArrayList |
-| 102 | Java Memory Model (JMM) |
+
+Java threading, synchronization, concurrent data structures, executors, virtual threads, and the Java Memory Model.
+
+**Keywords:** 331–370 (40 terms)
+
+| # | Keyword | Difficulty |
+|---|---|---|
+| 331 | Thread (Java) | ★☆☆ |
+| 332 | Runnable | ★☆☆ |
+| 333 | Callable | ★★☆ |
+| 334 | Future | ★★☆ |
+| 335 | CompletableFuture | ★★★ |
+| 336 | Thread Lifecycle | ★★☆ |
+| 337 | Thread States | ★★☆ |
+| 338 | synchronized | ★★☆ |
+| 339 | volatile | ★★★ |
+| 340 | wait / notify / notifyAll | ★★★ |
+| 341 | ReentrantLock | ★★★ |
+| 342 | ReadWriteLock | ★★★ |
+| 343 | StampedLock | ★★★ |
+| 344 | ThreadLocal | ★★★ |
+| 345 | Java Memory Model (JMM) | ★★★ |
+| 346 | Race Condition | ★★☆ |
+| 347 | CAS (Compare-And-Swap) | ★★★ |
+| 348 | Optimistic Locking (Java) | ★★★ |
+| 349 | Executor | ★★☆ |
+| 350 | ExecutorService | ★★☆ |
+| 351 | ThreadPoolExecutor | ★★★ |
+| 352 | ForkJoinPool | ★★★ |
+| 353 | Virtual Threads (Project Loom) | ★★★ |
+| 354 | Carrier Thread | ★★★ |
+| 355 | Continuation | ★★★ |
+| 356 | Semaphore (Java) | ★★☆ |
+| 357 | CountDownLatch | ★★☆ |
+| 358 | CyclicBarrier | ★★★ |
+| 359 | Phaser | ★★★ |
+| 360 | BlockingQueue | ★★☆ |
+| 361 | ConcurrentHashMap | ★★★ |
+| 362 | CopyOnWriteArrayList | ★★★ |
+| 363 | Atomic Classes | ★★★ |
+| 364 | VarHandle | ★★★ |
+| 365 | Structured Concurrency | ★★★ |
+| 366 | Scoped Values | ★★★ |
+| 367 | Thread Dump Analysis | ★★★ |
+| 368 | Deadlock Detection (Java) | ★★★ |
+| 369 | Lock Striping | ★★★ |
+| 370 | Actor Model | ★★★ |

@@ -1,13 +1,10 @@
----
+﻿---
 layout: default
-title: "DevOps & SDLC"
-parent: "Documentation"
-nav_order: 13
-has_children: true
-permalink: /devops-sdlc/
+title: "DevOps & SDLC (Deprecated)"
+parent: Home
+nav_order: 999
 ---
-# DevOps & SDLC
-
-DevOps practices: CI/CD, Blue-Green, GitOps, SRE, Error Budget, IaC.
-
-**Keywords:** 450-460 (11 terms)
+# DevOps & SDLC ⚠️ Deprecated
+> This category has been reorganised.
+Content moved to **CI-CD**, **Microservices**, **Kubernetes**, **Cloud - AWS**, **Observability**, and **System Design**.
+Please navigate using the sidebar.

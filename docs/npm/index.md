@@ -1,31 +1,37 @@
 ---
 layout: default
-title: "npm"
+title: "npm & Package Management"
 parent: "Documentation"
-nav_order: 23
+nav_order: 37
+has_children: true
 permalink: /npm/
 ---
-# npm
 
-Package management, dependency resolution, and monorepo tooling.
+# npm & Package Management
 
-**Keywords:** 791–820 (30 terms)
+npm, pnpm, yarn, semantic versioning, lock files, monorepo tooling, and package security.
 
-| # | Keyword | # | Keyword |
-|---|---|---|---|
-| 791 | package.json | 806 | Phantom Dependencies |
-| 792 | package-lock.json | 807 | Dependency Hell |
-| 793 | node_modules | 808 | Security Auditing (npm audit) |
-| 794 | Semantic Versioning (semver) | 809 | Scoped Packages |
-| 795 | dependencies vs devDependencies vs peerDependencies | 810 | .npmrc |
-| 796 | npm install / ci | 811 | Lifecycle Scripts (preinstall, postinstall) |
-| 797 | npm scripts | 812 | Monorepo Tooling (Turborepo, Nx) |
-| 798 | npx | 813 | Changesets |
-| 799 | npm publish / registry | 814 | npm link |
-| 800 | Private Registry | 815 | Shrinkwrap |
-| 801 | npm workspaces (Monorepo) | 816 | Provenance (npm) |
-| 802 | yarn | 817 | Bundled Dependencies |
-| 803 | pnpm | 818 | Optional Dependencies |
-| 804 | Lock Files | 819 | overrides / resolutions |
-| 805 | Hoisting (npm) | 820 | npm Caching |
+**Keywords:** 1511–1530 (20 terms)
 
+| # | Keyword | Difficulty |
+|---|---|---|
+| 1511 | package.json | ★☆☆ |
+| 1512 | Semantic Versioning | ★★☆ |
+| 1513 | dependencies vs devDependencies | ★★☆ |
+| 1514 | Lock Files | ★★☆ |
+| 1515 | npm workspaces | ★★★ |
+| 1516 | pnpm | ★★★ |
+| 1517 | yarn | ★★☆ |
+| 1518 | Phantom Dependencies | ★★★ |
+| 1519 | Dependency Hell | ★★★ |
+| 1520 | npm audit | ★★☆ |
+| 1521 | Monorepo Tooling (Turborepo, Nx) | ★★★ |
+| 1522 | Changesets | ★★★ |
+| 1523 | Private Registry | ★★★ |
+| 1524 | npm Lifecycle Scripts | ★★★ |
+| 1525 | overrides / resolutions | ★★★ |
+| 1526 | Maven BOM equivalent in npm | ★★★ |
+| 1527 | npm Provenance | ★★★ |
+| 1528 | Hoisting (npm) | ★★★ |
+| 1529 | Scoped Packages | ★★☆ |
+| 1530 | .npmrc Configuration | ★★★ |

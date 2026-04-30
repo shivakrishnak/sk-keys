@@ -1,28 +1,10 @@
----
+﻿---
 layout: default
-title: "Messaging & Streaming"
-parent: "Documentation"
-nav_order: 6
-permalink: /messaging-streaming/
+title: "Messaging & Streaming (Deprecated)"
+parent: Home
+nav_order: 999
 ---
-# Messaging & Streaming
-
-## Event-Driven Architecture and Real-Time Processing
-
-This section covers messaging systems, event streaming, and asynchronous communication patterns.
-
-### Topics Covered
-
-- **Message Queues** - RabbitMQ, Kafka, ActiveMQ
-- **Event Streaming** - Stream processing and event logs
-- **Pub/Sub Patterns** - Publishing and subscription models
-- **Message Ordering** - Guarantees and delivery semantics
-- **Stream Processing** - Apache Flink, Spark Streaming
-- **Exactly-Once Semantics** - Idempotency and deduplication
-
----
-
-## Structure
-
-All messaging and streaming documentation is organized in this section. Use the navigation menu to explore specific topics.
-
+# Messaging & Streaming ⚠️ Deprecated
+> This category has been reorganised.
+Content split into **Big Data & Streaming** and **Distributed Systems**.
+Please navigate using the sidebar.

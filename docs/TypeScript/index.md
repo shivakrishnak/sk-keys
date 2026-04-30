@@ -2,40 +2,66 @@
 layout: default
 title: "TypeScript"
 parent: "Documentation"
-nav_order: 20
+nav_order: 34
+has_children: true
 permalink: /typescript/
 ---
+
 # TypeScript
 
-Static typing, type system, generics, and TypeScript tooling.
+TypeScript type system, generics, utility types, mapped types, conditional types, and compiler internals.
 
-**Keywords:** 621–670 (50 terms)
+**Keywords:** 1371–1420 (50 terms)
 
-| # | Keyword | # | Keyword |
-|---|---|---|---|
-| 621 | TypeScript vs JavaScript | 646 | Type Guard |
-| 622 | Static Typing | 647 | Assertion Functions |
-| 623 | Type Inference | 648 | as (Type Assertion) |
-| 624 | Type Annotation | 649 | satisfies Operator |
-| 625 | Primitive Types | 650 | Enum |
-| 626 | any / unknown / never | 651 | Const Enum |
-| 627 | void | 652 | Namespace |
-| 628 | Union Types | 653 | Declaration Merging |
-| 629 | Intersection Types | 654 | Module Augmentation |
-| 630 | Literal Types | 655 | Declaration Files (.d.ts) |
-| 631 | Type Alias | 656 | tsconfig.json |
-| 632 | Interface | 657 | strict Mode |
-| 633 | Type Alias vs Interface | 658 | Structural Typing (Duck Typing) |
-| 634 | Optional Properties | 659 | Excess Property Checking |
-| 635 | Readonly | 660 | Index Signatures |
-| 636 | Generics (TS) | 661 | Function Overloading (TS) |
-| 637 | Generic Constraints | 662 | Decorators (TS) |
-| 638 | Utility Types (Partial, Required, Pick, Omit) | 663 | Abstract Classes |
-| 639 | Record Type | 664 | Access Modifiers (public, private, protected) |
-| 640 | Mapped Types | 665 | ReturnType / Parameters Utility |
-| 641 | Conditional Types | 666 | Awaited Utility Type |
-| 642 | infer Keyword | 667 | Variance (Covariance / Contravariance in TS) |
-| 643 | Template Literal Types | 668 | keyof / typeof |
-| 644 | Discriminated Union | 669 | Type Widening / Narrowing |
-| 645 | Type Narrowing | 670 | TS Compiler Pipeline (tsc) |
-
+| # | Keyword | Difficulty |
+|---|---|---|
+| 1371 | TypeScript vs JavaScript | ★☆☆ |
+| 1372 | Static Typing | ★☆☆ |
+| 1373 | Type Inference | ★★☆ |
+| 1374 | Type Annotation | ★☆☆ |
+| 1375 | Primitive Types | ★☆☆ |
+| 1376 | any / unknown / never | ★★☆ |
+| 1377 | Union Types | ★★☆ |
+| 1378 | Intersection Types | ★★☆ |
+| 1379 | Literal Types | ★★☆ |
+| 1380 | Type Alias | ★★☆ |
+| 1381 | Interface | ★★☆ |
+| 1382 | Type Alias vs Interface | ★★★ |
+| 1383 | Optional / Readonly | ★★☆ |
+| 1384 | Generics (TS) | ★★★ |
+| 1385 | Generic Constraints | ★★★ |
+| 1386 | Utility Types | ★★★ |
+| 1387 | Mapped Types | ★★★ |
+| 1388 | Conditional Types | ★★★ |
+| 1389 | infer Keyword | ★★★ |
+| 1390 | Template Literal Types | ★★★ |
+| 1391 | Discriminated Union | ★★★ |
+| 1392 | Type Narrowing | ★★★ |
+| 1393 | Type Guard | ★★★ |
+| 1394 | satisfies Operator | ★★★ |
+| 1395 | Enum | ★★☆ |
+| 1396 | Declaration Files (.d.ts) | ★★★ |
+| 1397 | tsconfig.json | ★★☆ |
+| 1398 | strict Mode | ★★☆ |
+| 1399 | Structural Typing | ★★★ |
+| 1400 | Excess Property Checking | ★★★ |
+| 1401 | Index Signatures | ★★★ |
+| 1402 | Function Overloading (TS) | ★★★ |
+| 1403 | Decorators (TS) | ★★★ |
+| 1404 | Abstract Classes | ★★★ |
+| 1405 | keyof / typeof | ★★★ |
+| 1406 | ReturnType / Parameters | ★★★ |
+| 1407 | Awaited Utility Type | ★★★ |
+| 1408 | Variance (TS) | ★★★ |
+| 1409 | Declaration Merging | ★★★ |
+| 1410 | Module Augmentation | ★★★ |
+| 1411 | TS Compiler Pipeline | ★★★ |
+| 1412 | Type-Level Programming | ★★★ |
+| 1413 | Branded Types | ★★★ |
+| 1414 | Opaque Types | ★★★ |
+| 1415 | Type Assertions | ★★☆ |
+| 1416 | Non-null Assertion | ★★☆ |
+| 1417 | Project References | ★★★ |
+| 1418 | Monorepo TypeScript Setup | ★★★ |
+| 1419 | TypeScript Performance | ★★★ |
+| 1420 | Type Compatibility Rules | ★★★ |
