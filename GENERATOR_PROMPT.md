@@ -58,7 +58,10 @@ category: Category Name
 difficulty: ★☆☆
 depends_on: Keyword1, Keyword2, Keyword3
 used_by: Keyword1, Keyword2, Keyword3
-tags: #tag1, #tag2, #tag3
+tags:
+  - tag1
+  - tag2
+  - tag3
 ---
 
 FIELD RULES:
