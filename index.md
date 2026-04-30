@@ -352,22 +352,37 @@ Software development lifecycle and DevOps practices.
 | 416 | Adapter | 436 | |
 | 417 | Decorator | 437 | |
 
-### Testing & Clean Code (18 keywords)
+### Testing (12 keywords)
 
-| # | Keyword | # | Keyword |
-|---|---|---|---|
-| 438 | Unit Test | 450 | Abstraction |
-| 439 | Integration Test | 451 | Encapsulation |
-| 440 | Contract Test | 452 | Polymorphism |
-| 441 | E2E Test | 453 | Inheritance |
-| 442 | TDD | 454 | Command-Query Separation (CQS) |
-| 443 | BDD | 455 | Feature Flags |
-| 444 | Mocking | 456 | Technical Debt |
-| 445 | Stubbing | 457 | Refactoring |
-| 446 | Faking / Spying | 458 | |
-| 447 | Test Pyramid | 459 | |
-| 448 | Property-Based Testing | 460 | |
-| 449 | Mutation Testing | 461 | |
+| # | Keyword |
+|---|---|
+| 412 | Unit Test |
+| 413 | Integration Test |
+| 414 | Contract Test |
+| 415 | E2E Test |
+| 416 | TDD |
+| 417 | BDD |
+| 418 | Mocking |
+| 419 | Stubbing |
+| 420 | Faking / Spying |
+| 421 | Test Pyramid |
+| 422 | Property-Based Testing |
+| 423 | Mutation Testing |
+
+### Clean Code (10 keywords)
+
+| # | Keyword |
+|---|---|
+| 424 | [Cohesion](<docs/Clean Code/🧹 424 — Cohesion.md>) |
+| 425 | [Coupling](<docs/Clean Code/🧹 425 — Coupling.md>) |
+| 426 | [Abstraction](<docs/Clean Code/🧹 426 — Abstraction.md>) |
+| 427 | [Encapsulation](<docs/Clean Code/🧹 427 — Encapsulation.md>) |
+| 428 | [Polymorphism](<docs/Clean Code/🧹 428 — Polymorphism.md>) |
+| 429 | [Inheritance](<docs/Clean Code/🧹 429 — Inheritance.md>) |
+| 430 | [Command-Query Separation (CQS)](<docs/Clean Code/🧹 430 — Command-Query Separation (CQS).md>) |
+| 431 | [Feature Flags](<docs/Clean Code/🧹 431 — Feature Flags.md>) |
+| 432 | [Technical Debt](<docs/Clean Code/🧹 432 — Technical Debt.md>) |
+| 433 | [Refactoring](<docs/Clean Code/🧹 433 — Refactoring.md>) |
 
 ### Cloud & Infrastructure (17 keywords)
 
