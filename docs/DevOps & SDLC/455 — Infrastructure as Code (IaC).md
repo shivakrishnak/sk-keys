@@ -4,14 +4,7 @@ title: "Infrastructure as Code (IaC)"
 parent: "DevOps & SDLC"
 nav_order: 455
 permalink: /devops-sdlc/infrastructure-as-code-iac/
-number: "455"
-category: DevOps & SDLC
-difficulty: ★★☆
-depends_on: Version Control, CI/CD Pipeline
-used_by: GitOps, Immutable Infrastructure, Cloud Provisioning
-tags: #devops #sdlc #intermediate #iac
 ---
-
 # 455 — Infrastructure as Code (IaC)
 
 `#devops` `#sdlc` `#intermediate` `#iac`

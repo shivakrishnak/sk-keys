@@ -4,14 +4,7 @@ title: "BeanPostProcessor"
 parent: "Spring Framework"
 nav_order: 110
 permalink: /spring/beanpostprocessor/
-number: "110"
-category: Spring & Spring Boot
-difficulty: ★★★
-depends_on: Bean Lifecycle, IoC
-used_by: AOP Proxy, @Autowired, Validation
-tags: #spring, #internals, #advanced
 ---
-
 # 110 — BeanPostProcessor
 
 `#spring` `#internals` `#advanced`

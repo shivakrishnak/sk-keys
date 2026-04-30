@@ -4,14 +4,7 @@ title: "DI (Dependency Injection)"
 parent: "Spring Framework"
 nav_order: 104
 permalink: /spring/di-dependency-injection/
-number: "104"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: IoC
-used_by: @Autowired, ApplicationContext, BeanFactory
-tags: #spring, #springboot, #internals, #pattern, #foundational
 ---
-
 # 104 — DI (Dependency Injection)
 
 `#spring` `#springboot` `#internals` `#pattern` `#foundational`

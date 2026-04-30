@@ -3,10 +3,8 @@ layout: default
 title: "JavaScript"
 parent: "Documentation"
 nav_order: 19
-has_children: true
 permalink: /javascript/
 ---
-
 # JavaScript
 
 JS engine, event loop, async patterns, and modern language features.

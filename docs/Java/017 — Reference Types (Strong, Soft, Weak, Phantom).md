@@ -3,15 +3,8 @@ layout: default
 title: "Reference Types (Strong, Soft, Weak, Phantom)"
 parent: "Java & JVM Internals"
 nav_order: 17
-permalink: /java/reference-types/
-number: "017"
-category: JVM Internals
-difficulty: ★★★
-depends_on: JVM, Heap Memory, GC Roots, Object Header, Young Generation
-used_by: GC, G1GC, ZGC, Parallel GC, Memory Leak Diagnosis
-tags: #java, #jvm, #memory, #gc, #internals, #deep-dive
+permalink: /java/reference-types-strong-soft-weak-phantom/
 ---
-
 # 017 — Reference Types (Strong, Soft, Weak, Phantom)
 
 `#java` `#jvm` `#memory` `#gc` `#internals` `#deep-dive`

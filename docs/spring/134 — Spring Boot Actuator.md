@@ -4,14 +4,7 @@ title: "Spring Boot Actuator"
 parent: "Spring Framework"
 nav_order: 134
 permalink: /spring/spring-boot-actuator/
-number: "134"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: Spring Boot, Auto-Configuration
-used_by: Health Check, Metrics, Monitoring, /actuator endpoints
-tags: #springboot, #spring, #observability, #intermediate
 ---
-
 # 134 — Spring Boot Actuator
 
 `#springboot` `#spring` `#observability` `#intermediate`

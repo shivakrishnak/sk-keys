@@ -4,14 +4,7 @@ title: "Circular Dependency"
 parent: "Spring Framework"
 nav_order: 115
 permalink: /spring/circular-dependency/
-number: "115"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: Bean, DI
-used_by: @Lazy injection, proxy-based resolution
-tags: #spring, #internals, #intermediate
 ---
-
 # 115 — Circular Dependency
 
 `#spring` `#internals` `#intermediate`

@@ -4,14 +4,7 @@ title: "Coupling"
 parent: "Clean Code"
 nav_order: 425
 permalink: /clean-code/coupling/
-number: "425"
-category: Clean Code
-difficulty: ★★☆
-depends_on: Cohesion, Module Design
-used_by: Dependency Injection, DIP, Refactoring
-tags: #cleancode #architecture #foundational
 ---
-
 # 425 — Coupling
 
 `#cleancode` `#architecture` `#foundational`

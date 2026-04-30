@@ -4,14 +4,7 @@ title: "Feature Flags"
 parent: "Clean Code"
 nav_order: 431
 permalink: /clean-code/feature-flags/
-number: "431"
-category: Clean Code
-difficulty: ★★☆
-depends_on: CI/CD, Canary Deployment, Trunk-Based Development
-used_by: A/B Testing, Canary Releases, Kill Switches
-tags: #cleancode #devops #intermediate
 ---
-
 # 431 — Feature Flags
 
 `#cleancode` `#devops` `#intermediate`

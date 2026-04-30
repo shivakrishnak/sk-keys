@@ -4,14 +4,7 @@ title: "WebFlux / Reactive"
 parent: "Spring Framework"
 nav_order: 136
 permalink: /spring/webflux-reactive/
-number: "136"
-category: Spring & Spring Boot
-difficulty: ★★★
-depends_on: Reactive Streams, Project Reactor, Non-blocking I/O
-used_by: Mono Flux, Backpressure, reactive APIs
-tags: #spring, #springboot, #concurrency, #advanced
 ---
-
 # 136 — WebFlux Reactive
 
 `#spring` `#springboot` `#concurrency` `#advanced`

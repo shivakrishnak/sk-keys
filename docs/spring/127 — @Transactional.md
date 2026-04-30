@@ -4,14 +4,7 @@ title: "@Transactional"
 parent: "Spring Framework"
 nav_order: 127
 permalink: /spring/transactional/
-number: "127"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: AOP, CGLIB Proxy, Transaction Manager
-used_by: Transaction Propagation, Transaction Isolation Levels
-tags: #spring, #database, #internals, #intermediate
 ---
-
 # 127 — @Transactional
 
 `#spring` `#database` `#internals` `#intermediate`

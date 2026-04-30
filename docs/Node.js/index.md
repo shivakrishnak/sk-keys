@@ -3,10 +3,8 @@ layout: default
 title: "Node.js"
 parent: "Documentation"
 nav_order: 22
-has_children: true
 permalink: /nodejs/
 ---
-
 # Node.js
 
 Server-side JavaScript, event loop, streams, and Node ecosystem.

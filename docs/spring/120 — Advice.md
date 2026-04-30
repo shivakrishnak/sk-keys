@@ -4,14 +4,7 @@ title: "Advice"
 parent: "Spring Framework"
 nav_order: 120
 permalink: /spring/advice/
-number: "120"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: Aspect, AOP
-used_by: @Before, @After, @Around, @AfterReturning
-tags: #spring, #internals, #intermediate
 ---
-
 # 120 — Advice
 
 `#spring` `#internals` `#intermediate`

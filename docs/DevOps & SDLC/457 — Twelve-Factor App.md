@@ -4,14 +4,7 @@ title: "Twelve-Factor App"
 parent: "DevOps & SDLC"
 nav_order: 457
 permalink: /devops-sdlc/twelve-factor-app/
-number: "457"
-category: DevOps & SDLC
-difficulty: ★★☆
-depends_on: Cloud-Native Architecture, Microservices
-used_by: IaC, Immutable Infrastructure, CI/CD
-tags: #devops #sdlc #intermediate #architecture
 ---
-
 # 457 — Twelve-Factor App
 
 `#devops` `#sdlc` `#intermediate` `#architecture`

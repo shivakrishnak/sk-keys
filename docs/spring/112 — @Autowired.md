@@ -4,14 +4,7 @@ title: "@Autowired"
 parent: "Spring Framework"
 nav_order: 112
 permalink: /spring/autowired/
-number: "112"
-category: Spring & Spring Boot
-difficulty: ★☆☆
-depends_on: DI, Bean
-used_by: @Qualifier, @Primary, Constructor Injection
-tags: #spring, #internals, #foundational
 ---
-
 # 112 — @Autowired
 
 `#spring` `#internals` `#foundational`

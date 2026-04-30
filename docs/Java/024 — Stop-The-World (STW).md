@@ -4,12 +4,6 @@ title: "Stop-The-World (STW)"
 parent: "Java & JVM Internals"
 nav_order: 24
 permalink: /java/stop-the-world-stw/
-number: "024"
-category: Java & JVM Internals
-difficulty: ★★★
-depends_on: JVM, GC, Minor GC, Major GC, Full GC, Thread
-used_by: GC, JIT Compiler, Deoptimization, Debugger, Thread Dump
-tags: #java #jvm #gc #concurrency #internals #deep-dive
 ---
 # 024 — Stop-The-World (STW)
 

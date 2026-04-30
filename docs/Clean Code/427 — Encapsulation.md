@@ -4,14 +4,7 @@ title: "Encapsulation"
 parent: "Clean Code"
 nav_order: 427
 permalink: /clean-code/encapsulation/
-number: "427"
-category: Clean Code
-difficulty: ★☆☆
-depends_on: Abstraction, Class Design
-used_by: Cohesion, Information Hiding, Invariants
-tags: #cleancode #oop #foundational
 ---
-
 # 427 — Encapsulation
 
 `#cleancode` `#oop` `#foundational`

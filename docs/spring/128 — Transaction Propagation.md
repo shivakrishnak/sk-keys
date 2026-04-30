@@ -4,14 +4,7 @@ title: "Transaction Propagation"
 parent: "Spring Framework"
 nav_order: 128
 permalink: /spring/transaction-propagation/
-number: "128"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: @Transactional
-used_by: Nested transactions, service layer design
-tags: #spring, #database, #internals, #intermediate
 ---
-
 # 128 — Transaction Propagation
 
 `#spring` `#database` `#internals` `#intermediate`

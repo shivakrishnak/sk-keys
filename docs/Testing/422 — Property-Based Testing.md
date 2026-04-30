@@ -4,14 +4,7 @@ title: "Property-Based Testing"
 parent: "Testing"
 nav_order: 422
 permalink: /testing/property-based-testing/
-number: "422"
-category: Testing
-difficulty: ★★★
-depends_on: Unit Test, QuickCheck, jqwik
-used_by: Unit Test, TDD, Fuzzing
-tags: #testing #advanced #property-based #quality
 ---
-
 # 422 — Property-Based Testing
 
 `#testing` `#advanced` `#property-based` `#quality`

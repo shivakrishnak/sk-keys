@@ -3,10 +3,8 @@ layout: default
 title: "npm"
 parent: "Documentation"
 nav_order: 23
-has_children: true
 permalink: /npm/
 ---
-
 # npm
 
 Package management, dependency resolution, and monorepo tooling.

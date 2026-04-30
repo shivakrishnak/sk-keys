@@ -4,14 +4,7 @@ title: "Integer Cache"
 parent: "Java Language"
 nav_order: 52
 permalink: /java-language/integer-cache/
-number: "052"
-category: Java Language
-difficulty: ★★☆
-depends_on: Autoboxing, Integer.valueOf
-used_by: Autoboxing, String Pool, Performance Analysis
-tags: #java #internals #intermediate #jvm
 ---
-
 # 052 — Integer Cache
 
 `#java` `#internals` `#intermediate` `#jvm`

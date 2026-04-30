@@ -4,14 +4,7 @@ title: "Refactoring"
 parent: "Clean Code"
 nav_order: 433
 permalink: /clean-code/refactoring/
-number: "433"
-category: Clean Code
-difficulty: ★★☆
-depends_on: Technical Debt, Unit Tests, Code Smells
-used_by: Technical Debt, Clean Code, Boy Scout Rule
-tags: #cleancode #intermediate #pattern
 ---
-
 # 433 — Refactoring
 
 `#cleancode` `#intermediate` `#pattern`

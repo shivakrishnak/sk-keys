@@ -4,14 +4,7 @@ title: "DispatcherServlet"
 parent: "Spring Framework"
 nav_order: 124
 permalink: /spring/dispatcherservlet/
-number: "124"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: Servlet API, ApplicationContext
-used_by: HandlerMapping, Spring MVC, Filter vs Interceptor
-tags: #spring, #networking, #internals, #intermediate
 ---
-
 # 124 — DispatcherServlet
 
 `#spring` `#networking` `#internals` `#intermediate`

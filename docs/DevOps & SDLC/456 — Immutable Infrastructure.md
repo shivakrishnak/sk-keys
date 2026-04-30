@@ -4,14 +4,7 @@ title: "Immutable Infrastructure"
 parent: "DevOps & SDLC"
 nav_order: 456
 permalink: /devops-sdlc/immutable-infrastructure/
-number: "456"
-category: DevOps & SDLC
-difficulty: ★★☆
-depends_on: IaC, CI/CD Pipeline, Containers
-used_by: GitOps, IaC, Cloud-Native Architecture
-tags: #devops #sdlc #intermediate #reliability
 ---
-
 # 456 — Immutable Infrastructure
 
 `#devops` `#sdlc` `#intermediate` `#reliability`

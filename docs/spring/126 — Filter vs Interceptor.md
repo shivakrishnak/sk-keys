@@ -4,14 +4,7 @@ title: "Filter vs Interceptor"
 parent: "Spring Framework"
 nav_order: 126
 permalink: /spring/filter-vs-interceptor/
-number: "126"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: Servlet API, DispatcherServlet
-used_by: Security filter chain, logging, Spring Security
-tags: #spring, #networking, #pattern, #intermediate
 ---
-
 # 126 — Filter vs Interceptor
 
 `#spring` `#networking` `#pattern` `#intermediate`

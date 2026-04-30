@@ -4,14 +4,7 @@ title: "Serialization / Deserialization"
 parent: "Java Language"
 nav_order: 60
 permalink: /java-language/serialization-deserialization/
-number: "060"
-category: Java Language
-difficulty: ★★☆
-depends_on: JVM, Object, Streams
-used_by: RMI, JMS, Caching, Persistence, Network Protocols
-tags: #java #intermediate #serialization #io #security
 ---
-
 # 060 — Serialization / Deserialization
 
 `#java` `#intermediate` `#serialization` `#io` `#security`

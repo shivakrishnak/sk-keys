@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "Heap Memory"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 7
 permalink: /java/heap-memory/
-number: "007"
-category: JVM Memory
-difficulty: ★★☆
-depends_on: JVM, GC, Stack Memory
-used_by: Every object allocation, GC, Spring, Hibernate
-tags: #java, #jvm, #memory, #gc, #internals, #intermediate
 ---
-
 # 007 — Heap Memory
 
 `#java` `#jvm` `#memory` `#gc` `#internals` `#intermediate`

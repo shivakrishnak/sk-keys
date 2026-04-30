@@ -4,14 +4,7 @@ title: "Error Budget"
 parent: "DevOps & SDLC"
 nav_order: 459
 permalink: /devops-sdlc/error-budget/
-number: "459"
-category: DevOps & SDLC
-difficulty: ★★★
-depends_on: SRE, SLO, SLI
-used_by: SRE, Release Decisions, CI/CD Gates
-tags: #devops #sdlc #advanced #sre #reliability
 ---
-
 # 459 — Error Budget
 
 `#devops` `#sdlc` `#advanced` `#sre` `#reliability`

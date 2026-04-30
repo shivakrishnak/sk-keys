@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "Stack Frame"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 9
 permalink: /java/stack-frame/
-number: "009"
-category: JVM Memory
-difficulty: ★★★
-depends_on: Stack Memory, JVM, Bytecode, Thread
-used_by: Every method invocation, JIT Compiler, Debugger
-tags: #java, #jvm, #memory, #internals, #deep-dive
 ---
-
 # 009 — Stack Frame
 
 `#java` `#jvm` `#memory` `#internals` `#deep-dive`

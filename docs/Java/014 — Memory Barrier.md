@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "Memory Barrier"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 14
 permalink: /java/memory-barrier/
-number: "014"
-category: JVM Internals
-difficulty: ★★★
-depends_on: JVM, Java Memory Model, volatile, CPU Cache
-used_by: volatile, synchronized, Happens-Before, JIT Compiler
-tags: #java, #jvm, #concurrency, #internals, #deep-dive
 ---
-
 # 014 — Memory Barrier
 
 `#java` `#jvm` `#concurrency` `#internals` `#deep-dive`

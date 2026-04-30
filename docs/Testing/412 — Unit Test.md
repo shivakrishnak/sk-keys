@@ -4,14 +4,7 @@ title: "Unit Test"
 parent: "Testing"
 nav_order: 412
 permalink: /testing/unit-test/
-number: "412"
-category: Testing
-difficulty: ★☆☆
-depends_on: JUnit, Assertion Libraries
-used_by: TDD, Test Pyramid, CI/CD
-tags: #testing #foundational #java
 ---
-
 # 412 — Unit Test
 
 `#testing` `#foundational` `#java`

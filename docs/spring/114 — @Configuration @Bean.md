@@ -4,14 +4,7 @@ title: "@Configuration / @Bean"
 parent: "Spring Framework"
 nav_order: 114
 permalink: /spring/configuration-bean/
-number: "114"
-category: Spring & Spring Boot
-difficulty: ★☆☆
-depends_on: Bean, ApplicationContext
-used_by: Auto-Configuration, Spring Boot, BeanFactory
-tags: #spring, #internals, #foundational
 ---
-
 # 114 — @Configuration @Bean
 
 `#spring` `#internals` `#foundational`

@@ -4,14 +4,7 @@ title: "CGLIB Proxy"
 parent: "Spring Framework"
 nav_order: 116
 permalink: /spring/cglib-proxy/
-number: "116"
-category: Spring & Spring Boot
-difficulty: ★★★
-depends_on: JVM, Bytecode, Proxy Pattern
-used_by: AOP, @Transactional, @Configuration
-tags: #spring, #jvm, #internals, #advanced
 ---
-
 # 116 — CGLIB Proxy
 
 `#spring` `#jvm` `#internals` `#advanced`

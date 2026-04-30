@@ -4,14 +4,7 @@ title: "Spring Boot Startup Lifecycle"
 parent: "Spring Framework"
 nav_order: 135
 permalink: /spring/spring-boot-startup-lifecycle/
-number: "135"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: ApplicationContext, Auto-Configuration
-used_by: Spring Boot initialization, ApplicationRunner
-tags: #springboot, #spring, #internals, #intermediate
 ---
-
 # 135 — Spring Boot Startup Lifecycle
 
 `#springboot` `#spring` `#internals` `#intermediate`

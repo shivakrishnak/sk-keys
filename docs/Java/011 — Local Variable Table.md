@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "Local Variable Table"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 11
 permalink: /java/local-variable-table/
-number: "011"
-category: JVM Internals
-difficulty: ★★★
-depends_on: Stack Frame, Bytecode, Operand Stack
-used_by: Every method execution, Debugger, JIT Compiler
-tags: #java, #jvm, #internals, #memory, #bytecode, #deep-dive
 ---
-
 # 011 — Local Variable Table
 
 `#java` `#jvm` `#internals` `#memory` `#bytecode` `#deep-dive`

@@ -4,14 +4,7 @@ title: "Bean Scope"
 parent: "Spring Framework"
 nav_order: 109
 permalink: /spring/bean-scope/
-number: "109"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: Bean, IoC
-used_by: @Scope, Prototype Bean, Request Scope
-tags: #spring, #internals, #foundational
 ---
-
 # 109 — Bean Scope
 
 `#spring` `#internals` `#foundational`

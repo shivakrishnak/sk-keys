@@ -4,14 +4,7 @@ title: "Reflection"
 parent: "Java Language"
 nav_order: 58
 permalink: /java-language/reflection/
-number: "058"
-category: Java Language
-difficulty: ★★★
-depends_on: Class Loader, JVM, Type Erasure
-used_by: Spring Framework, Jackson, JUnit, Mockito, Lombok
-tags: #java #advanced #reflection #jvm #internals
 ---
-
 # 058 — Reflection
 
 `#java` `#advanced` `#reflection` `#jvm` `#internals`

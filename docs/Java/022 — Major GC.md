@@ -4,12 +4,6 @@ title: "Major GC"
 parent: "Java & JVM Internals"
 nav_order: 22
 permalink: /java/major-gc/
-number: "022"
-category: Java & JVM Internals
-difficulty: ★★★
-depends_on: JVM, Old Generation, Minor GC, GC Roots, Heap Memory
-used_by: GC, Full GC, Stop-The-World, JVM Performance, G1GC
-tags: #java #jvm #memory #gc #internals #deep-dive
 ---
 # 022 — Major GC
 

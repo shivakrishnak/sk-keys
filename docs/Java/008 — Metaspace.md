@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "Metaspace"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 8
 permalink: /java/metaspace/
-number: "008"
-category: JVM Memory
-difficulty: ★★☆
-depends_on: JVM, Class Loader, Heap Memory
-used_by: Every loaded class, Spring, Hibernate
-tags: #java, #jvm, #memory, #internals, #classloading, #intermediate
 ---
-
 # 008 — Metaspace
 
 `#java` `#jvm` `#memory` `#internals` `#classloading` `#intermediate`

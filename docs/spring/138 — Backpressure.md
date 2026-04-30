@@ -4,14 +4,7 @@ title: "Backpressure"
 parent: "Spring Framework"
 nav_order: 138
 permalink: /spring/backpressure/
-number: "138"
-category: Spring & Spring Boot
-difficulty: ★★★
-depends_on: Reactive Streams, Mono Flux
-used_by: Reactive pipelines, WebFlux, flow control
-tags: #spring, #distributed, #performance, #reliability, #advanced
 ---
-
 # 138 — Backpressure
 
 `#spring` `#distributed` `#performance` `#reliability` `#advanced`

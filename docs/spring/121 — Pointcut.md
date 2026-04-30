@@ -4,14 +4,7 @@ title: "Pointcut"
 parent: "Spring Framework"
 nav_order: 121
 permalink: /spring/pointcut/
-number: "121"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: Aspect, JoinPoint
-used_by: Advice, Weaving, @Pointcut expression
-tags: #spring, #internals, #intermediate
 ---
-
 # 121 — Pointcut
 
 `#spring` `#internals` `#intermediate`

@@ -4,14 +4,7 @@ title: "Bean Lifecycle"
 parent: "Spring Framework"
 nav_order: 108
 permalink: /spring/bean-lifecycle/
-number: "108"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: Bean, IoC, ApplicationContext
-used_by: BeanPostProcessor, @PostConstruct, @PreDestroy
-tags: #spring, #internals, #intermediate
 ---
-
 # 108 — Bean Lifecycle
 
 `#spring` `#internals` `#intermediate`

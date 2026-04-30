@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Java Concurrency"
 parent: "Documentation"

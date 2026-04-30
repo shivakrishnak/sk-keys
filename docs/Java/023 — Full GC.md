@@ -4,12 +4,6 @@ title: "Full GC"
 parent: "Java & JVM Internals"
 nav_order: 23
 permalink: /java/full-gc/
-number: "023"
-category: Java & JVM Internals
-difficulty: ★★★
-depends_on: JVM, Heap Memory, Young Generation, Old Generation, Metaspace, Minor GC, Major GC
-used_by: GC, OutOfMemoryError, JVM Performance, Memory Leak Diagnosis
-tags: #java #jvm #memory #gc #internals #deep-dive
 ---
 # 023 — Full GC
 

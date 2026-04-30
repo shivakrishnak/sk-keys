@@ -4,14 +4,7 @@ title: "Auto-Configuration"
 parent: "Spring Framework"
 nav_order: 133
 permalink: /spring/auto-configuration/
-number: "133"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: Bean, @Configuration, @ConditionalOn
-used_by: Spring Boot Starters, Spring Boot Startup Lifecycle
-tags: #springboot, #spring, #internals, #foundational
 ---
-
 # 133 — Auto-Configuration
 
 `#springboot` `#spring` `#internals` `#foundational`

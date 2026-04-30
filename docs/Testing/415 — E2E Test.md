@@ -4,14 +4,7 @@ title: "E2E Test"
 parent: "Testing"
 nav_order: 415
 permalink: /testing/e2e-test/
-number: "415"
-category: Testing
-difficulty: ★★☆
-depends_on: Integration Test, Selenium, Playwright, Cypress
-used_by: Test Pyramid, CI/CD, QA
-tags: #testing #intermediate #e2e #quality
 ---
-
 # 415 — E2E Test
 
 `#testing` `#intermediate` `#e2e` `#quality`

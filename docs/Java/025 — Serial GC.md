@@ -4,12 +4,6 @@ title: "Serial GC"
 parent: "Java & JVM Internals"
 nav_order: 25
 permalink: /java/serial-gc/
-number: "025"
-category: Java & JVM Internals
-difficulty: ★★☆
-depends_on: JVM, GC, Stop-The-World, Heap Memory, Young Generation, Old Generation
-used_by: Small applications, Single-core environments, GC baseline understanding
-tags: #java #jvm #gc #memory #internals #intermediate
 ---
 # 025 — Serial GC
 

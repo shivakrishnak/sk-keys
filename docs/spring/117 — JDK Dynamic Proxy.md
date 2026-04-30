@@ -4,14 +4,7 @@ title: "JDK Dynamic Proxy"
 parent: "Spring Framework"
 nav_order: 117
 permalink: /spring/jdk-dynamic-proxy/
-number: "117"
-category: Spring & Spring Boot
-difficulty: ★★★
-depends_on: Reflection, Interface, Proxy Pattern
-used_by: AOP, @Transactional, interface-based beans
-tags: #spring, #jvm, #internals, #advanced
 ---
-
 # 117 — JDK Dynamic Proxy
 
 `#spring` `#jvm` `#internals` `#advanced`

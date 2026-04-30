@@ -4,14 +4,7 @@ title: "CI/CD Pipeline"
 parent: "DevOps & SDLC"
 nav_order: 450
 permalink: /devops-sdlc/cicd-pipeline/
-number: "450"
-category: DevOps & SDLC
-difficulty: ★★☆
-depends_on: Version Control, Build Tools, Automated Testing
-used_by: Blue-Green Deployment, Canary Deployment, GitOps
-tags: #devops #sdlc #cicd #intermediate
 ---
-
 # 450 — CI/CD Pipeline
 
 `#devops` `#sdlc` `#cicd` `#intermediate`

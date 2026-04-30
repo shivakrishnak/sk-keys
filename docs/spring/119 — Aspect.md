@@ -4,14 +4,7 @@ title: "Aspect"
 parent: "Spring Framework"
 nav_order: 119
 permalink: /spring/aspect/
-number: "119"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: AOP
-used_by: Pointcut, Advice, @Aspect annotation
-tags: #spring, #internals, #intermediate
 ---
-
 # 119 — Aspect
 
 `#spring` `#internals` `#intermediate`

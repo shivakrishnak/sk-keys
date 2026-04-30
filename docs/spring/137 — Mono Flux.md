@@ -4,14 +4,7 @@ title: "Mono / Flux"
 parent: "Spring Framework"
 nav_order: 137
 permalink: /spring/mono-flux/
-number: "137"
-category: Spring & Spring Boot
-difficulty: ★★★
-depends_on: WebFlux Reactive, Project Reactor
-used_by: Backpressure, reactive pipeline, WebFlux endpoints
-tags: #spring, #springboot, #concurrency, #advanced
 ---
-
 # 137 — Mono Flux
 
 `#spring` `#springboot` `#concurrency` `#advanced`

@@ -4,14 +4,7 @@ title: "Faking / Spying"
 parent: "Testing"
 nav_order: 420
 permalink: /testing/faking-spying/
-number: "420"
-category: Testing
-difficulty: ★★☆
-depends_on: Unit Test, Mocking, Stubbing
-used_by: Unit Test, Mocking, TDD
-tags: #testing #intermediate #java #mockito
 ---
-
 # 420 — Faking / Spying
 
 `#testing` `#intermediate` `#java` `#mockito`

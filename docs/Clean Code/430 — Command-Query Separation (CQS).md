@@ -4,14 +4,7 @@ title: "Command-Query Separation (CQS)"
 parent: "Clean Code"
 nav_order: 430
 permalink: /clean-code/command-query-separation-cqs/
-number: "430"
-category: Clean Code
-difficulty: ★★☆
-depends_on: CQRS, API Design, Side Effects
-used_by: CQRS, Functional Programming, Idempotency, Testing
-tags: #cleancode #pattern #intermediate
 ---
-
 # 430 — Command-Query Separation (CQS)
 
 `#cleancode` `#pattern` `#intermediate`

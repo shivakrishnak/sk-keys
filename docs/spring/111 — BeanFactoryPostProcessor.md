@@ -4,14 +4,7 @@ title: "BeanFactoryPostProcessor"
 parent: "Spring Framework"
 nav_order: 111
 permalink: /spring/beanfactorypostprocessor/
-number: "111"
-category: Spring & Spring Boot
-difficulty: ★★★
-depends_on: BeanFactory, IoC
-used_by: PropertyPlaceholderConfigurer, ConfigurationClassPostProcessor
-tags: #spring, #internals, #advanced
 ---
-
 # 111 — BeanFactoryPostProcessor
 
 `#spring` `#internals` `#advanced`

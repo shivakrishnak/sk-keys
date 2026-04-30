@@ -4,14 +4,7 @@ title: "SerialVersionUID"
 parent: "Java Language"
 nav_order: 61
 permalink: /java-language/serialversionuid/
-number: "061"
-category: Java Language
-difficulty: ★☆☆
-depends_on: Serialization, Class Evolution
-used_by: Serializable classes, RMI, JMS, Caching systems
-tags: #java #foundational #serialization #versioning
 ---
-
 # 061 — SerialVersionUID
 
 `#java` `#foundational` `#serialization` `#versioning`

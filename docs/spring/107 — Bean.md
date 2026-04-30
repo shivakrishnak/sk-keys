@@ -4,14 +4,7 @@ title: "Bean"
 parent: "Spring Framework"
 nav_order: 107
 permalink: /spring/bean/
-number: "107"
-category: Spring & Spring Boot
-difficulty: ★☆☆
-depends_on: IoC, DI
-used_by: Bean Lifecycle, Bean Scope, @Autowired
-tags: #spring, #internals, #foundational
 ---
-
 # 107 — Bean
 
 `#spring` `#internals` `#foundational`

@@ -4,14 +4,7 @@ title: "Toil"
 parent: "DevOps & SDLC"
 nav_order: 460
 permalink: /devops-sdlc/toil/
-number: "460"
-category: DevOps & SDLC
-difficulty: ★★☆
-depends_on: SRE, Error Budget, Automation
-used_by: SRE, Error Budget, Operational Excellence
-tags: #devops #sdlc #intermediate #sre #reliability
 ---
-
 # 460 — Toil
 
 `#devops` `#sdlc` `#intermediate` `#sre` `#reliability`

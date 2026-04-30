@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "JRE (Java Runtime Environment)"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 2
 permalink: /java/jre-java-runtime-environment/
-number: "002"
-category: Java & JVM Internals
-difficulty: ★☆☆
-depends_on: JVM
-used_by: JDK, Application Deployment
-tags: #java, #jvm, #internals, #foundational
 ---
-
 # 002 — JRE (Java Runtime Environment)
 
 `#java` `#jvm` `#internals` `#foundational`

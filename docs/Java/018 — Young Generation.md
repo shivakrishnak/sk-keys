@@ -4,14 +4,7 @@ title: "Young Generation"
 parent: "Java & JVM Internals"
 nav_order: 18
 permalink: /java/young-generation/
-number: "018"
-category: JVM Internals
-difficulty: ★★☆
-depends_on: JVM, Heap Memory, GC Roots, Object Allocation
-used_by: GC, Minor GC, Object Promotion, TLAB, G1GC
-tags: #java, #jvm, #memory, #gc, #internals, #intermediate
 ---
-
 # 018 — Young Generation
 
 `#java` `#jvm` `#memory` `#gc` `#internals` `#intermediate`

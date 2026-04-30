@@ -3,10 +3,8 @@ layout: default
 title: "React"
 parent: "Documentation"
 nav_order: 21
-has_children: true
 permalink: /react/
 ---
-
 # React
 
 React fundamentals, hooks, performance, and ecosystem.

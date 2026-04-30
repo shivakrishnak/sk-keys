@@ -4,14 +4,7 @@ title: "ApplicationContext"
 parent: "Spring Framework"
 nav_order: 105
 permalink: /spring/applicationcontext/
-number: "105"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: BeanFactory, IoC, DI
-used_by: Spring Boot, Spring MVC, AOP, @Configuration
-tags: #spring, #springboot, #internals, #foundational
 ---
-
 # 105 — ApplicationContext
 
 `#spring` `#springboot` `#internals` `#foundational`

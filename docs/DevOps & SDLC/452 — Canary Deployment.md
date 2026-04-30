@@ -4,14 +4,7 @@ title: "Canary Deployment"
 parent: "DevOps & SDLC"
 nav_order: 452
 permalink: /devops-sdlc/canary-deployment/
-number: "452"
-category: DevOps & SDLC
-difficulty: ★★☆
-depends_on: CI/CD Pipeline, Load Balancer, Monitoring
-used_by: CI/CD Pipeline, Risk Reduction, Feature Validation
-tags: #devops #sdlc #intermediate #reliability
 ---
-
 # 452 — Canary Deployment
 
 `#devops` `#sdlc` `#intermediate` `#reliability`

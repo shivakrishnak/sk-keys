@@ -4,12 +4,6 @@ title: "Minor GC"
 parent: "Java & JVM Internals"
 nav_order: 21
 permalink: /java/minor-gc/
-number: "021"
-category: Java & JVM Internals
-difficulty: ★★☆
-depends_on: JVM, Young Generation, Eden Space, Survivor Space, GC Roots
-used_by: GC, Object Promotion, Old Generation, JVM Performance
-tags: #java #jvm #memory #gc #internals #intermediate
 ---
 # 021 — Minor GC
 

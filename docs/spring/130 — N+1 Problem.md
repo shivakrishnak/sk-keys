@@ -4,14 +4,7 @@ title: "N+1 Problem"
 parent: "Spring Framework"
 nav_order: 130
 permalink: /spring/n1-problem/
-number: "130"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: JPA, Lazy vs Eager Loading
-used_by: Fetch optimization, @EntityGraph, JOIN FETCH
-tags: #spring, #database, #performance, #intermediate
 ---
-
 # 130 — N+1 Problem
 
 `#spring` `#database` `#performance` `#intermediate`

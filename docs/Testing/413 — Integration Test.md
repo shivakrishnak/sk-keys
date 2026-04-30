@@ -4,14 +4,7 @@ title: "Integration Test"
 parent: "Testing"
 nav_order: 413
 permalink: /testing/integration-test/
-number: "413"
-category: Testing
-difficulty: ★★☆
-depends_on: Unit Test, Spring Boot Test, Testcontainers
-used_by: Test Pyramid, CI/CD, Contract Test
-tags: #testing #intermediate #java #spring
 ---
-
 # 413 — Integration Test
 
 `#testing` `#intermediate` `#java` `#spring`

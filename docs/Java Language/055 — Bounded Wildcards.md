@@ -4,14 +4,7 @@ title: "Bounded Wildcards"
 parent: "Java Language"
 nav_order: 55
 permalink: /java-language/bounded-wildcards/
-number: "055"
-category: Java Language
-difficulty: ★★★
-depends_on: Generics, Type Erasure, Subtyping
-used_by: Collections API, Stream API, Utility Methods
-tags: #java #advanced #generics #wildcards #pecs
 ---
-
 # 055 — Bounded Wildcards
 
 `#java` `#advanced` `#generics` `#wildcards` `#pecs`

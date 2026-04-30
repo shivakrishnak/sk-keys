@@ -4,14 +4,7 @@ title: "Records (Java 16+)"
 parent: "Java Language"
 nav_order: 62
 permalink: /java-language/records-java-16/
-number: "062"
-category: Java Language
-difficulty: ★★☆
-depends_on: Classes, Immutability, equals/hashCode
-used_by: DTOs, Value Objects, Pattern Matching, Domain Models
-tags: #java #intermediate #records #immutability #java16
 ---
-
 # 062 — Records (Java 16+)
 
 `#java` `#intermediate` `#records` `#immutability` `#java16`

@@ -4,14 +4,7 @@ title: "Type Erasure"
 parent: "Java Language"
 nav_order: 54
 permalink: /java-language/type-erasure/
-number: "054"
-category: Java Language
-difficulty: ★★★
-depends_on: Generics, Bytecode, JVM
-used_by: Reflection, Generics Limitations, Heap Pollution
-tags: #java #intermediate #generics #jvm #internals
 ---
-
 # 054 — Type Erasure
 
 `#java` `#intermediate` `#generics` `#jvm` `#internals`

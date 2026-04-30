@@ -4,14 +4,7 @@ title: "Rolling Update"
 parent: "DevOps & SDLC"
 nav_order: 453
 permalink: /devops-sdlc/rolling-update/
-number: "453"
-category: DevOps & SDLC
-difficulty: ★☆☆
-depends_on: CI/CD Pipeline, Kubernetes
-used_by: CI/CD Pipeline, Kubernetes Deployments
-tags: #devops #sdlc #foundational #reliability
 ---
-
 # 453 — Rolling Update
 
 `#devops` `#sdlc` `#foundational` `#reliability`

@@ -4,14 +4,7 @@ title: "HandlerMapping"
 parent: "Spring Framework"
 nav_order: 125
 permalink: /spring/handlermapping/
-number: "125"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: DispatcherServlet
-used_by: @RequestMapping, Spring MVC routing, @GetMapping
-tags: #spring, #networking, #internals, #intermediate
 ---
-
 # 125 — HandlerMapping
 
 `#spring` `#networking` `#internals` `#intermediate`

@@ -4,14 +4,7 @@ title: "Abstraction"
 parent: "Clean Code"
 nav_order: 426
 permalink: /clean-code/abstraction/
-number: "426"
-category: Clean Code
-difficulty: ★☆☆
-depends_on: Interface, Polymorphism
-used_by: Encapsulation, Coupling, API Design
-tags: #cleancode #oop #foundational
 ---
-
 # 426 — Abstraction
 
 `#cleancode` `#oop` `#foundational`

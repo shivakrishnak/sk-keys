@@ -4,14 +4,7 @@ title: "Cohesion"
 parent: "Clean Code"
 nav_order: 424
 permalink: /clean-code/cohesion/
-number: "424"
-category: Clean Code
-difficulty: ★★☆
-depends_on: SRP, Module Design
-used_by: Coupling, Refactoring
-tags: #cleancode #architecture #foundational
 ---
-
 # 424 — Cohesion
 
 `#cleancode` `#architecture` `#foundational`

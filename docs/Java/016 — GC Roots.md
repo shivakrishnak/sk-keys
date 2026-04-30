@@ -4,14 +4,7 @@ title: "GC Roots"
 parent: "Java & JVM Internals"
 nav_order: 16
 permalink: /java/gc-roots/
-number: "016"
-category: JVM Internals
-difficulty: ★★★
-depends_on: JVM, Heap Memory, Garbage Collector, Class Loader
-used_by: GC, Memory Leak Diagnosis, jmap, Eclipse MAT
-tags: #java, #jvm, #memory, #gc, #internals, #deep-dive
 ---
-
 # 016 — GC Roots
 
 `#java` `#jvm` `#memory` `#gc` `#internals` `#deep-dive`

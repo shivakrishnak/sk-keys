@@ -4,14 +4,7 @@ title: "Test Pyramid"
 parent: "Testing"
 nav_order: 421
 permalink: /testing/test-pyramid/
-number: "421"
-category: Testing
-difficulty: ★★☆
-depends_on: Unit Test, Integration Test, E2E Test
-used_by: Testing Strategy, CI/CD, QA
-tags: #testing #intermediate #strategy #quality
 ---
-
 # 421 — Test Pyramid
 
 `#testing` `#intermediate` `#strategy` `#quality`

@@ -4,14 +4,7 @@ title: "Blue-Green Deployment"
 parent: "DevOps & SDLC"
 nav_order: 451
 permalink: /devops-sdlc/blue-green-deployment/
-number: "451"
-category: DevOps & SDLC
-difficulty: ★★☆
-depends_on: CI/CD Pipeline, Load Balancer
-used_by: CI/CD Pipeline, Zero-Downtime Deployment
-tags: #devops #sdlc #intermediate #reliability
 ---
-
 # 451 — Blue-Green Deployment
 
 `#devops` `#sdlc` `#intermediate` `#reliability`

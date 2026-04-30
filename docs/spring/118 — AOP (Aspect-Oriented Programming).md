@@ -4,14 +4,7 @@ title: "AOP (Aspect-Oriented Programming)"
 parent: "Spring Framework"
 nav_order: 118
 permalink: /spring/aop-aspect-oriented-programming/
-number: "118"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: CGLIB Proxy, JDK Dynamic Proxy, Proxy Pattern
-used_by: @Transactional, Logging, Security
-tags: #spring, #internals, #pattern, #intermediate
 ---
-
 # 118 — AOP (Aspect-Oriented Programming)
 
 `#spring` `#internals` `#pattern` `#intermediate`

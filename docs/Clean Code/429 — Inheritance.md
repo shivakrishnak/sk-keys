@@ -4,14 +4,7 @@ title: "Inheritance"
 parent: "Clean Code"
 nav_order: 429
 permalink: /clean-code/inheritance/
-number: "429"
-category: Clean Code
-difficulty: ★★☆
-depends_on: Polymorphism, Abstraction
-used_by: LSP, Composition over Inheritance, Subtype Polymorphism
-tags: #cleancode #oop #foundational
 ---
-
 # 429 — Inheritance
 
 `#cleancode` `#oop` `#foundational`

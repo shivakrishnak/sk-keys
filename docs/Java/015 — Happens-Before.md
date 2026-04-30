@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "Happens-Before"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 15
 permalink: /java/happens-before/
-number: "015"
-category: JVM Internals
-difficulty: ★★★
-depends_on: Java Memory Model, Memory Barrier, volatile, synchronized, Thread
-used_by: volatile, synchronized, final, Thread.start, Thread.join
-tags: #java, #jvm, #concurrency, #internals, #deep-dive
 ---
-
 # 015 — Happens-Before
 
 `#java` `#jvm` `#concurrency` `#internals` `#deep-dive`

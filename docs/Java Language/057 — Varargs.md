@@ -4,14 +4,7 @@ title: "Varargs"
 parent: "Java Language"
 nav_order: 57
 permalink: /java-language/varargs/
-number: "057"
-category: Java Language
-difficulty: ★☆☆
-depends_on: Arrays, Method Signatures, Autoboxing
-used_by: String.format, MessageFormat, Logging APIs
-tags: #java #foundational #varargs #methods
 ---
-
 # 057 — Varargs
 
 `#java` `#foundational` `#varargs` `#methods`

@@ -4,14 +4,7 @@ title: "GitOps"
 parent: "DevOps & SDLC"
 nav_order: 454
 permalink: /devops-sdlc/gitops/
-number: "454"
-category: DevOps & SDLC
-difficulty: ★★☆
-depends_on: CI/CD Pipeline, IaC, Kubernetes
-used_by: CI/CD Pipeline, IaC, Kubernetes
-tags: #devops #sdlc #intermediate #gitops
 ---
-
 # 454 — GitOps
 
 `#devops` `#sdlc` `#intermediate` `#gitops`

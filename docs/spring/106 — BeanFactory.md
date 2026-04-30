@@ -4,14 +4,7 @@ title: "BeanFactory"
 parent: "Spring Framework"
 nav_order: 106
 permalink: /spring/beanfactory/
-number: "106"
-category: Spring & Spring Boot
-difficulty: ★☆☆
-depends_on: IoC
-used_by: ApplicationContext, Bean, Spring Container
-tags: #spring, #internals, #foundational
 ---
-
 # 106 — BeanFactory
 
 `#spring` `#internals` `#foundational`

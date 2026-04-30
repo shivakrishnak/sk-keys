@@ -3,10 +3,8 @@ layout: default
 title: "CSS"
 parent: "Documentation"
 nav_order: 18
-has_children: true
 permalink: /css/
 ---
-
 # CSS
 
 Styling, layout, responsive design, and modern CSS features.

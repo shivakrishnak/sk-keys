@@ -4,14 +4,7 @@ title: "Mocking"
 parent: "Testing"
 nav_order: 418
 permalink: /testing/mocking/
-number: "418"
-category: Testing
-difficulty: ★★☆
-depends_on: Unit Test, Mockito, Dependency Injection
-used_by: Unit Test, TDD, Integration Test
-tags: #testing #intermediate #java #mockito
 ---
-
 # 418 — Mocking
 
 `#testing` `#intermediate` `#java` `#mockito`

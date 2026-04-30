@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Java Language"
 parent: "Documentation"

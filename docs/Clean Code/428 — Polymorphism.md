@@ -4,14 +4,7 @@ title: "Polymorphism"
 parent: "Clean Code"
 nav_order: 428
 permalink: /clean-code/polymorphism/
-number: "428"
-category: Clean Code
-difficulty: ★★☆
-depends_on: Abstraction, Inheritance, Interface
-used_by: Strategy Pattern, OCP, Runtime Dispatch
-tags: #cleancode #oop #foundational #pattern
 ---
-
 # 428 — Polymorphism
 
 `#cleancode` `#oop` `#foundational` `#pattern`

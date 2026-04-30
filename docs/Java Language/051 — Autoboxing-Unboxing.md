@@ -4,14 +4,7 @@ title: "Autoboxing / Unboxing"
 parent: "Java Language"
 nav_order: 51
 permalink: /java-language/autoboxing-unboxing/
-number: "051"
-category: Java Language
-difficulty: ★☆☆
-depends_on: Primitive Types, Wrapper Classes
-used_by: Collections, Generics, Streams
-tags: #java #foundational #internals
 ---
-
 # 051 — Autoboxing / Unboxing
 
 `#java` `#foundational` `#internals`

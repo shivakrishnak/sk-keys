@@ -4,14 +4,7 @@ title: "Mutation Testing"
 parent: "Testing"
 nav_order: 423
 permalink: /testing/mutation-testing/
-number: "423"
-category: Testing
-difficulty: ★★★
-depends_on: Unit Test, Code Coverage, TDD
-used_by: Unit Test, Test Quality, CI/CD
-tags: #testing #advanced #quality #mutation
 ---
-
 # 423 — Mutation Testing
 
 `#testing` `#advanced` `#quality` `#mutation`

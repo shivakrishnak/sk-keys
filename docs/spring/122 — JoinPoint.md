@@ -4,14 +4,7 @@ title: "JoinPoint"
 parent: "Spring Framework"
 nav_order: 122
 permalink: /spring/joinpoint/
-number: "122"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: AOP, Aspect
-used_by: Advice methods, method interception
-tags: #spring, #internals, #intermediate
 ---
-
 # 122 — JoinPoint
 
 `#spring` `#internals` `#intermediate`

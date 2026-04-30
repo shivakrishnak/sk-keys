@@ -4,14 +4,7 @@ title: "Technical Debt"
 parent: "Clean Code"
 nav_order: 432
 permalink: /clean-code/technical-debt/
-number: "432"
-category: Clean Code
-difficulty: ★★☆
-depends_on: Refactoring, Code Quality, Architecture
-used_by: Refactoring, Code Smells, Velocity, Architecture
-tags: #cleancode #architecture #intermediate
 ---
-
 # 432 — Technical Debt
 
 `#cleancode` `#architecture` `#intermediate`

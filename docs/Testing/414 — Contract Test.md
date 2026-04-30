@@ -4,14 +4,7 @@ title: "Contract Test"
 parent: "Testing"
 nav_order: 414
 permalink: /testing/contract-test/
-number: "414"
-category: Testing
-difficulty: ★★★
-depends_on: Integration Test, Consumer-Driven Contracts
-used_by: Microservices, CI/CD, API Versioning
-tags: #testing #advanced #microservices #contracts
 ---
-
 # 414 — Contract Test
 
 `#testing` `#advanced` `#microservices` `#contracts`

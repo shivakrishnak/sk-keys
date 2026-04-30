@@ -4,14 +4,7 @@ title: "Lazy vs Eager Loading"
 parent: "Spring Framework"
 nav_order: 131
 permalink: /spring/lazy-vs-eager-loading/
-number: "131"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: JPA, N+1 Problem
-used_by: @OneToMany, @FetchType, Hibernate SQL optimization
-tags: #spring, #database, #performance, #intermediate
 ---
-
 # 131 — Lazy vs Eager Loading
 
 `#spring` `#database` `#performance` `#intermediate`

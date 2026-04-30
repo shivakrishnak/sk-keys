@@ -4,14 +4,7 @@ title: "IoC (Inversion of Control)"
 parent: "Spring Framework"
 nav_order: 103
 permalink: /spring/ioc-inversion-of-control/
-number: "103"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: Design Principles, OOP
-used_by: DI, ApplicationContext, BeanFactory
-tags: #spring, #springboot, #internals, #pattern, #foundational
 ---
-
 # 103 — IoC (Inversion of Control)
 
 `#spring` `#springboot` `#internals` `#pattern` `#foundational`

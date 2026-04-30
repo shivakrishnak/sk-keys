@@ -3,10 +3,8 @@ layout: default
 title: "HTML"
 parent: "Documentation"
 nav_order: 17
-has_children: true
 permalink: /html/
 ---
-
 # HTML
 
 HTML document structure, semantics, accessibility, and browser rendering.

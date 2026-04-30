@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "Stack Memory"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 6
 permalink: /java/stack-memory/
-number: "006"
-category: JVM Memory
-difficulty: ★★☆
-depends_on: JVM, Thread
-used_by: Every method call, Recursion, JIT Compiler
-tags: #java, #jvm, #memory, #internals, #intermediate
 ---
-
 # 006 — Stack Memory
 
 `#java` `#jvm` `#memory` `#internals` `#intermediate`

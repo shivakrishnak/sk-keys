@@ -3,10 +3,8 @@ layout: default
 title: "TypeScript"
 parent: "Documentation"
 nav_order: 20
-has_children: true
 permalink: /typescript/
 ---
-
 # TypeScript
 
 Static typing, type system, generics, and TypeScript tooling.

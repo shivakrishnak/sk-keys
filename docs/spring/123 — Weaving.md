@@ -4,14 +4,7 @@ title: "Weaving"
 parent: "Spring Framework"
 nav_order: 123
 permalink: /spring/weaving/
-number: "123"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: AOP, CGLIB Proxy
-used_by: Spring AOP, AspectJ, proxy generation
-tags: #spring, #internals, #intermediate
 ---
-
 # 123 — Weaving
 
 `#spring` `#internals` `#intermediate`

@@ -4,14 +4,7 @@ title: "Covariance / Contravariance"
 parent: "Java Language"
 nav_order: 56
 permalink: /java-language/covariance-contravariance/
-number: "056"
-category: Java Language
-difficulty: ★★★
-depends_on: Generics, Bounded Wildcards, Subtyping
-used_by: Comparable, Comparator, Collections API, TypeScript Variance
-tags: #java #advanced #generics #variance #covariance
 ---
-
 # 056 — Covariance / Contravariance
 
 `#java` `#advanced` `#generics` `#variance` `#covariance`

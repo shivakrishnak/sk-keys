@@ -3,10 +3,8 @@ layout: default
 title: "Webpack & Build Tools"
 parent: "Documentation"
 nav_order: 24
-has_children: true
 permalink: /webpack/
 ---
-
 # Webpack & Build Tools
 
 Bundling, code splitting, transpilation, and build optimization.

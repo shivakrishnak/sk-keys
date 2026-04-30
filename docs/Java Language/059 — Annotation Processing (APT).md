@@ -4,14 +4,7 @@ title: "Annotation Processing (APT)"
 parent: "Java Language"
 nav_order: 59
 permalink: /java-language/annotation-processing-apt/
-number: "059"
-category: Java Language
-difficulty: ★★★
-depends_on: Annotations, Reflection, Compiler API
-used_by: Lombok, MapStruct, Dagger 2, Spring (compile-time), Auto-Value
-tags: #java #advanced #annotations #apt #codegen
 ---
-
 # 059 — Annotation Processing (APT)
 
 `#java` `#advanced` `#annotations` `#apt` `#codegen`

@@ -4,14 +4,7 @@ title: "Generics"
 parent: "Java Language"
 nav_order: 53
 permalink: /java-language/generics/
-number: "053"
-category: Java Language
-difficulty: ★★★
-depends_on: Type System, Object, Collections
-used_by: Collections Framework, Streams API, Optional, Spring Framework
-tags: #java #intermediate #generics #typesystem
 ---
-
 # 053 — Generics
 
 `#java` `#intermediate` `#generics` `#typesystem`

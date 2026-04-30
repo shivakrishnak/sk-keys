@@ -4,14 +4,7 @@ title: "HikariCP"
 parent: "Spring Framework"
 nav_order: 132
 permalink: /spring/hikaricp/
-number: "132"
-category: Spring & Spring Boot
-difficulty: ★★☆
-depends_on: JDBC, Connection Pool
-used_by: Spring JDBC, Spring Data JPA, DataSource
-tags: #spring, #database, #performance, #internals, #intermediate
 ---
-
 # 132 — HikariCP
 
 `#spring` `#database` `#performance` `#internals` `#intermediate`

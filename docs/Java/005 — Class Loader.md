@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "Class Loader"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 5
 permalink: /java/class-loader/
-number: "005"
-category: JVM Internals
-difficulty: ★★☆
-depends_on: JVM, Bytecode
-used_by: JIT Compiler, Spring, Hibernate, OSGi, Tomcat
-tags: #java, #jvm, #internals, #classloading, #intermediate
 ---
-
 # 005 — Class Loader
 
 `#java` `#jvm` `#internals` `#classloading` `#intermediate`

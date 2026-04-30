@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "Operand Stack"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 10
 permalink: /java/operand-stack/
-number: "010"
-category: JVM Internals
-difficulty: ★★★
-depends_on: Stack Frame, Bytecode, Local Variable Table
-used_by: Every bytecode instruction, JIT Compiler
-tags: #java, #jvm, #internals, #bytecode, #deep-dive
 ---
-
 # 010 — Operand Stack
 
 `#java` `#jvm` `#internals` `#bytecode` `#deep-dive`

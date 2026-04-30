@@ -4,14 +4,7 @@ title: "Eden Space"
 parent: "Java & JVM Internals"
 nav_order: 19
 permalink: /java/eden-space/
-number: "019"
-category: JVM Internals
-difficulty: ★★☆
-depends_on: JVM, Young Generation, GC Roots, Object Allocation, TLAB
-used_by: GC, Minor GC, Object Aging, Young Generation
-tags: #java, #jvm, #memory, #gc, #internals, #intermediate
 ---
-
 # 019 — Eden Space
 
 `#java` `#jvm` `#memory` `#gc` `#internals` `#intermediate`

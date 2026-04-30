@@ -4,14 +4,7 @@ title: "Transaction Isolation Levels"
 parent: "Spring Framework"
 nav_order: 129
 permalink: /spring/transaction-isolation-levels/
-number: "129"
-category: Spring & Spring Boot
-difficulty: ★★★
-depends_on: @Transactional, Database Transactions
-used_by: Concurrency control, dirty read prevention
-tags: #spring, #database, #internals, #advanced
 ---
-
 # 129 — Transaction Isolation Levels
 
 `#spring` `#database` `#internals` `#advanced`

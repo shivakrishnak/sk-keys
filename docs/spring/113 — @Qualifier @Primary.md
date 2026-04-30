@@ -4,14 +4,7 @@ title: "@Qualifier / @Primary"
 parent: "Spring Framework"
 nav_order: 113
 permalink: /spring/qualifier-primary/
-number: "113"
-category: Spring & Spring Boot
-difficulty: ★☆☆
-depends_on: @Autowired, Bean
-used_by: Multiple Bean Resolution, @Autowired disambiguation
-tags: #spring, #internals, #foundational
 ---
-
 # 113 — @Qualifier @Primary
 
 `#spring` `#internals` `#foundational`

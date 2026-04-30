@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "JDK (Java Development Kit)"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 3
 permalink: /java/jdk-java-development-kit/
-number: "003"
-category: Java & JVM Internals
-difficulty: ★☆☆
-depends_on: JRE, JVM
-used_by: javac, javadoc, jdb, Maven, Gradle
-tags: #java, #jvm, #internals, #foundational
 ---
-
 # 003 — JDK (Java Development Kit)
 
 `#java` `#jvm` `#internals` `#foundational`

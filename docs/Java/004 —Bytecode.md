@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "Bytecode"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 4
 permalink: /java/bytecode/
-number: "004"
-category: Java & JVM Internals
-difficulty: ★★☆
-depends_on: JVM, javac
-used_by: JIT Compiler, Class Loader, JVM
-tags: #java, #jvm, #internals, #deep-dive
 ---
-
 # 004 — Bytecode
 
 `#java` `#jvm` `#internals` `#deep-dive`

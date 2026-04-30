@@ -4,14 +4,7 @@ title: "Stubbing"
 parent: "Testing"
 nav_order: 419
 permalink: /testing/stubbing/
-number: "419"
-category: Testing
-difficulty: ★☆☆
-depends_on: Unit Test, Mocking
-used_by: Unit Test, Mocking, TDD
-tags: #testing #foundational #java #mockito
 ---
-
 # 419 — Stubbing
 
 `#testing` `#foundational` `#java` `#mockito`

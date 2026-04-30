@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "Escape Analysis"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 13
 permalink: /java/escape-analysis/
-number: "013"
-category: JVM Internals
-difficulty: ★★★
-depends_on: JVM, Heap Memory, Stack Memory, JIT Compiler
-used_by: GC, JIT Compiler, Stack Frame
-tags: #java, #jvm, #internals, #jit, #deep-dive
 ---
-
 # 013 — Escape Analysis
 
 `#java` `#jvm` `#internals` `#jit` `#deep-dive`

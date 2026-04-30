@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "Object Header"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 12
 permalink: /java/object-header/
-number: "012"
-category: JVM Internals
-difficulty: ★★★
-depends_on: JVM, Heap Memory, Bytecode
-used_by: GC, Synchronized, JIT Compiler
-tags: #java, #jvm, #memory, #internals, #deep-dive
 ---
-
 # 012 — Object Header
 
 `#java` `#jvm` `#memory` `#internals` `#deep-dive`

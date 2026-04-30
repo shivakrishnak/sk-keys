@@ -4,14 +4,7 @@ title: "Survivor Space"
 parent: "Java & JVM Internals"
 nav_order: 20
 permalink: /java/survivor-space/
-number: "020"
-category: JVM Internals
-difficulty: ★★☆
-depends_on: JVM, Young Generation, Eden Space, GC Roots, Minor GC
-used_by: GC, Minor GC, Object Aging, Object Promotion, Young Generation
-tags: #java, #jvm, #memory, #gc, #internals, #intermediate
 ---
-
 # 020 — Survivor Space
 
 `#java` `#jvm` `#memory` `#gc` `#internals` `#intermediate`

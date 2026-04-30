@@ -1,17 +1,10 @@
 ---
 layout: default
 title: "JVM (Java Virtual Machine)"
-parent: "Java Fundamentals"
+parent: "Java & JVM Internals"
 nav_order: 1
 permalink: /java/jvm-java-virtual-machine/
-number: "001"
-category: Java & JVM Internals
-difficulty: ★★☆
-depends_on: JRE, JDK
-used_by: JRE, JDK, Bytecode, Class Loader
-tags: #java, #jvm, #internals, #foundational
 ---
-
 # 001 — JVM (Java Virtual Machine)
 
 `#java` `#jvm` `#internals` `#foundational`
