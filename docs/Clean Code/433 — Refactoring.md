@@ -1,4 +1,4 @@
----
+﻿---
 number: "433"
 category: Clean Code
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: Technical Debt, Clean Code, Boy Scout Rule
 tags: #cleancode #intermediate #pattern
 ---
 
-# 🧹 433 — Refactoring
+# 433 — Refactoring
 
 `#cleancode` `#intermediate` `#pattern`
 

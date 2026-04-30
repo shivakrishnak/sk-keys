@@ -1,4 +1,4 @@
----
+﻿---
 number: "426"
 category: Clean Code
 difficulty: ★☆☆
@@ -7,7 +7,7 @@ used_by: Encapsulation, Coupling, API Design
 tags: #cleancode #oop #foundational
 ---
 
-# 🧹 426 — Abstraction
+# 426 — Abstraction
 
 `#cleancode` `#oop` `#foundational`
 

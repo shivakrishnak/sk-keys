@@ -1,4 +1,4 @@
----
+﻿---
 number: "428"
 category: Clean Code
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: Strategy Pattern, OCP, Runtime Dispatch
 tags: #cleancode #oop #foundational #pattern
 ---
 
-# 🧹 428 — Polymorphism
+# 428 — Polymorphism
 
 `#cleancode` `#oop` `#foundational` `#pattern`
 

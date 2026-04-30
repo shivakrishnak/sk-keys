@@ -1,4 +1,4 @@
----
+﻿---
 number: "453"
 category: DevOps & SDLC
 difficulty: ★☆☆
@@ -7,7 +7,7 @@ used_by: CI/CD Pipeline, Kubernetes Deployments
 tags: #devops #sdlc #foundational #reliability
 ---
 
-# 🔄 453 — Rolling Update
+# 453 — Rolling Update
 
 `#devops` `#sdlc` `#foundational` `#reliability`
 

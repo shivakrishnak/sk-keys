@@ -1,4 +1,4 @@
----
+﻿---
 number: "424"
 category: Clean Code
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: Coupling, Refactoring
 tags: #cleancode #architecture #foundational
 ---
 
-# 🧹 424 — Cohesion
+# 424 — Cohesion
 
 `#cleancode` `#architecture` `#foundational`
 

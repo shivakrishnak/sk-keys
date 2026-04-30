@@ -1,4 +1,4 @@
----
+﻿---
 number: "454"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: CI/CD Pipeline, IaC, Kubernetes
 tags: #devops #sdlc #intermediate #gitops
 ---
 
-# 🔄 454 — GitOps
+# 454 — GitOps
 
 `#devops` `#sdlc` `#intermediate` `#gitops`
 

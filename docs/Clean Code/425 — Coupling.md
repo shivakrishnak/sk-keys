@@ -1,4 +1,4 @@
----
+﻿---
 number: "425"
 category: Clean Code
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: Dependency Injection, DIP, Refactoring
 tags: #cleancode #architecture #foundational
 ---
 
-# 🧹 425 — Coupling
+# 425 — Coupling
 
 `#cleancode` `#architecture` `#foundational`
 

@@ -1,4 +1,4 @@
----
+﻿---
 number: "452"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: CI/CD Pipeline, Risk Reduction, Feature Validation
 tags: #devops #sdlc #intermediate #reliability
 ---
 
-# 🔄 452 — Canary Deployment
+# 452 — Canary Deployment
 
 `#devops` `#sdlc` `#intermediate` `#reliability`
 

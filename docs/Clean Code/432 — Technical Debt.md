@@ -1,4 +1,4 @@
----
+﻿---
 number: "432"
 category: Clean Code
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: Refactoring, Code Smells, Velocity, Architecture
 tags: #cleancode #architecture #intermediate
 ---
 
-# 🧹 432 — Technical Debt
+# 432 — Technical Debt
 
 `#cleancode` `#architecture` `#intermediate`
 

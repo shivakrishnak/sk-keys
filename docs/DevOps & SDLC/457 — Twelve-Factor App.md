@@ -1,4 +1,4 @@
----
+﻿---
 number: "457"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: IaC, Immutable Infrastructure, CI/CD
 tags: #devops #sdlc #intermediate #architecture
 ---
 
-# 🔄 457 — Twelve-Factor App
+# 457 — Twelve-Factor App
 
 `#devops` `#sdlc` `#intermediate` `#architecture`
 

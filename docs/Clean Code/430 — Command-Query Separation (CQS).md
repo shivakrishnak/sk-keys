@@ -1,4 +1,4 @@
----
+﻿---
 number: "430"
 category: Clean Code
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: CQRS, Functional Programming, Idempotency, Testing
 tags: #cleancode #pattern #intermediate
 ---
 
-# 🧹 430 — Command-Query Separation (CQS)
+# 430 — Command-Query Separation (CQS)
 
 `#cleancode` `#pattern` `#intermediate`
 

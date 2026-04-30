@@ -1,4 +1,4 @@
----
+﻿---
 number: "427"
 category: Clean Code
 difficulty: ★☆☆
@@ -7,7 +7,7 @@ used_by: Cohesion, Information Hiding, Invariants
 tags: #cleancode #oop #foundational
 ---
 
-# 🧹 427 — Encapsulation
+# 427 — Encapsulation
 
 `#cleancode` `#oop` `#foundational`
 

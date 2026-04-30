@@ -1,4 +1,4 @@
----
+﻿---
 number: "431"
 category: Clean Code
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: A/B Testing, Canary Releases, Kill Switches
 tags: #cleancode #devops #intermediate
 ---
 
-# 🧹 431 — Feature Flags
+# 431 — Feature Flags
 
 `#cleancode` `#devops` `#intermediate`
 

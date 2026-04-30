@@ -1,4 +1,4 @@
----
+﻿---
 number: "456"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: GitOps, IaC, Cloud-Native Architecture
 tags: #devops #sdlc #intermediate #reliability
 ---
 
-# 🔄 456 — Immutable Infrastructure
+# 456 — Immutable Infrastructure
 
 `#devops` `#sdlc` `#intermediate` `#reliability`
 

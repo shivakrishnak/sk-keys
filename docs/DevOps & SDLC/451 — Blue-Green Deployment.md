@@ -1,4 +1,4 @@
----
+﻿---
 number: "451"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: CI/CD Pipeline, Zero-Downtime Deployment
 tags: #devops #sdlc #intermediate #reliability
 ---
 
-# 🔄 451 — Blue-Green Deployment
+# 451 — Blue-Green Deployment
 
 `#devops` `#sdlc` `#intermediate` `#reliability`
 

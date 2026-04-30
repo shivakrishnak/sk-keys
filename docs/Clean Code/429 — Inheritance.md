@@ -1,4 +1,4 @@
----
+﻿---
 number: "429"
 category: Clean Code
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: LSP, Composition over Inheritance, Subtype Polymorphism
 tags: #cleancode #oop #foundational
 ---
 
-# 🧹 429 — Inheritance
+# 429 — Inheritance
 
 `#cleancode` `#oop` `#foundational`
 

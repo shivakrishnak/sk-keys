@@ -1,4 +1,4 @@
----
+﻿---
 number: "455"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: GitOps, Immutable Infrastructure, Cloud Provisioning
 tags: #devops #sdlc #intermediate #iac
 ---
 
-# 🔄 455 — Infrastructure as Code (IaC)
+# 455 — Infrastructure as Code (IaC)
 
 `#devops` `#sdlc` `#intermediate` `#iac`
 

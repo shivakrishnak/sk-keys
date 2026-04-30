@@ -1,4 +1,4 @@
----
+﻿---
 number: "459"
 category: DevOps & SDLC
 difficulty: ★★★
@@ -7,7 +7,7 @@ used_by: SRE, Release Decisions, CI/CD Gates
 tags: #devops #sdlc #advanced #sre #reliability
 ---
 
-# 🔄 459 — Error Budget
+# 459 — Error Budget
 
 `#devops` `#sdlc` `#advanced` `#sre` `#reliability`
 

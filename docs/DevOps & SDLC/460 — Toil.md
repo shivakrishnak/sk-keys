@@ -1,4 +1,4 @@
----
+﻿---
 number: "460"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: SRE, Error Budget, Operational Excellence
 tags: #devops #sdlc #intermediate #sre #reliability
 ---
 
-# 🔄 460 — Toil
+# 460 — Toil
 
 `#devops` `#sdlc` `#intermediate` `#sre` `#reliability`
 

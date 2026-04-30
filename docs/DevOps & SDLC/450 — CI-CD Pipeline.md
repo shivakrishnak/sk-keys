@@ -1,4 +1,4 @@
----
+﻿---
 number: "450"
 category: DevOps & SDLC
 difficulty: ★★☆
@@ -7,7 +7,7 @@ used_by: Blue-Green Deployment, Canary Deployment, GitOps
 tags: #devops #sdlc #cicd #intermediate
 ---
 
-# 🔄 450 — CI/CD Pipeline
+# 450 — CI/CD Pipeline
 
 `#devops` `#sdlc` `#cicd` `#intermediate`
 
