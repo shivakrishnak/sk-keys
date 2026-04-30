@@ -168,7 +168,6 @@ Fix: always use `.equals()` for `Integer`, `Long`, `Double` comparisons.
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Automatic int↔Integer conversion — convenient │
@@ -186,6 +185,7 @@ Fix: always use `.equals()` for `Integer`, `Long`, `Double` comparisons.
 │ NEXT EXPLORE │ Integer Cache --> Generics --> Type Erasure    │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why does unboxing a null `Integer` cause a `NullPointerException`?

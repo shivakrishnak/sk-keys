@@ -213,7 +213,6 @@ for (int i = 0; i < 1_000_000; i++) {
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Zero-or-more args; compiler wraps in array;   │
@@ -231,6 +230,7 @@ for (int i = 0; i < 1_000_000; i++) {
 │ NEXT EXPLORE │ @SafeVarargs → Heap Pollution → Type Erasure  │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why must a varargs parameter always be the last parameter in a method signature?

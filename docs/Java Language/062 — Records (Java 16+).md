@@ -239,7 +239,6 @@ Records and Lombok `@Data` on the same class causes compilation issues. Pick one
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Immutable data carrier: components → final    │
@@ -257,6 +256,7 @@ Records and Lombok `@Data` on the same class causes compilation issues. Pick one
 │ NEXT EXPLORE │ Sealed Classes → Pattern Matching → ADTs      │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why are records unsuitable as JPA/Hibernate `@Entity` classes?

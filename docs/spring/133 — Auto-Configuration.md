@@ -26,12 +26,19 @@ tags: #springboot, #spring, #internals, #foundational
 ---
 
 ### 📘 Textbook Definition
+
 Spring Boot Auto-Configuration is a mechanism driven by `@EnableAutoConfiguration` (included in `@SpringBootApplication`) that automatically creates and configures Spring beans by processing classes listed in `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` (Boot 3+) or `spring.factories` (Boot 2.x). Each auto-configuration class uses `@Conditional` annotations to activate only when specific classes, beans, or properties are present.
+
 ### 🟢 Simple Definition (Easy)
+
 Auto-Configuration means Spring Boot sees you added `spring-boot-starter-data-jpa` to your project and automatically sets up a DataSource, EntityManager, and TransactionManager — without you writing any config. As soon as you provide your own, Boot backs off.
+
 ### 🔵 Simple Definition (Elaborated)
+
 Each starter jar ships with auto-configuration classes that declare: "If `DataSource.class` is on the classpath AND no `DataSource` bean is already defined, create a default one." These conditions are evaluated at startup, and matching configs are applied — giving you a working app with zero configuration. You override defaults by defining your own beans; Boot's `@ConditionalOnMissingBean` backs off automatically.
+
 ### 🔩 First Principles Explanation
+
 **How it works:**
 ```
 1. @SpringBootApplication includes @EnableAutoConfiguration
@@ -53,6 +60,7 @@ Each starter jar ships with auto-configuration classes that declare: "If `DataSo
 @ConditionalOnBean        — specific bean IS defined
 @ConditionalOnWebApplication — is a web app?
 ```
+
 ### 💻 Code Example
 ```java
 // Auto-config you get for FREE when adding spring-boot-starter-data-jpa:
@@ -76,15 +84,20 @@ public DataSource myCustomDataSource() {
 // logging.level.org.springframework.boot.autoconfigure=DEBUG
 // Or: spring-boot actuator /actuator/conditions endpoint
 ```
+
 ### ⚠️ Common Misconceptions
+
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | Auto-config is magic — can't be controlled | Fully conditional and overridable; `@ConditionalOnMissingBean` is the key |
 | Defining your own bean breaks everything | Defining your own bean causes Boot's default to back off gracefully |
 | Auto-config slows startup | Condition checks are fast; unused configs are skipped entirely |
+
 ### 🔗 Related Keywords
+
 - **[Spring Boot Startup Lifecycle](./135 — Spring Boot Startup Lifecycle.md)** — when auto-config runs
 - **[BeanFactoryPostProcessor](./111 — BeanFactoryPostProcessor.md)** — mechanism for condition evaluation
+
 ### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+

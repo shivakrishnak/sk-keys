@@ -421,6 +421,7 @@ java -XX:MetaspaceSize=256m \
 │ NEXT EXPLORE │ Stop-The-World → OutOfMemoryError → GC Tuning    │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
 ---
 
 ### 🧠 Think About This Before We Continue
@@ -430,7 +431,9 @@ java -XX:MetaspaceSize=256m \
 **Q2.** Your application experiences Full GC every 4 hours with a 2-second pause. After each Full GC, Old Gen drops from 8GB to 6GB — 2GB freed. But 4 hours later it's back to 8GB. Is this a memory leak? How do you distinguish between "objects accumulating that should be freed" vs "the application legitimately needs 6-8GB of long-lived objects and this is normal Major GC behaviour"?
 
 ---
+
 ---
+
 number: 024
 category: JVM Internals
 difficulty: ★★★

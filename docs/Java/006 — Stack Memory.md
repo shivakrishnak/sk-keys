@@ -30,16 +30,19 @@ tags: #java, #jvm, #memory, #internals, #intermediate
 Stack Memory is a **per-thread, LIFO (Last-In-First-Out) memory region** managed by the JVM that stores stack frames for each method invocation. Each frame holds the method's local variables, operand stack, and return address. Memory is allocated on method entry and automatically reclaimed on method exit — no GC involved.
 
 ---
+
 ### 🟢 Simple Definition (Easy)
 
 Stack memory is the JVM's **scratch pad for method calls** — every time a method is called, a new block of memory is pushed onto the stack. When the method returns, that block is gone. Fast, automatic, no cleanup needed.
 
 ---
+
 ### 🔵 Simple Definition (Elaborated)
 
 Every thread in the JVM gets its own private stack. As methods call other methods, frames pile up on this stack — each frame holding everything that method needs to execute: its local variables, intermediate calculations, and where to return when done. The moment a method finishes, its frame is popped off. No garbage collector needed — the stack manages itself purely by push and pop. The tradeoff: it's fixed in size, so infinite recursion destroys it.
 
 ---
+
 ### 🔩 First Principles Explanation
 
 **The problem:**
@@ -68,6 +71,7 @@ main() returns     →   []
 The stack **perfectly mirrors** the call hierarchy. No explicit cleanup needed — return = pop.
 
 ---
+
 ### 🧠 Mental Model / Analogy
 
 > Imagine a **stack of trays in a cafeteria**.
@@ -77,11 +81,13 @@ The stack **perfectly mirrors** the call hierarchy. No explicit cleanup needed �
 > Stack too many trays (infinite recursion) → the stack physically collapses → `StackOverflowError`.
 
 ---
+
 ### ⚙️ How It Works — Stack Frame Anatomy
 
 Every method call creates exactly **one stack frame**. Here's what's inside:
 
 ---
+
 ### ⚙️ Full Thread Stack — Multiple Frames
 
 ```
@@ -109,6 +115,7 @@ THREAD STACK (grows downward)
 Only the **top frame** is active. Everything below is frozen — waiting for the call above to return.
 
 ---
+
 ### 🔄 How It Connects
 
 ```
@@ -129,6 +136,7 @@ Stack frame gone → local primitive vars gone instantly
 ```
 
 ---
+
 ### 💻 Code Example — Tracing Stack Frames
 
 **Simple call chain:**

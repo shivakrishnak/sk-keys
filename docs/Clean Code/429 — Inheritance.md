@@ -197,7 +197,6 @@ Fix: flatten hierarchies; use interfaces + composition to share behavior without
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ IS-A relationship: subclass acquires and      │
@@ -214,6 +213,7 @@ Fix: flatten hierarchies; use interfaces + composition to share behavior without
 │ NEXT EXPLORE │ LSP → Composition over Inheritance → Mixins   │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the Fragile Base Class problem and how does marking a class `final` partially address it?  

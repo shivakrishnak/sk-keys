@@ -199,7 +199,6 @@ Document the exception explicitly; keep it at the data layer, not business logic
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Methods either change state (void) or return  │
@@ -216,6 +215,7 @@ Document the exception explicitly; keep it at the data layer, not business logic
 │ NEXT EXPLORE │ CQRS --> Event Sourcing --> Idempotency        │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** How does CQS enable safe caching of query results?  

@@ -427,7 +427,6 @@ k = null;
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌──────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Four GC collection strengths: Strong      │
@@ -451,7 +450,9 @@ k = null;
 │              │ DirectByteBuffer cleanup                  │
 └──────────────────────────────────────────────────────────┘
 ```
+
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** You're building an event bus where listeners register to receive events. You use a `List<WeakReference<EventListener>>` to store listeners. A developer complains that their listener stops receiving events even though their code is still running. What is happening — and what does this reveal about the relationship between WeakReference and object lifecycle management?

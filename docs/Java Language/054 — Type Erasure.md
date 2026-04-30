@@ -219,7 +219,6 @@ List<MyType> result = objectMapper.readValue(json,
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Generic types enforce safety at compile time  │
@@ -236,6 +235,7 @@ List<MyType> result = objectMapper.readValue(json,
 │ NEXT EXPLORE │ Generics → Heap Pollution → Reflection        │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why does `new T[10]` fail at compile time even though the compiler knows `T` — what would go wrong if it allowed it?

@@ -243,7 +243,6 @@ Fix: error budget policies are agreed cross-functionally before any incident; it
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Error Budget = 100% - SLO = quantified        │
@@ -261,6 +260,7 @@ Fix: error budget policies are agreed cross-functionally before any incident; it
 │ NEXT EXPLORE │ SLO --> SLI --> SLA --> Burn Rate Alerts       │
 └───────────────────────────────��─────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** How does the burn rate of an error budget differ from the absolute remaining balance, and why do you need both?  

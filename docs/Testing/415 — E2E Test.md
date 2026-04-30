@@ -190,7 +190,6 @@ Fix: isolated test environments per run; reset state between test runs; use sepa
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Simulate real user journeys through the full  │
@@ -207,6 +206,7 @@ Fix: isolated test environments per run; reset state between test runs; use sepa
 │ NEXT EXPLORE │ Test Pyramid --> Playwright --> Smoke Testing  │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why should E2E tests only cover critical happy paths rather than all scenarios?  

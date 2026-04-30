@@ -26,10 +26,15 @@ tags: #spring, #database, #performance, #internals, #intermediate
 ---
 
 ### 📘 Textbook Definition
+
 HikariCP is a high-performance JDBC connection pooling library. Instead of creating a new TCP connection to the database for each request (expensive: 10-200ms), HikariCP maintains a pool of pre-created, ready-to-use connections. Spring Boot auto-configures HikariCP as the default connection pool since Spring Boot 2.
+
 ### 🟢 Simple Definition (Easy)
+
 Creating a database connection is slow (like starting a phone call from scratch). HikariCP maintains a pool of "always-connected" connections. When you need one, HikariCP hands you an existing one from its pool. When done, you return it — not disconnect.
+
 ### 🔩 First Principles Explanation
+
 **Without connection pool:**
 ```
 Request → new TCP connection to DB (10-200ms) → query → close connection
@@ -55,6 +60,7 @@ spring:
       max-lifetime: 1800000      # ms max connection lifetime (< DB timeout)
       pool-name: HikariPool-Orders
 ```
+
 ### 💻 Code Example
 ```java
 // HikariCP is the DEFAULT in Spring Boot — no config needed for basic usage
@@ -73,13 +79,17 @@ void checkPool() {
 // management.endpoints.web.exposure.include=metrics
 // Metric: hikaricp.connections.active, hikaricp.connections.idle, etc.
 ```
+
 ### ⚠️ Common Misconceptions
+
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | More pool size = better | Too many connections overwhelm the DB — tune based on DB thread count |
 | Connection pool is application-specific | Each app instance has its own pool; database sees total = instances × pool-size |
 | HikariCP needs explicit config | Spring Boot autoconfigures it; you only tune when needed |
+
 ### 🔥 Pitfalls in Production
+
 **Pitfall: Connection timeout under load**
 ```yaml
 # If all 10 connections are in use and a new request waits > 30s:
@@ -90,9 +100,12 @@ maximum-pool-size: 20  # but verify DB can handle it
 **Pitfall: max-lifetime > DB wait_timeout**
 > If `max-lifetime` > MySQL `wait_timeout`, Hikari may hand out a stale closed connection.
 > Always set `max-lifetime` to slightly less than the DB connection timeout.
+
 ### 🔗 Related Keywords
+
 - **[N+1 Problem](./130 — N+1 Problem.md)** — N+1 exhausts the connection pool
 - **[@Transactional](./127 — @Transactional.md)** — holds a connection for the duration of the transaction
+
 ### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+

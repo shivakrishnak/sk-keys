@@ -396,7 +396,6 @@ try {
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌──────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Fixed live anchors the GC traces from —  │
@@ -419,7 +418,9 @@ try {
 │              │ Memory Leak Patterns                      │
 └──────────────────────────────────────────────────────────┘
 ```
+
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A Spring singleton bean holds a reference to a request-scoped object that was injected into it. The request is long gone. Why is the request-scoped object still alive — what is the root path keeping it in memory — and how does Spring's scoped proxy pattern solve this?

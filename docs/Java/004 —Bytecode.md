@@ -30,16 +30,19 @@ tags: #java, #jvm, #internals, #deep-dive
 Java bytecode is the **intermediate, platform-independent instruction set** produced by the Java compiler (`javac`) from `.java` source files. It is stored in `.class` files and executed by the JVM — either interpreted directly or JIT-compiled into native machine code at runtime.
 
 ---
+
 ### 🟢 Simple Definition (Easy)
 
 Bytecode is the **compiled form of your Java code** — not human-readable source, not machine-specific binary — it's a middle format that any JVM on any platform can run.
 
 ---
+
 ### 🔵 Simple Definition (Elaborated)
 
 When you run `javac`, your `.java` source is transformed into bytecode — a set of compact, low-level instructions designed specifically for the JVM's execution engine. These instructions are more abstract than CPU assembly (they don't care about registers or memory addresses) but more concrete than Java source. The JVM reads them and either interprets or compiles them to native code for your specific CPU.
 
 ---
+
 ### 🔩 First Principles Explanation
 
 **The core problem:**
@@ -345,6 +348,7 @@ javac --release 11 MyApp.java
 ### 📌 Quick Reference Card
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 Two sharp questions to build your instinct:

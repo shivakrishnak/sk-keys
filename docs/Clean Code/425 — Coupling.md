@@ -197,7 +197,6 @@ Fix: split the god object; route communication through interfaces or events.
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Modules should know as little as possible     │
@@ -212,6 +211,7 @@ Fix: split the god object; route communication through interfaces or events.
 │ NEXT EXPLORE │ Cohesion → DIP → Dependency Injection         │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between afferent coupling (Ca) and efferent coupling (Ce)?  

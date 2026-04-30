@@ -184,7 +184,6 @@ Fix: balance — group things that change together.
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Everything inside a module belongs together   │
@@ -199,6 +198,7 @@ Fix: balance — group things that change together.
 │ NEXT EXPLORE │ Coupling → SRP → Refactoring                  │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Can a class have high cohesion but also high coupling? What would that look like?  

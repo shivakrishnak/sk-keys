@@ -232,7 +232,6 @@ Fix: enforce IaC-only changes via policy; use GitOps to detect and revert drift.
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Describe infrastructure in code; apply it     │
@@ -250,6 +249,7 @@ Fix: enforce IaC-only changes via policy; use GitOps to detect and revert drift.
 │ NEXT EXPLORE │ Terraform --> GitOps --> Immutable Infra       │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between declarative and imperative IaC approaches? When would you choose each?  

@@ -230,7 +230,6 @@ Reflection calls are checked against the security manager in constrained environ
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Runtime introspection of class structure;     │
@@ -248,6 +247,7 @@ Reflection calls are checked against the security manager in constrained environ
 │ NEXT EXPLORE │ APT → Spring DI → Jackson → Java Modules      │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** How does Spring use reflection to implement `@Autowired` without knowing your class at compile time?

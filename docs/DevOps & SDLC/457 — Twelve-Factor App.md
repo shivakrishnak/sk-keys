@@ -207,7 +207,6 @@ Fix: use Docker Compose in dev to run the same PostgreSQL version as production.
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ 12 practices that make apps deployable,       │
@@ -224,6 +223,7 @@ Fix: use Docker Compose in dev to run the same PostgreSQL version as production.
 │ NEXT EXPLORE │ IaC --> Immutable Infra --> GitOps             │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What specific problem does Factor III (config in environment) solve, and how does it enable the same image to run in dev, staging, and prod?  

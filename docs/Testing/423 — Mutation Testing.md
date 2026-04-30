@@ -224,7 +224,6 @@ Fix: review mutant kills by adding meaningful assertions; mutation score is a gu
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Introduce small bugs; verify tests catch them │
@@ -242,6 +241,7 @@ Fix: review mutant kills by adding meaningful assertions; mutation score is a gu
 │ NEXT EXPLORE │ PIT --> Code Coverage --> Property-Based Tests │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why does 100% line coverage not guarantee that tests will catch mutations?  

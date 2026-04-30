@@ -203,7 +203,6 @@ Fix: follow the Liskov Substitution Principle — a subtype must be substitutabl
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ One interface, many implementations; runtime  │
@@ -220,6 +219,7 @@ Fix: follow the Liskov Substitution Principle — a subtype must be substitutabl
 │ NEXT EXPLORE │ Strategy Pattern → OCP → LSP                  │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between compile-time (static) and runtime (dynamic) polymorphism?  

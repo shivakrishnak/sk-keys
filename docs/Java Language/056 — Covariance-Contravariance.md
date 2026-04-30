@@ -211,7 +211,6 @@ void fillList(List<? extends Number> list, Number n) {
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Covariant = safe to produce/read (extends)    │
@@ -229,6 +228,7 @@ void fillList(List<? extends Number> list, Number n) {
 │ NEXT EXPLORE │ Bounded Wildcards → Comparator design → Kotlin │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why does `String[]` being assignable to `Object[]` create a runtime safety hole that `List<String>` → `List<Object>` does not?

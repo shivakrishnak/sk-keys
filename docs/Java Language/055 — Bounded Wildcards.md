@@ -206,7 +206,6 @@ private <T> void swap(List<T> list, int i, int j) {
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ PECS: Producer Extends, Consumer Super        │
@@ -224,6 +223,7 @@ private <T> void swap(List<T> list, int i, int j) {
 │ NEXT EXPLORE │ Covariance/Contravariance → PECS → JDK APIs   │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why is it safe to read from `List<? extends Number>` but not write to it?

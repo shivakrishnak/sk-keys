@@ -201,7 +201,6 @@ Fix: abstract at natural, stable seams in the system — not everywhere as a hab
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Show WHAT, hide HOW                          │
@@ -216,6 +215,7 @@ Fix: abstract at natural, stable seams in the system — not everywhere as a hab
 │ NEXT EXPLORE │ Encapsulation → Polymorphism → Interface      │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What makes an abstraction "leaky"? Give an example from a standard library you use daily.  

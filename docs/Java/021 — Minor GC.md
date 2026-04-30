@@ -418,6 +418,7 @@ Scenario:
 │ NEXT EXPLORE │ Major GC → Full GC → Stop-The-World → G1GC       │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
 ---
 
 ### 🧠 Think About This Before We Continue

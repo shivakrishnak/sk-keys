@@ -207,7 +207,6 @@ Fix: keep flags at entry points; the feature implementation itself should be fla
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Decouple code deployment from feature release  │
@@ -225,6 +224,7 @@ Fix: keep flags at entry points; the feature implementation itself should be fla
 │ NEXT EXPLORE │ Canary Deployment --> A/B Testing --> CI/CD    │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** How do feature flags enable trunk-based development for large teams with many parallel features?  

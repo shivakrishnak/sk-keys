@@ -213,7 +213,6 @@ Fix: simplify the class; split responsibilities; the test smell reveals a produc
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Replace real dependencies with controlled     │
@@ -231,6 +230,7 @@ Fix: simplify the class; split responsibilities; the test smell reveals a produc
 │ NEXT EXPLORE │ Mockito --> Stubbing --> Spy --> Test Doubles  │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between `verify()` and `assertThat()` in a test — when do you need both?  

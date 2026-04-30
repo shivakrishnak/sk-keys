@@ -223,7 +223,6 @@ Fix: use header-based routing or ensure stateless sessions for accurate canary s
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Expose a small % of real production traffic   │
@@ -241,6 +240,7 @@ Fix: use header-based routing or ensure stateless sessions for accurate canary s
 │ NEXT EXPLORE │ Blue-Green --> Rolling Update --> Argo Rollouts│
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the key difference between a canary deployment and a blue-green deployment in terms of risk profile?  

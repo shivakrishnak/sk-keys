@@ -416,6 +416,7 @@ java -agentpath:/path/to/async-profiler.so=\
 │ NEXT EXPLORE │ G1GC → ZGC → Shenandoah → GC Safepoint           │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
 ---
 
 ### 🧠 Think About This Before We Continue

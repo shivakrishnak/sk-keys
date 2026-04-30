@@ -240,7 +240,6 @@ Fix: trunk-based development with feature flags; independent pipeline per servic
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Automate the entire path from commit to       │
@@ -257,6 +256,7 @@ Fix: trunk-based development with feature flags; independent pipeline per servic
 │ NEXT EXPLORE │ Blue-Green --> Canary --> GitOps --> IaC       │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between Continuous Delivery and Continuous Deployment?  

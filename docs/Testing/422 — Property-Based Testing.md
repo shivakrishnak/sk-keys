@@ -196,7 +196,6 @@ Fix: configure fewer iterations in CI (`tries = 100`); run full suite nightly or
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Specify invariants; let the framework find    │
@@ -214,6 +213,7 @@ Fix: configure fewer iterations in CI (`tries = 100`); run full suite nightly or
 │ NEXT EXPLORE │ jqwik --> QuickCheck concepts --> Fuzzing      │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is "shrinking" in property-based testing and why is it essential for usability?  

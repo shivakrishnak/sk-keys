@@ -172,7 +172,6 @@ Fix: use `.equals()` everywhere; never depend on `==` for correctness.
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Integer.valueOf() caches -128 to 127;        │
@@ -190,6 +189,7 @@ Fix: use `.equals()` everywhere; never depend on `==` for correctness.
 │ NEXT EXPLORE │ Autoboxing --> String Pool --> == vs equals() │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why does `Integer.valueOf(100) == Integer.valueOf(100)` return `true` but `new Integer(100) == new Integer(100)` return `false`?

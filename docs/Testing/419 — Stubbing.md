@@ -202,7 +202,6 @@ Fix: always create fresh objects in each test or use immutable data.
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Configure a fake dependency to return         │
@@ -220,6 +219,7 @@ Fix: always create fresh objects in each test or use immutable data.
 │ NEXT EXPLORE │ Mocking --> Faking --> Test Doubles taxonomy   │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** When should you use a stub vs a full mock — what guides that decision?  

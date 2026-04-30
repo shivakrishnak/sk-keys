@@ -425,6 +425,7 @@ public void returnBuffer(byte[] buf) {
 │ NEXT EXPLORE │ Full GC → Stop-The-World → G1GC → ZGC            │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
 ---
 
 ### 🧠 Think About This Before We Continue

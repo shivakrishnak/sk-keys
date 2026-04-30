@@ -336,6 +336,7 @@ t.setContextClassLoader(Thread.currentThread().getContextClassLoader());
 ### 📌 Quick Reference Card
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Tomcat runs multiple webapps in one JVM. Each webapp has its own `ClassLoader`. What happens when two webapps both use `log4j` but different versions — and how does ClassLoader isolation solve this?

@@ -228,7 +228,6 @@ Fix: use maxUnavailable=1 or 25% for production; save aggressive settings for de
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Replace pods one-by-one; service stays up;    │
@@ -245,6 +244,7 @@ Fix: use maxUnavailable=1 or 25% for production; save aggressive settings for de
 │ NEXT EXPLORE │ Canary --> Blue-Green --> Readiness Probes     │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why is a readiness probe critical for rolling updates, and what happens without one?  

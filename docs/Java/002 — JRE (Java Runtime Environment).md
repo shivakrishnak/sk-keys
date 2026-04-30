@@ -168,7 +168,6 @@ javac MyApp.java        # ❌ javac not available — needs JDK
 
 ---
 
-
 This is a **critical modern reality:**
 
 > From Java 9 onward, Oracle stopped shipping a standalone JRE. You use the JDK directly, or build a custom runtime image with `jlink`.

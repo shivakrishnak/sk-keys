@@ -229,7 +229,6 @@ class Service implements Serializable {
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Implements Serializable → auto byte             │
@@ -248,6 +247,7 @@ class Service implements Serializable {
 │ NEXT EXPLORE │ SerialVersionUID → Jackson → Protobuf          │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why can deserializing untrusted bytes lead to Remote Code Execution — what mechanism makes this possible?

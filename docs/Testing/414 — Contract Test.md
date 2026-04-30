@@ -212,7 +212,6 @@ Fix: use a Pact Broker (or PactFlow); it tracks which consumer/provider version 
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Consumer defines what it needs; provider      │
@@ -229,6 +228,7 @@ Fix: use a Pact Broker (or PactFlow); it tracks which consumer/provider version 
 │ NEXT EXPLORE │ Pact --> Pact Broker --> Consumer-Driven CDCs  │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why is consumer-driven contract testing more effective than provider-defined contract testing?  

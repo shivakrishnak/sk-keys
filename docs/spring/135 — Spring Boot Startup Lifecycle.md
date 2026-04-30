@@ -26,10 +26,15 @@ tags: #springboot, #spring, #internals, #intermediate
 ---
 
 ### 📘 Textbook Definition
+
 The Spring Boot application startup lifecycle encompasses the phases from `SpringApplication.run()` invocation through publishing `ApplicationReadyEvent`. It includes: creating and preparing the `SpringApplication`, preparing the environment (`Environment`), creating the `ApplicationContext`, loading bean definitions (including auto-configuration), refreshing the context (instantiating all singletons), starting the embedded server, and publishing lifecycle events.
+
 ### 🟢 Simple Definition (Easy)
+
 When you call `SpringApplication.run()`, Spring Boot goes through a sequence of steps: set up properties, create the container, load all beans, start Tomcat, then announce "I'm ready." Hook into any of these steps with listeners.
+
 ### 🔩 First Principles Explanation
+
 **Complete startup sequence:**
 ```
 SpringApplication.run(MyApp.class)
@@ -58,6 +63,7 @@ SpringApplication.run(MyApp.class)
      ↓
 9. ApplicationReadyEvent published ← APPLICATION IS READY
 ```
+
 ### 💻 Code Example
 ```java
 // Hook 1: ApplicationContextInitializer — before context refresh
@@ -97,10 +103,13 @@ public void onFailed(ApplicationFailedEvent event) {
     // alert, cleanup
 }
 ```
+
 ### 🔗 Related Keywords
+
 - **[ApplicationContext](./105 — ApplicationContext.md)** — the container created during startup
 - **[Auto-Configuration](./133 — Auto-Configuration.md)** — runs during startup BeanDefinition loading
 - **[Bean Lifecycle](./108 — Bean Lifecycle.md)** — happens during ApplicationContext refresh
+
 ### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+

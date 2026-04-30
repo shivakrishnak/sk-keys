@@ -26,9 +26,13 @@ tags: #spring, #networking, #pattern, #intermediate
 ---
 
 ### 📘 Textbook Definition
+
 **Filter** is a Java Servlet API component (`javax.servlet.Filter`) that intercepts HTTP requests/responses before they reach any Servlet (including DispatcherServlet), operating at the web container level with access to raw request/response. **HandlerInterceptor** is a Spring MVC component that intercepts requests within the DispatcherServlet lifecycle — after handler resolution — providing pre-handle, post-handle, and after-completion hooks with access to the handler and ModelAndView.
+
 ### 🟢 Simple Definition (Easy)
+
 Filter is a security guard at the building entrance — it sees everyone before they enter. Interceptor is the receptionist inside — it sees visitors after they're in the building and knows which meeting room (controller) they're heading to.
+
 ### 🔩 First Principles Explanation
 ```
 HTTP Request
@@ -51,6 +55,7 @@ View rendered
     ↑
 [Filter Chain] exiting ← response passes back through filters
 ```
+
 ### 💻 Code Example
 ```java
 // ── FILTER (Servlet level — authentication, CORS, logging) ───────────────────
@@ -98,15 +103,20 @@ public class MvcConfig implements WebMvcConfigurer {
     }
 }
 ```
+
 ### ⚠️ Common Misconceptions
+
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | Filters and interceptors are the same | Different layers — filter=servlet, interceptor=Spring MVC |
 | Interceptors can catch all requests | Interceptors only work for requests going through DispatcherServlet |
 | Interceptors can access Spring Security context | Yes — unlike filters before Spring Security, interceptors run after security processing |
+
 ### 🔗 Related Keywords
+
 - **[DispatcherServlet](./124 — DispatcherServlet.md)** — interceptors run inside DispatcherServlet
 - **[AOP](./118 — AOP (Aspect-Oriented Programming).md)** — alternative for method-level cross-cutting concerns
+
 ### 📌 Quick Reference Card
 ```
 +-------------+--------------------------+----------------------------+

@@ -243,7 +243,6 @@ Fix: automate blue teardown after green is validated stable (e.g., 1 hour after 
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Two identical envs; switch traffic instantly;  │
@@ -260,6 +259,7 @@ Fix: automate blue teardown after green is validated stable (e.g., 1 hour after 
 │ NEXT EXPLORE │ Canary --> Rolling Update --> Feature Flags    │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** How does the expand-contract database migration pattern enable safe blue-green deployments?  

@@ -213,7 +213,6 @@ Fix: use wrapper types (`Integer`, `Long`), accept autoboxing overhead.
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Type-safe parameterization at compile time;   │
@@ -230,6 +229,7 @@ Fix: use wrapper types (`Integer`, `Long`), accept autoboxing overhead.
 │ NEXT EXPLORE │ Type Erasure → Bounded Wildcards → PECS       │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why can't you write `new T[10]` inside a generic class, even though `T` feels like a type at compile time?

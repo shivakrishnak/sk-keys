@@ -26,9 +26,13 @@ tags: #springboot, #spring, #observability, #intermediate
 ---
 
 ### 📘 Textbook Definition
+
 Spring Boot Actuator is a sub-project that adds production-ready features to Spring Boot applications. It provides built-in HTTP and JMX endpoints for monitoring and managing applications — including health checks (`/actuator/health`), metrics (`/actuator/metrics`), environment properties (`/actuator/env`), bean listing (`/actuator/beans`), and condition reports (`/actuator/conditions`).
+
 ### 🟢 Simple Definition (Easy)
+
 Actuator adds a "diagnostic panel" to your app. Without writing any code, you get URLs like `/health` (is the app up?), `/metrics` (CPU, memory, request counts), and `/beans` (all Spring beans). It's essential for production monitoring.
+
 ### 💻 Code Example
 ```yaml
 # application.yml
@@ -85,15 +89,20 @@ public class OrderMetrics {
 /actuator/threaddump    → current thread state
 /actuator/httptrace     → recent HTTP requests
 ```
+
 ### ⚠️ Common Misconceptions
+
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | Actuator is only for development | It's designed for production — integrate with Prometheus/Grafana |
 | /actuator is exposed by default | Only /health and /info are exposed by default — others must be enabled |
 | Actuator endpoints have no security risk | /env and /beans can expose sensitive data — secure with Spring Security |
+
 ### 🔗 Related Keywords
+
 - **[Spring Boot Startup Lifecycle](./135 — Spring Boot Startup Lifecycle.md)** — Actuator context initialized during startup
 - **[Auto-Configuration](./133 — Auto-Configuration.md)** — Actuator endpoints are auto-configured
+
 ### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+

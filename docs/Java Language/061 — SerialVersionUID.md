@@ -209,7 +209,6 @@ Each class in a hierarchy needs its own `serialVersionUID`. If a parent class ch
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Version ID for serialized class; must match   │
@@ -226,6 +225,7 @@ Each class in a hierarchy needs its own `serialVersionUID`. If a parent class ch
 │ NEXT EXPLORE │ Serialization → Externalizable → Protobuf     │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** If you keep `serialVersionUID = 1L` across two versions of a class but remove a field in v2, what happens when you deserialize v1 bytes? Is there an exception?

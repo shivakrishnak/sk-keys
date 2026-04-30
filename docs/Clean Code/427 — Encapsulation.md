@@ -205,7 +205,6 @@ Fix: wrap in a DTO, record, or interface that represents the caller's view.
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Bundle data + behavior; protect state via     │
@@ -221,6 +220,7 @@ Fix: wrap in a DTO, record, or interface that represents the caller's view.
 │ NEXT EXPLORE │ Abstraction → Polymorphism → Immutability     │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why is a class with only public getters/setters considered to have broken encapsulation?  

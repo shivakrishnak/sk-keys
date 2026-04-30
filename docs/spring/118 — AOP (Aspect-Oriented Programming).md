@@ -26,12 +26,19 @@ tags: #spring, #internals, #pattern, #intermediate
 ---
 
 ### 📘 Textbook Definition
+
 Aspect-Oriented Programming (AOP) is a programming paradigm that aims to increase modularity by allowing the separation of cross-cutting concerns. In Spring AOP, aspects are defined using pointcut expressions to select join points (method executions), and advice to define what runs at those join points. Spring AOP is proxy-based — it uses JDK Dynamic Proxy or CGLIB to weave advice at runtime.
+
 ### 🟢 Simple Definition (Easy)
+
 AOP lets you say "run this code every time any service method is called" without modifying every service. You write the extra code once (in an Aspect), declare where it applies (Pointcut), and Spring handles the wiring.
+
 ### 🔵 Simple Definition (Elaborated)
+
 Common cross-cutting concerns — logging every method call, checking security on every endpoint, managing transactions, measuring performance — would normally add dozens of lines to every method. AOP externalizes this. You define an `@Aspect` class with advice methods, specify which methods they apply to via pointcut expressions, and Spring proxies your beans to inject the advice transparently at runtime.
+
 ### 🔩 First Principles Explanation
+
 **Without AOP:**
 ```java
 public void placeOrder(Order order) {
@@ -61,6 +68,7 @@ Pointcut   = expression selecting which methods to intercept
 JoinPoint  = a specific method execution being intercepted
 Weaving    = applying aspect to target (Spring does it at runtime via proxies)
 ```
+
 ### 💻 Code Example
 ```java
 @Component
@@ -90,14 +98,18 @@ public class LoggingAspect {
     }
 }
 ```
+
 ### ⚠️ Common Misconceptions
+
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | AOP modifies source code | Spring AOP works via runtime proxies — source is untouched |
 | AOP intercepts everything | Spring AOP only intercepts public methods on Spring-managed beans |
 | @Around replaces the method | @Around must call pjp.proceed() or the real method never runs |
 | Private method @Transactional works via AOP | AOP can't intercept private methods — proxies can only override public/protected |
+
 ### 🔥 Pitfalls in Production
+
 **Pitfall: Self-invocation bypasses AOP**
 ```java
 @Service
@@ -112,12 +124,15 @@ public class OrderService {
 // Fix: inject OrderService into itself (@Autowired @Lazy OrderService self)
 // or extract processPayment to another service bean
 ```
+
 ### 🔗 Related Keywords
+
 - **[Aspect](./119 — Aspect.md)** — the AOP module class
 - **[Advice](./120 — Advice.md)** — what runs at the join point
 - **[Pointcut](./121 — Pointcut.md)** — expression selecting join points
 - **[CGLIB Proxy](./116 — CGLIB Proxy.md)** — runtime weaving mechanism
 - **[@Transactional](./127 — @Transactional.md)** — Spring's most-used AOP application
+
 ### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+
@@ -130,7 +145,9 @@ public class OrderService {
 | COMMON USES | Logging, @Transactional, @Secured, @Async, @Cacheable|
 +------------------------------------------------------------------+
 ```
+
 ### 🧠 Think About This Before We Continue
+
 **Q1.** What is the performance impact of Spring AOP (proxy-based) vs. AspectJ (compile-time/load-time weaving)?
 **Q2.** You annotate a private method `@Transactional`. The app runs with no errors, but transactions never begin. Why?
 **Q3.** How would you write a pointcut that matches only methods annotated with a custom annotation `@Audited`?

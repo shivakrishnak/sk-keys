@@ -347,7 +347,6 @@ java -XX:NewSize=1g MyApp
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌──────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Birth region for all objects — fast TLAB  │
@@ -369,7 +368,9 @@ java -XX:NewSize=1g MyApp
 │              │ Bump Pointer Allocation → G1GC Regions    │
 └──────────────────────────────────────────────────────────┘
 ```
+
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Eden uses bump-pointer allocation within TLABs — essentially zero-cost allocation. Yet allocation-heavy microservices still suffer GC pressure. If allocation itself is nearly free, what exactly is the performance cost — and at what point in the allocation → Eden fill → Minor GC → Survivor copy cycle does the real cost appear?

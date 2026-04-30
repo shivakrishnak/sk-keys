@@ -26,10 +26,15 @@ tags: #spring, #internals, #intermediate
 ---
 
 ### 📘 Textbook Definition
+
 In Spring AOP, Advice is the action taken by an aspect at a particular join point. Types include: `@Before` (executes before method), `@AfterReturning` (after normal return), `@AfterThrowing` (after exception), `@After` (after any outcome), and `@Around` (wraps the method — most powerful, must call `pjp.proceed()`).
+
 ### 🟢 Simple Definition (Easy)
+
 Advice is the "what happens" part of AOP. "Before the method runs, log the call." That "log the call" part is the advice. Pointcut selects which methods; advice defines what extra code runs.
+
 ### 🔩 First Principles Explanation
+
 **Five advice types:**
 ```
 @Before          — runs before the method (can't stop execution)
@@ -47,6 +52,7 @@ Advice is the "what happens" part of AOP. "Before the method runs, log the call.
     → @After runs
 @Around ends
 ```
+
 ### 💻 Code Example
 ```java
 @Aspect @Component
@@ -77,10 +83,13 @@ public class TimingAspect {
     }
 }
 ```
+
 ### 🔗 Related Keywords
+
 - **[Aspect](./119 — Aspect.md)** — the class that holds advice
 - **[Pointcut](./121 — Pointcut.md)** — selects which join points advice applies to
 - **[JoinPoint](./122 — JoinPoint.md)** — the runtime context passed to advice
+
 ### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+

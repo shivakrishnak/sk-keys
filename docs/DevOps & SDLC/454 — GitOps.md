@@ -221,7 +221,6 @@ Fix: treat OutOfSync as an incident; alert on-call; investigate and resolve imme
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Git is the single source of truth; an agent  │
@@ -239,6 +238,7 @@ Fix: treat OutOfSync as an incident; alert on-call; investigate and resolve imme
 │ NEXT EXPLORE │ ArgoCD --> Flux --> IaC --> Sealed Secrets    │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** How does the pull-based GitOps model improve security compared to the push-based CI/CD model?  

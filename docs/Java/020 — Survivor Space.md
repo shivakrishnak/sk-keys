@@ -386,7 +386,6 @@ jstat -gcnew <pid> 1000
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌──────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Two-space ping-pong aging buffer —        │
@@ -411,7 +410,9 @@ jstat -gcnew <pid> 1000
 │              │ G1GC Regions → Copy Collector Algorithm   │
 └──────────────────────────────────────────────────────────┘
 ```
+
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The copy-collect algorithm used in Survivor spaces has a fundamental space overhead — you always need one empty Survivor space as the copy destination. This means 50% of total Survivor capacity is always unused. For a 512MB Young Gen with SurvivorRatio=8: calculate exactly how much memory is permanently reserved but unusable — and explain why this trade-off is worth it compared to the alternative (mark-and-sweep in-place).

@@ -26,9 +26,13 @@ tags: #spring, #internals, #intermediate
 ---
 
 ### 📘 Textbook Definition
+
 In Spring AOP, a JoinPoint represents a point during program execution at which an aspect can be plugged in. It is the runtime handle passed to `@Before`, `@After`, `@AfterReturning`, and `@AfterThrowing` advice methods, containing metadata about the intercepted method invocation. `ProceedingJoinPoint` (used in `@Around`) extends JoinPoint with the ability to control method execution via `proceed()`.
+
 ### 🟢 Simple Definition (Easy)
+
 JoinPoint is the "who called what with what arguments" information available inside your advice method. When Spring intercepts a method call to give to your aspect, it packages all the details into a JoinPoint object.
+
 ### 💻 Code Example
 ```java
 @Aspect @Component
@@ -50,14 +54,19 @@ public class InspectionAspect {
     }
 }
 ```
+
 ### ⚠️ Common Misconceptions
+
 | ❌ Wrong Belief | ✅ Correct Reality |
 |---|---|
 | JoinPoint is available for all advice types | @Around uses ProceedingJoinPoint (extend of JoinPoint); others use JoinPoint |
 | jp.getThis() and jp.getTarget() are always the same | getThis() = proxy; getTarget() = real target bean — different! |
+
 ### 🔗 Related Keywords
+
 - **[Advice](./120 — Advice.md)** — the method that receives JoinPoint
 - **[Pointcut](./121 — Pointcut.md)** — selects which JoinPoints advice applies to
+
 ### 📌 Quick Reference Card
 ```
 +------------------------------------------------------------------+

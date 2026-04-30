@@ -200,7 +200,6 @@ Fix: move boundary/edge-case tests to unit tests; keep E2E only for happy paths.
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Many fast unit tests, fewer integration,      │
@@ -217,6 +216,7 @@ Fix: move boundary/edge-case tests to unit tests; keep E2E only for happy paths.
 │ NEXT EXPLORE │ Unit Test --> Integration Test --> E2E         │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why does inverting the pyramid (mostly E2E) create a "slow and fragile" test suite?  

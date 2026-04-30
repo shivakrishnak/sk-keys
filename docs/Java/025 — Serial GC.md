@@ -363,6 +363,7 @@ CMD java $JAVA_OPTS -jar app.jar
 │ NEXT EXPLORE │ Parallel GC → G1GC → ZGC → GC Tuning             │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
 ---
 
 ### 🧠 Think About This Before We Continue

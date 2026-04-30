@@ -210,7 +210,6 @@ Fix: timebox refactoring; apply the Boy Scout Rule (leave it a little better, no
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Improve internal structure without changing    │
@@ -227,6 +226,7 @@ Fix: timebox refactoring; apply the Boy Scout Rule (leave it a little better, no
 │ NEXT EXPLORE │ Code Smells --> TDD --> Boy Scout Rule         │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why must refactoring and feature development always be in separate commits?  

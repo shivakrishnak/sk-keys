@@ -30,16 +30,19 @@ tags: #java, #jvm, #internals, #jit, #deep-dive
 Escape Analysis is a **compile-time optimisation performed by the JIT compiler** that determines whether an object's reference can "escape" the scope in which it was created — either by being returned, stored in a field, or passed to another thread. If the JIT proves an object does NOT escape, it can apply three optimisations: **stack allocation** (put object on stack instead of heap), **scalar replacement** (decompose object into primitive variables), and **lock elision** (remove synchronization on unescaped objects).
 
 ---
+
 ### 🟢 Simple Definition (Easy)
 
 Escape Analysis is the JVM asking: **"Does this object ever leave the method that created it?"** If the answer is no — it never leaves — the JVM can avoid putting it on the heap entirely, making allocation and cleanup essentially free.
 
 ---
+
 ### 🔵 Simple Definition (Elaborated)
 
 Every `new` object normally goes to the heap and eventually needs GC. But if the JIT can prove that an object is only used within one method and never handed to anything outside — no return, no field store, no other thread — it can allocate that object on the stack instead, where cleanup is instant and free. Even better, it can decompose the object into plain variables, eliminating the object entirely. This happens silently, automatically, with no code changes from you.
 
 ---
+
 ### 🔩 First Principles Explanation
 
 **The problem:**
@@ -135,6 +138,7 @@ Without escape analysis:
 ```
 
 ---
+
 ### 🧠 Mental Model / Analogy
 
 > Imagine you're cooking a meal (executing a method).
@@ -148,9 +152,11 @@ Without escape analysis:
 > **With scalar replacement:** The JVM goes further — "you don't even need a bowl, just put the ingredients directly on the counter (local variables) and slide them onto the plate."
 
 ---
+
 ### ⚙️ How It Works — Three Optimisations
 
 ---
+
 ### 🔄 How It Connects
 
 ```
@@ -180,6 +186,7 @@ Native code generated
 ```
 
 ---
+
 ### 💻 Code Example
 
 **Example 1 — Scalar Replacement in action:**
@@ -336,6 +343,7 @@ public int processFast(List<Point> results) {
 ```
 
 ---
+
 ### 🔁 EA Interaction with Inlining
 
 ```

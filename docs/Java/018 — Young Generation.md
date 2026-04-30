@@ -405,7 +405,6 @@ java -XX:SurvivorRatio=6 MyApp
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌──────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Heap nursery for new objects —            │
@@ -429,7 +428,9 @@ java -XX:SurvivorRatio=6 MyApp
 │              │ Old Generation → TLAB → G1GC regions      │
 └──────────────────────────────────────────────────────────┘
 ```
+
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A high-throughput REST API processes 10,000 requests/second. Each request creates ~500 short-lived objects (DTOs, builders, strings). Minor GC runs every 2 seconds with a 15ms pause. The team wants to reduce GC pause impact. What are the two opposite directions they could tune Young Generation size — and what are the exact trade-offs of each direction?

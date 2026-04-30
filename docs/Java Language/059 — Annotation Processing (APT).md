@@ -218,7 +218,6 @@ Fix: use multiple compilation rounds (`RoundEnvironment.processingOver()`); desi
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Compile-time code generation via annotation   │
@@ -236,6 +235,7 @@ Fix: use multiple compilation rounds (`RoundEnvironment.processingOver()`); desi
 │ NEXT EXPLORE │ Lombok → MapStruct → Dagger2 → JavaPoet       │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Why does Dagger 2 (APT-based DI) start faster than Spring (reflection-based DI)?

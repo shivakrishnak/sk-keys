@@ -198,7 +198,6 @@ Fix: refactor the structure; use tests as the safety net to enable that refactor
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Shortcuts now = compounding cost later        │
@@ -215,6 +214,7 @@ Fix: refactor the structure; use tests as the safety net to enable that refactor
 │ NEXT EXPLORE │ Refactoring --> Code Smells --> Boy Scout Rule │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between deliberate/prudent debt and reckless/inadvertent debt?  

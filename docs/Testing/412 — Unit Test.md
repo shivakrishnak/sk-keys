@@ -204,7 +204,6 @@ Fix: always have at least one `assertThat`; use `verify()` for void methods.
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Test one unit of logic in complete isolation  │
@@ -220,6 +219,7 @@ Fix: always have at least one `assertThat`; use `verify()` for void methods.
 │ NEXT EXPLORE │ Mocking --> TDD --> Test Pyramid               │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between a mock and a stub in unit testing?  

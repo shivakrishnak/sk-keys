@@ -188,7 +188,6 @@ Fix: annotate integration tests with `@Transactional` to roll back after each te
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Verify that components work together using     │
@@ -205,6 +204,7 @@ Fix: annotate integration tests with `@Transactional` to roll back after each te
 │ NEXT EXPLORE │ Testcontainers --> Contract Test --> E2E Test  │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What class of bugs can integration tests catch that unit tests with mocks cannot?  

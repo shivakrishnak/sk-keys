@@ -229,7 +229,6 @@ Fix: fakes enable fast unit/service tests; integration tests (Testcontainers) va
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     Fake: working lightweight impl (no infra)       │
@@ -247,6 +246,7 @@ Fix: fakes enable fast unit/service tests; integration tests (Testcontainers) va
 │ NEXT EXPLORE Mocking --> Test Doubles --> Testcontainers      │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** When is a fake preferable to a mock + stubs for testing a repository?  

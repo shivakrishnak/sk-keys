@@ -238,7 +238,6 @@ Fix: audit alerts; delete non-actionable ones; reduce signal-to-noise ruthlessly
 
 ### 📌 Quick Reference Card
 
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ KEY IDEA     │ Manual, repetitive, automatable work that     │
@@ -256,6 +255,7 @@ Fix: audit alerts; delete non-actionable ones; reduce signal-to-noise ruthlessly
 │ NEXT EXPLORE │ SRE --> Error Budget --> Automation --> IaC   │
 └─────────────────────────────────────────────────────────────┘
 ```
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** What is the difference between toil and "valuable operational work" — where is the line?  
