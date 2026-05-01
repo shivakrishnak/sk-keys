@@ -18,10 +18,10 @@ tags: #intermediate, #spring, #foundational, #architecture
 
 ⚡ TL;DR — `@Autowired` is the annotation that tells Spring to inject a dependency from the container by type. Constructor injection (implicit in Spring 5+ for single-constructor beans) is the recommended approach; field and setter injection are legacy patterns.
 
-| #380            | Category: Spring Core                                                            | Difficulty: ★★☆ |
-| :-------------- | :------------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | DI (Dependency Injection), Bean, BeanPostProcessor, ApplicationContext            |                 |
-| **Used by:**    | Circular Dependency, @Qualifier / @Primary, Bean Lifecycle                        |                 |
+| #380            | Category: Spring Core                                                  | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | DI (Dependency Injection), Bean, BeanPostProcessor, ApplicationContext |                 |
+| **Used by:**    | Circular Dependency, @Qualifier / @Primary, Bean Lifecycle             |                 |
 
 ---
 
@@ -134,6 +134,7 @@ class NotificationService {
 WITHOUT `@Autowired`:
 
 What breaks without it:
+
 1. Developers must manually construct and wire every dependency — `new OrderService(new JpaOrderRepository(new HikariDataSource(...)))` — brittle object graphs in code.
 2. No centralised control of dependency resolution — if `OrderRepository` implementation changes, every construction site must be updated.
 3. No support for injecting all implementations of an interface — building plugin systems is complex.
@@ -325,12 +326,12 @@ class EmailService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `@Autowired` is required on constructors in Spring Boot | Since Spring 4.3, a single constructor is automatically used for injection — no `@Autowired` annotation needed. The annotation is only required when there are multiple constructors |
-| Field injection and constructor injection behave identically | Field injection uses reflection to set private fields; constructor injection provides values via the constructor. They differ in testability (constructor injection needs no Spring for tests), immutability (field injection cannot use `final`), and circular dependency detection (constructor injection fails fast; field injection may succeed with a proxy workaround) |
-| `@Autowired` with `required = false` on a constructor means zero-arg construction | `required = false` means: if no matching bean is found, set the field to null (or skip setter call). A constructor with `required = false` on it is only valid on one of multiple constructors — it tells Spring which to prefer, not that the argument can be null |
-| Spring injects a new instance every time `@Autowired` is used | Spring injects from the container based on scope. For singleton-scoped beans (the default), the SAME instance is injected everywhere it is needed. A new instance is only created if the bean is prototype-scoped |
+| Misconception                                                                     | Reality                                                                                                                                                                                                                                                                                                                                                                      |
+| --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@Autowired` is required on constructors in Spring Boot                           | Since Spring 4.3, a single constructor is automatically used for injection — no `@Autowired` annotation needed. The annotation is only required when there are multiple constructors                                                                                                                                                                                         |
+| Field injection and constructor injection behave identically                      | Field injection uses reflection to set private fields; constructor injection provides values via the constructor. They differ in testability (constructor injection needs no Spring for tests), immutability (field injection cannot use `final`), and circular dependency detection (constructor injection fails fast; field injection may succeed with a proxy workaround) |
+| `@Autowired` with `required = false` on a constructor means zero-arg construction | `required = false` means: if no matching bean is found, set the field to null (or skip setter call). A constructor with `required = false` on it is only valid on one of multiple constructors — it tells Spring which to prefer, not that the argument can be null                                                                                                          |
+| Spring injects a new instance every time `@Autowired` is used                     | Spring injects from the container based on scope. For singleton-scoped beans (the default), the SAME instance is injected everywhere it is needed. A new instance is only created if the bean is prototype-scoped                                                                                                                                                            |
 
 ---
 
