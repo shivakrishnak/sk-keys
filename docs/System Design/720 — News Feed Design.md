@@ -18,10 +18,10 @@ tags: #advanced, #system-design, #interview, #social, #feed
 
 ⚡ TL;DR — **News Feed Design** aggregates posts from followed accounts into a personalised, ranked timeline using either Fan-Out on Write (pre-compute per user) or Fan-Out on Read (compute at query time), with Redis for hot feed storage and hybrid strategies for celebrity accounts.
 
-| #720 | Category: System Design | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Fan-Out on Write vs Read, Push vs Pull Architecture, Caching | |
-| **Used by:** | System Design Interview | |
+| #720            | Category: System Design                                      | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------- | :-------------- |
+| **Depends on:** | Fan-Out on Write vs Read, Push vs Pull Architecture, Caching |                 |
+| **Used by:**    | System Design Interview                                      |                 |
 
 ---
 
@@ -52,15 +52,15 @@ CORE ENTITIES:
 
   users table:
     user_id, username, follower_count, following_count
-    
+
   posts table:
     post_id, user_id, content, media_url, created_at
-    
+
   follows table:
     follower_id, followee_id, created_at
     INDEX on (followee_id) — "all followers of X" query
     INDEX on (follower_id) — "all accounts X follows" query
-    
+
   feed table (Redis, not MySQL):
     Key: feed:{user_id}
     Type: Redis Sorted Set (score = timestamp, member = post_id)
@@ -76,15 +76,15 @@ STRATEGY 1: FAN-OUT ON WRITE (Push Model):
        ZADD feed:{follower_id} {timestamp} {post_id}
        ZREMRANGEBYRANK feed:{follower_id} 0 -501  // keep only last 500
      → 1,000 Redis writes (fast: ~0.1ms each → 100ms total, done async in background)
-  
+
   Read path (Alice opens feed):
   1. ZREVRANGE feed:{alice_id} 0 19  // fetch 20 most recent post_ids
   2. Batch fetch post content: SELECT * FROM posts WHERE id IN (...)
   3. Return rendered feed to Alice → ~5ms total
-  
+
   READ: O(1) Redis read → extremely fast (1ms).
   WRITE: O(followers) Redis writes → acceptable if follower count is small.
-  
+
   Problem: CELEBRITY WRITE EXPLOSION
     Elon Musk (100M followers): 1 tweet → 100M Redis ZADD operations
     Time: 100M × 0.1ms = 10,000 seconds (2.8 hours!) → not feasible
@@ -93,21 +93,21 @@ STRATEGY 2: FAN-OUT ON READ (Pull Model):
 
   Write path (when Bob posts):
   1. Insert post into posts table → done (no fan-out!)
-  
+
   Read path (Alice opens feed):
   1. Fetch all accounts Alice follows:
      SELECT followee_id FROM follows WHERE follower_id = Alice_id
      → Alice follows 500 accounts
   2. For each followee: fetch recent posts
-     SELECT * FROM posts WHERE user_id IN (500 IDs) 
+     SELECT * FROM posts WHERE user_id IN (500 IDs)
      AND created_at > NOW() - INTERVAL 7 DAYS
      ORDER BY created_at DESC LIMIT 20
   3. Merge, sort, deduplicate → render feed
   4. Return to Alice → 50-500ms (lots of DB queries)
-  
+
   WRITE: O(1) → instant.
   READ: O(following_count) DB queries per feed load → slow for users following 1000+ accounts.
-  
+
   Problem: SLOW READ, DB OVERLOAD
     Alice follows 1,000 accounts. Feed load = 1,000 user timelines merged.
     Facebook: 1B daily active users × feed loads/day = hundreds of billions of DB queries.
@@ -116,57 +116,57 @@ STRATEGY 3: HYBRID (Production choice: Twitter/Instagram):
 
   Regular users (follower_count < 10,000): Fan-Out on Write
     Post → immediately written to all followers' Redis feeds
-    
+
   Celebrity users (follower_count ≥ 10,000): Fan-Out on Read
     Post → stored in posts table only (no fan-out to Redis)
-    
+
   Feed generation:
   1. Fetch user's pre-computed Redis feed (fan-out-on-write posts from regular followees)
   2. Identify celebrity followees (cached list)
   3. Fetch recent posts from celebrity followees directly from DB/cache
   4. Merge and sort all posts by timestamp
   5. Return merged feed
-  
+
   Celebrity threshold: 10,000 followers → fan-out to 10,000 Redis keys still manageable
                        100,000 followers → fan-out on read only
-  
+
   This is a HYBRID: most reads served from Redis (fast), celebrity posts fetched on demand.
 
 FEED RANKING (beyond chronological):
 
   Chronological: simple, predictable. Used by LinkedIn, Twitter (chronological view).
-  
+
   Machine Learning Ranking:
     Factors: recency, engagement (likes, comments), user interest signals, author affinity
     Ranking model: gradient boosted tree or neural network
     Score: each candidate post gets a relevance score
     Sort by score → personalized feed
-    
+
   Candidate generation → Ranking → Filtering (spam, blocked users) → Serving
-  
+
   This is how Facebook News Feed, Instagram, TikTok work.
 
 PAGINATION — CURSOR-BASED:
 
   Avoid offset pagination (slow for large offsets):
     OFFSET 10000 LIMIT 20 → DB scans 10,020 rows → slow
-    
+
   Cursor-based pagination:
     First load: ZREVRANGE feed:{user_id} 0 19 → return last 20 posts + cursor
     Next page: ZREVRANGEBYSCORE feed:{user_id} {cursor_score} -inf LIMIT 0 20
     cursor = timestamp of last returned post
-    
+
   Consistent: no duplicates on insert during scroll (cursor anchors position)
   O(log N) per page → fast regardless of how deep in feed user scrolls
 
 NOTIFICATION ON NEW POSTS:
 
   New post: followers should see "3 new posts" indicator without polling.
-  
+
   Option 1: SSE (Server-Sent Events): server pushes "new post" notification to open connections
   Option 2: WebSocket: bidirectional — server pushes, client subscribes
   Option 3: Polling (naive): client polls every 30s → wasteful for inactive feeds
-  
+
   Production: Push notification (mobile) for inactive users.
               WebSocket/SSE for active users with app open.
 ```
@@ -176,6 +176,7 @@ NOTIFICATION ON NEW POSTS:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT dedicated feed architecture:
+
 - Naive: SELECT all posts from all followed users, sort by time → 1,000 users × 1B DAUs = trillion DB queries/day
 - Simple join: unindexable, query time grows with following count
 
@@ -205,14 +206,14 @@ WITH News Feed architecture:
 ```java
 @Service
 public class FeedService {
-    
+
     @Autowired private FollowRepository followRepository;
     @Autowired private RedisTemplate<String, Long> redis;
     @Autowired private UserRepository userRepository;
-    
+
     private static final int MAX_FEED_SIZE = 500;     // keep last 500 posts per user
     private static final int CELEBRITY_THRESHOLD = 10_000;
-    
+
     // Called asynchronously when a new post is created:
     @Async
     public void fanOutPost(long authorId, long postId, long timestamp) {
@@ -221,38 +222,38 @@ public class FeedService {
         if (author.getFollowerCount() >= CELEBRITY_THRESHOLD) {
             return;  // Celebrity: fan-out on READ (not write)
         }
-        
+
         // Fetch followers in batches (may be millions):
         int batchSize = 1000;
         long lastFollowerId = 0;
-        
+
         while (true) {
             List<Long> followerIds = followRepository.findFollowersBatch(
                 authorId, lastFollowerId, batchSize);
-            
+
             if (followerIds.isEmpty()) break;
-            
+
             // Batch Redis write (pipeline all ZADD commands):
             redis.executePipelined((RedisCallback<?>) connection -> {
                 for (long followerId : followerIds) {
                     String feedKey = "feed:" + followerId;
                     // ZADD feed:{userId} {timestamp} {postId}
-                    connection.zAdd(feedKey.getBytes(), timestamp, 
+                    connection.zAdd(feedKey.getBytes(), timestamp,
                                    String.valueOf(postId).getBytes());
                     // Trim to last 500 posts (ZREMRANGEBYRANK ... 0 -501):
                     connection.zRemRangeByRank(feedKey.getBytes(), 0, -(MAX_FEED_SIZE + 1));
                 }
                 return null;
             });
-            
+
             lastFollowerId = followerIds.get(followerIds.size() - 1);
         }
     }
-    
+
     // Called when user loads their feed:
     public List<Long> getFeed(long userId, Long cursor, int pageSize) {
         String feedKey = "feed:" + userId;
-        
+
         // Step 1: Get pre-computed feed from Redis (fan-out-on-write posts):
         Set<TypedTuple<Long>> regularPosts;
         if (cursor == null) {
@@ -264,18 +265,18 @@ public class FeedService {
             regularPosts = redis.opsForZSet().reverseRangeByScoreWithScores(
                 feedKey, 0, cursor - 1, 0, pageSize);
         }
-        
+
         // Step 2: Fetch celebrity followees and their recent posts:
         List<Long> celebrityFollowees = getCelebrityFollowees(userId);
         List<Long> celebrityPostIds = fetchRecentCelebrityPosts(
             celebrityFollowees, cursor, pageSize);
-        
+
         // Step 3: Merge and sort by timestamp (score):
         List<Long> allPostIds = new ArrayList<>();
         regularPosts.forEach(t -> allPostIds.add(t.getValue()));
         allPostIds.addAll(celebrityPostIds);
         allPostIds.sort(Comparator.reverseOrder());  // sort by post_id (time-ordered)
-        
+
         return allPostIds.subList(0, Math.min(pageSize, allPostIds.size()));
     }
 }
@@ -318,30 +319,30 @@ class Post:
     timestamp: float
     content: str
 
-def get_news_feed(user_id: int, cursor: Optional[float] = None, 
+def get_news_feed(user_id: int, cursor: Optional[float] = None,
                   page_size: int = 20) -> List[Post]:
     """
-    Hybrid feed: merge pre-computed Redis feed (regular users) 
+    Hybrid feed: merge pre-computed Redis feed (regular users)
     + on-demand celebrity posts.
     """
-    
+
     # 1. Get pre-computed feed from Redis sorted set:
     feed_key = f"feed:{user_id}"
     if cursor is None:
         # First page: latest 20
-        redis_entries = r.zrevrangebyscore(feed_key, '+inf', '-inf', 
+        redis_entries = r.zrevrangebyscore(feed_key, '+inf', '-inf',
                                            start=0, num=page_size, withscores=True)
     else:
         # Paginated: older than cursor timestamp
         redis_entries = r.zrevrangebyscore(feed_key, cursor - 0.001, '-inf',
                                            start=0, num=page_size, withscores=True)
-    
+
     regular_post_ids = [(int(post_id), score) for post_id, score in redis_entries]
-    
+
     # 2. Get celebrity followees (cached list, expires hourly):
     celebrity_key = f"celebrity_followees:{user_id}"
     celebrity_ids = [int(cid) for cid in r.smembers(celebrity_key)]
-    
+
     # 3. Fetch recent celebrity posts from DB (on demand):
     celebrity_posts = []
     if celebrity_ids:
@@ -350,21 +351,21 @@ def get_news_feed(user_id: int, cursor: Optional[float] = None,
             since_timestamp=cursor or float('inf'),
             limit=page_size
         )
-    
+
     # 4. Merge: interleave regular and celebrity by timestamp (max-heap):
     all_candidates = []
-    
+
     for post_id, timestamp in regular_post_ids:
         post = get_post_by_id(post_id)  # batch fetch from posts table
         all_candidates.append((-timestamp, post))  # negative for max-heap
-    
+
     for post in celebrity_posts:
         all_candidates.append((-post.timestamp, post))
-    
+
     # Sort by timestamp descending, take top page_size:
     all_candidates.sort(key=lambda x: x[0])
     top_posts = [post for _, post in all_candidates[:page_size]]
-    
+
     return top_posts
 ```
 
@@ -372,12 +373,12 @@ def get_news_feed(user_id: int, cursor: Optional[float] = None,
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Fan-out on write is always better for read-heavy social apps | Fan-out on write creates severe write amplification for celebrity accounts. A single post from an account with 50M followers triggers 50M Redis writes. For a system with many celebrity accounts, this can saturate your write infrastructure. The hybrid model is necessary above a certain follower threshold |
-| The news feed must be strictly chronological | Many production systems use ranked/recommended feeds (Instagram, Facebook, TikTok). Ranking improves engagement but increases computation cost (scoring each candidate post) and reduces predictability (users can't tell why items appear). Offering both chronological and ranked views (as Twitter does) is a common compromise |
-| Redis sorted sets can scale infinitely for feed storage | Each user's Redis feed is a sorted set of post_ids. At 500 posts × 8 bytes × 500M users = 2 TB of Redis memory just for feeds. This requires a large Redis cluster. Limit feed size (last 500 posts), apply TTL on inactive user feeds (don't store feeds for users who haven't logged in for 30 days), and use Redis cluster with memory tiering |
-| Following count determines fan-out cost | Fan-out cost on the READER side is determined by their following count (pull model). Fan-out cost on the WRITER side is determined by their FOLLOWER count (push model). A user following 10,000 accounts pays the cost at read time (pull). An author with 10,000 followers causes 10,000 writes at write time (push). These are different and the system must handle both |
+| Misconception                                                | Reality                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fan-out on write is always better for read-heavy social apps | Fan-out on write creates severe write amplification for celebrity accounts. A single post from an account with 50M followers triggers 50M Redis writes. For a system with many celebrity accounts, this can saturate your write infrastructure. The hybrid model is necessary above a certain follower threshold                                                            |
+| The news feed must be strictly chronological                 | Many production systems use ranked/recommended feeds (Instagram, Facebook, TikTok). Ranking improves engagement but increases computation cost (scoring each candidate post) and reduces predictability (users can't tell why items appear). Offering both chronological and ranked views (as Twitter does) is a common compromise                                          |
+| Redis sorted sets can scale infinitely for feed storage      | Each user's Redis feed is a sorted set of post_ids. At 500 posts × 8 bytes × 500M users = 2 TB of Redis memory just for feeds. This requires a large Redis cluster. Limit feed size (last 500 posts), apply TTL on inactive user feeds (don't store feeds for users who haven't logged in for 30 days), and use Redis cluster with memory tiering                           |
+| Following count determines fan-out cost                      | Fan-out cost on the READER side is determined by their following count (pull model). Fan-out cost on the WRITER side is determined by their FOLLOWER count (push model). A user following 10,000 accounts pays the cost at read time (pull). An author with 10,000 followers causes 10,000 writes at write time (push). These are different and the system must handle both |
 
 ---
 
@@ -390,26 +391,26 @@ PROBLEM: User unfollows celebrity — celebrity's old posts remain in pre-comput
 
   Alice follows Elon (celebrity, fan-out on read).
   Alice unfollows Elon.
-  
+
   Fan-out on read: just remove Elon from Alice's celebrity_followees list.
   Next feed load: Elon's posts not fetched. ✓ Works.
-  
+
   BUT: Fan-out on WRITE for regular users:
   Alice follows Bob (regular user, fan-out on write).
   Bob's posts: pre-written to Redis feed:{alice}.
   Alice UNFOLLOWS Bob.
-  
+
   Bob's old posts: still in Redis feed:{alice} (fan-out-on-write doesn't "un-fan-out").
   Alice's feed: still shows Bob's old posts for up to 24 hours (TTL of feed entries).
-  
-  SEVERITY: Shows posts from a user you've unfollowed. Jarring UX. 
+
+  SEVERITY: Shows posts from a user you've unfollowed. Jarring UX.
             Also: blocked users' posts may still appear in feed if not cleaned up.
 
 FIX 1: CLEANUP ON UNFOLLOW (expensive):
   When Alice unfollows Bob:
   1. Fetch all of Bob's post_ids in the last N days.
   2. For each post_id: ZREM feed:{alice} {post_id}
-  
+
   Expensive if Bob has posted 1,000 times. But unfollow is rare → acceptable.
 
 FIX 2: FILTER AT RENDER TIME:
@@ -417,9 +418,9 @@ FIX 2: FILTER AT RENDER TIME:
   1. Fetch post_ids from Redis (may include Bob's posts).
   2. For each post_id: check if author is in Alice's current follows list.
   3. Filter out unfollowed authors' posts.
-  
+
   Extra check per post but simple. Cache Alice's follows list in Redis for O(1) lookup.
-  
+
   // During feed rendering:
   Set<Long> currentFollowees = getFolloweesForUser(aliceId);  // cached in Redis
   List<Post> filteredPosts = candidatePosts.stream()
