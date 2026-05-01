@@ -18,10 +18,10 @@ tags: #intermediate, #microservices, #networking, #distributed
 
 ⚡ TL;DR — A **Service Registry** is a database of service instances and their network locations (host + port). Services register themselves on startup and deregister on shutdown. Clients query the registry to discover where to send requests. Eureka, Consul, and Kubernetes Service Discovery are common implementations.
 
-| #635            | Category: Microservices                                                                      | Difficulty: ★★☆ |
-| :-------------- | :------------------------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Monolith vs Microservices, Service Discovery                                                 |                 |
-| **Used by:**    | Service Discovery, Client-Side vs Server-Side Discovery, Health Check Patterns               |                 |
+| #635            | Category: Microservices                                                        | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Monolith vs Microservices, Service Discovery                                   |                 |
+| **Used by:**    | Service Discovery, Client-Side vs Server-Side Discovery, Health Check Patterns |                 |
 
 ---
 
@@ -127,6 +127,7 @@ Kubernetes eliminates the need for a separate registry:
 WITHOUT a Service Registry:
 
 What breaks without it:
+
 1. Hardcoded IP addresses in configuration files — every deployment change requires config updates.
 2. Cannot scale horizontally — new instances have new IPs that clients do not know about.
 3. Cannot handle failures transparently — a crashed instance's IP remains in all clients' configs.
@@ -259,12 +260,12 @@ class DatabaseHealthIndicator implements HealthIndicator {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| You need a separate Service Registry (like Eureka) in Kubernetes | Kubernetes provides built-in service discovery via DNS and kube-proxy. Adding Spring Cloud Eureka to a Kubernetes deployment is redundant and adds unnecessary complexity. Use Kubernetes-native service discovery unless running outside Kubernetes |
-| The Service Registry eliminates the need for circuit breakers | The registry only contains instances that have sent recent heartbeats. An instance can be "registered as UP" but experiencing high latency or errors. Circuit breakers handle actual call failures; the registry handles address discovery. Both are needed |
-| Service registration is always self-registration | In containerised environments (Docker, Kubernetes), services rarely self-register. Instead, the orchestration platform or a sidecar (Consul agent, registrator) handles registration — the service itself doesn't know it's in a registry |
-| Registry data is always consistent across all nodes | Eureka is designed for availability over consistency (AP in CAP theorem) — registry data may be slightly stale across Eureka server replicas. Consul uses Raft consensus (CP) — stronger consistency but more sensitive to network partitions |
+| Misconception                                                    | Reality                                                                                                                                                                                                                                                     |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| You need a separate Service Registry (like Eureka) in Kubernetes | Kubernetes provides built-in service discovery via DNS and kube-proxy. Adding Spring Cloud Eureka to a Kubernetes deployment is redundant and adds unnecessary complexity. Use Kubernetes-native service discovery unless running outside Kubernetes        |
+| The Service Registry eliminates the need for circuit breakers    | The registry only contains instances that have sent recent heartbeats. An instance can be "registered as UP" but experiencing high latency or errors. Circuit breakers handle actual call failures; the registry handles address discovery. Both are needed |
+| Service registration is always self-registration                 | In containerised environments (Docker, Kubernetes), services rarely self-register. Instead, the orchestration platform or a sidecar (Consul agent, registrator) handles registration — the service itself doesn't know it's in a registry                   |
+| Registry data is always consistent across all nodes              | Eureka is designed for availability over consistency (AP in CAP theorem) — registry data may be slightly stale across Eureka server replicas. Consul uses Raft consensus (CP) — stronger consistency but more sensitive to network partitions               |
 
 ---
 
