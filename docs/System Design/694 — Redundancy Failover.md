@@ -18,10 +18,10 @@ tags: #intermediate, #reliability, #distributed, #architecture, #foundational
 
 ⚡ TL;DR — **Redundancy** eliminates single points of failure by duplicating critical components; **Failover** is the automatic or manual process of switching to a redundant system when the primary fails.
 
-| #694 | Category: System Design | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | RTO / RPO, Active-Passive | |
-| **Used by:** | Active-Active, Disaster Recovery | |
+| #694            | Category: System Design          | Difficulty: ★★☆ |
+| :-------------- | :------------------------------- | :-------------- |
+| **Depends on:** | RTO / RPO, Active-Passive        |                 |
+| **Used by:**    | Active-Active, Disaster Recovery |                 |
 
 ---
 
@@ -51,21 +51,21 @@ A single-server database is a SPOF: if it crashes, the whole system is down. Add
 IDENTIFYING SPOFS — trace every critical path:
 
   User → DNS → Load Balancer → App Server → Database → Storage
-  
+
   Each arrow is a potential SPOF:
-  
+
   1. DNS: single DNS provider → all names unresolvable if provider fails
      FIX: multiple DNS providers (Route53 + Cloudflare), NS record redundancy
-  
+
   2. Load Balancer: single instance → no traffic routing if LB fails
      FIX: Active-passive LB pair (keepalived VIP), or cloud-managed LB (inherently redundant)
-  
+
   3. App Server: single instance → one crash = full outage
      FIX: Multiple instances behind LB + health checks → auto-replacement
-  
+
   4. Database: single instance → most common SPOF in architectures
      FIX: Multi-AZ (RDS), Sentinel/Cluster (Redis), replica set (MongoDB)
-  
+
   5. Storage: single disk → RAID for local; S3 (11-9s durability) for cloud
      FIX: RAID 1/5/6, cloud object storage with cross-region replication
 
@@ -73,12 +73,12 @@ AVAILABILITY FROM REDUNDANCY:
 
   Single component: availability = A
   Two components (active-passive): availability ≈ 1 - (1-A)^2
-  
+
   Example: each component = 99% available
   Single:          99.00%
   Two (A-P):       1 - (0.01)^2 = 99.99%
   Three:           1 - (0.01)^3 = 99.9999%
-  
+
   Important caveat: the FAILOVER mechanism itself must be reliable.
   If failover logic has a bug or requires manual intervention (slow MTTR),
   the theoretical availability gain is not realised.
@@ -87,7 +87,7 @@ FAILOVER TYPES:
 
   AUTOMATIC FAILOVER (preferred):
     Health check detects failure → redirects traffic → no human needed.
-    
+
     Kubernetes: liveness probe fails → kubelet restarts pod
       livenessProbe:
         httpGet:
@@ -96,20 +96,20 @@ FAILOVER TYPES:
         failureThreshold: 3
         periodSeconds: 10
     → Pod replaced within 30 seconds of failure
-    
+
     RDS Multi-AZ: primary fails → standby promoted automatically
     → DNS endpoint updated → application reconnects in ~90 seconds
-    
+
     keepalived (Linux VRRP): LB1 fails → LB2 takes over Virtual IP
     → No DNS change needed (VIP stays the same)
     → Failover: <1 second
-    
+
   MANUAL FAILOVER (degraded option):
     Human detects failure, executes runbook, promotes standby.
     RTO: 30 minutes to hours (human response time + execution)
     When to use: when automatic failover risks data corruption/split-brain
     Example: database with async replication — auto-promote may lose data
-    
+
   GRACEFUL vs. FORCED FAILOVER:
     GRACEFUL: primary drains connections, replication confirmed,
               then promotion. Data consistent. Takes longer.
@@ -121,7 +121,7 @@ FAILOVER TESTING:
   Chaos engineering: deliberately trigger failovers in production.
   Netflix Chaos Monkey: terminates random EC2 instances.
   AWS Fault Injection Simulator (FIS): controlled failure injection.
-  
+
   Without testing:
   - Failover scripts have bugs (discovered during actual outage)
   - Operators unfamiliar with failover procedure (slow manual execution)
@@ -133,6 +133,7 @@ FAILOVER TESTING:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Redundancy + Failover:
+
 - Single component failure = complete system outage
 - MTTR = time to detect + provision replacement + restore data
 - Every component is a ticking time bomb (hardware fails, software crashes)
@@ -170,19 +171,19 @@ backend postgres_pool
     balance first           # send all to first available server
     option tcp-check        # TCP health check
     tcp-check connect
-    
+
     # Primary (normal target)
     server pg-primary 10.0.1.1:5432 check inter 5s fall 2 rise 3
-    # pg-primary: 
+    # pg-primary:
     #   check: health check enabled
     #   inter 5s: check every 5 seconds
     #   fall 2: mark DOWN after 2 consecutive failures (10s to detect failure)
     #   rise 3: mark UP after 3 consecutive successes (15s to return traffic)
-    
+
     # Standby (only used if primary DOWN)
     server pg-standby 10.0.1.2:5432 backup check inter 5s fall 2 rise 3
     # backup: only receives traffic when all non-backup servers are DOWN
-    
+
 # Failover flow:
 # T+00: pg-primary health check fails (2nd consecutive failure)
 # T+10: pg-primary marked DOWN by HAProxy
@@ -277,12 +278,12 @@ route53.change_resource_record_sets(
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Redundancy eliminates all downtime | Redundancy eliminates downtime from single component failures, not all downtime. Common failure modes NOT solved by N+1 redundancy: software bugs (affect all instances simultaneously), misconfigured deployments (affect all instances), shared infrastructure failure (network, DNS, cloud region), correlated failures (all instances on same hardware rack) |
-| Active-passive wastes the standby resource | Active-passive standby isn't entirely idle: it runs health checks, receives replication, handles monitoring. For databases, the standby actively receives replication writes. For compute, standbys can serve read traffic (read replicas). The "waste" is in unused write capacity — which is the accepted cost of fast failover |
-| Automatic failover is always safer than manual | For databases with async replication, automatic failover can cause split-brain or data loss. If both primary and standby believe they're primary simultaneously: two databases accepting writes → data divergence → corruption. Manual failover with careful sequencing prevents this. AWS RDS Multi-AZ uses synchronous replication specifically to enable safe auto-failover |
-| Redundancy at the component level is sufficient | System-level availability requires redundancy at EVERY layer. A redundant database does not help if the load balancer is a SPOF. The weakest redundancy link determines system availability. Systematic SPOF analysis is essential |
+| Misconception                                   | Reality                                                                                                                                                                                                                                                                                                                                                                        |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Redundancy eliminates all downtime              | Redundancy eliminates downtime from single component failures, not all downtime. Common failure modes NOT solved by N+1 redundancy: software bugs (affect all instances simultaneously), misconfigured deployments (affect all instances), shared infrastructure failure (network, DNS, cloud region), correlated failures (all instances on same hardware rack)               |
+| Active-passive wastes the standby resource      | Active-passive standby isn't entirely idle: it runs health checks, receives replication, handles monitoring. For databases, the standby actively receives replication writes. For compute, standbys can serve read traffic (read replicas). The "waste" is in unused write capacity — which is the accepted cost of fast failover                                              |
+| Automatic failover is always safer than manual  | For databases with async replication, automatic failover can cause split-brain or data loss. If both primary and standby believe they're primary simultaneously: two databases accepting writes → data divergence → corruption. Manual failover with careful sequencing prevents this. AWS RDS Multi-AZ uses synchronous replication specifically to enable safe auto-failover |
+| Redundancy at the component level is sufficient | System-level availability requires redundancy at EVERY layer. A redundant database does not help if the load balancer is a SPOF. The weakest redundancy link determines system availability. Systematic SPOF analysis is essential                                                                                                                                             |
 
 ---
 
@@ -295,7 +296,7 @@ PROBLEM: Network partition causes split-brain
 
   Scenario: Primary DB and Standby DB connected via network.
   Network partition at T=0: Primary and Standby can't communicate.
-  
+
   Without fencing mechanism:
   T=0:  Network partition. Primary still accepting writes.
   T=30: Standby: "Primary is unreachable!" → promotes itself to primary.
@@ -304,26 +305,26 @@ PROBLEM: Network partition causes split-brain
              Old Primary still accepting writes from some clients (no DNS update yet).
   T=60: Network restored. Two databases with diverged data.
         Which is authoritative? Data loss + corruption inevitable.
-  
+
   SPLIT-BRAIN CONSEQUENCES:
   - Double writes: order placed twice (financial impact)
   - Conflicting updates: same record updated differently in both primaries
   - Undefined merge: which version is correct?
-  
+
 FIX 1: STONITH (Shoot The Other Node In The Head)
   Fencing: before standby promotes, send STONITH signal to primary.
   STONITH: sends IPMI/BMC power-off command to primary hardware.
   Primary: hard-powered-off → definitively cannot accept more writes.
   Standby: now safe to promote (only one primary).
-  
+
   Cloud equivalent: terminate the primary EC2 instance via API before promotion.
-  
+
 FIX 2: Quorum-based consensus (Raft, Paxos)
   Promotion requires acknowledgement from MAJORITY of nodes.
   With 3 nodes: need 2/3 agreement to promote.
   Network partition: partitioned side with 1 node cannot achieve quorum.
   Cannot promote → no split-brain.
-  
+
   etcd, Consul, ZooKeeper, Raft-based DBs (CockroachDB, TiDB) use this.
 
 FIX 3: Synchronous replication + epoch fencing

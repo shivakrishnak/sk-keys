@@ -18,10 +18,10 @@ tags: #advanced, #distributed, #algorithm, #architecture, #performance
 
 ⚡ TL;DR — **Consistent Hashing** maps requests to servers on a virtual ring, so adding or removing a server only remaps ~1/N of keys instead of remapping everything — critical for cache efficiency in distributed caches.
 
-| #686 | Category: System Design | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Load Balancing, Round Robin | |
-| **Used by:** | Sticky Sessions, Sharding | |
+| #686            | Category: System Design     | Difficulty: ★★★ |
+| :-------------- | :-------------------------- | :-------------- |
+| **Depends on:** | Load Balancing, Round Robin |                 |
+| **Used by:**    | Sticky Sessions, Sharding   |                 |
 
 ---
 
@@ -54,15 +54,15 @@ MODULAR HASHING: server = hash(key) % N
   hash("user:1234") % 3 = 1 → Server B
   hash("user:5678") % 3 = 2 → Server C
   hash("user:9012") % 3 = 0 → Server A
-  
+
   ADD Server D (N=4):
   hash("user:1234") % 4 = 3 → Server D  ← was B
   hash("user:5678") % 4 = 1 → Server B  ← was C
   hash("user:9012") % 4 = 2 → Server C  ← was A
-  
+
   ALL THREE keys remapped. Statistically: (1 - N/(N+1)) ≈ 75% remapped.
   Cache: all data on old servers → wrong server → miss → database load spikes
-  
+
   For a 10M-key cache adding 1 server: ~7.5M cache misses hitting the DB.
   Under traffic: DB overwhelmed → cascade failure.
 
@@ -73,18 +73,18 @@ CONSISTENT HASHING: remaps only 1/N of keys on server changes
   Server B → hash("server-B") = 30
   Server C → hash("server-C") = 70
   Ring (sorted): 0..10(A)..30(B)..70(C)..100(wrap to A)
-  
+
   hash("user:1234") = 15 → clockwise → Server B (at 30)
   hash("user:5678") = 45 → clockwise → Server C (at 70)
   hash("user:9012") = 80 → clockwise → wraps → Server A (at 10+100=110)
-  
+
   ADD Server D at position 50:
   Ring: 0..10(A)..30(B)..50(D)..70(C)..100
-  
+
   hash("user:1234") = 15 → Server B (unchanged)
   hash("user:5678") = 45 → NOW Server D (was C: D inserted between B and C)
   hash("user:9012") = 80 → Server A (unchanged)
-  
+
   Only "user:5678" remapped (it was between B=30 and C=70, D inserted at 50).
   All other keys: unchanged. ~1/N = ~25% remapped.
 ```
@@ -98,21 +98,21 @@ PROBLEM WITH BASIC CONSISTENT HASHING:
   Server A: handles range 60-10 = 50% of ring
   Server B: handles range 10-12 = 2% of ring
   Server C: handles range 12-60 = 48% of ring
-  
+
   Uneven! Server B almost idle, Server A/C overloaded.
 
 VIRTUAL NODES (vnodes):
   Each physical server gets V virtual nodes (positions on ring).
   Typical V: 100-200 vnodes per server.
-  
+
   Server A: positions {10, 45, 78, 23, 91, ...} (100 positions)
   Server B: positions {15, 52, 83, 37, 66, ...} (100 positions)
   Server C: positions {8, 31, 70, 18, 95, ...}  (100 positions)
-  
+
   300 total positions → each server handles ~100/300 = 33% of ring.
   With 100 vnodes: standard deviation of load ≈ 10% (acceptable).
   With 1 vnode: standard deviation ≈ 100% (very uneven).
-  
+
   ADD Server D: gets 100 vnodes spread across ring.
   Each existing server loses ~25 of its 100 vnodes to D.
   Load redistribution: uniform (~25% of keys moved).
@@ -134,12 +134,12 @@ Write: hash(partition_key) = 45 → Node B is primary coordinator
 Node B fails:
   Node A + C still have all B's replicas (RF=3 → no data loss)
   Reads for token 45: routed to Node C (has replica) or Node A (has replica)
-  
+
 New node added:
   Gets token range 17-33 (split from Node A)
   Node A streams its data for range 17-33 to new node
   Only A's data for 17-33 moved — all other data unchanged
-  
+
 # nodetool ring: shows token assignments
 # nodetool status: shows load distribution per node
 ```
@@ -149,6 +149,7 @@ New node added:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Consistent Hashing:
+
 - Adding/removing a server from a distributed cache: massive cache miss storm (75-80% remapping)
 - Cache miss storm → all misses hit the database → DB overload → cascade failure
 - Scale events are dangerous: must do them at low-traffic times
@@ -179,26 +180,26 @@ WITH Consistent Hashing:
 public class ConsistentHashRouter<T> {
     private final TreeMap<Long, T> ring = new TreeMap<>();
     private final int virtualNodes;
-    
+
     public ConsistentHashRouter(List<T> nodes, int virtualNodes) {
         this.virtualNodes = virtualNodes;
         nodes.forEach(this::addNode);
     }
-    
+
     public void addNode(T node) {
         for (int i = 0; i < virtualNodes; i++) {
             long hash = hash(node.toString() + "#vn" + i);
             ring.put(hash, node);
         }
     }
-    
+
     public void removeNode(T node) {
         for (int i = 0; i < virtualNodes; i++) {
             long hash = hash(node.toString() + "#vn" + i);
             ring.remove(hash);
         }
     }
-    
+
     public T getNode(String key) {
         if (ring.isEmpty()) throw new IllegalStateException("No nodes");
         long hash = hash(key);
@@ -208,7 +209,7 @@ public class ConsistentHashRouter<T> {
         if (entry == null) entry = ring.firstEntry();
         return entry.getValue();
     }
-    
+
     private long hash(String key) {
         // MurmurHash3 or MD5 for good distribution:
         return Math.abs(key.hashCode());  // simplified; use MurmurHash in prod
@@ -273,12 +274,12 @@ redis-cli --cluster reshard 10.0.0.1:6379
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Consistent Hashing distributes load perfectly evenly | With few virtual nodes, distribution can be highly uneven. 150+ vnodes per server are needed for acceptably uniform distribution (≤10% imbalance). Cassandra and Dynamo-style systems use 256 vnodes |
-| Consistent Hashing is only for caches | Consistent Hashing is used for: distributed cache routing (Memcached, Redis), database sharding (Cassandra, DynamoDB), service routing (Envoy ring_hash), and partition assignment (Kafka partition → consumer mapping) |
-| Consistent Hashing prevents ALL cache misses during scaling | It minimises remapping to ~1/N, but the remapped keys still miss on their new server until re-cached from the database. The difference: 1/N misses (manageable) vs N/(N+1) misses (cache miss storm) |
-| Removing a server is the same as adding one | Removing: all of the removed server's keys must move to successor nodes (cold start for 1/N of keys). Adding: 1/N of existing keys move from existing nodes to the new node (those servers get cache relief). Both remap ~1/N, but removal requires successor nodes to absorb load immediately |
+| Misconception                                               | Reality                                                                                                                                                                                                                                                                                        |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Consistent Hashing distributes load perfectly evenly        | With few virtual nodes, distribution can be highly uneven. 150+ vnodes per server are needed for acceptably uniform distribution (≤10% imbalance). Cassandra and Dynamo-style systems use 256 vnodes                                                                                           |
+| Consistent Hashing is only for caches                       | Consistent Hashing is used for: distributed cache routing (Memcached, Redis), database sharding (Cassandra, DynamoDB), service routing (Envoy ring_hash), and partition assignment (Kafka partition → consumer mapping)                                                                        |
+| Consistent Hashing prevents ALL cache misses during scaling | It minimises remapping to ~1/N, but the remapped keys still miss on their new server until re-cached from the database. The difference: 1/N misses (manageable) vs N/(N+1) misses (cache miss storm)                                                                                           |
+| Removing a server is the same as adding one                 | Removing: all of the removed server's keys must move to successor nodes (cold start for 1/N of keys). Adding: 1/N of existing keys move from existing nodes to the new node (those servers get cache relief). Both remap ~1/N, but removal requires successor nodes to absorb load immediately |
 
 ---
 
@@ -291,11 +292,11 @@ PROBLEM:
   Consistent Hashing distributes KEYS across nodes.
   But a single hot key ("product:viral-item-12345") → always one node.
   That one node handles all traffic for the viral product.
-  
+
   During flash sale: 100,000 requests/sec for "product:viral-item-12345"
   All hit cache-node-2 (hash("product:viral-item-12345") maps there).
   Cache-node-2: overwhelmed → returns errors → all misses hit DB → cascade.
-  
+
   Other 7 cache nodes: idle.
   Consistent Hashing: doing its job correctly.
   The problem: traffic distribution is by key, not by request count.
@@ -306,12 +307,12 @@ SOLUTIONS:
             ... × 10 replicas on different nodes
      Read: cache.get("product:viral#" + random(1,10))
      → 10x distribution of reads across 10 nodes
-  
+
   2. Local in-process cache (L1 cache) per app instance:
      @Cacheable(value = "product-local", key = "#id")  // Caffeine (local JVM)
      → Hot product cached in every JVM → never hits distributed cache for reads
      TTL: 5 seconds (stale for 5s is acceptable for product display)
-  
+
   3. Read-through cache at edge (CDN):
      Hot products cached in CloudFront/Fastly → never reaches origin cache
 ```

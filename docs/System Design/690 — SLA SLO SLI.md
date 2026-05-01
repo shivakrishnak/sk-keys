@@ -18,10 +18,10 @@ tags: #intermediate, #reliability, #observability, #architecture, #foundational
 
 ⚡ TL;DR — **SLI** measures reliability (what you observe), **SLO** is your internal target (what you commit to internally), **SLA** is a contractual promise (what you commit to customers with financial consequences for breach).
 
-| #690 | Category: System Design | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Observability, Error Budget | |
-| **Used by:** | Error Budget, MTTR / MTBF | |
+| #690            | Category: System Design     | Difficulty: ★★☆ |
+| :-------------- | :-------------------------- | :-------------- |
+| **Depends on:** | Observability, Error Budget |                 |
+| **Used by:**    | Error Budget, MTTR / MTBF   |                 |
 
 ---
 
@@ -56,31 +56,31 @@ THE RELIABILITY MEASUREMENT PROBLEM:
   How do you know if your service is "reliable"?
   "The service is up" → vague, binary, not useful.
   "Users are happy" → unmeasurable, subjective.
-  
+
   NEED: precise, measurable, actionable definitions.
 
 SERVICE LEVEL INDICATOR (SLI) — the measurement:
 
   Definition: SLI = (good events) / (total events)
-  
+
   AVAILABILITY SLI:
     SLI = (successful HTTP responses with status 2xx or 3xx)
           / (total HTTP requests)
     Measured over: rolling 28-day window
     Example value: 0.99951 (99.951%)
-    
+
   LATENCY SLI (threshold-based):
     SLI = (requests completed in < 200ms) / (total requests)
     Example value: 0.9981 (99.81% of requests complete in < 200ms)
-    
+
     NOTE: Use percentile thresholds (P99, P95), not averages.
     Average latency hides tail latency: 1% of users waiting 10 seconds
     while average is 50ms — average says "great", P99 says "broken".
-    
+
   ERROR RATE SLI:
     SLI = 1 - (5xx errors / total requests)
     = 1 - error_rate
-  
+
   DURABILITY SLI (for storage systems):
     SLI = (objects retrievable on demand) / (objects stored)
 
@@ -88,24 +88,24 @@ SERVICE LEVEL OBJECTIVE (SLO) — the internal target:
 
   SLO = target threshold for an SLI.
   Example: "SLI_availability >= 99.9% over rolling 28 days"
-  
+
   SLO MUST BE:
   - Specific: which SLI, what threshold, what time window
   - Measurable: automated monitoring and alerting
   - Achievable: based on architecture capability (not wishful)
   - Time-bounded: rolling window (28 days) vs. calendar period
-  
+
   SETTING TIGHT vs. LOOSE SLOs:
-  
+
     TOO TIGHT (99.9999% = 31 seconds downtime/year):
       Nearly impossible to achieve consistently.
       Any incident → SLO breach → engineering distracted by alerts.
       Leads to: alert fatigue, engineering burnout, risk aversion.
-    
+
     TOO LOOSE (90% = 36 days downtime/year):
       Users are unhappy before SLO breach.
       SLO breach is meaningless signal.
-    
+
     CORRECT: Set SLO just above where users would notice/complain.
       Survey users: what's the minimum reliability you'd accept?
       Analysis: what does current system actually achieve (SLI history)?
@@ -115,10 +115,10 @@ ERROR BUDGET: SLO to actionable budget:
 
   Error Budget = 1 - SLO
   SLO = 99.9% → Error Budget = 0.1% = 43.2 minutes/month allowed downtime
-  
+
   Error Budget Consumed = 1 - current SLI
   If SLI = 99.85% → consumed 0.15% (exceeded 0.1% budget → SLO breach)
-  
+
   Error Budget drives decisions:
   - Budget remaining: can deploy new features (accepting risk of failures)
   - Budget exhausted: freeze deployments, focus on reliability only
@@ -130,19 +130,19 @@ SERVICE LEVEL AGREEMENT (SLA) — the contract:
     SLO: 99.9% (internal target)
     SLA: 99.5% (customer commitment)
     Buffer: 0.4% (safety margin)
-    
+
   Why looser?
   - SLO breach: engineering alert → investigation starts before customers notice
   - SLA breach: customers already impacted → legal/financial consequences
-  
+
   SLA PENALTIES (typical):
     99.5% to 99.0%: 10% service credit
     99.0% to 95.0%: 25% service credit
     Below 95.0%: 50% service credit or right to terminate
-  
+
   AWS S3 SLA: 99.9% monthly uptime commitment.
   (Note: S3 SLO is much higher — designed for 99.999999999% durability)
-  
+
   PRACTICAL NOTE: Many "SLAs" in informal conversations are actually SLOs.
   When a team says "our SLA is 99.9%", they often mean their internal target.
   True SLAs: signed contracts with customers, specific financial remedies.
@@ -153,6 +153,7 @@ SERVICE LEVEL AGREEMENT (SLA) — the contract:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT SLI/SLO/SLA framework:
+
 - Reliability debates: "Is this acceptable?" — subjective, politically charged
 - Engineering prioritisation: impossible to justify reliability work vs. features
 - Customer trust: no measurable promises → customers cannot evaluate fit for purpose
@@ -192,14 +193,14 @@ groups:
           sum(rate(http_requests_total{status=~"2..|3.."}[5m]))
           /
           sum(rate(http_requests_total[5m]))
-      
+
       # SLI: latency - fraction of requests completing in < 200ms
       - record: job:sli_latency_p200ms:ratio_rate5m
         expr: |
           sum(rate(http_request_duration_seconds_bucket{le="0.2"}[5m]))
           /
           sum(rate(http_request_duration_seconds_count[5m]))
-      
+
       # Alert: SLO breach imminent (burn rate alert)
       - alert: SLOBurnRateHigh
         expr: |
@@ -210,7 +211,7 @@ groups:
         annotations:
           summary: "SLO breach: availability SLI below 99.9%"
           description: "Current SLI: {{ $value | humanizePercentage }}"
-      
+
       # Error budget: remaining budget (rolling 28-day window)
       - record: job:error_budget_remaining:ratio
         expr: |
@@ -253,25 +254,25 @@ class SLOTracker:
         """
         self.slo_target = slo_target
         self.window_days = window_days
-    
+
     def calculate_sli(self, good_requests: int, total_requests: int) -> float:
         """SLI = good_requests / total_requests"""
         if total_requests == 0:
             return 1.0  # no traffic = 100% success rate
         return good_requests / total_requests
-    
+
     def error_budget_minutes(self) -> float:
         """Total error budget in minutes for the window"""
         total_minutes = self.window_days * 24 * 60
         return total_minutes * (1 - self.slo_target)
-    
+
     def error_budget_consumed(self, current_sli: float) -> dict:
         """How much error budget has been consumed?"""
         budget_total = self.error_budget_minutes()
         window_minutes = self.window_days * 24 * 60
         minutes_failed = (1 - current_sli) * window_minutes
         budget_remaining = budget_total - minutes_failed
-        
+
         return {
             "slo_target": f"{self.slo_target * 100:.3f}%",
             "current_sli": f"{current_sli * 100:.3f}%",
@@ -300,12 +301,12 @@ result = tracker.error_budget_consumed(current_sli=0.9991)
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| 100% SLO is the goal | 100% is not achievable and attempting it is counterproductive: it means no deployments (risk of downtime), extreme conservatism, and eventual user disappointment anyway. Honest, achievable SLOs (99.9%, 99.5%) are better than dishonest 100% claims |
-| SLA and SLO are the same thing | SLO is an internal engineering target with no contractual commitment. SLA is a legal contract with financial consequences. SLA is always set looser than SLO — the gap is your safety buffer to prevent SLA breaches |
-| Measuring availability as uptime/downtime is the right SLI | Binary uptime/downtime misses partial degradation. A server returning 500 errors 30% of the time is "up" by binary measure but failing users. Request success rate SLI captures this. Modern SRE: measure from the user's perspective |
-| SLOs should be set as high as possible to show ambition | SLOs should be calibrated to what users actually need. Over-ambitious SLOs breach constantly → alert fatigue, engineering burnout. Calibrated SLOs breach rarely but meaningfully → each breach is a real signal |
+| Misconception                                              | Reality                                                                                                                                                                                                                                                |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 100% SLO is the goal                                       | 100% is not achievable and attempting it is counterproductive: it means no deployments (risk of downtime), extreme conservatism, and eventual user disappointment anyway. Honest, achievable SLOs (99.9%, 99.5%) are better than dishonest 100% claims |
+| SLA and SLO are the same thing                             | SLO is an internal engineering target with no contractual commitment. SLA is a legal contract with financial consequences. SLA is always set looser than SLO — the gap is your safety buffer to prevent SLA breaches                                   |
+| Measuring availability as uptime/downtime is the right SLI | Binary uptime/downtime misses partial degradation. A server returning 500 errors 30% of the time is "up" by binary measure but failing users. Request success rate SLI captures this. Modern SRE: measure from the user's perspective                  |
+| SLOs should be set as high as possible to show ambition    | SLOs should be calibrated to what users actually need. Over-ambitious SLOs breach constantly → alert fatigue, engineering burnout. Calibrated SLOs breach rarely but meaningfully → each breach is a real signal                                       |
 
 ---
 
@@ -316,18 +317,18 @@ result = tracker.error_budget_consumed(current_sli=0.9991)
 ```
 PROBLEM: measuring SLI from inside your service (server-side metrics)
 
-  Server-side: 
+  Server-side:
     http_requests_total{status="200"}: 9,990,000
     http_requests_total{status="5xx"}: 10,000
     Calculated SLI: 99.9% — looks great!
-  
+
   Client-side reality (Synthetic monitoring from outside):
     30% of requests: timing out before server responds (TCP connection timeout)
     These timeouts: never reach server → never counted in server-side metrics
     Real user SLI: 70% (30% of requests failing)
-    
+
   Root cause: load balancer connectivity issue upstream of server metrics.
-  
+
   SERVER-SIDE METRICS miss:
   - DNS resolution failures
   - Network-level drops before reaching server
@@ -341,16 +342,16 @@ FIX: Multi-layer SLI measurement
      running from multiple regions every 60 seconds.
      Measures the actual user-facing URL end-to-end.
      This is the "true" SLI from user perspective.
-  
+
   2. CLIENT-SIDE RUM (Real User Monitoring):
      JavaScript snippet: window.performance.getEntriesByType("navigation")
      Reports actual page load times per real user session.
      Most representative signal of user experience.
-  
+
   3. SERVER-SIDE METRICS: secondary signal for root cause analysis
      Good for diagnosing WHERE the problem is (which endpoint, which service)
      NOT for calculating the primary user-facing SLI
-  
+
   Best practice:
     Primary SLI source = Synthetic monitoring or client RUM
     Debugging tool = server-side metrics + distributed traces

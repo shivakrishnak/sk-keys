@@ -18,10 +18,10 @@ tags: #intermediate, #reliability, #observability, #architecture, #foundational
 
 ⚡ TL;DR — **MTBF** measures how long a system runs between failures (longer = more reliable); **MTTR** measures how fast you recover from failure (shorter = more resilient). High MTBF + low MTTR = highly available system.
 
-| #692 | Category: System Design | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | SLA / SLO / SLI, Observability | |
-| **Used by:** | Disaster Recovery, RTO / RPO | |
+| #692            | Category: System Design        | Difficulty: ★★☆ |
+| :-------------- | :----------------------------- | :-------------- |
+| **Depends on:** | SLA / SLO / SLI, Observability |                 |
+| **Used by:**    | Disaster Recovery, RTO / RPO   |                 |
 
 ---
 
@@ -55,39 +55,39 @@ SCENARIO A: High MTBF, High MTTR (reliable but slow to recover)
   MTBF = 1000 hours (fails once every ~42 days)
   MTTR = 8 hours (8-hour recovery per incident)
   Availability = 1000 / (1000 + 8) = 99.2%
-  
+
 SCENARIO B: Lower MTBF, Low MTTR (fails more often but recovers fast)
   MTBF = 100 hours (fails every ~4 days — 10x more fragile)
   MTTR = 0.1 hour (6 minutes to recover — automated)
   Availability = 100 / (100 + 0.1) = 99.9%
-  
+
   COUNTERINTUITIVE: System B fails 10x more often but is MORE available.
   Low MTTR dominates the availability calculation.
   SRE insight: invest in fast recovery, not just failure prevention.
-  
+
 MTTD (Mean Time To Detect) — the invisible contributor to MTTR:
 
   MTTR = MTTD + MTTI (Mean Time To Isolate) + MTTF (Mean Time To Fix)
        + MTTV (Mean Time To Verify)
-  
+
   If MTTD = 2 hours (failure undetected for 2 hours):
   Even if fix takes 5 minutes, MTTR = 125 minutes.
-  
+
   Improving MTTD:
   - Better monitoring and alerting (PagerDuty, SLO burn rate alerts)
   - Synthetic monitoring (detects issues before users report them)
   - Error budget burn rate alerts (detects degradation early)
-  
+
   Improving MTTI (isolation):
   - Distributed tracing (Jaeger, Zipkin) → find root cause quickly
   - Service dashboards with drill-down capability
   - Runbooks for common failure modes
-  
+
   Improving MTTF (fix):
   - Automated remediation (restart service, scale out, roll back)
   - Feature flags (disable bad feature in 30 seconds)
   - Blue-green deployments (rollback in 60 seconds vs. 30-minute rollback)
-  
+
   Improving MTTV (verification):
   - Automated smoke tests post-deployment/recovery
   - Synthetic probes confirming user-facing functionality
@@ -97,14 +97,14 @@ RELIABILITY vs. RESILIENCE:
   RELIABILITY (high MTBF): build systems that DON'T fail
   - Redundant hardware, better testing, circuit breakers
   - Diminishing returns: going from 3 nines to 4 nines is expensive
-  
+
   RESILIENCE (low MTTR): build systems that RECOVER FAST
   - Automated rollback, chaos engineering, runbooks
   - Often cheaper and more effective than chasing perfect reliability
-  
-  Google SRE philosophy: "Hope is not a strategy. 
+
+  Google SRE philosophy: "Hope is not a strategy.
   Build for failure; reduce MTTR to near-zero."
-  
+
   Example: Netflix Chaos Monkey
   - Deliberately kills random production services
   - Forces teams to build fast self-healing (low MTTR)
@@ -118,6 +118,7 @@ RELIABILITY vs. RESILIENCE:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT MTBF/MTTR metrics:
+
 - Reliability is subjective: "we had some outages this quarter"
 - No baseline: can't measure improvement over time
 - Prioritisation unclear: should we invest in prevention or recovery?
@@ -219,11 +220,11 @@ curl -X GET \
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| MTBF is the most important availability metric | MTTR often matters more and is easier to improve. A system that fails 10x more often but recovers in seconds can have higher availability than a reliable system with slow recovery. Prioritise MTTR reduction first — it has faster ROI |
-| MTTR starts when the fix is deployed | MTTR = total time from failure onset to full recovery, including: detection time (MTTD), diagnosis time, fix implementation, deployment, and verification. Detection time is often the largest component in practice and the most overlooked |
-| High MTBF means your system is production-ready | MTBF measures historical failure frequency, not severity. A system with high MTBF might fail rarely but catastrophically (full data loss, unrecoverable state). MTBF + MTTR together with severity categorisation give a full picture |
+| Misconception                                     | Reality                                                                                                                                                                                                                                                     |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| MTBF is the most important availability metric    | MTTR often matters more and is easier to improve. A system that fails 10x more often but recovers in seconds can have higher availability than a reliable system with slow recovery. Prioritise MTTR reduction first — it has faster ROI                    |
+| MTTR starts when the fix is deployed              | MTTR = total time from failure onset to full recovery, including: detection time (MTTD), diagnosis time, fix implementation, deployment, and verification. Detection time is often the largest component in practice and the most overlooked                |
+| High MTBF means your system is production-ready   | MTBF measures historical failure frequency, not severity. A system with high MTBF might fail rarely but catastrophically (full data loss, unrecoverable state). MTBF + MTTR together with severity categorisation give a full picture                       |
 | 99.9% availability = 8.76 hours downtime per year | This calculates unplanned downtime only. Planned maintenance windows (deployments, database migrations) also reduce availability. A system with 99.9% unplanned availability but 48 hours of planned downtime annually has effective availability of ~99.4% |
 
 ---
@@ -243,17 +244,17 @@ INCIDENT TIMELINE (real-world pattern):
   T+02:30  Root cause identified: connection pool exhaustion
   T+02:45  Fix deployed: pool size increased
   T+02:50  Verification: logins working
-  
+
   MTTR: 2 hours 50 minutes
   Of which: MTTD = 1 hour 35 minutes (56% of total MTTR!)
   Actual fix time: 15 minutes
-  
+
   PROBLEM: The failure was detectable at T+00:00 from metrics:
     db_connection_pool_exhausted counter spiked
     API error rate hit 100%
     HTTP 500s spiked in logs
     → All of this was measurable but no alert fired
-    
+
 FIX: Alert on SLO burn rate (detects failure within 2-5 minutes):
 
   # Prometheus: multi-window burn rate alert
@@ -268,10 +269,10 @@ FIX: Alert on SLO burn rate (detects failure within 2-5 minutes):
       severity: critical
     annotations:
       summary: "High error burn rate — SLO breach imminent in <1 hour"
-  
+
   # 14.4x burn rate = SLO breach in 1/14.4 of 28 days = ~46 hours
   # Multi-window: both 1h and 5m must confirm → reduces false positives
-  
+
   Result: alert fires at T+00:05 → MTTD drops from 95 min to 5 min
           MTTR: 2h50m → ~25 minutes (90% reduction)
 ```

@@ -18,10 +18,10 @@ tags: #intermediate, #cloud, #distributed, #architecture, #reliability
 
 ⚡ TL;DR — **Auto Scaling** automatically adjusts the number of compute instances based on load metrics (CPU, traffic, queue depth), adding capacity during peaks and removing it during troughs to control cost and maintain performance.
 
-| #689 | Category: System Design | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Horizontal Scaling, Vertical Scaling | |
-| **Used by:** | Capacity Planning | |
+| #689            | Category: System Design              | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------- | :-------------- |
+| **Depends on:** | Horizontal Scaling, Vertical Scaling |                 |
+| **Used by:**    | Capacity Planning                    |                 |
 
 ---
 
@@ -50,11 +50,11 @@ At 9 AM, your API gets 100 requests per minute — 2 servers are enough. At 2 PM
 ```
 STATIC PROVISIONING (before auto scaling):
   Problem: when to provision for peak traffic?
-  
+
   OPTION A: Provision for average load
     Peak traffic: servers overwhelmed → degraded performance / outages
     Failure: during Black Friday, Christmas sale, viral events
-    
+
   OPTION B: Provision for peak load
     Average: 10 servers needed
     Peak:    100 servers needed
@@ -63,7 +63,7 @@ STATIC PROVISIONING (before auto scaling):
     Cloud cost: 100 × $0.10/hr × 8,760 hr/yr = $87,600/year
     vs.   10 × $0.10/hr × 8,760 hr/yr = $8,760/year (average need)
     Waste: $78,840/year — 90% cost overhead for peak readiness
-    
+
   OPTION C: Auto Scaling (dynamic provisioning)
     Scale OUT when needed (peak): provision 100 servers for 4 hours/day
     Scale IN when load drops: de-provision back to 10 servers
@@ -83,20 +83,20 @@ AUTO SCALING TRIGGER TYPES:
      Scale in: CPU falls below 50% → remove instances
      AWS: TargetTrackingScalingPolicy
      K8s: HPA with targetCPUUtilizationPercentage: 50
-  
+
   2. STEP SCALING (threshold-based):
      CPU 60-70% → add 1 instance
      CPU 70-80% → add 2 instances
      CPU 80-90% → add 4 instances
      CPU >90%   → add 8 instances (aggressive scale-out for danger zone)
      Configured as step adjustments for fine-grained control.
-  
+
   3. SCHEDULED SCALING (predictive):
      "Add 10 instances at 8:30 AM every weekday (before business hours)"
      "Remove 10 instances at 8 PM every weekday"
      Pre-warms capacity before predictable load spikes.
      Used when traffic pattern is known and consistent.
-  
+
   4. PREDICTIVE SCALING (ML-based):
      AWS Predictive Scaling: analyses historical CloudWatch metrics.
      Forecasts future load 48 hours ahead using ML.
@@ -109,23 +109,23 @@ COOLDOWN PERIODS AND SCALE-IN PROTECTION:
   Why: new instances take 2-5 minutes to start, register, and warm up.
   Without cooldown: CPU still high (new instances not warm yet) →
     triggers another scale-out → over-provisions.
-  
+
   Scale-in protection: during scale-in, don't terminate instances with
     active in-flight requests.
   AWS: Connection Draining (ALB): wait for connections to complete before
     marking instance as deregistered.
-    aws ec2 modify-instance-attribute --instance-id i-xxx 
+    aws ec2 modify-instance-attribute --instance-id i-xxx
       --no-instance-initiated-shutdown-behavior
 
 WARM-UP TIME (critical for sticky sessions + caching apps):
 
   New instance: cold (empty local cache, no JIT compilation, no connection pool).
   First requests on new instance: slower than steady state.
-  
+
   AWS: Instance Warm-Up Period in scaling policy.
     During warm-up: instance's metrics not counted toward scaling triggers.
     Prevents: warm-up load from triggering another scale-out.
-  
+
   K8s HPA: readinessProbe gates traffic until application is ready:
     readinessProbe:
       httpGet:
@@ -141,6 +141,7 @@ WARM-UP TIME (critical for sticky sessions + caching apps):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Auto Scaling:
+
 - Static provisioning: either under-provisioned (outages at peak) or over-provisioned (cost waste)
 - Traffic spikes: either manual emergency scaling (slow, error-prone) or pre-built headroom (expensive)
 - Off-peak hours: idle servers still running and costing money
@@ -179,8 +180,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: api-service
-  minReplicas: 2      # always at least 2 pods (HA)
-  maxReplicas: 20     # never more than 20 (cost ceiling)
+  minReplicas: 2 # always at least 2 pods (HA)
+  maxReplicas: 20 # never more than 20 (cost ceiling)
   metrics:
     # Target: keep average CPU at 50% across all pods
     - type: Resource
@@ -196,20 +197,20 @@ spec:
           name: http_requests_per_second
         target:
           type: AverageValue
-          averageValue: "100"   # target: 100 rps per pod
+          averageValue: "100" # target: 100 rps per pod
   behavior:
     scaleUp:
-      stabilizationWindowSeconds: 0    # react immediately to scale-out need
+      stabilizationWindowSeconds: 0 # react immediately to scale-out need
       policies:
         - type: Percent
-          value: 100                   # double pods if needed
+          value: 100 # double pods if needed
           periodSeconds: 60
     scaleDown:
-      stabilizationWindowSeconds: 300  # wait 5 min before scale-in
+      stabilizationWindowSeconds: 300 # wait 5 min before scale-in
       policies:
         - type: Pods
-          value: 1                     # remove at most 1 pod at a time
-          periodSeconds: 60            # conservative scale-in
+          value: 1 # remove at most 1 pod at a time
+          periodSeconds: 60 # conservative scale-in
 ---
 # Deployment resource limits (required for HPA CPU metric):
 apiVersion: apps/v1
@@ -223,7 +224,7 @@ spec:
         - name: api
           resources:
             requests:
-              cpu: "250m"    # HPA calculates utilisation relative to request
+              cpu: "250m" # HPA calculates utilisation relative to request
               memory: "256Mi"
             limits:
               cpu: "500m"
@@ -299,12 +300,12 @@ autoscaling.put_scaling_policy(
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Auto Scaling works instantly during traffic spikes | Instance launch takes 2-5 minutes (AMI boot + app startup + health check). During a sudden spike, you're unprotected for those minutes. Mitigation: pre-warm with scheduled scaling, maintain a buffer above baseline, or use faster-starting containers (Fargate, Lambda) |
-| Auto Scaling eliminates the need for load balancing | Auto Scaling adds/removes instances; a Load Balancer is still needed to distribute traffic across the varying pool. They work together: Auto Scaling controls pool size, Load Balancer controls traffic distribution |
-| You should scale in aggressively to save costs | Aggressive scale-in risks: removing instances that still have active connections (session loss); leaving insufficient capacity for sudden re-spikes. Recommended: slow, conservative scale-in (remove 1 instance per minute) with long stabilisation windows (5 minutes) |
-| Auto Scaling handles database capacity automatically | Auto Scaling is for stateless compute. Databases have their own scaling approaches: read replicas, vertical scaling, Aurora Serverless (auto-scales), connection pooling. Auto Scaling of app servers + non-scaled DB = DB becomes the bottleneck |
+| Misconception                                        | Reality                                                                                                                                                                                                                                                                    |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Auto Scaling works instantly during traffic spikes   | Instance launch takes 2-5 minutes (AMI boot + app startup + health check). During a sudden spike, you're unprotected for those minutes. Mitigation: pre-warm with scheduled scaling, maintain a buffer above baseline, or use faster-starting containers (Fargate, Lambda) |
+| Auto Scaling eliminates the need for load balancing  | Auto Scaling adds/removes instances; a Load Balancer is still needed to distribute traffic across the varying pool. They work together: Auto Scaling controls pool size, Load Balancer controls traffic distribution                                                       |
+| You should scale in aggressively to save costs       | Aggressive scale-in risks: removing instances that still have active connections (session loss); leaving insufficient capacity for sudden re-spikes. Recommended: slow, conservative scale-in (remove 1 instance per minute) with long stabilisation windows (5 minutes)   |
+| Auto Scaling handles database capacity automatically | Auto Scaling is for stateless compute. Databases have their own scaling approaches: read replicas, vertical scaling, Aurora Serverless (auto-scales), connection pooling. Auto Scaling of app servers + non-scaled DB = DB becomes the bottleneck                          |
 
 ---
 
@@ -316,16 +317,16 @@ autoscaling.put_scaling_policy(
 PROBLEM:
   Scaling policy: scale out when CPU > 70%.
   Application: spiky load pattern.
-  
+
   T=0:  2 instances, CPU=75% → scale out → now 4 instances
   T=1m: 4 instances, CPU=38% (load distributed) → cool down period
-  T=5m: CPU=72% → scale out → now 6 instances  
+  T=5m: CPU=72% → scale out → now 6 instances
   T=6m: CPU=30% → scale in → back to 4 instances
   T=10m: CPU=71% → scale out again...
-  
+
   Thrashing: constant scale out/in → costs money, instances launching/terminating
               continuously → increased risk of instance launch failures.
-  
+
   Symptom: CloudWatch shows zigzag instance count (2→4→2→4→2→4)
 
 FIX 1: Use Target Tracking (instead of simple threshold)
@@ -343,7 +344,7 @@ FIX 2: Increase stabilisation window for scale-in:
 FIX 3: Step scaling with aggressive scale-out, conservative scale-in:
   Scale out: immediate, large steps (fast response to load)
   Scale in:  slow, 1 instance at a time, with 5-minute wait per step
-  
+
   # K8s HPA behavior (as shown in mechanism section):
   scaleUp.stabilizationWindowSeconds: 0    # immediate
   scaleDown.stabilizationWindowSeconds: 300 # 5-minute cooldown

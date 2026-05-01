@@ -18,10 +18,10 @@ tags: #foundational, #distributed, #networking, #algorithm, #architecture
 
 ⚡ TL;DR — **Round Robin** is the simplest load balancing algorithm: requests are distributed to backend servers in sequential circular order — server 1, server 2, server 3, back to server 1.
 
-| #684 | Category: System Design | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Load Balancing | |
-| **Used by:** | Sticky Sessions, Session Affinity | |
+| #684            | Category: System Design           | Difficulty: ★☆☆ |
+| :-------------- | :-------------------------------- | :-------------- |
+| **Depends on:** | Load Balancing                    |                 |
+| **Used by:**    | Sticky Sessions, Session Affinity |                 |
 
 ---
 
@@ -52,11 +52,11 @@ Three backend servers. Requests come in: request 1 → Server A, request 2 → S
 public class RoundRobinLoadBalancer {
     private final List<String> backends;
     private final AtomicInteger index = new AtomicInteger(0);
-    
+
     public RoundRobinLoadBalancer(List<String> backends) {
         this.backends = List.copyOf(backends);
     }
-    
+
     public String nextBackend() {
         // Atomically increment and wrap:
         int i = index.getAndIncrement() % backends.size();
@@ -90,6 +90,7 @@ public class RoundRobinLoadBalancer {
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT any load balancing algorithm:
+
 - No systematic distribution — all requests to one server
 
 WITH Round Robin:
@@ -121,7 +122,7 @@ upstream backend {
     server backend2.example.com:8080 weight=2;  # gets 2/8 of requests
     server backend3.example.com:8080 weight=1;  # gets 1/8 of requests
     # Use case: backend1 is on a 4x larger instance
-    
+
     # Default (no weight) = weight=1 each = standard round robin
 }
 
@@ -178,12 +179,12 @@ done
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Round Robin ensures equal load on all servers | It ensures equal request count, not equal CPU/memory load. A server handling one 30-second request is more loaded than a server that handled ten 1ms requests — but round-robin distributed these evenly by count |
+| Misconception                                              | Reality                                                                                                                                                                                                                          |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Round Robin ensures equal load on all servers              | It ensures equal request count, not equal CPU/memory load. A server handling one 30-second request is more loaded than a server that handled ten 1ms requests — but round-robin distributed these evenly by count                |
 | DNS round robin is equivalent to load balancer round robin | DNS round-robin has no health checks (routes to dead servers), no persistence, variable TTL caching (clients may reuse one IP for minutes), and no session affinity. Software load balancers are superior for production traffic |
-| Weighted round robin is complex to configure | Most load balancers support weight as a simple integer in server configuration. The complexity is only in determining correct weight values (capacity benchmarking) |
-| Round Robin is outdated and shouldn't be used | Round Robin is appropriate for homogeneous workloads (similar request cost, equal-capacity servers). It's the default in many systems for good reason — it's simple, fast, and predictable |
+| Weighted round robin is complex to configure               | Most load balancers support weight as a simple integer in server configuration. The complexity is only in determining correct weight values (capacity benchmarking)                                                              |
+| Round Robin is outdated and shouldn't be used              | Round Robin is appropriate for homogeneous workloads (similar request cost, equal-capacity servers). It's the default in many systems for good reason — it's simple, fast, and predictable                                       |
 
 ---
 
@@ -198,22 +199,22 @@ PROBLEM:
   Round-robin: sends 20% of requests to Backend 3.
   Backend 3: builds up 100 active connections (all waiting for slow responses).
   Other backends: each at 5-10 active connections.
-  
+
   Clients: 20% of requests take 800ms instead of 50ms.
   P99 latency: dramatically elevated by the slow backend.
-  
+
 FIX:
   Switch to least_conn or least_time (nginx):
   upstream backend {
     least_conn;          # route to backend with fewest active connections
     # OR:
     # least_time header; # route to fastest backend by response time
-    
+
     server backend1:8080;
     server backend2:8080;
     server backend3:8080;  # naturally gets fewer requests when slow
   }
-  
+
   ALSO: set max_fails + fail_timeout to remove consistently slow backend:
     server backend3:8080 max_fails=3 fail_timeout=30s;
     # 3 failures within 30s → remove from rotation for 30s

@@ -18,10 +18,10 @@ tags: #intermediate, #reliability, #distributed, #architecture, #pattern
 
 ⚡ TL;DR — **Active-Passive** keeps one primary node handling all traffic while a standby replica sits ready; on primary failure, the passive node is promoted, trading some switchover time (~seconds to minutes) for architectural simplicity.
 
-| #696 | Category: System Design | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Redundancy / Failover, RTO / RPO | |
-| **Used by:** | Disaster Recovery | |
+| #696            | Category: System Design          | Difficulty: ★★☆ |
+| :-------------- | :------------------------------- | :-------------- |
+| **Depends on:** | Redundancy / Failover, RTO / RPO |                 |
+| **Used by:**    | Disaster Recovery                |                 |
 
 ---
 
@@ -60,11 +60,11 @@ FAILURE DETECTION:
   Method 1: Health check polling (LB or external monitor)
     Health checker: pings primary every 5s
     Primary fails: 2 consecutive failures → marked DOWN (10s detection)
-    
+
   Method 2: Heartbeat (standby watches primary)
     Standby: sends heartbeat to primary every 1s
     No response for 3s → declares primary dead → initiates failover
-    
+
   Method 3: Agent-based (monitoring daemon on primary)
     Agent detects local failure → sends signal to orchestrator
     Fastest detection (sub-second) but adds complexity
@@ -83,7 +83,7 @@ FAILOVER SEQUENCE:
        Load Balancer: remove primary, add standby to pool (instant)
     4. VERIFICATION: health check confirms standby accepting requests
   T+30-90s: Service restored at standby
-  
+
   Total RTO: 30-90 seconds (automated) or 15-30 minutes (manual)
 
 SYNCHRONOUS vs. ASYNCHRONOUS REPLICATION effect on RPO:
@@ -94,14 +94,14 @@ SYNCHRONOUS vs. ASYNCHRONOUS REPLICATION effect on RPO:
     Failover: no data loss.
     Cost: each write waits for network RTT to standby.
     Typical: +1-5ms for same-AZ, +50ms for cross-region.
-    
+
   ASYNCHRONOUS (RPO = seconds to minutes):
     Primary: write committed immediately.
     Replication: happens in background.
     Lag at failure time: 0-N seconds of uncommitted writes.
     Failover: up to N seconds of data loss.
     Cost: no write latency overhead.
-    
+
     Example: PostgreSQL with streaming replication
     pg_stat_replication: shows lag
     In synchronous mode: synchronous_standby_names = 'standby1'
@@ -113,7 +113,7 @@ ACTIVE-PASSIVE FOR COMPUTE (stateless app servers):
   Failover: LB health check removes primary, adds standby
   Data: no replication needed (stateless — state in shared DB)
   RTO: < 10 seconds (LB health check cycle)
-  
+
   Note: for stateless services, Active-Active is usually preferred
   (wastes no capacity, no failover delay). Active-Passive for compute
   is only common in very specific legacy or compliance scenarios.
@@ -130,6 +130,7 @@ ACTIVE-PASSIVE FOR DATABASES (stateful — most common use case):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Active-Passive (single node):
+
 - Any hardware/software failure = complete downtime (full SPOF)
 - MTTR: hours to provision replacement + restore backup
 
@@ -161,22 +162,22 @@ WITH Active-Passive:
 
 scope: postgres-cluster
 namespace: /service/
-name: node1  # change per node (node1, node2, node3)
+name: node1 # change per node (node1, node2, node3)
 
 etcd:
   hosts: 10.0.0.1:2379,10.0.0.2:2379,10.0.0.3:2379
 
 bootstrap:
   dcs:
-    ttl: 30                           # leader lock TTL: 30 seconds
-    loop_wait: 10                     # check every 10 seconds
+    ttl: 30 # leader lock TTL: 30 seconds
+    loop_wait: 10 # check every 10 seconds
     retry_timeout: 10
-    maximum_lag_on_failover: 1048576  # 1MB max replication lag for failover
-  
+    maximum_lag_on_failover: 1048576 # 1MB max replication lag for failover
+
   postgresql:
     parameters:
-      synchronous_commit: "on"         # synchronous replication (RPO=0)
-      synchronous_standby_names: "*"   # wait for any one standby
+      synchronous_commit: "on" # synchronous replication (RPO=0)
+      synchronous_standby_names: "*" # wait for any one standby
 
 postgresql:
   listen: 0.0.0.0:5432
@@ -262,12 +263,12 @@ sentinel parallel-syncs mymaster 1              # 1 replica syncs at a time
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Active-Passive wastes 50% of resources | Passive nodes aren't fully idle: they handle replication processing, can serve read traffic (read replicas), run monitoring and health checks, and may handle reporting queries. Database read replicas in Active-Passive are common: writes to primary, reads distributed across replicas |
-| Active-Passive provides the same availability as Active-Active | Active-Active: no failover delay, node failure is absorbed instantly. Active-Passive: 30-90 second failover window. For many applications this difference is acceptable; for zero-tolerance latency, Active-Active is needed |
-| You should always use synchronous replication for zero RPO | Synchronous replication adds write latency equal to the network RTT to the standby. For same-AZ: 1-2ms (usually acceptable). For cross-region: 50-200ms (often unacceptable for write-heavy apps). Asynchronous replication accepts a small RPO (seconds) in exchange for no write latency overhead |
-| Active-Passive is outdated — everyone uses Active-Active now | Active-Passive remains the default pattern for most databases in production (RDS Multi-AZ, Redis Sentinel, PostgreSQL with Patroni). Active-Active for databases is significantly harder to operate correctly and is only needed when the simpler approach's failover time or single-region availability is insufficient |
+| Misconception                                                  | Reality                                                                                                                                                                                                                                                                                                                  |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Active-Passive wastes 50% of resources                         | Passive nodes aren't fully idle: they handle replication processing, can serve read traffic (read replicas), run monitoring and health checks, and may handle reporting queries. Database read replicas in Active-Passive are common: writes to primary, reads distributed across replicas                               |
+| Active-Passive provides the same availability as Active-Active | Active-Active: no failover delay, node failure is absorbed instantly. Active-Passive: 30-90 second failover window. For many applications this difference is acceptable; for zero-tolerance latency, Active-Active is needed                                                                                             |
+| You should always use synchronous replication for zero RPO     | Synchronous replication adds write latency equal to the network RTT to the standby. For same-AZ: 1-2ms (usually acceptable). For cross-region: 50-200ms (often unacceptable for write-heavy apps). Asynchronous replication accepts a small RPO (seconds) in exchange for no write latency overhead                      |
+| Active-Passive is outdated — everyone uses Active-Active now   | Active-Passive remains the default pattern for most databases in production (RDS Multi-AZ, Redis Sentinel, PostgreSQL with Patroni). Active-Active for databases is significantly harder to operate correctly and is only needed when the simpler approach's failover time or single-region availability is insufficient |
 
 ---
 
@@ -281,42 +282,42 @@ PROBLEM: Async replication + forced failover → unexpected data loss
   Deployment: PostgreSQL primary (us-east-1a) + async replica (us-east-1b)
   Replication mode: asynchronous (no write latency overhead)
   Typical lag: 50ms-500ms (acceptable RPO)
-  
+
   Scenario: primary server OS panic at T=0.
   Primary: last committed write at T=-30ms.
   Replica lag at time of failure: 2 MINUTES (backlog due to heavy write load)
-  
+
   Failover initiated at T+10s (detection time).
   Standby state: 2 minutes behind primary at time of failure.
   Forced promotion: standby becomes primary with 2-minute-old data.
-  
+
   Data loss: 2 minutes of transactions (RPO violation if target was 30s).
-  
+
   Why did lag reach 2 minutes?
   - Heavy batch job running: 50,000 writes/second
   - Replication slot: standby couldn't keep up with WAL generation
   - Monitoring: replication lag metric existed but no alert set!
-  
+
 FIX 1: Monitor and alert on replication lag
   PostgreSQL: pg_stat_replication.replay_lag
   Alert: replay_lag > 30s (target RPO threshold) → PagerDuty
-  
+
   # Prometheus PostgreSQL exporter:
   pg_replication_lag > 30   # alert if replica > 30 seconds behind
-  
+
 FIX 2: Replication slot + pg_replication_slots monitoring
   Replication slot: prevents WAL from being deleted until replica consumes it.
   Risk: disk space exhaustion if replica is very far behind.
   Alert: pg_replication_slots.active = false (disconnected replica)
          pg_replication_slots.lag_bytes > 5GB (getting dangerous)
-  
+
 FIX 3: Synchronous replication for RPO-critical systems
   synchronous_commit = on
   synchronous_standby_names = 'replica1'
   → Writes only committed when replica confirms
   → Lag: guaranteed 0 (at cost of +1-2ms write latency per write)
   → On replica disconnect: primary blocks writes (availability trade-off)
-  
+
   COMPROMISE: synchronous_commit = remote_write
   → Primary waits for replica to receive WAL (not execute it)
   → Slightly weaker consistency guarantee, but prevents data loss

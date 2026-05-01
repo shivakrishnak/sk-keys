@@ -18,10 +18,10 @@ tags: #intermediate, #distributed, #networking, #algorithm, #architecture
 
 ⚡ TL;DR — **Least Connections** routes each new request to the backend server with the fewest currently active connections, dynamically balancing load when request durations vary.
 
-| #685 | Category: System Design | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Load Balancing, Round Robin | |
-| **Used by:** | Auto Scaling | |
+| #685            | Category: System Design     | Difficulty: ★★☆ |
+| :-------------- | :-------------------------- | :-------------- |
+| **Depends on:** | Load Balancing, Round Robin |                 |
+| **Used by:**    | Auto Scaling                |                 |
 
 ---
 
@@ -56,7 +56,7 @@ ROUND ROBIN (timestamp: T=0 to T=60s):
        333 × 30% = ~100 slow requests per server (each taking 10 seconds)
        All 3 servers: 100 slow active connections from T=0 to T=10
        Fast requests queue: have to wait for slow connections to free up
-       
+
   T=5: User waits for fast API call — it's queued behind slow reports
   P99: 5+ seconds for a 10ms API call (blocked by slow connections)
 
@@ -64,15 +64,15 @@ LEAST CONNECTIONS (same workload):
   T=0: Fast requests: complete in 10ms → connection released immediately
        Connection count: fast-request servers stay at low count
        Slow requests: 10+ seconds → accumulate on whichever server got them
-  
+
   T=1: Server B has 30 slow connections. Server A/C: 2 active each.
        New request → Least Connections picks Server A or C (count=2)
        Not Server B (count=30)
-  
+
   Result: slow requests are isolated to servers that received them.
           Fast requests naturally distributed to servers with low count.
           Fast request users: still get sub-50ms responses.
-  
+
   NOTE: Least Connections doesn't separate the workloads —
         it still mixes fast and slow on the same pool.
   BETTER: separate pools (fast pool + slow pool) with path-based routing.
@@ -86,7 +86,7 @@ LEAST CONNECTIONS:
   State: load balancer tracks active_connections[] array
   Update: connection opened → count++, connection closed → count--
   Thread-safe: requires atomic increment/decrement per backend
-  
+
 WEIGHTED LEAST CONNECTIONS:
   Route to: argmin(active_connections[i] / weight[i])
   Example:
@@ -101,7 +101,7 @@ LEAST RESPONSE TIME (HAProxy: leastconn + http-check):
     - Active connections (current load)
     - Average response time (historical performance)
   More sophisticated: accounts for both current backlog and server speed
-  
+
   nginx: least_time header;
     # Routes to server with smallest header_time × num_conns value
     # header_time: time until first byte of response
@@ -112,6 +112,7 @@ LEAST RESPONSE TIME (HAProxy: leastconn + http-check):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Least Connections (Round Robin only):
+
 - Variable-duration requests accumulate on some servers, leaving others idle
 - Fast requests queued behind slow ones → unpredictable latency
 - Degraded backends receive same traffic as healthy ones → cascading failure
@@ -147,12 +148,12 @@ backend order_service_pool
     option forwardfor                    # pass client IP in X-Forwarded-For
     option httpchk GET /actuator/health  # active health checks
     http-check expect status 200
-    
+
     # Weighted: server1 handles 3x, server2 handles 1x relative load
     server order-svc-1 10.0.1.1:8080 weight 3 check inter 10s fall 3 rise 2
     server order-svc-2 10.0.1.2:8080 weight 1 check inter 10s fall 3 rise 2
     server order-svc-3 10.0.1.3:8080 weight 2 check inter 10s fall 3 rise 2
-    
+
     # Observing active connections (HAProxy stats endpoint):
     # haproxy_backend_active_servers{backend="order_service_pool"}
     # haproxy_backend_current_sessions{backend="order_service_pool"}
@@ -184,11 +185,11 @@ Least Connections  ◄──── (you are here)
 ```nginx
 upstream api_backends {
     least_conn;   # Enable Least Connections (default: round-robin)
-    
+
     server api-1.internal:8080;
     server api-2.internal:8080;
     server api-3.internal:8080;
-    
+
     keepalive 64;  # keep 64 idle connections per worker per backend
                    # important: Least Connections + keepalive: the LB
                    # must count long-lived keepalive connections too
@@ -215,12 +216,12 @@ server {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Least Connections is always better than Round Robin | For homogeneous requests (similar duration, equal server capacity), Round Robin and Least Connections perform nearly identically. Least Connections adds state tracking overhead. For truly uniform workloads, Round Robin's simplicity wins |
-| Least Connections counts total connections, not active ones | Least Connections counts ACTIVE (in-progress) connections, not total established TCP connections including idle keepalives. Some implementations count all connections including keepalive — this can skew the algorithm for HTTP/1.1 with persistent connections |
-| Least Connections prevents hotspots | If one server becomes slow (network degradation, CPU throttling), it accumulates connections and stops receiving new ones — partially protecting it. But the remaining servers absorb its share and may themselves become overloaded. Least Connections mitigates but doesn't eliminate hotspots |
-| Weighted Least Connections needs manual weight tuning | Weights should match actual server capacity. Start with benchmark ratios (throughput test per instance type). In homogeneous fleets (all same instance type), all weights=1 is correct |
+| Misconception                                               | Reality                                                                                                                                                                                                                                                                                          |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Least Connections is always better than Round Robin         | For homogeneous requests (similar duration, equal server capacity), Round Robin and Least Connections perform nearly identically. Least Connections adds state tracking overhead. For truly uniform workloads, Round Robin's simplicity wins                                                     |
+| Least Connections counts total connections, not active ones | Least Connections counts ACTIVE (in-progress) connections, not total established TCP connections including idle keepalives. Some implementations count all connections including keepalive — this can skew the algorithm for HTTP/1.1 with persistent connections                                |
+| Least Connections prevents hotspots                         | If one server becomes slow (network degradation, CPU throttling), it accumulates connections and stops receiving new ones — partially protecting it. But the remaining servers absorb its share and may themselves become overloaded. Least Connections mitigates but doesn't eliminate hotspots |
+| Weighted Least Connections needs manual weight tuning       | Weights should match actual server capacity. Start with benchmark ratios (throughput test per instance type). In homogeneous fleets (all same instance type), all weights=1 is correct                                                                                                           |
 
 ---
 
@@ -232,20 +233,20 @@ server {
 PROBLEM:
   WebSocket connections: stay open for 30+ minutes.
   HTTP REST calls: 50-200ms.
-  
+
   Server A gets 100 WebSocket connections (long-lived, low CPU).
   Server A: active_connections = 100 → Least Connections routes AWAY from A.
   Server B/C: get all new REST traffic despite Server A being mostly idle.
   Server B: overloaded with REST requests (actual CPU at 90%).
   Server A: idle (100 WebSocket connections open but sleeping).
-  
+
   Least Connections counts connections, not CPU load.
   WebSocket connections inflate count without contributing load.
 
 FIX 1: Separate pools — WebSocket and REST on different backend groups.
   upstream websocket_pool { least_conn; server ws-1:8080; server ws-2:8080; }
   upstream rest_pool { least_conn; server rest-1:8080; server rest-2:8080; }
-  
+
   # Path-based routing:
   location /ws/ { proxy_pass http://websocket_pool; }
   location /api/ { proxy_pass http://rest_pool; }

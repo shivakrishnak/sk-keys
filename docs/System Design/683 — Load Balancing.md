@@ -18,10 +18,10 @@ tags: #intermediate, #distributed, #networking, #architecture, #reliability
 
 ⚡ TL;DR — **Load Balancing** distributes incoming traffic across multiple backend servers to prevent any single server from becoming a bottleneck, enabling horizontal scaling and high availability.
 
-| #683 | Category: System Design | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Horizontal Scaling | |
-| **Used by:** | Round Robin, Least Connections, Consistent Hashing, Sticky Sessions | |
+| #683            | Category: System Design                                             | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Horizontal Scaling                                                  |                 |
+| **Used by:**    | Round Robin, Least Connections, Consistent Hashing, Sticky Sessions |                 |
 
 ---
 
@@ -52,37 +52,37 @@ LAYER 4 (TCP/UDP) LOAD BALANCING:
   Operates at: IP addresses + TCP/UDP ports (no HTTP awareness)
   Sees: source IP, dest IP, source port, dest port, TCP flags
   Cannot see: HTTP headers, URL paths, cookies, request body
-  
+
   How it works:
     Client → TCP SYN to LB IP:443
     LB: selects backend (e.g., round-robin by connection count)
     LB: forwards entire TCP stream to selected backend
     Connection: client ↔ backend (LB is transparent pass-through)
-  
+
   Use cases:
     - Non-HTTP protocols (MySQL, PostgreSQL, gRPC)
     - Lowest latency (no packet inspection overhead)
     - TLS passthrough (LB doesn't decrypt; backend holds certificate)
-  
+
   Tools: AWS NLB, HAProxy TCP mode, iptables DNAT
 
 LAYER 7 (HTTP/HTTPS) LOAD BALANCING:
   Operates at: HTTP request headers, method, URL, cookies, body
   Can do: path-based routing, header-based routing, cookie affinity
-  
+
   How it works:
     Client → TLS terminated at LB (LB has certificate)
     LB: reads HTTP request fully
     LB: routing decision based on URL/headers/cookies
     LB: new HTTP connection to selected backend (not original client TCP)
-  
+
   Use cases:
     - HTTP/HTTPS web traffic (most modern services)
     - Path-based routing: /api/ → backend A, /static/ → CDN
     - A/B testing (route 10% by header to canary backend)
     - Session affinity (route by cookie to same backend)
     - Request manipulation (add headers, rewrite URLs)
-  
+
   Tools: AWS ALB, nginx, HAProxy HTTP mode, Traefik, Envoy
 
 ```
@@ -101,14 +101,14 @@ ACTIVE HEALTH CHECK (preferred):
   LB: if 3 consecutive probes fail → remove backend from rotation.
   LB: if 3 consecutive probes succeed → re-add backend.
   Cons: extra traffic overhead (usually negligible: 1 req/5s per backend).
-  
+
   AWS ALB health check config:
     Health check path: /actuator/health
     Interval: 30 seconds
     Healthy threshold: 2 (2 successes → re-add)
     Unhealthy threshold: 3 (3 failures → remove)
     Timeout: 5 seconds
-    
+
   Kubernetes readiness probe (same concept, pod-level):
     readinessProbe:
       httpGet:
@@ -156,6 +156,7 @@ CONSISTENT HASHING:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Load Balancing:
+
 - All traffic to one server: single point of failure, capacity ceiling
 - Server failure: complete outage
 - Cannot benefit from horizontal scaling (multiple servers) without a distributor
@@ -188,11 +189,11 @@ WITH Load Balancing:
 upstream order_service {
     # Least connections algorithm:
     least_conn;
-    
+
     server order-service-1:8080 weight=1;
     server order-service-2:8080 weight=1;
     server order-service-3:8080 weight=1;
-    
+
     # Health check:
     keepalive 32;  # keep 32 connections warm to each backend
 }
@@ -205,7 +206,7 @@ server {
     listen 443 ssl;
     ssl_certificate     /etc/nginx/certs/server.crt;
     ssl_certificate_key /etc/nginx/certs/server.key;
-    
+
     # Path-based routing (L7 capability):
     location /api/ {
         proxy_pass http://order_service;
@@ -214,7 +215,7 @@ server {
         proxy_connect_timeout 2s;
         proxy_read_timeout 30s;
     }
-    
+
     location /static/ {
         proxy_pass https://static_assets;
     }
@@ -275,7 +276,7 @@ resource "aws_lb_target_group" "order_service" {
     timeout             = 5
     matcher             = "200"
   }
-  
+
   # Deregistration delay: give instances time to drain in-flight requests
   deregistration_delay = 30
 }
@@ -285,12 +286,12 @@ resource "aws_lb_target_group" "order_service" {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Load balancers eliminate single points of failure completely | The load balancer itself can be a SPOF. Production systems run LBs in active-active or active-passive HA pairs. Cloud-managed LBs (AWS ALB/NLB) are inherently HA across multiple AZs |
-| More backends always means better performance | Adding backends improves throughput, but if the bottleneck is the database (all backends share one DB), adding app servers just shifts the bottleneck. Profile to find the actual constraint |
-| Round-robin ensures perfectly even distribution | Round-robin distributes connections evenly, but if some requests take 100x longer than others (long-polling, file uploads), backends become very uneven. Least-connections handles this better |
-| Load balancers work only at the network edge | Modern architectures use load balancing at multiple layers: edge LB (internet→cluster), service mesh (service→service), connection pooling (app→DB replicas), message partitioning (Kafka consumer groups) |
+| Misconception                                                | Reality                                                                                                                                                                                                    |
+| ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Load balancers eliminate single points of failure completely | The load balancer itself can be a SPOF. Production systems run LBs in active-active or active-passive HA pairs. Cloud-managed LBs (AWS ALB/NLB) are inherently HA across multiple AZs                      |
+| More backends always means better performance                | Adding backends improves throughput, but if the bottleneck is the database (all backends share one DB), adding app servers just shifts the bottleneck. Profile to find the actual constraint               |
+| Round-robin ensures perfectly even distribution              | Round-robin distributes connections evenly, but if some requests take 100x longer than others (long-polling, file uploads), backends become very uneven. Least-connections handles this better             |
+| Load balancers work only at the network edge                 | Modern architectures use load balancing at multiple layers: edge LB (internet→cluster), service mesh (service→service), connection pooling (app→DB replicas), message partitioning (Kafka consumer groups) |
 
 ---
 
@@ -305,17 +306,17 @@ PROBLEM:
   ALB: 5 seconds later, stops routing new requests to instance
   But: instance has 15-second requests in-flight (file upload, report generation)
   Those 15-second requests: connection reset by ALB after 5 seconds → 502
-  
+
 FIX:
   deregistration_delay = 60  # >= max expected request duration
-  
+
   AND: application graceful shutdown drain timeout >= deregistration_delay:
   server:
     shutdown: graceful
   spring:
     lifecycle:
       timeout-per-shutdown-phase: 55s  # slightly less than 60s ALB delay
-  
+
   SEQUENCE:
     ALB: deregisters instance → waits 60s → cuts connection
     App: receives SIGTERM → drains requests for 55s → exits

@@ -18,10 +18,10 @@ tags: #intermediate, #distributed, #networking, #architecture, #pattern
 
 ⚡ TL;DR — **Session Affinity** is the principle that a client's requests should reach the same server during a session; Sticky Sessions is one implementation — but external session stores remove the need entirely.
 
-| #688 | Category: System Design | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Load Balancing, Sticky Sessions | |
-| **Used by:** | Horizontal Scaling | |
+| #688            | Category: System Design         | Difficulty: ★★☆ |
+| :-------------- | :------------------------------ | :-------------- |
+| **Depends on:** | Load Balancing, Sticky Sessions |                 |
+| **Used by:**    | Horizontal Scaling              |                 |
 
 ---
 
@@ -54,38 +54,38 @@ STATEFULNESS SPECTRUM (and affinity requirements):
     - REST API with JWT: token carries all state
     - GraphQL API: state in database, stateless compute
     - Static asset servers: HTML/CSS/JS, all identical
-    
+
     All servers: identical, interchangeable.
     Load balancer: use any algorithm freely.
     Horizontal scaling: perfectly linear.
-    
+
   SOFT SESSION AFFINITY (prefer same server, can re-initialize):
     - In-memory computation cache (CDN edge, computation results)
       Same server: cache hit → fast response
       Different server: cache miss → recompute → still works, just slower
-      
+
     - Connection pools to specific shards (database routing):
       Same server: reuse existing DB connection pool
       Different server: create new pool → works, with connection overhead
-      
+
     - Not using session affinity: safe but suboptimal (performance)
     - Using session affinity: performance optimization only
-    
+
   HARD SESSION AFFINITY (broken without same server):
     - In-process HTTP sessions: Java HttpSession, PHP $_SESSION
       Without same server: "session not found" → authentication failure
       REQUIRES affinity to function at all
-      
+
     - Long-lived WebSocket connections (stateful protocol):
       WebSocket connection established to Server A.
       Server A maintains connection state (user, subscription topics).
       All WebSocket messages for this client: MUST go to Server A.
       Different server: connection doesn't exist → error.
-      
+
     - Conversational AI / multi-turn chat servers:
       Conversation context held in server memory.
       Different server: no context → broken conversation.
-      
+
 REMOVING HARD SESSION AFFINITY:
 
   Pattern 1: EXTERNALISE SESSION STATE
@@ -93,18 +93,18 @@ REMOVING HARD SESSION AFFINITY:
     @EnableRedisHttpSession  // sessions stored in Redis, not server RAM
     // Result: any server reads any session from Redis
     // Session affinity: no longer required
-    
+
   Pattern 2: CLIENT-SIDE STATE (JWT, stateless tokens)
     JWT payload: { userId: 42, roles: ["admin"], exp: 1730000000 }
     Signed with server secret → tamper-proof
     Any server: verify signature → extract state → proceed
     No server-side storage → truly stateless
-    
+
   Pattern 3: WEBSOCKET BACKPLANE (for WebSocket affinity)
     Redis Pub/Sub or Apache Kafka:
     Client → WebSocket → Server A → publishes to Redis channel
     Server B/C also subscribed → can relay messages to their clients
-    
+
     // Socket.IO with Redis Adapter:
     const { createAdapter } = require("@socket.io/redis-adapter");
     const pubClient = createClient({ url: "redis://redis:6379" });
@@ -119,17 +119,17 @@ REMOVING HARD SESSION AFFINITY:
 ```
 APPLICATION-LEVEL AFFINITY (sharding by user ID):
   Not a load balancer feature — baked into application routing.
-  
+
   Example: multi-tenant SaaS, each tenant has a dedicated shard:
     tenantId "acme-corp" → always to Shard 3 (data isolation)
     tenantId "globex" → always to Shard 7
-    
+
   Router service: routes based on tenant registry (database lookup).
   This is NOT sticky sessions — it's logical routing by business rule.
-  
+
   Advantage: can be maintained across server restarts, deploys
   Disadvantage: hot tenant problem (one large tenant overloads shard)
-  
+
 LOAD BALANCER AFFINITY (sticky sessions):
   Transparent to application — LB handles routing.
   Session → Server mapping: stored in LB's memory.
@@ -142,6 +142,7 @@ LOAD BALANCER AFFINITY (sticky sessions):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Session Affinity (stateful app with server-side sessions):
+
 - Requests from same user → different servers → broken session state
 - User experience: random logouts, lost state, broken flows
 
@@ -262,12 +263,12 @@ public UserProfile getProfile(HttpSession session) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                           | Reality                                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Session Affinity and Sticky Sessions are the same thing | Sticky Sessions is one implementation of Session Affinity. Others include IP-hash routing, consistent hashing by session token, application-level sharding by user ID, and client-side state (JWT). Session Affinity is the principle; Sticky Sessions is a specific mechanism |
-| All distributed applications need session affinity | Only applications with server-side state require it. REST/JSON APIs with JWT, GraphQL APIs, and static content servers are stateless and work fine without any session affinity |
-| Removing session affinity always requires Redis | Redis is the most common external session store, but alternatives include: Memcached, database-backed sessions (slower), client-side JWT tokens (no external store needed), cookie-stored encrypted sessions (limited size) |
-| Session affinity prevents horizontal scaling | Sticky sessions ENABLE horizontal scaling for stateful apps that would otherwise break. The real ceiling is uneven load (one server accumulates more sessions than others). Removing session affinity entirely (via external store) provides the most scalable architecture |
+| All distributed applications need session affinity      | Only applications with server-side state require it. REST/JSON APIs with JWT, GraphQL APIs, and static content servers are stateless and work fine without any session affinity                                                                                                |
+| Removing session affinity always requires Redis         | Redis is the most common external session store, but alternatives include: Memcached, database-backed sessions (slower), client-side JWT tokens (no external store needed), cookie-stored encrypted sessions (limited size)                                                    |
+| Session affinity prevents horizontal scaling            | Sticky sessions ENABLE horizontal scaling for stateful apps that would otherwise break. The real ceiling is uneven load (one server accumulates more sessions than others). Removing session affinity entirely (via external store) provides the most scalable architecture    |
 
 ---
 
@@ -280,30 +281,30 @@ PROBLEM:
   Rolling deployment: replace servers one at a time.
   Load balancer: 4 servers (A, B, C, D)
   Server A: 1,500 active sessions
-  
+
   Deployment starts: Server A taken out of rotation.
   Session affinity bindings for Server A: all immediately invalid.
   1,500 users: next request → LB routes to B/C/D → session not found.
   1,500 users: forced logout (HttpSession.getAttribute returns null → NPE)
-  
+
   User impact: all active users on Server A simultaneously logged out.
   With 4 servers: 25% of users logged out per server replacement.
-  
+
 MITIGATION 1: Session drain (graceful)
   1. Remove Server A from rotation (no new sessions routed there).
   2. Set drain timeout: 30 minutes (match session TTL).
   3. Existing session requests: still route to Server A during drain.
   4. After 30 minutes: all sessions either expired or completed.
   5. Now terminate Server A — no active sessions → no forced logouts.
-  
+
   Trade-off: deployment takes hours (30-min drain × 4 servers = 2 hours).
-  
+
 MITIGATION 2: External session store (Redis) — the proper fix
   Sessions in Redis: survive Server A termination.
   Server A is terminated → sessions remain in Redis.
   Requests: LB routes to B/C/D → they read sessions from Redis.
   No forced logouts. Rolling deployment takes minutes, not hours.
-  
+
   Implementation time: typically 1-3 sprints.
   ROI: eliminates all session-related production incidents.
 ```

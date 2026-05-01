@@ -18,10 +18,10 @@ tags: #advanced, #reliability, #distributed, #architecture, #pattern
 
 ⚡ TL;DR — **Active-Active** runs all redundant instances simultaneously as live traffic servers; every node handles requests, so any node failure is absorbed transparently with no switchover delay.
 
-| #695 | Category: System Design | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Redundancy / Failover, Load Balancing | |
-| **Used by:** | Geo-Replication, Multi-Region Architecture | |
+| #695            | Category: System Design                    | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------- | :-------------- |
+| **Depends on:** | Redundancy / Failover, Load Balancing      |                 |
+| **Used by:**    | Geo-Replication, Multi-Region Architecture |                 |
 
 ---
 
@@ -53,37 +53,37 @@ STATELESS ACTIVE-ACTIVE (easy):
   All nodes: identical, any node handles any request
   Load balancer: round-robin or least-connections across all nodes
   Node failure: remove from LB pool, remaining nodes absorb traffic
-  
+
   No data consistency problem (no local state → no conflict)
   No switchover: traffic immediately redirected by LB health check
-  
+
   3 nodes at 33% capacity each:
   1 node fails → remaining 2 at 50% → degraded but functional
   Recovery: add new node, LB adds to pool, back to 33%
 
 DATABASE ACTIVE-ACTIVE (complex):
-  
+
   CHALLENGE: concurrent writes to same data from two nodes
-  
+
   Example: User balance = $100
     Node A receives: Debit $30 → new balance = $70
     Node B receives (same instant): Debit $50 → new balance = $50
     Both writes committed on their respective nodes.
     Replication: both nodes receive each other's write.
     CONFLICT: which value is correct? $70 or $50?
-    
+
     Actual answer: $20 ($100 - $30 - $50) — but neither node got this.
     Data corruption.
-    
+
   CONFLICT RESOLUTION STRATEGIES:
-  
+
   1. LAST WRITE WINS (LWW):
      Timestamp-based: latest timestamp wins.
      A wrote at T=100.01, B wrote at T=100.00 → A's write wins ($70)
      Problem: B's $50 debit is silently lost → user debited $50 without effect.
      Use: non-critical data, eventually consistent systems (social media "likes"),
           where approximate consistency is acceptable.
-  
+
   2. CRDT (Conflict-free Replicated Data Types):
      Data structure designed so concurrent operations always merge correctly.
      Counters (G-Counter, PN-Counter): each node increments its own counter.
@@ -91,21 +91,21 @@ DATABASE ACTIVE-ACTIVE (complex):
      Example: shopping cart (add-only set): both carts merged = union.
      Limitations: only works for specific data structures.
                   Not suitable for "set balance to X" operations.
-  
+
   3. APPLICATION-LEVEL CONFLICT DETECTION:
      Vector clocks track causal order.
      On conflict: expose to application → application resolves.
      DynamoDB with "last_writer_wins" or custom resolver.
      Amazon Dynamo paper: conflict resolution at application layer.
      Use: when business logic can decide (e.g., accept both, take max, etc.)
-  
+
   4. MULTI-MASTER WITH WRITE COORDINATION:
      All writes for a record routed to the same primary node.
      Routing: consistent hashing by record ID → always same node.
      "Active-Active" in traffic terms but writes are actually serialised per record.
      CockroachDB, YugabyteDB: distributed SQL with Raft consensus per range.
      MySQL Group Replication: certify writes across all nodes before committing.
-  
+
   5. SHARED STORAGE (easiest):
      All nodes write to same distributed storage.
      Aurora Multi-Master: multiple writer nodes, single storage layer.
@@ -115,17 +115,17 @@ DATABASE ACTIVE-ACTIVE (complex):
 
 ACTIVE-ACTIVE ACROSS REGIONS:
   Primary use case: latency reduction + availability
-  
+
   Users in US → us-east-1 cluster (low latency)
   Users in EU → eu-west-1 cluster (low latency)
-  
+
   Data consistency: each region may serve slightly stale data
   (asynchronous replication between regions, ~100ms lag)
-  
+
   Pattern: Route writes to user's home region.
            Route reads to nearest region (may be slightly stale).
            Global DB: DynamoDB Global Tables (replication across 5 regions).
-  
+
   Amazon DynamoDB Global Tables:
     Multi-region Active-Active
     Last Write Wins conflict resolution (timestamp-based)
@@ -138,6 +138,7 @@ ACTIVE-ACTIVE ACROSS REGIONS:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Active-Active (Active-Passive only):
+
 - Half capacity sits idle (standby server)
 - Failover time: 30-90 seconds (promotion + DNS change) → users see outage
 - Uneven geographic load: some regions serve more users than others
@@ -168,18 +169,18 @@ WITH Active-Active:
 ARCHITECTURE:
   us-east-1: App cluster + Aurora Primary
   eu-west-1: App cluster + Aurora Read Replica (promoted to writer on failover)
-  
+
   AWS Global Accelerator: anycast routing → nearest healthy region
-  
+
   Traffic flow:
     User in New York → Global Accelerator → us-east-1 (nearest) → App → DB
     User in London → Global Accelerator → eu-west-1 (nearest) → App → Aurora
-    
+
     If us-east-1 fails (unhealthy health check):
     User in New York → Global Accelerator → reroutes to eu-west-1
     Wait time: ~30 seconds (health check detection + routing update)
     Note: this is close to Active-Active but still has a brief RTO
-    
+
     True Active-Active for DB: Aurora Global Database
     Both regions: write capability (multi-master mode)
     Replication: storage level, ~100ms lag
@@ -188,11 +189,11 @@ KUBERNETES MULTI-CLUSTER ACTIVE-ACTIVE:
   Two clusters: cluster-a (us-east-1), cluster-b (eu-west-1)
   Istio + Kiali: cross-cluster service mesh
   DNS: weighted routing (50/50) → both clusters serve traffic
-  
+
   Any pod in either cluster can receive requests.
   Cross-cluster: pod in cluster-a can call pod in cluster-b transparently.
   Shared state: centralised database or DynamoDB Global Tables.
-  
+
   Failure: cluster-b network outage → mesh detects → routes all to cluster-a
   Recovery: cluster-b recovers → mesh rebalances to 50/50
 ```
@@ -244,7 +245,7 @@ public class UserService {
     // Write: goes to local region → Global Tables replicates to all regions
     // Read: local region → possibly stale by < 1 second (eventual consistency)
     // Accept this: 1-second stale user profile is acceptable for most use cases
-    
+
     public void updateUserPreference(String userId, Map<String, String> prefs) {
         // This write is committed locally, then replicated globally
         // LWW conflict resolution: if two regions update simultaneously,
@@ -266,12 +267,12 @@ public class UserService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Active-Active means no data loss on failure | Active-Active for stateless services: no data loss (no state). Active-Active for databases with async replication: replication lag means very recent writes to failed node may not have replicated. RPO is near-zero (milliseconds), not guaranteed zero |
-| Active-Active is always better than Active-Passive | Active-Active is more complex and costly to implement correctly for stateful services. For databases, conflict resolution is difficult. For small organisations or non-critical services, Active-Passive is simpler and sufficient. Use Active-Active when the complexity cost is justified by the availability requirement |
+| Misconception                                                         | Reality                                                                                                                                                                                                                                                                                                                            |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Active-Active means no data loss on failure                           | Active-Active for stateless services: no data loss (no state). Active-Active for databases with async replication: replication lag means very recent writes to failed node may not have replicated. RPO is near-zero (milliseconds), not guaranteed zero                                                                           |
+| Active-Active is always better than Active-Passive                    | Active-Active is more complex and costly to implement correctly for stateful services. For databases, conflict resolution is difficult. For small organisations or non-critical services, Active-Passive is simpler and sufficient. Use Active-Active when the complexity cost is justified by the availability requirement        |
 | Multi-region Active-Active provides consistent low latency everywhere | Users are routed to nearest region (low read latency). But writes that require cross-region coordination (synchronous commit) have latency proportional to inter-region RTT (100-200ms). For most use cases, writes go to the nearest region's DB (no cross-region wait), but users near no region still experience higher latency |
-| Active-Active databases eliminate the need for conflict resolution | Any Active-Active write-accepting database must handle conflicts. Even "serialisable" distributed databases (CockroachDB, Spanner) use distributed consensus (Raft/Paxos) that serialises conflicting writes — but this serialisation has a performance cost and cross-region latency for geographically distributed writes |
+| Active-Active databases eliminate the need for conflict resolution    | Any Active-Active write-accepting database must handle conflicts. Even "serialisable" distributed databases (CockroachDB, Spanner) use distributed consensus (Raft/Paxos) that serialises conflicting writes — but this serialisation has a performance cost and cross-region latency for geographically distributed writes        |
 
 ---
 
@@ -284,15 +285,15 @@ PROBLEM: e-commerce order processing with DynamoDB Global Tables (LWW)
 
   User places order in us-east-1 at T=0.
   Order record written: { orderId: "123", status: "pending", region: "us-east-1" }
-  
+
   Replication to eu-west-1: ~500ms delay.
-  
+
   At T=200ms: user refreshes page; request goes to eu-west-1 (round-robin LB).
   eu-west-1: order "123" not yet replicated → "order not found" → 404!
-  
+
   User: clicks "place order" again → second order "124" created.
   At T=600ms: both "123" and "124" exist → user charged twice.
-  
+
   ROOT CAUSE: Read-your-writes consistency not guaranteed across regions.
   Active-Active + async replication = eventual consistency = stale reads possible.
 
@@ -301,22 +302,22 @@ SOLUTIONS:
   1. READ-YOUR-WRITES (Session consistency):
      After write in region A: redirect subsequent reads to region A
      (for the duration of the session or until replication confirmed).
-     
+
      AWS Global Accelerator: route user to same region for duration of session.
      Cookie: X-Write-Region: us-east-1 → force reads to us-east-1 for 2 seconds.
-     
+
   2. CONDITIONAL WRITES (Optimistic concurrency):
      DynamoDB condition expressions:
        // Only create order if orderId does NOT already exist:
        ConditionExpression: attribute_not_exists(orderId)
        // Second "place order" click: orderId "123" exists → ConditionalCheckFailed
        // Returns 400, not 200 → idempotent order creation
-     
+
   3. IDEMPOTENCY KEY:
      Client generates idempotency key (UUID) per order attempt.
      Server: deduplicate on idempotency key (even across regions).
      DynamoDB conditional write on idempotency key ensures exactly-once creation.
-  
+
   4. SINGLE-REGION WRITE PATH (Active-Active reads, Active-Passive writes):
      All writes: routed to us-east-1 (single write primary)
      All reads: served from nearest region (read replicas)

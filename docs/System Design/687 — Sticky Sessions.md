@@ -18,10 +18,10 @@ tags: #intermediate, #distributed, #networking, #architecture, #pattern
 
 ⚡ TL;DR — **Sticky Sessions** (session persistence) ensures all requests from the same user/session are routed to the same backend server, preserving server-side session state across multiple HTTP requests.
 
-| #687 | Category: System Design | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Load Balancing, Round Robin, Session Affinity | |
-| **Used by:** | Session Affinity | |
+| #687            | Category: System Design                       | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------- | :-------------- |
+| **Depends on:** | Load Balancing, Round Robin, Session Affinity |                 |
+| **Used by:**    | Session Affinity                              |                 |
 
 ---
 
@@ -51,27 +51,27 @@ User logs in → load balancer routes to Server A → Server A creates session (
 STATELESS HTTP DESIGN (ideal for horizontal scaling):
   HTTP is stateless by design: each request is independent.
   User state lives in external storage: database, Redis.
-  
+
   Request 1: POST /login → authenticated → JWT token returned
   Request 2: GET /dashboard → sends JWT → any server can verify JWT
   Request 3: GET /profile → any server reads from shared database
-  
+
   Load balancer: distributes freely — any server handles any request.
   Horizontal scaling: add servers → automatically handles more traffic.
   Server failure: requests rerouted → new server handles them fine.
-  
+
 STATEFUL HTTP APPLICATION (the problem):
   Server-side session: HttpSession (Java EE), $_SESSION (PHP),
   request.session (Express.js)
-  
+
   Session data lives IN MEMORY on the specific server:
   Server A RAM: { "session_abc123": { "userId": 42, "cart": [...] } }
   Server B RAM: { }  ← no knowledge of session_abc123
-  
+
   Without Sticky Sessions:
   Request 1 → Server A → creates session_abc123 in Server A's memory
   Request 2 → Server B → "session_abc123 not found" → 401 Unauthorized
-  
+
   User experience: random logouts, lost shopping carts, broken workflows.
 
 STICKY SESSIONS: bind session to server, solve the symptoms
@@ -80,10 +80,10 @@ STICKY SESSIONS: bind session to server, solve the symptoms
   { "session_abc123": "server-a:8080" }
   { "session_xyz789": "server-b:8080" }
   { "session_qrs456": "server-a:8080" }
-  
+
   Cookie: JSESSIONID=abc123 → LB table lookup → Server A
   Cookie: JSESSIONID=xyz789 → LB table lookup → Server B
-  
+
   Server A handles 2 sessions, Server B handles 1 session.
   (Load imbalance is accepted to preserve session affinity)
 
@@ -91,15 +91,15 @@ COOKIE-BASED STICKINESS (most reliable):
   First request: load balancer sets a cookie with the server binding:
     Set-Cookie: AWSELB=server-a-id; Path=/; HttpOnly
     (or AWSALB, BIGipServer, NginxRoute, etc.)
-  
+
   Subsequent requests: browser sends cookie → LB reads → routes to server-a
-  
+
   Advantages: works even if client IP changes (mobile, NAT)
   Disadvantages: requires cookie support in client; adds cookie to response
 
 IP HASH STICKINESS (simpler):
   server_binding = hash(client_ip) % num_servers
-  
+
   Advantages: no cookie needed; stateless load balancer
   Disadvantages: NAT (many users behind one IP → hot server),
                 IPv6 addresses harder to predict,
@@ -111,6 +111,7 @@ IP HASH STICKINESS (simpler):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Sticky Sessions (stateful application without shared session store):
+
 - Requests from same user routed to different servers → sessions lost
 - Users randomly logged out, shopping carts emptied, workflows broken
 - Horizontal scaling impossible — adding servers breaks existing users
@@ -155,7 +156,7 @@ FAILURE SCENARIO:
   Next request: AWSALB points to dead server → no longer in pool
   ALB: falls back to routing algorithm → sends to Server B
   Server B: no session abc123 → user must log in again
-  
+
   This is unavoidable with server-side session state.
   Mitigation: session replication to nearest neighbour (Tomcat clustering),
               or external session store (Redis) + sticky sessions as optimisation.
@@ -192,7 +193,7 @@ Session Affinity (broader concept)
 upstream api_backend {
     # Cookie-based sticky sessions:
     sticky cookie srv_id expires=1h domain=.example.com path=/ httponly;
-    
+
     server backend1:8080;
     server backend2:8080;
     server backend3:8080;
@@ -222,12 +223,12 @@ backend app_servers
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Sticky Sessions are needed for all load-balanced applications | Only needed for applications with server-side session state. Stateless applications (JWT auth, API servers, microservices) don't need sticky sessions — any server can handle any request |
-| Sticky Sessions solve the horizontal scaling problem | They enable horizontal scaling for stateful apps, but they also limit it: if one server has disproportionately many active sessions, load is uneven. They're a workaround, not a true solution — the real solution is an external session store |
-| IP-hash sticky sessions always route the same client to the same server | IP-hash fails when clients are behind NAT (thousands of users share one IP → all routed to same server) or when clients use VPNs or mobile networks (IP changes during session → routed to wrong server) |
-| Sticky Sessions prevent data loss on server failure | Server failure always means session loss when using server-side sessions. Sticky Sessions don't replicate session data; they just maintain affinity for healthy servers. For HA, use session replication or external session stores |
+| Misconception                                                           | Reality                                                                                                                                                                                                                                         |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sticky Sessions are needed for all load-balanced applications           | Only needed for applications with server-side session state. Stateless applications (JWT auth, API servers, microservices) don't need sticky sessions — any server can handle any request                                                       |
+| Sticky Sessions solve the horizontal scaling problem                    | They enable horizontal scaling for stateful apps, but they also limit it: if one server has disproportionately many active sessions, load is uneven. They're a workaround, not a true solution — the real solution is an external session store |
+| IP-hash sticky sessions always route the same client to the same server | IP-hash fails when clients are behind NAT (thousands of users share one IP → all routed to same server) or when clients use VPNs or mobile networks (IP changes during session → routed to wrong server)                                        |
+| Sticky Sessions prevent data loss on server failure                     | Server failure always means session loss when using server-side sessions. Sticky Sessions don't replicate session data; they just maintain affinity for healthy servers. For HA, use session replication or external session stores             |
 
 ---
 
@@ -239,23 +240,23 @@ backend app_servers
 PROBLEM:
   9 AM: 10 backend servers, 10,000 users with sticky sessions evenly distributed.
   Each server: 1,000 sticky sessions.
-  
+
   11 AM: traffic spike → Auto Scaler adds 5 more servers (now 15 total).
   New servers: 0 sticky sessions (no one is bound to them yet).
   Existing 10 servers: still have their 1,000 sessions each.
-  
+
   New requests from NEW users: round-robin across all 15 servers.
   New users: most go to 5 new servers (they're free in round-robin).
   Existing users: still bound to their original 10 servers.
-  
+
   Effective load:
     Original 10 servers: 1,000 old sessions + some new users
     New 5 servers: only new users (no sessions yet)
-  
+
   RESULT: load does NOT distribute evenly across 15 servers.
   The 10 original servers are still handling most of the load.
   Auto scaling didn't help existing users — only new users hit new servers.
-  
+
 FIX:
   OPTION 1 (Best): Migrate to shared session store (Redis).
     Spring Session + Redis:
@@ -264,12 +265,12 @@ FIX:
     // Any server can handle any user's request
     // Sticky sessions no longer needed
     // Auto scaling: new server immediately handles all sessions
-  
+
   OPTION 2 (Migration path): Session replication.
     Tomcat cluster: replicate session data across all nodes.
     Expensive (network + memory per replication),
     but allows removing sticky sessions requirement.
-  
+
   OPTION 3 (Temporary relief): Session drain during scale-in.
     Before decommissioning a server:
     - Remove from load balancer (no new sessions)

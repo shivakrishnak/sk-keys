@@ -18,10 +18,10 @@ tags: #advanced, #distributed, #performance, #reliability, #architecture
 
 ⚡ TL;DR — **Thundering Herd** occurs when a large number of processes simultaneously wake up and compete for the same resource (cache expiry, server restart, broadcast wakeup), overwhelming the system and causing cascade failure.
 
-| #700 | Category: System Design | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Caching, Load Balancing, Auto Scaling | |
-| **Used by:** | Rate Limiting (System), Capacity Planning | |
+| #700            | Category: System Design                   | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------- | :-------------- |
+| **Depends on:** | Caching, Load Balancing, Auto Scaling     |                 |
+| **Used by:**    | Rate Limiting (System), Capacity Planning |                 |
 
 ---
 
@@ -60,19 +60,19 @@ VARIANT 1: CACHE STAMPEDE (most common)
             Queue: 4,900 queries waiting
             Queries: each takes 200ms normally → now 30 seconds (resource contention)
   T=90:    Database crashes (OOM, connection limit exceeded)
-  
+
   SOLUTIONS:
-  
+
   A. MUTEX LOCK (Cache Stampede Lock / Cache Miss Coalescing):
-  
+
     When a cache miss occurs, only ONE request fetches from DB.
     Others: wait for the first request to finish and populate cache.
-    
+
     // Java: cache-aside with lock using Redis SETNX (SET if Not eXists):
     public String getHomepage() {
       String cached = redis.get("homepage");
       if (cached != null) return cached;  // cache hit
-      
+
       // Cache miss: try to acquire lock
       boolean acquired = redis.setnx("homepage:lock", "1");
       if (acquired) {
@@ -90,61 +90,61 @@ VARIANT 1: CACHE STAMPEDE (most common)
         return getHomepage();  // recursive retry (with backoff in prod)
       }
     }
-    
+
     PROBLEM: threads block while waiting.
     BETTER: return stale data while refresh happens ("stale while revalidate").
-  
+
   B. PROBABILISTIC EARLY EXPIRATION (PER):
-  
+
     Before the TTL expires, stochastically recompute the cache.
     Items with high recomputation cost and many readers: expire earlier on average.
-    
+
     // PER algorithm (XFetch by Vattani et al., 2015):
     double expiryTime = cacheSetTime + ttl;
     double currentTime = System.currentTimeMillis() / 1000.0;
     double recomputationTime = 0.1; // 100ms estimated recomputation
     double beta = 1.0; // tuning parameter
-    
-    boolean shouldRecompute = 
+
+    boolean shouldRecompute =
       currentTime - beta * recomputationTime * Math.log(Math.random()) > expiryTime;
-    
+
     // Result: cache is refreshed BEFORE it expires, by a random early amount
     // Earlier refresh probability increases as TTL approaches
     // Only ONE request at a time is in the "early refresh" window → no stampede
-  
+
   C. JITTER (TTL randomisation):
-  
+
     Instead of fixed TTL=60, use: TTL = 60 + random(0, 10)
     Effect: cache keys don't all expire at the same instant
-    
-    // Different users' requests: 
+
+    // Different users' requests:
     //   homepage key (user A's request cached): TTL=63
-    //   homepage key (user B's request cached): TTL=67  
+    //   homepage key (user B's request cached): TTL=67
     //   All staggered by ±10 seconds
-    
+
     Cache.setex("homepage", 60 + random.nextInt(10), data)
-    
+
     Result: expiration spread over 10 seconds → max 10% of herd per second
     Simplest fix. Doesn't eliminate stampede entirely, just reduces peak.
 
 VARIANT 2: CONNECTION STAMPEDE (server restart)
 
   Scenario: Service A goes down briefly (deploy/crash).
-  Client B: 1,000 connections retry. All use exponential backoff... 
-  But they all started failing at the same time → same backoff intervals → 
+  Client B: 1,000 connections retry. All use exponential backoff...
+  But they all started failing at the same time → same backoff intervals →
   all retry at T+1s → server overwhelmed → goes down again → retry cycle
-  
+
   FIX: JITTER in exponential backoff
-  
+
   BAD (synchronised retries — thundering herd):
     retry_delay = min(2^attempt, 60)  // same for all clients
-    
+
   GOOD (desynchronised via jitter):
     // Full jitter:
     retry_delay = random(0, min(2^attempt, 60))
     // Decorrelated jitter (AWS recommended):
     retry_delay = min(max_delay, random(base, prev_delay * 3))
-    
+
   Result: 1,000 clients spread their retries across 0-60 seconds
   Server: 1,000 connections / 60 seconds = ~17 connections/second (manageable)
   vs. 1,000 connections in 1 second (overwhelming)
@@ -154,13 +154,13 @@ VARIANT 3: WORKER STAMPEDE (scheduled jobs + message queues)
   Scenario: 1,000 worker processes subscribe to a queue.
   A message "process batch" is broadcast at midnight.
   All 1,000 workers: wake up simultaneously → all try to acquire database connection.
-  
+
   FIX: MESSAGE VISIBILITY / COMPETING CONSUMERS (SQS design):
     SQS: each message visible to ONE consumer at a time.
     Consumer processes: compete for messages → natural rate limiting.
     1,000 workers: each picks up one message → 1,000 messages processed in parallel
     (Not simultaneously on the same resource — each gets a different message)
-    
+
   FIX: DISTRIBUTED RATE LIMITING (see Rate Limiting keyword)
     Token bucket: workers draw tokens before processing
     Rate: 100 db operations/second maximum
@@ -172,6 +172,7 @@ VARIANT 3: WORKER STAMPEDE (scheduled jobs + message queues)
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Thundering Herd protection:
+
 - Cache expiry → database overload → cascade failure at predictable intervals
 - Server restarts → connection storm → immediate second outage
 - Scheduled jobs → synchronised resource contention → job delays / failures
@@ -214,10 +215,10 @@ def get_homepage():
     cached = r.get("homepage:data")
     if cached:
         return cached  # cache hit: fast path
-    
+
     # Cache miss: try to acquire lock for refresh
     lock_acquired = r.set("homepage:lock", "1", nx=True, ex=LOCK_TTL)
-    
+
     if lock_acquired:
         # This request recomputes the cache
         try:
@@ -235,7 +236,7 @@ def get_homepage():
         stale = r.get("homepage:data:stale")
         if stale:
             return stale  # serve stale immediately (no wait)
-        
+
         # No stale data: wait with brief backoff
         time.sleep(0.1)
         return get_homepage()  # retry (add max retry limit in prod)
@@ -245,7 +246,7 @@ def expensive_db_query():
     existing = r.get("homepage:data")
     if existing:
         r.setex("homepage:data:stale", STALE_EXTENSION, existing)
-    
+
     # Simulate expensive query:
     time.sleep(0.2)
     return f"<html>Homepage content at {time.time()}</html>"
@@ -316,12 +317,12 @@ public class HomepageService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Thundering herd only affects caches | It affects any shared resource with synchronized wake-up: connection pools (reconnection storms), database connection limits (multiple services restart simultaneously), message queues (broadcast wakeup of consumers), DNS TTL expiry (all clients refresh simultaneously). Any pattern of synchronised dormancy → simultaneous activation is a thundering herd |
-| Adding more cache servers eliminates thundering herd | More cache nodes reduce single-node load but don't eliminate the herd. If 10,000 clients simultaneously miss the same key, distributing those 10,000 simultaneous DB queries across 10 nodes still overwhelms the database (1,000 queries per node simultaneously). The fix is coalescing or jitter, not scaling |
-| Thundering herd is rare and not worth planning for | Cache expiry is routine. Scheduled jobs are routine. Server restarts (deployments) are routine. Any system with multiple cache entries and concurrent users will experience mini-herds on every cache miss. The scale of impact determines whether it's noticeable. Planning for it prevents production incidents |
-| Increasing cache TTL eliminates thundering herd | Longer TTL: stampede happens less frequently but at higher magnitude (more stale reads accumulated → larger surge when expiry hits). The fundamental problem (synchronised expiry) is unchanged; only the frequency shifts |
+| Misconception                                        | Reality                                                                                                                                                                                                                                                                                                                                                           |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Thundering herd only affects caches                  | It affects any shared resource with synchronized wake-up: connection pools (reconnection storms), database connection limits (multiple services restart simultaneously), message queues (broadcast wakeup of consumers), DNS TTL expiry (all clients refresh simultaneously). Any pattern of synchronised dormancy → simultaneous activation is a thundering herd |
+| Adding more cache servers eliminates thundering herd | More cache nodes reduce single-node load but don't eliminate the herd. If 10,000 clients simultaneously miss the same key, distributing those 10,000 simultaneous DB queries across 10 nodes still overwhelms the database (1,000 queries per node simultaneously). The fix is coalescing or jitter, not scaling                                                  |
+| Thundering herd is rare and not worth planning for   | Cache expiry is routine. Scheduled jobs are routine. Server restarts (deployments) are routine. Any system with multiple cache entries and concurrent users will experience mini-herds on every cache miss. The scale of impact determines whether it's noticeable. Planning for it prevents production incidents                                                 |
+| Increasing cache TTL eliminates thundering herd      | Longer TTL: stampede happens less frequently but at higher magnitude (more stale reads accumulated → larger surge when expiry hits). The fundamental problem (synchronised expiry) is unchanged; only the frequency shifts                                                                                                                                        |
 
 ---
 
@@ -332,27 +333,27 @@ public class HomepageService {
 ```
 PROBLEM: Rolling restart causes cache stampede
 
-  Scenario: 
+  Scenario:
     20 app servers serving 50,000 requests/minute.
     Each server: warm in-memory Caffeine cache (1,000 cached items).
     Rolling deploy: restart servers one by one (5 minutes each).
-    
+
   At T=0: server 1 restarted → cold cache.
     All requests to server 1: cache miss → DB query
     DB load: +5% (server 1 is 1/20 = 5% of fleet)
     Acceptable.
-    
+
   At T=5: server 2 restarted → cold cache.
     +5% DB load. Still OK.
-    
+
   At T=15: 4 servers cold → 20% more DB queries.
     DB: starting to strain.
-    
+
   At T=60: all 20 servers restarted (but they take 5 min each to warm up):
     At peak: 10 servers are cold (50% of fleet).
     DB load: +50% from cold cache misses.
     DB: throughput limit hit → queries slow down → request timeouts.
-    
+
   Cold cache + rolling deploy = self-inflicted thundering herd.
 
 FIX 1: Cache warm-up before serving traffic
@@ -360,16 +361,16 @@ FIX 1: Cache warm-up before serving traffic
     1. Start new server instance
     2. Execute warm-up script: pre-populate 100 most common cache keys from DB
     3. ONLY THEN: add to load balancer pool
-    
+
     # warm-up script example:
     # curl http://localhost:8080/internal/cache-warmup
     # → endpoint: loads top-100 products, top-10 categories, home page data into cache
-    
+
 FIX 2: External shared cache (Redis)
   If cache is in Redis (not in-process Caffeine):
   Server restart: connects to Redis → all cache entries still there.
   No cold cache on restart → no thundering herd.
-  
+
   Trade-off: in-process cache is faster (0.01ms vs 1ms Redis roundtrip)
   For stampede prevention: Redis cache is far superior.
 
