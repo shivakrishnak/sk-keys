@@ -18,10 +18,10 @@ tags: #advanced, #microservices, #distributed, #messaging, #architecture, #patte
 
 ⚡ TL;DR — **Event-Driven Microservices** architecture uses **domain events** published to a message broker (Kafka, RabbitMQ) as the primary integration mechanism between services. Services are loosely coupled: producers publish events without knowing consumers. Enables: temporal decoupling, independent scalability, and event replay. Trade-off: eventual consistency and increased operational complexity.
 
-| #655            | Category: Microservices                                                                               | Difficulty: ★★★ |
-| :-------------- | :---------------------------------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Synchronous vs Async Communication, Saga Pattern (Microservices)                                      |                 |
-| **Used by:**    | Eventual Consistency (Microservices), Event Sourcing in Microservices, CQRS in Microservices          |                 |
+| #655            | Category: Microservices                                                                      | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Synchronous vs Async Communication, Saga Pattern (Microservices)                             |                 |
+| **Used by:**    | Eventual Consistency (Microservices), Event Sourcing in Microservices, CQRS in Microservices |                 |
 
 ---
 
@@ -299,12 +299,12 @@ BigDecimal price = productPriceProjectionRepository
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Event-driven means all communication is asynchronous | Even in event-driven systems, some operations require synchronous responses (user-facing reads, real-time validation). Event-driven architecture complements synchronous calls — it doesn't replace them for all interactions |
-| The message broker is just a pass-through | The broker (Kafka) is a critical infrastructure component. Events are persisted in the broker for the retention period. Broker availability, partition count, replication factor, and retention configuration directly impact system behaviour |
-| Event-driven services are automatically idempotent | Kafka delivers events at-least-once. Consumers WILL receive duplicate events. Every consumer must implement idempotency (check if event was already processed using eventId before processing) |
-| Event ordering is guaranteed globally | Kafka guarantees ordering only within a partition. Events for the same entity (e.g., same orderId) must be published to the same partition (use orderId as partition key) to guarantee ordering. Global ordering across partitions is not guaranteed |
+| Misconception                                        | Reality                                                                                                                                                                                                                                              |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Event-driven means all communication is asynchronous | Even in event-driven systems, some operations require synchronous responses (user-facing reads, real-time validation). Event-driven architecture complements synchronous calls — it doesn't replace them for all interactions                        |
+| The message broker is just a pass-through            | The broker (Kafka) is a critical infrastructure component. Events are persisted in the broker for the retention period. Broker availability, partition count, replication factor, and retention configuration directly impact system behaviour       |
+| Event-driven services are automatically idempotent   | Kafka delivers events at-least-once. Consumers WILL receive duplicate events. Every consumer must implement idempotency (check if event was already processed using eventId before processing)                                                       |
+| Event ordering is guaranteed globally                | Kafka guarantees ordering only within a partition. Events for the same entity (e.g., same orderId) must be published to the same partition (use orderId as partition key) to guarantee ordering. Global ordering across partitions is not guaranteed |
 
 ---
 
