@@ -18,10 +18,10 @@ tags: #intermediate, #distributed, #consistency, #nosql, #availability
 
 ⚡ TL;DR — **BASE** (**B**asically **A**vailable, **S**oft state, **E**ventually consistent) is the design philosophy of NoSQL distributed systems that trades ACID's strong consistency for high availability and partition tolerance.
 
-| #579 | Category: Distributed Systems | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Eventual Consistency, CAP Theorem | |
-| **Used by:** | NoSQL Databases, Cassandra, DynamoDB | |
+| #579            | Category: Distributed Systems        | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------- | :-------------- |
+| **Depends on:** | Eventual Consistency, CAP Theorem    |                 |
+| **Used by:**    | NoSQL Databases, Cassandra, DynamoDB |                 |
 
 ---
 
@@ -54,12 +54,12 @@ ACID PROPERTIES (Traditional RDBMS):
   C — Consistency: database transitions between valid states (invariants preserved).
   I — Isolation: concurrent transactions don't see each other's intermediate states.
   D — Durability: committed transactions survive failures.
-  
+
   Cost in distributed systems:
     Atomicity across nodes: requires 2-Phase Commit (2PC).
     Isolation: requires distributed locks or SSI.
     Both: require coordination → latency proportional to number of nodes × RTT.
-    
+
   Multi-region ACID example (CockroachDB):
     Write to 3 regions (US, EU, APAC):
     2PC: prepare phase (3× RTT) + commit phase (3× RTT) = 6× RTT minimum.
@@ -72,12 +72,12 @@ BASE PROPERTIES (NoSQL / Distributed):
     System continues to function even during partial failures.
     NOT "always fully available" — some data may be unavailable during extreme failures.
     "Basic" = core read/write functionality preserved; some anomalies may occur.
-    
+
     Example (Cassandra):
       RF=3, 1 node down. Writes with ONE consistency: still succeed (2 nodes available).
       Reads with ONE consistency: still succeed (may return stale data from remaining nodes).
       System remains operational. Write throughput unaffected.
-      
+
   S — Soft State:
     State changes without user input due to background processes:
     - Asynchronous replication: new writes arrive at replicas minutes after primary write.
@@ -85,15 +85,15 @@ BASE PROPERTIES (NoSQL / Distributed):
     - Read repair: stale replicas updated on read queries.
     - Hinted handoff: writes to down nodes buffered and replayed on recovery.
     - Compaction: SSTables merged in background, physical state constantly changing.
-    
+
     "Soft" = not frozen, always in motion toward consistency.
     Contrast with ACID: state changes only when transactions commit (hard state transitions).
-    
+
   E — Eventually Consistent:
     Given no new writes: all replicas converge to the same value.
     Timing: no SLA on "eventual" in the abstract model.
     In practice: Cassandra within-DC: seconds. Cross-DC: 10s of seconds.
-    
+
     Convergence mechanisms:
     1. Gossip protocol: nodes exchange data via peer-to-peer rumor spreading.
     2. Read repair: reads contact multiple replicas; stale ones are updated.
@@ -103,22 +103,22 @@ BASE PROPERTIES (NoSQL / Distributed):
 BASE SYSTEM DESIGN IMPLICATIONS:
 
   Application must handle inconsistency:
-  
+
   1. STALE DATA:
      Read may return data seconds behind the latest write.
      Application: display with "as of X minutes ago" timestamp.
      Example: Twitter follower count may be temporarily off by 1-2.
-     
+
   2. CONCURRENT WRITE CONFLICTS:
      Two users write same key on different replicas simultaneously.
      Resolution: LWW (Last Write Wins), CRDTs, or application merge.
      Application must understand conflict resolution strategy.
-     
+
   3. MISSING WRITES (Read-Before-Write):
      Application reads, modifies, writes back → Read-Modify-Write pattern.
      Under eventual consistency: two concurrent RMWs lose updates (lost update problem).
      Application: use atomic operations (CRDT increments), or switch to CAS (Cassandra LWT).
-     
+
   4. CROSS-ENTITY CONSISTENCY:
      BASE: no transactions across entities (keys).
      Application: cannot assume "balance deducted ↔ payment recorded" atomically.
@@ -131,13 +131,13 @@ CHOOSING BETWEEN ACID AND BASE:
     - Complex transactions spanning multiple entities (transfer A→B atomically)
     - Compliance requirements mandate consistency (financial regulations)
     - Write contention low enough for coordination cost to be acceptable
-    
+
   Choose BASE when:
     - High throughput, low write latency critical (social feeds, analytics events)
     - Geographic distribution (global writes, avoid cross-region coordination)
     - Availability > consistency (service must stay up even during partial failures)
     - Data conflicts have natural resolution (LWW for user profile, CRDT for counters)
-    
+
   Hybrid approaches:
     - BASE for writes, ACID-like for reads (read quorum = quasi-strong consistency)
     - ACID within a service (single database), BASE across services (eventual consistency between services)
@@ -149,7 +149,7 @@ MEASURING "EVENTUAL" IN PRACTICE:
   DynamoDB: typically < 1 second for global table propagation.
   DNS: minutes to hours (TTL-bounded).
   Git (distributed repos): hours to days (human-initiated pull/push).
-  
+
   Monitoring: "replication lag" metric tracks how far behind replicas are.
     Cassandra: metrics via nodetool netstats (total pending ranges, total streaming bytes).
     PostgreSQL async replication: pg_stat_replication.replay_lag.
@@ -161,6 +161,7 @@ MEASURING "EVENTUAL" IN PRACTICE:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT BASE (strict ACID everywhere):
+
 - Global distributed systems impossible (cross-continent coordination = 360ms+ per write)
 - Availability suffers: any partition = system down (CP choice in CAP)
 - Write throughput bottlenecked: every write waits for all replicas globally
@@ -297,12 +298,12 @@ print(f"EU-West after 2 seconds: {bio}")  # Now shows "Software Engineer in Pari
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| BASE means the database is unreliable | BASE databases are highly reliable — they're designed for extreme availability. The "soft state" and "eventual consistency" don't mean data is lost; they describe the replication model. DynamoDB has 99.999% availability SLA. Cassandra is used for banking, healthcare, and financial systems. The trade-off is about consistency models, not reliability of data storage |
-| BASE and ACID are mutually exclusive | Many systems blend both. PostgreSQL can use read replicas (eventually consistent reads) while transactions are fully ACID on the primary. DynamoDB supports ACID transactions (TransactWriteItems) for critical operations while offering BASE behavior for normal reads/writes. The right approach is to use ACID where required and BASE where acceptable |
-| "Basically Available" means 99% uptime | "Basically Available" means the system continues functioning during partial failures, serving some subset of requests — not a specific uptime percentage. During a network partition: a Cassandra cluster with a down node still serves reads and writes (with reduced redundancy). A PostgreSQL cluster may stop accepting writes during primary failure. The difference is about behavior under failure, not annual uptime percentage |
-| Eventual consistency is the only consistency option in BASE systems | Most BASE systems support tunable consistency. Cassandra supports QUORUM and ALL reads (quasi-strong or strong consistency). DynamoDB supports strongly consistent reads. The BASE label describes the system's default behavior and architecture, not its only mode. Applications choose stronger consistency for critical reads at the cost of latency |
+| Misconception                                                       | Reality                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BASE means the database is unreliable                               | BASE databases are highly reliable — they're designed for extreme availability. The "soft state" and "eventual consistency" don't mean data is lost; they describe the replication model. DynamoDB has 99.999% availability SLA. Cassandra is used for banking, healthcare, and financial systems. The trade-off is about consistency models, not reliability of data storage                                                           |
+| BASE and ACID are mutually exclusive                                | Many systems blend both. PostgreSQL can use read replicas (eventually consistent reads) while transactions are fully ACID on the primary. DynamoDB supports ACID transactions (TransactWriteItems) for critical operations while offering BASE behavior for normal reads/writes. The right approach is to use ACID where required and BASE where acceptable                                                                             |
+| "Basically Available" means 99% uptime                              | "Basically Available" means the system continues functioning during partial failures, serving some subset of requests — not a specific uptime percentage. During a network partition: a Cassandra cluster with a down node still serves reads and writes (with reduced redundancy). A PostgreSQL cluster may stop accepting writes during primary failure. The difference is about behavior under failure, not annual uptime percentage |
+| Eventual consistency is the only consistency option in BASE systems | Most BASE systems support tunable consistency. Cassandra supports QUORUM and ALL reads (quasi-strong or strong consistency). DynamoDB supports strongly consistent reads. The BASE label describes the system's default behavior and architecture, not its only mode. Applications choose stronger consistency for critical reads at the cost of latency                                                                                |
 
 ---
 
@@ -316,14 +317,14 @@ PROBLEM: Developer uses Cassandra (BASE) for wallet balance without extra safegu
 
   Wallet: user_id=alice, balance=100.
   Two concurrent deduction requests: -60 and -70.
-  
+
   Request 1 (Node A): SELECT balance → 100. 100 ≥ 60 → OK. UPDATE balance=40.
   Request 2 (Node B): SELECT balance → 100 (soft state: B hasn't received Request 1 yet)
                       100 ≥ 70 → OK. UPDATE balance=30.
-  
+
   After LWW reconciliation: balance = 30 (last writer wins by timestamp).
   Reality: 60 + 70 = 130 deducted from balance of 100 → account balance in negative.
-  
+
   Root cause: Read-Modify-Write in eventually consistent system without atomic check.
 
 BAD: Read-then-write on eventually consistent Cassandra:
@@ -336,14 +337,14 @@ FIX 1: CASSANDRA LIGHTWEIGHT TRANSACTIONS (LWT) — Compare-And-Swap:
       IF balance = 100;  -- Only apply if balance is still 100 (no concurrent modification)
   -- Returns applied=true/false. If false: another transaction modified balance → retry.
   -- LWT: ~4-5× slower than normal writes (Paxos rounds) → use ONLY for critical ops.
-  
+
 FIX 2: MOVE BALANCE TO ACID DATABASE:
   -- Cassandra: user profile, activity feed, analytics (BASE appropriate).
   -- PostgreSQL: wallet balance (ACID required).
   -- Microservices pattern: WalletService owns balance in PostgreSQL.
   -- All balance operations: through WalletService with proper transactions.
   -- Cassandra: stores non-financial data that can tolerate eventual consistency.
-  
+
 FIX 3: EVENT-DRIVEN WITH IDEMPOTENT OPERATIONS:
   -- Each deduction = immutable event with UUID.
   -- INSERT INTO deductions (id=uuid, user_id='alice', amount=60) IF NOT EXISTS;
