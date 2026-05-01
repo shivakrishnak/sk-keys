@@ -18,10 +18,10 @@ tags: #advanced, #database, #architecture, #performance, #scalability
 
 ⚡ TL;DR — **Denormalization for Scale** is the deliberate introduction of redundant data into a database schema to eliminate expensive JOINs, reduce read latency, and increase read throughput — trading write complexity and storage for read performance.
 
-| #709 | Category: System Design | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Read-Heavy vs Write-Heavy Design, Caching, Database Normalization | |
-| **Used by:** | Fan-Out on Write vs Read, CQRS | |
+| #709            | Category: System Design                                           | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Read-Heavy vs Write-Heavy Design, Caching, Database Normalization |                 |
+| **Used by:**    | Fan-Out on Write vs Read, CQRS                                    |                 |
 
 ---
 
@@ -51,12 +51,12 @@ Normalised schema: `orders` table has `customer_id`, `product_id`. To display an
 TECHNIQUE 1: COLUMN DUPLICATION (flatten foreign key references)
 
   NORMALISED (3 JOINs, slow reads):
-  
+
   orders: | order_id | customer_id | product_id | quantity |
   customers: | customer_id | name | email | tier |
   products: | product_id | name | price | category_id |
   categories: | category_id | name |
-  
+
   Query: "Show order #123 with customer and product details"
   SELECT o.*, c.name, c.email, p.name, p.price, cat.name
   FROM orders o
@@ -64,21 +64,21 @@ TECHNIQUE 1: COLUMN DUPLICATION (flatten foreign key references)
   JOIN products p ON o.product_id = p.product_id
   JOIN categories cat ON p.category_id = cat.category_id
   WHERE o.order_id = 123;
-  
+
   DENORMALISED (0 JOINs, fast reads):
-  
-  orders: | order_id | customer_id | customer_name | customer_email | 
+
+  orders: | order_id | customer_id | customer_name | customer_email |
           | product_id | product_name | product_price | category_name |
           | quantity | created_at |
-  
+
   Query:
   SELECT * FROM orders WHERE order_id = 123;
-  
+
   WHEN TO USE:
     - Orders: immutable after creation (price at purchase time is historically correct)
     - Read:Write ratio > 100:1 (reading orders >> writing orders)
     - Distributed DB (shards: JOINs across shards are impossible)
-  
+
   WHEN NOT TO USE:
     - Mutable data with frequent updates (customer name change → update all orders)
     - Write-heavy systems where read optimisation isn't the bottleneck
@@ -86,12 +86,12 @@ TECHNIQUE 1: COLUMN DUPLICATION (flatten foreign key references)
 TECHNIQUE 2: EMBEDDED DOCUMENTS (NoSQL / MongoDB)
 
   NORMALISED (separate collections, aggregation pipeline required):
-  
+
   users: { user_id: 1, name: "Alice", address_id: 5 }
   addresses: { address_id: 5, street: "123 Main St", city: "NYC" }
-  
+
   DENORMALISED (embedded document — 1 document read):
-  
+
   users: {
     user_id: 1,
     name: "Alice",
@@ -100,14 +100,14 @@ TECHNIQUE 2: EMBEDDED DOCUMENTS (NoSQL / MongoDB)
       city: "NYC"
     }
   }
-  
+
   RULES FOR EMBEDDING vs REFERENCING (MongoDB data modelling):
     EMBED when:
     - "Has one" or "owned by" relationship (user has one address)
     - Child data is always read with parent (never standalone)
     - Child data rarely changes
     - Small child document size
-    
+
     REFERENCE when:
     - "Many-to-many" relationship (products ↔ categories)
     - Child data accessed standalone frequently
@@ -123,25 +123,25 @@ TECHNIQUE 3: MATERIALISED VIEWS (pre-computed aggregations)
   ORDER BY total_sold DESC
   LIMIT 10;
   -- Full table scan on 100M rows: 10,000ms
-  
+
   MATERIALISED VIEW (pre-computed, refreshed periodically):
-  
+
   CREATE MATERIALIZED VIEW product_sales_summary AS
   SELECT product_id, SUM(quantity) as total_sold, AVG(price) as avg_price
   FROM order_items
   GROUP BY product_id;
-  
+
   -- Index the materialised view:
   CREATE INDEX ON product_sales_summary(total_sold DESC);
-  
+
   -- Query materialised view: fast index scan
   SELECT * FROM product_sales_summary ORDER BY total_sold DESC LIMIT 10;
   -- < 10ms (index scan on pre-computed table of ~10K product rows)
-  
+
   -- Refresh (PostgreSQL CONCURRENTLY: no lock on reads during refresh):
   REFRESH MATERIALIZED VIEW CONCURRENTLY product_sales_summary;
   -- Schedule: every 5 minutes via pg_cron or application scheduler
-  
+
   TRADE-OFF:
     - Data is stale (up to 5 minutes behind)
     - Refresh adds write load to DB
@@ -153,18 +153,18 @@ TECHNIQUE 4: COUNTER CACHING (pre-computed counts)
   NORMALISED (count query, slow at scale):
   SELECT COUNT(*) FROM followers WHERE followed_user_id = ?;
   -- 100K followers: full index scan, 500ms → not feasible at Twitter scale
-  
+
   DENORMALISED (stored counter):
   users: | user_id | username | follower_count | following_count |
-  
+
   -- When a new follow happens:
   UPDATE users SET follower_count = follower_count + 1 WHERE user_id = followed_id;
   INSERT INTO followers (follower_id, followed_id) VALUES (?, ?);
-  
+
   -- Read follower count:
   SELECT follower_count FROM users WHERE user_id = ?;
   -- 1ms single index lookup — no COUNT(*) scan
-  
+
   TRADE-OFF:
     - Counter can diverge from actual row count if write fails partially
     - Use transactions or eventual consistency sync to reconcile
@@ -178,7 +178,7 @@ DECIDING WHEN TO DENORMALISE:
   ✓ Sharded DB (cross-shard JOINs impossible)
   ✓ NoSQL database (no JOIN support)
   ✓ Read latency p99 > SLA despite indexes and caching
-  
+
   SIGNALS to STAY normalised:
   ✗ Data changes frequently (UPDATE storms on denormalised columns)
   ✗ Complex many-to-many relationships (denormalised copies explode)
@@ -191,9 +191,10 @@ DECIDING WHEN TO DENORMALISE:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Denormalization:
+
 - 3+ JOINs per read: multiplicative latency, CPU overhead
 - Sharded DB: JOINs across shards require scatter-gather (slow, complex)
-- COUNT(*) on large tables: full scans on every read
+- COUNT(\*) on large tables: full scans on every read
 
 WITH Denormalization:
 → Single-row reads: no JOINs, sub-millisecond response
@@ -283,31 +284,31 @@ Denormalization for Scale ◄──── (you are here)
 @Service
 @Transactional
 public class OrderService {
-    
+
     @Autowired private OrderRepository orderRepository;
     @Autowired private CustomerRepository customerRepository;
     @Autowired private ProductRepository productRepository;
-    
+
     public Order createOrder(Long customerId, Long productId, int quantity) {
         // Fetch normalised source data:
         Customer customer = customerRepository.findById(customerId).orElseThrow();
         Product product = productRepository.findById(productId).orElseThrow();
-        
+
         // Denormalize at write time — embed needed data in order row:
         Order order = new Order();
         order.setCustomerId(customerId);
         order.setProductId(productId);
         order.setQuantity(quantity);
-        
+
         // Denormalized fields — copied at order creation time:
         order.setCustomerName(customer.getName());          // denormalized
         order.setCustomerEmail(customer.getEmail());        // denormalized
         order.setProductName(product.getName());            // denormalized
         order.setProductPriceCents(product.getPriceCents());// denormalized (immutable: price at purchase)
         order.setCategoryName(product.getCategory().getName()); // denormalized
-        
+
         return orderRepository.save(order);
-        
+
         // Result: Order row is self-contained.
         // Reads: SELECT * FROM orders WHERE order_id = ? → 0 JOINs.
         // If product name changes: historical orders correctly show OLD name (desired for order history).
@@ -319,12 +320,12 @@ public class OrderService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                   | Reality                                                                                                                                                                                                                                                                                                                                          |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Denormalization means abandoning data integrity | Denormalization introduces redundancy but integrity is maintained through application-layer writes (update all copies on change). The trade-off is that the database can no longer enforce single-source-of-truth integrity — the application must ensure consistency. This is acceptable when the denormalized data is write-rarely, read-often |
-| Denormalization is only for NoSQL databases | Relational databases benefit equally from denormalization for read-heavy workloads. PostgreSQL materialised views, counter cache columns, and flattened read tables are all forms of relational denormalization. PostgreSQL, MySQL, and Oracle all support materialised views natively |
-| More JOINs always means you need to denormalise | JOINs on small tables with good indexes are fast. A JOIN on a 1,000-row countries table is trivially fast even at high read rates (fits in buffer pool). Denormalise only JOINs to large tables or tables with frequently changing index patterns. Profile before denormalizing |
-| Denormalization permanently locks the schema | Denormalization can be applied incrementally: start normalised, add denormalized columns when profiling shows JOINs are bottlenecks. Rolling schema changes with background backfills allow gradual denormalization without system rewrites |
+| Denormalization is only for NoSQL databases     | Relational databases benefit equally from denormalization for read-heavy workloads. PostgreSQL materialised views, counter cache columns, and flattened read tables are all forms of relational denormalization. PostgreSQL, MySQL, and Oracle all support materialised views natively                                                           |
+| More JOINs always means you need to denormalise | JOINs on small tables with good indexes are fast. A JOIN on a 1,000-row countries table is trivially fast even at high read rates (fits in buffer pool). Denormalise only JOINs to large tables or tables with frequently changing index patterns. Profile before denormalizing                                                                  |
+| Denormalization permanently locks the schema    | Denormalization can be applied incrementally: start normalised, add denormalized columns when profiling shows JOINs are bottlenecks. Rolling schema changes with background backfills allow gradual denormalization without system rewrites                                                                                                      |
 
 ---
 
@@ -337,23 +338,23 @@ PROBLEM: Denormalized counter diverges from reality
 
   users table: follower_count column (denormalized counter)
   followers table: actual follow relationships
-  
+
   Expected invariant: follower_count = COUNT(*) FROM followers WHERE followed_user_id = user_id
-  
+
   BUG: Transaction fails after INSERT into followers but before UPDATE to follower_count:
-  
+
   BEGIN;
     INSERT INTO followers (follower_id, followed_user_id) VALUES (100, 200);
     -- Application crashes here (network timeout, OOM, etc.)
     UPDATE users SET follower_count = follower_count + 1 WHERE user_id = 200;
     -- Never executed!
   COMMIT;
-  
-  Result: 
+
+  Result:
     followers table: shows user 100 follows user 200 ✓
     users.follower_count for user 200: N (not N+1) ✗
     Counter is now permanently off by 1.
-    
+
 FIX 1: ATOMIC TRANSACTION (ensure both updates succeed or both fail)
 
   @Transactional
@@ -375,7 +376,7 @@ FIX 2: PERIODIC RECONCILIATION (catch historical divergence)
       "WHERE u.follower_count != f.actual_count",
       Long.class
     );
-    
+
     for (Long userId : divergedUsers) {
       jdbcTemplate.update(
         "UPDATE users SET follower_count = " +

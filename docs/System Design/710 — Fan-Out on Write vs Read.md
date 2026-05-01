@@ -18,10 +18,10 @@ tags: #advanced, #distributed, #architecture, #social, #performance
 
 ⚡ TL;DR — **Fan-Out on Write** pre-computes and pushes content to followers' feeds when published; **Fan-Out on Read** computes feeds on-demand at read time — the choice determines write vs. read cost, with read-heavy systems favouring write fan-out and celebrity users requiring a hybrid.
 
-| #710 | Category: System Design | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Denormalization for Scale, Read-Heavy vs Write-Heavy Design, Caching | |
-| **Used by:** | News Feed Design, Push vs Pull Architecture | |
+| #710            | Category: System Design                                              | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Denormalization for Scale, Read-Heavy vs Write-Heavy Design, Caching |                 |
+| **Used by:**    | News Feed Design, Push vs Pull Architecture                          |                 |
 
 ---
 
@@ -56,36 +56,36 @@ STRATEGY 1: FAN-OUT ON WRITE (Push Model)
     3. For each follower F1...F500:
        - Write reference to T1 in F's timeline cache (Redis sorted set)
     4. Return 200 OK to Alice
-    
+
   At read time:
     1. User Bob opens app (follows Alice)
     2. Read Bob's timeline cache (Redis ZRANGE key 0 99 REV):
        → Returns pre-sorted list of tweet IDs
     3. Fetch tweet content for those IDs (Redis or post store)
     4. Render feed — typically < 10ms total
-    
+
   DATA STRUCTURE (Redis Sorted Set per user):
     Key: "timeline:user:{user_id}"
     Score: tweet creation timestamp (for time-ordering)
     Member: tweet_id
-    
+
     ZADD timeline:user:bob 1700000001 tweet_123   # Alice's tweet
     ZADD timeline:user:bob 1700000050 tweet_456   # Carol's tweet
     ZRANGE timeline:user:bob 0 99 REV             # Bob's feed: newest first
-    
+
   WRITE COST:
     500 followers → 500 ZADD operations per tweet
     Twitter peak (6,000 tweets/sec × avg 200 followers) = 1.2M Redis writes/sec
-    
+
   READ COST:
     1 ZRANGE operation → O(log(N) + M) where N=timeline size, M=results returned
     Very fast. Redis: 100K+ ops/sec per node.
-    
+
   ADVANTAGES:
     - Read path: O(1) per user (single Redis read)
     - Read latency: predictable, sub-10ms
     - No real-time aggregation needed at read time
-    
+
   DISADVANTAGES:
     - Write amplification: 1 tweet → N fan-out writes (N = follower count)
     - Celebrity problem: celebrity with 10M followers → 10M writes per tweet
@@ -98,7 +98,7 @@ STRATEGY 2: FAN-OUT ON READ (Pull Model)
     1. User Alice posts tweet T1
     2. Write T1 to Alice's post store only
     3. Return 200 OK — done (cheap write)
-    
+
   At read time:
     1. User Bob opens app
     2. Query: who does Bob follow? → follows table: [Alice, Carol, Dave]
@@ -108,16 +108,16 @@ STRATEGY 2: FAN-OUT ON READ (Pull Model)
        SELECT * FROM posts WHERE user_id = Dave_id AND created_at > ? LIMIT 50
     4. Merge and sort all results by time
     5. Return top 50 posts
-    
+
   WRITE COST: O(1) — one database write per post regardless of followers
   READ COST: O(N) — N queries where N = number of accounts user follows
-  
+
   PROBLEM at scale:
     Bob follows 1,000 accounts.
     Read path: 1,000 database queries → merge sort 50,000 posts → return 50.
     At 1M users × 1,000 queries each = 1B DB queries for one feed refresh.
     Latency: 1,000 sequential queries × 10ms = 10 seconds (unacceptable).
-    
+
   WHEN FAN-OUT ON READ IS ACCEPTABLE:
     - Small follower/following counts (< 50 per user)
     - Low traffic systems
@@ -130,27 +130,27 @@ STRATEGY 3: HYBRID (industry standard for large-scale social platforms)
       use FAN-OUT ON WRITE (pre-compute their posts into followers' feeds)
     else:
       use FAN-OUT ON READ (inject celebrity posts at read time)
-      
+
   READ PATH (hybrid):
     1. User Bob opens app
     2. Fetch Bob's pre-computed timeline cache (fan-out on write: normal users)
     3. Fetch posts from celebrity accounts Bob follows (fan-out on read: celebrities)
     4. Merge: pre-computed timeline + celebrity posts (usually 2-3 celebrities max)
     5. Return top 50 sorted by time
-    
+
   Timeline merge (Redis + DB):
     // Pre-computed (ZADD for normal followed users):
     timeline_ids = redis.ZRANGE("timeline:bob", 0, 499, REV)
-    
+
     // Celebrities: real-time query (only a few per user):
     celebrity_posts = celebrities_bob_follows.map(celeb =>
       db.query("SELECT id FROM posts WHERE user_id = ? ORDER BY created_at DESC LIMIT 10", celeb.id)
     )
-    
+
     // Merge and sort:
     all_post_ids = merge_sort(timeline_ids, celebrity_posts)
     posts = db.batchGet("SELECT * FROM posts WHERE id IN (?)", all_post_ids[0:50])
-    
+
   CELEBRITY THRESHOLD TUNING:
     Too low (100): too many "celebrities" → too much fan-out on read computation
     Too high (10M): many high-follower users doing fan-out on write → Redis overloaded
@@ -158,14 +158,14 @@ STRATEGY 3: HYBRID (industry standard for large-scale social platforms)
     Instagram: similar hybrid threshold
 
 INACTIVE USER OPTIMISATION:
-  
+
   Problem: fan-out on write writes to inactive users' caches (wasteful).
-  
+
   Solution: LAZY FAN-OUT
     Don't fan-out to users inactive for > 7 days.
     When inactive user returns: rebuild timeline by fan-out on read (one-time catch-up).
     Mark user active again → resume fan-out on write.
-    
+
   Storage savings: 30% of social media users inactive on any given day.
   Fan-out writes reduced by 30%.
 ```
@@ -175,6 +175,7 @@ INACTIVE USER OPTIMISATION:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Fan-Out on Write (pure fan-out on read):
+
 - Feed read: 1,000 DB queries per user → 10-second load time → unusable
 - Database overwhelmed: 1M concurrent feed reads × 1,000 queries = 1B DB operations
 
@@ -205,20 +206,20 @@ WITH Fan-Out on Write:
 // POST endpoint: create a tweet
 @RestController
 public class TweetController {
-    
+
     @PostMapping("/tweets")
     public ResponseEntity<Tweet> createTweet(
             @RequestBody CreateTweetRequest request,
             @AuthenticationPrincipal User author) {
-        
+
         // 1. Save tweet to primary store (fast):
         Tweet tweet = tweetService.saveTweet(author.getId(), request.getContent());
-        
+
         // 2. Async fan-out: publish to Kafka (non-blocking):
         kafkaTemplate.send("tweet-created", new TweetCreatedEvent(
             tweet.getId(), author.getId(), tweet.getCreatedAt()
         ));
-        
+
         // 3. Return immediately — fan-out happens asynchronously:
         return ResponseEntity.ok(tweet);
     }
@@ -227,24 +228,24 @@ public class TweetController {
 // Fan-out worker (Kafka consumer):
 @KafkaListener(topics = "tweet-created", groupId = "timeline-fanout")
 public class TimelineFanoutWorker {
-    
+
     @Autowired private FollowerRepository followerRepository;
     @Autowired private RedisTemplate<String, String> redisTemplate;
     @Autowired private UserService userService;
-    
+
     private static final int CELEBRITY_THRESHOLD = 1_000_000;
-    
+
     public void handleTweetCreated(TweetCreatedEvent event) {
         User author = userService.findById(event.getAuthorId());
-        
+
         // Don't fan-out celebrities (handled at read time):
         if (author.getFollowerCount() >= CELEBRITY_THRESHOLD) {
             return;  // Read path will inject celebrity posts dynamically
         }
-        
+
         // Fan-out to all followers:
         List<Long> followerIds = followerRepository.findFollowerIds(event.getAuthorId());
-        
+
         followerIds.forEach(followerId -> {
             // Add to follower's timeline (Redis sorted set, score = timestamp):
             String timelineKey = "timeline:" + followerId;
@@ -265,11 +266,11 @@ public List<Tweet> getFeed(@AuthenticationPrincipal User user) {
     // 1. Get pre-computed timeline:
     Set<String> tweetIds = redisTemplate.opsForZSet()
         .reverseRange("timeline:" + user.getId(), 0, 49);
-    
+
     // 2. Get celebrity posts (real-time query — small list):
     List<Long> celebrityIds = userService.getCelebrityFollows(user.getId());
     List<Tweet> celebrityPosts = tweetService.getRecentPosts(celebrityIds, 10);
-    
+
     // 3. Merge and return:
     List<Tweet> feedTweets = tweetService.batchGet(tweetIds);
     return mergeSortByTime(feedTweets, celebrityPosts).subList(0, 50);
@@ -309,14 +310,14 @@ r = redis.Redis()
 def post_tweet(author_id: int, tweet_id: int, followers: list[int]):
     """Fan-out on write: push tweet to all followers' timelines."""
     timestamp = time.time()
-    
+
     # Save tweet (primary store — simplified):
     r.hset(f"tweet:{tweet_id}", mapping={
         "author_id": author_id,
         "content": f"Tweet {tweet_id} by user {author_id}",
         "created_at": timestamp
     })
-    
+
     # Fan-out to followers (fan-out on write):
     for follower_id in followers:
         timeline_key = f"timeline:{follower_id}"
@@ -327,9 +328,9 @@ def get_feed(user_id: int, page: int = 0, per_page: int = 20) -> list:
     """Fan-out on write read: single Redis ZRANGE."""
     start = page * per_page
     end = start + per_page - 1
-    
+
     tweet_ids = r.zrevrange(f"timeline:{user_id}", start, end)
-    
+
     # Batch fetch tweet content:
     return [r.hgetall(f"tweet:{tid.decode()}") for tid in tweet_ids]
 
@@ -346,12 +347,12 @@ print(feed)  # [{'author_id': b'1', 'content': b'Tweet 101 by user 1', ...}]
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Fan-out on write is always better because reads are faster | For celebrities (millions of followers), fan-out on write is prohibitively expensive and creates write storms. Hybrid approaches are used by all major social platforms precisely because neither pure strategy works at scale with highly skewed follower distributions |
-| Fan-out on read is obsolete/bad | Fan-out on read is appropriate for: small-scale systems, private networks, apps with small average following counts, enterprise tools. It's simple, consistent, and storage-efficient. The complexity of fan-out on write is only justified when feed read latency is clearly the bottleneck |
-| Timeline caches are the source of truth for tweets | Timeline caches are derived data (like a materialised view). The source of truth is the primary tweet store. Caches can be lost and rebuilt from the primary store. A lost timeline cache means a user's feed looks empty until rebuilt — not that tweets are lost |
-| Fan-out on write requires synchronous writes to all followers | Fan-out should always be asynchronous (Kafka queue + workers). The user posting a tweet should NOT wait for all followers' caches to be updated. Accept eventual consistency: followers' feeds update within seconds (typically < 5s at Twitter/Instagram scale) |
+| Misconception                                                 | Reality                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fan-out on write is always better because reads are faster    | For celebrities (millions of followers), fan-out on write is prohibitively expensive and creates write storms. Hybrid approaches are used by all major social platforms precisely because neither pure strategy works at scale with highly skewed follower distributions                     |
+| Fan-out on read is obsolete/bad                               | Fan-out on read is appropriate for: small-scale systems, private networks, apps with small average following counts, enterprise tools. It's simple, consistent, and storage-efficient. The complexity of fan-out on write is only justified when feed read latency is clearly the bottleneck |
+| Timeline caches are the source of truth for tweets            | Timeline caches are derived data (like a materialised view). The source of truth is the primary tweet store. Caches can be lost and rebuilt from the primary store. A lost timeline cache means a user's feed looks empty until rebuilt — not that tweets are lost                           |
+| Fan-out on write requires synchronous writes to all followers | Fan-out should always be asynchronous (Kafka queue + workers). The user posting a tweet should NOT wait for all followers' caches to be updated. Accept eventual consistency: followers' feeds update within seconds (typically < 5s at Twitter/Instagram scale)                             |
 
 ---
 
@@ -365,15 +366,15 @@ PROBLEM: Fan-out done synchronously in tweet POST endpoint
   @PostMapping("/tweets")
   public ResponseEntity<Tweet> createTweet(...) {
     Tweet tweet = tweetService.save(...);
-    
+
     // WRONG: synchronous fan-out
     List<Long> followers = followerRepository.findAll(author.getId());  // 500K followers
     followers.forEach(fid -> redisTemplate.zadd("timeline:" + fid, ...));  // 500K Redis writes
-    
+
     return ResponseEntity.ok(tweet);
     // User waits: 500K × 0.1ms = 50 seconds!!
   }
-  
+
 CORRECT: Async fan-out via Kafka
 
   @PostMapping("/tweets")
@@ -383,16 +384,16 @@ CORRECT: Async fan-out via Kafka
     return ResponseEntity.ok(tweet);             // returns in ~5ms
     // Fan-out: happens asynchronously over the next 1-5 seconds
   }
-  
+
   ADDITIONAL PROTECTION: Fan-out worker rate limiting
-  
+
   Celebrity with 10M followers posts a tweet:
   Without throttling: 10M fan-out writes in < 1 second → Redis overloaded.
-  
-  With throttling: 
+
+  With throttling:
     Fan-out worker: processes 10K fan-outs/sec per partition.
     10M / 10K = 1,000 seconds to complete fan-out.
-    
+
   For celebrities: don't fan-out at all (hybrid approach):
     if (followerCount > CELEBRITY_THRESHOLD) publishAsyncCelebrityPost(tweet);
     // Readers fetch celebrity posts directly at read time.

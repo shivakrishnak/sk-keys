@@ -18,10 +18,10 @@ tags: #advanced, #architecture, #distributed, #messaging, #performance
 
 ⚡ TL;DR — **Push** sends data to consumers as soon as it's available (server-initiated); **Pull** waits for consumers to request data when they're ready (client-initiated) — each suits different latency, coupling, and load distribution requirements.
 
-| #711 | Category: System Design | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Fan-Out on Write vs Read, Polling vs Webhooks | |
-| **Used by:** | News Feed Design, Notification System Design, Polling vs Webhooks | |
+| #711            | Category: System Design                                           | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Fan-Out on Write vs Read, Polling vs Webhooks                     |                 |
+| **Used by:**    | News Feed Design, Notification System Design, Polling vs Webhooks |                 |
 
 ---
 
@@ -53,38 +53,38 @@ LAYER 1: CLIENT-SERVER COMMUNICATION
   PUSH (WebSocket):
     Client → Server: "Connect" (WebSocket handshake)
     Server → Client: data pushed as it arrives
-    
+
     Pros: Zero-latency delivery. No repeated HTTP requests. Stateful connection.
     Cons: Server must maintain connection state per client (memory: ~50KB/connection).
           100K connected clients → 5 GB RAM just for connections.
           If client disconnects: must reconnect + handle missed messages.
     Use: chat applications, live trading dashboards, collaborative editing (Google Docs).
-  
+
   PUSH (Server-Sent Events / SSE):
     Simpler unidirectional version of WebSocket.
     Client → Server: GET /events (one HTTP request, connection stays open)
     Server → Client: events pushed as text/event-stream
-    
+
     Pros: Simpler than WebSocket. HTTP/1.1 compatible. Automatic reconnect built-in.
     Cons: One-directional (server → client only). HTTP/1.1 limit: 6 concurrent SSE per domain.
     Use: live feeds (Twitter streaming, sports scores, live dashboards).
-  
+
   PULL (HTTP Polling):
     Client → Server: GET /events?since={last_id} (repeated at interval)
     Server → Client: events since last_id (or empty if none)
-    
+
     Pros: Simple. Works over standard HTTP. No persistent connection.
     Cons: Latency = polling interval (30-second poll → up to 30s lag).
           Wasted requests when no new data.
           N clients polling = N × polling_frequency requests/sec (load).
     Use: dashboards that update every 30 seconds, simple notifications.
-    
+
   PULL (Long Polling):
     Client → Server: GET /events?since={last_id}
     Server: holds the request open if no new events (up to 30s).
     Server: responds immediately when new event arrives OR timeout.
     Client: immediately re-issues request after response.
-    
+
     Pros: Near-real-time with lower load than short-interval polling.
     Cons: Still has reconnect overhead. Server: many open connections.
     Use: Baseline for chat (Slack, Discord pre-WebSocket). Legacy AJAX push.
@@ -92,10 +92,10 @@ LAYER 1: CLIENT-SERVER COMMUNICATION
 LAYER 2: DATA PIPELINE (KAFKA EXAMPLE)
 
   KAFKA: PULL-BASED (consumers pull from brokers)
-  
+
     Consumer.poll(100ms): consumer asks broker "any new messages?"
     Broker: returns messages if available, waits if empty.
-    
+
     WHY PULL (not push) for Kafka:
     1. BACKPRESSURE: consumer controls its own consumption rate.
        If consumer is slow: it simply polls less frequently → no message loss.
@@ -105,7 +105,7 @@ LAYER 2: DATA PIPELINE (KAFKA EXAMPLE)
        Pull: consumer decides when it's ready → inherently backpressure-safe.
     3. CONSUMER INDEPENDENCE: 10 consumer groups pulling independently.
        Each at their own rate. No coordination between consumers needed.
-       
+
     KAFKA PULL PATTERN:
     while (running) {
         ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
@@ -114,20 +114,20 @@ LAYER 2: DATA PIPELINE (KAFKA EXAMPLE)
         }
         consumer.commitSync();  // commit only after processing
     }
-    
+
     BENEFIT: If processRecord() takes 5 seconds, no messages lost.
              Consumer simply processes at its own rate.
              Broker holds messages until consumer commits.
 
   RABBITMQ / ACTIVEMQ: PUSH-BASED
-  
+
     Broker pushes messages to consumers via AMQP protocol.
     Consumer: acknowledges each message.
     prefetch_count: limits how many messages broker pushes before waiting for ACK.
-    
+
     prefetch_count=1: one message at a time pushed. Fair round-robin. Slow.
     prefetch_count=10: 10 messages buffered per consumer. Better throughput.
-    
+
     Risk without prefetch: broker pushes 1,000 messages to one fast consumer
     while other consumers are idle → uneven distribution.
 
@@ -139,7 +139,7 @@ LAYER 3: MOBILE PUSH NOTIFICATIONS
     Pros: Works when app is not running (OS-level delivery)
     Cons: Requires device token management. Message size limits (4KB FCM).
     Use: "You received a message", "Your order shipped"
-    
+
   PULL (App polling in background):
     App: background fetch every 15-30 minutes.
     Pros: No external service dependency. Always consistent.
@@ -151,20 +151,20 @@ HYBRID PATTERN ("kick" + fetch):
 
   Problem: Push sends large payload → bandwidth waste (many clients, large data).
   Problem: Push sends stale data → client fetched different version than push contained.
-  
+
   Solution: PUSH NOTIFICATION + PULL FETCH ("nudge + fetch")
-  
+
   1. Server detects change: new comment on user's post.
   2. Server sends LIGHTWEIGHT push: {"type": "new_comment", "post_id": 123}
      (no actual data — just a notification that something changed)
   3. Client receives push → immediately pulls: GET /posts/123/comments?since=last
   4. Client gets fresh data directly from source
-  
+
   Benefits:
   - Push payload tiny (no data staleness risk)
   - Pull gets current state (race conditions with push payload eliminated)
   - Works with push rate limiting (multiple events → one notification → one fetch)
-  
+
   Used by: Google Drive sync, Slack, iMessage, GitHub notifications.
 ```
 
@@ -173,6 +173,7 @@ HYBRID PATTERN ("kick" + fetch):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT push/pull distinction:
+
 - Chat app built with polling: 1M users × poll every second = 1M HTTP req/sec for mostly empty responses
 - Kafka with push model: slow consumers overwhelmed → consumer crashes → message loss
 
@@ -203,19 +204,19 @@ WITH correct push/pull selection:
 // 1. WebSocket Push (Spring Boot):
 @ServerEndpoint("/ws/notifications")
 public class NotificationWebSocket {
-    
+
     private static Set<Session> sessions = ConcurrentHashMap.newKeySet();
-    
+
     @OnOpen
     public void onOpen(Session session) {
         sessions.add(session);
     }
-    
+
     @OnClose
     public void onClose(Session session) {
         sessions.remove(session);
     }
-    
+
     // Push to all connected clients:
     public static void pushToAll(String message) {
         sessions.forEach(session -> {
@@ -232,24 +233,24 @@ public class NotificationWebSocket {
 @GetMapping(value = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 public SseEmitter streamEvents(@RequestParam Long userId) {
     SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-    
+
     // Register emitter for this user:
     emitterService.register(userId, emitter);
-    
+
     // Send event to user when triggered:
     // emitter.send(SseEmitter.event().data("{\"type\":\"notification\"}"));
-    
+
     return emitter;
 }
 
 // 3. Long Polling (fallback for clients behind restrictive firewalls):
 @GetMapping("/poll/notifications")
 public DeferredResult<List<Notification>> pollNotifications(
-        @RequestParam Long since, 
+        @RequestParam Long since,
         @RequestParam Long userId) {
-    
+
     DeferredResult<List<Notification>> result = new DeferredResult<>(30_000L);  // 30s timeout
-    
+
     List<Notification> pending = notificationService.getSince(userId, since);
     if (!pending.isEmpty()) {
         result.setResult(pending);  // Immediate response if data available
@@ -257,7 +258,7 @@ public DeferredResult<List<Notification>> pollNotifications(
         // Suspend request until new notification arrives or timeout:
         notificationService.registerWaiter(userId, result);
     }
-    
+
     return result;
 }
 ```
@@ -312,16 +313,16 @@ def receive_webhook():
     event = request.json
     if event["event"] == "new_message":
         conversation_id = event["conversation_id"]
-        
+
         # Pull actual message content (fresh from source):
         messages = requests.get(
             f"https://api.example.com/conversations/{conversation_id}/messages",
             headers={"Authorization": f"Bearer {API_KEY}"},
             params={"since": get_last_seen_id(conversation_id)}
         ).json()
-        
+
         display_new_messages(messages)
-    
+
     return jsonify({"status": "ok"})
 ```
 
@@ -329,12 +330,12 @@ def receive_webhook():
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Push is always faster than pull | Push is lower latency for delivering the notification, but the actual data is often fetched via pull after the push notification. The hybrid "nudge + fetch" pattern means total latency = push notification latency + subsequent pull latency. For large data payloads, push can actually be slower (push must deliver full payload; nudge + pull can use cached/compressed delivery) |
-| WebSocket is the only way to push to clients | WebSocket is one option. SSE (Server-Sent Events) is simpler for unidirectional push. Long polling works without WebSocket. Push notifications (APNs/FCM) work even when the app is closed. HTTP/2 server push can pre-emptively send resources. The choice depends on: bidirectional need, offline delivery, browser/platform support |
-| Kafka is a push-based system | Kafka consumers actively poll the broker — it is pull-based. This is fundamental to Kafka's design: it enables backpressure (consumers control their rate), replayability (consumers can re-read old messages), and consumer independence. Many people confuse Kafka with push-based systems because producers push messages to the broker, but the broker-to-consumer direction is always pull |
-| Pull requires polling (constant requests) | Long polling is a pull mechanism that avoids constant requests: the client sends one request, the server holds it until data is available (or timeout), then the client re-requests. This provides near-real-time pull with much lower load than short-interval polling |
+| Misconception                                | Reality                                                                                                                                                                                                                                                                                                                                                                                         |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Push is always faster than pull              | Push is lower latency for delivering the notification, but the actual data is often fetched via pull after the push notification. The hybrid "nudge + fetch" pattern means total latency = push notification latency + subsequent pull latency. For large data payloads, push can actually be slower (push must deliver full payload; nudge + pull can use cached/compressed delivery)          |
+| WebSocket is the only way to push to clients | WebSocket is one option. SSE (Server-Sent Events) is simpler for unidirectional push. Long polling works without WebSocket. Push notifications (APNs/FCM) work even when the app is closed. HTTP/2 server push can pre-emptively send resources. The choice depends on: bidirectional need, offline delivery, browser/platform support                                                          |
+| Kafka is a push-based system                 | Kafka consumers actively poll the broker — it is pull-based. This is fundamental to Kafka's design: it enables backpressure (consumers control their rate), replayability (consumers can re-read old messages), and consumer independence. Many people confuse Kafka with push-based systems because producers push messages to the broker, but the broker-to-consumer direction is always pull |
+| Pull requires polling (constant requests)    | Long polling is a pull mechanism that avoids constant requests: the client sends one request, the server holds it until data is available (or timeout), then the client re-requests. This provides near-real-time pull with much lower load than short-interval polling                                                                                                                         |
 
 ---
 
@@ -348,36 +349,36 @@ PROBLEM: RabbitMQ push overwhelms slow consumer
   Config: RabbitMQ consumer, prefetch_count = unlimited (default in some clients)
   Producer: 10,000 messages/second
   Consumer: processes 100 messages/second (complex business logic)
-  
+
   Day 1:
     Queue: 10,000 msg/sec in, 100 msg/sec out → +9,900 msg/sec backlog
     After 24 hours: 9,900 × 86,400 = 855M messages queued.
     RabbitMQ: runs out of memory → crashes.
-    
+
   Day 2:
     Recovery: restart RabbitMQ.
     BUT: 855M message backlog → consumer takes 855M / 100 = 99 days to catch up.
-    
+
   ROOT CAUSE: No backpressure. Producer faster than consumer. Push model without flow control.
-  
+
 FIX 1: prefetch_count = 1 (one message at a time)
 
   Consumer: processes one message, sends ACK, receives next.
   RabbitMQ: never pushes more than 1 message per consumer.
   Risk: low throughput (serial processing).
-  
+
 FIX 2: prefetch_count = 10 (bounded prefetch)
 
   Consumer: has at most 10 unacked messages in flight.
   Better throughput than prefetch=1; still bounded memory.
-  
+
 FIX 3: Switch to PULL model (SQS or Kafka)
 
-  SQS consumer.receive(maxMessages=10): 
+  SQS consumer.receive(maxMessages=10):
     Receives 10 messages, processes, sends deletes, receives next 10.
     Natural backpressure: consumer only gets what it asks for.
     Queue backlog grows if consumer is slow — no consumer OOM.
-    
+
   LESSON: In distributed systems, backpressure is critical.
           Pull models provide implicit backpressure.
           Push models require explicit flow control (prefetch, rate limiting).

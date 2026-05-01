@@ -18,10 +18,10 @@ tags: #advanced, #architecture, #database, #performance, #distributed
 
 ⚡ TL;DR — **Read-Heavy vs Write-Heavy Design** refers to architecting systems differently based on whether the dominant load is reads or writes — each has distinct bottlenecks, optimisation strategies, and trade-offs.
 
-| #708 | Category: System Design | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Caching, Sharding (System), Database Replication | |
-| **Used by:** | Denormalization for Scale, Fan-Out on Write vs Read, CQRS | |
+| #708            | Category: System Design                                   | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------- | :-------------- |
+| **Depends on:** | Caching, Sharding (System), Database Replication          |                 |
+| **Used by:**    | Denormalization for Scale, Fan-Out on Write vs Read, CQRS |                 |
 
 ---
 
@@ -54,56 +54,56 @@ READ-HEAVY SYSTEM ARCHITECTURE:
   - Read:Write ratio > 10:1 (often 100:1 to 1000:1)
   - Common examples: news sites, social media feeds, product catalogues, Wikipedia
   - Bottleneck: read throughput, read latency
-  
+
   OPTIMISATION 1: CACHING
     Application-level cache (Redis, Memcached):
     - Cache popular reads in memory
     - Cache hit: sub-millisecond response (no DB query)
     - Cache hit rate target: >90% for read-heavy systems
-    
+
     CDN (for static content):
     - Media, JS, CSS, images cached at edge
     - 95%+ of bytes served from CDN
-    
+
     Strategy:
     └── Read request → Check Redis (1ms) → Check DB (20ms) → Cache result
-    
+
     Write path does NOT change for readers: asynchronous invalidation OK.
-    
+
   OPTIMISATION 2: READ REPLICAS
     Primary DB: handles writes (single instance for consistency)
     Read replicas (3-5): handle all read queries
     Read:Write = 100:1 → 5 read replicas each at 20 reads/write = manageable
-    
+
     // Spring: read-write routing
     @ReadOnly → routes to read replica
     @Transactional → routes to primary
-    
+
     Trade-off: replication lag → replicas slightly behind primary (eventual consistency).
     Acceptable for most reads (see "reading from replica" consistency level).
-    
+
   OPTIMISATION 3: DENORMALIZATION
     Normalised DB: products, categories, manufacturers in separate tables → 3 JOINs per read.
     Denormalised: all product data in one row (redundant but fast reads).
-    
+
     // Product query (normalised): 3 joins, 20ms
     SELECT p.*, c.name, m.name FROM products p
     JOIN categories c ON p.category_id = c.id
     JOIN manufacturers m ON p.mfr_id = m.id
     WHERE p.id = ?
-    
+
     // Product query (denormalised): 1 lookup, 2ms
     SELECT * FROM products_denormalized WHERE id = ?
-    
+
     Cost: write complexity (must update denormalized table when category/manufacturer changes)
     Benefit: 10× read speedup, scales linearly with read replicas
-    
+
   OPTIMISATION 4: MATERIALISED VIEWS / PRE-COMPUTATION
     Expensive aggregation query: "Top 10 products by revenue this week"
     Running on every request: full table scan on 1M orders → 500ms
     Materialised view: pre-computed and stored, refreshed every 5 minutes.
     Query response: 2ms (single index scan on materialised view)
-    
+
     Trade-off: data is up to 5 minutes stale (acceptable for dashboards)
     Use case: analytics, leaderboards, aggregation queries
 
@@ -113,35 +113,35 @@ WRITE-HEAVY SYSTEM ARCHITECTURE:
   - Write rate: high (1,000+ writes/sec per node)
   - Common examples: IoT telemetry, financial transactions, activity logs, GPS tracking
   - Bottleneck: write throughput, write amplification, lock contention on writes
-  
+
   OPTIMISATION 1: WRITE-OPTIMISED STORAGE (LSM-Trees)
     B-Tree (traditional RDBMS): random write I/O — slow for high write rates
     LSM-Tree (Cassandra, RocksDB, LevelDB): sequential write I/O — 10-100× faster writes
-    
+
     LSM-Tree write path:
       Write → MemTable (in-memory buffer) → WAL (durability log) → return ACK
       Background: merge MemTable to SSTable (sequential disk write)
       Read: merge all SSTables + MemTable (more complex than B-Tree reads)
-      
+
     Write-heavy: LSM-Tree wins. Read-heavy: B-Tree is faster.
     Cassandra: pure LSM → excellent for write-heavy, OK for reads with compaction.
     PostgreSQL: B-Tree → excellent for reads, good writes up to ~10K/sec.
-    
+
   OPTIMISATION 2: WRITE BUFFERING (Kafka / Message Queues)
     Problem: DB write rate = 100K writes/sec. DB max = 10K writes/sec.
     Solution: Kafka buffer
       Producers → Kafka (100K/sec — Kafka handles this easily)
       Consumers → DB writers (10K/sec — multiple consumers, batched writes)
-      
+
     Benefit: decouple write spikes from DB throughput limit.
     Trade-off: data not immediately in DB (seconds to minutes lag).
     Use when: write bursts > DB throughput AND eventual consistency OK.
-    
+
   OPTIMISATION 3: WRITE BATCHING
     Individual writes: 100,000 INSERT statements = 100,000 DB round trips.
     Batched writes: 10 INSERT ... VALUES (...), (...), ... = 10 DB round trips.
     Throughput: 10× improvement. Latency per individual write: slightly higher.
-    
+
     // JDBC batch insert:
     PreparedStatement ps = conn.prepareStatement("INSERT INTO events VALUES (?,?,?)");
     for (Event e : events) {
@@ -152,16 +152,16 @@ WRITE-HEAVY SYSTEM ARCHITECTURE:
       if (++count % 1000 == 0) ps.executeBatch(); // batch every 1000
     }
     ps.executeBatch(); // final batch
-    
+
   OPTIMISATION 4: ASYNC WRITES + EVENTUAL CONSISTENCY
     Synchronous write: wait for DB ACK → 20ms per write → 50 writes/sec/thread.
     Async write: fire and forget → 1ms (just queue submission) → 1000 writes/sec/thread.
-    
+
     // Write-heavy: async write to Redis + background persistence to DB
     redisTemplate.opsForValue().set(key, value);  // async: 0.1ms
     kafkaTemplate.send("db-writes", key, value);  // async: 0.1ms
     return;  // don't wait for DB write (it happens eventually)
-    
+
     Risk: if crash between Redis write and DB write → data loss.
     Acceptable for: analytics, logs, metrics (loss of some data OK).
     Not acceptable for: financial transactions, user account data.
@@ -170,18 +170,18 @@ MIXED WORKLOADS: CQRS (Command Query Responsibility Segregation)
 
   Many systems: heavy reads in user-facing path, heavy writes in data pipeline.
   CQRS: separate read model (optimised for reads) from write model (optimised for writes).
-  
+
   Write path: normalised DB (OLTP) → fast writes, data integrity
   Read path: denormalised read store (Elasticsearch, Redis, materialised views) → fast reads
   Sync: event-driven (write → publish event → update read store)
-  
+
   Example:
     User posts tweet → write to MySQL (primary tweet store, write-optimised)
     Event: "tweet_created" published to Kafka
     Consumer: updates Elasticsearch index (for search reads)
     Consumer: updates Redis timeline cache (for home feed reads)
     Consumer: fan-out to follower caches (for follower feeds)
-    
+
   Result: reads served from pre-optimised read stores (fast).
           writes go to simple primary store (clean, consistent).
 ```
@@ -191,6 +191,7 @@ MIXED WORKLOADS: CQRS (Command Query Responsibility Segregation)
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT read/write pattern analysis:
+
 - Apply same architecture to all systems → wrong optimisations
 - Read-heavy system with no cache → database overwhelmed by reads
 - Write-heavy system with complex relational DB → write lock contention → backpressure
@@ -222,14 +223,14 @@ WITH read/write pattern analysis:
 STEP 1: MEASURE READ:WRITE RATIO
 
   DB slow query log + application metrics:
-  
+
   # PostgreSQL: check read vs write statement ratio
-  SELECT 
+  SELECT
     schemaname, tablename,
     seq_scan + idx_scan AS total_reads,
     n_tup_ins + n_tup_upd + n_tup_del AS total_writes,
     ROUND(
-      (seq_scan + idx_scan)::numeric / 
+      (seq_scan + idx_scan)::numeric /
       NULLIF(n_tup_ins + n_tup_upd + n_tup_del, 0), 1
     ) AS read_write_ratio
   FROM pg_stat_user_tables
@@ -242,7 +243,7 @@ STEP 2: IDENTIFY BOTTLENECK
   - Cache miss rate: high (>10% misses on hot data)
   - DB replica lag: reads overwhelming replica(s)
   - Read latency: p99 > 100ms on simple queries
-  
+
   Write-heavy signals:
   - DB CPU: dominated by INSERT/UPDATE
   - Write queue: growing backlog of uncommitted writes
@@ -288,25 +289,25 @@ Read-Heavy vs Write-Heavy ◄──── (you are here)
 ```java
 @Configuration
 public class DataSourceConfig {
-    
+
     @Bean
     @Primary
     @ConfigurationProperties("spring.datasource.primary")
     public DataSource primaryDataSource() {
         return DataSourceBuilder.create().build();
     }
-    
+
     @Bean
     @ConfigurationProperties("spring.datasource.replica")
     public DataSource replicaDataSource() {
         return DataSourceBuilder.create().build();
     }
-    
+
     @Bean
     public DataSource routingDataSource(
             @Qualifier("primaryDataSource") DataSource primary,
             @Qualifier("replicaDataSource") DataSource replica) {
-        
+
         AbstractRoutingDataSource router = new AbstractRoutingDataSource() {
             @Override
             protected Object determineCurrentLookupKey() {
@@ -338,12 +339,12 @@ public Product createProduct(Product product) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Adding more replicas solves all read scalability problems | Read replicas help with throughput but replication lag grows with write rate. A heavily write-loaded primary can lag replicas by seconds to minutes — replicas become stale. Heavy write + heavy read systems need CQRS with separate data stores, not just more replicas |
-| Write-heavy systems need less caching | Write-heavy systems still have significant read load (often reads track writes: "show me what I just wrote"). Read-through caches on write-heavy systems prevent read load from further stressing the write-loaded primary. The cache write policy (write-through vs write-behind) matters |
-| Read:Write ratio is fixed at system design time | Access patterns change over time. A startup may launch with equal reads and writes; after viral growth, reads may dominate 1000:1. Capacity planning must re-evaluate read:write ratio quarterly. Architecture built for write-heavy may need caching/replica additions as the system matures |
-| Denormalization only benefits read-heavy systems | Write-heavy systems also benefit from denormalization when writes are batch-insert patterns (analytics ingestion). Writing a flat denormalized row is faster than normalised multi-table writes with foreign key constraints. The "normalise for writes" advice is specifically for high-contention update workloads |
+| Misconception                                             | Reality                                                                                                                                                                                                                                                                                                              |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Adding more replicas solves all read scalability problems | Read replicas help with throughput but replication lag grows with write rate. A heavily write-loaded primary can lag replicas by seconds to minutes — replicas become stale. Heavy write + heavy read systems need CQRS with separate data stores, not just more replicas                                            |
+| Write-heavy systems need less caching                     | Write-heavy systems still have significant read load (often reads track writes: "show me what I just wrote"). Read-through caches on write-heavy systems prevent read load from further stressing the write-loaded primary. The cache write policy (write-through vs write-behind) matters                           |
+| Read:Write ratio is fixed at system design time           | Access patterns change over time. A startup may launch with equal reads and writes; after viral growth, reads may dominate 1000:1. Capacity planning must re-evaluate read:write ratio quarterly. Architecture built for write-heavy may need caching/replica additions as the system matures                        |
+| Denormalization only benefits read-heavy systems          | Write-heavy systems also benefit from denormalization when writes are batch-insert patterns (analytics ingestion). Writing a flat denormalized row is faster than normalised multi-table writes with foreign key constraints. The "normalise for writes" advice is specifically for high-contention update workloads |
 
 ---
 
@@ -356,31 +357,31 @@ PROBLEM: Application accidentally writes to read replica
 
   Bug: @Transactional annotation missing on write method.
   Result: Spring routes write request to read replica (readOnly=true default).
-  
+
   Read replica: rejects write (PostgreSQL read replica: ERROR: cannot execute INSERT in a read-only transaction)
-  
+
   OR worse: Some DBs don't reject (eventual sync issues):
     Write goes to replica → replication overrides with primary state → data lost.
-    
+
 CORRECT PATTERN:
 
   // WRONG — no @Transactional → might route to replica:
   public User createUser(User user) {
     return userRepository.save(user);  // might go to replica!
   }
-  
+
   // CORRECT — explicit @Transactional → always routes to primary:
   @Transactional
   public User createUser(User user) {
     return userRepository.save(user);  // always primary
   }
-  
+
   // CORRECT — read — explicitly read-only:
   @Transactional(readOnly = true)
   public User findUser(Long id) {
     return userRepository.findById(id).orElseThrow();
   }
-  
+
 MONITORING: Alert on writes to read replica:
   Track: replica write errors (rate > 0 → routing bug)
   Alert: any INSERT/UPDATE/DELETE on replica → PagerDuty alert.
