@@ -18,10 +18,10 @@ tags: #advanced, #distributed, #coordination, #concurrency, #safety
 
 ⚡ TL;DR — **Distributed Locking** is the mechanism to ensure at most one node holds exclusive access to a shared resource at a time — requiring TTL-based expiry, fencing tokens, and correct storage-level enforcement to be safe in the presence of GC pauses and network partitions.
 
-| #597 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Fencing and Epoch, Leader Election | |
-| **Used by:** | ZooKeeper, etcd, Redis Redlock, Database SELECT FOR UPDATE | |
+| #597            | Category: Distributed Systems                              | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------- | :-------------- |
+| **Depends on:** | Fencing and Epoch, Leader Election                         |                 |
+| **Used by:**    | ZooKeeper, etcd, Redis Redlock, Database SELECT FOR UPDATE |                 |
 
 ---
 
@@ -53,7 +53,7 @@ NAIVE DISTRIBUTED LOCK (WRONG — no fencing):
   Server A: acquire lock by writing "locked" to Redis with SETNX.
   Server A: does critical work.
   Server A: releases lock by deleting "locked" from Redis.
-  
+
   FAILURE: Server A GC pause during critical work.
     T=0: Server A acquires lock (TTL=30s).
     T=25: Server A: GC pause starts.
@@ -67,19 +67,19 @@ CORRECT DISTRIBUTED LOCK WITH FENCING TOKEN:
   Step 1: Acquire lock → get monotonically increasing token.
     Server A: acquires lock. Gets token=47.
     Lock TTL: 30 seconds.
-    
+
   Step 2: Use token in every write to the protected resource.
     Server A: writes to DB with token=47.
     DB: records "last accepted token = 47."
-    
+
   Step 3: If lock expires and Server B acquires lock → gets token=48.
     Server B: writes to DB with token=48.
     DB: records "last accepted token = 48."
-    
+
   Step 4: GC pause ends. Server A resumes with token=47.
     Server A: writes to DB with token=47.
     DB: "Current token=48 > 47. REJECT." Server A fenced.
-    
+
   Implementation: etcd revision as fencing token.
     Acquire: etcd lease → put key → response.Header.Revision = fencing token.
     Write to resource: include Revision in request.
@@ -95,29 +95,29 @@ ZOOKEEPER DISTRIBUTED LOCK (RECIPE):
     4. If not smallest: client watches the znode with the next-smaller sequence number.
        Wait for that znode to be deleted.
     5. On watch trigger: go to step 2 (re-check).
-    
+
   Example with 3 clients:
     C1 creates /lock/node-0001. Gets all: [0001]. C1 is smallest. LOCK ACQUIRED.
     C2 creates /lock/node-0002. Gets all: [0001, 0002]. C2 watches 0001.
     C3 creates /lock/node-0003. Gets all: [0001, 0002, 0003]. C3 watches 0002.
-    
+
   C1 releases (deletes 0001):
     C2: receives watch notification (0001 deleted). Gets all: [0002, 0003].
     C2 is now smallest (0002). LOCK ACQUIRED. Proceeds.
     C3: still watching 0002. Not disturbed.
-    
+
   CRASH-SAFETY: C1 crashes without releasing:
     ZooKeeper: C1's session expires (heartbeat timeout).
     C1's ephemeral znode 0001: automatically deleted on session expiry.
     C2: receives watch notification. Acquires lock.
     TTL equivalent: session timeout (default: 40s in ZooKeeper).
-    
+
   WHY SEQUENTIAL? WATCH PREDECESSOR (not all):
     Without sequential: all clients watch a single "/lock" node.
     When lock releases: ALL clients get notified. All try to acquire. "Herd effect."
     With sequential + watch predecessor: only the next-in-line client is notified.
     O(1) notifications per lock release (not O(N)).
-    
+
   FENCING TOKEN: use C1's znode's zxid (transaction ID) as fencing token.
     zxid = monotonically increasing per ZooKeeper write.
     New lock holder always gets higher zxid than previous. Safe fencing.
@@ -129,35 +129,35 @@ REDIS DISTRIBUTED LOCK (REDLOCK):
     NX: only set if not exists (atomic acquire).
     PX 30000: 30-second TTL.
     my_random_value: unique per lock acquisition (random UUID). Used to verify ownership on release.
-    
+
   Release: check + delete atomically via Lua:
     if redis.call("GET", KEYS[1]) == ARGV[1] then  -- Check: is this still our lock?
         return redis.call("DEL", KEYS[1])           -- If yes: delete.
     else
         return 0
     end
-    
+
   Redlock (multi-node Redis):
     5 Redis instances (independent, no replication).
     Acquire: attempt to acquire lock on ALL 5 within TTL/2 time.
     Acquired if: majority (3+) ACK within time window.
     Validity time: TTL - elapsed_time - clock_drift_margin.
     Release: send DEL to all 5 (even ones that didn't ACK).
-    
+
   CONTROVERSY (Martin Kleppmann, 2016):
     Problem 1: No fencing token. Client A acquires Redlock.
-               A: GC pause for 35s. Lock expires (TTL=30s). 
+               A: GC pause for 35s. Lock expires (TTL=30s).
                B: acquires Redlock. Both A and B in critical section.
                Redlock doesn't give a fencing token → storage can't reject A's writes.
-               
+
     Problem 2: Clock skew. Redis node R3's clock jumps forward 10s.
                R3 expires lock 10s early. B acquires lock on R3 + 2 others (3 of 5).
                A still has lock on R1, R2. Clock-based disagreement.
-               
+
     Antirez (Redis author) response: Redlock is designed for "efficiency" (prevent double-work),
                not "correctness" (prevent concurrent writes to storage).
                For correctness: use ZooKeeper/etcd with fencing tokens.
-               
+
   GUIDELINE:
     Use Redlock for: "only one instance does expensive operation" where occasional duplication
                      is acceptable (idempotent operations).
@@ -169,22 +169,22 @@ DATABASE-LEVEL DISTRIBUTED LOCKS:
     pg_try_advisory_lock(lockid): try to acquire. Returns true/false. Non-blocking.
     pg_advisory_lock(lockid): acquire. Blocks until available.
     pg_advisory_unlock(lockid): release.
-    
+
     Session-level: released on connection close (crash-safe).
     Transaction-level: released on COMMIT/ROLLBACK.
-    
+
     SELECT pg_try_advisory_lock(hashtext('billing-job-lock'));
     -- Returns: t (acquired) or f (already held by another session).
     -- If t: proceed with billing. If f: skip (another instance is running).
-    
+
     Advantage: same ACID transaction that uses the lock → no external lock service needed.
     Limitation: only for operations within PostgreSQL. Not cross-service.
-    
+
   MySQL GET_LOCK():
     SELECT GET_LOCK('billing-job-lock', 10);  -- Wait up to 10s for lock. 1=acquired, 0=timeout.
     SELECT RELEASE_LOCK('billing-job-lock'); -- Release.
     -- Connection-scoped: released on connection close. Crash-safe.
-    
+
   Database row-level SELECT FOR UPDATE:
     BEGIN;
     SELECT * FROM jobs WHERE name='billing' FOR UPDATE;
@@ -199,6 +199,7 @@ DATABASE-LEVEL DISTRIBUTED LOCKS:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT distributed locking:
+
 - Multiple instances execute critical sections simultaneously: double-billing, duplicate emails, inventory miscounts
 - No coordination: any instance can start the "exclusive" operation without checking
 - Data corruption: concurrent writes to the same record from multiple nodes
@@ -240,30 +241,30 @@ func main() {
         Endpoints: []string{"etcd1:2379", "etcd2:2379", "etcd3:2379"},
     })
     defer cli.Close()
-    
+
     // Session: lease with TTL=15s (auto-renewed while session is active).
     // If this process crashes: lease expires in 15s → lock auto-released.
     session, _ := concurrency.NewSession(cli, concurrency.WithTTL(15))
     defer session.Close()
-    
+
     mutex := concurrency.NewMutex(session, "/locks/billing-job")
-    
+
     ctx := context.Background()
-    
+
     // Acquire lock (blocks until acquired):
     if err := mutex.Lock(ctx); err != nil {
         panic(err)
     }
-    
+
     // Fencing token = etcd revision when lock was acquired.
     // This revision is globally monotonic — every new lock holder gets higher revision.
     fencingToken := mutex.Header().Revision
     fmt.Printf("Lock acquired. Fencing token: %d\n", fencingToken)
-    
+
     // Critical section: use fencing token in all storage operations.
     // Storage must check: "is this token > last_seen_token?"
     processMonthlyBilling(cli, fencingToken)
-    
+
     // Release lock:
     if err := mutex.Unlock(ctx); err != nil {
         panic(err)
@@ -275,18 +276,18 @@ func processMonthlyBilling(cli *clientv3.Client, fencingToken int64) {
     // Only succeeds if no one with a newer token has written to this key.
     ctx := context.Background()
     txn := cli.Txn(ctx)
-    
+
     resp, err := txn.
         // Fencing: only proceed if nobody has written to this key with a newer token.
         If(clientv3.Compare(clientv3.ModRevision("/billing/status"), "<", fencingToken+1)).
         Then(clientv3.OpPut("/billing/status", fmt.Sprintf("running:%d", fencingToken))).
         Commit()
-    
+
     if err != nil || !resp.Succeeded {
         fmt.Println("Fencing: another lock holder has taken over. Stopping.")
         return
     }
-    
+
     fmt.Println("Billing processing started...")
     // ... billing work ...
 }
@@ -325,7 +326,7 @@ public class BillingApplication { ... }
 
 @Component
 public class MonthlyBillingJob {
-    
+
     @Scheduled(cron = "0 0 1 1 * *") // 1st of every month at 1 AM
     @SchedulerLock(
         name = "monthly-billing",
@@ -337,7 +338,7 @@ public class MonthlyBillingJob {
         // If instance A crashes mid-billing: lock expires in 25 minutes → B can proceed.
         // If A finishes in 5 minutes: lock held minimum 5 minutes (prevents duplicate runs
         //   if multiple scheduler instances fire simultaneously at 1:00:00 AM).
-        
+
         log.info("Starting monthly billing on instance: {}", instanceId);
         billingService.processAll(); // Idempotent: safe to retry after failure.
         log.info("Monthly billing complete.");
@@ -361,12 +362,12 @@ public class MonthlyBillingJob {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                         | Reality                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Redlock is safe for all distributed locking use cases | Redlock provides "efficiency locks" (avoiding expensive duplicate work) but NOT "correctness locks" (guaranteeing no two processes write to storage simultaneously). Without fencing tokens, a GC-paused process can resume after its Redlock expires and write to storage concurrently with the new lock holder. For correctness: use ZooKeeper or etcd with fencing tokens, where the storage system validates the token |
-| TTL-based expiry is sufficient for lock safety | TTL prevents indefinite blocking but doesn't prevent concurrent access. If TTL = 30s and GC pause = 35s: lock expired, new holder acquired, original holder resumed = 5 seconds of concurrent access. TTL only prevents DEADLOCKS; fencing tokens prevent RACE CONDITIONS. Both are needed for a fully safe distributed lock |
-| Distributed locks are equivalent to in-process locks | In-process locks (synchronized, mutex) are instantaneous — the JVM guarantees atomicity of lock acquire and release. Distributed locks involve network round trips (10-100ms), TTL clocks, and failure modes unknown to in-process locks. A distributed lock's "hold" can be violated by GC pauses, network partitions, and clock skew — none of which affect in-process locks. The semantics are fundamentally different |
-| ZooKeeper locks are faster than etcd locks | ZooKeeper has watch-based notifications (ephemeral znode deletion triggers immediate watch event → lock handoff). etcd has similar watch semantics. Performance is similar for locks. The real difference is operational: ZooKeeper has a Java-based server with JVM GC issues; etcd is written in Go (fewer GC pauses). For high-throughput locking: etcd is generally preferred in modern architectures |
+| TTL-based expiry is sufficient for lock safety        | TTL prevents indefinite blocking but doesn't prevent concurrent access. If TTL = 30s and GC pause = 35s: lock expired, new holder acquired, original holder resumed = 5 seconds of concurrent access. TTL only prevents DEADLOCKS; fencing tokens prevent RACE CONDITIONS. Both are needed for a fully safe distributed lock                                                                                               |
+| Distributed locks are equivalent to in-process locks  | In-process locks (synchronized, mutex) are instantaneous — the JVM guarantees atomicity of lock acquire and release. Distributed locks involve network round trips (10-100ms), TTL clocks, and failure modes unknown to in-process locks. A distributed lock's "hold" can be violated by GC pauses, network partitions, and clock skew — none of which affect in-process locks. The semantics are fundamentally different  |
+| ZooKeeper locks are faster than etcd locks            | ZooKeeper has watch-based notifications (ephemeral znode deletion triggers immediate watch event → lock handoff). etcd has similar watch semantics. Performance is similar for locks. The real difference is operational: ZooKeeper has a Java-based server with JVM GC issues; etcd is written in Go (fewer GC pauses). For high-throughput locking: etcd is generally preferred in modern architectures                  |
 
 ---
 
@@ -380,7 +381,7 @@ REAL INCIDENT: E-commerce flash sale.
   Each email server acquires Redis lock before sending batch.
   Lock TTL: 30 seconds.
   Job time: ~45 seconds (under normal load).
-  
+
   Flash sale: email server overloaded. Job took 60 seconds.
   At T=30s: Redis lock expired. Server B acquired lock. Started sending emails.
   Server A: still running at T=30-60s. Both A and B sending simultaneously.
@@ -390,7 +391,7 @@ REAL INCIDENT: E-commerce flash sale.
 BAD: Redis lock without fencing token and without idempotency:
   String lockToken = UUID.randomUUID().toString();
   Boolean acquired = redis.set("flash-sale-email-lock", lockToken, "NX", "PX", 30000);
-  
+
   if (Boolean.TRUE.equals(acquired)) {
       // No fencing check during the 60-second operation:
       for (Customer customer : first100Customers) {

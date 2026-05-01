@@ -18,10 +18,10 @@ tags: #advanced, #distributed, #theory, #consensus, #impossibility
 
 ⚡ TL;DR — The **Two Generals Problem** proves it is **impossible** to achieve perfectly reliable consensus over an unreliable channel — you can always reduce uncertainty but never eliminate it; TCP's three-way handshake and distributed commit protocols accept this by living with bounded uncertainty.
 
-| #618 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Consensus, CAP Theorem | |
-| **Used by:** | TCP handshake, Distributed Commit Protocols, Two-Phase Commit | |
+| #618            | Category: Distributed Systems                                 | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Consensus, CAP Theorem                                        |                 |
+| **Used by:**    | TCP handshake, Distributed Commit Protocols, Two-Phase Commit |                 |
 
 ---
 
@@ -55,30 +55,30 @@ TWO GENERALS PROBLEM — FORMAL SETUP:
   Rule: attacking alone = defeat. Attacking together = victory.
   Communication: messengers through the valley (may be captured, i.e., message may be lost).
   Goal: coordinate to attack simultaneously.
-  
+
   PROOF BY INDUCTION (impossibility):
-  
+
   Claim: No finite message protocol guarantees both generals attack.
-  
+
   Base case: 1 message.
     A sends "attack at dawn" to B.
     B receives message. B knows to attack. A does NOT know if B received it.
     If A attacks: might be alone (message lost). Defeat.
     If A doesn't attack: definitely doesn't attack. Safe but no coordination.
     Result: 1 message insufficient.
-    
+
   Inductive step: Assume any k-message protocol fails.
     Protocol with k+1 messages: same issue.
     The (k+1)th message: is the ACK of the kth message.
     Sender of message k+1: doesn't know if message k+1 was received.
     Same uncertainty as the k-message case.
-    
+
   By induction: no finite message protocol eliminates the uncertainty.
-  
+
   KEY INSIGHT:
     The last message in ANY protocol always leaves the sender uncertain.
     "Did my last message arrive?" → need another message to confirm → infinite regress.
-    
+
   MATHEMATICAL FORMULATION:
     Let S = set of all possible message sequences (finite).
     For any s ∈ S: if the last message is removed → protocol still has same problem.
@@ -89,23 +89,23 @@ TCP THREE-WAY HANDSHAKE — ACCEPTING BOUNDED UNCERTAINTY:
   SYN    → (Client to Server: "I want to connect")
   SYN-ACK← (Server to Client: "OK, I'm ready")
   ACK    → (Client to Server: "Got your SYN-ACK, connection established")
-  
+
   After ACK sent by client:
     Client: believes connection established. Starts sending data.
     Server: may or may not have received the ACK.
-    
+
   If ACK lost:
     Server: waits in SYN_RECEIVED state. Resends SYN-ACK after timeout.
     Client: receives duplicate SYN-ACK. Resends ACK.
     Eventually: Server receives ACK → connection established.
-    
+
   TCP ACCEPTS THE IMPOSSIBILITY:
     Uses TIMEOUTS and RETRANSMISSION rather than trying to eliminate uncertainty.
     "We'll behave correctly MOST of the time. When things go wrong: retry."
     This is a pragmatic engineering solution to a theoretically impossible problem.
-    
+
   WHY THREE-WAY (not two-way):
-    Two-way: SYN → SYN-ACK. 
+    Two-way: SYN → SYN-ACK.
     Server: knows client wants connection. Client: knows server is ready.
     But server: doesn't know if client received the SYN-ACK.
     Server: might think connection established, client: timed out.
@@ -115,44 +115,44 @@ TCP THREE-WAY HANDSHAKE — ACCEPTING BOUNDED UNCERTAINTY:
 TWO-PHASE COMMIT — THE GENERALS PROBLEM IN PRACTICE:
 
   2PC is exactly the Two Generals Problem with more participants.
-  
+
   BLOCKING FAILURE SCENARIO:
     Coordinator: sends PREPARE to all participants. All reply PREPARED.
     Coordinator: decides COMMIT. Sends COMMIT to Participant A. → Success.
     Coordinator: CRASHES before sending COMMIT to Participant B.
-    
+
     State:
       Participant A: committed (can't undo without coordinator instruction).
       Participant B: prepared (holding locks, waiting for commit or abort instruction).
       Coordinator: crashed. Not available.
-      
+
     Participant B: "Should I commit or abort?"
       Cannot commit: coordinator didn't say so.
       Cannot abort: participant A already committed (inconsistency if B aborts).
       Result: BLOCKED. Holds database locks indefinitely.
-      
+
   This is the Two Generals Problem: B doesn't know if A got the COMMIT.
   Even if B could contact A: if A committed, should B commit? But what if A also timed out?
-  
+
   PRACTICAL SOLUTIONS (not perfect, but acceptable):
-  
+
   1. COORDINATOR RECOVERY:
      New coordinator: reads transaction log. Was the decision COMMIT or ABORT?
      If yes: resend COMMIT/ABORT to all participants.
      Recovery time: minutes (new coordinator must be elected, read logs).
      Participant: unblocked after coordinator recovers.
      Still blocked DURING coordinator failure.
-     
+
   2. PAXOS/RAFT (Three-Phase Commit approximation):
      Distributed coordinator: replicated (Raft consensus group).
      Coordinator failure: Raft elects new leader. Continues from where left off.
      Reduces blocking window from "until coordinator recovers" to "until new leader elected" (seconds).
      Still cannot 100% eliminate the blocking window.
-     
+
   3. SAGAS (avoid 2PC entirely):
      Use compensating transactions instead of distributed atomic commit.
      Accept eventual consistency. Avoid the Two Generals Problem altogether.
-     
+
   4. ACCEPT UNCERTAINTY:
      Financial systems: "debit $100 in both accounts, reconcile discrepancies nightly."
      Accept that some transactions may need manual resolution.
@@ -165,19 +165,19 @@ REAL-WORLD SYSTEMS THAT ACCEPT THE IMPOSSIBILITY:
     Server: processes request. Might crash before responding.
     Client: gets no response. Retry? Request may have been processed already.
     → Idempotency keys solve this by making retries safe.
-    
+
   E-commerce payment:
     Customer: clicks "Pay." Browser: sends request. Network drops.
     Browser: shows error. Customer: clicks "Pay" again.
     Payment service: already processed first request? Or not?
     → Idempotency key (order ID): if already processed, return cached result. Don't double-charge.
-    
+
   DNS propagation:
     DNS record updated. Propagation: takes up to 48 hours.
     During propagation: some resolvers return old IP, some return new.
     Two clients at same time: may resolve to different servers.
     → Accepted as a known limitation. TTL reduces window.
-    
+
   THE FUNDAMENTAL INSIGHT:
     Perfect reliability is mathematically impossible over unreliable channels.
     Engineering response: minimize uncertainty + handle inconsistency gracefully.
@@ -190,6 +190,7 @@ REAL-WORLD SYSTEMS THAT ACCEPT THE IMPOSSIBILITY:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT understanding this impossibility:
+
 - Design systems that assume perfect message delivery
 - Waste engineering effort trying to achieve impossible guarantees
 - Build brittle systems that fail unexpectedly at boundaries
@@ -253,7 +254,7 @@ Two Generals Problem ◄──── (you are here)
 // Client-side (resilient with retry):
 public Order placeOrder(OrderRequest request) {
     String idempotencyKey = request.getClientOrderId(); // Unique per order attempt.
-    
+
     for (int attempt = 0; attempt < 3; attempt++) {
         try {
             return httpClient.post("/orders")
@@ -274,13 +275,13 @@ public Order placeOrder(OrderRequest request) {
 public ResponseEntity<Order> createOrder(
         @RequestHeader("Idempotency-Key") String idempotencyKey,
         @RequestBody OrderRequest request) {
-    
+
     // Check: already processed this idempotency key?
     Optional<Order> existing = idempotencyStore.get(idempotencyKey);
     if (existing.isPresent()) {
         return ResponseEntity.ok(existing.get()); // Return cached result.
     }
-    
+
     Order order = orderService.create(request);
     idempotencyStore.save(idempotencyKey, order, Duration.ofDays(1));
     return ResponseEntity.status(201).body(order);
@@ -291,11 +292,11 @@ public ResponseEntity<Order> createOrder(
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| TCP solves the Two Generals Problem | TCP minimizes the problem with three-way handshake + timeouts + retransmission, but cannot solve it. After the ACK (third message), the client doesn't know if the server received it. If the ACK is lost: the server retransmits SYN-ACK; the client retransmits ACK. Eventually converges, but there's always a window of uncertainty. TCP is a practical engineering solution, not a theoretical proof of reliability |
+| Misconception                                                                | Reality                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TCP solves the Two Generals Problem                                          | TCP minimizes the problem with three-way handshake + timeouts + retransmission, but cannot solve it. After the ACK (third message), the client doesn't know if the server received it. If the ACK is lost: the server retransmits SYN-ACK; the client retransmits ACK. Eventually converges, but there's always a window of uncertainty. TCP is a practical engineering solution, not a theoretical proof of reliability               |
 | More acknowledgements reduce uncertainty sufficiently for distributed commit | Adding more rounds (three-phase commit vs. two-phase commit) reduces the blocking window but doesn't eliminate it. 3PC can avoid blocking in partial synchrony models but introduces other failure modes (split-brain). The Two Generals impossibility result proves no finite protocol works with an asynchronous, unreliable channel. Raft/Paxos: solve this by requiring a majority, accepting that a minority might be out of sync |
-| The Two Generals Problem only applies to commit protocols | It applies to any protocol requiring bilateral agreement over an unreliable channel. HTTP request-response (did the server process my request?), DNS updates (did all resolvers get the new record?), cache invalidation (did all caches receive the invalidation?). Everywhere two systems must agree on a state change: the Two Generals Problem lurks. The practical response is always: idempotency + retry + reconciliation |
+| The Two Generals Problem only applies to commit protocols                    | It applies to any protocol requiring bilateral agreement over an unreliable channel. HTTP request-response (did the server process my request?), DNS updates (did all resolvers get the new record?), cache invalidation (did all caches receive the invalidation?). Everywhere two systems must agree on a state change: the Two Generals Problem lurks. The practical response is always: idempotency + retry + reconciliation       |
 
 ---
 
@@ -308,18 +309,18 @@ SCENARIO: Order service uses 2PC across PostgreSQL (order DB) and Inventory DB.
   Coordinator sends PREPARE → both databases reply PREPARED.
   Coordinator sends COMMIT to Order DB → success.
   Coordinator: crashes immediately after.
-  
+
   State:
     Order DB: COMMITTED (order exists, locks released).
     Inventory DB: PREPARED (locks held, waiting for COMMIT or ABORT).
-    
+
   Result:
     Inventory DB: holds row-level locks on inventory items indefinitely.
     All queries trying to update those items: BLOCKED.
     Service: appears to hang on inventory updates.
-    
+
   This is the Two Generals Problem: Inventory DB doesn't know if Order DB committed.
-  
+
 BAD: Using 2PC for inter-service transactions without recovery plan:
   // No automatic coordinator failover.
   // No monitoring for prepared-but-not-committed transactions.
@@ -328,22 +329,22 @@ BAD: Using 2PC for inter-service transactions without recovery plan:
 DETECTION AND RECOVERY:
   PostgreSQL: SELECT * FROM pg_prepared_xacts; -- Shows prepared transactions.
   If transaction stuck > 5 minutes: investigate.
-  
+
   Manual recovery (with knowledge of coordinator's decision):
     -- If coordinator log shows COMMIT was decided:
     COMMIT PREPARED 'transaction-id-abc';
-    
+
     -- If coordinator log shows ABORT was decided (or unknown):
     ROLLBACK PREPARED 'transaction-id-abc';
-  
+
   PREVENTION:
     Option 1: Use saga instead of 2PC (avoid the problem).
     Option 2: Replicated coordinator (Raft): coordinator failure → new leader continues.
-    Option 3: Distributed transaction timeout: 
+    Option 3: Distributed transaction timeout:
       If prepared transaction > X minutes → auto-rollback.
       Risk: Order DB committed, Inventory DB rolled back → inconsistency.
       Acceptable if reconciliation job runs to detect and fix mismatches.
-      
+
   MONITORING:
     Alert: "prepared transaction older than 5 minutes in any database."
     Runbook: steps to identify coordinator decision and manually complete.

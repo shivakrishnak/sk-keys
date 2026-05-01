@@ -18,10 +18,10 @@ tags: #advanced, #distributed, #kubernetes, #patterns, #microservices
 
 ⚡ TL;DR — The **Sidecar Pattern** co-locates a helper container alongside the main container in the same pod, sharing its network and filesystem, to add cross-cutting capabilities (logging, proxying, TLS, tracing) without modifying the application.
 
-| #614 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Containers, Kubernetes | |
-| **Used by:** | Service Mesh (Istio, Linkerd), Dapr, Envoy, Logging Agents | |
+| #614            | Category: Distributed Systems                              | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------- | :-------------- |
+| **Depends on:** | Containers, Kubernetes                                     |                 |
+| **Used by:**    | Service Mesh (Istio, Linkerd), Dapr, Envoy, Logging Agents |                 |
 
 ---
 
@@ -54,14 +54,14 @@ KUBERNETES POD — SHARED RESOURCES:
     - Network namespace: same IP address, same localhost, same ports
     - Process namespace (optional, via shareProcessNamespace: true)
     - Volumes (explicit volume mounts)
-    
+
   POD NETWORK:
     Container A (app): binds to 0.0.0.0:8080
     Container B (sidecar proxy): binds to 0.0.0.0:15001
     Both containers: use "localhost" to talk to each other.
     App: sends HTTP to localhost:15001 → Envoy sidecar → actual network call.
     OR: iptables redirect all outbound from app → Envoy intercepts transparently.
-    
+
   VOLUME SHARING:
     App container: writes logs to /var/log/app/app.log
     Sidecar container: reads /var/log/app/app.log, ships to ELK.
@@ -79,7 +79,7 @@ KUBERNETES POD SPEC — SIDECAR EXAMPLE:
           capabilities:
             add: ["NET_ADMIN"]
         # Sets up iptables rules to redirect traffic to Envoy
-        
+
     containers:
       - name: order-service           # Main container: application code
         image: myapp/order-service:1.2.3
@@ -88,7 +88,7 @@ KUBERNETES POD SPEC — SIDECAR EXAMPLE:
         volumeMounts:
           - name: logs
             mountPath: /var/log/app
-            
+
       - name: envoy                   # Sidecar 1: network proxy
         image: docker.io/envoyproxy/envoy:v1.28
         ports:
@@ -97,7 +97,7 @@ KUBERNETES POD SPEC — SIDECAR EXAMPLE:
         volumeMounts:
           - name: envoy-config
             mountPath: /etc/envoy
-            
+
       - name: log-shipper             # Sidecar 2: log aggregation
         image: fluent/fluent-bit:latest
         volumeMounts:
@@ -106,7 +106,7 @@ KUBERNETES POD SPEC — SIDECAR EXAMPLE:
         env:
           - name: ELASTICSEARCH_HOST
             value: "elasticsearch:9200"
-            
+
     volumes:
       - name: logs
         emptyDir: {}                  # Shared ephemeral volume
@@ -119,7 +119,7 @@ KUBERNETES 1.29+ NATIVE SIDECAR CONTAINERS:
   Problem: regular sidecars start in any order.
   If log-shipper starts after app: first log lines lost.
   If Envoy not ready: app's first requests fail.
-  
+
   Kubernetes 1.29: sidecar containers feature (restartPolicy: Always in initContainers):
     initContainers:
       - name: log-shipper
@@ -127,7 +127,7 @@ KUBERNETES 1.29+ NATIVE SIDECAR CONTAINERS:
         restartPolicy: Always         # Runs for pod lifetime (like sidecar, not init)
         # Starts BEFORE app containers. App waits for this to be Ready.
         # If pod shuts down: app terminates first, then sidecars (reverse order).
-        
+
   Benefit: guaranteed startup order. Clean shutdown order.
 
 SIDECAR VARIANTS:
@@ -136,17 +136,17 @@ SIDECAR VARIANTS:
      Intercepts network traffic.
      Examples: Envoy (Istio), linkerd2-proxy (Linkerd), Nginx.
      Use: TLS termination, retries, circuit breaking, load balancing.
-     
+
   2. LOGGING/MONITORING SIDECAR:
      Collects and ships telemetry.
      Examples: Fluent Bit, Datadog Agent, Prometheus node exporter.
      Use: read log files from shared volume, forward to centralized backend.
-     
+
   3. CONFIGURATION/SECRET SIDECAR:
      Vault Agent Injector: injects secrets into shared volume.
      Config sync: watches for config changes, writes to shared volume.
      App: reads config from file (no Vault SDK needed in app).
-     
+
      # Vault Agent annotation (auto-injects Vault Agent sidecar):
      annotations:
        vault.hashicorp.com/agent-inject: "true"
@@ -154,13 +154,13 @@ SIDECAR VARIANTS:
        vault.hashicorp.com/agent-inject-secret-db-creds: "secret/data/db/credentials"
        # Vault Agent: writes secret to /vault/secrets/db-creds
        # App: reads /vault/secrets/db-creds (plain file, no Vault SDK)
-       
+
   4. AMBASSADOR SIDECAR:
      Protocol translation proxy for outgoing requests.
      App: sends HTTP/1.1 to sidecar localhost:9001.
      Sidecar (Envoy): translates to gRPC for upstream service.
      App: no gRPC library needed.
-     
+
   5. ADAPTER SIDECAR:
      Normalizes app output format.
      Legacy app: writes non-JSON logs to stdout.
@@ -171,10 +171,10 @@ SIDECAR vs DAPR (Distributed Application Runtime):
 
   Dapr is a sidecar-based middleware for microservices.
   Dapr sidecar: provides pub/sub, state management, service invocation, secrets via HTTP API.
-  
+
   App: POST http://localhost:3500/v1.0/invoke/inventory-service/method/reserve
     → Dapr sidecar: handles service discovery, mTLS, retries, tracing.
-    
+
   Benefit: app calls simple HTTP localhost API. No service discovery client, no retry library.
   Dapr sidecar: abstracts all infrastructure concerns.
   Portable: switch from Kafka to RabbitMQ → change Dapr config, not app code.
@@ -185,12 +185,12 @@ ANTI-PATTERNS:
      Each sidecar: RAM, CPU overhead.
      10 sidecars = 10 containers to manage, start, monitor.
      Rule: max 2-3 sidecars per pod in production.
-     
+
   2. TIGHT COUPLING TO SIDECAR:
      App code directly calling sidecar API (not through localhost abstraction).
      If sidecar changes: app code breaks.
      Rule: app should be unaware of which sidecar is running.
-     
+
   3. SHARED MUTABLE STATE via sidecar:
      Two sidecars writing to same shared volume file simultaneously.
      Race condition: data corruption.
@@ -202,6 +202,7 @@ ANTI-PATTERNS:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT sidecar:
+
 - Cross-cutting concerns (logging, TLS, retries) embedded in each service's code
 - Platform team must send PRs to 50 services to update the logging library
 - App containers must have all dependencies (security libs, logging agents, proxies)
@@ -239,7 +240,7 @@ NETWORK INTERCEPTION (iptables redirect — how Envoy sidecar intercepts transpa
     Receives all outbound traffic from app.
     Applies: retry, circuit breaking, TLS, trace header injection.
     Forwards to actual destination with mTLS.
-    
+
   App code: ZERO changes needed.
 ```
 
@@ -283,17 +284,18 @@ spec:
       # Vault Agent writes to /vault/secrets/db
       # App reads: /vault/secrets/db as environment file
       # App has NO Vault SDK dependency
-      command: ["sh", "-c", "export $(cat /vault/secrets/db) && ./order-service"]
+      command:
+        ["sh", "-c", "export $(cat /vault/secrets/db) && ./order-service"]
 ```
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Sidecar containers run in a separate network namespace | Sidecar containers share the SAME network namespace as the main container. Same IP, same localhost, same ports. This is what enables Envoy to intercept traffic on localhost. Running in a separate network namespace would require explicit networking — it would not be a "sidecar" in the Kubernetes sense |
-| Sidecars are only for Kubernetes | Sidecar pattern predates Kubernetes. Docker Compose: multiple services in a compose file sharing a network. HashiCorp Nomad: task group with sidecar task. VMs: two processes on the same VM sharing localhost. Kubernetes: makes the pattern first-class via the Pod spec. The concept is container/process co-location with shared resources, not Kubernetes-specific |
+| Misconception                                                | Reality                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Sidecar containers run in a separate network namespace       | Sidecar containers share the SAME network namespace as the main container. Same IP, same localhost, same ports. This is what enables Envoy to intercept traffic on localhost. Running in a separate network namespace would require explicit networking — it would not be a "sidecar" in the Kubernetes sense                                                            |
+| Sidecars are only for Kubernetes                             | Sidecar pattern predates Kubernetes. Docker Compose: multiple services in a compose file sharing a network. HashiCorp Nomad: task group with sidecar task. VMs: two processes on the same VM sharing localhost. Kubernetes: makes the pattern first-class via the Pod spec. The concept is container/process co-location with shared resources, not Kubernetes-specific  |
 | The app container must be restarted when the sidecar updates | In a standard Kubernetes pod: both containers share a pod lifecycle. Update the sidecar image: requires pod restart (rolling update). With Kubernetes 1.28+ sidecar containers feature: sidecars can be updated more gracefully. Dapr/Istio auto-injection: updating the sidecar globally is a rolling deployment across all pods, done independently of app deployments |
 
 ---
@@ -308,7 +310,7 @@ SCENARIO: Istio sidecar injection. App starts, immediately makes outbound call.
   iptables rules: already redirecting traffic to Envoy (port 15001).
   App's first request: connection refused (Envoy not listening yet).
   Result: first request fails. App crashes. CrashLoopBackOff.
-  
+
 BAD: No startup delay — app calls external service immediately on startup:
   @SpringBootApplication
   public class Application {
@@ -317,20 +319,20 @@ BAD: No startup delay — app calls external service immediately on startup:
           // Envoy: not ready. First call: fails.
       }
   }
-  
+
 FIX 1: Add startup delay (poor man's solution):
   # Pod annotation: add hold-off before Envoy allows traffic
   annotations:
     proxy.istio.io/config: '{"holdApplicationUntilProxyStarts": true}'
   # Istio: holds app container start until Envoy is ready.
-  
+
 FIX 2: Retry/health-check in app startup:
   @PostConstruct
   public void init() {
       // Don't call downstream immediately. Wait for health checks.
       // Spring retry or @Retryable on first call.
   }
-  
+
 FIX 3: Kubernetes 1.29 native sidecars:
   initContainers:
     - name: istio-proxy

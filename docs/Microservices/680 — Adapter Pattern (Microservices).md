@@ -18,10 +18,10 @@ tags: #advanced, #microservices, #distributed, #architecture, #pattern
 
 ⚡ TL;DR — The **Adapter Pattern (Microservices)** deploys a sidecar that translates inbound requests from one protocol or format to what the application understands, enabling protocol evolution without modifying the application.
 
-| #680 | Category: Microservices | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Sidecar Pattern, Cross-Cutting Concerns | |
-| **Used by:** | Service Mesh, Ambassador Pattern | |
+| #680            | Category: Microservices                 | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------- | :-------------- |
+| **Depends on:** | Sidecar Pattern, Cross-Cutting Concerns |                 |
+| **Used by:**    | Service Mesh, Ambassador Pattern        |                 |
 
 ---
 
@@ -51,14 +51,14 @@ Legacy Order Service only speaks HTTP/1.1 REST. Your mobile app team wants to us
 WITHOUT ADAPTER:
   Service A: legacy REST/HTTP1.1 (cannot be easily changed)
   New requirement: expose gRPC interface for mobile clients
-  
+
   Option 1: Add gRPC support to Service A code
     - Requires gRPC Java library integration
     - Protobuf schema maintenance
     - Dual protocol testing
     - Risk: changes to stable legacy service
     - Time: 2-4 sprints of engineering effort
-  
+
   Option 2: Build a separate gRPC facade microservice
     - New service to deploy, monitor, maintain
     - Extra network hop for every call
@@ -67,17 +67,17 @@ WITHOUT ADAPTER:
 
 WITH ADAPTER SIDECAR:
   Deploy adapter alongside Service A: zero app code changes.
-  
+
   Mobile client → gRPC:50051 → Adapter (gRPC → REST translation)
                              → REST:8080 → Service A
-  
+
   Adapter: pure protocol translation
     Accepts: gRPC (Protobuf binary)
     Translates: Protobuf → JSON, gRPC method → HTTP path+method
     Forwards: HTTP/1.1 REST to localhost:8080
     Returns: REST response → Protobuf, HTTP status → gRPC status
-  
-  Service A: zero changes. Still REST. 
+
+  Service A: zero changes. Still REST.
   Mobile app: gRPC streaming, binary protocol efficiency.
   Adapter: single responsibility — translation only.
 ```
@@ -90,50 +90,50 @@ WITH ADAPTER SIDECAR:
 
 static_resources:
   listeners:
-  - name: grpc_adapter
-    address:
-      socket_address:
-        address: 0.0.0.0
-        port_value: 50051  # gRPC port (external clients connect here)
-    filter_chains:
-    - filters:
-      - name: envoy.filters.network.http_connection_manager
-        typed_config:
-          "@type": type.googleapis.com/.../HttpConnectionManager
-          codec_type: HTTP2  # gRPC requires HTTP/2
-          http_filters:
-          # gRPC-JSON transcoder: converts gRPC ↔ REST automatically
-          - name: envoy.filters.http.grpc_json_transcoder
-            typed_config:
-              "@type": type.googleapis.com/.../GrpcJsonTranscoder
-              proto_descriptor: /etc/envoy/api_descriptor.pb
-              # ^ compiled from .proto file: protoc --descriptor_set_out=api_descriptor.pb
-              services: ["com.example.order.OrderService"]
-              print_options:
-                add_whitespace: true
-                preserve_proto_field_names: true
-          - name: envoy.filters.http.router
-          route_config:
-            virtual_hosts:
-            - name: order_service_rest
-              domains: ["*"]
-              routes:
-              - match: {prefix: "/"}
-                route:
-                  cluster: order_service_rest_cluster
+    - name: grpc_adapter
+      address:
+        socket_address:
+          address: 0.0.0.0
+          port_value: 50051 # gRPC port (external clients connect here)
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/.../HttpConnectionManager
+                codec_type: HTTP2 # gRPC requires HTTP/2
+                http_filters:
+                  # gRPC-JSON transcoder: converts gRPC ↔ REST automatically
+                  - name: envoy.filters.http.grpc_json_transcoder
+                    typed_config:
+                      "@type": type.googleapis.com/.../GrpcJsonTranscoder
+                      proto_descriptor: /etc/envoy/api_descriptor.pb
+                      # ^ compiled from .proto file: protoc --descriptor_set_out=api_descriptor.pb
+                      services: ["com.example.order.OrderService"]
+                      print_options:
+                        add_whitespace: true
+                        preserve_proto_field_names: true
+                  - name: envoy.filters.http.router
+                route_config:
+                  virtual_hosts:
+                    - name: order_service_rest
+                      domains: ["*"]
+                      routes:
+                        - match: { prefix: "/" }
+                          route:
+                            cluster: order_service_rest_cluster
 
   clusters:
-  - name: order_service_rest_cluster
-    connect_timeout: 1s
-    load_assignment:
-      cluster_name: order_service_rest_cluster
-      endpoints:
-      - lb_endpoints:
-        - endpoint:
-            address:
-              socket_address:
-                address: 127.0.0.1  # localhost: same pod
-                port_value: 8080    # Service A's REST port
+    - name: order_service_rest_cluster
+      connect_timeout: 1s
+      load_assignment:
+        cluster_name: order_service_rest_cluster
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: 127.0.0.1 # localhost: same pod
+                      port_value: 8080 # Service A's REST port
 ```
 
 **Proto definition drives the transcoding mapping:**
@@ -153,7 +153,7 @@ service OrderService {
       // Envoy transcoder maps these automatically
     };
   }
-  
+
   rpc CreateOrder (CreateOrderRequest) returns (OrderResponse) {
     option (google.api.http) = {
       post: "/api/v1/orders"
@@ -174,26 +174,26 @@ service OrderService {
 
 spec:
   containers:
-  - name: legacy-billing-service
-    image: legacy-billing:1.0.0  # only understands XML/SOAP
-    ports:
-    - containerPort: 8080
+    - name: legacy-billing-service
+      image: legacy-billing:1.0.0 # only understands XML/SOAP
+      ports:
+        - containerPort: 8080
 
-  - name: json-xml-adapter
-    image: json-xml-adapter:1.0.0
-    # Custom adapter: nginx + Lua OR a lightweight Go proxy
-    # Accepts: JSON REST requests (external clients)
-    # Translates: JSON → XML/SOAP
-    # Forwards to: localhost:8080 (legacy billing)
-    # Translates: XML/SOAP response → JSON
-    # Returns: JSON to client
-    ports:
-    - containerPort: 8081  # external JSON port
-    env:
-    - name: UPSTREAM_URL
-      value: "http://localhost:8080"
-    - name: UPSTREAM_CONTENT_TYPE
-      value: "application/xml"
+    - name: json-xml-adapter
+      image: json-xml-adapter:1.0.0
+      # Custom adapter: nginx + Lua OR a lightweight Go proxy
+      # Accepts: JSON REST requests (external clients)
+      # Translates: JSON → XML/SOAP
+      # Forwards to: localhost:8080 (legacy billing)
+      # Translates: XML/SOAP response → JSON
+      # Returns: JSON to client
+      ports:
+        - containerPort: 8081 # external JSON port
+      env:
+        - name: UPSTREAM_URL
+          value: "http://localhost:8080"
+        - name: UPSTREAM_CONTENT_TYPE
+          value: "application/xml"
 ```
 
 ---
@@ -201,6 +201,7 @@ spec:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Adapter Pattern:
+
 - Legacy services must be rewritten to support new protocols (high risk, high cost)
 - Clients must implement legacy protocols (exposing internal legacy stack to outside)
 - Protocol upgrades require coordinated changes to both service and all clients
@@ -238,12 +239,12 @@ INBOUND: Mobile App → gRPC Call
   2. Adapter receives gRPC request on port 50051
      Transcoder: decodes Protobuf → OrderResponse GetOrder(orderId="abc-123")
      Maps: gRPC method → REST: GET /api/v1/orders/abc-123
-     
+
   3. Adapter → HTTP/1.1 GET /api/v1/orders/abc-123 → localhost:8080
      App: standard REST call (no knowledge of gRPC client)
 
   4. App returns: HTTP 200 {"orderId":"abc-123","status":"CONFIRMED"}
-     
+
   5. Adapter: JSON response → Protobuf encode → gRPC response
      Returns to mobile: OrderResponse{orderId="abc-123", status=CONFIRMED}
      HTTP status: 200 → gRPC status: OK
@@ -311,12 +312,12 @@ kubectl logs order-service-pod -c json-xml-adapter --tail=5
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Adapter Pattern in microservices is the same as GoF Adapter | GoF Adapter wraps an object in code (class-level). Microservices Adapter Pattern deploys a proxy container (infrastructure-level). Same intent (interface translation) at different layers of abstraction |
-| Adapter always means gRPC-to-REST | Adapter applies to any protocol/format translation: JSON↔XML, HTTP/1.1↔HTTP/2, AMQP↔Kafka, REST↔SOAP, binary↔text. The gRPC-to-REST case is the most common modern use case |
-| Adapter and Ambassador are interchangeable terms | Ambassador = outbound proxy (represents service to external world). Adapter = inbound proxy (translates external protocol to internal protocol). Ambassador handles egress; Adapter handles ingress at the service level |
-| Adapter adds two network hops per request | The adapter is on the same pod (loopback), so the "hop" is ~0.1ms. The external client still makes one network call to the pod's IP. Adapter adds one loopback hop inside the pod, not a separate network hop |
+| Misconception                                               | Reality                                                                                                                                                                                                                  |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Adapter Pattern in microservices is the same as GoF Adapter | GoF Adapter wraps an object in code (class-level). Microservices Adapter Pattern deploys a proxy container (infrastructure-level). Same intent (interface translation) at different layers of abstraction                |
+| Adapter always means gRPC-to-REST                           | Adapter applies to any protocol/format translation: JSON↔XML, HTTP/1.1↔HTTP/2, AMQP↔Kafka, REST↔SOAP, binary↔text. The gRPC-to-REST case is the most common modern use case                                              |
+| Adapter and Ambassador are interchangeable terms            | Ambassador = outbound proxy (represents service to external world). Adapter = inbound proxy (translates external protocol to internal protocol). Ambassador handles egress; Adapter handles ingress at the service level |
+| Adapter adds two network hops per request                   | The adapter is on the same pod (loopback), so the "hop" is ~0.1ms. The external client still makes one network call to the pod's IP. Adapter adds one loopback hop inside the pod, not a separate network hop            |
 
 ---
 
@@ -328,32 +329,32 @@ kubectl logs order-service-pod -c json-xml-adapter --tail=5
 PROBLEM:
   Envoy transcoder uses a compiled proto descriptor (api_descriptor.pb)
   that maps gRPC methods to REST paths.
-  
+
   Developer adds new REST endpoint: POST /api/v1/orders/bulk
   Does NOT update order.proto or recompile descriptor.
-  
+
   gRPC clients: cannot call bulk create (no method in proto)
   REST clients: bulk create works fine
-  
+
   6 months later: new developer adds BulkCreateOrders to proto
   Recompiles descriptor. Deploys new adapter config.
-  
+
   Proto has wrong path annotation: "post: /api/v1/orders/batch" (old name)
   Actual app: POST /api/v1/orders/bulk
-  
+
   gRPC clients: 404 on BulkCreateOrders → transcoder maps to /batch → 404
-  
+
 FIX:
   1. Treat .proto file as source of truth, not afterthought:
      Proto-first: define proto method WITH http annotation FIRST.
      Generate REST controller stub from proto (openapi-generator or similar).
-     
+
   2. CI job: recompile proto descriptor and include in Docker image build.
      If proto changes: adapter image auto-rebuilt with correct descriptor.
-     
+
   3. Integration test: for every gRPC method, test via gRPC AND REST:
      Both paths exercised in CI → mismatch caught before prod.
-     
+
   4. Shared proto repository:
      api-contracts repo: owns .proto files and generated descriptors.
      Service team: imports from api-contracts (not their own copy).

@@ -18,10 +18,10 @@ tags: #advanced, #distributed, #architecture, #patterns, #scalability
 
 ⚡ TL;DR — **CQRS** (Command Query Responsibility Segregation) separates read and write operations into distinct models: write side handles commands (mutate state), read side handles queries (return data) — enabling each to be scaled, optimized, and evolved independently.
 
-| #615 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Event Sourcing, Domain-Driven Design | |
-| **Used by:** | Axon Framework, EventStoreDB, Kafka, Apache Kafka Streams | |
+| #615            | Category: Distributed Systems                             | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------- | :-------------- |
+| **Depends on:** | Event Sourcing, Domain-Driven Design                      |                 |
+| **Used by:**    | Axon Framework, EventStoreDB, Kafka, Apache Kafka Streams |                 |
 
 ---
 
@@ -52,10 +52,10 @@ SIMPLE CQRS (same database, separate objects):
 
   Write side: Command + CommandHandler + Aggregate (domain model)
   Read side: QueryHandler + ReadModel (DTO, simplified view)
-  
+
   // Command: intent to change state.
   public record PlaceOrderCommand(String userId, List<OrderItem> items, String paymentMethod) {}
-  
+
   // CommandHandler: validates and executes.
   @CommandHandler
   public class OrderCommandHandler {
@@ -63,17 +63,17 @@ SIMPLE CQRS (same database, separate objects):
           // Domain validation (business rules).
           User user = userRepo.findById(cmd.userId());
           if (!user.isEligibleToBuy()) throw new UserNotEligibleException();
-          
+
           Order order = Order.create(cmd.userId(), cmd.items(), cmd.paymentMethod());
           orderRepo.save(order);
           return order.getId();
           // Returns only the ID, not the full order (commands return void or minimal data).
       }
   }
-  
+
   // Query: request for data (no mutation).
   public record GetOrderSummaryQuery(String orderId) {}
-  
+
   // QueryHandler: returns read-optimized DTO.
   @QueryHandler
   public class OrderQueryHandler {
@@ -88,18 +88,18 @@ FULL CQRS + EVENT SOURCING:
 
   Write side:  Command → Aggregate → Domain Events → Event Store (append-only)
   Read side:   Event Store → Event Handler (projection) → Read Store (materialized view)
-  
+
   WRITE FLOW:
-  
+
     1. PlaceOrderCommand received.
     2. OrderAggregate loaded from event store (replays all past OrderCreated, OrderUpdated events).
     3. OrderAggregate.placeOrder(): validates business rules.
     4. Generates: OrderPlacedEvent {orderId, userId, items, timestamp}.
     5. Event stored to event store (append-only):
        event_store: [OrderPlacedEvent, ItemAddedEvent, PaymentConfirmedEvent, ...]
-       
+
   READ FLOW (projection):
-  
+
     6. Event handler receives OrderPlacedEvent.
     7. Updates read store:
        OrderSummaryView {
@@ -113,15 +113,15 @@ FULL CQRS + EVENT SOURCING:
        Also updates:
        OrdersByUserView {userId: "u-456", orders: [...]}
        PendingOrdersView {orders: [...]}
-       
+
     8. Query: GetOrderSummary(orderId) → reads from OrderSummaryView.
        No joins. No N+1. Pre-computed, instant.
-       
+
   EVENTUAL CONSISTENCY:
     Gap between step 5 and step 7: may be milliseconds (sync) or seconds (async).
     User: places order → immediately queries order status.
     If projection not yet updated: query returns stale data (e.g., status still "UNKNOWN").
-    
+
     UI HANDLING:
     Option 1: Show optimistic UI state immediately (before query confirms).
     Option 2: Query with version-based polling:
@@ -131,16 +131,16 @@ FULL CQRS + EVENT SOURCING:
 READ MODEL PROJECTIONS — MULTIPLE VIEWS PER AGGREGATE:
 
   Event: OrderPlacedEvent → updates MANY read models simultaneously.
-  
+
   OrderSummaryView     → for order detail page
   CustomerOrdersView   → for "my orders" list
   PendingOrdersReport  → for operations dashboard
   RevenueMetricsView   → for business analytics
   InventoryDepletionView → for warehouse system
-  
+
   Each view: optimized for its specific query.
   No JOIN queries at read time: all denormalized at write time (projection).
-  
+
   PROJECTION REBUILD:
     New analytics view needed: "orders by geographic region."
     No new events needed.
@@ -152,21 +152,21 @@ AXON FRAMEWORK (JAVA CQRS + EVENT SOURCING):
 
   @Aggregate
   public class OrderAggregate {
-      
+
       @AggregateIdentifier
       private String orderId;
       private OrderStatus status;
-      
+
       @CommandHandler
       public OrderAggregate(PlaceOrderCommand cmd) {
           // Domain validation.
           if (cmd.items().isEmpty()) throw new EmptyOrderException();
-          
+
           // Emit event (do NOT change state here — only emit event).
           AggregateLifecycle.apply(new OrderPlacedEvent(
               cmd.orderId(), cmd.userId(), cmd.items()));
       }
-      
+
       @EventSourcingHandler
       public void on(OrderPlacedEvent event) {
           // Update aggregate state from event.
@@ -174,7 +174,7 @@ AXON FRAMEWORK (JAVA CQRS + EVENT SOURCING):
           this.status = OrderStatus.PLACED;
           // Called when event is applied AND when aggregate is replayed from event store.
       }
-      
+
       @CommandHandler
       public void handle(CancelOrderCommand cmd) {
           if (this.status == OrderStatus.SHIPPED) {
@@ -183,11 +183,11 @@ AXON FRAMEWORK (JAVA CQRS + EVENT SOURCING):
           AggregateLifecycle.apply(new OrderCancelledEvent(this.orderId));
       }
   }
-  
+
   // Read side projection:
   @Component
   public class OrderSummaryProjection {
-      
+
       @EventHandler
       @Transactional
       public void on(OrderPlacedEvent event) {
@@ -200,7 +200,7 @@ AXON FRAMEWORK (JAVA CQRS + EVENT SOURCING):
               event.timestamp()
           ));
       }
-      
+
       @QueryHandler
       public OrderSummaryDTO handle(GetOrderSummaryQuery query) {
           return orderSummaryRepo.findById(query.orderId())
@@ -213,14 +213,14 @@ CQRS WITHOUT EVENT SOURCING:
 
   Common misconception: CQRS requires event sourcing.
   Reality: CQRS is independently useful even with a traditional database.
-  
+
   Pattern: Command side → writes to normalized relational DB.
            Query side → reads from separate denormalized read DB (replicated slave, or dedicated views).
-  
+
   Synchronization: DB replication (async), or application-level sync via domain events.
   Benefit: write model keeps normalization; read model uses denormalized projections.
   Complexity: much lower than full event sourcing.
-  
+
   USEFUL WHEN:
     Read/write ratio is very high (e.g., 99:1 reads to writes).
     Query patterns are complex and diverse (different views need different shapes).
@@ -232,6 +232,7 @@ CQRS WITHOUT EVENT SOURCING:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT CQRS:
+
 - Same model for reads and writes: indexes optimized for reads slow down writes
 - Complex query requirements contaminate domain model with query-specific fields
 - Can't scale reads independently of writes
@@ -296,17 +297,17 @@ public record CreateProductCommand(String name, BigDecimal price, int stock) {}
 
 @Service
 public class ProductCommandService {
-    
+
     @Transactional
     public String createProduct(CreateProductCommand cmd) {
         // Domain model: rich, validates business rules.
         Product product = Product.create(cmd.name(), cmd.price(), cmd.stock());
         productRepo.save(product);
-        
+
         // Publish domain event for projection update.
         eventPublisher.publishEvent(new ProductCreatedEvent(
             product.getId(), product.getName(), product.getPrice()));
-        
+
         return product.getId();
     }
 }
@@ -323,13 +324,13 @@ public class ProductCatalogView {
 
 @Service
 public class ProductQueryService {
-    
+
     public ProductCatalogView getProduct(String id) {
         return productCatalogViewRepo.findById(id)
             .orElseThrow(() -> new ProductNotFoundException(id));
         // No joins, no domain logic — just data retrieval.
     }
-    
+
     public Page<ProductCatalogView> searchProducts(String keyword, Pageable pageable) {
         return productCatalogViewRepo.findByNameContaining(keyword, pageable);
         // Full-text search on pre-indexed read model.
@@ -354,12 +355,12 @@ public class ProductProjectionUpdater {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| CQRS requires event sourcing | CQRS (separate command/query models) is independent of event sourcing (storing events as the source of truth). They complement each other well, but CQRS works with a traditional database. And event sourcing works without CQRS (single model consuming events). The combination is powerful but adds complexity; start with CQRS alone if event sourcing isn't needed |
-| CQRS means two separate databases | In simple CQRS: same database, different model objects (Command uses domain aggregates; Query uses DTOs). In full CQRS: separate stores (event store for write, read-optimized store for queries). The key distinction is model separation, not database separation. Many successful CQRS implementations use one database with separate tables/views for read models |
+| Misconception                        | Reality                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CQRS requires event sourcing         | CQRS (separate command/query models) is independent of event sourcing (storing events as the source of truth). They complement each other well, but CQRS works with a traditional database. And event sourcing works without CQRS (single model consuming events). The combination is powerful but adds complexity; start with CQRS alone if event sourcing isn't needed                                               |
+| CQRS means two separate databases    | In simple CQRS: same database, different model objects (Command uses domain aggregates; Query uses DTOs). In full CQRS: separate stores (event store for write, read-optimized store for queries). The key distinction is model separation, not database separation. Many successful CQRS implementations use one database with separate tables/views for read models                                                  |
 | CQRS solves all performance problems | CQRS improves read scalability and query optimization but adds eventual consistency complexity. The read model lag can cause issues: user updates, then immediately queries — gets stale data. Also: projections can become stale or corrupt (bugs in projection logic). More moving parts = more failure modes. CQRS is not a general performance improvement; it's a specific pattern for specific scaling scenarios |
-| Commands should return void | While the strict CQS principle says commands return nothing, in practice commands commonly return the ID of the created/modified resource. This simplifies client code (client needs the ID to navigate to the new resource). Returning the full resource state is the anti-pattern (that's a query). Returning minimal identifiers (ID, version) is widely accepted in CQRS implementations |
+| Commands should return void          | While the strict CQS principle says commands return nothing, in practice commands commonly return the ID of the created/modified resource. This simplifies client code (client needs the ID to navigate to the new resource). Returning the full resource state is the anti-pattern (that's a query). Returning minimal identifiers (ID, version) is widely accepted in CQRS implementations                           |
 
 ---
 
@@ -371,43 +372,43 @@ public class ProductProjectionUpdater {
 SCENARIO: User places order → redirected to order confirmation page.
   Page loads: queries order status → returns "ORDER_NOT_FOUND" (projection not yet updated).
   User: "I was just charged but my order doesn't exist?!"
-  
+
 BAD: Redirect immediately after command, then query:
   POST /orders → 201 Created {orderId: "abc-123"}
   → Frontend: immediately GET /orders/abc-123 → 404 Not Found
   → Projection lag: 500ms behind
-  
+
 FIX 1: Optimistic UI (most common, best UX):
   Frontend: after POST /orders → immediately show order confirmation using data from the POST request.
   Don't query until user navigates away and returns.
   Projection: updated by the time user navigates back.
-  
+
 FIX 2: Wait for projection (if API must return data):
   CommandHandler: after saving event → wait for projection update (max 2 seconds).
   POST /orders → waits until OrderSummaryView is updated → returns full order data.
   Downside: couples command side to read side latency.
-  
+
 FIX 3: Version-based read:
   Command returns: {orderId: "abc-123", version: 5}
   Client: GET /orders/abc-123?minVersion=5
   Query handler: waits until projection is at version >= 5 (long-poll or retry).
-  
+
 FIX 4: Return command result directly (no projection):
   After PlaceOrderCommand: return the result object constructed directly from command data.
   Not from the projection. User sees the data they just submitted.
   Simplest fix. Trade-off: not from the read model (no enrichment, no denormalization).
-  
+
 PROJECTION BUG — corrupted read model:
   Event handler bug: incorrectly updates projection.
   Symptoms: read model shows wrong data (prices wrong, orders missing).
-  
+
   Recovery with event sourcing:
     1. Fix the projection bug.
     2. Drop the corrupted read model (truncate the read store).
     3. Replay all events from the event store → rebuild projection from scratch.
     4. No data loss: source of truth is the event store (immutable).
     5. Downtime: only during projection rebuild (can build in parallel with shadow read store).
-    
+
   Without event sourcing (traditional DB write side):
     Data already overwritten. Projection bug = potentially unrecoverable corruption.
     Lesson: event sourcing's immutable event log makes projection bugs recoverable.

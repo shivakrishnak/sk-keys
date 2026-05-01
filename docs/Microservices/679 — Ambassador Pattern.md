@@ -18,10 +18,10 @@ tags: #advanced, #microservices, #distributed, #architecture, #pattern
 
 ⚡ TL;DR — The **Ambassador Pattern** is a sidecar proxy that handles outbound communication from a service to external resources, adding retry, circuit breaking, and routing on behalf of the application.
 
-| #679 | Category: Microservices | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Sidecar Pattern, API Gateway | |
-| **Used by:** | Cross-Cutting Concerns | |
+| #679            | Category: Microservices      | Difficulty: ★★★ |
+| :-------------- | :--------------------------- | :-------------- |
+| **Depends on:** | Sidecar Pattern, API Gateway |                 |
+| **Used by:**    | Cross-Cutting Concerns       |                 |
 
 ---
 
@@ -57,11 +57,11 @@ WITHOUT AMBASSADOR:
     ✗ Load balancing: discover endpoints, distribute load, detect unhealthy
     ✗ Connection pool: limit open connections, reuse TCP connections
     ✗ Observability: emit metrics per upstream, trace outbound calls
-  
+
   All implemented in application code:
     Java: Resilience4j + OkHttp + OpenTelemetry Java SDK + custom cert loading
     Python: tenacity + requests + certificate pinning
-    
+
   PROBLEMS:
     - Different language teams → inconsistent implementations
     - Security bugs in custom TLS/auth code
@@ -88,62 +88,62 @@ WITH AMBASSADOR:
 
 static_resources:
   listeners:
-  # App calls localhost:8001 → Ambassador → payment-service
-  - name: payment_ambassador
-    address: {socket_address: {address: 127.0.0.1, port_value: 8001}}
-    filter_chains:
-    - filters:
-      - name: envoy.filters.network.http_connection_manager
-        typed_config:
-          "@type": type.googleapis.com/.../HttpConnectionManager
-          route_config:
-            virtual_hosts:
-            - name: payment_upstream
-              domains: ["*"]
-              routes:
-              - match: {prefix: "/"}
-                route:
-                  cluster: payment_service_cluster
-                  retry_policy:
-                    retry_on: "connect-failure,refused-stream,5xx"
-                    num_retries: 3
-                    per_try_timeout: 2s
-                    retry_back_off:
-                      base_interval: 100ms
-                      max_interval: 2s
-          http_filters:
-          # Add Authorization header (reads from file updated by Vault Agent sidecar):
-          - name: envoy.filters.http.lua
-            typed_config:
-              "@type": type.googleapis.com/.../LuaPerRoute
-              inline_code: |
-                function envoy_on_request(request_handle)
-                  local token_file = io.open("/var/run/secrets/oauth-token", "r")
-                  if token_file then
-                    local token = token_file:read("*all")
-                    token_file:close()
-                    request_handle:headers():add("Authorization", "Bearer " .. token)
-                  end
-                end
+    # App calls localhost:8001 → Ambassador → payment-service
+    - name: payment_ambassador
+      address: { socket_address: { address: 127.0.0.1, port_value: 8001 } }
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/.../HttpConnectionManager
+                route_config:
+                  virtual_hosts:
+                    - name: payment_upstream
+                      domains: ["*"]
+                      routes:
+                        - match: { prefix: "/" }
+                          route:
+                            cluster: payment_service_cluster
+                            retry_policy:
+                              retry_on: "connect-failure,refused-stream,5xx"
+                              num_retries: 3
+                              per_try_timeout: 2s
+                              retry_back_off:
+                                base_interval: 100ms
+                                max_interval: 2s
+                http_filters:
+                  # Add Authorization header (reads from file updated by Vault Agent sidecar):
+                  - name: envoy.filters.http.lua
+                    typed_config:
+                      "@type": type.googleapis.com/.../LuaPerRoute
+                      inline_code: |
+                        function envoy_on_request(request_handle)
+                          local token_file = io.open("/var/run/secrets/oauth-token", "r")
+                          if token_file then
+                            local token = token_file:read("*all")
+                            token_file:close()
+                            request_handle:headers():add("Authorization", "Bearer " .. token)
+                          end
+                        end
 
   clusters:
-  - name: payment_service_cluster
-    connect_timeout: 1s
-    type: STRICT_DNS
-    load_assignment:
-      cluster_name: payment_service_cluster
-      endpoints:
-      - lb_endpoints:
-        - endpoint:
-            address:
-              socket_address:
-                address: payment-service.production.svc.cluster.local
-                port_value: 8080
-    circuit_breakers:
-      thresholds:
-      - max_connections: 50
-        max_pending_requests: 25
-        max_requests: 100
+    - name: payment_service_cluster
+      connect_timeout: 1s
+      type: STRICT_DNS
+      load_assignment:
+        cluster_name: payment_service_cluster
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: payment-service.production.svc.cluster.local
+                      port_value: 8080
+      circuit_breakers:
+        thresholds:
+          - max_connections: 50
+            max_pending_requests: 25
+            max_requests: 100
 ```
 
 **Ambassador for legacy application — adding retries to a legacy app with no source:**
@@ -159,18 +159,18 @@ spec:
   template:
     spec:
       containers:
-      # PRIMARY: legacy billing service (cannot be modified)
-      - name: billing-service
-        image: legacy-billing:1.0.0  # 10-year-old binary
-        # Makes plain HTTP calls to downstream services
-        # Points to localhost:9001, localhost:9002 (its hardcoded config)
+        # PRIMARY: legacy billing service (cannot be modified)
+        - name: billing-service
+          image: legacy-billing:1.0.0 # 10-year-old binary
+          # Makes plain HTTP calls to downstream services
+          # Points to localhost:9001, localhost:9002 (its hardcoded config)
 
-      # AMBASSADOR: adds retries/circuit breaker/mTLS to legacy app's outbound
-      - name: billing-ambassador
-        image: envoy:v1.28.0
-        # Listens on localhost:9001, localhost:9002
-        # Intercepts legacy app's outbound calls
-        # Adds retry, circuit breaker, mTLS without touching legacy code
+        # AMBASSADOR: adds retries/circuit breaker/mTLS to legacy app's outbound
+        - name: billing-ambassador
+          image: envoy:v1.28.0
+          # Listens on localhost:9001, localhost:9002
+          # Intercepts legacy app's outbound calls
+          # Adds retry, circuit breaker, mTLS without touching legacy code
 ```
 
 ---
@@ -178,6 +178,7 @@ spec:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Ambassador Pattern:
+
 - Networking concerns (retries, TLS, auth) mixed into business logic
 - Language heterogeneity → no shared implementation
 - Legacy apps: cannot add modern networking capabilities without source code
@@ -259,16 +260,16 @@ services:
       # App points to ambassador, not directly to services:
       PAYMENT_SERVICE_URL: http://localhost:8001
       INVENTORY_SERVICE_URL: http://localhost:8002
-    network_mode: "service:ambassador"  # share ambassador's network
+    network_mode: "service:ambassador" # share ambassador's network
 
   ambassador:
     image: envoy:v1.28.0
     volumes:
-    - ./envoy-ambassador.yaml:/etc/envoy/envoy.yaml
+      - ./envoy-ambassador.yaml:/etc/envoy/envoy.yaml
     ports:
-    - "8001:8001"   # payment ambassador port
-    - "8002:8002"   # inventory ambassador port
-    - "9901:9901"   # admin UI: http://localhost:9901
+      - "8001:8001" # payment ambassador port
+      - "8002:8002" # inventory ambassador port
+      - "9901:9901" # admin UI: http://localhost:9901
     # Envoy admin: shows circuit breaker state, upstream health, metrics
 
   # Downstream services (real or mocked):
@@ -282,12 +283,12 @@ services:
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                   | Reality                                                                                                                                                                                                                                                                                                 |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Ambassador Pattern and API Gateway are the same | API Gateway operates at the cluster/network boundary, handling inbound traffic from clients to services. Ambassador Pattern is service-level, handling outbound calls FROM a service to its dependencies. They are complementary: API Gateway handles north-south traffic, Ambassador handles east-west |
-| Every service needs its own ambassador | The ambassador is typically configured per-service based on that service's specific outbound dependencies. A service that only calls one downstream with simple HTTP may not need an ambassador. Apply where the complexity of outbound networking justifies the extra container |
-| Ambassador pattern requires Envoy specifically | Any capable proxy can be an ambassador: nginx, HAProxy, Traefik, or a custom Go binary. Envoy is most common due to its xDS API (dynamic reconfiguration) and Istio integration, but the pattern is proxy-implementation-agnostic |
-| Ambassador adds latency for every outbound call | The ambassador runs on localhost (loopback), so the network hop is ~0.1ms. For retries (when upstream fails), the ambassador saves the round-trip latency of making the call from application code — it does the retry locally |
+| Every service needs its own ambassador          | The ambassador is typically configured per-service based on that service's specific outbound dependencies. A service that only calls one downstream with simple HTTP may not need an ambassador. Apply where the complexity of outbound networking justifies the extra container                        |
+| Ambassador pattern requires Envoy specifically  | Any capable proxy can be an ambassador: nginx, HAProxy, Traefik, or a custom Go binary. Envoy is most common due to its xDS API (dynamic reconfiguration) and Istio integration, but the pattern is proxy-implementation-agnostic                                                                       |
+| Ambassador adds latency for every outbound call | The ambassador runs on localhost (loopback), so the network hop is ~0.1ms. For retries (when upstream fails), the ambassador saves the round-trip latency of making the call from application code — it does the retry locally                                                                          |
 
 ---
 
@@ -301,20 +302,20 @@ PROBLEM:
   POST /payments (charge $100) → payment service returns 500.
   Ambassador: retries 3 times.
   Payment service was actually slow (not failed) — charged $100 three times.
-  
+
 FIX:
   Only retry idempotent operations (GET, PUT with idempotency key).
   For non-idempotent POST: retry ONLY on connection-failure (network level),
   NOT on 5xx (which may mean the request was processed but response lost).
-  
+
   retry_policy:
     # WRONG: retry on all 5xx (may cause duplicate charges)
     retry_on: "5xx"
-    
+
     # CORRECT: retry only on connection-level failures for POST
     retry_on: "connect-failure,refused-stream"
     # NOT "retriable-4xx" or "5xx" for non-idempotent requests
-  
+
   ALSO: add idempotency key to POST requests:
     App generates UUID, passes as X-Idempotency-Key header.
     Ambassador passes header through on retries.

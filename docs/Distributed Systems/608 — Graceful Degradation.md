@@ -18,10 +18,10 @@ tags: #intermediate, #distributed, #resilience, #availability, #design
 
 ⚡ TL;DR — **Graceful Degradation** is a system design principle where functionality is progressively reduced — not completely lost — when components fail, ensuring core operations remain available while non-essential features are safely disabled.
 
-| #608 | Category: Distributed Systems | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Fallback, Circuit Breaker | |
-| **Used by:** | Netflix, Google, Amazon, Any high-availability system | |
+| #608            | Category: Distributed Systems                         | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------- | :-------------- |
+| **Depends on:** | Fallback, Circuit Breaker                             |                 |
+| **Used by:**    | Netflix, Google, Amazon, Any high-availability system |                 |
 
 ---
 
@@ -51,30 +51,30 @@ Design for graceful degradation: draw a "feature criticality map." Core: can't d
 FEATURE CRITICALITY CLASSIFICATION:
 
   E-commerce system example:
-  
+
   TIER 1: CRITICAL (must be available, no degradation possible):
     - Authentication / session management.
     - Shopping cart (add/view items).
     - Checkout / payment processing.
     - Order confirmation.
     - Account balance view.
-    
+
     Strategy: high availability through redundancy, replication, failover.
     NOT graceful degradation: you can't "degrade" checkout to a partial checkout.
     Invest in: multi-region replication, circuit breakers to external payment APIs,
                DB read replicas, connection pooling.
-    
+
   TIER 2: IMPORTANT (significantly degrades user experience if missing):
     - Product search.
     - Product catalog / images.
     - User profile.
     - Order history.
-    
+
     Strategy: fallback to cached/stale data. Allow up to 10-minute staleness.
     Search down: return empty results with "Search unavailable. Browse categories instead."
     Images down: return placeholder image. Don't blank the page.
     Profile down: use last-fetched profile from session cache.
-    
+
   TIER 3: OPTIONAL (nice to have; business continues without):
     - Product recommendations.
     - User reviews / ratings.
@@ -83,11 +83,11 @@ FEATURE CRITICALITY CLASSIFICATION:
     - Live chat support widget.
     - Promotional banners (A/B test variants).
     - Analytics / tracking pixels.
-    
+
     Strategy: fail silent. Hide widget. Log to dead letter queue.
     Don't show error. Don't block page render. Don't log as critical alert.
     Monitor: "feature X was disabled for Y% of users in last hour."
-    
+
 DEGRADATION LEVELS (for each feature):
 
   Level 0 (fully functional):     Real-time personalized data.
@@ -96,7 +96,7 @@ DEGRADATION LEVELS (for each feature):
   Level 3 (severely degraded):    Default/static data (no personalization).
   Level 4 (feature disabled):     Feature hidden (fail silent).
   Level 5 (explicit error):       "Feature temporarily unavailable" (fail loudly).
-  
+
   Example: "Recommendations" widget levels:
     Level 0: ML model, real-time user behavior.
     Level 1: ML model, 2-minute-old cache.
@@ -104,7 +104,7 @@ DEGRADATION LEVELS (for each feature):
     Level 3: "Top 20 Trending This Week" (pre-computed, hourly).
     Level 4: Hide widget entirely.
     Level 5: "Recommendations temporarily unavailable." (Rarely appropriate for this feature.)
-    
+
 IMPLEMENTATION: FEATURE FLAGS + CIRCUIT BREAKERS:
 
   Static feature flag: manually enable/disable feature during incident.
@@ -113,27 +113,27 @@ IMPLEMENTATION: FEATURE FLAGS + CIRCUIT BREAKERS:
     Impact: minor UX degradation (no recommendations).
     Benefit: stops memory leak from causing cascading failures.
     No deployment needed. Instant.
-    
+
   Dynamic feature flag from circuit breaker state:
     CB OPEN → automatically toggle feature to degraded mode.
     CB CLOSED → feature automatically re-enables.
     No human intervention needed for short outages.
-    
+
   Example (Spring Cloud + Resilience4j):
     @Component
     public class FeatureDegradationManager {
-        
+
         public boolean isRecommendationsEnabled() {
             CircuitBreaker cb = cbRegistry.circuitBreaker("rec-service");
             return cb.getState() == CircuitBreaker.State.CLOSED;
         }
-        
+
         public boolean isSearchEnabled() {
             CircuitBreaker cb = cbRegistry.circuitBreaker("search-service");
             return cb.getState() != CircuitBreaker.State.OPEN;
         }
     }
-    
+
     // UI (Thymeleaf): conditionally render based on feature state:
     // th:if="${featureManager.isRecommendationsEnabled()}" → show widget
     // or pass feature flags to frontend (React/Next.js) via API response header.
@@ -142,47 +142,47 @@ GRACEFUL DEGRADATION UNDER LOAD (LOAD SHEDDING):
 
   System approaching capacity: instead of all features degrading together,
   shed lower-priority features first.
-  
+
   Request priority:
     CRITICAL: authenticated user actions (checkout, account management).
     HIGH: search queries, product views.
     LOW: analytics logging, recommendation pre-computation, email sends.
-    
+
   Under 80% CPU/memory: drop LOW priority requests.
   Under 95% CPU/memory: drop LOW + HIGH priority.
   Under 99% CPU/memory: reject everything except CRITICAL.
-  
+
   Implementation: request priority header (X-Priority: low/high/critical).
   Load balancer or API gateway: sheds lower-priority traffic first.
   Or: separate endpoints / queues per priority tier.
-  
+
   This is the "graceful degradation under overload" pattern (vs. failure).
 
 CHAOS ENGINEERING + GRACEFUL DEGRADATION:
 
   Test degradation paths BEFORE production incidents.
-  
+
   Netflix Simian Army / Chaos Monkey:
     Randomly kill instances → verify fallbacks activate.
     Inject latency on recommendation service → verify CB opens, fallback serves.
     Fail image service → verify placeholder images shown (not 500).
-    
+
   GameDay exercise:
     Simulate: "Recommendation service returns 503 for 30 minutes."
     Verify: recommendations widget hides. No cascading errors. Other features unaffected.
     Verify: monitoring alert fires ("rec-service circuit open for 5 minutes").
     Verify: CB closes after service recovery. Recommendations re-appear.
-    
+
   Without testing: degradation paths may be broken in ways not visible until production incident.
-  
+
 PROGRESSIVE WEB DEGRADATION (FRONTEND):
 
   Frontend graceful degradation: render what you can, load the rest async.
-  
+
   Server-side render: critical content (product title, price, buy button).
   Async load: recommendations, reviews, related items.
   If async fails: show placeholder or hide section. Not a white screen.
-  
+
   HTML + CSS fallback: JavaScript disabled / fails → static HTML still works.
   Core functionality (product page) accessible without JS.
   Enhanced functionality (dynamic filtering, AJAX cart) requires JS.
@@ -194,6 +194,7 @@ PROGRESSIVE WEB DEGRADATION (FRONTEND):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT graceful degradation:
+
 - Brittle system: any component failure → complete unavailability
 - Non-critical feature failure (recommendations) blocks entire user session
 - All features treated equally → harder to prioritize availability investments
@@ -223,14 +224,14 @@ GRACEFUL DEGRADATION DECISION TREE (per request):
   Is feature critical path?
     YES → invest in HA, not degradation. Fallback = honest error.
     NO → define degradation levels 0-4.
-  
+
   At runtime:
     Can primary be reached? → Level 0.
     Primary slow/error? → Check cache → Level 1/2.
     No cache? → Use default/pre-computed → Level 3.
     No default? → Hide feature → Level 4.
     Cannot hide (feature required by UX)? → Explicit error message → Level 5.
-    
+
   Track: which level is serving? Log as metric. Alert on extended degradation.
 ```
 
@@ -259,24 +260,24 @@ Graceful Degradation ◄──── (you are here)
 ```java
 @Component
 public class ProductPageService {
-    
+
     private final ProductService productService;         // Tier 1: Critical
     private final RecommendationService recService;      // Tier 3: Optional
     private final ReviewService reviewService;           // Tier 2: Important
     private final InventoryService inventoryService;     // Tier 1: Critical
-    
+
     public ProductPageResponse buildPage(String productId, String userId) {
-        
+
         // CRITICAL: product data. Fail fast if unavailable (no silent fallback).
         ProductData product = productService.get(productId); // throws if unavailable
         InventoryStatus inventory = inventoryService.get(productId); // throws if unavailable
-        
+
         // IMPORTANT: reviews. Degrade gracefully (stale or empty).
         List<Review> reviews = getReviewsWithFallback(productId);
-        
+
         // OPTIONAL: recommendations. Fail silent (hide if unavailable).
         List<Product> recommendations = getRecommendationsSilent(productId, userId);
-        
+
         return ProductPageResponse.builder()
             .product(product)
             .inventory(inventory)
@@ -286,7 +287,7 @@ public class ProductPageService {
             .recommendationsAvailable(recommendations != null)
             .build();
     }
-    
+
     // IMPORTANT: stale reviews OK; no reviews not ideal but acceptable.
     private List<Review> getReviewsWithFallback(String productId) {
         try {
@@ -301,7 +302,7 @@ public class ProductPageService {
             return Collections.emptyList(); // Show "No reviews yet" instead of error.
         }
     }
-    
+
     // OPTIONAL: fail completely silently. UI checks null → hides section.
     private List<Product> getRecommendationsSilent(String productId, String userId) {
         try {
@@ -318,12 +319,12 @@ public class ProductPageService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Graceful degradation means making everything highly available | Graceful degradation means accepting that some features WILL be unavailable and designing for that state explicitly. It's about defining what the system looks like DURING failure, not preventing failure. High availability (replication, failover, redundancy) prevents failure. Graceful degradation handles failure when it occurs. Both strategies are needed; they're complementary, not alternatives |
-| All features should degrade gracefully | Critical path features (login, checkout, core data) should be highly available, not gracefully degraded. Degrading checkout to "partial checkout" (take order but don't charge) creates worse problems than an honest "checkout unavailable." Reserve graceful degradation for truly non-critical features where a reduced experience is acceptable. Misclassifying critical features as optional is dangerous |
-| Graceful degradation is automatically handled by microservices | Microservices make graceful degradation MORE necessary, not automatic. In a monolith: one failure takes down everything (already bad). In microservices: one service failure can cascade if not explicitly handled. Each service boundary requires explicit fallback design. The decomposition of a monolith into microservices without explicit degradation planning often leads to harder-to-debug cascading failures |
-| Users always prefer partial functionality over an error message | For financial and transactional operations: an explicit error message is better than silent degradation. A user who sees "Payment unavailable, please try again in 5 minutes" can make informed decisions. A user who silently gets queued for later processing without notification may think the payment succeeded and submit twice. Design degradation modes WITH user communication in mind |
+| Misconception                                                   | Reality                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Graceful degradation means making everything highly available   | Graceful degradation means accepting that some features WILL be unavailable and designing for that state explicitly. It's about defining what the system looks like DURING failure, not preventing failure. High availability (replication, failover, redundancy) prevents failure. Graceful degradation handles failure when it occurs. Both strategies are needed; they're complementary, not alternatives            |
+| All features should degrade gracefully                          | Critical path features (login, checkout, core data) should be highly available, not gracefully degraded. Degrading checkout to "partial checkout" (take order but don't charge) creates worse problems than an honest "checkout unavailable." Reserve graceful degradation for truly non-critical features where a reduced experience is acceptable. Misclassifying critical features as optional is dangerous          |
+| Graceful degradation is automatically handled by microservices  | Microservices make graceful degradation MORE necessary, not automatic. In a monolith: one failure takes down everything (already bad). In microservices: one service failure can cascade if not explicitly handled. Each service boundary requires explicit fallback design. The decomposition of a monolith into microservices without explicit degradation planning often leads to harder-to-debug cascading failures |
+| Users always prefer partial functionality over an error message | For financial and transactional operations: an explicit error message is better than silent degradation. A user who sees "Payment unavailable, please try again in 5 minutes" can make informed decisions. A user who silently gets queued for later processing without notification may think the payment succeeded and submit twice. Design degradation modes WITH user communication in mind                         |
 
 ---
 
@@ -335,35 +336,35 @@ public class ProductPageService {
 SCENARIO: E-commerce platform. Inventory service classified as "optional" (graceful degrade).
   Fallback: show product as "in stock" when inventory service is down.
   Inventory service: down for 3 hours during Black Friday.
-  
+
   What happens:
-    Customers: see all items as "in stock." 
+    Customers: see all items as "in stock."
     1,000 customers: add sold-out items to cart and checkout.
     System: accepts orders (payment charged).
     Warehouse: "We don't have these items." Fulfillment impossible.
     Customer service: 1,000 complaint calls. Mass refunds. Reputation damage.
-    
+
 BAD: Wrong criticality classification:
   // Inventory classified as "optional" (incorrect).
   private InventoryStatus getInventoryFallback(String productId, Exception e) {
       return InventoryStatus.IN_STOCK; // WRONG: defaulting to in_stock is dangerous!
   }
-  
+
 FIX 1: Correct criticality classification:
   // Inventory is CRITICAL for checkout (can't sell what you don't have).
   // At product VIEW level: can degrade to cached inventory (30s stale OK).
   // At CHECKOUT level: inventory MUST be checked live (no degradation).
-  
+
   // Product page: cached inventory for display (acceptable if 30s stale):
   public InventoryStatus getInventoryForDisplay(String productId) {
       try {
           return inventoryService.get(productId); // Live check
       } catch (Exception e) {
-          return cache.get("inv:" + productId, 
+          return cache.get("inv:" + productId,
               InventoryStatus.UNKNOWN); // Show "Check availability" if cached unknown
       }
   }
-  
+
   // Checkout: hard requirement for live inventory (no fallback):
   public void checkout(Cart cart) {
       for (CartItem item : cart.getItems()) {
@@ -375,7 +376,7 @@ FIX 1: Correct criticality classification:
       }
       // Proceed with payment.
   }
-  
+
 FIX 2: Safe default when in doubt:
   // When inventory service is down and fallback required:
   // Default to "unavailable" (conservative), not "in_stock" (optimistic).

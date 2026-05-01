@@ -18,10 +18,10 @@ tags: #intermediate, #distributed, #resilience, #latency, #availability
 
 ⚡ TL;DR — **Timeout** terminates a waiting operation after a maximum duration, preventing resource exhaustion from indefinitely blocking calls — the most fundamental resilience mechanism in distributed systems, required for all network I/O.
 
-| #606 | Category: Distributed Systems | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Failure Modes, Circuit Breaker | |
-| **Used by:** | HTTP clients, gRPC, JDBC, Redis clients, Kafka consumers | |
+| #606            | Category: Distributed Systems                            | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------- | :-------------- |
+| **Depends on:** | Failure Modes, Circuit Breaker                           |                 |
+| **Used by:**    | HTTP clients, gRPC, JDBC, Redis clients, Kafka consumers |                 |
 
 ---
 
@@ -56,7 +56,7 @@ WHY TIMEOUTS ARE MANDATORY IN DISTRIBUTED SYSTEMS:
     Over 10 minutes: 100 requests arrive. Each blocked.
     At 50 threads: thread pool exhausted. New requests: rejected.
     Service A: completely unresponsive. For 10 MINUTES.
-    
+
   With timeout (5s read timeout):
     Thread A: calls B. B is hung.
     After 5 seconds: SocketTimeoutException.
@@ -70,63 +70,63 @@ TIMEOUT TYPES AND CONFIGURATION:
      Time to complete TCP 3-way handshake (SYN → SYN-ACK → ACK).
      If server is unreachable: OS retransmits SYN multiple times (default: 3-7 retries = 75s!).
      Custom connection timeout: override OS default. Typical: 1-5s.
-     
+
      OkHttp: .connectTimeout(5, TimeUnit.SECONDS)
      JDBC: connectionTimeout=5000 (HikariCP)
-     
+
   2. READ TIMEOUT / RESPONSE TIMEOUT:
      Time from connection established to complete response received.
      This is the most important timeout for preventing thread exhaustion.
-     
+
      OkHttp: .readTimeout(30, TimeUnit.SECONDS)
      Spring RestTemplate: requestFactory.setReadTimeout(30000)
      JDBC: socketTimeout=30000 (MariaDB), queryTimeout
-     
+
   3. WRITE TIMEOUT:
      Time to fully send the request body.
      Usually less critical (you control the sending, not the remote).
      Important for large uploads to slow receivers.
-     
+
      OkHttp: .writeTimeout(30, TimeUnit.SECONDS)
-     
+
   4. CALL TIMEOUT (end-to-end):
      Total time from start to finish: includes connect + write + read.
      More useful than separate timeouts for overall SLA enforcement.
-     
+
      OkHttp: .callTimeout(60, TimeUnit.SECONDS)
-     
+
   5. POOL TIMEOUT / BORROW TIMEOUT:
      Time to wait for a connection from the pool when pool is exhausted.
-     
+
      HikariCP: connectionTimeout=30000 (wait 30s for pool slot — usually set much lower)
-     
+
   6. IDLE TIMEOUT:
      Time to keep idle connection in pool before closing.
      Prevents holding connections to DB/service that the server has already closed.
-     
+
      HikariCP: idleTimeout=600000 (10 minutes default)
-     
+
 TIMEOUT VALUE SELECTION:
 
   FORMULA: timeout = percentile_response_time × safety_multiplier
-  
+
   Where: percentile = 99th or 99.9th (not mean/median).
          safety_multiplier = 2-3×.
-         
+
   Example:
     Service B: P50=50ms, P99=200ms, P999=800ms.
     Acceptable user-visible latency: < 5 seconds.
-    Internal service timeout: 500ms (2.5× P99). 
+    Internal service timeout: 500ms (2.5× P99).
     External API timeout: 2000ms (2.5× P999, higher for rare spikes).
-    
+
   COMMON MISTAKES:
-    Too loose: timeout=30s. P99=200ms. 
+    Too loose: timeout=30s. P99=200ms.
       Wait: 30s ÷ 200ms = 150 slow responses in progress simultaneously.
       Thread pool of 50: exhausted after 50 slow responses. Why have timeout at all?
-    
+
     Too tight: timeout=100ms. P99=200ms.
       50% of P99+ responses → unnecessary timeout errors → poor availability.
-      
+
   RULE: timeout should be ≥ 99th percentile of NORMAL response time.
         If P99=500ms: timeout ≥ 500ms (preferably 1-2s with safety margin).
 
@@ -134,13 +134,13 @@ DEADLINE PROPAGATION:
 
   Problem: top-level request has 5s SLA. Calls: Payment (2s) → Fraud Check (1s) → DB (0.5s).
            Total: 3.5s. Within 5s SLA.
-           
+
   Without deadline propagation:
     Payment timeout: 5s. Fraud timeout: 5s. DB timeout: 5s.
     Payment: slow → takes 4.9s. Fraud: slow → takes 4.9s. Total: 9.8s.
     Top-level: times out at 5s. But payment and fraud: still running (using resources).
     Wasted work: payment and fraud complete at 9.8s (results discarded by timeout).
-    
+
   With deadline propagation:
     Top-level request: starts at T=0. Deadline: T=5s.
     Payment call: timeout=min(2s, remaining_time - 0.1s overhead).
@@ -149,24 +149,24 @@ DEADLINE PROPAGATION:
       At T=2: remaining=3s. Fraud timeout=min(1s, 2.9s)=1s.
     DB call: timeout=min(0.5s, remaining_time - 0.1s).
       At T=3: remaining=2s. DB timeout=min(0.5s, 1.9s)=0.5s.
-    
+
     If payment takes 4.9s (slow): payment times out at T=2s.
     Top-level: returns error at T=2s. Fraud and DB: never called. Resources conserved.
-    
+
   IMPLEMENTATION: pass deadline in context / header.
     gRPC: deadline passed in Context. Each service: creates child Context with shorter timeout.
-    HTTP: custom header X-Request-Deadline (Unix timestamp). 
+    HTTP: custom header X-Request-Deadline (Unix timestamp).
           Each service: check if deadline passed → reject immediately.
-    
+
   gRPC deadline propagation example:
     // Client (edge): set 5-second deadline.
     Deadline deadline = Deadline.after(5, TimeUnit.SECONDS);
     stub.withDeadline(deadline).processOrder(request);
-    
+
     // Server (payment): extract remaining deadline from gRPC context.
     // gRPC automatically propagates remaining deadline to downstream calls.
     // If remaining deadline < 50ms: fail fast (not enough time to complete).
-    
+
 TIMEOUT AND IDEMPOTENCY:
 
   Timeout + non-idempotent operation:
@@ -174,22 +174,22 @@ TIMEOUT AND IDEMPOTENCY:
     Client: "failed." Server: "done."
     Client retries (same UUID idempotency key): gets cached result.
     Safe.
-    
+
   Without idempotency key: client retries → double execution.
   RULE: timeout triggers retry ONLY if operation is idempotent.
-  
+
 TIMEOUT IN CONTEXT OF RESILIENCE PATTERNS:
 
   Timeout is the foundation; others build on top:
-  
+
   Timeout → detects slow calls (count timeout as "failure" in CB metrics).
   Circuit Breaker → if timeout rate > threshold: opens circuit.
   Retry with Backoff → retries after timeout (only if idempotent).
   Bulkhead → limits concurrent calls so timeouts don't exhaust all threads.
-  
+
   Without timeout: Circuit Breaker never sees failures (threads blocked, not erroring).
   CB requires timeout to detect slow calls. Set CB timeLimiterConfig.timeoutDuration.
-  
+
   Resilience4j TimeLimiter:
     @TimeLimiter(name = "service-b", fallbackMethod = "fallback")
     public CompletableFuture<Response> callServiceB(Request req) {
@@ -204,6 +204,7 @@ TIMEOUT IN CONTEXT OF RESILIENCE PATTERNS:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT timeouts:
+
 - Single slow dependency: all threads blocked indefinitely → service completely unresponsive
 - Network partition: TCP connections never error (kernel retransmits) → application sees hang
 - Wasted work: downstream services completing requests after upstream already gave up
@@ -232,13 +233,13 @@ HTTP Read Timeout (OkHttp internal):
 
   Client: schedules background timer when request is sent.
   Timer duration: readTimeout value.
-  
+
   If response completes before timer: timer cancelled. Return response.
-  If timer fires before response: 
+  If timer fires before response:
     Socket: forcibly closed.
     Throw: SocketTimeoutException ("Read timed out").
     Thread: unblocked. Handles exception (retry, fallback, error).
-    
+
   Server-side: response body generation may continue until server notices closed socket.
   Server: writes to closed socket → IOException → server-side processing stops.
 ```
@@ -273,7 +274,7 @@ spring:
       connection-timeout: 5000      # 5s: wait for pool connection
       idle-timeout: 600000          # 10min: close idle connections
       max-lifetime: 1800000         # 30min: rotate connections
-  
+
   # Feign HTTP client timeouts:
 feign:
   client:
@@ -299,7 +300,7 @@ public WebClient paymentWebClient() {
         .doOnConnected(conn ->
             conn.addHandlerLast(new ReadTimeoutHandler(5, TimeUnit.SECONDS))
                 .addHandlerLast(new WriteTimeoutHandler(5, TimeUnit.SECONDS)));
-    
+
     return WebClient.builder()
         .clientConnector(new ReactorClientHttpConnector(httpClient))
         .baseUrl("https://payment-service")
@@ -309,7 +310,7 @@ public WebClient paymentWebClient() {
 // gRPC deadline propagation:
 @GrpcService
 public class OrderService extends OrderServiceGrpc.OrderServiceImplBase {
-    
+
     @Override
     public void processOrder(OrderRequest request, StreamObserver<OrderResponse> observer) {
         // Check if deadline already passed before doing expensive work:
@@ -318,7 +319,7 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase {
             observer.onError(Status.DEADLINE_EXCEEDED.asRuntimeException());
             return;
         }
-        
+
         // Propagate remaining deadline to downstream payment call:
         // gRPC stub automatically inherits context deadline.
         PaymentResult payment = paymentStub
@@ -326,7 +327,7 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase {
             .processPayment(PaymentRequest.newBuilder()
                 .setOrderId(request.getOrderId())
                 .build());
-        
+
         observer.onNext(buildResponse(payment));
         observer.onCompleted();
     }
@@ -337,12 +338,12 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| A timeout means the operation failed | A timeout means YOU stopped waiting — the server may have succeeded. This is the fundamental timeout ambiguity: the server processed the request and committed, but the network dropped the response. This is why timeouts on non-idempotent operations are dangerous (retry → double-execution). Timeout = "I don't know what happened," not "the server failed." |
-| Setting a long timeout is safer than a short one | Long timeouts hold threads/connections longer, increasing the risk of resource exhaustion under load. A 30-second timeout on a service with 50 threads means a 30-second outage in a downstream service exhausts the thread pool (50 requests × 30s ÷ 10s arrival rate = 50 concurrent blocked threads). Short timeouts free resources faster and enable faster circuit breaker trips. The risk of long timeouts is usually higher than the risk of short ones |
-| Network socket errors happen fast (no timeout needed) | TCP connections to unreachable hosts don't fail fast. The OS sends SYN, waits for SYN-ACK, retransmits SYN after 1s, 3s, 7s, 15s, 31s... Default TCP connect timeout: 75 seconds on Linux. Without a custom connect timeout, your application will appear hung for 75 seconds. Always set custom connect timeout (1-5s) for all outbound connections |
-| Database queries don't need timeouts (they run on the DB side) | Database queries run on the server, but the client thread waits for the result. A slow query (full table scan, deadlock wait, lock contention) holds the client thread and the DB connection. With HikariCP: a 50-thread pool with 30s query timeout = up to 50 × 30s = 1500 thread-seconds of blocked capacity. Set queryTimeout (JDBC) and socketTimeout (driver) to bound maximum query wait time |
+| Misconception                                                  | Reality                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A timeout means the operation failed                           | A timeout means YOU stopped waiting — the server may have succeeded. This is the fundamental timeout ambiguity: the server processed the request and committed, but the network dropped the response. This is why timeouts on non-idempotent operations are dangerous (retry → double-execution). Timeout = "I don't know what happened," not "the server failed."                                                                                             |
+| Setting a long timeout is safer than a short one               | Long timeouts hold threads/connections longer, increasing the risk of resource exhaustion under load. A 30-second timeout on a service with 50 threads means a 30-second outage in a downstream service exhausts the thread pool (50 requests × 30s ÷ 10s arrival rate = 50 concurrent blocked threads). Short timeouts free resources faster and enable faster circuit breaker trips. The risk of long timeouts is usually higher than the risk of short ones |
+| Network socket errors happen fast (no timeout needed)          | TCP connections to unreachable hosts don't fail fast. The OS sends SYN, waits for SYN-ACK, retransmits SYN after 1s, 3s, 7s, 15s, 31s... Default TCP connect timeout: 75 seconds on Linux. Without a custom connect timeout, your application will appear hung for 75 seconds. Always set custom connect timeout (1-5s) for all outbound connections                                                                                                           |
+| Database queries don't need timeouts (they run on the DB side) | Database queries run on the server, but the client thread waits for the result. A slow query (full table scan, deadlock wait, lock contention) holds the client thread and the DB connection. With HikariCP: a 50-thread pool with 30s query timeout = up to 50 × 30s = 1500 thread-seconds of blocked capacity. Set queryTimeout (JDBC) and socketTimeout (driver) to bound maximum query wait time                                                           |
 
 ---
 
@@ -354,25 +355,25 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase {
 SCENARIO: Spring Boot app with default RestTemplate (no timeout set).
   Downstream service: load balancer accepts TCP connection (SYN-ACK) but never sends response
   (upstream app crashed, LB doesn't know).
-  
+
   Default RestTemplate: no read timeout.
   Thread: blocked waiting for response.
   20 RPS incoming. Each request: allocates thread, blocks.
   After 2.5 minutes: all 50 threads blocked. New requests: rejected with 503.
   App: unresponsive. No error logs (threads are waiting, not erroring).
-  
+
 BAD: RestTemplate without timeout (Spring Boot default):
   // This creates an HTTP client with NO timeout:
   @Bean
   public RestTemplate restTemplate() {
       return new RestTemplate(); // No timeout configured!
   }
-  
+
   // OR: RestTemplate with wrong timeout configuration:
   RestTemplate restTemplate = new RestTemplate();
   restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
   // SimpleClientHttpRequestFactory: default connectTimeout=-1, readTimeout=-1 (infinite!)
-  
+
 FIX: Always configure explicit timeouts:
   @Bean
   public RestTemplate restTemplate() {
@@ -381,7 +382,7 @@ FIX: Always configure explicit timeouts:
       factory.setReadTimeout(10000);    // 10s read timeout
       return new RestTemplate(factory);
   }
-  
+
   // OR with Apache HttpClient (more configurable):
   @Bean
   public RestTemplate restTemplate() {
@@ -390,14 +391,14 @@ FIX: Always configure explicit timeouts:
           .setSocketTimeout(10000)      // Read timeout
           .setConnectionRequestTimeout(5000)  // Pool borrow timeout
           .build();
-      
+
       CloseableHttpClient client = HttpClientBuilder.create()
           .setDefaultRequestConfig(config)
           .build();
-      
+
       return new RestTemplate(new HttpComponentsClientHttpRequestFactory(client));
   }
-  
+
   // VERIFY: test that timeout is actually applied:
   // Use WireMock with fixed delay longer than timeout → confirm SocketTimeoutException.
   // Unit test:
@@ -405,7 +406,7 @@ FIX: Always configure explicit timeouts:
   void shouldTimeoutAfter2Seconds() {
       wireMock.stubFor(get("/api").willReturn(
           aResponse().withFixedDelay(3000))); // 3s delay
-      
+
       assertThrows(ResourceAccessException.class, () ->
           restTemplate.getForObject(wireMock.baseUrl() + "/api", String.class));
       // Must throw in < 2.5s (2s timeout + small overhead)

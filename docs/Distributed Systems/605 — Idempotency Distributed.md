@@ -18,10 +18,10 @@ tags: #advanced, #distributed, #safety, #retry, #exactly-once
 
 ⚡ TL;DR — **Idempotency** in distributed systems means an operation can be safely retried any number of times with the same result as a single execution — enabled by idempotency keys, deduplication state, and atomic conditional writes at the server side.
 
-| #605 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Retry with Backoff, Two-Phase Commit | |
-| **Used by:** | Payment APIs, Stripe, AWS APIs, Message Queues | |
+| #605            | Category: Distributed Systems                  | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------- | :-------------- |
+| **Depends on:** | Retry with Backoff, Two-Phase Commit           |                 |
+| **Used by:**    | Payment APIs, Stripe, AWS APIs, Message Queues |                 |
 
 ---
 
@@ -51,7 +51,7 @@ Why distributed systems specifically need idempotency: in a distributed system, 
 THE DISTRIBUTED IDEMPOTENCY PROBLEM:
 
   Client sends: POST /payments { amount: 100, card: "4111..." }
-  
+
   Timeline:
     T=0:   Client sends request.
     T=50ms: Server receives request.
@@ -64,7 +64,7 @@ THE DISTRIBUTED IDEMPOTENCY PROBLEM:
     T=5060ms: Server: no idempotency check → processes AGAIN → charges card TWICE.
     T=5065ms: Server: HTTP 200.
     T=5065ms: Customer: charged $100 twice for one order. Fraud complaint.
-    
+
   RESULT WITHOUT IDEMPOTENCY: client-side retry → server-side double execution.
 
 IDEMPOTENCY KEY SOLUTION:
@@ -72,45 +72,45 @@ IDEMPOTENCY KEY SOLUTION:
   Client: generates UUID once per logical operation.
     idempotencyKey = UUID.randomUUID() = "a1b2c3d4-e5f6-..."
     Stores key locally for this operation (in memory or persistent if needed).
-    
+
   Client sends: POST /payments
     Headers: Idempotency-Key: a1b2c3d4-e5f6-...
     Body: { amount: 100, card: "4111..." }
-    
+
   Server (first request):
     1. Check DB: "SELECT * FROM idempotency_keys WHERE key = 'a1b2c3d4-...' ".
        Not found. Proceed.
     2. Process payment: charge card. Payment ID = X. Result = { success: true, paymentId: X }.
     3. ATOMICALLY: begin transaction.
        a. Commit payment to payments table.
-       b. INSERT INTO idempotency_keys (key, result, expires_at) 
+       b. INSERT INTO idempotency_keys (key, result, expires_at)
           VALUES ('a1b2c3d4-...', '{"success":true,"paymentId":"X"}', NOW() + INTERVAL '24h').
        Commit transaction.
     4. Return: 200 OK { success: true, paymentId: X }.
-    
+
   Network drops. Client retries.
-  
+
   Server (retry request):
     1. Check DB: "SELECT * FROM idempotency_keys WHERE key = 'a1b2c3d4-...' ".
        FOUND. result = { success: true, paymentId: X }.
     2. Return cached result: 200 OK { success: true, paymentId: X }.
     3. Payment NOT re-processed.
-    
+
   Client: receives success response. Proceeds as if first attempt succeeded.
   Customer: charged exactly once.
-  
+
 ATOMICITY REQUIREMENT (CRITICAL):
 
   Server must atomically commit both the operation AND the idempotency key record.
-  
+
   WRONG (non-atomic):
     1. Process payment (charge card). ← Card charged.
     2. Commit payment to DB. ← DB updated.
-    3. Server crashes here. ←←←← 
+    3. Server crashes here. ←←←←
     4. INSERT idempotency key. ← NEVER HAPPENS.
-    
+
     Retry: idempotency key not in DB → server processes again → double charge.
-    
+
   CORRECT (atomic):
     BEGIN TRANSACTION:
       1. Check idempotency key: not found.
@@ -118,21 +118,21 @@ ATOMICITY REQUIREMENT (CRITICAL):
       3. Process payment (call Stripe API — outside transaction! See note below).
       4. UPDATE idempotency key: status=completed, result=...
     COMMIT.
-    
+
   NOTE: External API calls (Stripe, bank) cannot be part of a DB transaction.
         Pattern: two-step atomic write:
         Step 1 (before external call): INSERT idempotency_key WHERE NOT EXISTS (atomic).
                 If INSERT fails (key exists): return cached result.
                 If INSERT succeeds: proceed to external call.
         Step 2 (after external call): UPDATE idempotency_key with result.
-        
+
         Edge case: server crashes between step 1 and step 2.
           Retry: step 1 → INSERT fails (key in pending state).
           Server: idempotency key found but status=pending.
-          Decision: 
+          Decision:
             Option A: return 409 Conflict ("request in progress, wait and retry").
             Option B: check if external operation completed (query Stripe for idempotency key).
-            
+
         Stripe solves this: Stripe itself is idempotent (each Stripe request has idempotency key).
         Step 3: query Stripe with same idempotency key → Stripe returns original result.
         Server: completes step 2 with Stripe result. Returns to client.
@@ -146,7 +146,7 @@ DATABASE-LEVEL IDEMPOTENCY:
     ON CONFLICT (id) DO NOTHING;
     -- If record already exists (same id): silent no-op. No error. Returns 0 rows affected.
     -- Caller: check rows_affected. 0 = duplicate (already processed).
-    
+
   DynamoDB conditional write:
     PutItemRequest.builder()
       .tableName("orders")
@@ -155,7 +155,7 @@ DATABASE-LEVEL IDEMPOTENCY:
       .build();
     // If orderId already exists: throws ConditionalCheckFailedException.
     // Caller: catch ConditionalCheckFailed → idempotent (already processed, safe to ignore).
-    
+
   Optimistic locking (version-based):
     UPDATE orders SET status='processing', version=version+1
     WHERE order_id=:id AND version=:expected_version;
@@ -166,9 +166,9 @@ MESSAGE QUEUE IDEMPOTENCY:
 
   At-least-once delivery: message may be delivered multiple times.
   Consumer MUST be idempotent.
-  
+
   Consumer idempotency patterns:
-  
+
   1. Message ID deduplication:
      -- Consumer: check if message already processed.
      IF NOT EXISTS (SELECT 1 FROM processed_messages WHERE message_id = :msg_id):
@@ -176,13 +176,13 @@ MESSAGE QUEUE IDEMPOTENCY:
          INSERT INTO processed_messages (message_id, processed_at) VALUES (:msg_id, NOW())
      -- DB constraint: UNIQUE (message_id).
      -- Duplicate message: INSERT fails → harmless duplicate message ignored.
-     
+
   2. Kafka idempotent producer:
      properties.put("enable.idempotence", "true");
      // Producer: assigns sequence numbers to each message per partition.
      // Broker: tracks sequence numbers. Duplicate message (same sequence): silently discarded.
      // At-most-once: combined with acks=all → exactly-once at producer level.
-     
+
   3. Kafka transactions (exactly-once end-to-end):
      // Producer: atomic: consume from topic A + produce to topic B.
      // If consumer commits offset and producer commits atomically: no duplicates.
@@ -200,18 +200,18 @@ STRIPE IDEMPOTENCY KEY BEHAVIOR:
   Stripe API:
     POST /v1/charges
     Idempotency-Key: <your-uuid>
-    
+
     First request: processes charge. Stores result for 24 hours.
     Same key, same params: returns stored result. No re-processing.
     Same key, DIFFERENT params: 400 Bad Request. (Key reuse with different request = error.)
-    
+
     Key expiry: 24 hours. After 24h: same key treated as new request.
-    
+
   Best practice: derive key deterministically:
     idempotencyKey = "charge-" + orderId + "-" + orderVersion;
     // Always the same key for the same logical operation.
     // Survives client restarts (UUID in memory wouldn't).
-    
+
   Store key in request table:
     payment_requests(order_id, idempotency_key, status, payment_id, created_at)
     -- Before sending to Stripe: INSERT or SELECT payment_requests.
@@ -233,6 +233,7 @@ HTTP IDEMPOTENCY BY METHOD:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT idempotency:
+
 - Client retry on timeout: double payment, duplicate email, double inventory decrement
 - Message redelivery: consumer processes same event twice → duplicate records
 - Network timeouts: can't distinguish "not received" from "failed" → unsafe to retry
@@ -296,15 +297,15 @@ Idempotency (Distributed) ◄──── (you are here)
 ```java
 @RestController
 public class PaymentController {
-    
+
     @PostMapping("/payments")
     public ResponseEntity<PaymentResult> createPayment(
             @RequestHeader("Idempotency-Key") String idempotencyKey,
             @RequestBody PaymentRequest request) {
-        
+
         // Step 1: Atomic check-and-insert (prevents race condition on concurrent retries).
         Optional<IdempotencyRecord> existing = idempotencyRepo.findByKey(idempotencyKey);
-        
+
         if (existing.isPresent()) {
             IdempotencyRecord record = existing.get();
             if ("completed".equals(record.getStatus())) {
@@ -316,7 +317,7 @@ public class PaymentController {
                 return ResponseEntity.status(409).build();
             }
         }
-        
+
         // Step 2: Reserve the key (atomic insert).
         try {
             idempotencyRepo.insertPending(idempotencyKey, request);
@@ -324,7 +325,7 @@ public class PaymentController {
             // Race condition: another thread just inserted. Re-fetch.
             return createPayment(idempotencyKey, request); // Recursive retry to get result.
         }
-        
+
         // Step 3: Execute the operation.
         PaymentResult result;
         try {
@@ -337,10 +338,10 @@ public class PaymentController {
             idempotencyRepo.markFailed(idempotencyKey, e.getMessage());
             throw e;
         }
-        
+
         // Step 4: Atomically mark complete and store result.
         idempotencyRepo.markCompleted(idempotencyKey, result);
-        
+
         return ResponseEntity.ok(result);
     }
 }
@@ -361,12 +362,12 @@ public class PaymentController {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| PUT and DELETE are automatically idempotent in practice | PUT and DELETE are idempotent by HTTP SPECIFICATION, but implementations can violate this. A poorly implemented DELETE that returns 404 on second call may trigger error handling in clients that breaks the idempotency contract. More critically: DELETE implemented as "soft delete with audit log" inserts a new audit record on each call — functionally idempotent (user deleted) but with side effects. Design matters |
-| UUID idempotency keys must be random | Idempotency keys should be DETERMINISTIC (derived from the operation's logical identity), not random. Random UUID in memory: if client crashes and restarts: generates new UUID → no deduplication on retry → potential duplicate. Deterministic: idempotencyKey = hash("payment:" + orderId + ":" + attemptVersion). Same operation after restart: same key → server deduplicates. Store the key persistently with the order if it will survive client restarts |
-| Idempotency is only needed for payment operations | Any operation with side effects that may be retried needs idempotency: creating database records, sending emails, pushing events to queues, incrementing counters, creating infrastructure (Terraform idempotent by design), updating inventory. Especially critical for: message consumers (at-least-once delivery), webhook handlers (third-party systems retry webhooks), any API with timeout-based retry |
-| Idempotency keys can be short-lived (seconds) | Idempotency key TTL depends on the client's retry window. If a client retries for up to 1 hour (long timeout + many retries + circuit breaker recovery): key must live for at least 1 hour. If an async process may retry a day later: key must live for 1 day. Stripe stores keys for 24 hours. Set TTL = max(client_timeout_window, async_retry_window) + buffer |
+| Misconception                                           | Reality                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PUT and DELETE are automatically idempotent in practice | PUT and DELETE are idempotent by HTTP SPECIFICATION, but implementations can violate this. A poorly implemented DELETE that returns 404 on second call may trigger error handling in clients that breaks the idempotency contract. More critically: DELETE implemented as "soft delete with audit log" inserts a new audit record on each call — functionally idempotent (user deleted) but with side effects. Design matters                                    |
+| UUID idempotency keys must be random                    | Idempotency keys should be DETERMINISTIC (derived from the operation's logical identity), not random. Random UUID in memory: if client crashes and restarts: generates new UUID → no deduplication on retry → potential duplicate. Deterministic: idempotencyKey = hash("payment:" + orderId + ":" + attemptVersion). Same operation after restart: same key → server deduplicates. Store the key persistently with the order if it will survive client restarts |
+| Idempotency is only needed for payment operations       | Any operation with side effects that may be retried needs idempotency: creating database records, sending emails, pushing events to queues, incrementing counters, creating infrastructure (Terraform idempotent by design), updating inventory. Especially critical for: message consumers (at-least-once delivery), webhook handlers (third-party systems retry webhooks), any API with timeout-based retry                                                    |
+| Idempotency keys can be short-lived (seconds)           | Idempotency key TTL depends on the client's retry window. If a client retries for up to 1 hour (long timeout + many retries + circuit breaker recovery): key must live for at least 1 hour. If an async process may retry a day later: key must live for 1 day. Stripe stores keys for 24 hours. Set TTL = max(client_timeout_window, async_retry_window) + buffer                                                                                               |
 
 ---
 
@@ -384,7 +385,7 @@ SCENARIO: E-commerce checkout. Client (mobile app) generates idempotency key as 
   App: generatess new key: xyz-789 (NEW random UUID — old one lost in memory).
   App sends POST /payments with key=xyz-789.
   Server: new key → processes AGAIN → charges card TWICE.
-  
+
 BAD: Random UUID in memory as idempotency key:
   String idempotencyKey = UUID.randomUUID().toString(); // Lost on app crash.
 
@@ -393,13 +394,13 @@ FIX: Derive idempotency key from durable, persistent operation identity:
   String cartId = orderRepository.getCartId(); // Stable, persisted before payment attempt.
   String attemptVersion = "1"; // Increment only on explicit user retry (not system retry).
   String idempotencyKey = "pay-" + cartId + "-v" + attemptVersion;
-  
+
   // This key is:
   //   - Deterministic: same cart → same key (survives app restarts)
   //   - Unique per logical operation: different carts → different keys
   //   - User-controlled versioning: increment "attemptVersion" only when user explicitly
   //     tries a different payment method ("try different card" → new attempt version → new key)
-  
+
 FIX 2: Server-side idempotency key storage on order creation:
   // When order is created: generate and store idempotency key SERVER-SIDE on the order.
   // Client: GET /orders/{id}/payment-key → returns stored idempotency key.

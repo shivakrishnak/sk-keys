@@ -18,10 +18,10 @@ tags: #advanced, #distributed, #observability, #microservices, #debugging
 
 ⚡ TL;DR — Distributed tracing assigns a unique **trace ID** to each request, propagating it across all services, so you can reconstruct the full call chain and see exactly where latency or failures occur in a multi-service system.
 
-| #611 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Service Mesh, Correlation ID | |
-| **Used by:** | Jaeger, Zipkin, OpenTelemetry, Datadog APM, AWS X-Ray | |
+| #611            | Category: Distributed Systems                         | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------- | :-------------- |
+| **Depends on:** | Service Mesh, Correlation ID                          |                 |
+| **Used by:**    | Jaeger, Zipkin, OpenTelemetry, Datadog APM, AWS X-Ray |                 |
 
 ---
 
@@ -52,9 +52,9 @@ TRACE ANATOMY:
 
   User request: GET /api/orders/123
   traceId: "abc-123-xyz" (generated at entry point, e.g., API gateway)
-  
+
   SPAN TREE:
-  
+
   [API Gateway]          traceId=abc-123-xyz, spanId=A, parentSpanId=null
     start: 10:00:00.000  duration: 230ms
     |
@@ -77,14 +77,14 @@ TRACE ANATOMY:
           duration: 8ms
 
   WATERFALL VIEW (Jaeger/Zipkin timeline):
-  
+
   API Gateway    |████████████████████████████████████| 230ms
   OrderService       |████████████████████████████| 210ms
   DB Query (orders)      |█| 5ms
   InventoryService           |████████████████| 200ms
   DB Query (inventory)         |██████████████| 195ms  ← spike!
   AuthService            |█| 8ms
-  
+
   Immediate insight: InventoryService DB query = bottleneck. 195ms for inventory lookup.
   Next action: EXPLAIN ANALYZE on that query. Missing index on order_id column.
 
@@ -93,23 +93,23 @@ CONTEXT PROPAGATION (W3C TraceContext standard):
   HTTP request headers:
     traceparent: 00-abc123xyz-spanIdB-01
     tracestate: vendor-specific-data
-    
+
   Format: version-traceId-spanId-flags
-  
+
   Service receives request:
     1. Parse traceparent header → extract traceId, parentSpanId.
     2. Create new span: spanId=newId, parentSpanId=extractedSpanId, traceId=same.
     3. Do work (record timing, errors).
     4. On outgoing requests: inject traceparent with traceId + newSpanId.
     5. Downstream services: repeat steps 1-4.
-    
+
   If no traceparent header: service is the root → generate new traceId.
-  
+
   PROPAGATION ACROSS PROTOCOLS:
     HTTP: headers (traceparent)
     gRPC: metadata (grpc-trace-bin or traceparent)
     Kafka: message headers (W3C traceparent in Kafka header)
-    
+
   KAFKA TRACING CHALLENGE:
     Producer: inject traceId in Kafka message headers.
     Consumer: extract traceId from headers, create child span.
@@ -120,25 +120,25 @@ CONTEXT PROPAGATION (W3C TraceContext standard):
 SAMPLING STRATEGIES:
 
   Full trace recording: too expensive at scale. 10K RPS × 50 spans = 500K spans/sec.
-  
+
   1. HEAD-BASED SAMPLING (decision at entry point):
      API gateway: roll dice (1% = record, 99% = discard).
      Decision propagated in headers (flags bit = 1 = sampled).
      Downstream services: record span only if sampled=1.
-     
+
      PROS: Low overhead (most traces never recorded at all).
      CONS: "Interesting" traces (errors, slow) randomly discarded.
-     
+
   2. TAIL-BASED SAMPLING (decision after trace complete):
      All services: record spans in memory (or edge buffer).
      Trace collector: receives ALL spans for a trace.
      Collector: makes sampling decision AFTER seeing full trace.
      Decision criteria: "was there an error? Was duration > 500ms? → keep."
-     
+
      PROS: Always keep interesting traces (errors, slow).
      CONS: Higher memory overhead (buffering complete traces before decision).
      Complexity: all spans for a trace must route to same collector.
-     
+
   3. ADAPTIVE/DYNAMIC SAMPLING:
      New endpoints, new error types: 100% sampled.
      High-volume, healthy paths: 0.1% sampled.
@@ -148,24 +148,24 @@ SAMPLING STRATEGIES:
 OPENTELEMETRY (OTEL) ARCHITECTURE:
 
   SDK (in each service) → OTEL Collector → Backend (Jaeger/Datadog/etc.)
-  
+
   SDK components:
     Tracer: creates traces and spans.
     Context: stores current span for automatic parent detection.
     Exporter: sends spans to collector (OTLP protocol).
-    
+
   OTEL Collector:
     Receives from multiple services (OTLP receiver).
     Processes (batching, filtering, attribute enrichment).
     Exports to multiple backends simultaneously (Jaeger + Datadog + Prometheus).
-    
+
   Value: instrument once (OTEL SDK) → switch backends without code changes.
-  
+
   AUTO-INSTRUMENTATION:
     Java agent: -javaagent:opentelemetry-javaagent.jar
     Automatically instruments: HTTP clients, JDBC, gRPC, Kafka, Spring, etc.
     Zero code changes. Just attach agent.
-    
+
     // Manual span creation (when auto-instrumentation isn't sufficient):
     Tracer tracer = GlobalOpenTelemetry.getTracer("my-service");
     Span span = tracer.spanBuilder("process-order")
@@ -187,18 +187,18 @@ TRACE CORRELATION WITH LOGS AND METRICS:
 
   LOGS + TRACES:
     Add traceId + spanId to every log line:
-    logger.info("Processing order {}", orderId, 
+    logger.info("Processing order {}", orderId,
         Map.of("traceId", span.getSpanContext().getTraceId(),
                "spanId", span.getSpanContext().getSpanId()));
-    
+
     Log output: {"message": "Processing order 123", "traceId": "abc-123", "spanId": "span-B"}
-    
+
     In Grafana/Datadog: click on a trace span → jump to logs filtered by traceId.
     Click on a log line → jump to the trace. Full correlation.
-    
+
   METRICS + TRACES:
     Exemplars: attach a traceId to a metric data point.
-    "p99 latency spiked at 10:05AM" → click metric point → 
+    "p99 latency spiked at 10:05AM" → click metric point →
     "exemplar traceId = abc-999" → open that trace → see why it was slow.
 ```
 
@@ -207,6 +207,7 @@ TRACE CORRELATION WITH LOGS AND METRICS:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT distributed tracing:
+
 - "The checkout is slow" → logs across 10 services → hours of correlation by timestamp
 - No way to link a user's experience to specific service calls
 - Latency root-cause analysis requires expert knowledge of the whole system
@@ -244,10 +245,10 @@ SPRING BOOT + OPENTELEMETRY AUTO-INSTRUMENTATION:
 
   # build.gradle — OTEL Java agent (zero code changes):
   # Run with: java -javaagent:opentelemetry-javaagent-1.x.jar -jar app.jar
-  
+
   # Result: all HTTP, JDBC, Kafka calls automatically traced.
   # Spring's @Observed annotation for custom spans:
-  
+
   @Service
   public class OrderService {
       @Observed(name = "order.process", contextualName = "process-order")
@@ -282,10 +283,10 @@ Distributed Tracing ◄──── (you are here)
 // Manual OpenTelemetry tracing in Java:
 @RestController
 public class OrderController {
-    
-    private static final Tracer tracer = 
+
+    private static final Tracer tracer =
         GlobalOpenTelemetry.getTracer("order-service", "1.0.0");
-    
+
     @PostMapping("/orders")
     public ResponseEntity<Order> createOrder(@RequestBody OrderRequest request) {
         // Auto-instrumented: HTTP span created automatically by OTEL agent.
@@ -294,7 +295,7 @@ public class OrderController {
             .setAttribute("order.customer_id", request.getCustomerId())
             .setAttribute("order.item_count", request.getItems().size())
             .startSpan();
-        
+
         try (Scope scope = span.makeCurrent()) {
             // All DB calls, HTTP calls inside here: automatically parented to this span.
             Order order = orderService.create(request);
@@ -316,12 +317,12 @@ public class OrderController {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Distributed tracing replaces logging | Tracing and logging are complementary. Traces: show WHAT happened and WHERE time was spent (request flow, latency). Logs: show WHY (detailed error messages, state, business context). Best practice: inject traceId into log MDC so logs and traces are linked. Then: use traces to find the problem, use logs to understand it |
-| 100% trace sampling in production is fine | At 1000 RPS with 30 spans/request: 30,000 spans/sec. Each span ~1KB: 30MB/sec → 2.5TB/day. Storage and processing cost is significant. Use adaptive sampling: 100% for errors, 1% for healthy high-volume paths. Tail-based sampling keeps all interesting traces while discarding noise |
+| Misconception                                              | Reality                                                                                                                                                                                                                                                                                                                                    |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Distributed tracing replaces logging                       | Tracing and logging are complementary. Traces: show WHAT happened and WHERE time was spent (request flow, latency). Logs: show WHY (detailed error messages, state, business context). Best practice: inject traceId into log MDC so logs and traces are linked. Then: use traces to find the problem, use logs to understand it           |
+| 100% trace sampling in production is fine                  | At 1000 RPS with 30 spans/request: 30,000 spans/sec. Each span ~1KB: 30MB/sec → 2.5TB/day. Storage and processing cost is significant. Use adaptive sampling: 100% for errors, 1% for healthy high-volume paths. Tail-based sampling keeps all interesting traces while discarding noise                                                   |
 | Distributed tracing requires code changes in every service | OpenTelemetry Java agent, Python auto-instrumentation, and Node.js auto-instrumentation can instrument services with zero code changes. Attach the agent at startup. Service meshes (Istio) inject trace headers at the proxy level. For maximum detail: add manual spans for business operations. But baseline tracing: zero code changes |
-| A trace shows the complete picture of what happened | Traces show the HAPPY PATH call chain. They miss: async work done after response returned, background jobs triggered by the request, eventual consistency side effects. Combine traces with events/logs for full picture. A trace ending at the API response doesn't show if the downstream Kafka consumer processed the message correctly |
+| A trace shows the complete picture of what happened        | Traces show the HAPPY PATH call chain. They miss: async work done after response returned, background jobs triggered by the request, eventual consistency side effects. Combine traces with events/logs for full picture. A trace ending at the API response doesn't show if the downstream Kafka consumer processed the message correctly |
 
 ---
 
@@ -333,38 +334,38 @@ public class OrderController {
 SCENARIO: HTTP request → OrderService creates order → publishes Kafka message.
   Consumer (FulfillmentService) processes message, but trace is broken.
   In Jaeger: two separate traces. Can't link customer request to fulfillment.
-  
+
 BAD: Kafka message without trace context:
   // Producer: doesn't propagate trace context.
   kafkaTemplate.send("fulfillment-events", new FulfillmentEvent(orderId));
   // FulfillmentService consumer: creates NEW trace. No link to original request.
-  
+
 FIX: Propagate trace context in Kafka message headers:
   // Producer: inject W3C trace context into Kafka headers.
   @Service
   public class OrderEventPublisher {
-      
+
       @Autowired private KafkaTemplate<String, FulfillmentEvent> kafkaTemplate;
-      
+
       public void publishFulfillmentEvent(String orderId) {
-          ProducerRecord<String, FulfillmentEvent> record = 
+          ProducerRecord<String, FulfillmentEvent> record =
               new ProducerRecord<>("fulfillment-events", orderId, new FulfillmentEvent(orderId));
-          
+
           // Inject current span context into Kafka headers:
           OpenTelemetry otel = GlobalOpenTelemetry.get();
           otel.getPropagators().getTextMapPropagator().inject(
               Context.current(), record.headers(),
               (headers, key, value) -> headers.add(key, value.getBytes()));
-          
+
           kafkaTemplate.send(record);
       }
   }
-  
+
   // Consumer: extract trace context from Kafka headers.
   @KafkaListener(topics = "fulfillment-events")
   public void onFulfillmentEvent(
           ConsumerRecord<String, FulfillmentEvent> record) {
-      
+
       // Extract propagated context from Kafka headers:
       Context extractedContext = GlobalOpenTelemetry.get()
           .getPropagators().getTextMapPropagator().extract(
@@ -373,13 +374,13 @@ FIX: Propagate trace context in Kafka message headers:
                   Header h = headers.lastHeader(key);
                   return h != null ? new String(h.value()) : null;
               });
-      
+
       // Create child span linked to the original HTTP request trace:
       Span span = GlobalOpenTelemetry.getTracer("fulfillment-service")
           .spanBuilder("process-fulfillment")
           .setParent(extractedContext)  // Links to original trace!
           .startSpan();
-      
+
       try (Scope scope = span.makeCurrent()) {
           fulfillmentService.process(record.value());
       } finally {

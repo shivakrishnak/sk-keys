@@ -18,10 +18,10 @@ tags: #advanced, #distributed, #reliability, #messaging, #transactions
 
 ⚡ TL;DR — The **Outbox Pattern** solves the dual-write problem: instead of writing to the DB and publishing an event atomically (impossible across two systems), write both to the **same DB transaction** — the event row in an outbox table — then a relay process publishes it to the message broker asynchronously.
 
-| #617 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Event-Driven Architecture, Idempotency (Distributed) | |
-| **Used by:** | Debezium, Spring Modulith, Kafka, Transactional Outbox | |
+| #617            | Category: Distributed Systems                          | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------- | :-------------- |
+| **Depends on:** | Event-Driven Architecture, Idempotency (Distributed)   |                 |
+| **Used by:**    | Debezium, Spring Modulith, Kafka, Transactional Outbox |                 |
 
 ---
 
@@ -51,36 +51,36 @@ The problem without outbox: OrderService saves the order to PostgreSQL AND publi
 DUAL-WRITE PROBLEM (why outbox is needed):
 
   WITHOUT OUTBOX:
-  
+
     BEGIN TRANSACTION:
       INSERT INTO orders (id, status, ...) VALUES ('abc-123', 'PLACED', ...);
     COMMIT; -- DB write succeeds.
-    
+
     // === CRASH ZONE: service crashes here ===
-    
+
     kafkaTemplate.send("order-events", new OrderCreated("abc-123")); // NEVER EXECUTED.
-    
+
   Result: Order exists in DB. No Kafka event. Downstream services: never notified.
   Inconsistency: permanent (unless manual fix).
-  
+
   REVERSE FAILURE:
     kafkaTemplate.send("order-events", new OrderCreated("abc-123")); // Succeeds.
     // Kafka broker confirms.
-    
+
     BEGIN TRANSACTION:
       INSERT INTO orders (...) VALUES (...);
     // === DB failure (connection reset) ===
     ROLLBACK; // Order not saved.
-    
+
   Result: Kafka event published. DB: no order. Downstream: processes event for non-existent order.
-  
+
   ROOT CAUSE: Two systems (PostgreSQL, Kafka) = two separate transaction coordinators.
   No atomic commit across both without distributed transactions (2PC — too expensive).
 
 OUTBOX PATTERN SOLUTION:
 
   Outbox table in SAME database as business data:
-  
+
     CREATE TABLE outbox (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         event_type VARCHAR NOT NULL,          -- e.g., 'OrderPlaced'
@@ -91,32 +91,32 @@ OUTBOX PATTERN SOLUTION:
         published BOOLEAN DEFAULT FALSE,      -- polling relay: mark when published
         published_at TIMESTAMPTZ             -- for cleanup/debugging
     );
-    
+
   WRITE FLOW (single DB transaction):
     BEGIN TRANSACTION:
       INSERT INTO orders (id, status, ...) VALUES ('abc-123', 'PLACED', ...);
       INSERT INTO outbox (event_type, aggregate_id, payload)
         VALUES ('OrderPlaced', 'abc-123', '{"userId": "u-456", "total": 75.00}');
     COMMIT;
-    
+
   GUARANTEE:
     Case A: COMMIT succeeds → both order row AND outbox row exist → relay publishes event.
     Case B: COMMIT fails → neither row exists → no event → no inconsistency.
     Case C: Relay crashes after DB commit but before publishing → relay retries on restart.
       (outbox row still unpublished: published=FALSE → relay retries).
-    
+
   RESULT: At-least-once delivery guarantee.
   Consumers: MUST be idempotent (relay may publish same event twice on retry).
 
 POLLING RELAY:
 
   Separate process (thread, scheduled job, or microservice):
-  
+
     @Scheduled(fixedDelay = 100) // Poll every 100ms
     @Transactional
     public void pollAndPublish() {
         List<OutboxEvent> unpublished = outboxRepo.findByPublishedFalseOrderByCreatedAtAsc();
-        
+
         for (OutboxEvent event : unpublished) {
             try {
                 kafkaTemplate.send(
@@ -124,7 +124,7 @@ POLLING RELAY:
                     event.getAggregateId(), // Partition key for ordering.
                     event.getPayload()
                 ).get(); // Wait for Kafka acknowledgement.
-                
+
                 event.setPublished(true);
                 event.setPublishedAt(Instant.now());
                 outboxRepo.save(event);
@@ -134,19 +134,19 @@ POLLING RELAY:
             }
         }
     }
-    
+
     // Cleanup: delete published events older than 7 days.
     @Scheduled(cron = "0 0 * * * *") // Hourly
     public void cleanupOldPublishedEvents() {
         outboxRepo.deleteByPublishedTrueAndPublishedAtBefore(
             Instant.now().minus(7, ChronoUnit.DAYS));
     }
-    
+
   DRAWBACKS OF POLLING:
     Latency: up to poll interval (100ms-1s).
     DB load: constant polling query even when no events.
     Thundering herd: many events → many rows → slow query.
-    
+
   OPTIMIZATION: Use SELECT FOR UPDATE SKIP LOCKED for concurrent relay instances:
     @Query("SELECT o FROM OutboxEvent o WHERE o.published = FALSE ORDER BY o.createdAt FOR UPDATE SKIP LOCKED")
     List<OutboxEvent> findUnpublishedForUpdate();
@@ -156,11 +156,11 @@ CDC RELAY WITH DEBEZIUM (production-grade):
 
   Debezium: Change Data Capture tool. Reads database transaction log.
   PostgreSQL: WAL (Write-Ahead Log). MySQL: binlog.
-  
+
   Debezium reads: every row INSERT in outbox table → publishes to Kafka.
   No polling. Near-real-time (WAL-based, sub-100ms lag).
   No additional DB load (reads WAL, not rows).
-  
+
   DEBEZIUM CONFIGURATION (PostgreSQL outbox):
     {
       "name": "outbox-connector",
@@ -179,14 +179,14 @@ CDC RELAY WITH DEBEZIUM (production-grade):
         // Routes to topic: "Order", "Payment", etc. based on aggregate_type.
       }
     }
-    
+
   DEBEZIUM FLOW:
     1. DB transaction commits: outbox row inserted.
     2. PostgreSQL WAL: logs the INSERT.
     3. Debezium connector: reads WAL change → transforms to Kafka message.
     4. Publishes to Kafka topic (e.g., "Order" topic, key=aggregate_id).
     5. No DB polling. Pure WAL streaming.
-    
+
   ADVANTAGE: Outbox events published even if relay was down.
   Debezium resumes from WAL position (stored in Kafka offsets).
   No events missed during downtime (unlike polling relay which might miss events if DB cleaned up).
@@ -195,25 +195,25 @@ ORDERING GUARANTEE:
 
   Events for the same aggregate MUST be ordered.
   Example: OrderPlaced → OrderShipped (must be consumed in this order).
-  
+
   Kafka: ordered within a partition. Key → partition (consistent hashing).
   Outbox relay: publish with key = aggregate_id.
   OrderService: all events for "Order-abc-123" → same partition.
   Consumer: processes events in order within partition.
-  
+
   CROSS-AGGREGATE ORDERING: not guaranteed (different aggregates → different partitions).
   Design: events that must be ordered should come from the same aggregate.
 
 SPRING MODULITH OUTBOX:
 
   Spring Modulith: provides built-in outbox implementation.
-  
+
   @ApplicationModuleListener
   public class OrderEventHandler {
       // Spring Modulith: stores this event in outbox automatically.
       // Published to ApplicationEventPublisher → stored in DB → relayed to broker.
   }
-  
+
   // In service:
   @Transactional
   public Order createOrder(OrderRequest req) {
@@ -230,6 +230,7 @@ SPRING MODULITH OUTBOX:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT outbox pattern:
+
 - Dual-write: DB commit succeeds, Kafka publish fails → silent inconsistency
 - No retry on message publish failure (message lost)
 - System discovers inconsistency only when downstream service reports missing order
@@ -294,11 +295,11 @@ Outbox Pattern ◄──── (you are here)
 @Service
 @Transactional
 public class OrderService {
-    
+
     public Order placeOrder(PlaceOrderRequest request) {
         // Business write.
         Order order = orderRepository.save(Order.from(request));
-        
+
         // Outbox write — same transaction.
         outboxRepository.save(OutboxEvent.builder()
             .id(UUID.randomUUID())
@@ -308,7 +309,7 @@ public class OrderService {
             .payload(objectMapper.writeValueAsString(new OrderPlacedEvent(
                 order.getId(), request.getUserId(), order.getTotal())))
             .build());
-        
+
         return order; // Transaction commits: both rows written atomically.
     }
 }
@@ -330,13 +331,13 @@ public class OutboxEvent {
 @KafkaListener(topics = "Order")
 public void consume(ConsumerRecord<String, String> record) {
     String eventId = record.headers().lastHeader("id").toString(); // Debezium sets event ID.
-    
+
     // Idempotency check: already processed?
     if (processedEventRepository.existsById(eventId)) {
         log.debug("Skipping duplicate event: {}", eventId);
         return;
     }
-    
+
     inventoryService.reserve(parseOrderPlaced(record.value()));
     processedEventRepository.save(new ProcessedEvent(eventId, Instant.now()));
 }
@@ -346,10 +347,10 @@ public void consume(ConsumerRecord<String, String> record) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Outbox pattern guarantees exactly-once delivery | Outbox guarantees AT-LEAST-ONCE delivery. The relay may publish an event multiple times (on retry after relay crash, after Kafka broker failure/retry). Consumers MUST be idempotent. Exactly-once delivery requires Kafka's transactional producer + idempotent consumer together — significantly higher complexity |
-| The outbox table must be cleaned up manually | Cleanup is important but can be automated. Polling relay: mark published=true, scheduled job deletes published events older than retention period (e.g., 7 days). Debezium: after CDC reads the row, you can DELETE the row (Debezium captures INSERT, not the subsequent DELETE). Spring Modulith: handles cleanup automatically. Infinite outbox growth: will slow down polling queries |
+| Misconception                                      | Reality                                                                                                                                                                                                                                                                                                                                                                                   |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Outbox pattern guarantees exactly-once delivery    | Outbox guarantees AT-LEAST-ONCE delivery. The relay may publish an event multiple times (on retry after relay crash, after Kafka broker failure/retry). Consumers MUST be idempotent. Exactly-once delivery requires Kafka's transactional producer + idempotent consumer together — significantly higher complexity                                                                      |
+| The outbox table must be cleaned up manually       | Cleanup is important but can be automated. Polling relay: mark published=true, scheduled job deletes published events older than retention period (e.g., 7 days). Debezium: after CDC reads the row, you can DELETE the row (Debezium captures INSERT, not the subsequent DELETE). Spring Modulith: handles cleanup automatically. Infinite outbox growth: will slow down polling queries |
 | CDC (Debezium) is always better than polling relay | Debezium: lower latency, lower DB load, no polling overhead. But: operational complexity (Kafka Connect cluster, Debezium connector management, WAL slot management). Polling relay: simple (one scheduled job), no extra infrastructure. For low-event-volume services: polling relay is perfectly adequate. Debezium: justified at high event volume or strict low-latency requirements |
 
 ---
@@ -364,14 +365,14 @@ SCENARIO: New service deployed. Outbox table cleaned up manually.
   Polling relay query: "SELECT * FROM outbox WHERE published=FALSE ORDER BY created_at"
   Even with index: query scans 50M rows. Relay latency: 10+ seconds.
   Event processing: effectively stopped.
-  
+
 BAD: No cleanup scheduled:
   @Scheduled(fixedDelay = 100)
   public void pollAndPublish() {
       // Publishes events but NEVER deletes them.
       // outbox grows forever.
   }
-  
+
 FIX 1: Scheduled cleanup job:
   @Scheduled(cron = "0 */1 * * * *") // Every minute
   @Transactional
@@ -382,16 +383,16 @@ FIX 1: Scheduled cleanup job:
           log.info("Cleaned up {} published outbox events", deleted);
       }
   }
-  
+
 FIX 2: Index on (published, created_at) — partial index for unpublished:
-  CREATE INDEX CONCURRENTLY idx_outbox_unpublished 
+  CREATE INDEX CONCURRENTLY idx_outbox_unpublished
     ON outbox (created_at) WHERE published = FALSE;
   -- Query only scans unpublished rows (not 50M total).
-  
+
 FIX 3: Separate outbox table per aggregate type:
   outbox_orders, outbox_payments, outbox_inventory
   Smaller per-table row count. Cleanup per table. Queries faster.
-  
+
 FIX 4: Debezium — no cleanup needed at application level:
   Debezium reads WAL: publish row → immediately DELETE the row.
   Outbox table stays near-empty (only uncommitted or just-committed events).

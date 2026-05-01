@@ -18,10 +18,10 @@ tags: #intermediate, #distributed, #observability, #logging, #debugging
 
 ⚡ TL;DR — A **Correlation ID** is a unique identifier attached to every request at entry and propagated across all services, enabling you to filter all related log lines for a single user interaction across a distributed system.
 
-| #612 | Category: Distributed Systems | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Distributed Tracing, Logging | |
-| **Used by:** | Spring Cloud Sleuth, MDC, API Gateways, Log Aggregation | |
+| #612            | Category: Distributed Systems                           | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------ | :-------------- |
+| **Depends on:** | Distributed Tracing, Logging                            |                 |
+| **Used by:**    | Spring Cloud Sleuth, MDC, API Gateways, Log Aggregation |                 |
 
 ---
 
@@ -33,7 +33,7 @@ tags: #intermediate, #distributed, #observability, #logging, #debugging
 
 ### 🟢 Simple Definition (Easy)
 
-Customer calls support: "My order ABC-123 is broken." Agent checks the logs: "SELECT * WHERE correlationId = 'request-xyz'." All log lines from all 10 services for that request appear in order. Without correlation ID: "The error was at 10:05:23.123... let me find that timestamp in OrderService logs... and InventoryService logs... and PaymentService logs..." — 30 minutes of manual log cross-referencing.
+Customer calls support: "My order ABC-123 is broken." Agent checks the logs: "SELECT \* WHERE correlationId = 'request-xyz'." All log lines from all 10 services for that request appear in order. Without correlation ID: "The error was at 10:05:23.123... let me find that timestamp in OrderService logs... and InventoryService logs... and PaymentService logs..." — 30 minutes of manual log cross-referencing.
 
 ---
 
@@ -51,30 +51,30 @@ Implementation: API Gateway generates UUID on every request. Sets `X-Correlation
 CORRELATION ID LIFECYCLE:
 
   1. Client: sends HTTP request (no X-Correlation-ID header — first entry).
-  
+
   2. API Gateway / entry service:
      a. No header present: generate new UUID: "req-7a3f9b2c".
      b. Header present (from trusted source/client SDK): use provided ID.
      c. Set MDC: MDC.put("correlationId", "req-7a3f9b2c").
      d. All log statements from this thread: auto-include correlationId.
-     
+
   3. Service calls downstream (HTTP):
      RestTemplate / WebClient: adds header:
      X-Correlation-ID: req-7a3f9b2c
-     
+
   4. Downstream service (OrderService):
      Filter/interceptor: reads X-Correlation-ID header.
      Sets MDC: MDC.put("correlationId", "req-7a3f9b2c").
      All logs: include correlationId automatically.
-     
+
   5. OrderService calls InventoryService:
      Same: propagates X-Correlation-ID header.
-     
+
   6. Log aggregation (ELK/Splunk):
      All services ship logs to central store.
      Query: correlationId="req-7a3f9b2c"
      Result: ALL log lines from ALL services, ordered by timestamp.
-     
+
   7. Cleanup:
      MDC.clear() after request completes (or MDC.remove("correlationId")).
      IMPORTANT: thread pool reuse → MDC persists between requests without cleanup.
@@ -84,26 +84,26 @@ LOG FORMAT WITH CORRELATION ID:
 
   # Logback pattern:
   %d{ISO8601} [%thread] %-5level [correlationId=%X{correlationId}] %logger{36} - %msg%n
-  
+
   Output:
   2024-01-15T10:05:23.123 [http-nio-8080-exec-1] INFO  [correlationId=req-7a3f9b2c] c.e.OrderService - Processing order for user 456
   2024-01-15T10:05:23.145 [http-nio-8080-exec-1] DEBUG [correlationId=req-7a3f9b2c] c.e.OrderRepo - Executing SQL: SELECT * FROM orders WHERE user_id=456
   2024-01-15T10:05:23.148 [http-nio-8080-exec-1] INFO  [correlationId=req-7a3f9b2c] c.e.InventoryClient - Calling InventoryService: GET /inventory/456
-  
+
   # InventoryService (different process):
   2024-01-15T10:05:23.155 [http-nio-8081-exec-3] INFO  [correlationId=req-7a3f9b2c] c.e.InventoryService - Received request for user 456
   2024-01-15T10:05:23.158 [http-nio-8081-exec-3] ERROR [correlationId=req-7a3f9b2c] c.e.InventoryService - Item out of stock: item-999
-  
+
   # Log aggregation query: correlationId=req-7a3f9b2c → all 5 lines, across 2 services.
-  
+
 THREAD POOLS AND ASYNC OPERATIONS (MDC PROPAGATION PROBLEM):
 
   MDC: thread-local. Async operations: different thread → MDC not inherited.
-  
+
   PROBLEM:
     @Async method: MDC is empty → correlationId missing in async logs.
     CompletableFuture.supplyAsync(): new thread → no MDC.
-    
+
   FIX (manual MDC copying):
     Map<String, String> mdc = MDC.getCopyOfContextMap(); // Capture before async.
     CompletableFuture.supplyAsync(() -> {
@@ -114,7 +114,7 @@ THREAD POOLS AND ASYNC OPERATIONS (MDC PROPAGATION PROBLEM):
             MDC.clear();
         }
     }, executor);
-    
+
   FIX (executor wrapper):
     // Wrap executor to auto-copy MDC context.
     public class MdcAwareExecutor implements Executor {
@@ -128,7 +128,7 @@ THREAD POOLS AND ASYNC OPERATIONS (MDC PROPAGATION PROBLEM):
             });
         }
     }
-    
+
 KAFKA / MESSAGE QUEUE PROPAGATION:
 
   Producer: include correlationId in message headers.
@@ -137,7 +137,7 @@ KAFKA / MESSAGE QUEUE PROPAGATION:
     if (corrId != null) {
         record.headers().add("X-Correlation-ID", corrId.getBytes());
     }
-    
+
   Consumer: extract and set MDC.
     @KafkaListener(topics = "orders")
     public void consume(ConsumerRecord<String, Event> record) {
@@ -150,7 +150,7 @@ KAFKA / MESSAGE QUEUE PROPAGATION:
             MDC.clear();
         }
     }
-    
+
 CORRELATION ID vs TRACE ID:
 
   Correlation ID:
@@ -160,7 +160,7 @@ CORRELATION ID vs TRACE ID:
     - Used for: log correlation
     - Tool: MDC + log aggregation
     - Overhead: minimal (UUID generation + header propagation)
-    
+
   Distributed Trace ID:
     - traceId + spanId + parentSpanId per service
     - Timing per span
@@ -168,7 +168,7 @@ CORRELATION ID vs TRACE ID:
     - Used for: latency analysis, dependency mapping
     - Tool: OpenTelemetry + Jaeger/Zipkin
     - Overhead: higher (span creation, reporting, sampling logic)
-    
+
   The correlation ID IS the traceId in OpenTelemetry's W3C traceparent header.
   Migrating from correlation ID to full tracing: replace UUID generation with OTEL SDK.
   The existing X-Correlation-ID header: map to traceparent header.
@@ -180,6 +180,7 @@ CORRELATION ID vs TRACE ID:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT correlation ID:
+
 - Log search for a failing request: timestamp-based grep across 10 service log files
 - 30 minutes to reconstruct what happened for a single user complaint
 - Race conditions in log timestamps make ordering unreliable
@@ -209,23 +210,23 @@ SPRING BOOT FILTER (automatic correlation ID generation and propagation):
   @Component
   @Order(Ordered.HIGHEST_PRECEDENCE)
   public class CorrelationIdFilter extends OncePerRequestFilter {
-      
+
       private static final String CORRELATION_ID_HEADER = "X-Correlation-ID";
       private static final String MDC_KEY = "correlationId";
-      
+
       @Override
       protected void doFilterInternal(HttpServletRequest request,
               HttpServletResponse response, FilterChain chain)
               throws ServletException, IOException {
-          
+
           String correlationId = request.getHeader(CORRELATION_ID_HEADER);
           if (correlationId == null || correlationId.isBlank()) {
               correlationId = UUID.randomUUID().toString();
           }
-          
+
           MDC.put(MDC_KEY, correlationId);
           response.addHeader(CORRELATION_ID_HEADER, correlationId); // Echo back to client.
-          
+
           try {
               chain.doFilter(request, response);
           } finally {
@@ -289,11 +290,11 @@ public WebClient webClient() {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Correlation ID and Trace ID are the same thing | Correlation ID: simple UUID for log correlation. Trace ID: part of a full distributed trace (includes spans, timing, parent-child hierarchy). W3C traceparent uses a 128-bit traceId — technically a correlation ID with structure. OpenTelemetry's traceId IS a correlation ID that can also be used as MDC correlationId. But a bare correlation ID has no span hierarchy, timing, or observability tooling |
-| MDC is automatically propagated to async threads | MDC is thread-local. CompletableFuture, @Async, reactive streams (Project Reactor), virtual threads — all require explicit MDC copying/restoration. Reactor: use `reactor.util.context.Context` and bridge with MDC. Forgetting this: async log lines lose correlationId → partial log correlation |
-| The client should never set the Correlation ID | For trusted internal services and developer tools: clients CAN set the correlation ID to trace end-to-end including client-side operations. For external/public APIs: validate the format (UUID regex) and reject or replace malformed values to prevent injection attacks. Never blindly log user-provided values without sanitization |
+| Misconception                                    | Reality                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Correlation ID and Trace ID are the same thing   | Correlation ID: simple UUID for log correlation. Trace ID: part of a full distributed trace (includes spans, timing, parent-child hierarchy). W3C traceparent uses a 128-bit traceId — technically a correlation ID with structure. OpenTelemetry's traceId IS a correlation ID that can also be used as MDC correlationId. But a bare correlation ID has no span hierarchy, timing, or observability tooling |
+| MDC is automatically propagated to async threads | MDC is thread-local. CompletableFuture, @Async, reactive streams (Project Reactor), virtual threads — all require explicit MDC copying/restoration. Reactor: use `reactor.util.context.Context` and bridge with MDC. Forgetting this: async log lines lose correlationId → partial log correlation                                                                                                            |
+| The client should never set the Correlation ID   | For trusted internal services and developer tools: clients CAN set the correlation ID to trace end-to-end including client-side operations. For external/public APIs: validate the format (UUID regex) and reject or replace malformed values to prevent injection attacks. Never blindly log user-provided values without sanitization                                                                       |
 
 ---
 
@@ -317,10 +318,10 @@ BAD: No MDC cleanup → previous request's correlationId bleeds into next reques
           // Next request on this thread: logs show WRONG correlationId.
       }
   }
-  
+
   Symptom: Log aggregation shows request X's correlationId on log lines from request Y.
   Very confusing: "why does order-123 trace show inventory lookup for user-456?"
-  
+
 FIX: Always clear MDC in finally block:
   try {
       MDC.put("correlationId", corrId);
