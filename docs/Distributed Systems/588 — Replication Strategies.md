@@ -18,10 +18,10 @@ tags: #advanced, #distributed, #replication, #consistency, #durability
 
 ⚡ TL;DR — **Replication Strategies** are the policies (synchronous, asynchronous, semi-sync, multi-master) defining when a write is "done" — determining the consistency vs. latency vs. availability trade-off in distributed data stores.
 
-| #588 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Leader Election, Consistency Models | |
-| **Used by:** | MySQL, PostgreSQL, Kafka, Cassandra | |
+| #588            | Category: Distributed Systems       | Difficulty: ★★★ |
+| :-------------- | :---------------------------------- | :-------------- |
+| **Depends on:** | Leader Election, Consistency Models |                 |
+| **Used by:**    | MySQL, PostgreSQL, Kafka, Cassandra |                 |
 
 ---
 
@@ -59,11 +59,11 @@ SYNCHRONOUS REPLICATION:
     Replica1 → Primary: ACK.
     Replica2 → Primary: ACK.
     Primary → Client: "Write successful."
-  
+
   Latency: write_latency = primary_write_time + max(replica1_RTT, replica2_RTT) + replica_write_time.
     Same DC (1ms RTT): ~2-3ms per write. Acceptable.
     Cross-region (80ms RTT): ~160ms per write. Unacceptable for most apps.
-  
+
   Failure scenarios:
     Replica1 CRASHES during write:
       Primary: waiting for Replica1 ACK indefinitely.
@@ -71,11 +71,11 @@ SYNCHRONOUS REPLICATION:
         a) Primary times out → returns error to client (write fails). Availability impact.
         b) Primary waits until Replica1 recovers (may be minutes/hours). Blocked.
         c) Primary continues with remaining replicas if quorum satisfied (Raft approach).
-      
+
       With Raft (quorum-based synchronous): N=5 cluster, W=3 (majority).
         Primary waits for 3 ACKs (including itself): if 1 replica down, 4 remaining → still gets 3.
         One failure tolerated without availability impact. Two failures: primary stops (safety).
-        
+
   Data loss on failover: ZERO. All replicas have all committed data.
   Use when: financial transactions, configuration data, anything where 0 data loss is required.
 
@@ -88,27 +88,27 @@ ASYNCHRONOUS REPLICATION:
     [Background] Primary → Replica1: "Replicate this write."
     [Background] Primary → Replica2: "Replicate this write."
     Replicas apply write asynchronously (100ms - minutes later, depending on load).
-  
+
   Replication lag: the delay between primary write and replica having the write.
     Typical: 100ms - 10 seconds under normal load.
     Under primary load spike: can grow to minutes.
-    
+
   Failure scenario — PRIMARY CRASHES:
     Primary has written [tx1, tx2, tx3] but only tx1 has replicated to Replica1.
     tx2, tx3: LOST. Replica1 promoted to primary.
     Applications see data from tx1 but never tx2 or tx3.
-    
+
     Real-world example: MySQL async replication, primary has 5 seconds of unreplicated writes.
     Primary crashes. Replica promoted. 5 seconds of orders missing. Customers charged but no order.
-    
+
   Replication lag reading:
     Client writes: update balance to $100 (primary).
     Client reads: balance = $50 (replica, hasn't received update yet).
     Client sees stale data. This is "read-your-writes" violation.
-    
+
     Fix: route reads to primary, OR wait for replication lag on replica.
     MySQL: SELECT WAIT_FOR_EXECUTED_GTID_SET('<gtid>', 5) — wait for replica to catch up before read.
-    
+
   Use when: analytics replicas (reads can be slightly stale), geo-replication for disaster recovery
             (acceptable to lose seconds of data if regional DC fails).
 
@@ -116,26 +116,26 @@ SEMI-SYNCHRONOUS REPLICATION:
 
   Write flow:
     Client → Primary: write.
-    Primary: writes locally. 
+    Primary: writes locally.
     Primary → ALL replicas: "Replicate."
     Primary waits for AT LEAST ONE replica to ACK.
     Primary → Client: "Write successful."
     Other replicas: continue replicating asynchronously.
-  
+
   Guarantee: on primary failure, AT MOST 1 transaction lost.
     Why 1?: the primary has committed transaction T. At least 1 replica confirmed T.
     Replica1 has T. Even if Replica2 doesn't: Replica1 promoted → T not lost.
-    
+
   Failover: must promote a replica that ACKed the latest transaction.
     MySQL: GTID-based auto-failover (MHA, Orchestrator) — promotes replica with highest GTID.
-    
+
   Latency: primary waits for the FASTEST replica's ACK.
     Same DC replica: minimal latency impact.
     Cross-region: wait for nearest replica → acceptable compromise.
-    
+
   Degradation: if ALL replicas are slow/unavailable → MySQL times out → falls back to async.
     This is a safety hole! Semi-sync can silently degrade to async under replica failure.
-    
+
   Use when: MySQL production setups with RPO > 0 but < last-transaction.
             "We can't lose more than 1 write."
 
@@ -145,28 +145,28 @@ QUORUM-BASED REPLICATION (Cassandra, DynamoDB, Riak):
     N = replication factor (copies of data)
     W = write quorum (number of replicas that must ACK write)
     R = read quorum (number of replicas that must respond to read)
-    
+
   Consistency iff W + R > N:
     At least (W + R - N) replicas have both the latest write AND are included in the read.
     These "overlap" replicas return the latest value.
-    
+
   Example: N=3, W=2, R=2:
     Write: ACK from 2 of 3 replicas → "written."
     Read: query 2 of 3 replicas, take latest value (by timestamp or version).
     Overlap: at least 1 replica has both latest write and is queried → consistent.
-    
+
   Tuning options:
     W=1, R=1: max performance, no consistency (any single replica accepts/serves).
     W=3, R=1: all replicas write, 1 read → consistent (but write throughput limited).
     W=1, R=3: 1 replica writes, all 3 queried → consistent but write bottleneck.
     W=2, R=2, N=3: balanced — tolerates 1 replica failure for both reads and writes.
     W=N, R=1: all writes synchronous → equivalent to synchronous replication.
-    
+
   Last-Write-Wins (LWW): conflicting writes resolved by timestamp.
     Problem: clock skew → arbitrary conflict resolution (later clock wins, not later write).
     Cassandra: uses coordinator-assigned timestamps. Clients can set explicit timestamps.
-    
-  Hinted Handoff (Cassandra failover): 
+
+  Hinted Handoff (Cassandra failover):
     Node B is down. Write (key, value) goes to A and C (quorum W=2 met).
     A: "I'll hold a 'hint' for B — deliver when B recovers."
     B recovers: A delivers hint → B gets the write.
@@ -175,24 +175,24 @@ QUORUM-BASED REPLICATION (Cassandra, DynamoDB, Riak):
 MULTI-MASTER (MULTI-PRIMARY) REPLICATION:
 
   All nodes accept writes. Conflicts possible.
-  
+
   Use case: MySQL multi-master cluster across DCs.
     DC-east: master writes US data.
     DC-west: master writes EU data.
     Both replicate bidirectionally.
-    
+
   Conflict: both DCs update same row simultaneously.
     Row A: user_id=1, email='a@old.com'.
     DC-east: UPDATE email='a@new1.com'.
     DC-west: UPDATE email='a@new2.com'.
     Replication delay: each DC ACKs its local write, replicates to other.
-    
+
   Conflict resolution options:
     Last-Write-Wins (LWW): highest timestamp wins (a@new1.com or a@new2.com — arbitrary).
     Application-defined merge: application provides merge function (e.g., union of tags).
     Conflict detection + rejection: reject second write (optimistic concurrency control).
     CRDT: data structure that merges automatically (e.g., grow-only counter, OR-Set).
-    
+
   Use when: geo-distributed systems where cross-DC write latency is unacceptable.
             Accept eventual consistency + conflict resolution complexity.
 
@@ -212,6 +212,7 @@ COMPARISON TABLE:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT replication strategies (only raw replication):
+
 - No systematic way to trade off consistency vs. latency
 - Engineers copy-paste replication setups without understanding failure modes
 - Silent data loss: async replication with failover, no one notices missing writes
@@ -265,7 +266,7 @@ SELECT WAIT_FOR_EXECUTED_GTID_SET('3E11FA47-71CA-11E1-9E33-C80AA9429562:37', 5);
 -- Use after write on primary, before read on replica.
 
 -- MONITOR replication lag:
-SELECT 
+SELECT
     MEMBER_HOST,
     MEMBER_STATE,
     COUNT_TRANSACTIONS_IN_QUEUE,
@@ -302,9 +303,9 @@ import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.cql.*;
 
 public class CassandraQuorumExample {
-    
+
     private final CqlSession session;
-    
+
     // WRITE with QUORUM consistency (W=2 of N=3 must ACK):
     public void writeUserProfile(String userId, String email) {
         PreparedStatement write = session.prepare(
@@ -312,13 +313,13 @@ public class CassandraQuorumExample {
         );
         BoundStatement statement = write.bind(email, userId)
             .setConsistencyLevel(ConsistencyLevel.QUORUM); // W=2 of 3 replicas
-        
+
         session.execute(statement);
         // Returns only when 2 of 3 replicas have the write.
         // 1 replica can be down → still succeeds.
         // At most 1 replica has stale data → safe with QUORUM reads.
     }
-    
+
     // READ with QUORUM consistency (R=2 of N=3 must respond):
     public String readUserProfile(String userId) {
         PreparedStatement read = session.prepare(
@@ -326,13 +327,13 @@ public class CassandraQuorumExample {
         );
         BoundStatement statement = read.bind(userId)
             .setConsistencyLevel(ConsistencyLevel.QUORUM); // R=2 of 3 replicas
-        
+
         Row row = session.execute(statement).one();
         // Queries 2 of 3 replicas. Takes the value with highest timestamp.
         // Since W=2, R=2, N=3 → W+R=4 > N=3 → always sees latest write.
         return row != null ? row.getString("email") : null;
     }
-    
+
     // For eventual consistency (max performance, may serve stale):
     public String readEventually(String userId) {
         PreparedStatement read = session.prepare(
@@ -351,12 +352,12 @@ public class CassandraQuorumExample {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Asynchronous replication means data is replicated slowly | Asynchronous means the primary doesn't WAIT for replication. The actual replication can be near-instant (milliseconds). The "lag" depends on network and replica load. MySQL async replication on the same LAN: typically < 1ms lag under normal load. The risk is not slowness but: during the millisecond before replication completes, if the primary crashes, those writes are lost |
-| Quorum reads always return the latest write | Quorum reads return the latest write IF W + R > N. If you set W=1, R=1, N=3: no quorum overlap → stale reads possible even with "quorum". Also: Cassandra's quorum reads use timestamps for conflict resolution. If two writes happen with the same timestamp (clock skew), the winning value is arbitrary. Always use monotonic timestamps or explicit version vectors for true latest-write semantics |
-| Semi-synchronous replication guarantees no data loss | Semi-sync guarantees at most 1 transaction lost. If the primary ACKs a transaction to the client, at least 1 replica has it — on failover, promote that replica. BUT: MySQL semi-sync silently degrades to async if the replica ACK times out (configurable timeout, default 10 seconds). During that window: zero replicas confirmed, and if the primary crashes — the transaction is lost. Production must monitor for semi-sync degradation |
-| Multi-master replication enables horizontal write scaling | Multi-master enables writes at multiple DCs (reduce latency for geographically distributed users), NOT higher aggregate write throughput. Each master must replicate all writes from all other masters. Total replication work increases with masters. For throughput: shard write traffic (Vitess, CitusDB, CockroachDB) — different nodes own different partitions |
+| Misconception                                             | Reality                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Asynchronous replication means data is replicated slowly  | Asynchronous means the primary doesn't WAIT for replication. The actual replication can be near-instant (milliseconds). The "lag" depends on network and replica load. MySQL async replication on the same LAN: typically < 1ms lag under normal load. The risk is not slowness but: during the millisecond before replication completes, if the primary crashes, those writes are lost                                                        |
+| Quorum reads always return the latest write               | Quorum reads return the latest write IF W + R > N. If you set W=1, R=1, N=3: no quorum overlap → stale reads possible even with "quorum". Also: Cassandra's quorum reads use timestamps for conflict resolution. If two writes happen with the same timestamp (clock skew), the winning value is arbitrary. Always use monotonic timestamps or explicit version vectors for true latest-write semantics                                        |
+| Semi-synchronous replication guarantees no data loss      | Semi-sync guarantees at most 1 transaction lost. If the primary ACKs a transaction to the client, at least 1 replica has it — on failover, promote that replica. BUT: MySQL semi-sync silently degrades to async if the replica ACK times out (configurable timeout, default 10 seconds). During that window: zero replicas confirmed, and if the primary crashes — the transaction is lost. Production must monitor for semi-sync degradation |
+| Multi-master replication enables horizontal write scaling | Multi-master enables writes at multiple DCs (reduce latency for geographically distributed users), NOT higher aggregate write throughput. Each master must replicate all writes from all other masters. Total replication work increases with masters. For throughput: shard write traffic (Vitess, CitusDB, CockroachDB) — different nodes own different partitions                                                                           |
 
 ---
 
@@ -369,7 +370,7 @@ PROBLEM: e-commerce checkout.
   Client writes order (primary). Client redirected to order-confirmation page.
   Order-confirmation page: reads order (replica). Replica is 200ms behind.
   Order-confirmation page: "No order found" → user calls support.
-  
+
   This happens in production frequently with async replicas behind a load balancer.
 
 BAD: Reads after writes load-balanced across primary and replicas without lag awareness:
@@ -379,12 +380,12 @@ BAD: Reads after writes load-balanced across primary and replicas without lag aw
       return orderRepository.findById(orderId)  // May hit stale replica
           .orElseThrow(() -> new OrderNotFoundException(orderId));
   }
-  
+
   // Write route:
   @Transactional
   public Order createOrder(OrderRequest req) {
       Order order = orderRepository.save(new Order(req));
-      return order;  // Written to primary. 
+      return order;  // Written to primary.
       // But subsequent reads may hit replica with 200ms lag.
   }
 
@@ -396,11 +397,11 @@ FIX 1: STICKY SESSIONS — route user to primary for short window after write:
       session.setAttribute("read_primary_until", System.currentTimeMillis() + 500);
       return order;
   }
-  
+
   @Transactional(readOnly = true)
   public Order getOrder(String orderId, HttpSession session) {
       Long readPrimaryUntil = (Long) session.getAttribute("read_primary_until");
-      boolean readFromPrimary = readPrimaryUntil != null && 
+      boolean readFromPrimary = readPrimaryUntil != null &&
                                 System.currentTimeMillis() < readPrimaryUntil;
       DataSource ds = readFromPrimary ? primaryDataSource : replicaDataSource;
       // ... route to appropriate DS
@@ -416,7 +417,7 @@ FIX 2: GTID WAIT — replica catches up before serving read-your-writes:
       );
       return gtid; // Return GTID to client.
   }
-  
+
   @Transactional(readOnly = true)  // On replica connection
   public Order getOrderConsistent(String orderId, String afterGtid) {
       // Wait for replica to apply GTID before serving read:

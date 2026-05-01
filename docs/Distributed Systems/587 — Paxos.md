@@ -18,10 +18,10 @@ tags: #advanced, #distributed, #consensus, #coordination, #theoretical
 
 ⚡ TL;DR — **Paxos** is the foundational consensus algorithm that proves a single value can be agreed upon by N distributed nodes despite failures — the theoretical bedrock underlying Google Chubby, Spanner, and distributed consensus systems.
 
-| #587 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Leader Election, Quorum | |
-| **Used by:** | Google Chubby, Spanner, ZooKeeper (ZAB) | |
+| #587            | Category: Distributed Systems           | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------- | :-------------- |
+| **Depends on:** | Leader Election, Quorum                 |                 |
+| **Used by:**    | Google Chubby, Spanner, ZooKeeper (ZAB) |                 |
 
 ---
 
@@ -52,7 +52,7 @@ ROLES:
   Proposer: initiates the protocol, tries to get a value chosen.
   Acceptor: votes on proposals. Must be a majority to "choose" a value.
   Learner: learns the chosen value (may be separate from acceptors).
-  
+
   In practice: each node plays all three roles.
 
 PHASE 1a: PREPARE
@@ -61,7 +61,7 @@ PHASE 1a: PREPARE
 
 PHASE 1b: PROMISE
   Acceptor A receives Prepare(n):
-    If n > A.maxPromised: 
+    If n > A.maxPromised:
       A.maxPromised = n.
       Responds: Promise(n, acceptedBallot, acceptedValue)
         where acceptedBallot = last ballot A accepted (or null)
@@ -78,7 +78,7 @@ PHASE 2a: ACCEPT
       (Proposer cannot use its own value — another value may have been almost chosen.)
     Else (no acceptor has accepted anything):
       v = proposer's own proposed value.
-      
+
   Sends Accept(n, v) to all (or quorum of) acceptors.
 
 PHASE 2b: ACCEPTED
@@ -97,7 +97,7 @@ LEARNING:
 SAFETY PROOF (why two different values can't be chosen):
   Suppose value X is chosen in ballot n1 (quorum Q1 all accepted X in ballot n1).
   Can value Y ≠ X be chosen in ballot n2 > n1?
-  
+
   For Y to be chosen in n2: proposer must have gotten promises from quorum Q2.
   Q1 and Q2 must share ≥ 1 acceptor (both are majorities of N nodes).
   Shared acceptor A:
@@ -106,7 +106,7 @@ SAFETY PROOF (why two different values can't be chosen):
     A returned: Promise(n2, n1, X) ← told proposer about previously accepted value X.
     Proposer in n2 received A's promise with (n1, X) — highest accepted ballot.
     Proposer MUST set v = X (cannot use its own Y).
-  Therefore: in ballot n2, proposer proposes X, not Y. 
+  Therefore: in ballot n2, proposer proposes X, not Y.
   Y cannot be chosen. Safety maintained.
 
 CONCRETE EXAMPLE (5 acceptors, 2 competing proposers):
@@ -118,7 +118,7 @@ CONCRETE EXAMPLE (5 acceptors, 2 competing proposers):
     A1, A2, A3: Accepted(1, "red").  ← quorum (3 of 5)!
     Value "red" is CHOSEN.
     A4, A5: network delays, haven't received Accept yet.
-    
+
   ROUND 2 — Competing Proposer P2 tries to get value "blue" (concurrent with Round 1):
     P2: Prepare(2) → A1, A2, A3, A4, A5.
     Responses:
@@ -127,7 +127,7 @@ CONCRETE EXAMPLE (5 acceptors, 2 competing proposers):
       A3: "maxPromised was 1. n=2 > 1. Promise(2, ballot=1, value='red')"
       A4: "maxPromised was 1. n=2 > 1. Promise(2, null, null)" — hadn't accepted yet
       A5: "maxPromised was 1. n=2 > 1. Promise(2, null, null)" — hadn't accepted yet
-      
+
     P2 receives promises from A1-A5 (quorum).
     HighestAccepted: ballot=1, value="red" (from A1, A2, A3).
     P2 MUST propose "red" (not "blue")!
@@ -145,7 +145,7 @@ LIVE-LOCK (why Paxos liveness is not guaranteed):
   P1: Accept(3, v1) → rejected.
   P2: Accept(4, v2) → rejected.
   ... forever. Live-lock.
-  
+
   Fix: only one proposer at a time (leader election). Multi-Paxos adds leader election.
 
 MULTI-PAXOS:
@@ -155,9 +155,9 @@ MULTI-PAXOS:
     All acceptors promise: "We won't accept < n for ANY slot."
     Leader then runs Phase 2 for each slot independently (no Phase 1 per slot).
     Result: single RTT per slot when leader is stable.
-  
+
   Equivalent to Raft's normal operation (leader election + log append per entry).
-  
+
   Phase 1 required again when: leader fails → new leader with higher ballot → Phase 1 for all uncommitted slots.
 ```
 
@@ -166,6 +166,7 @@ MULTI-PAXOS:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Paxos (no consensus algorithm):
+
 - No theoretical proof that distributed consensus is possible
 - No principled way to replicate state machine across nodes
 - All distributed databases had ad-hoc replication with unknown safety guarantees
@@ -198,13 +199,13 @@ public class PaxosAcceptor {
     // Per-slot state:
     private Map<Long, SlotState> slots = new ConcurrentHashMap<>();
     private volatile long globalMaxPromised = 0;  // For Phase 1 optimization
-    
+
     static class SlotState {
         volatile long maxPromised = -1;   // Highest ballot promised
         volatile long acceptedBallot = -1; // Ballot of accepted value
         volatile Object acceptedValue = null; // Accepted value
     }
-    
+
     // Phase 1b: handle Prepare(ballot, slot)
     public PromiseResponse prepare(long ballot, long slot) {
         SlotState state = slots.computeIfAbsent(slot, k -> new SlotState());
@@ -216,7 +217,7 @@ public class PaxosAcceptor {
             return new PromiseResponse(false, -1, null); // Nack
         }
     }
-    
+
     // Phase 2b: handle Accept(ballot, slot, value)
     public boolean accept(long ballot, long slot, Object value) {
         SlotState state = slots.computeIfAbsent(slot, k -> new SlotState());
@@ -237,24 +238,24 @@ public class PaxosProposer {
     private final List<PaxosAcceptor> acceptors;
     private final int quorumSize;
     private volatile long currentBallot;
-    
+
     // Phase 1 (run once per leadership term):
     public boolean becomeLeader(long ballot) throws Exception {
         this.currentBallot = ballot;
         List<PromiseResponse> promises = new ArrayList<>();
-        
+
         for (PaxosAcceptor acceptor : acceptors) {
             PromiseResponse r = acceptor.prepare(ballot, Long.MAX_VALUE); // All future slots
             if (r.promised) promises.add(r);
         }
         return promises.size() >= quorumSize; // Phase 1 succeeded
     }
-    
+
     // Phase 2 (per log slot, no Phase 1 needed if leader stable):
     public boolean proposeValue(long slot, Object value) throws Exception {
         // Check for previously accepted values (from Phase 1 responses):
         Object actualValue = getHighestAcceptedValue(slot, value);
-        
+
         int accepts = 0;
         for (PaxosAcceptor acceptor : acceptors) {
             if (acceptor.accept(currentBallot, slot, actualValue)) {
@@ -304,30 +305,30 @@ import uuid
 
 class DistributedLock:
     """Mimics Chubby's distributed lock using etcd (Raft-based consensus)."""
-    
+
     def __init__(self, etcd_client, lock_name: str, ttl: int = 30):
         self.client = etcd_client
         self.lock_name = f"/chubby/locks/{lock_name}"
         self.ttl = ttl
         self.lease = None
         self.lock_holder_id = str(uuid.uuid4())
-    
+
     def acquire(self) -> bool:
         """Try to acquire lock. Returns True if acquired."""
         # Paxos-equivalent: consensus on who holds the lock.
         # etcd: atomic compare-and-swap on the key (backed by Raft consensus).
         self.lease = self.client.lease(self.ttl)
-        
+
         # Atomic: only creates key if it doesn't exist (compare-and-create).
         # Under the hood: etcd Raft group agrees that this key was created.
         success, _ = self.client.transaction(
             compare=[self.client.transactions.create(self.lock_name) == 0],  # Key doesn't exist
-            success=[self.client.transactions.put(self.lock_name, self.lock_holder_id, 
+            success=[self.client.transactions.put(self.lock_name, self.lock_holder_id,
                                                    lease=self.lease)],
             failure=[]
         )
         return success
-    
+
     def release(self):
         """Release the lock."""
         # Only release if we're the current holder (fencing: check lock_holder_id).
@@ -344,12 +345,12 @@ class DistributedLock:
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Paxos and Raft are fundamentally different algorithms | Multi-Paxos and Raft are architecturally equivalent: both use leader election + replicated log. The key difference is how they're specified and implemented. Raft explicitly defines leader election, log indices, terms, and the up-to-date check. Multi-Paxos leaves these as implementation details. This is why Raft implementations are more consistent and easier to verify |
-| Paxos guarantees liveness (will always make progress) | Single-Decree Paxos does NOT guarantee liveness. Two proposers can repeatedly out-bid each other (live-lock) and no value is ever chosen. FLP Impossibility Theorem proves no deterministic consensus algorithm can guarantee both safety AND liveness in a fully asynchronous system. In practice: add leader election to ensure at most one proposer → progress is made |
-| Paxos is only used in academic systems | Paxos (or variants) powers Google's most critical infrastructure: Chubby (distributed lock, used by BigTable, GFS, Spanner), Spanner (global distributed SQL database), Megastore, and more. AWS also uses Paxos variants. ZooKeeper's ZAB (Zookeeper Atomic Broadcast) is a Paxos-like protocol. The theoretical foundations are very much in production |
-| The "ballot number" is the same as Raft's "term" | They're conceptually similar (both prevent old leaders from interfering) but have subtle differences. Raft's term is per-leader and resets on each new election. Paxos ballot numbers must be globally unique and increasing (proposers choose them, often using a formula like `server_id + (n × num_servers)`). Raft's term is implicit in every AppendEntries; Paxos's ballot must be explicitly tracked per slot in multi-Paxos |
+| Misconception                                         | Reality                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Paxos and Raft are fundamentally different algorithms | Multi-Paxos and Raft are architecturally equivalent: both use leader election + replicated log. The key difference is how they're specified and implemented. Raft explicitly defines leader election, log indices, terms, and the up-to-date check. Multi-Paxos leaves these as implementation details. This is why Raft implementations are more consistent and easier to verify                                                   |
+| Paxos guarantees liveness (will always make progress) | Single-Decree Paxos does NOT guarantee liveness. Two proposers can repeatedly out-bid each other (live-lock) and no value is ever chosen. FLP Impossibility Theorem proves no deterministic consensus algorithm can guarantee both safety AND liveness in a fully asynchronous system. In practice: add leader election to ensure at most one proposer → progress is made                                                           |
+| Paxos is only used in academic systems                | Paxos (or variants) powers Google's most critical infrastructure: Chubby (distributed lock, used by BigTable, GFS, Spanner), Spanner (global distributed SQL database), Megastore, and more. AWS also uses Paxos variants. ZooKeeper's ZAB (Zookeeper Atomic Broadcast) is a Paxos-like protocol. The theoretical foundations are very much in production                                                                           |
+| The "ballot number" is the same as Raft's "term"      | They're conceptually similar (both prevent old leaders from interfering) but have subtle differences. Raft's term is per-leader and resets on each new election. Paxos ballot numbers must be globally unique and increasing (proposers choose them, often using a formula like `server_id + (n × num_servers)`). Raft's term is implicit in every AppendEntries; Paxos's ballot must be explicitly tracked per slot in multi-Paxos |
 
 ---
 
@@ -371,9 +372,9 @@ SCENARIO:
     F1 (ballot=2) rejects L's AppendEntries (ballot 1 < 2).
     F1 sends its own AppendEntries to L.
     L: sees ballot=2 > ballot=1. Steps down. F1 is leader.
-  
+
   Correct Raft handles this gracefully (term number fencing).
-  
+
   BUT: buggy Paxos implementation where two proposers continuously increment ballot:
     Proposer A: Prepare(100). Gets promises. About to Accept(100, v).
     Proposer B: Prepare(101). All acceptors: maxPromised=101.
@@ -394,7 +395,7 @@ FIX: Leader election + exponential backoff + jitter:
   // If proposer detects competing proposer (rejected due to higher ballot):
   //   1. Back off exponentially.
   //   2. Yield to the higher-ballot proposer (it may succeed).
-  
+
   long retryDelay = 100; // ms
   while (true) {
       long ballot = getNextBallot();
