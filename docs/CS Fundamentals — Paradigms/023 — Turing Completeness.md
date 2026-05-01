@@ -18,16 +18,16 @@ tags: #advanced, #theory, #computability, #deep-dive
 
 ⚡ TL;DR — A system is **Turing complete** if it can simulate a Turing machine — meaning it can compute any algorithm that is computably possible, given unlimited memory and time.
 
-| #23 | Category: CS Fundamentals — Paradigms | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Imperative Programming, Recursion, Church-Turing Thesis | |
-| **Used by:** | Church-Turing Thesis, Lambda Calculus, Compiler Design, Programming Language Design | |
+| #23             | Category: CS Fundamentals — Paradigms                                               | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Imperative Programming, Recursion, Church-Turing Thesis                             |                 |
+| **Used by:**    | Church-Turing Thesis, Lambda Calculus, Compiler Design, Programming Language Design |                 |
 
 ---
 
 ### 📘 Textbook Definition
 
-**Turing Completeness** is a property of a computational system — typically a programming language, automaton, or set of rewrite rules — that means the system can simulate a **universal Turing machine**. A universal Turing machine can compute any function that is computable, as formalised by the Church-Turing thesis. In practical terms, a language or system is Turing complete if it supports: (1) conditional branching (if/else, or equivalent), and (2) arbitrary looping or unbounded recursion (the ability to run indefinitely). Most general-purpose programming languages are Turing complete. Languages that deliberately omit one of these properties (e.g., no unbounded loops) are called *Turing incomplete* and can therefore guarantee termination — a property used in proof assistants (Coq, Agda), smart contract languages (some subsets), and configuration languages (Dhall).
+**Turing Completeness** is a property of a computational system — typically a programming language, automaton, or set of rewrite rules — that means the system can simulate a **universal Turing machine**. A universal Turing machine can compute any function that is computable, as formalised by the Church-Turing thesis. In practical terms, a language or system is Turing complete if it supports: (1) conditional branching (if/else, or equivalent), and (2) arbitrary looping or unbounded recursion (the ability to run indefinitely). Most general-purpose programming languages are Turing complete. Languages that deliberately omit one of these properties (e.g., no unbounded loops) are called _Turing incomplete_ and can therefore guarantee termination — a property used in proof assistants (Coq, Agda), smart contract languages (some subsets), and configuration languages (Dhall).
 
 ---
 
@@ -64,16 +64,16 @@ Despite this extreme simplicity, Turing proved in 1936 that this device can comp
 
 **The two minimal conditions for Turing completeness:**
 
-1. **Conditional branching** — the ability to take different paths based on state.  
+1. **Conditional branching** — the ability to take different paths based on state.
    (`if`, `cond`, `match`, `JNZ` instruction, state transitions, etc.)
-2. **Unbounded iteration** — the ability to repeat a process an arbitrary number of times.  
+2. **Unbounded iteration** — the ability to repeat a process an arbitrary number of times.
    (`while(true)`, `goto`, `loop`, unbounded recursion, `JMPB`, etc.)
 
 If both exist, the system is Turing complete.
 
 **Why this also means undecidability:**
 
-The same property that makes Turing complete systems universally powerful also makes them fundamentally limited: **you cannot always determine in advance whether a Turing complete program will terminate**. This is the *Halting Problem* — proved undecidable by Turing in 1936. Any Turing complete language must have programs that loop forever, and there is no algorithm that can reliably detect all of them.
+The same property that makes Turing complete systems universally powerful also makes them fundamentally limited: **you cannot always determine in advance whether a Turing complete program will terminate**. This is the _Halting Problem_ — proved undecidable by Turing in 1936. Any Turing complete language must have programs that loop forever, and there is no algorithm that can reliably detect all of them.
 
 ```
 Turing Completeness  ←→  Halting Problem is undecidable for that system
@@ -89,12 +89,14 @@ This is why static analysis tools (linters, type checkers) can never catch all b
 WITHOUT the concept of Turing completeness:
 
 What breaks without it:
+
 1. No formal basis to compare the computational power of different languages — is assembly more powerful than Java? How would you prove it?
 2. No theoretical guarantee that a language can express any algorithm.
-3. No formal understanding of what static analysis *cannot* do — if a system is Turing complete, its halting problem is undecidable; this sets hard limits on compilers, linters, and verifiers.
+3. No formal understanding of what static analysis _cannot_ do — if a system is Turing complete, its halting problem is undecidable; this sets hard limits on compilers, linters, and verifiers.
 4. No way to reason about whether a configuration language (YAML, JSON, Terraform HCL) can be used to express arbitrary logic — and why that would be dangerous.
 
 WITH Turing completeness:
+
 - **Language design**: you can prove a language can run any algorithm (or deliberately limit it to guarantee termination).
 - **Security**: knowing Terraform HCL or SQL with CTEs is Turing complete means user input in those languages can express infinite loops — a DoS vector.
 - **Theory**: Church-Turing thesis provides a unified definition of "computable" across all models.
@@ -104,7 +106,7 @@ WITH Turing completeness:
 
 ### 🧠 Mental Model / Analogy
 
-> Think of power outlets and adapters. A standard 230V power outlet (Turing complete) can power *any* electrical device with the right adapter — a lamp, a computer, a fridge. A USB port (Turing incomplete) can power a phone but not a fridge; it lacks the necessary capability (amperage). The "power" is the set of computable functions. Turing completeness means: "given the right program (adapter), this system can do anything that any computer can do."
+> Think of power outlets and adapters. A standard 230V power outlet (Turing complete) can power _any_ electrical device with the right adapter — a lamp, a computer, a fridge. A USB port (Turing incomplete) can power a phone but not a fridge; it lacks the necessary capability (amperage). The "power" is the set of computable functions. Turing completeness means: "given the right program (adapter), this system can do anything that any computer can do."
 
 "Powering any device" = simulating any computable function
 "USB vs. wall outlet" = Turing incomplete vs. Turing complete
@@ -261,12 +263,12 @@ class RuleEngine {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Turing completeness means the language is powerful in practice | It only means theoretical equivalence in computability. A language can be TC and still lack concurrency, libraries, performance, and safety features. Brainfuck is TC but useless for production |
-| All programming languages are Turing complete | Many intentionally are not: Dhall, Coq's Gallina, regular expressions (without extensions), finite automata, and most config formats are deliberately Turing incomplete |
-| A Turing complete system can solve any problem | TC only means it can compute any *computable* function. Many problems (halting, entscheidungsproblem, Kolmogorov complexity) are uncomputable — no TC system can solve them |
-| Proving Turing completeness requires implementing a Turing machine | It only requires showing the system can simulate *any* known TC system. Simulating Rule 110 or the SKI combinator calculus is often simpler |
+| Misconception                                                      | Reality                                                                                                                                                                                          |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Turing completeness means the language is powerful in practice     | It only means theoretical equivalence in computability. A language can be TC and still lack concurrency, libraries, performance, and safety features. Brainfuck is TC but useless for production |
+| All programming languages are Turing complete                      | Many intentionally are not: Dhall, Coq's Gallina, regular expressions (without extensions), finite automata, and most config formats are deliberately Turing incomplete                          |
+| A Turing complete system can solve any problem                     | TC only means it can compute any _computable_ function. Many problems (halting, entscheidungsproblem, Kolmogorov complexity) are uncomputable — no TC system can solve them                      |
+| Proving Turing completeness requires implementing a Turing machine | It only requires showing the system can simulate _any_ known TC system. Simulating Rule 110 or the SKI combinator calculus is often simpler                                                      |
 
 ---
 
