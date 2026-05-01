@@ -18,10 +18,10 @@ tags: #advanced, #microservices, #networking, #distributed, #observability, #rel
 
 ⚡ TL;DR — A **Service Mesh** is an infrastructure layer that manages **service-to-service communication** (east-west traffic) by injecting a **sidecar proxy** (Envoy) into each pod. It provides: mutual TLS, load balancing, circuit breaking, retries, timeouts, and observability — transparently, without changing application code.
 
-| #643            | Category: Microservices                                                                 | Difficulty: ★★★ |
-| :-------------- | :-------------------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Inter-Service Communication, Service Discovery, API Gateway (Microservices)             |                 |
-| **Used by:**    | Istio, Envoy Proxy, Sidecar Pattern (Microservices)                                     |                 |
+| #643            | Category: Microservices                                                     | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Inter-Service Communication, Service Discovery, API Gateway (Microservices) |                 |
+| **Used by:**    | Istio, Envoy Proxy, Sidecar Pattern (Microservices)                         |                 |
 
 ---
 
@@ -129,6 +129,7 @@ AFTER MESH (automatic):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT a Service Mesh:
+
 1. Each team duplicates resilience libraries (Resilience4j, Hystrix) — inconsistent configuration.
 2. Each team duplicates observability setup — some services have tracing, others don't.
 3. mTLS between services requires per-service certificate management — complex and error-prone.
@@ -172,13 +173,13 @@ spec:
   trafficPolicy:
     connectionPool:
       http:
-        http1MaxPendingRequests: 100    # circuit breaker: max pending requests
+        http1MaxPendingRequests: 100 # circuit breaker: max pending requests
         http2MaxRequests: 1000
     outlierDetection:
-      consecutiveGatewayErrors: 5      # 5 consecutive 5xx → eject instance
-      interval: 30s                    # check every 30 seconds
-      baseEjectionTime: 30s            # eject for at least 30 seconds
-      maxEjectionPercent: 50           # eject up to 50% of instances
+      consecutiveGatewayErrors: 5 # 5 consecutive 5xx → eject instance
+      interval: 30s # check every 30 seconds
+      baseEjectionTime: 30s # eject for at least 30 seconds
+      maxEjectionPercent: 50 # eject up to 50% of instances
     retries:
       attempts: 3
       perTryTimeout: 2s
@@ -223,7 +224,7 @@ spec:
     - match:
         - headers:
             x-canary:
-              exact: "true"       # explicit canary header → always go to canary
+              exact: "true" # explicit canary header → always go to canary
       route:
         - destination:
             host: product-service
@@ -246,12 +247,12 @@ spec:
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Service Mesh replaces the API Gateway | They handle different traffic directions. API Gateway: north-south (external client → services). Service Mesh: east-west (service → service). Both are needed in a mature system |
-| Service Mesh eliminates all application-level resilience code | The mesh handles network-level failures (connection reset, 5xx errors). Application-level logic (business error fallbacks, compensating transactions) still belongs in code |
-| Service Mesh is only for large companies with hundreds of services | Even 5-10 services benefit from automatic mTLS, consistent observability, and centralised traffic policies. The operational overhead of managing libraries across multiple language stacks is what the mesh eliminates |
-| Adding a Service Mesh is a small operational change | Injecting Envoy sidecars into every pod doubles the container count, adds ~50ms startup latency per pod, and requires understanding Istio CRDs for troubleshooting. It is a significant operational investment with real debugging complexity |
+| Misconception                                                      | Reality                                                                                                                                                                                                                                       |
+| ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Service Mesh replaces the API Gateway                              | They handle different traffic directions. API Gateway: north-south (external client → services). Service Mesh: east-west (service → service). Both are needed in a mature system                                                              |
+| Service Mesh eliminates all application-level resilience code      | The mesh handles network-level failures (connection reset, 5xx errors). Application-level logic (business error fallbacks, compensating transactions) still belongs in code                                                                   |
+| Service Mesh is only for large companies with hundreds of services | Even 5-10 services benefit from automatic mTLS, consistent observability, and centralised traffic policies. The operational overhead of managing libraries across multiple language stacks is what the mesh eliminates                        |
+| Adding a Service Mesh is a small operational change                | Injecting Envoy sidecars into every pod doubles the container count, adds ~50ms startup latency per pod, and requires understanding Istio CRDs for troubleshooting. It is a significant operational investment with real debugging complexity |
 
 ---
 

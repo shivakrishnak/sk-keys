@@ -18,10 +18,10 @@ tags: #advanced, #microservices, #architecture, #pattern
 
 ⚡ TL;DR — **Backend for Frontend (BFF)** is a pattern where you create a **dedicated backend layer for each client type** (web, mobile, third-party). Each BFF aggregates and transforms microservice data specifically for its client's needs. Solves: over-fetching, under-fetching, and conflicting API requirements between client types.
 
-| #642            | Category: Microservices                                              | Difficulty: ★★★ |
-| :-------------- | :------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | API Gateway (Microservices), Service Discovery                       |                 |
-| **Used by:**    | Service Mesh (Microservices)                                         |                 |
+| #642            | Category: Microservices                        | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------- | :-------------- |
+| **Depends on:** | API Gateway (Microservices), Service Discovery |                 |
+| **Used by:**    | Service Mesh (Microservices)                   |                 |
 
 ---
 
@@ -143,6 +143,7 @@ INCORRECT BFF (thick — business logic leaked into BFF):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT BFF:
+
 1. Mobile apps over-fetch (receive desktop-scale responses) — battery and bandwidth waste.
 2. Web apps under-fetch (limited to mobile-sized responses) — N+1 call problem.
 3. Shared API — changing it for mobile breaks web, and vice versa — deployment coupling.
@@ -270,12 +271,12 @@ class PartnerProductController {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| BFF is just a renamed API Gateway | A generic API Gateway routes and applies cross-cutting concerns. BFF is a composition layer specific to a client type with a distinct ownership model. A BFF is typically owned by the frontend team, not a platform team |
-| Every client type needs a BFF | BFF adds operational overhead (another service to deploy and maintain). Justify it when clients have genuinely different data needs or different ownership. A web and mobile app with identical data needs don't need separate BFFs |
-| The BFF should validate business rules | BFF is a composition and transformation layer. Business rules (discount calculation, fraud detection, inventory rules) belong in microservices — not in BFF. BFF that contains business logic becomes a hidden monolith |
-| BFF eliminates the need for an API Gateway | BFF and API Gateway are complementary: the API Gateway handles TLS termination, rate limiting, and authentication at the infrastructure level. BFFs sit behind the gateway and handle client-specific aggregation |
+| Misconception                              | Reality                                                                                                                                                                                                                             |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BFF is just a renamed API Gateway          | A generic API Gateway routes and applies cross-cutting concerns. BFF is a composition layer specific to a client type with a distinct ownership model. A BFF is typically owned by the frontend team, not a platform team           |
+| Every client type needs a BFF              | BFF adds operational overhead (another service to deploy and maintain). Justify it when clients have genuinely different data needs or different ownership. A web and mobile app with identical data needs don't need separate BFFs |
+| The BFF should validate business rules     | BFF is a composition and transformation layer. Business rules (discount calculation, fraud detection, inventory rules) belong in microservices — not in BFF. BFF that contains business logic becomes a hidden monolith             |
+| BFF eliminates the need for an API Gateway | BFF and API Gateway are complementary: the API Gateway handles TLS termination, rate limiting, and authentication at the infrastructure level. BFFs sit behind the gateway and handle client-specific aggregation                   |
 
 ---
 

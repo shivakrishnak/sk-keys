@@ -18,10 +18,10 @@ tags: #advanced, #microservices, #networking, #distributed, #performance
 
 ⚡ TL;DR — **Envoy** is a high-performance **L7 proxy and communications bus** written in C++. It is the data plane of Istio and most modern service meshes. As a sidecar, it intercepts all pod traffic, handles: mTLS, load balancing, retries, circuit breaking, observability (traces/metrics/logs), and protocol translation — configured via the **xDS API**.
 
-| #645            | Category: Microservices                                              | Difficulty: ★★★ |
-| :-------------- | :------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Service Mesh (Microservices), Istio                                  |                 |
-| **Used by:**    | Sidecar Pattern (Microservices), Ambassador Pattern                  |                 |
+| #645            | Category: Microservices                             | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------- | :-------------- |
+| **Depends on:** | Service Mesh (Microservices), Istio                 |                 |
+| **Used by:**    | Sidecar Pattern (Microservices), Ambassador Pattern |                 |
 
 ---
 
@@ -250,12 +250,12 @@ class OrderService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Envoy replaces Nginx | Envoy and Nginx serve overlapping but distinct use cases. Nginx is a battle-hardened reverse proxy/web server excellent for static content and simple HTTP routing. Envoy is designed for dynamic service mesh and L7 traffic management. Many organisations use both: Nginx for static web serving, Envoy for service mesh |
-| Envoy adds significant latency to every request | Envoy's C++ event-driven architecture adds approximately 0.5–2ms per proxy hop. For a service with 100ms response time, this is 1–2% overhead — typically acceptable. Envoy is significantly faster than JVM-based proxies like Spring Cloud Gateway for raw proxying |
-| Envoy configuration is only managed by Istio | Envoy can be used standalone with a static YAML configuration (envoy.yaml) or integrated with other control planes (Consul, xDS-compatible custom control planes). Istio is the most common control plane, but Envoy is independent |
-| Envoy handles application-level errors | Envoy handles HTTP protocol errors (5xx, connection failures, timeouts). Application business errors (validation failures, not-found responses) are 4xx and typically not retried by Envoy — configure retryOn carefully |
+| Misconception                                   | Reality                                                                                                                                                                                                                                                                                                                     |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Envoy replaces Nginx                            | Envoy and Nginx serve overlapping but distinct use cases. Nginx is a battle-hardened reverse proxy/web server excellent for static content and simple HTTP routing. Envoy is designed for dynamic service mesh and L7 traffic management. Many organisations use both: Nginx for static web serving, Envoy for service mesh |
+| Envoy adds significant latency to every request | Envoy's C++ event-driven architecture adds approximately 0.5–2ms per proxy hop. For a service with 100ms response time, this is 1–2% overhead — typically acceptable. Envoy is significantly faster than JVM-based proxies like Spring Cloud Gateway for raw proxying                                                       |
+| Envoy configuration is only managed by Istio    | Envoy can be used standalone with a static YAML configuration (envoy.yaml) or integrated with other control planes (Consul, xDS-compatible custom control planes). Istio is the most common control plane, but Envoy is independent                                                                                         |
+| Envoy handles application-level errors          | Envoy handles HTTP protocol errors (5xx, connection failures, timeouts). Application business errors (validation failures, not-found responses) are 4xx and typically not retried by Envoy — configure retryOn carefully                                                                                                    |
 
 ---
 

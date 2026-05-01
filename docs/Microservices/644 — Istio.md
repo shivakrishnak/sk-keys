@@ -18,10 +18,10 @@ tags: #advanced, #microservices, #networking, #distributed, #observability, #rel
 
 ⚡ TL;DR — **Istio** is the most widely used **Service Mesh** implementation. It automatically injects **Envoy proxies** as sidecars, manages **mTLS** between services, provides **traffic management** (VirtualService, DestinationRule), and emits **observability signals** (traces, metrics, logs) — all without application code changes. Control plane: `istiod`.
 
-| #644            | Category: Microservices                                                                   | Difficulty: ★★★ |
-| :-------------- | :---------------------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Service Mesh (Microservices), Envoy Proxy, Kubernetes                                     |                 |
-| **Used by:**    | Sidecar Pattern (Microservices), Canary Deployment, Observability                         |                 |
+| #644            | Category: Microservices                                           | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Service Mesh (Microservices), Envoy Proxy, Kubernetes             |                 |
+| **Used by:**    | Sidecar Pattern (Microservices), Canary Deployment, Observability |                 |
 
 ---
 
@@ -234,12 +234,12 @@ spec:
     - fault:
         delay:
           percentage:
-            value: 10.0             # 10% of requests
-          fixedDelay: 5s            # delayed by 5 seconds
+            value: 10.0 # 10% of requests
+          fixedDelay: 5s # delayed by 5 seconds
         abort:
           percentage:
-            value: 2.0              # 2% of requests
-          httpStatus: 500           # return 500 error
+            value: 2.0 # 2% of requests
+          httpStatus: 500 # return 500 error
       route:
         - destination:
             host: inventory-service
@@ -252,11 +252,11 @@ spec:
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Istio is only for very large clusters | Istio adds value for 5+ services, particularly for automatic mTLS, consistent observability, and centralised traffic policies. The operational complexity is the main barrier, not the cluster size |
+| Misconception                                          | Reality                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Istio is only for very large clusters                  | Istio adds value for 5+ services, particularly for automatic mTLS, consistent observability, and centralised traffic policies. The operational complexity is the main barrier, not the cluster size                                                                                                                      |
 | Istio's circuit breaking is equivalent to Resilience4j | Istio's outlierDetection operates at the instance/pod level (ejecting unhealthy pods from load balancing). Resilience4j's circuit breaker operates at the service level (open/half-open/closed state). They are complementary — Istio handles network-level failures; Resilience4j handles business-logic-level failures |
-| Installing Istio is straightforward | Istio significantly increases operational complexity: debugging requires understanding xDS API, Envoy access logs, and Istio CRDs. Certificate rotation, upgrade paths, and ambient mesh migration all require careful planning |
+| Installing Istio is straightforward                    | Istio significantly increases operational complexity: debugging requires understanding xDS API, Envoy access logs, and Istio CRDs. Certificate rotation, upgrade paths, and ambient mesh migration all require careful planning                                                                                          |
 
 ---
 

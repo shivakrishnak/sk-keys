@@ -18,10 +18,10 @@ tags: #intermediate, #microservices, #networking, #architecture, #pattern
 
 ⚡ TL;DR — An **API Gateway** is a single entry point for all external client requests into a microservices system. It handles cross-cutting concerns: **routing** (to correct service), **authentication/authorisation**, **rate limiting**, **SSL termination**, **protocol translation**, and **request aggregation**. Examples: Spring Cloud Gateway, Kong, AWS API Gateway, Nginx.
 
-| #641            | Category: Microservices                                              | Difficulty: ★★☆ |
-| :-------------- | :------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Service Discovery, Inter-Service Communication                       |                 |
-| **Used by:**    | Backend for Frontend (BFF), Service Mesh (Microservices)             |                 |
+| #641            | Category: Microservices                                  | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------- | :-------------- |
+| **Depends on:** | Service Discovery, Inter-Service Communication           |                 |
+| **Used by:**    | Backend for Frontend (BFF), Service Mesh (Microservices) |                 |
 
 ---
 
@@ -116,20 +116,20 @@ spring:
     gateway:
       routes:
         - id: orders
-          uri: lb://order-service          # lb:// = Spring Cloud LoadBalancer
+          uri: lb://order-service # lb:// = Spring Cloud LoadBalancer
           predicates:
             - Path=/api/orders/**
           filters:
             - name: RequestRateLimiter
               args:
-                redis-rate-limiter.replenishRate: 100    # 100 req/s per key
-                redis-rate-limiter.burstCapacity: 200    # burst up to 200
+                redis-rate-limiter.replenishRate: 100 # 100 req/s per key
+                redis-rate-limiter.burstCapacity: 200 # burst up to 200
                 key-resolver: "#{@ipKeyResolver}"
             - name: CircuitBreaker
               args:
                 name: order-circuit-breaker
                 fallbackUri: forward:/fallback/orders
-            - RemoveRequestHeader=Authorization        # strip JWT before forwarding
+            - RemoveRequestHeader=Authorization # strip JWT before forwarding
             - AddRequestHeader=X-Forwarded-Service, api-gateway
 
         - id: products
@@ -143,6 +143,7 @@ spring:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT API Gateway:
+
 1. Clients must know all service addresses → coupling: every service relocation requires client updates.
 2. Each service implements JWT validation → duplicated logic, inconsistent implementation.
 3. Clients make multiple calls for one page → multiple round trips → high latency.
@@ -272,12 +273,12 @@ class DashboardAggregatorController {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| The API Gateway replaces the Service Mesh | They solve different problems: API Gateway handles north-south traffic (client → services); Service Mesh handles east-west traffic (service → service). You need both in a mature microservices system |
-| The API Gateway should contain business logic | The API Gateway should only handle cross-cutting concerns (routing, auth, rate limiting, SSL). Business logic belongs in services. Thick gateways become bottlenecks and monoliths |
-| A single API Gateway serves all client types equally | Mobile apps, browsers, and third-party consumers have different needs (data shape, auth methods, rate limits). The BFF pattern creates client-specific gateways rather than a single overly complex one |
-| API Gateway is only needed for external traffic | Some architectures use internal gateways for service-to-service calls. However, this is usually better handled by a Service Mesh which provides per-service observability and security without centralizing routing |
+| Misconception                                        | Reality                                                                                                                                                                                                             |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The API Gateway replaces the Service Mesh            | They solve different problems: API Gateway handles north-south traffic (client → services); Service Mesh handles east-west traffic (service → service). You need both in a mature microservices system              |
+| The API Gateway should contain business logic        | The API Gateway should only handle cross-cutting concerns (routing, auth, rate limiting, SSL). Business logic belongs in services. Thick gateways become bottlenecks and monoliths                                  |
+| A single API Gateway serves all client types equally | Mobile apps, browsers, and third-party consumers have different needs (data shape, auth methods, rate limits). The BFF pattern creates client-specific gateways rather than a single overly complex one             |
+| API Gateway is only needed for external traffic      | Some architectures use internal gateways for service-to-service calls. However, this is usually better handled by a Service Mesh which provides per-service observability and security without centralizing routing |
 
 ---
 
