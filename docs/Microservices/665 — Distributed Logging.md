@@ -18,10 +18,10 @@ tags: #advanced, #microservices, #observability, #distributed, #architecture
 
 ⚡ TL;DR — **Distributed Logging** is the practice of collecting, correlating, and querying log entries from multiple microservices as if they were a single unified log stream. Requires: structured log format (JSON), correlation IDs propagated across service calls, centralized log aggregation (ELK/Grafana Loki), and trace context (OpenTelemetry). Without it, debugging multi-service requests is forensically impossible.
 
-| #665            | Category: Microservices                                  | Difficulty: ★★★ |
-| :-------------- | :------------------------------------------------------- | :-------------- |
-| **Depends on:** | Cross-Cutting Concerns, Correlation ID                   |                 |
-| **Used by:**    | OpenTelemetry, Observability & SRE                       |                 |
+| #665            | Category: Microservices                | Difficulty: ★★★ |
+| :-------------- | :------------------------------------- | :-------------- |
+| **Depends on:** | Cross-Cutting Concerns, Correlation ID |                 |
+| **Used by:**    | OpenTelemetry, Observability & SRE     |                 |
 
 ---
 
@@ -50,7 +50,7 @@ User clicks "Place Order." Request flow: Browser → API Gateway → OrderServic
 ```
 ❌ UNSTRUCTURED LOG (Useless for distributed systems):
   2024-01-15 10:30:00 INFO  Order placed for customer 123 amount 49.99
-  
+
   Problems:
   - Parsing required to extract fields: regex = brittle, slow
   - No standard field names: correlationId? traceId? Where?
@@ -70,7 +70,7 @@ User clicks "Place Order." Request flow: Browser → API Gateway → OrderServic
     "message": "Order placed successfully",
     "durationMs": 142
   }
-  
+
   Benefits:
   - Kibana/Loki: query by ANY field instantly
   - No parsing required: fields already extracted
@@ -289,12 +289,12 @@ userId: "user-123" AND level: "INFO"
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Centralised logging is too expensive for all services | Log volume is manageable with appropriate log levels (INFO in production, not DEBUG). Grafana Loki is significantly cheaper than Elasticsearch for pure log storage (labels-only indexing). Cost grows with log volume — which is controlled by log level discipline |
-| Logs alone are sufficient for debugging microservices | Logs tell you what happened. Distributed traces tell you how long each step took and where the latency is. Metrics tell you the rate of occurrence. The "three pillars of observability" (logs, traces, metrics) are all needed — logs alone leave significant blind spots |
-| Correlation IDs are automatically propagated | Correlation ID propagation must be explicitly implemented: extracted from incoming HTTP headers, placed in MDC for logging, and injected into all outbound HTTP calls and Kafka messages. If even one service in the chain doesn't propagate the ID, the correlation chain is broken |
-| Service logs should capture every database query for debugging | DEBUG-level SQL logging in production causes: massive log volume (10-100x more entries), storage cost explosion, performance overhead (log serialization is not free), and PII exposure risk (queries may contain sensitive parameter values). Enable selectively and temporarily |
+| Misconception                                                  | Reality                                                                                                                                                                                                                                                                              |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Centralised logging is too expensive for all services          | Log volume is manageable with appropriate log levels (INFO in production, not DEBUG). Grafana Loki is significantly cheaper than Elasticsearch for pure log storage (labels-only indexing). Cost grows with log volume — which is controlled by log level discipline                 |
+| Logs alone are sufficient for debugging microservices          | Logs tell you what happened. Distributed traces tell you how long each step took and where the latency is. Metrics tell you the rate of occurrence. The "three pillars of observability" (logs, traces, metrics) are all needed — logs alone leave significant blind spots           |
+| Correlation IDs are automatically propagated                   | Correlation ID propagation must be explicitly implemented: extracted from incoming HTTP headers, placed in MDC for logging, and injected into all outbound HTTP calls and Kafka messages. If even one service in the chain doesn't propagate the ID, the correlation chain is broken |
+| Service logs should capture every database query for debugging | DEBUG-level SQL logging in production causes: massive log volume (10-100x more entries), storage cost explosion, performance overhead (log serialization is not free), and PII exposure risk (queries may contain sensitive parameter values). Enable selectively and temporarily    |
 
 ---
 
