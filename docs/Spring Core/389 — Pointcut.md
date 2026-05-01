@@ -18,10 +18,10 @@ tags: #intermediate, #spring, #architecture, #pattern
 
 ⚡ TL;DR — A **Pointcut** is an expression that selects which join points (method executions) an Aspect's Advice should be applied to — the "where" in AOP. Spring uses AspectJ expression syntax: `execution(...)`, `within(...)`, `@annotation(...)`, `@within(...)`, and others.
 
-| #389            | Category: Spring Core                                              | Difficulty: ★★☆ |
-| :-------------- | :----------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Aspect, Advice, AOP (Aspect-Oriented Programming), JoinPoint       |                 |
-| **Used by:**    | Advice, JoinPoint, Weaving, @Transactional                         |                 |
+| #389            | Category: Spring Core                                        | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------- | :-------------- |
+| **Depends on:** | Aspect, Advice, AOP (Aspect-Oriented Programming), JoinPoint |                 |
+| **Used by:**    | Advice, JoinPoint, Weaving, @Transactional                   |                 |
 
 ---
 
@@ -136,6 +136,7 @@ Examples:
 WITHOUT Pointcuts:
 
 What breaks without it:
+
 1. AOP Aspects would have to be applied manually to each method — no automatic matching.
 2. No way to apply Advice to dynamically discovered classes (e.g., all `@Service` beans).
 3. `@Transactional` processing would require enumerating every class method explicitly.
@@ -281,12 +282,12 @@ public class AuditAspect {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `execution(* com.example.*.*(..))` matches subpackages | The single `*` in the package expression matches ONE package level. `com.example.*` matches classes directly in `com.example` only. Use `com.example..*` (two dots) to match all subpackages recursively |
-| `within(com.example.service.OrderService)` and `target(com.example.service.OrderService)` are equivalent | `within` matches based on the compile-time type of the class being executed. `target` matches based on the runtime type of the target object. For proxied beans, `target` matches the real bean type; `within` may match the proxy type |
-| Named `@Pointcut` methods can have any return type | Named `@Pointcut` methods must return `void`. Any other return type causes an error. The method body is ignored — only the annotation value (the expression) matters |
-| `@annotation(Transactional)` requires the fully qualified class name | The fully qualified name is required unless the annotation class is imported in the `@Aspect` class. Best practice: use fully qualified names to avoid ambiguity: `@annotation(org.springframework.transaction.annotation.Transactional)` |
+| Misconception                                                                                            | Reality                                                                                                                                                                                                                                   |
+| -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `execution(* com.example.*.*(..))` matches subpackages                                                   | The single `*` in the package expression matches ONE package level. `com.example.*` matches classes directly in `com.example` only. Use `com.example..*` (two dots) to match all subpackages recursively                                  |
+| `within(com.example.service.OrderService)` and `target(com.example.service.OrderService)` are equivalent | `within` matches based on the compile-time type of the class being executed. `target` matches based on the runtime type of the target object. For proxied beans, `target` matches the real bean type; `within` may match the proxy type   |
+| Named `@Pointcut` methods can have any return type                                                       | Named `@Pointcut` methods must return `void`. Any other return type causes an error. The method body is ignored — only the annotation value (the expression) matters                                                                      |
+| `@annotation(Transactional)` requires the fully qualified class name                                     | The fully qualified name is required unless the annotation class is imported in the `@Aspect` class. Best practice: use fully qualified names to avoid ambiguity: `@annotation(org.springframework.transaction.annotation.Transactional)` |
 
 ---
 

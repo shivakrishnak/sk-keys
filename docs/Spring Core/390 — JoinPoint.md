@@ -18,10 +18,10 @@ tags: #intermediate, #spring, #architecture, #pattern
 
 ⚡ TL;DR — A **JoinPoint** is the context object passed to Advice methods — it represents the specific method execution being intercepted and provides access to the method name, arguments, target object, and proxy. `ProceedingJoinPoint` (for `@Around`) additionally allows calling the real method with `proceed()`.
 
-| #390            | Category: Spring Core                                              | Difficulty: ★★☆ |
-| :-------------- | :----------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Aspect, Advice, Pointcut, AOP (Aspect-Oriented Programming)        |                 |
-| **Used by:**    | Advice, Weaving                                                    |                 |
+| #390            | Category: Spring Core                                       | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------- | :-------------- |
+| **Depends on:** | Aspect, Advice, Pointcut, AOP (Aspect-Oriented Programming) |                 |
+| **Used by:**    | Advice, Weaving                                             |                 |
 
 ---
 
@@ -166,6 +166,7 @@ public void beforePlaceOrder(JoinPoint jp) {
 WITHOUT JoinPoint:
 
 What breaks without it:
+
 1. Advice code is context-blind — it cannot know which method triggered it, what arguments were passed, or which object was called.
 2. Cannot write generic Advice that behaves differently based on the method being intercepted.
 3. Cannot access method metadata for logging, auditing, or security decisions.
@@ -302,11 +303,11 @@ class UserService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `jp.getTarget()` returns the proxy | `getTarget()` returns the REAL bean (the target of the proxy, not the proxy itself). To get the proxy, use `jp.getThis()`. Use `getTarget()` when you need the actual bean's class or fields |
-| Modifying `jp.getArgs()[0]` changes what the method receives | `getArgs()` returns a reference to the args array. Modifying elements of this array DOES affect what gets passed to the method — this is intentional but potentially surprising. In `@Around`, use `pjp.proceed(modifiedArgs)` for clarity |
-| `JoinPoint` can be used in `@Around` advice | `@Around` must use `ProceedingJoinPoint`, not plain `JoinPoint` — the `proceed()` method is only available on `ProceedingJoinPoint`. Spring will throw `IllegalStateException` if `JoinPoint` is used in `@Around` |
+| Misconception                                                | Reality                                                                                                                                                                                                                                            |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `jp.getTarget()` returns the proxy                           | `getTarget()` returns the REAL bean (the target of the proxy, not the proxy itself). To get the proxy, use `jp.getThis()`. Use `getTarget()` when you need the actual bean's class or fields                                                       |
+| Modifying `jp.getArgs()[0]` changes what the method receives | `getArgs()` returns a reference to the args array. Modifying elements of this array DOES affect what gets passed to the method — this is intentional but potentially surprising. In `@Around`, use `pjp.proceed(modifiedArgs)` for clarity         |
+| `JoinPoint` can be used in `@Around` advice                  | `@Around` must use `ProceedingJoinPoint`, not plain `JoinPoint` — the `proceed()` method is only available on `ProceedingJoinPoint`. Spring will throw `IllegalStateException` if `JoinPoint` is used in `@Around`                                 |
 | `JoinPoint.getSignature().getName()` includes the class name | `getSignature().getName()` returns only the method name (e.g., `"placeOrder"`). For the full name including class, use `getSignature().toShortString()` (`"OrderService.placeOrder(..)"`), or `toLongString()` for full return type and parameters |
 
 ---

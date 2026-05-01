@@ -18,10 +18,10 @@ tags: #intermediate, #distributed, #reliability, #architecture
 
 ⚡ TL;DR — An operation is **idempotent** when applying it multiple times produces the same result as applying it once — making retries and duplicate deliveries safe in distributed systems.
 
-| #030            | Category: CS Fundamentals — Paradigms                                  | Difficulty: ★★☆ |
-| :-------------- | :--------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Side Effects, HTTP & APIs, Distributed Systems                         |                 |
-| **Used by:**    | REST APIs, Microservices, Message Queues, Distributed Systems          |                 |
+| #030            | Category: CS Fundamentals — Paradigms                         | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Side Effects, HTTP & APIs, Distributed Systems                |                 |
+| **Used by:**    | REST APIs, Microservices, Message Queues, Distributed Systems |                 |
 
 ---
 
@@ -48,6 +48,7 @@ Idempotency matters because networks and distributed systems are unreliable: a r
 **The problem: networks cause duplicate delivery.**
 
 In any distributed system, message delivery follows one of three guarantees:
+
 - **At-most-once**: message delivered zero or one time — may be lost.
 - **Exactly-once**: message delivered exactly once — theoretically achievable with high cost.
 - **At-least-once**: message delivered one or more times — duplicates possible.
@@ -105,6 +106,7 @@ HTTP methods by specification:
 WITHOUT Idempotency:
 
 What breaks without it:
+
 1. Network timeouts after partial processing cause duplicated charges, orders, or notifications with no way to detect or correct.
 2. Message queue at-least-once delivery creates duplicate records in the database.
 3. Retry logic in HTTP clients (Spring's `@Retryable`, AWS SDK's built-in retry) causes silent data corruption on non-idempotent endpoints.
@@ -296,12 +298,12 @@ ResponseEntity<Payment> createPayment(
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `DELETE` is not idempotent because the second call returns 404 | HTTP's idempotency refers to server-side state, not the response code. After the first `DELETE`, the resource is gone. After the second, it is still gone. The state is identical — idempotent. Returning 404 on the second call is correct and does not violate idempotency |
-| `GET` is idempotent so it never changes state | `GET` is defined as both safe (no intended state change) AND idempotent. But nothing prevents a poorly designed server from changing state on `GET` (e.g., incrementing a view counter). Safe + idempotent is what the spec says `GET` SHOULD be; enforcement is up to the implementation |
-| Idempotency and referential transparency are the same concept | They address related but different concerns. RT is about expressions returning the same value (pure functions, no side effects). Idempotency is about operations producing the same *state* when repeated — they may still have side effects, just the same effects each time |
-| Using a UUID as an idempotency key automatically makes the operation idempotent | The UUID is the key that allows the server to DETECT duplicates. The server still must implement the idempotency logic (store the result, return cached result on duplicate key). The UUID alone does nothing |
+| Misconception                                                                   | Reality                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DELETE` is not idempotent because the second call returns 404                  | HTTP's idempotency refers to server-side state, not the response code. After the first `DELETE`, the resource is gone. After the second, it is still gone. The state is identical — idempotent. Returning 404 on the second call is correct and does not violate idempotency              |
+| `GET` is idempotent so it never changes state                                   | `GET` is defined as both safe (no intended state change) AND idempotent. But nothing prevents a poorly designed server from changing state on `GET` (e.g., incrementing a view counter). Safe + idempotent is what the spec says `GET` SHOULD be; enforcement is up to the implementation |
+| Idempotency and referential transparency are the same concept                   | They address related but different concerns. RT is about expressions returning the same value (pure functions, no side effects). Idempotency is about operations producing the same _state_ when repeated — they may still have side effects, just the same effects each time             |
+| Using a UUID as an idempotency key automatically makes the operation idempotent | The UUID is the key that allows the server to DETECT duplicates. The server still must implement the idempotency logic (store the result, return cached result on duplicate key). The UUID alone does nothing                                                                             |
 
 ---
 

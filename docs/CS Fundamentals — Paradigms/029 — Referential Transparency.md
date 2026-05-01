@@ -18,10 +18,10 @@ tags: #advanced, #functional, #deep-dive, #architecture
 
 ⚡ TL;DR — An expression is **referentially transparent** when it can be replaced by its value everywhere it appears without changing the program's behaviour — the defining property of pure functions.
 
-| #029            | Category: CS Fundamentals — Paradigms                                              | Difficulty: ★★★ |
-| :-------------- | :--------------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Side Effects, Functional Programming, Pure Functions                               |                 |
-| **Used by:**    | Lambda Calculus, Memoisation, Functional Programming, Compiler Optimisation        |                 |
+| #029            | Category: CS Fundamentals — Paradigms                                       | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Side Effects, Functional Programming, Pure Functions                        |                 |
+| **Used by:**    | Lambda Calculus, Memoisation, Functional Programming, Compiler Optimisation |                 |
 
 ---
 
@@ -115,6 +115,7 @@ int g(int y) { return square(y) + square(y); }
 WITHOUT Referential Transparency:
 
 What breaks without it:
+
 1. Memoisation is unsafe: caching `f(x)` assumes `f(x)` always returns the same value. If `f` reads from a database, the cache goes stale.
 2. Compiler cannot safely inline or reorder calls: if `f()` has side effects, calling it twice vs once or in a different order changes behaviour.
 3. Parallel execution is unsafe: two threads calling non-RT functions may observe different results even for the same inputs.
@@ -297,12 +298,12 @@ val result = s + s                  // reuse — identical behaviour
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Referential transparency means the function always returns the same type | RT means the function returns the same VALUE for the same inputs. The type is irrelevant; a function `random()` always returns an `int` but is not RT because the value varies |
-| All pure functions are deterministic | Purity (no side effects) and determinism (same result for same input) are the same thing for a function with fixed inputs. A function that reads from an immutable global constant is pure but the purity is contingent on the constant never changing |
-| RT is a Haskell/FP concept with no relevance to Java | RT is a reasoning tool for any language. Java's `String::length`, `Math.sqrt`, and `Collectors.toList()` are RT; `System.currentTimeMillis()` and `new Random().nextInt()` are not. Knowing which is which determines where caching is safe |
-| Making a function RT always requires more code | The functional core / imperative shell pattern usually REDUCES code: pure functions need no mock setup, no `@Before`/`@After` test setup, and no thread synchronisation |
+| Misconception                                                            | Reality                                                                                                                                                                                                                                                |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Referential transparency means the function always returns the same type | RT means the function returns the same VALUE for the same inputs. The type is irrelevant; a function `random()` always returns an `int` but is not RT because the value varies                                                                         |
+| All pure functions are deterministic                                     | Purity (no side effects) and determinism (same result for same input) are the same thing for a function with fixed inputs. A function that reads from an immutable global constant is pure but the purity is contingent on the constant never changing |
+| RT is a Haskell/FP concept with no relevance to Java                     | RT is a reasoning tool for any language. Java's `String::length`, `Math.sqrt`, and `Collectors.toList()` are RT; `System.currentTimeMillis()` and `new Random().nextInt()` are not. Knowing which is which determines where caching is safe            |
+| Making a function RT always requires more code                           | The functional core / imperative shell pattern usually REDUCES code: pure functions need no mock setup, no `@Before`/`@After` test setup, and no thread synchronisation                                                                                |
 
 ---
 
