@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "BeanFactoryPostProcessor"
 parent: "Spring Core"
@@ -6,187 +6,211 @@ nav_order: 379
 permalink: /spring/beanfactorypostprocessor/
 number: "379"
 category: Spring Core
-difficulty: ★★☆
-depends_on: BeanFactory, ApplicationContext, Bean Lifecycle, @Configuration
-used_by: PropertySourcesPlaceholderConfigurer, @Value, Auto-Configuration, Conditional Beans
-tags: #java, #spring, #springboot, #intermediate, #internals
+difficulty: ★★★
+depends_on: Bean Lifecycle, BeanPostProcessor, ApplicationContext, BeanFactory
+used_by: Auto-Configuration, @ConfigurationProperties, Bean Lifecycle
+tags: #advanced, #spring, #internals, #deep-dive
 ---
 
 # 379 — BeanFactoryPostProcessor
 
-`#java` `#spring` `#springboot` `#intermediate` `#internals`
+`#advanced` `#spring` `#internals` `#deep-dive`
 
-⚡ TL;DR — A Spring extension that intercepts bean definitions (metadata) before any beans are instantiated — enabling property resolution, conditional registration, and definition modification.
+⚡ TL;DR — A **BeanFactoryPostProcessor** intercepts bean _definitions_ (the metadata blueprints) before any beans are instantiated, allowing you to modify, add, or remove bean definitions at container startup. `PropertySourcesPlaceholderConfigurer` — the processor that resolves `${property.name}` — is a BeanFactoryPostProcessor.
 
-| #379 | category: Spring Core
-|:---|:---|:---|
-| **Depends on:** | BeanFactory, ApplicationContext, Bean Lifecycle, @Configuration | |
-| **Used by:** | PropertySourcesPlaceholderConfigurer, @Value, Auto-Configuration, Conditional Beans | |
+| #379            | Category: Spring Core                                              | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Bean Lifecycle, BeanPostProcessor, ApplicationContext, BeanFactory |                 |
+| **Used by:**    | Auto-Configuration, @ConfigurationProperties, Bean Lifecycle       |                 |
 
 ---
 
 ### 📘 Textbook Definition
 
-`BeanFactoryPostProcessor` (BFPP) is a Spring extension interface invoked after all bean definitions have been parsed and registered but before any bean instances are created. It receives a `ConfigurableListableBeanFactory` and can read or modify `BeanDefinition` objects — changing scope, adding property values, overriding class names, or removing definitions entirely. The most important built-in BFPP is `PropertySourcesPlaceholderConfigurer`, which resolves `${property.key}` placeholders in `@Value` annotations and XML configuration. `BeanDefinitionRegistryPostProcessor` (a subinterface) can additionally register new `BeanDefinition`s dynamically.
+A **BeanFactoryPostProcessor** is a Spring container extension point that operates on the `BeanFactory` _after_ all bean definitions have been loaded but _before_ any bean instances are created. Its single method, `postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)`, receives the full bean factory, giving access to all registered `BeanDefinition` objects. A `BeanFactoryPostProcessor` can read, modify, or add bean definitions — changing scope, adding property values, setting constructor arguments, or registering entirely new bean definitions. The canonical Spring implementation is `PropertySourcesPlaceholderConfigurer`, which resolves `${...}` property placeholders in bean definitions before beans are instantiated. `BeanDefinitionRegistryPostProcessor` (a sub-interface) additionally allows registering new `BeanDefinition` objects — `ConfigurationClassPostProcessor`, which processes all `@Configuration`, `@ComponentScan`, `@Bean`, and `@Import` annotations, is a `BeanDefinitionRegistryPostProcessor`. BeanFactoryPostProcessor is distinct from `BeanPostProcessor` (which operates on instances after creation).
 
 ---
 
 ### 🟢 Simple Definition (Easy)
 
-A `BeanFactoryPostProcessor` runs before Spring creates any beans. It reads or rewrites the "blueprints" (bean definitions) — for example, filling in property placeholders like `${server.port}` before any objects are built.
+A BeanFactoryPostProcessor runs before Spring creates any beans and lets you change the recipes (definitions) used to create beans — for example, filling in property values from config files.
 
 ---
 
 ### 🔵 Simple Definition (Elaborated)
 
-Before Spring instantiates a single bean, it first builds a complete map of all bean definitions — the metadata describing every class to instantiate, its scope, constructor arguments, and property values. `BeanFactoryPostProcessor` intercepts at this definition-metadata stage. The most visible use is property resolution: `@Value("${spring.datasource.url}")` is just a placeholder string in the bean definition until `PropertySourcesPlaceholderConfigurer` resolves it by reading `application.properties` or environment variables. Spring Boot's auto-configuration conditions (`@ConditionalOnClass`, `@ConditionalOnProperty`) are evaluated by `ConfigurationClassPostProcessor`, a `BeanDefinitionRegistryPostProcessor`, before any beans are created.
+Spring's startup has two phases: first, it reads and compiles all the instructions (bean definitions) for how to create each bean. Second, it creates the actual bean instances. A BeanFactoryPostProcessor runs between these two phases — after all definitions are loaded, before any beans exist. At this point you have access to every blueprint, and you can change them. The most common real-world use is `PropertySourcesPlaceholderConfigurer`: it scans every bean definition looking for `${db.url}` placeholders and replaces them with real values from `application.properties` before any database bean is created. Spring Boot's auto-configuration heavily uses `BeanDefinitionRegistryPostProcessor` (a sub-interface) to conditionally register bean definitions based on classpath detection.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**Two distinct pre-instantiation phases:**
+**The interface and its position in the startup sequence:**
 
-```
-┌─────────────────────────────────────────────────────┐
-│  STARTUP PHASES                                     │
-│                                                     │
-│  Phase 1: DEFINITION PHASE                          │
-│  ApplicationContext reads @Configuration classes,  │
-│  classpath scan, XML → builds BeanDefinition map   │
-│  (metadata only — no objects created yet)           │
-│                                                     │
-│  ↓ BFPP runs HERE ↓                                │
-│  BeanFactoryPostProcessor invoked:                  │
-│  - Reads/modifies BeanDefinitions                  │
-│  - Resolves ${placeholders} in definitions          │
-│  - Registers/removes bean definitions              │
-│  - Evaluates @Conditional conditions                │
-│                                                     │
-│  Phase 2: INSTANTIATION PHASE                       │
-│  All singleton beans created in dependency order    │
-│  BeanPostProcessors intercept (see entry 110)       │
-└─────────────────────────────────────────────────────┘
+```java
+@FunctionalInterface
+public interface BeanFactoryPostProcessor {
+    // Called AFTER all BeanDefinitions are loaded,
+    // BEFORE any bean instances are created
+    void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
+            throws BeansException;
+}
+
+// Sub-interface: allows registering NEW BeanDefinitions
+public interface BeanDefinitionRegistryPostProcessor
+        extends BeanFactoryPostProcessor {
+    // Called BEFORE postProcessBeanFactory
+    void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry)
+            throws BeansException;
+}
 ```
 
-**Why definition modification must happen before creation:**
+**The full startup sequence showing where BFPP fits:**
 
-`@Value("${db.url}")` is stored as a literal string `"${db.url}"` in the bean definition. When the `DataSource` bean is created, Spring reads this literal and initialises the dataSource with `"${db.url}"` — obviously wrong. `PropertySourcesPlaceholderConfigurer` (a BFPP) resolves all `${...}` strings to their real values *before* any beans are created, so the DataSource constructor receives the real URL.
+```
+APPLICATION CONTEXT REFRESH
+           │
+   1. Load all BeanDefinitions
+      (component scan, @Configuration classes, XML)
+           │
+   2. Run BeanDefinitionRegistryPostProcessors  ← sub-interface
+      (ConfigurationClassPostProcessor runs here:
+       processes @Configuration, @Bean, @ComponentScan, @Import)
+           │
+   3. Run BeanFactoryPostProcessors  ← standard interface
+      (PropertySourcesPlaceholderConfigurer: resolves ${...})
+           │
+   4. Register BeanPostProcessors
+           │
+   5. Instantiate beans (singleton beans, unless lazy)
+      (BeanPostProcessors run during this phase)
+           │
+   6. Context is READY
+```
+
+**What a BeanFactoryPostProcessor can do:**
+
+```java
+// Access any registered BeanDefinition
+BeanDefinition bd = beanFactory.getBeanDefinition("orderService");
+
+// Read metadata
+String className  = bd.getBeanClassName();
+String scope      = bd.getScope();
+boolean lazy      = bd.isLazyInit();
+
+// Modify metadata BEFORE instantiation
+bd.setScope("prototype");           // change scope
+bd.setLazyInit(true);               // make lazy
+bd.getPropertyValues().add("timeout", 30); // add property value
+bd.getConstructorArgumentValues()
+  .addIndexedArgumentValue(0, "value"); // change constructor arg
+```
+
+**The most important built-in BeanFactoryPostProcessors:**
+
+```
+ConfigurationClassPostProcessor (BeanDefinitionRegistryPostProcessor)
+  → Processes ALL @Configuration classes
+  → Discovers @Bean methods, registers their BeanDefinitions
+  → Processes @ComponentScan — triggers classpath scanning
+  → Processes @Import — registers imported BeanDefinitions
+  → Processes @PropertySource — adds property files to Environment
+  ★ This is the most important BFPP — without it, none of
+    @Configuration, @Bean, or @ComponentScan would work.
+
+PropertySourcesPlaceholderConfigurer (BeanFactoryPostProcessor)
+  → Scans all BeanDefinitions for ${property.placeholder} strings
+  → Resolves them from Environment (application.properties, env vars)
+  → Replaces placeholders with actual values in BeanDefinitions
+  → Must be registered as a STATIC @Bean to work in @Configuration
+    (it runs before @Configuration is fully processed)
+```
 
 ---
 
 ### ❓ Why Does This Exist (Why Before What)
 
-**WITHOUT BeanFactoryPostProcessor:**
+WITHOUT BeanFactoryPostProcessor:
 
-```
-Without BFPP:
+What breaks without it:
 
-  @Value("${server.port}") → literal string "${server.port}"
-    never resolved → injected as the placeholder string itself
-    → application.properties has no effect on @Value fields
+1. `@Configuration` and `@ComponentScan` processing would need to be hardcoded in the container — no extensibility.
+2. Property placeholder resolution (`${db.url}`) would not exist — bean definitions could not reference external configuration.
+3. Spring Boot's conditional auto-configuration (`@ConditionalOnClass`, `@ConditionalOnProperty`) could not dynamically register beans at startup.
+4. Framework integrations (Hibernate validator, Spring Data repository generation) could not register their own bean definitions.
 
-  @ConditionalOnClass impossible:
-    Conditions must be evaluated BEFORE beans are created
-    → can't decide "create DataSourceAutoConfiguration?"
-    at instantiation time — too late
-
-  Dynamic bean registration impossible:
-    Can't register a BeanDefinition based on external
-    config (API key present? register this gateway bean)
-    without BeanDefinitionRegistryPostProcessor
-```
-
-**WITH BeanFactoryPostProcessor:**
-
-```
-→ @Value("${db.url}") resolved to real URL before bean creation
-→ @ConditionalOnProperty evaluated at definition phase
-  → beans conditionally registered or skipped
-→ PropertyOverrideConfigurer overrides any bean property
-  from external config file (legacy use case)
-→ Spring Boot's ConfigurationClassPostProcessor processes
-  @Import, @Bean, @ComponentScan at definition time
-```
+WITH BeanFactoryPostProcessor:
+→ `ConfigurationClassPostProcessor` drives all modern annotation-based configuration.
+→ `PropertySourcesPlaceholderConfigurer` externalisesall configuration — no hardcoded values in bean definitions.
+→ Spring Boot auto-configuration conditionally populates the container based on environment inspection.
+→ The factory is open for extension at the definition level, not just the instance level.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> A `BeanFactoryPostProcessor` is like a **building inspector who reviews blueprints before construction begins**. They can mark required corrections: fill in missing measurements (property resolution), approve or reject designs based on building codes (conditional evaluation), or add new rooms to the blueprint (dynamic bean registration). Once construction starts (bean instantiation), the blueprints are fixed. The inspector works only on paper, not on actual buildings — this is the key distinction from `BeanPostProcessor`, who works on finished structures.
+> Think of a construction project. BeanDefinitions are the architect's blueprints. BeanFactoryPostProcessors are the planning committee reviewers who examine all blueprints before construction begins — they can annotate blueprints with amendments, reject some designs, or add new buildings. Only after all reviews are complete does construction (bean instantiation) begin. BeanPostProcessors are the on-site quality inspectors who check each building as it is constructed. The reviewers (BFPP) work before a single brick is laid; the inspectors (BPP) work during construction.
 
-"Blueprints" = BeanDefinitions (metadata)
-"Inspector reviewing before construction" = BFPP runs before instantiation
-"Filling in missing measurements" = resolving ${placeholder} values
-"Approving/rejecting designs" = @Conditional evaluation
-"Adding new rooms to blueprint" = BeanDefinitionRegistryPostProcessor
-"Construction starts" = bean instantiation phase
+"Architect's blueprints" = BeanDefinitions
+"Planning committee review" = BeanFactoryPostProcessor
+"Adding amendments to blueprints" = modifying BeanDefinition properties
+"On-site construction inspectors" = BeanPostProcessors
+"Construction phase" = bean instantiation
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**The interface:**
+**ConfigurationClassPostProcessor — the heart of Spring Boot startup:**
 
-```java
-@FunctionalInterface
-public interface BeanFactoryPostProcessor {
-  void postProcessBeanFactory(
-      ConfigurableListableBeanFactory beanFactory)
-      throws BeansException;
-}
+```
+@SpringBootApplication
+  = @EnableAutoConfiguration
+  + @ComponentScan
+  + @SpringBootConfiguration (@Configuration)
+
+At startup, ConfigurationClassPostProcessor:
+  1. Finds this @Configuration class (it's a BeanDefinition already)
+  2. Parses it: discovers @ComponentScan("com.example")
+  3. Scans classpath for @Component/@Service/@Repository/@Controller
+  4. Registers each found class as a BeanDefinition
+  5. Parses each @Configuration class found in the scan
+  6. Discovers @Bean methods → registers as BeanDefinitions
+  7. Processes @Import (imports more configuration)
+  8. Processes @EnableAutoConfiguration
+     → reads META-INF/spring/auto-configuration.imports
+     → conditionally registers auto-configuration BeanDefinitions
+
+Result: before any beans are created, ALL BeanDefinitions are ready
 ```
 
-**What you can do with the BeanFactory at this phase:**
+**PropertySourcesPlaceholderConfigurer — how ${} resolution works:**
 
 ```java
-@Component
-public class MyBFPP implements BeanFactoryPostProcessor {
+// Bean definition (what you write)
+@Bean
+DataSource dataSource(
+    @Value("${db.url}") String url,        // placeholder in definition
+    @Value("${db.password}") String pass    // placeholder in definition
+) { ... }
 
-  @Override
-  public void postProcessBeanFactory(
-      ConfigurableListableBeanFactory bf) {
+// BFPP action:
+// Scans all BeanDefinitions for "${...}" patterns
+// Looks up "db.url" in Environment (application.properties → env var → system prop)
+// Replaces "${db.url}" with "jdbc:postgresql://localhost:5432/mydb"
+// Replaces "${db.password}" with "secret"
+// THEN: bean instantiation happens with already-resolved values
 
-    // Read all bean definitions
-    String[] names = bf.getBeanDefinitionNames();
-
-    // Modify a specific bean's definition
-    BeanDefinition def = bf.getBeanDefinition("dataSource");
-    def.getPropertyValues().add(
-        "connectionTimeout", "5000");
-
-    // Change scope of a bean programmatically
-    BeanDefinition svcDef = bf.getBeanDefinition("orderSvc");
-    svcDef.setScope(BeanDefinition.SCOPE_PROTOTYPE);
-  }
-}
-```
-
-**BeanDefinitionRegistryPostProcessor (subinterface):**
-
-```java
-@Component
-public class DynamicBeanRegistrar
-    implements BeanDefinitionRegistryPostProcessor {
-
-  @Override
-  public void postProcessBeanDefinitionRegistry(
-      BeanDefinitionRegistry registry) {
-    // Register a new bean definition dynamically
-    // (conditioned on runtime config)
-    if (System.getenv("STRIPE_KEY") != null) {
-      registry.registerBeanDefinition("paymentGateway",
-          BeanDefinitionBuilder
-              .genericBeanDefinition(StripeGateway.class)
-              .getBeanDefinition());
+// CRITICAL: must be @Bean as static in @Configuration
+@Configuration
+class DataConfig {
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+        // STATIC because it must run before @Configuration is processed
+        // Non-static would cause a circular dependency with @Configuration
     }
-  }
-
-  @Override
-  public void postProcessBeanFactory(
-      ConfigurableListableBeanFactory bf) {
-    // optional additional modification
-  }
 }
 ```
 
@@ -195,131 +219,153 @@ public class DynamicBeanRegistrar
 ### 🔄 How It Connects (Mini-Map)
 
 ```
-ApplicationContext parses @Configuration / scan
-        ↓
-  BeanDefinition registry built (all metadata)
-        ↓
-  BFPP runs  ← you are here
-  (modifies BeanDefinitions before instantiation)
-        ↓
-  Key built-in BFPPs:
-  ConfigurationClassPostProcessor
-    (processes @Bean, @Import, @Conditional)
-  PropertySourcesPlaceholderConfigurer
-    (resolves ${} in @Value and XML)
-        ↓
-  Bean instantiation begins
-  (BeanPostProcessor intercepts per-bean)
-        ↓
-  ApplicationContext fully started
+BeanDefinitions (blueprints for all beans)
+        │
+        ▼
+BeanFactoryPostProcessor  ◄──── (you are here)
+(modifies definitions BEFORE instantiation)
+        │
+        ├──── BeanDefinitionRegistryPostProcessor
+        │     (ConfigurationClassPostProcessor)
+        │     → @Configuration / @Bean / @ComponentScan / @Import
+        │
+        ├──── PropertySourcesPlaceholderConfigurer
+        │     → ${property.placeholder} resolution
+        │
+        ▼
+Bean Instantiation
+        │
+        ▼
+BeanPostProcessor
+(modifies INSTANCES during/after creation)
 ```
 
 ---
 
 ### 💻 Code Example
 
-**Example 1 — PropertySourcesPlaceholderConfigurer (how @Value works):**
+**Example 1 — Custom BFPP that enforces bean naming conventions:**
 
 ```java
-// Defined automatically by Spring Boot
-@Bean
-public static PropertySourcesPlaceholderConfigurer pspc() {
-  return new PropertySourcesPlaceholderConfigurer();
-  // Runs as BFPP at startup; resolves all ${...} in defs
+@Component
+public class NamingConventionBFPP implements BeanFactoryPostProcessor {
+
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory bf)
+            throws BeansException {
+        for (String beanName : bf.getBeanDefinitionNames()) {
+            BeanDefinition bd = bf.getBeanDefinition(beanName);
+            String className = bd.getBeanClassName();
+            if (className == null) continue;
+
+            // Enforce: all @Service beans must end in "Service"
+            if (bd.hasAttribute("serviceComponent") &&
+                !className.endsWith("Service")) {
+                throw new BeanDefinitionParsingException(
+                    new Problem("Service beans must have class names ending in 'Service'",
+                                new Location(new ClassPathResource(className))));
+            }
+        }
+    }
 }
-
-// application.properties:
-// db.url=jdbc:postgresql://prod-db:5432/app
-// db.pool.size=20
-
-@Service
-public class DatabaseService {
-  @Value("${db.url}")        // stored as literal in BeanDef
-  private String dbUrl;      // resolved by PSPC before creation
-
-  @Value("${db.pool.size}")
-  private int poolSize;
-}
-// Without PSPC BFPP: dbUrl = "${db.url}" (unresolved!)
-// With PSPC BFPP:    dbUrl = "jdbc:postgresql://prod-db..."
 ```
 
-**Example 2 — ConfigurationClassPostProcessor processing @Conditional:**
+**Example 2 — BeanDefinitionRegistryPostProcessor that dynamically registers beans:**
 
 ```java
-// Auto-configuration processed by ConfigurationClassBPP
-@Configuration
-@ConditionalOnClass(DataSource.class)      // evaluates here
-@ConditionalOnProperty("spring.datasource.url") // evaluates here
-public class DataSourceAutoConfiguration {
-  @Bean
-  DataSource dataSource(DataSourceProperties p) {
-    return DataSourceBuilder.create()
-        .url(p.getUrl()).build();
-  }
+@Component
+public class PluginRegistryPostProcessor
+        implements BeanDefinitionRegistryPostProcessor {
+
+    @Override
+    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry)
+            throws BeansException {
+        // Discover all Plugin implementations on the classpath
+        ServiceLoader.load(Plugin.class).forEach(plugin -> {
+            String beanName = "plugin-" + plugin.getName();
+            BeanDefinition bd = BeanDefinitionBuilder
+                .genericBeanDefinition(plugin.getClass())
+                .setScope(BeanDefinition.SCOPE_SINGLETON)
+                .getBeanDefinition();
+            registry.registerBeanDefinition(beanName, bd);
+            log.info("Registered plugin bean: {}", beanName);
+        });
+    }
+
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
+            throws BeansException {
+        // No further modification needed
+    }
 }
-// If spring-jdbc not on classpath → bean NOT registered
-// Evaluated at BFPP phase, before any beans created
 ```
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| BFPP and BeanPostProcessor run at the same time | BFPP runs on bean DEFINITIONS before instantiation; BPP runs on bean INSTANCES after creation. They operate on different subjects at different times |
-| @Value resolution is built into @Value annotation processing | @Value placeholders are resolved by PropertySourcesPlaceholderConfigurer (a BFPP) before beans are created, not at injection time |
-| You should always inject beans into a BFPP | BFPPs should NOT have injected dependencies — they run so early that the injection infrastructure may not be ready. Use static factory methods where possible |
-| BFPP can create new bean instances | BFPP operates on BeanDefinitions (metadata), not instances. Creating bean instances at BFPP phase can cause initialization issues |
+| Misconception                                                                                               | Reality                                                                                                                                                                                                                                                                             |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BeanFactoryPostProcessor and BeanPostProcessor do the same thing                                            | They operate at completely different phases: BFPP operates on bean DEFINITIONS before any beans are instantiated; BPP operates on bean INSTANCES after creation. BFPP changes blueprints; BPP changes buildings                                                                     |
+| You can access bean instances inside a BeanFactoryPostProcessor                                             | You must NOT call `beanFactory.getBean()` inside a BFPP — this triggers early instantiation of beans before the full lifecycle is set up, leading to beans without BPP processing (no AOP proxies, no `@Autowired` injection)                                                       |
+| `PropertySourcesPlaceholderConfigurer` is auto-registered                                                   | In Spring Boot, `@Value` and `${...}` resolution work because Spring Boot auto-configures `PropertySourcesPlaceholderConfigurer`. In plain Spring MVC or `@Configuration`, you must register it explicitly as a `static @Bean`                                                      |
+| `BeanDefinitionRegistryPostProcessor.postProcessBeanDefinitionRegistry` runs after `postProcessBeanFactory` | It runs BEFORE: first all `postProcessBeanDefinitionRegistry` methods run (so all BeanDefinitions are fully registered), then all `postProcessBeanFactory` methods run. `ConfigurationClassPostProcessor` is a prime example — it must register beans before the factory-level pass |
 
 ---
 
 ### 🔥 Pitfalls in Production
 
-**1. BFPP with @Autowired dependencies — premature creation**
+**Calling `beanFactory.getBean()` inside a BFPP — bypasses AOP proxying**
 
 ```java
-// BAD: BFPP with @Autowired forces bean creation too early
+// BAD: getting a bean instance inside a BFPP
 @Component
-public class MyBFPP implements BeanFactoryPostProcessor {
-  @Autowired
-  ConfigProperties config; // Forces ConfigProperties to be
-  // instantiated BEFORE BFPP processing completes
-  // → ConfigProperties may not have ${} values resolved yet!
+public class EagerBFPP implements BeanFactoryPostProcessor {
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
+        OrderService svc = bf.getBean(OrderService.class); // WRONG
+        // OrderService is instantiated NOW — before BeanPostProcessors run
+        // → @Transactional AOP proxy NOT applied
+        // → @Autowired dependencies may not be injected
+        // Spring logs: "Bean 'orderService' is not eligible for getting
+        //               processed by all BeanPostProcessors"
+    }
 }
 
-// GOOD: implement as a static @Bean with no dependencies,
-// or use BeanDefinitionRegistryPostProcessor pattern
-@Bean
-public static MyBFPP myBfpp() {
-  return new MyBFPP(); // static — no injection
+// GOOD: modify BeanDefinitions only — never instantiate beans inside BFPP
+@Override
+public void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
+    BeanDefinition bd = bf.getBeanDefinition("orderService");
+    bd.getPropertyValues().add("timeout", 30); // safe — modifies definition only
 }
 ```
 
-**2. Forgetting `static` on BFPP @Bean method**
+---
+
+**Non-static `PropertySourcesPlaceholderConfigurer` in a `@Configuration` class**
 
 ```java
-// BAD: non-static @Bean method for BFPP
+// BAD: non-static @Bean — BFPP may not run early enough
 @Configuration
 class AppConfig {
-  @Bean
-  public BeanFactoryPostProcessor myBFPP() {
-    // Non-static: requires AppConfig instance to be created first
-    // AppConfig bean processed normally → too late for BFPP!
-    return bf -> { /* ... */ };
-  }
-}
-// Spring may log WARNING: "non-static @Bean may cause issues
-// with post-processing of the configuration class"
+    @Bean  // not static — Spring tries to create AppConfig first
+    PropertySourcesPlaceholderConfigurer cfg() {
+        // AppConfig needs @Value resolution → BFPP needed →
+        // BFPP needs AppConfig bean → circular bootstrap issue
+        return new PropertySourcesPlaceholderConfigurer();
+    }
 
-// GOOD: always declare BFPP @Bean methods as static
+    @Value("${app.name}") // may not be resolved — BFPP too late
+    String appName;
+}
+
+// GOOD: static @Bean ensures BFPP instantiated before @Configuration bean
 @Configuration
 class AppConfig {
-  @Bean
-  public static BeanFactoryPostProcessor myBFPP() {
-    return bf -> { /* ... */ };
-  }
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer cfg() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
 }
 ```
 
@@ -327,12 +373,12 @@ class AppConfig {
 
 ### 🔗 Related Keywords
 
-- `BeanPostProcessor` — intercepts bean INSTANCES post-creation; BFPP intercepts bean DEFINITIONS pre-creation
-- `ApplicationContext` — orchestrates BFPP invocation at startup before bean instantiation
-- `@Value` — relies on PropertySourcesPlaceholderConfigurer (a BFPP) for ${} resolution
-- `Auto-Configuration` — Spring Boot's conditional auto-config is processed by ConfigurationClassPostProcessor
-- `BeanDefinition` — the metadata object BFPP reads and modifies (scope, class, properties)
-- `@Conditional` — evaluated during BFPP phase to include/exclude bean definitions
+- `BeanPostProcessor` — sibling; operates on bean instances (phases 4 and 6) vs. definitions (pre-instantiation)
+- `BeanFactory` — the container whose `BeanFactory.postProcessBeanFactory()` is the callback parameter
+- `Bean Lifecycle` — BFPP runs between definition loading (phase 0) and bean instantiation (phase 1)
+- `@Configuration / @Bean` — processed by `ConfigurationClassPostProcessor` (a `BeanDefinitionRegistryPostProcessor`)
+- `Auto-Configuration` — Spring Boot's `AutoConfigurationImportSelector` uses BFPP-driven import to register beans
+- `@Value / @ConfigurationProperties` — placeholder resolution via `PropertySourcesPlaceholderConfigurer`
 
 ---
 
@@ -340,21 +386,22 @@ class AppConfig {
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Runs on bean DEFINITIONS before any bean  │
-│              │ is created — resolves properties,         │
-│              │ evaluates conditions, registers defs      │
+│ TIMING       │ After all definitions loaded              │
+│              │ BEFORE any bean instances created         │
 ├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Dynamic bean registration; property       │
-│              │ placeholder resolution; condition testing  │
+│ KEY BUILT-IN │ ConfigurationClassPostProcessor           │
+│ EXAMPLES     │   → processes @Configuration/@Bean/@Scan  │
+│              │ PropertySourcesPlaceholderConfigurer      │
+│              │   → resolves ${property.placeholder}      │
 ├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Never @Autowired into BFPP — mark @Bean   │
-│              │ methods static to avoid ordering issues   │
+│ DANGER       │ NEVER call beanFactory.getBean() inside  │
+│              │ BFPP — causes early unproxied bean creation│
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "BPP works on buildings;                  │
-│              │  BFPP works on blueprints."               │
+│ STATIC RULE  │ BFPP @Bean methods must be STATIC in     │
+│              │ @Configuration to avoid bootstrap issues  │
 ├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ @Autowired (112) → Circular Dependency    │
-│              │ (115) → Auto-Configuration (133)          │
+│ ONE-LINER    │ "BFPP = planning committee: amends        │
+│              │  blueprints before construction begins."  │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -362,7 +409,6 @@ class AppConfig {
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** Spring Boot's `ConfigurationClassPostProcessor` is a `BeanDefinitionRegistryPostProcessor` that processes all `@Configuration` classes, evaluates `@Conditional` annotations, and registers bean definitions. It runs in a fixed order relative to other BFPPs. Explain what happens if you write a custom `BeanFactoryPostProcessor` that modifies a bean definition that `ConfigurationClassPostProcessor` hasn't yet processed — specifically, what ordering guarantee does `Ordered` or `PriorityOrdered` provide — and describe how `PropertySourcesPlaceholderConfigurer.setOrder(Ordered.HIGHEST_PRECEDENCE)` affects the processing chain.
+**Q1.** `ConfigurationClassPostProcessor` is a `BeanDefinitionRegistryPostProcessor`. It processes `@ComponentScan` and discovers all `@Component`-annotated classes, registering them as `BeanDefinitions`. If a scanned class is itself a `@Configuration` class with a `@Bean` method that returns a `DataSource`, trace the exact sequence of events: when does Spring discover the nested `@Configuration`? When is the `@Bean` method's `BeanDefinition` registered? Can a `@Bean` method in a scanned `@Configuration` class have a `@Conditional` annotation, and if so, when is that condition evaluated — during the BFPP phase or during instantiation?
 
-**Q2.** `@Value` injection resolves `${property.key}` strings at bean creation time via BFPP. But `@ConfigurationProperties` (used by Spring Boot for type-safe configuration binding) uses a completely different mechanism — it does NOT use `PropertySourcesPlaceholderConfigurer`. Explain how `@ConfigurationProperties` binding works instead, what `ConfigurationPropertiesBindingPostProcessor` is, and describe the specific scenario where `@Value` and `@ConfigurationProperties` behave differently when a property is missing from the configuration.
-
+**Q2.** Spring Boot's `@ConditionalOnMissingBean` annotation is evaluated by `OnMissingBeanCondition`, which is invoked during `ConfigurationClassPostProcessor`'s processing phase. This evaluation depends on what `BeanDefinitions` have already been registered at the time of evaluation. Explain why the ORDER in which `@Configuration` classes are processed matters for `@ConditionalOnMissingBean` correctness, describe how Spring Boot controls this ordering (via `@AutoConfigureAfter`, `@AutoConfigureBefore`, `AutoConfigurationSorter`), and explain the edge case where a user's own `@Bean` definition for a type might appear AFTER the auto-configuration processes — causing the condition to evaluate incorrectly.

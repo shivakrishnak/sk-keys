@@ -1,99 +1,115 @@
-﻿---
+---
 layout: default
 title: "DI (Dependency Injection)"
 parent: "Spring Core"
 nav_order: 372
-permalink: /spring/di-dependency-injection/
+permalink: /spring/dependency-injection/
 number: "372"
 category: Spring Core
-difficulty: ★★☆
-depends_on: IoC, Abstraction, Interfaces, Coupling
-used_by: ApplicationContext, @Autowired, Bean, Unit Testing, Spring Boot
-tags: #java, #spring, #springboot, #pattern, #intermediate, #testing
+difficulty: ★☆☆
+depends_on: IoC (Inversion of Control), Object-Oriented Programming (OOP), Interfaces
+used_by: ApplicationContext, @Autowired, Spring Boot, Testability
+tags: #foundational, #spring, #architecture, #pattern
 ---
 
 # 372 — DI (Dependency Injection)
 
-`#java` `#spring` `#springboot` `#pattern` `#intermediate` `#testing`
+`#foundational` `#spring` `#architecture` `#pattern`
 
-⚡ TL;DR — The IoC mechanism where a component's dependencies are provided externally at construction time rather than being instantiated inside the component.
+⚡ TL;DR — Dependency Injection is the technique of supplying a class's collaborators from outside rather than having the class construct them — the primary implementation of IoC in Spring.
 
-| #372 | category: Spring Core
-|:---|:---|:---|
-| **Depends on:** | IoC, Abstraction, Interfaces, Coupling | |
-| **Used by:** | ApplicationContext, @Autowired, Bean, Unit Testing, Spring Boot | |
+| #372            | Category: Spring Core                                         | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------------------ | :-------------- |
+| **Depends on:** | IoC (Inversion of Control), Object-Oriented Programming (OOP) |                 |
+| **Used by:**    | ApplicationContext, @Autowired, Spring Boot, Testability      |                 |
 
 ---
 
 ### 📘 Textbook Definition
 
-**Dependency Injection (DI)** is a design pattern and the primary implementation mechanism of the IoC principle. A component (the dependent) declares the interfaces it requires; an external injector (the Spring container) creates instances of those interfaces and provides them to the component — either through a constructor, a setter method, or a field. DI decouples components from the concrete implementations they use, relying on abstractions (interfaces) instead. This makes components independently testable with mock collaborators, independently deployable, and reconfigurable without source-code changes.
+**Dependency Injection** (DI) is a design pattern that implements the Inversion of Control principle by supplying an object's dependencies from an external source rather than having the object create them. The three canonical forms are: _constructor injection_ (dependencies passed as constructor parameters), _setter injection_ (dependencies set via setter methods after construction), and _field injection_ (dependencies assigned directly to fields, typically via reflection). In Spring, the IoC container reads bean definitions, instantiates the dependencies, and injects them into each bean via whichever injection style is configured. Constructor injection is the Spring team's recommended default because it makes dependencies explicit, ensures immutability, and prevents partially-constructed objects.
 
 ---
 
 ### 🟢 Simple Definition (Easy)
 
-Dependency Injection means you don't create the objects your class needs — someone else creates them and passes them in. Your class just declares what it needs in its constructor.
+Instead of a class creating the things it needs (`new PaymentGateway()`), you pass them in from outside — Spring handles the passing. The class just declares what it needs.
 
 ---
 
 ### 🔵 Simple Definition (Elaborated)
 
-Without DI, a `UserService` calls `new JdbcUserRepository()` itself — it is coupled to that specific implementation. With DI, `UserService` declares "I need a `UserRepository`" in its constructor, and Spring creates the right implementation and passes it in automatically. The `UserService` never knows whether it's talking to a JDBC, JPA, or in-memory implementation. This single change makes `UserService` fully testable with a mock, configurable via Spring configuration, and reusable across different contexts.
+DI is the "how" behind IoC. A class has _dependencies_ — other objects it needs to do its work. DI means those objects are _injected_ into the class rather than created by it. In Spring you have three injection styles: constructor (most recommended — dependencies are final, set once), setter (optional dependencies, can be changed), and field (convenient but hides dependencies). Spring reads your class, sees what it needs (via `@Autowired`, constructor types, or XML config), creates the required beans, and injects them. The class becomes a passive consumer: it declares its needs and the container fulfils them.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**Three DI styles — and why constructor injection wins:**
-
-```
-┌─────────────────────────────────────────────────────┐
-│  DI INJECTION TYPES                                 │
-├─────────────────────────────────────────────────────┤
-│  1. CONSTRUCTOR injection (preferred)               │
-│     Deps declared in constructor signature          │
-│     → Immutable — deps set once, never change       │
-│     → Testable without Spring context               │
-│     → Detects circular deps at startup              │
-│     → NullPointerException impossible after ctor    │
-│                                                     │
-│  2. SETTER injection (optional deps)                │
-│     Deps set via setX() after construction          │
-│     → Allows optional dependencies                 │
-│     → Mutable — allows reconfiguration             │
-│     → Risk: object used before setter called        │
-│                                                     │
-│  3. FIELD injection (avoid)                         │
-│     @Autowired directly on private fields           │
-│     → Requires reflection — breaks encapsulation    │
-│     → Invisible dependencies — no constructor hint  │
-│     → Untestable without Spring or Mockito magic    │
-└─────────────────────────────────────────────────────┘
-```
-
-**Why constructor injection prevents hidden surprises:**
+**The three injection styles and their trade-offs:**
 
 ```java
-// Constructor injection: self-documenting
-public OrderService(PaymentGateway gw,
-                    InventoryService inv,
-                    AuditLogger audit) {
-  // Caller MUST provide all three — compiler enforces it
-  this.gw    = Objects.requireNonNull(gw);
-  this.inv   = Objects.requireNonNull(inv);
-  this.audit = Objects.requireNonNull(audit);
-}
-// This class literally cannot be instantiated
-// with a missing dependency → fail fast at startup
-
-// Field injection: invisible
+// 1. CONSTRUCTOR INJECTION — recommended
 @Service
 class OrderService {
-  @Autowired PaymentGateway gw;     // invisible
-  @Autowired InventoryService inv;  // invisible
-  @Autowired AuditLogger audit;     // invisible
-  // Class appears to have no deps until runtime NPE
+    private final PaymentGateway gateway;
+    private final OrderRepository repo;
+
+    // Spring calls this constructor with ready-made beans
+    OrderService(PaymentGateway gateway, OrderRepository repo) {
+        this.gateway = gateway;
+        this.repo    = repo;
+    }
+    // Benefits:
+    // - Dependencies are final (immutable after construction)
+    // - Object is never in a partially-initialised state
+    // - Dependencies visible in constructor signature
+    // - Easy to test: just call new OrderService(mockGateway, mockRepo)
+}
+
+// 2. SETTER INJECTION — for optional dependencies
+@Service
+class ReportService {
+    private EmailSender emailSender; // optional — may not be set
+
+    @Autowired(required = false)
+    void setEmailSender(EmailSender emailSender) {
+        this.emailSender = emailSender;
+    }
+    // Use when a dependency is genuinely optional
+    // Drawback: object can be used before injection is complete
+}
+
+// 3. FIELD INJECTION — convenient but discouraged
+@Service
+class NotificationService {
+    @Autowired                          // Spring injects via reflection
+    private PushNotifier notifier;      // NOT final — mutable after construction
+
+    // Drawbacks:
+    // - Cannot be tested without a Spring container (or reflection tricks)
+    // - Hides the dependency — constructor doesn't show what is needed
+    // - Cannot be declared final
+}
+```
+
+**Why constructor injection is preferred:**
+
+```java
+// Constructor injection makes circular dependency visible at startup
+// (Spring throws UnsatisfiedDependencyException immediately)
+// Field injection hides the circular dep until runtime behaviour fails
+
+// Constructor injection allows plain unit test:
+class OrderServiceTest {
+    @Test
+    void testPlaceOrder() {
+        // No Spring context needed — just pass mocks directly
+        var service = new OrderService(
+            mock(PaymentGateway.class),
+            mock(OrderRepository.class)
+        );
+        service.placeOrder(new Order(...));
+    }
 }
 ```
 
@@ -101,109 +117,80 @@ class OrderService {
 
 ### ❓ Why Does This Exist (Why Before What)
 
-**WITHOUT DI:**
+WITHOUT Dependency Injection:
 
-```
-Without DI:
+What breaks without it:
 
-  Hard to test:
-    new UserService() → inside: new JdbcRepo(dataSource)
-    → unit test requires a real database
-    → 100ms per test → 10,000 tests = 17 minutes
+1. Unit tests for `OrderService` require a real database, real payment API, and real email server — infrastructure tests, not unit tests.
+2. Changing `StripeGateway` to `PayPalGateway` means finding every `new StripeGateway()` call and changing it.
+3. Thread safety is unclear: is `new PaymentGateway()` inside a request handler safe to call concurrently?
+4. Configuration (API keys, timeouts) is embedded in constructors rather than centralised.
+5. Mocking frameworks cannot intercept `new ConcreteClass()` — they can only intercept injected interfaces.
 
-  Hard to configure:
-    Database URL in UserService constructor
-    → change DB URL = recompile UserService
-    → prod DB URL in source code
-
-  Hard to swap:
-    Using JPA? Want to switch to MongoDB?
-    → rewrite every class that uses the old repo
-    → massive cascading change
-
-  Hard to share:
-    Each new UserService() creates a new connection pool
-    → run out of DB connections at 100 concurrent users
-```
-
-**WITH DI:**
-
-```
-→ Test: inject mock UserRepository — no DB needed
-→ Config: Spring reads URL from application.properties
-→ Swap: change @Bean definition — zero class changes
-→ Share: container creates one repo, injects everywhere
-→ Audit: all injection points visible in constructors
-```
+WITH DI:
+→ Unit tests inject mocks — no infrastructure needed: `new OrderService(mockGateway, mockRepo)`.
+→ Implementations swapped via configuration only — zero business code changes.
+→ Spring manages singleton beans correctly — thread safety is the container's concern.
+→ Configuration externalised via `@Value`, environment variables, and `application.properties`.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> DI is like a **catering company supplying a restaurant kitchen**. The chef (your class) declares "I need fresh tomatoes, mozzarella, and basil today." The catering manager (Spring container) sources the right ingredients and delivers them to the kitchen door. The chef never goes shopping. If the supplier changes from organic to conventional tomatoes, the chef doesn't notice — they just use what's delivered. Only the catering manager needs to know where the tomatoes come from.
+> Think of a restaurant kitchen. A cook without DI goes to the market every morning to buy their own ingredients — they know the supplier, negotiate the price, and carry the bags themselves. A cook WITH DI arrives to find all ingredients pre-sourced and laid out: the head chef (container) handles procurement. The cook just cooks. If the head chef swaps a supplier (implementation), the cook never needs to know — the ingredient (interface) looks the same.
 
-"Chef declaring ingredients needed" = constructor parameter list
-"Catering manager sourcing ingredients" = Spring container creating beans
-"Delivering to kitchen door" = injection at construction time
-"Chef not caring about supplier" = component only knows interfaces
-"Supplier changes" = swapping implementation in @Bean config
+"Cook going to market" = class calling `new ConcreteImpl()`
+"Ingredients laid out on arrival" = dependencies injected by the container
+"Head chef (container) handling procurement" = Spring IoC wiring dependencies
+"Swapping a supplier" = swapping an implementation without changing the consumer
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**Constructor injection (Spring 4.3+: single-constructor auto-detected):**
+**Spring DI resolution sequence:**
+
+```
+┌──────────────────────────────────────────────┐
+│      DI Resolution for OrderService          │
+│                                              │
+│  Spring sees: OrderService needs             │
+│    PaymentGateway (interface)                │
+│    OrderRepository (interface)               │
+│           ↓                                  │
+│  Spring searches bean registry:              │
+│    PaymentGateway → StripeGateway @Component │
+│    OrderRepository → JpaOrderRepo @Repository│
+│           ↓                                  │
+│  Spring instantiates dependencies first:     │
+│    new StripeGateway(httpClient)             │
+│    new JpaOrderRepo(entityManager)           │
+│           ↓                                  │
+│  Spring injects into OrderService:           │
+│    new OrderService(stripeGw, jpaRepo)       │
+│           ↓                                  │
+│  OrderService bean ready in context          │
+└──────────────────────────────────────────────┘
+```
+
+**DI with `@Configuration` + `@Bean` (explicit wiring):**
 
 ```java
-@Service
-public class PaymentService {
-  private final PaymentGateway gateway;
-  private final AuditRepository audit;
+@Configuration
+class AppConfig {
+    // Explicit DI: you control exactly what gets injected
+    @Bean
+    PaymentGateway paymentGateway() {
+        return new StripeGateway(apiKey(), httpClient());
+    }
 
-  // Spring 4.3+: @Autowired not required on single ctor
-  public PaymentService(PaymentGateway gateway,
-                        AuditRepository audit) {
-    this.gateway = gateway;
-    this.audit   = audit;
-  }
+    @Bean
+    OrderService orderService(PaymentGateway gateway,
+                              OrderRepository repo) {
+        return new OrderService(gateway, repo);
+    }
+    // Spring calls orderService() and injects the beans declared above
 }
-```
-
-**Setter injection (for optional dependencies):**
-
-```java
-@Service
-public class NotificationService {
-  private SmsProvider smsProvider;
-
-  // Optional: SMS provider may not be configured
-  @Autowired(required = false)
-  public void setSmsProvider(SmsProvider smsProvider) {
-    this.smsProvider = smsProvider;
-  }
-}
-```
-
-**How Spring resolves the injection:**
-
-```
-┌─────────────────────────────────────────────────────┐
-│  RESOLUTION ORDER                                   │
-│                                                     │
-│  1. Find beans matching the parameter TYPE          │
-│     (PaymentGateway.class)                          │
-│                                                     │
-│  2. If one match → inject it                        │
-│                                                     │
-│  3. If multiple matches:                            │
-│     a. Check for @Primary on one candidate         │
-│     b. Check @Qualifier on injection point          │
-│     c. Match by parameter NAME as bean name         │
-│     d. If still ambiguous → NoUniqueBeanException  │
-│                                                     │
-│  4. If zero matches:                               │
-│     → NoSuchBeanDefinitionException (or optional)  │
-└─────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -211,108 +198,73 @@ public class NotificationService {
 ### 🔄 How It Connects (Mini-Map)
 
 ```
-IoC Principle (103)
-(control inverted — declare needs)
-        ↓
-  DI MECHANISM  ← you are here
-  (constructor / setter / field injection)
-        ↓
-  Implemented by:
-  ApplicationContext (105) scanning @Component beans
-  @Autowired (112) marking injection points
-        ↓
-  Resolution via:
-  @Qualifier (113) — pick by name
-  @Primary (113) — default candidate
-        ↓
-  Enables:
-  Unit testing with mocks (no Spring context)
-  Configurable implementations (dev vs prod)
+IoC (Inversion of Control)
+(principle — the why)
+        │  ← implements →
+        ▼
+DI (Dependency Injection)  ◄──── (you are here)
+        │
+        ├──────────────────────────────────────┐
+        ▼                                      ▼
+Constructor Injection (recommended)   Field Injection (discouraged)
+        │                                      │
+        ▼                                      ▼
+ApplicationContext / BeanFactory       @Autowired annotation
+(manages and performs the injection)   (marks injection points)
 ```
 
 ---
 
 ### 💻 Code Example
 
-**Example 1 — Comparing all three injection styles:**
+**Example 1 — Full constructor injection with Spring Boot:**
 
 ```java
-// FIELD injection — AVOID in production code
 @Service
-class UserServiceBad {
-  @Autowired UserRepository repo; // hidden dependency
-  @Autowired PasswordEncoder encoder; // hidden
-}
+public class UserRegistrationService {
+    private final UserRepository userRepo;
+    private final PasswordEncoder encoder;
+    private final EventPublisher  events;
 
-// SETTER injection — for optional dependencies only
-@Service
-class UserServiceOkay {
-  private MetricsRecorder metrics;
+    // Single constructor — @Autowired optional in Spring 4.3+
+    public UserRegistrationService(UserRepository userRepo,
+                                    PasswordEncoder encoder,
+                                    EventPublisher events) {
+        this.userRepo  = userRepo;
+        this.encoder   = encoder;
+        this.events    = events;
+    }
 
-  @Autowired(required = false) // optional
-  public void setMetrics(MetricsRecorder m) {
-    this.metrics = m;
-  }
-}
-
-// CONSTRUCTOR injection — ALWAYS prefer this
-@Service
-class UserService {
-  private final UserRepository repo;
-  private final PasswordEncoder encoder;
-
-  // @Autowired optional for single constructor (Spring 4.3+)
-  public UserService(UserRepository repo,
-                     PasswordEncoder encoder) {
-    this.repo    = Objects.requireNonNull(repo);
-    this.encoder = Objects.requireNonNull(encoder);
-    // Immutable, explicit, testable
-  }
+    public void register(String email, String rawPassword) {
+        String hash = encoder.encode(rawPassword);
+        User user   = userRepo.save(new User(email, hash));
+        events.publish(new UserRegisteredEvent(user));
+    }
 }
 ```
 
-**Example 2 — Testing with constructor injection (zero Spring magic):**
+**Example 2 — Testability via constructor injection (no Spring context):**
 
 ```java
-class UserServiceTest {
-  private UserService service;
-  private UserRepository mockRepo;
+class UserRegistrationServiceTest {
+    @Test
+    void shouldPublishEventOnRegistration() {
+        // Arrange — plain Java mocks, no Spring needed
+        UserRepository   mockRepo   = mock(UserRepository.class);
+        PasswordEncoder  mockEnc    = mock(PasswordEncoder.class);
+        EventPublisher   mockEvents = mock(EventPublisher.class);
 
-  @BeforeEach
-  void setUp() {
-    mockRepo = mock(UserRepository.class);
-    var encoder = new BCryptPasswordEncoder();
-    // Pure Java — no @SpringBootTest, no context startup
-    service = new UserService(mockRepo, encoder);
-  }
+        when(mockRepo.save(any())).thenReturn(new User("a@b.com", "hash"));
+        when(mockEnc.encode("pass")).thenReturn("hash");
 
-  @Test
-  void registerUser_shouldEncodePassword() {
-    service.register(new RegisterRequest("a@b.com", "pass"));
-    verify(mockRepo).save(argThat(u ->
-        !u.getPassword().equals("pass") // encoded
-    ));
-  }
-}
-```
+        var service = new UserRegistrationService(mockRepo, mockEnc, mockEvents);
 
-**Example 3 — Injecting multiple implementations by qualifier:**
+        // Act
+        service.register("a@b.com", "pass");
 
-```java
-// Two implementations of same interface
-@Component("stripeGateway")
-class StripePaymentGateway implements PaymentGateway {...}
-
-@Component("paypalGateway")
-class PayPalPaymentGateway implements PaymentGateway {...}
-
-// Inject specific implementation by name
-@Service
-class CheckoutService {
-  public CheckoutService(
-      @Qualifier("stripeGateway") PaymentGateway gw) {
-    this.gateway = gw;
-  }
+        // Assert — event published exactly once
+        verify(mockEvents, times(1)).publish(any(UserRegisteredEvent.class));
+    }
 }
 ```
 
@@ -320,64 +272,62 @@ class CheckoutService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Field injection and constructor injection are equivalent | Field injection hides dependencies, prevents final fields, breaks non-Spring unit tests, and can cause NullPointerExceptions if Spring hasn't run |
-| DI requires a framework | DI is achievable in plain Java — just pass dependencies via constructors. Spring automates discovery and wiring at scale |
-| @Autowired on a constructor is mandatory | Since Spring 4.3, a single-constructor class is auto-detected — @Autowired is not needed on the constructor |
-| DI makes code harder to trace | Constructor injection makes the full dependency graph explicit and visible in the source — easier to trace than scattered new calls |
-| All bean types should use DI | Value objects, DTOs, and domain entities created transiently should use new — only application-layer beans need container-managed injection |
+| Misconception                                             | Reality                                                                                                                                                                                     |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Field injection is fine because it is less verbose        | Field injection cannot be used without a Spring container, prevents `final` fields, hides dependencies, and makes constructors misleading. The Spring team officially discourages it        |
+| Setter injection is outdated                              | Setter injection is correct for optional dependencies or for dependencies that can legitimately change after construction (rare but valid)                                                  |
+| DI requires annotations (@Autowired)                      | Spring can perform DI through XML configuration, Java `@Configuration` classes, or implicit single-constructor injection — no annotations required                                          |
+| DI and the Service Locator pattern achieve the same thing | DI pushes dependencies IN (passive recipient); Service Locator pulls dependencies OUT (active fetcher). DI is more testable; Service Locator introduces a hidden dependency on the registry |
 
 ---
 
 ### 🔥 Pitfalls in Production
 
-**1. Optional dependency NPE when not checking for null**
+**Field injection breaks testability — forced to use Spring context in unit tests**
 
 ```java
-// BAD: optional dep used without null check
+// BAD: field injection — cannot test without Spring
 @Service
-class NotificationService {
-  @Autowired(required = false)
-  private SmsProvider smsProvider;
-
-  public void notify(String msg) {
-    smsProvider.send(msg); // NPE if SMS not configured!
-  }
+class InvoiceService {
+    @Autowired
+    private TaxCalculator calculator; // injected by Spring via reflection
+    // No constructor that accepts TaxCalculator
+    // Unit test must spin up a Spring context — slow, fragile
 }
 
-// GOOD: null-safe use of optional dependency
-public void notify(String msg) {
-  if (smsProvider != null) {
-    smsProvider.send(msg);
-  }
-  emailFallback.send(msg); // always falls through to email
+// GOOD: constructor injection — testable without Spring
+@Service
+class InvoiceService {
+    private final TaxCalculator calculator;
+
+    InvoiceService(TaxCalculator calculator) {
+        this.calculator = calculator;
+    }
+    // Unit test: new InvoiceService(new FakeTaxCalculator())
 }
-// Or use Optional<SmsProvider> injection
 ```
 
-**2. Injecting Spring ApplicationContext directly instead of specific beans**
+---
+
+**Injecting too many dependencies — hidden SRP violation**
 
 ```java
-// BAD: Service Locator anti-pattern hidden in DI
+// BAD: 8 injected dependencies — SRP violation disguised as DI
 @Service
 class OrderService {
-  @Autowired ApplicationContext ctx; // pulls the entire container
+    OrderService(PaymentGateway g, OrderRepo r, EmailSender e,
+                 SMSSender s, AuditLog a, InventoryService i,
+                 PricingEngine p, FraudDetector f) { ... }
+    // 8 deps = this class is doing too many things
+    // DI makes it easy to add deps — but doesn't mean you should
 
-  public void process(Order order) {
-    // Dynamic lookup defeats the purpose of DI
-    PaymentGateway gw = ctx.getBean(PaymentGateway.class);
-    gw.charge(order);
-  }
-}
-
-// GOOD: declare the specific dependency in constructor
+// GOOD: extract responsibilities into focused services
 @Service
 class OrderService {
-  private final PaymentGateway gateway;
-  public OrderService(PaymentGateway gateway) {
-    this.gateway = gateway;
-  }
+    OrderService(PaymentService payment,   // wraps gateway + fraud
+                 FulfillmentService fulfil, // wraps inventory + shipping
+                 NotificationService notify) { ... } // wraps email + SMS
+    // 3 focused collaborators — each with single responsibility
 }
 ```
 
@@ -385,12 +335,13 @@ class OrderService {
 
 ### 🔗 Related Keywords
 
-- `IoC` — the overarching principle; DI is the implementation mechanism
-- `@Autowired` — Spring's annotation for declaring injection points
-- `ApplicationContext` — the container that performs the actual injection
-- `@Qualifier` — resolves ambiguity when multiple beans match an injection point
-- `Bean` — the objects the container creates and injects
-- `Unit Testing` — the primary beneficiary of constructor DI: no Spring context needed for tests
+- `IoC (Inversion of Control)` — the principle DI implements; the "why" behind DI
+- `@Autowired` — Spring's annotation for marking injection points in constructor, setter, or field
+- `ApplicationContext` — the Spring container that performs DI for all beans at startup
+- `Bean` — any object whose dependencies are managed and injected by the Spring container
+- `@Qualifier / @Primary` — annotations that resolve ambiguity when multiple beans satisfy a dependency type
+- `Circular Dependency` — a DI failure mode where A needs B and B needs A; constructor injection detects it at startup
+- `BeanPostProcessor` — the Spring mechanism that processes `@Autowired` and performs field/setter injection
 
 ---
 
@@ -398,20 +349,20 @@ class OrderService {
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Dependencies provided externally at       │
-│              │ construction — declare needs, don't build  │
+│ KEY IDEA     │ Pass dependencies in from outside rather  │
+│              │ than having the class create them         │
 ├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Always prefer constructor injection;      │
-│              │ setter for optional; never field inject   │
+│ PREFER       │ Constructor injection: final fields,      │
+│              │ immutable, visible, no-Spring testable    │
 ├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Value objects / DTOs — use new instead    │
-│              │ Field injection — hides dependencies      │
+│ AVOID        │ Field injection: hides deps, prevents     │
+│              │ final, requires Spring context in tests   │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Don't build your tools —                 │
-│              │  have them delivered to your door."       │
+│ ONE-LINER    │ "Declare what you need; Spring provides   │
+│              │ it — you're a consumer, not a builder."   │
 ├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ ApplicationContext (105) → Bean (107) →   │
-│              │ @Autowired (112)                          │
+│ NEXT EXPLORE │ @Autowired → ApplicationContext →         │
+│              │ Bean Lifecycle → Circular Dependency      │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -419,7 +370,6 @@ class OrderService {
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** Spring's DI container resolves injection by type. A large microservice has 3 different `MessageSender` implementations: `EmailSender`, `SmsSender`, `PushSender`. A `NotificationService` needs all three. Explain the type-resolution ambiguity and describe the three different Spring mechanisms for resolving it — `@Qualifier`, `@Primary`, and injecting a `List<MessageSender>` — including the specific scenario where each approach is the right choice and what the trade-off is.
+**Q1.** Spring Boot 2.2 made `@Autowired` optional on single-constructor beans (implicit constructor injection). A developer adds a second constructor to an existing service for a custom factory use case. This causes a `NoUniqueBeanException` at startup — the application won't start. Explain the exact Spring mechanism that determines which constructor to use for injection, what rules apply when there are multiple constructors, and how to resolve the ambiguity without removing the second constructor.
 
-**Q2.** Constructor injection creates immutable beans with `final` fields. But Spring also supports lazy-initialised beans (`@Lazy`) that are created only on first access. Explain the mechanism Spring uses to inject a `@Lazy` dependency into a constructor-injected bean — what object is actually passed to the constructor at startup, how the real bean is resolved on first method call, and why injecting a prototype-scoped bean into a singleton via a constructor is subtly different from `@Lazy` injection.
-
+**Q2.** A Spring service uses setter injection for a dependency, claiming "it is optional." During load testing, threads calling the service concurrently observe a `NullPointerException` on the dependency field — even though the dependency was injected. Explain the specific race condition that setter injection introduces during bean initialisation that constructor injection eliminates, describe the memory visibility guarantee (or lack thereof) for setters vs. final fields in the Java Memory Model, and identify the Spring bean scope that makes this race condition impossible by design.

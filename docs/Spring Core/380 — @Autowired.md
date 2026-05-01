@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "@Autowired"
 parent: "Spring Core"
@@ -7,91 +7,123 @@ permalink: /spring/autowired/
 number: "380"
 category: Spring Core
 difficulty: ★★☆
-depends_on: Dependency Injection, Bean, ApplicationContext, @Qualifier
-used_by: Constructor injection, Field injection, Setter injection, Spring Testing
-tags: #java, #spring, #springboot, #intermediate, #pattern
+depends_on: DI (Dependency Injection), Bean, BeanPostProcessor, ApplicationContext
+used_by: Circular Dependency, @Qualifier / @Primary, Bean Lifecycle
+tags: #intermediate, #spring, #foundational, #architecture
 ---
 
 # 380 — @Autowired
 
-`#java` `#spring` `#springboot` `#intermediate` `#pattern`
+`#intermediate` `#spring` `#foundational` `#architecture`
 
-⚡ TL;DR — Spring's primary injection annotation that marks a constructor, field, or setter as an injection point — the container resolves the matching bean and provides it automatically.
+⚡ TL;DR — `@Autowired` is the annotation that tells Spring to inject a dependency from the container by type. Constructor injection (implicit in Spring 5+ for single-constructor beans) is the recommended approach; field and setter injection are legacy patterns.
 
-| #380 | category: Spring Core
-|:---|:---|:---|
-| **Depends on:** | Dependency Injection, Bean, ApplicationContext, @Qualifier | |
-| **Used by:** | Constructor injection, Field injection, Setter injection, Spring Testing | |
+| #380            | Category: Spring Core                                                            | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | DI (Dependency Injection), Bean, BeanPostProcessor, ApplicationContext            |                 |
+| **Used by:**    | Circular Dependency, @Qualifier / @Primary, Bean Lifecycle                        |                 |
 
 ---
 
 ### 📘 Textbook Definition
 
-`@Autowired` is Spring's annotation for marking an injection point — a constructor, setter method, or field — where the container should provide a matching bean. By default, injection is required and Spring throws `NoSuchBeanDefinitionException` if no matching bean exists; `@Autowired(required = false)` makes the dependency optional. Bean resolution follows three rules in order: type match, then `@Qualifier` name match, then parameter name match. Since Spring 4.3, a class with a single constructor does not require `@Autowired` — the single constructor is auto-detected as the injection point. The preferred pattern is constructor injection; field injection is discouraged in production code.
+`@Autowired` is a Spring annotation that marks a constructor, field, setter method, or arbitrary method as an injection point — instructing the container to resolve and inject a matching bean from the `ApplicationContext`. Resolution is primarily by type (`Class` matching), with `@Qualifier` used to narrow by bean name when multiple candidates of the same type exist. `@Autowired` injection is processed by `AutowiredAnnotationBeanPostProcessor` during Phase 2/4 of the bean lifecycle. From Spring 4.3 onward, a class with a single constructor does not need `@Autowired` on it — the framework infers constructor injection implicitly. The `required` attribute (default `true`) controls whether the container throws `NoSuchBeanDefinitionException` if no matching bean is found; `required = false` makes the dependency optional. For collections (`List<T>`, `Set<T>`, `Map<String, T>`), Spring injects all beans of the matching type. Constructor injection is the strongly recommended approach over field injection because it enables immutability (`final` fields), makes dependencies explicit, and supports testing without the Spring container.
 
 ---
 
 ### 🟢 Simple Definition (Easy)
 
-`@Autowired` tells Spring "fill this in for me." Put it on a constructor or field, and Spring finds the right bean and injects it automatically.
+`@Autowired` tells Spring: "find a bean in the container that matches this type and inject it here." You do not call `new` — Spring provides the object for you.
 
 ---
 
 ### 🔵 Simple Definition (Elaborated)
 
-Without `@Autowired`, you'd have to look up every dependency manually or wire them in XML. With it, you simply annotate your constructor (or field) and Spring does the lookup and injection. The container finds the right implementation, verifies it exists, checks for ambiguity (if two beans match the type, it looks for a qualifier or primary), and injects it at runtime. Since Spring 4.3, even the `@Autowired` annotation itself is optional on single-constructor classes — the presence of the constructor is enough. The annotation is a declaration of need: the container is responsible for fulfilling it.
+Without `@Autowired`, you would have to construct and wire all your objects manually. `@Autowired` is the signal to Spring that says "I need this dependency — you provide it." You can place it on a constructor (Spring creates the bean passing in the matching dependency), on a setter method (Spring calls the setter after constructing the bean), or on a field (Spring directly sets the field value via reflection). Constructor injection is preferred because it makes dependencies visible, enforces them at construction time (the object is never in an incomplete state), allows `final` fields (immutable dependencies), and works perfectly in tests without Spring. Field injection is short to write but has hidden dependencies — you cannot tell from the public API what a class needs, and testing requires reflection hacks or the Spring container.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**Resolution algorithm — how Spring picks the right bean:**
-
-When Spring encounters an `@Autowired` injection point, it follows this resolution chain:
-
-```
-┌─────────────────────────────────────────────────────┐
-│  @AUTOWIRED RESOLUTION ALGORITHM                    │
-│                                                     │
-│  1. Find all beans matching the declared TYPE       │
-│     (e.g. PaymentGateway.class)                    │
-│                                                     │
-│  2. If exactly one match → inject it               │
-│                                                     │
-│  3. If multiple matches:                            │
-│     a. Is one annotated @Primary? → use it         │
-│     b. Is @Qualifier present on injection point?   │
-│        → match by qualifier value (bean name)       │
-│     c. Does parameter name match a bean name?       │
-│        → use that bean                             │
-│     d. Still ambiguous?                            │
-│        → NoUniqueBeanDefinitionException           │
-│                                                     │
-│  4. If zero matches:                               │
-│     required=true (default) → NoSuchBeanDef…Exc   │
-│     required=false → leave null (setter/field)     │
-│     Optional<T> → inject Optional.empty()          │
-└─────────────────────────────────────────────────────┘
-```
-
-**Constructor injection is the recommended pattern from Spring 4.3:**
+**Three injection styles — with trade-offs:**
 
 ```java
-// Modern pattern: @Autowired not needed on single constructor
+// STYLE 1: Constructor injection ✅ RECOMMENDED
 @Service
-public class CheckoutService {
-  private final CartService cart;
-  private final PaymentGateway gateway;
-  private final OrderRepository orders;
+class OrderService {
+    private final OrderRepository repo;     // final → immutable
+    private final PaymentGateway gateway;   // final → immutable
 
-  // Single constructor → auto-detected, no @Autowired needed
-  public CheckoutService(CartService cart,
-                         PaymentGateway gateway,
-                         OrderRepository orders) {
-    this.cart    = Objects.requireNonNull(cart);
-    this.gateway = Objects.requireNonNull(gateway);
-    this.orders  = Objects.requireNonNull(orders);
-  }
+    // @Autowired optional in Spring 4.3+ for single constructor
+    @Autowired
+    OrderService(OrderRepository repo, PaymentGateway gateway) {
+        this.repo    = Objects.requireNonNull(repo,    "repo required");
+        this.gateway = Objects.requireNonNull(gateway, "gateway required");
+    }
+}
+// Pros: final fields, fail-fast null check, testable without Spring
+// Test: new OrderService(mockRepo, mockGateway) — no container needed
+
+
+// STYLE 2: Setter injection ⚠️ use for optional dependencies only
+@Service
+class ReportService {
+    private NotificationService notifier;
+
+    @Autowired(required = false)  // optional dep — app works without it
+    void setNotifier(NotificationService notifier) {
+        this.notifier = notifier;
+    }
+}
+// Cons: field is mutable, nullable, object can be constructed without dep
+
+
+// STYLE 3: Field injection ❌ avoid in production code
+@Service
+class UserService {
+    @Autowired  // Spring sets via reflection — bypasses encapsulation
+    private UserRepository repo;  // NOT final — mutable, no null check
+}
+// Cons: cannot test without Spring, hides dependencies, no final fields
+```
+
+**How `AutowiredAnnotationBeanPostProcessor` resolves the dependency:**
+
+```
+@Autowired UserRepository repo
+
+Resolution algorithm:
+  Step 1: Find all beans of type UserRepository in ApplicationContext
+    → Found: JpaUserRepository, CachedUserRepository  (2 candidates)
+
+  Step 2: Is there exactly ONE? No → proceed to disambiguation
+
+  Step 3: Is one marked @Primary? Yes → use it
+    Or: Does the field/param name match a bean name? Yes → use it
+
+  Step 4: Is @Qualifier present?
+    @Qualifier("cachedUserRepository") → use CachedUserRepository
+
+  Step 5: No disambiguation → throw NoUniqueBeanDefinitionException
+```
+
+**Injecting collections — all beans of a type:**
+
+```java
+@Service
+class NotificationService {
+    private final List<NotificationChannel> channels;
+
+    // Spring injects ALL beans implementing NotificationChannel
+    // in @Order / Ordered order
+    @Autowired
+    NotificationService(List<NotificationChannel> channels) {
+        this.channels = channels;
+    }
+
+    // Also works:
+    // Set<NotificationChannel> channels → unordered set of all instances
+    // Map<String, NotificationChannel> → beanName → bean mappings
 }
 ```
 
@@ -99,109 +131,79 @@ public class CheckoutService {
 
 ### ❓ Why Does This Exist (Why Before What)
 
-**WITHOUT @Autowired:**
+WITHOUT `@Autowired`:
 
-```
-Without @Autowired (pre-annotation Spring or manual):
+What breaks without it:
+1. Developers must manually construct and wire every dependency — `new OrderService(new JpaOrderRepository(new HikariDataSource(...)))` — brittle object graphs in code.
+2. No centralised control of dependency resolution — if `OrderRepository` implementation changes, every construction site must be updated.
+3. No support for injecting all implementations of an interface — building plugin systems is complex.
+4. Testing requires manually stubbing object graphs — no simple mock substitution.
 
-  Option A: XML wiring
-    <bean id="checkout" class="CheckoutService">
-      <constructor-arg ref="cartService"/>
-      <constructor-arg ref="paymentGateway"/>
-    </bean>
-    → XML diverges from code → hard to maintain
-    → Rename a class → update XML → runtime failures
-
-  Option B: Manual getBean()
-    CartService cart = ctx.getBean(CartService.class);
-    // Service Locator anti-pattern
-    // Hidden dependency — not visible in constructor
-    // Untestable without Spring context
-```
-
-**WITH @Autowired:**
-
-```
-→ Dependencies declared in constructor — visible, verifiable
-→ Container wires everything automatically — no XML
-→ Constructor injection: testable with plain new MyService(mock)
-→ Spring Boot: zero XML, zero manual wiring
-→ @Autowired(required=false): optional deps without NPE
-→ List<T> injection: all beans of that type injected together
-```
+WITH `@Autowired`:
+→ Dependencies declared; Spring resolves and injects — application code does not know which implementation class is used.
+→ Switching implementations requires only changing one `@Bean` definition or `@Primary` annotation.
+→ Collection injection enables strategy and plugin patterns with zero code changes when new implementations are added.
+→ Constructor injection makes test setup a simple `new ServiceClass(mockDep)` call.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> `@Autowired` is like a **purchase order** in a warehouse. You fill out a PO saying "I need 1× PaymentGateway, medium urgency." The warehouse manager (Spring container) checks the inventory, finds the right item, and delivers it to your workstation. You don't visit the warehouse yourself — you just fill in the form. If two items match your description, the manager asks you for more specifics (`@Qualifier`). If the item is out of stock, the manager either yells at you (`NoSuchBeanDefinitionException`) or leaves your desk empty (`required=false`).
+> Think of a hotel restaurant ordering system. `@Autowired` is like a kitchen station declaring: "I need a supplier for fresh tomatoes." The hotel procurement system (Spring container) looks at all registered suppliers (beans), finds the one that provides tomatoes (type match), and delivers them to the station. The kitchen station does not know which farm provides the tomatoes — it just uses them. If the hotel has two tomato suppliers, procurement asks the station to be more specific (add a `@Qualifier`). If the requirement is critical, procurement fails loudly if no supplier is found (`required = true`).
 
-"Purchase order" = @Autowired annotation
-"Warehouse manager" = Spring container
-"Inventory" = registered beans
-"Item description" = the declared interface/class type
-"Asking for specifics" = @Qualifier resolution
-"Out of stock" = NoSuchBeanDefinitionException
+"Kitchen station declaring a need" = `@Autowired` annotation
+"Procurement system" = `AutowiredAnnotationBeanPostProcessor`
+"Supplier match by product type" = bean resolution by type
+"Two suppliers → need clarification" = multiple beans → need `@Qualifier`
+"Required supply, no supplier" = `required = true` → `NoSuchBeanDefinitionException`
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**Three injection styles:**
+**AutowiredAnnotationBeanPostProcessor processing flow:**
 
-```java
-// 1. CONSTRUCTOR injection (preferred)
-@Service
-public class UserService {
-  private final UserRepository repo;
+```
+postProcessBeforeInitialization(bean, beanName):
+  1. Find all @Autowired / @Value injection points in bean class
+     (constructor, fields, setter methods)
 
-  // Spring 4.3+: @Autowired optional for single constructor
-  public UserService(UserRepository repo) {
-    this.repo = repo;
-  }
-}
+  2. For each injection point:
+     a. Determine required type (OrderRepository)
+     b. Resolve from BeanFactory:
+        - beanFactory.getBean(OrderRepository.class)  [by type]
+        - If multiple: check @Primary, then name match, then @Qualifier
+        - If still ambiguous: NoUniqueBeanDefinitionException
+        - If not found and required=true: NoSuchBeanDefinitionException
 
-// 2. SETTER injection (for optional dependencies)
-@Service
-public class NotificationService {
-  private MetricsRecorder metrics;
-
-  @Autowired(required = false) // optional
-  public void setMetrics(MetricsRecorder m) {
-    this.metrics = m;
-  }
-}
-
-// 3. FIELD injection (avoid in production)
-@Service
-public class OrderService {
-  @Autowired
-  private PaymentGateway gateway; // hidden dependency
-  // Cannot be final, cannot be tested without Spring
-}
+  3. Inject value:
+     - Field: Field.set(bean, resolvedValue)  [via reflection]
+     - Setter: method.invoke(bean, resolvedValue)
+     - Constructor: injected at construction time (Phase 1)
 ```
 
-**Special injection forms:**
+**Spring 4.3+ implicit constructor injection:**
 
 ```java
-// Inject ALL beans of a type
-@Autowired
-private List<MessageSender> senders;
-// Injects [EmailSender, SmsSender, PushSender]
+// Spring 4.3+: single constructor → @Autowired implied, no annotation needed
+@Service
+class ProductService {
+    private final ProductRepository repo;
 
-// Inject as a Map (key = bean name)
-@Autowired
-private Map<String, PaymentGateway> gateways;
-// {"stripeGateway": StripeGateway, "paypalGateway": ...}
+    // No @Autowired — Spring infers constructor injection automatically
+    ProductService(ProductRepository repo) {
+        this.repo = repo;
+    }
+}
 
-// Inject Optional for nullable dep
-@Autowired
-private Optional<FeatureFlagService> flagService;
-// Optional.empty() if no FeatureFlagService bean
+// Multiple constructors: must use @Autowired to designate the one to use
+@Service
+class LegacyService {
+    @Autowired  // tells Spring which constructor to use for DI
+    LegacyService(Repository repo, Validator validator) { ... }
 
-// Inject ObjectProvider for lazy/prototype deps
-@Autowired
-private ObjectProvider<ReportContext> contextProvider;
+    LegacyService(Repository repo) { ... }  // NOT used for injection
+}
 ```
 
 ---
@@ -209,97 +211,114 @@ private ObjectProvider<ReportContext> contextProvider;
 ### 🔄 How It Connects (Mini-Map)
 
 ```
-Bean registered in ApplicationContext
-        ↓
-  @AUTOWIRED (112)  ← you are here
-  (marks injection points in constructors/fields)
-        ↓
-  Resolved by:
-  AutowiredAnnotationBeanPostProcessor (a BPP)
-        ↓
-  Disambiguation via:
-  @Primary (113) — default candidate
-  @Qualifier (113) — name-based selection
-        ↓
-  Injection styles:
-  Constructor injection (preferred)
-  Setter (optional deps)
-  Field (avoid)
-  List<T>, Map<String,T>, Optional<T>
+DI (Dependency Injection)
+(the pattern — constructor, setter, interface)
+        │
+        ▼
+@Autowired  ◄──── (you are here)
+(Spring's annotation implementation of DI)
+        │
+        ├──── type-based resolution ──► multiple beans of same type
+        │                                        │
+        │                                        ▼
+        │                               @Qualifier / @Primary
+        │                               (disambiguation)
+        │
+        ├──── processed by ──────────► AutowiredAnnotationBeanPostProcessor
+        │
+        └──── circular dependency ───► Circular Dependency (potential issue)
+                                        (constructor injection detects early,
+                                         field injection may mask it)
 ```
 
 ---
 
 ### 💻 Code Example
 
-**Example 1 — Multiple implementations resolved by @Qualifier:**
+**Example 1 — Constructor injection with validation (production pattern):**
 
 ```java
-@Component("stripe")
-class StripeGateway implements PaymentGateway {
-  public Receipt charge(PaymentRequest r) { /* stripe */ }
-}
-
-@Component("paypal")
-class PayPalGateway implements PaymentGateway {
-  public Receipt charge(PaymentRequest r) { /* paypal */ }
-}
-
 @Service
-class CheckoutService {
-  private final PaymentGateway gateway;
+public class OrderService {
+    private final OrderRepository    orderRepo;
+    private final InventoryService   inventory;
+    private final PaymentGateway     payment;
 
-  // Qualifier disambiguates which bean to inject
-  public CheckoutService(
-      @Qualifier("stripe") PaymentGateway gateway) {
-    this.gateway = gateway;
-  }
+    // Spring 4.3+: no @Autowired annotation needed — single constructor
+    public OrderService(OrderRepository orderRepo,
+                        InventoryService inventory,
+                        PaymentGateway payment) {
+        this.orderRepo = Objects.requireNonNull(orderRepo,  "orderRepo is required");
+        this.inventory = Objects.requireNonNull(inventory,  "inventory is required");
+        this.payment   = Objects.requireNonNull(payment,    "payment is required");
+    }
+
+    // Test-friendly: new OrderService(mockRepo, mockInventory, mockPayment)
 }
 ```
 
-**Example 2 — Injecting all implementations for a notification fan-out:**
+**Example 2 — Injecting all strategy implementations:**
 
 ```java
-// All senders registered as beans
-@Component class EmailSender implements Notifier { ... }
-@Component class SmsSender   implements Notifier { ... }
-@Component class PushSender  implements Notifier { ... }
+public interface TaxStrategy {
+    BigDecimal calculate(Order order);
+    String region();
+}
+
+@Component class USTaxStrategy    implements TaxStrategy { ... }
+@Component class EUTaxStrategy    implements TaxStrategy { ... }
+@Component class UKTaxStrategy    implements TaxStrategy { ... }
 
 @Service
-class NotificationService {
-  private final List<Notifier> notifiers;
+class TaxService {
+    // Spring injects ALL three TaxStrategy beans automatically
+    private final Map<String, TaxStrategy> strategies;
 
-  // Spring injects ALL Notifier beans
-  public NotificationService(List<Notifier> notifiers) {
-    this.notifiers = notifiers;
-  }
+    // Map key = bean name; value = bean instance
+    @Autowired
+    TaxService(Map<String, TaxStrategy> strategies) {
+        this.strategies = strategies;
+    }
 
-  public void notify(User u, String msg) {
-    notifiers.forEach(n -> n.send(u, msg));
-  }
+    public BigDecimal calculate(Order order, String region) {
+        TaxStrategy strategy = strategies.get(region + "TaxStrategy");
+        if (strategy == null) throw new UnsupportedRegionException(region);
+        return strategy.calculate(order);
+    }
+    // Adding a new region: just add a new @Component implementing TaxStrategy
+    // No changes to TaxService — open/closed principle
 }
 ```
 
-**Example 3 — Unit test without Spring context:**
+**Example 3 — Optional dependency with @Autowired(required = false):**
 
 ```java
-// Constructor injection makes this trivially testable
-class CheckoutServiceTest {
-  CheckoutService service;
+@Service
+class EmailService {
+    private final EmailSender primarySender;
+    private EmailSender fallbackSender; // optional — app works without it
 
-  @BeforeEach
-  void setUp() {
-    PaymentGateway mockGw = mock(PaymentGateway.class);
-    service = new CheckoutService(mockGw); // plain Java!
-  }
+    EmailService(EmailSender primarySender) {
+        this.primarySender = primarySender;
+    }
 
-  @Test
-  void shouldChargeOnCheckout() {
-    service.checkout(testCart());
-    verify(mockGw).charge(any(PaymentRequest.class));
-  }
+    @Autowired(required = false) // no NoSuchBeanDefinitionException if absent
+    void setFallbackSender(EmailSender fallbackSender) {
+        this.fallbackSender = fallbackSender;
+    }
+
+    void send(Email email) {
+        try {
+            primarySender.send(email);
+        } catch (EmailException e) {
+            if (fallbackSender != null) {
+                fallbackSender.send(email);
+            } else {
+                throw e;
+            }
+        }
+    }
 }
-// No @SpringBootTest, no context startup, runs in <10ms
 ```
 
 ---
@@ -308,89 +327,87 @@ class CheckoutServiceTest {
 
 | Misconception | Reality |
 |---|---|
-| @Autowired is required on every constructor | Since Spring 4.3, a class with a single constructor does not need @Autowired — the constructor is auto-detected |
-| @Autowired injects by bean name by default | @Autowired injects by type first. The parameter name is used as a fallback bean-name hint only when multiple type matches exist |
-| Field injection and constructor injection behave the same | Field injection uses reflection, cannot be final, hides dependencies, breaks unit tests without Spring, and can produce null fields before injection completes |
-| @Autowired(required=false) on a constructor is safe | A required=false on a constructor means the entire constructor injection can be skipped — the bean will still be created via the no-arg constructor |
+| `@Autowired` is required on constructors in Spring Boot | Since Spring 4.3, a single constructor is automatically used for injection — no `@Autowired` annotation needed. The annotation is only required when there are multiple constructors |
+| Field injection and constructor injection behave identically | Field injection uses reflection to set private fields; constructor injection provides values via the constructor. They differ in testability (constructor injection needs no Spring for tests), immutability (field injection cannot use `final`), and circular dependency detection (constructor injection fails fast; field injection may succeed with a proxy workaround) |
+| `@Autowired` with `required = false` on a constructor means zero-arg construction | `required = false` means: if no matching bean is found, set the field to null (or skip setter call). A constructor with `required = false` on it is only valid on one of multiple constructors — it tells Spring which to prefer, not that the argument can be null |
+| Spring injects a new instance every time `@Autowired` is used | Spring injects from the container based on scope. For singleton-scoped beans (the default), the SAME instance is injected everywhere it is needed. A new instance is only created if the bean is prototype-scoped |
 
 ---
 
 ### 🔥 Pitfalls in Production
 
-**1. Ambiguous injection causing NoUniqueBeanDefinitionException**
+**Field injection breaks unit tests — hidden dependency problem**
 
 ```java
-// Two beans of same type — no @Primary, no @Qualifier
-@Component class MysqlRepo implements UserRepository {...}
-@Component class MongoRepo  implements UserRepository {...}
-
+// BAD: field injection — dependencies invisible, test requires Spring
 @Service
-class UserService {
-  // FAILS: NoUniqueBeanDefinitionException
-  public UserService(UserRepository repo) {...}
+class PricingService {
+    @Autowired private TaxService taxService;     // hidden dependency
+    @Autowired private DiscountService discount;  // hidden dependency
+
+    public BigDecimal price(Item item) {
+        return item.getBasePrice()
+                   .add(taxService.calculate(item))
+                   .subtract(discount.apply(item));
+    }
 }
 
-// FIX option 1: @Primary on preferred impl
-@Component @Primary
-class MysqlRepo implements UserRepository {...}
+// Unit test requires: SpringRunner, context, or reflection hacks:
+@SpringBootTest // loads full context — slow, brittle
+class PricingServiceTest { ... }
 
-// FIX option 2: @Qualifier on injection point
+// GOOD: constructor injection — dependencies explicit, test without Spring
 @Service
-class UserService {
-  public UserService(
-      @Qualifier("mysqlRepo") UserRepository repo) {...}
+class PricingService {
+    private final TaxService taxService;
+    private final DiscountService discount;
+
+    PricingService(TaxService taxService, DiscountService discount) {
+        this.taxService = taxService;
+        this.discount   = discount;
+    }
+}
+
+// Clean unit test — no Spring needed
+class PricingServiceTest {
+    PricingService svc = new PricingService(
+        new FakeTaxService(),    // simple test double
+        new FakeDiscountService()
+    );
+
+    @Test void calculatesCorrectly() { ... }
 }
 ```
 
-**2. Circular dependency via field injection — silent at runtime**
+---
+
+**Circular dependency via constructor injection — detected at startup (good), but signals design issue**
 
 ```java
-// BAD: circular field injection resolves silently (Spring uses proxy)
-@Service class A {
-  @Autowired B b;
+// Spring throws BeanCurrentlyInCreationException at startup
+@Service class ServiceA {
+    ServiceA(ServiceB b) { } // A needs B
 }
-@Service class B {
-  @Autowired A a;
+@Service class ServiceB {
+    ServiceB(ServiceA a) { } // B needs A — circular!
 }
-// Spring 6.x throws BeanCurrentlyInCreationException
-// Spring 5.x may silently resolve via early reference
-// → b.a may be the unproxied raw instance, not @Transactional proxy
+// Spring cannot construct A without B, cannot construct B without A
+// Constructor injection exposes this design flaw immediately
 
-// GOOD: constructor injection exposes the cycle at compile/startup:
-@Service class A {
-  public A(B b) {...} // FAILS at startup → must redesign
-}
-```
-
-**3. @Autowired on a static field — never works**
-
-```java
-// BAD: @Autowired on static field is ignored
-@Service
-class MyService {
-  @Autowired
-  private static UserRepository repo; // ALWAYS null!
-  // Spring injects instance fields, not static fields
-}
-
-// GOOD: use instance field or a @PostConstruct setter
-@Service
-class MyService {
-  @Autowired
-  private UserRepository repo; // instance field — works
-}
+// Wrong fix: switch to field injection (hides the circular dep)
+// Right fix: extract shared logic to a third ServiceC, or use an event
 ```
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Dependency Injection` — the pattern @Autowired enables: declare need, container provides
-- `@Qualifier` — resolves ambiguity when multiple beans match an injection point type
-- `@Primary` — marks a bean as the default when multiple type-matches exist
-- `Bean` — the object the container provides at the @Autowired injection point
-- `ApplicationContext` — the container that resolves and performs @Autowired injection
-- `AutowiredAnnotationBeanPostProcessor` — the BPP that processes @Autowired annotations
+- `DI (Dependency Injection)` — the principle that `@Autowired` implements in Spring
+- `@Qualifier / @Primary` — annotation pair used to disambiguate when multiple beans of the same type exist
+- `BeanPostProcessor` — specifically `AutowiredAnnotationBeanPostProcessor` which processes `@Autowired`
+- `Circular Dependency` — the problem that arises when beans with `@Autowired` have mutually dependent constructors
+- `Bean` — the container-managed object that `@Autowired` resolves and injects
+- `ApplicationContext` — the registry from which `@Autowired` candidates are resolved
 
 ---
 
@@ -398,21 +415,20 @@ class MyService {
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Marks injection point; container provides │
-│              │ matching bean by type, then qualifier     │
+│ RESOLUTION   │ By type → @Primary → name match →        │
+│ ORDER        │ @Qualifier → NoUniqueBeanDefinitionEx     │
 ├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Constructor injection (always preferred); │
-│              │ setter for optional; List<T> for all impls│
+│ INJECTION    │ ✅ Constructor — final fields, testable   │
+│ STYLES       │ ⚠️  Setter — optional deps only          │
+│              │ ❌ Field — avoid, hides deps              │
 ├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Field injection in production code;       │
-│              │ static fields (never injected by Spring)  │
+│ SPRING 4.3+  │ Single constructor: @Autowired not needed │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Fill out the PO —                        │
-│              │  Spring delivers to your workstation."    │
+│ OPTIONAL DEP │ @Autowired(required = false)              │
+│              │ or: Optional<T> / ObjectProvider<T>       │
 ├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ @Qualifier / @Primary (113) →             │
-│              │ @Configuration / @Bean (114) →            │
-│              │ Circular Dependency (115)                 │
+│ ONE-LINER    │ "@Autowired = tell Spring: 'I need this   │
+│              │  — you find it and deliver it.'"          │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -420,7 +436,6 @@ class MyService {
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** Spring resolves `@Autowired` injection points using `AutowiredAnnotationBeanPostProcessor`. This BPP runs during bean creation and processes each `@Autowired` field/constructor. However, when Spring's context is starting up and a bean has a circular dependency — A depends on B, B depends on A — Spring resolves it using "early bean references" (a half-initialised proxy). Trace exactly what A receives from B when the circle involves field injection vs constructor injection, and explain why constructor injection *correctly* throws `BeanCurrentlyInCreationException` while field injection *incorrectly* resolves silently.
+**Q1.** `@Autowired` resolves beans by type. If you have an interface `PaymentGateway` with three implementations — `StripeGateway` (`@Primary`), `PayPalGateway` (`@Profile("paypal")`), and `MockGateway` (`@Profile("test")`) — describe the full resolution sequence for: (a) a production environment where only `StripeGateway` is active, (b) a test environment where `MockGateway` is active and `@Primary` on `StripeGateway` is also present but `StripeGateway` is NOT profile-gated, and (c) a missing `@Qualifier` situation where BOTH `StripeGateway` (primary) and `PayPalGateway` (non-primary) are active. Explain which exception is thrown, when, and by which component.
 
-**Q2.** Spring Boot's `@SpringBootTest` with `@MockBean` replaces a real bean with a Mockito mock. Internally, `@MockBean` is processed by `MockitoPostProcessor` — a `BeanFactoryPostProcessor` — that registers the mock as a BeanDefinition before context startup. Explain why this must happen at the BFPP phase rather than the BPP phase, how the mock's BeanDefinition replaces the real bean's definition without affecting the bean's injection points in other beans, and what happens to all the beans that were already injected with the real bean before the mock was registered (hint: they're not yet created).
-
+**Q2.** When Spring processes `@Autowired` on a `List<SecurityFilter>` injection point, it injects all beans implementing `SecurityFilter` in registration order. However, `SecurityFilter` implementations need to run in a specific order (authentication before authorisation before rate-limiting). Describe three separate mechanisms Spring provides to control the order of beans in an `@Autowired` collection (`@Order`, `Ordered` interface, `PriorityOrdered`), explain which one takes precedence when multiple mechanisms are combined on the same bean, and identify the edge case where `@Order` on the bean class is ignored in favour of `@Order` on the `@Bean` factory method.

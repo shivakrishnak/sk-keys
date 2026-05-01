@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "BeanPostProcessor"
 parent: "Spring Core"
@@ -7,218 +7,171 @@ permalink: /spring/beanpostprocessor/
 number: "378"
 category: Spring Core
 difficulty: ★★★
-depends_on: Bean Lifecycle, ApplicationContext, AOP Proxy, CGLIB
-used_by: Spring AOP, @Transactional, @Async, @Cacheable, Spring Security
-tags: #java, #spring, #internals, #advanced, #deep-dive
+depends_on: Bean Lifecycle, Bean, ApplicationContext
+used_by: AOP, @Transactional, @Autowired, Bean Lifecycle
+tags: #advanced, #spring, #internals, #deep-dive
 ---
 
 # 378 — BeanPostProcessor
 
-`#java` `#spring` `#internals` `#advanced` `#deep-dive`
+`#advanced` `#spring` `#internals` `#deep-dive`
 
-⚡ TL;DR — A Spring extension interface that intercepts every bean at two points in its lifecycle — before and after initialisation — enabling annotation processing, proxying, and instrumentation.
+⚡ TL;DR — A **BeanPostProcessor** is a Spring extension point that intercepts every bean after instantiation — allowing you to inspect, wrap, or replace it before and after its initialisation method runs. AOP proxy creation is implemented as a BeanPostProcessor.
 
-| #378 | category: Spring Core
-|:---|:---|:---|
-| **Depends on:** | Bean Lifecycle, ApplicationContext, AOP Proxy, CGLIB | |
-| **Used by:** | Spring AOP, @Transactional, @Async, @Cacheable, Spring Security | |
+| #378            | Category: Spring Core                           | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------- | :-------------- |
+| **Depends on:** | Bean Lifecycle, Bean, ApplicationContext        |                 |
+| **Used by:**    | AOP, @Transactional, @Autowired, Bean Lifecycle |                 |
 
 ---
 
 ### 📘 Textbook Definition
 
-`BeanPostProcessor` is a Spring extension interface with two callback methods: `postProcessBeforeInitialization(bean, beanName)` — called after dependency injection but before `@PostConstruct` / `afterPropertiesSet()` — and `postProcessAfterInitialization(bean, beanName)` — called after all initialisation callbacks complete. Implementations can inspect, modify, or replace (wrap in a proxy) any bean. `BeanPostProcessor` beans are created before all other beans, in a special early phase of the ApplicationContext startup. Spring's most critical features — `@Transactional`, `@Async`, `@Cacheable`, `@Scheduled`, Spring Security method security — all work via `BeanPostProcessor` implementations that create CGLIB or JDK proxies in `postProcessAfterInitialization`.
+A **BeanPostProcessor** is a Spring container extension point that operates on _bean instances_ after they are created. It defines two callback methods: `postProcessBeforeInitialization(Object bean, String beanName)` — called after dependency injection but before the init method (`@PostConstruct` / `InitializingBean.afterPropertiesSet()`), and `postProcessAfterInitialization(Object bean, String beanName)` — called after the init method. Any registered `BeanPostProcessor` is called for every bean in the container. BeanPostProcessors can return the original bean, a modified bean, or a completely different object (typically an AOP proxy). The entire `@Autowired` processing, `@PostConstruct` / `@PreDestroy` processing, and AOP proxy creation in Spring are all implemented as `BeanPostProcessor` implementations: `AutowiredAnnotationBeanPostProcessor`, `CommonAnnotationBeanPostProcessor`, and `AnnotationAwareAspectJAutoProxyCreator` respectively. BeanPostProcessors are distinct from `BeanFactoryPostProcessor` (which operates on bean _definitions_, not instances).
 
 ---
 
 ### 🟢 Simple Definition (Easy)
 
-A BeanPostProcessor is a "before and after" hook that fires for every bean Spring creates. Before: inspect or modify it. After: wrap it in a proxy. This is how Spring wires in transactions, caching, and security without you writing any proxy code.
+A BeanPostProcessor is a plugin you write that Spring calls on every bean it creates, letting you inspect or modify beans right after they are built — before and after their setup methods run.
 
 ---
 
 ### 🔵 Simple Definition (Elaborated)
 
-Think of `BeanPostProcessor` as Spring's plugin mechanism for the bean lifecycle. Every time Spring creates a bean — any bean in your application — it runs every registered `BeanPostProcessor` against it. If the processor detects its annotation (e.g. `@Transactional`), it replaces the original bean with a CGLIB proxy. The proxy intercepts every method call, applies the cross-cutting behaviour (open a transaction, check security, hit cache), and delegates to the original bean. None of this requires any changes in your application code — the processor wires it all behind the scenes.
+Imagine Spring creates 300 beans at startup. For each one, before it is handed to the application, Spring runs every registered BeanPostProcessor against it. The processor receives the bean instance and its name and can: do nothing and return it unchanged, add behaviour (wrap it in a proxy that adds logging), or replace it entirely with a different object. This is the mechanism Spring itself uses internally for almost everything important: `@Autowired` injection, `@PostConstruct` callback processing, AOP proxy creation for `@Transactional`, and validation annotations. You can write your own BeanPostProcessor to implement cross-cutting concerns without modifying any bean class — for example, automatically adding metrics to all services that implement a certain interface.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**The problem — cross-cutting concerns require boilerplate:**
-
-Without AOP or proxying, every service method that needs a transaction must manually:
+**The interface:**
 
 ```java
-// Manual transaction management — repeated everywhere
-public Receipt chargeCustomer(Order order) {
-  TransactionStatus tx = tm.getTransaction(new DefaultTransactionDef());
-  try {
-    Receipt r = gateway.charge(order);
-    auditRepo.save(new AuditEntry(order, r));
-    tm.commit(tx);
-    return r;
-  } catch (Exception e) {
-    tm.rollback(tx);
-    throw e;
-  }
+public interface BeanPostProcessor {
+    // Called AFTER injection, BEFORE init method (@PostConstruct)
+    @Nullable
+    default Object postProcessBeforeInitialization(Object bean, String beanName)
+            throws BeansException {
+        return bean; // return the bean unchanged (default)
+    }
+
+    // Called AFTER init method — AOP proxy creation happens here
+    @Nullable
+    default Object postProcessAfterInitialization(Object bean, String beanName)
+            throws BeansException {
+        return bean; // return the bean (or a proxy)
+    }
 }
 ```
 
-Multiply by 50 service methods. Now add security checks, caching, retry logic, metrics recording. The business logic drowns in boilerplate.
-
-**BeanPostProcessor solves this by intercepting at creation time:**
+**The full lifecycle showing exactly where BeanPostProcessor fits:**
 
 ```
-┌────────────────────────────────────────────────────────┐
-│  BPP EXECUTION MODEL (postProcessAfterInitialization)  │
-│                                                        │
-│  For each bean in the context:                         │
-│    inspect bean for @Transactional annotation          │
-│    if found:                                           │
-│      create CGLIB subclass proxy                       │
-│      proxy intercepts ALL method calls                 │
-│      proxy opens/commits/rolls back transactions       │
-│      proxy delegates to original bean                  │
-│    replace bean in context with proxy                  │
-│    return proxy                                        │
-│                                                        │
-│  Application code calls proxy → gets transaction       │
-│  Application code has zero transaction boilerplate     │
-└────────────────────────────────────────────────────────┘
+ construct → inject deps → Aware callbacks
+      ↓
+ [ ALL BPPs ] postProcessBeforeInitialization()
+      ↓
+ @PostConstruct / afterPropertiesSet()  ← init method
+      ↓
+ [ ALL BPPs ] postProcessAfterInitialization()  ← proxy created here
+      ↓
+ Bean is READY (may be the proxy, not the original object)
+```
+
+**Spring's built-in BeanPostProcessors — what they do:**
+
+```
+AutowiredAnnotationBeanPostProcessor
+  → Processes @Autowired, @Value, @Inject annotations
+  → Called in postProcessBeforeInitialization
+  → Injects dependencies into @Autowired fields
+
+CommonAnnotationBeanPostProcessor
+  → Processes @PostConstruct, @PreDestroy, @Resource
+  → Calls @PostConstruct methods in postProcessBeforeInitialization
+  → Registers @PreDestroy for later execution
+
+AnnotationAwareAspectJAutoProxyCreator  ← the most important one
+  → Processes @Transactional, @Cacheable, @Async, @Aspect
+  → Called in postProcessAfterInitialization
+  → Wraps bean in CGLIB or JDK proxy if any advice applies
+  → Returns the PROXY — the original bean is stored inside it
 ```
 
 ---
 
 ### ❓ Why Does This Exist (Why Before What)
 
-**WITHOUT BeanPostProcessor:**
+WITHOUT BeanPostProcessor:
 
-```
-Without BPP extension point:
+What breaks without it:
 
-  @Transactional is just metadata — nothing acts on it
-  @Cacheable is just metadata — no caching happens
-  @Async is just metadata — no thread pool used
-  Spring Security @Secured — no security check applied
+1. No way to apply cross-cutting behaviour to beans without modifying each bean class.
+2. `@Autowired`, `@PostConstruct`, `@PreDestroy` would have to be hardcoded into the container — no pluggability.
+3. AOP proxy creation would require compile-time weaving or special inheritance — no runtime proxy transparency.
+4. Framework extensions (Hibernate validation, Spring Security method security) could not hook into the bean lifecycle.
 
-  Every cross-cutting concern must be implemented
-  manually in every class that needs it:
-  → Transaction: 30 lines of boilerplate per method
-  → Security: manual SecurityContextHolder checks
-  → Caching: manual Map.computeIfAbsent calls
-
-  No way to instrument beans post-creation
-  without changing the bean's source code
-```
-
-**WITH BeanPostProcessor:**
-
-```
-→ @Transactional: add annotation, get transactions
-→ @Cacheable: add annotation, get caching
-→ @Async: add annotation, get async execution
-→ @Secured: add annotation, get security checks
-
-Spring's built-in BPPs:
-  AutowiredAnnotationBPP → processes @Autowired
-  CommonAnnotationBPP    → processes @PostConstruct
-  AbstractAutoProxyCreator → creates AOP proxies
-  ScheduledAnnotationBPP → registers @Scheduled tasks
-  PersistenceAnnotationBPP → injects @PersistenceContext
-```
+WITH BeanPostProcessor:
+→ All annotation processing is delegated to pluggable processors — Spring's own code uses the same extension point you use.
+→ AOP proxies are created transparently at the right lifecycle phase (after init, before ready).
+→ Third-party frameworks can register BeanPostProcessors to instrument beans without Spring code changes.
+→ The factory is open for extension, closed for modification.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> A `BeanPostProcessor` is like a **customs inspection checkpoint** that every person (bean) must pass through when arriving in a country. Before inspection: you verify the person's identity (pre-init customisation). After inspection: you stamp their passport and optionally give them a special jacket (proxy) that lets them transact in the country's economy (transaction management), access restricted areas (security), or move through fast lanes (caching). The person never knows they're wearing a special jacket — but the country's systems do.
+> Think of an assembly line quality-control checkpoint. Each product (bean) rolls off the manufacturing line. Before it is packaged (before init), quality control inspectors (BeanPostProcessors) check it and can add features or corrections. After final assembly (after init), a second set of inspectors can wrap it in protective packaging (AOP proxy) before shipping it to customers (the application). Every single product goes through every checkpoint — no bean escapes BeanPostProcessor processing.
 
-"Person arriving" = bean being created
-"Before inspection" = postProcessBeforeInitialization
-"After inspection" = postProcessAfterInitialization
-"Special jacket" = AOP proxy created by BPP
-"Country's systems recognising the jacket" = proxy intercepting method calls
+"Quality-control checkpoint before packaging" = `postProcessBeforeInitialization`
+"Second inspector wrapping in packaging" = `postProcessAfterInitialization` (AOP proxy)
+"Protective packaging" = the AOP proxy that wraps the real bean
+"Every product goes through every checkpoint" = all registered BPPs run for every bean
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**The interface:**
-
-```java
-public interface BeanPostProcessor {
-  // Called BEFORE init callbacks (@PostConstruct, afterPropertiesSet)
-  // Return: modified bean or null (= use original)
-  default Object postProcessBeforeInitialization(
-      Object bean, String beanName) {
-    return bean; // default: pass through unchanged
-  }
-
-  // Called AFTER all init callbacks complete
-  // Return: modified bean — THIS is where proxies are created
-  default Object postProcessAfterInitialization(
-      Object bean, String beanName) {
-    return bean; // default: pass through unchanged
-  }
-}
-```
-
-**BPP creation order — the special early phase:**
+**How Spring manages BeanPostProcessor ordering:**
 
 ```
-┌─────────────────────────────────────────────────────┐
-│  BPP INSTANTIATION ORDER (startup)                  │
-│                                                     │
-│  1. BeanFactoryPostProcessors run first             │
-│     (modify bean DEFINITIONS, not instances)        │
-│                                                     │
-│  2. BeanPostProcessors instantiated NEXT            │
-│     (before any regular beans)                      │
-│     Reason: BPPs must exist BEFORE beans are created│
-│     so they can intercept creation                  │
-│                                                     │
-│  3. All other singleton beans created               │
-│     Each passes through ALL registered BPPs         │
-│                                                     │
-│  Consequence: beans required by a BPP are created   │
-│  EARLY, outside normal BPP processing → may miss   │
-│  annotations like @Transactional (BPP ordering bug) │
-└─────────────────────────────────────────────────────┘
+BeanPostProcessors implement PriorityOrdered or Ordered or neither:
+  PriorityOrdered BPPs  → registered and run first
+    (AutowiredAnnotationBPP, CommonAnnotationBPP)
+  Ordered BPPs          → registered and run second
+  Unordered BPPs        → registered and run last
+    (custom BPPs without Ordered)
+
+Critical invariant:
+  BeanPostProcessors are instantiated BEFORE regular beans.
+  This means: beans that BeanPostProcessors depend on are
+  instantiated early — BEFORE @Transactional wrapping.
+  A bean used by a BPP will NOT have its AOP proxy created
+  in time → beans like this should not use @Transactional.
 ```
 
-**Writing a custom BeanPostProcessor:**
+**What happens when `postProcessAfterInitialization` returns a proxy:**
 
-```java
-@Component
-public class LoggingBeanPostProcessor
-    implements BeanPostProcessor {
+```
+Before BPP.postProcessAfterInitialization:
+  ApplicationContext registry: "orderService" → OrderService@123 (raw bean)
 
-  @Override
-  public Object postProcessBeforeInitialization(
-      Object bean, String name) {
-    if (bean.getClass().isAnnotationPresent(Audit.class)) {
-      log.debug("Initialising audited bean: {}", name);
-    }
-    return bean; // unchanged
-  }
+BPP (AnnotationAwareAspectJAutoProxyCreator) runs:
+  OrderService has @Transactional methods?  YES
+  → Create CGLIB subclass proxy wrapping OrderService@123
+  → Proxy intercepts method calls, applies TransactionInterceptor
+  → Return proxy OrderServiceProxy@456
 
-  @Override
-  public Object postProcessAfterInitialization(
-      Object bean, String name) {
-    if (bean.getClass().isAnnotationPresent(Audit.class)) {
-      // Return a proxy that logs every method call
-      return Proxy.newProxyInstance(
-          bean.getClass().getClassLoader(),
-          bean.getClass().getInterfaces(),
-          (proxy, method, args) -> {
-            log.info("Calling {}.{}", name, method.getName());
-            return method.invoke(bean, args);
-          });
-    }
-    return bean;
-  }
-}
+After BPP.postProcessAfterInitialization:
+  ApplicationContext registry: "orderService" → OrderServiceProxy@456 (proxy)
+  OrderService@123 is stored INSIDE the proxy, not in the context
+
+When code injects OrderService:
+  Gets OrderServiceProxy@456 — proxy is transparent (same interface)
+  Calls proxy.createOrder() → TransactionInterceptor begins transaction
+                            → delegates to OrderService@123.createOrder()
+                            → TransactionInterceptor commits/rolls back
 ```
 
 ---
@@ -226,161 +179,201 @@ public class LoggingBeanPostProcessor
 ### 🔄 How It Connects (Mini-Map)
 
 ```
-Bean created (constructor + injection)
-        ↓
-  BPP.postProcessBeforeInitialization
-  (CommonAnnotationBPP → @PostConstruct prep)
-        ↓
-  @PostConstruct / afterPropertiesSet()
-        ↓
-  BPP.postProcessAfterInitialization  ← you are here
-  (AbstractAutoProxyCreator runs here)
-        ↓
-  AOP PROXY created if @Transactional/@Async/@Cacheable
-        ↓
-  Proxy replaces original in context
-        ↓
-  Used by: @Transactional (127), @Async,
-           @Cacheable, Spring Security
+Bean Lifecycle (phases 4 and 6)
+        │
+        ▼
+BeanPostProcessor  ◄──── (you are here)
+(instance-level hooks: before and after init)
+        │
+        ├──── postProcessBeforeInit ──► @Autowired injection
+        │                               @PostConstruct processing
+        │
+        └──── postProcessAfterInit  ──► AOP Proxy creation
+                                        (@Transactional, @Cacheable, @Async)
+                                                │
+                                                ▼
+                                        CGLIB Proxy / JDK Dynamic Proxy
+                                        (the proxy returned to application)
+        │
+        ▼
+BeanFactoryPostProcessor
+(different hook — operates on BeanDefinitions, not instances)
 ```
 
 ---
 
 ### 💻 Code Example
 
-**Example 1 — Spring's AbstractAutoProxyCreator in action:**
-
-```java
-// Your service
-@Service
-@Transactional  // detected by AbstractAutoProxyCreator BPP
-public class OrderService {
-  public Order place(OrderRequest req) {
-    // business logic
-    return orderRepo.save(Order.from(req));
-  }
-}
-
-// After BPP processing — what's actually in the context:
-OrderService bean = ctx.getBean(OrderService.class);
-bean.getClass().getName();
-// → "com.example.OrderService$$SpringCGLIB$$0" (proxy!)
-
-// Proxy intercepts place() call:
-// 1. Opens transaction
-// 2. Calls original OrderService.place(req)
-// 3. Commits on success / rolls back on exception
-```
-
-**Example 2 — BPP ordering problem (classic pitfall):**
+**Example 1 — Custom BeanPostProcessor that logs all bean types:**
 
 ```java
 @Component
-public class MyBeanPostProcessor implements BeanPostProcessor {
-  @Autowired
-  AuditService auditService; // regular @Service bean
+public class BeanAuditPostProcessor implements BeanPostProcessor {
 
-  // PROBLEM: auditService is created EARLY to satisfy
-  // BPP creation → auditService created before
-  // AbstractAutoProxyCreator runs → auditService has
-  // NO @Transactional proxy!
-}
-// Spring logs: BeanPostProcessorChecker WARNING
-// "AuditService is not eligible for getting processed
-//  by all BeanPostProcessors"
+    private static final Logger log = LoggerFactory.getLogger(BeanAuditPostProcessor.class);
 
-// FIX: BPP should not @Autowired regular beans directly
-// Use ApplicationContext.getBean() lazily if needed:
-@Override
-public Object postProcessAfterInitialization(
-    Object bean, String name) {
-  AuditService svc = beanFactory.getBean(AuditService.class);
-  // resolved lazily — fully proxied at this point
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName)
+            throws BeansException {
+        log.debug("BEFORE INIT: bean '{}' of type {}", beanName, bean.getClass().getSimpleName());
+        return bean; // return unchanged
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName)
+            throws BeansException {
+        log.debug("AFTER INIT: bean '{}' final type {} (may be proxy)",
+                beanName, bean.getClass().getSimpleName());
+        return bean; // return unchanged
+    }
 }
+```
+
+**Example 2 — BeanPostProcessor that wraps services with timing metrics:**
+
+```java
+@Component
+public class TimingProxyPostProcessor implements BeanPostProcessor {
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName)
+            throws BeansException {
+        // Only wrap beans that implement our Monitored marker interface
+        if (!(bean instanceof Monitored)) {
+            return bean; // pass through unchanged
+        }
+
+        return Proxy.newProxyInstance(
+            bean.getClass().getClassLoader(),
+            bean.getClass().getInterfaces(),
+            (proxy, method, args) -> {
+                long start = System.nanoTime();
+                try {
+                    return method.invoke(bean, args);
+                } finally {
+                    long elapsed = System.nanoTime() - start;
+                    Metrics.timer("service." + beanName + "." + method.getName())
+                           .record(elapsed, TimeUnit.NANOSECONDS);
+                }
+            }
+        );
+    }
+}
+```
+
+**Example 3 — InstantiationAwareBeanPostProcessor (advanced — intercepts before construction):**
+
+```java
+@Component
+public class ConditionalBeanPostProcessor
+        implements InstantiationAwareBeanPostProcessor {
+
+    @Override
+    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName)
+            throws BeansException {
+        // Return non-null to short-circuit default instantiation
+        // (WARNING: skips DI, @PostConstruct, etc. — advanced use only)
+        if (beanClass.isAnnotationPresent(MockInTests.class) && isTestContext()) {
+            return Mockito.mock(beanClass); // replace real bean with mock
+        }
+        return null; // proceed with normal instantiation
+    }
+}
+```
+
+---
+
+### 🔁 Flow / Lifecycle
+
+**BeanPostProcessor registration and execution flow:**
+
+```
+APPLICATION CONTEXT REFRESH
+           │
+           ▼
+  1. Register BeanPostProcessors FIRST
+     (PriorityOrdered → Ordered → rest)
+           │
+           ▼
+  2. For each regular bean:
+     a. Instantiate (constructor)
+     b. Inject dependencies
+     c. Run Aware callbacks
+           │
+           ▼
+  3. For each registered BPP in order:
+     → BPP.postProcessBeforeInitialization(bean, name)
+           │
+           ▼
+  4. Run init method (@PostConstruct / afterPropertiesSet)
+           │
+           ▼
+  5. For each registered BPP in order:
+     → BPP.postProcessAfterInitialization(bean, name)
+     ← returns: original bean OR proxy
+           │
+           ▼
+  6. Store result in ApplicationContext
+     (may be proxy, not original bean)
 ```
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| BeanPostProcessor runs once at startup | It runs for every singleton bean created — once per bean during context initialisation |
-| You can use @Transactional on a BeanPostProcessor | BPPs are created before the AOP infrastructure that implements @Transactional. The annotation is present but the proxy may not be applied |
-| BPP only runs for beans with certain annotations | BPP fires for ALL beans — it is up to the implementation to check the bean type/annotations and decide whether to act |
-| Returning null from a BPP method is safe | Returning null from postProcessBeforeInitialization is treated as null in the chain — the next BPP receives null. Always return the bean (or your replacement) |
+| Misconception                                                                  | Reality                                                                                                                                                                                                                                                                               |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BeanPostProcessor only runs on custom beans                                    | BPPs run on EVERY bean in the context — including Spring's own infrastructure beans (unless specifically excluded). This is why the order of BPP registration matters                                                                                                                 |
+| BeanPostProcessor and BeanFactoryPostProcessor are the same thing              | BeanPostProcessor runs on bean INSTANCES after creation (phases 4 and 6 of lifecycle). BeanFactoryPostProcessor runs on bean DEFINITIONS before any beans are created — completely different phase and purpose                                                                        |
+| If a BeanPostProcessor replaces a bean with a proxy, the original bean is gone | The original bean instance is NOT discarded — it is stored inside the proxy as the "target." The proxy delegates all method calls to it. AOP advice wraps around the target, it does not replace it                                                                                   |
+| You can safely inject regular beans into a BeanPostProcessor                   | BeanPostProcessors are instantiated very early, before the main bean lifecycle. Beans they depend on skip the normal proxy-creation phase, so injected beans may not have `@Transactional` or other AOP advice applied. Use `@Lazy` injection or `ObjectProvider` to defer resolution |
 
 ---
 
 ### 🔥 Pitfalls in Production
 
-**1. BPP dependency on regular bean — proxy not applied**
+**BeanPostProcessor that depends on a `@Transactional` bean — proxy not applied**
 
 ```java
-// BAD: CachingBPP depends on MetricsService
-// → MetricsService created before AOP proxies → no @Transactional
+// BAD: BPP injects a regular service bean
 @Component
-public class CachingBPP implements BeanPostProcessor {
-  @Autowired MetricsService metrics; // created too early!
+class SecurityBeanPostProcessor implements BeanPostProcessor {
+    @Autowired
+    AuditService auditService; // instantiated early, BEFORE AnnotationAwareAspectJAutoProxyCreator
+    // auditService will NOT have @Transactional proxy applied!
+    // Spring logs a warning: "AuditService is not eligible for proxy creation"
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) {
+        auditService.logBeanCreation(beanName); // runs without transaction
+        return bean;
+    }
 }
 
-// GOOD: retrieve lazily from BeanFactory after startup
+// GOOD: use @Lazy or ObjectProvider to defer auditService resolution
 @Component
-public class CachingBPP
-    implements BeanPostProcessor, BeanFactoryAware {
-  private BeanFactory beanFactory;
+class SecurityBeanPostProcessor implements BeanPostProcessor {
+    @Autowired
+    ObjectProvider<AuditService> auditServiceProvider; // deferred resolution
 
-  @Override
-  public void setBeanFactory(BeanFactory bf) {
-    this.beanFactory = bf;
-  }
-
-  @Override
-  public Object postProcessAfterInitialization(
-      Object bean, String name) {
-    // Lazy get — MetricsService fully proxied by now
-    MetricsService m = beanFactory.getBean(MetricsService.class);
-    // ...
-    return bean;
-  }
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) {
+        auditServiceProvider.ifAvailable(svc -> svc.logBeanCreation(beanName));
+        return bean;
+    }
 }
-```
-
-**2. Returning wrong type from BPP breaks injection**
-
-```java
-// BAD: wrapping changes the interface, breaks @Autowired
-@Override
-public Object postProcessAfterInitialization(
-    Object bean, String name) {
-  if (bean instanceof UserService) {
-    // Returns Object proxy without UserService interface
-    return Proxy.newProxyInstance(
-        bean.getClass().getClassLoader(),
-        new Class[]{},  // empty interfaces! breaks injection
-        handler);
-  }
-  return bean;
-}
-// @Autowired UserService — NoSuchBeanDefinitionException
-
-// GOOD: preserve the interfaces
-return Proxy.newProxyInstance(
-    bean.getClass().getClassLoader(),
-    bean.getClass().getInterfaces(), // preserve all
-    handler);
 ```
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Bean Lifecycle` — BPP fires at steps 6 and 10 of the lifecycle (before and after init callbacks)
-- `Spring AOP` — implemented via AbstractAutoProxyCreator, a BeanPostProcessor subclass
-- `@Transactional` — enabled by AnnotationTransactionAttributeSource + BPP proxy creation
-- `CGLIB Proxy` — the proxy type created by BPP for class-based (non-interface) beans
-- `BeanFactoryPostProcessor` — sibling that modifies bean DEFINITIONS before beans are created
-- `ApplicationContext` — auto-discovers and registers BPPs from the context
+- `Bean Lifecycle` — defines the phases where BeanPostProcessor callbacks are invoked (phases 4 and 6)
+- `BeanFactoryPostProcessor` — sibling concept; operates on bean definitions before instance creation
+- `AOP (Aspect-Oriented Programming)` — implemented via BeanPostProcessor; proxies created in `postProcessAfterInitialization`
+- `CGLIB Proxy` — the proxy type used by `AnnotationAwareAspectJAutoProxyCreator` for class-based proxying
+- `@Autowired` — processed by `AutowiredAnnotationBeanPostProcessor` in `postProcessBeforeInitialization`
+- `@PostConstruct` — processed by `CommonAnnotationBeanPostProcessor` in `postProcessBeforeInitialization`
 
 ---
 
@@ -388,21 +381,22 @@ return Proxy.newProxyInstance(
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Intercepts every bean before/after init;  │
-│              │ can replace bean with proxy — all AOP uses │
-│              │ this mechanism                            │
+│ INTERFACE    │ postProcessBeforeInitialization()         │
+│              │ postProcessAfterInitialization()          │
 ├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Applying cross-cutting behaviour via      │
-│              │ annotation scanning; custom proxying      │
+│ TIMING       │ Before: after inject, before @PostConstruct│
+│              │ After:  after @PostConstruct — AOP proxy  │
 ├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Injecting regular beans into BPP — BPP-  │
-│              │ dependent beans won't be fully proxied    │
+│ BUILT-IN BPPs│ AutowiredAnnotationBPP → @Autowired       │
+│              │ CommonAnnotationBPP    → @PostConstruct   │
+│              │ AspectJAutoProxyCreator→ AOP proxies      │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "BPP is the assembly line inspector —     │
-│              │  every bean passes through its hands."    │
+│ KEY RISK     │ BPP dependencies instantiated early —     │
+│              │ their @Transactional proxy not applied    │
 ├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ BeanFactoryPostProcessor (111) →          │
-│              │ Spring AOP (118) → @Transactional (127)   │
+│ ONE-LINER    │ "BeanPostProcessor = QC inspector:        │
+│              │ every bean passes through every inspector  │
+│              │ before going to production."              │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -410,7 +404,6 @@ return Proxy.newProxyInstance(
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** `AbstractAutoProxyCreator` uses a `Map<Object, Boolean>` called `advisedBeans` to track which beans have been processed to avoid double-proxying. If a `BeanPostProcessor` chains with `AbstractAutoProxyCreator` — that is, your custom BPP also wraps beans in a proxy — explain the specific scenario where two layers of CGLIB proxies are created, whether Spring detects and prevents this, and what `AopProxyUtils.ultimateTargetClass()` returns in each case.
+**Q1.** You write a `BeanPostProcessor` that returns a JDK dynamic proxy from `postProcessAfterInitialization` for all beans implementing `Service`. Later, another `@Aspect` in the application also wants to apply advice to those same beans. Explain the interaction: what does `AnnotationAwareAspectJAutoProxyCreator` see when it processes a bean that your BPP already replaced with a JDK proxy? Will the Aspect's advice be applied to the original bean or the JDK proxy? Does the order of BPP registration matter? And what is the risk of double-proxying?
 
-**Q2.** Spring Boot Actuator's `/actuator/beans` endpoint lists all beans in the ApplicationContext with their types. When a `@Transactional` bean is listed, it shows the CGLIB proxy class, not the original. Write the exact code you would use in a diagnostic `BeanPostProcessor` to record the mapping of original class → proxy class for all proxied beans at startup, and explain why comparing `bean.getClass()` against `AopUtils.getTargetClass(bean)` is the reliable detection method rather than instanceof checks.
-
+**Q2.** `SmartInstantiationAwareBeanPostProcessor.predictBeanType()` is called by Spring to resolve circular dependency candidate types before full instantiation. Explain the specific circular dependency scenario where this method is critical: if Bean A (a singleton) depends on Bean B (which has `@Transactional`), and Bean B depends on Bean A, describe the exact order of events Spring uses to resolve this circular dependency using the "early exposure" mechanism (`ObjectFactory` in the `singletonFactories` map), explain why this early-exposed reference is the RAW bean (not the proxy), and identify the risk this creates for the `@Transactional` proxy on Bean B when it is injected into Bean A.
