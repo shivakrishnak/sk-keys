@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Blocking I/O suspends the calling thread until the operation completes — simple to write, but ties up a thread waiting for every read or write.
 
-| #0104 | Category: Operating Systems | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | System Call (syscall), Process, Thread, File Descriptor | |
-| **Used by:** | Non-Blocking I/O, Async I/O, epoll / kqueue / io_uring | |
-| **Related:** | Non-Blocking I/O, Async I/O, File Descriptor | |
+| #0104           | Category: Operating Systems                             | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------ | :-------------- |
+| **Depends on:** | System Call (syscall), Process, Thread, File Descriptor |                 |
+| **Used by:**    | Non-Blocking I/O, Async I/O, epoll / kqueue / io_uring  |                 |
+| **Related:**    | Non-Blocking I/O, Async I/O, File Descriptor            |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -49,6 +49,7 @@ This is exactly why Blocking I/O was created — instead of busy-waiting, the OS
 Blocking I/O means "wait here, do nothing, until the data arrives" — the thread sleeps while the OS works.
 
 **One analogy:**
+
 > Ordering at a restaurant: you tell the waiter what you want, then sit and wait until your food arrives. You do nothing else — you block. The kitchen (hardware) does the work. When your food is ready, the waiter (OS) wakes you up. Simple and natural, but inefficient if you could be doing other things while waiting.
 
 **One insight:**
@@ -57,6 +58,7 @@ Blocking I/O is not "slow" — it's the OS working correctly (no busy-waiting). 
 ### 🔩 First Principles Explanation
 
 CORE INVARIANTS:
+
 1. A blocking I/O call does not return until data is available or an error occurs.
 2. The calling thread is parked in the kernel's wait queue — not running, not consuming CPU.
 3. The OS resumes the thread upon hardware interrupt or timer.
@@ -74,6 +76,7 @@ SETUP:
 A chat server must handle 10,000 simultaneous users, each sending one message per second. Each network read takes up to 100 ms if the user is slow.
 
 WHAT HAPPENS WITH blocking I/O:
+
 1. Server spawns one thread per connection: 10,000 threads.
 2. Each thread calls `read(socket_fd, buf, 1024)` and blocks.
 3. 10,000 threads in RAM: 10,000 × 1 MB stack = 10 GB RAM.
@@ -81,6 +84,7 @@ WHAT HAPPENS WITH blocking I/O:
 5. At 1,000 connections: manageable. At 100,000 connections: system cannot fork that many threads.
 
 WHAT HAPPENS WITH non-blocking I/O + event loop:
+
 1. One thread manages all 10,000 connections via `epoll`.
 2. Only connections with data ready trigger callbacks.
 3. No idle threads — same thread handles all ready connections.
@@ -147,6 +151,7 @@ Blocking I/O was the natural choice in single-CPU single-process systems: one ta
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
+
 ```
 [Server: Thread calls read(client_fd, buf, 1024)]
    → [Kernel: no data yet ← YOU ARE HERE]
@@ -166,6 +171,7 @@ At 10,000 blocked threads, the scheduler must track 10,000 runnable/waiting thre
 ### 💻 Code Example
 
 Example 1 — Simple blocking read:
+
 ```java
 // Java: blocking socket read (classic pattern)
 // BAD: no timeout set — can block forever
@@ -185,6 +191,7 @@ try {
 ```
 
 Example 2 — Thread-per-connection scaling problem:
+
 ```java
 // BAD: one thread per connection — doesn't scale to 10K+
 ExecutorService pool = Executors.newFixedThreadPool(100);
@@ -207,6 +214,7 @@ try (var executor =
 ```
 
 Example 3 — Detecting blocking I/O bottleneck:
+
 ```bash
 # BAD: guessing why server is slow under load
 # GOOD: check thread states
@@ -221,25 +229,25 @@ ps -eLf | grep <PID> | wc -l  # thread count
 
 ### ⚖️ Comparison Table
 
-| Model | Threads per conn | Complexity | Throughput | Best For |
-|---|---|---|---|---|
-| **Blocking I/O** | 1 thread | Very low | Low–Med | < 1000 connections |
-| Non-Blocking + select | 1 thread total | Medium | Medium | Legacy C servers |
-| Non-Blocking + epoll | 1 thread total | High | Very high | High-conn servers |
-| Async I/O (io_uring) | 0 threads needed | High | Maximum | Kernel-bypass I/O |
-| Java Virtual Threads | 1 vthread/conn | Very low | High | JVM at scale |
+| Model                 | Threads per conn | Complexity | Throughput | Best For           |
+| --------------------- | ---------------- | ---------- | ---------- | ------------------ |
+| **Blocking I/O**      | 1 thread         | Very low   | Low–Med    | < 1000 connections |
+| Non-Blocking + select | 1 thread total   | Medium     | Medium     | Legacy C servers   |
+| Non-Blocking + epoll  | 1 thread total   | High       | Very high  | High-conn servers  |
+| Async I/O (io_uring)  | 0 threads needed | High       | Maximum    | Kernel-bypass I/O  |
+| Java Virtual Threads  | 1 vthread/conn   | Very low   | High       | JVM at scale       |
 
 How to choose: Use blocking I/O for internal services with < 500 concurrent connections. Use epoll/io_uring or virtual threads when connection count exceeds thread pool limits.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Blocking I/O wastes CPU by spinning" | Blocked threads sleep in the kernel wait queue — CPU is free to run other threads; no spinning occurs |
-| "Non-blocking I/O is always faster" | Non-blocking I/O has higher code complexity. For low concurrency, blocking I/O can be faster due to simpler code paths |
-| "read() blocks until the buffer is full" | read() returns as soon as ANY data is available — not necessarily `n` bytes. Always loop on short reads |
-| "A blocked thread consumes CPU" | A blocked thread uses zero CPU; it consumes only kernel state (wait queue entry) and its stack memory |
-| "Thread-per-request doesn't scale at all" | Java 21 virtual threads make thread-per-request viable again at millions of concurrent tasks |
+| Misconception                             | Reality                                                                                                                |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| "Blocking I/O wastes CPU by spinning"     | Blocked threads sleep in the kernel wait queue — CPU is free to run other threads; no spinning occurs                  |
+| "Non-blocking I/O is always faster"       | Non-blocking I/O has higher code complexity. For low concurrency, blocking I/O can be faster due to simpler code paths |
+| "read() blocks until the buffer is full"  | read() returns as soon as ANY data is available — not necessarily `n` bytes. Always loop on short reads                |
+| "A blocked thread consumes CPU"           | A blocked thread uses zero CPU; it consumes only kernel state (wait queue entry) and its stack memory                  |
+| "Thread-per-request doesn't scale at all" | Java 21 virtual threads make thread-per-request viable again at millions of concurrent tasks                           |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -250,6 +258,7 @@ Symptom: New connections time out; server appears unresponsive; `jstack` shows a
 Root Cause: All threads blocked on slow clients; new connections can't get a thread from the pool.
 
 Diagnostic:
+
 ```bash
 # Java: check thread pool queue depth
 jcmd <PID> Thread.print | grep -c "WAITING"
@@ -271,6 +280,7 @@ Symptom: A thread is stuck in `read()` or `connect()` for hours; server has a "t
 Root Cause: Remote peer stalled (network partition, process hang) with no timeout set on the socket. `read()` waits forever.
 
 Diagnostic:
+
 ```bash
 # Find threads stuck in blocking syscall
 cat /proc/<PID>/task/*/syscall | grep "^0 "  # read syscall #
@@ -279,6 +289,7 @@ strace -p <TID> -e read 2>&1  # show if stuck
 ```
 
 Fix:
+
 ```java
 // BAD: no timeout — can block indefinitely
 socket.connect(addr);
@@ -300,6 +311,7 @@ Symptom: Application completely freezes; all threads show as blocked; no CPU usa
 Root Cause: Thread A holds a lock and calls blocking I/O; Thread B needs the lock but is blocked by Thread A's I/O wait; Thread A's I/O waits for data that Thread B must send.
 
 Diagnostic:
+
 ```bash
 jstack <PID> 2>&1 | grep -A10 "deadlock\|BLOCKED"
 # Shows circular dependency
@@ -312,16 +324,19 @@ Prevention: Use `tryLock(timeout)` instead of `lock()` to detect lock starvation
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `System Call (syscall)` — blocking I/O calls are implemented via syscalls
 - `Thread` — blocking I/O suspends the calling thread
 - `File Descriptor` — blocking I/O operates on file descriptors
 
 **Builds On This (learn these next):**
+
 - `Non-Blocking I/O` — the alternative that returns immediately and requires polling
 - `Async I/O` — the model where I/O completion is notified asynchronously
 - `epoll / kqueue / io_uring` — multiplexing mechanisms that make non-blocking I/O practical
 
 **Alternatives / Comparisons:**
+
 - `Non-Blocking I/O` — returns `EAGAIN` immediately if no data; requires event loop
 - `Async I/O (io_uring)` — kernel performs I/O, notifies user space when done; no thread blocked
 
@@ -355,6 +370,7 @@ Prevention: Use `tryLock(timeout)` instead of `lock()` to detect lock starvation
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Java 21 virtual threads allow millions of "blocking" I/O operations with only a handful of OS threads. When a virtual thread calls `socket.read()` and the OS would normally block the thread, what exactly happens inside the JVM — and how does the JVM guarantee that the OS thread is released to run other virtual threads rather than truly blocking in the kernel?

@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — `mmap` lets your process treat a file as if it's in RAM — the OS loads pages on demand and writes changes back to disk automatically.
 
-| #0103 | Category: Operating Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Virtual Memory, Paging, Page Fault, File Descriptor | |
-| **Used by:** | Zero-Copy (sendfile), Page Cache, Blocking I/O | |
-| **Related:** | Page Cache, Zero-Copy (sendfile), File Descriptor | |
+| #0103           | Category: Operating Systems                         | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------- | :-------------- |
+| **Depends on:** | Virtual Memory, Paging, Page Fault, File Descriptor |                 |
+| **Used by:**    | Zero-Copy (sendfile), Page Cache, Blocking I/O      |                 |
+| **Related:**    | Page Cache, Zero-Copy (sendfile), File Descriptor   |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -49,6 +49,7 @@ This is exactly why `mmap` was created — to map a file directly into the proce
 mmap turns a file into an array in your program's memory — read and write it like any variable.
 
 **One analogy:**
+
 > Traditional file I/O is like a mailbox: you make a request, wait for the postal worker to bring you one letter at a time. mmap is like having the entire filing cabinet teleported into your office — every document is right there at arm's reach. You grab exactly what you need, instantly. The office manager (OS) makes sure any changes you make are eventually filed back.
 
 **One insight:**
@@ -57,6 +58,7 @@ The most important insight about mmap is that there is no "copy" — the file da
 ### 🔩 First Principles Explanation
 
 CORE INVARIANTS:
+
 1. An mmap region is backed by physical pages in the page cache — the same pages used by `read()`.
 2. File data is loaded lazily on first access via page fault — no eager loading.
 3. Writable, non-private mappings share physical pages with the file; `MAP_PRIVATE` uses copy-on-write.
@@ -74,12 +76,14 @@ SETUP:
 A program reads 100 random records from a 1 GB database file. Each record is 1 KB, spread across different 4 KB pages.
 
 WHAT HAPPENS WITH read():
+
 1. 100 × `lseek()` calls = 100 syscalls (~200 ns each = 20 µs)
 2. 100 × `read()` calls = 100 syscalls (~200 ns each = 20 µs)
 3. Each `read()` copies 1 KB from kernel page cache to user heap = 100 copies
 4. Total syscall overhead: 40 µs. Plus 100 × disk reads if not cached.
 
 WHAT HAPPENS WITH mmap():
+
 1. One `mmap()` call maps the entire 1 GB.
 2. 100 pointer dereferences trigger 100 page faults (first access per page).
 3. Each fault loads page into page cache — same underlying I/O as read().
@@ -145,6 +149,7 @@ The design of sharing page cache pages directly (rather than copying) was a deli
 **Subsequent access to same page:** TLB hit (if warm) → direct access to page cache physical page, ~4 cycles.
 
 **mmap vs read() comparison:**
+
 ```
 read():  disk → page cache → (copy) → user heap
 mmap():  disk → page cache → (mapped) → user VA  [no copy]
@@ -153,6 +158,7 @@ mmap():  disk → page cache → (mapped) → user VA  [no copy]
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
+
 ```
 [fd = open("data.bin", O_RDONLY)]
    → [ptr = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0)]
@@ -171,6 +177,7 @@ A database process mapping 1 TB of data files has 256 million PTE entries. Page 
 ### 💻 Code Example
 
 Example 1 — Basic read-only file mapping:
+
 ```c
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -195,6 +202,7 @@ close(fd);
 ```
 
 Example 2 — Shared memory between processes:
+
 ```c
 // Process A: creates shared region
 int fd = shm_open("/my_shared", O_CREAT|O_RDWR, 0666);
@@ -211,6 +219,7 @@ printf("%d\n", *shared);  // prints 42
 ```
 
 Example 3 — SIGBUS handling for mmap:
+
 ```c
 #include <signal.h>
 #include <setjmp.h>
@@ -236,12 +245,12 @@ if (sigsetjmp(sigbus_jmp, 1) != 0) {
 
 ### ⚖️ Comparison Table
 
-| Approach | Copy Overhead | Syscalls | Random Access | Error Handling | Best For |
-|---|---|---|---|---|---|
-| **mmap** | Zero | 1 setup | Pointer arithmetic | SIGBUS | Large random-access files |
-| read() | Double buffered | Per-chunk | lseek+read | Return value | Sequential streaming |
-| sendfile | Zero (kernel) | 1 | No | Return value | File serving over network |
-| Direct I/O | Single | Per-chunk | O_DIRECT | Return value | DB bypass page cache |
+| Approach   | Copy Overhead   | Syscalls  | Random Access      | Error Handling | Best For                  |
+| ---------- | --------------- | --------- | ------------------ | -------------- | ------------------------- |
+| **mmap**   | Zero            | 1 setup   | Pointer arithmetic | SIGBUS         | Large random-access files |
+| read()     | Double buffered | Per-chunk | lseek+read         | Return value   | Sequential streaming      |
+| sendfile   | Zero (kernel)   | 1         | No                 | Return value   | File serving over network |
+| Direct I/O | Single          | Per-chunk | O_DIRECT           | Return value   | DB bypass page cache      |
 
 How to choose: Use mmap for large files with random access patterns (databases, indexes, sparse access). Use `read()` for sequential streaming where read-ahead is important. Use `sendfile` for serving files to sockets without user-space involvement.
 
@@ -271,13 +280,13 @@ How to choose: Use mmap for large files with random access patterns (databases, 
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "mmap loads the whole file into RAM immediately" | mmap creates virtual mappings; physical pages are loaded on demand via page faults |
-| "mmap is always faster than read()" | For small files or sequential read-once workloads, read() with large buffers outperforms mmap due to setup overhead |
-| "munmap() writes changes to disk" | munmap flushes dirty pages but doesn't guarantee durability; call msync(MS_SYNC) before munmap for durability |
-| "MAP_PRIVATE writes are not visible to other processes" | Correct — but the copy-on-write means your write consumes extra physical RAM for the modified pages |
-| "File must exist on disk for mmap to work" | MAP_ANONYMOUS mmap creates memory with no file backing — used for large heap-like allocations (e.g., by malloc) |
+| Misconception                                           | Reality                                                                                                             |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| "mmap loads the whole file into RAM immediately"        | mmap creates virtual mappings; physical pages are loaded on demand via page faults                                  |
+| "mmap is always faster than read()"                     | For small files or sequential read-once workloads, read() with large buffers outperforms mmap due to setup overhead |
+| "munmap() writes changes to disk"                       | munmap flushes dirty pages but doesn't guarantee durability; call msync(MS_SYNC) before munmap for durability       |
+| "MAP_PRIVATE writes are not visible to other processes" | Correct — but the copy-on-write means your write consumes extra physical RAM for the modified pages                 |
+| "File must exist on disk for mmap to work"              | MAP_ANONYMOUS mmap creates memory with no file backing — used for large heap-like allocations (e.g., by malloc)     |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -288,6 +297,7 @@ Symptom: Process crashes with SIGBUS; stack trace points into mmap'd region acce
 Root Cause: During a page fault on an mmap'd file, the underlying disk I/O failed; the kernel delivers SIGBUS instead of returning an error code.
 
 Diagnostic:
+
 ```bash
 dmesg | grep -i "I/O error\|blk_update_request"
 journalctl -k | grep "ata\|scsi\|nvme" | grep -i error
@@ -306,6 +316,7 @@ Symptom: Process virtual address space grows without bound (`/proc/PID/maps` acc
 Root Cause: `mmap()` called in a loop without corresponding `munmap()`; typically in code that remaps files on each access.
 
 Diagnostic:
+
 ```bash
 cat /proc/<PID>/maps | wc -l   # count VMAs
 pmap -x <PID> | tail -5        # total mapped
@@ -325,6 +336,7 @@ Symptom: `msync(MS_SYNC)` takes 100ms+ unexpectedly; application appears to hang
 Root Cause: Large number of dirty pages accumulated (MAP_SHARED + many writes); `MS_SYNC` must flush all of them synchronously to disk.
 
 Diagnostic:
+
 ```bash
 # Check dirty page count
 cat /proc/meminfo | grep Dirty
@@ -333,6 +345,7 @@ iostat -x 1 | grep -v "^$"
 ```
 
 Fix:
+
 ```c
 // BAD: one big msync at end
 // (all dirty pages flush at once — huge latency spike)
@@ -351,16 +364,19 @@ Prevention: Tune `vm.dirty_ratio` and `vm.dirty_background_ratio` to control whe
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Virtual Memory` — mmap is built on virtual address space management
 - `Paging` — mmap pages are loaded via the standard demand-paging mechanism
 - `Page Fault` — the mechanism by which mmap pages are loaded on first access
 
 **Builds On This (learn these next):**
+
 - `Page Cache` — mmap shares physical pages with the kernel's page cache
 - `Zero-Copy (sendfile)` — similar zero-copy principle applied to file-to-socket transfers
 - `File Descriptor` — mmap takes a file descriptor as input
 
 **Alternatives / Comparisons:**
+
 - `read() / write()` — explicit I/O with copies; simpler error handling but higher copy overhead
 - `sendfile()` — zero-copy for file→socket, but no user-space access to data
 - `Direct I/O (O_DIRECT)` — bypasses page cache entirely; useful for databases managing their own cache
@@ -395,6 +411,7 @@ Prevention: Tune `vm.dirty_ratio` and `vm.dirty_background_ratio` to control whe
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** LMDB (Lightning Memory-Mapped Database) uses mmap for all reads, achieving near-zero per-read overhead. However, LMDB has a hard limit: the database must be smaller than available virtual address space (128 TB on 64-bit Linux). MongoDB used mmap-based storage (MMAPv1) and abandoned it for WiredTiger. What specific operational problems at scale forced MongoDB to move away from mmap storage, and which of those problems would LMDB also encounter at the same scale?

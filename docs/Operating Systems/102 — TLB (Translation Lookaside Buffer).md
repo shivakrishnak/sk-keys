@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — The TLB is a tiny, ultra-fast hardware cache for page table lookups — without it, every memory access would require 4 extra RAM reads just to translate the address.
 
-| #0102 | Category: Operating Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Paging, Virtual Memory, Cache Line | |
-| **Used by:** | Context Switch, NUMA, False Sharing | |
-| **Related:** | Page Fault, Cache Line, NUMA | |
+| #0102           | Category: Operating Systems         | Difficulty: ★★★ |
+| :-------------- | :---------------------------------- | :-------------- |
+| **Depends on:** | Paging, Virtual Memory, Cache Line  |                 |
+| **Used by:**    | Context Switch, NUMA, False Sharing |                 |
+| **Related:**    | Page Fault, Cache Line, NUMA        |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -49,6 +49,7 @@ The **Translation Lookaside Buffer (TLB)** is a high-speed, hardware-managed cac
 The TLB is the shortcut that remembers "virtual address X lives at physical address Y" so you don't have to look it up every time.
 
 **One analogy:**
+
 > You call a customer support line every day. The first time, the agent has to look up your account in the filing cabinet (page table walk — slow). After that, they write your info on a sticky note at their desk (TLB entry). Next day, they see your name on the caller ID and answer immediately without opening any cabinets. If too many customers call, they run out of sticky notes and have to toss the oldest ones (TLB eviction).
 
 **One insight:**
@@ -57,6 +58,7 @@ The TLB works because programs have spatial and temporal locality — the same p
 ### 🔩 First Principles Explanation
 
 CORE INVARIANTS:
+
 1. Every virtual memory access requires a virtual→physical translation.
 2. Page table walks are slow (4+ memory accesses); TLB hits are fast (1 cycle).
 3. TLB is hardware-managed: fills automatically on miss, invalidated on specific events.
@@ -74,16 +76,19 @@ SETUP:
 A tight inner loop accesses 1,000 different 4 KB pages randomly (4 MB total working set).
 
 WHAT HAPPENS WITHOUT TLB (or with a full TLB):
+
 1. Every access to a new page requires a page table walk: 4 × 100 ns = 400 ns overhead.
 2. 1,000 accesses × 400 ns = 400 µs extra overhead per loop iteration.
 3. L1 cache hits become irrelevant — translation overhead dominates.
 
 WHAT HAPPENS WITH TLB (and 128 entries covers 512 KB):
+
 1. First 128 page accesses: TLB misses — page walks.
 2. Pages 129–1000 cycle through, constantly evicting cached translations.
 3. TLB miss rate = ~87%; high overhead persists.
 
 WHAT HAPPENS WITH huge pages (2 MB, 128 entries covers 256 MB):
+
 1. All 1,000 accesses fit within 2 huge pages → 2 TLB entries cover the entire working set.
 2. After first 2 misses, all subsequent accesses are TLB hits.
 3. Translation overhead drops to ~1 cycle per access.
@@ -145,6 +150,7 @@ When a PTE is modified (page remapped), the kernel must invalidate the TLB entry
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
+
 ```
 [Process accesses data at VA 0x7f000123]
    → [L1 dTLB lookup: VPFN=0x7f000 ← YOU ARE HERE]
@@ -162,6 +168,7 @@ On a 256-core machine with a shared workload, a kernel `munmap()` of a shared me
 ### 💻 Code Example
 
 Example 1 — Measuring TLB pressure with perf:
+
 ```bash
 # BAD: no TLB visibility
 ./myapp  # performance issues, no diagnosis
@@ -177,6 +184,7 @@ perf stat -e dTLB-loads,dTLB-load-misses,\
 ```
 
 Example 2 — Enabling huge pages to improve TLB coverage:
+
 ```c
 // BAD: standard mmap — 4 KB pages, poor TLB coverage
 void *buf = mmap(NULL, 1UL << 30,  // 1 GB
@@ -192,6 +200,7 @@ void *buf = mmap(NULL, 1UL << 30,
 ```
 
 Example 3 — madvise for Transparent Huge Pages:
+
 ```c
 void *buf = mmap(NULL, 256 * 1024 * 1024,
     PROT_READ | PROT_WRITE,
@@ -207,24 +216,24 @@ madvise(buf, 256 * 1024 * 1024, MADV_HUGEPAGE);
 
 ### ⚖️ Comparison Table
 
-| TLB Type | Entries | Latency | Scope | Best For |
-|---|---|---|---|---|
-| **L1 dTLB** | 64–96 (4K), 32 (2M) | 1 cycle | Data accesses | Tight loops |
-| L1 iTLB | 128 entries | 1 cycle | Code fetches | Dense code |
-| L2 TLB | 1,500–4,096 | 4–8 cycles | Unified | Larger working sets |
-| HW Page Walker | N/A | 40–100 cycles | Fallback | TLB miss path |
+| TLB Type       | Entries             | Latency       | Scope         | Best For            |
+| -------------- | ------------------- | ------------- | ------------- | ------------------- |
+| **L1 dTLB**    | 64–96 (4K), 32 (2M) | 1 cycle       | Data accesses | Tight loops         |
+| L1 iTLB        | 128 entries         | 1 cycle       | Code fetches  | Dense code          |
+| L2 TLB         | 1,500–4,096         | 4–8 cycles    | Unified       | Larger working sets |
+| HW Page Walker | N/A                 | 40–100 cycles | Fallback      | TLB miss path       |
 
 How to choose: You don't choose TLB levels — profile with `perf` to find miss rates. If L2 TLB miss rate > 5%, switch to huge pages.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "TLB flush only happens on process exit" | TLB flushes on every context switch (without PCID), every `munmap`, every page remapping via `mmap`/`mremap` |
-| "Huge pages only help with page fault reduction" | The primary benefit is TLB coverage: 2 MB pages give 512× more coverage per TLB entry vs 4 KB |
-| "TLB misses only add one extra memory access" | A 4-level page table walk = 4 extra memory accesses (PGD + PUD + PMD + PTE) each ~100 ns |
-| "PCID/ASID eliminates all TLB management cost" | PCID avoids TLB flushes on context switch but not on page table modifications (shootdowns still needed) |
-| "Bigger TLB = always better performance" | If working set fits in L2 TLB, bigger L1 just wastes chip area; real bottleneck is often memory bandwidth |
+| Misconception                                    | Reality                                                                                                      |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| "TLB flush only happens on process exit"         | TLB flushes on every context switch (without PCID), every `munmap`, every page remapping via `mmap`/`mremap` |
+| "Huge pages only help with page fault reduction" | The primary benefit is TLB coverage: 2 MB pages give 512× more coverage per TLB entry vs 4 KB                |
+| "TLB misses only add one extra memory access"    | A 4-level page table walk = 4 extra memory accesses (PGD + PUD + PMD + PTE) each ~100 ns                     |
+| "PCID/ASID eliminates all TLB management cost"   | PCID avoids TLB flushes on context switch but not on page table modifications (shootdowns still needed)      |
+| "Bigger TLB = always better performance"         | If working set fits in L2 TLB, bigger L1 just wastes chip area; real bottleneck is often memory bandwidth    |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -235,6 +244,7 @@ Symptom: Application 2–5× slower than expected despite L3 cache hit rate bein
 Root Cause: Random-access pattern across a memory region larger than TLB coverage (128 entries × 4 KB = 512 KB); each access requires a full page table walk.
 
 Diagnostic:
+
 ```bash
 perf stat -e dTLB-loads,dTLB-load-misses \
           -e L1-dcache-loads,L1-dcache-misses \
@@ -255,6 +265,7 @@ Symptom: Kernel time high under concurrent `mmap`/`munmap` or page remapping; `p
 Root Cause: Shared page table modification (e.g., shared memory remapping) sends IPIs to all CPUs to flush TLB entries; each CPU pauses for IPI handling.
 
 Diagnostic:
+
 ```bash
 perf trace -e tlb:tlb_flush --pid <PID> 2>&1 | head -20
 # Or view IPI count
@@ -274,6 +285,7 @@ Symptom: After Linux kernel upgrade (4.15+, post-Meltdown), syscall-heavy worklo
 Root Cause: Kernel Page Table Isolation switches CR3 on every syscall (user→kernel and back). Without PCID, this flushes the TLB twice per syscall.
 
 Diagnostic:
+
 ```bash
 # Verify KPTI is active
 dmesg | grep "page table isolation"
@@ -288,16 +300,19 @@ Prevention: Reduce syscall rate using `io_uring` batch I/O; upgrade to patched h
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Paging` — the TLB caches page table entries; understanding paging is prerequisite
 - `Virtual Memory` — TLB exists to make virtual memory fast
 - `Cache Line` — TLB operates conceptually similarly to CPU data cache
 
 **Builds On This (learn these next):**
+
 - `Context Switch` — the event that (without ASID/PCID) flushes the entire TLB
 - `NUMA` — physical page placement affects which physical addresses the TLB maps to
 - `False Sharing` — cache-line contention shares mechanisms with TLB shootdowns
 
 **Alternatives / Comparisons:**
+
 - `Software-managed TLB` — MIPS architecture uses software-filled TLB; OS handles every miss
 - `Inverted Page Table` — one entry per physical frame rather than per virtual page; no TLB structure needed in the same sense
 
@@ -330,6 +345,7 @@ Prevention: Reduce syscall rate using `io_uring` batch I/O; upgrade to patched h
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The Spectre variant 2 attack exploits the branch predictor, and Spectre variant 1 exploits the out-of-order execution pipeline — both can leak kernel data to user space. Given that the TLB itself can be used as a timing side-channel (TLB hit vs miss timing reveals which pages a victim process has accessed), design a hypothetical attack that uses TLB timing to infer a secret value held in kernel memory. What OS-level countermeasure would break this attack?

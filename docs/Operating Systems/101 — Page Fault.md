@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — A page fault is the CPU's signal to the OS that a memory access hit a virtual page with no physical backing — the OS either loads it or kills the process.
 
-| #0101 | Category: Operating Systems | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Paging, Virtual Memory, User Space vs Kernel Space | |
-| **Used by:** | TLB, Swap / Thrashing, Memory-Mapped File (mmap) | |
-| **Related:** | TLB, Swap / Thrashing, Segmentation Fault | |
+| #0101           | Category: Operating Systems                        | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------- | :-------------- |
+| **Depends on:** | Paging, Virtual Memory, User Space vs Kernel Space |                 |
+| **Used by:**    | TLB, Swap / Thrashing, Memory-Mapped File (mmap)   |                 |
+| **Related:**    | TLB, Swap / Thrashing, Segmentation Fault          |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -49,6 +49,7 @@ A **page fault** is a hardware exception raised by the CPU's MMU when a process 
 A page fault is a "please load this page now" interrupt — the OS pauses your program and fills in the missing memory.
 
 **One analogy:**
+
 > You're reading a book but page 247 is missing — it was never printed in your copy. You call the librarian (page fault handler). The librarian finds the page in the archive (swap disk or file), prints a copy, inserts it in your book, and says "continue reading from page 247." If page 247 doesn't exist in any archive (invalid address), the librarian tears your library card up (SIGSEGV).
 
 **One insight:**
@@ -57,6 +58,7 @@ Most page faults are minor and invisible — they are the normal mechanism by wh
 ### 🔩 First Principles Explanation
 
 CORE INVARIANTS:
+
 1. A page fault happens when PTE.Present = 0, regardless of reason.
 2. The OS — not the CPU — decides what "not present" means: lazy allocation, swapped out, file-backed, or illegal access.
 3. After the fault is handled successfully, the CPU retries the faulting instruction from the beginning.
@@ -74,12 +76,14 @@ SETUP:
 A Java process with a 4 GB heap. It allocates a 1 GB byte array: `byte[] data = new byte[1_000_000_000]`.
 
 WHAT HAPPENS WITHOUT page fault (eager allocation):
+
 1. OS must immediately find 250,000 physical pages (4 KB each) for the 1 GB array.
 2. All 1 GB is reserved and zeroed before the allocation returns.
 3. If 1 GB RAM is not available immediately → allocation fails even if the array will only use 10 MB.
 4. JVM startup takes longer as heap is faulted in eagerly.
 
 WHAT HAPPENS WITH page fault (demand paging):
+
 1. OS creates a VMA entry for 1 GB of address space — no physical pages allocated.
 2. `new byte[1_000_000_000]` returns instantly.
 3. As Java code accesses `data[0]`, `data[4096]`, etc., minor page faults trigger.
@@ -146,6 +150,7 @@ The fault-and-retry design (CPU retries the faulting instruction after handling)
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
+
 ```
 [Process: first access to malloc'd address]
    → [MMU: TLB miss → page walk → PTE.Present=0]
@@ -163,24 +168,24 @@ A JVM starting with a 32 GB heap on a cold machine triggers 8 million minor page
 
 ### ⚖️ Comparison Table
 
-| Fault Type | Trigger | Latency | Action | User Impact |
-|---|---|---|---|---|
-| **Minor fault** | Page in RAM, not mapped | ~1 µs | Install PTE | Invisible |
-| **Major fault** | Page on disk (swap/file) | 1–10 ms | Disk I/O + install PTE | Latency spike |
-| **COW fault** | Write to shared page | ~2 µs | Copy page + install PTE | Invisible |
-| **Invalid fault** | No VMA covers address | ~1 µs | Send SIGSEGV | Process crash |
+| Fault Type        | Trigger                  | Latency | Action                  | User Impact   |
+| ----------------- | ------------------------ | ------- | ----------------------- | ------------- |
+| **Minor fault**   | Page in RAM, not mapped  | ~1 µs   | Install PTE             | Invisible     |
+| **Major fault**   | Page on disk (swap/file) | 1–10 ms | Disk I/O + install PTE  | Latency spike |
+| **COW fault**     | Write to shared page     | ~2 µs   | Copy page + install PTE | Invisible     |
+| **Invalid fault** | No VMA covers address    | ~1 µs   | Send SIGSEGV            | Process crash |
 
 How to choose: You don't choose fault types — the OS determines them. Optimise by: using `mlock()` to prevent major faults, huge pages to reduce minor fault frequency, and `madvise(MADV_WILLNEED)` to trigger prefetch.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Page faults always mean something is wrong" | Minor faults are normal — every first memory access causes one. They're a feature, not a bug |
+| Misconception                                    | Reality                                                                                                                          |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| "Page faults always mean something is wrong"     | Minor faults are normal — every first memory access causes one. They're a feature, not a bug                                     |
 | "A segfault and a page fault are the same thing" | A segfault (SIGSEGV) is the result of an unhandleable page fault (invalid address); a minor/major page fault is handled silently |
-| "Major page faults only happen on the first run" | Major faults recur whenever a page is evicted from RAM to swap — under memory pressure this happens constantly |
-| "mlock() prevents page faults forever" | mlock() prevents the OS from evicting locked pages; it doesn't prevent COW faults or initial minor faults |
-| "More RAM = no page faults" | Minor faults still occur for first-access demand paging even with infinite RAM |
+| "Major page faults only happen on the first run" | Major faults recur whenever a page is evicted from RAM to swap — under memory pressure this happens constantly                   |
+| "mlock() prevents page faults forever"           | mlock() prevents the OS from evicting locked pages; it doesn't prevent COW faults or initial minor faults                        |
+| "More RAM = no page faults"                      | Minor faults still occur for first-access demand paging even with infinite RAM                                                   |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -191,6 +196,7 @@ Symptom: Application latency spikes to hundreds of milliseconds; `vmstat 1` show
 Root Cause: Working set larger than available RAM; pages being evicted and re-loaded continuously.
 
 Diagnostic:
+
 ```bash
 vmstat 1 5
 # Look for: majflt > 0 (per-process), pgmajfault > 0 (system)
@@ -210,6 +216,7 @@ Symptom: Spring Boot app takes 30+ seconds to serve first request; `perf stat` s
 Root Cause: Large JVM heap allocated but not touched during startup; first requests trigger millions of demand-paging faults.
 
 Diagnostic:
+
 ```bash
 /usr/bin/time -v java -jar app.jar 2>&1 | grep "Page faults"
 # Or
@@ -217,6 +224,7 @@ perf stat -e minor-faults java -jar app.jar
 ```
 
 Fix:
+
 ```bash
 # BAD: default heap (demand paging on first access)
 java -Xmx8g -jar app.jar
@@ -237,6 +245,7 @@ Symptom: CRIU restore or VM live migration takes unexpectedly long; process appe
 Root Cause: `userfaultfd` handler in user space is too slow to service faults; faulting thread blocks waiting for the handler to deliver a page.
 
 Diagnostic:
+
 ```bash
 # Monitor userfaultfd events
 cat /proc/<PID>/fdinfo/<fd_num>
@@ -251,16 +260,19 @@ Prevention: Benchmark userfaultfd handler throughput vs required fault-handling 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Paging` — page faults are the runtime event that demand paging triggers
 - `Virtual Memory` — the abstraction that makes demand paging possible
 - `Swap / Thrashing` — the severe consequence of too many major page faults
 
 **Builds On This (learn these next):**
+
 - `TLB` — a TLB miss precedes every page fault; the TLB is filled after the fault is handled
 - `Memory-Mapped File (mmap)` — file-backed pages use page faults as their loading mechanism
 - `Buddy System / Slab Allocator` — the kernel allocator that provides physical pages to satisfy faults
 
 **Alternatives / Comparisons:**
+
 - `mlock()` — prevents pages from being evicted, eliminating major faults at the cost of locked memory
 - `madvise(MADV_WILLNEED)` — hints to the OS to prefetch pages before they are needed
 - `io_uring IORING_REGISTER_PBUFFERS` — pre-registers I/O buffers to avoid fault overhead in I/O paths
@@ -295,6 +307,7 @@ Prevention: Benchmark userfaultfd handler throughput vs required fault-handling 
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A high-frequency trading system uses `mlock()`ed huge pages to eliminate page fault latency from its hot path. During a market stress event, memory usage spikes and the OS cannot evict the locked pages to accommodate other processes. Trace step-by-step what happens: which processes are affected, in what order, and what the OOM killer's decision algorithm considers when choosing a victim.
