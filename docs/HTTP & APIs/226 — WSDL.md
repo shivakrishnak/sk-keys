@@ -24,12 +24,12 @@ tags:
 ⚡ TL;DR — WSDL (Web Services Description Language) is the XML-based interface definition language for SOAP web services; it formally describes the operations a service offers, the message formats it accepts, and the endpoint URL — enabling automatic generation of type-safe client code in any language.
 
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ #226         │ Category: HTTP & APIs              │ Difficulty: ★★☆      │
+│ #226 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
 ├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ SOAP, XML, Web Services            │                      │
-│ Used by:     │ SOAP, JAX-WS, API Contract Testing │                      │
-│ Related:     │ SOAP, OpenAPI Specification,       │                      │
-│              │ Protocol Buffers                   │                      │
+│ Depends on: │ SOAP, XML, Web Services │ │
+│ Used by: │ SOAP, JAX-WS, API Contract Testing │ │
+│ Related: │ SOAP, OpenAPI Specification, │ │
+│ │ Protocol Buffers │ │
 └──────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -80,6 +80,7 @@ Client stubs can be automatically generated from a WSDL using tools like
 WSDL is the contract document for SOAP services — a machine-readable spec that describes every operation, input, output, and endpoint URL, enabling auto-generated clients in any language.
 
 **One analogy:**
+
 > WSDL is like the operator manual for a piece of machinery. It precisely describes
 > every button (operation), what settings each button accepts (input message),
 > what output to expect (response message), where the machine is located (endpoint URL),
@@ -169,6 +170,7 @@ is the pattern that all modern API frameworks copied.
 ```
 
 **FIVE COMPONENTS SUMMARIZED:**
+
 ```
 types     — XML Schema: the data type definitions
 message   — abstract request/response units
@@ -178,6 +180,7 @@ service   — the physical URL where the service lives
 ```
 
 **CLIENT CODE GENERATION:**
+
 ```bash
 # Java — generate client stubs from WSDL URL
 wsimport -keep -verbose http://api.bank.example.com/AccountService?wsdl
@@ -189,6 +192,7 @@ wsdl2java -client http://api.bank.example.com/AccountService?wsdl
 ```
 
 **THE TRADE-OFFS:**
+
 - Gain: machine-readable contract → auto-generated, type-safe client code in any language.
 - Cost: verbose XML — WSDL files can be hundreds of lines for moderately complex services.
 - Gain: changes to WSDL detected at code generation/compile time.
@@ -421,28 +425,28 @@ try {
 
 ### ⚖️ Comparison Table
 
-| Feature | WSDL 1.1 | OpenAPI 3.0 | .proto (gRPC) |
-|---|---|---|---|
-| **Format** | XML | JSON/YAML | Proto IDL |
-| **Protocol** | SOAP | REST/HTTP | gRPC/HTTP2 |
-| **Type system** | XML Schema (XSD) | JSON Schema | Protobuf types |
-| **Code gen** | wsimport, CXF | OpenAPI Generator | protoc |
-| **Transport abstraction** | Yes (portType vs binding) | No | No |
-| **Human-readable** | Poor | Good | Moderate |
-| **Versioning** | In namespace | In path/header | Field numbers |
-| **Maturity** | 2000 (legacy) | 2017 | 2015 |
+| Feature                   | WSDL 1.1                  | OpenAPI 3.0       | .proto (gRPC)  |
+| ------------------------- | ------------------------- | ----------------- | -------------- |
+| **Format**                | XML                       | JSON/YAML         | Proto IDL      |
+| **Protocol**              | SOAP                      | REST/HTTP         | gRPC/HTTP2     |
+| **Type system**           | XML Schema (XSD)          | JSON Schema       | Protobuf types |
+| **Code gen**              | wsimport, CXF             | OpenAPI Generator | protoc         |
+| **Transport abstraction** | Yes (portType vs binding) | No                | No             |
+| **Human-readable**        | Poor                      | Good              | Moderate       |
+| **Versioning**            | In namespace              | In path/header    | Field numbers  |
+| **Maturity**              | 2000 (legacy)             | 2017              | 2015           |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| WSDL 2.0 replaced WSDL 1.1 | WSDL 2.0 was never widely adopted; almost all real-world SOAP services use WSDL 1.1 |
-| WSDL explicitly documents behavior | WSDL only describes message formats and endpoints — not business logic, error codes, or ordering constraints |
-| WSDL requires SOAP | WSDL 2.0 supports REST HTTP bindings, but WSDL 1.1 is essentially SOAP-only in practice |
-| The WSDL at `?wsdl` is always up-to-date | Auto-generated WSDL is current; hand-maintained WSDL may drift from implementation |
-| Changing a WSDL is a minor operation | Adding optional fields is backward-compatible; adding required fields, removing fields, or changing types is a breaking change for all consumers |
+| Misconception                            | Reality                                                                                                                                          |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| WSDL 2.0 replaced WSDL 1.1               | WSDL 2.0 was never widely adopted; almost all real-world SOAP services use WSDL 1.1                                                              |
+| WSDL explicitly documents behavior       | WSDL only describes message formats and endpoints — not business logic, error codes, or ordering constraints                                     |
+| WSDL requires SOAP                       | WSDL 2.0 supports REST HTTP bindings, but WSDL 1.1 is essentially SOAP-only in practice                                                          |
+| The WSDL at `?wsdl` is always up-to-date | Auto-generated WSDL is current; hand-maintained WSDL may drift from implementation                                                               |
+| Changing a WSDL is a minor operation     | Adding optional fields is backward-compatible; adding required fields, removing fields, or changing types is a breaking change for all consumers |
 
 ---
 
@@ -460,6 +464,7 @@ Java packages, or the `binding` style (rpc/encoded) is outdated and not
 supported cleanly by modern code generators.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Validate WSDL with online tool or:
 java -jar wsdl-validator.jar http://service/Service?wsdl

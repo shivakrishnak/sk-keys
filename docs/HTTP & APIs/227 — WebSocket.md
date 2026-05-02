@@ -23,13 +23,13 @@ tags:
 ⚡ TL;DR — WebSocket is a full-duplex, persistent communication channel between a client and server over a single TCP connection, established via an HTTP upgrade handshake — enabling real-time bidirectional data exchange without the overhead of repeated HTTP requests.
 
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ #227         │ Category: HTTP & APIs              │ Difficulty: ★★☆      │
+│ #227 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
 ├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ HTTP, TCP, HTTP Upgrade Mechanism  │                      │
-│ Used by:     │ Real-time Apps, gRPC Streaming,    │                      │
-│              │ GraphQL Subscriptions              │                      │
-│ Related:     │ Server-Sent Events, Long Polling,  │                      │
-│              │ gRPC Streaming                     │                      │
+│ Depends on: │ HTTP, TCP, HTTP Upgrade Mechanism │ │
+│ Used by: │ Real-time Apps, gRPC Streaming, │ │
+│ │ GraphQL Subscriptions │ │
+│ Related: │ Server-Sent Events, Long Polling, │ │
+│ │ gRPC Streaming │ │
 └──────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -75,6 +75,7 @@ Either party can initiate a message independently. Neither party has to "wait fo
 WebSocket upgrades an HTTP connection into a permanent two-way communication channel — like a phone call that stays open instead of sending individual text messages.
 
 **One analogy:**
+
 > HTTP is like sending letters: you write one (request), mail it, wait for a reply letter
 > (response), then write again. WebSocket is like a phone call: you dial once (handshake),
 > and then you both can speak and listen simultaneously for as long as you want, with
@@ -114,6 +115,7 @@ After `101 Switching Protocols`, the TCP connection is now a WebSocket channel.
 HTTP is no longer spoken on this connection.
 
 **FRAME FORMAT:**
+
 ```
 Byte 0: [FIN|RSV1|RSV2|RSV3|Opcode(4bits)]
 Byte 1: [MASK|Payload length(7bits)]
@@ -123,6 +125,7 @@ Bytes M-end: Payload data
 ```
 
 **OPCODES:**
+
 ```
 0x1 = Text frame
 0x2 = Binary frame
@@ -137,6 +140,7 @@ cache poisoning attacks on intermediaries (proxies that might cache WebSocket
 frames as if they were HTTP responses). Server→client frames are NOT masked.
 
 **THE TRADE-OFFS:**
+
 - Gain: full-duplex, persistent → zero per-message HTTP overhead.
 - Cost: stateful connections → horizontal scaling requires sticky sessions or shared state.
 - Gain: sub-millisecond delivery latency for push messages.
@@ -154,6 +158,7 @@ watching the same item. Each increment updates the displayed price. Average: 3 b
 per second in the final 10 seconds = 30 price changes broadcast to 5,000 users.
 
 **HTTP POLLING (2-second interval):**
+
 ```
 Polling: 5,000 users × 0.5 req/s = 2,500 req/s
 Useful responses: ~30 price changes / 10 seconds = 3/s
@@ -162,6 +167,7 @@ Plus: up to 2-second latency per update (a bid could expire before users see it)
 ```
 
 **WEBSOCKET:**
+
 ```
 Connections: 5,000 open WebSocket connections
 Event push: server broadcasts each bid to all 5,000 connections
@@ -364,57 +370,59 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
 ```javascript
 // Browser JavaScript WebSocket client
-const ws = new WebSocket('wss://api.example.com/ws/chat?channel=general');
+const ws = new WebSocket("wss://api.example.com/ws/chat?channel=general");
 
 ws.onopen = () => {
-    console.log('Connected');
-    ws.send(JSON.stringify({ type: 'join', user: 'Alice' }));
+  console.log("Connected");
+  ws.send(JSON.stringify({ type: "join", user: "Alice" }));
 };
 
 ws.onmessage = (event) => {
-    const msg = JSON.parse(event.data);
-    displayMessage(msg);
+  const msg = JSON.parse(event.data);
+  displayMessage(msg);
 };
 
 ws.onerror = (error) => {
-    console.error('WebSocket error:', error);
+  console.error("WebSocket error:", error);
 };
 
 ws.onclose = (event) => {
-    console.log('Disconnected, code:', event.code);
-    // Reconnect with exponential backoff:
-    setTimeout(() => reconnect(), Math.min(30000, backoffMs));
+  console.log("Disconnected, code:", event.code);
+  // Reconnect with exponential backoff:
+  setTimeout(() => reconnect(), Math.min(30000, backoffMs));
 };
 
 // Send a message:
-ws.send(JSON.stringify({ type: 'message', text: 'Hello!', channel: 'general' }));
+ws.send(
+  JSON.stringify({ type: "message", text: "Hello!", channel: "general" }),
+);
 ```
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Feature | WebSocket | SSE | Long Polling | gRPC Bidirectional |
-|---|---|---|---|---|
-| **Direction** | Full duplex | Server→Client only | Simulated push | Full duplex |
-| **Protocol** | WS (TCP) | HTTP/1.1, HTTP/2 | HTTP | HTTP/2 |
-| **Browser support** | Universal | Universal | Universal | gRPC-Web proxy needed |
-| **Auto-reconnect** | No (manual) | Yes (built-in) | Per-request | No (manual) |
-| **Message typing** | Text or Binary | Text only | Text/JSON | Typed (Protobuf) |
-| **Overhead per message** | ~2–14 bytes | HTTP headers | Full HTTP | ~5 bytes (gRPC frame) |
-| **Best for** | Chat, games, collab | Notifications, feeds | Simple push (legacy) | Internal service streaming |
+| Feature                  | WebSocket           | SSE                  | Long Polling         | gRPC Bidirectional         |
+| ------------------------ | ------------------- | -------------------- | -------------------- | -------------------------- |
+| **Direction**            | Full duplex         | Server→Client only   | Simulated push       | Full duplex                |
+| **Protocol**             | WS (TCP)            | HTTP/1.1, HTTP/2     | HTTP                 | HTTP/2                     |
+| **Browser support**      | Universal           | Universal            | Universal            | gRPC-Web proxy needed      |
+| **Auto-reconnect**       | No (manual)         | Yes (built-in)       | Per-request          | No (manual)                |
+| **Message typing**       | Text or Binary      | Text only            | Text/JSON            | Typed (Protobuf)           |
+| **Overhead per message** | ~2–14 bytes         | HTTP headers         | Full HTTP            | ~5 bytes (gRPC frame)      |
+| **Best for**             | Chat, games, collab | Notifications, feeds | Simple push (legacy) | Internal service streaming |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| WebSocket works through all proxies | Corporate HTTP proxies often break WebSocket; use `wss://` (TLS) which is harder for proxies to intercept; or test behind your load balancer |
-| WebSocket connections auto-reconnect | WebSocket has NO built-in reconnection; the application must implement retry logic (most libraries like SockJS provide this) |
-| WebSocket replaces REST for all communication | REST is still better for standard CRUD; WebSocket is for sustained real-time bidirectional communication |
-| Dead WebSocket connections are detected immediately | Without Ping/Pong heartbeats, a silent TCP reset may not be detected for minutes; always implement heartbeat keepalives |
-| WebSocket and HTTP/2 are incompatible | HTTP/2 supports WebSocket (RFC 8441 "Bootstrapping WebSockets with HTTP/2") but browser support varies |
+| Misconception                                       | Reality                                                                                                                                      |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| WebSocket works through all proxies                 | Corporate HTTP proxies often break WebSocket; use `wss://` (TLS) which is harder for proxies to intercept; or test behind your load balancer |
+| WebSocket connections auto-reconnect                | WebSocket has NO built-in reconnection; the application must implement retry logic (most libraries like SockJS provide this)                 |
+| WebSocket replaces REST for all communication       | REST is still better for standard CRUD; WebSocket is for sustained real-time bidirectional communication                                     |
+| Dead WebSocket connections are detected immediately | Without Ping/Pong heartbeats, a silent TCP reset may not be detected for minutes; always implement heartbeat keepalives                      |
+| WebSocket and HTTP/2 are incompatible               | HTTP/2 supports WebSocket (RFC 8441 "Bootstrapping WebSockets with HTTP/2") but browser support varies                                       |
 
 ---
 
@@ -432,6 +440,7 @@ Server still has `WebSocketSession` objects marked as open, but sending fails
 silently or with delayed IOException.
 
 Diagnostic Command / Tool:
+
 ```java
 // Add ping-based heartbeat to detect dead connections:
 @Scheduled(fixedDelay = 30000) // every 30 seconds
