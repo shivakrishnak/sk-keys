@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — The Outbox Pattern solves the dual-write problem: instead of writing to a database AND publishing to a message broker in two separate operations (both can fail independently), you write to BOTH in one database transaction — a business record + an outbox record — and a separate relay process publishes from the outbox to the broker, guaranteeing atomicity.
 
-| #617 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Event Sourcing, CQRS, Idempotency (Distributed), Database Fundamentals | |
-| **Used by:** | Saga Pattern, CQRS Projections, Microservices, Transactional Messaging | |
-| **Related:** | Event Sourcing, Saga Pattern, CQRS, Idempotency (Distributed), Change Data Capture | |
+| #617            | Category: Distributed Systems                                                      | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Event Sourcing, CQRS, Idempotency (Distributed), Database Fundamentals             |                 |
+| **Used by:**    | Saga Pattern, CQRS Projections, Microservices, Transactional Messaging             |                 |
+| **Related:**    | Event Sourcing, Saga Pattern, CQRS, Idempotency (Distributed), Change Data Capture |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -59,6 +59,7 @@ The **Outbox Pattern** addresses the dual-write problem — the impossibility of
 Don't publish to a message broker directly — write to an outbox table in the same DB transaction, then let a relay process publish from there.
 
 **One analogy:**
+
 > Outbox Pattern is like an email system with a Drafts folder. Instead of "send email while also saving to Sent" (dual write — one can fail), you first save to Drafts (outbox table) in one step, then a background process sends from Drafts and moves to Sent (marks as published). If the send fails, it retries from Drafts. If the background process crashes after send but before moving to Sent, it resends from Drafts (at-least-once delivery) — the recipient handles duplicates.
 
 **One insight:**
@@ -69,6 +70,7 @@ The key insight is that the outbox table is in the SAME database as the business
 ### 🔩 First Principles Explanation
 
 **OUTBOX TABLE STRUCTURE:**
+
 ```sql
 CREATE TABLE outbox_events (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -83,17 +85,18 @@ CREATE TABLE outbox_events (
 
 -- Business transaction: both writes or neither:
 BEGIN;
-  INSERT INTO orders (id, customer_id, status, total) 
+  INSERT INTO orders (id, customer_id, status, total)
   VALUES ('order-123', 'cust-456', 'PLACED', 150.00);
-  
+
   INSERT INTO outbox_events (aggregate_type, aggregate_id, event_type, payload)
-  VALUES ('Order', 'order-123', 'OrderPlaced', 
+  VALUES ('Order', 'order-123', 'OrderPlaced',
           '{"orderId":"order-123","customerId":"cust-456","total":150.00}');
 COMMIT;
 -- If any part fails: ROLLBACK — no order, no outbox entry. Consistent.
 ```
 
 **POLLING RELAY:**
+
 ```java
 @Scheduled(fixedDelay = 100) // Poll every 100ms
 @Transactional
@@ -101,18 +104,18 @@ public void publishPendingEvents() {
     List<OutboxEvent> pending = outboxRepo.findPendingEvents(
         PageRequest.of(0, 50)  // Process up to 50 at a time
     );
-    
+
     for (OutboxEvent event : pending) {
         try {
             // Publish to Kafka:
-            kafkaTemplate.send(event.getEventType(), 
-                event.getAggregateId(), 
+            kafkaTemplate.send(event.getEventType(),
+                event.getAggregateId(),
                 event.getPayload());
-            
+
             // Mark as published (idempotent — if this step fails, re-published next cycle):
             event.setPublishedAt(Instant.now());
             outboxRepo.save(event);
-            
+
         } catch (Exception e) {
             event.setRetryCount(event.getRetryCount() + 1);
             outboxRepo.save(event);
@@ -123,6 +126,7 @@ public void publishPendingEvents() {
 ```
 
 **CDC (CHANGE DATA CAPTURE) WITH DEBEZIUM:**
+
 ```
 Debezium captures PostgreSQL WAL (Write-Ahead Log) changes in real-time.
 No polling. Event fires within milliseconds of commit.
@@ -133,7 +137,7 @@ Architecture:
      Monitors: public.outbox_events table.
   3. Kafka: receives CDC events for each outbox_events INSERT.
   4. Consumer: reads from Kafka topic, processes OrderPlaced etc.
-  
+
   Debezium config (Kafka Connect):
   {
     "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
@@ -142,7 +146,7 @@ Architecture:
     "transforms": "outbox",
     "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter"
   }
-  
+
 Advantages over polling:
   - Latency: <1ms vs. polling interval (100ms-1s)
   - No polling overhead on DB
@@ -150,28 +154,29 @@ Advantages over polling:
 ```
 
 **AT-LEAST-ONCE + IDEMPOTENCY:**
+
 ```
 Outbox relay crash scenario:
   1. Relay publishes event to Kafka. (SUCCESS at broker)
   2. Relay crashes BEFORE marking outbox_events.published_at.
   3. Relay restarts. Re-reads unpublished outbox entry.
   4. Re-publishes to Kafka. Consumer receives DUPLICATE event.
-  
+
 Consumer must handle duplicates:
   // Idempotent consumer — uses Kafka offset as idempotency key:
   @KafkaListener(topics = "order-events")
   @Transactional
   public void consume(ConsumerRecord<String, OrderPlacedEvent> record) {
     String kafkaOffset = record.partition() + "-" + record.offset();
-    
+
     // Check if already processed:
     if (processedOffsetRepo.exists(kafkaOffset)) {
         return; // Already processed — skip duplicate
     }
-    
+
     // Process event:
     inventoryService.reserveItems(record.value());
-    
+
     // Mark as processed (in same transaction as business state change):
     processedOffsetRepo.save(new ProcessedOffset(kafkaOffset));
   }
@@ -186,6 +191,7 @@ Consumer must handle duplicates:
 If the relay crashes and is not repaired, the outbox table accumulates unprocessed events. 100 events/second × 24 hours = 8,640,000 rows. PostgreSQL query performance degrades. Application DB is now a message queue (bad).
 
 **Prevention:**
+
 1. Monitor: alert if `unpublished outbox events count > 1000 for > 60 seconds`.
 2. Relay SLA: relay is a critical infrastructure component; treat relay failure as P1 (same as application failure).
 3. Archival: once published, delete outbox entries (or move to a cold archive table). Don't keep published events in the hot outbox table.
@@ -214,22 +220,23 @@ If the relay crashes and is not repaired, the outbox table accumulates unprocess
 ### ⚙️ How It Works (Mechanism)
 
 **Spring Boot + Debezium Outbox:**
+
 ```java
 @Service
 @Transactional
 public class OrderService {
-    
+
     @Autowired
     private OrderRepository orderRepository;
-    
+
     @Autowired
     private OutboxRepository outboxRepository;
-    
+
     public String placeOrder(PlaceOrderRequest request) {
         // Step 1: Business write
         Order order = new Order(request.getCustomerId(), request.getItems());
         order = orderRepository.save(order);
-        
+
         // Step 2: Outbox write (SAME transaction)
         OrderPlacedEvent event = new OrderPlacedEvent(
             order.getId(), order.getCustomerId(), order.getTotal()
@@ -240,10 +247,10 @@ public class OrderService {
             "OrderPlaced",
             objectMapper.writeValueAsString(event)  // serialized payload
         ));
-        
+
         // Both saved or both rolled back — atomically.
         return order.getId();
-        
+
         // Debezium picks up the outbox INSERT via WAL and publishes to Kafka.
         // No explicit relay code needed.
     }
@@ -254,22 +261,22 @@ public class OrderService {
 
 ### ⚖️ Comparison Table
 
-| Approach | Atomicity | Latency | Complexity | Duplicates |
-|---|---|---|---|---|
-| Dual write (no pattern) | None | Low | Low | Possible + inconsistencies |
-| Outbox + polling | Guaranteed | polling interval | Medium | Yes (at-least-once) |
-| Outbox + CDC (Debezium) | Guaranteed | ~1ms | High (Kafka Connect) | Yes (at-least-once) |
-| Two-Phase Commit | Guaranteed | High | Very High | No (exactly-once) |
-| Saga with compensation | Semantic only | Medium | High | No (business-level) |
+| Approach                | Atomicity     | Latency          | Complexity           | Duplicates                 |
+| ----------------------- | ------------- | ---------------- | -------------------- | -------------------------- |
+| Dual write (no pattern) | None          | Low              | Low                  | Possible + inconsistencies |
+| Outbox + polling        | Guaranteed    | polling interval | Medium               | Yes (at-least-once)        |
+| Outbox + CDC (Debezium) | Guaranteed    | ~1ms             | High (Kafka Connect) | Yes (at-least-once)        |
+| Two-Phase Commit        | Guaranteed    | High             | Very High            | No (exactly-once)          |
+| Saga with compensation  | Semantic only | Medium           | High                 | No (business-level)        |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Outbox pattern gives exactly-once delivery | It gives at-least-once. For exactly-once semantics: consumers must use idempotency keys or Kafka transactional producers (Kafka exactly-once adds complexity) |
-| CDC (Debezium) eliminates the relay entirely | CDC is the relay — it reads the WAL and writes to Kafka. It still needs to be deployed, managed, and monitored |
+| Misconception                                       | Reality                                                                                                                                                                                    |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Outbox pattern gives exactly-once delivery          | It gives at-least-once. For exactly-once semantics: consumers must use idempotency keys or Kafka transactional producers (Kafka exactly-once adds complexity)                              |
+| CDC (Debezium) eliminates the relay entirely        | CDC is the relay — it reads the WAL and writes to Kafka. It still needs to be deployed, managed, and monitored                                                                             |
 | Publishing from outbox is as fast as direct publish | Outbox adds latency: polling relay (up to interval delay) or CDC relay (WAL capture latency ~1ms). For real-time systems, CDC is preferred; polling is fine for non-latency-critical flows |
 
 ---
@@ -279,7 +286,7 @@ public class OrderService {
 **Relay Down — Outbox Table Overflowing**
 
 Symptom: Downstream services stop receiving events. Order placed but inventory not
-reserved, payment not processed. Outbox table growing at 1000 rows/minute. 
+reserved, payment not processed. Outbox table growing at 1000 rows/minute.
 Customer-visible impact: orders stuck in PENDING state.
 
 Cause: Debezium connector crashed and was not paged. Outbox table now has 2 million

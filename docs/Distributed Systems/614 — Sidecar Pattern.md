@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — A sidecar is a helper container deployed alongside an application container in the same pod, sharing its network and file system, that handles cross-cutting concerns (logging, monitoring, mTLS, configuration injection) without modifying the application — separating operational concerns from business logic.
 
-| #614 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Containers, Kubernetes, Service Mesh, Distributed Tracing | |
-| **Used by:** | Service Mesh, Istio, Envoy, Dapr, Log Forwarding, Secret Management | |
-| **Related:** | Service Mesh, Ambassador Pattern, Adapter Pattern, Kubernetes, Dapr | |
+| #614            | Category: Distributed Systems                                       | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Containers, Kubernetes, Service Mesh, Distributed Tracing           |                 |
+| **Used by:**    | Service Mesh, Istio, Envoy, Dapr, Log Forwarding, Secret Management |                 |
+| **Related:**    | Service Mesh, Ambassador Pattern, Adapter Pattern, Kubernetes, Dapr |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ The **sidecar pattern** is a deployment pattern where auxiliary functionality is
 Sidecar = second container in the same pod as your app, sharing the same network — handles infrastructure concerns (logging, TLS, monitoring) so the app only handles business logic.
 
 **One analogy:**
+
 > A sidecar is like a motorcycle with a sidecar attachment. The motorcycle (your application) does the driving (business logic). The sidecar passenger (operational helper) handles navigation, communication with passers-by, and carrying cargo (logging, monitoring, secret injection). They travel together, sharing the road, but each doing their own job. You can swap the sidecar passenger without rebuilding the motorcycle.
 
 **One insight:**
@@ -60,6 +61,7 @@ The sidecar's power comes from the shared network namespace: the sidecar proxy (
 ### 🔩 First Principles Explanation
 
 **KUBERNETES POD WITH SIDECAR:**
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -67,52 +69,53 @@ metadata:
   name: product-service
 spec:
   initContainers:
-  # Init container: runs to completion BEFORE main containers start
-  - name: vault-agent-init
-    image: vault:1.13
-    command: ["vault", "agent", "-config=/vault/config.hcl"]
-    # Fetches secrets from Vault, writes to /app/secrets/
-    # Main app starts only after secrets are available
-    volumeMounts:
-    - name: secrets-volume
-      mountPath: /app/secrets
+    # Init container: runs to completion BEFORE main containers start
+    - name: vault-agent-init
+      image: vault:1.13
+      command: ["vault", "agent", "-config=/vault/config.hcl"]
+      # Fetches secrets from Vault, writes to /app/secrets/
+      # Main app starts only after secrets are available
+      volumeMounts:
+        - name: secrets-volume
+          mountPath: /app/secrets
 
   containers:
-  # Main application:
-  - name: product-service
-    image: company/product-service:2.1
-    ports:
-    - containerPort: 8080
-    # Reads secrets from /app/secrets/ (mounted from init container work)
-    volumeMounts:
-    - name: secrets-volume
-      mountPath: /app/secrets
-      readOnly: true
+    # Main application:
+    - name: product-service
+      image: company/product-service:2.1
+      ports:
+        - containerPort: 8080
+      # Reads secrets from /app/secrets/ (mounted from init container work)
+      volumeMounts:
+        - name: secrets-volume
+          mountPath: /app/secrets
+          readOnly: true
 
-  # Sidecar 1: Log forwarder
-  - name: fluent-bit
-    image: fluent/fluent-bit:2.1
-    # Reads from shared volume where application writes structured JSON logs
-    volumeMounts:
-    - name: app-logs
-      mountPath: /var/log/app
-    # Forwards to Elasticsearch/CloudWatch — application doesn't know where logs go
+    # Sidecar 1: Log forwarder
+    - name: fluent-bit
+      image: fluent/fluent-bit:2.1
+      # Reads from shared volume where application writes structured JSON logs
+      volumeMounts:
+        - name: app-logs
+          mountPath: /var/log/app
+      # Forwards to Elasticsearch/CloudWatch — application doesn't know where logs go
 
-  # Sidecar 2: Prometheus metrics exporter (if app doesn't expose Prometheus natively)
-  - name: metrics-adapter
-    image: company/metrics-adapter:1.0
-    ports:
-    - containerPort: 9090  # Prometheus scrape endpoint
-    # Polls app's internal metrics API, converts to Prometheus format
-    
+    # Sidecar 2: Prometheus metrics exporter (if app doesn't expose Prometheus natively)
+    - name: metrics-adapter
+      image: company/metrics-adapter:1.0
+      ports:
+        - containerPort: 9090 # Prometheus scrape endpoint
+      # Polls app's internal metrics API, converts to Prometheus format
+
   volumes:
-  - name: secrets-volume
-    emptyDir: {}
-  - name: app-logs
-    emptyDir: {}
+    - name: secrets-volume
+      emptyDir: {}
+    - name: app-logs
+      emptyDir: {}
 ```
 
 **ENVOY SIDECAR TRAFFIC INTERCEPTION (ISTIO):**
+
 ```
 How Istio's Envoy sidecar intercepts ALL traffic transparently:
 
@@ -129,17 +132,18 @@ How Istio's Envoy sidecar intercepts ALL traffic transparently:
 4. App calls: connect("product-service:8080")
    → iptables redirects to Envoy port 15001
    → Envoy: apply retry policy, establish mTLS to destination Envoy, forward request
-   
+
 5. Remote Envoy receives on port 15006:
    → Applies AuthorizationPolicy (verify caller identity)
    → If authorized: forwards to app on localhost:8080
-   
+
 App sees: it called product-service:8080 and got a response.
 Reality: Envoy handled all mTLS, retries, tracing injection.
 Application has ZERO knowledge of Envoy's existence.
 ```
 
 **DAPR SIDECAR (APPLICATION SDK-LESS DISTRIBUTED PRIMITIVES):**
+
 ```
 Dapr is an alternative sidecar approach that exposes distributed system primitives
 via HTTP/gRPC APIs on localhost, not just proxy intercepting traffic:
@@ -153,10 +157,10 @@ Dapr sidecar handles:
   - Rate limiting
 
 Application calls: POST http://localhost:3500/v1.0/publish/orders/{topic}/{event}
-Dapr handles: 
+Dapr handles:
   - Publishing to Kafka/Redis/AWS SNS (configurable without app code change)
   - Guaranteed delivery, retries
-  
+
 Key difference from Istio:
   Istio: transparent proxy (app unaware)
   Dapr: explicit API contract (app calls dapr HTTP API on localhost)
@@ -170,12 +174,14 @@ Key difference from Istio:
 **SIDECAR LIFECYCLE COUPLING:**
 
 Kubernetes pod: app container + Envoy sidecar. If Envoy crashes:
+
 - App traffic fails (all traffic goes through Envoy).
 - Kubernetes restarts the Envoy container.
 - During restart window (~1-5 seconds): app is network-isolated.
 - If app has multiple instances: upstream load balancer routes away from unhealthy pod.
 
 If app container crashes:
+
 - Envoy sidecar stays running (different container, independent lifecycle).
 - Kubernetes restarts app container (Envoy stays up, pod stays alive).
 - Shorter restart: no need to re-initialize Envoy.
@@ -210,6 +216,7 @@ Fix (Kubernetes 1.28+): `terminationGracePeriodSeconds` ordering. Set Envoy `pre
 ### ⚙️ How It Works (Mechanism)
 
 **Fluent Bit Log Forwarding Sidecar:**
+
 ```yaml
 # ConfigMap for Fluent Bit:
 apiVersion: v1
@@ -237,48 +244,48 @@ apiVersion: v1
 kind: Pod
 spec:
   containers:
-  - name: app
-    image: my-app:1.0
-    volumeMounts:
-    - name: logs
-      mountPath: /var/log/app
-  - name: fluent-bit
-    image: fluent/fluent-bit:2.1
-    volumeMounts:
-    - name: logs
-      mountPath: /var/log/app
-      readOnly: true
-    - name: fluent-config
-      mountPath: /fluent-bit/etc
+    - name: app
+      image: my-app:1.0
+      volumeMounts:
+        - name: logs
+          mountPath: /var/log/app
+    - name: fluent-bit
+      image: fluent/fluent-bit:2.1
+      volumeMounts:
+        - name: logs
+          mountPath: /var/log/app
+          readOnly: true
+        - name: fluent-config
+          mountPath: /fluent-bit/etc
   volumes:
-  - name: logs
-    emptyDir: {}
-  - name: fluent-config
-    configMap:
-      name: fluent-bit-config
+    - name: logs
+      emptyDir: {}
+    - name: fluent-config
+      configMap:
+        name: fluent-bit-config
 ```
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Approach | Coupling Level | Reuse | Language Independence | Example |
-|---|---|---|---|---|
-| In-app library | Tight | Per-language | No | Resilience4j in Java app |
-| Sidecar proxy | Loose (iptables) | Universal | Yes | Istio/Envoy |
-| Sidecar API | Explicit (localhost HTTP) | Universal | Yes | Dapr |
-| Node agent | Very loose (node-level) | Universal | Yes | Prometheus Node Exporter |
-| eBPF | Transparent (kernel) | Universal | Yes | Cilium |
+| Approach       | Coupling Level            | Reuse        | Language Independence | Example                  |
+| -------------- | ------------------------- | ------------ | --------------------- | ------------------------ |
+| In-app library | Tight                     | Per-language | No                    | Resilience4j in Java app |
+| Sidecar proxy  | Loose (iptables)          | Universal    | Yes                   | Istio/Envoy              |
+| Sidecar API    | Explicit (localhost HTTP) | Universal    | Yes                   | Dapr                     |
+| Node agent     | Very loose (node-level)   | Universal    | Yes                   | Prometheus Node Exporter |
+| eBPF           | Transparent (kernel)      | Universal    | Yes                   | Cilium                   |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Sidecar adds overhead that cancels its benefits | Sidecar adds ~50-100MB memory and ~1ms latency. For services doing IO-bound work (most services), this is negligible. For compute-bound critical paths, evaluate carefully |
-| Sidecar crashes take down the entire pod | Sidecar container crash → Kubernetes restarts THAT container only. Pod continues running. But a proxy sidecar crash will disrupt traffic until it restarts |
-| All sidecar concerns should go in sidecars | Business-logic concerns (auth, authorization at business layer) should stay in the application. Infrastructure concerns (mTLS, tracing headers, log rotation) belong in sidecars |
+| Misconception                                   | Reality                                                                                                                                                                          |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sidecar adds overhead that cancels its benefits | Sidecar adds ~50-100MB memory and ~1ms latency. For services doing IO-bound work (most services), this is negligible. For compute-bound critical paths, evaluate carefully       |
+| Sidecar crashes take down the entire pod        | Sidecar container crash → Kubernetes restarts THAT container only. Pod continues running. But a proxy sidecar crash will disrupt traffic until it restarts                       |
+| All sidecar concerns should go in sidecars      | Business-logic concerns (auth, authorization at business layer) should stay in the application. Infrastructure concerns (mTLS, tracing headers, log rotation) belong in sidecars |
 
 ---
 

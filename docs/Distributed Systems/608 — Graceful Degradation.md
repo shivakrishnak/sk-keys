@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Graceful degradation is an architectural strategy where a system intentionally reduces functionality (disables non-critical features) under load or failure, maintaining core user value at the cost of enhanced features — the planned sacrifice of less-critical capabilities to preserve the most-critical ones.
 
-| #608 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Circuit Breaker, Bulkhead, Fallback, Timeout, Feature Flags | |
-| **Used by:** | Netflix, Amazon, Service Mesh, Platform Engineering, SRE | |
-| **Related:** | Fallback, Circuit Breaker, Bulkhead, Feature Flags, Load Shedding | |
+| #608            | Category: Distributed Systems                                     | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Circuit Breaker, Bulkhead, Fallback, Timeout, Feature Flags       |                 |
+| **Used by:**    | Netflix, Amazon, Service Mesh, Platform Engineering, SRE          |                 |
+| **Related:**    | Fallback, Circuit Breaker, Bulkhead, Feature Flags, Load Shedding |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -58,6 +58,7 @@ Amazon's "Prepare for the Worst" design philosophy (early 2000s): design every p
 When things break, keep the most important parts running — gracefully give up the nice-to-haves to protect the must-haves.
 
 **One analogy:**
+
 > Graceful degradation is like an airplane's emergency power system. When an engine fails, non-essential electrical systems (entertainment screens, heated seats) are automatically switched off to conserve power for essential systems (navigation, communication, hydraulics). The plane lands safely — passengers miss in-flight movies, but they survive. No movies > no landing.
 
 **One insight:**
@@ -68,19 +69,20 @@ Every feature has a **criticality tier**. The design mistake is treating all fea
 ### 🔩 First Principles Explanation
 
 **FEATURE CRITICALITY CLASSIFICATION:**
+
 ```
 TIER 1 - CRITICAL (must never fail, no degradation acceptable):
   - User authentication
   - Core product/page content
   - Checkout and payment processing
   - Order confirmation
-  
+
 TIER 2 - IMPORTANT (should work, graceful fallback acceptable):
   - Product recommendations
   - Search ranking tuning
   - Price display (can use cached prices)
   - User account preferences
-  
+
 TIER 3 - NON-CRITICAL (can be silently disabled):
   - Social proof ("3 people viewing this")
   - Detailed user analytics
@@ -95,11 +97,10 @@ Degradation trigger: if ANY dependency of a TIER 2/3 feature is unavailable:
 ```
 
 **ASYNC NON-CRITICAL FEATURES (JAVASCRIPT PATTERN):**
+
 ```html
 <!-- Core content loaded synchronously: ALWAYS renders -->
-<main id="product-core" data-product-id="123">
-  Loading product...
-</main>
+<main id="product-core" data-product-id="123">Loading product...</main>
 
 <!-- Non-critical widgets: async, independent, fail-safe -->
 <div id="recommendations-widget">
@@ -108,35 +109,37 @@ Degradation trigger: if ANY dependency of a TIER 2/3 feature is unavailable:
 </div>
 
 <script>
-// Critical content: part of SSR (server-side rendering), no async.
-// Non-critical: async fetch with timeout and fallback:
+  // Critical content: part of SSR (server-side rendering), no async.
+  // Non-critical: async fetch with timeout and fallback:
 
-async function loadRecommendations(productId) {
+  async function loadRecommendations(productId) {
     try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 2000); // 2s timeout
-        
-        const resp = await fetch(`/api/recommendations/${productId}`, 
-            { signal: controller.signal });
-        clearTimeout(timeout);
-        
-        if (resp.ok) {
-            const data = await resp.json();
-            renderRecommendations(data);  // widget appears
-        }
-        // if !resp.ok: silently skip — widget stays empty
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 2000); // 2s timeout
+
+      const resp = await fetch(`/api/recommendations/${productId}`, {
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (resp.ok) {
+        const data = await resp.json();
+        renderRecommendations(data); // widget appears
+      }
+      // if !resp.ok: silently skip — widget stays empty
     } catch (e) {
-        // AbortError (timeout) or network error: silently skip
-        if (e.name !== 'AbortError') {
-            console.warn('Recommendations unavailable:', e.message);
-        }
-        // Widget is empty — graceful degradation complete
+      // AbortError (timeout) or network error: silently skip
+      if (e.name !== "AbortError") {
+        console.warn("Recommendations unavailable:", e.message);
+      }
+      // Widget is empty — graceful degradation complete
     }
-}
+  }
 </script>
 ```
 
 **LOAD SHEDDING (PRIORITY-BASED DEGRADATION):**
+
 ```
 Under normal load: serve ALL requests (Tier 1, 2, 3).
 Under 70% capacity: shed Tier 3 requests (reject with 503, no user-visible impact).
@@ -148,7 +151,7 @@ Implementation (token bucket per tier with priority in load balancer or API gate
   Header: X-Request-Priority: critical | important | background
   API Gateway: if capacity < 85%: reject requests with priority = "background"
   If capacity < 95%: reject "background" | "important" requests
-  
+
 This is how AWS/Google shed load during crisis:
   Background jobs: fail first (analytics, ML training, batch processing)
   Secondary features: fail second (recommendations, personalization)
@@ -198,6 +201,7 @@ Level 4 (catastrophic): Static maintenance page for non-critical users. Emergenc
 ### ⚙️ How It Works (Mechanism)
 
 **Spring Boot with Feature Flag-Based Degradation:**
+
 ```java
 @Service
 public class ProductPageService {
@@ -247,22 +251,22 @@ public class ProductPageService {
 
 ### ⚖️ Comparison Table
 
-| Strategy | User Impact | System Complexity | Failure Scope |
-|---|---|---|---|
-| Graceful Degradation | Reduced features, core works | High (design up front) | Contained to non-critical |
-| Hard Failure | Total failure of page/service | Low (no special handling) | Propagates to all users |
-| Fault Tolerance | None (transparent) | Very High (redundancy) | Eliminated at infrastructure |
-| Retry + Fallback | Transient: no impact; Persistent: degraded | Medium | Contained via fallback |
+| Strategy             | User Impact                                | System Complexity         | Failure Scope                |
+| -------------------- | ------------------------------------------ | ------------------------- | ---------------------------- |
+| Graceful Degradation | Reduced features, core works               | High (design up front)    | Contained to non-critical    |
+| Hard Failure         | Total failure of page/service              | Low (no special handling) | Propagates to all users      |
+| Fault Tolerance      | None (transparent)                         | Very High (redundancy)    | Eliminated at infrastructure |
+| Retry + Fallback     | Transient: no impact; Persistent: degraded | Medium                    | Contained via fallback       |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Graceful degradation = accepting lower quality | Graceful degradation = making a deliberate trade-off between unavailable enhancement and complete unavailability |
-| This can be added after the fact | Graceful degradation requires upfront architectural decisions about feature criticality and dependency isolation. Retrofitting is costly |
-| A fast fallback means no user impact | Users DO notice degradation (missing recommendations, stale prices). The goal is preserving CORE value, not pretending nothing happened |
+| Misconception                                  | Reality                                                                                                                                  |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Graceful degradation = accepting lower quality | Graceful degradation = making a deliberate trade-off between unavailable enhancement and complete unavailability                         |
+| This can be added after the fact               | Graceful degradation requires upfront architectural decisions about feature criticality and dependency isolation. Retrofitting is costly |
+| A fast fallback means no user impact           | Users DO notice degradation (missing recommendations, stale prices). The goal is preserving CORE value, not pretending nothing happened  |
 
 ---
 

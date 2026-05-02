@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — A service mesh moves cross-cutting network concerns (mutual TLS, retries, circuit breaking, load balancing, distributed tracing) out of application code and into a transparent infrastructure layer — deployed as sidecar proxies alongside each service, managed by a central control plane.
 
-| #613 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Sidecar Pattern, Circuit Breaker, Distributed Tracing, Kubernetes, mTLS | |
-| **Used by:** | Kubernetes, Cloud Native, Zero Trust Security, Distributed Tracing, Traffic Management | |
-| **Related:** | Sidecar Pattern, mTLS, Circuit Breaker, Distributed Tracing, API Gateway | |
+| #613            | Category: Distributed Systems                                                          | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Sidecar Pattern, Circuit Breaker, Distributed Tracing, Kubernetes, mTLS                |                 |
+| **Used by:**    | Kubernetes, Cloud Native, Zero Trust Security, Distributed Tracing, Traffic Management |                 |
+| **Related:**    | Sidecar Pattern, mTLS, Circuit Breaker, Distributed Tracing, API Gateway               |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ A **service mesh** is a dedicated infrastructure layer for handling service-to-s
 Service mesh is a transparent network layer — each service gets a dedicated proxy that handles TLS, retries, circuit breaking, and tracing without any code changes.
 
 **One analogy:**
+
 > Service mesh is like a corporate network's IT department versus each employee managing their own network security. Without the mesh: each developer writes their own firewall rules, timeout configurations, and mTLS certificates. With the mesh: the IT department installs a managed network adapter (sidecar) on every machine that enforces corporate security and networking policies automatically. The employees just use the network; they don't maintain it.
 
 **One insight:**
@@ -60,6 +61,7 @@ Service mesh shifts the visibility problem from applications to infrastructure. 
 ### 🔩 First Principles Explanation
 
 **DATA PLANE (ENVOY SIDECAR):**
+
 ```
 Without service mesh:
   [App] --TCP/HTTP--> [Remote Service]
@@ -67,7 +69,7 @@ Without service mesh:
 
 With service mesh (Istio + Envoy):
   [App] --plaintext--> [Envoy Sidecar (localhost:15001)] --mTLS--> [Remote Envoy] --plaintext--> [Remote App]
-  
+
   App sees: connect to service-b:8080 (plaintext, no TLS code)
   Envoy handles:
     - Rewrites connection to service-b's pod (service discovery via Istio control plane)
@@ -79,6 +81,7 @@ With service mesh (Istio + Envoy):
 ```
 
 **ISTIO CONTROL PLANE (ISTIOD):**
+
 ```
 Istiod components:
   Pilot:   Service discovery + traffic routing rules → converts to Envoy xDS config
@@ -98,6 +101,7 @@ Data flow:
 ```
 
 **TRAFFIC MANAGEMENT (CANARY WITH ISTIO):**
+
 ```yaml
 # VirtualService: route 90% to v1, 10% to v2:
 apiVersion: networking.istio.io/v1alpha3
@@ -139,6 +143,7 @@ spec:
 ```
 
 **MUTUAL TLS (mTLS) OVERVIEW:**
+
 ```
 Without mTLS:
   Service A claims to be Service A. No way to verify.
@@ -147,14 +152,14 @@ Without mTLS:
 With Istio mTLS (STRICT mode):
   Each sidecar has a SPIFFE credential (X.509 cert issued by Istiod Citadel).
   Identity = "spiffe://cluster.local/ns/default/sa/service-a-serviceaccount"
-  
+
   When Service A calls Service B:
   1. Service A's Envoy presents cert: "I am service-a-serviceaccount in namespace default."
   2. Service B's Envoy verifies cert: matches expected identity.
   3. Service B's AuthorizationPolicy:
      ALLOW: source.principal == "cluster.local/ns/default/sa/service-a-serviceaccount"
      DENY: all others
-  
+
   Even if an attacker compromises a pod and tries to call payment-service directly:
   → They don't have a valid SPIFFE cert for the payment-service namespace.
   → mTLS handshake fails. Call rejected. Zero-trust enforcement.
@@ -167,6 +172,7 @@ With Istio mTLS (STRICT mode):
 **THE MESH OVERHEAD QUESTION:**
 
 Envoy sidecar adds a network hop inside the pod (loopback). Measured overhead:
+
 - Added latency per request: ~0.5–1ms (Linkerd < 1ms; Istio/Envoy ~1ms typical)
 - CPU overhead: ~100–200m CPU per proxy per 1000 RPS
 - Memory overhead: ~50–100MB per sidecar
@@ -199,6 +205,7 @@ For a service with p99 = 2ms (high-performance cache proxy): adding 1ms is a 50%
 ### ⚙️ How It Works (Mechanism)
 
 **Istio Authorization Policy:**
+
 ```yaml
 # Only allow payment-service to call order-service:
 apiVersion: security.istio.io/v1beta1
@@ -211,14 +218,14 @@ spec:
     matchLabels:
       app: order-service
   rules:
-  - from:
-    - source:
-        principals: 
-          - "cluster.local/ns/production/sa/payment-service-account"
-    to:
-    - operation:
-        methods: ["GET", "POST"]
-        paths: ["/orders/*"]
+    - from:
+        - source:
+            principals:
+              - "cluster.local/ns/production/sa/payment-service-account"
+      to:
+        - operation:
+            methods: ["GET", "POST"]
+            paths: ["/orders/*"]
   # All other traffic DENIED by default (STRICT mTLS mode)
 ```
 
@@ -226,24 +233,24 @@ spec:
 
 ### ⚖️ Comparison Table
 
-| Capability | Application Code | Service Mesh |
-|---|---|---|
-| mTLS | Manual cert management per service | Auto-rotated, zero-code |
-| Circuit Breaker | Resilience4j/Hystrix per service | DestinationRule outlierDetection |
-| Tracing | OTel SDK per service | Auto-inject headers (partial — needs app for business spans) |
-| Retries | Per-client configuration | VirtualService retry policy |
-| Traffic Splitting | Feature flags + custom logic | VirtualService weights |
-| Observability | Custom Prometheus metrics | Auto-scraped from proxy |
+| Capability        | Application Code                   | Service Mesh                                                 |
+| ----------------- | ---------------------------------- | ------------------------------------------------------------ |
+| mTLS              | Manual cert management per service | Auto-rotated, zero-code                                      |
+| Circuit Breaker   | Resilience4j/Hystrix per service   | DestinationRule outlierDetection                             |
+| Tracing           | OTel SDK per service               | Auto-inject headers (partial — needs app for business spans) |
+| Retries           | Per-client configuration           | VirtualService retry policy                                  |
+| Traffic Splitting | Feature flags + custom logic       | VirtualService weights                                       |
+| Observability     | Custom Prometheus metrics          | Auto-scraped from proxy                                      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Service mesh replaces application-level resilience | Mesh handles infra retries; app still needs circuit breakers for business-logic failures (e.g., payment declined). Layer both |
-| mTLS means zero-trust is fully implemented | mTLS authenticates services but doesn't authorize operations. Still need AuthorizationPolicy to restrict which service can call which endpoint |
-| Service mesh is only for Kubernetes | Istio and Consul support VM workloads alongside Kubernetes pods |
+| Misconception                                      | Reality                                                                                                                                        |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Service mesh replaces application-level resilience | Mesh handles infra retries; app still needs circuit breakers for business-logic failures (e.g., payment declined). Layer both                  |
+| mTLS means zero-trust is fully implemented         | mTLS authenticates services but doesn't authorize operations. Still need AuthorizationPolicy to restrict which service can call which endpoint |
+| Service mesh is only for Kubernetes                | Istio and Consul support VM workloads alongside Kubernetes pods                                                                                |
 
 ---
 

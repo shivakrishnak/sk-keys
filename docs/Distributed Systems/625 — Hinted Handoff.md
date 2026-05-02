@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Hinted handoff is a write-side availability mechanism where, if a target replica is temporarily unavailable, the coordinator stores the write as a "hint" and delivers it to the target when it recovers — allowing the cluster to accept writes at full quorum even when one replica is briefly down, without permanently losing the write.
 
-| #625 | Category: Distributed Systems | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Quorum, Replication Strategies, Read Repair | |
-| **Used by:** | Cassandra, DynamoDB, Riak, ScyllaDB | |
-| **Related:** | Anti-Entropy, Read Repair, Gossip Protocol, Quorum, Eventual Consistency | |
+| #625            | Category: Distributed Systems                                            | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Quorum, Replication Strategies, Read Repair                              |                 |
+| **Used by:**    | Cassandra, DynamoDB, Riak, ScyllaDB                                      |                 |
+| **Related:**    | Anti-Entropy, Read Repair, Gossip Protocol, Quorum, Eventual Consistency |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ The coordinator (the node that received the client's write request) saves the wr
 When a replica is temporarily down, the coordinator stores the write as a "hint" and delivers it when the replica recovers — letting the cluster stay available and eventually consistent without losing recent writes.
 
 **One analogy:**
+
 > You need to deliver a package to Apartment 3B, but the resident isn't home. Instead of returning the package (rejecting the write), the building superintendent (coordinator) holds the package (hint). When the resident returns and checks in (gossip recovery detection), the superintendent delivers the package. The resident catches up on everything they missed. But if the package sits unclaimed for 3 hours (hint TTL), the delivery service shreds it (hint expires) — the resident must reconcile with the main inventory separately (anti-entropy).
 
 **One insight:**
@@ -60,6 +61,7 @@ Hinted handoff is a "write buffer for temporarily-unavailable nodes." Its critic
 ### 🔩 First Principles Explanation
 
 **HINTED HANDOFF FLOW:**
+
 ```
 Setup: RF=3 (Replicas: A, B, C)
 Coordinator receives write for key K → must write to A, B, C.
@@ -74,7 +76,7 @@ Hinted handoff (Node C is down):
   Coordinator → A: WRITE K=v1 ✓
   Coordinator → B: WRITE K=v1 ✓
   Coordinator → C: WRITE K=v1 ✗ (timeout, node down)
-  
+
   Coordinator detects C is down via gossip.
   Coordinator stores hint locally:
     {
@@ -84,9 +86,9 @@ Hinted handoff (Node C is down):
       timestamp: T1,
       expires_at: T1 + hint_window (3 hours)
     }
-  
+
   Quorum achieved (A + B = 2 of 3). Write returns success to client.
-  
+
   Node C recovers at T1 + 30 minutes:
     Gossip propagates: "Node C is UP" to all nodes.
     Coordinator (and any other node storing hints for C) detects C is up.
@@ -104,6 +106,7 @@ Node C down for 4 hours (> hint TTL of 3 hours):
 ```
 
 **CASSANDRA HINTED HANDOFF CONFIGURATION:**
+
 ```yaml
 # cassandra.yaml — key hinted handoff settings
 
@@ -112,21 +115,23 @@ hinted_handoff_enabled: true
 
 # Maximum time to store hints for a down node
 # (node must recover within this window for hints to be delivered)
-max_hint_window_in_ms: 10800000  # 3 hours (default)
+max_hint_window_in_ms: 10800000 # 3 hours (default)
 
 # Throttle hint delivery to recovering nodes (KB/s per thread)
 # Too fast: overwhelms a recovering node; too slow: recovery takes longer
-hinted_handoff_throttle_in_kb: 1024  # 1MB/s (default)
+hinted_handoff_throttle_in_kb: 1024 # 1MB/s (default)
 
 # Maximum number of hints written per second (across the cluster)
 # Prevents hints from overwhelming the coordinator's disk
-max_hints_delivery_threads: 2  # 2 threads sending hints concurrently
+max_hints_delivery_threads: 2 # 2 threads sending hints concurrently
+
 
 # Where hints are stored on coordinator:
 # $CASSANDRA_DATA_DIR/hints/{target_node_id}/*.hints
 ```
 
 **HINT EXPIRY AND ANTI-ENTROPY INTERACTION:**
+
 ```
 Timeline of correct failure recovery:
 
@@ -143,7 +148,7 @@ T=4h:    Node C comes back.
          Hints from T=0..3h → delivered to C. C receives 3 hours of writes.
          But: writes from T=3h..4h are NOT hinted.
          C is still missing 1 hour of writes (T=3h to T=4h).
-         
+
 T=4h+:  Read repair (probabilistic): reads that happen to hit C detect stale data.
 T=next repair: nodetool repair / anti-entropy fills the remaining gap.
 
@@ -158,6 +163,7 @@ Beyond hint_window: anti-entropy is the only guaranteed recovery.
 **THE INTERACTION BETWEEN QUORUM AND HINTED HANDOFF:**
 
 With RF=3, W=QUORUM=2, hint_window=3 hours:
+
 - 3 nodes: A, B, C
 - C is down. Coordinator is A.
 - Client writes K=v1: A writes to itself ✓, B ✓, stores hint for C.
@@ -194,6 +200,7 @@ This is exactly the "hint window gap" you must close with anti-entropy.
 ### ⚙️ How It Works (Mechanism)
 
 **Monitoring Hinted Handoff in Production:**
+
 ```bash
 # Check hint counts per target node (Cassandra):
 nodetool tpstats | grep -i hint
@@ -223,6 +230,7 @@ nodetool repair -pr -seq keyspace table
 ```
 
 **ScyllaDB Hinted Handoff Enhancement:**
+
 ```
 ScyllaDB improves Cassandra's hinted handoff with per-shard hint queues:
   - Each CPU core (shard) maintains its own hint queue for each target node.
@@ -241,22 +249,22 @@ Delivery throttle:
 
 ### ⚖️ Comparison Table
 
-| Repair Mechanism | When It Fires | What It Covers | TTL / Scope |
-|---|---|---|---|
-| Hinted Handoff | Write time (target node down) | Writes during node downtime (within hint window) | Hint TTL (3h default) |
-| Read Repair | Read time (digest mismatch) | Specific read keys (hot data) | Per-read (probabilistic) |
-| Anti-Entropy | Background schedule | ALL keys unconditionally | Full partition scan |
-| W=ALL Quorum | Every write (prevents divergence) | Prevents all divergence | No recovery needed |
+| Repair Mechanism | When It Fires                     | What It Covers                                   | TTL / Scope              |
+| ---------------- | --------------------------------- | ------------------------------------------------ | ------------------------ |
+| Hinted Handoff   | Write time (target node down)     | Writes during node downtime (within hint window) | Hint TTL (3h default)    |
+| Read Repair      | Read time (digest mismatch)       | Specific read keys (hot data)                    | Per-read (probabilistic) |
+| Anti-Entropy     | Background schedule               | ALL keys unconditionally                         | Full partition scan      |
+| W=ALL Quorum     | Every write (prevents divergence) | Prevents all divergence                          | No recovery needed       |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Hinted handoff means a node can be down indefinitely without data loss | Hints expire after the hint window (3 hours by default). After that, writes are no longer hinted. Anti-entropy is needed to repair the remaining gap |
-| Hints are delivered "immediately" when the node recovers | Hint delivery is throttled (default 1MB/s per thread). For a node that was down for 3 hours with 1000 writes/sec, hint backlog = ~10.8 million writes. Delivery at 1MB/s may take hours |
-| Disabling hinted handoff makes the cluster more available | Disabling hinted handoff means a crashed node will have permanently missed writes until manually repaired. It reduces recovery quality, not write availability (writes still succeed at quorum) |
+| Misconception                                                          | Reality                                                                                                                                                                                         |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hinted handoff means a node can be down indefinitely without data loss | Hints expire after the hint window (3 hours by default). After that, writes are no longer hinted. Anti-entropy is needed to repair the remaining gap                                            |
+| Hints are delivered "immediately" when the node recovers               | Hint delivery is throttled (default 1MB/s per thread). For a node that was down for 3 hours with 1000 writes/sec, hint backlog = ~10.8 million writes. Delivery at 1MB/s may take hours         |
+| Disabling hinted handoff makes the cluster more available              | Disabling hinted handoff means a crashed node will have permanently missed writes until manually repaired. It reduces recovery quality, not write availability (writes still succeed at quorum) |
 
 ---
 
@@ -275,15 +283,17 @@ Cause: During the 2.5-hour outage, the cluster was writing at 300K writes/sec.
 (~1000 mutations/sec), estimated delivery time = 2.7 million seconds. Meanwhile,
 Node C is also serving live traffic and running compaction. Total overload.
 
-Fix: 
+Fix:
+
 1. Pause hint delivery: `nodetool pausehandoff`
 2. Allow Node C to stabilize (compaction catches up, live traffic normalizes).
 3. Throttle hint delivery more aggressively:
-   ALTER SYSTEM SET hinted_handoff_throttle_in_kb = 256;  (0.25MB/s)
+   ALTER SYSTEM SET hinted_handoff_throttle_in_kb = 256; (0.25MB/s)
 4. Resume handoff: `nodetool resumehandoff`
 5. Monitor: set alert on HintedHandoffStage pending > 100K.
 
 Prevention:
+
 - If hint backlog is expected to be very large: decommission the node,
   bootstrap a replacement, which streams data from other replicas
   (faster than hint delivery for large datasets).

@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — CQRS (Command Query Responsibility Segregation) splits an application's data model into two: a Write model (Commands — optimized for transactional writes) and a Read model (Queries — optimized for read patterns), allowing each to be independently optimized, scaled, and structured.
 
-| #615 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Event Sourcing, Saga Pattern, Eventual Consistency, CRUD | |
-| **Used by:** | Event Sourcing, Outbox Pattern, Read Model Projections, DDD | |
-| **Related:** | Event Sourcing, Saga Pattern, Outbox Pattern, Eventual Consistency, Domain Events | |
+| #615            | Category: Distributed Systems                                                     | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Event Sourcing, Saga Pattern, Eventual Consistency, CRUD                          |                 |
+| **Used by:**    | Event Sourcing, Outbox Pattern, Read Model Projections, DDD                       |                 |
+| **Related:**    | Event Sourcing, Saga Pattern, Outbox Pattern, Eventual Consistency, Domain Events |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ Write path: normalized relational DB, small transactions, ACID guarantees. Each 
 Separate the database for writes (normalized, transactional) from the database for reads (denormalized, query-optimized) — and sync them via events.
 
 **One analogy:**
+
 > CQRS is like an accounting department split into two teams: the bookkeepers (command side) record all transactions with rigorous double-entry accounting (normalized, transactional). The reports analysts (query side) maintain pre-computed summary spreadsheets for management (read projections). Each bookkeeping entry automatically updates the summary spreadsheets. The analysts never write to the books; the bookkeepers don't compute reports. Each team's tools are optimized for their job.
 
 **One insight:**
@@ -60,6 +61,7 @@ CQRS solves the **impedance mismatch** between write schemas (optimized for cons
 ### 🔩 First Principles Explanation
 
 **CQRS + EVENT SOURCING ARCHITECTURE:**
+
 ```
 WRITE SIDE (Command Model):
   POST /orders — creates Order aggregate
@@ -68,7 +70,7 @@ WRITE SIDE (Command Model):
     3. Generate domain events: [OrderPlaced, ItemsReserved].
     4. Persist events to event store.
     5. Publish events to event bus (Kafka/RabbitMQ).
-    
+
   → Write DB: Event Store (append-only log of domain events)
     Events: [OrderPlaced, OrderConfirmed, OrderShipped, OrderDelivered]
 
@@ -77,23 +79,24 @@ READ SIDE (Query Model — Event Projectors):
     ON OrderPlaced:
       INSERT INTO order_summary_projection (id, customer, status, total)
       VALUES (event.orderId, event.customer, 'PLACED', event.total)
-      
+
     ON OrderShipped:
-      UPDATE order_summary_projection 
+      UPDATE order_summary_projection
       SET status='SHIPPED', trackingNo=event.trackingNo
       WHERE id = event.orderId
-      
+
     ON OrderDelivered:
       UPDATE order_summary_projection
       SET status='DELIVERED', deliveredAt=event.timestamp
       WHERE id = event.orderId
-      
+
   → Read DB: Relational DB / Redis / Elasticsearch (pre-computed, denormalized)
     GET /orders/customer/123 → SELECT * FROM order_summary_projection WHERE customer=123
     Zero joins. Millisecond response.
 ```
 
 **SEPARATE MODELS, SEPARATE SCALING:**
+
 ```
 Traffic profile: 1000 reads/second, 10 writes/second (100:1 ratio)
 
@@ -111,6 +114,7 @@ With CQRS:
 ```
 
 **SPRING CQRS IMPLEMENTATION (AXON FRAMEWORK):**
+
 ```java
 // COMMAND SIDE — handle OrderPlaceCommand:
 @Aggregate
@@ -199,17 +203,18 @@ Production incident: a bug in the projector populated the read model incorrectly
 ### ⚙️ How It Works (Mechanism)
 
 **Simple CQRS without Event Sourcing (Spring, PostgreSQL + Redis):**
+
 ```java
 // Write service: updates normalized DB + publishes event
 @Transactional
 public OrderId placeOrder(PlaceOrderRequest cmd) {
     Order order = new Order(cmd.getCustomerId(), cmd.getItems());
     Order saved = orderRepository.save(order); // Write to normalized PostgreSQL
-    
+
     // Publish domain event (via Outbox Pattern for reliability):
-    outboxRepository.save(new OutboxMessage("order.placed", 
+    outboxRepository.save(new OutboxMessage("order.placed",
         objectMapper.writeValueAsString(new OrderPlacedEvent(saved.getId(), ...))));
-    
+
     return saved.getId();
 }
 
@@ -222,7 +227,7 @@ public void projectOrderPlaced(OrderPlacedEvent event) {
         new OrderSummaryDto(event.getOrderId(), event.getStatus(), event.getTotal()),
         Duration.ofDays(30)
     );
-    
+
     // Update Elasticsearch (for search):
     elasticsearchClient.index(i -> i
         .index("orders")
@@ -241,24 +246,24 @@ public OrderSummaryDto getOrderSummary(String orderId) {
 
 ### ⚖️ Comparison Table
 
-| Aspect | CRUD (Single Model) | CQRS |
-|---|---|---|
-| Schema | One schema for all operations | Separate write (normalized) + read (denormalized) |
-| Read performance | JOINs required for complex views | Pre-projected, zero joins |
-| Write performance | Direct, simple | Same; plus event publishing overhead |
-| Consistency | Immediate (same DB) | Eventual (projection lag) |
-| Complexity | Low | High |
-| Best for | Simple stable data models | Complex reads, high read:write ratio, audit needs |
+| Aspect            | CRUD (Single Model)              | CQRS                                              |
+| ----------------- | -------------------------------- | ------------------------------------------------- |
+| Schema            | One schema for all operations    | Separate write (normalized) + read (denormalized) |
+| Read performance  | JOINs required for complex views | Pre-projected, zero joins                         |
+| Write performance | Direct, simple                   | Same; plus event publishing overhead              |
+| Consistency       | Immediate (same DB)              | Eventual (projection lag)                         |
+| Complexity        | Low                              | High                                              |
+| Best for          | Simple stable data models        | Complex reads, high read:write ratio, audit needs |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| CQRS requires event sourcing | CQRS and Event Sourcing are independent patterns. CQRS organizes the read/write separation; Event Sourcing is an option for the write model (append-only events as source of truth) |
-| CQRS means two different microservices | CQRS can be implemented within one service (two internal models, two data stores). Splitting into separate services adds more complexity — only justified if teams own the models independently |
-| Read model is always eventually consistent | With synchronous projection (in same transaction as write): read can be immediately consistent. Async/event-based projection = eventually consistent |
+| Misconception                              | Reality                                                                                                                                                                                         |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CQRS requires event sourcing               | CQRS and Event Sourcing are independent patterns. CQRS organizes the read/write separation; Event Sourcing is an option for the write model (append-only events as source of truth)             |
+| CQRS means two different microservices     | CQRS can be implemented within one service (two internal models, two data stores). Splitting into separate services adds more complexity — only justified if teams own the models independently |
+| Read model is always eventually consistent | With synchronous projection (in same transaction as write): read can be immediately consistent. Async/event-based projection = eventually consistent                                            |
 
 ---
 

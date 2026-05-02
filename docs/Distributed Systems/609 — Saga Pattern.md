@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — A saga replaces a distributed ACID transaction with a sequence of local transactions, each publishing an event or message; if any step fails, compensating transactions (roll-back actions) are executed in reverse order to undo completed steps — maintaining consistency without distributed locking.
 
-| #609 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Two-Phase Commit, Idempotency (Distributed), Choreography vs Orchestration, Event Sourcing | |
-| **Used by:** | Microservices, Distributed Transactions, Order Processing, Choreography vs Orchestration | |
-| **Related:** | Two-Phase Commit, Outbox Pattern, Idempotency (Distributed), Event Sourcing, CQRS | |
+| #609            | Category: Distributed Systems                                                              | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Two-Phase Commit, Idempotency (Distributed), Choreography vs Orchestration, Event Sourcing |                 |
+| **Used by:**    | Microservices, Distributed Transactions, Order Processing, Choreography vs Orchestration   |                 |
+| **Related:**    | Two-Phase Commit, Outbox Pattern, Idempotency (Distributed), Event Sourcing, CQRS          |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -58,6 +58,7 @@ A **saga** is a sequence of local transactions `[T₁, T₂, ..., Tₙ]` where e
 A saga breaks a distributed transaction into steps; each step commits locally; if anything fails later, "undo" steps run in reverse to restore consistency.
 
 **One analogy:**
+
 > A saga is like booking a vacation package step-by-step: first book flights, then hotel, then rental car. If the rental car is unavailable (step 3 fails), you cancel the hotel (undo step 2) and cancel the flights (undo step 1). You don't hold a "lock" on flights and hotel while checking rental car availability — you commit each booking and cancel if subsequent steps fail. The cancellation fees are the "imperfect compensation" of real sagas.
 
 **One insight:**
@@ -68,6 +69,7 @@ Sagas are semantically consistent but NOT isolated. Between T₂ committing and 
 ### 🔩 First Principles Explanation
 
 **SAGA SEQUENCE (ORDER PROCESSING):**
+
 ```
 Step 1: T₁ — OrderService: CREATE order (status=PENDING)
 Step 2: T₂ — InventoryService: RESERVE items (items marked reserved)
@@ -78,7 +80,7 @@ Step 5: T₅ — NotificationService: SEND confirmation email
 If Step 3 (payment) fails:
   C₂ — InventoryService: RELEASE reservation (items unmarked reserved)
   C₁ — OrderService: CANCEL order (status=CANCELLED)
-  
+
 If Step 4 (shipping) fails:
   C₃ — PaymentService: REFUND customer ($150 refunded)
   C₂ — InventoryService: RELEASE reservation
@@ -91,6 +93,7 @@ row/event that semantically reverses the business effect:
 ```
 
 **CHOREOGRAPHY SAGA (EVENT-DRIVEN):**
+
 ```
 OrderService creates order → publishes OrderCreated event
 ↓
@@ -113,38 +116,39 @@ No central coordinator. Each service knows its own step and its compensation.
 ```
 
 **ORCHESTRATION SAGA (CENTRALIZED COORDINATOR):**
+
 ```java
 @Service
 public class OrderSagaOrchestrator {
-    
+
     public void executeOrderSaga(OrderRequest req) {
         SagaState state = new SagaState(req.getOrderId());
-        
+
         try {
             // Step 1:
             orderClient.createOrder(req.getOrderId(), req); // T₁
             state.markStep("order_created");
-            
+
             // Step 2:
             inventoryClient.reserve(req.getOrderId(), req.getItems()); // T₂
             state.markStep("inventory_reserved");
-            
+
             // Step 3:
             paymentClient.charge(req.getOrderId(), req.getAmount()); // T₃
             state.markStep("payment_charged");
-            
+
             // Step 4:
             String trackingNo = shippingClient.createShipment(req.getOrderId()); // T₄
             state.markStep("shipment_created", trackingNo);
-            
+
             // All steps complete: saga succeeds
-            
+
         } catch (PaymentException e) {
             // Compensate completed steps in reverse:
             compensate(state);
         }
     }
-    
+
     private void compensate(SagaState state) {
         if (state.hasStep("inventory_reserved")) {
             inventoryClient.release(state.getOrderId()); // C₂
@@ -157,15 +161,16 @@ public class OrderSagaOrchestrator {
 ```
 
 **SAGA CRASH RECOVERY (ORCHESTRATOR):**
+
 ```
 Orchestrator crashes AFTER T₂ (inventory reserved) but BEFORE T₃ (payment).
 On restart: orchestrator reads SagaState from persistent store.
   state = {"order_id": "123", "steps": ["order_created", "inventory_reserved"]}
-  
+
 Because orchestrator crashed mid-saga (incomplete saga with no terminal state):
   Option A: Resume forward (retry from T₃ with idempotency key for T₂).
   Option B: Compensate backward (run C₂, C₁) and mark saga as FAILED.
-  
+
 Typical policy: retry forward N times; if all retries fail: compensate.
 All T operations and all C operations must be IDEMPOTENT (re-runnable on restart).
 ```
@@ -215,27 +220,28 @@ No problem: Saga1's cancellation returns 5 units to inventory after Saga2 alread
 ### ⚙️ How It Works (Mechanism)
 
 **Temporal Saga (Go):**
+
 ```go
 func OrderSagaWorkflow(ctx workflow.Context, order Order) error {
     // Each activity runs as a durable step; Temporal handles retry + persistence.
-    
+
     defer func() {
         if r := recover(); r != nil {
             // Compensation runs in defer if workflow PANICS:
             workflow.ExecuteActivity(ctx, CancelOrderActivity, order.ID).Get(ctx, nil)
         }
     }()
-    
+
     // Forward transactions:
     err := workflow.ExecuteActivity(ctx, CreateOrderActivity, order).Get(ctx, nil)
     if err != nil { return compensate(ctx, order, err) }
-    
+
     err = workflow.ExecuteActivity(ctx, ReserveInventoryActivity, order).Get(ctx, nil)
     if err != nil { return compensate(ctx, order, err) }
-    
+
     err = workflow.ExecuteActivity(ctx, ChargePaymentActivity, order).Get(ctx, nil)
     if err != nil { return compensate(ctx, order, err) }
-    
+
     return nil  // Success
 }
 
@@ -251,24 +257,24 @@ func compensate(ctx workflow.Context, order Order, originalErr error) error {
 
 ### ⚖️ Comparison Table
 
-| Property | 2PC | Saga |
-|---|---|---|
-| Atomicity | Yes (all-or-nothing) | Semantic (compensations may be imperfect) |
-| Isolation | Yes (locks across participants) | No (intermediate states visible) |
-| Cross-technology | No (requires XA support) | Yes (any tech that can publish events) |
-| Availability | Low (coordinator + all participants needed) | High (steps independent) |
-| Compensations | Automatic rollback | Manual compensating transactions |
-| Latency | High (multiple round trips + locks) | Lower (async between steps) |
+| Property         | 2PC                                         | Saga                                      |
+| ---------------- | ------------------------------------------- | ----------------------------------------- |
+| Atomicity        | Yes (all-or-nothing)                        | Semantic (compensations may be imperfect) |
+| Isolation        | Yes (locks across participants)             | No (intermediate states visible)          |
+| Cross-technology | No (requires XA support)                    | Yes (any tech that can publish events)    |
+| Availability     | Low (coordinator + all participants needed) | High (steps independent)                  |
+| Compensations    | Automatic rollback                          | Manual compensating transactions          |
+| Latency          | High (multiple round trips + locks)         | Lower (async between steps)               |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Saga rollback is the same as DB rollback | DB rollback reverts to pre-transaction state. Saga compensation creates a new offsetting operation. Side effects (emails sent, charges made) between steps may be visible and partially irreversible |
-| Saga guarantees full isolation | Sagas explicitly do NOT guarantee isolation. Other transactions may read intermediate states. Plan for this with semantic locks or countermeasures |
-| Choreography is better than orchestration | Choreography scales better; Orchestration is easier to understand and debug. Choose based on team size and complexity of the saga, not dogma |
+| Misconception                             | Reality                                                                                                                                                                                              |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Saga rollback is the same as DB rollback  | DB rollback reverts to pre-transaction state. Saga compensation creates a new offsetting operation. Side effects (emails sent, charges made) between steps may be visible and partially irreversible |
+| Saga guarantees full isolation            | Sagas explicitly do NOT guarantee isolation. Other transactions may read intermediate states. Plan for this with semantic locks or countermeasures                                                   |
+| Choreography is better than orchestration | Choreography scales better; Orchestration is easier to understand and debug. Choose based on team size and complexity of the saga, not dogma                                                         |
 
 ---
 

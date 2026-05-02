@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A correlation ID is a unique identifier attached to a request at its entry point and propagated through every service it touches, enabling engineers to search all logs and traces for that single ID and reconstruct the complete path of the request across the distributed system.
 
-| #612 | Category: Distributed Systems | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Distributed Tracing, Logging, HTTP & APIs, Microservices | |
-| **Used by:** | Distributed Tracing, Observability, API Gateway, Service Mesh | |
-| **Related:** | Distributed Tracing, Idempotency (Distributed), Request-Response Pattern, Logging | |
+| #612            | Category: Distributed Systems                                                     | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Distributed Tracing, Logging, HTTP & APIs, Microservices                          |                 |
+| **Used by:**    | Distributed Tracing, Observability, API Gateway, Service Mesh                     |                 |
+| **Related:**    | Distributed Tracing, Idempotency (Distributed), Request-Response Pattern, Logging |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -49,6 +49,7 @@ A **correlation ID** (also called request ID, trace ID in simple systems) is a u
 Generate one UUID per request at the entry point and include it in every log line and every downstream call — then search all your logs with that one ID to reconstruct what happened.
 
 **One analogy:**
+
 > Correlation ID is like a hospital wristband. Every patient gets one unique ID at admission. Every test result, medication record, X-ray, and doctor's note goes on the chart under that patient's ID. If you need to look up everything that happened to a patient, you search by wristband ID — you don't have to correlate by name (which might be duplicated) or by time (which overlaps with other patients).
 
 **One insight:**
@@ -59,6 +60,7 @@ The correlation ID is only valuable if it appears in EVERY log line throughout t
 ### 🔩 First Principles Explanation
 
 **PROPAGATION CHAIN:**
+
 ```
 Client → API Gateway → Service A → Service B → Service C
                                              → Database (connection comment)
@@ -66,28 +68,29 @@ Client → API Gateway → Service A → Service B → Service C
          API Gateway generates correlationId = "uuid-abc123"
          API Gateway: logs "request received uuid-abc123"
          API Gateway: adds header X-Correlation-ID: uuid-abc123 to request to Service A
-         
+
          Service A: extracts correlation ID from header
          Service A: puts in SLF4J MDC (Mapped Diagnostic Context)
          Service A: logs "processing order" → MDC auto-appends correlationId=uuid-abc123
          Service A: calls Service B with header X-Correlation-ID: uuid-abc123
          Service A: sends Kafka message with header correlationId=uuid-abc123
-         
+
          Service B: extracts from header, puts in MDC, logs with same ID
          Service C: extracts from header, puts in MDC, logs with same ID
-         
+
 Result: grep "uuid-abc123" in any service's logs → all log lines for this request
 ```
 
 **SLF4J MDC PROPAGATION (JAVA/SPRING):**
+
 ```java
 // Spring Web Filter — extracts/generates correlation ID:
 @Component
 public class CorrelationIdFilter extends OncePerRequestFilter {
-    
+
     private static final String CORRELATION_ID_HEADER = "X-Correlation-ID";
     private static final String MDC_KEY = "correlationId";
-    
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                      HttpServletResponse response,
@@ -96,10 +99,10 @@ public class CorrelationIdFilter extends OncePerRequestFilter {
         if (correlationId == null || correlationId.isBlank()) {
             correlationId = UUID.randomUUID().toString();  // Generate if not present
         }
-        
+
         MDC.put(MDC_KEY, correlationId);  // Thread-local: auto-appended to all log lines
         response.setHeader(CORRELATION_ID_HEADER, correlationId); // Echo back to client
-        
+
         try {
             chain.doFilter(request, response);
         } finally {
@@ -116,6 +119,7 @@ public class CorrelationIdFilter extends OncePerRequestFilter {
 ```
 
 **ASYNC THREAD POOL PROPAGATION:**
+
 ```java
 // PROBLEM: MDC does not propagate across thread boundaries automatically:
 ExecutorService executor = Executors.newFixedThreadPool(10);
@@ -152,6 +156,7 @@ public ThreadPoolTaskExecutor asyncExecutor() {
 ```
 
 **KAFKA MESSAGE HEADER PROPAGATION:**
+
 ```java
 // Producer: include correlation ID in Kafka message headers:
 ProducerRecord<String, OrderEvent> record = new ProducerRecord<>("orders", event);
@@ -211,32 +216,36 @@ Distributed tracing frameworks use the trace_id as their correlation ID. The tra
 ### ⚙️ How It Works (Mechanism)
 
 **Express.js Correlation ID Middleware:**
-```javascript
-const { v4: uuidv4 } = require('uuid');
-const { createNamespace } = require('cls-hooked'); // Continuation Local Storage
 
-const ns = createNamespace('request');
+```javascript
+const { v4: uuidv4 } = require("uuid");
+const { createNamespace } = require("cls-hooked"); // Continuation Local Storage
+
+const ns = createNamespace("request");
 
 app.use((req, res, next) => {
-    const correlationId = req.headers['x-correlation-id'] || uuidv4();
-    res.setHeader('x-correlation-id', correlationId);
-    
-    // CLS propagates across async/await automatically:
-    ns.run(() => {
-        ns.set('correlationId', correlationId);
-        next();
-    });
+  const correlationId = req.headers["x-correlation-id"] || uuidv4();
+  res.setHeader("x-correlation-id", correlationId);
+
+  // CLS propagates across async/await automatically:
+  ns.run(() => {
+    ns.set("correlationId", correlationId);
+    next();
+  });
 });
 
 // Logger reads from CLS:
 const logger = {
-    info: (msg, meta = {}) => console.log(JSON.stringify({
-        level: 'info',
+  info: (msg, meta = {}) =>
+    console.log(
+      JSON.stringify({
+        level: "info",
         message: msg,
-        correlationId: ns.get('correlationId'),  // auto-included
+        correlationId: ns.get("correlationId"), // auto-included
         timestamp: new Date().toISOString(),
-        ...meta
-    }))
+        ...meta,
+      }),
+    ),
 };
 ```
 
@@ -244,22 +253,22 @@ const logger = {
 
 ### ⚖️ Comparison Table
 
-| Approach | Setup | Data Captured | Debug Power | Use When |
-|---|---|---|---|---|
-| No correlation | None | None | Cannot correlate | Never (for distributed systems) |
-| Correlation ID | Low | Request path (flat) | Good (grep search) | Simple 2-3 service systems |
-| Distributed Tracing | Medium | Request path + timing tree | Excellent | 4+ service systems |
-| Full Observability | High | Traces + metrics + logs (linked) | Best | Production microservices |
+| Approach            | Setup  | Data Captured                    | Debug Power        | Use When                        |
+| ------------------- | ------ | -------------------------------- | ------------------ | ------------------------------- |
+| No correlation      | None   | None                             | Cannot correlate   | Never (for distributed systems) |
+| Correlation ID      | Low    | Request path (flat)              | Good (grep search) | Simple 2-3 service systems      |
+| Distributed Tracing | Medium | Request path + timing tree       | Excellent          | 4+ service systems              |
+| Full Observability  | High   | Traces + metrics + logs (linked) | Best               | Production microservices        |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Correlation ID automatically appears in all logs | Only if you put it in MDC and configure your log appender to include MDC. Log lines not going through SLF4J (e.g., System.out.println) won't have it |
-| One correlation ID per service is enough | Correlation ID must be the SAME value across ALL services for one logical request. Using service-local IDs defeats the purpose |
-| Correlation ID is only for debugging | Correlation ID is also used for: idempotency (same correlation ID = same logical operation), distributed tracing (base), security audit trail (who did what when) |
+| Misconception                                    | Reality                                                                                                                                                           |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Correlation ID automatically appears in all logs | Only if you put it in MDC and configure your log appender to include MDC. Log lines not going through SLF4J (e.g., System.out.println) won't have it              |
+| One correlation ID per service is enough         | Correlation ID must be the SAME value across ALL services for one logical request. Using service-local IDs defeats the purpose                                    |
+| Correlation ID is only for debugging             | Correlation ID is also used for: idempotency (same correlation ID = same logical operation), distributed tracing (base), security audit trail (who did what when) |
 
 ---
 

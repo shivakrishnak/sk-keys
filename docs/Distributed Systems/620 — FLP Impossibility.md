@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — The FLP Impossibility theorem (Fischer, Lynch, Paterson, 1985) proves that in an asynchronous distributed system, no deterministic consensus algorithm can guarantee both safety and termination if even one process might fail — it's always possible to construct an execution where the algorithm runs forever without reaching agreement.
 
-| #620 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Two Generals Problem, Byzantine Fault Tolerance, Consensus, Raft, Paxos | |
-| **Used by:** | Consensus Algorithm Design, Distributed Systems Research, CAP Theorem | |
-| **Related:** | Two Generals Problem, Byzantine Fault Tolerance, CAP Theorem, Raft, Paxos | |
+| #620            | Category: Distributed Systems                                             | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Two Generals Problem, Byzantine Fault Tolerance, Consensus, Raft, Paxos   |                 |
+| **Used by:**    | Consensus Algorithm Design, Distributed Systems Research, CAP Theorem     |                 |
+| **Related:**    | Two Generals Problem, Byzantine Fault Tolerance, CAP Theorem, Raft, Paxos |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ A consensus algorithm must satisfy: (1) Agreement — all correct processes deci
 It's mathematically proven that no distributed consensus algorithm can always terminate when the network can delay messages indefinitely and any process can crash.
 
 **One analogy:**
+
 > FLP is like proving that no meeting facilitator can guarantee a decision will be reached when participants can arrive arbitrarily late. Even with 10 participants: if one might be late (stuck in traffic — crash fault), and you can't tell the difference between "late" and "not coming" (asynchronous), you can never be sure you have everyone's input. If you wait: you might wait forever. If you decide without them: they might arrive with the deciding vote. You cannot guarantee both "we always decide" and "we always decide correctly."
 
 **One insight:**
@@ -60,6 +61,7 @@ The practical escape hatch is **partial synchrony**: the assumption that, while 
 ### 🔩 First Principles Explanation
 
 **THE FLP IMPOSSIBILITY PROOF (SIMPLIFIED):**
+
 ```
 Key concepts:
   Configuration C: the current state of all processes + pending messages
@@ -82,48 +84,50 @@ Step 2: From any bivalent configuration, there is always a next step that leads
 to another bivalent configuration (not a terminal decision).
   Argument: Consider the "deciding step" — the message delivery that causes
   transition from bivalent to univalent.
-  
+
   A faulty process can DELAY delivering the message that would cause decision.
   If you delay it: the algorithm is in a bivalent state, waiting.
   If you never deliver it: the algorithm never terminates.
-  
+
   The algorithm can't tell the difference between:
     "The slow process hasn't sent the message yet (it will)"
     "The process has crashed (it won't)"
-    
+
   → Any algorithm that terminates can be stuck in the bivalent state forever
      by a ADVERSARY that delays exactly the right messages.
-  
-Conclusion: No deterministic algorithm can guarantee termination 
+
+Conclusion: No deterministic algorithm can guarantee termination
 without risking being in a bivalent state forever.
 ```
 
 **PARTIAL SYNCHRONY ESCAPE (RAFT'S SOLUTION):**
+
 ```
 Raft assumes partial synchrony:
   "Eventually, messages will be delivered within time delta."
-  
+
 Raft's election timeout:
   Follower converts to candidate after 150-300ms of no leader heartbeat.
   Randomized timeouts prevent split votes.
-  
+
 How this escapes FLP:
   Under partial synchrony: eventually, one candidate's timeout fires first,
   it sends RequestVote to all, gets responses before others' timeouts fire,
   wins election, starts sending heartbeats.
-  
+
   The FLP adversary can delay messages: but only until delta (the sync bound).
   Once the sync bound holds: Raft eventually elects a leader and makes progress.
-  
+
   FLP says: you can't GUARANTEE termination in ALL executions.
   Raft says: I guarantee termination in ALL executions where eventual
              partial synchrony holds.
-  
+
   In practice: partial synchrony holds > 99.999% of the time.
   The "FLP adversary" that indefinitely delays messages doesn't exist in practice.
 ```
 
 **SAFETY vs. LIVENESS TRADE-OFF:**
+
 ```
 Safety:   "Nothing bad ever happens" (agreement + validity preserved)
 Liveness: "Something good eventually happens" (termination: algorithm decides)
@@ -134,9 +138,9 @@ Practical systems choose safety over liveness:
   Raft: if leader can't get majority, it STOPS making progress (waits for election).
     SAFE: no inconsistency. No liveness during election chaos.
     But eventually (partial synchrony): leader elected. Progress resumes.
-    
+
   This is correct: in a partition, it's better to pause than make an inconsistent decision.
-  
+
   Compare to AP systems (eventual consistency): sacrifice SAFETY for LIVENESS.
     "We'll accept writes even in partitions, resolve conflicts later."
     This is the other FLP escape hatch: sacrifice agreement (safety) to guarantee progress.
@@ -153,6 +157,7 @@ FLP says: there exists an adversary that can delay messages forever, preventing 
 In the real world: network delays are bounded. Even in the worst case, messages arrive within minutes (TCP retransmission + timeouts). The adversary that delays messages forever doesn't exist outside of the theoretical model.
 
 So why does FLP matter?
+
 1. It explains WHY consensus algorithms use timeouts (to assume partial synchrony).
 2. It explains why consensus cannot be 100% provably safe in ALL scenarios.
 3. It explains why distributed databases have SLAs like "P4 SLA: decisions reached within 30 seconds 99.99% of the time" — that "99.99%" acknowledges the 0.01% FLP-like scenarios.
@@ -181,6 +186,7 @@ So why does FLP matter?
 ### ⚙️ How It Works (Mechanism)
 
 **Demonstrating the FLP Scenario with Raft:**
+
 ```python
 # Simulated Raft showing the FLP scenario:
 # Under perfect adversarial message delay, leader election never completes
@@ -196,7 +202,7 @@ class RaftNode:
         self.votes = 0
         # Random timeout (150-300ms) — FLP escape hatch:
         self.timeout = random.uniform(0.150, 0.300)
-    
+
     def start_election(self):
         self.term += 1
         self.state = "candidate"
@@ -208,11 +214,11 @@ def simulate_flp_scenario():
     """
     Adversary delays all RequestVote responses until AFTER each candidate's
     election timeout — causing repeated split votes (all restart elections).
-    
+
     In a 3-node cluster with 3 simultaneous timeouts:
     """
     nodes = [RaftNode(i) for i in range(3)]
-    
+
     round_count = 0
     while round_count < 10:
         round_count += 1
@@ -220,11 +226,11 @@ def simulate_flp_scenario():
         for node in nodes:
             vote_req = node.start_election()
             # Adversary: delay the responses until AFTER all nodes start new elections
-        
+
         # No responses arrive in time — all restart elections
         print(f"Round {round_count}: All elections failed (split vote / timeout)")
         # This loop can go forever in a purely asynchronous system (FLP)
-    
+
     print("FLP scenario: protocol has not terminated after 10 rounds")
     print("Raft escapes this via RANDOMIZED timeouts — different nodes timeout at different times")
 ```
@@ -233,22 +239,22 @@ def simulate_flp_scenario():
 
 ### ⚖️ Comparison Table
 
-| Impossibility Result | Assumption | Conclusion |
-|---|---|---|
-| Two Generals Problem | Unreliable channel | Simultaneous coordination impossible |
-| FLP Impossibility | Asynchronous + 1 crash | Deterministic consensus can't guarantee termination |
-| CAP Theorem | Network partition | Can't have C + A + P simultaneously |
-| Byzantine >= N/3 | Malicious nodes | BFT impossible with >= 1/3 traitors |
+| Impossibility Result | Assumption             | Conclusion                                          |
+| -------------------- | ---------------------- | --------------------------------------------------- |
+| Two Generals Problem | Unreliable channel     | Simultaneous coordination impossible                |
+| FLP Impossibility    | Asynchronous + 1 crash | Deterministic consensus can't guarantee termination |
+| CAP Theorem          | Network partition      | Can't have C + A + P simultaneously                 |
+| Byzantine >= N/3     | Malicious nodes        | BFT impossible with >= 1/3 traitors                 |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| FLP means Raft/Paxos are unsafe | These algorithms are safe (safety property holds). FLP says they can't PROVABLY guarantee TERMINATION. In practice, they terminate reliably under partial synchrony |
+| Misconception                          | Reality                                                                                                                                                                        |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| FLP means Raft/Paxos are unsafe        | These algorithms are safe (safety property holds). FLP says they can't PROVABLY guarantee TERMINATION. In practice, they terminate reliably under partial synchrony            |
 | FLP applies to all distributed systems | FLP specifically applies to asynchronous systems (no message timing bounds). Synchronous systems (with proven message delivery bounds) can achieve consensus deterministically |
-| Randomized algorithms don't help | Randomized consensus (Ben-Or, Rabin) do achieve consensus "with probability 1" in asynchronous systems — they evade FLP by being non-deterministic |
+| Randomized algorithms don't help       | Randomized consensus (Ben-Or, Rabin) do achieve consensus "with probability 1" in asynchronous systems — they evade FLP by being non-deterministic                             |
 
 ---
 

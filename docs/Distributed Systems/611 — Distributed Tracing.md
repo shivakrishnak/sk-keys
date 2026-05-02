@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Distributed tracing records the path a request takes through every microservice, annotating each span with timing and metadata, so engineers can visualize the full call tree, identify which service introduced latency or errors, and debug cross-service performance problems.
 
-| #611 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Correlation ID, Observability, Microservices, HTTP & APIs | |
-| **Used by:** | Service Mesh, OpenTelemetry, Jaeger, Zipkin, SRE | |
-| **Related:** | Correlation ID, Logging, Metrics, Service Mesh, OpenTelemetry | |
+| #611            | Category: Distributed Systems                                 | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Correlation ID, Observability, Microservices, HTTP & APIs     |                 |
+| **Used by:**    | Service Mesh, OpenTelemetry, Jaeger, Zipkin, SRE              |                 |
+| **Related:**    | Correlation ID, Logging, Metrics, Service Mesh, OpenTelemetry |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ You look up the trace ID from the slow checkout request. The tracing system show
 Attach a unique ID to every request, pass it through every service, and record the timing and metadata of every hop — then visualize the entire call tree as one trace.
 
 **One analogy:**
+
 > Distributed tracing is like a parcel tracking system for requests. Each service the package passes through scans it and logs: "arrived at Service B at 10:00:01.234, left at 10:00:01.250 — 16ms processing time." The parcel tracking dashboard shows the complete journey: originated at ServiceA, went through B, C, D — stopped for 6 seconds at carrier ServiceH because the warehouse (ExternalAPI) was backed up.
 
 **One insight:**
@@ -60,6 +61,7 @@ The most common mistake is treating distributed tracing as just "colored logs." 
 ### 🔩 First Principles Explanation
 
 **TRACE STRUCTURE:**
+
 ```
 Trace ID: abc-123 (same across ALL services for this request)
 
@@ -88,6 +90,7 @@ Critical path = Gateway → Payment → Stripe (140ms of the 250ms total)
 ```
 
 **W3C TRACEPARENT HEADER:**
+
 ```
 traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01
               ^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^ ^^
@@ -104,6 +107,7 @@ When Service A calls Service B:
 ```
 
 **OPENTELEMETRY INSTRUMENTATION (JAVA):**
+
 ```java
 // Manual instrumentation:
 @GetMapping("/checkout/{orderId}")
@@ -113,13 +117,13 @@ public ResponseEntity<CheckoutResponse> checkout(@PathVariable String orderId,
     Span span = Span.current();
     span.setAttribute("order.id", orderId);
     span.setAttribute("user.id", getCurrentUserId());
-    
+
     // Create child span for a specific operation:
     Tracer tracer = GlobalOpenTelemetry.getTracer("checkout-service");
     Span paymentSpan = tracer.spanBuilder("process-payment")
         .setAttribute("payment.amount", order.getTotal())
         .startSpan();
-    
+
     try (Scope scope = paymentSpan.makeCurrent()) {
         PaymentResult result = paymentService.process(orderId);
         paymentSpan.setAttribute("payment.status", result.getStatus());
@@ -134,20 +138,21 @@ public ResponseEntity<CheckoutResponse> checkout(@PathVariable String orderId,
 }
 
 // OTel Java Agent auto-instruments:
-// Spring MVC, RestTemplate, WebClient, JDBC, Kafka, 
+// Spring MVC, RestTemplate, WebClient, JDBC, Kafka,
 // AWS SDK, MongoDB, Redis, gRPC — zero code changes needed.
 ```
 
 **SAMPLING STRATEGIES:**
+
 ```
 Head-Based Sampling (decide at trace entry point):
   Always sample: 100% traces recorded. High storage/CPU cost.
   Rate-based: sample 1% of traces. Miss slow/error traces in the 99%.
-  
+
 Tail-Based Sampling (decide AFTER seeing full trace):
   Collect all spans. Evaluate completed trace:
     - Trace has ERROR → KEEP (always capture errors)
-    - Trace took > p95 latency → KEEP (capture outliers)  
+    - Trace took > p95 latency → KEEP (capture outliers)
     - Trace is routine → DROP (save storage)
   Requires: collector holds all spans in memory until trace completes.
   Used by: Honeycomb, Grafana Tempo (with OTel Collector tail sampling processor).
@@ -193,12 +198,14 @@ Fix: use OTel's `Context.current().wrap(runnable)` when submitting to thread poo
 ### ⚙️ How It Works (Mechanism)
 
 **OpenTelemetry with Spring Boot (Auto-instrumentation):**
+
 ```yaml
 # application.yml
 management:
   tracing:
     sampling:
-      probability: 1.0  # 100% sampling in dev; use 0.01 in prod
+      probability: 1.0 # 100% sampling in dev; use 0.01 in prod
+
 
 # Add OTel Java Agent to JVM:
 # -javaagent:/path/to/opentelemetry-javaagent.jar
@@ -211,24 +218,24 @@ management:
 
 ### ⚖️ Comparison Table
 
-| Tool | Type | Backend | Best For |
-|---|---|---|---|
-| Jaeger | Open source | Self-hosted | Kubernetes environments |
-| Zipkin | Open source | Self-hosted | Simple setups |
-| Grafana Tempo | Open source | Self-hosted | Free-form trace storage |
-| Honeycomb | SaaS | Managed | Tail-based sampling, powerful queries |
-| AWS X-Ray | SaaS | AWS-managed | AWS native environments |
-| Datadog APM | SaaS | Managed | Full observability platform |
+| Tool          | Type        | Backend     | Best For                              |
+| ------------- | ----------- | ----------- | ------------------------------------- |
+| Jaeger        | Open source | Self-hosted | Kubernetes environments               |
+| Zipkin        | Open source | Self-hosted | Simple setups                         |
+| Grafana Tempo | Open source | Self-hosted | Free-form trace storage               |
+| Honeycomb     | SaaS        | Managed     | Tail-based sampling, powerful queries |
+| AWS X-Ray     | SaaS        | AWS-managed | AWS native environments               |
+| Datadog APM   | SaaS        | Managed     | Full observability platform           |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Distributed tracing replaces logging | Traces tell you WHERE and HOW LONG; logs tell you WHAT HAPPENED. Use both: traces for navigation, logs for details |
-| You need 100% sampling to find problems | Tail-based sampling at 5% captures 100% of errors and p99 latencies with 5% storage cost |
-| Auto-instrumentation is sufficient | Auto-instrumentation captures infrastructure spans (HTTP, DB). Business spans (saga steps, payment processing stages) require manual instrumentation for meaningful traces |
+| Misconception                           | Reality                                                                                                                                                                    |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Distributed tracing replaces logging    | Traces tell you WHERE and HOW LONG; logs tell you WHAT HAPPENED. Use both: traces for navigation, logs for details                                                         |
+| You need 100% sampling to find problems | Tail-based sampling at 5% captures 100% of errors and p99 latencies with 5% storage cost                                                                                   |
+| Auto-instrumentation is sufficient      | Auto-instrumentation captures infrastructure spans (HTTP, DB). Business spans (saga steps, payment processing stages) require manual instrumentation for meaningful traces |
 
 ---
 

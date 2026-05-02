@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Byzantine Fault Tolerance (BFT) is the ability of a distributed system to continue operating correctly even when some nodes behave arbitrarily — sending false information or acting maliciously — as long as fewer than one-third of nodes are Byzantine; the original Byzantine Generals Problem proves that n/3 is the maximum tolerable fraction of traitors.
 
-| #619 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Two Generals Problem, Consensus, Raft, FLP Impossibility | |
-| **Used by:** | Blockchain, PBFT, Tendermint, Hyperledger, Multi-Party Systems | |
-| **Related:** | Two Generals Problem, FLP Impossibility, Raft, Paxos, Blockchain | |
+| #619            | Category: Distributed Systems                                    | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Two Generals Problem, Consensus, Raft, FLP Impossibility         |                 |
+| **Used by:**    | Blockchain, PBFT, Tendermint, Hyperledger, Multi-Party Systems   |                 |
+| **Related:**    | Two Generals Problem, FLP Impossibility, Raft, Paxos, Blockchain |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ Lamport, Shostak, and Pease (1982): N generals must coordinate a battle. Some ar
 BFT means your distributed system still works correctly even if some nodes are lying, sending fake messages, or behaving maliciously — as long as fewer than 1/3 of nodes are compromised.
 
 **One analogy:**
+
 > Byzantine Fault Tolerance is like a jury deliberation where some jurors are bribed. As long as fewer than 1/3 of jurors are corrupt, the honest majority can still reach a correct verdict. They achieve this by requiring the same answer from multiple independent jurors — one corrupt juror can't fool the entire group. If too many are corrupt (≥ 1/3), the verdict can be manipulated.
 
 **One insight:**
@@ -60,6 +61,7 @@ The 1/3 threshold is not arbitrary — it's provably optimal. With 3f+1 nodes an
 ### 🔩 First Principles Explanation
 
 **WHY N ≥ 3f+1? (INTUITION):**
+
 ```
 Setup: N generals total, f are traitors. Goal: honest generals agree on attack or retreat.
 
@@ -69,59 +71,61 @@ Worst case partition during voting:
 
 Analysis (f=1, N=3):
   Generals: A (honest), B (honest), C (traitor/Byzantine).
-  
+
   C tells A: "B says attack."
   C tells B: "A says retreat."
-  
+
   A hears: A=attack, B=attack (C's lie), C=? → majority attack → A decides attack.
   B hears: A=retreat (C's lie), B=retreat, C=? → majority retreat → B decides retreat.
-  
+
   A and B cannot agree. 3 generals are insufficient for 1 traitor.
 
 With N=4 (3f+1 = 3*1+1 = 4):
   General D (honest) is added. Each honest node collects votes from all others:
-  
+
   C lies to A: "B says attack", lies to B: "A says retreat", lies to D: "A says attack"
-  
+
   A hears: A=attack, B=attack (C's lie), D=attack → majority attack
   B hears: A=retreat (C's lie), B=retreat, D=retreat → majority retreat
   D hears: A=attack (C's lie for D), B=retreat, D=attack → tied!
-  
+
   Actually, with the full PBFT algorithm, D gets the actual votes from A, B, and relays:
   Each node shares what it received, using a second round to detect inconsistencies.
   With 4 nodes and 1 traitor, honest nodes can detect C is Byzantine and ignore it.
 ```
 
 **PBFT (PRACTICAL BYZANTINE FAULT TOLERANCE) PROTOCOL:**
+
 ```
 3-Phase Protocol for each request:
   Phase 1: PRE-PREPARE
     Leader (primary) receives client request.
     Leader broadcasts PRE-PREPARE to all replicas:
       {view, sequence_number, message_digest, request}
-    
+
   Phase 2: PREPARE
     Each replica that accepts pre-prepare broadcasts PREPARE to all:
       {view, sequence_number, message_digest, replica_id}
-    
+
     Each replica waits for 2f PREPARE messages matching its pre-prepare.
     "Prepared" = received matching pre-prepare + 2f matching prepares.
-    
+
   Phase 3: COMMIT
     Each "prepared" replica broadcasts COMMIT:
       {view, sequence_number, message_digest, replica_id}
-    
+
     Waits for 2f+1 COMMIT messages.
     "Committed" = received 2f+1 commits.
     Only then executes the request and sends reply to client.
-    
+
   Message complexity: O(N²) per request (each of N nodes messages all N nodes)
   → Why BFT is expensive: 3-phase, O(N²) messages per consensus round.
-  
+
   Raft by comparison: O(N) per request (leader → all followers → leader).
 ```
 
 **BLOCKCHAIN BFT (NAKAMOTO CONSENSUS — PROBABILISTIC):**
+
 ```
 Bitcoin doesn't use PBFT — it uses Proof of Work as a probabilistic BFT:
   - Byzantine nodes: miners who try to mine a fraudulent chain.
@@ -129,7 +133,7 @@ Bitcoin doesn't use PBFT — it uses Proof of Work as a probabilistic BFT:
   - Probabilistic: not deterministic BFT. Requires "k confirmations" to be "probably final."
   - k=6 confirmations: probability that a 6-block chain is reversed ≈ e^(-1.17 × attacker_fraction * k)
     With 10% attacker hash rate: probability of reversion after 6 blocks ≈ 0.1%
-    
+
   Trade-off:
     PBFT: deterministic finality (block is final once committed), O(N²) messages, N ≤ ~100 nodes
     PoW: probabilistic finality (final after enough confirmations), O(N) messages, N = millions of nodes
@@ -172,6 +176,7 @@ If 3 nodes are compromised (3/7 ≈ 43% > 33%): BFT fails. Byzantine nodes can m
 ### ⚙️ How It Works (Mechanism)
 
 **HotStuff Simplified (3-Phase BFT):**
+
 ```
 # N = 4 nodes, f = 1 Byzantine fault tolerance
 # Threshold signature: requires 2f+1 = 3 valid signers
@@ -180,17 +185,17 @@ Phase 1: PREPARE
   Leader broadcasts PREPARE(block_hash) to all
   Each honest node signs and returns PREPARE vote
   Leader collects 2f+1 = 3 votes → creates quorum certificate (QC)
-  
+
 Phase 2: PRE-COMMIT
   Leader broadcasts PRE-COMMIT(block_hash, QC_from_prepare) to all
   Each node that sees QC → votes PRE-COMMIT
   Leader collects 2f+1 votes → pre-commit QC
-  
+
 Phase 3: COMMIT
   Leader broadcasts COMMIT(block_hash, pre-commit_QC) to all
   Each node votes COMMIT
   Leader collects 2f+1 commits → block is FINAL
-  
+
 Key advantage over PBFT:
   Each phase is O(N): leader → N nodes → leader.
   PBFT requires each node to talk to all others: O(N²).
@@ -201,25 +206,25 @@ Key advantage over PBFT:
 
 ### ⚖️ Comparison Table
 
-| Property | CFT (Raft/Paxos) | BFT (PBFT/Tendermint) |
-|---|---|---|
-| Failure model | Crash failures (honest but stopped) | Byzantine (arbitrary, malicious) |
-| Min nodes for f failures | N ≥ 2f+1 | N ≥ 3f+1 |
-| Message complexity | O(N) per round | O(N²) per round (PBFT); O(N) (HotStuff) |
-| Max practical N | 1000s | ~100 (PBFT); ~200 (HotStuff) |
-| Finality | Deterministic | Deterministic (PBFT); probabilistic (PoW) |
-| Trust model | All nodes honest (but crashable) | Up to 1/3 can be malicious |
-| Use case | Datacenter distributed systems | Cross-org, blockchain, untrusted participants |
+| Property                 | CFT (Raft/Paxos)                    | BFT (PBFT/Tendermint)                         |
+| ------------------------ | ----------------------------------- | --------------------------------------------- |
+| Failure model            | Crash failures (honest but stopped) | Byzantine (arbitrary, malicious)              |
+| Min nodes for f failures | N ≥ 2f+1                            | N ≥ 3f+1                                      |
+| Message complexity       | O(N) per round                      | O(N²) per round (PBFT); O(N) (HotStuff)       |
+| Max practical N          | 1000s                               | ~100 (PBFT); ~200 (HotStuff)                  |
+| Finality                 | Deterministic                       | Deterministic (PBFT); probabilistic (PoW)     |
+| Trust model              | All nodes honest (but crashable)    | Up to 1/3 can be malicious                    |
+| Use case                 | Datacenter distributed systems      | Cross-org, blockchain, untrusted participants |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| BFT is only for blockchain | BFT is used in any multi-party system where participants aren't fully trusted (multi-bank settlement, cross-company consortium databases, IoT networks) |
+| Misconception                                        | Reality                                                                                                                                                              |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BFT is only for blockchain                           | BFT is used in any multi-party system where participants aren't fully trusted (multi-bank settlement, cross-company consortium databases, IoT networks)              |
 | Raft can handle compromised nodes with more replicas | Raft assumes honest nodes. A single Byzantine Raft leader can corrupt the entire cluster. More replicas don't help — more Byzantine nodes can be in the expanded set |
-| 50% honest nodes are sufficient for BFT | BFT requires > 2/3 honest nodes (< 1/3 Byzantine). With exactly 50% each: Byzantine coalition can always deadlock consensus |
+| 50% honest nodes are sufficient for BFT              | BFT requires > 2/3 honest nodes (< 1/3 Byzantine). With exactly 50% each: Byzantine coalition can always deadlock consensus                                          |
 
 ---
 

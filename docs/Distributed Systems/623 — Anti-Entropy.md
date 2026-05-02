@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Anti-entropy is a background process that continuously synchronizes diverged replicas by comparing their data (using Merkle trees for efficiency) and exchanging differing values — ensuring eventual consistency even when real-time replication fails silently.
 
-| #623 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Gossip Protocol, Replication Strategies, Eventual Consistency | |
-| **Used by:** | Cassandra (nodetool repair), Riak, DynamoDB, Amazon S3, Dynamo | |
-| **Related:** | Gossip Protocol, Read Repair, Hinted Handoff, Merkle Tree, Eventual Consistency | |
+| #623            | Category: Distributed Systems                                                   | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Gossip Protocol, Replication Strategies, Eventual Consistency                   |                 |
+| **Used by:**    | Cassandra (nodetool repair), Riak, DynamoDB, Amazon S3, Dynamo                  |                 |
+| **Related:**    | Gossip Protocol, Read Repair, Hinted Handoff, Merkle Tree, Eventual Consistency |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -35,6 +35,7 @@ In a distributed database with N replicas, writes are acknowledged when W out of
 
 **THE DRIFT PROBLEM:**
 Replica divergence (entropy) accumulates over time because:
+
 - Network partitions cause missed writes
 - Node restarts cause missed writes during downtime
 - Hinted handoff delivers writes but hints expire before delivery
@@ -56,6 +57,7 @@ Without a corrective mechanism, replicas drift apart indefinitely. **Anti-entrop
 Anti-entropy is a background process where replicas periodically compare their data using Merkle trees and sync any differences — fixing divergence that real-time replication missed.
 
 **One analogy:**
+
 > Two accountants independently entering transactions. Normally they stay in sync because every transaction is sent to both. But sometimes a fax is lost, a system crashes, or a network hiccup causes one to miss an entry. Anti-entropy is like a weekly reconciliation meeting where they compare their ledgers: "I have 1,247 entries; you have 1,245. Let me show you a summary tree — ok, the difference is in Q3 transactions. Here are the 2 missing entries." No need to compare all 1,247 entries one-by-one; the summary tree finds the discrepancy efficiently.
 
 **One insight:**
@@ -66,6 +68,7 @@ Anti-entropy is the safety net below all other consistency mechanisms. Read repa
 ### 🔩 First Principles Explanation
 
 **MERKLE TREE CONSTRUCTION FOR ANTI-ENTROPY:**
+
 ```
 A Merkle tree for a partition [key1..keyN]:
 
@@ -99,6 +102,7 @@ where k << n. Critical for large datasets.
 ```
 
 **ANTI-ENTROPY PROCESS: HOW CASSANDRA `nodetool repair` WORKS:**
+
 ```
 Cassandra Anti-Entropy (nodetool repair):
 
@@ -129,6 +133,7 @@ nodetool repair command:
 ```
 
 **ANTI-ENTROPY vs. GOSSIP-BASED SYNC:**
+
 ```
 Gossip protocol: eventually disseminates metadata (node states, ring topology)
 Anti-entropy: resolves actual data divergence
@@ -184,6 +189,7 @@ This is why gc_grace_seconds (10 days default) must be longer than the repair in
 ### ⚙️ How It Works (Mechanism)
 
 **Anti-Entropy in a Production Cassandra Cluster:**
+
 ```
 Production Cassandra Anti-Entropy Schedule (best practice):
 
@@ -194,7 +200,7 @@ Weekly full repair script:
   #!/bin/bash
   KEYSPACE="production_ks"
   TABLES=("orders" "users" "inventory")
-  
+
   for TABLE in "${TABLES[@]}"; do
     echo "Starting repair: $KEYSPACE.$TABLE"
     # -pr: only repair ranges this node is primary for (avoids 3× repair traffic)
@@ -207,7 +213,7 @@ Monitoring:
   nodetool netstats              → see streaming activity during repair
   nodetool tpstats               → AntiEntropyStage queue depth
   system.compaction_history      → compaction triggered by repair streaming
-  
+
 Warning signs:
   "AntiEntropyStage: 1 pending tasks" for hours → repair stuck
   Repeated repair failures on same range → disk or network issue on that node
@@ -218,22 +224,22 @@ Warning signs:
 
 ### ⚖️ Comparison Table
 
-| Mechanism | Trigger | Coverage | Cost | Latency to Fix |
-|---|---|---|---|---|
-| Real-time Replication | Write | Only current write | Low | Immediate |
-| Hinted Handoff | Write (node down) | Recent writes (within hint window) | Low | Hours |
-| Read Repair | Read | Only read keys | Low-Med | Next read of that key |
-| Anti-Entropy | Background schedule | ALL data | High (Merkle trees) | Hours–days |
+| Mechanism             | Trigger             | Coverage                           | Cost                | Latency to Fix        |
+| --------------------- | ------------------- | ---------------------------------- | ------------------- | --------------------- |
+| Real-time Replication | Write               | Only current write                 | Low                 | Immediate             |
+| Hinted Handoff        | Write (node down)   | Recent writes (within hint window) | Low                 | Hours                 |
+| Read Repair           | Read                | Only read keys                     | Low-Med             | Next read of that key |
+| Anti-Entropy          | Background schedule | ALL data                           | High (Merkle trees) | Hours–days            |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Anti-entropy replaces the need for real-time replication | Anti-entropy is only the SAFETY NET. It runs hours after divergence occurs. Real-time replication (quorum writes) must be the primary consistency mechanism; anti-entropy corrects the residual gaps |
-| Running anti-entropy more frequently = faster convergence | Anti-entropy competes for disk I/O and network bandwidth with production queries. Running it too frequently degrades cluster performance. Balance repair frequency with repair impact |
-| nodetool repair on any one node is sufficient | Each node must be repaired. Running `nodetool repair -pr` (primary ranges) on each node in sequence covers the full ring. Running on only one node repairs only that node's primary ranges |
+| Misconception                                             | Reality                                                                                                                                                                                              |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Anti-entropy replaces the need for real-time replication  | Anti-entropy is only the SAFETY NET. It runs hours after divergence occurs. Real-time replication (quorum writes) must be the primary consistency mechanism; anti-entropy corrects the residual gaps |
+| Running anti-entropy more frequently = faster convergence | Anti-entropy competes for disk I/O and network bandwidth with production queries. Running it too frequently degrades cluster performance. Balance repair frequency with repair impact                |
+| nodetool repair on any one node is sufficient             | Each node must be repaired. Running `nodetool repair -pr` (primary ranges) on each node in sequence covers the full ring. Running on only one node repairs only that node's primary ranges           |
 
 ---
 
@@ -252,8 +258,8 @@ When Nodes 1 and 2 no longer have the tombstone: Node 3's old row is "unconteste
 becomes the latest version of that row. The deleted row resurrects.
 
 Fix: NEVER allow repair interval > gc_grace_seconds. This is a hard operational invariant.
-Remediate: (1) Extend gc_grace_seconds temporarily (if you can pause GC). (2) Re-run delete 
-with a fresh tombstone. (3) Run immediate repair. Prevention: Prometheus alert on 
+Remediate: (1) Extend gc_grace_seconds temporarily (if you can pause GC). (2) Re-run delete
+with a fresh tombstone. (3) Run immediate repair. Prevention: Prometheus alert on
 `time_since_last_repair > gc_grace_seconds * 0.7` for each node.
 
 ---

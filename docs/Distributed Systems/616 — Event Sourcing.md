@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Event Sourcing stores the history of changes as an immutable, append-only log of domain events — state is never updated in-place but derived by replaying events; this provides complete audit history, temporal queries ("what was the state at T-3 days?"), and the ability to reconstruct any past or present state from events alone.
 
-| #616 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | CQRS, Domain Events, Append-Only Log, Event-Driven Architecture | |
-| **Used by:** | CQRS, Audit Logs, Outbox Pattern, Saga Pattern, Time Travel Queries | |
-| **Related:** | CQRS, Outbox Pattern, Saga Pattern, Domain Events, Append-Only Log | |
+| #616            | Category: Distributed Systems                                       | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | CQRS, Domain Events, Append-Only Log, Event-Driven Architecture     |                 |
+| **Used by:**    | CQRS, Audit Logs, Outbox Pattern, Saga Pattern, Time Travel Queries |                 |
+| **Related:**    | CQRS, Outbox Pattern, Saga Pattern, Domain Events, Append-Only Log  |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ Financial systems using event sourcing have a complete record of every credit an
 Instead of storing "current balance = $1,247", store every transaction that led there — the current state is always computable from the transaction history.
 
 **One analogy:**
+
 > Event sourcing is like maintaining a general ledger in accounting (double-entry bookkeeping). You never "update" the ledger — you only append new journal entries. The current balance isn't stored; it's the sum of all entries. The ledger IS the truth. The balance is derived, not stored. Any audit, any reconstruction, any "what happened on March 15th?" is answered by reading the ledger.
 
 **One insight:**
@@ -60,6 +61,7 @@ Every database is implicitly event-sourced at the WAL (Write-Ahead Log) level �
 ### 🔩 First Principles Explanation
 
 **EVENT STORE STRUCTURE:**
+
 ```
 Table: order_events
   aggregate_id  | version | event_type       | event_data                          | timestamp
@@ -81,6 +83,7 @@ To know state at 2024-01-10 10:30:01 (between v3 and v4):
 ```
 
 **AGGREGATE LOADING + COMMAND HANDLING:**
+
 ```java
 @Aggregate
 public class OrderAggregate {
@@ -96,13 +99,13 @@ public class OrderAggregate {
         this.status = OrderStatus.PLACED;
         this.total = e.getTotal();
     }
-    
+
     @EventSourcingHandler
     public void on(PaymentChargedEvent e) {
         this.status = OrderStatus.PAYMENT_CHARGED;
         this.chargeId = e.getChargeId();
     }
-    
+
     // Handle new command — check invariants, apply new event:
     @CommandHandler
     public void handle(ShipOrderCommand cmd) {
@@ -112,7 +115,7 @@ public class OrderAggregate {
         // Emit event (do not directly modify state here):
         AggregateLifecycle.apply(new ShipmentCreatedEvent(orderId, cmd.getTrackingNo()));
     }
-    
+
     @EventSourcingHandler
     public void on(ShipmentCreatedEvent e) {
         this.status = OrderStatus.SHIPPED;
@@ -121,13 +124,14 @@ public class OrderAggregate {
 ```
 
 **SNAPSHOT PATTERN:**
+
 ```
 Problem: Order-123 has 10,000 events (1 order per day over 27 years — bank account).
 Loading this aggregate for every command = replay 10,000 events = slow.
 
 Snapshot Pattern:
   Periodically (e.g., every 100 events) capture current state:
-  
+
   Table: order_snapshots
     aggregate_id | version | state_json                              | created_at
     order-123    |  5000   | {"status":"DELIVERED","total":150.0,...} | 2024-01-12
@@ -136,12 +140,13 @@ Snapshot Pattern:
   1. Load latest snapshot: version=5000, state={...}
   2. Apply only events with version > 5000 (say events 5001-5003)
   3. Ready: only 3 events replayed, not 5003
-  
+
   Trade-off: snapshot storage cost vs. replay cost.
   Practical threshold: snapshot every 50-500 events depending on event size and load.
 ```
 
 **OPTIMISTIC CONCURRENCY CONTROL:**
+
 ```
 Problem: Two commands arrive simultaneously for Order-123.
 Both load aggregate at version=5. Both apply a command. Both try to append at version=6.
@@ -149,12 +154,12 @@ Both load aggregate at version=5. Both apply a command. Both try to append at ve
 Event Store enforces optimistic locking:
   INSERT INTO order_events (aggregate_id, version, ...)
   VALUES ('order-123', 6, ...)
-  WHERE NOT EXISTS (SELECT 1 FROM order_events 
+  WHERE NOT EXISTS (SELECT 1 FROM order_events
                     WHERE aggregate_id='order-123' AND version=6)
-  
+
   First insert: succeeds. Event version=6 stored.
   Second insert: CONFLICT (version=6 already exists) → raises ConcurrencyException.
-  
+
   Handler: catch ConcurrencyException → reload aggregate (now at version=6) → retry command.
 ```
 
@@ -197,17 +202,18 @@ Event sourcing is append-only. GDPR says users have the right to erasure of pers
 ### ⚙️ How It Works (Mechanism)
 
 **EventStoreDB Client (Java):**
+
 ```java
 // Append events to stream:
-public void saveEvents(String aggregateId, int expectedVersion, 
+public void saveEvents(String aggregateId, int expectedVersion,
                         List<DomainEvent> events) {
     String streamName = "order-" + aggregateId;
     List<EventData> eventData = events.stream()
         .map(e -> EventData.builderAsJson(e.getClass().getSimpleName(), e).build())
         .collect(Collectors.toList());
-    
+
     // expectedVersion: optimistic concurrency check
-    eventStoreDBClient.appendToStream(streamName, 
+    eventStoreDBClient.appendToStream(streamName,
         AppendToStreamOptions.get().expectedRevision(expectedVersion),
         eventData.iterator()).get();
 }
@@ -219,9 +225,9 @@ public OrderAggregate loadAggregate(String aggregateId) {
         .fromStart()
         .forwards()
         .notResolveLinkTos();
-    
+
     ReadResult result = eventStoreDBClient.readStream(streamName, options).get();
-    
+
     OrderAggregate aggregate = new OrderAggregate();
     result.getEvents().forEach(resolvedEvent -> {
         DomainEvent event = deserialize(resolvedEvent);
@@ -235,24 +241,24 @@ public OrderAggregate loadAggregate(String aggregateId) {
 
 ### ⚖️ Comparison Table
 
-| Aspect | Traditional CRUD | Event Sourcing |
-|---|---|---|
-| Storage | Current state only | Full history |
-| Audit trail | Manual (separate audit table) | Built-in (event log IS the audit trail) |
-| Temporal queries | Not supported | Native (replay to any point) |
-| Complexity | Low | High |
-| Debugging | "What is current state?" | "Why is state this way?" |
-| CQRS fit | Can use separately | Natural pairing |
-| Performance | Fast reads (direct state) | Slower loads (replay), mitigated by snapshots |
+| Aspect           | Traditional CRUD              | Event Sourcing                                |
+| ---------------- | ----------------------------- | --------------------------------------------- |
+| Storage          | Current state only            | Full history                                  |
+| Audit trail      | Manual (separate audit table) | Built-in (event log IS the audit trail)       |
+| Temporal queries | Not supported                 | Native (replay to any point)                  |
+| Complexity       | Low                           | High                                          |
+| Debugging        | "What is current state?"      | "Why is state this way?"                      |
+| CQRS fit         | Can use separately            | Natural pairing                               |
+| Performance      | Fast reads (direct state)     | Slower loads (replay), mitigated by snapshots |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Event sourcing replaces the database | Event sourcing IS the database pattern for the write side. You still need a database — just an event store instead of a state store |
-| You always need event sourcing with CQRS | CQRS and Event Sourcing are independent. You can have CQRS with a regular relational write DB. You can have Event Sourcing without CQRS (though rare) |
+| Misconception                                     | Reality                                                                                                                                                                           |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Event sourcing replaces the database              | Event sourcing IS the database pattern for the write side. You still need a database — just an event store instead of a state store                                               |
+| You always need event sourcing with CQRS          | CQRS and Event Sourcing are independent. You can have CQRS with a regular relational write DB. You can have Event Sourcing without CQRS (though rare)                             |
 | Events are immutable = you can never fix mistakes | You can append a corrective event. "OrderTotalCorrectedEvent" appended after a bugs. The history shows: original event (incorrect) + correction event. Full audit trail preserved |
 
 ---

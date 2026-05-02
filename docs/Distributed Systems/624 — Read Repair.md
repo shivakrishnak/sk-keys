@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Read Repair is an opportunistic consistency mechanism where the coordinator, after sending a read to multiple replicas, compares their responses and asynchronously (or synchronously) updates any replica that returned stale data — piggybacking repair onto normal read traffic.
 
-| #624 | Category: Distributed Systems | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Quorum, Replication Strategies, Eventual Consistency | |
-| **Used by:** | Cassandra, Riak, DynamoDB, ScyllaDB | |
-| **Related:** | Anti-Entropy, Hinted Handoff, Quorum, Eventual Consistency, Merkle Tree | |
+| #624            | Category: Distributed Systems                                           | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Quorum, Replication Strategies, Eventual Consistency                    |                 |
+| **Used by:**    | Cassandra, Riak, DynamoDB, ScyllaDB                                     |                 |
+| **Related:**    | Anti-Entropy, Hinted Handoff, Quorum, Eventual Consistency, Merkle Tree |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -49,6 +49,7 @@ Read repair harnesses the data already fetched during a quorum read to repair st
 When a quorum read finds that one replica has stale data, read repair takes the fresh data already fetched and pushes it to the stale replica — fixing consistency as a side effect of normal reads.
 
 **One analogy:**
+
 > You ask three librarians for the same book's latest edition. Two return "2024 edition" and one returns "2023 edition." You take the 2024 edition (quorum answer). While you walk out, a helpful coordinator whispers to the librarian who gave the 2023 edition: "Hey, you need to update your copy — here's the 2024 edition." That's read repair. No extra trip to find the discrepancy; it was already visible during the normal request.
 
 **One insight:**
@@ -59,6 +60,7 @@ Read repair only repairs keys that are actually read. A cold key that is never r
 ### 🔩 First Principles Explanation
 
 **HOW READ REPAIR WORKS IN CASSANDRA:**
+
 ```
 Read flow with quorum and read repair (RF=3, R=QUORUM=2):
 
@@ -83,12 +85,13 @@ Background Read Repair (async, probability-based):
   Coordinator sends repair write to Replica 3:
     WRITE: {id:42, status:"shipped", ts:100} USING TIMESTAMP 100
   Replica 3 updates: {id:42, status:"shipped", ts:100}
-  
+
 Total: client reads in 1 round trip. Repair happens in background.
 Latency impact: READ → none. Background write → minor I/O on Replica 3.
 ```
 
 **CASSANDRA CONFIGURATION:**
+
 ```sql
 -- Check current read repair settings for a table:
 SELECT read_repair_chance, dclocal_read_repair_chance
@@ -115,6 +118,7 @@ ALTER TABLE high_volume_events
 ```
 
 **WHEN READ REPAIR DOESN'T HELP:**
+
 ```
 Cold keys (keys never read):
   Example: deleted user accounts (rarely read after deletion).
@@ -140,15 +144,18 @@ Reads in AP mode (availability priority):
 **READ REPAIR VS. ANTI-ENTROPY — COVERAGE:**
 
 In a 1 billion key Cassandra table:
+
 - read_repair_chance = 0.1 (10%)
 - 1% of keys (10 million) are "hot" (read 1000 times/day)
 - 99% of keys (990 million) are "cold" (never read after initial write)
 
 How many keys does read repair cover per day?
+
 - Hot keys: 10M × 1000 reads × 10% = 1 billion repair checks per day (excellent coverage)
 - Cold keys: 0 reads × 10% = 0 repair checks (ZERO coverage)
 
 How many keys does anti-entropy (weekly repair) cover?
+
 - All 1 billion keys, regardless of access pattern
 
 Conclusion: Read repair provides excellent coverage for hot keys, zero coverage for cold keys. Anti-entropy covers everything but runs less frequently and at higher cost. Use BOTH.
@@ -176,6 +183,7 @@ Conclusion: Read repair provides excellent coverage for hot keys, zero coverage 
 ### ⚙️ How It Works (Mechanism)
 
 **Read Repair Flow in Production (Detailed):**
+
 ```
 Cassandra Read Repair — Full Mechanism:
 
@@ -209,21 +217,21 @@ Monitoring in Cassandra:
 
 ### ⚖️ Comparison Table
 
-| Repair Mechanism | Trigger | Data Coverage | Latency Impact | Handles Cold Keys |
-|---|---|---|---|---|
-| Read Repair | On read | Only read keys | Marginal (async) | No |
-| Hinted Handoff | On write (node down) | Recent missed writes | None | No |
-| Anti-Entropy | Background schedule | All keys | High (background I/O) | Yes |
-| Write Quorum (W=N) | On every write | Prevents divergence | Yes (write latency) | N/A |
+| Repair Mechanism   | Trigger              | Data Coverage        | Latency Impact        | Handles Cold Keys |
+| ------------------ | -------------------- | -------------------- | --------------------- | ----------------- |
+| Read Repair        | On read              | Only read keys       | Marginal (async)      | No                |
+| Hinted Handoff     | On write (node down) | Recent missed writes | None                  | No                |
+| Anti-Entropy       | Background schedule  | All keys             | High (background I/O) | Yes               |
+| Write Quorum (W=N) | On every write       | Prevents divergence  | Yes (write latency)   | N/A               |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Read repair makes quorum reads strongly consistent | Read repair improves eventual consistency but is probabilistic. With read_repair_chance=0.1, only 10% of reads trigger repair. For strong consistency, use LWT (Lightweight Transactions) or R=ALL + W=ALL |
-| Read repair is a Cassandra-only feature | Read repair was described in Amazon's Dynamo paper (2007) and is implemented in Riak, ScyllaDB, and many distributed KV stores |
+| Misconception                                                 | Reality                                                                                                                                                                                                              |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Read repair makes quorum reads strongly consistent            | Read repair improves eventual consistency but is probabilistic. With read_repair_chance=0.1, only 10% of reads trigger repair. For strong consistency, use LWT (Lightweight Transactions) or R=ALL + W=ALL           |
+| Read repair is a Cassandra-only feature                       | Read repair was described in Amazon's Dynamo paper (2007) and is implemented in Riak, ScyllaDB, and many distributed KV stores                                                                                       |
 | Disabling read repair improves read performance significantly | read_repair_chance triggers only on digests that DON'T match. If replicas are already in sync (common case), no repair fires. The performance overhead is proportional to how out-of-sync your replicas actually are |
 
 ---
@@ -234,7 +242,7 @@ Monitoring in Cassandra:
 
 Symptom: Cassandra cluster read latency increasing over time. nodetool tpstats shows
 ReadRepairStage: 5,000 pending, 0 completed/sec. Write errors on internal repair writes.
-Reads are returning correct data but slowly. 
+Reads are returning correct data but slowly.
 
 Cause: read_repair_chance = 1.0 (100% of reads trigger repair). After a node outage
 (missed 2 hours of writes), every read triggers repair on the recovered node. With 50K

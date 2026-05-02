@@ -22,16 +22,17 @@ tags:
 
 ⚡ TL;DR — In any system where concurrent updates can reach different replicas, conflicts must be resolved — two valid-but-incompatible states must be merged into one. Different strategies (Last-Write-Wins, multi-value registers, CRDT-based merge, application-level merge, operational transformation) differ in whether they lose data, require coordination, or need domain knowledge.
 
-| #622 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | CRDT, Eventual Consistency, Vector Clock, Lamport Clock | |
-| **Used by:** | Distributed Databases (DynamoDB, Cassandra, Riak), Multi-Master Replication, Sync Frameworks | |
-| **Related:** | CRDT, Vector Clock, Lamport Clock, Eventual Consistency, Last-Write-Wins, Operational Transform | |
+| #622            | Category: Distributed Systems                                                                   | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | CRDT, Eventual Consistency, Vector Clock, Lamport Clock                                         |                 |
+| **Used by:**    | Distributed Databases (DynamoDB, Cassandra, Riak), Multi-Master Replication, Sync Frameworks    |                 |
+| **Related:**    | CRDT, Vector Clock, Lamport Clock, Eventual Consistency, Last-Write-Wins, Operational Transform |                 |
 
 ### 🔥 The Problem This Solves
 
 **THE UNAVOIDABLE CONFLICT:**
 In any distributed system where writes are accepted at multiple nodes (multi-master replication, offline-first apps, geo-distributed databases), concurrent writes to the same key will inevitably arrive at a replica in different orders — or simultaneously. Two scenarios:
+
 1. **Concurrent writes**: Node A receives "price = $10" from client A at T=1; Node B receives "price = $12" from client B at T=1; they later sync. Which value is correct?
 2. **Partition + reconnect**: During a network partition, Node A and B both processed writes. On reconnect, they have diverged state for some keys.
 
@@ -42,6 +43,7 @@ There is no universal correct answer — the right strategy depends on the data 
 ### 📘 Textbook Definition
 
 **Conflict Resolution Strategies** are the algorithms and policies used to reconcile divergent states when a distributed system encounters concurrent updates to the same data. A conflict occurs when two replicas have accepted different values for the same key, and there is no causal ordering between the updates (they are **concurrent** in the sense of Vector Clock theory). The main strategies are:
+
 1. **Last-Write-Wins (LWW)**: the write with the highest timestamp (or sequence number) is kept; the other is discarded.
 2. **Multi-Value Register (MVR)**: all conflicting versions are stored; conflict resolution is deferred to the reader or application.
 3. **CRDT-Based Merge**: the data structure itself defines a correct merge operation (commutative, associative, idempotent).
@@ -56,6 +58,7 @@ There is no universal correct answer — the right strategy depends on the data 
 Conflict resolution decides which value "wins" when two replicas accept different updates to the same key — strategies range from "newest timestamp wins" (simple, lossy) to "store all versions and let the application decide" (safe, complex).
 
 **One analogy:**
+
 > Imagine two co-authors editing a shared document while offline. Author A changed "Chapter 3 title: Foundations" to "Chapter 3 title: Theory". Author B changed it to "Chapter 3 title: Principles". When they sync: LWW picks whoever edits last (the other edit is lost). MVR shows both versions to a human editor. 3-way merge tries to intelligently combine (if no actual text overlap, it might even auto-merge). Operational Transform restructures each edit so both can apply cleanly on a shared document.
 
 **One insight:**
@@ -66,6 +69,7 @@ There is no universally best strategy. The choice must be made based on: (1) can
 ### 🔩 First Principles Explanation
 
 **DETECTING CONFLICTS WITH VECTOR CLOCKS:**
+
 ```python
 from typing import Dict, Any, List, Tuple
 
@@ -73,27 +77,28 @@ class VectorClock:
     def __init__(self, node: str, nodes: list):
         self.node = node
         self.clock = {n: 0 for n in nodes}
-    
+
     def increment(self):
         self.clock[self.node] += 1
-    
+
     def merge(self, other: 'VectorClock'):
         for n in self.clock:
             self.clock[n] = max(self.clock[n], other.clock.get(n, 0))
-    
+
     def happened_before(self, other: 'VectorClock') -> bool:
         """self < other (self happened before other)"""
         return (all(self.clock[n] <= other.clock.get(n, 0) for n in self.clock) and
                 any(self.clock[n] < other.clock.get(n, 0) for n in self.clock))
-    
+
     def concurrent_with(self, other: 'VectorClock') -> bool:
         """Neither happened before the other → CONFLICT"""
-        return (not self.happened_before(other) and 
+        return (not self.happened_before(other) and
                 not other.happened_before(self) and
                 self.clock != other.clock)
 ```
 
 **STRATEGY 1 — LAST WRITE WINS (LWW):**
+
 ```python
 import time
 
@@ -107,13 +112,13 @@ class LWWRegister:
     def __init__(self):
         self.value = None
         self.timestamp = 0
-    
+
     def write(self, value: Any) -> None:
         ts = time.time()
         if ts > self.timestamp:
             self.value = value
             self.timestamp = ts
-    
+
     def merge(self, other: 'LWWRegister') -> 'LWWRegister':
         result = LWWRegister()
         if self.timestamp >= other.timestamp:
@@ -128,6 +133,7 @@ class LWWRegister:
 ```
 
 **STRATEGY 2 — MULTI-VALUE REGISTER (MVR):**
+
 ```python
 class MVRegister:
     """
@@ -140,19 +146,19 @@ class MVRegister:
         self.versions: List[Tuple[Any, VectorClock]] = []
         self.node_id = node_id
         self.nodes = nodes
-    
+
     def write(self, value: Any, vc: VectorClock) -> None:
         """Add version; prune any versions that are dominated by new vc."""
         vc.increment()
-        new_versions = [(v, c) for v, c in self.versions 
+        new_versions = [(v, c) for v, c in self.versions
                         if not c.happened_before(vc)]
         new_versions.append((value, vc))
         self.versions = new_versions
-    
+
     def read(self) -> List[Any]:
         """Return all concurrent versions (siblings)."""
         return [v for v, _ in self.versions]
-    
+
     def resolve(self, resolved_value: Any, merged_vc: VectorClock) -> None:
         """Application provides the resolved value; discard all siblings."""
         self.versions = [(resolved_value, merged_vc)]
@@ -165,13 +171,14 @@ class MVRegister:
 ```
 
 **STRATEGY 3 — APPLICATION-LEVEL 3-WAY MERGE:**
+
 ```python
 def three_way_merge(base: str, version_a: str, version_b: str) -> str:
     """
     Git-style 3-way merge (simplified).
     Base: the common ancestor.
     Version A and B: two diverged modifications.
-    
+
     If only one side changed a line: take that side's version.
     If both sides changed the same line differently: CONFLICT (mark for human resolution).
     If both sides changed the same line identically: no conflict, take either.
@@ -179,16 +186,16 @@ def three_way_merge(base: str, version_a: str, version_b: str) -> str:
     base_lines = base.splitlines()
     a_lines = version_a.splitlines()
     b_lines = version_b.splitlines()
-    
+
     # Simplified: line-by-line merge (real git uses diff3/Myers algorithm)
     result = []
     max_len = max(len(base_lines), len(a_lines), len(b_lines))
-    
+
     for i in range(max_len):
         base_line = base_lines[i] if i < len(base_lines) else None
         a_line = a_lines[i] if i < len(a_lines) else None
         b_line = b_lines[i] if i < len(b_lines) else None
-        
+
         if a_line == b_line:
             result.append(a_line or "")     # Both same (or both absent)
         elif a_line == base_line:
@@ -198,11 +205,12 @@ def three_way_merge(base: str, version_a: str, version_b: str) -> str:
         else:
             # Both changed differently: CONFLICT
             result.append(f"<<<<<<<\n{a_line}\n=======\n{b_line}\n>>>>>>>")
-    
+
     return "\n".join(result)
 ```
 
 **STRATEGY 4 — OPERATIONAL TRANSFORMATION (OT):**
+
 ```python
 # Operational Transformation: used in collaborative text editors
 # Operations: insert(pos, char) or delete(pos)
@@ -212,7 +220,7 @@ def transform_insert_vs_insert(op1, op2):
     """
     op1 = insert(pos=3, char='X')  [local op — being applied first]
     op2 = insert(pos=3, char='Y')  [remote concurrent op]
-    
+
     After op1 is applied: all positions >= 3 shift right by 1.
     Transform op2: new position = pos + 1 = 4.
     Result: both chars are inserted; no conflict.
@@ -235,13 +243,13 @@ def transform_insert_vs_insert(op1, op2):
 
 **Scenario**: User has a mobile app that works offline. They add/remove items while offline on their phone. A family member does the same on their laptop. On reconnect, both carts must be merged.
 
-| Operation | LWW | MVR | CRDT (OR-Set) | Application-level |
-|---|---|---|---|---|
-| Phone: add "milk" | ✅ | ✅ | ✅ | ✅ |
-| Laptop: remove "milk" (concurrent) | ❌ (loses one edit) | ⚠️ (shows conflict to user) | ✅ (remove wins for that add-tag) | ✅ (app logic: "remove intent beats add intent") |
-| Phone: add "eggs" (while laptop offline) | ❌ (may lose) | ✅ (stored as sibling) | ✅ (only phone added eggs) | ✅ |
-| Data preservation | POOR | GOOD | GOOD | BEST |
-| Simplicity | HIGH | MED | MED | LOW |
+| Operation                                | LWW                 | MVR                         | CRDT (OR-Set)                     | Application-level                                |
+| ---------------------------------------- | ------------------- | --------------------------- | --------------------------------- | ------------------------------------------------ |
+| Phone: add "milk"                        | ✅                  | ✅                          | ✅                                | ✅                                               |
+| Laptop: remove "milk" (concurrent)       | ❌ (loses one edit) | ⚠️ (shows conflict to user) | ✅ (remove wins for that add-tag) | ✅ (app logic: "remove intent beats add intent") |
+| Phone: add "eggs" (while laptop offline) | ❌ (may lose)       | ✅ (stored as sibling)      | ✅ (only phone added eggs)        | ✅                                               |
+| Data preservation                        | POOR                | GOOD                        | GOOD                              | BEST                                             |
+| Simplicity                               | HIGH                | MED                         | MED                               | LOW                                              |
 
 Amazon DynamoDB's own Dynamo paper used MVR (siblings) for shopping carts — the application merges on read.
 
@@ -250,6 +258,7 @@ Amazon DynamoDB's own Dynamo paper used MVR (siblings) for shopping carts — th
 ### 🧠 Mental Model / Analogy
 
 > Conflict resolution strategies map exactly to how humans handle disagreement:
+>
 > - **LWW**: "whoever spoke last is right" — fast, but unfair and lossy.
 > - **MVR**: "let's write down every position and decide later" — preserves all information, but defers the hard part.
 > - **CRDT**: "we designed the system so disagreements are mathematically impossible" — ideal but only works for specific operation types.
@@ -273,6 +282,7 @@ Amazon DynamoDB's own Dynamo paper used MVR (siblings) for shopping carts — th
 ### ⚙️ How It Works (Mechanism)
 
 **DynamoDB Conflict Resolution in Practice:**
+
 ```
 DynamoDB (default): LWW based on item-level conditional writes.
   write: PutItem with ConditionExpression="version = :expected"
@@ -292,7 +302,7 @@ Riak (MVR + siblings):
   1. PUT without vector clock → creates new sibling (conflict).
   2. Application: GET → receives siblings + context.
   3. Application: resolves → PUT with context → siblings merged.
-  Health check: `riak-admin status | grep node_gets_total` 
+  Health check: `riak-admin status | grep node_gets_total`
     rising sibling count without resolution → application bug.
 ```
 
@@ -300,24 +310,24 @@ Riak (MVR + siblings):
 
 ### ⚖️ Comparison Table
 
-| Strategy | Data Loss | Complexity | Coordination | Best For |
-|---|---|---|---|---|
-| Last-Write-Wins | Yes (silently) | Low | None | Timestamps, caches, presence |
-| Multi-Value Register | No (stores all) | Med | None (on write) | Shopping carts, user preferences |
-| CRDT | No (for supported ops) | Med | None | Counters, sets, collaborative edit |
-| 3-Way Merge | Minimal | High | Need common ancestor | Version control, document editing |
-| Operational Transform | No | Very High | Central sequencer | Real-time collaborative text |
-| Serializable Txns | No | Low (for app) | Yes (expensive) | Financial, inventory |
+| Strategy              | Data Loss              | Complexity    | Coordination         | Best For                           |
+| --------------------- | ---------------------- | ------------- | -------------------- | ---------------------------------- |
+| Last-Write-Wins       | Yes (silently)         | Low           | None                 | Timestamps, caches, presence       |
+| Multi-Value Register  | No (stores all)        | Med           | None (on write)      | Shopping carts, user preferences   |
+| CRDT                  | No (for supported ops) | Med           | None                 | Counters, sets, collaborative edit |
+| 3-Way Merge           | Minimal                | High          | Need common ancestor | Version control, document editing  |
+| Operational Transform | No                     | Very High     | Central sequencer    | Real-time collaborative text       |
+| Serializable Txns     | No                     | Low (for app) | Yes (expensive)      | Financial, inventory               |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| LWW is fine because NTP keeps clocks in sync | NTP drift can be 100ms+ across nodes. At high write rates, LWW with NTP can silently discard valid writes. Use logical clocks or conditional writes |
-| Application-level resolution means surfacing conflicts to users | Application resolution can be entirely automated (e.g., "if both versions increment a counter, sum them") — only truly ambiguous domain conflicts need to surface to users |
-| Choosing strong consistency eliminates the need to think about conflicts | Strong consistency (serializable) just moves the conflict to the lock/abort layer — conflicting transactions still occur and must be retried by the application |
+| Misconception                                                            | Reality                                                                                                                                                                    |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LWW is fine because NTP keeps clocks in sync                             | NTP drift can be 100ms+ across nodes. At high write rates, LWW with NTP can silently discard valid writes. Use logical clocks or conditional writes                        |
+| Application-level resolution means surfacing conflicts to users          | Application resolution can be entirely automated (e.g., "if both versions increment a counter, sum them") — only truly ambiguous domain conflicts need to surface to users |
+| Choosing strong consistency eliminates the need to think about conflicts | Strong consistency (serializable) just moves the conflict to the lock/abort layer — conflicting transactions still occur and must be retried by the application            |
 
 ---
 
@@ -335,10 +345,10 @@ Server-side LWW: T=101 > T=100 → keeps "theme=light", discards "theme=dark".
 Client A's write was valid (user intent) but lost.
 
 Fix: (1) Use conditional writes with an optimistic lock version counter:
-  GET: returns (value="dark", version=5)
-  PUT: ConditionExpression="version=5" → if another write changed version, retry.
+GET: returns (value="dark", version=5)
+PUT: ConditionExpression="version=5" → if another write changed version, retry.
 (2) Use CRDT-compatible data (if the preference is a "last-known state" like theme,
-  LWW is actually correct — the "newer" write is what the user set more recently).
+LWW is actually correct — the "newer" write is what the user set more recently).
 (3) Use vector clocks on the client to detect genuine concurrency vs. ordering.
 Root cause often: two devices writing "simultaneously" is actually a device bug
 (sync loop that re-writes last-read value unnecessarily).

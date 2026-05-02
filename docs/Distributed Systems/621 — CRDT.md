@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — CRDTs are special data structures designed so that concurrent updates on multiple replicas always merge correctly without conflicts — the merge operation is mathematically guaranteed to be commutative, associative, and idempotent. No coordination protocol is needed; nodes just exchange states (or operations), apply the merge function, and all replicas converge to the same value.
 
-| #621 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Eventual Consistency, Vector Clock, Conflict Resolution Strategies | |
-| **Used by:** | Redis, Riak, Collaborative Editing (Figma, Google Docs internals), Offline-First Apps | |
-| **Related:** | Conflict Resolution Strategies, Gossip Protocol, Anti-Entropy, Eventual Consistency, Vector Clock | |
+| #621            | Category: Distributed Systems                                                                     | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Eventual Consistency, Vector Clock, Conflict Resolution Strategies                                |                 |
+| **Used by:**    | Redis, Riak, Collaborative Editing (Figma, Google Docs internals), Offline-First Apps             |                 |
+| **Related:**    | Conflict Resolution Strategies, Gossip Protocol, Anti-Entropy, Eventual Consistency, Vector Clock |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -35,6 +35,7 @@ Generic distributed databases facing concurrent writes must choose: (1) queue al
 
 **THE CRDT INSIGHT:**
 Certain data structures have operations with mathematical properties that make conflicts impossible:
+
 - **Increment counter**: increment(5) then increment(3) = increment(3) then increment(5) → commutative! No matter which replica applies which operation first, the result is the same.
 - **Add-to-set**: add(A) then add(B) = add(B) then add(A) → commutative!
 - If all operations are commutative, associative, and idempotent: no matter in what order replicas receive and apply operations, they all converge to the same state.
@@ -55,6 +56,7 @@ A **CRDT (Conflict-free Replicated Data Type)** is a data structure that can be 
 CRDTs are data structures where merge is always unambiguous and conflict-free, so distributed replicas can update independently and always converge — no leader, no locks, no conflict resolution needed.
 
 **One analogy:**
+
 > Imagine teammates submitting "vote slip" ballots for a feature. Ballot rule: you can only add new votes ("yes for feature A"), not retract them. Now team members in different locations each collect votes. When they sync, they just take the union of all slips. No matter who syncs in what order, or who has a subset, the final combined result is always the same. The union operation is commutative, associative, and idempotent. A G-Set CRDT works exactly like this.
 
 **One insight:**
@@ -85,6 +87,7 @@ Because merge (⊔) is idempotent, commutative, associative:
 ```
 
 **G-COUNTER (GROW-ONLY COUNTER):**
+
 ```python
 class GCounter:
     """
@@ -95,15 +98,15 @@ class GCounter:
         self.node_id = node_id
         # One counter per node — this replica only updates its own slot
         self.counts = {n: 0 for n in all_nodes}
-    
+
     def increment(self, amount: int = 1) -> None:
         """Only this node increments its own slot."""
         self.counts[self.node_id] += amount
-    
+
     def value(self) -> int:
         """Global value = sum of all node slots."""
         return sum(self.counts.values())
-    
+
     def merge(self, other: 'GCounter') -> 'GCounter':
         """
         Merge = take element-wise max of the two count vectors.
@@ -134,6 +137,7 @@ print(f"Global count: {merged.value()}")  # 12 — always correct regardless of 
 ```
 
 **OR-SET (OBSERVED-REMOVE SET) — handles add AND remove:**
+
 ```python
 import uuid
 
@@ -143,7 +147,7 @@ class ORSet:
     Problem with simple G-Set + tombstone-set:
       Node A adds "X", Node B removes "X" concurrently.
       Simple approach: whoever "wins" — loses some intent.
-    
+
     OR-Set solution: each ADD creates a unique tag.
       REMOVE only removes specific tags it observed.
       If ADD and REMOVE are concurrent: ADD wins (not the tag REMOVE saw).
@@ -152,33 +156,33 @@ class ORSet:
         # elements dict: element → set of unique tags
         self.elements = {}  # {value: {tag1, tag2, ...}}
         self.tombstones = set()  # removed tags
-    
+
     def add(self, value):
         tag = str(uuid.uuid4())            # unique tag per add operation
         if value not in self.elements:
             self.elements[value] = set()
         self.elements[value].add(tag)
         return tag
-    
+
     def remove(self, value):
         """Remove only the tags this replica has OBSERVED (not future adds)."""
         if value in self.elements:
             for tag in self.elements[value]:
                 self.tombstones.add(tag)
             del self.elements[value]
-    
+
     def contains(self, value) -> bool:
         if value not in self.elements:
             return False
         active_tags = self.elements[value] - self.tombstones
         return len(active_tags) > 0
-    
+
     def merge(self, other: 'ORSet') -> 'ORSet':
         result = ORSet()
         # Union of all elements and tombstones
         all_keys = set(self.elements.keys()) | set(other.elements.keys())
         for val in all_keys:
-            tags = (self.elements.get(val, set()) | 
+            tags = (self.elements.get(val, set()) |
                     other.elements.get(val, set()))
             result.elements[val] = tags
         result.tombstones = self.tombstones | other.tombstones
@@ -195,6 +199,7 @@ Alice's cart on her phone (offline): adds "milk", removes "bread", adds "eggs".
 Bob's cart on his laptop (online): removes "milk", adds "rice".
 
 When Alice reconnects:
+
 - **LWW**: the last timestamp wins. If Bob's laptop clock is 10ms ahead, ALL of Bob's state wins → Alice loses her "eggs" add. Silent data loss.
 - **CRDT (OR-Set)**: merges both sets of operations. "milk": Alice added (tag_A), Bob removed (tag_A) → tag_A tombstoned → milk removed (Bob's intent honored). "eggs": Alice added (tag_E), Bob didn't see it → eggs present (Alice's intent honored). "rice": Bob added → rice present. Result: {eggs, rice} — both users' intents preserved.
 
@@ -223,6 +228,7 @@ The CRDT approach preserves user intent. LWW silently discards it.
 ### ⚙️ How It Works (Mechanism)
 
 **Redis CRDT (Redis Enterprise Active-Active geo-replication):**
+
 ```
 Redis Enterprise with CRDT replication:
 
@@ -256,23 +262,23 @@ Without CRDT (classic master-slave):
 
 ### ⚖️ Comparison Table
 
-| Aspect | CRDT | Operational Transform | LWW | Paxos/Raft |
-|---|---|---|---|---|
-| Conflict handling | Math-guaranteed no conflict | Transform operations at merge | Discard older timestamp | Serialized through leader |
-| Coordination needed | None (async) | None (for OT) | None | Yes (quorum) |
-| Data loss risk | None (for operations in scope) | None | Yes (silent) | None |
-| Supported operations | Limited (depends on CRDT type) | Any (complex transforms) | Any | Any |
-| Latency | Read/write local (low) | Read/write local (low) | Read/write local (low) | Leader round-trip (higher) |
-| Used in | Redis, Riak, Figma | Google Docs (early) | Many DBs (fallback) | etcd, ZooKeeper |
+| Aspect               | CRDT                           | Operational Transform         | LWW                     | Paxos/Raft                 |
+| -------------------- | ------------------------------ | ----------------------------- | ----------------------- | -------------------------- |
+| Conflict handling    | Math-guaranteed no conflict    | Transform operations at merge | Discard older timestamp | Serialized through leader  |
+| Coordination needed  | None (async)                   | None (for OT)                 | None                    | Yes (quorum)               |
+| Data loss risk       | None (for operations in scope) | None                          | Yes (silent)            | None                       |
+| Supported operations | Limited (depends on CRDT type) | Any (complex transforms)      | Any                     | Any                        |
+| Latency              | Read/write local (low)         | Read/write local (low)        | Read/write local (low)  | Leader round-trip (higher) |
+| Used in              | Redis, Riak, Figma             | Google Docs (early)           | Many DBs (fallback)     | etcd, ZooKeeper            |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| CRDTs can represent any data structure | Only certain operations are CRDT-compatible. A "decrement-then-read-if-zero-delete" pattern requires coordination and can't be CRDT-ized |
-| CRDTs are only for counters | CRDTs include sets, maps, registers, sequences (text CRDTs), graphs — any data structure that can be modeled as a join-semilattice |
+| Misconception                                      | Reality                                                                                                                                                                             |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CRDTs can represent any data structure             | Only certain operations are CRDT-compatible. A "decrement-then-read-if-zero-delete" pattern requires coordination and can't be CRDT-ized                                            |
+| CRDTs are only for counters                        | CRDTs include sets, maps, registers, sequences (text CRDTs), graphs — any data structure that can be modeled as a join-semilattice                                                  |
 | CRDTs eliminate the need for consistency protocols | CRDTs give eventual consistency for their supported operations. You still need consensus for anything outside the CRDT model (e.g., unique ID generation, distributed transactions) |
 
 ---

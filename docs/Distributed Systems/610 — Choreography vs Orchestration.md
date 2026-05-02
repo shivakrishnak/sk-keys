@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Choreography: services react to events autonomously with no central coordinator (participants are peers); Orchestration: a central workflow engine directs each participant what to do and when (one coordinator, many participants) — two fundamentally different coordination models for multi-service workflows.
 
-| #610 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Saga Pattern, Event-Driven Architecture, Message Broker, Microservices | |
-| **Used by:** | Saga Pattern, Order Processing, Distributed Workflows, BPMN | |
-| **Related:** | Saga Pattern, Event Sourcing, Outbox Pattern, Service Mesh, CQRS | |
+| #610            | Category: Distributed Systems                                          | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Saga Pattern, Event-Driven Architecture, Message Broker, Microservices |                 |
+| **Used by:**    | Saga Pattern, Order Processing, Distributed Workflows, BPMN            |                 |
+| **Related:**    | Saga Pattern, Event Sourcing, Outbox Pattern, Service Mesh, CQRS       |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -54,6 +54,7 @@ Teams instinctively build choreography (services react to events because it's "e
 Choreography = each service knows its own role and reacts to events; Orchestration = one brain tells all services what to do next.
 
 **One analogy:**
+
 > Choreography is a self-organizing flash mob — each dancer follows their own cue from the music. No one is directing individuals. Orchestration is a ballet performance — the director has a script, calls each dancer's entrance, and runs the show. Both produce coordinated movement; one is emergent, one is directed.
 
 **One insight:**
@@ -64,23 +65,24 @@ In choreography, the workflow logic is **distributed** and **implicit** — it l
 ### 🔩 First Principles Explanation
 
 **CHOREOGRAPHY (ORDER SAGA via EVENTS):**
+
 ```
 Events published/consumed:
 
 OrderService:
   PUBLISHES: OrderCreated {orderId, items, amount, userId}
   CONSUMES: ItemsReleased (on failure) → cancels order
-  
+
 InventoryService:
   CONSUMES: OrderCreated → reserves items
   PUBLISHES: ItemsReserved {orderId} OR InventoryInsufficient {orderId}
   CONSUMES: PaymentFailed → releases items, publishes ItemsReleased
-  
+
 PaymentService:
   CONSUMES: ItemsReserved → charges customer
   PUBLISHES: PaymentSucceeded {orderId, chargeId} OR PaymentFailed {orderId}
   CONSUMES: ShipmentFailed → refunds, publishes PaymentRefunded
-  
+
 ShippingService:
   CONSUMES: PaymentSucceeded → creates shipment
   PUBLISHES: ShipmentCreated {orderId, trackingNo} OR ShipmentFailed {orderId}
@@ -92,11 +94,12 @@ No service knows the full workflow. The workflow emerges from event chains.
 ```
 
 **ORCHESTRATION (ORDER SAGA via ORCHESTRATOR):**
+
 ```java
 // All workflow logic in ONE place:
 @Service
 public class OrderOrchestrator {
-    
+
     public void processOrder(Order order) {
         try {
             // Explicit, readable workflow:
@@ -104,7 +107,7 @@ public class OrderOrchestrator {
             paymentService.charge(order.getAmount());        // Step 2
             shippingService.createShipment(order);           // Step 3
             notificationService.sendConfirmation(order);     // Step 4
-            
+
         } catch (PaymentException e) {
             // Compensation: explicit, visible, in one place:
             inventoryService.release(order.getItems());
@@ -119,13 +122,14 @@ public class OrderOrchestrator {
 ```
 
 **COMPARING THE SAME WORKFLOW:**
+
 ```
 CHOREOGRAPHY:
   Visibility:      Distributed across 5 services
   Change process:  Modify event handlers in each affected service
   Debug Path:      Trace event chain across Kafka/RabbitMQ topics
   Coupling:        Services coupled through shared event schemas
-  
+
 ORCHESTRATION:
   Visibility:      All in OrderOrchestrator (single class/workflow)
   Change process:  Modify OrderOrchestrator only
@@ -134,6 +138,7 @@ ORCHESTRATION:
 ```
 
 **SERVICE MESH SIDE NOTE:**
+
 ```
 Service mesh (Istio/Linkerd) handles infrastructure-level concerns:
   - Load balancing, service discovery, mutual TLS
@@ -152,6 +157,7 @@ These operate at different layers: don't confuse them.
 A new engineer joins. Task: "Find where the logic is that sends a confirmation email after an order is placed."
 
 **Choreography system:**
+
 1. Search codebase for "OrderCreated" event consumers.
 2. Find: InventoryService subscribes. Look at it — not the email.
 3. Find InventoryService publishes "ItemsReserved".
@@ -163,6 +169,7 @@ A new engineer joins. Task: "Find where the logic is that sends a confirmation e
 The engineer traced through 5 services and 4 event topics to understand one workflow.
 
 **Orchestration system:**
+
 1. Find OrderOrchestrator class.
 2. Read the 20-line `processOrder` method.
 3. See `notificationService.sendConfirmation(order)` on line 18.
@@ -196,6 +203,7 @@ Done. The entire workflow is readable in one class.
 ### ⚙️ How It Works (Mechanism)
 
 **Choreography with Apache Kafka:**
+
 ```java
 // InventoryService subscribes to OrderCreated:
 @KafkaListener(topics = "order-created", groupId = "inventory-service")
@@ -204,7 +212,7 @@ public void onOrderCreated(OrderCreated event) {
         inventoryRepository.reserve(event.getOrderId(), event.getItems());
         kafkaTemplate.send("items-reserved", new ItemsReserved(event.getOrderId()));
     } catch (InsufficientInventoryException e) {
-        kafkaTemplate.send("inventory-insufficient", 
+        kafkaTemplate.send("inventory-insufficient",
             new InventoryInsufficient(event.getOrderId()));
     }
 }
@@ -220,25 +228,25 @@ public void onItemsReserved(ItemsReserved event) {
 
 ### ⚖️ Comparison Table
 
-| Dimension | Choreography | Orchestration |
-|---|---|---|
-| Workflow visibility | Implicit (distributed) | Explicit (central) |
-| Coupling | Services ↔ Event schema | Services → Orchestrator |
-| Team independence | High (each service is autonomous) | Low (changes require orchestrator update) |
-| Debugging | Hard (trace events across systems) | Easy (read orchestrator logs) |
-| Failure handling | Distributed (each service compensates) | Centralized (orchestrator compensates) |
-| Best for | Simple, well-defined, stable flows | Complex business rules, human-in-loop |
-| Scales independently | Yes | Orchestrator can become bottleneck |
+| Dimension            | Choreography                           | Orchestration                             |
+| -------------------- | -------------------------------------- | ----------------------------------------- |
+| Workflow visibility  | Implicit (distributed)                 | Explicit (central)                        |
+| Coupling             | Services ↔ Event schema                | Services → Orchestrator                   |
+| Team independence    | High (each service is autonomous)      | Low (changes require orchestrator update) |
+| Debugging            | Hard (trace events across systems)     | Easy (read orchestrator logs)             |
+| Failure handling     | Distributed (each service compensates) | Centralized (orchestrator compensates)    |
+| Best for             | Simple, well-defined, stable flows     | Complex business rules, human-in-loop     |
+| Scales independently | Yes                                    | Orchestrator can become bottleneck        |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Event-driven = choreography | Event-driven is a mechanism; you can orchestrate using events (orchestrator sends events as commands to participants) |
-| Orchestration = synchronous HTTP calls | Orchestration can use async messaging; the synchronous/async dimension is orthogonal to orchestration/choreography |
-| Choreography scales better | Both can scale. Choreography scales teams better (decoupled services); orchestration can scale instances but the orchestrator itself is a bottleneck if not distributed |
+| Misconception                          | Reality                                                                                                                                                                 |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Event-driven = choreography            | Event-driven is a mechanism; you can orchestrate using events (orchestrator sends events as commands to participants)                                                   |
+| Orchestration = synchronous HTTP calls | Orchestration can use async messaging; the synchronous/async dimension is orthogonal to orchestration/choreography                                                      |
+| Choreography scales better             | Both can scale. Choreography scales teams better (decoupled services); orchestration can scale instances but the orchestrator itself is a bottleneck if not distributed |
 
 ---
 

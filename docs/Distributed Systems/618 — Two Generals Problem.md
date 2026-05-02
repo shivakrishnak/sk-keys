@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — The Two Generals Problem proves that coordinating a simultaneous action between two parties over an unreliable communication channel is **fundamentally impossible** — any number of acknowledgments can be lost, so neither party can ever be 100% certain the other will act at the same time.
 
-| #618 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Consensus, FLP Impossibility, Byzantine Fault Tolerance | |
-| **Used by:** | TCP Handshake Design, Consensus Algorithms, Distributed Transactions | |
-| **Related:** | FLP Impossibility, Byzantine Fault Tolerance, Consensus, CAP Theorem | |
+| #618            | Category: Distributed Systems                                        | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Consensus, FLP Impossibility, Byzantine Fault Tolerance              |                 |
+| **Used by:**    | TCP Handshake Design, Consensus Algorithms, Distributed Transactions |                 |
+| **Related:**    | FLP Impossibility, Byzantine Fault Tolerance, Consensus, CAP Theorem |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ The **Two Generals Problem** (also called the Coordinated Attack Problem) is a t
 It's mathematically impossible to coordinate a simultaneous action between two parties over a network that can lose messages — no matter how many acknowledgment rounds you add.
 
 **One analogy:**
+
 > You and a friend want to meet at a café tomorrow morning. You can only communicate by leaving notes on a bulletin board in a building that occasionally catches fire (notes can be lost). You post: "Meet at 9 AM." Your friend might not see it. Your friend posts "Got it! See you at 9 AM." That note might burn. You post "Great, confirmed!" That might burn too. Your friend doesn't know if you got their confirmation. There is no finite number of notes that makes BOTH of you 100% certain you'll both show up.
 
 **One insight:**
@@ -60,6 +61,7 @@ The impossibility is not about protocol design failure — it's a **mathematical
 ### 🔩 First Principles Explanation
 
 **THE FORMAL PROOF BY INDUCTION:**
+
 ```
 Claim: No protocol of N messages guarantees simultaneous attack.
 
@@ -71,20 +73,21 @@ Base case (N=1):
 
 Inductive step:
   Assume: any protocol of N-1 messages cannot guarantee coordination.
-  
+
   Consider a protocol of N messages.
   The Nth message (the last one) might be lost.
   If the Nth message is lost, the sender of the Nth message doesn't know
   if the receiver got it — so the sender is in the same position as in
   the N-1 message protocol (no confirmation possible for the last ack).
-  
+
   By induction: if N-1 messages don't solve it, neither does N messages
   (the last message could always be lost, leaving same uncertainty).
-  
+
   Therefore: no finite protocol of N messages can guarantee coordination.
 ```
 
 **THE PROTOCOL THAT GIVES UP ON CERTAINTY:**
+
 ```python
 # Best-effort attack protocol:
 # Both generals attack if they have received confirmation AND enough time has passed.
@@ -108,6 +111,7 @@ def general_B():
 ```
 
 **TCP 3-WAY HANDSHAKE (PRACTICAL WORKAROUND):**
+
 ```
 TCP doesn't "solve" the Two Generals Problem — it accepts the impossibility
 and builds best-effort reliability on top.
@@ -118,15 +122,15 @@ ACK: "Got your ready, starting now" (A → B) [might be lost]
 
 If the final ACK is lost:
   A: sent ACK, considers connection ESTABLISHED. Starts sending data.
-  B: didn't get ACK. Still waiting. 
+  B: didn't get ACK. Still waiting.
   B's behavior: retransmit SYN-ACK (timeout-based retry).
   When A's data arrives: B sees it without ACK → B infers connection is established.
-  
+
 TCP resolves it not by achieving certainty, but by:
   (1) Timeout-based retry (keep sending SYN-ACK until something arrives)
   (2) Accept data as implicit ACK ("you sent data, so you received my SYN-ACK")
   (3) Time-bounded recovery (eventually one of them times out and resets)
-  
+
 This is NOT a solution to Two Generals — it's a pragmatic workaround that works
 "well enough" in practice at the cost of edge-case failures (connection half-open states).
 ```
@@ -166,6 +170,7 @@ Result: A committed, B aborted — INCONSISTENCY. This is the fundamental proble
 ### ⚙️ How It Works (Mechanism)
 
 **Simulating the Problem (Python):**
+
 ```python
 import random
 import time
@@ -180,14 +185,14 @@ def two_generals_protocol():
     attack_time = "06:00"
     a_is_ready = False
     b_is_ready = False
-    
+
     # Round 1: A sends to B
     msg = send_message(f"Attack at {attack_time}")
     if msg is None:
         print("A: message to B was lost. A does NOT attack (might be alone).")
         return
     b_is_ready = True
-    
+
     # Round 2: B acknowledges to A
     ack = send_message("Confirmed")
     if ack is None:
@@ -196,10 +201,10 @@ def two_generals_protocol():
         print("→ B attacks alone. Defeat.")
         return
     a_is_ready = True
-    
+
     # At this point: A knows B got the message. But B doesn't know A got the ACK.
     # Whatever we do next, the last message might be lost.
-    
+
     if a_is_ready and b_is_ready:
         print("Both attack! (But B doesn't KNOW A is certain...)")
         print("There's always residual uncertainty. This 'success' is probabilistic.")
@@ -214,22 +219,22 @@ for i in range(5):
 
 ### ⚖️ Comparison Table
 
-| Problem | Channel | Party Behavior | Solution |
-|---|---|---|---|
-| Two Generals | Unreliable (messages lost) | Honest (correct behavior) | Impossible (provably) |
-| Byzantine Generals | Unreliable + unreliable agents | Can lie | Possible if < N/3 traitors |
-| FLP Impossibility | Asynchronous | Honest | Impossible to guarantee termination |
-| Consensus (practical) | Partially synchronous | Honest | Possible with timeout assumptions (Raft, Paxos) |
+| Problem               | Channel                        | Party Behavior            | Solution                                        |
+| --------------------- | ------------------------------ | ------------------------- | ----------------------------------------------- |
+| Two Generals          | Unreliable (messages lost)     | Honest (correct behavior) | Impossible (provably)                           |
+| Byzantine Generals    | Unreliable + unreliable agents | Can lie                   | Possible if < N/3 traitors                      |
+| FLP Impossibility     | Asynchronous                   | Honest                    | Impossible to guarantee termination             |
+| Consensus (practical) | Partially synchronous          | Honest                    | Possible with timeout assumptions (Raft, Paxos) |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| TCP solves the Two Generals Problem | TCP uses best-effort retransmission and implicit acknowledgment (data as ACK) — it doesn't eliminate the theoretical impossibility, it makes it vanishingly rare in practice |
-| More ACK rounds eliminate the problem | The proof shows NO finite number of rounds eliminates uncertainty. Each additional round only moves the uncertainty to the last round |
-| This is a theoretical problem with no practical relevance | Two Generals is the theoretical basis for why 2PC has vulnerability windows, why distributed locks can expire mid-use, and why "exactly-once" is hard |
+| Misconception                                             | Reality                                                                                                                                                                      |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TCP solves the Two Generals Problem                       | TCP uses best-effort retransmission and implicit acknowledgment (data as ACK) — it doesn't eliminate the theoretical impossibility, it makes it vanishingly rare in practice |
+| More ACK rounds eliminate the problem                     | The proof shows NO finite number of rounds eliminates uncertainty. Each additional round only moves the uncertainty to the last round                                        |
+| This is a theoretical problem with no practical relevance | Two Generals is the theoretical basis for why 2PC has vulnerability windows, why distributed locks can expire mid-use, and why "exactly-once" is hard                        |
 
 ---
 
