@@ -49,6 +49,7 @@ This is exactly why Inference was defined as a distinct phase — to separate th
 Inference is using the finished model to answer questions — like sitting the exam after all the studying is done.
 
 **One analogy:**
+
 > Training is like a student spending months studying for a medical exam, memorising thousands of cases, running thousands of practice tests, and correcting mistakes. Inference is the exam itself: the student applies everything they learned to new questions, but nothing they do during the exam changes their underlying knowledge. The knowledge is frozen; only the application is new.
 
 **One insight:**
@@ -59,6 +60,7 @@ Inference and training have different resource profiles. Training requires stori
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. During inference, weights are read but never written.
 2. No gradient computation is required (no backward pass).
 3. For autoregressive models, each generated token requires a new forward pass (sequential, not parallelisable).
@@ -104,6 +106,7 @@ Inference involves a fundamental trade-off between latency (time to first token,
 > Think of inference as a chef executing a recipe. Training was learning the recipe (years of practice, many mistakes, gradual improvement). Inference is service — cooking dish after dish using the perfected recipe without changing it. The recipe (weights) stays the same. The inputs (customer orders) change. The chef's job is to execute the recipe as fast and consistently as possible.
 
 Mapping:
+
 - "Recipe" → trained model weights
 - "Cooking a dish" → one forward pass
 - "Customer order" → input prompt
@@ -161,6 +164,7 @@ The prefill/decode split maps directly to GPU hardware characteristics. Prefill 
 ```
 
 **KV Cache growth:**
+
 ```
 seq_len=1000, batch=8, 32 layers, 32 heads:
 32 × 32 × 128 × 1000 × 8 × 2 bytes ≈ 2.1 GB
@@ -172,6 +176,7 @@ seq_len=128K → 268 GB — exceeds GPU capacity!
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 HTTP request arrives (user prompt)
     ↓
@@ -193,6 +198,7 @@ HTTP response returned
 ```
 
 **FAILURE PATH:**
+
 ```
 KV cache fills GPU memory (long context + large batch)
     ↓
@@ -211,6 +217,7 @@ At high concurrency, batching becomes critical — multiple decode steps from di
 ### 💻 Code Example
 
 **Example 1 — Basic inference with correct settings:**
+
 ```python
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -242,6 +249,7 @@ print(tokenizer.decode(output[0], skip_special_tokens=True))
 ```
 
 **Example 2 — Streaming inference for real-time UX:**
+
 ```python
 from transformers import TextStreamer
 
@@ -259,6 +267,7 @@ with torch.no_grad():
 ```
 
 **Example 3 — Measuring inference metrics:**
+
 ```python
 import time
 
@@ -288,13 +297,13 @@ def measure_inference(model, tokenizer, prompt: str):
 
 ### ⚖️ Comparison Table
 
-| Mode | Latency | Throughput | GPU Use | Best For |
-|---|---|---|---|---|
-| Single request | Lowest | Lowest | ~15% | Development, testing |
-| **Batched inference** | Medium | Highest | ~90% | High-throughput APIs |
-| Streaming (token-by-token) | Low TTFT | Medium | ~40% | Real-time chat UX |
-| Continuous batching | Low TTFT | High | ~80% | Production serving |
-| Speculative decoding | Very low | High | ~80% | Latency-critical tasks |
+| Mode                       | Latency  | Throughput | GPU Use | Best For               |
+| -------------------------- | -------- | ---------- | ------- | ---------------------- |
+| Single request             | Lowest   | Lowest     | ~15%    | Development, testing   |
+| **Batched inference**      | Medium   | Highest    | ~90%    | High-throughput APIs   |
+| Streaming (token-by-token) | Low TTFT | Medium     | ~40%    | Real-time chat UX      |
+| Continuous batching        | Low TTFT | High       | ~80%    | Production serving     |
+| Speculative decoding       | Very low | High       | ~80%    | Latency-critical tasks |
 
 **How to choose:** For production chat APIs, continuous batching (vLLM) provides the best balance. For batch processing (document analysis, embeddings), maximise batch size for throughput. For interactive apps, streaming is essential for good UX regardless of throughput cost.
 
@@ -302,12 +311,12 @@ def measure_inference(model, tokenizer, prompt: str):
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Inference is just running the model" | Inference has two distinct phases (prefill + decode) with very different compute profiles |
-| "More GPU memory only matters for training" | KV cache during long-context inference can consume more memory than model weights |
-| "Inference is cheap compared to training" | At scale, cumulative inference spend dominates training spend by 10–50× |
-| "Batching always reduces latency" | Batching improves throughput but increases individual request latency due to queuing |
+| Misconception                                | Reality                                                                                     |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| "Inference is just running the model"        | Inference has two distinct phases (prefill + decode) with very different compute profiles   |
+| "More GPU memory only matters for training"  | KV cache during long-context inference can consume more memory than model weights           |
+| "Inference is cheap compared to training"    | At scale, cumulative inference spend dominates training spend by 10–50×                     |
+| "Batching always reduces latency"            | Batching improves throughput but increases individual request latency due to queuing        |
 | "torch.no_grad() is just for training loops" | It must be used in every production inference call to prevent unnecessary memory allocation |
 
 ---
@@ -321,6 +330,7 @@ def measure_inference(model, tokenizer, prompt: str):
 **Root Cause:** KV cache grows with each generated token. Long sequences with large batches exhaust GPU VRAM during decode.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Monitor KV cache size during generation
 import torch
@@ -350,6 +360,7 @@ print(kv_cache_size_gb(32, 32, 128, 4096, 8))
 **Root Cause:** Prefill phase processes all input tokens in a single forward pass — long prompts require more compute. Attention is O(n²) in sequence length.
 
 **Diagnostic Command / Tool:**
+
 ```bash
 # Use vLLM's built-in benchmarking
 python -m vllm.entrypoints.openai.api_server \
@@ -366,16 +377,19 @@ python -m vllm.entrypoints.openai.api_server \
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Model Weights` — inference loads and uses frozen weights; understanding weight loading is prerequisite
 - `Model Parameters` — inference is the read-only use of trained parameters
 - `Neural Network` — inference is running the forward pass of a neural network
 
 **Builds On This (learn these next):**
+
 - `Context Window` — the maximum sequence length that fits in one inference forward pass
 - `Temperature` — sampling strategy applied at the output of each inference step
 - `Latency vs Throughput (AI)` — the core trade-off in production inference system design
 
 **Alternatives / Comparisons:**
+
 - `Training` — the opposite phase: updates weights, requires gradients, 10–20× more memory
 - `Model Quantization` — reduces weight precision to speed inference and reduce memory
 - `Fine-Tuning` — a hybrid: uses inference-like forward passes but with training-like gradient updates on a small dataset

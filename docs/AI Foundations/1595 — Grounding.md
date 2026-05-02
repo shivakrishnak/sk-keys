@@ -50,6 +50,7 @@ This is exactly why Grounding was formalised — as the practice and toolset for
 Grounding means the AI only says things it can back up with evidence you gave it.
 
 **One analogy:**
+
 > It's the difference between an open-book exam and a closed-book exam. In the closed-book version (no grounding), the student answers entirely from memory — fast, but potentially wrong on specific details. In the open-book version (grounding), the student must cite the page number their answer comes from — slower, but verifiable and accountable.
 
 **One insight:**
@@ -60,6 +61,7 @@ Grounding does not make the model smarter — it changes the model's information
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. LLMs store knowledge in weights — lossy, inaccessible, and unverifiable at inference time.
 2. The context window at inference time is fully inspectable — you can see exactly what the model was shown.
 3. A model instructed to answer only from provided context can be audited for faithfulness.
@@ -68,11 +70,13 @@ Grounding does not make the model smarter — it changes the model's information
 Grounding exploits invariant 3. Instead of asking "what do you know about X?", a grounded system asks: "Given these documents about X, answer the user's question. If the answer is not in the documents, say so."
 
 The system architecture becomes:
+
 ```
 Query → Retrieval → [Retrieved docs + Query] → LLM → Response + Citations
 ```
 
 This separates two concerns:
+
 - **Retrieval quality:** did we surface the right documents? (measurable with recall@k)
 - **Generation faithfulness:** did the LLM stick to those documents? (measurable with faithfulness score)
 
@@ -105,6 +109,7 @@ Grounding narrows the model's answer space from "everything in training data" to
 > Think of grounding as giving a lawyer their case files. Without the files (ungrounded), the lawyer must argue entirely from memory — they may mis-cite precedents or invent supporting arguments. With the files (grounded), they argue strictly from the documents in front of them and cite every claim. The judge (user) can verify every assertion.
 
 Mapping:
+
 - "Lawyer" → LLM generating responses
 - "Argues from memory" → parametric knowledge (training weights)
 - "Case files" → retrieved documents injected into context
@@ -176,6 +181,7 @@ Grounding shifts the LLM from being a knowledge store to being a reasoning and s
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 User query
     ↓
@@ -197,6 +203,7 @@ Response + citations returned to user
 ```
 
 **FAILURE PATH:**
+
 ```
 Retrieval returns wrong documents
     ↓
@@ -218,6 +225,7 @@ At high query volume, retrieval becomes the bottleneck — not the LLM. Caching 
 ### 💻 Code Example
 
 **Example 1 — Simple grounded prompt:**
+
 ```python
 def grounded_answer(query: str,
                     docs: list[dict],
@@ -250,6 +258,7 @@ def grounded_answer(query: str,
 ```
 
 **Example 2 — Faithfulness validation:**
+
 ```python
 def check_faithfulness(response: str,
                        sources: list[str],
@@ -281,13 +290,13 @@ Return JSON: {{"claims": [{{"claim": str,
 
 ### ⚖️ Comparison Table
 
-| Approach | Factual Accuracy | Updateable? | Auditable? | Best For |
-|---|---|---|---|---|
-| **Grounding (RAG)** | High (if retrieval good) | Yes | Yes | Knowledge Q&A, enterprise |
-| Fine-tuning | Medium | No (retrain required) | No | Domain-specific style/tasks |
-| Few-shot prompting | Low for facts | No | Partially | Reasoning patterns |
-| Ungrounded LLM | Low for rare facts | N/A | No | Creative, non-factual tasks |
-| Tool calling | High | Yes | Yes | Structured data, APIs |
+| Approach            | Factual Accuracy         | Updateable?           | Auditable? | Best For                    |
+| ------------------- | ------------------------ | --------------------- | ---------- | --------------------------- |
+| **Grounding (RAG)** | High (if retrieval good) | Yes                   | Yes        | Knowledge Q&A, enterprise   |
+| Fine-tuning         | Medium                   | No (retrain required) | No         | Domain-specific style/tasks |
+| Few-shot prompting  | Low for facts            | No                    | Partially  | Reasoning patterns          |
+| Ungrounded LLM      | Low for rare facts       | N/A                   | No         | Creative, non-factual tasks |
+| Tool calling        | High                     | Yes                   | Yes        | Structured data, APIs       |
 
 **How to choose:** For factual enterprise applications, grounding is the baseline — it's cheaper to build than fine-tuning and more auditable. For frequently updated knowledge (live data, product catalogue), pair grounding with structured tool calls to fetch live data rather than relying on a static knowledge base.
 
@@ -295,13 +304,13 @@ Return JSON: {{"claims": [{{"claim": str,
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Grounding eliminates hallucination" | Grounding reduces hallucination for topics in the knowledge base; the model can still hallucinate on topics not covered, or make unfaithful inferences from grounded documents |
-| "Grounding requires RAG" | Grounding can be achieved with any external evidence — pasted documents, tool outputs, structured data, or database query results |
-| "Grounded answers are always correct" | Grounded answers are only as correct as the retrieved sources; wrong sources = grounded wrong answers |
-| "Grounding is just adding context to the prompt" | Grounding also requires faithfulness constraints in the prompt and ideally post-generation validation |
-| "Grounding makes the model slower" | Grounding adds retrieval latency; the LLM inference time is unchanged or slightly reduced (focused context) |
+| Misconception                                    | Reality                                                                                                                                                                        |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "Grounding eliminates hallucination"             | Grounding reduces hallucination for topics in the knowledge base; the model can still hallucinate on topics not covered, or make unfaithful inferences from grounded documents |
+| "Grounding requires RAG"                         | Grounding can be achieved with any external evidence — pasted documents, tool outputs, structured data, or database query results                                              |
+| "Grounded answers are always correct"            | Grounded answers are only as correct as the retrieved sources; wrong sources = grounded wrong answers                                                                          |
+| "Grounding is just adding context to the prompt" | Grounding also requires faithfulness constraints in the prompt and ideally post-generation validation                                                                          |
+| "Grounding makes the model slower"               | Grounding adds retrieval latency; the LLM inference time is unchanged or slightly reduced (focused context)                                                                    |
 
 ---
 
@@ -314,6 +323,7 @@ Return JSON: {{"claims": [{{"claim": str,
 **Root Cause:** The query embedding does not match the document embedding closely enough. Semantic mismatch between question phrasing and document language.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Check retrieval recall on known queries
 def retrieval_audit(query: str,
@@ -341,6 +351,7 @@ def retrieval_audit(query: str,
 **Root Cause:** The model's RLHF training optimised for helpfulness; it learned to answer rather than say "I don't know." Grounding instructions in the prompt are insufficient to override this tendency.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Test with questions you KNOW are not in the KB
 response = grounded_answer(
@@ -362,16 +373,19 @@ print(response)
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Hallucination` — grounding is the primary mitigation; understanding the failure mode motivates the solution
 - `Context Window` — retrieved documents must fit in the context window; grounding requires context budget management
 - `Embedding` — vector search for retrieval depends on embedding quality
 
 **Builds On This (learn these next):**
+
 - `Retrieval-Augmented Generation` — the full architecture pattern that formalises grounding at scale
 - `AI Safety` — grounding is a key mechanism for factual safety in deployed systems
 - `Responsible AI` — auditability and source attribution are core responsible AI requirements
 
 **Alternatives / Comparisons:**
+
 - `Fine-Tuning` — embeds knowledge in weights rather than retrieving it; not auditable but lower latency
 - `Hallucination` — the problem grounding solves; understanding both gives a complete picture
 - `In-Context Learning` — a form of grounding using examples; blurs the line between grounding and few-shot learning

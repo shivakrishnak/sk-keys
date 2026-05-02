@@ -49,6 +49,7 @@ A **context window** is the maximum number of tokens — including input (prompt
 The context window is how much the model can read and remember at one time.
 
 **One analogy:**
+
 > Think of it like a desk. You can only spread out so many papers at once. Everything on the desk is available to you — you can cross-reference anything. But if you need a document that's still in the filing cabinet, you can't use it until you bring it to the desk (at the cost of removing something else).
 
 **One insight:**
@@ -59,6 +60,7 @@ The context window is not just about length — it is about coherence. Everythin
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Transformer attention is O(n²) in memory and time relative to sequence length.
 2. A forward pass requires all input tokens to fit in GPU/TPU memory simultaneously.
 3. Tokens outside the window cannot be attended to — there is no partial memory.
@@ -94,16 +96,17 @@ The context window is not a suggestion — it is a hard physical constraint. Any
 
 ### 🧠 Mental Model / Analogy
 
-> Imagine a courtroom where the judge can only consider evidence presented in the current session. Evidence admitted in a previous session is completely off-limits — not inadmissible, just *gone*. The context window is the session length. Everything said in the current session is equally accessible to the judge (the model). Once the session exceeds its time limit, earlier evidence drops off the record.
+> Imagine a courtroom where the judge can only consider evidence presented in the current session. Evidence admitted in a previous session is completely off-limits — not inadmissible, just _gone_. The context window is the session length. Everything said in the current session is equally accessible to the judge (the model). Once the session exceeds its time limit, earlier evidence drops off the record.
 
 Mapping:
+
 - "Court session" → single LLM forward pass
 - "Evidence in session" → tokens in the context window
 - "Judge's reasoning" → self-attention over all tokens
 - "Previous session" → tokens beyond the context window (invisible)
 - "Case summary" → a summary injected to preserve prior context
 
-Where this analogy breaks down: in a real courtroom, the judge retains memory of prior sessions; the LLM retains *nothing* — each call is stateless.
+Where this analogy breaks down: in a real courtroom, the judge retains memory of prior sessions; the LLM retains _nothing_ — each call is stateless.
 
 ---
 
@@ -157,6 +160,7 @@ When you call an LLM API, you pass a sequence of tokens. The model embeds every 
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 User input
     ↓
@@ -174,6 +178,7 @@ Response returned
 ```
 
 **FAILURE PATH:**
+
 ```
 Context exceeds window limit
     ↓
@@ -192,6 +197,7 @@ At high request volume, large context windows dominate cost — every token in t
 ### 💻 Code Example
 
 **Example 1 — Counting tokens before sending (Python):**
+
 ```python
 # BAD — silently truncates if over limit
 response = openai.chat.completions.create(
@@ -223,6 +229,7 @@ def safe_send(text: str, model: str = "gpt-4") -> str:
 ```
 
 **Example 2 — Sliding window for long conversations:**
+
 ```python
 from collections import deque
 
@@ -256,13 +263,13 @@ class ContextManager:
 
 ### ⚖️ Comparison Table
 
-| Strategy | Context Used | Quality | Cost | Best For |
-|---|---|---|---|---|
-| **Full context** | All tokens verbatim | Highest | Highest | Short docs, precision tasks |
-| Sliding window | Most recent N tokens | Medium | Medium | Long conversations |
-| Summarisation | Summary + recent | Medium | Low | Very long sessions |
-| RAG | Query-relevant chunks | High | Low | Document Q&A |
-| KV-cache prefix | Shared prefix cached | High | Low | Repeated system prompts |
+| Strategy         | Context Used          | Quality | Cost    | Best For                    |
+| ---------------- | --------------------- | ------- | ------- | --------------------------- |
+| **Full context** | All tokens verbatim   | Highest | Highest | Short docs, precision tasks |
+| Sliding window   | Most recent N tokens  | Medium  | Medium  | Long conversations          |
+| Summarisation    | Summary + recent      | Medium  | Low     | Very long sessions          |
+| RAG              | Query-relevant chunks | High    | Low     | Document Q&A                |
+| KV-cache prefix  | Shared prefix cached  | High    | Low     | Repeated system prompts     |
 
 **How to choose:** Use full context for precision tasks under 8K tokens. For long documents or multi-session workflows, use RAG to retrieve relevant chunks rather than stuffing the full document — it's cheaper and often more accurate because irrelevant text adds noise.
 
@@ -298,13 +305,13 @@ Request arrives
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "More context always means better answers" | Irrelevant tokens add noise and cost; focused context often outperforms a stuffed window |
-| "The model remembers previous conversations" | Each API call is stateless; conversation history must be manually re-injected into the context |
-| "Context window = maximum response length" | Context window includes BOTH input AND output; the output budget is whatever remains after the input |
-| "Truncation only affects the end of the input" | Many implementations truncate the beginning (older messages), not the end; strategy varies by SDK |
-| "Larger window = better model" | Window size is an engineering choice; a smaller model with a larger window can underperform a larger model with a smaller window on complex reasoning |
+| Misconception                                  | Reality                                                                                                                                               |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "More context always means better answers"     | Irrelevant tokens add noise and cost; focused context often outperforms a stuffed window                                                              |
+| "The model remembers previous conversations"   | Each API call is stateless; conversation history must be manually re-injected into the context                                                        |
+| "Context window = maximum response length"     | Context window includes BOTH input AND output; the output budget is whatever remains after the input                                                  |
+| "Truncation only affects the end of the input" | Many implementations truncate the beginning (older messages), not the end; strategy varies by SDK                                                     |
+| "Larger window = better model"                 | Window size is an engineering choice; a smaller model with a larger window can underperform a larger model with a smaller window on complex reasoning |
 
 ---
 
@@ -317,6 +324,7 @@ Request arrives
 **Root Cause:** The system prompt was at the beginning of the context and was evicted by a sliding-window strategy that removes oldest tokens first.
 
 **Diagnostic Command / Tool:**
+
 ```bash
 # Log token counts per role
 print(f"System: {count_tokens(system_prompt)}")
@@ -337,6 +345,7 @@ print(f"Total: {total_tokens}")
 **Root Cause:** Total token count of messages + expected output exceeds model limit.
 
 **Diagnostic Command / Tool:**
+
 ```python
 import tiktoken
 enc = tiktoken.encoding_for_model("gpt-4")
@@ -358,6 +367,7 @@ print(f"Total tokens: {total}")
 **Root Cause:** Empirical finding — LLMs attend more strongly to the beginning and end of the context window ("primacy/recency bias"). Information in the middle of a very long context is under-attended.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Test with the "needle in a haystack" benchmark:
 # inject a specific fact at various positions and
@@ -373,16 +383,19 @@ print(f"Total tokens: {total}")
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Token` — context window is measured in tokens, not characters or words
 - `Tokenization` — understanding how text maps to tokens is essential for budgeting
 - `Transformer Architecture` — attention mechanism is what makes the context window a hard boundary
 
 **Builds On This (learn these next):**
+
 - `In-Context Learning` — few-shot examples must fit within the context window budget
 - `Retrieval-Augmented Generation` — RAG exists specifically to work around context window limits
 - `Fine-Tuning` — an alternative to large context when the model needs domain knowledge baked in
 
 **Alternatives / Comparisons:**
+
 - `Embedding` — long-term memory strategy: compress content to vectors, retrieve relevant ones into context
 - `Hallucination` — context window overflow is a leading cause of LLM hallucination via truncation
 - `Model Quantization` — quantized models may have smaller effective context due to precision loss

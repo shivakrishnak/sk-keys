@@ -49,6 +49,7 @@ This is exactly why Model Weights (model serialisation) was established — as t
 Model weights are the save file for a trained AI — everything it learned, stored as a binary file you can download and run.
 
 **One analogy:**
+
 > Think of it like a chess grandmaster's entire game knowledge compressed into a USB stick. The USB stick contains all the patterns, strategies, and intuitions built over 20 years of play — stored as serialised data. You don't need to re-train the grandmaster; you just plug in the USB stick and they play at full strength. Model weights are that USB stick.
 
 **One insight:**
@@ -59,6 +60,7 @@ Weights are the primary unit of value in the AI ecosystem. Training produces wei
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. A neural network is defined by its architecture (graph of operations) plus its parameter values (weights).
 2. Architecture without weights = a random, untrained model.
 3. Weights without architecture = a collection of matrices with no defined meaning.
@@ -66,11 +68,13 @@ Weights are the primary unit of value in the AI ecosystem. Training produces wei
 
 **DERIVED DESIGN:**
 Weights are stored as tensors — multidimensional arrays of floating-point numbers. For a 7B model:
+
 - ~7 billion float16 values
 - Stored as named tensors: `model.layers.0.self_attn.q_proj.weight`, etc.
 - File format handles: tensor names, shapes, data types, byte offsets
 
 Modern formats:
+
 - **safetensors** (Hugging Face): lazy loading, no arbitrary code execution, memory-mapped
 - **GGUF** (llama.cpp): optimised for CPU/quantized inference
 - **ONNX**: cross-framework deployment
@@ -104,6 +108,7 @@ Weights are the compressed encoding of computation. The 14 GB file represents th
 > Think of weights as a brain's connectome — the complete map of all neural connections and their strengths, frozen at a moment in time. Given the connectome, neuroscientists could (in theory) reconstruct exactly how that brain responds to any input. Weights serve the same function: a complete specification of the neural network's computational behaviour, reproducible across any hardware that can do the matrix multiplications.
 
 Mapping:
+
 - "Brain at a moment in time" → trained model state
 - "Connectome" → weight file
 - "Synaptic strengths" → floating-point weight values
@@ -169,6 +174,7 @@ The shift from `pickle`-based `.bin` to `safetensors` was a security decision �
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW (from training to deployment):**
+
 ```
 Training completes
     ↓
@@ -189,6 +195,7 @@ Inference requests served
 ```
 
 **FAILURE PATH:**
+
 ```
 Weights file corrupted or truncated during download
     ↓
@@ -207,6 +214,7 @@ Serving multiple models in production means managing a weight library — versio
 ### 💻 Code Example
 
 **Example 1 — Loading weights safely:**
+
 ```python
 from transformers import AutoModelForCausalLM
 import torch
@@ -226,6 +234,7 @@ model = AutoModelForCausalLM.from_pretrained(
 ```
 
 **Example 2 — Saving and loading fine-tuned weights:**
+
 ```python
 # Save only the fine-tuned adapter weights (LoRA)
 model.save_pretrained("./my-fine-tuned-model/")
@@ -244,6 +253,7 @@ model = PeftModel.from_pretrained(
 ```
 
 **Example 3 — Verifying weights integrity:**
+
 ```python
 import hashlib
 
@@ -269,13 +279,13 @@ def verify_weight_file(path: str,
 
 ### ⚖️ Comparison Table
 
-| Format | Size | Security | Use Case | Best For |
-|---|---|---|---|---|
-| **safetensors** | Native | Safe | HF ecosystem | Production deployment |
-| GGUF | Quantized | Safe | llama.cpp | Local CPU/GPU inference |
-| ONNX | Cross-framework | Safe | Deployment | Framework-agnostic serving |
-| PyTorch .bin | Native | Unsafe (pickle) | Legacy | Training checkpoints only |
-| GPTQ | Quantized | Safe | GPU quantized | High-throughput GPU serving |
+| Format          | Size            | Security        | Use Case      | Best For                    |
+| --------------- | --------------- | --------------- | ------------- | --------------------------- |
+| **safetensors** | Native          | Safe            | HF ecosystem  | Production deployment       |
+| GGUF            | Quantized       | Safe            | llama.cpp     | Local CPU/GPU inference     |
+| ONNX            | Cross-framework | Safe            | Deployment    | Framework-agnostic serving  |
+| PyTorch .bin    | Native          | Unsafe (pickle) | Legacy        | Training checkpoints only   |
+| GPTQ            | Quantized       | Safe            | GPU quantized | High-throughput GPU serving |
 
 **How to choose:** Use safetensors for all new deployments — it's faster to load, more secure, and natively supported by Hugging Face. Use GGUF for local/edge deployment with llama.cpp. Never use PyTorch .bin from untrusted sources.
 
@@ -283,13 +293,13 @@ def verify_weight_file(path: str,
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Weights and parameters are different things" | Weights are a subset of parameters (the weight matrices, excluding biases) — often used interchangeably in LLM context |
-| "Downloading model weights transfers ownership" | Most weights are licenced — commercial use requires checking the licence (many open-weight models are non-commercial) |
-| "You can inspect weights to understand model behaviour" | Weight values are not human-interpretable; mechanistic interpretability is an active research area |
-| "Smaller weight files always mean worse models" | Quantized models (int4 GGUF) are 4× smaller than float16 with often < 5% quality degradation |
-| "Loading weights is instant" | 14 GB from NVMe SSD takes ~10 seconds; from network, minutes — cold start is a real deployment concern |
+| Misconception                                           | Reality                                                                                                                |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| "Weights and parameters are different things"           | Weights are a subset of parameters (the weight matrices, excluding biases) — often used interchangeably in LLM context |
+| "Downloading model weights transfers ownership"         | Most weights are licenced — commercial use requires checking the licence (many open-weight models are non-commercial)  |
+| "You can inspect weights to understand model behaviour" | Weight values are not human-interpretable; mechanistic interpretability is an active research area                     |
+| "Smaller weight files always mean worse models"         | Quantized models (int4 GGUF) are 4× smaller than float16 with often < 5% quality degradation                           |
+| "Loading weights is instant"                            | 14 GB from NVMe SSD takes ~10 seconds; from network, minutes — cold start is a real deployment concern                 |
 
 ---
 
@@ -302,6 +312,7 @@ def verify_weight_file(path: str,
 **Root Cause:** The weight file was saved from a different model version than the architecture code being used to load it. Common after model architecture updates.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Inspect available keys in the weight file
 from safetensors import safe_open
@@ -331,6 +342,7 @@ print(f"Extra in file: {extra}")
 **Root Cause:** PyTorch `.bin` uses Python pickle, which executes arbitrary code during deserialization. A malicious weight file can embed a `__reduce__` method that runs shell commands.
 
 **Diagnostic Command / Tool:**
+
 ```bash
 # Scan for pickle exploits before loading
 pip install fickling
@@ -346,16 +358,19 @@ python -m fickling --check-safety model.bin
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Model Parameters` — weights are the stored form of parameters; understanding parameters is essential
 - `Neural Network` — weights are the variable values in a neural network's layer functions
 - `Training` — training is the process that produces the weight values stored in weight files
 
 **Builds On This (learn these next):**
+
 - `Inference` — inference loads weights and runs forward passes without updating them
 - `Model Quantization` — reduces the precision of weight values to save memory and speed inference
 - `Fine-Tuning` — updates a model's weights on new data to specialise its behaviour
 
 **Alternatives / Comparisons:**
+
 - `Model Parameters` — the in-memory runtime form of the same values
 - `Transfer Learning` — the practice of reusing pretrained weights as a starting point
 - `Model Quantization` — transforming weight precision to enable deployment on constrained hardware

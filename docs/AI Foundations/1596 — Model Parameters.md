@@ -49,6 +49,7 @@ This is exactly why Model Parameters were invented — as the mechanism by which
 Model parameters are the numbers the model learned — billions of weights that together encode its "knowledge" of language.
 
 **One analogy:**
+
 > Think of a piano. The keys, strings, and hammers are the architecture. The musician's years of practice — muscle memory, intuition, sense of timing — are the parameters. You cannot see the practice directly; it is encoded in the musician's body. Model parameters are the same: invisible learned values that encode skill, shaped by millions of examples during training.
 
 **One insight:**
@@ -59,6 +60,7 @@ Parameters are the only persistent state of a trained neural network. Everything
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. A neural network is a composition of mathematical functions (layers).
 2. Each layer has free variables (parameters) that determine its output for any given input.
 3. Training finds parameter values that make the network's outputs match the desired outputs on the training data.
@@ -67,6 +69,7 @@ Parameters are the only persistent state of a trained neural network. Everything
 For a simple linear layer: `output = W × input + b`
 
 `W` (weight matrix) and `b` (bias vector) are the parameters. During training:
+
 1. Forward pass: compute output using current W, b.
 2. Compute loss: how wrong is the output?
 3. Backward pass: compute gradient of loss with respect to every parameter.
@@ -117,6 +120,7 @@ Parameters are the "memory budget" of the neural network. More parameters = more
 > Think of parameters as the synaptic strengths in a brain. Each connection between neurons has a strength (the weight). Learning = adjusting these strengths based on experience. A "stronger" synapse means "this pattern matters more." The brain doesn't store facts in single neurons; it stores them as distributed patterns across billions of connections. Neural network parameters work identically.
 
 Mapping:
+
 - "Neurons" → activations (computed, not stored)
 - "Synaptic strengths" → weight matrix values (stored, learned)
 - "Learning from experience" → gradient descent on training data
@@ -182,6 +186,7 @@ The distributed representation of knowledge in parameters is a deliberate design
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW (training):**
+
 ```
 Random initialisation of parameters
     ↓
@@ -202,6 +207,7 @@ Model saved to disk
 ```
 
 **NORMAL FLOW (inference):**
+
 ```
 Model parameters loaded to GPU memory
     ↓
@@ -221,6 +227,7 @@ At very large parameter counts (70B+), single-node inference becomes impossible 
 ### 💻 Code Example
 
 **Example 1 — Inspecting model parameters:**
+
 ```python
 from transformers import AutoModelForCausalLM
 import torch
@@ -244,6 +251,7 @@ print(f"Memory: {q_proj.nbytes/1e6:.1f} MB")
 ```
 
 **Example 2 — Memory calculation before loading:**
+
 ```python
 def estimate_model_memory(n_params: int,
                           dtype_bytes: int = 2,
@@ -264,6 +272,7 @@ print(estimate_model_memory(7e9, 1)) # int8 → ~8.4 GB
 ```
 
 **Example 3 — Freezing parameters for fine-tuning:**
+
 ```python
 # Fine-tuning: freeze base params, only train adapter
 for name, param in model.named_parameters():
@@ -283,14 +292,14 @@ print(f"Trainable: {trainable/total*100:.2f}%")
 
 ### ⚖️ Comparison Table
 
-| Parameter Count | Memory (fp16) | Capability | Best For |
-|---|---|---|---|
-| ~1B | ~2 GB | Basic tasks | Edge/embedded devices |
-| **~7B** | ~14 GB | Strong general | Single GPU (A100) |
-| ~13B | ~26 GB | Better reasoning | 2× GPU or high VRAM |
-| ~70B | ~140 GB | Near frontier | Multi-GPU cluster |
-| ~405B | ~810 GB | Frontier | Large cluster |
-| MoE (e.g., 141B total) | ~45B active | Frontier efficient | Mixture-of-experts serving |
+| Parameter Count        | Memory (fp16) | Capability         | Best For                   |
+| ---------------------- | ------------- | ------------------ | -------------------------- |
+| ~1B                    | ~2 GB         | Basic tasks        | Edge/embedded devices      |
+| **~7B**                | ~14 GB        | Strong general     | Single GPU (A100)          |
+| ~13B                   | ~26 GB        | Better reasoning   | 2× GPU or high VRAM        |
+| ~70B                   | ~140 GB       | Near frontier      | Multi-GPU cluster          |
+| ~405B                  | ~810 GB       | Frontier           | Large cluster              |
+| MoE (e.g., 141B total) | ~45B active   | Frontier efficient | Mixture-of-experts serving |
 
 **How to choose:** Start with the smallest model that meets your quality threshold — it's dramatically cheaper to serve. Use quantization (int8/int4) to fit larger models in less memory if quality is paramount.
 
@@ -298,13 +307,13 @@ print(f"Trainable: {trainable/total*100:.2f}%")
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "More parameters = smarter model" | Parameter efficiency matters; a well-trained 7B model can outperform a poorly-trained 70B model on specific tasks |
-| "Parameters directly store facts" | Facts are distributed across many parameters in superposition; no single parameter stores a single fact |
-| "You can edit parameters to update knowledge" | Direct parameter editing is an active research area (model editing); it doesn't reliably work yet at scale |
-| "Parameter count = training compute" | Training compute = parameters × training tokens × 6; the same parameter count can be undertrained or overtrained |
-| "Inference cost = parameter count" | Inference cost also depends on context length, batch size, and KV cache — a 7B model with 128K context can use more memory than a 70B with 4K context |
+| Misconception                                 | Reality                                                                                                                                               |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "More parameters = smarter model"             | Parameter efficiency matters; a well-trained 7B model can outperform a poorly-trained 70B model on specific tasks                                     |
+| "Parameters directly store facts"             | Facts are distributed across many parameters in superposition; no single parameter stores a single fact                                               |
+| "You can edit parameters to update knowledge" | Direct parameter editing is an active research area (model editing); it doesn't reliably work yet at scale                                            |
+| "Parameter count = training compute"          | Training compute = parameters × training tokens × 6; the same parameter count can be undertrained or overtrained                                      |
+| "Inference cost = parameter count"            | Inference cost also depends on context length, batch size, and KV cache — a 7B model with 128K context can use more memory than a 70B with 4K context |
 
 ---
 
@@ -317,6 +326,7 @@ print(f"Trainable: {trainable/total*100:.2f}%")
 **Root Cause:** Model parameters exceed available GPU VRAM. float16 7B = ~14 GB; many consumer GPUs have 8–12 GB.
 
 **Diagnostic Command / Tool:**
+
 ```bash
 # Check GPU VRAM before loading
 nvidia-smi --query-gpu=memory.free,memory.total \
@@ -324,6 +334,7 @@ nvidia-smi --query-gpu=memory.free,memory.total \
 ```
 
 **Fix:**
+
 ```python
 # Use quantization to fit in smaller VRAM
 from transformers import BitsAndBytesConfig
@@ -347,6 +358,7 @@ model = AutoModelForCausalLM.from_pretrained(
 **Root Cause:** Gradients flowing backward through layers become very large (explode), pushing parameters to extreme values that cause numerical overflow.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Monitor gradient norms during training
 for name, param in model.named_parameters():
@@ -365,16 +377,19 @@ for name, param in model.named_parameters():
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Neural Network` — parameters are the weights in neural network layers
 - `Training` — gradient descent is the mechanism by which parameters acquire their values
 - `Deep Learning` — deep networks have billions of parameters requiring GPU-scale compute
 
 **Builds On This (learn these next):**
+
 - `Model Weights` — the specific representation format of parameters at rest (on disk)
 - `Model Quantization` — reducing parameter precision to save memory and speed inference
 - `Fine-Tuning` — updating a subset of parameters on new data to specialise the model
 
 **Alternatives / Comparisons:**
+
 - `Model Weights` — often used interchangeably; technically weights are a subset of parameters (excluding biases)
 - `Inference` — inference uses parameters without updating them; training updates them
 - `Training` — the process that discovers optimal parameter values

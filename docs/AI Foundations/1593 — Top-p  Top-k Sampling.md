@@ -49,6 +49,7 @@ This is exactly why Top-p and Top-k were introduced — as pre-sampling filters 
 Top-k and top-p filter out the "wild card" tokens so the model only picks from genuinely reasonable options.
 
 **One analogy:**
+
 > Imagine choosing your lunch from a restaurant menu. Top-k says "only consider the 5 most popular dishes." Top-p says "only consider dishes until you've covered 90% of what most people order." Both approaches stop you from accidentally ordering something bizarre that happens to be on the menu.
 
 **One insight:**
@@ -59,6 +60,7 @@ The critical difference: top-k has a fixed number of candidates regardless of ho
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. After temperature scaling, a softmax produces a probability distribution over the full vocabulary.
 2. Low-probability tokens can still be sampled with non-zero probability.
 3. In long sequences, even very rare events (p=0.001) happen occasionally — causing derailment.
@@ -116,6 +118,7 @@ Top-p is context-aware — it produces narrow samples when the model is confiden
 > Think of a trivia game show where the host reads out the most popular answers in order until the total audience votes reaches 90%. When the question is "Name a European capital" — just "London" gets 95% → nucleus has 1 answer. When the question is "Name a colour" — you need "red, blue, green, yellow, purple..." to reach 90% → nucleus has many answers. The host (top-p) always stops at exactly 90%, regardless of question difficulty.
 
 Mapping:
+
 - "Trivia question" → each token generation step
 - "Audience votes" → token probabilities
 - "90% threshold" → p parameter
@@ -185,6 +188,7 @@ Nucleus sampling was introduced in "The Curious Case of Neural Text Degeneration
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 Prompt input
     ↓
@@ -206,6 +210,7 @@ Append token, repeat
 ```
 
 **FAILURE PATH:**
+
 ```
 top_p = 1.0 and temperature = 1.5
     ↓
@@ -226,6 +231,7 @@ Sorting the full vocabulary at each token step (for top-p) is O(V log V) per ste
 ### 💻 Code Example
 
 **Example 1 — Manual top-k implementation:**
+
 ```python
 import torch
 import torch.nn.functional as F
@@ -243,6 +249,7 @@ def top_k_sample(logits: torch.Tensor, k: int,
 ```
 
 **Example 2 — Manual top-p (nucleus) implementation:**
+
 ```python
 def top_p_sample(logits: torch.Tensor, p: float,
                  temperature: float = 1.0) -> int:
@@ -266,6 +273,7 @@ def top_p_sample(logits: torch.Tensor, p: float,
 ```
 
 **Example 3 — Combined strategy via OpenAI API:**
+
 ```python
 import openai
 
@@ -284,14 +292,14 @@ response = openai.chat.completions.create(
 
 ### ⚖️ Comparison Table
 
-| Strategy | Nucleus Size | Context-Aware | Coherence | Best For |
-|---|---|---|---|---|
-| Greedy (T=0) | 1 | No | Highest | Deterministic, testable tasks |
-| **Top-k** | Fixed k | No | High | Simple, fast filtering |
-| **Top-p (nucleus)** | Dynamic | Yes | High | General production use |
-| Top-k + Top-p | ≤k, dynamic | Yes | Highest | Best-practice default |
-| Temperature only | Full vocab | No | Medium | Quick experiments |
-| Beam search | All beams | No | Highest | Translation, structured gen |
+| Strategy            | Nucleus Size | Context-Aware | Coherence | Best For                      |
+| ------------------- | ------------ | ------------- | --------- | ----------------------------- |
+| Greedy (T=0)        | 1            | No            | Highest   | Deterministic, testable tasks |
+| **Top-k**           | Fixed k      | No            | High      | Simple, fast filtering        |
+| **Top-p (nucleus)** | Dynamic      | Yes           | High      | General production use        |
+| Top-k + Top-p       | ≤k, dynamic  | Yes           | Highest   | Best-practice default         |
+| Temperature only    | Full vocab   | No            | Medium    | Quick experiments             |
+| Beam search         | All beams    | No            | Highest   | Translation, structured gen   |
 
 **How to choose:** Use top-p=0.9 as your default. Add top-k=50 as an outer cap to prevent extremely large nuclei. Use beam search only for structured generation where you need the single highest-probability sequence (e.g., translation, JSON extraction).
 
@@ -299,13 +307,13 @@ response = openai.chat.completions.create(
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Top-k and top-p do the same thing" | Top-k is fixed; top-p adapts to distribution shape — they solve different failure modes |
-| "top_p=1.0 means no filtering" | Correct — p=1.0 disables nucleus filtering, allowing full-vocabulary sampling |
+| Misconception                                    | Reality                                                                                            |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| "Top-k and top-p do the same thing"              | Top-k is fixed; top-p adapts to distribution shape — they solve different failure modes            |
+| "top_p=1.0 means no filtering"                   | Correct — p=1.0 disables nucleus filtering, allowing full-vocabulary sampling                      |
 | "Higher top-p always means more creative output" | Higher top-p widens the nucleus, but if temperature is low, high-probability tokens still dominate |
-| "These parameters affect model quality" | They only affect sampling strategy at inference; model weights are unchanged |
-| "Setting both top-k and top-p is redundant" | They are complementary: top-k limits maximum nucleus size; top-p limits minimum quality |
+| "These parameters affect model quality"          | They only affect sampling strategy at inference; model weights are unchanged                       |
+| "Setting both top-k and top-p is redundant"      | They are complementary: top-k limits maximum nucleus size; top-p limits minimum quality            |
 
 ---
 
@@ -318,6 +326,7 @@ response = openai.chat.completions.create(
 **Root Cause:** After RLHF or fine-tuning, the model's learned distribution may concentrate very high probability on a narrow set of tokens even with filtering. The repetition is not a sampling issue but a distribution issue.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Inspect raw logits at the problem step
 import torch
@@ -342,6 +351,7 @@ print(top_values.softmax(-1))
 **Root Cause:** top-p=0.5 on an ambiguous generation step collapses the nucleus to 1–2 tokens, forcing near-deterministic output regardless of temperature.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Log nucleus size per step during generation
 cumprobs = torch.cumsum(sorted_probs, dim=-1)
@@ -358,16 +368,19 @@ print(f"Nucleus size at this step: {nucleus_size}")
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Token` — sampling operates at the token level; understanding token granularity is essential
 - `Temperature` — top-p and top-k are applied after temperature scaling; they are part of the same pipeline
 - `Inference` — these are inference-time parameters; understanding the forward pass is required
 
 **Builds On This (learn these next):**
+
 - `Hallucination` — understanding sampling strategies clarifies which hallucination causes are controllable at inference time
 - `Model Evaluation Metrics` — diversity metrics (distinct-n, self-BLEU) measure the quality of sampling strategies
 - `Fine-Tuning` — an alternative to sampling tricks for controlling output distribution
 
 **Alternatives / Comparisons:**
+
 - `Temperature` — the upstream step that top-p/top-k refine; they work together, not as alternatives
 - `Grounding` — addresses hallucination at the context level rather than the sampling level
 - `Beam Search` — deterministic alternative to sampling; does not use top-p or top-k

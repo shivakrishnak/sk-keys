@@ -49,6 +49,7 @@ This is exactly why Hallucination was named and studied — to give engineers a 
 An LLM hallucinates when it generates confident falsehoods because it learned to sound plausible, not to be accurate.
 
 **One analogy:**
+
 > Imagine a very well-read student who has read thousands of academic papers but cannot check any facts during an exam. Asked about a specific study, they construct a completely plausible-sounding answer using patterns from real papers — correct format, reasonable methodology, believable results — but they invented the details because they were never specifically trained on that paper. They are not lying; they are pattern-matching.
 
 **One insight:**
@@ -59,6 +60,7 @@ Hallucination is not a bug to be patched — it is a structural consequence of h
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. LLMs are trained to minimise cross-entropy loss — to predict the most probable next token, not the most factually correct next token.
 2. The model's "knowledge" is compressed into billions of parameters; specific facts are lossy-encoded during training.
 3. The model has no mechanism to flag low-confidence outputs from high-confidence outputs during generation.
@@ -67,6 +69,7 @@ Hallucination is not a bug to be patched — it is a structural consequence of h
 Given these invariants, hallucination is inevitable on facts that were rare, ambiguous, or absent in training data. When asked about a specific paper from 2019 that appeared in only 3 documents in the training corpus, the model generates tokens that would plausibly follow "The 2019 study by [Author] found that..." based on pattern similarity — not retrieval.
 
 Two types of hallucination emerge:
+
 - **Intrinsic hallucination:** contradicts provided context (the answer is in the prompt but the model ignores it)
 - **Extrinsic hallucination:** fabricates information not present in the context (cannot be verified from provided sources)
 
@@ -99,6 +102,7 @@ The model did not "lie" — it generated the most plausible continuation of the 
 > Think of a hallucinating LLM as a very talented improv actor who has studied thousands of legal briefs. Ask them to play a lawyer citing a specific case — they will give you a flawless performance with case number, judge's name, ruling date, and legal reasoning. But they improvised every detail. They are not lying; they are performing. The performance is indistinguishable from reality unless you check the court records.
 
 Mapping:
+
 - "Improv actor" → LLM generating tokens
 - "Studying briefs" → pre-training on text corpus
 - "Performance" → fluent, confident output
@@ -156,6 +160,7 @@ Hallucination is not a failure of model design — it is an emergent property of
 ```
 
 **Hallucination triggers:**
+
 - Query about specific statistics, dates, names, citations
 - Very recent events (post training cutoff)
 - Domain-specific jargon with multiple similar referents
@@ -169,6 +174,7 @@ User query → retrieval system fetches source documents → documents injected 
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW (without grounding):**
+
 ```
 User asks factual question
     ↓
@@ -185,6 +191,7 @@ User receives — cannot distinguish real from fabricated
 ```
 
 **WITH GROUNDING:**
+
 ```
 User asks factual question
     ↓
@@ -207,6 +214,7 @@ Hallucination rate tends to increase as: context window fills with irrelevant in
 ### 💻 Code Example
 
 **Example 1 — Detecting hallucination via source faithfulness:**
+
 ```python
 from sentence_transformers import SentenceTransformer
 import numpy as np
@@ -236,6 +244,7 @@ print(faithfulness_score(source, answer_hallucinated))
 ```
 
 **Example 2 — Grounding prompt pattern:**
+
 ```python
 def grounded_qa(question: str, source_docs: list[str],
                 client) -> str:
@@ -261,6 +270,7 @@ Answer:"""
 ```
 
 **Example 3 — Self-consistency check (reduce hallucination):**
+
 ```python
 from collections import Counter
 
@@ -287,14 +297,14 @@ def self_consistent_answer(question: str, client,
 
 ### ⚖️ Comparison Table
 
-| Mitigation | Hallucinates? | Latency | Cost | Best For |
-|---|---|---|---|---|
-| No mitigation | High | Lowest | Lowest | Non-factual creative tasks |
-| **Grounding (RAG)** | Low | Medium | Medium | Knowledge-intensive Q&A |
-| Self-consistency | Medium | High | High | Reasoning tasks |
-| Fine-tuning | Medium | Same | High upfront | Domain-specific tasks |
-| Constitutional AI | Low | Same | High training | Safety-critical applications |
-| Human-in-the-loop | Very low | Highest | Highest | Legal, medical, compliance |
+| Mitigation          | Hallucinates? | Latency | Cost          | Best For                     |
+| ------------------- | ------------- | ------- | ------------- | ---------------------------- |
+| No mitigation       | High          | Lowest  | Lowest        | Non-factual creative tasks   |
+| **Grounding (RAG)** | Low           | Medium  | Medium        | Knowledge-intensive Q&A      |
+| Self-consistency    | Medium        | High    | High          | Reasoning tasks              |
+| Fine-tuning         | Medium        | Same    | High upfront  | Domain-specific tasks        |
+| Constitutional AI   | Low           | Same    | High training | Safety-critical applications |
+| Human-in-the-loop   | Very low      | Highest | Highest       | Legal, medical, compliance   |
 
 **How to choose:** For most factual applications, RAG is the practical default — it reduces hallucination dramatically without model retraining. For high-stakes tasks (legal, medical, financial), combine RAG with human review. Self-consistency is useful for mathematical reasoning tasks where outputs can be compared.
 
@@ -302,13 +312,13 @@ def self_consistent_answer(question: str, client,
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                          | Reality                                                                                                                       |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
 | "The model is lying or making things up intentionally" | Hallucination is a structural consequence of training objective, not intent — the model has no concept of truth vs. falsehood |
-| "Temperature=0 prevents hallucination" | T=0 makes the model deterministically wrong on facts it misremembers; it does not prevent hallucination |
-| "Larger models hallucinate less" | Larger models hallucinate on different, more obscure facts; they may hallucinate more confidently on knowledge gaps |
-| "Adding 'don't make things up' to the prompt works" | Prompt instructions reduce but cannot eliminate hallucination; architectural mitigations are required for reliability |
-| "Hallucination is always dangerous" | For creative writing, brainstorming, or fiction, hallucination is desirable — the concern is only in factual domains |
+| "Temperature=0 prevents hallucination"                 | T=0 makes the model deterministically wrong on facts it misremembers; it does not prevent hallucination                       |
+| "Larger models hallucinate less"                       | Larger models hallucinate on different, more obscure facts; they may hallucinate more confidently on knowledge gaps           |
+| "Adding 'don't make things up' to the prompt works"    | Prompt instructions reduce but cannot eliminate hallucination; architectural mitigations are required for reliability         |
+| "Hallucination is always dangerous"                    | For creative writing, brainstorming, or fiction, hallucination is desirable — the concern is only in factual domains          |
 
 ---
 
@@ -321,6 +331,7 @@ def self_consistent_answer(question: str, client,
 **Root Cause:** The model was asked for specific citations. The training corpus contained patterns like "[Author] (YEAR) showed X in [journal]" but not the specific paper. It generates a plausible citation by composing real names, real journals, and plausible findings.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Post-generation citation verification
 import requests
@@ -346,6 +357,7 @@ def verify_doi(doi: str) -> bool:
 **Root Cause:** With long prompts, the model's attention over distant context weakens. Information at the beginning or middle of a long context window may be under-weighted relative to the model's parametric memory.
 
 **Diagnostic Command / Tool:**
+
 ```bash
 # Test with needle-in-a-haystack benchmark:
 # Place critical fact at various positions in context
@@ -362,16 +374,19 @@ python needle_test.py --position 0.1 0.5 0.9
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Token` — hallucination occurs at the token sampling level
 - `Training` — understanding training objectives explains why hallucination is structural, not accidental
 - `Temperature` — temperature settings affect how often low-probability (potentially hallucinated) tokens are sampled
 
 **Builds On This (learn these next):**
+
 - `Grounding` — the primary architectural mitigation for hallucination
 - `Retrieval-Augmented Generation` — the most widely deployed anti-hallucination pattern
 - `AI Safety` — hallucination is a core concern in AI safety and alignment research
 
 **Alternatives / Comparisons:**
+
 - `Fine-Tuning` — teaches the model new facts, reducing hallucination on fine-tuned domain knowledge
 - `Context Window` — larger context enables more grounding documents but also increases drift risk
 - `Model Evaluation Metrics` — FactScore and faithfulness metrics quantify hallucination rates

@@ -49,6 +49,7 @@ This is exactly why Temperature was introduced — as a scalar parameter that re
 Temperature is the creativity dial — turn it down for precision, up for variety.
 
 **One analogy:**
+
 > Imagine choosing a restaurant from a list ranked by review score. At temperature 0, you always go to #1. At temperature 0.7, you usually go to the top 3 but occasionally try #7. At temperature 2, you spin a wheel and end up at a random place including ones you would never normally consider.
 
 **One insight:**
@@ -59,6 +60,7 @@ Temperature does not make the model "smarter" — it only changes how it samples
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. After the final transformer layer, the model outputs one logit per vocabulary token (e.g., 50,257 logits for GPT-2).
 2. Softmax converts logits to a probability distribution that sums to 1.0.
 3. The next token is sampled from this distribution.
@@ -107,6 +109,7 @@ Temperature controls the shape of the probability distribution, not the model's 
 > Imagine a symphony orchestra where each musician has a score (the logits) showing how loudly to play their note. At temperature 0, only the loudest note plays; all others are silent. At temperature 1, the orchestra plays as written. At temperature 2, every instrument plays at nearly equal volume — rich, chaotic sound where the melody is buried in noise.
 
 Mapping:
+
 - "Orchestra score" → logit values
 - "Note volume" → logit magnitude (higher = more probable)
 - "Temperature 0" → only the single best token is selected
@@ -167,6 +170,7 @@ The choice to implement temperature as logit scaling (rather than post-hoc distr
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 Prompt tokens input to transformer
     ↓
@@ -187,6 +191,7 @@ Append to context; repeat until stop token
 ```
 
 **FAILURE PATH:**
+
 ```
 Temperature = 0 on creative brainstorm task
     ↓
@@ -205,6 +210,7 @@ High temperature increases output variance — at scale, a T=1.5 response genera
 ### 💻 Code Example
 
 **Example 1 — Temperature comparison (OpenAI):**
+
 ```python
 import openai
 
@@ -234,6 +240,7 @@ print(generate(prompt, temperature=2.0))
 ```
 
 **Example 2 — Deterministic testing with T=0:**
+
 ```python
 def test_json_extraction():
     """Use T=0 for deterministic, testable outputs."""
@@ -246,6 +253,7 @@ def test_json_extraction():
 ```
 
 **Example 3 — Task-appropriate temperature routing:**
+
 ```python
 TASK_TEMPERATURES = {
     "code_generation": 0.0,
@@ -265,14 +273,14 @@ def smart_generate(prompt: str, task: str) -> str:
 
 ### ⚖️ Comparison Table
 
-| Sampling Strategy | Randomness | Coherence | Best For |
-|---|---|---|---|
-| **Temperature (T<1)** | Low | High | Factual tasks, code, structured output |
-| Temperature (T=1) | Native | Native | General-purpose default |
-| Temperature (T>1) | High | Low | Brainstorming, diversity testing |
-| Top-k sampling | Medium | Medium | Limiting to top K tokens |
-| Top-p (nucleus) | Adaptive | High | Creative tasks with coherence |
-| Beam search | None | Highest | Translation, structured generation |
+| Sampling Strategy     | Randomness | Coherence | Best For                               |
+| --------------------- | ---------- | --------- | -------------------------------------- |
+| **Temperature (T<1)** | Low        | High      | Factual tasks, code, structured output |
+| Temperature (T=1)     | Native     | Native    | General-purpose default                |
+| Temperature (T>1)     | High       | Low       | Brainstorming, diversity testing       |
+| Top-k sampling        | Medium     | Medium    | Limiting to top K tokens               |
+| Top-p (nucleus)       | Adaptive   | High      | Creative tasks with coherence          |
+| Beam search           | None       | Highest   | Translation, structured generation     |
 
 **How to choose:** For most production tasks, start at T=0.7 with top-p=0.9. Use T=0 for deterministic, testable outputs. Combine temperature with top-p for creative tasks that still need grammatical coherence.
 
@@ -280,13 +288,13 @@ def smart_generate(prompt: str, task: str) -> str:
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Higher temperature makes the model smarter" | Temperature only changes sampling strategy; it cannot add knowledge the model doesn't have |
-| "Temperature 0 is always best for accuracy" | T=0 can over-confidently output wrong answers; slight temperature with top-p often gives better calibrated responses |
-| "Temperature affects the model's weights" | Temperature is applied only at inference time (logit scaling); it does not modify model parameters |
-| "Temperature controls response length" | Length is controlled by `max_tokens` and stop sequences; temperature only affects token selection probabilities |
-| "The same temperature works for all models" | Different models have different logit scales; T=0.7 on GPT-4 ≠ T=0.7 on Llama-3 |
+| Misconception                                | Reality                                                                                                              |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| "Higher temperature makes the model smarter" | Temperature only changes sampling strategy; it cannot add knowledge the model doesn't have                           |
+| "Temperature 0 is always best for accuracy"  | T=0 can over-confidently output wrong answers; slight temperature with top-p often gives better calibrated responses |
+| "Temperature affects the model's weights"    | Temperature is applied only at inference time (logit scaling); it does not modify model parameters                   |
+| "Temperature controls response length"       | Length is controlled by `max_tokens` and stop sequences; temperature only affects token selection probabilities      |
+| "The same temperature works for all models"  | Different models have different logit scales; T=0.7 on GPT-4 ≠ T=0.7 on Llama-3                                      |
 
 ---
 
@@ -299,6 +307,7 @@ def smart_generate(prompt: str, task: str) -> str:
 **Root Cause:** At very low temperatures, the model becomes trapped in local probability maxima — once it generates a pattern that scores high, it keeps selecting tokens that continue that pattern.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Check for repeated n-grams in output
 from collections import Counter
@@ -329,6 +338,7 @@ if score > 0.3:
 **Root Cause:** High temperature flattens the probability distribution so heavily that low-probability (semantically unrelated) tokens are frequently selected.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Perplexity check using model's own scoring
 import torch
@@ -349,16 +359,19 @@ def compute_perplexity(model, tokenizer, text: str) -> float:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Token` — temperature operates on per-token probability distributions
 - `Inference` — temperature is an inference-time parameter, not a training parameter
 - `Model Parameters` — temperature is a sampling hyperparameter, distinct from model weights
 
 **Builds On This (learn these next):**
+
 - `Top-p / Top-k Sampling` — complementary sampling strategies applied in conjunction with temperature
 - `Hallucination` — high temperature increases hallucination risk by sampling low-probability tokens
 - `Fine-Tuning` — an alternative to high temperature for domain-specific generation
 
 **Alternatives / Comparisons:**
+
 - `Grounding` — reduces hallucination regardless of temperature by anchoring outputs to retrieved facts
 - `Model Weights` — the underlying distribution temperature reshapes; changing weights changes the base distribution
 - `Beam Search` — deterministic alternative to sampling; ignores temperature entirely
