@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — HATEOAS is REST's most radical constraint: responses include links to all legal next actions, so clients never need to hardcode API URLs or workflow logic—they navigate the API like a website, following links the server provides.
 
-| #215 | Category: HTTP & APIs | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | REST, RESTful Constraints, HTTP Methods, Hypermedia, HTTP Headers | |
-| **Used by:** | API Design Best Practices, Hypermedia, API Discoverability | |
-| **Related:** | REST, RESTful Constraints, Hypermedia, OpenAPI, GraphQL | |
+| #215            | Category: HTTP & APIs                                             | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | REST, RESTful Constraints, HTTP Methods, Hypermedia, HTTP Headers |                 |
+| **Used by:**    | API Design Best Practices, Hypermedia, API Discoverability        |                 |
+| **Related:**    | REST, RESTful Constraints, Hypermedia, OpenAPI, GraphQL           |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -78,6 +78,7 @@ HATEOAS means your API response tells the client what it can do next, just like 
 webpage tells users where they can click — no URL hardcoding needed.
 
 **One analogy:**
+
 > Using a REST API without HATEOAS is like navigating a city by memorising a list
 > of all street addresses. Using HATEOAS is like navigating the same city using
 > Google Maps — at every step, the map shows you which roads are currently open
@@ -97,6 +98,7 @@ the same model to APIs.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. The current state of a resource determines which actions are available. The
    server knows this state; the client should not duplicate this knowledge.
 2. Links embedded in responses are the API's state machine, made explicit.
@@ -105,6 +107,7 @@ the same model to APIs.
    `GET /api`) and navigate entirely through links. No out-of-band URL knowledge.
 
 **THE STATE MACHINE AS LINKS:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │    Order State Machine — HATEOAS Links vs Code       │
@@ -147,6 +150,7 @@ the same model to APIs.
 
 **LINK RELATIONS (rel):**
 Each link has a `rel` (relation type) that names the semantic of the link:
+
 - `self` — the resource's own URL (canonical identifier)
 - `next`, `prev` — pagination links
 - `edit`, `delete` — CRUD operations
@@ -156,27 +160,33 @@ Each link has a `rel` (relation type) that names the semantic of the link:
 **HYPERMEDIA FORMATS:**
 
 **HAL (Hypertext Application Language):**
+
 ```json
 {
   "id": 123,
   "total": 49.99,
   "status": "PENDING",
   "_links": {
-    "self":     { "href": "/orders/123" },
-    "cancel":   { "href": "/orders/123/cancel", "method": "DELETE" },
-    "pay":      { "href": "/orders/123/payments", "method": "POST" },
+    "self": { "href": "/orders/123" },
+    "cancel": { "href": "/orders/123/cancel", "method": "DELETE" },
+    "pay": { "href": "/orders/123/payments", "method": "POST" },
     "customer": { "href": "/customers/456" }
   },
   "_embedded": {
     "items": [
-      { "productId": 789, "qty": 1, "price": 49.99,
-        "_links": { "self": { "href": "/products/789" } } }
+      {
+        "productId": 789,
+        "qty": 1,
+        "price": 49.99,
+        "_links": { "self": { "href": "/products/789" } }
+      }
     ]
   }
 }
 ```
 
 **THE TRADE-OFFS:**
+
 - Gain: clients decouple from URL structure; server controls state machine;
   API evolvable without coordinated client updates
 - Cost: responses larger (links add payload); client implementation more complex
@@ -194,6 +204,7 @@ partner API. The business adds a rule: orders over $500 require manager approval
 before shipping. URL involved: `POST /orders/{id}/ship`.
 
 **WHAT HAPPENS WITHOUT HATEOAS:**
+
 1. Developer adds the rule: orders > $500 are PUT in `AWAITING_APPROVAL` state
 2. `POST /orders/{id}/ship` returns 422 for unapproved high-value orders
 3. All 4 client teams scramble to update their code to check `total > 500`
@@ -202,6 +213,7 @@ before shipping. URL involved: `POST /orders/{id}/ship`.
 6. Coordinating releases across 4 teams delays shipping for 2 weeks
 
 **WHAT HAPPENS WITH HATEOAS:**
+
 1. Developer adds the rule: orders > $500 get `approval` link instead of `ship` link
 2. `GET /orders/{id}` response changes automatically:
    - For `total < 500`: `_links.ship` present
@@ -230,6 +242,7 @@ cost multiplier from 100× to 1×.
 > addresses.
 
 **Mapping:**
+
 - "amazon.com home page" → API entry point (`GET /api`)
 - "page links and buttons" → `_links` in HATEOAS response
 - "Add to Cart button absent on out-of-stock" → cancel link absent on non-cancellable
@@ -289,6 +302,7 @@ non-purist approach.
 ### ⚙️ How It Works (Mechanism)
 
 **Spring HATEOAS Implementation:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │    Spring HATEOAS — Response Assembly                │
@@ -321,6 +335,7 @@ non-purist approach.
 ```
 
 **Pagination via HATEOAS (standard pattern):**
+
 ```json
 GET /orders?page=2&size=10
 {
@@ -335,9 +350,11 @@ GET /orders?page=2&size=10
   }
 }
 ```
+
 Client never constructs pagination URLs — it follows `next` and `prev` links.
 
 **Link in HTTP Header (for responses without body):**
+
 ```
 HTTP/1.1 204 No Content
 Link: </orders/123>; rel="self"
@@ -349,6 +366,7 @@ Link: </orders/123/ship>; rel="ship"
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │            HATEOAS API Interaction Flow              │
@@ -397,6 +415,7 @@ HATEOAS even when it adds response payload overhead.
 ### 💻 Code Example
 
 **Example 1 — Spring HATEOAS: conditional, state-aware links:**
+
 ```java
 @RestController
 @RequestMapping("/orders")
@@ -439,6 +458,7 @@ public class OrderController {
 ```
 
 **Example 2 — Pagination collection with HATEOAS:**
+
 ```java
 @GetMapping
 public CollectionModel<EntityModel<OrderDto>> listOrders(
@@ -474,32 +494,33 @@ public CollectionModel<EntityModel<OrderDto>> listOrders(
 ```
 
 **Example 3 — Client consuming HATEOAS links (JavaScript):**
+
 ```javascript
 // GOOD: Client follows links, never constructs URLs
 async function cancelOrder(orderId) {
-    // Get order with its current links:
-    const order = await fetch(`/api/orders/${orderId}`)
-        .then(r => r.json());
+  // Get order with its current links:
+  const order = await fetch(`/api/orders/${orderId}`).then((r) => r.json());
 
-    // Check if cancel is available in current state:
-    const cancelLink = order._links?.cancel;
-    if (!cancelLink) {
-        throw new Error('Cancellation not available for this order');
-    }
+  // Check if cancel is available in current state:
+  const cancelLink = order._links?.cancel;
+  if (!cancelLink) {
+    throw new Error("Cancellation not available for this order");
+  }
 
-    // Follow the link — URL from server, not hardcoded:
-    const result = await fetch(cancelLink.href, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-    });
-    return result.json();
+  // Follow the link — URL from server, not hardcoded:
+  const result = await fetch(cancelLink.href, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+  return result.json();
 }
 
 // BAD: Hardcoded URL — breaks when server changes URL structure
 async function cancelOrder_BAD(orderId) {
-    // This will break if server renames the endpoint:
-    return fetch(`/api/orders/${orderId}/cancel`, {method: 'POST'})
-        .then(r => r.json());
+  // This will break if server renames the endpoint:
+  return fetch(`/api/orders/${orderId}/cancel`, { method: "POST" }).then((r) =>
+    r.json(),
+  );
 }
 ```
 
@@ -507,12 +528,12 @@ async function cancelOrder_BAD(orderId) {
 
 ### ⚖️ Comparison Table
 
-| Approach | Client-Server Coupling | API Evolution | Tooling Support | Complexity |
-|---|---|---|---|---|
-| **HATEOAS** | Minimal (follows links) | Server-driven | Limited | High |
-| OpenAPI-only | Moderate (URL contracts) | Client + Server coord. | Excellent | Low |
-| GraphQL | Low (query-driven) | schema-versioned | Very Good | Medium |
-| Strict RPC (gRPC) | High (generated stubs) | Proto versioning | Excellent | Medium |
+| Approach          | Client-Server Coupling   | API Evolution          | Tooling Support | Complexity |
+| ----------------- | ------------------------ | ---------------------- | --------------- | ---------- |
+| **HATEOAS**       | Minimal (follows links)  | Server-driven          | Limited         | High       |
+| OpenAPI-only      | Moderate (URL contracts) | Client + Server coord. | Excellent       | Low        |
+| GraphQL           | Low (query-driven)       | schema-versioned       | Very Good       | Medium     |
+| Strict RPC (gRPC) | High (generated stubs)   | Proto versioning       | Excellent       | Medium     |
 
 **How to choose:** Implement full HATEOAS when you have many independent clients
 and business rules that change frequently (payment workflows, approval chains,
@@ -523,13 +544,13 @@ few clients. The `self` link is universally recommended even without full HATEOA
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| HATEOAS is optional in REST | Fielding considers it mandatory for the uniform interface constraint. Its absence technically means the system is an "HTTP API" not a REST API |
-| Adding _links to responses is enough | HATEOAS requires clients to FOLLOW links rather than constructing URLs. Adding links that clients ignore provides no benefit |
-| HATEOAS makes APIs self-documenting | HATEOAS makes API workflows navigable without URL knowledge, but link relation semantics still need documentation |
-| HATEOAS is impractical for production | PayPal, GitHub, AWS HAL APIs, and Spring HATEOAS use it at scale. The challenge is client adoption, not server implementation |
-| Every link must be an absolute URL | RFC 5988 (Web Linking) allows both absolute and relative URIs in links. Best practice: use absolute URIs to avoid base URL ambiguity |
+| Misconception                         | Reality                                                                                                                                        |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| HATEOAS is optional in REST           | Fielding considers it mandatory for the uniform interface constraint. Its absence technically means the system is an "HTTP API" not a REST API |
+| Adding \_links to responses is enough | HATEOAS requires clients to FOLLOW links rather than constructing URLs. Adding links that clients ignore provides no benefit                   |
+| HATEOAS makes APIs self-documenting   | HATEOAS makes API workflows navigable without URL knowledge, but link relation semantics still need documentation                              |
+| HATEOAS is impractical for production | PayPal, GitHub, AWS HAL APIs, and Spring HATEOAS use it at scale. The challenge is client adoption, not server implementation                  |
+| Every link must be an absolute URL    | RFC 5988 (Web Linking) allows both absolute and relative URIs in links. Best practice: use absolute URIs to avoid base URL ambiguity           |
 
 ---
 
@@ -545,6 +566,7 @@ defeating the entire purpose of HATEOAS. Common when HATEOAS isn't enforced
 by API contract tests.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Search client code for hardcoded API URL patterns:
 grep -r '"/orders/' frontend-src/ | grep -v "_links"
@@ -572,6 +594,7 @@ viable HATEOAS — it provides the resource's canonical URL for bookmarking,
 caching, and subsequent operations.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Check if responses include self links:
 curl -s https://api.example.com/orders/123 | jq '._links.self'
@@ -602,6 +625,7 @@ Root Cause: Embedded sub-resources include their full HATEOAS links, which
 include their parent's URL, which includes the sub-resources...
 
 Diagnostic Command / Tool:
+
 ```bash
 # Check response size for circular embedding:
 curl -s https://api.example.com/orders/123 | wc -c
@@ -620,6 +644,7 @@ resources use minimal representation (`id` + `self` link only).
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `REST` — HATEOAS is the fourth sub-constraint of REST's uniform interface;
   REST must be understood before HATEOAS
 - `RESTful Constraints` — HATEOAS is one of the six RESTful constraints; context
@@ -628,12 +653,14 @@ resources use minimal representation (`id` + `self` link only).
   original hypermedia — the same concept applied to machine clients
 
 **Builds On This (learn these next):**
+
 - `Hypermedia` — the broader concept that links connect resources across the
   internet; HATEOAS applies hypermedia to API state transitions
 - `API Design Best Practices` — practical guidance on when to implement full
   HATEOAS vs pragmatic "self-link only" approaches
 
 **Alternatives / Comparisons:**
+
 - `OpenAPI` — documents API contracts statically (URL structure, parameters,
   schemas) — the practical alternative to HATEOAS for API discoverability
 - `GraphQL` — self-descriptive via introspection query; clients discover available

@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Raft is a consensus algorithm designed to be understandable: it decomposes the consensus problem into leader election, log replication, and safety, allowing a cluster of servers to agree on a sequence of values even as servers fail and recover.
 
-| #586 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Leader Election, Log Replication, Quorum, Consensus, State Machine Replication | |
-| **Used by:** | etcd, Kubernetes, CockroachDB, TiKV, Distributed Locking | |
-| **Related:** | Paxos, Zab, Multi-Paxos, Log Replication, State Machine Replication | |
+| #586            | Category: Distributed Systems                                                  | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Leader Election, Log Replication, Quorum, Consensus, State Machine Replication |                 |
+| **Used by:**    | etcd, Kubernetes, CockroachDB, TiKV, Distributed Locking                       |                 |
+| **Related:**    | Paxos, Zab, Multi-Paxos, Log Replication, State Machine Replication            |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ Diego Ongaro and John Ousterhout, motivated by the Paxos understandability crisi
 Raft is the consensus algorithm that finally made distributed agreement easy enough to get right: one leader, a shared append-only log, and a majority vote.
 
 **One analogy:**
+
 > Raft is like a distributed secretary: the elected secretary (leader) receives all meeting minutes (client commands), writes them down in order, sends copies to every committee member (follower), and a decision is final when more than half confirm they've written it down. If the secretary quits, the committee elects a new one whose notes are the most complete.
 
 **One insight:**
@@ -83,6 +84,7 @@ Raft's key insight over Paxos: by having a strong leader that is authoritative f
 ```
 
 **RAFT LOG REPLICATION FLOW:**
+
 ```
 Client: "SET x=42"
           │
@@ -104,6 +106,7 @@ Client: "SET x=42"
 ```
 
 **LOG MATCHING PROPERTY:**
+
 ```
 If two logs contain an entry with same (index, term):
   → All entries BEFORE that index are identical in both logs
@@ -116,6 +119,7 @@ Why? Leader sends AppendEntries with prevLogIndex+prevLogTerm.
 ```
 
 **LEADER ELECTION SAFETY:**
+
 ```
 Candidate gets vote from N only if:
   candidate's lastLog.term > voter's lastLog.term  OR
@@ -177,6 +181,7 @@ was never confirmed to the client. Retrying is the client's responsibility.
 ### ⚙️ How It Works (Mechanism)
 
 **Raft AppendEntries RPC:**
+
 ```
 Leader → Follower:
   AppendEntries {
@@ -201,6 +206,7 @@ Safety check on follower:
 ```
 
 **etcd Raft State (production):**
+
 ```bash
 # Check Raft leader and term:
 etcdctl endpoint status --cluster -w table
@@ -214,25 +220,25 @@ journalctl -u etcd -f | grep -E "became leader|started election|term"
 
 ### ⚖️ Comparison Table
 
-| Property | Raft | Paxos (Multi-Paxos) |
-|---|---|---|
-| Understandability | High (primary design goal) | Low (notoriously complex) |
-| Leader-based | Yes (strong leader) | Yes (proposer) but weaker |
-| Log compaction | Built-in (snapshots) | Not specified (impl-dependent) |
-| Membership change | Joint consensus (built-in) | Not specified |
-| Throughput | Good (pipelining) | Slightly better (more flexible) |
-| Production systems | etcd, CockroachDB, TiKV | Chubby, some internal systems |
+| Property           | Raft                       | Paxos (Multi-Paxos)             |
+| ------------------ | -------------------------- | ------------------------------- |
+| Understandability  | High (primary design goal) | Low (notoriously complex)       |
+| Leader-based       | Yes (strong leader)        | Yes (proposer) but weaker       |
+| Log compaction     | Built-in (snapshots)       | Not specified (impl-dependent)  |
+| Membership change  | Joint consensus (built-in) | Not specified                   |
+| Throughput         | Good (pipelining)          | Slightly better (more flexible) |
+| Production systems | etcd, CockroachDB, TiKV    | Chubby, some internal systems   |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                         | Reality                                                                                                                                               |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Raft is slow because of single leader | Pipelining and batching give Raft competitive throughput. Single-leader IS a bottleneck for geo-distributed systems but fine for cluster coordination |
-| Raft 100% guarantees no data loss | Raft guarantees no loss of COMMITTED entries. Un-committed entries (acknowledged to client before majority ACK — which shouldn't happen) CAN be lost |
-| Raft requires all nodes to be up | Raft requires only a MAJORITY (N/2+1). A 5-node Raft cluster remains functional with 2 node failures |
-| etcd IS Raft | etcd implements Raft but adds its own storage layer, watch mechanism, transaction KV API on top |
+| Raft 100% guarantees no data loss     | Raft guarantees no loss of COMMITTED entries. Un-committed entries (acknowledged to client before majority ACK — which shouldn't happen) CAN be lost  |
+| Raft requires all nodes to be up      | Raft requires only a MAJORITY (N/2+1). A 5-node Raft cluster remains functional with 2 node failures                                                  |
+| etcd IS Raft                          | etcd implements Raft but adds its own storage layer, watch mechanism, transaction KV API on top                                                       |
 
 ---
 
@@ -258,7 +264,7 @@ Symptom: Rapid leader changes; high term numbers; etcd alarms.
 
 Root Cause: Follower election timeouts misconfigured too short for network jitter.
 
-Fix: `--election-timeout` should be ≥ 10× `--heartbeat-interval` and ≥ 5× the 
+Fix: `--election-timeout` should be ≥ 10× `--heartbeat-interval` and ≥ 5× the
 99th-percentile network RTT between nodes.
 
 ```bash

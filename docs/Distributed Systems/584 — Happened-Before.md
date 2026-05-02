@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — The "happened-before" relation (→) is the formal definition of causality in distributed systems: event A happened-before B if A could have influenced B through any chain of events or messages, regardless of physical clock time.
 
-| #584 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Distributed Systems, Concurrency vs Parallelism, Causality | |
-| **Used by:** | Lamport Clock, Vector Clock, Causal Consistency, Total Order, CRDT | |
-| **Related:** | Lamport Clock, Vector Clock, Total Order, Causal Consistency, Linearizability | |
+| #584            | Category: Distributed Systems                                                 | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Distributed Systems, Concurrency vs Parallelism, Causality                    |                 |
+| **Used by:**    | Lamport Clock, Vector Clock, Causal Consistency, Total Order, CRDT            |                 |
+| **Related:**    | Lamport Clock, Vector Clock, Total Order, Causal Consistency, Linearizability |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -58,6 +58,7 @@ The **happened-before** relation (→), defined by Lamport on events in a distri
 "A happened before B" means A could have sent a message that influenced B, directly or through intermediaries.
 
 **One analogy:**
+
 > Happened-before is like a paper trail of who cc'd whom on an email chain.
 > If Alice sent Bob an email, and Bob forwarded to Carol, then Alice's message
 > happened before Carol's response — even if the calendar times are wrong.
@@ -65,13 +66,14 @@ The **happened-before** relation (→), defined by Lamport on events in a distri
 > — they're concurrent. The email chain IS the causality graph.
 
 **One insight:**
-Happened-before is not about physical time — it's about information flow. "A happened before B" means information from A *could* have arrived at B before B occurred. Two events are concurrent if neither could have informed the other. This purely logical definition is what makes it robust across arbitrary network delays, clock skews, and machine failures.
+Happened-before is not about physical time — it's about information flow. "A happened before B" means information from A _could_ have arrived at B before B occurred. Two events are concurrent if neither could have informed the other. This purely logical definition is what makes it robust across arbitrary network delays, clock skews, and machine failures.
 
 ---
 
 ### 🔩 First Principles Explanation
 
 **THE THREE RULES (explicit):**
+
 ```
 System: N processes, each performing events.
 Events: local computations + send/receive of messages.
@@ -94,6 +96,7 @@ CONCURRENT: ¬(a → b) AND ¬(b → a)
 ```
 
 **CAUSAL GRAPH EXAMPLE:**
+
 ```
 Process P1:   A ──────→ C ──────→ E
                \send m1    \send m2
@@ -105,18 +108,19 @@ Process P3:           X ──────→ Y ←recv m4
 
 Happens-before chains:
   A → C  (process order)
-  A → B  (via message m1? No — A is send of m1, so A → B? 
+  A → B  (via message m1? No — A is send of m1, so A → B?
           Actually: the send event for m1 at P1 is → receive at P2)
   Let's say A is the send of m1: A → B (message rule)
   B → D? Only if D receives B's message. Let's say B sends m3 to C: B → C (via m3 receive)
   C → E, C → D (via m2 receive), E, D are then ordered.
-  
+
 The key structure: solid arrows = happened-before; dashed = concurrent.
 A ∥ X  (no message path between them)
 E ∥ Y  (if no message from E ever reaches Y's precursor)
 ```
 
 **RELATING TO REAL CONSISTENCY BUGS:**
+
 ```
 Causal consistency violation:
   Op A: User posts photo (P → database-write)
@@ -149,7 +153,7 @@ A third user, Bob, reads both accounts at "the same time."
 
 **SCENARIO A:** Bob reads BOTH accounts AFTER both ops are applied. Balance consistent.
 
-**SCENARIO B:** Bob reads checking (before Op2) and savings (after Op1). 
+**SCENARIO B:** Bob reads checking (before Op2) and savings (after Op1).
 Bob sees: $100 missing from savings AND not in checking — $100 has vanished.
 
 **WHY THIS IS A CAUSALITY VIOLATION:**
@@ -192,6 +196,7 @@ read from replicas that have also applied Op2.
 ### ⚙️ How It Works (Mechanism)
 
 **Happens-Before Tracking (distributed event logging):**
+
 ```java
 // Attach Lamport timestamp to every event:
 // If ts(A) < ts(B) AND same process or message path → A likely → B
@@ -211,22 +216,22 @@ Span childSpan = tracer.buildSpan("operation")
 
 ### ⚖️ Comparison Table
 
-| Relation | Definition | Detectable By | Application |
-|---|---|---|---|
-| Happened-Before (→) | Causal influence possible | Vector Clock | Causally consistent reads |
-| Concurrent (∥) | No causal link | Vector Clock | Conflict detection |
-| Physical Before | Wall clock comparison | NTP time | Human-readable logs (unreliable) |
-| Logical Before | Lamport timestamp | Lamport Clock | Total order (partial causality) |
+| Relation            | Definition                | Detectable By | Application                      |
+| ------------------- | ------------------------- | ------------- | -------------------------------- |
+| Happened-Before (→) | Causal influence possible | Vector Clock  | Causally consistent reads        |
+| Concurrent (∥)      | No causal link            | Vector Clock  | Conflict detection               |
+| Physical Before     | Wall clock comparison     | NTP time      | Human-readable logs (unreliable) |
+| Logical Before      | Lamport timestamp         | Lamport Clock | Total order (partial causality)  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| A → B means A physically happened first | A → B means information COULD have flowed from A to B — it's about potential influence, not physical time |
-| Concurrent means simultaneous | Concurrent means NEITHER influenced the other — they could have happened at very different physical times |
-| Happened-before is transitive but not reflexive | Correct — it's a strict partial order (irreflexive: nothing happened before itself) |
+| Misconception                                           | Reality                                                                                                                                |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| A → B means A physically happened first                 | A → B means information COULD have flowed from A to B — it's about potential influence, not physical time                              |
+| Concurrent means simultaneous                           | Concurrent means NEITHER influenced the other — they could have happened at very different physical times                              |
+| Happened-before is transitive but not reflexive         | Correct — it's a strict partial order (irreflexive: nothing happened before itself)                                                    |
 | All events in a distributed system are causally related | Most real events in large distributed systems are concurrent with most other events — only events in the same causal chain are related |
 
 ---

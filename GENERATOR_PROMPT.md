@@ -353,15 +353,12 @@ Examples of BAD TL;DR:
 5.3  ENTRY METADATA TABLE  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
-Format (exact ASCII table structure):
+Use a Markdown table (NOT Unicode box-drawing characters):
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #NNN         │ Category: [name]                     │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ Keyword1, Keyword2, Keyword3         │                          │
-│ Used by:     │ Keyword1, Keyword2, Keyword3         │                          │
-│ Related:     │ Keyword1, Keyword2, Keyword3         │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+  | #NNN | Category: [category name] | Difficulty: [stars] |
+  |:---|:---|:---|
+  | **Depends on:** | Keyword1, Keyword2, Keyword3 | |
+  | **Used by:** | Keyword1, Keyword2, Keyword3 | |
 
 Rules:
   - All values: plain text, comma-separated, NO wiki links
@@ -1625,45 +1622,142 @@ TARGET CATEGORY: Kubernetes
 
 ---
 
-## 🚀 Quick One-Shot Workflow Prompt (for IDE Agent Mode)
+## 🚀 Rolling Generation Prompt — Generate All Missing, 10 at a Time
 
-Use this as a single agent-mode prompt to handle detect → generate → commit in one go:
+Use this as a single agent-mode prompt to handle detect → generate → commit, rolling
+continuously until every missing keyword entry has been created. No confirmation needed.
 
 ```
-TARGET CATEGORY: Java Concurrency
-
 You are an automated keyword generation agent for the sk-keys Technical Dictionary.
+Your job: generate every missing keyword entry using the v2.0 spec, 10 files at a time,
+committing after each batch, rolling continuously until all entries exist.
 
-YOUR WORKFLOW — repeat until I say stop:
+═══════════════════════════════════════════════════════════════════════
+YOUR WORKFLOW — RUNS CONTINUOUSLY UNTIL ALL ENTRIES ARE GENERATED
+═══════════════════════════════════════════════════════════════════════
 
-LOOP:
-  1. DETECT: Scan docs/ for existing keyword files. Extract numbers from filenames.
-             Cross-reference TECHNICAL_DICTIONARY.md master table.
-             Find next 10 missing keyword numbers (starting from lowest gap).
+LOOP (repeat automatically — no confirmation needed between batches):
 
-  2. REPORT: Print the 10 keywords you will generate:
-             "#NNN — Keyword Name  (Category | ★ Difficulty)"
+  STEP 1 — FIND NEXT 10 MISSING ENTRIES:
+    Scan ALL .md files inside docs/ recursively (exclude index.md files).
+    Extract the keyword number from each filename prefix (e.g. "347 — CAS" → 347).
+    Cross-reference against the Complete Master Table in TECHNICAL_DICTIONARY.md.
+    Find the next 10 keyword numbers that do NOT yet have a generated file.
+    Start from the lowest missing number globally (across all categories).
+    If fewer than 10 remain, process however many are left.
+    If 0 remain, print the DONE report and stop.
 
-  3. GENERATE: Create all 10 files using GENERATOR_PROMPT.md v2.0 spec exactly.
-               Place each in: docs/<correct Category Folder>/<NNNN> — <Keyword Name>.md
-               Use correct parent, nav_order, permalink, category per front matter rules.
+  STEP 2 — REPORT THE BATCH:
+    Print:
+      "⚙️ Generating batch N — keywords NNNN–NNNN:"
+      List each: "#NNNN — Keyword Name  (Category | ★ Difficulty)"
 
-  4. COMMIT: After all 10 files are created, run:
-               git add docs/
-               git commit -m "feat: add keywords NNNN–NNNN — <Category> batch <N>"
-             Do NOT run git push.
+  STEP 3 — GENERATE ALL 10 FILES:
+    For each of the 10 missing keywords:
 
-  5. CONFIRM: Say "✅ Batch complete. Generated NNNN–NNNN. Committed.
-               Next missing keyword: #NNNN. Continue? (yes/stop)"
+    a. LOOK UP in TECHNICAL_DICTIONARY.md:
+         - keyword number, name, category, difficulty
 
-Wait for my confirmation before starting the next loop.
+    b. DERIVE frontmatter:
+         - layout     → always: default
+         - title      → keyword name in double quotes
+         - parent     → exact category title from mapping table below
+         - nav_order  → keyword number as plain integer
+         - permalink  → /category-slug/keyword-slug/
+                        (keyword-slug: lowercase, spaces→hyphens,
+                         strip parentheses, & → and)
+         - number     → zero-padded 4-digit string in double quotes
+         - category   → exact category name from master list
+         - difficulty → from TECHNICAL_DICTIONARY.md
+         - depends_on → up to 5 prerequisite concepts
+         - used_by    → up to 5 concepts that build on this
+         - related    → up to 5 lateral / alternative concepts
+         - tags       → 3–6 tags from approved taxonomy (Section 4)
 
-RULES:
-- Never regenerate a keyword that already has a file
+    c. GENERATE the complete file using GENERATOR_PROMPT.md v2.0 spec.
+       All 20 content sections required.
+       File must be 100% self-contained.
+
+    d. WRITE to: docs/<correct Category Folder>/<NNNN> — <Keyword Name>.md
+       If the category folder doesn't exist yet, create it with an index.md first.
+
+  STEP 4 — COMMIT THE BATCH:
+    After all 10 files are created:
+      git add docs/
+      git commit -m "feat: add keywords NNNN–NNNN — <Category or mixed> batch N"
+    Do NOT run git push.
+
+  STEP 5 — LOOP:
+    Immediately go back to STEP 1.
+    Do NOT ask for confirmation.
+    Do NOT pause.
+    Keep looping until 0 missing entries remain.
+
+  WHEN ALL ENTRIES ARE DONE, print:
+    "✅ All keyword files generated.
+     Total created: [N] files across [X] batches.
+     Run 'git log --oneline' to see all generation commits."
+
+═══════════════════════════════════════════════════════════════════════
+CATEGORY → PARENT TITLE → PERMALINK SLUG MAPPING
+═══════════════════════════════════════════════════════════════════════
+
+  CS Fundamentals — Paradigms    | "CS Fundamentals — Paradigms"    | /cs-fundamentals/
+  Data Structures & Algorithms   | "Data Structures & Algorithms"   | /dsa/
+  Operating Systems              | "Operating Systems"              | /operating-systems/
+  Linux                          | "Linux"                          | /linux/
+  Networking                     | "Networking"                     | /networking/
+  HTTP & APIs                    | "HTTP & APIs"                    | /http-apis/
+  Java & JVM Internals           | "Java & JVM Internals"           | /java/
+  Java Language                  | "Java Language"                  | /java-language/
+  Java Concurrency               | "Java Concurrency"               | /java-concurrency/
+  Spring Core                    | "Spring Core"                    | /spring/
+  Database Fundamentals          | "Database Fundamentals"          | /databases/
+  NoSQL & Distributed Databases  | "NoSQL & Distributed Databases"  | /nosql/
+  Caching                        | "Caching"                        | /caching/
+  Data Fundamentals              | "Data Fundamentals"              | /data-fundamentals/
+  Big Data & Streaming           | "Big Data & Streaming"           | /big-data-streaming/
+  Distributed Systems            | "Distributed Systems"            | /distributed-systems/
+  Microservices                  | "Microservices"                  | /microservices/
+  System Design                  | "System Design"                  | /system-design/
+  Software Architecture Patterns | "Software Architecture Patterns" | /software-architecture/
+  Design Patterns                | "Design Patterns"                | /design-patterns/
+  Containers                     | "Containers"                     | /containers/
+  Kubernetes                     | "Kubernetes"                     | /kubernetes/
+  Cloud — AWS                    | "Cloud — AWS"                    | /cloud-aws/
+  Cloud — Azure                  | "Cloud — Azure"                  | /cloud-azure/
+  CI/CD                          | "CI/CD"                          | /ci-cd/
+  Git & Branching Strategy       | "Git & Branching Strategy"       | /git/
+  Maven & Build Tools (Java)     | "Maven & Build Tools (Java)"     | /maven-build/
+  Code Quality                   | "Code Quality"                   | /code-quality/
+  Testing                        | "Testing"                        | /testing/
+  Observability & SRE            | "Observability & SRE"            | /observability/
+  HTML                           | "HTML"                           | /html/
+  CSS                            | "CSS"                            | /css/
+  JavaScript                     | "JavaScript"                     | /javascript/
+  TypeScript                     | "TypeScript"                     | /typescript/
+  React                          | "React"                          | /react/
+  Node.js                        | "Node.js"                        | /nodejs/
+  npm & Package Management       | "npm & Package Management"       | /npm/
+  Webpack & Build Tools          | "Webpack & Build Tools"          | /webpack-build/
+  AI Foundations                 | "AI Foundations"                 | /ai-foundations/
+  LLMs & Prompt Engineering      | "LLMs & Prompt Engineering"      | /llms/
+  RAG & Agents & LLMOps          | "RAG & Agents & LLMOps"          | /rag-agents/
+  Platform & Modern SWE          | "Platform & Modern SWE"          | /platform-engineering/
+  Behavioral & Leadership        | "Behavioral & Leadership"        | /leadership/
+
+═══════════════════════════════════════════════════════════════════════
+RULES
+═══════════════════════════════════════════════════════════════════════
+
+- Never overwrite or regenerate a keyword that already has a file
 - Keep all existing files untouched
-- One commit per batch of 10
-- Follow the full GENERATOR_PROMPT.md v2.0 spec for every single entry
-- If a category folder doesn't exist yet, create it with an appropriate index.md
+- One commit per batch of 10 (or fewer for the final batch)
+- Commit message format: "feat: add keywords NNNN–NNNN — batch N"
+- Do NOT git push
+- Do NOT pause or ask for confirmation between batches — keep rolling
+- Follow GENERATOR_PROMPT.md v2.0 spec exactly for every single entry
+- If a category folder doesn't exist, create it with an appropriate index.md
 ```
 
 ---

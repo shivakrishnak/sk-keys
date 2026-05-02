@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Paxos is the theoretical foundation of all practical consensus algorithms: a two-phase protocol (Prepare + Accept) that guarantees a cluster of nodes agrees on a single value even when messages are delayed and nodes fail, as long as a majority survives.
 
-| #587 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Leader Election, Quorum, Consensus, Distributed Systems, Failure Modes | |
-| **Used by:** | Raft, Distributed Locking, State Machine Replication, Google Chubby | |
-| **Related:** | Raft, Multi-Paxos, Zab, Consensus, Quorum | |
+| #587            | Category: Distributed Systems                                          | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Leader Election, Quorum, Consensus, Distributed Systems, Failure Modes |                 |
+| **Used by:**    | Raft, Distributed Locking, State Machine Replication, Google Chubby    |                 |
+| **Related:**    | Raft, Multi-Paxos, Zab, Consensus, Quorum                              |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ Leslie Lamport published "The Part-Time Parliament" in 1998 (originally written 
 Paxos is the two-step protocol that proves distributed consensus is possible: first ask "what have others already agreed to?", then propose a value that doesn't contradict it.
 
 **One analogy:**
+
 > Paxos is like passing a motion in a committee with a multi-round voting system.
 > Round 1: A member says "I'm proposing motion #5 — is anyone currently committed to a higher-numbered motion?" Any member who already voted on motion #4 reports what they voted for. Round 2: The proposer collects these reports, and if someone already voted for a specific value, must adopt that value; otherwise proposes their own. The motion passes when a majority votes yes.
 
@@ -61,6 +62,7 @@ Paxos Phase 1 is about preventing the proposer from choosing a value that confli
 ### 🔩 First Principles Explanation
 
 **PHASE 1 — PREPARE:**
+
 ```
 Proposer P selects proposal number n (must be globally unique, monotonically increasing).
 P sends: Prepare(n) to ALL acceptors (or a quorum).
@@ -77,6 +79,7 @@ Each Acceptor A responds:
 ```
 
 **PHASE 2 — ACCEPT:**
+
 ```
 Proposer receives Phase 1 responses from a quorum Q:
 
@@ -99,6 +102,7 @@ Each Acceptor A:
 ```
 
 **WHY THIS IS SAFE:**
+
 ```
 Invariant: if value V was chosen (accepted by quorum Q),
   then any future Phase 1 quorum Q' must include at least one
@@ -112,6 +116,7 @@ This is THE fundamental safety argument for Paxos.
 ```
 
 **MULTI-PAXOS OPTIMISATION:**
+
 ```
 Single-decree Paxos: agrees on ONE value (one slot in the log).
 
@@ -131,6 +136,7 @@ Slot-by-slot:
 ### 🧪 Thought Experiment
 
 **DUELLING PROPOSERS — LIVELOCK:**
+
 ```
 Proposer P1 sends Prepare(n=1) → quorum promises.
 Proposer P2 sends Prepare(n=2) → quorum promises, eclipsing P1.
@@ -179,6 +185,7 @@ FLP Impossibility (Fischer, Lynch, Paterson, 1985) proves no deterministic conse
 ### ⚙️ How It Works (Mechanism)
 
 **Single-Decree Paxos Pseudocode:**
+
 ```python
 # Proposer:
 def propose(preferred_value, n, acceptors):
@@ -230,24 +237,24 @@ class Acceptor:
 
 ### ⚖️ Comparison Table
 
-| Property | Single-Decree Paxos | Multi-Paxos | Raft |
-|---|---|---|---|
-| Scope | One value per run | Sequential log slots | Sequential log |
-| Leader | Any proposer | Stable leader (elected) | Stable leader (elected) |
-| Phase 1 per slot | Yes | Only on first | Only on first (term) |
-| Livelock risk | Yes (duelling proposers) | No (stable leader) | No |
-| Completeness | Safety only | Safety + practical | Safety + practical + membership |
-| Understandability | Low | Medium | High |
+| Property          | Single-Decree Paxos      | Multi-Paxos             | Raft                            |
+| ----------------- | ------------------------ | ----------------------- | ------------------------------- |
+| Scope             | One value per run        | Sequential log slots    | Sequential log                  |
+| Leader            | Any proposer             | Stable leader (elected) | Stable leader (elected)         |
+| Phase 1 per slot  | Yes                      | Only on first           | Only on first (term)            |
+| Livelock risk     | Yes (duelling proposers) | No (stable leader)      | No                              |
+| Completeness      | Safety only              | Safety + practical      | Safety + practical + membership |
+| Understandability | Low                      | Medium                  | High                            |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Paxos guarantees liveness (progress) | FLP impossibility: no consensus algorithm guarantees progress in a purely asynchronous system. Paxos only guarantees liveness under eventual synchrony |
-| Paxos and Multi-Paxos are the same | Single-decree Paxos agrees on one value. Multi-Paxos uses a leader to agree on an ordered log efficiently |
-| Raft replaced Paxos | Raft is a re-derivation of Multi-Paxos with complete specification; they're equivalent in power but Raft is easier to implement correctly |
+| Misconception                                 | Reality                                                                                                                                                           |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Paxos guarantees liveness (progress)          | FLP impossibility: no consensus algorithm guarantees progress in a purely asynchronous system. Paxos only guarantees liveness under eventual synchrony            |
+| Paxos and Multi-Paxos are the same            | Single-decree Paxos agrees on one value. Multi-Paxos uses a leader to agree on an ordered log efficiently                                                         |
+| Raft replaced Paxos                           | Raft is a re-derivation of Multi-Paxos with complete specification; they're equivalent in power but Raft is easier to implement correctly                         |
 | Two different values can be chosen with Paxos | The quorum intersection invariant mathematically prevents this — if implemented correctly, Paxos never allows two different values to be chosen for the same slot |
 
 ---

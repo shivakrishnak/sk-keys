@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Keep-Alive reuses a single TCP connection for multiple HTTP requests instead of reconnecting for every one, cutting connection setup latency from the critical path; connection pooling manages a set of pre-established connections shared across concurrent request threads.
 
-| #212 | Category: HTTP & APIs | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | HTTP/1.1, TCP, Sockets, HTTP Headers | |
-| **Used by:** | HTTP/2, API Performance, Database Connection Pools, HTTP Client Libraries | |
-| **Related:** | TCP, HTTP/2, Connection Management, HikariCP, Thread Pools | |
+| #212            | Category: HTTP & APIs                                                     | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | HTTP/1.1, TCP, Sockets, HTTP Headers                                      |                 |
+| **Used by:**    | HTTP/2, API Performance, Database Connection Pools, HTTP Client Libraries |                 |
+| **Related:**    | TCP, HTTP/2, Connection Management, HikariCP, Thread Pools                |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -74,6 +74,7 @@ Keep-Alive reuses the same TCP "highway" for many requests instead of tearing
 it down and rebuilding it for every trip.
 
 **One analogy:**
+
 > Without keep-alive: every time you need to make a phone call, you pick up the
 > phone, dial the number, wait for it to ring, say hello, talk, then hang up and
 > dial again for the very next sentence. With keep-alive: you dial once, say
@@ -93,6 +94,7 @@ cost from per-request to per-application.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. A TCP connection is a bidirectional byte stream with session state maintained
    at both endpoints. Setting it up is expensive (RTT); tearing it down is cheap.
 2. HTTP is request-response: requests and responses are perfectly serialised on a
@@ -103,6 +105,7 @@ cost from per-request to per-application.
 **DERIVED DESIGN:**
 
 **Keep-Alive (single connection reuse):**
+
 ```
 ┌──────────────────────────────────────────────────┐
 │ Without Keep-Alive (HTTP/1.0 default):           │
@@ -122,6 +125,7 @@ cost from per-request to per-application.
 ```
 
 **Connection Pool (concurrent access):**
+
 ```
 ┌──────────────────────────────────────────────────┐
 │         Connection Pool Structure                │
@@ -145,10 +149,12 @@ Servers close idle connections after a timeout (Nginx default: 75s, AWS ALB: 60s
 If a pool holds a connection idle for longer, the next request on that connection
 hits a half-open socket: the client writes to it, the server has closed it, the
 client receives `Connection reset by peer`. The pool must:
+
 1. Set its idle-eviction timeout below the server's keepalive timeout
 2. Validate connections before use (TCP write probe or cheap HEAD request)
 
 **THE TRADE-OFFS:**
+
 - Gain: eliminates TCP/TLS setup latency from the hot path; reduces OS, CDN, and
   server socket state
 - Cost: idle connections consume memory and server-side socket descriptors; an
@@ -163,6 +169,7 @@ A microservice makes 100 calls/second to a downstream HTTPS API. Each call takes
 5ms of server processing time. TCP+TLS setup = 30ms (3 RTTs on a 10ms RTT link).
 
 **WITHOUT CONNECTION POOLING:**
+
 - Each request: 30ms setup + 5ms processing = 35ms per request
 - 100 req/s × 35ms = 3,500ms worth of active ops per second
 - Actual server processing time: 100 × 5ms = 500ms
@@ -170,6 +177,7 @@ A microservice makes 100 calls/second to a downstream HTTPS API. Each call takes
 - At 200 req/s the system would need 200 simultaneous TCP setups → port exhaustion
 
 **WITH CONNECTION POOL (max 10 connections):**
+
 - On startup: 10 connections established (10 × 30ms — one-time cost)
 - Each request: 0ms setup + 5ms processing = 5ms per request
 - 100 req/s × 5ms = 500ms worth of active ops per second
@@ -195,6 +203,7 @@ exhaustion issues.
 > any cab whose engine has gone cold while waiting.
 
 **Mapping:**
+
 - "airport" → your application
 - "destination" → downstream API server
 - "taxi" → TCP connection (with TLS already established)
@@ -254,6 +263,7 @@ databases (which don't speak HTTP), and scenarios where HTTP/2 is unavailable.
 ### ⚙️ How It Works (Mechanism)
 
 **Keep-Alive Headers (HTTP/1.1):**
+
 ```
 # Request (keep-alive is implicit in HTTP/1.1):
 GET /api/data HTTP/1.1
@@ -266,9 +276,11 @@ Connection: keep-alive
 Keep-Alive: timeout=60, max=100
 Content-Length: 47
 ```
+
 `timeout`: idle seconds before server closes. `max`: max requests on this connection.
 
 **Connection Pool Lifecycle State Machine:**
+
 ```
 ┌──────────────────────────────────────────────────┐
 │     Connection Pool State Machine                │
@@ -303,6 +315,7 @@ common connection pool failure in high-load systems.
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 ┌──────────────────────────────────────────────────┐
 │     Request Through a Connection Pool            │
@@ -343,6 +356,7 @@ service with 1,000 concurrent threads each taking 50ms: pool needs 50 connection
 ### 💻 Code Example
 
 **Example 1 — OkHttp connection pool configuration:**
+
 ```java
 // BAD: New client per request — defeats pooling entirely
 public String callApi(String url) throws IOException {
@@ -369,6 +383,7 @@ public OkHttpClient okHttpClient() {
 ```
 
 **Example 2 — Apache HttpClient pool:**
+
 ```java
 PoolingHttpClientConnectionManager cm =
     new PoolingHttpClientConnectionManager();
@@ -384,6 +399,7 @@ CloseableHttpClient client = HttpClients.custom()
 ```
 
 **Example 3 — Spring Boot: configure WebClient connection pool:**
+
 ```java
 @Bean
 public WebClient webClient() {
@@ -412,12 +428,12 @@ public WebClient webClient() {
 
 ### ⚖️ Comparison Table
 
-| Strategy | Connections | Thread Safety | Overhead | Best For |
-|---|---|---|---|---|
-| New connection per request | N (one each) | No | Maximum | Testing only |
-| **Keep-Alive (no pool)** | 1 per thread | Yes (per-thread) | Low (1 handshake) | Single-threaded clients |
-| **Connection Pool** | Configurable | Yes | Minimal | Multi-threaded servers |
-| HTTP/2 multiplexing | 1–2 total | Yes | Near zero | Modern APIs, gRPC |
+| Strategy                   | Connections  | Thread Safety    | Overhead          | Best For                |
+| -------------------------- | ------------ | ---------------- | ----------------- | ----------------------- |
+| New connection per request | N (one each) | No               | Maximum           | Testing only            |
+| **Keep-Alive (no pool)**   | 1 per thread | Yes (per-thread) | Low (1 handshake) | Single-threaded clients |
+| **Connection Pool**        | Configurable | Yes              | Minimal           | Multi-threaded servers  |
+| HTTP/2 multiplexing        | 1–2 total    | Yes              | Near zero         | Modern APIs, gRPC       |
 
 **How to choose:** Use connection pooling for any multi-threaded HTTP client.
 Set `maxPerRoute` to prevent one slow upstream from exhausting the entire pool.
@@ -428,13 +444,13 @@ handles more load than a bigger HTTP/1.1 pool.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| More pool connections = better performance | Diminishing returns above queue depth saturation. Too many idle connections waste server descriptors and JVM memory |
-| Keep-alive prevents all connection setup latency | Keep-alive eliminates latency for reused connections. The first connection to each host still pays full handshake cost |
-| Connection pools are only for databases | HTTP client connection pools are equally important. Creating new OkHttp clients per request is a very common production performance bug |
-| maxTotal and maxPerRoute are the same setting | maxTotal is the absolute pool cap; maxPerRoute is per-upstream-host. A route-level limit prevents one slow host from monopolising the pool |
-| HTTPS connections can't be reused | HTTPS connections benefit even more from reuse because TLS handshake (~100ms) adds to TCP handshake (~30ms), increasing total setup cost |
+| Misconception                                    | Reality                                                                                                                                    |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| More pool connections = better performance       | Diminishing returns above queue depth saturation. Too many idle connections waste server descriptors and JVM memory                        |
+| Keep-alive prevents all connection setup latency | Keep-alive eliminates latency for reused connections. The first connection to each host still pays full handshake cost                     |
+| Connection pools are only for databases          | HTTP client connection pools are equally important. Creating new OkHttp clients per request is a very common production performance bug    |
+| maxTotal and maxPerRoute are the same setting    | maxTotal is the absolute pool cap; maxPerRoute is per-upstream-host. A route-level limit prevents one slow host from monopolising the pool |
+| HTTPS connections can't be reused                | HTTPS connections benefit even more from reuse because TLS handshake (~100ms) adds to TCP handshake (~30ms), increasing total setup cost   |
 
 ---
 
@@ -450,6 +466,7 @@ Root Cause: All pool connections in use; slow downstream creating long hold time
 pool sized too small for peak concurrency.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Check OkHttp pool stats (expose via Micrometer):
 curl http://localhost:8080/actuator/metrics/http.client.requests \
@@ -484,6 +501,7 @@ while it was idle in the client's pool. Next request attempts to write to the
 closed socket, receives TCP RST, and fails.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Check server-side keepalive timeout:
 # For Nginx:
@@ -495,6 +513,7 @@ watch -n 1 "ss -n state time-wait | wc -l"
 ```
 
 Fix:
+
 ```java
 // Set pool idle timeout BELOW server's keepalive timeout:
 .maxIdleTime(Duration.ofSeconds(45))  // server = 60s, ours = 45s
@@ -510,12 +529,14 @@ Never use the default, which may exceed server timeouts.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `TCP` — keep-alive reuses TCP connections; understanding TCP's 3-way handshake
   cost and TIME_WAIT state is essential to understanding why keep-alive matters
 - `HTTP/1.1` — keep-alive is an HTTP/1.1 default behaviour defined in the spec;
   HTTP/1.0 required explicit opt-in
 
 **Builds On This (learn these next):**
+
 - `HTTP/2` — HTTP/2 takes connection reuse to its logical extreme: one connection
   serves all concurrent requests via multiplexed streams, making large per-host
   connection pools unnecessary
@@ -523,6 +544,7 @@ Never use the default, which may exceed server timeouts.
   identical trade-offs and configuration principles
 
 **Alternatives / Comparisons:**
+
 - `HTTP/2 Multiplexing` — eliminates the need for large HTTP connection pools;
   one multiplexed connection replaces the role of 10–50 HTTP/1.1 pool connections
 

@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Replication strategies define how and when data is copied across multiple nodes: synchronous (all must confirm before success), asynchronous (confirm immediately, replicate later), or semi-synchronous (wait for a subset) — each balancing durability, latency, and availability differently.
 
-| #588 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Distributed Systems, CAP Theorem, Consistency Models, Quorum | |
-| **Used by:** | Log Replication, State Machine Replication, Eventual Consistency, Raft | |
-| **Related:** | Log Replication, Quorum, Strong Consistency, Eventual Consistency, Raft | |
+| #588            | Category: Distributed Systems                                           | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Distributed Systems, CAP Theorem, Consistency Models, Quorum            |                 |
+| **Used by:**    | Log Replication, State Machine Replication, Eventual Consistency, Raft  |                 |
+| **Related:**    | Log Replication, Quorum, Strong Consistency, Eventual Consistency, Raft |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ Replication is the answer to durability and availability. But how to replicate i
 Replication strategies answer: "does the client wait for the backup to confirm?" — either "yes, always" (safe but slow), "no, never" (fast but risky), or "yes, for a majority" (balanced).
 
 **One analogy:**
+
 > Synchronous replication is like filing two copies of a cheque simultaneously — slow, but you're certain both banks have a record. Asynchronous is like filing with one bank first, mailing the copy later — faster, but if the postal van crashes before delivery, one bank's copy is lost. Quorum is like filing with 3 out of 5 branches simultaneously — acceptable for "good enough" durability without full synchronous lag.
 
 **One insight:**
@@ -60,6 +61,7 @@ The fundamental tension in replication: increasing durability (more replicas mus
 ### 🔩 First Principles Explanation
 
 **TYPES OF REPLICATION:**
+
 ```
 ┌────────────────┬────────────────────────────┬─────────┬──────────┐
 │ Strategy       │ Description                │ Latency │ Max Loss │
@@ -82,6 +84,7 @@ The fundamental tension in replication: increasing durability (more replicas mus
 ```
 
 **QUORUM MATHS:**
+
 ```
 System: N replicas
 Writes go to W replicas (write quorum)
@@ -101,11 +104,12 @@ Examples (N=5):
 ```
 
 **REPLICATION LAG:**
+
 ```
 Async replication scenario:
   Primary applies write at T=0
   Replica receives write at T=500ms (replication lag)
-  
+
   If primary crashes at T=200ms:
     500ms worth of writes NOT yet replicated = LOST
     Replica promoted to primary with stale state
@@ -117,6 +121,7 @@ Monitoring replica lag:
 ```
 
 **CHAIN REPLICATION:**
+
 ```
 Write path:  Client → HEAD → N2 → N3 → TAIL → ACK to client
 Read path:   Client → TAIL (always consistent: TAIL has all committed writes)
@@ -164,8 +169,8 @@ semi-sync is MySQL's recommended production setting for write-critical workloads
 > Replication strategy is a durability dial:
 >
 > ASYNC ←──────────────────────────────── SYNC
-> Fast, risky                        Slow, safe
-> "Post your backup copy later"  "File with all offices simultaneously"
+> Fast, risky Slow, safe
+> "Post your backup copy later" "File with all offices simultaneously"
 >
 > QUORUM sits in the middle: "file with majority of offices" — fast enough,
 > safe enough, mathematically guaranteed to be consistent if W + R > N.
@@ -187,6 +192,7 @@ semi-sync is MySQL's recommended production setting for write-critical workloads
 ### ⚙️ How It Works (Mechanism)
 
 **PostgreSQL Synchronous Replication:**
+
 ```sql
 -- postgresql.conf:
 synchronous_commit = 'on'            -- wait for standby WAL write
@@ -201,6 +207,7 @@ FROM pg_stat_replication;
 ```
 
 **Cassandra Quorum:**
+
 ```java
 // Write quorum (QUORUM = majority of replicas for that token):
 session.execute(
@@ -225,24 +232,24 @@ session.execute(
 
 ### ⚖️ Comparison Table
 
-| Strategy | Durability | Write Latency | Read Staleness | Use Case |
-|---|---|---|---|---|
-| Async | RPO > 0 | Lowest | Possible lag | Cross-region backup, analytics replicas |
-| Semi-sync (1 ACK) | RPO ≈ 0 | Low-medium | Minimal | MySQL production primary-replica |
-| Quorum (W+R>N) | Zero (if W+R>N) | Medium | None (if W+R>N) | Dynamo, Cassandra QUORUM |
-| Full Sync (W=N) | Zero | Highest | None | Mission-critical, small N |
-| Chain Replication | Zero | High (chain depth) | None (TAIL reads) | CRAQ, distributed log systems |
+| Strategy          | Durability      | Write Latency      | Read Staleness    | Use Case                                |
+| ----------------- | --------------- | ------------------ | ----------------- | --------------------------------------- |
+| Async             | RPO > 0         | Lowest             | Possible lag      | Cross-region backup, analytics replicas |
+| Semi-sync (1 ACK) | RPO ≈ 0         | Low-medium         | Minimal           | MySQL production primary-replica        |
+| Quorum (W+R>N)    | Zero (if W+R>N) | Medium             | None (if W+R>N)   | Dynamo, Cassandra QUORUM                |
+| Full Sync (W=N)   | Zero            | Highest            | None              | Mission-critical, small N               |
+| Chain Replication | Zero            | High (chain depth) | None (TAIL reads) | CRAQ, distributed log systems           |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| More replicas = more consistency | More replicas = more durability. Consistency depends on W+R>N, not replica count alone |
-| Async replication is always wrong | For read scaling or cross-region observers, async is correct and sync would add unacceptable latency |
-| Quorum guarantees linearisability | Quorum writes/reads guarantee that reads see a value from the latest write, but not necessarily a linearisable order without additional mechanisms (e.g., Raft's ReadIndex protocol) |
-| Semi-sync means exactly one follower ACKs | MySQL's semi-sync allows configuring a minimum number of replicas; "semi" refers to "not all" |
+| Misconception                             | Reality                                                                                                                                                                              |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| More replicas = more consistency          | More replicas = more durability. Consistency depends on W+R>N, not replica count alone                                                                                               |
+| Async replication is always wrong         | For read scaling or cross-region observers, async is correct and sync would add unacceptable latency                                                                                 |
+| Quorum guarantees linearisability         | Quorum writes/reads guarantee that reads see a value from the latest write, but not necessarily a linearisable order without additional mechanisms (e.g., Raft's ReadIndex protocol) |
+| Semi-sync means exactly one follower ACKs | MySQL's semi-sync allows configuring a minimum number of replicas; "semi" refers to "not all"                                                                                        |
 
 ---
 
@@ -257,6 +264,7 @@ Cause: Primary I/O bound or CPU saturated; replica cannot keep pace with binlog
 stream; replication thread falls behind.
 
 Diagnosis:
+
 ```sql
 -- MySQL:
 SHOW REPLICA STATUS\G

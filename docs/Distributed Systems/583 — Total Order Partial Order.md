@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — A partial order allows some events to be unordered (concurrent); a total order places every pair of events in a definitive sequence — and establishing a global total order is the fundamental challenge in distributed system coordination.
 
-| #583 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Lamport Clock, Happened-Before, Distributed Systems, Set Theory | |
-| **Used by:** | Raft, Paxos, Log Replication, Causal Consistency, State Machine Replication | |
-| **Related:** | Happened-Before, Lamport Clock, Vector Clock, Linearizability, Total Order Broadcast | |
+| #583            | Category: Distributed Systems                                                        | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Lamport Clock, Happened-Before, Distributed Systems, Set Theory                      |                 |
+| **Used by:**    | Raft, Paxos, Log Replication, Causal Consistency, State Machine Replication          |                 |
+| **Related:**    | Happened-Before, Lamport Clock, Vector Clock, Linearizability, Total Order Broadcast |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -59,6 +59,7 @@ A **partial order** is a binary relation `≤` on a set S satisfying: reflexivit
 A partial order says "some things happen before others, some are just simultaneous"; a total order says "everything has a definite sequence number."
 
 **One analogy:**
+
 > Partial order is like a "must start after" project dependency graph. Task B must come after Task A, but Task C can run in parallel with B — there's no defined order between C and B. Total order is like a single-file queue: every task has an exact sequence number, and no two tasks are equal-ranked.
 
 **One insight:**
@@ -84,6 +85,7 @@ Total Order (P, ≤):
 ```
 
 **EXAMPLES IN DISTRIBUTED SYSTEMS:**
+
 ```
 Happens-before (→) on distributed events:
   Partial order:
@@ -107,6 +109,7 @@ Git commit graph:
 ```
 
 **TOTAL ORDER BROADCAST:**
+
 ```
 Problem: N nodes, each may propose events concurrently.
          Need: all nodes deliver ALL events in the SAME order.
@@ -131,17 +134,20 @@ Equivalence:
 
 **THE BANK ACCOUNT PROBLEM:**
 Two operations arrive at a replicated bank account system concurrently:
+
 - Op A: `DEPOSIT 100` (from Client 1 to Node A)
 - Op B: `WITHDRAW 100` (from Client 2 to Node B)
 
 Initial balance: 50.
 
 **WITH PARTIAL ORDER (concurrent, no agreed sequence):**
+
 - Node A applies A then B: balance = 50 + 100 - 100 = 50. WITHDRAW succeeds.
 - Node B applies B then A: balance = 50 - 100 = ERROR (insufficient funds). A is then applied: balance = 50.
 - Result: nodes diverge. Replicas show different final balances.
 
 **WITH TOTAL ORDER (consensus-agreed sequence):**
+
 - Consensus protocol picks ONE ordering (say: A before B).
 - ALL nodes apply A then B: balance 50 → 150 → 50. Consistent.
 - Or ALL nodes apply B then A: balance 50 → ERROR (reject) → still 50.
@@ -198,23 +204,23 @@ Result: every node applies operations in identical total order
 
 ### ⚖️ Comparison Table
 
-| Order Type | Comparability | Concurrent Events | Examples | Protocol |
-|---|---|---|---|---|
-| Partial | Some pairs incomparable | Exist | Happens-before, Git DAG | — |
-| Total | All pairs comparable | None (all sequenced) | Raft log, B-tree keys | Paxos/Raft |
-| Causal | Causal pairs ordered | Exist | Causal consistency | Version vectors |
-| Real-time | All pairs + physical time | None | Linearizability | TrueTime + Spanner |
+| Order Type | Comparability             | Concurrent Events    | Examples                | Protocol           |
+| ---------- | ------------------------- | -------------------- | ----------------------- | ------------------ |
+| Partial    | Some pairs incomparable   | Exist                | Happens-before, Git DAG | —                  |
+| Total      | All pairs comparable      | None (all sequenced) | Raft log, B-tree keys   | Paxos/Raft         |
+| Causal     | Causal pairs ordered      | Exist                | Causal consistency      | Version vectors    |
+| Real-time  | All pairs + physical time | None                 | Linearizability         | TrueTime + Spanner |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Total order is always "correct" order | Total order assigns ONE sequence to concurrent events — the choice is arbitrary but consistent. The "right" tiebreak is application-defined |
-| Partial order means no ordering at all | Partial order means SOME pairs are ordered (the causal ones) and some are not (the concurrent ones) |
-| Any tiebreak gives equivalent results | Different tiebreaks produce different application outcomes (e.g., different "last write wins" results) — correctness of results depends on application semantics |
-| Total order broadcast requires a leader | Multi-leader and leaderless consensus protocols (EPaxos) can achieve total order broadcast without a fixed leader, at higher message complexity |
+| Misconception                           | Reality                                                                                                                                                          |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Total order is always "correct" order   | Total order assigns ONE sequence to concurrent events — the choice is arbitrary but consistent. The "right" tiebreak is application-defined                      |
+| Partial order means no ordering at all  | Partial order means SOME pairs are ordered (the causal ones) and some are not (the concurrent ones)                                                              |
+| Any tiebreak gives equivalent results   | Different tiebreaks produce different application outcomes (e.g., different "last write wins" results) — correctness of results depends on application semantics |
+| Total order broadcast requires a leader | Multi-leader and leaderless consensus protocols (EPaxos) can achieve total order broadcast without a fixed leader, at higher message complexity                  |
 
 ---
 

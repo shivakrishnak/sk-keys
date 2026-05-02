@@ -20,13 +20,13 @@ tags:
 
 # 209 — HTTP Methods (GET, POST, PUT, PATCH, DELETE)
 
-⚡ TL;DR — HTTP methods declare the *intent* of a request — what the client wants to DO to the resource — giving servers, proxies, and caches semantic meaning beyond just "send me bytes."
+⚡ TL;DR — HTTP methods declare the _intent_ of a request — what the client wants to DO to the resource — giving servers, proxies, and caches semantic meaning beyond just "send me bytes."
 
-| #209 | Category: HTTP & APIs | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | HTTP/1.1, REST, URLs | |
-| **Used by:** | RESTful Constraints, API Design Best Practices, Idempotency in HTTP | |
-| **Related:** | HTTP Status Codes, REST, Idempotency in HTTP, HTTP Headers | |
+| #209            | Category: HTTP & APIs                                               | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | HTTP/1.1, REST, URLs                                                |                 |
+| **Used by:**    | RESTful Constraints, API Design Best Practices, Idempotency in HTTP |                 |
+| **Related:**    | HTTP Status Codes, REST, Idempotency in HTTP, HTTP Headers          |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -74,6 +74,7 @@ HTTP methods tell the server what you want to do to a resource — read, create,
 replace, update, or delete — using standardised verbs with defined safety rules.
 
 **One analogy:**
+
 > Think of HTTP methods as verbs on a file cabinet: GET = "let me read this
 > folder," POST = "add a new document," PUT = "replace this entire document,"
 > PATCH = "change just the address on page 2," DELETE = "shred this document."
@@ -81,8 +82,8 @@ replace, update, or delete — using standardised verbs with defined safety rule
 > can be safely repeated (GET) and which are one-shot (POST).
 
 **One insight:**
-The most important thing to understand about HTTP methods is not *what* they do
-but *what properties they guarantee*: GET, HEAD, PUT, DELETE, and OPTIONS are
+The most important thing to understand about HTTP methods is not _what_ they do
+but _what properties they guarantee_: GET, HEAD, PUT, DELETE, and OPTIONS are
 **idempotent** (repeating them has the same net effect), while GET, HEAD, and
 OPTIONS are also **safe** (they don't modify state). These guarantees — not the
 names — are what make HTTP infrastructure intelligent.
@@ -92,6 +93,7 @@ names — are what make HTTP infrastructure intelligent.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. A **safe** method does not modify server state. Clients, caches, and proxies
    can call safe methods freely without worrying about side effects.
 2. An **idempotent** method can be repeated N times and produce the same result
@@ -118,6 +120,7 @@ names — are what make HTTP infrastructure intelligent.
 ```
 
 **DERIVED DESIGN:**
+
 - **GET**: Retrieve a resource. No body. Response cacheable by default.
   The URL is the complete identifier.
 - **HEAD**: Like GET but returns only headers (no body). Used to check
@@ -125,7 +128,7 @@ names — are what make HTTP infrastructure intelligent.
 - **POST**: Submit data to be processed. Creates a new resource or triggers
   an action. Not cacheable by default. Response may return 201 (created) or
   200 (processed). Body describes the new resource.
-- **PUT**: Replace the *entire* resource at the URI with the request body.
+- **PUT**: Replace the _entire_ resource at the URI with the request body.
   If it doesn't exist, creates it. Client supplies the complete representation.
 - **PATCH**: Partially modify a resource using a patch document (RFC 5789).
   Only changes specified fields. Idempotency is NOT guaranteed by the spec —
@@ -134,6 +137,7 @@ names — are what make HTTP infrastructure intelligent.
   return 404 (resource gone) or 204 (idempotent no-op). Both are correct.
 
 **THE TRADE-OFFS:**
+
 - Gain: Infrastructure intelligence (caching, retry safety), machine-readable
   contract, standardised routing
 - Cost: Developers must think carefully about method semantics and not just
@@ -150,6 +154,7 @@ glitches and the client doesn't receive the response. The client must decide:
 retry or not?
 
 **WHAT HAPPENS WITH POST (no retry guarantee):**
+
 1. Client sends `POST /tasks` with body `{"title": "Buy milk"}`
 2. Server creates task ID=42, sends `201 Created`
 3. Network drops the response — client never receives it
@@ -158,6 +163,7 @@ retry or not?
 6. User now has a duplicate task — and no way to know without querying all tasks
 
 **WHAT HAPPENS WITH PUT (idempotent):**
+
 1. Client generates a client-side UUID: `00f3-abc1`
 2. Client sends `PUT /tasks/00f3-abc1` with body `{"title": "Buy milk"}`
 3. Server creates task at that ID, sends `201 Created`
@@ -184,6 +190,7 @@ Idempotency-Key headers to make POST idempotent even where the method is not.
 > implies — pressing "See what's available" a hundred times is always safe.
 
 **Mapping:**
+
 - "vending machine" → web resource / API endpoint
 - "See what's available" → GET
 - "Buy an item" → POST (creates new resource, not idempotent)
@@ -231,7 +238,7 @@ self-describing protocol for intermediaries. The controversial choice was PATCH
 (added in RFC 5789, 2010) — the committee debated whether to extend PUT semantics
 or add a new verb. PATCH won because it correctly captures "delta update" semantics
 that PUT cannot express. However, PATCH introduces a new question: what is the
-*format* of the patch? RFC 6902 (JSON Patch) and RFC 7396 (JSON Merge Patch)
+_format_ of the patch? RFC 6902 (JSON Patch) and RFC 7396 (JSON Merge Patch)
 answered this — two competing standards that still cause API design debates.
 
 ---
@@ -245,6 +252,7 @@ GET /users/123 HTTP/1.1
 Host: api.example.com
 Accept: application/json
 ```
+
 No body allowed for GET. The resource is identified entirely by the URL.
 
 ```
@@ -255,6 +263,7 @@ Content-Length: 42
 
 {"name":"Alice","email":"alice@example.com"}
 ```
+
 Body contains the new resource representation. Server assigns ID.
 
 ```
@@ -265,6 +274,7 @@ Content-Length: 52
 
 {"id":123,"name":"Alice","email":"updated@example.com"}
 ```
+
 Complete resource representation. Server replaces the resource at /users/123.
 
 ```
@@ -274,15 +284,18 @@ Content-Type: application/json-patch+json
 
 [{"op":"replace","path":"/email","value":"new@example.com"}]
 ```
+
 Only the specified fields change. Uses JSON Patch (RFC 6902) format.
 
 ```
 DELETE /users/123 HTTP/1.1
 Host: api.example.com
 ```
+
 No body. Server removes the resource and returns 204 No Content.
 
 **Method Routing in Spring Boot:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │         HTTP Method → Spring Handler Mapping         │
@@ -300,6 +313,7 @@ No body. Server removes the resource and returns 204 No Content.
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │       HTTP Method Request Lifecycle                  │
@@ -337,6 +351,7 @@ designed "search via POST" endpoint forced to origin is a silent scalability bom
 ### 💻 Code Example
 
 **Example 1 — REST controller in Java/Spring:**
+
 ```java
 @RestController
 @RequestMapping("/users")
@@ -384,18 +399,19 @@ public class UserController {
 ```
 
 **Example 2 — Client-side method selection (fetch API):**
+
 ```javascript
 // BAD: Using POST for a read operation — not cacheable, not safe
-const res = await fetch('/api/users/123', { method: 'POST' });
+const res = await fetch("/api/users/123", { method: "POST" });
 
 // GOOD: GET for reads — CDN/browser cache can serve this
-const res = await fetch('/api/users/123'); // default method = GET
+const res = await fetch("/api/users/123"); // default method = GET
 
 // GOOD: PATCH for partial update (not PUT which requires full body)
-const res = await fetch('/api/users/123', {
-  method: 'PATCH',
-  headers: { 'Content-Type': 'application/merge-patch+json' },
-  body: JSON.stringify({ email: 'new@example.com' })
+const res = await fetch("/api/users/123", {
+  method: "PATCH",
+  headers: { "Content-Type": "application/merge-patch+json" },
+  body: JSON.stringify({ email: "new@example.com" }),
 });
 ```
 
@@ -403,15 +419,15 @@ const res = await fetch('/api/users/123', {
 
 ### ⚖️ Comparison Table
 
-| Method | Safe | Idempotent | Body? | Success Code | Best For |
-|---|---|---|---|---|---|
-| **GET** | Yes | Yes | No | 200 | Read resource |
-| HEAD | Yes | Yes | No | 200 | Check existence/ETag |
-| **POST** | No | No | Yes | 201/200 | Create resource |
-| **PUT** | No | Yes | Yes | 200/204 | Replace full resource |
-| **PATCH** | No | Conditional | Yes | 200/204 | Partial update |
-| **DELETE** | No | Yes | No | 204/404 | Remove resource |
-| OPTIONS | Yes | Yes | No | 200/204 | CORS preflight |
+| Method     | Safe | Idempotent  | Body? | Success Code | Best For              |
+| ---------- | ---- | ----------- | ----- | ------------ | --------------------- |
+| **GET**    | Yes  | Yes         | No    | 200          | Read resource         |
+| HEAD       | Yes  | Yes         | No    | 200          | Check existence/ETag  |
+| **POST**   | No   | No          | Yes   | 201/200      | Create resource       |
+| **PUT**    | No   | Yes         | Yes   | 200/204      | Replace full resource |
+| **PATCH**  | No   | Conditional | Yes   | 200/204      | Partial update        |
+| **DELETE** | No   | Yes         | No    | 204/404      | Remove resource       |
+| OPTIONS    | Yes  | Yes         | No    | 200/204      | CORS preflight        |
 
 **How to choose:** Use GET for reads, POST when creating a server-assigned
 resource, PUT when the client controls the resource URI and sends the full
@@ -422,13 +438,13 @@ is impractical.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| PUT and PATCH are interchangeable | PUT replaces the ENTIRE resource; PATCH changes only specified fields. Sending a partial body to PUT silently clears omitted fields |
-| POST is always for creates | POST can also trigger actions (POST /payments/123/capture) or process data without creating persistent resources |
-| DELETE is always idempotent | Conceptually yes (deleting a deleted resource leaves it deleted), but servers may return 404 on second call — which is still correct and idempotent by definition |
-| GET can have a body for search queries | While technically possible, many caches, proxies, and servers strip or ignore GET bodies. Use POST or query parameters for complex searches |
-| PATCH is always idempotent | NOT guaranteed by spec. An `increment-by-1` PATCH applied twice produces a different state than once. Design PATCH bodies carefully |
+| Misconception                          | Reality                                                                                                                                                           |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PUT and PATCH are interchangeable      | PUT replaces the ENTIRE resource; PATCH changes only specified fields. Sending a partial body to PUT silently clears omitted fields                               |
+| POST is always for creates             | POST can also trigger actions (POST /payments/123/capture) or process data without creating persistent resources                                                  |
+| DELETE is always idempotent            | Conceptually yes (deleting a deleted resource leaves it deleted), but servers may return 404 on second call — which is still correct and idempotent by definition |
+| GET can have a body for search queries | While technically possible, many caches, proxies, and servers strip or ignore GET bodies. Use POST or query parameters for complex searches                       |
+| PATCH is always idempotent             | NOT guaranteed by spec. An `increment-by-1` PATCH applied twice produces a different state than once. Design PATCH bodies carefully                               |
 
 ---
 
@@ -445,6 +461,7 @@ POST (network timeout), the server may have processed the first request but
 failed to return the response.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Check for duplicate records in database:
 SELECT email, COUNT(*) FROM users
@@ -455,6 +472,7 @@ grep "POST /users" access.log | awk '{print $10}' | sort | uniq -d
 ```
 
 Fix:
+
 ```java
 // Use Idempotency-Key header to detect duplicates:
 @PostMapping("/orders")
@@ -481,6 +499,7 @@ Root Cause: Client sends PUT with only changed fields instead of full resource.
 Server replaces the entire resource, setting unspecified fields to null.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Compare before/after state:
 curl -s https://api.example.com/users/123 | jq .
@@ -509,6 +528,7 @@ Root Cause: The server does not handle `OPTIONS` requests for CORS preflight.
 Browsers automatically send OPTIONS before cross-origin POST/PUT/PATCH/DELETE.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Simulate CORS preflight manually:
 curl -X OPTIONS \
@@ -519,6 +539,7 @@ curl -X OPTIONS \
 ```
 
 Fix: Configure CORS globally in Spring Boot:
+
 ```java
 @Bean
 public CorsConfigurationSource corsConfigurationSource() {
@@ -539,12 +560,14 @@ or API gateway CORS configuration.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `HTTP/1.1` — HTTP methods are defined as part of the HTTP/1.1 request format;
   understanding the request-line structure is required
 - `URLs` — the resource being acted upon is identified by the URL; method +
   URL = a complete operation identifier
 
 **Builds On This (learn these next):**
+
 - `REST` — REST uses HTTP methods as the uniform interface for resource manipulation
 - `Idempotency in HTTP` — the practical implications of method idempotency for
   distributed system retry safety
@@ -552,6 +575,7 @@ or API gateway CORS configuration.
   POST→201, DELETE→204
 
 **Alternatives / Comparisons:**
+
 - `gRPC` — defines operations via Protobuf service definitions rather than HTTP
   methods; RPC semantics replace REST method semantics
 - `GraphQL` — uses POST exclusively; sidesteps HTTP method semantics entirely

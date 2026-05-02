@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — REST is an architectural style for distributed systems that treats every piece of data or functionality as a named resource, accessed via uniform HTTP operations, giving the entire web and most modern APIs a consistent, cacheable, scalable interface.
 
-| #213 | Category: HTTP & APIs | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | HTTP/1.1, HTTP Methods, HTTP Status Codes, URLs | |
-| **Used by:** | RESTful Constraints, API Gateway, API Design Best Practices, BFF | |
-| **Related:** | GraphQL, gRPC, SOAP, RESTful Constraints, HATEOAS | |
+| #213            | Category: HTTP & APIs                                            | Difficulty: ★☆☆ |
+| :-------------- | :--------------------------------------------------------------- | :-------------- |
+| **Depends on:** | HTTP/1.1, HTTP Methods, HTTP Status Codes, URLs                  |                 |
+| **Used by:**    | RESTful Constraints, API Gateway, API Design Best Practices, BFF |                 |
+| **Related:**    | GraphQL, gRPC, SOAP, RESTful Constraints, HATEOAS                |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -77,6 +77,7 @@ REST is the design philosophy that makes web APIs work like websites — nouns
 (resources) you can read, create, update, and delete using standard verbs.
 
 **One analogy:**
+
 > REST is like a well-organised library. Every book (resource) has a unique
 > call number (URL). You interact with books using the same four actions:
 > "borrow" (GET), "donate a book" (POST), "replace a book" (PUT), "return
@@ -124,6 +125,7 @@ programming language already has an HTTP client. You get this for free.
    sending executable code (JavaScript). Rarely used in APIs.
 
 **RESOURCES AND REPRESENTATIONS:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │           REST: Resources vs Representations         │
@@ -143,6 +145,7 @@ programming language already has an HTTP client. You get this for free.
 ```
 
 **THE TRADE-OFFS:**
+
 - Gain: universal client support, leverages HTTP infrastructure (caching,
   CDN, proxies); decoupled evolution of client and server
 - Cost: chatty by nature (multiple requests for related data); statelessness
@@ -159,6 +162,7 @@ latest posts, and the number of their followers. Compare RPC (one custom call)
 vs REST (separate resources).
 
 **WHAT HAPPENS WITH RPC (non-REST):**
+
 1. Client calls `getUserProfilePage(userId=123)` — one request
 2. Server fetches and combines user + posts + follower count into one response
 3. Fast, but tightly coupled: client can't cache user data and posts separately
@@ -167,6 +171,7 @@ vs REST (separate resources).
    fewer posts
 
 **WHAT HAPPENS WITH REST:**
+
 1. GET `/users/123` → user details (cache for 1 hour)
 2. GET `/users/123/posts?limit=10` → posts (cache for 30 seconds)
 3. GET `/users/123/followers/count` → count (cache for 5 minutes)
@@ -193,6 +198,7 @@ This is impossible with opaque RPC calls that combine multiple concerns.
 > DELETE works with any REST API.
 
 **Mapping:**
+
 - "remote control" → HTTP client (browser, curl, JavaScript fetch, OkHttp)
 - "TV" → REST API server
 - "channel position" → resource URL
@@ -254,6 +260,7 @@ problems that REST's cacheability should prevent.
 ### ⚙️ How It Works (Mechanism)
 
 **Resource-URL Hierarchy Design:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │               REST Resource URL Hierarchy            │
@@ -275,6 +282,7 @@ problems that REST's cacheability should prevent.
 ```
 
 **Request-Response Example (full cycle):**
+
 ```
 # Create a user:
 POST /users HTTP/1.1
@@ -300,6 +308,7 @@ Accept: application/json
 ```
 
 **Statelessness — what it means concretely:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │           Stateless vs Stateful Sessions             │
@@ -325,6 +334,7 @@ Accept: application/json
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │         REST API Request — Full System View          │
@@ -366,6 +376,7 @@ from a two-line header change.
 ### 💻 Code Example
 
 **Example 1 — Well-designed REST controller (Spring Boot):**
+
 ```java
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -415,6 +426,7 @@ public class OrderController {
 ```
 
 **Example 2 — Common REST anti-patterns:**
+
 ```java
 // BAD: Verb in URL — method IS the verb, not the path
 @GetMapping("/getUser/{id}")    // GET /getUser/123
@@ -446,13 +458,13 @@ public ResponseEntity<User> getUser(@PathVariable Long id) {
 
 ### ⚖️ Comparison Table
 
-| Style | Interface | Caching | Type Safety | Streaming | Best For |
-|---|---|---|---|---|---|
-| **REST** | HTTP + JSON | Excellent | Manual | Limited | Public APIs, CRUD |
-| GraphQL | POST /graphql | Complex | Schema | Subscriptions | Complex queries |
-| gRPC | HTTP/2 + Protobuf | No | Generated stubs | Bidirectional | Internal microservices |
-| SOAP | HTTP + XML | No | WSDL | No | Legacy enterprise |
-| WebSocket | TCP (upgrade) | N/A | Manual | Yes (full-duplex) | Real-time |
+| Style     | Interface         | Caching   | Type Safety     | Streaming         | Best For               |
+| --------- | ----------------- | --------- | --------------- | ----------------- | ---------------------- |
+| **REST**  | HTTP + JSON       | Excellent | Manual          | Limited           | Public APIs, CRUD      |
+| GraphQL   | POST /graphql     | Complex   | Schema          | Subscriptions     | Complex queries        |
+| gRPC      | HTTP/2 + Protobuf | No        | Generated stubs | Bidirectional     | Internal microservices |
+| SOAP      | HTTP + XML        | No        | WSDL            | No                | Legacy enterprise      |
+| WebSocket | TCP (upgrade)     | N/A       | Manual          | Yes (full-duplex) | Real-time              |
 
 **How to choose:** Use REST for public-facing APIs and CRUD-heavy services where
 caching and client universality matter. Use GraphQL when clients need flexible
@@ -463,13 +475,13 @@ strong typing. Use WebSocket for real-time bidirectional communication.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| REST means using JSON over HTTP | REST is a set of architectural constraints. Using JSON + HTTP is common but not sufficient. True REST requires statelessness, cacheability, uniform interface, and other constraints |
-| All HTTP APIs are RESTful | An API using POST for everything with session-based auth on a server-side session is HTTP but not REST (violates statelessness and uniform interface) |
-| REST is always better than gRPC/GraphQL | REST's caching strengths apply to read-heavy public APIs. Internal microservices with complex operations often benefit from gRPC's type safety and bidirectional streaming |
-| /users/{id}/delete is RESTful | Never put verbs in URLs. Use DELETE /users/{id} — the method IS the verb |
-| REST requires HATEOAS in practice | Fielding considers HATEOAS (hypermedia) mandatory. In practice, almost no real-world API implementations include HATEOAS — making them technically "HTTP APIs", not REST |
+| Misconception                           | Reality                                                                                                                                                                              |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| REST means using JSON over HTTP         | REST is a set of architectural constraints. Using JSON + HTTP is common but not sufficient. True REST requires statelessness, cacheability, uniform interface, and other constraints |
+| All HTTP APIs are RESTful               | An API using POST for everything with session-based auth on a server-side session is HTTP but not REST (violates statelessness and uniform interface)                                |
+| REST is always better than gRPC/GraphQL | REST's caching strengths apply to read-heavy public APIs. Internal microservices with complex operations often benefit from gRPC's type safety and bidirectional streaming           |
+| /users/{id}/delete is RESTful           | Never put verbs in URLs. Use DELETE /users/{id} — the method IS the verb                                                                                                             |
+| REST requires HATEOAS in practice       | Fielding considers HATEOAS (hypermedia) mandatory. In practice, almost no real-world API implementations include HATEOAS — making them technically "HTTP APIs", not REST             |
 
 ---
 
@@ -485,6 +497,7 @@ Root Cause: REST's resource granularity matches individual entities well but
 requires aggregation at client or API layer for composed views.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Chrome DevTools Network tab: count requests per page load
 # Look for patterns: GET /users, GET /users/1, GET /users/2, ...etc.
@@ -509,12 +522,13 @@ Apply BFF (Backend for Frontend) pattern for mobile vs web clients.
 Symptom: CDN serves stale data even after the data changes; state changes
 triggered by hitting "refresh" in browser; inconsistent results from refreshing.
 
-Root Cause: API uses GET requests for operations with side effects  
+Root Cause: API uses GET requests for operations with side effects
 (incrementing view counters, recording "last seen", triggering actions).
 CDN caches GET responses and serves stale data, but also misses side effects
 on cache hits.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Check if GET responses trigger side effects by examining logs:
 grep "GET /api/posts" access.log | wc -l  # total GETs
@@ -534,6 +548,7 @@ Enforce this with architecture tests (ArchUnit).
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `HTTP/1.1` — REST is built entirely on HTTP; understanding HTTP methods, status
   codes, and headers is required to implement REST correctly
 - `HTTP Methods` — the HTTP verbs (GET, POST, PUT, PATCH, DELETE) are REST's
@@ -542,6 +557,7 @@ Enforce this with architecture tests (ArchUnit).
   of every operation
 
 **Builds On This (learn these next):**
+
 - `RESTful Constraints` — the six formal constraints that define REST vs HTTP-API;
   important for understanding what "truly RESTful" means
 - `API Design Best Practices` — practical conventions for URL structure, versioning,
@@ -550,11 +566,12 @@ Enforce this with architecture tests (ArchUnit).
   REST APIs at scale
 
 **Alternatives / Comparisons:**
+
 - `GraphQL` — query language that avoids REST's N+1 problem by fetching exactly
   the fields needed in one request; trades cacheability for query flexibility
 - `gRPC` — binary RPC protocol over HTTP/2; trades REST's universality and
   cacheability for performance and bidirectional streaming
-- `SOAP` — XML-based predecessor; more rigid, more verbose, but offers WS-*
+- `SOAP` — XML-based predecessor; more rigid, more verbose, but offers WS-\*
   standards for enterprise security and transactions
 
 ---

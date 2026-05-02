@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — HTTP status codes are 3-digit machine-readable responses that tell the client exactly what happened to its request — success, redirection, client error, or server fault — enabling automated retry, routing, and error reporting without parsing response bodies.
 
-| #210 | Category: HTTP & APIs | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | HTTP/1.1, HTTP Methods | |
-| **Used by:** | REST, API Design Best Practices, API Error Handling, Client Retry Logic | |
-| **Related:** | HTTP Methods, HTTP Headers, REST, API Design Best Practices | |
+| #210            | Category: HTTP & APIs                                                   | Difficulty: ★☆☆ |
+| :-------------- | :---------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | HTTP/1.1, HTTP Methods                                                  |                 |
+| **Used by:**    | REST, API Design Best Practices, API Error Handling, Client Retry Logic |                 |
+| **Related:**    | HTTP Methods, HTTP Headers, REST, API Design Best Practices             |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -72,6 +72,7 @@ HTTP status codes are a standardised 3-digit vocabulary that tells every machine
 in the network what happened to a request — without reading the response body.
 
 **One analogy:**
+
 > Status codes are like traffic lights combined with road signs: 2xx is a green
 > light (proceed, you got what you wanted), 3xx is a detour sign (go that way
 > instead), 4xx is a "wrong road" sign (you drove incorrectly, fix your route),
@@ -81,8 +82,8 @@ in the network what happened to a request — without reading the response body.
 
 **One insight:**
 The most important thing about status codes is the 4xx vs 5xx distinction.
-A 4xx error means the *client* made a mistake — retrying the same request
-will produce the same error. A 5xx error means the *server* failed — the
+A 4xx error means the _client_ made a mistake — retrying the same request
+will produce the same error. A 5xx error means the _server_ failed — the
 same request might succeed if retried. This distinction drives all retry
 logic in distributed systems.
 
@@ -91,6 +92,7 @@ logic in distributed systems.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. The first digit determines the category — always. Never return 200 with an
    error payload; always return the appropriate error status.
 2. 4xx = client is wrong; 5xx = server is wrong. This is the fundamental
@@ -115,6 +117,7 @@ logic in distributed systems.
 **KEY CODES WITH EXACT SEMANTICS:**
 
 **2xx Success:**
+
 - `200 OK` — generic success. Response body contains the result.
 - `201 Created` — POST succeeded. `Location` header points to new resource.
 - `202 Accepted` — async: request queued, not yet processed (fire-and-forget).
@@ -122,6 +125,7 @@ logic in distributed systems.
 - `206 Partial Content` — range request fulfilled (video streaming).
 
 **3xx Redirection:**
+
 - `301 Moved Permanently` — resource moved; update bookmarks. Cached forever.
 - `302 Found` — temporary redirect; do NOT update bookmarks. Not cached.
 - `304 Not Modified` — conditional GET hit; client cache is fresh. No body.
@@ -129,6 +133,7 @@ logic in distributed systems.
 - `308 Permanent Redirect` — like 301 but method preserved.
 
 **4xx Client Error:**
+
 - `400 Bad Request` — malformed request, invalid input. Don't retry.
 - `401 Unauthorized` — unauthenticated. Provide credentials.
 - `403 Forbidden` — authenticated but unauthorised. Don't retry same auth.
@@ -141,12 +146,14 @@ logic in distributed systems.
 - `429 Too Many Requests` — rate limit hit. Retry after `Retry-After`.
 
 **5xx Server Error:**
+
 - `500 Internal Server Error` — server crashed / unhandled exception.
 - `502 Bad Gateway` — upstream server returned invalid response.
 - `503 Service Unavailable` — server overloaded or in maintenance.
 - `504 Gateway Timeout` — upstream server timed out.
 
 **THE TRADE-OFFS:**
+
 - Gain: machine-readable, universal, infrastructure-operable contract
 - Cost: requires discipline to return correct codes; "200 with error body"
   anti-pattern is common and breaks all infrastructure assumptions
@@ -160,6 +167,7 @@ A payment service calls an inventory service. The request fails. The caller
 must decide: retry immediately? retry later? fail permanently?
 
 **WHAT HAPPENS WITH "200 OK" FOR EVERYTHING (anti-pattern):**
+
 1. Inventory service is down; its load balancer returns custom JSON body:
    `{"error": "service unavailable", "code": "SVC_DOWN"}`
 2. But status code is 200 OK (developer mistakenly used it for all responses)
@@ -169,6 +177,7 @@ must decide: retry immediately? retry later? fail permanently?
 6. Monitoring alerts only on non-200 — shows 0 errors while service is down
 
 **WHAT HAPPENS WITH CORRECT STATUS CODES:**
+
 1. Inventory service is down; load balancer returns `503 Service Unavailable`
 2. Client's retry library recognises 5xx = server error → retries with backoff
 3. Circuit breaker tracks 503 rate → opens after 5 consecutive 503s
@@ -194,6 +203,7 @@ all that intelligence yourself, in every client.
 > whether to call a specialist (retry) or send the patient home (fail).
 
 **Mapping:**
+
 - "emergency room triage" → HTTP status code classification
 - "stable patient" → 2xx success
 - "wrong department form" → 4xx client error (patient's fault)
@@ -252,13 +262,16 @@ mis-implementing auth flows.
 ### ⚙️ How It Works (Mechanism)
 
 **Status Line Structure:**
+
 ```
 HTTP/1.1 201 Created\r\n
 ```
+
 Three components: HTTP version, 3-digit code, reason phrase. Only the 3-digit
 code has machine-readable meaning. The reason phrase is ignored by code.
 
 **Decision Tree for Common Codes:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │         Status Code Selection Decision Tree          │
@@ -282,6 +295,7 @@ code has machine-readable meaning. The reason phrase is ignored by code.
 ```
 
 **Retry-After Header (critical for 429):**
+
 ```
 HTTP/1.1 429 Too Many Requests
 Retry-After: 30
@@ -289,6 +303,7 @@ Content-Type: application/json
 
 {"error": "rate_limit_exceeded", "retry_in_seconds": 30}
 ```
+
 The `Retry-After` value is either an integer (seconds) or an HTTP date.
 Well-behaved clients MUST respect this value.
 
@@ -297,6 +312,7 @@ Well-behaved clients MUST respect this value.
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │        Status Code in the Request Lifecycle          │
@@ -338,6 +354,7 @@ Use jitter: return randomised `Retry-After: 25–35` to spread the retry burst.
 ### 💻 Code Example
 
 **Example 1 — Correct status codes in Spring Boot:**
+
 ```java
 @RestController
 @RequestMapping("/orders")
@@ -376,6 +393,7 @@ public class OrderController {
 ```
 
 **Example 2 — Client retry based on status code:**
+
 ```java
 // BAD: Retrying on 400 wastes resources — bad request won't fix itself
 RetryConfig config = RetryConfig.custom()
@@ -396,6 +414,7 @@ RetryConfig config = RetryConfig.custom()
 ```
 
 **Example 3 — Correct 401 vs 403 usage:**
+
 ```java
 // 401 Unauthorized = "Tell me who you are first"
 // Use when: no valid auth token present
@@ -414,18 +433,18 @@ if (!authzService.canDelete(user, resource)) {
 
 ### ⚖️ Comparison Table
 
-| Code | Class | Cacheable | Retriable | Meaning |
-|---|---|---|---|---|
-| 200 | 2xx | Yes | N/A | Success with body |
-| 201 | 2xx | No | N/A | Created — check Location header |
-| 204 | 2xx | No | N/A | Success, no body |
-| 304 | 3xx | N/A | N/A | Cache hit — no body |
-| 400 | 4xx | No | No | Bad input — fix request |
-| 401 | 4xx | No | No | Login first |
-| 403 | 4xx | No | No | Authorised but blocked |
-| 429 | 4xx | No | Yes (after delay) | Rate limited |
-| 500 | 5xx | No | Yes (with backoff) | Server crashed |
-| 503 | 5xx | No | Yes (with backoff) | Server overloaded |
+| Code | Class | Cacheable | Retriable          | Meaning                         |
+| ---- | ----- | --------- | ------------------ | ------------------------------- |
+| 200  | 2xx   | Yes       | N/A                | Success with body               |
+| 201  | 2xx   | No        | N/A                | Created — check Location header |
+| 204  | 2xx   | No        | N/A                | Success, no body                |
+| 304  | 3xx   | N/A       | N/A                | Cache hit — no body             |
+| 400  | 4xx   | No        | No                 | Bad input — fix request         |
+| 401  | 4xx   | No        | No                 | Login first                     |
+| 403  | 4xx   | No        | No                 | Authorised but blocked          |
+| 429  | 4xx   | No        | Yes (after delay)  | Rate limited                    |
+| 500  | 5xx   | No        | Yes (with backoff) | Server crashed                  |
+| 503  | 5xx   | No        | Yes (with backoff) | Server overloaded               |
 
 **How to choose retry strategy:** Never retry 4xx except 429 (rate limit) and
 occasionally 408 (request timeout). Always retry 5xx with exponential backoff
@@ -435,13 +454,13 @@ and jitter. Never retry without a finite maximum attempts count.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| 200 OK can be returned with an error message in the body | This is the most dangerous anti-pattern in API design. It breaks retry logic, circuit breakers, and monitoring entirely |
-| 401 means "you don't have permission" | 401 means unauthenticated ("please send credentials"). 403 means authenticated but forbidden |
-| 404 means the endpoint doesn't exist | 404 means the *resource* at that URL doesn't exist. The endpoint may be fine; the specific resource ID is missing |
-| 500 should be the default for all errors | 500 is only for unexpected server errors. Validation errors → 400. Auth → 401/403. Not found → 404. Each has a precise meaning |
-| Returning 204 means "completed successfully" | 204 specifically means success with no body. If your operation has a result to return, use 200. Use 204 for DELETE and body-less updates |
+| Misconception                                            | Reality                                                                                                                                  |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 200 OK can be returned with an error message in the body | This is the most dangerous anti-pattern in API design. It breaks retry logic, circuit breakers, and monitoring entirely                  |
+| 401 means "you don't have permission"                    | 401 means unauthenticated ("please send credentials"). 403 means authenticated but forbidden                                             |
+| 404 means the endpoint doesn't exist                     | 404 means the _resource_ at that URL doesn't exist. The endpoint may be fine; the specific resource ID is missing                        |
+| 500 should be the default for all errors                 | 500 is only for unexpected server errors. Validation errors → 400. Auth → 401/403. Not found → 404. Each has a precise meaning           |
+| Returning 204 means "completed successfully"             | 204 specifically means success with no body. If your operation has a result to return, use 200. Use 204 for DELETE and body-less updates |
 
 ---
 
@@ -457,6 +476,7 @@ error details only in response body. All HTTP infrastructure treats responses
 as successful.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Find 200 responses that contain error indicators:
 cat access.log | awk '$9 == 200' | grep '"error"' | wc -l
@@ -483,6 +503,7 @@ Root Cause: Server returns 403 for authenticated-but-unauthorised access to
 existing resources, revealing that the resource exists.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Security test: compare responses for own vs other user's resource:
 curl -H "Authorization: Bearer alice_token" \
@@ -504,12 +525,14 @@ sensitive? If yes, use 404 for all unauthorised accesses.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `HTTP/1.1` — status codes are part of the HTTP response status line; the
   full semantics are defined in RFC 7231
 - `HTTP Methods` — each method has specific expected success status codes;
   GET→200, POST→201, DELETE→204
 
 **Builds On This (learn these next):**
+
 - `REST` — REST APIs rely on correct status codes as the uniform interface
   for communicating operation outcomes
 - `API Design Best Practices` — status code selection is a core API design
@@ -518,6 +541,7 @@ sensitive? If yes, use 404 for all unauthorised accesses.
   to open the circuit
 
 **Alternatives / Comparisons:**
+
 - `gRPC Status Codes` — gRPC defines its own status code set (OK, NOT_FOUND,
   INTERNAL, etc.) with similar 5-class semantics but different integer values
 - `GraphQL errors` — GraphQL always returns 200 OK and puts errors in a

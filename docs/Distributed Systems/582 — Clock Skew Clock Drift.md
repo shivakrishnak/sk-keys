@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Clock skew is the instantaneous difference in time between two clocks; clock drift is the rate at which that difference grows — and both are unavoidable in distributed systems, making wall-clock timestamps unreliable for ordering events.
 
-| #582 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Distributed Systems, Lamport Clock, Networking, Operating Systems | |
-| **Used by:** | Lamport Clock, Vector Clock, Distributed Locking, Fencing / Epoch | |
-| **Related:** | Lamport Clock, NTP, Fencing / Epoch, Distributed Locking, TrueTime | |
+| #582            | Category: Distributed Systems                                      | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Distributed Systems, Lamport Clock, Networking, Operating Systems  |                 |
+| **Used by:**    | Lamport Clock, Vector Clock, Distributed Locking, Fencing / Epoch  |                 |
+| **Related:**    | Lamport Clock, NTP, Fencing / Epoch, Distributed Locking, TrueTime |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -53,6 +53,7 @@ This is why logical clocks (Lamport, vector) were invented — to provide orderi
 Every clock in a distributed system is slightly wrong, and "slightly wrong" is enough to corrupt any system that trusts timestamps for ordering.
 
 **One analogy:**
+
 > Imagine 100 referees each timing a 100m race with their own stopwatch. Even if everyone starts at the same signal, by the end of the race some watches show 9.87s and others show 9.85s — all watches drifted differently. If you pick the winner by whose stopwatch shows the earliest time, you'll sometimes pick the wrong runner. Now imagine the stakes are distributed database commits rather than a race result.
 
 **One insight:**
@@ -63,6 +64,7 @@ The truly dangerous property of clock skew is that it's invisible from inside an
 ### 🔩 First Principles Explanation
 
 **TYPES OF CLOCK ERROR:**
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │            Clock Error Taxonomy                          │
@@ -90,12 +92,14 @@ The truly dangerous property of clock skew is that it's invisible from inside an
 ```
 
 **PRACTICAL SKEW BOUNDS:**
+
 - LAN with NTP: ±1ms typical, ±10ms worst case
 - WAN with NTP: ±50ms typical, ±500ms worst case
 - GPS-disciplined (PTP/TrueTime): ±100μs to ±7ms
 - No synchronisation: unbounded
 
 **THE MONOTONIC CLOCK SPLIT (Java/Linux):**
+
 ```java
 // Wall-clock time — synchronised, may go backward:
 System.currentTimeMillis()  //  can jump on NTP correction
@@ -111,6 +115,7 @@ ProcessHandle.current().info().startInstant()  // internal reference
 ```
 
 **GOOGLE SPANNER'S TRUETIME SOLUTION:**
+
 ```
 TrueTime reports time as an interval: [earliest, latest]
 where the true time is guaranteed to be within this interval.
@@ -179,6 +184,7 @@ Physical time is completely eliminated from the correctness argument.
 ### ⚙️ How It Works (Mechanism)
 
 **Measuring Skew (Linux/NTP):**
+
 ```bash
 # Check NTP synchronisation status:
 timedatectl status
@@ -197,6 +203,7 @@ ssh server-b "date +%s%N" && date +%s%N
 ```
 
 **Safe Timestamp Pattern in Java:**
+
 ```java
 // SAFE: wall clock for log correlation, monotonic for measurement
 public class SafeClock {
@@ -215,25 +222,25 @@ public class SafeClock {
 
 ### ⚖️ Comparison Table
 
-| Approach | Ordering Guarantee | Clock Dependency | Latency | Use Case |
-|---|---|---|---|---|
-| Wall clock (raw) | None (unreliable) | Physical clock | Zero | Human logs only |
-| Logical clock (Lamport) | Causal (partial) | None | Zero | Total order without physical time |
-| Vector clock | Causal (exact) | None | Zero | Concurrency detection |
-| Fencing token | Sequential | None | Zero | Distributed locks, leases |
-| TrueTime (Spanner) | External consistency | GPS/atomic clock | ≤7ms commit wait | Global transactions |
-| HLC | Causal + physical | NTP | Zero extra | CockroachDB, YugabyteDB |
+| Approach                | Ordering Guarantee   | Clock Dependency | Latency          | Use Case                          |
+| ----------------------- | -------------------- | ---------------- | ---------------- | --------------------------------- |
+| Wall clock (raw)        | None (unreliable)    | Physical clock   | Zero             | Human logs only                   |
+| Logical clock (Lamport) | Causal (partial)     | None             | Zero             | Total order without physical time |
+| Vector clock            | Causal (exact)       | None             | Zero             | Concurrency detection             |
+| Fencing token           | Sequential           | None             | Zero             | Distributed locks, leases         |
+| TrueTime (Spanner)      | External consistency | GPS/atomic clock | ≤7ms commit wait | Global transactions               |
+| HLC                     | Causal + physical    | NTP              | Zero extra       | CockroachDB, YugabyteDB           |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| NTP makes clocks identical | NTP corrects clocks to within ±1–50ms depending on network latency — far from identical |
-| Monotonic clocks prevent ordering bugs across machines | Monotonic clocks are per-process — they cannot be compared across different machines |
-| High-precision hardware eliminates the problem | Even atomic clocks drift and have bounded uncertainty; Spanner models this explicitly with TrueTime |
-| Cloud VMs have more reliable clocks than bare metal | VMs are worse — hypervisor interrupts cause clock stalls; AWS/GCP compensate with PTP but uncertainty remains |
+| Misconception                                          | Reality                                                                                                       |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| NTP makes clocks identical                             | NTP corrects clocks to within ±1–50ms depending on network latency — far from identical                       |
+| Monotonic clocks prevent ordering bugs across machines | Monotonic clocks are per-process — they cannot be compared across different machines                          |
+| High-precision hardware eliminates the problem         | Even atomic clocks drift and have bounded uncertainty; Spanner models this explicitly with TrueTime           |
+| Cloud VMs have more reliable clocks than bare metal    | VMs are worse — hypervisor interrupts cause clock stalls; AWS/GCP compensate with PTP but uncertainty remains |
 
 ---
 
@@ -251,6 +258,7 @@ measurements. For database timestamps, use `clock_timestamp()` with awareness it
 can drift; for sequencing, use a logical counter or Postgres' `txid_current()`.
 
 Diagnosis:
+
 ```bash
 # Check for time jumps in recent system logs:
 journalctl -u chronyd | grep -E "stepped|offset"

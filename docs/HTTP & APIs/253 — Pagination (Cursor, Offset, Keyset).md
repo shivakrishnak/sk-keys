@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Pagination controls how large datasets are split into pages for API responses. Three strategies dominate: offset/limit (simple but inconsistent under inserts/deletes), cursor (stable but opaque), and keyset (efficient at depth but requires sort-key awareness).
 
-| #253 | Category: HTTP & APIs | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | REST, HTTP Methods, HTTP Status Codes, SQL Fundamentals, Database Indexes | |
-| **Used by:** | API Design Best Practices, GraphQL, REST | |
-| **Related:** | HATEOAS, Rate Limiting, API Throttling, Caching, HTTP Headers | |
+| #253            | Category: HTTP & APIs                                                     | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | REST, HTTP Methods, HTTP Status Codes, SQL Fundamentals, Database Indexes |                 |
+| **Used by:**    | API Design Best Practices, GraphQL, REST                                  |                 |
+| **Related:**    | HATEOAS, Rate Limiting, API Throttling, Caching, HTTP Headers             |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -78,6 +78,7 @@ Pagination is how APIs hand you a dataset one page at a time, and the strategy
 determines whether flipping to page 5,000 takes 5ms or 50 seconds.
 
 **One analogy:**
+
 > Offset pagination is like reading a book by counting from page 1 to wherever
 > you want to start every time you pick it up — slower the further along you are.
 > Cursor pagination is like using a bookmark — you open exactly where you left off,
@@ -132,6 +133,7 @@ not a scan. For "infinite scroll" feeds, this difference is the boundary between
 ```
 
 **OFFSET INSTABILITY DEMO:**
+
 ```
 Page 1 request: GET /posts?page=1&size=3
 DB state at request time:  [A, B, C, D, E, F]
@@ -150,6 +152,7 @@ a record would be SKIPPED instead.
 ```
 
 **KEYSET SQL PATTERN:**
+
 ```sql
 -- Sort key: (created_at DESC, id DESC) — stable, unique
 -- First page:
@@ -168,6 +171,7 @@ LIMIT 20;
 ```
 
 **CURSOR ENCODING (opaque cursor from keyset):**
+
 ```python
 import base64, json
 
@@ -196,12 +200,14 @@ New tweets constantly arrive. Users scroll down ("Load more"). Some users jump t
 "yesterday's timeline" link.
 
 **OFFSET PAGINATION:**
+
 - User on page 500: database scans and discards 10,000 tweets → 200ms query
 - New tweet arrives at the top: pages 1-499 all shift — user sees duplicates on
   next scroll → terrible UX
 - Duplicate tweets destroy user trust. DMs "Twitter is showing me old tweets again"
 
 **CURSOR PAGINATION:**
+
 - User on page 500: cursor = `eyJpZCI6IDIzMTk4fQ==` → O(log N) seek → 2ms query
 - New tweet at top: cursor holds position perfectly — user continues where they left off
 - "Yesterday's timeline": cursor CAN'T do this — cursors are sequential-only
@@ -273,6 +279,7 @@ pagination precisely for this reason.
 ### ⚙️ How It Works (Mechanism)
 
 **HATEOAS Pagination Response (HAL):**
+
 ```json
 GET /posts?size=20
 {
@@ -292,6 +299,7 @@ GET /posts?size=20
 ```
 
 **Stripe-style cursor pagination (industry standard):**
+
 ```json
 GET /v1/charges?limit=3
 {
@@ -310,24 +318,24 @@ GET /v1/charges?limit=3&starting_after=ch_1N5Kj2ABC...
 
 ### ⚖️ Comparison Table
 
-| Strategy | Use Case | Random Access | Stability | DB Performance |
-|---|---|---|---|---|
-| Offset | Admin UIs, small data | Yes | Unstable | O(N) at depth |
-| Cursor | Feeds, timelines | No | Stable | O(log N) |
-| Keyset | Same as cursor, transparent | No | Stable | O(log N) |
-| Page token (GraphQL) | Connection pattern | No | Stable | O(log N) |
+| Strategy             | Use Case                    | Random Access | Stability | DB Performance |
+| -------------------- | --------------------------- | ------------- | --------- | -------------- |
+| Offset               | Admin UIs, small data       | Yes           | Unstable  | O(N) at depth  |
+| Cursor               | Feeds, timelines            | No            | Stable    | O(log N)       |
+| Keyset               | Same as cursor, transparent | No            | Stable    | O(log N)       |
+| Page token (GraphQL) | Connection pattern          | No            | Stable    | O(log N)       |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Offset pagination is fine for production | At OFFSET 100,000 with 1M rows, performance degrades severely even with indexes. Cursor/keyset are needed for deep pagination |
-| Cursors prevent duplicates entirely | Only if the sort key is truly unique and stable. Non-unique sort keys (timestamp alone) can still produce duplicates |
-| Total count is easy with cursor pagination | Accurate total counts require `COUNT(*)` full scans — expensive. Many cursor APIs omit totals or provide estimates |
-| `LIMIT/OFFSET` and offset pagination are equivalent | Offset pagination is a convention using LIMIT/OFFSET; keyset also uses LIMIT but replaces OFFSET with a WHERE predicate |
-| Cursor = Base64 encoded JSON only | Cursors are opaque tokens — they CAN encode anything: timestamps, IDs, sort vectors, encrypted values |
+| Misconception                                       | Reality                                                                                                                       |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Offset pagination is fine for production            | At OFFSET 100,000 with 1M rows, performance degrades severely even with indexes. Cursor/keyset are needed for deep pagination |
+| Cursors prevent duplicates entirely                 | Only if the sort key is truly unique and stable. Non-unique sort keys (timestamp alone) can still produce duplicates          |
+| Total count is easy with cursor pagination          | Accurate total counts require `COUNT(*)` full scans — expensive. Many cursor APIs omit totals or provide estimates            |
+| `LIMIT/OFFSET` and offset pagination are equivalent | Offset pagination is a convention using LIMIT/OFFSET; keyset also uses LIMIT but replaces OFFSET with a WHERE predicate       |
+| Cursor = Base64 encoded JSON only                   | Cursors are opaque tokens — they CAN encode anything: timestamps, IDs, sort vectors, encrypted values                         |
 
 ---
 
@@ -342,6 +350,7 @@ Root Cause: Offset pagination used on a frequently-updated dataset. Inserts
 near the sort order cause previously-seen rows to shift into subsequent pages.
 
 Diagnostic:
+
 ```bash
 # Check if API uses offset-style params on a live dataset:
 curl "https://api.example.com/events?page=2&size=10"
@@ -359,6 +368,7 @@ Symptom: `GET /admin/audit-logs?page=10000` times out; slow query log shows
 `filesort` with millions of rows; page 1 returns in 10ms, page 10000 in 45s.
 
 Diagnostic:
+
 ```sql
 EXPLAIN SELECT * FROM audit_logs ORDER BY id LIMIT 20 OFFSET 200000;
 -- Look for "rows" in the millions despite a LIMIT of 20

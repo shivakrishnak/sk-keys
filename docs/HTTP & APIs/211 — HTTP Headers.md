@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — HTTP headers are key-value metadata fields sent in every request and response that control caching, authentication, content format, connection behaviour, and security policies — entirely separate from the URL, method, and body.
 
-| #211 | Category: HTTP & APIs | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | HTTP/1.1, HTTP Status Codes, HTTP Methods | |
-| **Used by:** | CORS, Content Negotiation, API Authentication, ETag, Keep-Alive | |
-| **Related:** | HTTP Status Codes, CORS, Content Negotiation, ETag, API Authentication | |
+| #211            | Category: HTTP & APIs                                                  | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | HTTP/1.1, HTTP Status Codes, HTTP Methods                              |                 |
+| **Used by:**    | CORS, Content Negotiation, API Authentication, ETag, Keep-Alive        |                 |
+| **Related:**    | HTTP Status Codes, CORS, Content Negotiation, ETag, API Authentication |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -75,6 +75,7 @@ HTTP headers are the envelope metadata of an HTTP message — information about
 the message itself, separate from its content.
 
 **One analogy:**
+
 > HTTP headers are like the outside of a postal package: the "To" address
 > (Host), "Return address" (Origin), "Contents: fragile glassware"
 > (Content-Type: application/json), "Store until" date (Cache-Control),
@@ -93,6 +94,7 @@ changes to the protocol itself. Understanding headers is understanding HTTP.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Headers appear after the start-line, before the body, separated by CRLF.
    A blank line separates headers from body.
 2. Header names are case-insensitive; values are case-sensitive for most
@@ -105,13 +107,16 @@ changes to the protocol itself. Understanding headers is understanding HTTP.
 **THE CRITICAL HEADER GROUPS:**
 
 **Authentication:**
+
 ```
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ...
 WWW-Authenticate: Bearer realm="api.example.com"
 ```
+
 Request carries credentials; response prompts authentication.
 
 **Content Description:**
+
 ```
 Content-Type: application/json; charset=UTF-8
 Content-Length: 1024
@@ -121,6 +126,7 @@ Accept: application/json, text/xml;q=0.9
 ```
 
 **Caching:**
+
 ```
 Cache-Control: max-age=3600, public
 ETag: "abc123def"
@@ -130,6 +136,7 @@ Vary: Accept-Encoding, Accept-Language
 ```
 
 **Security:**
+
 ```
 Strict-Transport-Security: max-age=31536000; includeSubDomains
 X-Content-Type-Options: nosniff
@@ -138,6 +145,7 @@ X-Frame-Options: DENY
 ```
 
 **Connection Management:**
+
 ```
 Connection: keep-alive
 Keep-Alive: timeout=60, max=1000
@@ -146,6 +154,7 @@ Upgrade: websocket
 
 **DERIVED DESIGN — Hop-by-Hop vs End-to-End:**
 HTTP distinguishes two classes of headers:
+
 - **End-to-end** headers: forwarded by all proxies to the final destination
   (e.g., `Authorization`, `Content-Type`)
 - **Hop-by-hop** headers: consumed by the next intermediary and NOT forwarded
@@ -154,6 +163,7 @@ HTTP distinguishes two classes of headers:
   before forwarding.
 
 **THE TRADE-OFFS:**
+
 - Gain: universal extensibility, protocol/application decoupling,
   infrastructure-readable metadata
 - Cost: header bloat (HTTP/1.1 sends headers verbatim on every request;
@@ -171,6 +181,7 @@ call `GET /reports/sales`. Without headers, how would the server know which form
 to return?
 
 **WHAT HAPPENS WITHOUT ACCEPT HEADERS:**
+
 1. Server must use a different URL per format: `/reports/sales.json`, `/reports/sales.csv`
 2. Or use a query param: `/reports/sales?format=csv`
 3. CDN now caches two different URLs for the same logical resource
@@ -179,6 +190,7 @@ to return?
 5. The server cannot transparently add new formats without changing URLs
 
 **WHAT HAPPENS WITH ACCEPT HEADERS:**
+
 1. Web app sends: `Accept: application/json`
 2. Reporting tool sends: `Accept: text/csv`
 3. Both use the same URL: `GET /reports/sales`
@@ -205,6 +217,7 @@ on URL structure.
 > instructions without needing to read the letter.
 
 **Mapping:**
+
 - "postal carrier" → HTTP proxy / CDN / gateway
 - "check ID" → `WWW-Authenticate` / `Authorization`
 - "keep refrigerated" → `Cache-Control: no-store`
@@ -267,6 +280,7 @@ allowing arbitrary extensibility.
 ### ⚙️ How It Works (Mechanism)
 
 **Wire Format:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │              HTTP/1.1 Request Headers                │
@@ -283,6 +297,7 @@ allowing arbitrary extensibility.
 ```
 
 **Cache-Control directives:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │       Cache-Control Directives Quick Reference       │
@@ -298,6 +313,7 @@ allowing arbitrary extensibility.
 ```
 
 **Security headers every API should set:**
+
 ```
 Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
 X-Content-Type-Options: nosniff
@@ -307,6 +323,7 @@ Referrer-Policy: strict-origin-when-cross-origin
 ```
 
 **Forwarding headers (proxy chain):**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │         Request Header Propagation through Proxy     │
@@ -330,6 +347,7 @@ Referrer-Policy: strict-origin-when-cross-origin
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │       HTTP Headers in the Request/Response Cycle     │
@@ -372,6 +390,7 @@ for repeated headers. At 1M req/s, this is the difference between 800 MB/s and
 ### 💻 Code Example
 
 **Example 1 — Setting response headers in Spring Boot:**
+
 ```java
 @GetMapping("/reports/sales")
 public ResponseEntity<byte[]> getSalesReport(
@@ -399,6 +418,7 @@ public ResponseEntity<byte[]> getSalesReport(
 ```
 
 **Example 2 — Reading and validating incoming headers:**
+
 ```java
 @PostMapping("/webhooks/payment")
 public ResponseEntity<Void> receiveWebhook(
@@ -424,6 +444,7 @@ public ResponseEntity<Void> receiveWebhook(
 ```
 
 **Example 3 — Security headers via Spring Security:**
+
 ```java
 @Bean
 public SecurityFilterChain securityFilterChain(HttpSecurity http)
@@ -444,14 +465,14 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http)
 
 ### ⚖️ Comparison Table
 
-| Header Category | Key Headers | Controlled By | Impact |
-|---|---|---|---|
-| **Authentication** | Authorization, WWW-Authenticate | Server/Client | API access control |
-| **Caching** | Cache-Control, ETag, Vary | Server | CDN/browser cache efficiency |
-| **Content** | Content-Type, Accept, Encoding | Both | Parsing correctness |
-| **Security** | HSTS, CSP, X-Frame-Options | Server | Browser protection |
-| **Connection** | Connection, Keep-Alive, Upgrade | Both | TCP reuse, ws upgrade |
-| **Forwarding** | X-Forwarded-For, Via, Host | Proxy | Request routing, rate limiting |
+| Header Category    | Key Headers                     | Controlled By | Impact                         |
+| ------------------ | ------------------------------- | ------------- | ------------------------------ |
+| **Authentication** | Authorization, WWW-Authenticate | Server/Client | API access control             |
+| **Caching**        | Cache-Control, ETag, Vary       | Server        | CDN/browser cache efficiency   |
+| **Content**        | Content-Type, Accept, Encoding  | Both          | Parsing correctness            |
+| **Security**       | HSTS, CSP, X-Frame-Options      | Server        | Browser protection             |
+| **Connection**     | Connection, Keep-Alive, Upgrade | Both          | TCP reuse, ws upgrade          |
+| **Forwarding**     | X-Forwarded-For, Via, Host      | Proxy         | Request routing, rate limiting |
 
 **How to choose:** Always set security headers on all responses (they're free).
 Always set `Content-Type` and `Cache-Control` explicitly — never rely on defaults,
@@ -461,13 +482,13 @@ which vary by framework and may be incorrect.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Cache-Control: no-cache means "don't cache" | no-cache means "cache but always revalidate before serving." Use no-store to truly prevent caching |
-| X-Forwarded-For is always the client's real IP | X-Forwarded-For can be spoofed by the client. Only trust it if set by your own trusted proxy, not the value the client provided |
+| Misconception                                        | Reality                                                                                                                                                                             |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cache-Control: no-cache means "don't cache"          | no-cache means "cache but always revalidate before serving." Use no-store to truly prevent caching                                                                                  |
+| X-Forwarded-For is always the client's real IP       | X-Forwarded-For can be spoofed by the client. Only trust it if set by your own trusted proxy, not the value the client provided                                                     |
 | Content-Type and Content-Encoding are the same thing | Content-Type is the media type of the data; Content-Encoding is a transformation applied (gzip). A gzipped JSON response is Content-Type: application/json + Content-Encoding: gzip |
-| Custom headers should start with X- | RFC 6648 deprecated the X- prefix convention. New custom headers should use descriptive names without prefix |
-| Headers are private because HTTPS encrypts them | TLS encrypts headers from observation, but the server, any intermediary handling TLS termination, and logging systems can see them. Never log Authorization or Cookie headers |
+| Custom headers should start with X-                  | RFC 6648 deprecated the X- prefix convention. New custom headers should use descriptive names without prefix                                                                        |
+| Headers are private because HTTPS encrypts them      | TLS encrypts headers from observation, but the server, any intermediary handling TLS termination, and logging systems can see them. Never log Authorization or Cookie headers       |
 
 ---
 
@@ -482,6 +503,7 @@ Root Cause: Client sends POST/PUT without `Content-Type` header. Framework
 defaults to `application/octet-stream` and refuses to parse as JSON.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Test with explicit Content-Type:
 curl -X POST https://api.example.com/users \
@@ -513,6 +535,7 @@ first response (which might have been from a same-origin request, with no
 CORS headers) and serves it to cross-origin clients.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Check if Vary: Origin is present:
 curl -s -I -H "Origin: https://app.example.com" \
@@ -538,6 +561,7 @@ to 8 KB for request headers. JWT tokens containing many claims, multiple large
 cookies, or verbose `Authorization` headers can exceed this.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Measure total header size of a request:
 curl -v -H "Authorization: Bearer $(cat large-jwt.txt)" \
@@ -547,6 +571,7 @@ echo "Authorization: Bearer $(cat large-jwt.txt)" | wc -c
 ```
 
 Fix: Increase buffer sizes for APIs that use large tokens:
+
 ```nginx
 large_client_header_buffers 4 32k;
 client_header_buffer_size 4k;
@@ -561,12 +586,14 @@ all user data in the token.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `HTTP/1.1` — headers are defined as core HTTP message components; understanding
   the request/response format is required before working with headers
 - `HTTP Status Codes` — response headers accompany status codes; understanding
   what headers are valid for which codes is essential
 
 **Builds On This (learn these next):**
+
 - `Content Negotiation` — the `Accept`, `Content-Type`, and `Vary` headers
   enable content negotiation; headers are the mechanism
 - `CORS` — cross-origin resource sharing is entirely implemented via headers
@@ -574,6 +601,7 @@ all user data in the token.
 - `ETag / Cache-Control` — the caching subsystem is entirely header-driven
 
 **Alternatives / Comparisons:**
+
 - `gRPC Metadata` — gRPC's equivalent of HTTP headers: key-value pairs sent
   with each RPC call, but binary-encoded in Protobuf frames
 - `HTTP Trailers` — like headers but sent at the end of a chunked response body;

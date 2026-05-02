@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Leader election is the process by which a distributed cluster of nodes autonomously selects one node to act as the authoritative coordinator, ensuring all clients interact with a consistent single source of truth even as nodes fail and recover.
 
-| #585 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Distributed Systems, Consensus, Quorum, Failure Modes, Networking | |
-| **Used by:** | Raft, Paxos, Distributed Locking, Log Replication, State Machine Replication | |
-| **Related:** | Raft, Paxos, Split Brain, Quorum, Fencing / Epoch | |
+| #585            | Category: Distributed Systems                                                | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Distributed Systems, Consensus, Quorum, Failure Modes, Networking            |                 |
+| **Used by:**    | Raft, Paxos, Distributed Locking, Log Replication, State Machine Replication |                 |
+| **Related:**    | Raft, Paxos, Split Brain, Quorum, Fencing / Epoch                            |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -63,6 +63,7 @@ even when multiple nodes suspect leadership is vacant simultaneously.
 Leader election is how a cluster picks one node to be "in charge" — and automatically picks a new one when the current leader goes offline.
 
 **One analogy:**
+
 > Leader election is like choosing a spokesperson in a room where the lights keep going out. When the current spokesperson's voice goes silent (timeout), everyone starts talking at once, but the group eventually agrees on exactly one new voice to listen to. The key rule: wait for a majority to confirm the choice before the new spokesperson starts giving directives — this prevents two people thinking they're simultaneously the spokesperson.
 
 **One insight:**
@@ -73,6 +74,7 @@ The most dangerous moment in leader election is the gap between the old leader b
 ### 🔩 First Principles Explanation
 
 **THE SPLIT-BRAIN PROBLEM:**
+
 ```
 5-node cluster: N1 N2 N3 | N4 N5  (network partition)
 
@@ -92,6 +94,7 @@ WHY MAJORITY?
 ```
 
 **RAFT ELECTION (simplified):**
+
 ```
 State machine:
   FOLLOWER → (timeout, no heartbeat) → CANDIDATE
@@ -113,6 +116,7 @@ KEY SAFETY INSIGHT: log completeness check in step 3 ensures the new leader
 ```
 
 **TERM / EPOCH NUMBER:**
+
 ```
 Term 1: N1 is leader.
 N1 crashes. Timeout fires.
@@ -126,6 +130,7 @@ RULE: Any message with higher term number immediately demotes the receiver to fo
 ```
 
 **BULLY ALGORITHM:**
+
 ```
 Node with highest ID always wins.
 Election triggered by any node noticing unresponsive leader:
@@ -185,6 +190,7 @@ Clients must not assume a "yes" from the leader means the write is committed unt
 ### ⚙️ How It Works (Mechanism)
 
 **Raft Election State Machine:**
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │       FOLLOWER                                           │
@@ -208,6 +214,7 @@ Clients must not assume a "yes" from the leader means the write is committed unt
 ```
 
 **ZooKeeper-based Leader Election (practical pattern):**
+
 ```java
 // ZooKeeper election via ephemeral sequential znodes:
 // 1. Each candidate creates /election/candidate-XXXXXXXXXX (sequential)
@@ -224,23 +231,23 @@ Clients must not assume a "yes" from the leader means the write is committed unt
 
 ### ⚖️ Comparison Table
 
-| Algorithm | Safety (No Split-Brain) | Liveness | Elects Best Node | Complexity |
-|---|---|---|---|---|
-| Bully | If network reliable | Yes | Highest ID (not best log) | O(N²) messages |
-| Raft Election | Yes (quorum) | Yes (random timeout) | Most up-to-date log | O(N) messages |
-| ZooKeeper ZAB | Yes (quorum) | Yes | FIFO order | O(N) messages |
-| Paxos Phase 1 | Yes (quorum) | With randomisation | Any proposer | O(N) messages |
+| Algorithm     | Safety (No Split-Brain) | Liveness             | Elects Best Node          | Complexity     |
+| ------------- | ----------------------- | -------------------- | ------------------------- | -------------- |
+| Bully         | If network reliable     | Yes                  | Highest ID (not best log) | O(N²) messages |
+| Raft Election | Yes (quorum)            | Yes (random timeout) | Most up-to-date log       | O(N) messages  |
+| ZooKeeper ZAB | Yes (quorum)            | Yes                  | FIFO order                | O(N) messages  |
+| Paxos Phase 1 | Yes (quorum)            | With randomisation   | Any proposer              | O(N) messages  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                    | Reality                                                                                                                                      |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | Leader election guarantees instant leader change | Election takes at least one round-trip timeout + vote exchange. Production systems should expect 150-500ms of unavailability during election |
-| Any node can win an election | Safety-sensitive elections (Raft) only allow a node to win if its log is at least as complete as any voter's log — prevents data rollback |
-| Split-brain is prevented by leader heartbeats | Heartbeats detect failure but cannot prevent split-brain — only quorum-based voting prevents two simultaneous leaders |
-| The first node to timeout becomes leader | Multiple nodes may timeout simultaneously; votes settle this; randomised timeouts make simultaneous elections rare |
+| Any node can win an election                     | Safety-sensitive elections (Raft) only allow a node to win if its log is at least as complete as any voter's log — prevents data rollback    |
+| Split-brain is prevented by leader heartbeats    | Heartbeats detect failure but cannot prevent split-brain — only quorum-based voting prevents two simultaneous leaders                        |
+| The first node to timeout becomes leader         | Multiple nodes may timeout simultaneously; votes settle this; randomised timeouts make simultaneous elections rare                           |
 
 ---
 
@@ -258,6 +265,7 @@ Fix: Increase election timeout to 3-5× the 99th-percentile heartbeat RTT.
 Enable leader stickiness (prefer re-electing current leader when healthy).
 
 Diagnosis:
+
 ```bash
 # Raft/etcd election events:
 journalctl -u etcd | grep -E "election|term|leader"
