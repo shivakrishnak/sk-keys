@@ -7,8 +7,6 @@ plugins:
   - jekyll-remote-theme
 
 exclude:
-  - GENERATOR_PROMPT.md
-  - TECHNICAL_DICTIONARY.md
   - README.md
   - Update-MarkdownFrontmatter.ps1
   - Gemfile
