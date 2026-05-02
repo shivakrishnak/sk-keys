@@ -24,12 +24,12 @@ tags:
 ⚡ TL;DR — Content negotiation is the HTTP mechanism by which a client and server agree on the format of the response; the client declares preferences via the `Accept` header (e.g., `application/json` vs `application/xml`) and the server responds in the best-matched format or returns `406 Not Acceptable` — enabling a single endpoint to serve JSON, XML, CSV, or other formats based on what the client requests.
 
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ #245         │ Category: HTTP & APIs              │ Difficulty: ★★☆      │
+│ #245 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
 ├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ HTTP, MIME Types, REST             │                      │
-│ Used by:     │ REST APIs, Web Apps, Multi-format  │                      │
-│ Related:     │ REST, HTTP Headers, OpenAPI,       │                      │
-│              │ API Versioning                     │                      │
+│ Depends on: │ HTTP, MIME Types, REST │ │
+│ Used by: │ REST APIs, Web Apps, Multi-format │ │
+│ Related: │ REST, HTTP Headers, OpenAPI, │ │
+│ │ API Versioning │ │
 └──────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -75,6 +75,7 @@ Content negotiation is client saying "I prefer JSON but can accept XML" and the 
 responding in the best format it supports — all through standard HTTP headers on the same endpoint.
 
 **One analogy:**
+
 > Content negotiation is like ordering at a multilingual restaurant.
 > You tell the waiter (server) your language preferences: "French preferred,
 > English acceptable, no Italian." The waiter brings the same dish (resource) but
@@ -370,23 +371,23 @@ public class CsvHttpMessageConverter extends AbstractHttpMessageConverter<UserLi
 
 ### ⚖️ Comparison Table
 
-| Approach | URL Cleanliness | REST-Pure | CDN Caching | Versioning |
-|---|---|---|---|---|
-| **Accept Header (conneg)** | ✅ Clean | ✅ | Needs Vary | Via vendor MIME |
-| **URL extension** (`/users.json`) | ❌ Polluted | ❌ | Simple | By path |
-| **Query param** (`?format=json`) | Polluted | ❌ | Varies by param | By param |
-| **Separate endpoints** (`/json/users`) | ❌ Duplicated | ❌ | Simple | By path |
+| Approach                               | URL Cleanliness | REST-Pure | CDN Caching     | Versioning      |
+| -------------------------------------- | --------------- | --------- | --------------- | --------------- |
+| **Accept Header (conneg)**             | ✅ Clean        | ✅        | Needs Vary      | Via vendor MIME |
+| **URL extension** (`/users.json`)      | ❌ Polluted     | ❌        | Simple          | By path         |
+| **Query param** (`?format=json`)       | Polluted        | ❌        | Varies by param | By param        |
+| **Separate endpoints** (`/json/users`) | ❌ Duplicated   | ❌        | Simple          | By path         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Content negotiation is only about JSON vs XML | Also covers: language (Accept-Language), encoding (Accept-Encoding: gzip), charset, and can be used for API versioning via vendor MIME types |
-| Missing Vary header is harmless | Caches (CDN, proxies) may serve a JSON response to XML-requesting clients on the same URL. Always set `Vary: Accept` when there are multiple representations |
+| Misconception                                            | Reality                                                                                                                                                                            |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Content negotiation is only about JSON vs XML            | Also covers: language (Accept-Language), encoding (Accept-Encoding: gzip), charset, and can be used for API versioning via vendor MIME types                                       |
+| Missing Vary header is harmless                          | Caches (CDN, proxies) may serve a JSON response to XML-requesting clients on the same URL. Always set `Vary: Accept` when there are multiple representations                       |
 | 406 Not Acceptable means the server rejected the request | It means the server can't provide any representation matching the client's Accept preferences. Solution: client should use `*/*` as fallback q-value or use a supported media type |
-| Content-Type and Accept are the same | Content-Type: what format THIS request body is in. Accept: what format I want the RESPONSE in. Different directions |
+| Content-Type and Accept are the same                     | Content-Type: what format THIS request body is in. Accept: what format I want the RESPONSE in. Different directions                                                                |
 
 ---
 
@@ -404,6 +405,7 @@ legacy client) and serves it to all subsequent requests for that URL, regardless
 of Accept header.
 
 Diagnostic:
+
 ```bash
 # Check if Vary: Accept is in responses:
 curl -I https://api.company.com/v1/users \

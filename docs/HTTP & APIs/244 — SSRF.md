@@ -24,12 +24,12 @@ tags:
 ⚡ TL;DR — SSRF is an attack where an attacker tricks a server into making HTTP requests to internal network resources or external URLs — using the server's privileged network position to access services that are unreachable from the internet, such as cloud instance metadata endpoints (AWS `169.254.169.254`) that expose IAM credentials; prevented by URL allowlisting, disabling redirects, and network-level egress controls.
 
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ #244         │ Category: HTTP & APIs              │ Difficulty: ★★★      │
+│ #244 │ Category: HTTP & APIs │ Difficulty: ★★★ │
 ├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ HTTP, Networking, Cloud Infra      │                      │
-│ Used by:     │ Web APIs, Cloud-hosted Apps        │                      │
-│ Related:     │ SQL Injection, XSS, API Security,  │                      │
-│              │ Cloud Metadata Service             │                      │
+│ Depends on: │ HTTP, Networking, Cloud Infra │ │
+│ Used by: │ Web APIs, Cloud-hosted Apps │ │
+│ Related: │ SQL Injection, XSS, API Security, │ │
+│ │ Cloud Metadata Service │ │
 └──────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves (The Threat)
@@ -76,6 +76,7 @@ SSRF makes the server act as a proxy to access internal or privileged resources 
 the attacker's behalf — exploiting the server's trusted network position.
 
 **One analogy:**
+
 > SSRF is like a trusted employee (the server) being tricked into fetching files
 > from the secure archive room (internal network) on behalf of an outsider.
 > Security only checks WHO is making the request (the trusted employee, not the
@@ -367,24 +368,24 @@ public class SafeUrlFetcher {
 
 ### ⚖️ Comparison Table
 
-| Defense | Layer | Stops | Notes |
-|---|---|---|---|
-| **URL allowlist** | Application | All non-allowlisted targets | Most restrictive; broken if requirements need arbitrary URLs |
-| **IP blocklist + DNS resolve** | Application | RFC1918 + metadata + loopback | Must validate resolved IP, not hostname |
-| **Network security groups** | Infrastructure | Metadata + internal ranges | Defense-in-depth; stops at network level |
-| **IMDSv2 (AWS)** | Cloud | Unauthenticated metadata fetch | PUT requirement; reduces but doesn't eliminate risk |
-| **Minimal IAM role perms** | Cloud | Limits blast radius | Even with credential theft: limited access |
+| Defense                        | Layer          | Stops                          | Notes                                                        |
+| ------------------------------ | -------------- | ------------------------------ | ------------------------------------------------------------ |
+| **URL allowlist**              | Application    | All non-allowlisted targets    | Most restrictive; broken if requirements need arbitrary URLs |
+| **IP blocklist + DNS resolve** | Application    | RFC1918 + metadata + loopback  | Must validate resolved IP, not hostname                      |
+| **Network security groups**    | Infrastructure | Metadata + internal ranges     | Defense-in-depth; stops at network level                     |
+| **IMDSv2 (AWS)**               | Cloud          | Unauthenticated metadata fetch | PUT requirement; reduces but doesn't eliminate risk          |
+| **Minimal IAM role perms**     | Cloud          | Limits blast radius            | Even with credential theft: limited access                   |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Validating the URL hostname is enough | DNS rebinding: hostname passes validation, later resolves to internal IP. Must validate the RESOLVED IP and use it in the request |
-| SSRF only affects cloud environments | Pre-cloud SSRF enables internal network scanning, accessing unprotected internal services (Redis, Mongo with no-auth), admin interfaces |
+| Misconception                                 | Reality                                                                                                                                                              |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Validating the URL hostname is enough         | DNS rebinding: hostname passes validation, later resolves to internal IP. Must validate the RESOLVED IP and use it in the request                                    |
+| SSRF only affects cloud environments          | Pre-cloud SSRF enables internal network scanning, accessing unprotected internal services (Redis, Mongo with no-auth), admin interfaces                              |
 | Blocklisting private ranges covers everything | Cover ALL: 127.0.0.0/8, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16, ::1/128, fe80::/10. Also: 0.0.0.0 (often means 127.0.0.1 in some implementations) |
-| HTTPS requirement prevents SSRF | `https://169.254.169.254/` is still SSRF — the scheme doesn't prevent internal targets |
+| HTTPS requirement prevents SSRF               | `https://169.254.169.254/` is still SSRF — the scheme doesn't prevent internal targets                                                                               |
 
 ---
 
@@ -405,6 +406,7 @@ Attacker submitted `http://169.254.169.254/latest/meta-data/iam/security-credent
 → Attacker retrieved it at their profile URL → used extracted credentials.
 
 Diagnostic:
+
 ```
 # Check CloudTrail for unusual IAM activity from EC2 instance role:
 aws cloudtrail lookup-events \
