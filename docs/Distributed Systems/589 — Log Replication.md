@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Log Replication"
 parent: "Distributed Systems"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Log Replication is the mechanism by which a distributed system maintains identical, ordered logs across multiple nodes by having the leader append entries to its own log and then replicate those entries to followers before confirming them as committed. It is the core mechanism in Raft, MySQL binlog replication, Kafka's log segment replication, and write-ahead logging (WAL). The log serves as the source of truth: any state can be derived by replaying the log from the beginning.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #589         │ Category: Distributed Systems      │ Difficulty: ★★★      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ Raft, Leader Election, Distributed │                      │
-│              │ Consensus, Write-Ahead Log          │                      │
-│ Used by:     │ etcd, CockroachDB, MySQL           │                      │
-│              │ Replication, Kafka                 │                      │
-│ Related:     │ Raft, State Machine Replication,   │                      │
-│              │ Write-Ahead Log, Replication       │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #589 | Category: Distributed Systems | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Raft, Leader Election, Distributed Consensus, Write-Ahead Log | |
+| **Used by:** | etcd, CockroachDB, MySQL Replication, Kafka | |
+| **Related:** | Raft, State Machine Replication, Write-Ahead Log, Replication Strategies | |
 
 ### 🔥 The Problem This Solves
 

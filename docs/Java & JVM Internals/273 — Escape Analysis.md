@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Escape Analysis"
 parent: "Java & JVM Internals"
@@ -23,16 +23,11 @@ tags:
 
 ⚡ TL;DR — Escape Analysis is a JIT optimisation that proves whether an object's reference leaves a method or thread, enabling the JVM to skip heap allocation entirely for objects that don't.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0273        │ Category: Java & JVM Internals       │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ JVM, Heap Memory, Stack Memory,      │                          │
-│              │ JIT Compiler, Object Header          │                          │
-│ Used by:     │ JIT Compiler, Stack Allocation,      │                          │
-│              │ Lock Elision                         │                          │
-│ Related:     │ JIT Compiler, Stack Memory, Object   │                          │
-│              │ Header, TLAB                         │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #273 | Category: Java & JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Heap Memory, Stack Memory, JIT Compiler, Object Header | |
+| **Used by:** | JIT Compiler, Stack Allocation, Lock Elision | |
+| **Related:** | JIT Compiler, Stack Memory, Object Header, TLAB | |
 
 ### 🔥 The Problem This Solves
 

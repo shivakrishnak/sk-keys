@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "GraphQL Resolvers"
 parent: "HTTP & APIs"
@@ -21,16 +21,11 @@ tags:
 
 ⚡ TL;DR — A GraphQL resolver is a function that fetches the data for a single field in the schema; the GraphQL runtime calls the correct resolver for each field selected in a query and assembles the results into the response.
 
-┌───────────────────────────────────────────────────────────────────────────┐
-│ #219 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼─────────────────────────────────────┼─────────────────────┤
-│ Depends on: │ GraphQL, GraphQL Schema, │ │
-│ │ Functions / Closures │ │
-│ Used by: │ GraphQL N+1 Problem, DataLoader, │ │
-│ │ GraphQL Subscriptions │ │
-│ Related: │ GraphQL Schema, REST Controller, │ │
-│ │ Repository Pattern │ │
-└───────────────────────────────────────────────────────────────────────────┘
+| #219 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | GraphQL, GraphQL Schema, Functions / Closures | |
+| **Used by:** | GraphQL N+1 Problem, DataLoader, GraphQL Subscriptions | |
+| **Related:** | GraphQL Schema, REST Controller, Repository Pattern | |
 
 ### 🔥 The Problem This Solves
 

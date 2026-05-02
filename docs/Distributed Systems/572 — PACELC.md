@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "PACELC"
 parent: "Distributed Systems"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — PACELC extends the CAP Theorem by acknowledging that even when there is no network partition (normal operations), distributed systems must choose between **Latency (L)** and **Consistency (C)** — specifically: if there's a Partition (P), choose between Availability (A) or Consistency (C); Else (E, normal operation), choose between Latency (L) or Consistency (C).
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #572         │ Category: Distributed Systems      │ Difficulty: ★★★      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ CAP Theorem, Consistency Models,   │                      │
-│              │ Latency                            │                      │
-│ Used by:     │ Database Design, Distributed       │                      │
-│              │ Storage, Cloud Databases           │                      │
-│ Related:     │ CAP Theorem, Consistency Models,   │                      │
-│              │ Eventual Consistency               │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #572 | Category: Distributed Systems | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | CAP Theorem, Consistency Models, Latency | |
+| **Used by:** | Database Design, Distributed Storage, Cloud Databases | |
+| **Related:** | CAP Theorem, Consistency Models, Eventual Consistency | |
 
 ### 🔥 The Problem This Solves
 

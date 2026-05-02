@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Content Negotiation"
 parent: "HTTP & APIs"
@@ -23,14 +23,11 @@ tags:
 
 ⚡ TL;DR — Content negotiation is the HTTP mechanism by which a client and server agree on the format of the response; the client declares preferences via the `Accept` header (e.g., `application/json` vs `application/xml`) and the server responds in the best-matched format or returns `406 Not Acceptable` — enabling a single endpoint to serve JSON, XML, CSV, or other formats based on what the client requests.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #245 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, MIME Types, REST │ │
-│ Used by: │ REST APIs, Web Apps, Multi-format │ │
-│ Related: │ REST, HTTP Headers, OpenAPI, │ │
-│ │ API Versioning │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #245 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, MIME Types, REST | |
+| **Used by:** | REST APIs, Web Applications, Multi-format APIs | |
+| **Related:** | REST, HTTP Headers, OpenAPI/Swagger, API Versioning | |
 
 ### 🔥 The Problem This Solves
 

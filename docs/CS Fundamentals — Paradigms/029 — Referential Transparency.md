@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Referential Transparency"
 parent: "CS Fundamentals — Paradigms"
@@ -21,15 +21,11 @@ tags:
 
 ⚡ TL;DR — An expression is referentially transparent if it can be replaced by its value without changing the program's behaviour — the defining property of pure functions.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #029 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★★ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Side Effects, Functional Programming, │ │
-│ │ Higher-Order Functions │ │
-│ Used by: │ Idempotency, Functional Programming │ │
-│ Related: │ Side Effects, Idempotency, Pure │ │
-│ │ Functions, Memoization │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #029 | Category: CS Fundamentals — Paradigms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Side Effects, Functional Programming, Higher-Order Functions | |
+| **Used by:** | Idempotency, Functional Programming | |
+| **Related:** | Side Effects, Idempotency, Pure Functions, Memoization | |
 
 ---
 

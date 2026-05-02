@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Two Pointer"
 parent: "Data Structures & Algorithms"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — Two Pointer uses two indices that move toward (or away from) each other through a sorted array, solving pair/partition problems in O(N) instead of O(N²).
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #069         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Array, Sorting Algorithms,             │                        │
-│              │ Time Complexity / Big-O                │                        │
-│ Used by:     │ Sliding Window, Three Sum,             │                        │
-│              │ Container With Most Water              │                        │
-│ Related:     │ Sliding Window, Binary Search, HashMap │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #069 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Array, Sorting Algorithms, Time Complexity / Big-O | |
+| **Used by:** | Sliding Window, Three Sum, Container With Most Water | |
+| **Related:** | Sliding Window, Binary Search, Hash Map | |
 
 ### 🔥 The Problem This Solves
 

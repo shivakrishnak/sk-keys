@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Memory Barrier"
 parent: "Java & JVM Internals"
@@ -23,16 +23,11 @@ tags:
 
 ⚡ TL;DR — A Memory Barrier is a CPU instruction that prevents the processor and compiler from reordering memory operations across it, ensuring visibility of writes to other threads.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0274        │ Category: Java & JVM Internals       │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ JVM, Java Memory Model, volatile,    │                          │
-│              │ Thread, Cache Line                   │                          │
-│ Used by:     │ volatile, synchronized, Happens-     │                          │
-│              │ Before, CAS, VarHandle               │                          │
-│ Related:     │ Happens-Before, volatile, synchronized│                          │
-│              │ False Sharing                        │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #274 | Category: Java & JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Java Memory Model, volatile, Thread, Cache Line | |
+| **Used by:** | volatile, synchronized, Happens-Before, CAS, VarHandle | |
+| **Related:** | Happens-Before, volatile, synchronized, False Sharing | |
 
 ### 🔥 The Problem This Solves
 

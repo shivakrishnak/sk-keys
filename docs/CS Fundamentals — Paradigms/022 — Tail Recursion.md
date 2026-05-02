@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Tail Recursion"
 parent: "CS Fundamentals — Paradigms"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Tail recursion is recursion where the recursive call is the last operation, enabling compilers to reuse the stack frame instead of creating a new one.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #022 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★★ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Recursion, Memory Management Models, │ │
-│ │ Compiled vs Interpreted Languages │ │
-│ Used by: │ Functional Programming, │ │
-│ │ Higher-Order Functions │ │
-│ Related: │ Recursion, TCO (Tail Call │ │
-│ │ Optimisation), Trampolining │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #022 | Category: CS Fundamentals — Paradigms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Recursion, Memory Management Models, Compiled vs Interpreted Languages | |
+| **Used by:** | Functional Programming, Higher-Order Functions | |
+| **Related:** | Recursion, TCO (Tail Call Optimisation), Trampolining | |
 
 ---
 

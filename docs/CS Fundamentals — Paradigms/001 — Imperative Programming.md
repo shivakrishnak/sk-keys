@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Imperative Programming"
 parent: "CS Fundamentals — Paradigms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — Imperative programming means telling the computer HOW to do something, step by step, like a precise recipe.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0001 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
-├──────────────┼───────────────────────────────────────┼─────────────────────────┤
-│ Depends on: │ Variables, Control Flow, Functions │ │
-│ Used by: │ Procedural, OOP, Event-Driven │ │
-│ Related: │ Declarative, Functional, Procedural │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #001 | Category: CS Fundamentals — Paradigms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Variables, Control Flow, Functions | |
+| **Used by:** | Procedural Programming, Object-Oriented Programming, Event-Driven Programming | |
+| **Related:** | Declarative Programming, Functional Programming, Procedural Programming | |
 
 ### 🔥 The Problem This Solves
 

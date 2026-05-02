@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Process"
 parent: "Operating Systems"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A process is an isolated, running instance of a program with its own memory space, resources, and execution state managed by the OS.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #091 │ Category: Operating Systems │ Difficulty: ★☆☆ │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on: │ Operating System, CPU, Memory │ │
-│ Used by: │ Thread, Context Switch, Scheduler │ │
-│ Related: │ Thread, Fiber / Coroutine │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #091 | Category: Operating Systems | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Operating System, CPU, Memory Management | |
+| **Used by:** | Thread, Context Switch, Fork / Exec, Scheduler / Preemption, Signal Handling | |
+| **Related:** | Thread, Fiber / Coroutine, Process vs Thread | |
 
 ### 🔥 The Problem This Solves
 

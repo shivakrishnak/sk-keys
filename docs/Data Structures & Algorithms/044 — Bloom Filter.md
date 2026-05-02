@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Bloom Filter"
 parent: "Data Structures & Algorithms"
@@ -23,13 +23,11 @@ tags:
 
 ⚡ TL;DR — A Bloom Filter uses multiple hash functions and a bit array to answer "is X in the set?" in O(1) with zero false negatives but some tunable false positives, using a fraction of a HashMap's memory.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #044         │ Category: Data Structures & Algorithms │ Difficulty: ★★★        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Hashing Techniques, Bit Manipulation   │                        │
-│ Used by:     │ Caching, Database Optimisation, CDN    │                        │
-│ Related:     │ HashMap, Count-Min Sketch, Cuckoo Filter│                       │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #044 | Category: Data Structures & Algorithms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Hashing Techniques, Bit Manipulation | |
+| **Used by:** | Caching, Database Query Optimisation, Networking | |
+| **Related:** | HashMap, Count-Min Sketch, Cuckoo Filter | |
 
 ### 🔥 The Problem This Solves
 

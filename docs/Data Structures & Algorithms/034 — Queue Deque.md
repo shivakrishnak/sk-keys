@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Queue / Deque"
 parent: "Data Structures & Algorithms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A Queue delivers items in the order they arrived (FIFO); a Deque extends this with O(1) add/remove at both ends.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #034         │ Category: Data Structures & Algorithms │ Difficulty: ★☆☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Array, LinkedList                      │                        │
-│ Used by:     │ BFS, LRU Cache, Sliding Window         │                        │
-│ Related:     │ Stack, Priority Queue, BlockingQueue   │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #034 | Category: Data Structures & Algorithms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Array, LinkedList | |
+| **Used by:** | BFS, LRU Cache, Sliding Window | |
+| **Related:** | Stack, Priority Queue, BlockingQueue | |
 
 ### 🔥 The Problem This Solves
 

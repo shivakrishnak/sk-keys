@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Polymorphism"
 parent: "CS Fundamentals — Paradigms"
@@ -21,15 +21,11 @@ tags:
 
 ⚡ TL;DR — Polymorphism lets you write code that works with many different types through a shared interface, without knowing the concrete type at compile time.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #018 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Abstraction, Encapsulation, │ │
-│ │ Inheritance │ │
-│ Used by: │ Design Patterns, Dependency Injection │ │
-│ │ Software Architecture Patterns │ │
-│ Related: │ Inheritance, Interfaces, Duck Typing │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #018 | Category: CS Fundamentals — Paradigms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Abstraction, Encapsulation, Inheritance | |
+| **Used by:** | Design Patterns, Dependency Injection, Software Architecture Patterns | |
+| **Related:** | Inheritance, Interfaces, Duck Typing | |
 
 ---
 

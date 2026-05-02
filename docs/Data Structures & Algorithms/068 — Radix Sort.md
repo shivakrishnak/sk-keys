@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Radix Sort"
 parent: "Data Structures & Algorithms"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — Radix Sort sorts integers digit-by-digit using a stable sub-sort, breaking the O(N log N) comparison-sort barrier to achieve O(N × d) where d is the number of digits.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #068         │ Category: Data Structures & Algorithms │ Difficulty: ★★★        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Counting Sort, Arrays,                 │                        │
-│              │ Time Complexity / Big-O                │                        │
-│ Used by:     │ Integer Sorting, IP Address Sorting,   │                        │
-│              │ Suffix Array Construction              │                        │
-│ Related:     │ Counting Sort, Bucket Sort, Mergesort  │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #068 | Category: Data Structures & Algorithms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Counting Sort, Arrays, Time Complexity / Big-O | |
+| **Used by:** | Integer Sorting, IP Address Sorting, Suffix Array Construction | |
+| **Related:** | Counting Sort, Bucket Sort, Mergesort | |
 
 ### 🔥 The Problem This Solves
 

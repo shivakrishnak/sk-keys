@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Total Order / Partial Order"
 parent: "Distributed Systems"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — A **Partial Order** is a binary relation that is reflexive, antisymmetric, and transitive, but doesn't require all pairs to be comparable (some events are concurrent/incomparable). A **Total Order** requires every pair to be comparable — every two elements have a "before/after" relationship. In distributed systems: logical time gives a partial order (concurrent events are incomparable); Total Order Broadcast (used by ZooKeeper, Kafka) extends this to a total order by assigning a deterministic ordering to all events, enabling replicated state machine consistency.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #583         │ Category: Distributed Systems      │ Difficulty: ★★★      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ Lamport Clock, Happened-Before,    │                      │
-│              │ Distributed Consensus              │                      │
-│ Used by:     │ Replicated State Machines,         │                      │
-│              │ ZooKeeper, Kafka, Total Order BC   │                      │
-│ Related:     │ Lamport Clock, Raft, Paxos,        │                      │
-│              │ Happened-Before, Sequential Cons.  │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #583 | Category: Distributed Systems | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Lamport Clock, Happened-Before, Distributed Consensus | |
+| **Used by:** | Replicated State Machines, ZooKeeper, Kafka, Total Order Broadcast | |
+| **Related:** | Lamport Clock, Raft, Paxos, Happened-Before, Sequential Consistency | |
 
 ### 🔥 The Problem This Solves
 

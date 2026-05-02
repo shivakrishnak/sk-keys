@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Array"
 parent: "Data Structures & Algorithms"
@@ -22,13 +22,11 @@ tags:
 
 ⚡ TL;DR — An array stores elements in contiguous memory so any element is reachable in O(1) time by index.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #031         │ Category: Data Structures & Algorithms │ Difficulty: ★☆☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Memory Management Models               │                        │
-│ Used by:     │ HashMap, Heap, Sorting, Sliding Window │                        │
-│ Related:     │ LinkedList, ArrayList, Deque           │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #031 | Category: Data Structures & Algorithms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Memory Management Models | |
+| **Used by:** | HashMap, Heap (Min/Max), Sorting Stability, Sliding Window, Two Pointer | |
+| **Related:** | LinkedList, ArrayList, Deque | |
 
 ### 🔥 The Problem This Solves
 

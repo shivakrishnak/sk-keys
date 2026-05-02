@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Priority Queue"
 parent: "Data Structures & Algorithms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A Priority Queue always serves the highest-priority element next, regardless of insertion order, in O(log N) time.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #038         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Heap (Min/Max), Queue / Deque          │                        │
-│ Used by:     │ Dijkstra, A* Search, Event Simulation  │                        │
-│ Related:     │ Heap (Min/Max), Queue / Deque, TreeMap │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #038 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Heap (Min/Max), Queue / Deque | |
+| **Used by:** | Dijkstra, A* Search, Huffman Coding, Event Simulation | |
+| **Related:** | Heap (Min/Max), Queue / Deque, TreeMap | |
 
 ### 🔥 The Problem This Solves
 

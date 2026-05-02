@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Heap Memory"
 parent: "Java & JVM Internals"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — The JVM heap is the single shared memory region where all Java objects live, managed automatically by the garbage collector.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0267        │ Category: Java & JVM Internals       │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ JVM, Stack Memory,                   │                          │
-│              │ Memory Management Models             │                          │
-│ Used by:     │ Young Generation, Old Generation,    │                          │
-│              │ GC Roots, Minor GC, Major GC         │                          │
-│ Related:     │ Stack Memory, Metaspace, GC Roots,   │                          │
-│              │ Young Generation                     │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #267 | Category: Java & JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Stack Memory, Memory Management Models | |
+| **Used by:** | Young Generation, Old Generation, GC Roots, Minor GC, Major GC | |
+| **Related:** | Stack Memory, Metaspace, GC Roots, Young Generation | |
 
 ### 🔥 The Problem This Solves
 

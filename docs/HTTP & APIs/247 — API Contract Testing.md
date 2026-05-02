@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Contract Testing"
 parent: "HTTP & APIs"
@@ -23,14 +23,11 @@ tags:
 
 ⚡ TL;DR — API contract testing verifies that a service's API implementation matches an agreed-upon contract (specification), catching breaking changes before they reach production; **consumer-driven contract testing** (via tools like Pact) inverts this by having consumer teams define their expectations, which are then verified against the provider's actual implementation — preventing the provider from silently breaking consumers.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #247 │ Category: HTTP & APIs │ Difficulty: ★★★ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ REST, OpenAPI/Swagger, Testing │ │
-│ Used by: │ CI/CD, Microservices, API Design │ │
-│ Related: │ OpenAPI/Swagger, API Mocking, │ │
-│ │ Consumer-Driven Contracts, Pact │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #247 | Category: HTTP & APIs | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | REST, OpenAPI/Swagger, Testing | |
+| **Used by:** | CI/CD Pipelines, Microservices Integration, API Design | |
+| **Related:** | OpenAPI/Swagger, API Mocking, Consumer-Driven Contract Testing, Pact | |
 
 ### 🔥 The Problem This Solves
 

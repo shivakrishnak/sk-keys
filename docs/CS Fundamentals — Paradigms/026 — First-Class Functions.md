@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "First-Class Functions"
 parent: "CS Fundamentals — Paradigms"
@@ -21,15 +21,11 @@ tags:
 
 ⚡ TL;DR — First-class functions means functions are values: they can be assigned to variables, passed as arguments, returned from other functions, and stored in data structures.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #026 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Functional Programming, Lambda Calculus│ │
-│ Used by: │ Higher-Order Functions, Functional │ │
-│ │ Programming, Reactive Programming │ │
-│ Related: │ Higher-Order Functions, Closures, │ │
-│ │ Lambda Calculus, Callbacks │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #026 | Category: CS Fundamentals — Paradigms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Functional Programming, Lambda Calculus | |
+| **Used by:** | Higher-Order Functions, Functional Programming, Reactive Programming | |
+| **Related:** | Higher-Order Functions, Closures, Lambda Calculus, Callbacks | |
 
 ---
 

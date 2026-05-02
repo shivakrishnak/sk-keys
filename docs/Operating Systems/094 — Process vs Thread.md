@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Process vs Thread"
 parent: "Operating Systems"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A process is a fully isolated program with its own memory; a thread is a lightweight execution unit sharing memory within a process.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #094 │ Category: Operating Systems │ Difficulty: ★☆☆ │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on: │ Process, Thread, Memory Management │ │
-│ Used by: │ System Design, Web Server Architecture│ │
-│ Related: │ Fiber / Coroutine, Context Switch │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #094 | Category: Operating Systems | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Process, Thread, Memory Management | |
+| **Used by:** | System Design, Concurrency, Web Server Architecture | |
+| **Related:** | Fiber / Coroutine, Context Switch, Fork / Exec | |
 
 ### 🔥 The Problem This Solves
 

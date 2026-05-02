@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Vector Clock"
 parent: "Distributed Systems"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — A Vector Clock is an extension of the Lamport Clock that tracks one counter per process (a vector of N integers for N processes), enabling precise detection of both causal ordering AND concurrency. If VC(A) < VC(B) — every element of A's vector is ≤ B's, and at least one is strictly less — then A causally preceded B. If neither dominates the other, A and B are concurrent. Used in DynamoDB conflict detection, Git's merge algorithm, and CRDTs.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #581         │ Category: Distributed Systems      │ Difficulty: ★★★      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ Lamport Clock, Happened-Before,    │                      │
-│              │ Causality                          │                      │
-│ Used by:     │ Conflict Detection, CRDTs,         │                      │
-│              │ Distributed Version Control        │                      │
-│ Related:     │ Lamport Clock, Causal Consistency, │                      │
-│              │ Happened-Before, CRDTs             │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #581 | Category: Distributed Systems | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Lamport Clock, Happened-Before, Causality | |
+| **Used by:** | Conflict Detection, CRDTs, Distributed Version Control, DynamoDB | |
+| **Related:** | Lamport Clock, Causal Consistency, Happened-Before, CRDTs | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Consistency Models"
 parent: "Distributed Systems"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — Consistency models define the rules for what values a read operation is allowed to return in a distributed system. They form a spectrum from strongest (strict/linearizable — reads always see the absolute latest write) to weakest (eventual — reads eventually converge but may temporarily return stale data), with causal, sequential, and monotonic consistency in between.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #573         │ Category: Distributed Systems      │ Difficulty: ★★★      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ CAP Theorem, PACELC, Replication   │                      │
-│ Used by:     │ Database Selection, API Design,    │                      │
-│              │ Distributed Transactions           │                      │
-│ Related:     │ Linearizability, Serializability,  │                      │
-│              │ Eventual Consistency               │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #573 | Category: Distributed Systems | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | CAP Theorem, PACELC, Replication Strategies | |
+| **Used by:** | Database Selection, API Design, Distributed Transactions | |
+| **Related:** | Linearizability, Serializability, Eventual Consistency, Causal Consistency | |
 
 ### 🔥 The Problem This Solves
 

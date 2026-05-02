@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Tabulation (Bottom-Up DP)"
 parent: "Data Structures & Algorithms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — Tabulation fills a DP table iteratively from base cases upward, avoiding recursion overhead and call stack limits while matching memoization's time complexity.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #052         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Memoization, Array, Dynamic Programming│                        │
-│ Used by:     │ Dynamic Programming, LCS, Knapsack     │                        │
-│ Related:     │ Memoization, Dynamic Programming       │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #052 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Memoization, Array, Dynamic Programming | |
+| **Used by:** | Dynamic Programming, Longest Common Subsequence, Knapsack Problem | |
+| **Related:** | Memoization, Dynamic Programming, Space Complexity | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Divide and Conquer"
 parent: "Data Structures & Algorithms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — Divide and Conquer recursively breaks a problem into independent subproblems, solves each, then combines results — turning O(N) brute force into O(N log N) or O(log N).
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #053         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Recursion, Time Complexity / Big-O     │                        │
-│ Used by:     │ Mergesort, Quicksort, Binary Search    │                        │
-│ Related:     │ Dynamic Programming, Greedy Algorithm  │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #053 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Recursion, Time Complexity / Big-O | |
+| **Used by:** | Mergesort, Quicksort, Binary Search, A* Search | |
+| **Related:** | Dynamic Programming, Greedy Algorithm, Memoization | |
 
 ### 🔥 The Problem This Solves
 

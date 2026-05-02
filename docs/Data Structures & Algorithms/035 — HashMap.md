@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "HashMap"
 parent: "Data Structures & Algorithms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A HashMap maps keys to values in O(1) average time by using a hash function to find the storage bucket directly.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #035         │ Category: Data Structures & Algorithms │ Difficulty: ★☆☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Array, Hashing Techniques              │                        │
-│ Used by:     │ LRU Cache, Consistent Hash Ring, Graph │                        │
-│ Related:     │ TreeMap, HashSet, LinkedHashMap        │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #035 | Category: Data Structures & Algorithms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Array, Hashing Techniques | |
+| **Used by:** | LRU Cache, Consistent Hash Ring, Graph, Memoization | |
+| **Related:** | TreeMap, HashSet, LinkedHashMap | |
 
 ### 🔥 The Problem This Solves
 

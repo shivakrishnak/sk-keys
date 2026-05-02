@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Bytecode"
 parent: "Java & JVM Internals"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Java bytecode is the platform-neutral instruction set that lets one compiled program run on any JVM regardless of the underlying hardware.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0264        │ Category: Java & JVM Internals       │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ JVM, JDK, Compiled vs Interpreted    │                          │
-│              │ Languages                            │                          │
-│ Used by:     │ Class Loader, JIT Compiler,          │                          │
-│              │ Reflection, invokedynamic            │                          │
-│ Related:     │ JIT Compiler, AOT Compilation,       │                          │
-│              │ GraalVM Native Image                 │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #264 | Category: Java & JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, JDK, Compiled vs Interpreted Languages | |
+| **Used by:** | Class Loader, JIT Compiler, Reflection, invokedynamic | |
+| **Related:** | JIT Compiler, AOT Compilation, GraalVM Native Image | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Procedural Programming"
 parent: "CS Fundamentals — Paradigms"
@@ -21,16 +21,11 @@ tags:
 
 ⚡ TL;DR — Procedural programming organises imperative code into named, reusable procedures (functions), making programs maintainable by breaking them into callable steps.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0005 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
-├──────────────┼───────────────────────────────────────┼─────────────────────────┤
-│ Depends on: │ Imperative Programming, Functions, │ │
-│ │ Variables │ │
-│ Used by: │ Object-Oriented Programming, │ │
-│ │ Structured Programming │ │
-│ Related: │ Imperative Programming, Functional, │ │
-│ │ Object-Oriented Programming │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #005 | Category: CS Fundamentals — Paradigms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Imperative Programming, Functions, Variables | |
+| **Used by:** | Object-Oriented Programming, Structured Programming | |
+| **Related:** | Imperative Programming, Functional Programming, Object-Oriented Programming | |
 
 ### 🔥 The Problem This Solves
 

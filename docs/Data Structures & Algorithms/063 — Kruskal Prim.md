@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Kruskal / Prim"
 parent: "Data Structures & Algorithms"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Kruskal and Prim are two greedy algorithms that find the Minimum Spanning Tree of a weighted graph — the cheapest set of edges that connects all nodes.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #063         │ Category: Data Structures & Algorithms │ Difficulty: ★★★        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Graph, Union-Find, Priority Queue,     │                        │
-│              │ Greedy Algorithm                       │                        │
-│ Used by:     │ Network Design, Cluster Analysis,      │                        │
-│              │ Approximate TSP                        │                        │
-│ Related:     │ Dijkstra, Minimum Spanning Tree,       │                        │
-│              │ Union-Find                             │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #063 | Category: Data Structures & Algorithms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Graph, Union-Find (Disjoint Set), Priority Queue, Greedy Algorithm | |
+| **Used by:** | Network Design, Cluster Analysis, Approximate TSP | |
+| **Related:** | Dijkstra, Minimum Spanning Tree, Union-Find (Disjoint Set) | |
 
 ### 🔥 The Problem This Solves
 

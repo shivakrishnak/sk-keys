@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Thread"
 parent: "Operating Systems"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A thread is a lightweight unit of execution within a process, sharing its memory but with its own stack and program counter.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #092 │ Category: Operating Systems │ Difficulty: ★☆☆ │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on: │ Process, CPU, Stack │ │
-│ Used by: │ Context Switch, Thread Pool, Deadlock│ │
-│ Related: │ Fiber / Coroutine, Process vs Thread │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #092 | Category: Operating Systems | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Process, CPU, Stack | |
+| **Used by:** | Context Switch, Java Concurrency, Thread Pool, Deadlock | |
+| **Related:** | Fiber / Coroutine, Process vs Thread, Green Thread | |
 
 ### 🔥 The Problem This Solves
 

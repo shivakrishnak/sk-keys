@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Clock Skew / Clock Drift"
 parent: "Distributed Systems"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Clock Skew is the difference in time between two clocks at a moment in time; Clock Drift is the rate at which a clock diverges from true time. In distributed systems, every machine has an independent hardware clock that drifts relative to real time, causing skew between nodes. This invalidates wall-clock-based event ordering, invalidates lease-based logic, and breaks distributed protocols that assume synchronized time. Solutions include NTP (reduces ms-level skew), GPS/atomic clocks (μs), and Google's TrueTime (uncertainty-bounded clock API).
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #582         │ Category: Distributed Systems      │ Difficulty: ★★☆      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ Distributed Systems Fundamentals,  │                      │
-│              │ NTP, Lamport Clock                 │                      │
-│ Used by:     │ Distributed Transactions, Event    │                      │
-│              │ Ordering, Lease Management         │                      │
-│ Related:     │ Lamport Clock, Vector Clock,       │                      │
-│              │ Linearizability, Spanner TrueTime  │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #582 | Category: Distributed Systems | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Distributed Systems Fundamentals, NTP, Lamport Clock | |
+| **Used by:** | Distributed Transactions, Event Ordering, Lease Management | |
+| **Related:** | Lamport Clock, Vector Clock, Linearizability, Spanner TrueTime | |
 
 ### 🔥 The Problem This Solves
 

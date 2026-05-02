@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Type Systems (Static vs Dynamic)"
 parent: "CS Fundamentals — Paradigms"
@@ -23,16 +23,11 @@ tags:
 
 ⚡ TL;DR — A type system defines what kinds of data exist and when type errors are caught: statically at compile time (Java, TypeScript) or dynamically at runtime (Python, JavaScript).
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0010 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────────┼─────────────────────────┤
-│ Depends on: │ Variables, Functions, │ │
-│ │ Compiled vs Interpreted Languages │ │
-│ Used by: │ Strong vs Weak Typing, Java Language, │ │
-│ │ TypeScript │ │
-│ Related: │ Strong vs Weak Typing, Compiled vs │ │
-│ │ Interpreted, Type Inference │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #010 | Category: CS Fundamentals — Paradigms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Variables, Functions, Compiled vs Interpreted Languages | |
+| **Used by:** | Strong vs Weak Typing, Java Language, TypeScript | |
+| **Related:** | Strong vs Weak Typing, Compiled vs Interpreted Languages, Type Inference | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Security Best Practices"
 parent: "HTTP & APIs"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — API security best practices are the set of defenses addressing the OWASP API Security Top 10: use authentication on every endpoint (JWT/OAuth2), enforce authorization at object and function level (BOLA, BFLA), validate all input, never expose sensitive data unnecessarily, rate-limit requests, avoid mass assignment, log security events, and use HTTPS everywhere — together forming a defense-in-depth strategy for production APIs.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #260         │ Category: HTTP & APIs              │ Difficulty: ★★☆      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ REST, HTTP, Authentication, OWASP  │                      │
-│ Used by:     │ REST APIs, Platform Security,      │                      │
-│              │ API Gateways                       │                      │
-│ Related:     │ JWT, OAuth2, CORS, SSRF,           │                      │
-│              │ SQL Injection, CSRF, Rate Limiting │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #260 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | REST, HTTP, Authentication, OWASP | |
+| **Used by:** | REST APIs, Platform Security, API Gateways | |
+| **Related:** | JWT, OAuth2, CORS, SSRF, SQL Injection, CSRF, API Rate Limiting | |
 
 ### 🔥 The Problem This Solves
 

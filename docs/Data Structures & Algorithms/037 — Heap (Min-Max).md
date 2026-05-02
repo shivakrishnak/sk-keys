@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Heap (Min/Max)"
 parent: "Data Structures & Algorithms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A Heap is an array-based binary tree guaranteeing O(1) access to the minimum (or maximum) element with O(log N) insert and remove.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #037         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Array, Binary Search                   │                        │
-│ Used by:     │ Priority Queue, Heapsort, Dijkstra     │                        │
-│ Related:     │ Priority Queue, Segment Tree           │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #037 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Array, Binary Search | |
+| **Used by:** | Priority Queue, Heapsort, Dijkstra, A* Search | |
+| **Related:** | Priority Queue, Segment Tree, Sorted Array | |
 
 ### 🔥 The Problem This Solves
 

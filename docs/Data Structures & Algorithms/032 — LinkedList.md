@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "LinkedList"
 parent: "Data Structures & Algorithms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A LinkedList chains nodes via pointers to allow O(1) insert/delete at known positions without shifting elements.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #032         │ Category: Data Structures & Algorithms │ Difficulty: ★☆☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Array, Memory Management Models        │                        │
-│ Used by:     │ Stack, Queue / Deque, LRU Cache        │                        │
-│ Related:     │ Array, ArrayList, Deque                │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #032 | Category: Data Structures & Algorithms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Array, Memory Management Models | |
+| **Used by:** | Stack, Queue / Deque, LRU Cache | |
+| **Related:** | Array, ArrayList, Deque | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "SOAP"
 parent: "HTTP & APIs"
@@ -23,15 +23,11 @@ tags:
 
 ⚡ TL;DR — SOAP (Simple Object Access Protocol) is an XML-based messaging protocol for exchanging structured information in web services; it defines a strict message envelope format, uses WSDL for service contracts, and enables built-in standards for security (WS-Security), transactions, and reliability — making it the dominant enterprise API protocol before REST's rise.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #225 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, XML, Web Services, REST │ │
-│ Used by: │ Enterprise Integration, Legacy │ │
-│ │ Systems, Banking APIs │ │
-│ Related: │ REST, gRPC, GraphQL, WSDL, │ │
-│ │ XML Schema │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #225 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, XML, Web Services, REST | |
+| **Used by:** | Enterprise Integration, Legacy Systems, Banking APIs | |
+| **Related:** | REST, gRPC, GraphQL, WSDL, XML Schema | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Design Best Practices"
 parent: "HTTP & APIs"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — API design best practices are the set of conventions that make REST APIs intuitive, consistent, and evolvable: use nouns for resources (not verbs), plural resource names, correct HTTP methods (GET/POST/PUT/PATCH/DELETE), meaningful status codes, versioning in the URL, consistent error response shapes, and design for backward compatibility — following these reduces integration friction and support burden.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #256         │ Category: HTTP & APIs              │ Difficulty: ★★☆      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ REST, HTTP, JSON                   │                      │
-│ Used by:     │ API Design, Backend Dev,           │                      │
-│              │ Platform Engineering               │                      │
-│ Related:     │ REST, OpenAPI/Swagger,             │                      │
-│              │ API Versioning, API Documentation  │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #256 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | REST, HTTP, JSON | |
+| **Used by:** | API Design, Backend Development, Platform Engineering | |
+| **Related:** | REST, OpenAPI/Swagger, API Versioning, API Documentation | |
 
 ### 🔥 The Problem This Solves
 

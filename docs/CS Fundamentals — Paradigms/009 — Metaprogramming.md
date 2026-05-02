@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Metaprogramming"
 parent: "CS Fundamentals — Paradigms"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — Metaprogramming is code that writes or modifies other code — programs that treat programs as data, enabling automation of repetitive boilerplate.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0009 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★★ │
-├──────────────┼───────────────────────────────────────┼─────────────────────────┤
-│ Depends on: │ Object-Oriented Programming, │ │
-│ │ Type Systems, Reflection │ │
-│ Used by: │ AOP, Annotations, Code Generation │ │
-│ Related: │ Aspect-Oriented Programming, │ │
-│ │ Reflection, Annotations │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #009 | Category: CS Fundamentals — Paradigms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Object-Oriented Programming, Type Systems, Reflection | |
+| **Used by:** | Aspect-Oriented Programming, Annotations, Code Generation | |
+| **Related:** | Aspect-Oriented Programming, Reflection, Annotations | |
 
 ### 🔥 The Problem This Solves
 

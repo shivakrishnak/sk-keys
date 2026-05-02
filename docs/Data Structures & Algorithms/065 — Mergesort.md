@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Mergesort"
 parent: "Data Structures & Algorithms"
@@ -22,13 +22,11 @@ tags:
 
 ⚡ TL;DR — Mergesort divides an array in half, recursively sorts each half, then merges them — guaranteeing O(N log N) in all cases and stable ordering, at the cost of O(N) extra space.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #065         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Recursion, Divide and Conquer, Arrays  │                        │
-│ Used by:     │ Timsort, External Sort, Parallel Sort  │                        │
-│ Related:     │ Quicksort, Timsort, Heapsort           │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #065 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Recursion, Divide and Conquer, Arrays | |
+| **Used by:** | Timsort, External Sort, Parallel Sort | |
+| **Related:** | Quicksort, Timsort, Heapsort | |
 
 ### 🔥 The Problem This Solves
 

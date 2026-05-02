@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "gRPC Streaming"
 parent: "HTTP & APIs"
@@ -23,16 +23,11 @@ tags:
 
 ⚡ TL;DR — gRPC Streaming extends standard gRPC request/response with three streaming patterns: server streaming (server sends multiple responses), client streaming (client sends multiple requests), and bidirectional streaming (both sides send concurrently) — all over a single multiplexed HTTP/2 connection.
 
-┌──────────────────────────────────────────────────────────────────────────────┐
-│ #224 │ Category: HTTP & APIs │ Difficulty: ★★★ │
-├──────────────┼────────────────────────────────────────┼────────────────────┤
-│ Depends on: │ gRPC, Protocol Buffers, HTTP/2, │ │
-│ │ Reactive Programming │ │
-│ Used by: │ Real-time Data Pipelines, │ │
-│ │ Microservices, Service Mesh │ │
-│ Related: │ WebSocket, GraphQL Subscriptions, │ │
-│ │ Server-Sent Events │ │
-└──────────────────────────────────────────────────────────────────────────────┘
+| #224 | Category: HTTP & APIs | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | gRPC, Protocol Buffers, HTTP/2, Reactive Programming | |
+| **Used by:** | Real-time Data Pipelines, Microservices, Service Mesh | |
+| **Related:** | WebSocket, GraphQL Subscriptions, Server-Sent Events | |
 
 ### 🔥 The Problem This Solves
 

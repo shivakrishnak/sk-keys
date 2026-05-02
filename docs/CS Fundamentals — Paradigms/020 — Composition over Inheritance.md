@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Composition over Inheritance"
 parent: "CS Fundamentals — Paradigms"
@@ -23,16 +23,11 @@ tags:
 
 ⚡ TL;DR — Compose objects from smaller, focused behaviours rather than building deep inheritance hierarchies — it produces more flexible, maintainable code.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #020 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Inheritance, Encapsulation, │ │
-│ │ Polymorphism │ │
-│ Used by: │ Design Patterns, SOLID Principles, │ │
-│ │ Software Architecture Patterns │ │
-│ Related: │ Inheritance, Strategy Pattern, │ │
-│ │ Dependency Injection │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #020 | Category: CS Fundamentals — Paradigms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Inheritance, Encapsulation, Polymorphism | |
+| **Used by:** | Design Patterns, SOLID Principles, Software Architecture Patterns | |
+| **Related:** | Inheritance, Strategy Pattern, Dependency Injection | |
 
 ---
 

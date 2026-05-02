@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "SSRF"
 parent: "HTTP & APIs"
@@ -23,14 +23,11 @@ tags:
 
 ⚡ TL;DR — SSRF is an attack where an attacker tricks a server into making HTTP requests to internal network resources or external URLs — using the server's privileged network position to access services that are unreachable from the internet, such as cloud instance metadata endpoints (AWS `169.254.169.254`) that expose IAM credentials; prevented by URL allowlisting, disabling redirects, and network-level egress controls.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #244 │ Category: HTTP & APIs │ Difficulty: ★★★ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, Networking, Cloud Infra │ │
-│ Used by: │ Web APIs, Cloud-hosted Apps │ │
-│ Related: │ SQL Injection, XSS, API Security, │ │
-│ │ Cloud Metadata Service │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #244 | Category: HTTP & APIs | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, Networking, Cloud Infrastructure | |
+| **Used by:** | Web APIs, Cloud-hosted Applications | |
+| **Related:** | SQL Injection, XSS, API Security, Cloud Metadata Service | |
 
 ### 🔥 The Problem This Solves (The Threat)
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Time Complexity / Big-O"
 parent: "Data Structures & Algorithms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — Big-O notation describes how an algorithm's runtime scales with input size N, letting you compare algorithms without running them.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #048         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Recursion                              │                        │
-│ Used by:     │ Space Complexity, Amortized Analysis   │                        │
-│ Related:     │ Space Complexity, Amortized Analysis   │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #048 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Recursion | |
+| **Used by:** | Space Complexity, Amortized Analysis, All Algorithm Analysis | |
+| **Related:** | Space Complexity, Amortized Analysis, Master Theorem | |
 
 ### 🔥 The Problem This Solves
 

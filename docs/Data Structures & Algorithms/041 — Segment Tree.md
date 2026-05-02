@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Segment Tree"
 parent: "Data Structures & Algorithms"
@@ -21,14 +21,11 @@ tags:
 
 ⚡ TL;DR — A Segment Tree answers range queries (sum, min, max) and range updates on an array in O(log N) per operation, replacing O(N) brute force.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #041         │ Category: Data Structures & Algorithms │ Difficulty: ★★★        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Array, Heap (Min/Max), Divide and      │                        │
-│              │ Conquer                                │                        │
-│ Used by:     │ Range Queries, Competitive Programming │                        │
-│ Related:     │ Fenwick Tree (BIT), Sparse Table        │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #041 | Category: Data Structures & Algorithms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Array, Heap (Min/Max), Divide and Conquer | |
+| **Used by:** | Range Queries, Competitive Programming | |
+| **Related:** | Fenwick Tree (BIT), Sparse Table, Sqrt Decomposition | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "GraphQL Schema"
 parent: "HTTP & APIs"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — The GraphQL schema is a strongly typed contract between client and server, written in Schema Definition Language (SDL), that defines every type, field, query, mutation, and subscription the API exposes.
 
-┌─────────────────────────────────────────────────────────────────────────┐
-│ #218 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────┼──────────────────────┤
-│ Depends on: │ GraphQL, Type Systems, JSON │ │
-│ Used by: │ GraphQL Resolvers, GraphQL N+1 │ │
-│ │ Problem, API Design Best Practices│ │
-│ Related: │ OpenAPI Specification, │ │
-│ │ Protocol Buffers, JSON Schema │ │
-└─────────────────────────────────────────────────────────────────────────┘
+| #218 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | GraphQL, Type Systems, JSON | |
+| **Used by:** | GraphQL Resolvers, GraphQL N+1 Problem, API Design Best Practices | |
+| **Related:** | OpenAPI Specification, Protocol Buffers, JSON Schema | |
 
 ### 🔥 The Problem This Solves
 

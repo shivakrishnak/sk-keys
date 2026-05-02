@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Local Variable Table"
 parent: "Java & JVM Internals"
@@ -22,14 +22,11 @@ tags:
 
 ⚡ TL;DR — The Local Variable Table is the numbered slot array inside every Stack Frame that stores method parameters, local variables, and the `this` reference.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0271        │ Category: Java & JVM Internals       │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ Stack Frame, Bytecode, Operand Stack  │                          │
-│ Used by:     │ JIT Compiler, Escape Analysis,        │                          │
-│              │ Debugger                              │                          │
-│ Related:     │ Operand Stack, Stack Frame, Bytecode  │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #271 | Category: Java & JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Stack Frame, Bytecode, Operand Stack | |
+| **Used by:** | JIT Compiler, Escape Analysis, Debugger | |
+| **Related:** | Operand Stack, Stack Frame, Bytecode | |
 
 ### 🔥 The Problem This Solves
 

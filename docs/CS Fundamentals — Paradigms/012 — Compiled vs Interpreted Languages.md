@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Compiled vs Interpreted Languages"
 parent: "CS Fundamentals — Paradigms"
@@ -21,14 +21,11 @@ tags:
 
 ⚡ TL;DR — Compiled languages translate source code to machine instructions before execution; interpreted languages translate and run code line-by-line at runtime.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #012 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Type Systems (Static vs Dynamic), │ │
-│ │ Memory Management Models │ │
-│ Used by: │ JVM, JIT Compiler, Virtual Machine │ │
-│ Related: │ JIT Compiler, Bytecode, Transpilation │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #012 | Category: CS Fundamentals — Paradigms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Type Systems (Static vs Dynamic), Memory Management Models | |
+| **Used by:** | JVM, JIT Compiler, Virtual Machine | |
+| **Related:** | JIT Compiler, Bytecode, Transpilation | |
 
 ---
 

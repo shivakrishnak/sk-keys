@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Reference Types (Strong, Soft, Weak, Phantom)"
 parent: "Java & JVM Internals"
@@ -23,16 +23,11 @@ tags:
 
 ⚡ TL;DR — Java's four reference types let you fine-tune GC behavior: strong keeps forever, soft until memory pressure, weak until next GC, phantom for post-collection cleanup.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0277        │ Category: Java & JVM Internals       │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ GC Roots, Heap Memory, Class Loader, │                          │
-│              │ JVM                                  │                          │
-│ Used by:     │ Caching, WeakHashMap, Connection     │                          │
-│              │ Pooling, Memory Management           │                          │
-│ Related:     │ GC Roots, Heap Memory, WeakHashMap,  │                          │
-│              │ Metaspace                            │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #277 | Category: Java & JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | GC Roots, Heap Memory, Class Loader, JVM | |
+| **Used by:** | Caching, WeakHashMap, Connection Pooling, Memory Management | |
+| **Related:** | GC Roots, Heap Memory, WeakHashMap, Metaspace | |
 
 ### 🔥 The Problem This Solves
 

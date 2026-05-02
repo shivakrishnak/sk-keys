@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "TreeMap"
 parent: "Data Structures & Algorithms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A TreeMap stores key-value pairs in sorted key order using a balanced BST, giving O(log N) access but enabling range queries that HashMap cannot support.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #036         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ HashMap, Binary Search                 │                        │
-│ Used by:     │ Segment Tree, Consistent Hash Ring     │                        │
-│ Related:     │ HashMap, LinkedHashMap, TreeSet        │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #036 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HashMap, Binary Search | |
+| **Used by:** | Segment Tree, Consistent Hash Ring | |
+| **Related:** | HashMap, LinkedHashMap, TreeSet | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Context Switch"
 parent: "Operating Systems"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A context switch is the OS saving one process/thread's CPU state and loading another's, enabling the illusion of simultaneous execution on a single core.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #095 │ Category: Operating Systems │ Difficulty: ★★☆ │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on: │ Process, Thread, CPU Registers │ │
-│ Used by: │ Scheduler, Thread Pool, Perf Tuning │ │
-│ Related: │ Fiber / Coroutine, TLB │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #095 | Category: Operating Systems | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Process, Thread, CPU Registers, Scheduler / Preemption | |
+| **Used by:** | Scheduler / Preemption, Thread Pool, Performance Tuning | |
+| **Related:** | Fiber / Coroutine, Scheduler / Preemption, TLB | |
 
 ### 🔥 The Problem This Solves
 

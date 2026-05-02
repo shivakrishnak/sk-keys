@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Class Loader"
 parent: "Java & JVM Internals"
@@ -22,14 +22,11 @@ tags:
 
 ⚡ TL;DR — The Class Loader is the JVM component that finds, loads, and links `.class` files into memory on demand at runtime.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0265        │ Category: Java & JVM Internals       │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ JVM, Bytecode, JDK                   │                          │
-│ Used by:     │ Reflection, Spring Core, CGLIB Proxy,│                          │
-│              │ Metaspace                            │                          │
-│ Related:     │ Reflection, Metaspace, invokedynamic │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #265 | Category: Java & JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Bytecode, JDK | |
+| **Used by:** | Reflection, Spring Core, CGLIB Proxy, Metaspace | |
+| **Related:** | Reflection, Metaspace, invokedynamic | |
 
 ### 🔥 The Problem This Solves
 

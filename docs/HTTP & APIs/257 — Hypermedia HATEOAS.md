@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Hypermedia / HATEOAS"
 parent: "HTTP & APIs"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — HATEOAS (Hypermedia as the Engine of Application State) is a REST constraint where API responses include links describing what actions are available next — similar to how a web browser follows links without needing to know URLs in advance; in practice, clients discover and navigate API capabilities dynamically from response links rather than hardcoding URL structures, enabling APIs to evolve without breaking clients.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #257         │ Category: HTTP & APIs              │ Difficulty: ★★★      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ REST, HTTP, API Design Best Prctcs │                      │
-│ Used by:     │ REST APIs, Self-Describing APIs,   │                      │
-│              │ Workflow APIs                      │                      │
-│ Related:     │ REST, API Design Best Practices,  │                      │
-│              │ Richardson Maturity Model          │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #257 | Category: HTTP & APIs | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | REST, HTTP, API Design Best Practices | |
+| **Used by:** | REST APIs, Self-Describing APIs, Workflow APIs | |
+| **Related:** | REST, API Design Best Practices, Richardson Maturity Model | |
 
 ### 🔥 The Problem This Solves
 

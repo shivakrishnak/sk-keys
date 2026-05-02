@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Observability"
 parent: "HTTP & APIs"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — API observability is the ability to understand the internal state of an API from its external outputs — using the three pillars (metrics, logs, traces) to answer "why is the API misbehaving?" not just "is the API up?"; specifically: tracking per-endpoint error rates/latencies/throughput, recording structured request/response logs, and using distributed traces to follow a request through all microservices it touches.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #259         │ Category: HTTP & APIs              │ Difficulty: ★★★      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ REST, HTTP, Observability,         │                      │
-│              │ Distributed Tracing                │                      │
-│ Used by:     │ API Operations, SRE,              │                      │
-│              │ Platform Engineering               │                      │
-│ Related:     │ Observability, Distributed Tracing,│                      │
-│              │ API Rate Limiting, SLOs            │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #259 | Category: HTTP & APIs | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | REST, HTTP, Observability, Distributed Tracing | |
+| **Used by:** | API Operations, SRE, Platform Engineering | |
+| **Related:** | Observability, Distributed Tracing, API Rate Limiting, SLOs | |
 
 ### 🔥 The Problem This Solves
 

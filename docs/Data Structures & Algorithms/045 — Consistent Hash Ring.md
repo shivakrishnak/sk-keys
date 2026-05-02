@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Consistent Hash Ring"
 parent: "Data Structures & Algorithms"
@@ -22,13 +22,11 @@ tags:
 
 ⚡ TL;DR — A Consistent Hash Ring maps keys to nodes on a circular hash space so that adding/removing nodes only re-maps O(K/N) keys instead of O(K) with naive modulo hashing.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #045         │ Category: Data Structures & Algorithms │ Difficulty: ★★★        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Hashing Techniques, TreeMap            │                        │
-│ Used by:     │ Distributed Locking, Caching, Gossip   │                        │
-│ Related:     │ Virtual Nodes, Rendezvous Hashing      │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #045 | Category: Data Structures & Algorithms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Hashing Techniques, TreeMap | |
+| **Used by:** | Distributed Locking, Caching, Gossip Protocol | |
+| **Related:** | Virtual Nodes, Rendezvous Hashing, Distributed Systems | |
 
 ### 🔥 The Problem This Solves
 

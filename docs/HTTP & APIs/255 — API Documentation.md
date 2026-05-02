@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Documentation"
 parent: "HTTP & APIs"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — API documentation is the written and interactive material that tells developers how to use an API: what endpoints exist, what parameters they accept, what responses they return, how to authenticate, and what errors to expect — ranging from auto-generated OpenAPI/Swagger UI to hand-crafted guides, code samples, and developer portals.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #255 │ Category: HTTP & APIs │ Difficulty: ★☆☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ OpenAPI/Swagger, REST │ │
-│ Used by: │ API Consumers, Developer Portals, │ │
-│ │ SDK Generation │ │
-│ Related: │ OpenAPI/Swagger, API Design Best │ │
-│ │ Practices, API Contract Testing │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #255 | Category: HTTP & APIs | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | OpenAPI/Swagger, REST | |
+| **Used by:** | API Consumers, Developer Portals, SDK Generation | |
+| **Related:** | OpenAPI/Swagger, API Design Best Practices, API Contract Testing | |
 
 ### 🔥 The Problem This Solves
 

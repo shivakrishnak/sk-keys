@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Bellman-Ford"
 parent: "Data Structures & Algorithms"
@@ -22,14 +22,11 @@ tags:
 
 ⚡ TL;DR — Bellman-Ford finds shortest paths from a single source by relaxing all edges V-1 times — it handles negative edge weights and detects negative cycles where Dijkstra fails.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #060         │ Category: Data Structures & Algorithms │ Difficulty: ★★★        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Graph, Dynamic Programming, Dijkstra   │                        │
-│ Used by:     │ OSPF/BGP Routing, Arbitrage Detection, │                        │
-│              │ SSSP with Negative Weights             │                        │
-│ Related:     │ Dijkstra, Floyd-Warshall, SPFA         │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #060 | Category: Data Structures & Algorithms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Graph, Dynamic Programming, Dijkstra | |
+| **Used by:** | OSPF/BGP Routing, Arbitrage Detection, SSSP with Negative Weights | |
+| **Related:** | Dijkstra, Floyd-Warshall, SPFA (Shortest Path Faster Algorithm) | |
 
 ### 🔥 The Problem This Solves
 

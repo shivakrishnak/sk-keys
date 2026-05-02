@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Server-Sent Events (SSE)"
 parent: "HTTP & APIs"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — Server-Sent Events (SSE) is a simple HTTP-based server-push mechanism where the server streams a sequence of text events over a single persistent HTTP connection; the browser auto-reconnects on disconnect, making it ideal for one-way real-time feeds like notifications, live scores, and LLM token streaming.
 
-┌─────────────────────────────────────────────────────────────────────────┐
-│ #228 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, HTTP/2, Event Streaming │ │
-│ Used by: │ Real-time Notifications, │ │
-│ │ Live Feeds, LLM Streaming │ │
-│ Related: │ WebSocket, Long Polling, │ │
-│ │ gRPC Streaming │ │
-└─────────────────────────────────────────────────────────────────────────┘
+| #228 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, HTTP/2, Event Streaming | |
+| **Used by:** | Real-time Notifications, Live Feeds, LLM Streaming Responses | |
+| **Related:** | WebSocket, Long Polling, gRPC Streaming | |
 
 ### 🔥 The Problem This Solves
 

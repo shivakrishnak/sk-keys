@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Quicksort"
 parent: "Data Structures & Algorithms"
@@ -22,14 +22,11 @@ tags:
 
 ⚡ TL;DR — Quicksort is a divide-and-conquer sorting algorithm that partitions around a pivot and recursively sorts partitions — O(N log N) average, O(N²) worst case, but fastest in practice due to cache efficiency.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #064         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Recursion, Divide and Conquer, Arrays  │                        │
-│ Used by:     │ Dual-Pivot Quicksort (Java Arrays.sort)│                        │
-│              │ Quickselect, Introsort                 │                        │
-│ Related:     │ Mergesort, Heapsort, Timsort           │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #064 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Recursion, Divide and Conquer, Arrays | |
+| **Used by:** | Dual-Pivot Quicksort (Java Arrays.sort), Quickselect, Introsort | |
+| **Related:** | Mergesort, Heapsort, Timsort | |
 
 ### 🔥 The Problem This Solves
 

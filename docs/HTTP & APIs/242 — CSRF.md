@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "CSRF"
 parent: "HTTP & APIs"
@@ -23,14 +23,11 @@ tags:
 
 ⚡ TL;DR — CSRF is an attack where a malicious website tricks a victim's browser into making an authenticated request to a target site using the victim's existing cookies; prevented by synchronizer CSRF tokens (a secret per-session token that a cross-site form can't know), `SameSite=Strict` cookies, or stateless JWT-in-header authentication (which browsers don't auto-send cross-site).
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #242 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, Browser Security, Cookies, │ │
-│ │ Session Management │ │
-│ Used by: │ Web App Security, API Security │ │
-│ Related: │ XSS, CORS, SameSite, API Auth, JWT │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #242 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, Browser Security Model, Cookies, Session Management | |
+| **Used by:** | Web Application Security, API Security | |
+| **Related:** | XSS, CORS, SameSite Cookie, API Authentication, JWT | |
 
 ### 🔥 The Problem This Solves (The Threat)
 

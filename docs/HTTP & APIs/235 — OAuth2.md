@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "OAuth2"
 parent: "HTTP & APIs"
@@ -23,14 +23,11 @@ tags:
 
 ⚡ TL;DR — OAuth 2.0 is an authorization framework that allows a user to grant a third-party application limited access to their resources at another service without sharing their password; the app receives a short-lived access token by directing the user through a consent flow — "Login with Google" and Stripe's API delegation are both OAuth 2.0.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #235 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, HTTPS, API Auth, JWT │ │
-│ Used by: │ Social Login, Enterprise SSO, │ │
-│ │ Third-party Integrations, Mobile │ │
-│ Related: │ OIDC, JWT, API Auth, API Keys, PKCE │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #235 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, HTTPS, API Authentication, JWT | |
+| **Used by:** | Third-party Integrations, Social Login, Enterprise SSO, Mobile Apps | |
+| **Related:** | OIDC, JWT, API Authentication, API Keys, PKCE | |
 
 ### 🔥 The Problem This Solves
 

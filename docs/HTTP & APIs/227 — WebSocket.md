@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "WebSocket"
 parent: "HTTP & APIs"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — WebSocket is a full-duplex, persistent communication channel between a client and server over a single TCP connection, established via an HTTP upgrade handshake — enabling real-time bidirectional data exchange without the overhead of repeated HTTP requests.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #227 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, TCP, HTTP Upgrade Mechanism │ │
-│ Used by: │ Real-time Apps, gRPC Streaming, │ │
-│ │ GraphQL Subscriptions │ │
-│ Related: │ Server-Sent Events, Long Polling, │ │
-│ │ gRPC Streaming │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #227 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, TCP, HTTP Upgrade Mechanism | |
+| **Used by:** | Real-time Apps, gRPC Streaming, GraphQL Subscriptions | |
+| **Related:** | Server-Sent Events, Long Polling, gRPC Streaming | |
 
 ### 🔥 The Problem This Solves
 

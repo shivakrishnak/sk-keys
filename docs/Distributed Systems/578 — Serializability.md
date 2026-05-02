@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Serializability"
 parent: "Distributed Systems"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Serializability is the strongest isolation level for database transactions: a history of concurrent transactions is serializable if the result is equivalent to some serial (sequential, one-at-a-time) execution. It prevents all transaction anomalies (dirty reads, non-repeatable reads, phantom reads, write skew). In distributed databases, achieving serializability requires protocols like Two-Phase Locking (2PL), Serializable Snapshot Isolation (SSI), or Spanner's TrueTime-based distributed transactions.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #578         │ Category: Distributed Systems      │ Difficulty: ★★★      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ Consistency Models, Linearizability│                      │
-│              │ Database Transactions, ACID        │                      │
-│ Used by:     │ Financial Transactions, Distributed│                      │
-│              │ Databases, OLTP Systems            │                      │
-│ Related:     │ Linearizability, ACID, Isolation   │                      │
-│              │ Levels, Snapshot Isolation         │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #578 | Category: Distributed Systems | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Consistency Models, Linearizability, Database Transactions, ACID | |
+| **Used by:** | Financial Transactions, Distributed Databases, OLTP Systems | |
+| **Related:** | Linearizability, ACID, Isolation Levels, Snapshot Isolation | |
 
 ### 🔥 The Problem This Solves
 

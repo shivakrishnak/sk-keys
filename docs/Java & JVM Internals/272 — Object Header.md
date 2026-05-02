@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Object Header"
 parent: "Java & JVM Internals"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Every Java object on the heap begins with a hidden header (8–16 bytes) encoding the object's GC age, lock state, identity hash code, and class pointer.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0272        │ Category: Java & JVM Internals       │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ JVM, Heap Memory, synchronized,      │                          │
-│              │ Class Loader                         │                          │
-│ Used by:     │ Escape Analysis, GC Roots,           │                          │
-│              │ synchronized, Biased Locking         │                          │
-│ Related:     │ GC Roots, synchronized, Escape       │                          │
-│              │ Analysis, TLAB                       │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #272 | Category: Java & JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Heap Memory, synchronized, Class Loader | |
+| **Used by:** | Escape Analysis, GC Roots, synchronized, Biased Locking | |
+| **Related:** | GC Roots, synchronized, Escape Analysis, TLAB | |
 
 ### 🔥 The Problem This Solves
 

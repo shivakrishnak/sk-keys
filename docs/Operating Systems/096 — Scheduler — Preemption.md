@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Scheduler / Preemption"
 parent: "Operating Systems"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — The scheduler decides which process/thread runs next on the CPU; preemption forcibly interrupts a running task to give the CPU to a higher-priority or time-sliced task.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #096 │ Category: Operating Systems │ Difficulty: ★★☆ │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on: │ Process, Thread, Context Switch │ │
-│ Used by: │ Thread Pool, Real-Time Systems │ │
-│ Related: │ Context Switch, Starvation, Deadlock │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #096 | Category: Operating Systems | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Process, Thread, Context Switch, Timer Interrupt | |
+| **Used by:** | Thread Pool, Real-Time Systems, Java Thread Priority | |
+| **Related:** | Context Switch, Starvation, Priority Inversion | |
 
 ### 🔥 The Problem This Solves
 

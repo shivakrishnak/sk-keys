@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Memoization"
 parent: "Data Structures & Algorithms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — Memoization caches the results of recursive calls so each unique subproblem is computed only once, converting exponential recursion into polynomial time.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #051         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Recursion, HashMap                     │                        │
-│ Used by:     │ Dynamic Programming, Tabulation        │                        │
-│ Related:     │ Tabulation, Dynamic Programming, Cache │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #051 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Recursion, HashMap | |
+| **Used by:** | Dynamic Programming, Tabulation (Bottom-Up DP) | |
+| **Related:** | Tabulation (Bottom-Up DP), Dynamic Programming, LRU Cache | |
 
 ### 🔥 The Problem This Solves
 

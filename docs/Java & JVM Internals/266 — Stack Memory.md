@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Stack Memory"
 parent: "Java & JVM Internals"
@@ -22,14 +22,11 @@ tags:
 
 ⚡ TL;DR — Stack memory is the JVM's per-thread, auto-managed memory region where method call frames and local variables live — fast, bounded, and automatically reclaimed.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0266        │ Category: Java & JVM Internals       │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ JVM, Thread, Process                 │                          │
-│ Used by:     │ Stack Frame, Heap Memory,            │                          │
-│              │ Escape Analysis                      │                          │
-│ Related:     │ Heap Memory, Stack Frame, Metaspace  │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #266 | Category: Java & JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Thread, Process | |
+| **Used by:** | Stack Frame, Heap Memory, Escape Analysis | |
+| **Related:** | Heap Memory, Stack Frame, Metaspace | |
 
 ### 🔥 The Problem This Solves
 

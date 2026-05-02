@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Functional Programming"
 parent: "CS Fundamentals — Paradigms"
@@ -22,17 +22,11 @@ tags:
 
 ⚡ TL;DR — Functional programming treats computation as the evaluation of mathematical functions, eliminating shared mutable state to make programs correct by construction.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0004 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────────┼─────────────────────────┤
-│ Depends on: │ Declarative Programming, │ │
-│ │ First-Class Functions, │ │
-│ │ Higher-Order Functions │ │
-│ Used by: │ Reactive Programming, Side Effects, │ │
-│ │ Referential Transparency │ │
-│ Related: │ OOP, Declarative Programming, │ │
-│ │ Lambda Calculus │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #004 | Category: CS Fundamentals — Paradigms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Declarative Programming, First-Class Functions, Higher-Order Functions | |
+| **Used by:** | Reactive Programming, Side Effects, Referential Transparency | |
+| **Related:** | Object-Oriented Programming, Declarative Programming, Lambda Calculus | |
 
 ### 🔥 The Problem This Solves
 

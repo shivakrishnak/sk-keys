@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "OIDC"
 parent: "HTTP & APIs"
@@ -23,14 +23,11 @@ tags:
 
 ⚡ TL;DR — OpenID Connect (OIDC) is an authentication layer built on top of OAuth 2.0 that adds a standardized `id_token` (a JWT containing verified user identity claims), a `/userinfo` endpoint, and a discovery document — turning OAuth2 from a pure authorization protocol into a complete identity and authentication protocol used by "Login with Google/Microsoft/Apple."
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #237 │ Category: HTTP & APIs │ Difficulty: ★★★ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ OAuth2, JWT, HTTP │ │
-│ Used by: │ Enterprise SSO, Social Login, │ │
-│ │ Identity Federation, Mobile │ │
-│ Related: │ OAuth2, JWT, API Auth, SAML, Fed │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #237 | Category: HTTP & APIs | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | OAuth2, JWT, HTTP | |
+| **Used by:** | Enterprise SSO, Social Login, Identity Federation, Mobile Apps | |
+| **Related:** | OAuth2, JWT, API Authentication, SAML, Federation | |
 
 ### 🔥 The Problem This Solves
 

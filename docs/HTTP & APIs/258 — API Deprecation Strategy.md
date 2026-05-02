@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Deprecation Strategy"
 parent: "HTTP & APIs"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — API deprecation strategy is the process and policies for safely retiring old API versions or endpoints: announce deprecation early (via `Deprecation` + `Sunset` headers, changelog, email), provide a migration path, enforce a sunset date after which the endpoint is removed, and monitor which consumers are still calling deprecated endpoints to target migration outreach.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #258 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ API Versioning, API Backward │ │
-│ │ Compatibility, HTTP │ │
-│ Used by: │ Public APIs, Platform Teams, │ │
-│ │ Microservices │ │
-│ Related: │ API Versioning, API Backward Compat│ │
-│ │ HTTP Headers │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #258 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | API Versioning, API Backward Compatibility, HTTP | |
+| **Used by:** | Public APIs, Platform Teams, Microservices | |
+| **Related:** | API Versioning, API Backward Compatibility, HTTP Headers | |
 
 ### 🔥 The Problem This Solves
 

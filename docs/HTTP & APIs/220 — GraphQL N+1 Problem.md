@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "GraphQL N+1 Problem"
 parent: "HTTP & APIs"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — The N+1 problem occurs when fetching a list of N items then making one separate database query per item (for a related field) — resulting in N+1 total queries; GraphQL's per-field resolver model makes this the default behavior for nested list queries.
 
-┌────────────────────────────────────────────────────────────────────────────┐
-│ #220 │ Category: HTTP & APIs │ Difficulty: ★★★ │
-├──────────────┼──────────────────────────────────────┼─────────────────────┤
-│ Depends on: │ GraphQL, GraphQL Resolvers, │ │
-│ │ Database Queries, DataLoader │ │
-│ Used by: │ DataLoader, GraphQL Performance, │ │
-│ │ Query Complexity │ │
-│ Related: │ ORM N+1 Problem, Eager Loading, │ │
-│ │ Batch Processing │ │
-└────────────────────────────────────────────────────────────────────────────┘
+| #220 | Category: HTTP & APIs | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | GraphQL, GraphQL Resolvers, Database Queries, DataLoader | |
+| **Used by:** | DataLoader, GraphQL Performance Optimization, Query Complexity | |
+| **Related:** | ORM N+1 Problem, Eager Loading, Batch Processing | |
 
 ### 🔥 The Problem This Solves
 

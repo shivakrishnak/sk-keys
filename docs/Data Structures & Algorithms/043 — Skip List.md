@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Skip List"
 parent: "Data Structures & Algorithms"
@@ -22,13 +22,11 @@ tags:
 
 ⚡ TL;DR — A Skip List achieves O(log N) expected search, insert, and delete on sorted data using randomised multi-level linked lists — simpler to implement concurrently than balanced trees.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #043         │ Category: Data Structures & Algorithms │ Difficulty: ★★★        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ LinkedList, Randomized Algorithms      │                        │
-│ Used by:     │ ConcurrentSkipListMap, Database Index  │                        │
-│ Related:     │ TreeMap, B-Tree, AVL Tree              │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #043 | Category: Data Structures & Algorithms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | LinkedList, Randomized Algorithms | |
+| **Used by:** | ConcurrentSkipListMap, Database Index | |
+| **Related:** | TreeMap, B-Tree, AVL Tree | |
 
 ### 🔥 The Problem This Solves
 

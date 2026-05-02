@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Concurrency vs Parallelism"
 parent: "CS Fundamentals — Paradigms"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — Concurrency is about _dealing with_ multiple things at once (structure); parallelism is about _doing_ multiple things at once (execution).
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #014 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Operating Systems, │ │
-│ │ Synchronous vs Asynchronous │ │
-│ Used by: │ Java Concurrency, Reactive Programming│ │
-│ │ Distributed Systems │ │
-│ Related: │ Threads, Event Loop, Actor Model │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #014 | Category: CS Fundamentals — Paradigms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Operating Systems, Synchronous vs Asynchronous | |
+| **Used by:** | Java Concurrency, Reactive Programming, Distributed Systems | |
+| **Related:** | Threads, Event Loop, Actor Model | |
 
 ---
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Lamport Clock"
 parent: "Distributed Systems"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — A Lamport Clock (Lamport Timestamp) is a logical clock for ordering events in a distributed system without relying on synchronized physical clocks. Each process maintains a counter; the counter increments on every local event and on every message receive (taking the max of message timestamp and local clock, then +1). Lamport Clocks capture the happened-before relationship but cannot distinguish concurrent events — they only prove ordering, not simultaneity.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #580         │ Category: Distributed Systems      │ Difficulty: ★★★      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ Distributed Systems Fundamentals,  │                      │
-│              │ Happened-Before, Message Passing    │                      │
-│ Used by:     │ Distributed Tracing, Event          │                      │
-│              │ Ordering, Causal Consistency        │                      │
-│ Related:     │ Vector Clock, Happened-Before,      │                      │
-│              │ Causal Consistency, Total Order     │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #580 | Category: Distributed Systems | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Distributed Systems Fundamentals, Happened-Before, Message Passing | |
+| **Used by:** | Distributed Tracing, Event Ordering, Causal Consistency | |
+| **Related:** | Vector Clock, Happened-Before, Causal Consistency, Total Order | |
 
 ### 🔥 The Problem This Solves
 

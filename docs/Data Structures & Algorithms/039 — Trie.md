@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Trie"
 parent: "Data Structures & Algorithms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A Trie stores strings by their shared prefixes, enabling O(L) lookup and prefix search impossible to do this efficiently with a HashMap.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #039         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ HashMap, Array                         │                        │
-│ Used by:     │ String Matching, Prefix Search         │                        │
-│ Related:     │ HashMap, Radix Tree, Aho-Corasick      │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #039 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HashMap, Array | |
+| **Used by:** | String Matching (KMP, Rabin-Karp), Prefix Search | |
+| **Related:** | HashMap, Radix Tree, Aho-Corasick | |
 
 ### 🔥 The Problem This Solves
 

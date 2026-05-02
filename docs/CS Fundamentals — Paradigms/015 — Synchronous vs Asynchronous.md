@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Synchronous vs Asynchronous"
 parent: "CS Fundamentals — Paradigms"
@@ -21,15 +21,11 @@ tags:
 
 ⚡ TL;DR — Synchronous code waits for each operation to complete before continuing; asynchronous code initiates an operation and moves on, continuing when the result arrives.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #015 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Concurrency vs Parallelism │ │
-│ Used by: │ Event Loop, Reactive Programming, │ │
-│ │ HTTP & APIs │ │
-│ Related: │ Blocking vs Non-Blocking I/O, │ │
-│ │ Event Loop, Callbacks │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #015 | Category: CS Fundamentals — Paradigms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Concurrency vs Parallelism | |
+| **Used by:** | Event Loop, Reactive Programming, HTTP & APIs | |
+| **Related:** | Blocking vs Non-Blocking I/O, Event Loop, Callbacks | |
 
 ---
 

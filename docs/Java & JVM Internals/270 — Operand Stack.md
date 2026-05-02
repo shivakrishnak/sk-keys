@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Operand Stack"
 parent: "Java & JVM Internals"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — The Operand Stack is the JVM's per-frame LIFO working area where bytecode instructions push and pop values to perform all computation.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0270        │ Category: Java & JVM Internals       │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ Stack Frame, Bytecode, JVM,          │                          │
-│              │ Stack Memory                         │                          │
-│ Used by:     │ JIT Compiler, invokedynamic,         │                          │
-│              │ Local Variable Table                 │                          │
-│ Related:     │ Stack Frame, Local Variable Table,   │                          │
-│              │ Bytecode                             │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #270 | Category: Java & JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Stack Frame, Bytecode, JVM, Stack Memory | |
+| **Used by:** | JIT Compiler, invokedynamic, Local Variable Table | |
+| **Related:** | Stack Frame, Local Variable Table, Bytecode | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Space Complexity"
 parent: "Data Structures & Algorithms"
@@ -21,14 +21,11 @@ tags:
 
 ⚡ TL;DR — Space complexity measures how much additional memory an algorithm uses relative to input size N, using the same Big-O notation as time complexity.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #049         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Time Complexity / Big-O,               │                        │
-│              │ Memory Management Models               │                        │
-│ Used by:     │ Amortized Analysis, Space-Time Trade-off│                       │
-│ Related:     │ Time Complexity, Space-Time Trade-off  │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #049 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Time Complexity / Big-O, Memory Management Models | |
+| **Used by:** | Amortized Analysis, Space-Time Trade-off | |
+| **Related:** | Time Complexity / Big-O, Space-Time Trade-off, Amortized Analysis | |
 
 ### 🔥 The Problem This Solves
 

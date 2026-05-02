@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "WSDL"
 parent: "HTTP & APIs"
@@ -23,14 +23,11 @@ tags:
 
 ⚡ TL;DR — WSDL (Web Services Description Language) is the XML-based interface definition language for SOAP web services; it formally describes the operations a service offers, the message formats it accepts, and the endpoint URL — enabling automatic generation of type-safe client code in any language.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #226 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ SOAP, XML, Web Services │ │
-│ Used by: │ SOAP, JAX-WS, API Contract Testing │ │
-│ Related: │ SOAP, OpenAPI Specification, │ │
-│ │ Protocol Buffers │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #226 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | SOAP, XML, Web Services | |
+| **Used by:** | SOAP, JAX-WS, API Contract Testing | |
+| **Related:** | SOAP, OpenAPI Specification, Protocol Buffers | |
 
 ### 🔥 The Problem This Solves
 

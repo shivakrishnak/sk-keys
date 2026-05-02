@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Turing Completeness"
 parent: "CS Fundamentals — Paradigms"
@@ -21,15 +21,11 @@ tags:
 
 ⚡ TL;DR — A system is Turing complete if it can simulate any computation that a Turing machine can perform — meaning it can compute anything that is computable.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #023 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★★ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Compiled vs Interpreted Languages, │ │
-│ │ Memory Management Models │ │
-│ Used by: │ Metaprogramming, Church-Turing Thesis│ │
-│ Related: │ Church-Turing Thesis, Lambda Calculus,│ │
-│ │ Halting Problem │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #023 | Category: CS Fundamentals — Paradigms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Compiled vs Interpreted Languages, Concurrency vs Parallelism, Memory Management Models | |
+| **Used by:** | Metaprogramming, Church-Turing Thesis | |
+| **Related:** | Church-Turing Thesis, Lambda Calculus, Halting Problem | |
 
 ---
 

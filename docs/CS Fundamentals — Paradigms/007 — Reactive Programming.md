@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Reactive Programming"
 parent: "CS Fundamentals — Paradigms"
@@ -23,17 +23,11 @@ tags:
 
 ⚡ TL;DR — Reactive programming treats data as streams of events that you compose and transform with functional operators, automatically propagating changes through the pipeline.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0007 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────────┼─────────────────────────┤
-│ Depends on: │ Event-Driven Programming, │ │
-│ │ Functional Programming, │ │
-│ │ Asynchronous Programming │ │
-│ Used by: │ Spring WebFlux, RxJava, │ │
-│ │ Reactive Streams │ │
-│ Related: │ Event-Driven Programming, │ │
-│ │ Functional Programming, Actor Model │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #007 | Category: CS Fundamentals — Paradigms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Event-Driven Programming, Functional Programming, Asynchronous Programming | |
+| **Used by:** | Spring WebFlux, RxJava, Reactive Streams | |
+| **Related:** | Event-Driven Programming, Functional Programming, Actor Model | |
 
 ### 🔥 The Problem This Solves
 

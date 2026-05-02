@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Caching"
 parent: "HTTP & APIs"
@@ -23,15 +23,11 @@ tags:
 
 ⚡ TL;DR — API caching stores the responses to API requests so that subsequent identical requests are served from the cache (faster, cheaper) rather than re-executing the full backend logic; the primary mechanism is HTTP's `Cache-Control` directive, which tells clients, CDNs, and proxies how long to cache a response and when to revalidate with the server.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #251 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, REST, HTTP Caching Headers │ │
-│ Used by: │ REST APIs, CDN, Browser Caching, │ │
-│ │ Microservices │ │
-│ Related: │ ETag/Cache-Control, API Rate Limit,│ │
-│ │ CDN, Redis │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #251 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, REST, HTTP Caching Headers | |
+| **Used by:** | REST APIs, CDN, Browser Caching, Microservices | |
+| **Related:** | ETag/Cache-Control, API Rate Limiting, CDN, Redis | |
 
 ### 🔥 The Problem This Solves
 

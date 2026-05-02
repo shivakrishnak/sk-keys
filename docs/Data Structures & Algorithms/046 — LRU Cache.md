@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "LRU Cache"
 parent: "Data Structures & Algorithms"
@@ -22,13 +22,11 @@ tags:
 
 ⚡ TL;DR — An LRU Cache evicts the least recently used item when full, keeping hot data in O(1) time using a HashMap plus a doubly linked list.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #046         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ HashMap, LinkedList, Queue / Deque     │                        │
-│ Used by:     │ LFU Cache, HTTP Caching, OS Page Cache │                        │
-│ Related:     │ LFU Cache, MRU Cache, TTL Cache        │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #046 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HashMap, LinkedList, Queue / Deque | |
+| **Used by:** | LFU Cache, HTTP Caching, OS Page Cache | |
+| **Related:** | LFU Cache, MRU Cache, TTL Cache | |
 
 ### 🔥 The Problem This Solves
 

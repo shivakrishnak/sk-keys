@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Topological Sort"
 parent: "Data Structures & Algorithms"
@@ -22,14 +22,11 @@ tags:
 
 ⚡ TL;DR — Topological Sort orders nodes of a DAG so every directed edge points forward — essential for dependency resolution in build systems and task schedulers.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #058         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Graph, DFS, Queue / Deque              │                        │
-│ Used by:     │ Build systems, Task scheduling,        │                        │
-│              │ Course prerequisites                   │                        │
-│ Related:     │ DFS, BFS, Strongly Connected Components│                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #058 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Graph, DFS, Queue / Deque | |
+| **Used by:** | Build Systems, Task Scheduling, Course Prerequisites | |
+| **Related:** | DFS, BFS, Strongly Connected Components | |
 
 ### 🔥 The Problem This Solves
 

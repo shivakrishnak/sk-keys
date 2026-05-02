@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Mocking"
 parent: "HTTP & APIs"
@@ -23,15 +23,11 @@ tags:
 
 ⚡ TL;DR — API mocking creates a fake implementation of an API that returns predefined responses, enabling frontend/consumer development without a running backend, isolating services for testing, and simulating error conditions and edge cases that are difficult to reproduce with real services.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #248 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ REST, HTTP, OpenAPI/Swagger │ │
-│ Used by: │ Frontend Dev, Contract Testing, │ │
-│ │ Integration Testing, API Design │ │
-│ Related: │ API Contract Testing, OpenAPI, │ │
-│ │ Stubbing, WireMock, Pact │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #248 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | REST, HTTP, OpenAPI/Swagger | |
+| **Used by:** | Frontend Development, Contract Testing, Integration Testing, API Design | |
+| **Related:** | API Contract Testing, OpenAPI/Swagger, Stubbing, WireMock | |
 
 ### 🔥 The Problem This Solves
 

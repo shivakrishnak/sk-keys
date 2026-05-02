@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "A* Search"
 parent: "Data Structures & Algorithms"
@@ -23,16 +23,11 @@ tags:
 
 ⚡ TL;DR — A* finds shortest paths faster than Dijkstra by using a heuristic to guide expansion toward the goal, exploring far fewer nodes when the heuristic is accurate.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #061         │ Category: Data Structures & Algorithms │ Difficulty: ★★★        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Dijkstra, Priority Queue, Graph,       │                        │
-│              │ Heuristic Functions                    │                        │
-│ Used by:     │ GPS Navigation, Game Pathfinding,      │                        │
-│              │ Robotics Motion Planning               │                        │
-│ Related:     │ Dijkstra, Greedy Best-First Search,    │                        │
-│              │ Bidirectional Dijkstra                 │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #061 | Category: Data Structures & Algorithms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Dijkstra, Priority Queue, Graph, Heuristic Functions | |
+| **Used by:** | GPS Navigation, Game Pathfinding, Robotics Motion Planning | |
+| **Related:** | Dijkstra, Greedy Best-First Search, Bidirectional Dijkstra | |
 
 ### 🔥 The Problem This Solves
 

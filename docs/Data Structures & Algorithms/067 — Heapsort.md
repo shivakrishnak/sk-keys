@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Heapsort"
 parent: "Data Structures & Algorithms"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — Heapsort sorts in-place using a max-heap — guaranteed O(N log N) in all cases and O(1) extra space, but poor cache performance makes it slower than Quicksort in practice.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #067         │ Category: Data Structures & Algorithms │ Difficulty: ★★★        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Heap (Min/Max), Divide and Conquer,    │                        │
-│              │ Arrays                                 │                        │
-│ Used by:     │ Introsort (fallback), Priority Queues, │                        │
-│              │ k-largest element problems             │                        │
-│ Related:     │ Quicksort, Mergesort, Heap (Min/Max)   │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #067 | Category: Data Structures & Algorithms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Heap (Min/Max), Divide and Conquer, Arrays | |
+| **Used by:** | Introsort (fallback), Priority Queues, k-largest element problems | |
+| **Related:** | Quicksort, Mergesort, Heap (Min/Max) | |
 
 ### 🔥 The Problem This Solves
 

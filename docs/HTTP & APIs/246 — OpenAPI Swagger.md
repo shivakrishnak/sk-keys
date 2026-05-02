@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "OpenAPI / Swagger"
 parent: "HTTP & APIs"
@@ -23,14 +23,11 @@ tags:
 
 ⚡ TL;DR — OpenAPI (formerly Swagger) is a language-agnostic specification for describing REST APIs in a machine-readable YAML/JSON document, enabling automatic documentation generation, client SDK generation, server stub generation, and contract testing — all from a single source of truth that defines every endpoint, operation, request/response schema, and security requirement.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #246 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ REST, HTTP, JSON Schema │ │
-│ Used by: │ API Design, Docs, Code Generation │ │
-│ Related: │ API Contract Testing, REST, │ │
-│ │ API Documentation, API Versioning │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #246 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | REST, HTTP, JSON Schema | |
+| **Used by:** | API Design, Documentation, Code Generation, Contract Testing | |
+| **Related:** | API Contract Testing, API Documentation, REST, API Versioning | |
 
 ### 🔥 The Problem This Solves
 

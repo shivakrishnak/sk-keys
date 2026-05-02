@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "GraphQL Subscriptions"
 parent: "HTTP & APIs"
@@ -23,16 +23,11 @@ tags:
 
 ⚡ TL;DR — GraphQL Subscriptions allow clients to receive real-time data updates by maintaining a persistent connection to the server; the client declares what events it wants using the same query syntax, and the server pushes matching data whenever those events occur.
 
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ #221 │ Category: HTTP & APIs │ Difficulty: ★★★ │
-├──────────────┼───────────────────────────────────────┼────────────────────┤
-│ Depends on: │ GraphQL, GraphQL Resolvers, │ │
-│ │ WebSocket, Pub/Sub Pattern │ │
-│ Used by: │ Real-time APIs, Event-Driven Arch, │ │
-│ │ GraphQL Federation │ │
-│ Related: │ WebSocket, Server-Sent Events, │ │
-│ │ Long Polling │ │
-└─────────────────────────────────────────────────────────────────────────────┘
+| #221 | Category: HTTP & APIs | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | GraphQL, GraphQL Resolvers, WebSocket, Pub/Sub Pattern | |
+| **Used by:** | Real-time APIs, Event-Driven Architecture, GraphQL Federation | |
+| **Related:** | WebSocket, Server-Sent Events, Long Polling | |
 
 ### 🔥 The Problem This Solves
 

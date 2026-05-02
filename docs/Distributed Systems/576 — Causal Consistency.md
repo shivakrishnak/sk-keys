@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Causal Consistency"
 parent: "Distributed Systems"
@@ -22,17 +22,11 @@ tags:
 
 ⚡ TL;DR — Causal Consistency ensures that operations with a causal relationship (where one operation happened-before another) are seen in that order by all nodes. Causally unrelated (concurrent) operations may appear in any order. It is stronger than eventual consistency (captures semantic ordering), weaker than sequential consistency (doesn't require global order for concurrent ops), and achievable without global coordination — making it practical for geo-distributed systems.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #576         │ Category: Distributed Systems      │ Difficulty: ★★★      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ Consistency Models, Eventual        │                      │
-│              │ Consistency, Vector Clock,          │                      │
-│              │ Happened-Before                    │                      │
-│ Used by:     │ Social Networks, Messaging,        │                      │
-│              │ Collaborative Editing              │                      │
-│ Related:     │ Linearizability, Eventual           │                      │
-│              │ Consistency, Vector Clock, COPS     │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #576 | Category: Distributed Systems | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Consistency Models, Eventual Consistency, Vector Clock, Happened-Before | |
+| **Used by:** | Social Networks, Messaging Systems, Collaborative Editing | |
+| **Related:** | Linearizability, Eventual Consistency, Vector Clock, COPS | |
 
 ### 🔥 The Problem This Solves
 

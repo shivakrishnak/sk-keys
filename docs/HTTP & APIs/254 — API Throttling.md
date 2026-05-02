@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Throttling"
 parent: "HTTP & APIs"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — API throttling deliberately slows down or blocks requests that exceed a defined rate to protect the backend from overload; while **rate limiting** is binary (allow/deny per time window), **throttling** is a broader term that includes queuing, gradual slow-down, and request shaping — ensuring the API degrades gracefully under high load rather than crashing.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #254         │ Category: HTTP & APIs              │ Difficulty: ★★☆      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ API Rate Limiting, REST, HTTP      │                      │
-│ Used by:     │ REST APIs, API Gateways,           │                      │
-│              │ Microservices Protection           │                      │
-│ Related:     │ API Rate Limiting, API Gateway,    │                      │
-│              │ Circuit Breaker, Bulkhead          │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #254 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | API Rate Limiting, REST, HTTP | |
+| **Used by:** | REST APIs, API Gateways, Microservices Protection | |
+| **Related:** | API Rate Limiting, API Gateway, Circuit Breaker, Bulkhead | |
 
 ### 🔥 The Problem This Solves
 

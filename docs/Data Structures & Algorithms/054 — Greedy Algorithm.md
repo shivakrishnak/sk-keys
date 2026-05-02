@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Greedy Algorithm"
 parent: "Data Structures & Algorithms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A Greedy Algorithm makes the locally optimal choice at each step, never revising it — correct when the greedy choice property holds, faster than DP or exhaustive search.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #054         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Time Complexity / Big-O, Priority Queue│                        │
-│ Used by:     │ Dijkstra, Huffman Coding, Kruskal/Prim │                        │
-│ Related:     │ Dynamic Programming, Backtracking      │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #054 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Time Complexity / Big-O, Priority Queue | |
+| **Used by:** | Dijkstra, Huffman Coding, Kruskal / Prim | |
+| **Related:** | Dynamic Programming, Divide and Conquer, Backtracking | |
 
 ### 🔥 The Problem This Solves
 

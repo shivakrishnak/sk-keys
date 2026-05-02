@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Side Effects"
 parent: "CS Fundamentals — Paradigms"
@@ -21,15 +21,11 @@ tags:
 
 ⚡ TL;DR — A side effect is any observable change a function makes to the world beyond returning a value — writing to a file, modifying state, logging, calling a network API.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #028 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Functional Programming, │ │
-│ │ Higher-Order Functions │ │
-│ Used by: │ Referential Transparency, Idempotency │ │
-│ Related: │ Referential Transparency, Idempotency,│ │
-│ │ Pure Functions, Immutability │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #028 | Category: CS Fundamentals — Paradigms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Functional Programming, Higher-Order Functions | |
+| **Used by:** | Referential Transparency, Idempotency | |
+| **Related:** | Referential Transparency, Idempotency, Pure Functions, Immutability | |
 
 ---
 

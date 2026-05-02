@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Metaspace"
 parent: "Java & JVM Internals"
@@ -22,14 +22,11 @@ tags:
 
 ⚡ TL;DR — Metaspace is the JVM's native memory region where class metadata lives — it replaced PermGen in Java 8 and grows dynamically instead of hitting a fixed cap.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0268        │ Category: Java & JVM Internals       │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ JVM, Class Loader, Heap Memory       │                          │
-│ Used by:     │ GraalVM, JIT Compiler, Reflection    │                          │
-│ Related:     │ Heap Memory, Stack Memory,            │                          │
-│              │ Class Loader, PermGen                 │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #268 | Category: Java & JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Class Loader, Heap Memory | |
+| **Used by:** | GraalVM, JIT Compiler, Reflection | |
+| **Related:** | Heap Memory, Stack Memory, Class Loader, PermGen | |
 
 ### 🔥 The Problem This Solves
 

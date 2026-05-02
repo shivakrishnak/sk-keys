@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Rate Limiting"
 parent: "HTTP & APIs"
@@ -22,14 +22,11 @@ tags:
 
 ⚡ TL;DR — API rate limiting controls how many requests a client can make in a time window; the server returns HTTP 429 (Too Many Requests) when the limit is exceeded; strategies include Fixed Window, Sliding Window, Token Bucket, and Leaky Bucket — each with different fairness and burst tolerance tradeoffs.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #233 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, Redis, API Gateway │ │
-│ Used by: │ Public APIs, API GW, SaaS, Services│ │
-│ Related: │ API Throttling, API Gateway, Auth, │ │
-│ │ Circuit Breaker │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #233 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, Redis, API Gateway | |
+| **Used by:** | Public APIs, API Gateways, Microservices, SaaS Platforms | |
+| **Related:** | API Throttling, API Gateway, HMAC, API Authentication, Circuit Breaker | |
 
 ### 🔥 The Problem This Solves
 

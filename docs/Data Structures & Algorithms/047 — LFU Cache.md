@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "LFU Cache"
 parent: "Data Structures & Algorithms"
@@ -22,13 +22,11 @@ tags:
 
 ⚡ TL;DR — An LFU Cache evicts the least *frequently* accessed item when full, outperforming LRU on skewed workloads — achieved in O(1) via a frequency-bucketed doubly linked list design.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #047         │ Category: Data Structures & Algorithms │ Difficulty: ★★★        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ LRU Cache, HashMap, Heap (Min/Max)     │                        │
-│ Used by:     │ CDN Caching, Browser Cache             │                        │
-│ Related:     │ LRU Cache, TinyLFU, MFU Cache          │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #047 | Category: Data Structures & Algorithms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | LRU Cache, HashMap, Heap (Min/Max) | |
+| **Used by:** | CDN Caching, Browser Cache | |
+| **Related:** | LRU Cache, TinyLFU, MFU Cache | |
 
 ### 🔥 The Problem This Solves
 

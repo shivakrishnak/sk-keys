@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "CORS"
 parent: "HTTP & APIs"
@@ -23,14 +23,11 @@ tags:
 
 ⚡ TL;DR — CORS is a browser security mechanism that controls which cross-origin HTTP requests are allowed; browsers block requests to a different origin by default (Same-Origin Policy), and CORS allows servers to explicitly opt-in by sending `Access-Control-Allow-Origin` and related HTTP response headers — a CORS error means the SERVER's response is missing the right headers, not that the request was blocked by the server.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #240 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, Browser Security, SOP │ │
-│ Used by: │ Web APIs, SPA, API Gateways │ │
-│ Related: │ XSS, CSRF, HTTP Headers, │ │
-│ │ API Gateway │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #240 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, Browser Security Model, Same-Origin Policy | |
+| **Used by:** | Web APIs, SPA (React/Vue/Angular), API Gateways | |
+| **Related:** | XSS, CSRF, HTTP Headers, API Gateway | |
 
 ### 🔥 The Problem This Solves
 

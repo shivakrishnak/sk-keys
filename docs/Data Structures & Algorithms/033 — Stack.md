@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Stack"
 parent: "Data Structures & Algorithms"
@@ -20,13 +20,11 @@ tags:
 
 ⚡ TL;DR — A Stack enforces last-in, first-out (LIFO) order so the most recently added item is always processed first.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #033         │ Category: Data Structures & Algorithms │ Difficulty: ★☆☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Array, LinkedList                      │                        │
-│ Used by:     │ DFS, Backtracking, Recursion trade-offs│                        │
-│ Related:     │ Queue / Deque, Recursion, Call Stack   │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #033 | Category: Data Structures & Algorithms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Array, LinkedList | |
+| **Used by:** | DFS, Backtracking, Recursion vs Iteration Trade-offs | |
+| **Related:** | Queue / Deque, Recursion, Call Stack | |
 
 ### 🔥 The Problem This Solves
 

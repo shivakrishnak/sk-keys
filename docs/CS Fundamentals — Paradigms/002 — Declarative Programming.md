@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Declarative Programming"
 parent: "CS Fundamentals — Paradigms"
@@ -21,14 +21,11 @@ tags:
 
 ⚡ TL;DR — Declarative programming means telling the computer WHAT you want, not HOW to get it — you describe the goal, the system figures out the steps.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0002 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
-├──────────────┼───────────────────────────────────────┼─────────────────────────┤
-│ Depends on: │ Imperative Programming, Functions │ │
-│ Used by: │ Functional Programming, SQL, React │ │
-│ Related: │ Imperative Programming, Functional, │ │
-│ │ Domain-Specific Languages │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #002 | Category: CS Fundamentals — Paradigms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Imperative Programming, Functions | |
+| **Used by:** | Functional Programming, Reactive Programming, SQL | |
+| **Related:** | Imperative Programming, Functional Programming, Domain-Specific Languages | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Timsort"
 parent: "Data Structures & Algorithms"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — Timsort is a hybrid mergesort that exploits naturally occurring sorted "runs" in real data, achieving O(N) on nearly-sorted input while guaranteeing O(N log N) worst case and full stability.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #066         │ Category: Data Structures & Algorithms │ Difficulty: ★★★        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Mergesort, Insertion Sort,             │                        │
-│              │ Divide and Conquer                     │                        │
-│ Used by:     │ Java Arrays.sort (objects), Python     │                        │
-│              │ sorted(), Android Arrays.sort          │                        │
-│ Related:     │ Mergesort, Quicksort, Adaptive Sorting │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #066 | Category: Data Structures & Algorithms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Mergesort, Insertion Sort, Divide and Conquer | |
+| **Used by:** | Java Arrays.sort (objects), Python sorted(), Android Arrays.sort | |
+| **Related:** | Mergesort, Quicksort, Adaptive Sorting | |
 
 ### 🔥 The Problem This Solves
 

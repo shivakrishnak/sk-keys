@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "BFF (Backend for Frontend)"
 parent: "HTTP & APIs"
@@ -22,14 +22,11 @@ tags:
 
 ⚡ TL;DR — The Backend for Frontend (BFF) pattern creates a dedicated backend service for each distinct frontend client (web, mobile, TV) that aggregates, transforms, and tailors microservice responses to match exactly what that client needs, eliminating over-fetching, under-fetching, and the "one-size-fits-all" API that serves all clients poorly.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #250 │ Category: HTTP & APIs │ Difficulty: ★★★ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ API Gateway, REST, Microservices │ │
-│ Used by: │ Mobile Apps, SPAs, Smart TVs, │ │
-│ │ Multi-channel Products │ │
-│ Related: │ API Gateway, GraphQL, Microservices│ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #250 | Category: HTTP & APIs | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | API Gateway, REST, Microservices | |
+| **Used by:** | Mobile Apps, SPAs, Smart TVs, Multi-channel Products | |
+| **Related:** | API Gateway, GraphQL, Microservices, CQRS | |
 
 ### 🔥 The Problem This Solves
 

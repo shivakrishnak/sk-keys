@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Fiber / Coroutine"
 parent: "Operating Systems"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A fiber or coroutine is a user-space cooperative concurrency unit that suspends and resumes at explicit yield points without involving the OS scheduler.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #093 │ Category: Operating Systems │ Difficulty: ★★☆ │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on: │ Thread, Stack, Cooperative Scheduling│ │
-│ Used by: │ Async I/O, Virtual Thread, Node.js │ │
-│ Related: │ Thread, Async I/O, Virtual Thread │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #093 | Category: Operating Systems | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Thread, Stack, Cooperative Scheduling | |
+| **Used by:** | Async I/O, Node.js Event Loop, Virtual Thread, Kotlin Coroutines | |
+| **Related:** | Thread, Async I/O, Virtual Thread, Green Thread | |
 
 ### 🔥 The Problem This Solves
 

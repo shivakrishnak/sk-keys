@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "SQL Injection"
 parent: "HTTP & APIs"
@@ -23,14 +23,11 @@ tags:
 
 ⚡ TL;DR — SQL Injection is an attack where untrusted user input is embedded directly into a SQL query, allowing the attacker to manipulate the query structure — bypassing authentication, extracting all data from the database, modifying records, or even executing OS commands on the database server; prevented by parameterized queries (prepared statements) and ORM use.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #243 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ SQL, Databases, HTTP, Input Valid │ │
-│ Used by: │ Backend APIs, DB-driven Apps │ │
-│ Related: │ XSS, SSRF, API Security, │ │
-│ │ Parameterized Queries, ORM │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #243 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | SQL, Databases, HTTP, Input Validation | |
+| **Used by:** | Backend APIs, Database-driven Applications | |
+| **Related:** | XSS, SSRF, API Security, Parameterized Queries, ORM | |
 
 ### 🔥 The Problem This Solves (The Threat)
 

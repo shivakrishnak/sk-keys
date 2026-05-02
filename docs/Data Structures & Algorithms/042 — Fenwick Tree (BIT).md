@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Fenwick Tree (BIT)"
 parent: "Data Structures & Algorithms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A Fenwick Tree (Binary Indexed Tree) answers prefix-sum queries and point updates in O(log N) using a single array and bit manipulation, with a fraction of the code of a segment tree.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #042         │ Category: Data Structures & Algorithms │ Difficulty: ★★★        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Array, Bit Manipulation                │                        │
-│ Used by:     │ Inversion Count, Competitive Prog.     │                        │
-│ Related:     │ Segment Tree, Prefix Sum Array         │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #042 | Category: Data Structures & Algorithms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Array, Bit Manipulation | |
+| **Used by:** | Inversion Count, Competitive Programming | |
+| **Related:** | Segment Tree, Prefix Sum Array | |
 
 ### 🔥 The Problem This Solves
 

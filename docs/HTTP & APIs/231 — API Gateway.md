@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Gateway"
 parent: "HTTP & APIs"
@@ -22,14 +22,11 @@ tags:
 
 ⚡ TL;DR — An API Gateway is a reverse proxy that sits between clients and backend services, acting as the single entry point for all API traffic; it centralizes cross-cutting concerns — authentication, rate limiting, routing, logging, SSL termination, and request transformation — so individual services don't each need to implement them.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #231 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, REST, Load Balancer, Nets │ │
-│ Used by: │ Microservices, API Mgmt, Multi-client│ │
-│ Related: │ Reverse Proxy, Service Mesh, BFF, │ │
-│ │ Rate Limiting, CORS, Auth │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #231 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, REST, Load Balancer, Networking | |
+| **Used by:** | Microservices, API Management, Multi-client Apps | |
+| **Related:** | Reverse Proxy, Service Mesh, BFF, API Rate Limiting, API Authentication | |
 
 ### 🔥 The Problem This Solves
 

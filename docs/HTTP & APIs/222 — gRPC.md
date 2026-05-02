@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "gRPC"
 parent: "HTTP & APIs"
@@ -23,16 +23,11 @@ tags:
 
 ⚡ TL;DR — gRPC is a high-performance, open-source RPC framework by Google that uses Protocol Buffers for binary serialization and HTTP/2 for transport, providing strongly typed service contracts, auto-generated clients, and streaming support for internal service-to-service communication.
 
-┌─────────────────────────────────────────────────────────────────────────┐
-│ #222 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP/2, Protocol Buffers, REST, │ │
-│ │ RPC │ │
-│ Used by: │ Microservices, Service Mesh, │ │
-│ │ gRPC Streaming, Proto Buffers │ │
-│ Related: │ REST, GraphQL, Protocol Buffers, │ │
-│ │ WebSocket │ │
-└─────────────────────────────────────────────────────────────────────────┘
+| #222 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP/2, Protocol Buffers, REST, RPC | |
+| **Used by:** | Microservices, Service Mesh, gRPC Streaming, Protocol Buffers | |
+| **Related:** | REST, GraphQL, Protocol Buffers, WebSocket | |
 
 ### 🔥 The Problem This Solves
 

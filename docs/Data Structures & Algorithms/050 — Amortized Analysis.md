@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Amortized Analysis"
 parent: "Data Structures & Algorithms"
@@ -21,15 +21,11 @@ tags:
 
 ⚡ TL;DR — Amortized analysis proves that a sequence of operations is cheap on average even when individual operations can be expensive, by spreading the cost of rare expensive operations across many cheap ones.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #050         │ Category: Data Structures & Algorithms │ Difficulty: ★★★        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Time Complexity / Big-O, Space         │                        │
-│              │ Complexity                             │                        │
-│ Used by:     │ ArrayList, HashMap, Stack, Dynamic Arr.│                        │
-│ Related:     │ Time Complexity / Big-O, Potential     │                        │
-│              │ Method, Aggregate Analysis             │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #050 | Category: Data Structures & Algorithms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Time Complexity / Big-O, Space Complexity | |
+| **Used by:** | ArrayList, HashMap, Stack, Dynamic Array | |
+| **Related:** | Time Complexity / Big-O, Potential Method, Aggregate Analysis | |
 
 ### 🔥 The Problem This Solves
 

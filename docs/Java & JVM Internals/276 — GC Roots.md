@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "GC Roots"
 parent: "Java & JVM Internals"
@@ -23,16 +23,11 @@ tags:
 
 ⚡ TL;DR — GC Roots are the entry points from which the garbage collector traces object reachability — any object not reachable from a GC root is eligible for collection.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0276        │ Category: Java & JVM Internals       │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ JVM, Heap Memory, Class Loader,      │                          │
-│              │ Stack Memory, Thread                 │                          │
-│ Used by:     │ Minor GC, Major GC, Reference Types, │                          │
-│              │ Stop-The-World                       │                          │
-│ Related:     │ Heap Memory, Reference Types, Young  │                          │
-│              │ Generation, GC Pause                 │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #276 | Category: Java & JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | JVM, Heap Memory, Class Loader, Stack Memory, Thread | |
+| **Used by:** | Minor GC, Major GC, Reference Types, Stop-The-World | |
+| **Related:** | Heap Memory, Reference Types, Young Generation, GC Pause | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Stack Frame"
 parent: "Java & JVM Internals"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — A Stack Frame is the JVM's per-method activation record, pushed on the thread stack when a method is called and containing its local variables, operand stack, and return address.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0269        │ Category: Java & JVM Internals       │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ Stack Memory, JVM, Bytecode, Thread  │                          │
-│ Used by:     │ Operand Stack, JIT Compiler,         │                          │
-│              │ Escape Analysis                      │                          │
-│ Related:     │ Operand Stack, Local Variable Table, │                          │
-│              │ Stack Memory                         │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #269 | Category: Java & JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Stack Memory, JVM, Bytecode, Thread | |
+| **Used by:** | Operand Stack, JIT Compiler, Escape Analysis | |
+| **Related:** | Operand Stack, Local Variable Table, Stack Memory | |
 
 ### 🔥 The Problem This Solves
 

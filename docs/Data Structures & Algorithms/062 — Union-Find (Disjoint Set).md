@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Union-Find (Disjoint Set)"
 parent: "Data Structures & Algorithms"
@@ -22,14 +22,11 @@ tags:
 
 ⚡ TL;DR — Union-Find tracks which elements belong to the same group using near-O(1) amortised operations, making it the fastest way to merge groups and check connectivity at scale.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #062         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Graph, Arrays                          │                        │
-│ Used by:     │ Kruskal MST, Connected Components,     │                        │
-│              │ Cycle Detection (undirected graphs)    │                        │
-│ Related:     │ BFS, DFS, Kruskal / Prim               │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #062 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Graph, Arrays | |
+| **Used by:** | Kruskal MST, Connected Components, Cycle Detection in Undirected Graphs | |
+| **Related:** | BFS, DFS, Kruskal / Prim | |
 
 ### 🔥 The Problem This Solves
 

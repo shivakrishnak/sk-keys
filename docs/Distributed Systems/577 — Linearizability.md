@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Linearizability"
 parent: "Distributed Systems"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Linearizability is the strongest single-object consistency model: every operation appears to take effect instantaneously at some point between its invocation and response, and all operations respect real-clock time ordering. A linearizable system looks exactly like a single-node system to any external observer. It is the formal foundation of what most engineers call "strong consistency" and is implemented by etcd, ZooKeeper, and Google Spanner.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #577         │ Category: Distributed Systems      │ Difficulty: ★★★      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ Consistency Models, Strong         │                      │
-│              │ Consistency, Consensus, Raft        │                      │
-│ Used by:     │ Distributed Locks, Leader          │                      │
-│              │ Election, CAS Operations, etcd     │                      │
-│ Related:     │ Serializability, Sequential        │                      │
-│              │ Consistency, CAP Theorem, Raft     │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #577 | Category: Distributed Systems | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Consistency Models, Strong Consistency, Consensus, Raft | |
+| **Used by:** | Distributed Locks, Leader Election, CAS Operations, etcd | |
+| **Related:** | Serializability, Sequential Consistency, CAP Theorem, Raft | |
 
 ### 🔥 The Problem This Solves
 

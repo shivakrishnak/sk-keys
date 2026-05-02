@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Long Polling"
 parent: "HTTP & APIs"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — Long polling simulates server push by having the client send an HTTP request that the server holds open until an event occurs or a timeout is reached; when the server responds, the client immediately sends another request — creating a near-real-time push effect using standard HTTP.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #229 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, REST, HTTP Timeout │ │
-│ Used by: │ Legacy Real-time Systems, Chat, │ │
-│ │ Push Notifications │ │
-│ Related: │ WebSocket, Server-Sent Events, │ │
-│ │ Short Polling │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #229 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, REST, HTTP Timeout | |
+| **Used by:** | Legacy Real-time Systems, Chat Applications, Push Notifications | |
+| **Related:** | WebSocket, Server-Sent Events, Short Polling | |
 
 ### 🔥 The Problem This Solves
 

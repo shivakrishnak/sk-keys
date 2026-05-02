@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "BASE"
 parent: "Distributed Systems"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — BASE (Basically Available, Soft State, Eventually Consistent) is the design philosophy of AP distributed systems, contrasting with ACID. It accepts that data may be temporarily inconsistent and focuses on high availability and performance. "Basically Available" means the system responds even during failures; "Soft State" means data validity can expire and may change over time; "Eventually Consistent" means replicas will converge when writes stop.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #579         │ Category: Distributed Systems      │ Difficulty: ★★☆      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ Eventual Consistency, CAP Theorem,  │                      │
-│              │ Replication Strategies             │                      │
-│ Used by:     │ NoSQL Databases, Large-Scale Web   │                      │
-│              │ Applications, Microservices        │                      │
-│ Related:     │ ACID, Eventual Consistency, CAP    │                      │
-│              │ Theorem, CRDTs                     │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #579 | Category: Distributed Systems | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Eventual Consistency, CAP Theorem, Replication Strategies | |
+| **Used by:** | NoSQL Databases, Large-Scale Web Applications, Microservices | |
+| **Related:** | ACID, Eventual Consistency, CAP Theorem, CRDTs | |
 
 ### 🔥 The Problem This Solves
 

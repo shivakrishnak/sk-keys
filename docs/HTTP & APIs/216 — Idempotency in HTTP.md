@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Idempotency in HTTP"
 parent: "HTTP & APIs"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — An idempotent HTTP operation produces the same result no matter how many times it is called, making it safe to retry without fear of duplicate side effects.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #216 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on: │ HTTP Methods, REST, HTTP Status Codes │ │
-│ Used by: │ API Design Best Practices, │ │
-│ │ Retry Strategy, Idempotency Key │ │
-│ Related: │ REST, API Rate Limiting, │ │
-│ │ Retry with Backoff │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #216 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP Methods (GET, POST, PUT, PATCH, DELETE), REST, HTTP Status Codes | |
+| **Used by:** | API Design Best Practices, Retry Strategy, Idempotency Key | |
+| **Related:** | REST, API Rate Limiting, Retry with Backoff | |
 
 ### 🔥 The Problem This Solves
 

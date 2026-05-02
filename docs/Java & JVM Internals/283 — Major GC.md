@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Major GC"
 parent: "Java & JVM Internals"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Major GC collects the Old Generation — significantly more expensive than Minor GC because Old Gen is large, mostly-live, and cannot use a simple copying collector.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0283        │ Category: Java & JVM Internals       │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ Old Generation, Minor GC, GC Roots,  │                          │
-│              │ Stop-The-World                       │                          │
-│ Used by:     │ Full GC, G1GC, ZGC, GC Tuning,       │                          │
-│              │ GC Pause                             │                          │
-│ Related:     │ Minor GC, Full GC, Stop-The-World,   │                          │
-│              │ G1GC                                 │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #283 | Category: Java & JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Old Generation, Minor GC, GC Roots, Stop-The-World | |
+| **Used by:** | Full GC, G1GC, ZGC, GC Tuning, GC Pause | |
+| **Related:** | Minor GC, Full GC, Stop-The-World, G1GC | |
 
 ### 🔥 The Problem This Solves
 

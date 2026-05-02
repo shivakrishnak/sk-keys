@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Recursion"
 parent: "CS Fundamentals — Paradigms"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Recursion is a function calling itself with a smaller version of the same problem until reaching a base case that stops the chain.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #021 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Functional Programming, │ │
-│ │ Memory Management Models │ │
-│ Used by: │ Tail Recursion, Data Structures │ │
-│ │ & Algorithms, Divide and Conquer │ │
-│ Related: │ Tail Recursion, Iteration, Stack │ │
-│ │ Overflow │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #021 | Category: CS Fundamentals — Paradigms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Functional Programming, Memory Management Models | |
+| **Used by:** | Tail Recursion, Data Structures & Algorithms, Divide and Conquer | |
+| **Related:** | Tail Recursion, Iteration, Stack Overflow | |
 
 ---
 

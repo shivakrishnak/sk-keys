@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Minor GC"
 parent: "Java & JVM Internals"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Minor GC collects the Young Generation, reclaiming short-lived objects from Eden and Survivor spaces in typically milliseconds — the most frequent but cheapest GC event.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0282        │ Category: Java & JVM Internals       │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ Young Generation, Eden Space,        │                          │
-│              │ Survivor Space, GC Roots, JVM        │                          │
-│ Used by:     │ Old Generation, Major GC,            │                          │
-│              │ Stop-The-World, GC Tuning            │                          │
-│ Related:     │ Major GC, Full GC, Stop-The-World,   │                          │
-│              │ G1GC                                 │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #282 | Category: Java & JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Young Generation, Eden Space, Survivor Space, GC Roots, JVM | |
+| **Used by:** | Old Generation, Major GC, Stop-The-World, GC Tuning | |
+| **Related:** | Major GC, Full GC, Stop-The-World, G1GC | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Backward Compatibility"
 parent: "HTTP & APIs"
@@ -22,14 +22,11 @@ tags:
 
 ⚡ TL;DR — API backward compatibility means existing consumers continue to work without modification after the provider deploys a change; a **breaking change** (removing a field, renaming an endpoint, changing a data type) requires a new API version, while a **non-breaking change** (adding an optional field, adding a new endpoint) can be deployed without incrementing the version.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #249 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ REST, API Versioning, JSON Schema │ │
-│ Used by: │ Public APIs, Microservices, SDK │ │
-│ Related: │ API Versioning, OpenAPI/Swagger, │ │
-│ │ API Deprecation Strategy │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #249 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | REST, API Versioning, JSON Schema | |
+| **Used by:** | Public APIs, Microservices, SDK Design | |
+| **Related:** | API Versioning, OpenAPI/Swagger, API Deprecation Strategy, Breaking Changes | |
 
 ### 🔥 The Problem This Solves
 

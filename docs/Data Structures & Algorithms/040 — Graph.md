@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Graph"
 parent: "Data Structures & Algorithms"
@@ -21,13 +21,11 @@ tags:
 
 ⚡ TL;DR — A Graph models pairwise relationships between entities as vertices and edges, enabling shortest-path, reachability, and dependency-analysis algorithms.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #040         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Array, HashMap, LinkedList             │                        │
-│ Used by:     │ BFS, DFS, Dijkstra, Topological Sort   │                        │
-│ Related:     │ Tree, Matrix, Adjacency List           │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #040 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Array, HashMap, LinkedList | |
+| **Used by:** | BFS, DFS, Dijkstra, Topological Sort, Union-Find (Disjoint Set) | |
+| **Related:** | Tree, Matrix, Adjacency List | |
 
 ### 🔥 The Problem This Solves
 

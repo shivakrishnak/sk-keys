@@ -880,6 +880,19 @@ TABLES:
   - Always include a header row
   - Comparison tables: last column = "Best For" recommendation
 
+SECTION SPACING (CRITICAL):
+  - Every ### heading and --- divider MUST have ONE blank line before
+    and ONE blank line after
+  - Skip content inside ``` code fences — never inject blank lines
+    inside a code block
+  - Skip the frontmatter block (between opening --- and closing ---)
+  - Collapse 3+ consecutive blank lines down to 2 maximum
+
+FILE ENCODING:
+  - Always UTF-8 without BOM
+  - PowerShell: [System.IO.File]::WriteAllText(path, content,
+    [System.Text.UTF8Encoding]::new($false))
+    
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 7: CONTENT QUALITY STANDARDS
 ═══════════════════════════════════════════════════════════════════════════
@@ -971,13 +984,12 @@ tags:
 
 ⚡ TL;DR — [One sentence. Max 25 words. Essence + WHY.]
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #NNNN        │ Category: [name]                     │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ Keyword1, Keyword2                   │                          │
-│ Used by:     │ Keyword1, Keyword2                   │                          │
-│ Related:     │ Keyword1, Keyword2                   │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #NNN | Category: [name] | Difficulty: [stars] |
+|:---|:---|:---|
+| **Depends on:** | [Keyword1], [Keyword2] | |
+| **Used by:** | [Keyword1], [Keyword2] | |
+
+---
 
 ### 🔥 The Problem This Solves
 [WORLD WITHOUT IT: concrete pain scenario. 100–200 words.
@@ -1257,7 +1269,9 @@ FORMATTING:
   ☐ Analogies in > blockquote format only
   ☐ BAD pattern shown before GOOD pattern in all code
   ☐ No H2 headers in entry body
-  ☐ Horizontal rule precedes Think section
+  ☐ Horizontal rule --- precedes the Think section
+  ☐ Every ### heading has one blank line before and after
+  ☐ File saved as UTF-8 without BOM
 
 TEACHING PRINCIPLES (Section 1):
   ☐ P1: WHY established before WHAT

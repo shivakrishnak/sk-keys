@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Survivor Space"
 parent: "Java & JVM Internals"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Survivor Space is the Young Generation's transitional area where objects are aged across multiple Minor GC cycles before being promoted to the Old Generation.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0280        │ Category: Java & JVM Internals       │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ Young Generation, Eden Space,        │                          │
-│              │ Minor GC, JVM                        │                          │
-│ Used by:     │ Old Generation, Minor GC, Object     │                          │
-│              │ Header                               │                          │
-│ Related:     │ Eden Space, Old Generation, Young    │                          │
-│              │ Generation, Minor GC                 │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #280 | Category: Java & JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Young Generation, Eden Space, Minor GC, JVM | |
+| **Used by:** | Old Generation, Minor GC, Object Header | |
+| **Related:** | Eden Space, Old Generation, Young Generation, Minor GC | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Dynamic Programming"
 parent: "Data Structures & Algorithms"
@@ -23,16 +23,11 @@ tags:
 
 ⚡ TL;DR — Dynamic Programming trades memory for speed by caching overlapping subproblem results, reducing exponential recursion to polynomial time.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #055         │ Category: Data Structures & Algorithms │ Difficulty: ★★★        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Recursion, Memoization, Tabulation,    │                        │
-│              │ Time Complexity / Big-O                │                        │
-│ Used by:     │ Knapsack Problem, LCS, Dijkstra,       │                        │
-│              │ Bellman-Ford                           │                        │
-│ Related:     │ Greedy Algorithm, Divide and Conquer,  │                        │
-│              │ Backtracking                           │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #055 | Category: Data Structures & Algorithms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Recursion, Memoization, Tabulation (Bottom-Up DP), Time Complexity / Big-O | |
+| **Used by:** | Knapsack Problem, Longest Common Subsequence, Dijkstra, Bellman-Ford | |
+| **Related:** | Greedy Algorithm, Divide and Conquer, Backtracking | |
 
 ### 🔥 The Problem This Solves
 

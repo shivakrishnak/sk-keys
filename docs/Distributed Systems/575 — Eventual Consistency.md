@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Eventual Consistency"
 parent: "Distributed Systems"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Eventual Consistency is a consistency model where replicas are permitted to diverge temporarily, but are guaranteed to converge to the same state "eventually" if no new writes arrive. It trades immediate consistency for high availability and low latency, and is the default model for most large-scale distributed databases: Cassandra, DynamoDB, Riak, Couchbase, and DNS.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #575         │ Category: Distributed Systems      │ Difficulty: ★★☆      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ Consistency Models, Replication,   │                      │
-│              │ CAP Theorem                        │                      │
-│ Used by:     │ NoSQL Databases, DNS, Shopping     │                      │
-│              │ Carts, Social Feeds                │                      │
-│ Related:     │ Strong Consistency, Causal,        │                      │
-│              │ CRDTs, BASE, Conflict Resolution   │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #575 | Category: Distributed Systems | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Consistency Models, Replication Strategies, CAP Theorem | |
+| **Used by:** | NoSQL Databases, DNS, Shopping Carts, Social Feeds | |
+| **Related:** | Strong Consistency, Causal Consistency, CRDTs, BASE | |
 
 ### 🔥 The Problem This Solves
 

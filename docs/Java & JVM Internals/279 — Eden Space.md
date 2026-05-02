@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Eden Space"
 parent: "Java & JVM Internals"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Eden Space is where every new Java object is born — a fast allocation arena that empties almost entirely at each Minor GC because most objects die without ever leaving it.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0279        │ Category: Java & JVM Internals       │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ Young Generation, Heap Memory,       │                          │
-│              │ TLAB, JVM                            │                          │
-│ Used by:     │ Minor GC, Survivor Space,            │                          │
-│              │ Object Header                        │                          │
-│ Related:     │ Young Generation, Survivor Space,    │                          │
-│              │ TLAB, Minor GC                       │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #279 | Category: Java & JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Young Generation, Heap Memory, TLAB, JVM | |
+| **Used by:** | Minor GC, Survivor Space, Object Header | |
+| **Related:** | Young Generation, Survivor Space, TLAB, Minor GC | |
 
 ### 🔥 The Problem This Solves
 

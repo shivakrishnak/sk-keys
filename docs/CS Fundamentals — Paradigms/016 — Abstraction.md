@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Abstraction"
 parent: "CS Fundamentals — Paradigms"
@@ -21,16 +21,11 @@ tags:
 
 ⚡ TL;DR — Abstraction hides complexity behind a simple interface, letting you use something without knowing how it works internally.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #016 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Imperative Programming, │ │
-│ │ Object-Oriented Programming (OOP) │ │
-│ Used by: │ Encapsulation, Polymorphism, │ │
-│ │ Design Patterns │ │
-│ Related: │ Encapsulation, Information Hiding, │ │
-│ │ Interfaces │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #016 | Category: CS Fundamentals — Paradigms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Imperative Programming, Object-Oriented Programming (OOP) | |
+| **Used by:** | Encapsulation, Polymorphism, Design Patterns | |
+| **Related:** | Encapsulation, Information Hiding, Interfaces | |
 
 ---
 

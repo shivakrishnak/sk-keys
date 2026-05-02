@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Memory Management Models"
 parent: "CS Fundamentals — Paradigms"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Memory management models define who is responsible for allocating and freeing memory: the programmer, a runtime garbage collector, or a compiler-enforced ownership system.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #013 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Compiled vs Interpreted Languages, │ │
-│ │ Type Systems (Static vs Dynamic) │ │
-│ Used by: │ Garbage Collection, JVM, │ │
-│ │ Operating Systems │ │
-│ Related: │ Garbage Collection, Stack vs Heap, │ │
-│ │ Reference Counting │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #013 | Category: CS Fundamentals — Paradigms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Compiled vs Interpreted Languages, Type Systems (Static vs Dynamic) | |
+| **Used by:** | Garbage Collection, JVM, Operating Systems | |
+| **Related:** | Garbage Collection, Stack vs Heap, Reference Counting | |
 
 ---
 

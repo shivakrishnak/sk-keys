@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Inheritance"
 parent: "CS Fundamentals — Paradigms"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — Inheritance lets a class acquire the fields and methods of a parent class, enabling code reuse and establishing "is-a" relationships between types.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #019 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Object-Oriented Programming (OOP), │ │
-│ │ Abstraction, Encapsulation │ │
-│ Used by: │ Polymorphism, Design Patterns │ │
-│ Related: │ Composition over Inheritance, │ │
-│ │ Polymorphism, Abstract Classes │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #019 | Category: CS Fundamentals — Paradigms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Object-Oriented Programming (OOP), Abstraction, Encapsulation | |
+| **Used by:** | Polymorphism, Design Patterns | |
+| **Related:** | Composition over Inheritance, Polymorphism, Abstract Classes | |
 
 ---
 

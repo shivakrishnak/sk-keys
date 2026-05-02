@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Encapsulation"
 parent: "CS Fundamentals — Paradigms"
@@ -21,16 +21,11 @@ tags:
 
 ⚡ TL;DR — Encapsulation bundles data and the methods that operate on it together, while controlling which parts are accessible from outside.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #017 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Abstraction, │ │
-│ │ Object-Oriented Programming (OOP) │ │
-│ Used by: │ Design Patterns, Polymorphism, │ │
-│ │ Software Architecture Patterns │ │
-│ Related: │ Abstraction, Information Hiding, │ │
-│ │ Access Modifiers │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #017 | Category: CS Fundamentals — Paradigms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Abstraction, Object-Oriented Programming (OOP) | |
+| **Used by:** | Design Patterns, Polymorphism, Software Architecture Patterns | |
+| **Related:** | Abstraction, Information Hiding, Access Modifiers | |
 
 ---
 

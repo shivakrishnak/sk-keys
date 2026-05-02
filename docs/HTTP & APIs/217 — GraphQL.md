@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "GraphQL"
 parent: "HTTP & APIs"
@@ -21,14 +21,11 @@ tags:
 
 ⚡ TL;DR — GraphQL is a query language and runtime for APIs that lets clients ask for exactly the data they need, solving REST's over-fetching and under-fetching problems with a strongly typed schema as the single source of truth.
 
-┌─────────────────────────────────────────────────────────────────────────┐
-│ #217 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────┼──────────────────────┤
-│ Depends on: │ REST, HTTP, JSON │ │
-│ Used by: │ GraphQL Schema, GraphQL Resolvers, │ │
-│ │ GraphQL N+1 Problem │ │
-│ Related: │ REST, gRPC, API Gateway, SOAP │ │
-└─────────────────────────────────────────────────────────────────────────┘
+| #217 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | REST, HTTP, JSON, API Design Best Practices | |
+| **Used by:** | GraphQL Schema, GraphQL Resolvers, GraphQL N+1 Problem | |
+| **Related:** | REST, gRPC, API Gateway, SOAP | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Event-Driven Programming"
 parent: "CS Fundamentals — Paradigms"
@@ -23,16 +23,11 @@ tags:
 
 ⚡ TL;DR — Event-driven programming structures code around reacting to events — things that happen — rather than executing a fixed top-to-bottom sequence.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0006 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────────┼─────────────────────────┤
-│ Depends on: │ Imperative Programming, Functions, │ │
-│ │ Asynchronous Programming │ │
-│ Used by: │ Reactive Programming, Node.js, │ │
-│ │ JavaScript │ │
-│ Related: │ Reactive Programming, Observer, │ │
-│ │ Message-Driven Architecture │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #006 | Category: CS Fundamentals — Paradigms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Imperative Programming, Functions, Asynchronous Programming | |
+| **Used by:** | Reactive Programming, Node.js, JavaScript | |
+| **Related:** | Reactive Programming, Observer Pattern, Message-Driven Architecture | |
 
 ### 🔥 The Problem This Solves
 

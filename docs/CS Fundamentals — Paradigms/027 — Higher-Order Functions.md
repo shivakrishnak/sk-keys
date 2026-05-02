@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Higher-Order Functions"
 parent: "CS Fundamentals — Paradigms"
@@ -21,16 +21,11 @@ tags:
 
 ⚡ TL;DR — Higher-order functions are functions that take other functions as arguments, return functions as results, or both — enabling composable, reusable abstractions over behaviour.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #027 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ First-Class Functions, │ │
-│ │ Functional Programming │ │
-│ Used by: │ Functional Programming, Reactive │ │
-│ │ Programming, Side Effects │ │
-│ Related: │ First-Class Functions, Side Effects, │ │
-│ │ Referential Transparency, Closures │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #027 | Category: CS Fundamentals — Paradigms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | First-Class Functions, Functional Programming | |
+| **Used by:** | Functional Programming, Reactive Programming, Side Effects | |
+| **Related:** | First-Class Functions, Side Effects, Referential Transparency, Closures | |
 
 ---
 

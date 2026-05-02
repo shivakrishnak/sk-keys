@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Idempotency"
 parent: "CS Fundamentals — Paradigms"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — An operation is idempotent if applying it multiple times produces the same result as applying it once — making retries and deduplication safe.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #030 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Side Effects, Referential Transparency│ │
-│ Used by: │ Distributed Systems, HTTP & APIs, │ │
-│ │ Microservices │ │
-│ Related: │ Side Effects, Referential Transparency,│ │
-│ │ Distributed Systems, HTTP Methods │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #030 | Category: CS Fundamentals — Paradigms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Side Effects, Referential Transparency | |
+| **Used by:** | Distributed Systems, HTTP & APIs, Microservices | |
+| **Related:** | Side Effects, Referential Transparency, Distributed Systems, HTTP Methods | |
 
 ---
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Happens-Before"
 parent: "Java & JVM Internals"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Happens-Before is the JMM's formal guarantee that if action A happens-before action B, every thread will see A's effects before B executes — the foundational rule of Java concurrency correctness.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0275        │ Category: Java & JVM Internals       │ Difficulty: ★★★          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ Java Memory Model, Memory Barrier,   │                          │
-│              │ Thread, volatile, synchronized       │                          │
-│ Used by:     │ volatile, synchronized, Race         │                          │
-│              │ Condition, CAS, Thread Lifecycle     │                          │
-│ Related:     │ Memory Barrier, Java Memory Model,   │                          │
-│              │ Race Condition, volatile             │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #275 | Category: Java & JVM Internals | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Java Memory Model, Memory Barrier, Thread, volatile, synchronized | |
+| **Used by:** | volatile, synchronized, Race Condition, CAS, Thread Lifecycle | |
+| **Related:** | Memory Barrier, Java Memory Model, Race Condition, volatile | |
 
 ### 🔥 The Problem This Solves
 

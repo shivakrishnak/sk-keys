@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Protocol Buffers"
 parent: "HTTP & APIs"
@@ -23,16 +23,11 @@ tags:
 
 ⚡ TL;DR — Protocol Buffers (protobuf) is Google's language-neutral, platform-neutral, extensible binary serialization format — smaller and faster to encode/decode than JSON, with a strongly typed schema defined in `.proto` files that generate code in any target language.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #223 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ gRPC, Serialization, │ │
-│ │ Binary Encoding, Type Systems │ │
-│ Used by: │ gRPC, Event Streaming (Kafka), │ │
-│ │ Data Interchange │ │
-│ Related: │ JSON, Avro, Thrift, MessagePack, │ │
-│ │ FlatBuffers │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #223 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | gRPC, Serialization, Binary Encoding, Type Systems | |
+| **Used by:** | gRPC, Event Streaming (Kafka), Data Interchange | |
+| **Related:** | JSON, Avro, Thrift, MessagePack, FlatBuffers | |
 
 ### 🔥 The Problem This Solves
 

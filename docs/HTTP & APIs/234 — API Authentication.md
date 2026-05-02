@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Authentication"
 parent: "HTTP & APIs"
@@ -23,14 +23,11 @@ tags:
 
 ⚡ TL;DR — API authentication verifies the identity of a client making an API request; the main mechanisms are API Keys (simple shared secrets), Bearer Tokens / JWT (stateless signed tokens), OAuth 2.0 (delegated authorization), Basic Auth (username/password in header), and mTLS (mutual TLS certificate exchange) — each appropriate for different trust and use-case contexts.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #234 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, HTTPS, Cryptography Basics │ │
-│ Used by: │ All APIs, API GW, Microservices │ │
-│ Related: │ OAuth2, JWT, API Keys, HMAC, OIDC, │ │
-│ │ mTLS │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #234 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, HTTPS, Cryptography Basics | |
+| **Used by:** | All APIs, API Gateways, Microservices, SaaS Platforms | |
+| **Related:** | OAuth2, JWT, API Keys, HMAC, OIDC, mTLS | |
 
 ### 🔥 The Problem This Solves
 

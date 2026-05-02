@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Young Generation"
 parent: "Java & JVM Internals"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — The Young Generation is the heap region where all new Java objects are allocated and short-lived objects are efficiently collected by frequent, fast Minor GC cycles.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0278        │ Category: Java & JVM Internals       │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ Heap Memory, GC Roots, JVM, TLAB     │                          │
-│ Used by:     │ Minor GC, Eden Space, Survivor Space, │                          │
-│              │ Old Generation                       │                          │
-│ Related:     │ Eden Space, Survivor Space, Old       │                          │
-│              │ Generation, Minor GC                 │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #278 | Category: Java & JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Heap Memory, GC Roots, JVM, TLAB | |
+| **Used by:** | Minor GC, Eden Space, Survivor Space, Old Generation | |
+| **Related:** | Eden Space, Survivor Space, Old Generation, Minor GC | |
 
 ### 🔥 The Problem This Solves
 

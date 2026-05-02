@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "State Machine Replication"
 parent: "Distributed Systems"
@@ -21,16 +21,11 @@ tags:
 
 ⚡ TL;DR — State Machine Replication (SMR) is a technique for making a distributed system fault-tolerant by: (1) representing the system as a deterministic state machine, (2) replicating the sequence of commands (inputs) to multiple nodes via a total order broadcast, and (3) ensuring all replicas apply the same commands in the same order. If the state machine is deterministic and all replicas start from the same state, they will reach identical states after applying the same command history. This is the theoretical foundation for etcd, ZooKeeper, CockroachDB, and all Raft/Paxos-based systems.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #590         │ Category: Distributed Systems      │ Difficulty: ★★★      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ Log Replication, Raft, Distributed │                      │
-│              │ Consensus, Total Order Broadcast   │                      │
-│ Used by:     │ Distributed Databases, ZooKeeper,  │                      │
-│              │ etcd, CockroachDB                  │                      │
-│ Related:     │ Log Replication, Raft, Total Order │                      │
-│              │ Broadcast, Consensus               │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #590 | Category: Distributed Systems | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Log Replication, Raft, Distributed Consensus, Total Order Broadcast | |
+| **Used by:** | Distributed Databases, ZooKeeper, etcd, CockroachDB | |
+| **Related:** | Log Replication, Raft, Total Order Broadcast, Consensus | |
 
 ### 🔥 The Problem This Solves
 

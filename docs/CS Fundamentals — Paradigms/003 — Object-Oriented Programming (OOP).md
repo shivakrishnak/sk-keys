@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Object-Oriented Programming (OOP)"
 parent: "CS Fundamentals — Paradigms"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — OOP organises code into objects that combine state and behaviour, modelling real-world entities so software mirrors the problem domain.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0003 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
-├──────────────┼───────────────────────────────────────┼─────────────────────────┤
-│ Depends on: │ Imperative Programming, Functions, │ │
-│ │ Variables │ │
-│ Used by: │ Design Patterns, Spring Core, │ │
-│ │ Java Language │ │
-│ Related: │ Functional Programming, Procedural, │ │
-│ │ Composition over Inheritance │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #003 | Category: CS Fundamentals — Paradigms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Imperative Programming, Functions, Variables | |
+| **Used by:** | Design Patterns, Spring Core, Java Language | |
+| **Related:** | Functional Programming, Procedural Programming, Composition over Inheritance | |
 
 ### 🔥 The Problem This Solves
 

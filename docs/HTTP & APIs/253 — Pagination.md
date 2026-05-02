@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Pagination"
 parent: "HTTP & APIs"
@@ -23,15 +23,11 @@ tags:
 
 ⚡ TL;DR — Pagination splits large result sets into smaller pages so that APIs return manageable chunks of data rather than millions of rows at once; the three main approaches are **offset pagination** (`?page=2&size=20` — simple but has skip performance problems), **cursor pagination** (`?cursor=xyz` — performant for large datasets, used by Twitter/Facebook), and **keyset pagination** (`?after_id=100` — similar to cursor, uses a stable sorting key).
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #253         │ Category: HTTP & APIs              │ Difficulty: ★☆☆      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ REST, HTTP, Database Queries       │                      │
-│ Used by:     │ REST APIs, List Endpoints,         │                      │
-│              │ Data Export                        │                      │
-│ Related:     │ API Design Best Practices,         │                      │
-│              │ HATEOAS, Cursor-based Pagination   │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #253 | Category: HTTP & APIs | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | REST, HTTP, Database Queries | |
+| **Used by:** | REST APIs, List Endpoints, Data Export | |
+| **Related:** | API Design Best Practices, HATEOAS, Cursor-based Pagination | |
 
 ### 🔥 The Problem This Solves
 

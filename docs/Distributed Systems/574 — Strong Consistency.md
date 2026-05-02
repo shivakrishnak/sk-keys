@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Strong Consistency"
 parent: "Distributed Systems"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — Strong Consistency guarantees that all nodes in a distributed system see the same data at the same time: every read reflects the most recent write, regardless of which replica serves the request. Achieving this requires coordination (consensus, quorums, or synchronous replication) before acknowledging writes, creating a latency-availability cost in exchange for correctness guarantees.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #574         │ Category: Distributed Systems      │ Difficulty: ★★★      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ Consistency Models, Replication,   │                      │
-│              │ Consensus                          │                      │
-│ Used by:     │ Financial Systems, Distributed     │                      │
-│              │ Locking, Leader Election           │                      │
-│ Related:     │ Linearizability, Serializability,  │                      │
-│              │ CAP Theorem, PACELC                │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #574 | Category: Distributed Systems | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Consistency Models, Replication Strategies, Consensus | |
+| **Used by:** | Financial Systems, Distributed Locking, Leader Election | |
+| **Related:** | Linearizability, Serializability, CAP Theorem, PACELC | |
 
 ### 🔥 The Problem This Solves
 

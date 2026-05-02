@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "CAP Theorem"
 parent: "Distributed Systems"
@@ -23,15 +23,11 @@ tags:
 
 ⚡ TL;DR — The CAP Theorem states that a distributed system can guarantee at most two of three properties simultaneously: **C**onsistency (every read gets the most recent write), **A**vailability (every request gets a non-error response), and **P**artition tolerance (the system works despite network partitions); since network partitions are inevitable in distributed systems, the real choice is between Consistency and Availability during a partition.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #571         │ Category: Distributed Systems      │ Difficulty: ★★☆      │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ Distributed Systems, Consistency,  │                      │
-│              │ Availability                       │                      │
-│ Used by:     │ Database Design, NoSQL, Storage    │                      │
-│ Related:     │ PACELC, Consistency Models,        │                      │
-│              │ Eventual Consistency, BASE         │                      │
-└──────────────────────────────────────────────────────────────────────────┘
+| #571 | Category: Distributed Systems | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Distributed Systems Fundamentals, Consistency, Availability | |
+| **Used by:** | Database Design, NoSQL, Distributed Storage | |
+| **Related:** | PACELC, Consistency Models, Eventual Consistency, BASE | |
 
 ### 🔥 The Problem This Solves
 

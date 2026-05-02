@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Aspect-Oriented Programming"
 parent: "CS Fundamentals — Paradigms"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — AOP lets you inject cross-cutting concerns (logging, security, transactions) into code without modifying the original methods — keeping core logic clean.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0008 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
-├──────────────┼───────────────────────────────────────┼─────────────────────────┤
-│ Depends on: │ Object-Oriented Programming, │ │
-│ │ Procedural Programming, │ │
-│ │ Design Patterns │ │
-│ Used by: │ Spring Core, Logging, Security │ │
-│ Related: │ Decorator Pattern, Proxy Pattern, │ │
-│ │ Metaprogramming │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #008 | Category: CS Fundamentals — Paradigms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Object-Oriented Programming, Procedural Programming, Design Patterns | |
+| **Used by:** | Spring Core, Logging, Security | |
+| **Related:** | Decorator Pattern, Proxy Pattern, Metaprogramming | |
 
 ### 🔥 The Problem This Solves
 

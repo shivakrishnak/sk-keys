@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Versioning"
 parent: "HTTP & APIs"
@@ -22,14 +22,11 @@ tags:
 
 ⚡ TL;DR — API versioning is the practice of maintaining multiple coexisting versions of an API so that existing clients continue working while new capabilities are introduced; the primary strategies are URL path versioning (/v1/), header versioning (Accept: application/vnd.api+json;version=2), and query parameter versioning (?api-version=2).
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #232 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, REST, API Design │ │
-│ Used by: │ Public APIs, Mobile Apps, Enterprise│ │
-│ Related: │ API Deprecation, API GW, OpenAPI, │ │
-│ │ Backward Compatibility │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #232 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, REST, API Design | |
+| **Used by:** | Public APIs, Mobile Apps, Enterprise Integrations | |
+| **Related:** | API Deprecation Strategy, API Gateway, OpenAPI/Swagger, Backward Compatibility | |
 
 ### 🔥 The Problem This Solves
 

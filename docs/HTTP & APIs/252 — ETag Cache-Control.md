@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "ETag / Cache-Control"
 parent: "HTTP & APIs"
@@ -22,14 +22,11 @@ tags:
 
 ⚡ TL;DR — `ETag` is a response header containing a hash/fingerprint of the resource content (enabling conditional requests that return `304 Not Modified` with no body when content is unchanged), while `Cache-Control` is the master directive that tells browsers, CDNs, and proxies how long to cache a response and under what conditions — together they form the two-layer HTTP caching mechanism: TTL-based freshness and validation-based reuse.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #252 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, REST, API Caching │ │
-│ Used by: │ REST APIs, CDN, Browser Caching │ │
-│ Related: │ API Caching, HTTP Headers, │ │
-│ │ Content Negotiation │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #252 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, REST, API Caching | |
+| **Used by:** | REST APIs, CDN, Browser Caching | |
+| **Related:** | API Caching, HTTP Headers, Content Negotiation | |
 
 ### 🔥 The Problem This Solves
 

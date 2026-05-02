@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "HMAC"
 parent: "HTTP & APIs"
@@ -23,15 +23,11 @@ tags:
 
 ⚡ TL;DR — HMAC is a cryptographic technique that combines a secret key with a hash function (e.g., SHA-256) to produce a fixed-length authentication tag proving both message integrity (content wasn't modified) and authenticity (sender knows the shared secret) — used to sign webhook payloads, verify API requests, and as the HS256 algorithm in JWTs.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #239 │ Category: HTTP & APIs │ Difficulty: ★★★ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ Cryptographic Hash Functions, │ │
-│ │ Symmetric Crypto, HTTP │ │
-│ Used by: │ Webhook Verification, API Signing, │ │
-│ │ AWS Sig V4, JWT HS256 │ │
-│ Related: │ API Keys, SHA256, JWT, Webhook │ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #239 | Category: HTTP & APIs | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Cryptographic Hash Functions, Symmetric Cryptography, HTTP | |
+| **Used by:** | Webhook Verification, API Request Signing, AWS Signature V4, JWT (HS256) | |
+| **Related:** | API Keys, SHA256, JWT, Webhook, AWS S3 | |
 
 ### 🔥 The Problem This Solves
 

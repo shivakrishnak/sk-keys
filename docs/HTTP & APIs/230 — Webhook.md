@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Webhook"
 parent: "HTTP & APIs"
@@ -22,13 +22,11 @@ tags:
 
 ⚡ TL;DR — A webhook is a user-defined HTTP callback that a service calls to notify your application when an event occurs; instead of your app polling "did anything happen?", the sender POSTs event data to your URL the moment it does — reversing the traditional request/response direction.
 
-┌──────────────────────────────────────────────────────────────────────────┐
-│ #230 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
-├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on: │ HTTP, REST, HTTPS │ │
-│ Used by: │ Payments, CI/CD, SaaS, Notifs │ │
-│ Related: │ API Polling, EDA, API Gateway, HMAC│ │
-└──────────────────────────────────────────────────────────────────────────┘
+| #230 | Category: HTTP & APIs | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | HTTP, REST, HTTPS | |
+| **Used by:** | Payment Processing, CI/CD, SaaS Integrations, Event Notifications | |
+| **Related:** | API Polling, Event-Driven Architecture, API Gateway, HMAC | |
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Church-Turing Thesis"
 parent: "CS Fundamentals — Paradigms"
@@ -20,14 +20,11 @@ tags:
 
 ⚡ TL;DR — The Church-Turing Thesis states that any effectively computable function can be computed by a Turing machine — defining the absolute limits of what any computer can ever compute.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #024 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★★ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Turing Completeness, Lambda Calculus │ │
-│ Used by: │ — │ │
-│ Related: │ Turing Completeness, Lambda Calculus, │ │
-│ │ Halting Problem │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #024 | Category: CS Fundamentals — Paradigms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Turing Completeness, Lambda Calculus | |
+| **Used by:** |  | |
+| **Related:** | Turing Completeness, Lambda Calculus, Halting Problem | |
 
 ---
 

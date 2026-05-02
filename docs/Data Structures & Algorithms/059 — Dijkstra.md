@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Dijkstra"
 parent: "Data Structures & Algorithms"
@@ -22,15 +22,11 @@ tags:
 
 ⚡ TL;DR — Dijkstra's algorithm finds shortest paths from a single source in weighted graphs with non-negative edge weights using a greedy priority-queue expansion.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #059         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
-├──────────────┼────────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Graph, Priority Queue, Greedy          │                        │
-│              │ Algorithm, BFS                         │                        │
-│ Used by:     │ A* Search, GPS Navigation,             │                        │
-│              │ Network Routing (OSPF)                 │                        │
-│ Related:     │ Bellman-Ford, A* Search, BFS           │                        │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #059 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Graph, Priority Queue, Greedy Algorithm, BFS | |
+| **Used by:** | A* Search, GPS Navigation, Network Routing (OSPF) | |
+| **Related:** | Bellman-Ford, A* Search, BFS | |
 
 ### 🔥 The Problem This Solves
 

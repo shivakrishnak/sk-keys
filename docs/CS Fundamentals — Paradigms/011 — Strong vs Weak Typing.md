@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Strong vs Weak Typing"
 parent: "CS Fundamentals — Paradigms"
@@ -21,15 +21,11 @@ tags:
 
 ⚡ TL;DR — Strong typing means the language refuses to silently coerce values between incompatible types; weak typing means it will try anyway.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #011 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Type Systems (Static vs Dynamic) │ │
-│ Used by: │ Memory Management Models, │ │
-│ │ Compiled vs Interpreted Languages │ │
-│ Related: │ Static vs Dynamic Typing, │ │
-│ │ Type Inference, Duck Typing │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #011 | Category: CS Fundamentals — Paradigms | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Type Systems (Static vs Dynamic) | |
+| **Used by:** | Memory Management Models, Compiled vs Interpreted Languages | |
+| **Related:** | Static vs Dynamic Typing, Type Inference, Duck Typing | |
 
 ---
 

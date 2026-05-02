@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Old Generation"
 parent: "Java & JVM Internals"
@@ -22,16 +22,11 @@ tags:
 
 ⚡ TL;DR — The Old Generation is the JVM heap region for long-lived objects that have survived multiple Minor GCs — collected infrequently but at high cost.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0281        │ Category: Java & JVM Internals       │ Difficulty: ★★☆          │
-├──────────────┼──────────────────────────────────────┼──────────────────────────┤
-│ Depends on:  │ Young Generation, Survivor Space,    │                          │
-│              │ Heap Memory, JVM                     │                          │
-│ Used by:     │ Major GC, Full GC, G1GC, ZGC,        │                          │
-│              │ GC Tuning                            │                          │
-│ Related:     │ Young Generation, Major GC, Full GC, │                          │
-│              │ Metaspace                            │                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #281 | Category: Java & JVM Internals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Young Generation, Survivor Space, Heap Memory, JVM | |
+| **Used by:** | Major GC, Full GC, G1GC, ZGC, GC Tuning | |
+| **Related:** | Young Generation, Major GC, Full GC, Metaspace | |
 
 ### 🔥 The Problem This Solves
 

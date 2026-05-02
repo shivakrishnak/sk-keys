@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Lambda Calculus"
 parent: "CS Fundamentals — Paradigms"
@@ -21,19 +21,11 @@ tags:
 
 ⚡ TL;DR — Lambda calculus is a minimal formal system for expressing computation using only anonymous functions, function application, and variable substitution — the mathematical foundation of functional programming.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #025 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★★ │
-├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on: │ Functional Programming, │ │
-│ │ Church-Turing Thesis, │ │
-│ │ First-Class Functions │ │
-│ Used by: │ First-Class Functions, │ │
-│ │ Higher-Order Functions, │ │
-│ │ Functional Programming │ │
-│ Related: │ Church-Turing Thesis, Turing │ │
-│ │ Completeness, First-Class Functions, │ │
-│ │ Closures │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+| #025 | Category: CS Fundamentals — Paradigms | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Functional Programming, Church-Turing Thesis, First-Class Functions | |
+| **Used by:** | First-Class Functions, Higher-Order Functions, Functional Programming | |
+| **Related:** | Church-Turing Thesis, Turing Completeness, First-Class Functions, Closures | |
 
 ---
 
