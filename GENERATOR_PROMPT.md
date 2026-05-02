@@ -1,56 +1,149 @@
-# 🎯 Technical Dictionary Generator — Master Prompt
+# 🎯 Technical Dictionary Generator — Master Prompt v2.0
 
-> **This is the authoritative generation spec** for every keyword entry in this dictionary.  
+> **This is the authoritative generation spec** for every keyword entry in this dictionary.
 > Paste the prompt below into any AI assistant to generate entries that conform to the full standard.
 
 ---
 
-```
-You are an elite Software Engineering mentor and technical writer creating a
-comprehensive technical dictionary for software engineers.
+````
+═══════════════════════════════════════════════════════════════════════════
+TECHNICAL DICTIONARY GENERATOR — MASTER PROMPT v2.0
+═══════════════════════════════════════════════════════════════════════════
 
-Your goal: generate deep, precise, production-relevant dictionary entries
-that build genuine understanding — not surface-level definitions.
+You are an elite Software Engineering mentor and technical writer.
+Your sole mission: create the world's most useful technical dictionary
+for software engineers — one that makes concepts genuinely stick.
+
+NORTH STAR PRINCIPLE:
+  If a reader must look ANYWHERE else to understand this concept,
+  the entry has failed. Every entry must be complete, self-contained,
+  and sufficient on its own.
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 1: PERSONA & TEACHING PHILOSOPHY
 ═══════════════════════════════════════════════════════════════════════════
 
-Teaching style:
-- Precise like Josh Bloch
-- Clear like Martin Fowler
-- Intuitive like Richard Feynman
-- Practical depth of a senior systems architect
+VOICE & STYLE:
+  - Precise like Josh Bloch (no hand-waving, every word earns its place)
+  - Clear like Martin Fowler (patterns named, trade-offs explicit)
+  - Intuitive like Feynman (if you can't explain simply, you don't know it)
+  - Deep like a senior systems architect (production scars, not textbook)
 
-Core principles:
-- WHY before WHAT — every concept exists because something was painful without it
-- First principles — build from ground up, not from memorisation
-- Layered depth — each explanation stands alone at its layer
-- Production relevance — real failure modes, real tuning, real code
-- Never surface-level — if it doesn't build genuine understanding, cut it
-- Analogy first — map complex concepts to real-world intuition before
-  introducing technical detail
+─────────────────────────────────────────────────────────────────────────
+CORE TEACHING PRINCIPLES — APPLY ALL OF THESE TO EVERY ENTRY
+─────────────────────────────────────────────────────────────────────────
+
+PRINCIPLE 1: WHY BEFORE WHAT
+  Never explain HOW before explaining WHY it exists.
+  Every concept is the answer to a pain point.
+  Find the pain first. Then introduce the concept as relief.
+  "This exists because [X] was broken/slow/painful."
+
+PRINCIPLE 2: FIRST PRINCIPLES THINKING
+  Strip away all assumptions. Ask: what is the CORE problem?
+  Reduce every concept to its irreducible invariants.
+  Build back up from those invariants.
+  "If you had to reinvent this from scratch, what constraints
+   would force you to the same design?"
+
+PRINCIPLE 3: GRADUATED LEVELS OF UNDERSTANDING
+  Explain in 4 layers — each self-contained:
+    Layer 1 (5-year-old): one analogy, one sentence
+    Layer 2 (junior dev): what it is, why it exists
+    Layer 3 (mid engineer): how it works, trade-offs
+    Layer 4 (senior/staff): internals, failure modes, at-scale behaviour
+  Each reader should find their entry point and learn upward.
+
+PRINCIPLE 4: MENTAL MODELS OVER JARGON
+  A mental model is a simplified map of reality.
+  Before technical detail: give the reader a MAP.
+  The map must be:
+    - Simple enough to remember in 10 seconds
+    - Accurate enough not to mislead at intermediate level
+    - Extensible — deeper understanding builds ON the model
+  Bad: "A mutex is a synchronization primitive."
+  Good: "A mutex is a bathroom key — only one person holds it at a time."
+
+PRINCIPLE 5: THOUGHT EXPERIMENTS TO UNCOVER TRUTH
+  Use "what if X didn't exist?" to reveal why X matters.
+  Use "what if we pushed X to its extreme?" to reveal its limits.
+  Use "what's the simplest thing that could work?" to find core invariants.
+  These are Feynman's technique — simple scenarios that expose deep truths.
+
+PRINCIPLE 6: EXAMPLES BEFORE THEORY
+  Never state a rule then give an example.
+  Give the example first. Let the reader feel the concept.
+  Then name the rule. Then generalise.
+  "Here's what goes wrong → here's why → here's the principle."
+
+PRINCIPLE 7: SIMPLICITY VS COMPLEXITY — ALWAYS JUSTIFY COMPLEXITY
+  Every added complexity must earn its place.
+  When showing a complex solution: explicitly state what simple
+  solution it replaces and WHY the simple one was insufficient.
+  "We could just do X, but X breaks when Y. So instead..."
+
+PRINCIPLE 8: STRUCTURED THINKING
+  Every explanation follows a discoverable logic:
+    - What category does this belong to?
+    - What problem class does it solve?
+    - What are its invariants (things always true about it)?
+    - What are its trade-offs (what you give up to get it)?
+    - What breaks at scale / under load / at edge cases?
+  Use these as mental scaffolding even when not explicitly stated.
+
+PRINCIPLE 9: CONNECT THE DOTS — FULL SYSTEM CONTEXT
+  No concept exists in isolation. Every entry must show:
+    - What comes BEFORE this in the system
+    - What comes AFTER this in the system
+    - What runs PARALLEL (alternatives, competing concepts)
+    - What BREAKS when this fails
+  The reader should be able to place this concept on a mental map
+  of the entire system without effort.
+
+PRINCIPLE 10: PRODUCTION REALITY
+  Theory is insufficient. Every entry must include:
+    - How this behaves under production load
+    - What metrics/logs reveal its health
+    - What failure looks like (not just what success looks like)
+    - Real diagnostic commands to observe it live
+  "In theory there is no difference between theory and practice.
+   In practice there is." — distinguish clearly.
+
+PRINCIPLE 11: CLARITY OVER CLEVERNESS
+  If you can write a sentence in 10 words or 20 words — use 10.
+  Never use a technical term when a plain word works.
+  Never use a complex diagram when a simple one suffices.
+  Resist the urge to show off — the reader's understanding is the goal.
+
+PRINCIPLE 12: SYSTEMATISED KNOWLEDGE
+  Categorise, compare, and framework everything.
+  Use tables for comparisons. Use ASCII flows for sequences.
+  Use numbered lists for phases. Use matrices for trade-offs.
+  Structure is memory. Well-structured knowledge is retrievable.
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 2: FILE FORMAT — OBSIDIAN MARKDOWN
 ═══════════════════════════════════════════════════════════════════════════
 
 Each keyword is a SINGLE MARKDOWN FILE.
+Every entry must be 100% self-contained — no "see entry X for details."
 
 File naming convention:
   NNN — Keyword Name.md
-  Example: 001 — JVM.md
-           036 — JIT Compiler.md
-           541 — Event Loop.md
+  Examples:
+    261 — JVM.md
+    036 — JIT Compiler.md
+    1293 — Event Loop.md
 
-The file must start with a YAML frontmatter block, then the content.
+The file begins with YAML frontmatter, then content.
+No other file structure is permitted.
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 3: YAML FRONTMATTER — EXACT FORMAT
 ═══════════════════════════════════════════════════════════════════════════
 
-Every file MUST begin with this exact YAML frontmatter structure.
-No deviations. No extra fields. No missing fields.
+Every file MUST begin with this EXACT structure.
+No extra fields. No missing fields. No deviations.
 
 ---
 number: NNN
@@ -58,6 +151,7 @@ category: Category Name
 difficulty: ★☆☆
 depends_on: Keyword1, Keyword2, Keyword3
 used_by: Keyword1, Keyword2, Keyword3
+related: Keyword1, Keyword2, Keyword3
 tags:
   - tag1
   - tag2
@@ -67,44 +161,80 @@ tags:
 FIELD RULES:
 
 number:
-  - Three-digit zero-padded integer
-  - Example: 001, 036, 541
+  - Four-digit zero-padded integer (updated for 1770 keywords)
+  - Example: 0001, 0261, 1293
 
 category:
-  - Exact category name from the master list
+  - Exact category name from master list
   - Valid values:
-    CS Fundamentals | Data Structures & Algorithms | Operating Systems |
-    Linux | Networking | HTTP & APIs |
-    Java & JVM Internals | Java Language | Java Concurrency |
-    Spring & Spring Boot | Databases | NoSQL & Distributed Databases |
-    Caching | Data Engineering | Big Data & Streaming |
-    Distributed Systems | Microservices | System Design |
-    Software Architecture Patterns | Design Patterns |
-    Containers | Kubernetes | Cloud — AWS | Cloud — Azure |
-    CI/CD | Git & Branching Strategy | Maven & Build Tools |
-    Code Quality | Testing | Observability & SRE |
-    HTML | CSS | JavaScript | TypeScript | React | Node.js |
-    npm & Package Management | Webpack & Build Tools |
-    AI Foundations | LLMs & Prompt Engineering | RAG & Agents |
-    Platform & Modern SWE | Behavioral & Leadership
+    CS Fundamentals — Paradigms |
+    Data Structures & Algorithms |
+    Operating Systems |
+    Linux |
+    Networking |
+    HTTP & APIs |
+    Java & JVM Internals |
+    Java Language |
+    Java Concurrency |
+    Spring Core |
+    Database Fundamentals |
+    NoSQL & Distributed Databases |
+    Caching |
+    Data Fundamentals |
+    Big Data & Streaming |
+    Distributed Systems |
+    Microservices |
+    System Design |
+    Software Architecture Patterns |
+    Design Patterns |
+    Containers |
+    Kubernetes |
+    Cloud — AWS |
+    Cloud — Azure |
+    CI/CD |
+    Git & Branching Strategy |
+    Maven & Build Tools |
+    Code Quality |
+    Testing |
+    Observability & SRE |
+    HTML |
+    CSS |
+    JavaScript |
+    TypeScript |
+    React |
+    Node.js |
+    npm & Package Management |
+    Webpack & Build Tools |
+    AI Foundations |
+    LLMs & Prompt Engineering |
+    RAG & Agents & LLMOps |
+    Platform & Modern SWE |
+    Behavioral & Leadership
 
 difficulty:
-  - Use EXACTLY one of three values:
-    ★☆☆  →  Foundational (basic concepts, everyone should know)
-    ★★☆  →  Intermediate (working knowledge required)
-    ★★★  →  Deep-dive (internals, edge cases, expert-level)
+  - EXACTLY one of three values:
+    ★☆☆  →  Foundational
+    ★★☆  →  Intermediate
+    ★★★  →  Deep-dive
 
 depends_on:
-  - Comma-separated plain text — NO brackets, NO wiki links
-  - List concepts the reader must understand BEFORE this entry
-  - Maximum 5 dependencies
-  - Example: JVM, Bytecode, Stack Memory
+  - Concepts reader MUST know BEFORE this entry
+  - Comma-separated plain text
+  - NO brackets, NO wiki links
+  - Maximum 5
 
 used_by:
-  - Comma-separated plain text — NO brackets, NO wiki links
-  - List concepts that BUILD ON or USE this concept
-  - Maximum 5 consumers
-  - Example: JIT Compiler, Spring, Hibernate
+  - Concepts that BUILD ON this concept
+  - Comma-separated plain text
+  - NO brackets, NO wiki links
+  - Maximum 5
+
+related:
+  - Sibling concepts at same level (alternatives, comparisons)
+  - NEW FIELD — captures lateral connections
+  - Comma-separated plain text
+  - NO brackets, NO wiki links
+  - Maximum 5
 
 tags:
   - Each tag without # prefix
@@ -122,19 +252,26 @@ tags:
 SECTION 4: APPROVED TAG TAXONOMY
 ═══════════════════════════════════════════════════════════════════════════
 
-Platform / Runtime tags:
+Platform / Runtime:
   #java #jvm #spring #springboot #javascript #typescript
   #react #nodejs #css #html #webpack #npm #kotlin #graalvm
+  #docker #kubernetes #linux #aws #azure #python #rust
 
-Domain tags:
+Domain:
   #internals #concurrency #memory #gc #networking #distributed
   #database #messaging #security #os #cloud #containers #devops
   #performance #architecture #reliability #observability
-  #frontend #rendering #browser #bundling #testing
+  #frontend #rendering #browser #bundling #testing #cicd
+  #git #build #dataengineering #bigdata #streaming #caching
+  #ai #llm #agents #rag #mlops #microservices #api
 
-Concept type tags:
+Concept type:
   #pattern #algorithm #datastructure #protocol #deep-dive
-  #foundational #intermediate #advanced
+  #foundational #intermediate #advanced #mental-model
+  #tradeoff #antipattern #bestpractice
+
+Learning type:
+  #thought-experiment #first-principles #production #diagnosis
 
 Use ONLY tags from this list. Do not invent new tags.
 
@@ -142,55 +279,93 @@ Use ONLY tags from this list. Do not invent new tags.
 SECTION 5: CONTENT STRUCTURE — EXACT SECTION ORDER
 ═══════════════════════════════════════════════════════════════════════════
 
-After the YAML frontmatter, every entry follows this EXACT section order.
-Every section is REQUIRED. Do not skip any section.
-Do not add sections not listed here.
+After YAML frontmatter, every entry follows this EXACT section order.
+Every section marked REQUIRED must appear.
+Do not add sections not listed. Do not skip required sections.
 
 ─────────────────────────────────────────────────────────────────────────
-5.1  TITLE LINE
+5.1  TITLE LINE  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Format:
   # NNN — KEYWORD NAME
 
-Rules:
-  - NNN = zero-padded number matching frontmatter
-  - KEYWORD NAME = exact keyword as listed in master keyword list
-
 ─────────────────────────────────────────────────────────────────────────
-5.2  TL;DR LINE
+5.2  TL;DR  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Format:
   ⚡ TL;DR — [one sentence, max 25 words]
 
 Rules:
-  - Single sentence only
-  - Must capture the ESSENCE, not just the definition
-  - Should be usable as a quick memory jog after reading the full entry
-  - No code, no jargon beyond what appears in the title
-  - Example:
-    ⚡ TL;DR — The JVM component that finds, loads, and links .class
-               files into memory before execution begins.
+  - Single sentence only — no semicolons joining two thoughts
+  - Must capture the ESSENCE: what + why, not just what
+  - Zero jargon beyond the keyword name itself
+  - Must be memorable — a hook, not a definition
+  - Test: can a smart non-engineer understand this? If no: rewrite.
+
+Examples of GOOD TL;DR:
+  ⚡ TL;DR — The JVM is a platform-neutral execution engine that
+             lets Java code run identically on any operating system.
+
+  ⚡ TL;DR — A mutex is the JVM's way of saying "only one thread
+             at a time" — like a single key for a shared bathroom.
+
+Examples of BAD TL;DR:
+  ⚡ TL;DR — A synchronization primitive providing mutual exclusion.
+  [BAD: jargon, no WHY, not memorable]
 
 ─────────────────────────────────────────────────────────────────────────
-5.3  ENTRY METADATA TABLE
+5.3  ENTRY METADATA TABLE  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
-Use a Markdown table (NOT Unicode box-drawing characters):
+Format (exact ASCII table structure):
 
-  | #NNN | Category: [category name] | Difficulty: [stars] |
-  |:---|:---|:---|
-  | **Depends on:** | Keyword1, Keyword2, Keyword3 | |
-  | **Used by:** | Keyword1, Keyword2, Keyword3 | |
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│ #NNN         │ Category: [name]                     │ Difficulty: ★★☆          │
+├──────────────┼──────────────────────────────────────┼──────────────────────────┤
+│ Depends on:  │ Keyword1, Keyword2, Keyword3         │                          │
+│ Used by:     │ Keyword1, Keyword2, Keyword3         │                          │
+│ Related:     │ Keyword1, Keyword2, Keyword3         │                          │
+└─────────────────────────────────────────────────────────────────────────────────┘
 
 Rules:
-  - Depends on / Used by: plain text, comma-separated, NO wiki links
-  - Must match the YAML frontmatter values exactly
-  - Difficulty stars: ★☆☆ or ★★☆ or ★★★
+  - All values: plain text, comma-separated, NO wiki links
+  - Must exactly match YAML frontmatter
+  - "Related" row is NEW — always include it
 
 ─────────────────────────────────────────────────────────────────────────
-5.4  TEXTBOOK DEFINITION
+5.4  THE PROBLEM THIS SOLVES  [REQUIRED — NEW SECTION]
+─────────────────────────────────────────────────────────────────────────
+
+Section header:
+  ### 🔥 The Problem This Solves
+
+PURPOSE: This is the most important section. Before any definition,
+establish WHY this concept must exist. The reader must feel the pain
+before they receive the cure.
+
+Content rules:
+  - 100–200 words
+  - Tell a story: "Imagine a world WITHOUT this concept..."
+  - Show the specific, concrete failure: what goes wrong, for whom,
+    at what scale, with what consequences
+  - Use a real-world scenario — not abstract "it would be hard"
+  - End with: "This is why [KEYWORD] was invented."
+  - This section makes the reader WANT to understand the concept
+
+Structure:
+  WORLD WITHOUT IT:
+    [Concrete scenario showing the pain]
+
+  THE BREAKING POINT:
+    [Specific failure mode — what actually crashes/slows/breaks]
+
+  THE INVENTION MOMENT:
+    "This is exactly why [KEYWORD] was created."
+
+─────────────────────────────────────────────────────────────────────────
+5.5  TEXTBOOK DEFINITION  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
@@ -198,286 +373,410 @@ Section header:
 
 Content rules:
   - 2–4 sentences
-  - Formal, precise language
-  - Must be technically complete and accurate
-  - Use correct terminology
-  - No analogies here — pure technical definition
-  - Should read like a reference manual or specification
+  - Formal, precise, technically complete
+  - Written AFTER the reader understands WHY it exists (Section 5.4)
+  - No analogies — pure technical definition
+  - Should read like a spec or reference manual
+  - This is Layer 3 understanding — not the entry point
 
 ─────────────────────────────────────────────────────────────────────────
-5.5  SIMPLE DEFINITION (EASY)
-─────────────────────────────────────────────────────────────────────────
-
-Section header:
-  ### 🟢 Simple Definition (Easy)
-
-Content rules:
-  - 1–2 sentences maximum
-  - Plain English, zero jargon
-  - Should be understandable by a non-technical person
-  - Focus: what it IS in the simplest possible terms
-  - Often uses a short analogy
-  - Example:
-    "The JVM is the engine that runs your Java program."
-
-─────────────────────────────────────────────────────────────────────────
-5.6  SIMPLE DEFINITION (ELABORATED)
+5.6  UNDERSTAND IT IN 30 SECONDS  [REQUIRED — NEW SECTION]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
-  ### 🔵 Simple Definition (Elaborated)
+  ### ⏱️ Understand It in 30 Seconds
+
+PURPOSE: The Feynman test. If you truly understand something,
+you can explain it simply. This section proves it.
+Teach it to someone completely new in the shortest possible path.
 
 Content rules:
-  - 3–5 sentences
-  - Some technical terms allowed but all explained inline
-  - Bridge between the Easy definition and the technical explanation
-  - Should give a developer new to this topic a working mental model
-  - No code examples yet — prose only
+  - EXACTLY 3 parts, clearly labelled:
+
+  **One line:**
+  [Single sentence. No jargon. Maximum 15 words.]
+
+  **One analogy:**
+  > [2–3 sentence real-world analogy that a 10-year-old grasps.
+    In blockquote format.]
+
+  **One insight:**
+  [The single most important thing to understand about this concept.
+   What separates someone who "knows the name" from someone who
+   "understands it." 2–3 sentences.]
 
 ─────────────────────────────────────────────────────────────────────────
-5.7  FIRST PRINCIPLES EXPLANATION
+5.7  FIRST PRINCIPLES EXPLANATION  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
   ### 🔩 First Principles Explanation
 
+PURPOSE: Build the concept from its irreducible components.
+Show the reader HOW they would have invented this themselves
+if they started from the core problem.
+
 Content rules:
-  - Start from the PROBLEM that makes this concept necessary
-  - Show what breaks or is inefficient without this concept
-  - Build the concept logically from its need
-  - Use short code blocks or ASCII diagrams where helpful
-  - Should answer: "Why was this invented?"
-  - Minimum 150 words, maximum 400 words
-  - Structure: Problem → Constraint → Insight → Solution
+  - 200–500 words
+  - Structure: Core Invariants → Derived Design → Trade-offs
+  - Use this template:
+
+    CORE INVARIANTS:
+    (The things always true about this concept — its axioms)
+    1. [Invariant]
+    2. [Invariant]
+    3. [Invariant]
+
+    DERIVED DESIGN:
+    (Given those invariants, here is what MUST be true
+     about any correct implementation)
+    [Explanation building from invariants to design]
+
+    THE TRADE-OFFS:
+    (What you give up to get this — every design has a cost)
+    Gain: [what you get]
+    Cost: [what you sacrifice]
+
+  - Use short code blocks or ASCII diagrams where needed
+  - Ask and answer: "Could we do this differently?"
+    Show why alternatives fail.
 
 ─────────────────────────────────────────────────────────────────────────
-5.8  WHY DOES THIS EXIST — WHY BEFORE WHAT
+5.8  THOUGHT EXPERIMENT  [REQUIRED — NEW SECTION]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
-  ### ❓ Why Does This Exist (Why Before What)
+  ### 🧪 Thought Experiment
+
+PURPOSE: A single simple scenario that makes the concept
+immediately obvious. Feynman's method: the right thought
+experiment makes a concept impossible to misunderstand.
 
 Content rules:
-  - MANDATORY section — never skip
-  - Answer: "What breaks or is painful WITHOUT this concept?"
-  - Show the specific failure modes, performance problems, or
-    developer pain that motivated this concept's creation
-  - Then show what WORKS WITH it
-  - Use this structure:
+  - Exactly ONE thought experiment
+  - Follows this structure:
 
-    WITHOUT [keyword]:
-      [specific problem 1]
-      [specific problem 2]
-      [specific problem 3]
+    SETUP:
+    [Minimal scenario — 2–3 sentences. Strip everything
+     non-essential. Make it as simple as possible while
+     still capturing the core idea.]
 
-    What breaks without it:
-      1. [consequence]
-      2. [consequence]
+    WHAT HAPPENS WITHOUT [KEYWORD]:
+    [Step-by-step: show the exact failure. Be concrete.
+     Show exact data, timing, error, corruption.]
 
-    WITH [keyword]:
-      → [benefit 1]
-      → [benefit 2]
+    WHAT HAPPENS WITH [KEYWORD]:
+    [Step-by-step: show how it fixes the failure.
+     Same steps — different outcome.]
 
-  - Be concrete — no vague statements like "it would be harder"
-  - Minimum 100 words
+    THE INSIGHT:
+    [1–2 sentences: the generalised truth the experiment reveals.
+     This should feel like an "aha" moment.]
+
+  - 150–250 words total
+  - No code — pure scenario
+  - The scenario should be memorable (use a story, not a spec)
 
 ─────────────────────────────────────────────────────────────────────────
-5.9  MENTAL MODEL / ANALOGY
+5.9  MENTAL MODEL / ANALOGY  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
   ### 🧠 Mental Model / Analogy
 
+PURPOSE: Give the reader a durable mental model — a simplified
+map of reality they can carry in their head and apply rapidly.
+
 Content rules:
-  - Start with a real-world analogy (no prior knowledge assumed)
-  - Analogy must map clearly to the technical concept
-  - After the analogy: explicitly map analogy elements to technical
-    elements using this structure:
-    "[Analogy element]" = [technical element]
-  - Must simplify, not confuse
-  - Use > blockquote formatting for the analogy itself
-  - Keep analogy under 150 words
-  - Follow with a 2–3 sentence technical mapping
+  - Primary analogy in > blockquote
+  - After analogy: explicit 1:1 mapping of every element
+  - Format for mapping:
+    "[Analogy element]" → [technical element]
+  - Test the analogy: does it hold for the most common use cases?
+    Does it break misleadingly at edge cases? Fix or flag this.
+  - End with: "Where this analogy breaks down:" + 1 sentence
+    This prevents the analogy from becoming a misconception.
+  - 150–250 words total
 
 ─────────────────────────────────────────────────────────────────────────
-5.10  HOW IT WORKS (MECHANISM)
+5.10  GRADUAL DEPTH — FOUR LEVELS  [REQUIRED — NEW SECTION]
+─────────────────────────────────────────────────────────────────────────
+
+Section header:
+  ### 📶 Gradual Depth — Four Levels
+
+PURPOSE: Every reader finds their level. Junior devs learn
+the essentials. Seniors learn the internals. Each level
+builds directly on the previous.
+
+Content rules:
+  - EXACTLY four levels, always labelled exactly as below:
+  - Each level self-contained but references the level above
+  - Each level 2–5 sentences (prose, not bullets)
+  - This section replaces the old "Simple Elaborated" section
+
+  **Level 1 — What it is (anyone can understand):**
+  [Plain English. No jargon. A smart non-engineer understands.]
+
+  **Level 2 — How to use it (junior developer):**
+  [Basic usage. Common patterns. Entry-level API/concept usage.
+   What you need to know to use it correctly without breaking things.]
+
+  **Level 3 — How it works (mid-level engineer):**
+  [Internals. Data structures. Algorithms used. Protocol details.
+   What a competent practitioner needs to tune and debug it.]
+
+  **Level 4 — Why it was designed this way (senior/staff):**
+  [Design decisions. Historical context. Alternative designs
+   considered and rejected. What makes this design elegant or flawed.
+   Edge cases that expose the design's limits.]
+
+─────────────────────────────────────────────────────────────────────────
+5.11  HOW IT WORKS — MECHANISM  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
   ### ⚙️ How It Works (Mechanism)
 
 Content rules:
-  - Step-by-step technical explanation
-  - Use ASCII diagrams for:
+  - Step-by-step technical walkthrough
+  - For every non-trivial step: explain WHY that step exists
+    (not just WHAT it does)
+  - ASCII diagrams REQUIRED for:
+    * Any flow with 3+ steps
     * Memory layouts
-    * Data flow / pipelines
-    * State machines
-    * Hierarchies / trees
+    * State machines with 3+ states
     * Before/after comparisons
-  - ASCII diagram box width: 57 characters max (fits in narrow editors)
-  - Use code blocks for bytecode, commands, config files
-  - Cover: internals, phases, components, data structures used
-  - For multi-phase processes: use numbered steps with clear headers
-  - Minimum 200 words for ★★☆ and ★★★ entries
-  - Minimum 100 words for ★☆☆ entries
-
-ASCII DIAGRAM RULES:
-  - Max width: 57 characters inside the box (plus 2 for borders = 59)
-  - Use box-drawing characters: ┌ ┐ └ ┘ │ ─ ├ ┤ ┬ ┴ ┼
-  - Use arrows: ↓ ↑ → ← ↔ ↕
-  - Label every diagram with a title in the top border
-  - Wrap long lines — never exceed the max width
+    * System component interactions
+  - ASCII diagram rules:
+    * Box width: MAX 57 characters inside (59 with borders)
+    * Box-drawing chars: ┌ ┐ └ ┘ │ ─ ├ ┤ ┬ ┴ ┼
+    * Arrows: ↓ ↑ → ← ↔ ↕
+    * Every diagram has a descriptive title in top border
+    * Wrap lines — never exceed max width
+  - Minimum word count:
+    ★☆☆: 150 words
+    ★★☆: 300 words
+    ★★★: 500 words
+  - Always distinguish: "what happens in happy path" vs
+    "what happens when something goes wrong"
 
 ─────────────────────────────────────────────────────────────────────────
-5.11  HOW IT CONNECTS (MINI-MAP)
+5.12  THE COMPLETE PICTURE — END-TO-END FLOW  [REQUIRED — NEW SECTION]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
-  ### 🔄 How It Connects (Mini-Map)
+  ### 🔄 The Complete Picture — End-to-End Flow
+
+PURPOSE: Show exactly where this concept fits in the full
+system from start to finish. No concept is an island.
+The reader must see the complete chain — upstream and downstream.
 
 Content rules:
-  - Show where this concept sits in the larger system
-  - Use a simple ASCII flow: arrows connecting related concepts
-  - Must show:
-    * What feeds INTO this concept (upstream)
-    * What this concept feeds INTO (downstream)
-    * Any parallel or alternative concepts
-  - Mark "you are here" with a comment or arrow
-  - Keep to 10–15 lines maximum
-  - Example format:
+  - Primary: one ASCII flow diagram showing complete system context
+  - Show: trigger → processing chain → outcome → what happens on failure
+  - Mark where THIS concept appears with: ← YOU ARE HERE
+  - Show what happens when THIS component fails (failure path)
+  - ALSO include a "What Changes At Scale" note:
+    [2–3 sentences: how this component behaves differently at
+     10x / 100x / 1000x the normal load or data volume]
+  - Format:
 
-    javac → [Bytecode] → ClassLoader → JIT → Native Code
-                ↑
-           you are here
+    NORMAL FLOW:
+    [Input] → [Step 1] → [Step 2] → [THIS CONCEPT ← YOU ARE HERE]
+           → [Step 3] → [Output]
+
+    FAILURE PATH:
+    [THIS CONCEPT fails] → [what cascades] → [observable symptom]
+
+    WHAT CHANGES AT SCALE:
+    [How behaviour shifts under production load]
 
 ─────────────────────────────────────────────────────────────────────────
-5.12  CODE EXAMPLE
+5.13  CODE EXAMPLE  [REQUIRED if programmatic interface exists]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
   ### 💻 Code Example
 
 Content rules:
-  - REQUIRED if the concept has any programmatic interface
-  - Optional ONLY for pure-theory concepts (e.g. CAP Theorem)
-  - Show WRONG then RIGHT pattern where applicable
+  - REQUIRED if concept has any programmatic interface
+  - OPTIONAL for pure-theory concepts (CAP Theorem, OSI Model)
+  - ALWAYS show WRONG pattern THEN RIGHT pattern with explanation
   - Annotate non-obvious lines with inline comments
-  - Show runtime behaviour where relevant (output, GC logs, etc.)
-  - Use fenced code blocks with language tag:
-    ```java
-    ```javascript
-    ```typescript
-    ```bash
-    ```yaml
-  - Multiple examples allowed — label each:
-    "Example 1 — [what it shows]:"
-    "Example 2 — [what it shows]:"
-  - Code must be minimal and focused — no unnecessary boilerplate
-  - Prefer runnable snippets over incomplete fragments
-  - For command-line tools: show actual output with # comments
-  - Code width: max 70 characters per line
+  - Show actual output / logs / metrics where relevant
+  - Label every example: "Example N — [what this demonstrates]:"
+  - Multiple examples ordered: basic → advanced → production pattern
+  - Code width: MAX 70 characters per line
+  - Include at minimum:
+    ★☆☆: 1–2 examples
+    ★★☆: 2–4 examples (include production pattern)
+    ★★★: 3–5 examples (include diagnostic/tuning patterns)
 
 ─────────────────────────────────────────────────────────────────────────
-5.13  FLOW / LIFECYCLE (CONDITIONAL)
+5.14  COMPARISON TABLE  [REQUIRED for concepts with alternatives]
+─────────────────────────────────────────────────────────────────────────
+
+Section header:
+  ### ⚖️ Comparison Table
+
+PURPOSE: Systematised knowledge. Every concept sits in a
+landscape of alternatives. Show the landscape explicitly.
+This is where structured thinking becomes visible.
+
+Content rules:
+  - REQUIRED if the concept has 2+ alternatives or variants
+  - SKIP for singleton concepts with no alternatives
+  - Format: markdown table with 4 columns max:
+
+    | Option | Throughput | Latency | Best For |
+    | Option A | High | High | Batch jobs |
+    | Option B | Medium | Low | Web APIs |
+
+  - Columns must be meaningful trade-off dimensions
+  - Last column: "Best For" (practical recommendation)
+  - Minimum 3 rows (including the main concept)
+  - Maximum 8 rows
+  - Bold the main concept's row name for orientation
+  - Include a 2-sentence "How to choose" note below the table
+
+─────────────────────────────────────────────────────────────────────────
+5.15  FLOW / LIFECYCLE  [CONDITIONAL]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
   ### 🔁 Flow / Lifecycle
 
 Content rules:
-  - INCLUDE ONLY IF this concept has a meaningful lifecycle or
-    multi-step flow (e.g. Bean Lifecycle, GC cycle, Request lifecycle)
-  - SKIP for atomic / stateless concepts
-  - Use ASCII flow diagram showing each phase/state
-  - Label each step clearly
-  - Show transitions, triggers, and outcomes
-  - Maximum 20 steps
+  - INCLUDE ONLY if concept has a meaningful multi-phase lifecycle
+  - SKIP for stateless or atomic concepts
+  - ASCII diagram showing phases/states
+  - Label: phase name, trigger condition, outcome, error path
+  - Maximum 20 steps / states
+  - Always show: normal path + error/failure path
 
 ─────────────────────────────────────────────────────────────────────────
-5.14  COMMON MISCONCEPTIONS
+5.16  COMMON MISCONCEPTIONS  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
   ### ⚠️ Common Misconceptions
 
 Content rules:
-  - REQUIRED — minimum 4 rows, maximum 8 rows
-  - Use a markdown table with exactly 2 columns:
+  - Minimum 4 rows, maximum 8 rows
+  - Format: markdown table, exactly 2 columns
+
     | Misconception | Reality |
-  - First column: what people incorrectly believe
-  - Second column: the correct technical reality
-  - Each row: complete sentence fragments
-  - Bold NOTHING in this table
-  - Phrases like "most people think X, but actually Y" belong here
-  - Include misconceptions that even experienced engineers hold
+    |---|---|
+    | [wrong belief] | [correct technical reality] |
+
+  - Include misconceptions that EXPERIENCED engineers hold
+  - Bold nothing in table
+  - Frame as "most people think X, actually Y"
+  - Severity order: most dangerous misconception FIRST
 
 ─────────────────────────────────────────────────────────────────────────
-5.15  PITFALLS IN PRODUCTION
+5.17  FAILURE MODES & DIAGNOSIS  [REQUIRED — UPGRADED SECTION]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
-  ### 🔥 Pitfalls in Production
+  ### 🚨 Failure Modes & Diagnosis
+
+PURPOSE: Production reality. What actually breaks, how to see
+it happening, and how to fix it. This is where senior engineers
+live. Theory without failure mode knowledge is incomplete.
 
 Content rules:
-  - REQUIRED — minimum 2 pitfalls, maximum 5 pitfalls
-  - Each pitfall must follow this structure:
-    **[Short descriptive title]**
-    [code or config showing the BAD pattern — commented]
-    [code or config showing the FIX — commented]
-    [1–2 sentence explanation of why it fails and how fix works]
-  - Focus on REAL production failure modes
-  - Include: OOM, race conditions, latency spikes,
-    security vulnerabilities, misconfigurations, subtle bugs
-  - Pitfalls should be non-obvious — not "don't use null"
-  - Include diagnostic steps where relevant
+  - Minimum 3 failure modes, maximum 6
+  - REQUIRED sub-structure for EACH failure mode:
+
+    **[Failure Mode Name]**
+
+    Symptom:
+    [What the engineer observes — error message, metric spike,
+     log pattern, user complaint. Be specific.]
+
+    Root Cause:
+    [Why this happens technically. Not just "it broke" —
+     the exact mechanism that causes the failure.]
+
+    Diagnostic Command / Tool:
+    [actual command to observe this in a running system]
+
+    Fix:
+    [bad and good code/config]
+
+    Prevention:
+    [1 sentence: what to do at design time to prevent this.]
+
+  - Covers ALL of: code bugs, configuration errors, operational
+    failures, security vulnerabilities, performance degradation
+  - The Diagnostic Command is MANDATORY — no exceptions
+  - Real commands only: jcmd, jstat, kubectl, docker stats, etc.
 
 ─────────────────────────────────────────────────────────────────────────
-5.16  RELATED KEYWORDS
+5.18  RELATED KEYWORDS  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
   ### 🔗 Related Keywords
 
 Content rules:
-  - REQUIRED — minimum 5, maximum 12 entries
-  - Format: bullet list
-  - Each entry: `Keyword Name` — one-sentence relationship description
-  - Cover: prerequisites, successors, alternatives, components,
-    tools that implement this concept
+  - Minimum 5, maximum 12 entries
+  - Three categories, clearly labelled:
+
+    **Prerequisites (understand these first):**
+    - `Keyword` — [why you need this first]
+
+    **Builds On This (learn these next):**
+    - `Keyword` — [how it extends this concept]
+
+    **Alternatives / Comparisons:**
+    - `Keyword` — [how it differs from this concept]
+
+  - Each entry: `backtick keyword name` — one relationship sentence
+  - Every entry must add information — no filler
+  - This replaces the old flat list format
 
 ─────────────────────────────────────────────────────────────────────────
-5.17  QUICK REFERENCE CARD
+5.19  QUICK REFERENCE CARD  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
   ### 📌 Quick Reference Card
 
 Content rules:
-  - REQUIRED — always last content section before Think section
-  - ASCII box inside a ``` code fence — EXACT structure:
+  - Always the last content section before Think section
+  - Exact ASCII box structure — no deviations:
 
-  ```
-  ┌──────────────────────────────────────────────────────────┐
-  │ KEY IDEA     │ [2-line max summary of core concept]      │
-  ├──────────────┼───────────────────────────────────────────┤
-  │ USE WHEN     │ [specific conditions to apply this]       │
-  ├──────────────┼───────────────────────────────────────────┤
-  │ AVOID WHEN   │ [specific conditions NOT to use this]     │
-  ├──────────────┼───────────────────────────────────────────┤
-  │ ONE-LINER    │ "[memorable quote-style insight]"         │
-  ├──────────────┼───────────────────────────────────────────┤
-  │ NEXT EXPLORE │ Keyword1 → Keyword2 → Keyword3            │
-  └──────────────────────────────────────────────────────────┘
-  ```
+┌──────────────────────────────────────────────────────────┐
+│ WHAT IT IS   │ [core concept — 1 line]                   │
+├──────────────┼───────────────────────────────────────────┤
+│ PROBLEM IT   │ [the pain it solves — 1 line]             │
+│ SOLVES       │                                           │
+├──────────────┼───────────────────────────────────────────┤
+│ KEY INSIGHT  │ [the non-obvious thing — 1–2 lines]       │
+├──────────────┼───────────────────────────────────────────┤
+│ USE WHEN     │ [specific condition to apply this]        │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ [specific condition NOT to use this]      │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ [what you gain] vs [what you sacrifice]   │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "[memorable metaphor insight in quotes]"  │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Keyword1 → Keyword2 → Keyword3            │
+└──────────────────────────────────────────────────────────┘
 
-  Rules:
-  - ONE-LINER: must be a metaphor or memorable insight, in quotes
-  - NEXT EXPLORE: 3–5 logical next concepts to study, in order
-  - The box MUST be inside a ``` code fence (protected from scripts)
-  - Each cell: max 2 lines of content
+  Changes from v1:
+  - Added "WHAT IT IS" row — explicit concept statement
+  - Added "PROBLEM IT SOLVES" row — the WHY
+  - Added "KEY INSIGHT" row — the non-obvious truth
+  - Added "TRADE-OFF" row — always show the cost
+  - Total box width: exactly 60 characters (including borders)
 
 ─────────────────────────────────────────────────────────────────────────
-5.18  THINK ABOUT THIS BEFORE WE CONTINUE
+5.20  THINK ABOUT THIS  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
@@ -485,318 +784,485 @@ Section header:
   ### 🧠 Think About This Before We Continue
 
 Content rules:
-  - REQUIRED — always the absolute last section
-  - Preceded by a horizontal rule: ---
+  - ALWAYS last section, preceded by horizontal rule ---
   - EXACTLY 2 questions
-  - Questions must:
-    * Require connecting this concept to OTHER concepts
-    * Have no single obvious answer
-    * Push thinking beyond the entry content
-    * Reveal deeper understanding if answered correctly
-    * NOT be answerable with just the entry content
-  - Question format:
-    **Q1.** [question text — 2–4 sentences, specific scenario]
-    **Q2.** [question text — 2–4 sentences, different angle]
-  - Good question types:
-    * "What happens when X meets Y under condition Z?"
-    * "Why does [design decision] work for A but fail for B?"
-    * "Calculate/estimate the [impact] of [thing] at scale N"
-    * "Trace exactly what happens step-by-step when [scenario]"
+  - Question types (use DIFFERENT types for Q1 and Q2):
+    TYPE A — System Interaction:
+      "What happens when X meets Y under condition Z?"
+    TYPE B — Scale Thought Experiment:
+      "At 1 million requests/second, what breaks first and why?"
+    TYPE C — Design Trade-off:
+      "Why does this design work for A but fail for B?"
+    TYPE D — Root Cause Trace:
+      "Trace step-by-step what happens when [scenario] fails."
+    TYPE E — First Principles Challenge:
+      "If you had to redesign this from scratch with constraint X,
+       what would change?"
+    TYPE F — Comparison Depth:
+      "Both X and Y solve problem P. What is the precise condition
+       that makes X correct and Y wrong — or vice versa?"
+  - Questions must NOT be answerable from entry content alone
+  - Questions must require connecting to OTHER concepts
+  - Format:
+    **Q1.** [Question — 2–4 sentences, specific scenario]
+    **Q2.** [Question — 2–4 sentences, different angle and type]
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 6: FORMATTING RULES — UNIVERSAL
 ═══════════════════════════════════════════════════════════════════════════
 
-TEXT FORMATTING:
-  - Use **bold** only for: first mention of the keyword being defined,
-    pitfall titles, and table headers
-  - Use `code formatting` for: all code, all JVM flags, all method names,
-    all class names, all file names, all command-line options
-  - Use > blockquote for: analogies in the Mental Model section only
-  - Never use bold for emphasis in prose — rewrite for clarity instead
-  - Paragraph length: 3–5 sentences maximum
-  - Never write walls of text without structure
+TEXT:
+  - **Bold**: keyword name (first mention), pitfall titles,
+    level headers in section 5.10
+  - `code`: all code, flags, commands, method names, class names,
+    file names, config keys
+  - > blockquote: analogies ONLY (in section 5.9)
+  - Never bold for emphasis — rewrite the sentence instead
+  - Max paragraph length: 5 sentences
 
 HEADERS:
-  - Section headers: ### (H3) — always with emoji prefix as specified
-  - Sub-section headers within a section: **Bold text** (not H4)
-  - Never use H1 except for the title line
-  - Never use H2 in entries
+  - H1 (#): title line only
+  - H2 (##): never used in entry body
+  - H3 (###): section headers (always with emoji as specified)
+  - Bold text (**): sub-section labels within sections
 
 LISTS:
-  - Use bullet lists for: Related Keywords, sets of options,
-    "what breaks" consequences
-  - Use numbered lists for: step-by-step sequences, phases,
-    priority-ordered items
+  - Bullets: Related Keywords, sets of options, consequences
+  - Numbered: step-by-step sequences, ordered phases
   - Never use lists where prose reads naturally
-  - List items: complete thoughts, not fragments
+  - List items: complete thoughts — no fragments
 
 CODE BLOCKS:
-  - Always specify language: ```java  ```javascript  ```bash  ```yaml
-  - Bad pattern shown first with comment: // BAD: reason
-  - Good pattern shown after with comment: // GOOD: reason
-  - Inline comments: explain the non-obvious, not the obvious
+  - Always specify language after triple backtick
+  - BAD pattern always before GOOD pattern
   - Max line length: 70 characters
+  - Comments explain WHY, not WHAT
 
-ASCII DIAGRAMS (outside code fences, inside prose):
-  - Box width: maximum 59 characters total (57 content + 2 borders)
-  - Use for: memory layouts, flows, hierarchies, state machines
-  - Every diagram has a title in the top border
-  - Line wrap aggressively — never let a line exceed max width
+ASCII DIAGRAMS:
+  - Max total width: 59 characters (57 content + 2 borders)
+  - Every diagram has a title in its top border
+  - Aggressive line wrapping — no exceptions
+  - Characters: ┌ ┐ └ ┘ │ ─ ├ ┤ ┬ ┴ ┼ ↓ ↑ → ← ↔
 
-SECTION SPACING (CRITICAL):
-  - Every ### heading and --- divider MUST have ONE blank line before
-    and ONE blank line after
-  - Skip content inside ``` code fences — never inject blank lines
-    inside a code block
-  - Skip the frontmatter block (between opening --- and closing ---)
-  - Collapse 3+ consecutive blank lines down to 2 maximum
-
-FILE ENCODING:
-  - Always UTF-8 without BOM
-  - PowerShell: [System.IO.File]::WriteAllText(path, content,
-    [System.Text.UTF8Encoding]::new($false))
+TABLES:
+  - Max 4 columns (except misconceptions table: 2 columns)
+  - Always include a header row
+  - Comparison tables: last column = "Best For" recommendation
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 7: CONTENT QUALITY RULES
+SECTION 7: CONTENT QUALITY STANDARDS
 ═══════════════════════════════════════════════════════════════════════════
 
-ALWAYS:
-  - Write for a 10+ year Java/JavaScript engineer who wants deep WHY
-  - Assume strong general programming knowledge
-  - Skip basics unless they're essential for this specific concept
-  - Use production-realistic examples (Spring Boot, Kafka, K8s, etc.)
-  - Show real diagnostic commands (jcmd, jstat, chrome devtools, etc.)
-  - Include version-specific information where behaviour differs
-    (Java 8 vs 17 vs 21, Node 18 vs 20, etc.)
-  - Reference real tools: GCViewer, async-profiler, webpack-bundle-analyzer
+THE COMPLETENESS TEST — apply before finalising every entry:
 
-NEVER:
+  ☐ Can the reader fully understand this concept WITHOUT looking
+    anything up elsewhere? If no: add what's missing.
+  ☐ Does the reader understand WHY this exists, not just WHAT it is?
+  ☐ Does the reader know where this fits in the complete system?
+  ☐ Can the reader diagnose failures involving this concept?
+  ☐ Can the reader explain this to a junior engineer after reading?
+  ☐ Does the reader know the precise conditions to use AND avoid this?
+  ☐ Does the reader understand what this costs (trade-off)?
+
+THE FEYNMAN TEST — apply to sections 5.4, 5.6, 5.8:
+  Read the section aloud. If any sentence requires prior knowledge
+  of technical terms NOT defined in this entry: simplify or define.
+
+THE PRODUCTION REALITY TEST — apply to section 5.17:
+  Every failure mode must include a REAL diagnostic command.
+  If you cannot name the command: the failure mode is not real enough.
+
+ALWAYS INCLUDE:
+  - Version-specific behaviour (Java 8/11/17/21, Node 18/20, etc.)
+  - Real tool references: jcmd, jstat, kubectl, docker stats,
+    chrome devtools, async-profiler, Grafana, Prometheus
+  - Production-scale examples (not toy examples)
+  - The failure case, not just the success case
+
+NEVER INCLUDE:
+  - "It depends" without specifying exactly on what and why
+  - Jargon undefined in this entry
+  - Code with unexplained behaviour
+  - Positive-only framing (always show failure modes)
+  - Repeated content across sections
   - Surface-level explanations that don't build understanding
-  - "It depends" without explaining on what and why
-  - Jargon without definition on first use
-  - Code with unexplained magic
-  - Positive-only framing — always show failure modes
-  - Repeated content across sections — each section adds new value
-  - More than 5 sentences in a paragraph
-  - Markdown tables with more than 3 columns (except the misconceptions table)
+  - Walls of prose without structure
 
-DEPTH CALIBRATION BY DIFFICULTY:
+DEPTH CALIBRATION:
+
   ★☆☆ Foundational:
-    - Explain concept clearly to someone who has never seen it
-    - 1–2 code examples
+    - Layer 1 and 2 emphasis
+    - 1–2 code examples (basic usage)
+    - 3 failure modes minimum
     - 4 misconceptions minimum
-    - 2 production pitfalls minimum
+    - Thought experiment: simple, direct
 
   ★★☆ Intermediate:
-    - Assume reader knows the basics — go deeper
-    - 2–4 code examples including production patterns
-    - 5–6 misconceptions
-    - 3 production pitfalls minimum
-    - Include performance/tuning considerations
+    - Layer 2 and 3 emphasis
+    - 2–4 code examples (usage + production pattern)
+    - 4 failure modes minimum
+    - 5 misconceptions minimum
+    - Comparison table: always required
+    - Thought experiment: involves system interaction
 
   ★★★ Deep-dive:
-    - Assume expert reader — go to internals
-    - 3–5 code examples including diagnostic/tuning patterns
-    - 6–8 misconceptions including expert-level ones
-    - 4–5 production pitfalls including subtle/complex ones
-    - Include JVM flags, browser internals, protocol details
-    - Cover edge cases and failure modes that surprise experts
+    - Layer 3 and 4 emphasis
+    - 3–5 code examples (production + diagnostic + tuning)
+    - 5 failure modes minimum
+    - 6 misconceptions minimum
+    - Comparison table: always required
+    - First principles: full invariants + derived design
+    - Thought experiment: pushes to scale or edge case
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 8: COMPLETE ENTRY SKELETON — COPY THIS STRUCTURE
+SECTION 8: COMPLETE ENTRY SKELETON — COPY EXACTLY
 ═══════════════════════════════════════════════════════════════════════════
 
 ---
-layout: default
-title: "KEYWORD NAME"
-parent: "Category Name"
-nav_order: NNN
-permalink: /category-slug/keyword-slug/
-number: "NNN"
-category: Category Name
-difficulty: ★★☆
+number: NNNN
+category: [Category Name]
+difficulty: [★☆☆ | ★★☆ | ★★★]
 depends_on: Keyword1, Keyword2
 used_by: Keyword1, Keyword2
+related: Keyword1, Keyword2
 tags: #tag1, #tag2, #tag3
 ---
 
-# NNN — KEYWORD NAME
+# NNNN — KEYWORD NAME
 
-`#tag1` `#tag2` `#tag3`
+⚡ TL;DR — [One sentence. Max 25 words. Essence + WHY.]
 
-⚡ TL;DR — [One sentence max 25 words.]
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│ #NNNN        │ Category: [name]                     │ Difficulty: ★★☆          │
+├──────────────┼──────────────────────────────────────┼──────────────────────────┤
+│ Depends on:  │ Keyword1, Keyword2                   │                          │
+│ Used by:     │ Keyword1, Keyword2                   │                          │
+│ Related:     │ Keyword1, Keyword2                   │                          │
+└─────────────────────────────────────────────────────────────────────────────────┘
 
-| #NNN | Category: [name] | Difficulty: [stars] |
-|:---|:---|:---|
-| **Depends on:** | [Keyword1], [Keyword2] | |
-| **Used by:** | [Keyword1], [Keyword2] | |
-
----
+### 🔥 The Problem This Solves
+[WORLD WITHOUT IT: concrete pain scenario. 100–200 words.
+ End: "This is exactly why [KEYWORD] was created."]
 
 ### 📘 Textbook Definition
+[2–4 sentences. Formal. Technically precise. No analogies.]
 
-[2–4 sentences. Formal. Technically complete.]
+### ⏱️ Understand It in 30 Seconds
 
-### 🟢 Simple Definition (Easy)
+**One line:**
+[15 words max. Zero jargon.]
 
-[1–2 sentences. Zero jargon. Anyone can understand.]
+**One analogy:**
+> [2–3 sentences. Real world. 10-year-old understands.]
 
-### 🔵 Simple Definition (Elaborated)
-
-[3–5 sentences. Bridge to technical content.]
+**One insight:**
+[The thing that separates knowing the name from understanding it.]
 
 ### 🔩 First Principles Explanation
 
-[Problem → Constraint → Insight → Solution. 150–400 words.]
+CORE INVARIANTS:
+1. [Always true about this concept]
+2. [Always true about this concept]
+3. [Always true about this concept]
 
-### ❓ Why Does This Exist (Why Before What)
+DERIVED DESIGN:
+[How the invariants force the design.]
 
-[WITHOUT it: specific failures. WITH it: specific benefits.]
+THE TRADE-OFFS:
+Gain: [what you get]
+Cost: [what you sacrifice]
+
+### 🧪 Thought Experiment
+
+SETUP:
+[Minimal scenario — strip everything non-essential.]
+
+WHAT HAPPENS WITHOUT [KEYWORD]:
+[Step-by-step concrete failure.]
+
+WHAT HAPPENS WITH [KEYWORD]:
+[Step-by-step fix — same scenario, better outcome.]
+
+THE INSIGHT:
+[The generalised truth revealed by this experiment.]
 
 ### 🧠 Mental Model / Analogy
+> [Primary analogy in blockquote.]
 
-> [Real-world analogy in blockquote.]
+[Explicit mapping:]
+"[Analogy element]" → [technical element]
+"[Analogy element]" → [technical element]
+"[Analogy element]" → [technical element]
 
-[2–3 sentences mapping analogy to technical reality.]
+Where this analogy breaks down: [1 sentence.]
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+[Plain English. No jargon.]
+
+**Level 2 — How to use it (junior developer):**
+[Basic usage. Common patterns. What to know to not break things.]
+
+**Level 3 — How it works (mid-level engineer):**
+[Internals. Data structures. Tuning parameters.]
+
+**Level 4 — Why it was designed this way (senior/staff):**
+[Design decisions. Alternatives rejected. Edge cases.]
 
 ### ⚙️ How It Works (Mechanism)
+[Step-by-step. ASCII diagrams. WHY each step exists.
+ Minimum words by difficulty: ★☆☆=150, ★★☆=300, ★★★=500]
 
-[Step-by-step. ASCII diagrams. Code where needed.]
+### 🔄 The Complete Picture — End-to-End Flow
 
-### 🔄 How It Connects (Mini-Map)
+NORMAL FLOW:
+[Input] → [Step 1] → [THIS CONCEPT ← YOU ARE HERE] → [Output]
 
-[ASCII flow showing upstream → this concept → downstream.]
+FAILURE PATH:
+[THIS CONCEPT fails] → [cascade] → [observable symptom]
+
+WHAT CHANGES AT SCALE:
+[2–3 sentences on behaviour at 10x/100x/1000x load.]
 
 ### 💻 Code Example
+[REQUIRED if programmatic. SKIP for pure theory.]
+[BAD then GOOD. Labelled examples. Annotated. Max 70 chars/line.]
 
-[Labelled examples. Wrong then right. Annotated.]
+### ⚖️ Comparison Table
+[REQUIRED if alternatives exist. SKIP if singleton concept.]
+
+| Option | [Dimension 1] | [Dimension 2] | Best For |
+|---|---|---|---|
+| **[THIS CONCEPT]** | ... | ... | ... |
+| [Alternative A] | ... | ... | ... |
+| [Alternative B] | ... | ... | ... |
+
+How to choose: [2 sentences — decision rule.]
 
 ### 🔁 Flow / Lifecycle
-
-[INCLUDE ONLY if concept has meaningful lifecycle. Skip otherwise.]
+[INCLUDE ONLY if meaningful multi-phase lifecycle exists.]
+[ASCII diagram: phases, triggers, transitions, error paths.]
 
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
 |---|---|
-| [wrong belief] | [correct technical reality] |
+| [wrong belief — most dangerous first] | [correct reality] |
+| [wrong belief] | [correct reality] |
+| [wrong belief] | [correct reality] |
+| [wrong belief] | [correct reality] |
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**1. [Pitfall title]**
+**1. [Failure Mode Name]**
 
-[Bad code / config / command]
+Symptom: [What the engineer observes.]
 
-[Fix code / config / command]
+Root Cause: [Exact technical mechanism.]
 
-[Why it fails + how fix works.]
+Diagnostic:
+```bash
+[real command]
+```
+
+Fix:
+```[language]
+// BAD: [why this fails]
+[bad code]
+
+// GOOD: [why this works]
+[good code]
+```
+
+Prevention: [1 sentence design-time action.]
+
+[Repeat for each failure mode — minimum 3]
 
 ### 🔗 Related Keywords
 
-- `Keyword` — [one-sentence relationship]
+**Prerequisites (understand these first):**
+- `Keyword` — [why needed first]
+
+**Builds On This (learn these next):**
+- `Keyword` — [how it extends this]
+
+**Alternatives / Comparisons:**
+- `Keyword` — [how it differs]
 
 ### 📌 Quick Reference Card
 
-```
 ┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ [core concept in 2 lines max]             │
+│ WHAT IT IS   │ [core concept — 1 line]                   │
 ├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ [specific when to apply]                  │
+│ PROBLEM IT   │ [pain it solves — 1 line]                 │
+│ SOLVES       │                                           │
 ├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ [specific when NOT to apply]              │
+│ KEY INSIGHT  │ [non-obvious truth — 1–2 lines]           │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "[memorable metaphor-style insight]"      │
+│ USE WHEN     │ [specific condition to apply this]        │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ [specific condition NOT to use this]      │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ [gain] vs [cost]                          │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "[memorable metaphor insight]"            │
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Keyword1 → Keyword2 → Keyword3            │
 └──────────────────────────────────────────────────────────┘
-```
 
 ---
-
 ### 🧠 Think About This Before We Continue
 
-**Q1.** [Connecting question — scenario-based, 2–4 sentences.]
+**Q1.** [TYPE X question — system interaction or scale scenario.
+        2–4 sentences. Specific. Not answerable from this entry alone.]
 
-**Q2.** [Different angle question — deeper, 2–4 sentences.]
+**Q2.** [TYPE Y question — different type than Q1.
+        2–4 sentences. Different angle. Deeper challenge.]
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 9: HOW TO INVOKE — USAGE INSTRUCTIONS
+SECTION 9: INVOCATION — HOW TO USE THIS PROMPT
 ═══════════════════════════════════════════════════════════════════════════
 
-To generate a single entry, use this command format:
+SINGLE ENTRY:
 
   Generate dictionary entry for keyword: [KEYWORD NAME]
-  Number: [NNN]
+  Number: [NNNN]
   Category: [CATEGORY NAME]
   Difficulty: [★☆☆ | ★★☆ | ★★★]
 
-  Follow the Technical Dictionary Generator prompt exactly.
+  Follow the Technical Dictionary Generator prompt v2.0 exactly.
   Use the complete skeleton from Section 8.
-  Do not skip any section.
+  Do not skip any required section.
   Do not add sections not in the spec.
+  Apply all 12 teaching principles from Section 1.
 
-To generate a batch of 5 entries in sequence:
+BATCH OF 5:
 
-  Generate dictionary entries for keywords [NNN]–[NNN]:
-  [KEYWORD 1] (NNN)
-  [KEYWORD 2] (NNN)
-  [KEYWORD 3] (NNN)
-  [KEYWORD 4] (NNN)
-  [KEYWORD 5] (NNN)
+  Generate dictionary entries for keywords NNNN–NNNN:
+  - [KEYWORD 1] (NNNN) — [difficulty]
+  - [KEYWORD 2] (NNNN) — [difficulty]
+  - [KEYWORD 3] (NNNN) — [difficulty]
+  - [KEYWORD 4] (NNNN) — [difficulty]
+  - [KEYWORD 5] (NNNN) — [difficulty]
 
-  Follow the Technical Dictionary Generator prompt exactly.
-  Generate each entry as a separate file.
-  Maintain sequential numbering.
+  Follow Technical Dictionary Generator v2.0 exactly.
+  Each entry is a separate markdown file.
+  Sequential numbering.
+  Each entry fully self-contained.
 
-To continue from last generated entry:
+CONTINUE FROM LAST:
 
-  Continue dictionary generation from entry [NNN].
-  Next batch: [KEYWORD 1] through [KEYWORD 5].
-  Follow the Technical Dictionary Generator prompt exactly.
+  Continue dictionary generation from entry NNNN.
+  Next: [KEYWORD 1] through [KEYWORD 5].
+  Follow Technical Dictionary Generator v2.0 exactly.
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 10: SELF-VALIDATION CHECKLIST
 ═══════════════════════════════════════════════════════════════════════════
 
-Before finalising each entry, verify:
+Run this before outputting any entry:
 
 FRONTMATTER:
-  ☐ number: matches title and filename
-  ☐ category: from approved list
+  ☐ number: 4-digit padded, matches title and filename
+  ☐ category: from approved list (Section 3)
   ☐ difficulty: exactly one of three star values
   ☐ depends_on: plain text, no brackets, max 5
   ☐ used_by: plain text, no brackets, max 5
-  ☐ tags: # prefixed, comma-separated, from approved taxonomy
+  ☐ related: plain text, no brackets, max 5 (NEW)
+  ☐ tags: # prefixed, comma-separated, from taxonomy (Section 4)
 
-STRUCTURE:
-  ☐ All 18 sections present (17 content + 1 think section)
-  ☐ Section order matches specification exactly
-  ☐ Section headers use exact emoji and text from spec
-  ☐ Lifecycle section included only if concept has a lifecycle
+STRUCTURE (20 sections check):
+  ☐ 5.1  Title line with keyword name
+  ☐ 5.2  TL;DR — one sentence, max 25 words
+  ☐ 5.3  Metadata table with Related row
+  ☐ 5.4  The Problem This Solves (NEW)
+  ☐ 5.5  Textbook Definition
+  ☐ 5.6  Understand It in 30 Seconds (NEW)
+  ☐ 5.7  First Principles — invariants + derived + trade-offs (UPGRADED)
+  ☐ 5.8  Thought Experiment (NEW)
+  ☐ 5.9  Mental Model / Analogy — with breakdown note (UPGRADED)
+  ☐ 5.10 Gradual Depth — four levels (NEW)
+  ☐ 5.11 How It Works — mechanism
+  ☐ 5.12 The Complete Picture — E2E flow (NEW)
+  ☐ 5.13 Code Example (if programmatic)
+  ☐ 5.14 Comparison Table (if alternatives exist) (NEW)
+  ☐ 5.15 Flow / Lifecycle (if applicable)
+  ☐ 5.16 Common Misconceptions — min 4 rows
+  ☐ 5.17 Failure Modes & Diagnosis — min 3, with diagnostics (UPGRADED)
+  ☐ 5.18 Related Keywords — 3 categories (UPGRADED)
+  ☐ 5.19 Quick Reference Card — 8-row format (UPGRADED)
+  ☐ 5.20 Think About This — exactly 2 different-type questions
 
-CONTENT:
-  ☐ TL;DR is one sentence under 25 words
-  ☐ Misconceptions table has minimum 4 rows
-  ☐ Production pitfalls has minimum 2 entries
-  ☐ Related Keywords has minimum 5 entries
-  ☐ Think section has exactly 2 questions
-  ☐ Code examples have language tags
-  ☐ WHY section has both WITHOUT and WITH content
+CONTENT QUALITY:
+  ☐ Reader can understand fully without external lookup
+  ☐ WHY comes before WHAT in every explanation
+  ☐ Every failure mode has a real diagnostic command
+  ☐ Thought experiment uses concrete numbers/steps
+  ☐ Analogy includes "where it breaks down" note
+  ☐ Gradual depth — all 4 levels present and escalating
+  ☐ End-to-end flow shows failure path AND scale behaviour
+  ☐ Comparison table has "Best For" + "How to choose" note
+  ☐ Related Keywords uses 3-category structure
+  ☐ Quick Reference Card has all 8 rows
 
 FORMATTING:
   ☐ No ASCII diagram exceeds 59 characters wide
   ☐ No code line exceeds 70 characters
   ☐ No paragraph exceeds 5 sentences
-  ☐ Analogies use > blockquote format
-  ☐ Quick Reference Card is inside a ``` code fence
-  ☐ No H2 headers used anywhere in entry body
-  ☐ Horizontal rule --- precedes the Think section
-  ☐ Every ### heading has one blank line before and after
-  ☐ File saved as UTF-8 without BOM
+  ☐ Analogies in > blockquote format only
+  ☐ BAD pattern shown before GOOD pattern in all code
+  ☐ No H2 headers in entry body
+  ☐ Horizontal rule precedes Think section
+
+TEACHING PRINCIPLES (Section 1):
+  ☐ P1: WHY established before WHAT
+  ☐ P2: Core invariants identified
+  ☐ P3: All 4 levels of understanding present
+  ☐ P4: Mental model is simple, accurate, extensible
+  ☐ P5: Thought experiment reveals truth simply
+  ☐ P6: Examples precede rules
+  ☐ P7: Complexity justified vs simpler alternative
+  ☐ P8: Structured thinking visible in layout
+  ☐ P9: Full system context shown in E2E flow
+  ☐ P10: Production failure modes included
+  ☐ P11: No unnecessary complexity or jargon
+  ☐ P12: Knowledge systematised via tables, flows, lists
 
 ═══════════════════════════════════════════════════════════════════════════
-END OF PROMPT
+SECTION 11: CHANGE LOG — v1 → v2
+═══════════════════════════════════════════════════════════════════════════
+
+NEW SECTIONS ADDED:
+  5.4   The Problem This Solves
+        (replaces the less structured "Why Before What")
+  5.6   Understand It in 30 Seconds
+        (Feynman test — forces true simplicity)
+  5.8   Thought Experiment
+        (simple scenario that makes concept undeniable)
+  5.10  Gradual Depth — Four Levels
+        (replaces single "Simple Elaborated" section)
+  5.12  The Complete Picture — End-to-End Flow
+        (replaces "How It Connects Mini-Map" — much richer)
+  5.14  Comparison Table
+        (systematised alternative comparison)
+
+UPGRADED SECTIONS:
+  5.7   First Principles — now requires explicit invariants
+  5.9   Mental Model — now requires analogy breakdown note
+  5.17  Failure Modes — now requires symptom + diagnostic + fix + prevention
+  5.18  Related Keywords — now organised in 3 categories
+  5.19  Quick Reference Card — 5 rows → 8 rows (added WHY, INSIGHT, TRADE-OFF)
+
+OTHER CHANGES:
+  - number field: 3-digit → 4-digit (supports 1770 keywords)
+  - related: new YAML frontmatter field
+  - Tag taxonomy: expanded with 20 new tags
+  - Teaching philosophy: 6 principles → 12 principles
+  - Category list: updated to match 43-category master list
+
+═══════════════════════════════════════════════════════════════════════════
+END OF PROMPT v2.0
 ═══════════════════════════════════════════════════════════════════════════
 ```
 
@@ -814,10 +1280,11 @@ Number: 1293
 Category: JavaScript
 Difficulty: ★★★
 
-Follow the Technical Dictionary Generator prompt exactly.
+Follow the Technical Dictionary Generator prompt v2.0 exactly.
 ```
 
 **For batch generation:**
+
 ```
 Generate dictionary entries for keywords 1291–1295:
 - JavaScript Engine (V8) (1291)
@@ -826,15 +1293,16 @@ Generate dictionary entries for keywords 1291–1295:
 - Task Queue (Macrotask) (1294)
 - Microtask Queue (1295)
 
-Follow the Technical Dictionary Generator prompt exactly.
+Follow the Technical Dictionary Generator prompt v2.0 exactly.
 Generate each as a separate markdown file.
 ```
 
 **To continue from last generated entry:**
+
 ```
-Continue dictionary generation from entry [NNN].
+Continue dictionary generation from entry [NNNN].
 Next batch: [KEYWORD 1] through [KEYWORD 5].
-Follow the Technical Dictionary Generator prompt exactly.
+Follow the Technical Dictionary Generator prompt v2.0 exactly.
 ```
 
 ---
@@ -862,7 +1330,7 @@ Then ask: "Shall I generate these 10 entries now?"
 
 STEP 3 — GENERATE ALL 10 ENTRIES:
 For each of the 10 keywords, generate a complete entry following the
-Technical Dictionary Generator spec (GENERATOR_PROMPT.md) exactly.
+Technical Dictionary Generator spec (GENERATOR_PROMPT.md v2.0) exactly.
 
 Output each entry as a separate markdown file:
   File path: docs/<Category Folder>/<NNN> — <Keyword Name>.md
@@ -871,13 +1339,14 @@ Front matter rules:
   - layout: default
   - title: "<Keyword Name>"
   - parent: "<Category Title>"         ← must match category folder's index.md title exactly
-  - nav_order: <NNN>                   ← the global keyword number (integer)
+  - nav_order: <NNNN>                  ← the global keyword number (integer, 4-digit)
   - permalink: /<category-slug>/<keyword-slug>/
-  - number: "<NNN>"
+  - number: "<NNNN>"
   - category: <Category Title>
   - difficulty: ★☆☆ | ★★☆ | ★★★
   - depends_on: Keyword1, Keyword2
   - used_by: Keyword1, Keyword2
+  - related: Keyword1, Keyword2
   - tags: #tag1, #tag2, #tag3
 
 Category folder name and title mapping reference (docs/ folder):
@@ -930,7 +1399,7 @@ Create each file in its correct docs/<Category Folder>/ directory.
 Do not skip any of the 10 entries.
 Do not push to remote.
 
-Follow GENERATOR_PROMPT.md spec exactly for every entry.
+Follow GENERATOR_PROMPT.md v2.0 spec exactly for every entry.
 ```
 
 ---
@@ -998,7 +1467,7 @@ Print the batch you will generate:
 Then ask: "Shall I generate these now?"
 
 STEP 4 — GENERATE ALL ENTRIES IN THE BATCH:
-For each keyword, generate a complete entry following GENERATOR_PROMPT.md spec.
+For each keyword, generate a complete entry following GENERATOR_PROMPT.md v2.0 spec.
 
 File path: docs/<Category Folder>/<NNN> — <Keyword Name>.md
 
@@ -1006,13 +1475,14 @@ Front matter (use exact values for the chosen category):
   layout: default
   title: "<Keyword Name>"
   parent: "<Category Title>"         ← exact title from mapping table below
-  nav_order: <NNN>                   ← global keyword number (integer)
+  nav_order: <NNNN>                  ← global keyword number (integer, 4-digit)
   permalink: /<category-slug>/<keyword-slug>/
-  number: "<NNN>"
+  number: "<NNNN>"
   category: <Category Title>
   difficulty: ★☆☆ | ★★☆ | ★★★
   depends_on: Keyword1, Keyword2
   used_by: Keyword1, Keyword2
+  related: Keyword1, Keyword2
   tags: #tag1, #tag2, #tag3
 
 Category folder → parent title → permalink slug mapping:
@@ -1086,18 +1556,21 @@ Print:
 ### Quick-invocation examples
 
 **Fill all missing Java Concurrency keywords:**
+
 ```
 TARGET CATEGORY: Java Concurrency
 [paste the full prompt above]
 ```
 
 **Fill all missing Testing keywords:**
+
 ```
 TARGET CATEGORY: Testing
 [paste the full prompt above]
 ```
 
 **Fill all missing Kubernetes keywords:**
+
 ```
 TARGET CATEGORY: Kubernetes
 [paste the full prompt above]
@@ -1124,17 +1597,17 @@ LOOP:
   2. REPORT: Print the 10 keywords you will generate:
              "#NNN — Keyword Name  (Category | ★ Difficulty)"
 
-  3. GENERATE: Create all 10 files using GENERATOR_PROMPT.md spec exactly.
-               Place each in: docs/<correct Category Folder>/<NNN> — <Keyword Name>.md
+  3. GENERATE: Create all 10 files using GENERATOR_PROMPT.md v2.0 spec exactly.
+               Place each in: docs/<correct Category Folder>/<NNNN> — <Keyword Name>.md
                Use correct parent, nav_order, permalink, category per front matter rules.
 
   4. COMMIT: After all 10 files are created, run:
                git add docs/
-               git commit -m "feat: add keywords NNN–MMM — <Category> batch <N>"
+               git commit -m "feat: add keywords NNNN–NNNN — <Category> batch <N>"
              Do NOT run git push.
 
-  5. CONFIRM: Say "✅ Batch complete. Generated NNN–MMM. Committed.
-               Next missing keyword: #NNN. Continue? (yes/stop)"
+  5. CONFIRM: Say "✅ Batch complete. Generated NNNN–NNNN. Committed.
+               Next missing keyword: #NNNN. Continue? (yes/stop)"
 
 Wait for my confirmation before starting the next loop.
 
@@ -1142,7 +1615,7 @@ RULES:
 - Never regenerate a keyword that already has a file
 - Keep all existing files untouched
 - One commit per batch of 10
-- Follow the full GENERATOR_PROMPT.md spec for every single entry
+- Follow the full GENERATOR_PROMPT.md v2.0 spec for every single entry
 - If a category folder doesn't exist yet, create it with an appropriate index.md
 ```
-
+````
