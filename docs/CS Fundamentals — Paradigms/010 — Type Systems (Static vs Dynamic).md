@@ -24,14 +24,14 @@ tags:
 ⚡ TL;DR — A type system defines what kinds of data exist and when type errors are caught: statically at compile time (Java, TypeScript) or dynamically at runtime (Python, JavaScript).
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0010        │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆         │
+│ #0010 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
 ├──────────────┼───────────────────────────────────────┼─────────────────────────┤
-│ Depends on:  │ Variables, Functions,                 │                         │
-│              │ Compiled vs Interpreted Languages     │                         │
-│ Used by:     │ Strong vs Weak Typing, Java Language, │                         │
-│              │ TypeScript                            │                         │
-│ Related:     │ Strong vs Weak Typing, Compiled vs    │                         │
-│              │ Interpreted, Type Inference           │                         │
+│ Depends on: │ Variables, Functions, │ │
+│ │ Compiled vs Interpreted Languages │ │
+│ Used by: │ Strong vs Weak Typing, Java Language, │ │
+│ │ TypeScript │ │
+│ Related: │ Strong vs Weak Typing, Compiled vs │ │
+│ │ Interpreted, Type Inference │ │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -79,6 +79,7 @@ annotations.
 Static types: compiler catches type errors before you run the code. Dynamic types: errors appear at runtime.
 
 **One analogy:**
+
 > Static typing is like airport baggage rules declared upfront:
 > "Only 23kg bags allowed." Overweight bags are caught at
 > check-in — before the plane loads. Dynamic typing is like
@@ -96,6 +97,7 @@ harder to trace.
 ### 🔩 First Principles Explanation
 
 CORE INVARIANTS:
+
 1. Every value has a type — a category that determines which
    operations are valid on it. Even dynamically typed languages
    have types; they're just checked at runtime.
@@ -125,10 +127,10 @@ is executed.
 
 THE TRADE-OFFS:
 Static: Catches bugs early; IDE tooling (autocomplete, refactoring);
-        performance (types known to JIT); requires declarations
-        or inference; can be too restrictive.
+performance (types known to JIT); requires declarations
+or inference; can be too restrictive.
 Dynamic: Rapid prototyping; duck typing flexibility; shorter code;
-         type errors only at runtime; harder to maintain at scale.
+type errors only at runtime; harder to maintain at scale.
 
 ### 🧪 Thought Experiment
 
@@ -147,10 +149,12 @@ points to the middle of `calculateTax`, not the 50 callers.
 Finding the wrong caller requires investigation.
 
 WHAT HAPPENS IN STATICALLY TYPED JAVA:
+
 ```java
 double calculateTax(double income) { ... }
 calculateTax("50000");  // COMPILE ERROR: String not a double
 ```
+
 The IDE shows a red underline at the call site immediately.
 The error is caught before the code compiles, at the exact
 location of the mistake, in the file of the developer who made
@@ -267,6 +271,7 @@ returns `NotImplemented`, Python tries the right-hand operand's
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (Static — Java):
+
 ```
 [Developer writes: processAge(getUserName())]
   → [Compiler: getUserName() returns String]
@@ -278,10 +283,10 @@ NORMAL FLOW (Static — Java):
 
 FAILURE PATH (Dynamic — Python at runtime):
 [processAge(getUserName())] calls with string "Alice"
-  → [processAge runs: age * 2]
-  → [TypeError: can't multiply sequence by non-int]
-  → [Stack trace points to processAge internals]
-  → [Developer must trace back to callsite]
+→ [processAge runs: age * 2]
+→ [TypeError: can't multiply sequence by non-int]
+→ [Stack trace points to processAge internals]
+→ [Developer must trace back to callsite]
 
 WHAT CHANGES AT SCALE:
 At 10x codebase size, static typing's benefit compounds — refactoring
@@ -294,6 +299,7 @@ or OpenAPI schemas provide cross-service static typing.
 ### 💻 Code Example
 
 **Example 1 — Static vs dynamic: type error discovery:**
+
 ```java
 // Java (static): compile-time error
 public class PayrollService {
@@ -318,24 +324,26 @@ compute_pay("forty")  # TypeError: can't multiply str by float
 ```
 
 **Example 2 — TypeScript gradual typing:**
+
 ```typescript
 // BAD: any type — defeats static typing
 function processUser(user: any) {
-    console.log(user.nmae); // typo: 'nmae' not caught
+  console.log(user.nmae); // typo: 'nmae' not caught
 }
 
 // GOOD: explicit interface — typo caught at compile time
 interface User {
-    name: string;
-    age: number;
+  name: string;
+  age: number;
 }
 function processUser(user: User) {
-    console.log(user.nmae); // ERROR: Property 'nmae' does
-                             // not exist on type 'User'
+  console.log(user.nmae); // ERROR: Property 'nmae' does
+  // not exist on type 'User'
 }
 ```
 
 **Example 3 — Type inference in Java (var):**
+
 ```java
 // Before Java 10: explicit type required
 HashMap<String, List<Integer>> scores =
@@ -349,13 +357,13 @@ var scores = new HashMap<String, List<Integer>>();
 
 ### ⚖️ Comparison Table
 
-| Dimension | Static (Java, TS) | Dynamic (Python, JS) | Gradual (TS, Python hints) |
-|---|---|---|---|
-| Type errors caught | Compile time | Runtime | Compile time (opt-in) |
-| Verbosity | Higher | Lower | Configurable |
-| IDE tooling | Excellent | Limited | Good with hints |
-| Refactoring safety | High | Low | Medium |
-| **Best For** | Large teams, long-lived code | Rapid prototyping, scripts | Migration, flexibility |
+| Dimension          | Static (Java, TS)            | Dynamic (Python, JS)       | Gradual (TS, Python hints) |
+| ------------------ | ---------------------------- | -------------------------- | -------------------------- |
+| Type errors caught | Compile time                 | Runtime                    | Compile time (opt-in)      |
+| Verbosity          | Higher                       | Lower                      | Configurable               |
+| IDE tooling        | Excellent                    | Limited                    | Good with hints            |
+| Refactoring safety | High                         | Low                        | Medium                     |
+| **Best For**       | Large teams, long-lived code | Rapid prototyping, scripts | Migration, flexibility     |
 
 How to choose: Use static typing for systems that must be
 maintained long-term by large teams. Use dynamic typing for
@@ -365,11 +373,11 @@ dynamic codebases.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Python has no types | Python has types on every value; it's dynamically typed, meaning type CHECKING happens at runtime, not that types don't exist |
-| Static typing requires more code | Modern type inference (Kotlin `val`, TypeScript, Scala `val`) means static types often require no more syntax than dynamic types |
-| TypeScript is fully statically typed at runtime | TypeScript types are erased during compilation to JavaScript — at runtime, TypeScript code is JavaScript with no type checks |
+| Misconception                                    | Reality                                                                                                                             |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Python has no types                              | Python has types on every value; it's dynamically typed, meaning type CHECKING happens at runtime, not that types don't exist       |
+| Static typing requires more code                 | Modern type inference (Kotlin `val`, TypeScript, Scala `val`) means static types often require no more syntax than dynamic types    |
+| TypeScript is fully statically typed at runtime  | TypeScript types are erased during compilation to JavaScript — at runtime, TypeScript code is JavaScript with no type checks        |
 | Java's generics provide full runtime type safety | Java generics are erased at runtime — `List<String>` becomes `List`; casting errors are only caught if explicit casts are attempted |
 
 ### 🚨 Failure Modes & Diagnosis
@@ -387,6 +395,7 @@ number was expected, or None where an object was expected.
 Dynamic typing deferred this check to execution.
 
 Diagnostic:
+
 ```bash
 # Python: add type hints and use mypy for static analysis
 pip install mypy
@@ -400,6 +409,7 @@ class OrderInput(BaseModel):
 ```
 
 Fix:
+
 ```python
 # BAD: assumes input is the right type
 def process_order(amount):
@@ -426,6 +436,7 @@ An unchecked cast in generic code wasn't caught at compile time
 because type erasure removed the generic type information.
 
 Diagnostic:
+
 ```bash
 # Compile with -Xlint:unchecked to expose unsafe casts
 javac -Xlint:unchecked MyClass.java
@@ -433,6 +444,7 @@ javac -Xlint:unchecked MyClass.java
 ```
 
 Fix:
+
 ```java
 // BAD: heap pollution — mixing raw and generic types
 List list = new ArrayList();          // raw type
@@ -461,6 +473,7 @@ Root Cause:
 removes all guarantees.
 
 Diagnostic:
+
 ```bash
 # tsconfig.json: enable strict mode
 {
@@ -473,19 +486,20 @@ npx tsc --noEmit  # type-check without emitting JS
 ```
 
 Fix:
+
 ```typescript
 // BAD: any defeats type checking
 function processData(data: any) {
-    return data.nmae.toUpperCase();  // typo not caught
+  return data.nmae.toUpperCase(); // typo not caught
 }
 
 // GOOD: specific type with interface
 interface UserData {
-    name: string;
-    age: number;
+  name: string;
+  age: number;
 }
 function processData(data: UserData) {
-    return data.nmae.toUpperCase();  // ERROR: 'nmae' not in UserData
+  return data.nmae.toUpperCase(); // ERROR: 'nmae' not in UserData
 }
 ```
 
@@ -496,16 +510,19 @@ a code smell requiring justification; use `unknown` instead of
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Variables` — types describe what a variable can hold
 - `Functions` — parameter and return types are the function's contract
 - `Compiled vs Interpreted Languages` — static typing is often associated with compilation
 
 **Builds On This (learn these next):**
+
 - `Strong vs Weak Typing` — a related but distinct dimension of type system design
 - `TypeScript` — gradual typing for JavaScript
 - `Generics` — parameterised types that extend static type systems
 
 **Alternatives / Comparisons:**
+
 - `Strong vs Weak Typing` — orthogonal axis: how strictly the language enforces types
 - `Type Inference` — automatic static type deduction without explicit annotations
 - `Dependent Types` — types that depend on values — the extreme of static typing
@@ -513,34 +530,35 @@ a code smell requiring justification; use `unknown` instead of
 ### 📌 Quick Reference Card
 
 ┌──────────────────────────────────────────────────────────┐
-│ WHAT IT IS   │ Rules associating types with values and   │
-│              │ when type errors are caught               │
+│ WHAT IT IS │ Rules associating types with values and │
+│ │ when type errors are caught │
 ├──────────────┼───────────────────────────────────────────┤
-│ PROBLEM IT   │ Operations on wrong-type data produce     │
-│ SOLVES       │ garbage or crashes; type system prevents  │
-│              │ this class of errors                      │
+│ PROBLEM IT │ Operations on wrong-type data produce │
+│ SOLVES │ garbage or crashes; type system prevents │
+│ │ this class of errors │
 ├──────────────┼───────────────────────────────────────────┤
-│ KEY INSIGHT  │ Static ≠ verbose; dynamic ≠ typeless.     │
-│              │ The difference is WHEN errors are caught  │
+│ KEY INSIGHT │ Static ≠ verbose; dynamic ≠ typeless. │
+│ │ The difference is WHEN errors are caught │
 ├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Static: large teams, long-lived, complex  │
-│              │ Dynamic: scripts, prototyping, small teams│
+│ USE WHEN │ Static: large teams, long-lived, complex │
+│ │ Dynamic: scripts, prototyping, small teams│
 ├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ `any` in TypeScript defeats static typing;│
-│              │ raw types in Java defeat generics safety  │
+│ AVOID WHEN │ `any` in TypeScript defeats static typing;│
+│ │ raw types in Java defeat generics safety │
 ├──────────────┼───────────────────────────────────────────┤
-│ TRADE-OFF    │ Static: early error detection + tooling   │
-│              │ vs. Dynamic: flexibility + less ceremony  │
+│ TRADE-OFF │ Static: early error detection + tooling │
+│ │ vs. Dynamic: flexibility + less ceremony │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Airport baggage check: static catches    │
-│              │  overweight at check-in, dynamic mid-    │
-│              │  flight."                                │
+│ ONE-LINER │ "Airport baggage check: static catches │
+│ │ overweight at check-in, dynamic mid- │
+│ │ flight." │
 ├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Strong vs Weak Typing → TypeScript        │
-│              │ → Type Inference → Generics              │
+│ NEXT EXPLORE │ Strong vs Weak Typing → TypeScript │
+│ │ → Type Inference → Generics │
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Java's generics use type erasure — `List<String>` becomes

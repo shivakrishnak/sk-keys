@@ -22,14 +22,14 @@ tags:
 ⚡ TL;DR — A GraphQL resolver is a function that fetches the data for a single field in the schema; the GraphQL runtime calls the correct resolver for each field selected in a query and assembles the results into the response.
 
 ┌───────────────────────────────────────────────────────────────────────────┐
-│ #219         │ Category: HTTP & APIs               │ Difficulty: ★★☆     │
+│ #219 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
 ├──────────────┼─────────────────────────────────────┼─────────────────────┤
-│ Depends on:  │ GraphQL, GraphQL Schema,             │                     │
-│              │ Functions / Closures                 │                     │
-│ Used by:     │ GraphQL N+1 Problem, DataLoader,     │                     │
-│              │ GraphQL Subscriptions                │                     │
-│ Related:     │ GraphQL Schema, REST Controller,     │                     │
-│              │ Repository Pattern                   │                     │
+│ Depends on: │ GraphQL, GraphQL Schema, │ │
+│ │ Functions / Closures │ │
+│ Used by: │ GraphQL N+1 Problem, DataLoader, │ │
+│ │ GraphQL Subscriptions │ │
+│ Related: │ GraphQL Schema, REST Controller, │ │
+│ │ Repository Pattern │ │
 └───────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -39,8 +39,8 @@ A REST controller returns a fixed object. The endpoint defines what gets
 fetched and returned — every caller gets the same shape. But in GraphQL,
 different clients request different fields of the same type. If a single
 controller fetched every possible field for every request, you'd be back
-to REST's over-fetching problem. The engine needs a way to fetch *only
-the requested fields*, each potentially from a different source.
+to REST's over-fetching problem. The engine needs a way to fetch _only
+the requested fields_, each potentially from a different source.
 
 **THE BREAKING POINT:**
 A `User` type has fields: `name` (from DB), `profilePicture` (from S3),
@@ -52,8 +52,8 @@ collapses back into the same problem as REST.
 **THE INVENTION MOMENT:**
 Resolvers solve this by decomposing data fetching to the field level.
 Each field declares its own resolver — "when someone asks for User.name,
-call this function." The GraphQL runtime calls *only the resolvers for
-the fields the client actually requested*. A query asking for just `name`
+call this function." The GraphQL runtime calls _only the resolvers for
+the fields the client actually requested_. A query asking for just `name`
 calls only the name resolver (a property read) and skips the expensive
 `subscriptionStatus` Stripe call entirely.
 
@@ -64,6 +64,7 @@ calls only the name resolver (a property read) and skips the expensive
 A **resolver** in GraphQL is a function responsible for returning the data
 for a specific field in the schema. Every field in a GraphQL schema has a
 corresponding resolver. A resolver receives four arguments:
+
 1. `parent` (or `root/source`) — the resolved value of the parent object
 2. `args` — the arguments passed to the field in the query
 3. `context` — shared request state (auth info, DB connection, DataLoader instances)
@@ -81,6 +82,7 @@ plain values, Promises, or Observables (for subscriptions).
 Each field in the schema has a resolver function — "who fetches this data" — and GraphQL calls the right ones for each query.
 
 **One analogy:**
+
 > Imagine a hotel concierge desk (GraphQL runtime). Guests (queries) ask for
 > various services: taxi, room service, wake-up call. Each service (field)
 > has a specialist (resolver): the transportation desk, room service kitchen,
@@ -100,6 +102,7 @@ work — and why N+1 problems emerge naturally from list resolvers.
 ### 🔩 First Principles Explanation
 
 **RESOLVER FUNCTION SIGNATURE:**
+
 ```
 (parent, args, context, info) → value | Promise<value> | Observable<value>
 ```
@@ -136,6 +139,7 @@ enormous boilerplate. The default resolver eliminates ~80% of resolver
 code by reading the same-named property from the parent object.
 
 **THE TRADE-OFFS:**
+
 - Gain: field-level fetch isolation → only fetch what's requested.
 - Cost: per-field execution → N+1 query problem for lists.
 - Gain: resolver tree mirrors query tree → predictable execution.
@@ -151,12 +155,13 @@ The `users` resolver returns 50 users. The `posts` resolver fetches posts by
 `userId`. The `title` resolver is the default (property read).
 
 **RESOLVER EXECUTION COUNT:**
+
 1. `Query.users` called once → returns 50 user objects
 2. `User.name` called 50 times (default resolver, trivial)
 3. `User.posts` called 50 times → `SELECT * FROM posts WHERE user_id = ?`
    → 50 separate database queries!
 4. `Post.title` called N times (default resolver, trivial)
-Total DB queries: **51** (1 for users + 50 for posts)
+   Total DB queries: **51** (1 for users + 50 for posts)
 
 **WITHOUT BATCHING:** 51 DB round trips.
 
@@ -211,8 +216,8 @@ field resolvers, `@MutationMapping` for mutations. Method parameters annotated w
 
 **Level 3 — How it works (mid-level engineer):**
 The runtime builds an execution plan from the query AST and schema. For each
-field in the query, it finds the registered resolver. Root resolvers (Query.*,
-Mutation.*) receive `null` as parent. Object field resolvers receive the already-
+field in the query, it finds the registered resolver. Root resolvers (Query._,
+Mutation._) receive `null` as parent. Object field resolvers receive the already-
 resolved parent object. The runtime handles async resolution: if a resolver returns
 a `CompletableFuture`/`Promise`, it awaits resolution before passing the value
 to child resolvers. Sibling fields on the same level can be resolved concurrently
@@ -228,8 +233,8 @@ its own field and its immediate parent. The `context` is a deliberate escape
 hatch for per-request state (auth, DataLoaders, tracing) that would otherwise
 require thread-locals or injection frameworks. The separation of `context` from
 `parent` reflects a key design philosophy: resolver logic should be pure functions
-over their inputs — the parent determines *what* is being resolved, the context
-provides *how* (infra, auth). This makes resolvers unit-testable by injecting mock
+over their inputs — the parent determines _what_ is being resolved, the context
+provides _how_ (infra, auth). This makes resolvers unit-testable by injecting mock
 contexts. The `info` field was an afterthought — it exposes the full AST path,
 useful for query-level caching and field-level metrics, but accessing it couples
 resolvers to execution internals.
@@ -390,26 +395,26 @@ void user_resolver_returns_user_for_valid_id() {
 
 ### ⚖️ Comparison Table
 
-| Concept | GraphQL Resolver | REST Controller | Database Query |
-|---|---|---|---|
-| **Granularity** | Per field | Per endpoint | Per query |
-| **Input** | (parent, args, context, info) | HTTP request | SQL/DSL |
-| **Called when** | Field is in client query | URL matches route | Explicitly invoked |
-| **Return type** | Value, Promise, Observable | HTTP response | ResultSet |
-| **Default behavior** | Read parent property | None (404) | N/A |
-| **Batching support** | DataLoader pattern | N/A | Set-based queries |
+| Concept              | GraphQL Resolver              | REST Controller   | Database Query     |
+| -------------------- | ----------------------------- | ----------------- | ------------------ |
+| **Granularity**      | Per field                     | Per endpoint      | Per query          |
+| **Input**            | (parent, args, context, info) | HTTP request      | SQL/DSL            |
+| **Called when**      | Field is in client query      | URL matches route | Explicitly invoked |
+| **Return type**      | Value, Promise, Observable    | HTTP response     | ResultSet          |
+| **Default behavior** | Read parent property          | None (404)        | N/A                |
+| **Batching support** | DataLoader pattern            | N/A               | Set-based queries  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| You must define a resolver for every field | Default resolver handles all scalar fields that match parent property names — only define custom resolvers when needed |
-| Resolvers run sequentially | Sibling fields can run in parallel; only parent-child fields are sequential (parent must resolve first) |
-| The context is the HTTP request | Context is request-scoped but you control what it contains — it should hold auth, DataLoaders, DB connections, not raw HTTP objects |
-| Mutations always run sequentially | GraphQL spec requires root mutation fields to execute *serially*; nested mutation fields within one mutation are not guaranteed sequential |
-| Resolver errors fail the whole query | GraphQL returns partial data + errors; a resolver throwing an exception only nulls that field (and propagates null upstream if non-nullable) |
+| Misconception                              | Reality                                                                                                                                      |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| You must define a resolver for every field | Default resolver handles all scalar fields that match parent property names — only define custom resolvers when needed                       |
+| Resolvers run sequentially                 | Sibling fields can run in parallel; only parent-child fields are sequential (parent must resolve first)                                      |
+| The context is the HTTP request            | Context is request-scoped but you control what it contains — it should hold auth, DataLoaders, DB connections, not raw HTTP objects          |
+| Mutations always run sequentially          | GraphQL spec requires root mutation fields to execute _serially_; nested mutation fields within one mutation are not guaranteed sequential   |
+| Resolver errors fail the whole query       | GraphQL returns partial data + errors; a resolver throwing an exception only nulls that field (and propagates null upstream if non-nullable) |
 
 ---
 
@@ -426,6 +431,7 @@ Root Cause:
 SQL query instead of a batched IN query.
 
 Diagnostic Command / Tool:
+
 ```
 # Enable SQL query logging and count queries per GraphQL request:
 spring.jpa.show-sql=true
@@ -458,6 +464,7 @@ DataLoader instances created as application-scoped singletons (beans) instead
 of request-scoped. DataLoader cache from request 1 leaks into request 2.
 
 Diagnostic Command / Tool:
+
 ```java
 // WRONG: DataLoader as singleton bean
 @Bean
@@ -486,16 +493,19 @@ Test with concurrent requests using different users to detect cross-request leak
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `GraphQL` — must understand GraphQL fundamentals before resolver internals
 - `GraphQL Schema` — resolvers implement the schema; must know schema types and fields
 - `Functions / Closures` — resolvers are functions; closure over shared state is a common pattern
 
 **Builds On This (learn these next):**
+
 - `GraphQL N+1 Problem` — the direct performance consequence of per-field resolvers with list types
 - `DataLoader` — the standard batching solution for resolver N+1 problems
 - `GraphQL Subscriptions` — subscription resolvers use Observable/flux instead of Promise
 
 **Alternatives / Comparisons:**
+
 - `REST Controller` — monolithic approach where one method fetches everything for an endpoint
 - `Repository Pattern` — resolvers typically delegate to repositories for data access
 

@@ -23,13 +23,13 @@ tags:
 ⚡ TL;DR — Metaprogramming is code that writes or modifies other code — programs that treat programs as data, enabling automation of repetitive boilerplate.
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0009        │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★★         │
+│ #0009 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★★ │
 ├──────────────┼───────────────────────────────────────┼─────────────────────────┤
-│ Depends on:  │ Object-Oriented Programming,          │                         │
-│              │ Type Systems, Reflection              │                         │
-│ Used by:     │ AOP, Annotations, Code Generation     │                         │
-│ Related:     │ Aspect-Oriented Programming,          │                         │
-│              │ Reflection, Annotations               │                         │
+│ Depends on: │ Object-Oriented Programming, │ │
+│ │ Type Systems, Reflection │ │
+│ Used by: │ AOP, Annotations, Code Generation │ │
+│ Related: │ Aspect-Oriented Programming, │ │
+│ │ Reflection, Annotations │ │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -77,6 +77,7 @@ Ruby, Lisp, Scala, and — to a more limited extent — Java.
 Write code that inspects, generates, or modifies other code — programs as data.
 
 **One analogy:**
+
 > Metaprogramming is like a factory that builds other factories.
 > Instead of assembling 200 specific machine types by hand, you
 > build a meta-factory that reads a specification and builds
@@ -93,6 +94,7 @@ about the structure of code itself.
 ### 🔩 First Principles Explanation
 
 CORE INVARIANTS:
+
 1. In metaprogramming, code is data — a class, method, or
    field is a first-class value you can inspect and manipulate,
    not just something you call.
@@ -113,18 +115,19 @@ Given invariant 3, compile-time metaprogramming (annotation
 processors, macros) is safer than runtime reflection.
 
 Metaprogramming styles:
+
 - Runtime reflection: inspect/modify at execution time
 - Compile-time generation: generate source or bytecode at build
 - Macro/DSL: code transformations at parse time (Lisp, Scala)
 
 THE TRADE-OFFS:
 Gain: Elimination of structural boilerplate; uniform enforcement
-      of cross-cutting patterns; frameworks that "just work"
-      with any annotated class.
+of cross-cutting patterns; frameworks that "just work"
+with any annotated class.
 Cost: Loss of compile-time type safety; difficult to debug
-      (errors appear at runtime, not compile time); performance
-      overhead (reflection bypasses JIT optimisation); code
-      that's hard to navigate and understand.
+(errors appear at runtime, not compile time); performance
+overhead (reflection bypasses JIT optimisation); code
+that's hard to navigate and understand.
 
 ### 🧪 Thought Experiment
 
@@ -134,6 +137,7 @@ without knowing the class at compile time.
 
 WHAT HAPPENS WITHOUT METAPROGRAMMING:
 You must write a specific `printFields()` method for every class:
+
 ```java
 // for User:
 void printUser(User u) {
@@ -142,10 +146,12 @@ void printUser(User u) {
 }
 // for Product, Order, etc.: write again and again
 ```
+
 200 classes = 200 `printX()` methods. When a new field is added
 to User, the method silently misses it until someone notices.
 
 WHAT HAPPENS WITH METAPROGRAMMING (reflection):
+
 ```java
 void printAllFields(Object obj) throws Exception {
     Class<?> cls = obj.getClass();
@@ -157,6 +163,7 @@ void printAllFields(Object obj) throws Exception {
 // Works for ANY class with ANY fields
 // Add a field to User → it's automatically printed
 ```
+
 One method handles all 200 classes. New fields are automatically
 included. The downside: the compiler can't verify this is safe.
 
@@ -263,6 +270,7 @@ Validation). Generated code is fully type-safe — the compiler
 checks the generated output.
 
 **Runtime: dynamic proxy**
+
 ```
 Proxy.newProxyInstance(
     classLoader,
@@ -273,6 +281,7 @@ Proxy.newProxyInstance(
     }
 )
 ```
+
 The JVM generates a new class at runtime that implements
 `MyInterface`. Every method call routes through the lambda
 above — enabling Spring AOP, Mockito, and ORM proxies.
@@ -280,6 +289,7 @@ above — enabling Spring AOP, Mockito, and ORM proxies.
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (Hibernate entity mapping):
+
 ```
 [@Entity User class compiled]
   → [Hibernate annotation processor reads @Column annotations]
@@ -292,8 +302,8 @@ NORMAL FLOW (Hibernate entity mapping):
 
 FAILURE PATH:
 [Field added to User without @Column → not mapped]
-  → [INSERT missing column → DB constraint violation]
-  → [Observable: SQLException at runtime, not compile time]
+→ [INSERT missing column → DB constraint violation]
+→ [Observable: SQLException at runtime, not compile time]
 
 WHAT CHANGES AT SCALE:
 At 10x call rate, reflective `Field.get()` on hot paths shows
@@ -306,6 +316,7 @@ in JVM warm-up time matters for serverless/cold starts.
 ### 💻 Code Example
 
 **Example 1 — Runtime reflection (Java):**
+
 ```java
 // Generic field printer using reflection
 public static void printFields(Object obj) throws Exception {
@@ -326,6 +337,7 @@ printFields(new User("Alice", 30));
 ```
 
 **Example 2 — Compile-time annotation processing (Lombok):**
+
 ```java
 // BAD: manual boilerplate (150 lines for a data class)
 public class User {
@@ -347,6 +359,7 @@ public class User {
 ```
 
 **Example 3 — Dynamic proxy (JDK):**
+
 ```java
 // Create a proxy that intercepts all interface calls
 interface Calculator { int add(int a, int b); }
@@ -371,6 +384,7 @@ loggingCalc.add(3, 4);
 ```
 
 **Example 4 — MethodHandles (faster than reflection):**
+
 ```java
 // Reflection: slow (bypasses JIT optimisations)
 Method method = User.class.getMethod("getName");
@@ -387,13 +401,13 @@ String name = (String) getName.invoke(user);
 
 ### ⚖️ Comparison Table
 
-| Technique | Timing | Type Safe | Performance | Best For |
-|---|---|---|---|---|
-| **Runtime reflection** | Runtime | No | Low (10–100x overhead) | Framework internals, debugging |
-| Annotation processor | Compile time | Yes | Zero runtime cost | Boilerplate generation |
-| Dynamic proxy (JDK) | Runtime | Partial | Low–medium | AOP, mocking |
-| MethodHandles | Runtime | Yes | High (JIT-inlinable) | Performance-critical reflection |
-| Macros/templates | Compile/parse | Yes | Zero runtime cost | Language extension (Lisp, Scala) |
+| Technique              | Timing        | Type Safe | Performance            | Best For                         |
+| ---------------------- | ------------- | --------- | ---------------------- | -------------------------------- |
+| **Runtime reflection** | Runtime       | No        | Low (10–100x overhead) | Framework internals, debugging   |
+| Annotation processor   | Compile time  | Yes       | Zero runtime cost      | Boilerplate generation           |
+| Dynamic proxy (JDK)    | Runtime       | Partial   | Low–medium             | AOP, mocking                     |
+| MethodHandles          | Runtime       | Yes       | High (JIT-inlinable)   | Performance-critical reflection  |
+| Macros/templates       | Compile/parse | Yes       | Zero runtime cost      | Language extension (Lisp, Scala) |
 
 How to choose: Prefer compile-time generation (annotation
 processors, Lombok) for boilerplate elimination — zero runtime
@@ -403,12 +417,12 @@ measured bottleneck.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Reflection is "just slower" — still fine for production hot paths | Reflection can be 10–100x slower than direct calls; on a hot path called 1M times/second, that's 10–100μs overhead per call |
-| `setAccessible(true)` permanently bypasses Java's module system | Java 9+ modules can deny `setAccessible` entirely; frameworks requiring deep reflection need explicit `--add-opens` JVM flags |
-| Compile-time annotation processors run at runtime | Annotation processors run during `javac` and generate source files; the generated code is compiled normally with zero runtime overhead |
-| All metaprogramming is reflection | Metaprogramming includes compile-time macros, code generators, template engines — reflection is just the runtime variant |
+| Misconception                                                     | Reality                                                                                                                                |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Reflection is "just slower" — still fine for production hot paths | Reflection can be 10–100x slower than direct calls; on a hot path called 1M times/second, that's 10–100μs overhead per call            |
+| `setAccessible(true)` permanently bypasses Java's module system   | Java 9+ modules can deny `setAccessible` entirely; frameworks requiring deep reflection need explicit `--add-opens` JVM flags          |
+| Compile-time annotation processors run at runtime                 | Annotation processors run during `javac` and generate source files; the generated code is compiled normally with zero runtime overhead |
+| All metaprogramming is reflection                                 | Metaprogramming includes compile-time macros, code generators, template engines — reflection is just the runtime variant               |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -423,6 +437,7 @@ Reflection calls (`Field.get`, `Method.invoke`) are not inlined
 by the JIT and require security checks on every invocation.
 
 Diagnostic:
+
 ```bash
 # Profile with async-profiler
 ./profiler.sh -d 30 -e cpu -f flame.svg <pid>
@@ -434,6 +449,7 @@ jfr print --events jdk.ExecutionSample flight.jfr
 ```
 
 Fix:
+
 ```java
 // BAD: reflective access on every call (hot path)
 Method getter = cls.getMethod("getName");
@@ -464,6 +480,7 @@ Java 9 modules deny reflective access to non-exported packages
 unless explicitly opened.
 
 Diagnostic:
+
 ```bash
 # See which module owns the class
 java --list-modules | grep "java.base"
@@ -472,6 +489,7 @@ java --describe-module java.base | grep "opens"
 ```
 
 Fix:
+
 ```bash
 # JVM flag to open required package (startup flag):
 --add-opens java.base/java.lang=ALL-UNNAMED
@@ -496,6 +514,7 @@ implements an interface). JDK proxies implement the INTERFACE
 but are not instances of the concrete class.
 
 Diagnostic:
+
 ```bash
 # Check whether Spring uses JDK proxy or CGLIB
 ApplicationContext ctx = ...;
@@ -506,6 +525,7 @@ System.out.println(bean.getClass().getName());
 ```
 
 Fix:
+
 ```java
 // BAD: cast to concrete class
 UserServiceImpl svc = (UserServiceImpl) ctx.getBean("userService");
@@ -522,16 +542,19 @@ to a concrete Spring bean class in application code.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Object-Oriented Programming` — metaprogramming operates on OOP constructs
 - `Type Systems` — metaprogramming queries and manipulates types
 - `Reflection` — the primary runtime mechanism for Java metaprogramming
 
 **Builds On This (learn these next):**
+
 - `Aspect-Oriented Programming` — builds on dynamic proxy metaprogramming
 - `Annotations` — data attached to code; read by metaprograms
 - `Code Generation` — compile-time metaprogramming output
 
 **Alternatives / Comparisons:**
+
 - `Aspect-Oriented Programming` — a specific, structured use of metaprogramming for cross-cutting
 - `Generics` — compile-time type parameterisation (a limited, safe form of metaprogramming)
 - `Macros (Lisp/Scala)` — code-level metaprogramming at parse time; more powerful, less portable
@@ -539,34 +562,35 @@ to a concrete Spring bean class in application code.
 ### 📌 Quick Reference Card
 
 ┌──────────────────────────────────────────────────────────┐
-│ WHAT IT IS   │ Code that inspects, generates, or         │
-│              │ modifies other code — programs as data    │
+│ WHAT IT IS │ Code that inspects, generates, or │
+│ │ modifies other code — programs as data │
 ├──────────────┼───────────────────────────────────────────┤
-│ PROBLEM IT   │ Structural boilerplate identical across   │
-│ SOLVES       │ many types; uniform cross-cutting patterns│
+│ PROBLEM IT │ Structural boilerplate identical across │
+│ SOLVES │ many types; uniform cross-cutting patterns│
 ├──────────────┼───────────────────────────────────────────┤
-│ KEY INSIGHT  │ Prefer compile-time generation over       │
-│              │ runtime reflection — zero cost, type safe │
+│ KEY INSIGHT │ Prefer compile-time generation over │
+│ │ runtime reflection — zero cost, type safe │
 ├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ ORM mapping, serialisation, mocking,      │
-│              │ code generation, annotation-driven config │
+│ USE WHEN │ ORM mapping, serialisation, mocking, │
+│ │ code generation, annotation-driven config │
 ├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ The extra abstraction makes the codebase  │
-│              │ harder to debug than the boilerplate it   │
-│              │ eliminates                                │
+│ AVOID WHEN │ The extra abstraction makes the codebase │
+│ │ harder to debug than the boilerplate it │
+│ │ eliminates │
 ├──────────────┼───────────────────────────────────────────┤
-│ TRADE-OFF    │ Generality + automation vs. type safety   │
-│              │ loss + runtime errors + JIT penalty       │
+│ TRADE-OFF │ Generality + automation vs. type safety │
+│ │ loss + runtime errors + JIT penalty │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "A factory that builds factories:         │
-│              │  define the rules once, it makes any     │
-│              │  machine you specify."                   │
+│ ONE-LINER │ "A factory that builds factories: │
+│ │ define the rules once, it makes any │
+│ │ machine you specify." │
 ├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Reflection → Annotations                  │
-│              │ → AOP → Lombok (compile-time AOP)        │
+│ NEXT EXPLORE │ Reflection → Annotations │
+│ │ → AOP → Lombok (compile-time AOP) │
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Lombok uses compile-time annotation processing to generate

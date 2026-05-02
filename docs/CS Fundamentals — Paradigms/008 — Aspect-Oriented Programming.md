@@ -23,14 +23,14 @@ tags:
 ⚡ TL;DR — AOP lets you inject cross-cutting concerns (logging, security, transactions) into code without modifying the original methods — keeping core logic clean.
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0008        │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆         │
+│ #0008 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
 ├──────────────┼───────────────────────────────────────┼─────────────────────────┤
-│ Depends on:  │ Object-Oriented Programming,          │                         │
-│              │ Procedural Programming,               │                         │
-│              │ Design Patterns                       │                         │
-│ Used by:     │ Spring Core, Logging, Security        │                         │
-│ Related:     │ Decorator Pattern, Proxy Pattern,     │                         │
-│              │ Metaprogramming                       │                         │
+│ Depends on: │ Object-Oriented Programming, │ │
+│ │ Procedural Programming, │ │
+│ │ Design Patterns │ │
+│ Used by: │ Spring Core, Logging, Security │ │
+│ Related: │ Decorator Pattern, Proxy Pattern, │ │
+│ │ Metaprogramming │ │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -81,6 +81,7 @@ class load time (AspectJ LTW), or at runtime via proxies
 Define once what should happen around any method; inject it everywhere without touching the methods.
 
 **One analogy:**
+
 > AOP is like city-wide CCTV. The shops (your classes) don't
 > install their own cameras. The city (the AOP framework)
 > places a camera at every entrance (pointcut). When anyone
@@ -97,6 +98,7 @@ globally via aspects. The two authors never need to coordinate.
 ### 🔩 First Principles Explanation
 
 CORE INVARIANTS:
+
 1. A join point is any identifiable point in program execution —
    a method call, field access, exception throw. AOP intercepts
    at join points.
@@ -124,13 +126,13 @@ available (field access, constructor calls).
 
 THE TRADE-OFFS:
 Gain: Complete separation of cross-cutting concerns; zero
-      duplication of infrastructure code; business logic stays
-      clean; aspects can be enabled/disabled globally.
+duplication of infrastructure code; business logic stays
+clean; aspects can be enabled/disabled globally.
 Cost: Invisible behaviour (a method looks clean but secretly
-      has 3 aspects running); debugging is harder (proxy
-      stack frames); circular dependency issues with proxy
-      creation; not all method calls are interceptable (same-class
-      calls bypass the proxy in Spring AOP).
+has 3 aspects running); debugging is harder (proxy
+stack frames); circular dependency issues with proxy
+creation; not all method calls are interceptable (same-class
+calls bypass the proxy in Spring AOP).
 
 ### 🧪 Thought Experiment
 
@@ -139,6 +141,7 @@ A service has 50 methods. Security checks must run before every
 public method. Performance timing must log before and after.
 
 WHAT HAPPENS WITHOUT AOP:
+
 ```java
 public String getUser(long id) {
     securityService.checkAccess("READ_USER"); // duplicated
@@ -152,6 +155,7 @@ public String getUser(long id) {
 ```
 
 WHAT HAPPENS WITH AOP:
+
 ```java
 // Business method: zero infrastructure code
 public String getUser(long id) {
@@ -286,6 +290,7 @@ the return value before returning.
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
+
 ```
 [REST controller calls service.save(order)]
   → [Spring proxy intercepts]
@@ -299,9 +304,9 @@ NORMAL FLOW:
 
 FAILURE PATH:
 [service.save() throws RuntimeException]
-  → [@Transactional: catches exception, rolls back transaction]
-  → [Exception re-thrown to controller]
-  → [Observable: exception in controller logs, DB row not saved]
+→ [@Transactional: catches exception, rolls back transaction]
+→ [Exception re-thrown to controller]
+→ [Observable: exception in controller logs, DB row not saved]
 
 WHAT CHANGES AT SCALE:
 At 10x load, proxy overhead (1–5μs per call) is negligible
@@ -315,6 +320,7 @@ impossible.
 ### 💻 Code Example
 
 **Example 1 — Spring @Transactional (AOP under the hood):**
+
 ```java
 // BAD: manual transaction management in every method
 public void transferFunds(long from, long to, double amount) {
@@ -341,6 +347,7 @@ public void transferFunds(long from, long to, double amount) {
 ```
 
 **Example 2 — Custom logging aspect:**
+
 ```java
 @Aspect
 @Component
@@ -372,6 +379,7 @@ public class LoggingAspect {
 ```
 
 **Example 3 — Self-invocation pitfall (common bug):**
+
 ```java
 @Service
 public class OrderService {
@@ -401,12 +409,12 @@ public class OrderService {
 
 ### ⚖️ Comparison Table
 
-| Mechanism | Scope | Weaving Time | Self-call? | Best For |
-|---|---|---|---|---|
-| **Spring AOP** | Method calls only | Runtime (proxy) | No | Spring beans, common cases |
-| AspectJ compile-time | All join points | Compile time | Yes | Fine-grained, non-Spring |
-| AspectJ LTW | All join points | Load time | Yes | Runtime flexibility |
-| Decorator Pattern | Single class | Design time | Yes | Type-safe, explicit wrapping |
+| Mechanism            | Scope             | Weaving Time    | Self-call? | Best For                     |
+| -------------------- | ----------------- | --------------- | ---------- | ---------------------------- |
+| **Spring AOP**       | Method calls only | Runtime (proxy) | No         | Spring beans, common cases   |
+| AspectJ compile-time | All join points   | Compile time    | Yes        | Fine-grained, non-Spring     |
+| AspectJ LTW          | All join points   | Load time       | Yes        | Runtime flexibility          |
+| Decorator Pattern    | Single class      | Design time     | Yes        | Type-safe, explicit wrapping |
 
 How to choose: Use Spring AOP (via `@Transactional`, `@Cacheable`)
 for standard cross-cutting concerns in Spring apps. Use AspectJ
@@ -415,12 +423,12 @@ handle self-invocation.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `@Transactional` on a private method works | Spring AOP proxies only intercept public method calls from outside the bean — private and self-invoked methods are not intercepted |
-| AOP adds zero overhead | Proxy creation at startup and pointcut evaluation per-call add measurable overhead (~1–5μs/call); negligible for most workloads |
-| Aspects always run in a predictable order | Multiple aspects on the same method run in an undefined order unless `@Order` is specified |
-| AOP replaces the Decorator Pattern | AOP is transparent and invisible; Decorator is explicit and type-safe — use Decorator when the behaviour should be visible to callers |
+| Misconception                              | Reality                                                                                                                               |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `@Transactional` on a private method works | Spring AOP proxies only intercept public method calls from outside the bean — private and self-invoked methods are not intercepted    |
+| AOP adds zero overhead                     | Proxy creation at startup and pointcut evaluation per-call add measurable overhead (~1–5μs/call); negligible for most workloads       |
+| Aspects always run in a predictable order  | Multiple aspects on the same method run in an undefined order unless `@Order` is specified                                            |
+| AOP replaces the Decorator Pattern         | AOP is transparent and invisible; Decorator is explicit and type-safe — use Decorator when the behaviour should be visible to callers |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -435,6 +443,7 @@ When a Spring bean calls its own method (`this.method()`),
 it bypasses the AOP proxy — no aspects fire.
 
 Diagnostic:
+
 ```bash
 # Enable Spring transaction debug logging
 logging.level.org.springframework.transaction=DEBUG
@@ -444,6 +453,7 @@ logging.level.org.springframework.transaction=DEBUG
 ```
 
 Fix:
+
 ```java
 // BAD: self-invocation bypasses @Transactional proxy
 @Service
@@ -481,6 +491,7 @@ Root Cause:
 Two aspects on the same method run in wrong order.
 
 Diagnostic:
+
 ```bash
 # Enable AOP auto-proxy debugging
 logging.level.org.springframework.aop=DEBUG
@@ -488,6 +499,7 @@ logging.level.org.springframework.aop=DEBUG
 ```
 
 Fix:
+
 ```java
 // BAD: undefined order
 @Aspect @Component
@@ -518,6 +530,7 @@ An around-advice catches a broad exception type and returns
 a default value instead of rethrowing.
 
 Diagnostic:
+
 ```bash
 # Add detailed exception logging to suspect aspects
 @Around("serviceLayer()")
@@ -532,6 +545,7 @@ public Object logErrors(ProceedingJoinPoint pjp) throws Throwable {
 ```
 
 Fix:
+
 ```java
 // BAD: swallows exception silently
 @Around("serviceLayer()")
@@ -561,16 +575,19 @@ or throw; returning null on error creates silent failures.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Object-Oriented Programming` — AOP works alongside OOP; objects are the targets
 - `Design Patterns` — AOP automates the Proxy and Decorator patterns
 - `Proxy Pattern` — Spring AOP's runtime mechanism
 
 **Builds On This (learn these next):**
+
 - `Spring Core` — Spring's dependency injection works hand-in-hand with AOP
 - `@Transactional` — Spring's most important AOP-powered annotation
 - `Metaprogramming` — the broader concept AOP belongs to
 
 **Alternatives / Comparisons:**
+
 - `Decorator Pattern` — explicit, type-safe, visible cross-cutting; no proxy needed
 - `Metaprogramming` — the broader paradigm; AOP is a specific application
 - `Interceptors / Filters` — EE standard cross-cutting mechanism for HTTP
@@ -578,32 +595,33 @@ or throw; returning null on error creates silent failures.
 ### 📌 Quick Reference Card
 
 ┌──────────────────────────────────────────────────────────┐
-│ WHAT IT IS   │ Injecting cross-cutting behaviour into    │
-│              │ methods without modifying them            │
+│ WHAT IT IS │ Injecting cross-cutting behaviour into │
+│ │ methods without modifying them │
 ├──────────────┼───────────────────────────────────────────┤
-│ PROBLEM IT   │ Cross-cutting concerns (logging, auth,    │
-│ SOLVES       │ transactions) duplicated across classes   │
+│ PROBLEM IT │ Cross-cutting concerns (logging, auth, │
+│ SOLVES │ transactions) duplicated across classes │
 ├──────────────┼───────────────────────────────────────────┤
-│ KEY INSIGHT  │ Same-class self-invocation bypasses       │
-│              │ Spring AOP proxies — always inject self   │
+│ KEY INSIGHT │ Same-class self-invocation bypasses │
+│ │ Spring AOP proxies — always inject self │
 ├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Logging, security, transactions, caching  │
-│              │ must apply across many unrelated classes  │
+│ USE WHEN │ Logging, security, transactions, caching │
+│ │ must apply across many unrelated classes │
 ├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ The cross-cutting logic is specific to    │
-│              │ one class; explicit Decorator is clearer  │
+│ AVOID WHEN │ The cross-cutting logic is specific to │
+│ │ one class; explicit Decorator is clearer │
 ├──────────────┼───────────────────────────────────────────┤
-│ TRADE-OFF    │ Zero duplication of cross-cutting code    │
-│              │ vs. invisible behaviour and proxy limits  │
+│ TRADE-OFF │ Zero duplication of cross-cutting code │
+│ │ vs. invisible behaviour and proxy limits │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "City CCTV: every shop is monitored       │
-│              │  without the shop owner doing anything."  │
+│ ONE-LINER │ "City CCTV: every shop is monitored │
+│ │ without the shop owner doing anything." │
 ├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Spring Core → @Transactional              │
-│              │ → Proxy Pattern → Metaprogramming        │
+│ NEXT EXPLORE │ Spring Core → @Transactional │
+│ │ → Proxy Pattern → Metaprogramming │
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A Spring service method is annotated with both
