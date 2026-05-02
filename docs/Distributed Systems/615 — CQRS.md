@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "CQRS"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Event Sourcing, Saga Pattern, Eventual Consistency, CRUD                          |                 |
 | **Used by:**    | Event Sourcing, Outbox Pattern, Read Model Projections, DDD                       |                 |
 | **Related:**    | Event Sourcing, Saga Pattern, Outbox Pattern, Eventual Consistency, Domain Events |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

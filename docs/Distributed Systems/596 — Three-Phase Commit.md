@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Three-Phase Commit (3PC)"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 │ Depends on:  │ Two-Phase Commit                    │                      │
 │ Related:     │ 2PC, Saga Pattern, Consensus        │                      │
 └──────────────────────────────────────────────────────────────────────────┘
+
+---
 
 ### 🔥 The Problem This Solves
 

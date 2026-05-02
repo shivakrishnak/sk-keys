@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Write Barrier"
 parent: "Java & JVM Internals"
@@ -42,6 +42,8 @@ tags:
 | **Used by:** | Card Table, Remembered Set, G1GC, ZGC, Shenandoah GC | |
 | **Related:** | Card Table, Remembered Set, Read Barrier, Memory Barrier | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -53,9 +55,13 @@ G1GC concurrently marks live objects (no STW) across 1ms–100ms. During concurr
 THE INVENTION MOMENT:
 This is exactly why **Write Barriers** were created — to give the GC a hook at every reference store, allowing it to record metadata (dirty cards, pre/post values) needed for concurrent and incremental operation without requiring full STW pauses.
 
+---
+
 ### 📘 Textbook Definition
 
 A **write barrier** (in the GC context) is a small fragment of code inserted by the JVM/JIT at every reference field store instruction in compiled code. When an application thread stores a reference (`obj.field = value`), the write barrier executes immediately after (or before) the store, recording the store event in GC-specific data structures (card table, remembered set, SATB queue). Different GC algorithms use different barrier designs: **post-write barriers** (G1's card table marking: record after store), **pre-write barriers** (G1's SATB: record the overwritten value before it is lost), and **store barriers** (ZGC: color all references with GC state bits). Write barriers trade per-store overhead (~2–5 ns) for reduced GC pause time.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -67,6 +73,8 @@ A tiny piece of code that piggybacks on every object reference assignment and qu
 
 **One insight:**
 The write barrier is a tax on every reference store, paid up-front to avoid a much larger cost later (full STW scan). The critical question is whether the per-store tax is worth it for the GC algorithm using it. For concurrent GCs (G1, ZGC, Shenandoah), the answer is decisively yes: a 2ns per-store overhead avoids multi-hundred-millisecond STW pauses. For Serial GC (no concurrent marking), keeping a card table write barrier adds 1–3% throughput overhead for limited benefit.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -120,6 +128,8 @@ THE TRADE-OFFS:
 Gain: Concurrent/incremental GC possible; shorter STW pauses; O(modified objects) work per GC vs O(heap size).
 Cost: 2–5ns overhead per reference store; JIT code size increases for each store (barrier instructions); complex interaction with JIT optimization (stores must not be reordered past barriers).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -137,6 +147,8 @@ Before `A.child = null` executes: barrier fires, enqueues the old value (C) into
 THE INSIGHT:
 SATB's pre-write barrier records the "facts of the old world" before the application destroys them. This is the GC equivalent of a database transaction log — record before you overwrite, so you can reconstruct state if needed.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A write barrier is like a building's change management system. Every time someone moves furniture (modifies a reference), they fill out a short form: "room 42, moved sofa from position A to position B." The facilities manager (GC) can review this log to understand exactly what has changed without walking every room. Different facilities teams keep different logs: "where did new furniture come from?" (SATB) vs "which rooms were recently modified?" (card table) — each serving different maintenance needs.
@@ -148,6 +160,8 @@ SATB's pre-write barrier records the "facts of the old world" before the applica
 "Where did furniture come from?" → SATB pre-barrier for concurrent marking.
 
 Where this analogy breaks down: Unlike a paper form system, write barriers are inserted in compiled machine code and execute in 2–5ns — much faster than any paper form could be processed.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -167,6 +181,8 @@ The JIT optimizes these barriers: null checks are hoisted; conditions on GC stat
 
 **Level 4 — Why it was designed this way (senior/staff):**
 ZGC's load barrier is architecturally different and arguably more elegant: instead of a write barrier (recording every store), ZGC uses a **load barrier** (checking every reference load). This works because ZGC is a fully concurrent relocating GC: objects may move during application execution. When a thread loads a reference, the load barrier checks if the reference is "colored" (pointing to an old location that has been relocated). If so, it fixes up the reference to the new location — transparently, at load time. This converts the "store-time tracking" model to a "load-time healing" model. The advantage: fewer stores happen than loads in reference-heavy code (reads vastly outnumber writes), but ZGC's critical property is that the barrier runs only where needed (on "bad colored" references) — making the average overhead close to zero when relocated objects are rarely accessed.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -220,6 +236,8 @@ obj.fieldB = y;  // barrier: card already dirty, skip
 // JIT detects same card, eliminates second dirty mark
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (G1GC):
@@ -245,6 +263,8 @@ FAILURE PATH (design error — missing barrier):
 
 WHAT CHANGES AT SCALE:
 At 500 million reference stores per second (write-heavy caching service), write barrier overhead at 3ns/store = 1.5 seconds/second of write barrier CPU — 100% CPU. This drives the design of write-barrier-free algorithms in HPC Java (using primitive arrays, off-heap buffers, or Unsafe). For most services, reference store rates are 10–50 million/second, where 30–150ms/second overhead is 3–15% of CPU — acceptable for the GC benefits provided.
+
+---
 
 ### 💻 Code Example
 
@@ -306,6 +326,8 @@ java -XX:StartFlightRecording=duration=60s,\
 # High SATB buffer rate → lots of pre-write barrier activity
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | GC Algorithm | Write Barrier Type | Barrier Cost | Purpose |
@@ -318,6 +340,8 @@ java -XX:StartFlightRecording=duration=60s,\
 
 How to choose: GC algorithm determines write barrier type. If write-heavy workload is the throughput bottleneck, ZGC's store-barrier-free approach may improve throughput. Test with JMH under realistic load.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -328,6 +352,8 @@ How to choose: GC algorithm determines write barrier type. If write-heavy worklo
 | Write barriers are inserted only for field stores | Barriers are inserted for all reference stores: object field stores (`putfield`), array element stores (`aastore`), and `putStatic`. Each is handled |
 | JIT can eliminate all write barriers in JIT-optimized hot paths | JIT can eliminate redundant barriers (e.g., same card already dirty) but cannot eliminate barriers entirely from reference stores to Old Gen objects. The barrier is a correctness requirement, not optional |
 | ZGC's load barrier is more expensive than G1's write barrier | For stores: ZGC has no write barrier. For loads: ZGC's load barrier is ~2-3 instructions on the "good" fast path — comparable to G1's write barrier cost. ZGC trades write overhead for load overhead |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -407,6 +433,8 @@ Options by priority:
 Prevention:
 Performance test write-intensive code paths with realistic allocation patterns. Profile barrier overhead explicitly.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -422,6 +450,8 @@ Performance test write-intensive code paths with realistic allocation patterns. 
 **Alternatives / Comparisons:**
 - `Memory Barrier` — hardware instruction for CPU memory ordering; completely different from GC write barriers despite the name
 - `Card Table` — the data structure the write barrier updates; the two are inseparable
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -453,6 +483,7 @@ Performance test write-intensive code paths with realistic allocation patterns. 
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** ZGC replaces write barriers with load barriers for its relocation-based design. Shenandoah uses both a write barrier (for SATB concurrent marking) AND a "forwarding pointer" mechanism (for concurrent compaction). Explain the architectural reason Shenandoah needs two separate barrier types while ZGC achieves single-barrier design — and what specific property of ZGC's region layout eliminates the need for a write barrier during concurrent compaction.

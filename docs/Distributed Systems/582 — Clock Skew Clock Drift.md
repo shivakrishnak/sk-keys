@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Clock Skew / Clock Drift"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Distributed Systems, Lamport Clock, Networking, Operating Systems  |                 |
 | **Used by:**    | Lamport Clock, Vector Clock, Distributed Locking, Fencing / Epoch  |                 |
 | **Related:**    | Lamport Clock, NTP, Fencing / Epoch, Distributed Locking, TrueTime |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

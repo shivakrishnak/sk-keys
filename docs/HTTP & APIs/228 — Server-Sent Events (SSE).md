@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Real-time Notifications, Live Feeds, LLM Streaming Responses | |
 | **Related:** | WebSocket, Long Polling, gRPC Streaming | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

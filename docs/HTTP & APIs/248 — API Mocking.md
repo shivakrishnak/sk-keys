@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Frontend Development, Contract Testing, Integration Testing, API Design | |
 | **Related:** | API Contract Testing, OpenAPI/Swagger, Stubbing, WireMock | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

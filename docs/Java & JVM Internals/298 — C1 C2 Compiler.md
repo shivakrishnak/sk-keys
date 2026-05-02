@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "C1 / C2 Compiler"
 parent: "Java & JVM Internals"
@@ -39,6 +39,8 @@ tags:
 | **Used by:** | Tiered Compilation, Deoptimization, GraalVM | |
 | **Related:** | Tiered Compilation, Method Inlining, GraalVM, AOT Compilation | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -50,9 +52,13 @@ A production API service uses `-server` mode. It handles 2,000 req/s but during 
 THE INVENTION MOMENT:
 This is exactly why **C1 and C2** exist as a two-compiler pipeline within the same JVM — C1 for fast, cheap early compilation to reduce cold-start pain, while C2 handles proven-hot methods with expensive global optimization for peak throughput.
 
+---
+
 ### 📘 Textbook Definition
 
 **C1** (the "client" compiler) and **C2** (the "server" compiler) are the two JIT compilation backends in the HotSpot JVM. C1 performs a linear, method-local optimization pass and produces compiled code quickly (microseconds to milliseconds) with low optimization overhead, sacrificing peak performance. C2 uses an SSA-based intermediate representation ("Sea of Nodes") and performs aggressive global optimizations including global value numbering, alias analysis, loop transformations, and auto-vectorization, producing near-optimal native code but taking tens to hundreds of milliseconds per method. In tiered compilation mode (default since Java 8), both run in sequence: newly hot methods are first compiled by C1, then — if they remain hot — re-compiled by C2.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -64,6 +70,8 @@ C1 is a "fast sketch" and C2 is a "masterpiece" — you need both because master
 
 **One insight:**
 The critical insight is that C1 and C2 are not redundant — C1 produces *instrumented code* that continues profiling the method even after compilation. This profile is what C2 feeds on to make its hyper-optimized decisions. Without C1's profiled output, C2 would be forced to make conservative assumptions, producing code no better than C1's anyway.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -98,6 +106,8 @@ THE TRADE-OFFS:
 Gain: Best of both worlds — fast startup (C1) and peak throughput (C2) in a single JVM.
 Cost: Methods hot enough for C2 are compiled twice (C1 then C2), consuming more CPU. Both compilers consume memory (Code Cache). Complex C2 compilation can cause compilation pauses if the compiler queue grows.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -112,6 +122,8 @@ C2 receives the method + C1 profile data. It sees: branch always taken (removes 
 THE INSIGHT:
 Without C1's profiling instrumentation phase, C2 would be compiling a *cold* method with no type information — forced to include full virtual dispatch and all branch paths. C1's instrumented code is not just a fast interim solution; it is a profiling mechanism that *feeds* C2's optimizer.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Picture a two-round architectural design process. Round 1 (C1): architects produce a quick floor plan sketch — functional, clients can start building immediately, done in hours. Simultaneously, the sketch is used as a real building so architects observe exactly which rooms are used most, which doors are opened constantly, and which hallways are always congested. Round 2 (C2): using those observations, architects produce an optimized final design with wider hallways exactly where needed, smaller rooms nobody uses, and the most-used doors widened into archways.
@@ -122,6 +134,8 @@ Without C1's profiling instrumentation phase, C2 would be compiling a *cold* met
 "Most-used doors widened" → method inlining at confirmed monomorphic callsites.
 
 Where this analogy breaks down: Architects do the second pass once. C2 may deoptimize and re-compile multiple times as runtime behavior changes.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -136,6 +150,8 @@ C1 uses a **local** optimization approach: parse bytecode into a high-level IR, 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The Sea of Nodes IR (introduced by Cliff Click in his 1995 Stanford PhD thesis, and the basis for Graal's IR) is elegant but expensive: it merges data flow and control flow into a single graph, allowing optimizations that span loop boundaries and conditional paths. The cost is compilation time — the optimizer must traverse and transform a potentially huge graph. This is why C2 is reserved for *proven-hot* methods (invoked 10,000+ times) where the amortized speedup over millions of invocations justifies the one-time compilation cost. C2's global optimization scope also requires sophisticated deoptimization support: any speculative inline or null-check removal must be reversible if the profiling data turns out to be wrong (rare types appear).
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -178,6 +194,8 @@ Segmented cache prevents C1 code (which may be evicted when C2 code replaces it)
 **Compilation Threads:**
 `-XX:CICompilerCount` controls how many background JIT threads run. Default is 2 for older CPUs, up to `# of cores / 2` capped at 4 on modern hardware. For containers: `CICompilerCount` may be misconfigured if CPU quotas are not properly detected (see Java 10+ fixes for container CPU detection).
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -209,6 +227,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 In containerized environments with CPU throttling, the JIT compilation threads compete with application threads for the CPU quota. At scale with many containers, setting `CICompilerCount` too high degrades application throughput during warmup. At 1000+ concurrent JVM instances (microservice fleet), the aggregate compilation overhead is significant — driving adoption of ahead-of-time profiling with JEP 410 (AOT cache) in Java 24+.
+
+---
 
 ### 💻 Code Example
 
@@ -261,6 +281,8 @@ jcmd <pid> Compiler.codecache
 # CodeHeap 'non-methods'           used=8Mb  max=8Mb
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Compiler | Compilation Speed | Generated Code Speed | Profile Data | Best For |
@@ -273,6 +295,8 @@ jcmd <pid> Compiler.codecache
 
 How to choose: Leave tiered compilation enabled (default). Tune `TieredStopAtLevel=1` only when startup time is the primary constraint and peak throughput is secondary (e.g., serverless functions under 10 seconds lifetime).
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -283,6 +307,8 @@ How to choose: Leave tiered compilation enabled (default). Tune `TieredStopAtLev
 | Adding more C1/C2 threads always helps | More JIT threads steal CPU from the application. On a 2-core container, running 4 JIT threads causes severe application starvation during warmup |
 | C2 always produces correct code | C2 relies on speculative optimistic assumptions that can be wrong — this requires deoptimization support. Bugs in C2 (though rare) produce JVM crashes via SIGSEGV in native code |
 | GraalVM replaces C2 in standard JDK | As of Java 21, GraalVM JIT (Graal) is available via `-XX:+UseJVMCICompiler` as an experiment but is NOT the default; HotSpot C2 remains the standard |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -361,6 +387,8 @@ java -XX:+UseCodeCacheFlushing \
 Prevention:
 Monitor Code Cache waste/free ratio in production dashboards. Alert if used > 80% of reserved.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -375,6 +403,8 @@ Monitor Code Cache waste/free ratio in production dashboards. Alert if used > 80
 **Alternatives / Comparisons:**
 - `GraalVM` — replaces C2 with a Java-implemented compiler (Graal JIT) that produces better code for some workloads and enables polyglot compilation
 - `AOT (Ahead-of-Time Compilation)` — avoids both C1 and C2 entirely; no runtime compilation, no warmup, but no adaptive optimization either
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -405,6 +435,7 @@ Monitor Code Cache waste/free ratio in production dashboards. Alert if used > 80
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** In a tiered compilation model, C1 code is designed to be *profiling instrumented* — it runs slightly slower than un-instrumented C1 code specifically because it is collecting data for C2. If a method is invoked exactly 14,999 times (just below the C2 threshold), it runs at C1 Tier 3 speed forever — slower than C1 Tier 1 (no instrumentation) but without ever getting C2's benefit. What JVM flags could you use to detect and fix this scenario, and what is the performance engineering principle that this threshold tuning problem illustrates?

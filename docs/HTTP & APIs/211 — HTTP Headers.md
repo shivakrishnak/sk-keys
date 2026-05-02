@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "HTTP Headers"
 parent: "HTTP & APIs"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | HTTP/1.1, HTTP Status Codes, HTTP Methods                              |                 |
 | **Used by:**    | CORS, Content Negotiation, API Authentication, ETag, Keep-Alive        |                 |
 | **Related:**    | HTTP Status Codes, CORS, Content Negotiation, ETag, API Authentication |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

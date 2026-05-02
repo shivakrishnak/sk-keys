@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Service Mesh"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Sidecar Pattern, Circuit Breaker, Distributed Tracing, Kubernetes, mTLS                |                 |
 | **Used by:**    | Kubernetes, Cloud Native, Zero Trust Security, Distributed Tracing, Traffic Management |                 |
 | **Related:**    | Sidecar Pattern, mTLS, Circuit Breaker, Distributed Tracing, API Gateway               |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

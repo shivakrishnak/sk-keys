@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Card Table"
 parent: "Java & JVM Internals"
@@ -41,6 +41,8 @@ tags:
 | **Used by:** | Minor GC, G1GC, Write Barrier, Remembered Set | |
 | **Related:** | Write Barrier, Remembered Set, GC Roots, Minor GC | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -52,9 +54,13 @@ A caching layer holds references to freshly-created cache entries (Young Gen obj
 THE INVENTION MOMENT:
 This is exactly why the **Card Table** was created — to track which Old Gen regions contain modified references without requiring a full Old Gen scan on every Minor GC. The card table is a 512-byte-granularity bitmap: each bit covers a 512-byte region of Old Gen. Only "dirty" (modified) cards need scanning.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Card Table** is a write-tracking data structure in the JVM heap management system. The heap is divided into fixed-size **cards** (typically 512 bytes each). Each card has a corresponding 1-byte entry in the card table array. When an object in Old Gen has its reference fields modified (via a **write barrier**), the JVM marks the corresponding card as "dirty" (sets its byte to a nonzero value). During Minor GC, instead of scanning all of Old Gen, the GC scans only dirty cards to find Old→Young references. After scanning, dirty cards are cleaned (reset to zero). This reduces Minor GC root scanning from O(Old Gen size) to O(dirty card count), typically 1–5% of Old Gen.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -66,6 +72,8 @@ A index card per 512 bytes of memory that gets marked dirty whenever an object i
 
 **One insight:**
 The card table converts a global "where are all the Old→Young references?" question into a localized "which 512-byte regions of Old Gen were recently modified?" question. At 512 bytes per card = 1 byte per card, a 4GB Old Gen needs only 8MB of card table memory (1/512 ratio) — this fits in CPU cache, making card scanning fast despite the large Old Gen.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -110,6 +118,8 @@ THE TRADE-OFFS:
 Gain: Minor GC scans only dirty cards (1–5% of Old Gen typically) → fast Minor GC.
 Cost: Write barrier overhead on every reference store (1-2 extra instructions); card table memory (Old Gen / 512 bytes); false positives (dirty card scanned but no Young Gen reference found).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -124,6 +134,8 @@ WITH CARD TABLE:
 THE INSIGHT:
 The card table converts Old Gen scanning from proportional to Old Gen size to proportional to modification rate. In a typical workload where only 0.5% of Old Gen is modified between GCs, the speedup is 200x. This is why generational GC is effective: Minor GC is cheap, and the card table is what makes it cheap.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > The card table is like a hotel's "do not disturb / please clean" door sign system applied to memory. Each room (512-byte card) has a sign. When something changes in a room (object reference modified), the housekeeping management system flips the sign to "needs attention." Daily cleanup (Minor GC) walks only the hallway checking signs — goes into only "needs attention" rooms. After cleaning, resets to "do not disturb." The next day, only rooms actually changed since yesterday need new cleaning.
@@ -135,6 +147,8 @@ The card table converts Old Gen scanning from proportional to Old Gen size to pr
 "Resetting sign" → clearing card table entry after GC scan.
 
 Where this analogy breaks down: Unlike hotel rooms, card table false positives exist — a card may appear dirty because an unrelated write touched the same 512-byte region, causing the GC to scan that card even though the actual reference in it hasn't changed.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -149,6 +163,8 @@ The card table byte array is located at a fixed offset from the start of the hea
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The card table's 512-byte granularity was chosen after empirical analysis: smaller granularity (e.g., 64 bytes per card) would be more precise but require 8x more card table memory — not fitting in L2 cache for large heaps. Larger granularity (e.g., 4KB per card) would reduce memory but scan too much on each dirty card. 512 bytes fits the card table for a 4GB Old Gen into 8MB — exactly fitting in L3 cache on most machines. The card table's 1-byte-per-card design (vs 1-bit-per-card) serves an additional purpose: G1GC uses the card table byte to store not just "dirty/clean" but also generation and processing state — reducing the number of data structures needed per card.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -198,6 +214,8 @@ mov byte ptr [rax], 0xFF          ; mark card dirty
 **G1GC Card Table Extension:**
 G1GC extends the card table concept into per-region **Remembered Sets** (RSet): each region maintains a summary of cards from OTHER regions that point into it. This makes G1GC's incremental collection work: to collect a region, the GC only scans that region's RSet to find cross-region references, not the entire heap.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -230,6 +248,8 @@ not raw memory writes for reference fields)
 
 WHAT CHANGES AT SCALE:
 With a 64GB heap and frequent writes (write-heavy cache workload), 128MB of card table must be scanned on each Minor GC. At 10 Minor GCs/second, this is 1.28GB/sec of card table reading — realistic on server hardware, but at scale with hundreds of dirty cards per GC, the card scanning phase can become a bottleneck. G1GC's refined card scanning (processes dirty cards concurrently in the background) addresses this.
+
+---
 
 ### 💻 Code Example
 
@@ -293,6 +313,8 @@ java -XX:+UseG1GC \
 # These are the card table and remembered set phases
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Structure | Granularity | Memory Cost | Precision | GC Usage |
@@ -303,6 +325,8 @@ java -XX:+UseG1GC \
 | Mod Union Table | 512 bytes | Heap / 512 | Per-card (generational filter) | Full GC in some collectors |
 
 How to choose: These are GC-internal structures; you don't choose between them. Understanding them helps diagnose GC phase timings in GC logs.
+
+---
 
 ### 🔁 Flow / Lifecycle
 
@@ -330,6 +354,8 @@ How to choose: These are GC-internal structures; you don't choose between them. 
 └─────────────────────────────────────────────────┘
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -340,6 +366,8 @@ How to choose: These are GC-internal structures; you don't choose between them. 
 | Card table is per-heap | There is one card table per JVM heap. In a standard JVM process with one heap, one card table. Some advanced setups (NUMA-aware JVMs) may have per-NUMA-node tables |
 | Clearing dirty cards happens during Minor GC, causing longer pauses | G1GC's concurrent refinement threads process dirty cards in the background during application execution, clearing most cards before Minor GC starts |
 | Card table is only used in generational GC | ZGC and Shenandoah don't use a card table for generational tracking in their default configurations (though newer GraalVM versions introduce generational ZGC that does) |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -396,6 +424,8 @@ java -XX:G1ConcRefinementThreads=8 MyApp
 Prevention:
 Monitor G1 refinement thread CPU and dirty card queue depth in Prometheus.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -410,6 +440,8 @@ Monitor G1 refinement thread CPU and dirty card queue depth in Prometheus.
 **Alternatives / Comparisons:**
 - `Remembered Set` — per-region refinement of the card table concept used by G1GC
 - `Write Barrier` — the mechanism that CREATES dirty card entries; card table and write barrier are two sides of the same mechanism
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -440,6 +472,7 @@ Monitor G1 refinement thread CPU and dirty card queue depth in Prometheus.
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** G1GC's concurrent card table refinement processes dirty cards in the background during application execution. Describe the precise race condition that can occur if a refinement thread clears a dirty card while the application thread simultaneously writes a new reference to the same 512-byte region — and explain the JVM mechanism (either memory barrier or synchronization protocol) that prevents this from producing a silent correctness failure in the GC.

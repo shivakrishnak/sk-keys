@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Bulkhead"
 parent: "Distributed Systems"
@@ -26,6 +26,8 @@ tags:
 | **Depends on:** | Circuit Breaker, Timeout, Thread Pool, Failure Modes                         |                 |
 | **Used by:**    | Hystrix, Resilience4j, Service Mesh, Graceful Degradation                    |                 |
 | **Related:**    | Circuit Breaker, Retry with Backoff, Timeout, Fallback, Graceful Degradation |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

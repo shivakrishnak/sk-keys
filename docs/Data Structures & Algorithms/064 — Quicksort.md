@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Dual-Pivot Quicksort (Java Arrays.sort), Quickselect, Introsort | |
 | **Related:** | Mergesort, Heapsort, Timsort | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ O(N²) algorithms are too slow for large datasets. O(N log N) mergesort solves t
 THE INVENTION MOMENT:
 Instead of merging two sorted halves (which requires auxiliary space), partition the array in-place around a "pivot" value: move all elements smaller than the pivot to its left, all larger to its right. This partition step is O(N) and in-place. Then recursively sort each half. Average case: O(N log N). In practice, in-place partition means all operations touch a single array — maximising cache reuse. This is exactly why **Quicksort** was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Quicksort** is a divide-and-conquer sorting algorithm that selects a pivot element, partitions the array around the pivot (all smaller elements left, all larger right), and recursively sorts the sub-arrays. Average time complexity: O(N log N). Worst case: O(N²) when the pivot repeatedly divides the array into 1 vs N-1 elements (e.g., sorted input with last-element pivot). Space complexity: O(log N) average (recursion stack). Quicksort is **not stable** — equal elements may be reordered.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Pick a pivot, put smaller elements to its left and larger to its right, then rec
 
 **One insight:**
 Quicksort's average O(N log N) performance with O(log N) space relies on a fortunate property: a randomly chosen pivot splits the array roughly in half on average, producing a balanced recursion tree of depth O(log N). The danger is a "bad pivot" that creates a lopsided split (one partition of size 1, one of N-1), which degrades to O(N²). Randomised pivot selection makes this extremely improbable — and this is why production Quicksort implementations randomise the pivot or use median-of-three.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -83,6 +91,8 @@ THE TRADE-OFFS:
 Gain: O(N log N) average, O(log N) space, best cache performance of all comparison sorts.
 Cost: O(N²) worst case on adversarial input (mitigated by randomisation); not stable (equal elements can swap order).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -103,6 +113,8 @@ Recursion depth ≈ log₂(5) ≈ 3. Total work ≈ N log N = 12. Fast!
 THE INSIGHT:
 Sorted input is the adversarial case for fixed-position pivots. A pivot that always picks the median would guarantee O(N log N), but finding the median is itself O(N). Random pivot selection achieves expected O(N log N) because on average, a random pivot splits the array roughly in half.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Quicksort is like playing the "higher/lower" number guessing game as a group activity. Everyone picks a random number. One person (pivot) stands up. Everyone with a lower number stands to the left, everyone with a higher number to the right. Repeat within each group. The groups get smaller and smaller until everyone is standing in order — no merging needed.
@@ -113,6 +125,8 @@ Sorted input is the adversarial case for fixed-position pivots. A pivot that alw
 "Groups get smaller" → O(log N) recursion depth (on average)
 
 Where this analogy breaks down: If the pivot person is always the tallest (worst case), one group has everyone and the other is empty — O(N) groups of decreasing size each = O(N²). The game only works efficiently when the pivot is roughly in the middle.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -127,6 +141,8 @@ Java's `Arrays.sort` for primitives uses Dual-Pivot Quicksort (Vladimir Yaroslav
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Quicksort (Tony Hoare, 1959, ALGOL) was designed primarily for in-place performance on sequential memory. Its cache efficiency advantage over mergesort grew as CPUs added larger L1/L2 caches — a property Hoare could not have anticipated in 1959. The worst-case O(N²) behaviour drove 20+ years of research into pivot selection mechanisms. The randomised version's O(N log N) expected time with near-certainty made it practical. Median-of-medians guarantees O(N log N) deterministic pivot selection in O(N), but with a constant factor so large (10x) that it is never used in practice — a classic example of theoretically optimal but practically inferior.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -170,6 +186,8 @@ Quicksort (Tony Hoare, 1959, ALGOL) was designed primarily for in-place performa
 - Best/average: O(N log N) comparisons, O(log N) stack depth
 - Worst (sorted, fixed pivot): O(N²) comparisons, O(N) stack depth → StackOverflowError for N=100,000
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -197,6 +215,8 @@ Sorted input + last-element pivot
 
 WHAT CHANGES AT SCALE:
 For N=10⁸ elements (1 billion), random Quicksort's cache efficiency is crucial: mergesort accesses ~120 cache misses per element (L3 cache overflow); Quicksort accesses ~30 (better sequential access). At this scale, the factor-of-4 cache advantage translates to ~2 minutes vs ~8 minutes on real hardware. Parallel Quicksort partitions independently recursive sub-problems across cores — good parallel speedup until partition size < L1 cache, at which point sequential is faster.
+
+---
 
 ### 💻 Code Example
 
@@ -284,6 +304,8 @@ int quickselect(int[] arr, int lo, int hi,
 // int median = quickselect(arr, 0, n-1, n/2);
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Time (avg) | Time (worst) | Space | Stable | Cache Friendly | Best For |
@@ -295,6 +317,8 @@ int quickselect(int[] arr, int lo, int hi,
 | Insertion Sort | O(N²) | O(N²) | O(1) | Yes | Yes | Small arrays (N < 20), nearly sorted |
 
 How to choose: Use Quicksort (or native sort) for primitives. Use Mergesort/Timsort when stability is required. Use Heapsort when O(1) extra space is required and worst case must be O(N log N).
+
+---
 
 ### 🔁 Flow / Lifecycle
 
@@ -318,6 +342,8 @@ How to choose: Use Quicksort (or native sort) for primitives. Use Mergesort/Tims
 └──────────────────────────────────────────────┘
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -327,6 +353,8 @@ How to choose: Use Quicksort (or native sort) for primitives. Use Mergesort/Tims
 | Quicksort is in-place and uses O(1) extra space | Quicksort is in-place for data but uses O(log N) stack space (recursion) — O(N) in worst case (unbalanced partitions). Not truly O(1) space |
 | Randomised Quicksort guarantees O(N log N) | Randomised Quicksort has expected O(N log N) — it is possible (though astronomically unlikely) to get O(N²) with unlucky random choices. Introsort provides a hard O(N log N) guarantee |
 | Java's Arrays.sort uses standard Quicksort | Java uses Dual-Pivot Quicksort (for primitives) and Timsort (for objects). Standard one-pivot Quicksort has not been used in Java since Java 7 |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -394,6 +422,8 @@ Fix: Use `Arrays.sort(objectArray)` in Java (Timsort, stable) instead of custom 
 
 Prevention: Document stability requirements upfront. Default to stable sort unless performance profiling proves unstable sort is needed.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -410,6 +440,8 @@ Prevention: Document stability requirements upfront. Default to stable sort unle
 - `Mergesort` — stable, O(N log N) worst case, O(N) space; better for objects and external sorting.
 - `Heapsort` — O(N log N) worst case, O(1) space, not stable; Quicksort beats it in cache performance.
 - `Timsort` — stable, O(N log N) worst case, exploits existing sorted runs; Java's choice for objects.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -439,6 +471,7 @@ Prevention: Document stability requirements upfront. Default to stable sort unle
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Quicksort's average case O(N log N) performance relies on the pivot splitting the array roughly in half on average. Using random pivot selection, the probability that a random choice is in the "good" range (splits into at least 25% on each side) is exactly 50%. Using a recurrence relation T(N) = T(αN) + T((1-α)N) + O(N) for a split of α:(1-α), prove that any constant-fraction split (α ≥ 0.1) still gives O(N log N) time. What does this tell you about how imprecise the "in half" requirement actually is?

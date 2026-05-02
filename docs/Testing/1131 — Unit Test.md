@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Unit Test"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | TDD, Test Pyramid, CI-CD                             |                 |
 | **Related:**    | Integration Test, Mocking, Assertions, Test Coverage |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ To refactor with confidence, you need feedback in seconds — before deployment,
 THE INVENTION MOMENT:
 Kent Beck's SUnit (Smalltalk, 1994) and its Java port JUnit (1997) formalised the unit test pattern: Arrange (set up), Act (execute), Assert (verify). The framework pattern — test runner discovers test classes, isolates each test, reports pass/fail — became the model for every modern testing framework.
 
+---
+
 ### 📘 Textbook Definition
 
 A **unit test** is an automated test that verifies the behaviour of a single **unit** of code — typically a function, method, or class — in isolation from its dependencies. "Isolation" means external dependencies (databases, HTTP services, file systems, time) are replaced with **test doubles** (mocks, stubs, fakes). A unit test must be **FAST** (<100ms), **Isolated** (no shared state between tests), **Repeatable** (same result regardless of environment), **Self-checking** (pass/fail without human judgment), and **Timely** (written at development time). These properties are sometimes summarised as **FIRST** principles.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Unit test = call a function with known inputs → assert the output matches expe
 
 **One insight:**
 A unit test that requires a running database is not a unit test — it's an integration test wearing unit test clothes. The key word is "isolation." Speed (< 100ms) is the indicator: if it's slow, something external is involved.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -85,6 +93,8 @@ THE TRADE-OFFS:
 Gain: Millisecond feedback; safe refactoring; tests as documentation.
 Cost: Mocking can hide integration bugs; over-mocking leads to tests that pass but production breaks; maintaining tests as code evolves has cost.
 
+---
+
 ### 🧪 Thought Experiment
 
 WHAT IS THE "UNIT"?
@@ -107,11 +117,15 @@ Usually: one public method; sometimes: one class
 Never: crosses a process boundary
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A unit test is a spec sheet: "this function, given input X, should produce output Y." When you write the function, you implement the spec. When you refactor, you verify you still meet the spec. The test IS the spec, expressed as executable code.
 
 > The mock/stub is a stand-in actor: if your function needs a database, the test uses a "mock database" that returns predetermined answers — like filming a scene with a stand-in instead of the real VIP.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -122,6 +136,8 @@ Never: crosses a process boundary
 **Level 3:** Tests should verify behavior not implementation. Avoid `@InjectMocks` with complex dependency chains — prefer constructor injection for easier mocking. Use `@ParameterizedTest` for boundary value analysis. Test naming conventions affect discoverability: `given_when_then` vs `should_when`. Coverage metric: aim for behavior coverage (all branches), not line coverage.
 
 **Level 4:** The "unit" definition is contentious: "London school" (sociable unit tests) mocks all collaborators; "Chicago school" (classical unit tests) only mocks infrastructure (DB, HTTP) and allows real collaborators. The right boundary: mock at architectural boundaries (IO, network, time), not at every class boundary. This produces tests that are fast (no IO) but also resilient to refactoring (you can change internal class structure without breaking tests).
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -145,6 +161,8 @@ Never: crosses a process boundary
 │  returns configured stubs or records invocations    │
 └──────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -171,6 +189,8 @@ TDD CYCLE (Red-Green-Refactor):
    }
    // Test still PASSES (behavior unchanged)
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -235,6 +255,8 @@ class OrderPricingServiceTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Test Type   | Scope              | Speed    | Dependencies    | Confidence            |
@@ -244,6 +266,8 @@ class OrderPricingServiceTest {
 | E2E         | Full user flow     | 10s–5min | Full stack      | Very high (reality)   |
 | Contract    | Service boundary   | 1–10s    | Pact framework  | Medium (API contract) |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                          | Reality                                                                                                                  |
@@ -252,6 +276,8 @@ class OrderPricingServiceTest {
 | "More mocking = better isolation"      | Over-mocking produces tests that verify mock behavior, not real behavior; mock at architectural boundaries only          |
 | "Unit tests are slow to write"         | TDD discipline: tests as fast as possible; the slow part is writing code without clear requirements (TDD forces clarity) |
 | "Unit tests replace integration tests" | Unit tests verify units in isolation; integration tests verify units working together; both are required                 |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -265,11 +291,15 @@ Fix: Use `@MockBean Clock`, fixed seeds, `@TempDir`, `@TestMethodOrder(OrderAnno
 Cause: Tests verify internal implementation details (private method calls, field values via reflection).
 Fix: Only test public API. Use `verify()` sparingly — only for critical side effects (email sent, payment charged).
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Functions, Classes, Methods, Assertions
 - **Builds on:** Mocking, Stubbing, TDD, Test Pyramid
 - **Alternatives:** Integration Test (real dependencies), Contract Test (API boundaries)
+
+---
 
 ### 📌 Quick Reference Card
 

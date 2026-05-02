@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Replication Strategies"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Distributed Systems, CAP Theorem, Consistency Models, Quorum            |                 |
 | **Used by:**    | Log Replication, State Machine Replication, Eventual Consistency, Raft  |                 |
 | **Related:**    | Log Replication, Quorum, Strong Consistency, Eventual Consistency, Raft |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

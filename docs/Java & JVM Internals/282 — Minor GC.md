@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Old Generation, Major GC, Stop-The-World, GC Tuning | |
 | **Related:** | Major GC, Full GC, Stop-The-World, G1GC | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Collecting the entire heap when only 1% of heap objects are candidates is a 100�
 THE INVENTION MOMENT:
 Minor GC is the targeted, fast, frequent collection of only the Young Generation — skipping the vast, mostly-live Old Generation entirely. This is why Minor GC exists as a distinct event from full heap collection.
 
+---
+
 ### 📘 Textbook Definition
 
 A Minor GC (also called Young GC) is a garbage collection event that collects only the Young Generation of the JVM heap: Eden Space and both Survivor Spaces. It is triggered when Eden Space fills up. Minor GC is a stop-the-world event: all application threads pause while the GC traces object reachability from GC Roots (including the card table for Old→Young references), copies live objects from Eden and active Survivor to the inactive Survivor (or promotes to Old Gen), and resets Eden. Minor GC typically completes in <10ms for well-tuned applications and occurs every few hundred milliseconds to several seconds depending on allocation rate.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Minor GC is a fast, frequent cleanup of new objects — typically finishing in a
 
 **One insight:**
 Minor GC is fast not because the JVM is clever, but because of the Generational Hypothesis: 95–99% of Eden is dead garbage by the time Eden fills. The copying collector only copies the 1–5% that's live. It never touches the 95% that's dead. The bigger and deader Eden is, the faster Minor GC runs (relative to surviving volume).
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -68,6 +76,8 @@ THE TRADE-OFFS:
 Gain: O(Young Gen live objects) collection cost rather than O(full heap live objects); frequency tunable via Eden size.
 Cost: Stop-the-world pause (typically 1–20ms); card table maintenance overhead on every Old→Young reference write (write barrier); promotion fills Old Gen over time, eventually requiring expensive Major GC.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -82,6 +92,8 @@ Every 2 seconds (when Eden fills), Minor GC scans only Young Gen. 2 MB of live o
 THE INSIGHT:
 The "most of the heap is live objects that are never garbage" observation justifies skipping Old Gen in Minor GC. If you must scan 4 GB to collect 100 MB, you're paying too much. Minor GC targets where the garbage is dense.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Minor GC is like sorting your desk mail drawer at the end of each day. 95% is junk mail (dead objects) — discard instantly. 5% are papers to keep — move to the filing cabinet (Survivor/Old Gen). The whole operation takes 2 minutes. You don't re-examine every file in the entire office (Old Gen) every day — just the drawer where today's mail landed.
@@ -94,6 +106,8 @@ The "most of the heap is live objects that are never garbage" observation justif
 "Not re-examining office files" → skipping Old Gen during Minor GC
 
 Where this analogy breaks down: unlike humans who know which mail is junk by reading it, the JVM determines liveness by tracing reference chains — it doesn't look at the content of objects.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -108,6 +122,8 @@ Monitor Minor GC with `jstat -gc <pid>`: `YGC` = count, `YGCT` = total time. A h
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The minor/major split in GC is JVM implementation of the "generation scavenging" algorithm first described by Cheney (1970) and popularised by Ungar in the Berkeley Smalltalk system (1984). The key insight that enabled Minor GC to skip Old Gen entirely: the card table and remembered sets are maintained incrementally by write barriers on every reference store. This amortises the cost of tracking cross-generational references over all pointer updates, making the Minor GC's Old-Gen scanning bounded and cheap (only dirty cards, not the full Old Gen).
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -174,6 +190,8 @@ Timeline:
                  ↑ STW                       ↑ resume
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -203,6 +221,8 @@ Minor GC cannot complete in <MaxGCPauseMillis:
 
 WHAT CHANGES AT SCALE:
 At 1M requests/sec, allocation rate is enormous. Eden fills faster, Minor GC runs more frequently. At 100k req/sec with 1KB/request allocation: 100 MB/s → 256 MB Eden fills in 2.56 seconds. Minor GC frequency = 0.4/second. With 5ms average pause: 0.2% time in Minor GC — excellent. At 1M req/sec: frequency = 4/second, still manageable. The Young Generation handles high throughput well; it's the promotion rate that causes problems at scale.
+
+---
 
 ### 💻 Code Example
 
@@ -269,6 +289,8 @@ java -Xlog:gc+phases=debug:file=/tmp/gc.log \
 # "Object Copy" vs "Root Processing" breakdown visible
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | GC Event | Region | Frequency | Typical Pause | Triggered By |
@@ -281,6 +303,8 @@ java -Xlog:gc+phases=debug:file=/tmp/gc.log \
 
 How to choose: Minor GC: tune Eden size and Survivor to minimise frequency and overflow. Major GC: tune Old Gen size and GC algorithm. Aim for 0 Full GCs in production.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -289,6 +313,8 @@ How to choose: Minor GC: tune Eden size and Survivor to minimise frequency and o
 | "Minor GC doesn't affect application latency" | Minor GC is stop-the-world — all threads pause. p99 Minor GC pauses directly appear in request latency tail. |
 | "Minor GC collects only dead objects" | Minor GC identifies and COPIES live objects; dead objects are collected implicitly by Eden reset (never explicitly touched). |
 | "Card table scanning checks the entire Old Gen" | Only dirty cards (512-byte regions that had reference stores since last clean) are scanned. The card table is maintained by write barriers, keeping Minor GC's Old-Gen scanning bounded. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -341,6 +367,8 @@ grep "Promotion failed\|Evacuation Failure" /tmp/gc.log
 
 Prevention: Increase Old Gen size (increase `-Xmx` or decrease `-XX:NewRatio`); fix memory leaks to reduce Old Gen fill rate.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -358,6 +386,8 @@ Prevention: Increase Old Gen size (increase `-Xmx` or decrease `-XX:NewRatio`); 
 **Alternatives / Comparisons:**
 - `Major GC` — same basic algorithm but applied to Old Generation; far more expensive
 - `Full GC` — collects both Young and Old Generations; should be avoided in production
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -388,6 +418,7 @@ Prevention: Increase Old Gen size (increase `-Xmx` or decrease `-XX:NewRatio`); 
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The card table records which 512-byte Old Gen regions have written a reference to Young Gen since the last Minor GC. A write barrier runs on every reference store anywhere in the heap. An application performs 1 billion reference stores per second across a 4 GB Old Gen. What is the maximum number of dirty cards that can exist at the start of a Minor GC, and why does the card-table approach remain faster than scanning all of Old Gen even when most of the 4 GB heap has been written to — what mathematical property of card bytes vs heap bytes explains this?

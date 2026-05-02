@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Sorting Stability"
 parent: "Data Structures & Algorithms"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Multi-Key Sorting, Database ORDER BY, Radix Sort | |
 | **Related:** | Merge Sort, Quick Sort, Comparison Sort | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Multi-key sorting requires sorting multiple times, each sort refining the previo
 THE INVENTION MOMENT:
 A sort that preserves the relative order of equal elements — a **stable sort** — makes multi-key sorting compositional: sort by least-significant key first, then by most significant key. Equal-key elements retain their previously established order (from prior sorts). MergeSort and TimSort are canonical stable sorts. This is exactly why **Sorting Stability** matters.
 
+---
+
 ### 📘 Textbook Definition
 
 A sorting algorithm is **stable** if, for any two elements a and b where the key of a equals the key of b, and a appears before b in the input array, a still appears before b in the sorted output array. Formally: if key(a[i]) = key(a[j]) and i < j, then in the output a[i] still precedes a[j]. Stable sorting algorithms include: MergeSort, InsertionSort, BubbleSort, TimSort, and CountingSort. Unstable algorithms include HeapSort, QuickSort (standard), and SelectionSort. Any unstable algorithm can be made stable by augmenting elements with their original index as a tiebreaker.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Equal elements keep their original order — what was first stays first.
 
 **One insight:**
 Stability only matters when elements are considered "equal" by the sort key but differ in other ways. For primitive types sorted by value (integers sorted numerically), stability is irrelevant — equal integers are identical. For objects sorted by one field (sorting users by last name while preserving registration order among same-name users), stability is critical.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -75,6 +83,8 @@ THE TRADE-OFFS:
 Gain: Compositional multi-key sorting; predictable ordering; preserves original order for equal elements.
 Cost: Stable sorts typically require O(N) extra space (MergeSort). Augmentation approach (+original_index) increases comparison key size.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -89,6 +99,8 @@ Input: [Alice-A, Bob-A, Carol-B, Dave-B]. Sort by grade. MergeSort preserves equ
 THE INSIGHT:
 A stable sort on grade gives you "sorted by grade, then alphabetically by name" — for free — because the input was already alphabetically sorted. This is the foundation of multi-key radix sort: by sorting on each key from least significant to most significant using a stable sort, you build a multi-key sorted order without a multi-key comparator.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Stable sorting is like sorting a deck of playing cards: if two cards have the same value (say, both are 7s), you keep them in their original left-to-right order. An unstable sort might swap the 7♠ and 7♥ without reason. A stable sort guarantees: "I only moved cards when necessary — I never disturbed the original order otherwise."
@@ -99,6 +111,8 @@ A stable sort on grade gives you "sorted by grade, then alphabetically by name" 
 "Unstable: might swap 7s" → unstable sort has no guarantee for equal keys
 
 Where this analogy breaks down: In practice, playing cards with the same rank are interchangeable (suit is visible but secondary). The analogy works when the cards have hidden information beyond their face value that determines their "true" position.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -113,6 +127,8 @@ Java's `Arrays.sort(int[])` uses dual-pivot QuickSort — unstable but fast (O(N
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Stability was a formal requirement in database sorting (SQL `ORDER BY` with multiple columns), which drove the adoption of TimSort in JDK 1.7 (replacing MergeSort for objects) and Python. TimSort achieves stability by exploiting "runs" (already-sorted subsequences) common in real-world data; it merges runs using stable merge. The cost: O(N) extra space for the merge buffer. For in-place stable sorting, algorithms like WikiSort and BlockSort achieve O(1) extra space with a more complex implementation. Radix sort requires stability to be correct: without a stable counting sort as the inner primitive, the radix sort invariant breaks down entirely.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -158,6 +174,8 @@ Stability was a formal requirement in database sorting (SQL `ORDER BY` with mult
 └────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -183,6 +201,8 @@ Unstable sort used for multi-key sort
 
 WHAT CHANGES AT SCALE:
 For 10-billion-row database sorts (external sort), stability requires merge-based external sort (not in-memory QuickSort). TimSort adapted for external merge is used in most database systems and Hadoop. The O(N) extra space for stability becomes significant: 10B rows × 100 bytes = 1TB extra space. PostgreSQL, MySQL use merge sort for large sorts to guarantee stability and ordering.
+
+---
 
 ### 💻 Code Example
 
@@ -240,6 +260,8 @@ Arrays.sort(indexed,
 // Cost: O(N) extra space for index tracking
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Stable | Time | Space | Notes |
@@ -255,6 +277,8 @@ Arrays.sort(indexed,
 
 How to choose: Use TimSort (Java default for objects) for most multi-key or order-preserving sorts. Use counting/radix sort for small integer key ranges. Use QuickSort for single-key primitive sorts where stability is irrelevant.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -263,6 +287,8 @@ How to choose: Use TimSort (Java default for objects) for most multi-key or orde
 | Stability matters only when duplicates exist | Stability matters whenever sort keys might be equal while elements differ in other properties. Even with unique records, if records have multiple fields, sorting by one field may give equal "keys" for different records. |
 | Radix sort is inherently stable | Radix sort DEPENDS on stability of its inner counting sort. If the inner sort is unstable, radix sort produces wrong results. Stability is the foundational requirement. |
 | Making a sort stable requires O(N log N) extra work | The augmentation approach (add original index as tiebreaker) adds O(N) extra space but no extra comparisons. TimSort is stable without explicit tiebreaking via its merge step design. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -330,6 +356,8 @@ Fix: Always include a unique column (e.g., `id`) as the final tiebreaker in SQL 
 
 Prevention: Lint SQL queries to require unique tiebreaker in `ORDER BY`; document this requirement in query guidelines.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -345,6 +373,8 @@ Prevention: Lint SQL queries to require unique tiebreaker in `ORDER BY`; documen
 - `MergeSort` — The canonical stable sort; O(N log N) with O(N) space.
 - `QuickSort` — Canonical unstable sort; O(N log N) average with O(log N) space; faster in practice for single-key sorts.
 - `TimSort` — Hybrid MergeSort+InsertionSort; stable, adaptive (fast for partially sorted data); default in Java and Python.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -373,6 +403,7 @@ Prevention: Lint SQL queries to require unique tiebreaker in `ORDER BY`; documen
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Radix Sort is O(N×K) where K is the number of digits (or bit groups). It sorts N k-digit numbers in linear time for fixed K — beating O(N log N) comparison sort. Yet it requires stability of the inner counting sort. Trace a specific failure: given [312,132,213], perform radix sort by units digit. What incorrect output results if the inner sort is unstable (swaps equal-digit elements)? Then show the correct stable output. Explain why this failure generalises: any instability in the inner sort propagates to global incorrectness regardless of how many digits remain to process.

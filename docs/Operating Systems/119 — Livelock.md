@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Livelock"
 parent: "Operating Systems"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Retry Logic, Network Backoff, Lock-Free Algorithms |                 |
 | **Related:**    | Deadlock, Starvation, Backoff Strategy, CAS Loop   |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ The retry logic that prevents deadlock can introduce livelock if both threads re
 THE INVENTION MOMENT:
 The solution (randomised exponential backoff) was formalised for network protocols in Ethernet's CSMA/CD (1976): when two stations detect a collision, each waits a random period before retrying. The randomisation breaks symmetry — both stations are unlikely to retry at exactly the same time. The same principle applies to lock retry loops.
 
+---
+
 ### 📘 Textbook Definition
 
 **Livelock** is a concurrency failure mode in which two or more threads repeatedly change their state in response to each other without making forward progress. Unlike deadlock (where threads are blocked and not executing), in livelock threads are continuously executing — they consume CPU cycles — but their combined state oscillates rather than converging to completion. Livelock typically arises in deadlock-avoidance mechanisms (retry-on-failure) when multiple threads react to each other's presence with identical, symmetric responses and identical timing.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Livelock = busy but stuck; threads keep reacting to each other, burning CPU, and
 
 **One insight:**
 Livelock is harder to diagnose than deadlock: threads are RUNNABLE in the OS scheduler (not BLOCKED), so thread dumps don't reveal a clear "waiting for" relationship. You see CPU at 100% with zero progress — which looks like an infinite loop, not a concurrency bug.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -99,6 +107,8 @@ THE TRADE-OFFS:
 Gain: Avoids deadlock without risk of livelock (with proper backoff).
 Cost: Randomised backoff adds latency; must tune range (too short: livelock persists; too long: unnecessary delay).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -134,6 +144,8 @@ def retry_with_backoff(operation, max_retries=5):
 THE INSIGHT:
 The randomisation ("jitter") is the critical ingredient. Without jitter, both clients apply the same backoff (e.g., sleep 100ms) and collide again at t=100ms.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Two robots cleaning a floor with sensors: if they detect another robot approaching, they back up one step and try a different direction. Both robots are always moving — fully operational. But their identical sensor response logic means they mirror each other's movements: any path Robot A tries, Robot B also backs away from, clearing that path, then resetting to a blocking position. The floor never gets cleaned.
@@ -141,6 +153,8 @@ The randomisation ("jitter") is the critical ingredient. Without jitter, both cl
 > Fix: randomise the "backing away" direction. Eventually one robot gets to a position the other doesn't immediately mirror, and they diverge.
 
 Where the analogy breaks down: livelock in software can involve more than two parties and can manifest across distributed systems (microservice retry storms). The "corridor symmetry" intuition scales but the diagnosis is harder.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -155,6 +169,8 @@ Livelock can occur in CAS-based lock-free data structures under high contention.
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The Ethernet CSMA/CD backoff used a binary exponential backoff: on the first collision, wait 0 or 1 slot times (random). On the second, 0–3 slots. On the kth: 0 to 2^min(k,10)–1 slots. The ceiling at 10 prevents infinite backoff (avoids starvation). The exponential growth ensures that at high load, different stations are unlikely to collide again. This algorithm (802.3 section 4.2.3.2) was derived from the ALOHA protocol (1970) analysis showing that pure random backoff achieves 37% channel efficiency, while CSMA/CD achieves 90%+ at low load. The same mathematical principle — variance in retry timing → reduced collision probability — applies directly to software livelock prevention.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -181,6 +197,8 @@ The Ethernet CSMA/CD backoff used a binary exponential backoff: on the first col
 └────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 REAL-WORLD RETRY STORM (microservices livelock):
@@ -204,6 +222,8 @@ Service C: 500ms + rand(0–100ms) = 589ms
 → Auth serves retries without hitting rate limit
 → System recovers
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -287,6 +307,8 @@ public class OrderService {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Condition          | Threads Running? | CPU Used?  | Detectable by jstack?                 | Fix                        |
@@ -296,6 +318,8 @@ public class OrderService {
 | **Starvation**     | Mixed            | Varies     | Partial (threads waiting)             | Fair locks, priority       |
 | **Race Condition** | Yes              | Varies     | No                                    | Synchronization            |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                               | Reality                                                                                                         |
@@ -304,6 +328,8 @@ public class OrderService {
 | "100% CPU with no progress = infinite loop" | Could be livelock (two threads) or a spin loop; check thread interaction                                        |
 | "tryLock prevents livelock"                 | tryLock prevents deadlock; without backoff, it CAUSES livelock                                                  |
 | "Livelock only happens with locks"          | Also in message-based systems (request-reject-retry cycles), network protocols (collision retry), and CAS loops |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -347,6 +373,8 @@ perf stat -e instructions,cpu-cycles,cache-misses ./benchmark
 
 Fix: Add `Thread.onSpinWait()` after CAS failure; or add small random sleep; or switch to a lock-based implementation under extreme contention.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -366,6 +394,8 @@ Fix: Add `Thread.onSpinWait()` after CAS failure; or add small random sleep; or 
 - `Deadlock` — both are progress failures; deadlock: blocked, no CPU; livelock: running, CPU consumed
 - `Starvation` — indefinite postponement without a cycle; one thread is perpetually bypassed
 - `Thundering Herd` — many threads wake simultaneously and compete; similar to livelock in effect but different cause
+
+---
 
 ### 📌 Quick Reference Card
 

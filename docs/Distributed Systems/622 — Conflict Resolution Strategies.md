@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Conflict Resolution Strategies"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | CRDT, Eventual Consistency, Vector Clock, Lamport Clock                                         |                 |
 | **Used by:**    | Distributed Databases (DynamoDB, Cassandra, Riak), Multi-Master Replication, Sync Frameworks    |                 |
 | **Related:**    | CRDT, Vector Clock, Lamport Clock, Eventual Consistency, Last-Write-Wins, Operational Transform |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

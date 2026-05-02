@@ -27,6 +27,8 @@ tags:
 | **Used by:** | BFS, DFS, Dijkstra, Topological Sort, Union-Find (Disjoint Set) | |
 | **Related:** | Tree, Matrix, Adjacency List | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ Real-world problems — routing, social networks, dependency resolution, schedul
 THE INVENTION MOMENT:
 Define entities as *vertices* and relationships as *edges* connecting vertices. Edges can be directed or undirected, weighted or unweighted. This representation is general enough to model any pairwise relationship — and decades of algorithms (BFS, DFS, Dijkstra, Bellman-Ford, topological sort) work on it unchanged. This is exactly why the Graph was created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Graph** G = (V, E) is a mathematical structure consisting of a set of *vertices* (nodes) V and a set of *edges* E, where each edge connects two vertices. A *directed graph* (digraph) has edges with direction; an *undirected graph* has bidirectional edges. Edges may carry numerical *weights*. Common representations: an *adjacency matrix* (V × V 2D array, O(V²) space) and an *adjacency list* (array/map of edge lists, O(V + E) space). Graph algorithms solve problems including reachability, shortest path, cycle detection, topological ordering, and connected components.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -52,6 +58,8 @@ A structure of nodes connected by edges — the universal model for networks and
 
 **One insight:**
 A Graph is not a data structure — it is a *model*. Its power comes from the dozens of well-studied algorithms that work on it. When you model a problem as a graph, you instantly inherit BFS, DFS, Dijkstra, topological sort, and more, for free.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -79,6 +87,8 @@ THE TRADE-OFFS:
 Gain: Universal model for relationships; all graph algorithms available.
 Cost: Memory and algorithm complexity depend on graph density; representation mismatch causes performance problems.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -93,6 +103,8 @@ Adjacency list: `Map<Integer, List<Integer>> graph`. BFS with a `Set<Integer> vi
 THE INSIGHT:
 Without explicit visited tracking, graph traversal re-enters nodes infinitely in cyclic graphs. The graph model provides the structure; BFS/DFS with a visited set provides the protocol. Both are required — neither works alone.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A graph is a roadmap. Cities are vertices; roads are edges; distances are weights. Navigation algorithms (BFS = bidi search, Dijkstra = GPS routing) drive on this map to find paths. The map does nothing by itself — it enables navigation algorithms.
@@ -104,6 +116,8 @@ Without explicit visited tracking, graph traversal re-enters nodes infinitely in
 "GPS routing" → Dijkstra's algorithm on the graph
 
 Where this analogy breaks down: Real roads are embedded in 2D space; graph edges have no spatial layout — a "vertex" might connect to 10,000 others (as in a web page linking to many URLs), which no real road can do.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -118,6 +132,8 @@ BFS traversal: O(V + E) — every vertex and every edge visited once. DFS: same 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Graph theory predates computers (Euler's Bridges of Königsberg, 1736). The adjacency list representation was formalised because real-world graphs have E << V² (sparse). Social networks, dependency trees, internet topology, road networks — all sparse. The sparse: O(V+E) adjacency list outperforms dense: O(V²) matrix for algorithms whose inner loop iterates neighbours (DFS, BFS, Dijkstra). Modern graph processing frameworks (Apache Spark GraphX, Neo4j, NetworkX) all use adjacency lists internally. Distributed graph processing (Pregel model, used by Google's PageRank computation) partitions vertices across machines with edge messages crossing partitions.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -182,6 +198,8 @@ matrix[0][2] = 2;
 // neighbours of u: scan matrix[u][0..V-1] — O(V) ← expensive
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -204,6 +222,8 @@ Graph contains cycles but algorithm assumes DAG (e.g., topological sort)
 
 WHAT CHANGES AT SCALE:
 At V=100M vertices (Twitter user graph), a single-machine adjacency list requires O(V+E) in memory (~50GB for 100M users × 200 friends each). Real social graph algorithms use distributed processing: split vertices across machines; edges crossing partition boundaries become inter-machine messages. Pregel, PowerGraph, GraphX all use this message-passing model. For road networks with V=10M junctions, Dijkstra is too slow — use A* with geographic heuristics or pre-computed landmarks.
+
+---
 
 ### 💻 Code Example
 
@@ -263,6 +283,8 @@ Map<Integer, List<Integer>> buildGraph(int[][] edges) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Representation | hasEdge | Neighbours | Space | Best For |
@@ -273,6 +295,8 @@ Map<Integer, List<Integer>> buildGraph(int[][] edges) {
 | Implicit (function) | O(1) | Computed | O(1) | Grids, infinite graphs |
 
 How to choose: Use adjacency list for all sparse real-world graphs. Use adjacency matrix only when V is small (≤ 1,000) AND O(1) edge queries are critical. Edge lists are useful for sorting edges (Kruskal's MST) but not traversal.
+
+---
 
 ### 🔁 Flow / Lifecycle
 
@@ -296,6 +320,8 @@ Apply algorithm:
 Return result and free memory
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -305,6 +331,8 @@ Return result and free memory
 | Adjacency list is always better than matrix | For dense graphs (E ≈ V²) and O(1) edge queries, matrix is better |
 | DFS always finds the shortest path | DFS finds A path, not the shortest; BFS finds the shortest path in unweighted graphs |
 | A graph must have unique edges | Multigraphs allow multiple edges between the same pair of vertices |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -382,6 +410,8 @@ Fix: Convert recursive DFS to iterative using an explicit `ArrayDeque` stack.
 
 Prevention: Always use iterative DFS for production graph traversal where input size is unbounded.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -399,6 +429,8 @@ Prevention: Always use iterative DFS for production graph traversal where input 
 **Alternatives / Comparisons:**
 - `Tree` — a connected acyclic undirected graph; simpler traversal (no cycles to handle).
 - `Matrix` — 2D grid is an implicit graph where each cell connects to its 4 or 8 neighbours.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -428,6 +460,7 @@ Prevention: Always use iterative DFS for production graph traversal where input 
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A dependency resolution system for package management (like npm or Maven) must detect circular dependencies and refuse to build them. Model this as a graph problem: what do vertices and edges represent, what property of the graph indicates a circular dependency, and what algorithm detects it? At 100,000 packages with an average of 10 dependencies each, what is the time complexity of the detection algorithm, and would it run in under 1 second?

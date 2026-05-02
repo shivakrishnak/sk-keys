@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Thread (Java)"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Runnable, Callable, Thread Lifecycle, synchronized | |
 | **Related:** | Runnable, Callable, Virtual Threads (Java 21) | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ An e-commerce site processes checkout: validate cart, charge card, send receipt,
 THE INVENTION MOMENT:
 This is exactly why **Threads** were created — to run multiple independent execution paths concurrently, using multiple CPU cores, and overlapping I/O wait time with computation — turning a sequential bottleneck into a parallel pipeline.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Thread** in Java is a sequential flow of control within a process, represented by the `java.lang.Thread` class. Every Java program has at least one thread (the main thread). Threads share the JVM's heap memory (objects, static variables) — enabling communication — but each thread has its own program counter, stack, and local variables. The JVM maps Java threads to OS threads (platform threads, pre-Java 21). The OS scheduler multiplexes threads across CPU cores. Java 21 introduced virtual threads (`Thread.ofVirtual()`) as lightweight user-space threads for high-throughput I/O concurrency.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ A thread is the JVM's way to run two things at the same time in the same program
 
 **One insight:**
 Threads share heap memory — and that's both their power and their danger. Two threads can communicate through a shared object (power), but can also corrupt each other's data without synchronisation (danger). Every shared mutable object in a multi-threaded program is a potential source of race conditions.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -89,6 +97,8 @@ THE TRADE-OFFS:
 Gain: Concurrency and parallelism; overlapping I/O with computation; multi-core utilisation.
 Cost: Complexity — shared state requires synchronisation; race conditions, deadlocks, and livelocks are hard bugs; 1MB+ stack per thread limits scalability; context switching overhead.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -109,6 +119,8 @@ WITH THREADS (multi-threaded):
 THE INSIGHT:
 Threads allow I/O wait time (where the CPU is idle) to be overlapped with work from other threads. The server isn't working harder — it's filling idle time with other requests' work. This is threads' primary win for I/O-bound workloads.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Think of a Java program as a factory with multiple assembly lines (threads) sharing a common warehouse (heap). Each assembly line has its own workers and their own task list (stack). Workers from different lines can grab materials from the warehouse at the same time — but if two workers grab the last bolt simultaneously and both try to use it, chaos ensues (race condition). A sign-out system (synchronized) prevents this: only one worker checks out the bolt at a time.
@@ -120,6 +132,8 @@ Threads allow I/O wait time (where the CPU is idle) to be overlapped with work f
 "Sign-out system" → synchronization primitives.
 
 Where this analogy breaks down: Real assembly lines are physically separate; Java threads share the SAME heapspace — they're less "separate assembly lines" and more "overlapping work zones in the same space."
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -134,6 +148,8 @@ Create a thread by extending `Thread` (rarely used) or implementing `Runnable` (
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Java's 1:1 thread model (one Java thread = one OS thread) was the original design choice in Java 1.0 (1995). It leverages OS scheduling but limits scalability to OS-level thread limits (~10K-100K threads per JVM). Java green threads (early 1990s) were M:N (many Java threads to fewer OS threads) but were abandoned because they couldn't use multiple CPU cores effectively. Java 21's virtual threads revisit M:N threading: many virtual threads multiplexed over a small pool of OS carrier threads, enabling high concurrency without OS thread limits. The historical evolution was forced by changing hardware: in 1995, multi-core was exotic; by 2021, 64-core servers are common and thread limits matter enormously.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -196,6 +212,8 @@ jcmd <pid> JFR.start duration=30s filename=threads.jfr
 jfr print --events jdk.JavaThreadStart threads.jfr
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -222,6 +240,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At scale, raw `new Thread()` is never used in production — thread pools (`ExecutorService`) are used to manage thread lifecycle, cap concurrency, and reuse threads. At 10K+ concurrent I/O operations, virtual threads (Java 21) replace platform threads: no stack allocation per blocking operation, no OS thread limits. For CPU-bound parallelism, `ForkJoinPool` (used by parallel streams) dynamically adjusts worker count to match available cores.
+
+---
 
 ### 💻 Code Example
 
@@ -290,6 +310,8 @@ worker.interrupt();
 worker.join(5000); // wait 5 sec for clean shutdown
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Thread Type | Overhead | Max Count | I/O Blocking | Best For |
@@ -301,6 +323,8 @@ worker.join(5000); // wait 5 sec for clean shutdown
 
 How to choose: Use virtual threads (`Executors.newVirtualThreadPerTaskExecutor()`) for I/O-bound work in Java 21+. Use `ForkJoinPool` / parallel streams for CPU-bound compute. Use fixed thread pools for work requiring bounded concurrency. Never create unbounded raw `Thread` objects in production.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -310,6 +334,8 @@ How to choose: Use virtual threads (`Executors.newVirtualThreadPerTaskExecutor()
 | Thread.sleep() releases locks | `Thread.sleep()` does NOT release synchronized locks. The thread pauses but holds any locks it acquired. `Object.wait()` DOES release the lock during the wait |
 | More threads = more speed | For CPU-bound work, threads > CPU cores = slower (context switch overhead). For I/O-bound work, many threads help. For memory-bound work, threads compete for cache bandwidth and may degrade. Profile first |
 | Thread.stop() is safe for termination | `Thread.stop()` is deprecated and unsafe — it releases all locks the thread holds, potentially leaving shared state in an inconsistent mid-update state. Use interruption + cooperative shutdown |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -407,6 +433,8 @@ t.start(); // Starts concurrently
 
 Prevention: Code review checklist: all `new Thread(...)` uses should call `.start()`. Static analysis tools (SpotBugs, Checkstyle) flag `.run()` on Thread objects.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -422,6 +450,8 @@ Prevention: Code review checklist: all `new Thread(...)` uses should call `.star
 **Alternatives / Comparisons:**
 - `Virtual Threads (Java 21)` — lightweight user-space threads for I/O-concurrency without OS thread limits
 - `Callable` — the return-value analog of the `Runnable` passed to threads
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -455,6 +485,7 @@ Prevention: Code review checklist: all `new Thread(...)` uses should call `.star
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A web application creates one `Thread` per incoming HTTP request. Under normal load (100 req/sec), the server runs fine with ~100 active threads. During a traffic spike (5,000 req/sec), the server crashes with `OutOfMemoryError: unable to create new native thread`. Trace exactly what happens as thread count grows from 100 to failure: what memory is consumed per thread, at what count the OS limit is hit (assuming a typical Linux default), why GC cannot help even with available heap, and what the minimum change is to prevent the crash while maintaining throughput.

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Hudi"
 parent: "Data Fundamentals"
@@ -34,13 +34,19 @@ tags:
 
 **Apache Hudi** (Hadoop Upserts, Deletes and Incrementals) is an open-source data lakehouse storage layer originally developed at Uber. It provides upsert/delete capabilities on data lake files in object storage (S3, ADLS, GCS) via two storage table types: **Copy-on-Write (CoW)** — rewrites Parquet files on every update ensuring clean reads, and **Merge-on-Read (MoR)** — appends delta log files for fast writes, merging with base files at read time. Hudi's core differentiator is its **timeline** — an ordered log of all table operations — enabling incremental pulls, CDC integration, and near-real-time data ingestion pipelines.
 
+---
+
 ### 🟢 Simple Definition (Easy)
 
 Hudi is like a transaction log for a data lake — it tracks every insert, update, and delete as events on a timeline, enabling fast streaming ingestion, efficient GDPR deletes, and incremental data pulls.
 
+---
+
 ### 🔵 Simple Definition (Elaborated)
 
 Traditional data lakes are append-only: you can add files but updating or deleting specific rows is painfully expensive (full rewrite). Hudi was built at Uber to solve the high-volume streaming upsert problem — millions of records per hour where each ride event needed to update the ride's status. Hudi's MOR approach: write tiny delta files immediately (fast), merge with base Parquet files lazily during compaction (clean reads). Its timeline makes incremental reads trivial: "give me all changes since checkpoint X" instead of reading the entire table — critical for CDC pipelines feeding downstream consumers.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -123,6 +129,8 @@ df.write.format("hudi").options(**hudi_write_opts) \
     .mode("append").save("s3://bucket/rides")
 ```
 
+---
+
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Hudi (append-only data lake):
@@ -134,9 +142,13 @@ WITH Hudi:
 → Delete: mark records deleted via delete logs, compaction removes physical data.
 → Incremental reads: downstream pipelines receive only changed records since last checkpoint.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Hudi is like a database WAL (Write-Ahead Log) wrapped around a data lake. Traditional data lakes are like an append-only ledger: you can add pages but not erase or correct entries. Hudi adds a timeline (like a bank's transaction journal) plus two strategies: either correct the notebook immediately (CoW — clean but slow) or note corrections on a sticky note (MoR — fast, clean up later during compaction). The timeline lets any reader jump to "state at time T" or ask "what changed between T1 and T2?"
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -163,6 +175,8 @@ hudi_opts = {
 }
 ```
 
+---
+
 ### 🔄 How It Connects (Mini-Map)
 
 ```
@@ -177,6 +191,8 @@ Spark | Presto | Trino | Hive
         ↓ competes with
 Delta Lake | Apache Iceberg
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -204,6 +220,8 @@ query = cdc_df.writeStream.format("hudi") \
     .option("checkpointLocation", "s3://bucket/checkpoints/rides") \
     .start("s3://bucket/rides")
 ```
+
+---
 
 ### 📌 Quick Reference Card
 

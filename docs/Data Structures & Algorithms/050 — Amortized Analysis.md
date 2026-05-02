@@ -27,6 +27,8 @@ tags:
 | **Used by:** | ArrayList, HashMap, Stack, Dynamic Array | |
 | **Related:** | Time Complexity / Big-O, Potential Method, Aggregate Analysis | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ Worst-case analysis applied naively to every operation overstates total cost for
 THE INVENTION MOMENT:
 Analyse a *sequence* of N operations, not each operation in isolation. If the total cost of N operations is O(N×f(N)), then the amortized cost per operation is O(f(N)) — regardless of how individual costs fluctuate. "Rare expensive operations pay for themselves by enabling many cheap ones." This is exactly why Amortized Analysis was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Amortized analysis** is a method for determining the average cost of a single operation in the *worst case* over a sequence of operations. Unlike average-case analysis (which assumes probability distributions), amortized analysis is a worst-case guarantee on the average: no matter what sequence of N operations is performed, the total cost is bounded by N × amortized_cost. Three methods: **aggregate analysis** (total cost / N), **accounting method** (each operation charged a virtual cost covering future expensive ops), and **potential method** (define a potential function Φ that tracks "stored energy" in the data structure).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -52,6 +58,8 @@ Spread the cost of rare expensive operations across the many cheap ones they ena
 
 **One insight:**
 Amortized analysis is NOT average-case analysis. It does not assume random or typical inputs. It is a *worst-case guarantee on the total cost over any sequence of N operations*. The guarantee holds even on adversarial inputs — the data structure "saves up credit" from cheap ops to pay for expensive ones.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -81,6 +89,8 @@ THE TRADE-OFFS:
 Gain: True per-operation cost guarantees, enables O(1) amortized structures.
 Cost: Analysis is more complex; worst-case single operation may still be O(N) — latency sensitive code must account for this.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -105,6 +115,8 @@ Worst single push: 5 = O(N). But amortized: O(1).
 THE INSIGHT:
 The O(N) resize is affordable because it doubles capacity, enabling N/2 O(1) subsequent pushes that "repay" the resize cost. You never resize twice in a row — after each O(N) event, the next N/2 operations are free (relative to resize cost), making the average constant.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Amortized analysis is like a gym with an annual membership. Most months you pay $0 per visit because the monthly fee averages your visits. The one month you sign up (O(N) "cost" of setup) is balanced by 11 months of cheap workouts. Average cost per visit is low even though the first month was expensive.
@@ -115,6 +127,8 @@ The O(N) resize is affordable because it doubles capacity, enabling N/2 O(1) sub
 "Average cost per visit" → amortized O(1) per add
 
 Where this analogy breaks down: Gym membership has fixed cost; dynamic array resize cost is proportional to N. The key is that resize happens less often as N grows (only at powers of 2), not at a fixed schedule.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -129,6 +143,8 @@ Aggregate analysis: total work / N. For push on doubly-growing array: total work
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The potential method is the most powerful: Φ(state) maps the data structure state to a "stored energy" value. Amortized cost = actual cost + ΔΦ. This allows proving O(1) amortized for complex structures like splay trees, Fibonacci heaps (amortized O(1) insert and O(log N) extract-min), and skewed heaps. Splay trees achieve O(log N) amortized access using a "working set" argument: recently accessed nodes are moved to root, reducing access cost for temporally-local workloads. The "cash flow" framing of amortized analysis is formally equivalent to Lyapunov function analysis in control systems theory — a cross-domain connection rarely made explicit but illuminating.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -187,6 +203,8 @@ In both cases: amortized cost ≤ 3 = O(1)
 │          surplus banked; covers future resize│
 └──────────────────────────────────────────────┘
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -210,6 +228,8 @@ Real-time system requires guaranteed O(1) per operation
 
 WHAT CHANGES AT SCALE:
 For most server applications, O(1) amortized is sufficient — occasional O(N) operations are invisible in average throughput metrics. For latency-sensitive systems (realtime trading, games, HFT), worst-case latency matters; use structures where worst-case per-operation is guaranteed (not amortized). For distributed systems, amortized analysis applies to batched operations — a distributed hash table doesn't rehash every insertion but periodically, and the cost is amortized across all prior insertions.
+
+---
 
 ### 💻 Code Example
 
@@ -265,6 +285,8 @@ while (!stack.isEmpty()) {
 // Total: 2000 ops for 2000 operations = O(1) amortized
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Analysis Type | What It Measures | Use When |
@@ -276,6 +298,8 @@ while (!stack.isEmpty()) {
 
 How to choose: For throughput-oriented systems, amortized analysis gives the right metric. For latency-sensitive systems (real-time, HFT), use worst-case despite higher complexity. Average-case analysis is for randomised algorithms.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -284,6 +308,8 @@ How to choose: For throughput-oriented systems, amortized analysis gives the rig
 | Amortized O(1) means every operation is O(1) | Amortized O(1) means N operations total O(N); some individual operations can be O(N) |
 | ArrayList is O(N) per add because of resizing | Single worst-case add is O(N); amortized add is O(1) — N adds total O(N) work |
 | Doubling strategy is arbitrary | Doubling is optimal: any smaller factor (e.g., +1) gives O(N²) total; any larger factor wastes memory; 2× minimises total cost |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -340,6 +366,8 @@ Fix: `new ArrayDeque<>(10_000_000)` pre-sized to expected usage.
 
 Prevention: Whenever you know the maximum size of a collection upfront, always pass it at construction time.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -352,6 +380,8 @@ Prevention: Whenever you know the maximum size of a collection upfront, always p
 **Alternatives / Comparisons:**
 - `Worst-Case Analysis` — guarantees per-operation cost; required for real-time systems.
 - `Average-Case Analysis` — different tool for randomised algorithms; assumes input distributions.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -381,6 +411,7 @@ Prevention: Whenever you know the maximum size of a collection upfront, always p
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Java's `ArrayList` uses a growth factor of 1.5× (not 2×) starting from Java 6 in some implementations, while Python's list uses ~1.125× in some versions. The choice of growth factor directly affects the amortized cost constant. Derive the total copy work for N insertions with growth factor r (r > 1): what is the sum of the geometric series, and what does this imply about the relationship between the growth factor and the amortized constant? At r=1.0001, what is the amortized cost per insertion?

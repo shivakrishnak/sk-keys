@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "CompletableFuture"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Spring WebFlux, Reactive Programming, HTTP APIs | |
 | **Related:** | Future, Reactive Programming, ExecutorService | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -46,9 +48,13 @@ A microservice gateway chains 5 downstream calls per request (auth, catalog, pri
 THE INVENTION MOMENT:
 This is exactly why **`CompletableFuture`** was created — to chain async operations as callbacks without blocking any thread to wait, composing async pipelines that use threads only during actual computation, not during waiting.
 
+---
+
 ### 📘 Textbook Definition
 
 **`CompletableFuture<T>`** is a `Future<T>` implementation introduced in Java 8 that can be explicitly completed (by calling `complete(value)` or `completeExceptionally(ex)`) and supports non-blocking callback chaining. Key methods: `thenApply(fn)` — transform result; `thenCompose(fn)` — flat-map to another `CompletableFuture`; `thenCombine(other, fn)` — combine two independents; `thenAccept(consumer)` — consume result; `exceptionally(fn)` — handle exception; `handle(fn)` — handle both result and exception; `allOf(futures...)` — complete when all complete; `anyOf(futures...)` — complete when any completes. Static factory: `supplyAsync(supplier, executor)`.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -60,6 +66,8 @@ This is exactly why **`CompletableFuture`** was created — to chain async opera
 
 **One insight:**
 `CompletableFuture` enables "callback-driven" async: instead of blocking a thread to wait for A before starting B, you register "when A completes, start B." The thread is released immediately and only re-engaged when B needs to execute. This is the foundation of non-blocking I/O for Java web servers.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -91,6 +99,8 @@ THE TRADE-OFFS:
 Gain: Non-blocking; composable pipelines; error handling at any point; combines multiple async operations; integrates with reactive frameworks.
 Cost: Complex debugging (no linear stack trace); exception semantics require care (unhandled exceptions silently swallowed); thread pool for callbacks matters (avoid using network thread pool for CPU callbacks); hard to cancel mid-chain.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -120,6 +130,8 @@ return userCF.thenCombine(prefsCF, ProfileResponse::new)
 THE INSIGHT:
 `thenCombine` runs when BOTH are complete — the callback is registered, not blocked. Thread T1 is freed immediately after `supplyAsync`. The combines fires in whatever thread finishes last. Total time = max(userFetch, prefsFetch), not sum.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > `CompletableFuture` is a promise chain. You set up a chain of "promises": "promise to fetch user, then when done, promise to transform, then when done, promise to send response." You hand off the chain setup and walk away. The chain self-executes — each link fires when the previous one completes, driven by events, not blocked threads.
@@ -129,6 +141,8 @@ THE INSIGHT:
 "Collect the chain's final result" → `.get()` or `.join()`.
 
 Where this analogy breaks down: Promise chains in JavaScript execute in the event loop (single-threaded). Java `CompletableFuture` chains execute in thread pools — multiple threads can process different stages simultaneously, with ordering governed by the data dependency graph.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -143,6 +157,8 @@ Internally, `CompletableFuture` stores a linked list of `Completion` objects (ca
 
 **Level 4 — Why it was designed this way (senior/staff):**
 `CompletableFuture` was designed as a bridge between Java's thread-based model and reactive programming. The design explicitly supports both "synchronous" callbacks (in the completing thread — fast but couples caller and I/O threads) and "async" callbacks (in a pool — decoupled but requires executor choice). The lack of backpressure distinguishes `CompletableFuture` from reactive streams (Project Reactor, RxJava): `CompletableFuture` is for single values (request-response); reactive streams are for sequences under load. In practice, Spring WebFlux wraps `CompletableFuture` patterns into `Mono<T>` for backpressure-aware reactive HTTP handling.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -201,6 +217,8 @@ CompletableFuture.supplyAsync(() -> fetchData())
     });
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -225,6 +243,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At high scale, the choice of executor for async callbacks is critical. Using `ForkJoinPool.commonPool()` (the default for `thenApplyAsync` with no executor) for I/O callbacks starves CPU tasks. Use a dedicated executor for I/O-bound callback chains. Virtual threads (Java 21) simplify this: `Executors.newVirtualThreadPerTaskExecutor()` scales to millions of concurrent I/O operations without thread starvation.
+
+---
 
 ### 💻 Code Example
 
@@ -269,6 +289,8 @@ String value = (String) CompletableFuture
     .join(); // first to complete wins
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | API | Non-blocking | Chain | Error Handling | Best For |
@@ -280,6 +302,8 @@ String value = (String) CompletableFuture
 
 How to choose: Use `CompletableFuture` for async pipelines involving single results. Use `Mono/Flux` (Reactor) for reactive HTTP endpoints with backpressure. Use `Future` only for simple blocking result retrieval.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -289,6 +313,8 @@ How to choose: Use `CompletableFuture` for async pipelines involving single resu
 | `CompletableFuture.allOf()` returns results | `allOf()` returns `CompletableFuture<Void>` — you must retrieve individual results from each input future after `allOf().join()` |
 | `join()` is safer than `get()` | Both block. `join()` throws `CompletionException` (unchecked); `get()` throws `ExecutionException` (checked). `join()` is more convenient; `get()` forces explicit exception handling |
 | CompletableFuture supports backpressure | No — `CompletableFuture` is for single values, not streams. For backpressure over sequences, use Reactor `Flux` or reactive streams |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -356,6 +382,8 @@ List.of(f1, f2, f3).forEach(f -> {
 });
 ```
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -370,6 +398,8 @@ List.of(f1, f2, f3).forEach(f -> {
 **Alternatives / Comparisons:**
 - `Future` — simpler, blocking alternative; use when chaining is not needed
 - `Reactive Programming (Mono/Flux)` — for sequences and backpressure; the multi-value generalisation of `CompletableFuture`
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -404,6 +434,7 @@ List.of(f1, f2, f3).forEach(f -> {
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A service uses a `CompletableFuture` chain: `supplyAsync(A, ioPool).thenApply(B).thenApplyAsync(C, cpuPool).thenApply(D)`. A peak load, the I/O pool has 20 threads, the CPU pool has 8 threads. Trace: in which thread does each step (A, B, C, D) execute? What happens when step A completes but the CPU pool is fully occupied when `thenApplyAsync(C)` fires? What is the queue depth for the CPU pool under sustained load, and what change prevents CPU pool queue from growing unboundedly?

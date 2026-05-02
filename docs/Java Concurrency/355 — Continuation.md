@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Continuation"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Virtual Threads (Project Loom), Structured Concurrency | |
 | **Related:** | Virtual Threads (Project Loom), Carrier Thread | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -36,9 +38,13 @@ A blocking call (e.g., `socket.read()`) blocks the OS thread it runs on — the 
 THE INVENTION MOMENT:
 **Continuations** solve this by capturing the live execution state (call stack frames + local variables) on the heap, decoupled from any OS thread. When the blocking operation completes, the continuation is restored onto an OS thread to resume execution — as if the blocking call returned normally.
 
+---
+
 ### 📘 Textbook Definition
 
 A **continuation** is the captured execution state of a computation that can be suspended and resumed at a later point. In Java's Project Loom, continuations are implemented via `java.lang.Continuation` (JVM internal, not public API) — a heap-allocated object that stores the virtual thread's call stack as a linked list of `StackChunk` objects. When a virtual thread is unmounted (on blocking), its continuation is saved to heap. When rescheduled, the continuation is "yielded" back onto a carrier thread's stack, restoring all local variables and the exact program counter.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -50,6 +56,8 @@ A continuation is a "saved game state" for a thread — pause at any point, save
 
 **One insight:**
 Continuations make Java virtual threads fundamentally different from async/await (C#, JavaScript). In async/await, the developer manually "segments" code at `await` points. In Java, continuations make ANY synchronous blocking code "continuable" — the programmer writes blocking code and the JVM handles the save/restore transparently.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -87,6 +95,8 @@ THE TRADE-OFFS:
 Gain: Transparent blocking code; no callback/async rewriting; natural sequential code style; efficient heap storage for inactive VTs.
 Cost: Shallow vs deep stack matters — very deep call stacks mean larger continuation objects; StackChunk copying has overhead; native frames cannot be captured (causes pinning); debugging continuation stack traces requires tools support.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP: What does a 5-frame continuation look like?
@@ -110,6 +120,8 @@ The 6 stack frames are copied to heap-allocated StackChunks (each ~a few KB). Th
 THE INSIGHT:
 The continuation copy cost is ~1-2μs (typically much less). The benefit is freeing an OS thread worth of stack (~1MB) and context-switching cost. For 10,000 concurrent I/O-bound operations, the tradeoff is enormously positive.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A continuation is like a detailed pause state in a video game's quick-save slot. Not just level + health, but exact position, all inventory, every NPC's state at this exact second, cursor position. When you resume (load), everything is exactly as you left it — no information lost. The game can run other saves (other VTs) while yours is paused.
@@ -120,6 +132,8 @@ The continuation copy cost is ~1-2μs (typically much less). The benefit is free
 
 Where this analogy breaks down: Video game saves capture everything statically. Continuations capture stack frames which can contain object references into shared heap state — those objects may change while the continuation is suspended (correct concurrency semantics still apply when resumed).
 
+---
+
 ### 📶 Gradual Depth — Four Levels
 
 **Level 1:** A continuation is "pause a thread completely, save it, resume later" — letting the OS thread go do other work.
@@ -129,6 +143,8 @@ Where this analogy breaks down: Video game saves capture everything statically. 
 **Level 3:** The JVM uses `StackChunk` objects linked in a chain. When a virtual thread is unmounted, the interpreter walks the stack frames from the carrier's current execution point back to the virtual thread's entry frame, copying all interpreter frames into `StackChunk` objects. Compiled (JIT) frames require deoptimisation first — the JIT output is discarded and interpreted frames are saved. This is one reason blocking in hot loops (JIT-compiled code) has slightly higher overhead for the first unmount.
 
 **Level 4:** Continuations in Java Loom are **delimited continuations**: only the frames from the virtual thread's run frame to the yield point are saved — not the entire call stack of the carrier thread (which may include other completely unrelated work). This is why native frames pin: the JVM can't save native stack frames into a Java heap object — they contain C/C++ ABI frame layouts that the JVM cannot portably serialize.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -173,6 +189,8 @@ void callerFromJava() {
 // Will show: "pinned at nativeOperation (native method)"
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 ```
@@ -188,6 +206,8 @@ void callerFromJava() {
     → [Continuation: copy StackChunks back to carrier stack]
     → [socket.read() returns data — VT continues]
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -212,6 +232,8 @@ void doLevel1Work() {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Concurrency Model | Stack Storage | Developer Code | Blocking | Language |
@@ -224,6 +246,8 @@ void doLevel1Work() {
 
 How to choose: Virtual threads (continuations) give Java the simplicity of synchronous code with coroutine-level scalability — no async/await syntax needed.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -232,6 +256,8 @@ How to choose: Virtual threads (continuations) give Java the simplicity of synch
 | Continuations incur full OS context-switch cost | Continuations use heap copies + ForkJoinPool scheduling (~1-5μs). OS context switches include register saving, TLB flush, kernel/user mode transition (~10-20μs). Continuations are faster |
 | Every virtual thread always uses a continuation | A continuation is created only when a virtual thread actually blocks. VTs that complete without blocking never create a continuation |
 | Deep call stacks break virtual threads | Deep stacks create larger continuations but don't break correctness. The JVM handles stack expansion transparently. Very deep recursion still causes StackOverflow (but the limit is higher for VTs — configurable) |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -256,11 +282,15 @@ jmap -dump:live,format=b,file=heap.hprof <pid>
 
 Fix: Reduce call stack depth for VT-heavy paths. Avoid deeply nested framework calls in high-VT-concurrency code.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites:** `Virtual Threads (Project Loom)`, `Carrier Thread`, `ForkJoinPool`
 **Builds on:** `Structured Concurrency` (uses VTs + continuations)
 **Related:** `Carrier Thread`, `Virtual Threads (Project Loom)`
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -281,6 +311,7 @@ Fix: Reduce call stack depth for VT-heavy paths. Avoid deeply nested framework c
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** When a virtual thread's continuation is stored on the heap and the VT is unmounted, the continuation holds references to all local variables in all stack frames — including object references. Explain why a virtual thread that holds a database `Connection` object in a local variable while waiting for a query result (another I/O) means the `Connection` is kept alive on the heap (through the continuation) during the wait, why this is not a memory leak but correct expected behaviour, and what specific scenario WOULD be a memory leak involving continuations and object references.

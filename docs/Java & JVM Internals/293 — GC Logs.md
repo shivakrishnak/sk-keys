@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "GC Logs"
 parent: "Java & JVM Internals"
@@ -133,6 +133,8 @@ Log Analysis Workflow:
 
 ## 8. Under the Hood (Deep Dive)
 
+---
+
 ### Java 9+ Unified Logging format
 
 ```
@@ -148,6 +150,8 @@ Format: [timestamp][uptime][level][tag] GC(N) phase description sizes duration
 │                               └ JVM uptime
 └ wall-clock timestamp
 ```
+
+---
 
 ### Useful -Xlog tag combinations
 
@@ -171,6 +175,8 @@ Format: [timestamp][uptime][level][tag] GC(N) phase description sizes duration
 -Xlog:gc*:file=gc.log:time,uptime:filecount=10,filesize=50m
 ```
 
+---
+
 ### Legacy Java 8 equivalent flags
 
 ```bash
@@ -188,6 +194,8 @@ Format: [timestamp][uptime][level][tag] GC(N) phase description sizes duration
 # Note: These flags are REMOVED in Java 9+
 # Use -Xlog:gc* instead
 ```
+
+---
 
 ### Interpreting key log entries
 
@@ -211,6 +219,8 @@ GC(20): 300M->280M old
 GC(30): 400M->380M old
 ← each GC reclaims same amount but baseline grows = memory leak
 ```
+
+---
 
 ### GC log analysis metrics
 

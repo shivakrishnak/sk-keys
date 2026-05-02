@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Parallel GC"
 parent: "Java & JVM Internals"
@@ -73,7 +73,10 @@ Parallel GC uses the same phases as Serial GC (Mark-Copy for Young, Mark-Sweep-C
 
 Parallel GC prioritizes **throughput** over **latency** — it may pause for longer individual collections than G1GC, but spends less total time on GC overhead.
 
+---
+
 ### JVM flags:
+
 ```bash
 -XX:+UseParallelGC            # Enable Parallel GC
 -XX:ParallelGCThreads=N       # Number of GC threads
@@ -142,6 +145,8 @@ Full GC (Old Generation):
 
 ## 8. Under the Hood (Deep Dive)
 
+---
+
 ### Thread count calculation
 
 ```
@@ -157,6 +162,8 @@ Examples:
 
 Override with: -XX:ParallelGCThreads=N
 ```
+
+---
 
 ### Parallel compaction (PSOL)
 
@@ -176,6 +183,8 @@ Parallel Scavenge Old (PSOL) — Old Gen compaction in Parallel GC:
 Key: Regions are independent → true parallelism during compaction
 ```
 
+---
+
 ### Adaptive sizing (ergonomics)
 
 ```
@@ -194,6 +203,8 @@ Based on these goals, JVM auto-adjusts:
 
 To disable auto-sizing: -XX:-UseAdaptiveSizePolicy
 ```
+
+---
 
 ### Parallel GC vs G1GC performance
 

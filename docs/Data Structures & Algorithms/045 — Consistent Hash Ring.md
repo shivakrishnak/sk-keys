@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Distributed Locking, Caching, Gossip Protocol | |
 | **Related:** | Virtual Nodes, Rendezvous Hashing, Distributed Systems | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Simple modulo hashing ties every key's node assignment to the total number of no
 THE INVENTION MOMENT:
 Place both keys and nodes on a circle (hash ring) from 0 to 2^32. Each key is assigned to the first node clockwise from its position. Adding a node only affects keys between the new node and its predecessor — typically 1/N of all keys. Removing a node only affects its own 1/N share. This is exactly why the Consistent Hash Ring was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Consistent Hashing** maps objects to nodes using a circular hash space (hash ring) of size 2^32 or 2^64. Both nodes and keys are hashed to points on the ring; each key is assigned to the first node at or clockwise from the key's hash position. When a node is added, only the keys in the arc between the new node and its clockwise predecessor need re-mapping — roughly K/N keys for K total keys and N nodes. When a node is removed, only its K/N keys are re-mapped. **Virtual nodes** (multiple hash positions per physical node) improve load balance.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ A circular hash space where adding/removing a node only moves 1/N of the keys, n
 
 **One insight:**
 The "ring" is not a data structure by itself — it is the *hash space* interpreted as circular. The implementation is a sorted map (TreeMap) from hash values to node IDs. The ring is just the conceptual mental model; `ceilingKey(hash)` wraps around to `firstKey()` for the "clockwise" lookup.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -75,6 +83,8 @@ THE TRADE-OFFS:
 Gain: O(K/N) remapping on topology change, horizontal scaling without cache invalidation.
 Cost: Implementation complexity with virtual nodes, uneven physical load without vnodes, ring requires O(N×V) memory.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -89,6 +99,8 @@ New node inserted between node A (at position 100) and node B (at position 200).
 THE INSIGHT:
 Consistent hashing limits the blast radius of topology changes to 1/N of the dataset — deterministically. This transforms "restart causes total cache miss" into "scale operation causes ~10% cache miss." The same principle applies to distributed database sharding (Dynamo, Cassandra) and load balancing.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Consistent hashing is like assigning countries on a globe to the nearest time zone capital. When a new capital is added, only countries between it and the previous capital reassign. Removing a capital redistributes only its own countries to the next capital — not the whole map.
@@ -100,6 +112,8 @@ Consistent hashing limits the blast radius of topology changes to 1/N of the dat
 "New capital added" → new node absorbs adjacent arc
 
 Where this analogy breaks down: Capitals are chosen geographically; nodes on the hash ring are placed by their hash value — uniform in expectation but clustered in practice without virtual nodes.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -114,6 +128,8 @@ Each physical node registers V virtual nodes: `for v in 0..V: ring.put(hash(node
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Amazon Dynamo's 2007 paper coined "consistent hashing with virtual nodes" as the foundation for DynamoDB, Cassandra, and Riak. The virtual node count V=150 is empirically chosen: at V=150, load imbalance across N nodes is bounded to ±10% with high probability. Lower V → higher imbalance. Higher V → more metadata overhead. Modern systems (Cassandra 3.0+) switched to a different approach: deterministic virtual node placement (evenly spaced token assignment) rather than random hash assignment, which guarantees perfect balance instead of probabilistic balance, at the cost of more complex rebalancing during scale events.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -179,6 +195,8 @@ Key X hashes to position 1.5B → nearest clockwise = A2 → routes to A
 │  Only ~1/N keys affected per addition       │
 └──────────────────────────────────────────────┘
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -203,6 +221,8 @@ Target node fails
 
 WHAT CHANGES AT SCALE:
 At 1,000+ nodes, each with V=150 virtual nodes, the ring has 150,000 entries. `TreeMap` lookups are O(log 150,000) ≈ 17 comparisons — still fast. The metadata size (ring) fits comfortably in memory. At 10,000+ nodes, gossip propagation of ring changes becomes the bottleneck — each topology change must propagate to all nodes. Consistent hashing is well-proven at Cassandra's scale (thousands of nodes, petabyte datasets).
+
+---
 
 ### 💻 Code Example
 
@@ -237,6 +257,8 @@ int bucket = Hashing.consistentHash(
 // Less optimal for dynamic scaling than ring approach
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Strategy | Keys remapped on node add | Load balance | Implementation | Best For |
@@ -248,6 +270,8 @@ int bucket = Hashing.consistentHash(
 
 How to choose: Use Consistent Hash Ring for general distributed caching with dynamic scaling. Use Rendezvous Hashing when virtual nodes add unwanted complexity and cluster size is small. Use Modulo only when the node count is fixed forever.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -256,6 +280,8 @@ How to choose: Use Consistent Hash Ring for general distributed caching with dyn
 | Consistent hashing guarantees perfect load balance | Without virtual nodes, random placement creates up to 2–3× load imbalance between nodes |
 | The "ring" is a special data structure | The ring is a concept; the implementation is a TreeMap with modular (wrap-around) lookup |
 | All hashing algorithms produce a consistent hash ring | Only hashing algorithms that map to a large uniform integer space work; use MurmurHash or SHA-256, not Java's `hashCode()` |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -317,6 +343,8 @@ Fix: Pre-hash keys through a secondary uniform hash before ring assignment. Appl
 
 Prevention: Validate key distribution is uniform before deploying consistent hashing; test with production key samples.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -330,6 +358,8 @@ Prevention: Validate key distribution is uniform before deploying consistent has
 **Alternatives / Comparisons:**
 - `Rendezvous Hashing` — simpler algorithm, same O(K/N) remapping, no virtualnode complexity.
 - `Naive Modulo` — perfect balance but O(K) remapping on any topology change.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -359,6 +389,7 @@ Prevention: Validate key distribution is uniform before deploying consistent has
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A Cassandra cluster uses consistent hashing with V=256 virtual nodes per physical node. When adding a new physical node to a 10-node cluster, how many virtual nodes does the new node receive (on average), where do they come from, and what is the expected percentage of data that must migrate? If each physical node stores 1 TB, what is the expected data transfer volume during this scale-out operation, and how does this compare to naive repartitioning?

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Sliding Window"
 parent: "Data Structures & Algorithms"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Maximum Subarray, Longest Substring Without Repeating Characters, Minimum Window Substring | |
 | **Related:** | Two Pointer, Prefix Sum, Dynamic Programming | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ O(N×K) brute-force recalculation is wasteful because 99% of each new window ove
 THE INVENTION MOMENT:
 The key observation: when the window slides right by one, the new sum = old sum - left element + new right element. This single O(1) update replaces K additions. One pass, O(N) total. This is exactly why **Sliding Window** was created.
 
+---
+
 ### 📘 Textbook Definition
 
 The **Sliding Window** technique maintains a contiguous subarray (the "window") defined by two pointers `left` and `right` that always satisfy `left ≤ right`. In the fixed-size variant, both pointers advance together at a fixed distance. In the variable-size variant, `right` expands the window to include new elements and `left` contracts it when a constraint is violated. Both variants process each element at most twice (once added, once removed), yielding O(N) time with O(1) to O(K) auxiliary space depending on the tracked state.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Move a frame across an array, updating the result by adding one element and remo
 
 **One insight:**
 Sliding Window only works for **contiguous** subarrays or substrings. If the problem asks about non-contiguous subsets, the window's O(1) update rule breaks down. The power comes from the fact that consecutive windows share N-1 elements: the update is incremental, not from scratch.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -69,6 +77,8 @@ Because the window is contiguous, the "add right element / remove left element" 
 THE TRADE-OFFS:
 Gain: O(N) time, O(1) extra space for numeric aggregation, O(K) for character/element tracking.
 Cost: Restricted to **contiguous** subarrays. Requires defining a clear "validity constraint" for variable windows. If the aggregation cannot be updated in O(1) (e.g., median of window), the classic technique requires augmentation with a sorted data structure → O(N log K).
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -92,6 +102,8 @@ WHAT HAPPENS WITH SLIDING WINDOW:
 THE INSIGHT:
 Each slide is O(1) regardless of window size K. This transforms O(N×K) into O(N+K) ≈ O(N). The larger K is, the greater the savings — Sliding Window pays off most when windows are large.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Sliding Window is like a train moving along a track where each car is one element. As the train moves forward by one car length, you drop the last car from the rear and add a new car at the front. You always know the total "weight" of the train by adjusting — you never re-weigh all cars from scratch.
@@ -104,6 +116,8 @@ Each slide is O(1) regardless of window size K. This transforms O(N×K) into O(N
 "Train length" → window size (fixed or variable)
 
 Where this analogy breaks down: A real train has a fixed length; the variable-window variant dynamically changes window size. Also, some aggregations (like median) cannot be updated in O(1) even with the analogy intact.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -118,6 +132,8 @@ The variable-size variant relies on a "monotone" constraint: when the window bec
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Sliding Window is an application of the "amortized O(1) update" principle: any aggregate that can be updated by a single add/remove is a candidate. The technique dates to early text-search algorithms where substring patterns required scanning linearly without repetition. In stream processing, sliding windows are fundamental: tumbling, sliding, and session windows in Kafka Streams/Flink directly implement this pattern for real-time aggregations. The challenge at scale is state management: for a 1-hour tumbling window over 10M events/second, the state store must evict 36 billion entries per hour — the "add right, remove left" invariant translates directly to a time-ordered eviction policy.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -176,6 +192,8 @@ Sliding Window is an application of the "amortized O(1) update" principle: any a
 **Monotone Deque for Sliding Window Maximum:**
 For finding the maximum within each window of size K, maintain a deque of indices in decreasing order of `arr[i]`. When adding `arr[right]`, pop all indices from the back where `arr[deque.back()] ≤ arr[right]`. Pop from the front if that index is outside the current window. The front always holds the maximum. Each index enters/leaves the deque once: O(N) total.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -203,6 +221,8 @@ Non-contiguous problem mistakenly uses Sliding Window
 
 WHAT CHANGES AT SCALE:
 For streaming data (Kafka Streams, Flink), the sliding window maps directly to a time-based window operator where `arr[right]` is the incoming event and `arr[left]` is the event aged out of the window. At 1M events/second with a 1-minute tumbling window, state stores hold ~60M entries — LSM-tree–backed state stores (RocksDB in Flink) make eviction O(1) amortized. The algorithm is identical; the storage layer changes.
+
+---
 
 ### 💻 Code Example
 
@@ -292,6 +312,8 @@ int[] maxSlidingWindow(int[] nums, int k) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach | Time | Space | Best For |
@@ -304,6 +326,8 @@ int[] maxSlidingWindow(int[] nums, int k) {
 
 How to choose: Use Sliding Window when the problem involves contiguous subarrays with a constraint that becomes "more violated" as the window grows and "less violated" as it shrinks. Use Prefix Sum for arbitrary range queries without a sliding constraint.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -313,6 +337,8 @@ How to choose: Use Sliding Window when the problem involves contiguous subarrays
 | You can always shrink from left when constraint is violated | This only holds if adding an element makes the window strictly "more invalid" — a monotone constraint. If validity is non-monotone (e.g., exactly K distinct elements), you need a different tracking approach. |
 | The time complexity is O(N²) because of the inner while loop | The inner shrink loop is O(N) amortized across the full pass — `left` moves right at most N times total, not per outer iteration. Overall: O(N). |
 | Sliding Window requires sorted input | Unlike Two Pointer (converging variant), Sliding Window works on unsorted arrays. The constraint is contiguity, not ordering. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -397,6 +423,8 @@ Fix: Add `while (!dq.isEmpty() && dq.peekFirst() < i - k + 1) dq.pollFirst();` b
 
 Prevention: Always evict stale front-of-deque indices before reading the window maximum.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -413,6 +441,8 @@ Prevention: Always evict stale front-of-deque indices before reading the window 
 - `Prefix Sum` — Also O(N) for range queries, but handles arbitrary non-overlapping ranges; doesn't require a validity constraint.
 - `Dynamic Programming` — More general; handles non-contiguous problems Sliding Window cannot.
 - `Segment Tree` — O(log N) per range query including updates; use when range queries are not strictly sliding.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -441,6 +471,7 @@ Prevention: Always evict stale front-of-deque indices before reading the window 
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The variable Sliding Window guarantees O(N) because `left` moves right at most N times total. Now consider a Sliding Window problem where the validity constraint is "at most K distinct characters." If the input is "aabbccddee...zz" (26 pairs, K=1), trace how many total `left` moves occur. Does O(N) still hold? What changes when K approaches N/2?

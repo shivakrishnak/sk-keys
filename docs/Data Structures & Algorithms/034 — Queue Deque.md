@@ -27,6 +27,8 @@ tags:
 | **Used by:** | BFS, LRU Cache, Sliding Window | |
 | **Related:** | Stack, Priority Queue, BlockingQueue | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ Processing tasks in arrival order requires that the structure rewards patience: 
 THE INVENTION MOMENT:
 Restrict the collection so items are added to one end (tail) and removed from the other end (head). The first item added is always the first removed. Processing order matches arrival order automatically. This is exactly why the Queue was created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Queue** is an abstract data type implementing First-In, First-Out (FIFO) ordering. Elements are enqueued at the tail and dequeued from the head; all operations are O(1). A **Deque** (double-ended queue) generalises this by allowing O(1) add and remove at both the head and tail, making it usable as both a queue and a stack. Java's `ArrayDeque` implements `Deque` and is the preferred implementation for both use cases.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -52,6 +58,8 @@ A waiting line: first person there is first to be served.
 
 **One insight:**
 A Queue's power is *fairness and predictability*. Any system that must process items without favouritism — network packets, print jobs, BFS exploration, thread scheduling — needs a FIFO contract. A Queue provides that contract as a data structure guarantee, not a policy you enforce manually.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -71,6 +79,8 @@ THE TRADE-OFFS:
 Gain: O(1) enqueue/dequeue, fair FIFO processing.
 Cost: No random access; O(N) search/access by value or index.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -85,6 +95,8 @@ You enqueue B and C. You dequeue B (first in), process it, enqueue B's children.
 THE INSIGHT:
 The difference between BFS and DFS is literally one data structure choice: Queue vs Stack. The algorithm is identical — only the container changes. This makes the Queue's FIFO contract the precise mechanism that determines exploration order in graph traversal.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A Deque is like a queue at an airport with a VIP fast-track entrance at the front AND a regular entrance at the back. Normal passengers join the back; VIPs join the front. The agent at the desk always serves from the front. You can also pull someone off the back if they need to leave before being served.
@@ -95,6 +107,8 @@ The difference between BFS and DFS is literally one data structure choice: Queue
 "Person leaving back" → `removeLast()`
 
 Where this analogy breaks down: Real airport queues have a fixed order once joined; a Deque allows removal from either end at any time — there's no "cutting" social contract in the data structure.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -109,6 +123,8 @@ Use `Deque<T> queue = new ArrayDeque<>()`. For FIFO queue: `offer(val)` to add b
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The circular buffer design in `ArrayDeque` achieves amortized O(1) for all operations without the GC overhead of `LinkedList`. The power-of-2 capacity requirement allows bitwise AND for the wrap — `x & (n-1)` is equivalent to `x % n` but one instruction instead of a division. Java's `LinkedList` as a queue suffers from per-node allocation, double-pointer overhead, and GC pressure at high throughput. At 1M operations/second, `ArrayDeque` outperforms `LinkedList` by 3–5× due to cache locality.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -151,6 +167,8 @@ while (!queue.isEmpty()) {
 }
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -172,6 +190,8 @@ Producer far outpaces consumer
 
 WHAT CHANGES AT SCALE:
 At high producer-consumer rates, a single `ArrayDeque` with external synchronization is a bottleneck. Use `ArrayBlockingQueue` (bounded, blocks producer when full) or `LinkedTransferQueue` (unbounded, lock-free for high throughput). The choice between bounded and unbounded is a back-pressure decision: bounded queues push back to the producer, preventing OOM.
+
+---
 
 ### 💻 Code Example
 
@@ -218,6 +238,8 @@ int[] maxSlidingWindow(int[] nums, int k) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Structure | FIFO | LIFO | Both ends | Thread-safe | Best For |
@@ -230,6 +252,8 @@ int[] maxSlidingWindow(int[] nums, int k) {
 
 How to choose: For single-threaded use, `ArrayDeque` is always preferred. For producer-consumer patterns, use `ArrayBlockingQueue` (bounded) to apply back-pressure or `LinkedTransferQueue` for maximum throughput.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -239,6 +263,8 @@ How to choose: For single-threaded use, `ArrayDeque` is always preferred. For pr
 | `add()` and `offer()` are equivalent | `add()` throws on full bounded queue; `offer()` returns false — use `offer/poll` for safe code |
 | A Queue prevents OutOfMemoryError | Unbounded queues grow without limit; only bounded queues with back-pressure prevent OOME |
 | Queue FIFO order is guaranteed across threads | Only concurrent Queue implementations (BlockingQueue, ConcurrentLinkedQueue) are thread-safe |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -295,6 +321,8 @@ Fix: Use `ArrayBlockingQueue`, `LinkedBlockingDeque`, or `ConcurrentLinkedQueue`
 
 Prevention: Never share a plain `ArrayDeque` between threads without external locking.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -309,6 +337,8 @@ Prevention: Never share a plain `ArrayDeque` between threads without external lo
 **Alternatives / Comparisons:**
 - `Stack` — LIFO counterpart; same underlying `ArrayDeque`, different access pattern.
 - `Priority Queue` — processes elements by priority, not arrival order.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -336,6 +366,7 @@ Prevention: Never share a plain `ArrayDeque` between threads without external lo
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A Kafka consumer group reads messages from a topic and processes them via an in-memory `ArrayDeque`. The consumer processes 10,000 messages/second but the producer publishes 15,000 messages/second during peak. After 10 minutes, the service crashes with `OutOfMemoryError`. Trace exactly what happens step by step, describe exactly where the queue backlog forms, and propose two architectural solutions with their respective trade-offs.

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "ReentrantLock"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | ReadWriteLock, Condition, StampedLock | |
 | **Related:** | synchronized, ReadWriteLock, StampedLock | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ A timeout-sensitive trading system tries to acquire a lock to update a position.
 THE INVENTION MOMENT:
 This is exactly why **`ReentrantLock`** was created — to give developers full control over lock acquisition: try without blocking, try with timeout, interrupt while waiting, and support multiple independent conditions per lock.
 
+---
+
 ### 📘 Textbook Definition
 
 **`ReentrantLock`** is a lock implementation in `java.util.concurrent.locks` (Java 5+) that implements `Lock` interface and provides the same mutual exclusion and memory visibility as `synchronized`, plus extended capabilities: `lock()` — unconditional acquisition; `tryLock()` — immediate non-blocking attempt; `tryLock(timeout, unit)` — timed attempt; `lockInterruptibly()` — acquisition that can be interrupted; `newCondition()` — creates a `Condition` for selective thread coordination; constructor flag `fair=true` — FIFO ordering of waiting threads. Is reentrant: the holding thread can re-acquire without deadlock.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ This is exactly why **`ReentrantLock`** was created — to give developers full 
 
 **One insight:**
 The MUST-USE pattern for `ReentrantLock` is `try/finally` — unlike `synchronized`, exceptions don't auto-release the lock. Forgetting `finally { lock.unlock(); }` means the lock is never released, causing permanent deadlock.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -78,6 +86,8 @@ AQS Internal Structure:
 THE TRADE-OFFS:
 Gain: tryLock, timeout, interruption, multiple conditions, fairness option; same mutual exclusion and visibility as synchronized.
 Cost: MUST use try/finally; more verbose; slightly higher overhead than uncontended `synchronized`; forgetting unlock = permanent deadlock.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -112,6 +122,8 @@ if (lock.tryLock(50, TimeUnit.MILLISECONDS)) {
 THE INSIGHT:
 `tryLock(timeout)` enables SLA-enforced locking — the system fails gracefully rather than blocking indefinitely. This pattern is essential for latency-sensitive systems.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > `ReentrantLock` is a turnstile with a VIP card reader and a timer. `lock()` — go through the regular turnstile (wait indefinitely). `tryLock()` — tap the VIP reader; if busy, come back later. `tryLock(5, SECONDS)` — tap and wait 5 seconds; leave if not through. `lockInterruptibly()` — go through unless security cancels your ticket. The turnstile still only lets one person through at a time.
@@ -122,6 +134,8 @@ THE INSIGHT:
 
 Where this analogy breaks down: A real turnstile releases automatically when you walk away. `ReentrantLock` does NOT release automatically — you must call `unlock()` explicitly in `finally`.
 
+---
+
 ### 📶 Gradual Depth — Four Levels
 
 **Level 1:** `ReentrantLock` is a better version of `synchronized` that lets you ask "please give me the lock, but I'll only wait 5 seconds."
@@ -131,6 +145,8 @@ Where this analogy breaks down: A real turnstile releases automatically when you
 **Level 3:** Internally uses AQS with a CLH queue. `lock()` first attempts a non-fair CAS `state: 0→1`. On failure, enqueues in the CLH queue and calls `LockSupport.park()`. The thread head of the queue is unparked by `unlock()`. Fair mode skips the initial CAS barge-in and directly enqueues.
 
 **Level 4:** AQS is the backbone of nearly all `java.util.concurrent` locks and synchronizers: `ReentrantLock`, `Semaphore`, `CountDownLatch`, `CyclicBarrier`, `LinkedBlockingQueue`. Understanding AQS state machine, CLH queue, and park/unpark is the foundation for implementing custom concurrent data structures. The design choice of CAS + park/unpark (vs OS mutexes) allows the JVM to optimise lock contention without OS kernel involvement for uncontended cases.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -207,6 +223,8 @@ ReentrantLock fairLock = new ReentrantLock(true); // fair=true
 // Prevents starvation but reduces throughput (no barge-in)
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -235,6 +253,8 @@ FAILURE PATH (forgetting unlock):
 
 WHAT CHANGES AT SCALE:
 At scale, fair `ReentrantLock` prevents starvation but reduces throughput by preventing barge-in. Non-fair (default) has higher throughput but can starve low-priority threads. `StampedLock` (Java 8) adds optimistic reads for read-heavy workloads — faster than `ReadWriteLock` when contention is low. Choose the right lock type for the contention pattern.
+
+---
 
 ### 💻 Code Example
 
@@ -294,6 +314,8 @@ boolean transfer(Account from, Account to, BigDecimal amount) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Feature | synchronized | ReentrantLock |
@@ -311,6 +333,8 @@ boolean transfer(Account from, Account to, BigDecimal amount) {
 
 How to choose: Use `synchronized` when its simplicity is sufficient. Use `ReentrantLock` when you need timeout, interruption, multiple conditions, or fairness. Always use `try/finally` with `ReentrantLock`.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -319,6 +343,8 @@ How to choose: Use `synchronized` when its simplicity is sufficient. Use `Reentr
 | lock() can be placed outside try/finally | Only safe if lock acquisition itself can throw. In practice, always place `lock.unlock()` in `finally` — even if the acquire can fail, the unlock is harmless (throws `IllegalMonitorStateException` if not locked, which is caught or propagates) |
 | tryLock() is non-reentrant | `tryLock()` IS reentrant — a thread already holding the lock can successfully `tryLock()` |
 | Fair ReentrantLock prevents starvation absolutely | Fair fairness ordering prevents starvation for the queue, but threads outside the queue that haven't called `lock()` yet are not protected. New arrivals always enqueue behind existing waiters in fair mode |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -356,6 +382,8 @@ Root Cause: Two threads each call `tryLock()` on two locks, always fail simultan
 
 Fix: Add random or exponential backoff between retries. Or use a lock ordering protocol.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -369,6 +397,8 @@ Fix: Add random or exponential backoff between retries. Or use a lock ordering p
 **Alternatives / Comparisons:**
 - `synchronized` — simpler, auto-releasing, no features; best for simple critical sections
 - `ReadWriteLock` — extends the concept for reader-writer separation
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -400,6 +430,7 @@ Fix: Add random or exponential backoff between retries. Or use a lock ordering p
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A connection pool implementation uses a `ReentrantLock` with a `Condition notEmpty` to implement `borrowConnection()`: waits on `notEmpty` when pool is empty, signalled by `returnConnection()`. Under high load, all 50 borrowers are waiting on `notEmpty`. One connection is returned. `notEmpty.signal()` wakes ONE waiter. That waiter borrows, returns quickly, and signals again. Explain why this implementation can still cause starvation for some borrowers indefinitely — what ordering guarantee `signal()` provides vs `signalAll()`, and trace a specific scenario where borrower #47 never executes despite 1,000 borrow/return cycles.

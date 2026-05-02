@@ -28,6 +28,8 @@ tags:
 | **Used by:** | ConcurrentSkipListMap, Database Index | |
 | **Related:** | TreeMap, B-Tree, AVL Tree | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Balanced tree rebalancing is inherently non-local: a single insert can trigger r
 THE INVENTION MOMENT:
 Replace deterministic rebalancing with probabilistic layer promotion. A node is promoted to the next level with probability ½. On average, this creates a structure equivalent to a balanced tree — but with no rotations, and with lock-free insertion achievable through CAS operations on individual node pointers. This is exactly why the Skip List was created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Skip List** is a probabilistic data structure consisting of multiple levels of sorted linked lists. Level 0 contains all elements; each higher level is a randomly chosen subset (typically each element promoted with probability p=0.5). Search, insert, and delete operate in O(log N) *expected* time and O(N log N) *expected* space. The structure was invented by William Pugh in 1990 as a simpler alternative to balanced BSTs for sorted data, particularly suited to concurrent access patterns.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ A sorted linked list with express lanes that let you skip ahead fast — like a 
 
 **One insight:**
 The skip list's O(log N) performance is probabilistic — not guaranteed. But the probability that it *doesn't* perform in O(log N) decreases exponentially with N. For practical purposes, the performance is indistinguishable from a balanced tree, with the bonus that no rebalancing logic is required.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -76,6 +84,8 @@ THE TRADE-OFFS:
 Gain: Simple implementation, lock-friendly concurrent access, no rebalancing.
 Cost: O(N log N) expected space (pointer overhead per node), non-deterministic worst case (O(N) with exponentially small probability), less cache-friendly than arrays.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -91,6 +101,8 @@ WHAT HAPPENS WITH SKIP LIST (4 levels):
 THE INSIGHT:
 At each level, you skip over roughly half the remaining elements (the ones not promoted). This binary-search-like elimination is why O(log N) expected time emerges from simple coin flips.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A skip list is like a city with expressways at multiple scales. The expressway at the top level jumps 100 km at a time. The next level jumps 10 km. The street level visits every address. To reach any destination, start on the highest expressway and switch to slower roads as you approach the target.
@@ -101,6 +113,8 @@ At each level, you skip over roughly half the remaining elements (the ones not p
 "Coin flip for expressway on-ramp" → random level promotion
 
 Where this analogy breaks down: Real expressways have fixed distances between exits; skip list "skips" are determined by random coin flips — variable-size jumps that average out to logarithmic.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -115,6 +129,8 @@ Each node stores its `key`, `value`, and `next[]` — an array of forward pointe
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The core advantage over balanced BSTs in concurrent systems is that skip list insert modifies only a *fixed set of local pointers* — no global rebalancing. This makes CAS-based lock-free skip lists possible (Java's `ConcurrentSkipListMap` uses this). A lock-free balanced BST is significantly harder to implement correctly. Redis uses skip lists for sorted sets (ZADD/ZRANGE) precisely because range queries are natural (level 0 is always sorted), and concurrent access patterns are simpler. LevelDB and RocksDB use skip lists for their in-memory MemTable before flushing to disk.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -155,6 +171,8 @@ int randomLevel() {
 }
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -178,6 +196,8 @@ Pathological random seed → all elements promoted to max level
 
 WHAT CHANGES AT SCALE:
 At 10M+ elements, the pointer overhead of skip lists (~8 bytes per pointer × avg 2 pointers/node) becomes significant compared to B-trees (which pack many keys per cache line). Database systems (Redis, RocksDB MemTable) accept this overhead for the lock-free concurrency benefit. At extreme scale, trees are preferred because spatial locality (cache lines) matters more than lock-free code.
+
+---
 
 ### 💻 Code Example
 
@@ -216,6 +236,8 @@ ZRANGE leaderboard 0 2 WITHSCORES
 # 1) Alice, 1500  2) Carol, 1750  3) Bob, 2000
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Structure | Search | Insert | Delete | Concurrent | Best For |
@@ -227,6 +249,8 @@ ZRANGE leaderboard 0 2 WITHSCORES
 
 How to choose: Use `ConcurrentSkipListMap` when you need a thread-safe sorted map in Java. Use `TreeMap` in single-threaded contexts. Use B-trees for disk-based storage. Use hash maps if ordering is not required.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -235,6 +259,8 @@ How to choose: Use `ConcurrentSkipListMap` when you need a thread-safe sorted ma
 | Skip lists are only useful in concurrent settings | Skip lists are faster to implement than balanced BSTs even in single-threaded contexts |
 | All levels must have at least one element | A skip list is valid even if upper levels are empty for small N |
 | Skip lists waste less memory than trees | Skip lists use O(N log N) expected space due to pointer arrays; trees use O(N) nodes |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -295,6 +321,8 @@ Fix: Set `MAX_LEVEL = ceil(log₂(expectedMaxN))`. For N up to 10^6, MAX_LEVEL=2
 
 Prevention: Size MAX_LEVEL to your expected dataset; document the reasoning.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -307,6 +335,8 @@ Prevention: Size MAX_LEVEL to your expected dataset; document the reasoning.
 **Alternatives / Comparisons:**
 - `TreeMap` — deterministic O(log N) but harder to make concurrent; use for single-threaded sorted maps.
 - `B-Tree` — preferred for disk storage; better cache locality than skip lists.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -336,6 +366,7 @@ Prevention: Size MAX_LEVEL to your expected dataset; document the reasoning.
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Java's `ConcurrentSkipListMap` achieves lock-free reads and CAS-based writes. When two threads simultaneously insert keys that map to adjacent positions at level 0, why does a skip list allow this operation to proceed concurrently while a red-black tree would require serialisation? What specific structural property of skip lists enables local CAS operations to serve as the synchronisation primitive without violating sorted order?

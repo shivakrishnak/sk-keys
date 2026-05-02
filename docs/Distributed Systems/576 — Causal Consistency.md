@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Social Networks, Messaging Systems, Collaborative Editing | |
 | **Related:** | Linearizability, Eventual Consistency, Vector Clock, COPS | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT CAUSAL CONSISTENCY (pure eventual):**

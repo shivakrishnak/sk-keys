@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Callable"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | ExecutorService, Future, CompletableFuture | |
 | **Related:** | Runnable, Future, CompletableFuture | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ An async image-processing service submits 100 resize operations as `Runnable` ta
 THE INVENTION MOMENT:
 This is exactly why **`Callable<V>`** was created — to define a task contract that returns a typed result and can throw checked exceptions, paired with `Future<V>` to retrieve the result and observe failures from the submitting thread.
 
+---
+
 ### 📘 Textbook Definition
 
 **`Callable<V>`** is a functional interface in `java.util.concurrent` with a single abstract method `V call() throws Exception`. It was introduced in Java 5 (JSR 166) as a generified, exceptions-capable replacement for `Runnable` for use with the `ExecutorService` API. `executor.submit(callable)` returns a `Future<V>` — a handle to the pending result. `Future.get()` blocks until the result is available, returning the value or rethrowing the exception wrapped in `ExecutionException`. If the task was cancelled, `CancellationException` is thrown.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ This is exactly why **`Callable<V>`** was created — to define a task contract 
 
 **One insight:**
 `Callable` + `Future` together form a "request-response" pattern for asynchronous work: `submit()` is the request (non-blocking), `Future.get()` is the response (blocking if not yet ready). This cleanly separates "kick off the work" from "retrieve and handle the result."
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -81,6 +89,8 @@ Given invariant 3, the caller retrieves the exception via `e.getCause()` from `E
 THE TRADE-OFFS:
 Gain: Typed return value; checked exception propagation; cancellation support; clear "result available" semantics via `Future`.
 Cost: `Future.get()` is blocking — calling it immediately after `submit()` eliminates concurrency benefit; checked exception wrapping adds unwrapping ceremony; `Cancel` doesn't always interrupt running tasks.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -119,6 +129,8 @@ for (Future<Data> future : futures) {
 THE INSIGHT:
 `Callable` + `Future` is the standard "execute and retrieve" pattern for heterogeneous async results. Each result is independently retrievable with independent error handling, timeout, and cancellation.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > `Callable` is a vending machine ticket for a custom order. You put in your request (submit), get a ticket (`Future`), and walk away. Later, you redeem the ticket (`get()`) — either the order is ready or the machine tells you what went wrong (exception). You can check if it's ready without waiting (`isDone()`), set a deadline (`get(timeout)`), or cancel (`cancel()`).
@@ -129,6 +141,8 @@ THE INSIGHT:
 "`ExecutionException`" → "your order failed: [reason]".
 
 Where this analogy breaks down: A physical ticket can only be redeemed once. `Future.get()` can be called multiple times — subsequent calls return the cached result immediately (or the cached exception).
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -143,6 +157,8 @@ Use `Callable<T>` when your task produces a result or can throw checked exceptio
 
 **Level 4 — Why it was designed this way (senior/staff):**
 `Callable` was designed in JSR 166 (Doug Lea, 2004) as part of the `java.util.concurrent` overhaul. The checked `throws Exception` declaration (rather than specific exceptions) was intentional — generic generic utility methods wrapping tasks can't know the specific exception types. The `ExecutionException` wrapping was designed to re-throw on the caller's thread, preserving the original exception and its stack trace while adding the executor's context. `CompletableFuture` (Java 8) built on this foundation, replacing the blocking `Future.get()` with non-blocking callbacks, addressing the key limitation of blocking the caller thread.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -217,6 +233,8 @@ try {
 }
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -240,6 +258,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At scale, calling `future.get()` immediately after `submit()` in a loop eliminates concurrency — tasks run sequentially. Instead: submit all tasks first to fill the pool, THEN collect results. Use `CompletableFuture` for non-blocking callbacks when results can be processed as they arrive. `invokeAll()` submits all and returns when all complete (or timeout), which is cleaner in batch scenarios.
+
+---
 
 ### 💻 Code Example
 
@@ -280,6 +300,8 @@ CompletableFuture.supplyAsync(
 ).thenAccept(result2 -> handleResult(result2));
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Interface | Returns | Checked Ex | Cancel | Best For |
@@ -291,6 +313,8 @@ CompletableFuture.supplyAsync(
 
 How to choose: Use `Callable<V>` when you need the result and the task may throw checked exceptions. Use `CompletableFuture.supplyAsync()` when you want non-blocking result handling chains. Use `Runnable` for pure side-effect tasks with no result.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -299,6 +323,8 @@ How to choose: Use `Callable<V>` when you need the result and the task may throw
 | Cancelling a Future cancels the underlying task immediately | `future.cancel(true)` sets the cancel flag and interrupts the running thread. But if `call()` doesn't check `Thread.isInterrupted()` or catch `InterruptedException`, it runs to completion anyway |
 | All exceptions from `call()` throw as `ExecutionException` | `InterruptedException` from `future.get()` (the caller being interrupted while waiting) is separate from `ExecutionException` (exception from the task). They are caught separately |
 | `Callable<Void>` is the same as `Runnable` | Syntactically similar but different types. `Callable<Void>` must return `null` explicitly (`return null`); `Runnable.run()` returns void. They are not interchangeable in APIs that accept one or the other |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -360,6 +386,8 @@ CompletableFuture.supplyAsync(() -> outerTask(), executor)
 
 Prevention: Never call `future.get()` inside a task running in the same bounded executor. Use separate executor for inner tasks or use `CompletableFuture` chains.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -375,6 +403,8 @@ Prevention: Never call `future.get()` inside a task running in the same bounded 
 **Alternatives / Comparisons:**
 - `Runnable` — the no-result, no-exception alternative; simpler but less powerful
 - `CompletableFuture` — the modern, non-blocking alternative to `Callable` + `Future.get()`
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -407,6 +437,7 @@ Prevention: Never call `future.get()` inside a task running in the same bounded 
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** An image processing service submits 1,000 `Callable<ProcessedImage>` tasks to a 10-thread pool, then calls `future.get()` on each in order. Task 3 takes 45 seconds. Tasks 4–1000 complete in 1 second each. Trace the execution timeline: when do tasks 4–1000 actually run relative to task 3, when does the caller collect task 4's result (even though task 4 completed long ago), and calculate the total elapsed time until all results are collected. Then redesign: what data structure change makes the caller process results as they complete rather than in submission order?

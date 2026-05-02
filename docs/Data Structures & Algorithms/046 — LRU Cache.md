@@ -28,6 +28,8 @@ tags:
 | **Used by:** | LFU Cache, HTTP Caching, OS Page Cache | |
 | **Related:** | LFU Cache, MRU Cache, TTL Cache | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Cache eviction without recency knowledge wastes the cache by keeping cold, stale
 THE INVENTION MOMENT:
 Track which entry was accessed most recently. When the cache is full, evict the entry accessed least recently (the one you haven't needed for the longest time). This exploits temporal locality — the empirical observation that recently used data is likely to be used again soon. This is exactly why the LRU Cache was created.
 
+---
+
 ### 📘 Textbook Definition
 
 An **LRU (Least Recently Used) Cache** is a fixed-capacity cache with an eviction policy that removes the entry that was accessed (read or written) least recently when the cache is full and a new entry must be inserted. All operations — `get(key)` and `put(key, value)` — must complete in O(1) time. The standard implementation combines a `HashMap` (for O(1) key lookup) with a **doubly linked list** (for O(1) move-to-front and evict-from-tail), where the head is the most recently used and the tail is the least recently used.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ A fixed-size cache that always evicts the longest-unused item when full.
 
 **One insight:**
 The trick of combining a HashMap with a doubly linked list lets you do *both* O(1) lookup *and* O(1) update of access order. The HashMap finds the node in O(1); the doubly linked list moves it to the front and removes the tail in O(1). Neither structure alone can do both.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -75,6 +83,8 @@ THE TRADE-OFFS:
 Gain: O(1) get and put with optimal eviction for temporal-locality workloads.
 Cost: 2× memory per entry (HashMap + list node), poor fit for frequency-based access patterns (use LFU), no built-in TTL.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -91,6 +101,8 @@ put(4): evict LRU=2. Cache = [4,1,3]. get(1): hit!
 THE INSIGHT:
 LRU preserved the entry that was just accessed (1) over the one that hadn't been touched (2). FIFO preserved insertion order, which has nothing to do with what's currently useful. Recency is a proxy for future utility — and empirically it's a very good proxy.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > An LRU cache is like a browser's tab order by last use. The tab you switched to most recently is at the front. When your browser needs to suspend a tab to save memory, it suspends the one at the back — the one you haven't visited in hours.
@@ -102,6 +114,8 @@ LRU preserved the entry that was just accessed (1) over the one that hadn't been
 "Suspend least-used tab" → evict tail node
 
 Where this analogy breaks down: Browser tab suspension uses recency, but LFU would be better for tabs you visit regularly but infrequently (like a monthly report). LRU doesn't account for frequency — only recency.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -116,6 +130,8 @@ Two sentinel nodes (dummyHead, dummyTail) simplify edge cases (no null checks on
 
 **Level 4 — Why it was designed this way (senior/staff):**
 LRU is the standard CPU cache replacement policy and OS page replacement algorithm. The combination of HashMap + doubly linked list is O(1) for all operations — no other structure achieves this without trade-offs. Java's `LinkedHashMap(initialCapacity, loadFactor, accessOrder=true)` implements LRU in a single class: it maintains an internal doubly linked list ordered by access time. `removeEldestEntry()` is the hook for eviction. Caffeine (the modern Java cache library, used by Spring Boot's default cache) uses a Window-TinyLFU policy (admission + LFU + recency) that outperforms pure LRU by 50–80% on real workloads — LRU's weakness is workloads with "scans" (large reads that displace hot data without being hot themselves).
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -190,6 +206,8 @@ class LRUCache<K, V> {
 │  DLL: head ⇔ [4] ⇔ [1] ⇔ [3] ⇔ tail        │
 └──────────────────────────────────────────────┘
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -213,6 +231,8 @@ Cache scan: sequential access of N unique keys
 
 WHAT CHANGES AT SCALE:
 A single-threaded LRU is O(1) but needs external synchronization for concurrent access. `Collections.synchronizedMap` on a `LinkedHashMap` creates a global lock — a bottleneck at high concurrency. Caffeine's W-TinyLFU uses a write buffer + frequency sketch + LRU window for concurrent writes without global locking. At distributed scale (cross-machine caching), LRU is approximated through TTL + access-time tracking; true distributed LRU is impractical due to the coordination overhead.
+
+---
 
 ### 💻 Code Example
 
@@ -254,6 +274,8 @@ UserProfile profile = cache.get(userId, id -> db.load(id));
 System.out.println(cache.stats().hitRate());
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Policy | Hit Rate | Scan Resistant | Implementation | Best For |
@@ -266,6 +288,8 @@ System.out.println(cache.stats().hitRate());
 
 How to choose: Use LRU (LinkedHashMap or custom) for simple caches. Use Caffeine (W-TinyLFU) for production caches where hit rate matters. Use FIFO only for simplest cases. Never implement LFU from scratch without careful consideration of implementation complexity.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -275,6 +299,8 @@ How to choose: Use LRU (LinkedHashMap or custom) for simple caches. Use Caffeine
 | Moving to front means O(N) re-sort | Moving a node to front in a doubly linked list is O(1) — just pointer manipulation |
 | LRU protects against cache flooding | A sequential scan of N unique items empties the LRU cache of all hot data; TinyLFU resists this |
 | LRU and TTL serve the same purpose | LRU evicts by recency (memory pressure); TTL evicts by age (staleness); most production caches need both |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -331,6 +357,8 @@ Fix: Set capacity based on available heap × acceptable cache fraction. Monitor 
 
 Prevention: Set cache size as a fraction of available heap (e.g., 10%); use `Caffeine.maximumWeight()` for memory-bounded caches.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -345,6 +373,8 @@ Prevention: Set cache size as a fraction of available heap (e.g., 10%); use `Caf
 **Alternatives / Comparisons:**
 - `LFU Cache` — better hit rate for frequency-skewed workloads but O(log N) or complex O(1).
 - `TTL Cache` — evicts by age, not recency; useful for stale data prevention.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -374,6 +404,7 @@ Prevention: Set cache size as a fraction of available heap (e.g., 10%); use `Caf
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** An LRU cache of capacity 1,000 is used to cache database query results. Traffic shows that 100 queries account for 90% of requests ("hot queries") and 900 queries each account for 0.01% of requests. After deploying the cache, the hit rate is only 55% instead of the expected 90%. Trace through exactly why this happens given the workload distribution and cache capacity, and propose what change to the cache design would raise the hit rate to ~90%.

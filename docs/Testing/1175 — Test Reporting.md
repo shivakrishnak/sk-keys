@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Test Reporting"
 parent: "Testing"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | Developers, QA, Tech Leads, Engineering Management                           |                 |
 | **Related:**    | JUnit 5, CI-CD, SonarQube Quality Gate, Observability, Test Coverage Targets |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 "CI FAILED" — BUT WHERE?:
@@ -36,9 +38,13 @@ A 5,000-test CI run fails with "47 tests failed." The log file is 50,000 lines. 
 FLAKINESS IS INVISIBLE WITHOUT HISTORY:
 Test A fails today. Was it flaky or a real failure? Without historical test data (pass rate over last 100 runs), there's no way to know. Good test reporting tracks test history, surfaces flaky tests, and measures the impact of test health on team velocity.
 
+---
+
 ### 📘 Textbook Definition
 
 **Test reporting** is the process of collecting, formatting, and presenting test execution results in a human-readable and actionable form. Reporting occurs at multiple levels: (1) **per-run reports** — detailed results of a specific test run (JUnit XML, HTML reports, Allure Report); (2) **trend reports** — test results over time (pass rate, flakiness rate, average duration); (3) **coverage reports** — which code was exercised (JaCoCo HTML, SonarQube); (4) **CI integration** — surfacing test results directly in CI platforms (GitHub Actions test summary, Jenkins test results). Tools: JUnit XML (standard format), Allure Report (rich HTML), Surefire HTML (Maven), Gradle's built-in HTML report, Playwright's HTML report.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -48,6 +54,8 @@ Test reports answer "what failed, why, and how often" — turning test results i
 **One analogy:**
 
 > Test reporting is the **control room dashboard**: during a NASA mission, raw telemetry data from thousands of sensors is useless. The dashboard transforms it into actionable signals — green lights for OK, amber for warning, red for immediate action required. Test reports are the dashboard for your test suite's health.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -170,6 +178,8 @@ Tools that track this automatically:
   - Custom: store JUnit XML results per run, query flakiness rate
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 THE MISSING SKIP AUDIT:
@@ -195,9 +205,13 @@ Test report with SKIP TREND would have shown:
 Rule: @Disabled must have: (1) explanation, (2) JIRA ticket, (3) expiry (delete if not fixed within 30 days)
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Test reporting is **financial reporting for test suite health**: just as quarterly financial reports show revenue trends, profit margins, and anomalies (not just "are we profitable?"), test reports show test duration trends, flakiness rates, and coverage trends — not just "did it pass?". Executives see financial trends; tech leads see test health trends. Both enable data-driven decisions.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -208,6 +222,8 @@ Rule: @Disabled must have: (1) explanation, (2) JIRA ticket, (3) expiry (delete 
 **Level 3:** Flakiness detection: store test run results in a database (CI artifact); query pass rate per test over 100 runs; surface tests with < 99% pass rate as flaky; quarantine with `@Tag("flaky")`. Duration trend: track suite duration over time — gradual increase indicates accumulating slow tests (candidates for optimization). Coverage trend in SonarQube: line coverage per module plotted over time — dropping coverage alerts to missing tests.
 
 **Level 4:** Test analytics at scale: Gradle Enterprise, BuildKite Test Analytics — enterprise-grade test history, flakiness prediction, build failure attribution. Custom analytics: test results as events in a data pipeline (JUnit XML → Kafka → ClickHouse → Grafana); engineering leadership tracks test suite health as an OKR. Test efficiency metrics: "test-to-value ratio" — for each test, how often has it caught a real bug vs. how many times has it run? Low ratio on slow tests = candidates for removal. "Shift left" metrics: are failures caught in unit tests (cheap) or E2E tests (expensive)?
+
+---
 
 ### 💻 Code Example
 
@@ -266,6 +282,8 @@ mvn allure:report
 allure open target/site/allure-maven-plugin/
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Tool                   | Type             | Rich UI         | Trend | Flakiness | Best For                     |
@@ -276,6 +294,8 @@ allure open target/site/allure-maven-plugin/
 | Playwright HTML Report | Interactive HTML | Excellent (E2E) | No    | Basic     | E2E test diagnosis           |
 | Gradle Enterprise      | Cloud analytics  | Excellent       | Yes   | Yes       | Enterprise at scale          |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                   | Reality                                                                                                          |
@@ -283,6 +303,8 @@ allure open target/site/allure-maven-plugin/
 | "JUnit pass/fail count is sufficient reporting" | Without failure details, duration trends, and flakiness tracking, teams can't act on test health                 |
 | "Coverage report = test quality report"         | Coverage shows what was executed; test quality requires mutation testing, failure analysis, and assertion review |
 | "Test reports are for QA only"                  | Test health metrics are engineering metrics — part of sprint health tracking and technical debt management       |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -298,10 +320,14 @@ Fix: Track and report per-test pass rate (not just aggregate). Alert when any in
 Cause: CI artifacts deleted after 7 days; no trend data available.
 Fix: Publish test summary to a persistent store (database, Allure server, Gradle Enterprise). Or increase artifact retention period.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Unit Test, CI-CD, JUnit 5
 - **Related:** Allure Report, JUnit XML, Surefire, Playwright, Flaky Tests, SonarQube, JaCoCo, Test Coverage Targets
+
+---
 
 ### 📌 Quick Reference Card
 

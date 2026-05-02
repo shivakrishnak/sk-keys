@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Paxos"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Leader Election, Quorum, Consensus, Distributed Systems, Failure Modes |                 |
 | **Used by:**    | Raft, Distributed Locking, State Machine Replication, Google Chubby    |                 |
 | **Related:**    | Raft, Multi-Paxos, Zab, Consensus, Quorum                              |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "System Call (syscall)"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | File Descriptor, Blocking I/O, Non-Blocking I/O, Fork / Exec |                 |
 | **Related:**    | File Descriptor, Interrupt, User Space vs Kernel Space       |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Early real-mode DOS programs called BIOS routines directly via software interrup
 THE INVENTION MOMENT:
 This is exactly why the system call was created — to provide a single, validated, permission-checked entry point that every user program must use to request kernel services.
 
+---
+
 ### 📘 Textbook Definition
 
 A **system call** (syscall) is a programmatic interface that allows user-space processes to request services from the operating system kernel. When a process executes a syscall instruction, the CPU switches from user mode (ring 3) to kernel mode (ring 0), the kernel validates parameters and performs the requested operation (I/O, memory allocation, process management), then returns control to user space. The syscall interface is the ABI (Application Binary Interface) between user programs and the OS kernel.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ A syscall is a formal request form your program submits to the OS — the only w
 
 **One insight:**
 The syscall number is the key: your program doesn't call kernel functions by name or address — it places a number in a register (e.g., `rax=1` for `write` on Linux x86-64) and fires the `syscall` instruction. The kernel uses that number as an index into its syscall table, jumping to the right handler. This indirection means the kernel ABI can be stable even as internal kernel code changes.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -69,6 +77,8 @@ The CPU provides a `syscall`/`sysret` instruction pair (or `int 0x80` on older x
 THE TRADE-OFFS:
 Gain: Safe, validated, auditable interface — every kernel service request is logged, permission-checked, and bounded.
 Cost: ~100–300 ns per syscall; pipeline flush; TLB effects (especially with KPTI). High-frequency code must batch syscalls.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -93,6 +103,8 @@ WHAT HAPPENS WITH syscall:
 THE INSIGHT:
 The syscall boundary is not just performance overhead — it is a mandatory security checkpoint. Every resource the application uses is granted by the kernel, not seized.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A syscall is like an ATM transaction. You (user process) want cash (kernel service). You can't walk into the bank vault (kernel memory). You use the ATM (syscall interface), which validates your PIN (permission check), reads your account (kernel data), and dispenses only what you're authorised for. Every transaction is logged.
@@ -104,6 +116,8 @@ The syscall boundary is not just performance overhead — it is a mandatory secu
 "Transaction log" → audit log (auditd, seccomp)
 
 Where this analogy breaks down: ATM transactions are sequential; syscalls are concurrent — millions per second across all processes, handled by kernel code that must be re-entrant and lock-safe.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -118,6 +132,8 @@ On Linux x86-64, the syscall ABI places the syscall number in `rax`, arguments i
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The stable syscall ABI is one of Linux's most consequential design choices: syscall numbers are NEVER renumbered. A binary compiled in 2002 still works on Linux 6.x because the syscall table is ABI-stable. This is why POSIX exists — to standardise the syscall interface across Unixes. The alternative (Windows approach) uses an unstable syscall table hidden behind stable Win32 DLLs, giving more kernel flexibility but requiring every program to use system DLLs. `io_uring` (Linux 5.1) is the most radical syscall evolution: it maps a shared ring buffer between user and kernel, allowing batches of I/O operations to be submitted and completed without individual syscall overhead, reducing mode switches by orders of magnitude.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -151,6 +167,8 @@ The stable syscall ABI is one of Linux's most consequential design choices: sysc
 
 **Failure path:** If step 6 fails (invalid address), `access_ok` returns false → syscall returns `-EFAULT` → libc sets `errno = EFAULT` → application receives -1.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -169,6 +187,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At 1M syscalls/sec, mode-switch cost (~200 ns each) consumes ~20% of a single CPU core. Applications like Redis use `io_uring` to batch hundreds of I/O operations per ring submission, cutting per-op syscall cost to near zero. At Google/Facebook scale, seccomp-BPF filters are applied to restrict which syscalls are allowed per service, reducing attack surface and adding ~20–50 ns overhead per syscall for filter evaluation.
+
+---
 
 ### 💻 Code Example
 
@@ -221,6 +241,8 @@ for (int i = 0; i < 1000; i++) {
 io_uring_submit(&ring);  // ONE syscall for 1000 writes
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Interface               | Latency          | Batching | Security          | Best For                        |
@@ -232,6 +254,8 @@ io_uring_submit(&ring);  // ONE syscall for 1000 writes
 
 How to choose: Default to standard syscalls. Adopt `io_uring` when profiling shows >500K syscalls/sec as bottleneck. Use DPDK only for dedicated network packet processing.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                         | Reality                                                                                                             |
@@ -241,6 +265,8 @@ How to choose: Default to standard syscalls. Adopt `io_uring` when profiling sho
 | "The syscall number is the memory address to jump to" | Syscall number is an index into a dispatch table — the actual handler address is hidden from user space             |
 | "Syscalls are always slow"                            | vDSO maps some read-only syscalls into user space — `clock_gettime` costs ~5 ns, same as a function call            |
 | "strace doesn't affect performance in production"     | strace attaches ptrace which intercepts every syscall — easily 10–100× overhead, never use in production under load |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -312,6 +338,8 @@ Fix: Whitelist the required syscall in the container's seccomp profile or use `-
 
 Prevention: Test applications against their production seccomp profile in staging; use `strace -c` to enumerate all syscalls the app uses.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -330,6 +358,8 @@ Prevention: Test applications against their production seccomp profile in stagin
 
 - `vDSO` — kernel-mapped user-space page that lets some syscalls bypass ring transitions entirely
 - `DPDK` — eliminates most I/O syscalls by mapping device memory directly into user space
+
+---
 
 ### 📌 Quick Reference Card
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Mockito"
 parent: "Testing"
@@ -27,13 +27,19 @@ tags:
 | **Used by:**    | Java Developers                                  |                 |
 | **Related:**    | Mocking, Stubbing, Spying, JUnit 5, Test Doubles |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 Pre-Mockito, Java developers wrote manual mock objects by hand (implementing interfaces with hardcoded return values and call trackers — hundreds of lines of boilerplate per mock). Mockito generates mock objects at runtime using bytecode manipulation, requiring zero boilerplate — the same mock that previously took 50 lines can be created with `mock(UserRepository.class)`.
 
+---
+
 ### 📘 Textbook Definition
 
 **Mockito** is a Java mocking framework that: (1) generates **mock objects** at runtime for any interface or class; (2) **stubs** method return values (`when().thenReturn()`); (3) **verifies** method interactions (`verify()`); (4) **captures arguments** (`ArgumentCaptor`); (5) creates **spies** on real objects. Integrates with JUnit 5 via `@ExtendWith(MockitoExtension.class)` and Spring Boot via `@MockBean`. Since Mockito 2.x: supports static mocking (via `Mockito.mockStatic()`), strict stubbing (fail on unused stubs), and inline mock maker (mock final classes).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -43,6 +49,8 @@ Mockito = write `mock(ClassName.class)` instead of 50 lines of hand-written mock
 **One analogy:**
 
 > Mockito is a **professional costume designer**: you describe what role the actor should play (the interface), and Mockito dresses them in the perfect costume (mock object) instantly — complete with scripted responses for specific cues and a record of every scene they appeared in.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -132,6 +140,8 @@ STRICT STUBBING (Mockito default since 3.x):
 void testWithFlexibleStubs() { ... }
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 ARGUMENTCAPTOR FOR COMPLEX OBJECT ASSERTIONS:
@@ -156,9 +166,13 @@ void createUser_sendsWelcomeEmailWithCorrectContent() {
 }
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Mockito is a **dynamic proxy factory**: it creates a proxy object that intercepts all method calls. `when(...).thenReturn(...)` registers rules in the proxy's decision table. `verify(...)` queries the proxy's call log. The proxy is transparent to the code under test — it looks and acts like the real dependency, but every call is recorded and can be scripted.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -169,6 +183,8 @@ void createUser_sendsWelcomeEmailWithCorrectContent() {
 **Level 3:** Strict stubbing: Mockito 3+ enables strict stubbing by default — tests fail if you stub a method that's never called. This is a feature (catches dead stubs), not a bug. Use `@MockitoSettings(strictness = LENIENT)` to opt out for tests that need flexible stubs. `MockStatic`: mock static methods with `try (MockedStatic<Clock> mocked = mockStatic(Clock.class))` — use sparingly; code with testable static methods is usually poorly designed.
 
 **Level 4:** Mockito internals: mocks are created using ByteBuddy (or cglib in older versions) — a subclass is created at runtime, overriding all non-final methods. `@InjectMocks` tries constructor injection first, then setter injection, then field injection — with silent failures if injection fails. The "final class" problem: before `MockitoInlineMockMaker`, final classes couldn't be mocked (subclassing doesn't work). The inline mock maker (`mockito-inline` dependency or `mockito-core` 5+) uses Java agent instrumentation to mock final classes and static methods. Spring Boot's `@MockBean`: creates a Mockito mock and registers it as a Spring bean, replacing the real bean in the application context — but this forces Spring to reload the context if the mock configuration changes between tests.
+
+---
 
 ### 💻 Code Example
 
@@ -225,6 +241,8 @@ class OrderServiceTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Feature          | Mockito                          | Manual Mock           |
@@ -235,6 +253,8 @@ class OrderServiceTest {
 | Verification     | `verify()`                       | Counter fields        |
 | Type safety      | Runtime (reflection)             | Compile time          |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                           | Reality                                                                                       |
@@ -242,6 +262,8 @@ class OrderServiceTest {
 | "`when()` with spy is safe"             | `when(spy.method())` calls real method during setup — use `doReturn().when()`                 |
 | "UnnecessaryStubbingException is a bug" | It's a valuable signal: a stub that's never used is dead code or a misaligned test            |
 | "Mockito 5 changed everything"          | Core API is backward compatible; biggest changes: inline mock maker default, Java 17+ support |
+
+---
 
 ### 📌 Quick Reference Card
 

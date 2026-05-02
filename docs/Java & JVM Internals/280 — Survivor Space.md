@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Old Generation, Minor GC, Object Header | |
 | **Related:** | Eden Space, Old Generation, Young Generation, Minor GC | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Objects that survive one GC cycle are not necessarily long-lived. A temporary co
 THE INVENTION MOMENT:
 Survivor Space is the staging area — the "quarantine zone" where objects prove their longevity by surviving multiple Minor GC cycles before being promoted. This is exactly why Survivor Space exists: to filter out medium-life objects from polluting the Old Generation.
 
+---
+
 ### 📘 Textbook Definition
 
 Survivor Spaces (S0 and S1) are two equally sized subregions of the Young Generation that serve as the intermediate staging area for objects that survive Minor GC but have not yet reached the age threshold for promotion to Old Generation. At each Minor GC, objects from Eden and the active Survivor space (S0 or S1) that are still live are copied to the inactive Survivor space (the other one), with their age incremented by 1 in their Object Header. When an object's age reaches `MaxTenuringThreshold` (default: 15 for most GCs), it is promoted to Old Generation. The two Survivor spaces alternate roles ("From" and "To") after each GC. Only one Survivor is in use at any time; the other is always empty.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Survivor Space is an age filter — objects bounce between S0 and S1 until they'
 
 **One insight:**
 The two-Survivor design is elegant: it eliminates fragmentation in the Young Generation entirely. Rather than tracking free holes in Eden, the copying collector moves live objects from one Survivor to the other, leaving the source compact and fully recyclable. The "empty" Survivor's presence means there is always a defragmented destination for the next GC cycle.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -68,6 +76,8 @@ THE TRADE-OFFS:
 Gain: Filters medium-life objects from Old Generation; prevents unnecessary Major GC; clean compaction via copying.
 Cost: Two Survivor spaces means 50% waste in the Survivor area (one is always empty); if Survivor space is too small, objects are promoted before they would naturally die (premature promotion).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -82,6 +92,8 @@ P created in Eden. GC 1: P alive → copy from Eden to S1 (age=1). GC 2: P alive
 THE INSIGHT:
 Survivor Space acts as filter: objects that die young are reclaimed in Young Gen; objects that die medium-term are reclaimed in Young Gen; only truly long-lived objects reach Old Gen. This dramatically reduces Old Gen fill rate and major GC frequency.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > The two Survivor spaces (S0, S1) are like a revolving door between Eden (the lobby) and Old Generation (the office building). Objects enter through Eden and wait in S0 (the first waiting room). At each GC cycle, the waiting rooms flip: everyone in S0 moves to S1, everyone in S1 moves to S0 (if they've waited long enough: out the door to Old Gen). Anyone who finishes their business during the cycle doesn't get moved — they disappear.
@@ -94,6 +106,8 @@ Survivor Space acts as filter: objects that die young are reclaimed in Young Gen
 "Finishing business and disappearing" → dying before threshold, collected in Young Gen
 
 Where this analogy breaks down: unlike a revolving door where objects physically move, the JVM copies objects' bytes to the new Survivor space — the old copy in the source space is abandoned.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -108,6 +122,8 @@ Each Minor GC: the "From" Survivor (active one, containing aged objects) and Ede
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The dual Survivor design is a semi-space copying collector applied to a subregion. The "always empty" space overhead (1 Survivor is always empty, wasting Young Gen space) was accepted as the cost of fragment-free compaction. Original HotSpot tuning of `SurvivorRatio=8` was determined empirically to balance Eden throughput against Survivor capacity for typical server workloads. The G1GC evolution abandoned fixed-size Survivor regions in favour of dynamically-sized "survivor regions" within the region pool, adapting Survivor capacity to measured survival rates — eliminating the need to manually tune `SurvivorRatio`.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -165,6 +181,8 @@ The dual Survivor design is a semi-space copying collector applied to a subregio
 **Age Distribution Tracking:**
 The JVM tracks age distribution statistics (`-XX:+PrintTenuringDistribution`) after each Minor GC, showing how many bytes of each age survived. G1GC uses this to dynamically set `MaxTenuringThreshold` to the age where the cumulative survivor size exceeds 50% of the desired Survivor space size.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -193,6 +211,8 @@ Survivor overflow:
 
 WHAT CHANGES AT SCALE:
 At high object survival rates (e.g., a workload with many medium-lived objects like 1-minute HTTP sessions), Survivor space becomes the bottleneck. Objects continuously bounce between S0 and S1, consuming CPU for copying. If survival rate is genuinely high, lowering `MaxTenuringThreshold` (e.g., to 5) promotes objects faster, reducing Young Gen copying overhead. The trade-off: fewer Major GCs caught early vs. slightly faster Old Gen fill.
+
+---
 
 ### 💻 Code Example
 
@@ -252,6 +272,8 @@ java -XX:+UseG1GC \
 # Y: dynamically computed by G1 based on survival rate
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Config Scenario | Effect on Survivor | Effect on Old Gen | Best For |
@@ -264,6 +286,8 @@ java -XX:+UseG1GC \
 
 How to choose: For most applications, use G1GC defaults (adaptive). Only tune SurvivorRatio and MaxTenuringThreshold if `jstat` shows consistent Survivor overflow (S0U/S1U always 100%) or premature Old Gen filling.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -272,6 +296,8 @@ How to choose: For most applications, use G1GC defaults (adaptive). Only tune Su
 | "Larger Survivor means better performance" | Larger Survivor reduces premature promotion but comes at the cost of smaller Eden (smaller Eden → more frequent Minor GC). It's a trade-off. |
 | "Objects always survive exactly MaxTenuringThreshold GC cycles" | Survivor OVERFLOW promotes objects regardless of age. Adaptive tenuring (G1) changes the threshold dynamically. |
 | "G1GC uses Eden/Survivor layout like Parallel GC" | G1GC uses individual equal-sized heap regions that are dynamically assigned as Eden, Survivor, or Old — no fixed contiguous spaces. The concept of Survivor is preserved but implemented differently. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -343,6 +369,8 @@ java -XX:+PrintTenuringDistribution \
 
 Prevention: Profile application object lifetimes with async-profiler allocation profiling before production deployment sizing.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -359,6 +387,8 @@ Prevention: Profile application object lifetimes with async-profiler allocation 
 **Alternatives / Comparisons:**
 - `Old Generation` — what Survivor objects eventually become; understanding Old Gen explains why the Survivor filter is needed
 - `Eden Space` — Survivor's sibling: Eden for new objects, Survivor for ageing objects
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -391,6 +421,7 @@ Prevention: Profile application object lifetimes with async-profiler allocation 
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Adaptive tenuring in G1GC dynamically calculates `MaxTenuringThreshold` based on the current survival rate: specifically, it sets the threshold to the age at which the cumulative survivor bytes would exceed 50% of the Survivor region capacity. A web service handles 10,000 requests/second, each creating a `RequestContext` object that lives exactly for 200ms. Minor GC runs every 150ms. How many Minor GC cycles does a RequestContext survive before dying? Does it make it to Old Generation? And what change in request handling time would cause it to start reaching Old Generation?

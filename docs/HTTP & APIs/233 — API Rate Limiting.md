@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Public APIs, API Gateways, Microservices, SaaS Platforms | |
 | **Related:** | API Throttling, API Gateway, HMAC, API Authentication, Circuit Breaker | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

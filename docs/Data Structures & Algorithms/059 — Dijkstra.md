@@ -28,6 +28,8 @@ tags:
 | **Used by:** | A* Search, GPS Navigation, Network Routing (OSPF) | |
 | **Related:** | Bellman-Ford, A* Search, BFS | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Weighted graphs require a fundamentally different strategy than unweighted BFS. 
 THE INVENTION MOMENT:
 Edsger Dijkstra observed in 1956 that you can greedily expand the shortest-path frontier: always process the node with the currently smallest known distance from the source. Once a node is processed, its shortest distance is finalised — no later path can improve it (because all edge weights are non-negative, any extension of the current path can only increase or maintain the total distance). This greedy invariant makes the algorithm correct. This is exactly why **Dijkstra's algorithm** was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Dijkstra's algorithm** solves the Single-Source Shortest Path (SSSP) problem on weighted directed or undirected graphs with non-negative edge weights. It maintains a priority queue of (distance, node) pairs, always processing the minimum-distance node first. It relaxes edges: for each neighbour `v` of processed node `u`, if `dist[u] + weight(u,v) < dist[v]`, update `dist[v]` and enqueue `(dist[v], v)`. The algorithm runs in `O((V + E) log V)` with a binary heap priority queue.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Always take the nearest unvisited city next, recording the best known route to e
 
 **One insight:**
 The key correctness property is: **once a node is popped from the priority queue, its distance is final.** This works exclusively because edge weights are non-negative — any path that continues from an unvisited node can only increase (or stay equal) in total distance. Negative edges break this guarantee, which is why Dijkstra fails on graphs with negative edge weights.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -82,6 +90,8 @@ THE TRADE-OFFS:
 Gain: Optimal single-source shortest paths in `O((V+E) log V)`.
 Cost: Requires non-negative edge weights; does not detect negative cycles; `O(V)` memory for dist[] and priority queue.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -101,6 +111,8 @@ Pop (6,D). Optimal: S→B→A→D = 1+2+3 = 6.
 THE INSIGHT:
 The path S→B→A→D (3 hops) beats S→A→D (2 hops) because going through B first to reach A via the cheaper edge outweighs the extra hop. BFS (hop count) would have missed this. Dijkstra found it by always expanding the smallest-cost frontier.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Dijkstra is like a relay race where you always send the fastest available runner next. You track the minimum arrival time at every checkpoint. When a runner arrives at a checkpoint, they immediately dispatch the fastest available runner to each connected checkpoint. The first time a checkpoint is "confirmed reached," that arrival time is the globally minimum time.
@@ -111,6 +123,8 @@ The path S→B→A→D (3 hops) beats S→A→D (2 hops) because going through B
 "Checkpoint confirmed" → node permanently processed
 
 Where this analogy breaks down: Real relay races don't allow revisiting checkpoints with faster times. Dijkstra does allow updating `dist[v]` if a faster route is found before `v` is processed — this is the relaxation step that moves `v` "earlier" in the priority queue.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -125,6 +139,8 @@ The standard priority-queue implementation allows multiple entries for the same 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Dijkstra's algorithm is the direct application of the greedy algorithm paradigm to the SSSP problem. Its correctness proof by induction on the number of processed nodes is a model of clean algorithmic reasoning. The non-negative weight constraint is not an arbitrary limitation: it is the precise condition under which the greedy invariant (processed nodes have final distances) holds. OSPF routing in IP networks uses Dijkstra: each router computes the shortest path tree rooted at itself, then routes packets to the next hop in that tree. The Dijkstra-like expansion is also the foundation of Prim's MST algorithm — both maintain a "cheapest-to-reach" frontier and greedily commit to cheapest available extensions.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -160,6 +176,8 @@ Dijkstra's algorithm is the direct application of the greedy algorithm paradigm 
 **Path reconstruction (same as BFS):**
 `parent[v] = u` records which node was the predecessor on the shortest path to `v`. Trace backwards from target to source and reverse.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -189,6 +207,8 @@ Negative edge weight in graph
 
 WHAT CHANGES AT SCALE:
 For road networks (V=10⁷ nodes, E=10⁸ edges), vanilla Dijkstra takes several seconds. Production GPS systems use bidirectional Dijkstra (expand from source AND target simultaneously, meet in the middle — reduces search radius from r to r/2, so explored nodes ~O(r²/4) vs O(r²)), plus preprocessing shortcuts (Contraction Hierarchies) to reduce queries to milliseconds.
+
+---
 
 ### 💻 Code Example
 
@@ -290,6 +310,8 @@ int networkDelayTime(int[][] times, int n, int k){
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Negative Weights | Negative Cycles | Time | Space | Best For |
@@ -302,6 +324,8 @@ int networkDelayTime(int[][] times, int n, int k){
 
 How to choose: Use Dijkstra for non-negative weights (the common case). Use Bellman-Ford if negative edges exist. Use A* when a heuristic can guide the search (path-finding in physical space). Use Floyd-Warshall when you need all-pairs shortest paths and V is small.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -311,6 +335,8 @@ How to choose: Use Dijkstra for non-negative weights (the common case). Use Bell
 | Dijkstra finds shortest paths to ALL nodes | Dijkstra naturally computes SSSP (single-source, all destinations). To find just the shortest path to one target, stop when the target is first popped |
 | The priority queue should use set/visited instead of lazy deletion | Both approaches are correct. Lazy deletion (allow duplicates, skip stale entries on pop) is simpler to implement and performs identically in practice |
 | Dijkstra is O(V²) | With a binary heap, Dijkstra is O((V+E) log V). The O(V²) bound applies only to the naive array-based implementation (scan all V nodes per step instead of using a heap) |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -384,6 +410,8 @@ Fix: Add `if (d > dist[u]) continue;` immediately after `pq.poll()`.
 
 Prevention: This check is non-optional in the lazy-deletion implementation. Make it a template habit.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -401,6 +429,8 @@ Prevention: This check is non-optional in the lazy-deletion implementation. Make
 - `Bellman-Ford` — slower (O(VE)) but handles negative edges; use when graph has negative weights.
 - `Floyd-Warshall` — all-pairs shortest paths in O(V³); use when you need distances between all pairs.
 - `BFS` — exact replacement for Dijkstra in unweighted graphs; no priority queue needed.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -430,6 +460,7 @@ Prevention: This check is non-optional in the lazy-deletion implementation. Make
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Dijkstra's algorithm processes the node with the smallest current distance at each step. Consider a graph where all edge weights are equal (say, weight 1). Prove that in this case, Dijkstra's algorithm produces exactly the same traversal order as BFS. What does this reveal about the relationship between BFS and Dijkstra? Now consider: if you change the priority queue in Dijkstra to a LIFO stack instead of a min-heap (and use weight 1 for all edges), what traversal algorithm do you get?

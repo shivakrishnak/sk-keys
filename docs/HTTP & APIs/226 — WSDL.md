@@ -29,6 +29,8 @@ tags:
 | **Used by:** | SOAP, JAX-WS, API Contract Testing | |
 | **Related:** | SOAP, OpenAPI Specification, Protocol Buffers | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Legacy Real-time Systems, Chat Applications, Push Notifications | |
 | **Related:** | WebSocket, Server-Sent Events, Short Polling | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

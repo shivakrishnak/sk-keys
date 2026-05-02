@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "ForkJoinPool"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Stream API, CompletableFuture, Virtual Threads (Project Loom) | |
 | **Related:** | ThreadPoolExecutor, ExecutorService, RecursiveTask | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ A merge sort of 10M elements with 8 CPU cores. With `ThreadPoolExecutor(8)`: the
 THE INVENTION MOMENT:
 **`ForkJoinPool`** was created for exactly this pattern — it allows blocked threads (waiting for subtasks) to pick up other available work instead of truly blocking — maximising CPU utilisation for divide-and-conquer workloads.
 
+---
+
 ### 📘 Textbook Definition
 
 **`ForkJoinPool`** is a `ExecutorService` implementation specialised for divide-and-conquer (fork-join) parallel algorithms. It uses **work-stealing**: each worker thread has its own `ArrayDeque` of tasks; when idle, threads steal tasks from the tail of other workers' deques. Tasks are defined as `RecursiveTask<V>` (returns a value) or `RecursiveAction` (no return) and use `fork()` (submit subtask) + `join()` (wait for subtask) in an efficient non-blocking manner. `ForkJoinPool.commonPool()` is a JVM-wide shared pool used by parallel streams and `CompletableFuture.supplyAsync()` (no executor arg).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ THE INVENTION MOMENT:
 
 **One insight:**
 Work-stealing reduces contention vs. a single shared queue: each thread works from its own deque nose (LIFO), while stealers take from the tail (FIFO). This keeps cache-warm tasks with the thread that created them, while stealers get older tasks with less contention.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -80,6 +88,8 @@ This is different from a regular ThreadPoolExecutor where `future.get()` truly p
 THE TRADE-OFFS:
 Gain: High CPU utilisation for recursive divide-and-conquer; no blocked waiting threads; efficient for parallel streams.
 Cost: Overhead of deque management and stealing; JVM-wide common pool shared by all parallel streams + CompletableFuture; blocking I/O in common pool tasks is catastrophic; not ideal for simple task queues (use ThreadPoolExecutor instead).
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -121,6 +131,8 @@ long result = ForkJoinPool.commonPool()
 THE INSIGHT:
 `right.compute()` runs inline (no fork overhead for last subtask). `left.fork()` + `left.join()` allows the worker to pick up other tasks during join — no wasted blocking.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > ForkJoinPool is like a construction crew with a critical-path work policy. Foreman (coordinator) divides blueprint into tasks (fork), each worker takes a task. When someone finishes early (idle), they look around — the slowest team has leftover tasks — they pick one up (steal) without coordination overhead. No worker ever stands idle as long as work exists.
@@ -128,6 +140,8 @@ THE INSIGHT:
 "Foreman divides blueprint" → `RecursiveTask.fork()`.
 "Picking up another team's leftover tasks" → work-stealing.
 "All workers contributing" → work-stealing prevents idle CPU cores.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -138,6 +152,8 @@ THE INSIGHT:
 **Level 3:** `ForkJoinPool` uses `WorkQueue[]` array — even indices are submission queues, odd indices are worker queues. Each worker has its own index. Stealing: random victim selection with SpinWait; deque access via `Unsafe.compareAndExchangeObject`. `join()` uses `doJoin()` which calls `pollAndExecCC()` — either runs a stolen continuation or `wait()` on the FJ task.
 
 **Level 4:** Java 21's virtual threads use `ForkJoinPool` as the carrier thread pool. Virtual thread `park()` unmounts from the carrier (FJ worker) and the worker picks up another virtual thread — the same work-stealing principle applied to coroutine scheduling. This is why blocking I/O in virtual threads is efficient: the FJ carrier doesn't block, just unmounts the virtual thread and runs another.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -202,6 +218,8 @@ customPool.submit(
 ).join();
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 ```
@@ -219,6 +237,8 @@ customPool.submit(
 
 WHAT CHANGES AT SCALE:
 ForkJoinPool parallelism should equal available CPU cores for CPU-bound work. For tasks below `THRESHOLD`, sequential is faster (spawn overhead > parallelism gain). Tune threshold: too small = too many fork() calls, too large = too little parallelism.
+
+---
 
 ### 💻 Code Example
 
@@ -243,6 +263,8 @@ isolated.shutdown();
 // Use CompletableFuture with dedicated executor instead
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Pool Type | Best For | Blocking I/O | Overhead | Stealing |
@@ -253,6 +275,8 @@ isolated.shutdown();
 
 How to choose: ForkJoinPool for CPU-bound recursive algorithms and parallel streams. ThreadPoolExecutor for I/O-bound task queues with bounded concurrency. VirtualThreadExecutor for high-concurrency I/O.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -260,6 +284,8 @@ How to choose: ForkJoinPool for CPU-bound recursive algorithms and parallel stre
 | ForkJoinPool is always better than ThreadPoolExecutor | For non-recursive, non-CPU-bound work, ThreadPoolExecutor is simpler and appropriate. ForkJoinPool's overhead only pays off for divide-and-conquer with fine-grained tasks |
 | commonPool is isolated per application | The JVM shares ONE commonPool across ALL parallel streams and default CompletableFuture calls in the JVM. One blocking operation starves all parallel streams |
 | More parallelism = faster in ForkJoinPool | Parallelism > CPU cores causes thread context switching, hurting performance. Set parallelism = CPU cores for CPU-bound work |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -274,11 +300,15 @@ Fix: Use dedicated `ForkJoinPool` for workloads with any blocking I/O.
 Symptom: Overhead exceeds benefit; poor performance despite parallelism.
 Fix: Increase threshold. Benchmark with JMH varying threshold sizes.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites:** `ExecutorService`, `RecursiveTask`, `ThreadPoolExecutor`
 **Builds on:** Stream API (parallelStream uses commonPool), Virtual Threads
 **Related:** `CompletableFuture`, `RecursiveTask`, `RecursiveAction`
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -299,6 +329,7 @@ Fix: Increase threshold. Benchmark with JMH varying threshold sizes.
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Using `parallelStream()` inside a Spring `@Transactional` method risks a subtle bug. The parallel stream runs tasks in `ForkJoinPool.commonPool()` threads. Explain why these FJ worker threads do NOT inherit the `@Transactional` context from the calling thread (trace the Spring transaction propagation mechanism using `ThreadLocal`), what happens when FJ worker threads attempt database operations, and describe the exact exception type thrown when the EntityManager is used without an active transaction in the FJ worker context.

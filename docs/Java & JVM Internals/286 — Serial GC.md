@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Serial GC"
 parent: "Java & JVM Internals"
@@ -65,12 +65,18 @@ Serial GC uses:
 
 It is **fully Stop-The-World**: not a single GC phase runs concurrently with application threads. Every collection, whether Minor or Full, freezes the entire JVM.
 
+---
+
 ### Enable with:
+
 ```bash
 -XX:+UseSerialGC
 ```
 
+---
+
 ### When Serial GC is chosen automatically:
+
 - Java 7 and earlier on single-CPU machines
 - Very small heap environments
 - Some embedded/CLI tool contexts
@@ -132,6 +138,8 @@ Full GC (Old Generation + Young):
 
 ## 8. Under the Hood (Deep Dive)
 
+---
+
 ### Memory layout
 
 ```
@@ -149,6 +157,8 @@ Serial GC heap layout:
 Metaspace: separate native memory (not in heap)
 ```
 
+---
+
 ### Copying collector (Young Gen)
 
 ```
@@ -163,6 +173,8 @@ S0:   [] (cleared)
 S1:   [A][C][E][F][G] (live objects copied)
 Old:  []  (if any objects old enough, promoted here)
 ```
+
+---
 
 ### Mark-Sweep-Compact (Old Gen)
 
@@ -179,6 +191,8 @@ Step 3: Compact
   
 Result: No fragmentation, but expensive for large heaps
 ```
+
+---
 
 ### Tuning Serial GC
 

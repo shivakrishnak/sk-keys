@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Build Systems, Task Scheduling, Course Prerequisites | |
 | **Related:** | DFS, BFS, Strongly Connected Components | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Real dependency graphs have hundreds of modules with complex interdependencies. 
 THE INVENTION MOMENT:
 A dependency graph has a crucial property: it must be a DAG (Directed Acyclic Graph) — a cycle would mean "A depends on B depends on A," which is unsatisfiable. Given a DAG, there always exists at least one ordering where every dependency comes before the thing depending on it. The algorithm to find this ordering is called **Topological Sort**, and it is exactly why build systems, task schedulers, and package managers work correctly.
 
+---
+
 ### 📘 Textbook Definition
 
 **Topological Sort** produces a linear ordering of the vertices of a Directed Acyclic Graph (DAG) such that for every directed edge `u → v`, vertex `u` appears before vertex `v` in the ordering. Topological Sort is only possible on DAGs — a cycle makes it impossible because cyclic dependencies have no valid ordering. Two standard algorithms produce a topological ordering: DFS-based (reverse finish order) running in `O(V+E)` and Kahn's algorithm (BFS-based in-degree processing) also in `O(V+E)`.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Arrange tasks so every task comes after all its prerequisites.
 
 **One insight:**
 A topological sort exists if and only if the graph has no cycles. This means topological sort *simultaneously* validates the dependency structure (cycle = error) and produces the correct execution order. Build systems use this duality: "is the dependency graph valid?" and "what order should we build?" are answered by the same algorithm.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -75,6 +83,8 @@ THE TRADE-OFFS:
 Gain: O(V+E) ordering of dependencies; simultaneous cycle detection.
 Cost: Only applicable to DAGs; requires understanding the graph structure upfront.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -95,6 +105,8 @@ Build in this order: succeeds because D is built last (after B and C).
 THE INSIGHT:
 The ordering A, B, C, D is not the only valid one — A, C, B, D is equally valid. Topological sort does not produce a unique ordering; it produces *a* valid ordering (or reports impossibility if a cycle exists). The non-uniqueness reveals which steps can be parallelized: B and C in the queue simultaneously means they can be built in parallel.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Topological sort is like ordering domino pieces before setting them up. You must place a domino before any domino it will knock over. Given the "will knock over" relationships, find an order to place them all so the chain will work exactly as designed. If two dominoes knock over each other, the setup is invalid — that's a cycle, and no valid placement order exists.
@@ -105,6 +117,8 @@ The ordering A, B, C, D is not the only valid one — A, C, B, D is equally vali
 "Pieces with no incoming arrows" → in-degree-0 nodes, start of Kahn's queue
 
 Where this analogy breaks down: Real dominoes are physical — you always find some valid placement. In dependency graphs, cyclic dependencies are genuinely unsatisfiable, not just inconvenient — no placement order can satisfy the constraint.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -119,6 +133,8 @@ DFS-based topological sort uses the finish-time property: the last node to finis
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Topological sort on DAGs is the algorithmic foundation for dependency resolution in all modern software build systems (Maven, Gradle, Make, Bazel) and package managers (npm, pip, cargo). The connection to linear extensions of partial orders is the mathematical foundation: a topological ordering is a linear extension of the partial order defined by the dependency relation. A DAG is "topologically sortable" iff its dependency relation is a strict partial order (irreflexive, asymmetric, transitive) — a cycle violates asymmetry. Kahn's algorithm produces the canonical "level-order" topological sort, which maps directly to parallel build stages: all nodes at depth d can be processed simultaneously by separate workers.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -165,6 +181,8 @@ Topological sort on DAGs is the algorithmic foundation for dependency resolution
 - DFS produces a depth-first topological order (nodes with long dependency chains may appear later).
 - Both are valid topological orderings; neither is "more correct."
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -191,6 +209,8 @@ Circular dependency: A depends on B, B on A
 
 WHAT CHANGES AT SCALE:
 In monorepos with 10,000+ modules (Google's monorepo, Facebook's), topological sort is combined with dependency caching: the build system only rebuilds modules whose transitive dependencies changed. The topological order also determines the critical path — the longest dependency chain — which is the minimum build time with infinite parallelism.
+
+---
 
 ### 💻 Code Example
 
@@ -300,6 +320,8 @@ List<List<Integer>> parallelWaves(int n,
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Style | Cycle Detection | Parallel Waves | Stack Risk | Best For |
@@ -310,6 +332,8 @@ List<List<Integer>> parallelWaves(int n,
 
 How to choose: Use Kahn's algorithm for production build systems (explicit cycle detection, parallel wave identification, no stack overflow risk). Use DFS-based for competitive programming or when you need SCC integration.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -319,6 +343,8 @@ How to choose: Use Kahn's algorithm for production build systems (explicit cycle
 | Kahn's output has fewer nodes than V means exactly one cycle | output.size() < V means one or more cycles exist. The remaining nodes in the graph (not in output) form the cyclic subgraph, but it may contain multiple cycles |
 | BFS and Kahn's algorithm are not related | Kahn's is a BFS variant on the in-degree graph. The queue in Kahn's plays the role BFS's queue plays in graph traversal |
 | Topological sort only works on dependency trees | Topological sort works on DAGs, which include diamond-shaped dependencies (multiple dependency chains converging on a single node) — not just trees |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -380,6 +406,8 @@ Fix: Declare all dependencies explicitly. Use dependency analyzers to detect und
 
 Prevention: Enforce that all imports must have corresponding explicit dependency declarations.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -395,6 +423,8 @@ Prevention: Enforce that all imports must have corresponding explicit dependency
 **Alternatives / Comparisons:**
 - `DFS` — DFS can produce a topological sort via reverse finish order; Kahn's is preferred for explicit cycle detection and parallel wave extraction.
 - `BFS` — Kahn's algorithm IS BFS applied to the in-degree graph; pure BFS without in-degree tracking cannot produce a topological ordering.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -425,6 +455,7 @@ Prevention: Enforce that all imports must have corresponding explicit dependency
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** In a build system with 1000 modules, Kahn's topological sort produces waves of [100, 200, 400, 300] modules respectively (wave 1 has 100 independent modules, wave 2 has 200 that only depend on wave 1, etc.). The critical path is 4 waves long. You have 50 parallel build workers. What is the minimum build time in terms of the per-module build duration T? Now consider: if module M in wave 2 takes 10T (ten times longer than average), how does this change the critical path, and what is the new minimum build time?

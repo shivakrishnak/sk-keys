@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Anti-Entropy"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Gossip Protocol, Replication Strategies, Eventual Consistency                   |                 |
 | **Used by:**    | Cassandra (nodetool repair), Riak, DynamoDB, Amazon S3, Dynamo                  |                 |
 | **Related:**    | Gossip Protocol, Read Repair, Hinted Handoff, Merkle Tree, Eventual Consistency |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

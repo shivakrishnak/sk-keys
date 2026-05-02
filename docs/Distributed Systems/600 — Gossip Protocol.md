@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Gossip Protocol"
 parent: "Distributed Systems"
@@ -28,6 +28,8 @@ tags:
 │ Used by: │ Cassandra, Consul, Redis Cluster │ │
 │ Related: │ Anti-Entropy, Failure Detection │ │
 └──────────────────────────────────────────────────────────────────────────┘
+
+---
 
 ### 🔥 The Problem This Solves
 

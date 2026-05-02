@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Async I/O, Node.js Event Loop, Virtual Thread, Kotlin Coroutines | |
 | **Related:** | Thread, Async I/O, Virtual Thread, Green Thread | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -52,6 +54,8 @@ user-space execution unit that looks like synchronous code but can
 suspend without blocking an OS thread, making sequential-looking code
 that scales to millions of concurrent tasks.
 
+---
+
 ### 📘 Textbook Definition
 
 A **fiber** (also called a coroutine, green thread, or cooperative thread)
@@ -63,6 +67,8 @@ without an OS syscall or kernel context switch. The scheduler is
 implemented in user space and maps many fibers onto one or more OS threads.
 Key property: fibers are cooperative (yield at explicit points), not
 preemptive (interrupted by timer interrupt).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -83,6 +89,8 @@ _waiting_ — for disk, network, or locks. A fiber only needs an OS thread
 while it's actively computing; it releases the thread during waits, letting
 another fiber run. This is why fibers can number in the millions where
 threads cap at thousands.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -108,6 +116,8 @@ Cost: CPU-bound fibers that never yield will starve all others on that
 OS thread (cooperative = one bad actor can block all); debugging
 stack traces cross yield points and are harder to read; shared state
 is still unsafe if multiple OS threads run the fiber scheduler.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -135,6 +145,8 @@ THE INSIGHT:
 IO-bound concurrency is 98% waiting. Fibers eliminate the cost of waiting
 by making the wait invisible to the OS thread.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A fiber is like a generator function that can pause at `yield` and
@@ -152,6 +164,8 @@ by making the wait invisible to the OS thread.
 Where this analogy breaks down: generators typically produce values to
 a consumer; fibers model arbitrary suspended computation including IO
 waits, locks, and timers — broader than value generation.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -184,6 +198,8 @@ but requires all code in the call chain to be `suspend`-aware — the
 freely but must copy the stack on each suspend. Java Virtual Threads chose
 a middle path: OS blocking syscalls are intercepted by the JVM and converted
 to virtual thread yields, requiring no source-code changes.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -251,6 +267,8 @@ fun fetchUser(id: Int, cont: Continuation): Any {
 └─────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -285,6 +303,8 @@ for saved stacks becomes the bottleneck. Go's goroutine scheduler uses
 work-stealing across OS threads to balance load. Java Virtual Thread
 continuation heap segments fragment GC. At this scale, the scheduler
 design (work-stealing vs. single-queue) dominates throughput.
+
+---
 
 ### 💻 Code Example
 
@@ -340,6 +360,8 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 // 100,000 concurrent DB calls on ~50 OS threads
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Model          | OS Visible | Preemptive | Stack Size | Max Count | Best For         |
@@ -353,6 +375,8 @@ How to choose: use fibers/coroutines for IO-bound workloads with many
 concurrent tasks; use OS threads for CPU-bound parallel computation that
 needs true simultaneous execution on multiple cores.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                       | Reality                                                                                                                                     |
@@ -362,6 +386,8 @@ needs true simultaneous execution on multiple cores.
 | "Fibers eliminate race conditions"                  | If multiple OS threads run the fiber scheduler, fibers on different OS threads can race on shared state                                     |
 | "Virtual threads replace all use of thread pools"   | Thread pools are still useful for CPU-bound tasks; virtual threads shine for IO-bound blocking code                                         |
 | "A coroutine is just syntactic sugar for callbacks" | The compiler transforms to state machines, but the semantics include structured concurrency, cancellation, and scope — far beyond callbacks |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -475,6 +501,8 @@ try {
 Prevention: audit `synchronized` usage in IO-heavy paths before
 migrating to virtual threads.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -493,6 +521,8 @@ migrating to virtual threads.
 
 - `Thread` — OS-managed, preemptive; better for CPU-bound parallelism
 - `Async/Await` — JavaScript/Python pattern built on top of coroutine semantics
+
+---
 
 ### 📌 Quick Reference Card
 

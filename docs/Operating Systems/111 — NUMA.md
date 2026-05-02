@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "NUMA"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | JVM GC tuning, Database buffer pools, HPC, Kubernetes NUMA-aware scheduling |                 |
 | **Related:**    | False Sharing, Cache Line, UMA, CPU affinity, numactl                       |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT (SMP / UMA):
@@ -39,9 +41,13 @@ A server with 32 cores sharing one memory bus hits a bandwidth bottleneck. The b
 THE INVENTION MOMENT:
 NUMA connects each CPU socket to its own local memory bank, with inter-socket links (HyperTransport for AMD, QPI/UPI for Intel) for cross-socket access. Local memory: 60–80ns latency, full bandwidth. Remote memory (other socket): 120–160ns latency, shared bandwidth. This scales to 256+ cores — but now latency is non-uniform, and the OS and application must know about it.
 
+---
+
 ### 📘 Textbook Definition
 
 **NUMA (Non-Uniform Memory Access)** is a multi-processor memory architecture where memory access latency depends on the physical location of the memory relative to the accessing CPU. A NUMA system has multiple **nodes**, each containing one or more CPUs and a portion of system RAM (**local memory**). A CPU accesses its local memory with lower latency and higher bandwidth than it accesses **remote memory** (memory attached to another node). The OS exposes NUMA topology via `/sys/devices/system/node/` and tools like `numactl`, and optionally allocates memory on the node nearest to the accessing CPU (**NUMA-local allocation**).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ In a multi-socket server, RAM next to your CPU is fast, RAM next to the other CP
 
 **One insight:**
 The latency difference (1.5–4×) is invisible in profilers that don't attribute memory latency by NUMA node. A 30% throughput degradation in a JVM application running on a NUMA server can often be fully explained by NUMA-remote memory accesses in the GC allocator.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -70,6 +78,8 @@ The OS NUMA allocator (Linux: `libnuma`, `mbind()`, `set_mempolicy()`) attempts 
 THE TRADE-OFFS:
 Gain: Scales to 100+ cores without single memory bus bottleneck; full bandwidth per node.
 Cost: Remote accesses significantly slower; thread migration can silently cause remote accesses; interleaved workloads (random shared data) can't benefit from locality; OS/application complexity to manage placement.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -92,6 +102,8 @@ NUMA FAILURE MODE:
 THE INSIGHT:
 This is the silent NUMA problem: everything looks fine in CPU utilization and GC counters until you check `numastat -c <PID>` and see 90% remote hits.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > NUMA is like a two-floor library. The first floor (Node 0) has Reference A–M; second floor (Node 1) has Reference N–Z. Librarians on the first floor (CPUs) can instantly grab A–M books. N–Z requires climbing stairs. If you're studying only A–M, stay on the first floor. If your work was moved to the second floor but your books are on the first floor, you spend half your time on the stairs.
@@ -99,6 +111,8 @@ This is the silent NUMA problem: everything looks fine in CPU utilization and GC
 > The `numactl` tool is like having a librarian who keeps your books on the same floor as your desk.
 
 Where the analogy breaks down: unlike floors of a library, you can interleave NUMA memory across nodes (`--interleave=all`) to spread the load — useful when random access patterns mean no single node has all your data.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -113,6 +127,8 @@ Linux NUMA policy is per-virtual-memory-area (VMA). `set_mempolicy(MPOL_BIND, no
 
 **Level 4 — Why it was designed this way (senior/staff):**
 NUMA topology is a direct consequence of the memory controller location choice: shared memory controller (UMA) → bus saturation at scale; per-socket memory controller (NUMA) → linear bandwidth scaling. The trade-off is correctness: UMA means any code is automatically NUMA-optimal; NUMA means any code is potentially NUMA-suboptimal unless explicitly managed. The OS attempts to hide this via AutoNUMA (transparent page migration) but at the cost of extra memory bandwidth for the access-pattern sampling. The "right" solution is application-aware NUMA: databases (Oracle, PostgreSQL, Cassandra) have explicit NUMA zone managers; JVM G1 has per-node regions. The long-term trend (AMD EPYC, Intel Xeon 3rd gen) is toward chiplet-based designs with multiple sub-nodes even per socket (NUMA within a socket), making NUMA topology even more important.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -135,6 +151,8 @@ NUMA topology is a direct consequence of the memory controller location choice: 
 │  CPU0 → Node1 mem: 150ns (remote, crosses QPI link)       │
 └────────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -162,6 +180,8 @@ JVM running on CPUs 0–15, heap on Node 0
   → Diagnosis: numastat -c <PID> → high remote ratio
   → Fix: re-pin with numactl or K8s topology policy
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -246,6 +266,8 @@ spec:
       # With single-numa-node policy: 8 CPUs + 32GB on SAME node
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Architecture                  | Access Latency       | Bandwidth Scaling    | Complexity      | Use For                |
@@ -254,6 +276,8 @@ spec:
 | **NUMA**                      | Non-uniform (1.5–4×) | Linear with nodes    | Medium          | 8–hundreds of cores    |
 | NUMA within socket (AMD EPYC) | Multiple sub-nodes   | Very high            | High            | Latest-gen AMD servers |
 | NUMA-aware app                | Minimal remote hits  | Near-local           | High (explicit) | Databases, HPC, JVM    |
+
+---
 
 ### ⚠️ Common Misconceptions
 
@@ -264,6 +288,8 @@ spec:
 | "Interleaved allocation (-interleave=all) is the safe default" | Interleave helps random-access workloads but reduces throughput for sequential workloads vs strict local binding                              |
 | "More sockets = more NUMA nodes (always)"                      | Modern AMD EPYC has multiple NUMA nodes per socket (NUMA within a die); topology can be complex                                               |
 | "Setting -XX:+UseNUMA is enough"                               | UseNUMA only helps if JVM threads are actually running on consistent NUMA nodes; without CPU pinning, threads migrate and the benefit is lost |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -333,6 +359,8 @@ Fix: Use `best-effort` TopologyManager policy for workloads that can tolerate cr
 
 Prevention: Monitor per-NUMA-node memory utilization; don't overcommit individual nodes.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -351,6 +379,8 @@ Prevention: Monitor per-NUMA-node memory utilization; don't overcommit individua
 - `UMA (Uniform Memory Access)` — single-socket or small multi-core servers; lower peak scaling but uniform latency
 - `CPU affinity (taskset)` — CPU-level pinning; numactl also sets memory policy (more complete)
 - `FPGA / GPU NUMA` — PCIe devices create their own NUMA-like non-uniform topology for GPU memory access
+
+---
 
 ### 📌 Quick Reference Card
 

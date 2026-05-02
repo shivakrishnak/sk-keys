@@ -27,6 +27,8 @@ tags:
 | **Used by:** | System Design, Concurrency, Web Server Architecture | |
 | **Related:** | Fiber / Coroutine, Context Switch, Fork / Exec | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -54,6 +56,8 @@ solve concurrency but with fundamentally different isolation models.
 Understanding _exactly_ where they differ tells you _exactly_ when to
 use each.
 
+---
+
 ### 📘 Textbook Definition
 
 A **process** is an OS-managed execution environment with its own virtual
@@ -64,6 +68,8 @@ execution unit within a process, sharing the process's address space, file
 descriptors, and heap. Threads have private stacks and register sets.
 Creating a process requires duplicating the address space (via fork+exec);
 creating a thread requires only allocating a stack and thread control block.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -84,6 +90,8 @@ The core difference is not speed — it's _what can go wrong_. Threads are
 faster to create and communicate, but a bug in any thread can corrupt the
 entire process's state. With processes, bugs are contained; the worst
 outcome is one process crashes, not all of them.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -107,6 +115,8 @@ Process cost: expensive creation (~100µs), expensive IPC, no shared state.
 Thread gains: cheap creation (~1µs), zero-copy shared data, lower latency.
 Thread cost: one bug corrupts all, requires explicit synchronization,
 harder to reason about correctness.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -132,6 +142,8 @@ higher memory cost (each process has its own V8 heap) for a smaller
 blast radius. The right choice depends on how much you trust the code
 running in each unit.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Processes are countries with border control; threads are cities within
@@ -150,6 +162,8 @@ running in each unit.
 Where this analogy breaks down: countries can negotiate bilateral treaties
 (shared memory regions between processes); cities can't actually corrupt
 each other's infrastructure just by someone driving badly — threads can.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -180,6 +194,8 @@ famously implements threads as "light processes" — no separate kernel
 primitive — which simplifies the kernel but makes pthread semantics
 slightly different from some BSD implementations. This unified model
 is why `getpid()` in Linux returns the TGID, not the TID.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -225,6 +241,8 @@ is why `getpid()` in Linux returns the TGID, not the TID.
 └──────────────────┴─────────────┴─────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (web request, multi-process model):
@@ -257,6 +275,8 @@ process needs its own heap/stack); multi-thread hits synchronization
 contention on shared data structures. At this scale, neither naive model
 suffices — use async IO with a small thread pool or fiber-based model.
 
+---
+
 ### ⚖️ Comparison Table
 
 | Dimension        | Process             | Thread                   |
@@ -274,6 +294,8 @@ others (browser tabs, microservices, untrusted plugins); use threads
 when units need to share large data structures efficiently (DB server
 connection pool, in-memory cache).
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                              | Reality                                                                                                                                      |
@@ -283,6 +305,8 @@ connection pool, in-memory cache).
 | "Using more processes improves stability"  | More processes without proper crash recovery (supervisor, restart logic) just means more things that can crash                               |
 | "One process per microservice is required" | The process boundary is a common choice for isolation, but not mandatory — containers enforce process boundaries at the OS level             |
 | "Thread context switch is free"            | Thread context switches cost ~1 µs and flush CPU caches; at thousands of switches/second this is measurable overhead                         |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -366,6 +390,8 @@ not critical.
 Prevention: design IPC message sizes to amortize syscall overhead;
 benchmark IPC throughput early in architecture phase.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -383,6 +409,8 @@ benchmark IPC throughput early in architecture phase.
 
 - `Fiber / Coroutine` — a third option: user-space cooperative units
 - `Container` — process isolation at OS level (namespaces/cgroups)
+
+---
 
 ### 📌 Quick Reference Card
 

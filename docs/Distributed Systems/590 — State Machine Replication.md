@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Distributed Databases, ZooKeeper, etcd, CockroachDB | |
 | **Related:** | Log Replication, Raft, Total Order Broadcast, Consensus | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **DISTRIBUTED FAULT TOLERANCE WITHOUT SMR:**

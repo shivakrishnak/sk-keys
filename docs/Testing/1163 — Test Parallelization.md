@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Test Parallelization"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Developers, CI-CD Engineers                                                   |                 |
 | **Related:**    | Test Isolation, Flaky Tests, JUnit 5, Test Environments, Test Data Management |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 CI BUILD TAKES 40 MINUTES:
@@ -35,9 +37,13 @@ Large project: 5,000 unit tests + 500 integration tests. Runs sequentially: 40 m
 THE PARALLELIZATION TRAP:
 Simply enabling parallelization without preparation causes: port conflicts (two tests bind to port 8080), database conflicts (two tests insert the same unique record), test order dependencies (Test B expects Test A ran first), and race conditions in shared state. The result: tests that pass alone become flaky in parallel.
 
+---
+
 ### 📘 Textbook Definition
 
 **Test parallelization** is the execution of multiple tests concurrently, using multiple threads or processes, to reduce total test suite duration. Parallelization occurs at multiple granularities: **method-level** (multiple test methods in one class run concurrently), **class-level** (multiple test classes run concurrently), and **process-level** (test suite split across multiple CI machines). Each granularity requires different isolation guarantees. JUnit 5's parallel execution, Maven Surefire's fork count, and CI matrix strategies (GitHub Actions, Jenkins parallel stages) are common implementations.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -47,6 +53,8 @@ Parallel tests = faster CI; but only if tests are truly isolated (no shared muta
 **One analogy:**
 
 > Parallel tests are like **chefs working simultaneously in one kitchen**: if each chef has their own workstation, ingredients, and utensils (test isolation), they work efficiently without interfering. If they share a cutting board, the same bowl of ingredients, and the same stove burner — chaos. The kitchen (shared state) must be designed for concurrent use.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -131,6 +139,8 @@ PROBLEM: Sequence generators (auto-increment IDs conflict)
 SOLUTION: Never assert on auto-generated IDs; assert on behavior/content
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 THE SEQUENTIAL → PARALLEL MIGRATION:
@@ -163,9 +173,13 @@ Step 5: Isolate slow tests
   → Overall CI time: 5 minutes
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Parallelization is like adding **more lanes to a highway**. The road (test runner) can handle more traffic (tests) simultaneously. But if cars (tests) need to merge at a single tollbooth (shared database, shared port) — adding lanes doesn't help; it makes it worse. Parallelization requires widening every bottleneck, not just the main road.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -176,6 +190,8 @@ Step 5: Isolate slow tests
 **Level 3:** Maven Surefire `forkCount=1C` (one fork per CPU core) gives process-level isolation (separate JVM per fork). Heavier but prevents static state leakage between test classes. For CI: matrix builds split tests by `@Tag` across multiple machines for maximum throughput. The bottleneck analysis is essential: parallelizing fast tests while slow tests run sequentially gives diminishing returns.
 
 **Level 4:** Test sharding at CI level: tests sorted by historical duration (stored in CI artifact), then distributed across N machines using bin-packing algorithm to equalize total duration per machine. This minimizes total wall-clock time (all machines finish approximately simultaneously). Tools: Gradle's `--max-workers`, JUnit Platform's `--select-tag` for sharding, Test Analytics in CircleCI/GitHub Actions. Cost/benefit: diminishing returns after ~8 parallel streams — coordination overhead and I/O (database connections) become the bottleneck.
+
+---
 
 ### 💻 Code Example
 
@@ -228,6 +244,8 @@ jobs:
 ```
 {% endraw %}
 
+---
+
 ### ⚖️ Comparison Table
 
 |                    | Sequential | Thread-parallel   | Process-parallel      | Machine-parallel |
@@ -237,6 +255,8 @@ jobs:
 | Speedup            | 1x         | N threads         | N CPUs                | N machines       |
 | Shared state risk  | None       | High              | Low                   | None             |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                               | Reality                                                                              |
@@ -244,6 +264,8 @@ jobs:
 | "Enable parallel = automatic speedup"       | Only if tests are isolated; without isolation, parallelism causes flakiness          |
 | "More parallelism always helps"             | Bottlenecks (database connections, startup time) limit speedup; Amdahl's law applies |
 | "Unit tests are always safe to parallelize" | Not if they use static mutable state or file system I/O to shared paths              |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -260,10 +282,14 @@ Cause: Static mutable state (e.g., a static `List` being shared across test clas
 Diagnosis: Run tests in random order; run two specific tests together to reproduce.
 Fix: Remove static mutable state; inject dependencies instead.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Test Isolation, Flaky Tests, Concurrency vs Parallelism
 - **Related:** JUnit 5, Maven Surefire, Testcontainers, GitHub Actions Matrix, Amdahl's Law
+
+---
 
 ### 📌 Quick Reference Card
 

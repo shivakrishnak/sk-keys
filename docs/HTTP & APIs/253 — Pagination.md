@@ -29,6 +29,8 @@ tags:
 | **Used by:** | REST APIs, List Endpoints, Data Export | |
 | **Related:** | API Design Best Practices, HATEOAS, Cursor-based Pagination | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

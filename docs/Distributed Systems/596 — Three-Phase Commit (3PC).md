@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Three-Phase Commit (3PC)"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Two-Phase Commit, Distributed Systems, Consensus, Failure Modes       |                 |
 | **Used by:**    | Distributed Databases, Saga Pattern                                   |                 |
 | **Related:**    | Two-Phase Commit, Paxos, Saga Pattern, Consensus, Distributed Locking |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

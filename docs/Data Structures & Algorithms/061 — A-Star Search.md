@@ -29,6 +29,8 @@ tags:
 | **Used by:** | GPS Navigation, Game Pathfinding, Robotics Motion Planning | |
 | **Related:** | Dijkstra, Greedy Best-First Search, Bidirectional Dijkstra | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -40,9 +42,13 @@ Dijkstra is optimal in its exploration — it finds the shortest path — but it
 THE INVENTION MOMENT:
 Dijkstra prioritises `g(n)` — the actual known distance from source to node `n`. What if we also added a guess `h(n)` — the estimated remaining distance from `n` to the goal? Prioritise by `f(n) = g(n) + h(n)`. Nodes that are both close to the source AND estimated close to the goal get priority. With a good estimate (e.g., Euclidean distance), A* explores a narrow corridor toward the goal instead of expanding in all directions. This is exactly why **A* Search** was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **A* Search** is an informed best-first search algorithm that finds the shortest path between a source and a goal node by maintaining a priority queue ordered by `f(n) = g(n) + h(n)`, where `g(n)` is the exact cost from source to `n` and `h(n)` is an **admissible heuristic** — an estimate of the cost from `n` to the goal that never overestimates. When `h(n)` is admissible and consistent (monotone), A* is complete (finds a solution if one exists) and optimal (finds the shortest path). Time complexity ranges from O(E log V) with a near-perfect heuristic to O((V+E) log V) when `h(n)=0` (reducing to Dijkstra).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ Find the shortest path by always expanding the node closest to "distance travele
 
 **One insight:**
 A* is only as good as its heuristic. With `h(n) = 0`, A* reduces exactly to Dijkstra. With a perfect heuristic (h(n) = true remaining distance), A* explores only the nodes on the optimal path. The **admissibility** condition (`h(n)` never overestimates) is what preserves the optimality guarantee — it ensures A* never dismisses a path that could be shorter.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -77,6 +85,8 @@ THE TRADE-OFFS:
 Gain: Explores fewer nodes than Dijkstra when heuristic is tight; same correctness guarantees.
 Cost: Requires a domain-specific admissible heuristic to design and validate; memory unchanged at O(V) worst case; inadmissible heuristic sacrifices optimality silently.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -91,6 +101,8 @@ f(0,0) = 0+6 = 6. Explores only nodes along the diagonal where f=6. Reaches (3,3
 THE INSIGHT:
 The Manhattan heuristic confines A* to the "corridor" of nodes on or near the optimal path. Cells far from the diagonal (top-right corner, bottom-left corner) have f > 6 and are never explored. The heuristic acts as a focus beam, eliminating irrelevant exploration — which is exactly what makes A* faster than Dijkstra in practice.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A* is like a GPS that combines two signals: how far you have already driven (g), and the straight-line remaining distance to your destination (h). It always sends you down the road that minimises total estimated trip time. A GPS with only the driven distance (Dijkstra) zigzags uniformly in all directions. A GPS with only the remaining estimate (greedy best-first) drives in a straight line and gets stuck in cul-de-sacs. A* uses both to navigate intelligently.
@@ -101,6 +113,8 @@ The Manhattan heuristic confines A* to the "corridor" of nodes on or near the op
 "Always pick next road minimising total" → priority queue ordered by f
 
 Where this analogy breaks down: GPS estimates can be wrong (traffic). An inadmissible heuristic (overestimates) causes A* to skip the optimal path — the GPS would send you on a suboptimal route without warning.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -115,6 +129,8 @@ A* maintains an "open set" (priority queue by f) and tracks g-values. Consistenc
 
 **Level 4 — Why it was designed this way (senior/staff):**
 A* (Hart, Nilsson, Raphael, 1968) is information-theoretically optimal: among all best-first algorithms using the same admissible heuristic, A* expands the minimum number of nodes to guarantee optimality. The heuristic h encodes domain knowledge — better heuristics = fewer expanded nodes. In game AI, Jump Point Search (JPS) exploits grid symmetry to skip equivalent paths, reducing A* explored nodes by ~10x on open maps. In robotics, A* on discretised configuration spaces uses bespoke heuristics that account for kinodynamic constraints, ensuring the heuristic remains admissible despite the continuous space approximation.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -144,6 +160,8 @@ A* (Hart, Nilsson, Raphael, 1968) is information-theoretically optimal: among al
 
 The only change from Dijkstra: priority key is `g[v] + h(v)` instead of `g[v]`. When h=0 everywhere, f=g and the algorithm is exactly Dijkstra.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -172,6 +190,8 @@ Inadmissible heuristic: h(n) > true distance
 
 WHAT CHANGES AT SCALE:
 For city-scale road networks (V=10 million), A* with Euclidean heuristic still explores millions of nodes. Production GPS uses bidirectional A* plus Contraction Hierarchies: preprocessing builds a hierarchy allowing A* to skip low-importance roads entirely. This reduces query time from seconds (Dijkstra) to milliseconds (CH+A*).
+
+---
 
 ### 💻 Code Example
 
@@ -282,6 +302,8 @@ while (!pq.isEmpty()) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Heuristic | Optimal | Nodes Explored | Time | Best For |
@@ -294,6 +316,8 @@ while (!pq.isEmpty()) {
 
 How to choose: Use A* when you have a good admissible heuristic and need optimal paths. Use Dijkstra for general graphs without a heuristic. Use weighted A* when bounded suboptimality is acceptable for speed gains.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -303,6 +327,8 @@ How to choose: Use A* when you have a good admissible heuristic and need optimal
 | h(n)=0 makes A* equal to BFS | h(n)=0 makes A* equal to Dijkstra. BFS is for unweighted graphs. Dijkstra equals BFS only when all edge weights are 1 |
 | Admissible always implies consistent | Admissibility does not imply consistency. A consistent heuristic is always admissible. Most real-world heuristics (Manhattan, Euclidean) are both, but the implication is one-directional |
 | A* with admissible heuristic always terminates correctly | Only if the heuristic is also consistent (for the standard lazy-deletion implementation). Admissible-but-inconsistent heuristics may require re-processing already-closed nodes |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -375,6 +401,8 @@ Fix: Add `if (u == goal) return g[goal];` immediately after popping from the pri
 
 Prevention: The goal-check is always required in A* — it is the primary optimisation over running to completion.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -391,6 +419,8 @@ Prevention: The goal-check is always required in A* — it is the primary optimi
 - `Dijkstra` — same optimality guarantee but direction-blind; use when no heuristic is available.
 - `Greedy Best-First Search` — uses h(n) alone (no g); fast but not optimal; acceptable for real-time games where approximate paths suffice.
 - `Bidirectional Dijkstra` — explores from both source and goal simultaneously; achieves similar speedup to A* without needing a heuristic.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -420,6 +450,7 @@ Prevention: The goal-check is always required in A* — it is the primary optimi
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A* with an admissible heuristic guarantees optimality. Consider a graph where the true shortest path to the goal has cost 10, but the heuristic at the source overestimates the remaining distance as 12, making f(source) = 0+12 = 12. A suboptimal path of true cost 11 reaches the goal with h(goal)=0, giving f=11. A* would pop this suboptimal path first and return 11. Trace exactly which admissibility property is violated, and explain why the proof of A* optimality breaks down when h overestimates.

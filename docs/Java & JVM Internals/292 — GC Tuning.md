@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "GC Tuning"
 parent: "Java & JVM Internals"
@@ -163,6 +163,8 @@ STEP 7: Document changes in runbook/ADR
 
 ## 8. Under the Hood (Deep Dive)
 
+---
+
 ### Heap sizing fundamentals
 
 ```
@@ -182,6 +184,8 @@ Young Gen sizing:
     -XX:G1NewSizePercent=20 (min 20% of heap is Young)
     -XX:G1MaxNewSizePercent=40 (max 40%)
 ```
+
+---
 
 ### G1GC tuning recipe
 
@@ -205,6 +209,8 @@ java -XX:+UseG1GC -Xms4g -Xmx8g \
 -XX:ConcGCThreads=2
 ```
 
+---
+
 ### Common GC metrics to monitor
 
 ```
@@ -218,6 +224,8 @@ Old Gen growth trend     | Steady upward trend → memory leak
 Minor GC frequency       | > 1/second (Young Gen may be too small)
 Heap utilization         | > 85% consistently → increase Xmx
 ```
+
+---
 
 ### Object allocation reduction (best fix)
 

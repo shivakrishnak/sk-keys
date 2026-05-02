@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Dijkstra, Huffman Coding, Kruskal / Prim | |
 | **Related:** | Dynamic Programming, Divide and Conquer, Backtracking | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ For large combinatorial problems, exhaustive search is exponential. Dynamic prog
 THE INVENTION MOMENT:
 For this specific coin system, always picking the largest coin that fits (25¢, then 10¢, etc.) always produces the optimal answer. The "greedy choice" at each step is locally optimal, and remarkably, locally optimal choices compose into a globally optimal solution. This is the **Greedy Choice Property** — when it holds, a greedy algorithm beats DP in both time and simplicity. This is exactly why Greedy Algorithms were created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Greedy Algorithm** solves an optimisation problem by making a series of choices, each the locally optimal choice at that step, without revisiting previous choices. For a greedy algorithm to produce the globally optimal solution, the problem must satisfy two properties: the **Greedy Choice Property** (a globally optimal solution can be assembled from locally optimal choices) and **Optimal Substructure** (the optimum for the whole contains optima for subproblems). When these hold, greedy algorithms are typically O(N log N) or O(N) — faster than O(N² or exponential) DP or backtracking.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -52,6 +58,8 @@ At each step, pick the best available option and never look back.
 
 **One insight:**
 The hardest part of using greedy is *proving* the Greedy Choice Property — that "always take the best now" never sacrifices "the best total." This proof is problem-specific. Without proof, greedy is just a heuristic — it may find a good solution, but not necessarily the optimal one.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -79,6 +87,8 @@ THE TRADE-OFFS:
 Gain: Often O(N log N) or O(N), simple implementation, no need for state table.
 Cost: Correctness hard to verify; fails silently if greedy choice property doesn't hold; not universally applicable.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -97,6 +107,8 @@ Suppose an optimal solution O doesn't include the earliest-ending activity A. Sw
 THE INSIGHT:
 The "exchange argument" is the standard proof technique for greedy: show that any optimal solution can be transformed to include the greedy choice without getting worse. If this holds for every step, greedy is globally optimal.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Greedy is like a packing strategy for a suitcase: always pack the densest item first (most value per cm³). This fills the suitcase with maximum value per space. But if items are discrete and indivisible, the densest-first approach may leave wasted space that a different combination would fill better. Greedy works for the "fractional knapsack" (items divisible) but not the "0/1 knapsack" (items whole).
@@ -107,6 +119,8 @@ The "exchange argument" is the standard proof technique for greedy: show that an
 "Wasted space from indivisibility" → greedy choice property violated
 
 Where this analogy breaks down: "Densest" is a well-defined ordering; greedy selection criteria are problem-specific and may be non-obvious (e.g., Huffman encoding's criterion is character frequency).
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -121,6 +135,8 @@ Most greedy algorithms: (1) sort by the relevant criterion O(N log N), (2) itera
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Greedy algorithms are not about simplicity — they are about exploiting matroid structure. A **matroid** is an abstract mathematical structure where greedy algorithms always find optimal solutions (independent set systems with the exchange property). Huffman encoding works because the character frequencies form a matroid-like structure. Minimum spanning trees work because graphic matroids satisfy the exchange property. When you prove greedy is correct, you're implicitly proving the problem's solution space forms a matroid (or similar). Recognising when a problem has matroid structure is an advanced skill separating candidates who "know" greedy from those who understand it.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -187,6 +203,8 @@ Optimal: take (5,3)+(5,3) = 10
 Greedy FAILS for 0/1 knapsack.
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -210,6 +228,8 @@ Apply greedy without proof of correctness
 
 WHAT CHANGES AT SCALE:
 Greedy's O(N log N) is excellent at scale: 1 billion elements in ~30 log(10^9) ≈ 30 billion comparisons. The sort step dominates; the greedy scan is O(N). For streaming data (can't sort), greedy must be adapted with priority queues (Dijkstra: O((V+E) log V)). At distributed scale, greedy algorithms solve the local problem on each shard; global optimality requires careful aggregation.
+
+---
 
 ### 💻 Code Example
 
@@ -248,6 +268,8 @@ boolean canJump(int[] nums) {
 // Always extend reach greedily — O(N), no DP needed
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Paradigm | Choice per step | Can backtrack | Globally optimal | Time |
@@ -259,6 +281,8 @@ boolean canJump(int[] nums) {
 
 How to choose: Use greedy when you can prove the greedy choice property. Use DP when subproblems overlap and greedy fails. Use backtracking for constraint satisfaction where you need to explore all solutions.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -267,6 +291,8 @@ How to choose: Use greedy when you can prove the greedy choice property. Use DP 
 | Greedy and DP are equivalent | Greedy avoids a DP table by making one choice per step — faster, but narrower applicability |
 | Coin change is always greedy | Standard USD/EU denominations work greedily; non-canonical denominations (e.g., [1,3,4]) require DP |
 | "Pick the largest first" is the universal greedy criterion | The criterion is problem-specific: end time for scheduling, frequency for Huffman, edge weight for MST |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -327,6 +353,8 @@ Fix: Verify the overlap condition (strictly overlapping: `start < lastEnd`, or n
 
 Prevention: Define "compatible" precisely: "activity starts at or after last selected activity ends" → `act.start >= lastEnd`.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -341,6 +369,8 @@ Prevention: Define "compatible" precisely: "activity starts at or after last sel
 **Alternatives / Comparisons:**
 - `Dynamic Programming` — when greedy fails (no greedy choice property), use DP.
 - `Backtracking` — exhaustive correct-by-construction search when neither greedy nor DP applies.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -371,6 +401,7 @@ Prevention: Define "compatible" precisely: "activity starts at or after last sel
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The activity selection problem with identical end times: suppose you have N activities all ending at time 10, with start times 1, 2, 3, ..., N. Which activities can be selected? How many? What does this reveal about the activity selection greedy algorithm's behavior at the boundary, and does the greedy choice property still hold (does "earliest end time first" still produce the optimal count)? How would you handle ties in the greedy criterion to ensure deterministic and correct behavior?

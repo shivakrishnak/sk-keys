@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Inode — File System"
 parent: "Operating Systems"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | File Descriptor, Memory-Mapped File (mmap), Docker Layers |                 |
 | **Related:**    | ext4, XFS, VFS, dentry, Page Cache, Hard Link             |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,11 +40,15 @@ The insight: separate the data blocks + metadata (inode) from the name (director
 THE INVENTION MOMENT:
 Unix file system (1974, Dennis Ritchie). The inode structure has been fundamentally unchanged: 12 direct block pointers + indirect pointers + owner/permissions/timestamps. Modern filesystems (ext4, XFS, btrfs) extend this with extent-based allocation and checksums, but the conceptual model persists.
 
+---
+
 ### 📘 Textbook Definition
 
 An **inode** (index node) is a kernel data structure that stores all metadata about a file or directory: owner (UID/GID), permissions (mode), size, timestamps (atime/mtime/ctime), link count, and pointers to the data blocks on disk. Every file on a Unix filesystem has exactly one inode, identified by a unique inode number within its filesystem. The filename-to-inode mapping is stored in the **directory** (itself an inode + data blocks containing `[name, inode_number]` entries).
 
 The **Virtual File System (VFS)** is the Linux kernel's abstraction layer between system calls (`open()`, `read()`, `stat()`) and concrete filesystem implementations (ext4, XFS, NFS, procfs). VFS defines common in-memory objects (super_block, inode, dentry, file) that all filesystem drivers populate, allowing a single `read()` syscall to work identically for local ext4 files, NFS-mounted files, and virtual `/proc` files.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -55,6 +61,8 @@ Inode = file's identity card (metadata + data location); filename = label on the
 
 **One insight:**
 Hard links only work within a filesystem because inode numbers are only unique within one filesystem. A hard link to a file on a different disk would require copying the file, because inode numbers restart at each filesystem boundary.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -99,6 +107,8 @@ THE TRADE-OFFS:
 Gain: Rename O(1), hard links O(1), move-within-filesystem O(1).
 Cost: Two lookups for any file access (directory → inode, then inode → data blocks); inode table is fixed-size at mkfs time on ext4 (running out of inodes with many small files is a real issue despite having free space).
 
+---
+
 ### 🧪 Thought Experiment
 
 INODE EXHAUSTION:
@@ -122,11 +132,15 @@ Workaround (can't reformat): use a database or tar-ball small files into fewer l
 THE INSIGHT:
 The inode table is a fixed-size structure decided at filesystem creation. This is a design limitation of ext4. XFS uses dynamic inode allocation (no fixed inode table) — inodes are allocated on demand from data space. This is one reason XFS is preferred for workloads with millions of small files.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A library: the **card catalog** is the directory (maps title → catalog number). The **catalog number** is the inode number. The **catalog card** is the inode (author, edition, location in stacks, condition notes). The **shelved book** is the data blocks. You can have multiple catalog cards pointing to the same physical book in the stacks (hard links). The book's location can change (defragmentation) without changing any catalog cards — just update the location field on the catalog card.
 
 > The VFS is the library's checkout system: whether the book is in the building (ext4), at a partner library (NFS), or is a virtual book that's generated on demand (procfs), the checkout process is identical to the borrower.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -141,6 +155,8 @@ Linux VFS in-memory objects: `super_block` (mounted filesystem), `inode` (per-fi
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The separation of name (dentry) and metadata (inode) is what makes POSIX rename() atomic: `rename("old", "new")` is a single syscall that atomically replaces the target dentry — either the old name or new name is visible, never a partial state. This atomicity guarantee (from the filesystem journal) is what log-structured merge trees (LevelDB, RocksDB) exploit: write to a temp file, then atomic rename to the final path. The "rename is atomic" invariant underpins safe atomic file updates across all Unix filesystems. It's why `cp foo bar` is not atomic but `mv tmp_result bar` is.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -171,6 +187,8 @@ The separation of name (dentry) and metadata (inode) is what makes POSIX rename(
 └────────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 ATOMIC FILE UPDATE PATTERN (rename trick):
@@ -196,6 +214,8 @@ ATOMIC FILE UPDATE PATTERN (rename trick):
    Any process reading /etc/app/config sees a complete, consistent file
    No window where the file is partially written or empty
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -254,6 +274,8 @@ Files.move(temp, target,
 // Readers see complete old OR new config; never a partial write
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Feature          | ext4              | XFS           | btrfs   | NFS           |
@@ -265,6 +287,8 @@ Files.move(temp, target,
 | Snapshots        | No                | Yes (limited) | Yes     | N/A           |
 | Small file perf  | Good              | Medium        | Medium  | Network-bound |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                    | Reality                                                                                     |
@@ -273,6 +297,8 @@ Files.move(temp, target,
 | "Renaming a file updates its mtime"              | Rename updates ctime (inode change), not mtime (data modification)                          |
 | "You can run out of disk space with free inodes" | Yes — inode exhaustion is a separate limit from block exhaustion                            |
 | "Hard links work across filesystems"             | No — inodes are filesystem-local; cross-filesystem links require copies (or symlinks)       |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -301,6 +327,8 @@ Root Cause: NFS uses inode numbers as file handles. If the server remounts or re
 
 Fix: Clients must handle ESTALE by re-walking the path; NFS v4 uses persistent fileids instead of inode numbers to reduce this.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -318,6 +346,8 @@ Fix: Clients must handle ESTALE by re-walking the path; NFS v4 uses persistent f
 
 - `Object Storage (S3)` — no inodes, no directories — flat namespace with key → object; no rename atomicity
 - `Windows NTFS MFT` — analogous to inode table (Master File Table records)
+
+---
 
 ### 📌 Quick Reference Card
 

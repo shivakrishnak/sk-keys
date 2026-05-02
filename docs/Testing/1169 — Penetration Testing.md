@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Penetration Testing"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Security Teams, DevSecOps, Red Teams                               |                 |
 | **Related:**    | Security Test (SAST-DAST), OWASP, DAST, Threat Modeling, DevSecOps |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 AUTOMATED TOOLS MISS BUSINESS LOGIC FLAWS:
@@ -35,9 +37,13 @@ SAST finds SQL injection patterns in code. DAST sends fuzzing inputs. But a huma
 COMPLIANCE REQUIREMENTS:
 PCI DSS, ISO 27001, SOC 2, HIPAA all require regular penetration testing. "We run SAST" doesn't satisfy a pen test requirement in an audit.
 
+---
+
 ### 📘 Textbook Definition
 
 **Penetration testing** (pen testing) is a simulated cyberattack performed by authorized security professionals (pen testers / ethical hackers) against a computer system, application, or network to find and exploit security vulnerabilities. The goal is to identify weaknesses that an attacker could use, quantify the risk, and provide remediation guidance — before real attackers find them. Types: (1) **black box** — tester has no prior knowledge (simulates external attacker); (2) **white box** — tester has full source code and architecture info (most thorough); (3) **grey box** — tester has limited information (most common). Scope is defined in a **Rules of Engagement (RoE)** document — what systems are in scope, what attack types are permitted, timing restrictions.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -47,6 +53,8 @@ Pen testing = hire an ethical hacker to attack your system before real attackers
 **One analogy:**
 
 > Pen testing is **hiring a professional locksmith to try to break into your building**: they use all the techniques a real burglar would (pick locks, test windows, social engineer the receptionist), but report what they found instead of robbing you. The goal is to discover weaknesses before a criminal does.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -139,6 +147,8 @@ COMMON FINDINGS (what pen testers find):
    /phpinfo.php exposes server configuration
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 THE IDOR CHAIN:
@@ -161,9 +171,13 @@ Lesson: pen testers think in chains. Automated tools find individual
 vulnerabilities; pen testers combine them into attack paths.
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Pen testing is **adversarial thinking applied systematically**: where a developer thinks "what should this do?", a pen tester thinks "what can I make this do that it shouldn't?" This mindset flip reveals attack paths that normal development processes don't consider.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -174,6 +188,8 @@ vulnerabilities; pen testers combine them into attack paths.
 **Level 3:** Continuous penetration testing (bug bounty programs): rather than annual pen tests, companies (HackerOne, Bugcrowd) run continuous programs where security researchers report vulnerabilities for rewards. This provides ongoing adversarial testing between annual formal pen tests. Internal red team: dedicated internal security team that continuously attacks the organization's own systems.
 
 **Level 4:** Pen testing in the SDLC: shift-left security. Threat modeling during design. SAST/DAST in CI (automated, catches low-hanging fruit). Pen test before major releases or annually. Bug bounty program continuously. The pen test is NOT a replacement for building security in — it's the final verification layer. A mature DevSecOps pipeline has: secure coding training → SAST in IDE → SAST in CI → DAST against staging → pen test before launch → bug bounty ongoing.
+
+---
 
 ### 💻 Code Example
 
@@ -218,6 +234,8 @@ Remediation:
   Do NOT return 404 (to prevent ID enumeration).
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                        | SAST                       | DAST                    | Pen Test                         |
@@ -228,6 +246,8 @@ Remediation:
 | Business logic testing | No                         | Partially               | Yes                              |
 | Compliance satisfies   | Partially                  | Partially               | Yes (PCI, SOC 2, ISO 27001)      |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                        | Reality                                                                                                                 |
@@ -235,6 +255,8 @@ Remediation:
 | "SAST/DAST replaces pen testing"     | Automated tools miss business logic flaws, vulnerability chains, and novel attack paths that require human creativity   |
 | "Once a year pen test is sufficient" | Annual pen tests miss new vulnerabilities introduced throughout the year; continuous program (bug bounty) fills the gap |
 | "Pass = secure"                      | Pen test passing means no critical findings during that engagement; it doesn't mean no vulnerabilities exist            |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -251,10 +273,14 @@ Fix: Critical/High findings must have mandatory remediation SLAs. Re-test to ver
 Risk: Pen test against production can cause outages (buffer overflow exploits, DoS as side effect).
 Fix: Test against staging (production clone). If production testing required, out-of-hours window with rollback plan.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Security Test (SAST-DAST), Networking, HTTP & APIs
 - **Related:** OWASP Top 10, CVSS, Burp Suite, Metasploit, DAST, Threat Modeling, Bug Bounty, Red Team, DevSecOps
+
+---
 
 ### 📌 Quick Reference Card
 

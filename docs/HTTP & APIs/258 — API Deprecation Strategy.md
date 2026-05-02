@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Public APIs, Platform Teams, Microservices | |
 | **Related:** | API Versioning, API Backward Compatibility, HTTP Headers | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

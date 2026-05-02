@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Backend APIs, Database-driven Applications | |
 | **Related:** | XSS, SSRF, API Security, Parameterized Queries, ORM | |
 
+---
+
 ### 🔥 The Problem This Solves (The Threat)
 
 **THE ATTACK:**

@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Real-time APIs, Event-Driven Architecture, GraphQL Federation | |
 | **Related:** | WebSocket, Server-Sent Events, Long Polling | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

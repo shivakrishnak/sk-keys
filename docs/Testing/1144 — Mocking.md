@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Mocking"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Developers, TDD Practitioners                                        |                 |
 | **Related:**    | Stubbing, Faking, Spying, Mockito, Test Double, Dependency Injection |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -35,9 +37,13 @@ A `PaymentService` calls `StripePaymentGateway.charge(card, amount)`. To unit te
 THE ISOLATION PRINCIPLE:
 A unit test tests ONE unit in isolation. When `PaymentService.charge()` is tested with a real `StripeGateway`, you're simultaneously testing: PaymentService logic + network code + HTTP client + Stripe API behavior. When the test fails, is it the PaymentService logic or the Stripe API that's wrong? Mocking isolates the unit.
 
+---
+
 ### 📘 Textbook Definition
 
 A **mock** is a test double (a replacement for a real object in tests) that: (1) can be programmed to **return specific values** when specific methods are called (stubbing), (2) **records all interactions** (method calls, arguments, call order), (3) **verifies** at the end of the test that expected interactions actually occurred. Mocks answer: "Did my code call the right methods on its dependencies, with the right arguments, the right number of times?" Mocking frameworks (Mockito for Java, Jest mocks for JavaScript, unittest.mock for Python) generate mock objects at runtime using reflection/proxies.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -47,6 +53,8 @@ Mock = fake dependency that records interactions and returns scripted responses.
 **One analogy:**
 
 > Testing a pilot in a flight simulator: the simulator is a mock of the real aircraft. It returns realistic responses to inputs (stubbing), and the instructor can verify the pilot performed the right sequence of actions (verification). The test doesn't require a real plane, real fuel, or real passengers.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -94,6 +102,8 @@ WHEN TO MOCK:
    (over-mocking makes tests fragile: test knows too much about implementation)
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 OVER-MOCKING — THE FRAGILE TEST PROBLEM:
@@ -128,9 +138,13 @@ void createOrder() {
 // → Mock only external dependencies; use real objects for internal collaborators.
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A mock is like a **contract-enforcing test actor**: you hire an actor to play "the Stripe API" in your test. You hand them a script ("when asked to charge $100, say success"). After the scene, you check the actor's notes to verify they received the right cues from the code under test ("was charge() called exactly once with $100?"). The goal is to isolate the code under test from real external complexity.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -141,6 +155,8 @@ void createOrder() {
 **Level 3:** Mock vs Stub distinction in practice: if your test only calls `when().thenReturn()` without any `verify()`, you're using the mock as a stub (you don't care about interactions, only return values). If your test has `verify()`, you're using mock behavior (you care that specific interactions occurred). This distinction matters: over-verification (verifying every method call) creates tests that are too tied to implementation details — refactoring breaks tests without changing behavior.
 
 **Level 4:** The London School vs. Detroit School TDD debate: London School (mockist) uses mocks extensively — every collaborator is mocked to achieve complete isolation; tests verify interaction between objects. Detroit School (classicist) prefers real objects where possible — over-mocking creates tests that know too much about implementation. The classicist concern: "if you mock the order repository, you're testing that your code calls the repository correctly, not that the repository actually works." The consensus: mock at architectural boundaries (service → database, service → external API), use real objects within the same architectural layer.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -167,6 +183,8 @@ void createOrder() {
 │  → Exactly 1 call with these args → PASS               │
 └──────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -195,6 +213,8 @@ Integration test (separate, without mocking):
   → Uses WireMock (mock Stripe HTTP server)
   → Tests PaymentService + Repository interaction
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -243,6 +263,8 @@ class PaymentServiceTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Test Double | Returns Values       | Verifies Calls | Real Logic       |
@@ -253,6 +275,8 @@ class PaymentServiceTest {
 | Spy         | Real (or programmed) | Yes            | **Yes**          |
 | Fake        | Real (lightweight)   | No             | Yes (simplified) |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                              | Reality                                                                                                    |
@@ -261,6 +285,8 @@ class PaymentServiceTest {
 | "Always mock all dependencies"             | Over-mocking creates brittle tests tied to implementation; mock at boundaries only                         |
 | "If I mock everything, tests are fast"     | True, but tests may pass when code is wrong (mock hides real interaction issues)                           |
 | "Mocks make integration tests unnecessary" | Mocks confirm your code calls dependencies correctly; integration tests confirm the real dependencies work |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -274,11 +300,15 @@ Fix: Supplement unit tests with integration tests against real (or WireMock) dep
 Cause: Tests over-verify every internal interaction; mock `verify()` on private collaborators.
 Fix: Verify observable behavior (outputs, returned values) not internal interactions. Remove `verify()` calls that aren't testing meaningful contract obligations.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Unit Test, Dependency Injection, Interfaces
 - **Builds on:** Stubbing, Spying, Faking, Mockito, WireMock
 - **Related:** Test Isolation, Test Doubles, TDD, Contract Testing
+
+---
 
 ### 📌 Quick Reference Card
 

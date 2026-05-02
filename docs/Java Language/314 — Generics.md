@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Generics"
 parent: "Java Language"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Type Erasure, Bounded Wildcards, Stream API, Collections Framework | |
 | **Related:** | Type Erasure, Bounded Wildcards, Covariance / Contravariance | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ A payment service stores `List<PaymentEvent>` as a raw `List`. A junior engineer
 THE INVENTION MOMENT:
 This is exactly why **Generics** were created — to parameterise classes and methods by type, so the compiler can verify type correctness at compile time, eliminating an entire class of runtime `ClassCastException` bugs while also removing the need for explicit casts.
 
+---
+
 ### 📘 Textbook Definition
 
 **Generics** are a compile-time type-parameterisation mechanism introduced in Java 5 (JSR 14) that allow classes, interfaces, and methods to operate on parameterised types. A generic type declaration such as `class Box<T>` defines a family of types — `Box<String>`, `Box<Integer>`, etc. — each enforcing type safety independently. At runtime, type parameters are erased by the compiler (Type Erasure), so a single compiled class file serves all instantiations. This provides type safety at zero runtime cost.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Write a class once that works safely for any type, with the compiler checking ty
 
 **One insight:**
 Generics move type errors from runtime (a `ClassCastException` in production) to compile time (a red squiggly in your IDE). The same information that previously blew up at 2am during a batch job now shows up as a compilation error you fix before lunch.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -100,6 +108,8 @@ THE TRADE-OFFS:
 Gain: Compile-time type safety, elimination of explicit casts, better IDE support and refactoring.
 Cost: Type Erasure means no runtime type information for the generic parameter; invariance of parameterised types surprises developers familiar with covariant arrays.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -125,6 +135,8 @@ The compiler rejects `42` immediately. The bug never reaches runtime.
 THE INSIGHT:
 Type parameters shift the burden of proof from the developer (manually ensuring every cast is correct) to the compiler (mechanically verifying all assignments). The correctness guarantee is now built into the type system, not maintained by human vigilance.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A generic class is like a shipping container template that says "this container holds ONE item type." When you order a "String container," the dock workers know to refuse anything that isn't a string. When you order an "Integer container," integers only. The same container design works for both — only the label changes.
@@ -135,6 +147,8 @@ Type parameters shift the burden of proof from the developer (manually ensuring 
 "Same container design" → single compiled class file (Type Erasure)
 
 Where this analogy breaks down: Real containers can be relabelled at runtime. Generic type parameters cannot — they are erased at runtime, so a `Box<String>` and `Box<Integer>` are indistinguishable in the JVM heap.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -149,6 +163,8 @@ Generics are enforced only at compile time. The compiler inserts casts and check
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Generics were added to Java with backward compatibility as the primary constraint: existing raw-type code (thousands of libraries) had to remain compilable and interoperable. This forced erasure-based generics rather than reified generics (which C# chose). Erasure means the JVM bytecode is unchanged — no new instruction set needed. The downside is loss of runtime type information, wildcards and unbounded type parameters become tricky, and some type-safe patterns (like creating generic arrays) are impossible without unsafe casts. Project Valhalla (ongoing) aims to address this with specialised generics but must still preserve backward compatibility.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -188,6 +204,8 @@ String s = (String) identity("hello"); // cast inserted by compiler
 └────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -213,6 +231,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At scale, generics have zero runtime cost — erasure means the same bytecode handles all parameterisations. The compile-time savings are amplified: a bug caught in a generic utility class prevents errors across every callsite in a large codebase. The main scaling concern is API design — overly complex generic signatures (multiple bounded wildcards, recursive type parameters) slow compilation and hurt readability.
+
+---
 
 ### 💻 Code Example
 
@@ -289,6 +309,8 @@ items.add("hello");
 // items.add(42);  // COMPILE ERROR — caught immediately
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach | Type Safety | Flexibility | Runtime Overhead | Best For |
@@ -300,6 +322,8 @@ items.add("hello");
 
 How to choose: Use generics in all new Java code without exception. Use raw types only when integrating with pre-Java-5 libraries. Never use `Object` as a substitute for a proper generic type parameter.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -309,6 +333,8 @@ How to choose: Use generics in all new Java code without exception. Use raw type
 | `new T()` works inside a generic class | You cannot instantiate a type parameter directly (`new T()`). Use a `Supplier<T>` or `Class<T>` factory pattern instead |
 | `T[]` is a safe way to create a generic array | Creating generic arrays (`new T[10]`) is unchecked and produces a compiler warning. Use `List<T>` instead, or `(T[]) new Object[10]` with the `@SuppressWarnings("unchecked")` annotation |
 | Wildcards (`?`) and type parameters (`T`) are the same | `T` captures a specific type that can be referenced across a method; `?` is an unknown type you cannot refer to by name. `<T> void copy(List<T> src, List<T> dst)` ensures same type; `void print(List<?> list)` accepts any list |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -404,6 +430,8 @@ processAnimals(new ArrayList<Dog>());  // OK
 
 Prevention: Use `? extends T` for read-only collection parameters, `? super T` for write-only collection parameters (Producer Extends, Consumer Super — PECS rule).
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -419,6 +447,8 @@ Prevention: Use `? extends T` for read-only collection parameters, `? super T` f
 **Alternatives / Comparisons:**
 - `Covariance / Contravariance` — the broader theory behind why generic wildcards work the way they do
 - `Reflection` — can work with generic types at runtime via `ParameterizedType`, but loses compile-time safety
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -450,6 +480,7 @@ Prevention: Use `? extends T` for read-only collection parameters, `? super T` f
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** You have a method `public static <T> void swap(List<T> list, int i, int j)` that swaps two elements. A colleague points out that `public static void swap(List<?> list, int i, int j)` would also compile. Trace exactly what happens inside each version when you try to implement the swap using a temporary variable — specifically, at which line does each version fail to compile and why, and which signature is actually implementable?

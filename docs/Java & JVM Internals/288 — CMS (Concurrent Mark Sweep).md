@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "CMS (Concurrent Mark Sweep)"
 parent: "Java & JVM Internals"
@@ -146,6 +146,8 @@ Phase 6: Concurrent Reset (no STW)
 
 ## 8. Under the Hood (Deep Dive)
 
+---
+
 ### Concurrent Mode Failure
 
 ```
@@ -167,6 +169,8 @@ Prevention:
   → Start CMS early enough that it finishes before Old Gen fills
 ```
 
+---
+
 ### Fragmentation problem
 
 ```
@@ -183,6 +187,8 @@ Large object allocation (e.g., 1 MB array):
 Mitigation: -XX:+CMSFullGCsBeforeCompaction=N
 (Compact after N Full GCs — but Full GC is still a long STW)
 ```
+
+---
 
 ### Write barriers in CMS
 
@@ -201,6 +207,8 @@ Performance cost:
   - Every reference write has a small overhead (write barrier)
   - Final Remark STW duration ∝ number of dirty cards
 ```
+
+---
 
 ### Key tuning flags
 

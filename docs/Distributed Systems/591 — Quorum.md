@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Quorum"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Distributed Systems, Replication Strategies, CAP Theorem, Leader Election |                 |
 | **Used by:**    | Raft, Paxos, Consistent Hashing, Distributed Locking, Split Brain         |                 |
 | **Related:**    | Replication Strategies, Split Brain, Raft, Paxos, Consistent Hashing      |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "TLB (Translation Lookaside Buffer)"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | Context Switch, NUMA, False Sharing |                 |
 | **Related:**    | Page Fault, Cache Line, NUMA        |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Early virtual memory implementations without TLBs were measured as running at 20
 THE INVENTION MOMENT:
 This is exactly why the TLB was created — a tiny, on-chip fully-associative cache of recent virtual→physical translations that turns a 4-step page table walk into a 1-cycle lookup for frequently accessed pages.
 
+---
+
 ### 📘 Textbook Definition
 
 The **Translation Lookaside Buffer (TLB)** is a high-speed, hardware-managed cache within the CPU's MMU that stores recent virtual-to-physical page address translations. When the MMU needs to translate a virtual address, it first checks the TLB; a **TLB hit** returns the physical address in 1 cycle, bypassing the page table walk entirely. A **TLB miss** requires the full hardware page table walk (~10+ cycles/memory accesses), after which the result is stored in the TLB for future use. TLBs are typically split into instruction TLBs (iTLB) and data TLBs (dTLB), with L1 and L2 levels.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ The TLB is the shortcut that remembers "virtual address X lives at physical addr
 
 **One insight:**
 The TLB works because programs have spatial and temporal locality — the same pages are accessed repeatedly. A typical L1 TLB covers 64–128 entries. With 4 KB pages, 128 entries covers 512 KB. With 2 MB huge pages, the same 128 entries covers 256 MB — which is why huge pages dramatically reduce TLB misses for large working sets.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -69,6 +77,8 @@ The TLB must be fully associative (any entry can hold any translation) and very 
 THE TRADE-OFFS:
 Gain: Near-zero translation overhead for working sets that fit in TLB coverage.
 Cost: TLB misses are expensive (~40–100 cycles); context switches invalidate TLB (unless ASID used); TLB shootdowns (multi-core page table modifications) require inter-processor interrupts (IPIs) which stall all CPUs.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -96,6 +106,8 @@ WHAT HAPPENS WITH huge pages (2 MB, 128 entries covers 256 MB):
 THE INSIGHT:
 Page size selection is fundamentally a TLB coverage problem. For large working sets, the benefit of huge pages comes almost entirely from TLB coverage, not from reduced page fault count.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > The TLB is like a translator's cheat sheet. Translating a document from Japanese to English requires looking up every word in a dictionary (page table walk — slow). The translator keeps their most-used 1,500 words on a laminated sheet at their desk (TLB). Words on the cheat sheet are translated in a glance (1 cycle). Obscure words require a full dictionary lookup (page table walk). When a new document arrives in a different domain, they swap cheat sheets (context switch with TLB flush).
@@ -107,6 +119,8 @@ Page size selection is fundamentally a TLB coverage problem. For large working s
 "ASID tag on each entry" → using PCID so cheat sheets from multiple translators coexist
 
 Where this analogy breaks down: Unlike a cheat sheet, the TLB is hardware — it fills and evicts automatically with no explicit programmer control (except huge page selection and ASID management).
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -121,6 +135,8 @@ Modern x86-64 CPUs (Intel Ice Lake) have: L1 iTLB 128 entries (4 KB), L1 dTLB 96
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The TLB's fully-associative design (vs. set-associative) was chosen for simplicity and to avoid TLB thrashing (where two addresses always map to the same set). The tradeoff is chip area. PCIDs (Process Context IDs) were introduced in Sandy Bridge (2011) to avoid TLB flush on context switch, critical for the 2018 Meltdown/Spectre mitigations. KPTI (Kernel Page Table Isolation) makes every syscall switch CR3 twice (user→kernel and back), which without PCIDs would flush the TLB on every syscall — catastrophic for performance. With PCIDs, KPTI overhead dropped from 30% to 1–5%. The fundamental tension: larger TLBs save performance but cost chip die area and power. The solution (huge pages) cleverly trades one kind of resource (physical memory alignment) for another (TLB coverage) without hardware changes.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -147,6 +163,8 @@ The TLB's fully-associative design (vs. set-associative) was chosen for simplici
 **TLB shootdown (multi-core):**
 When a PTE is modified (page remapped), the kernel must invalidate the TLB entry on ALL CPUs that may have cached it. This requires an IPI (Inter-Processor Interrupt) to every CPU, which pauses them to execute `INVLPG`. At high core counts (128-core servers), TLB shootdowns for frequently-remapped regions become a serialisation bottleneck.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -164,6 +182,8 @@ FAILURE PATH (TLB miss + page table walk):
 
 WHAT CHANGES AT SCALE:
 On a 256-core machine with a shared workload, a kernel `munmap()` of a shared memory region triggers 256 simultaneous TLB shootdown IPIs. Each IPI stalls the receiving CPU for ~2–5 µs. At high remapping rates (e.g., a database buffer pool with frequent eviction), shootdown storms can consume 10–30% of CPU time. Mitigation: batch TLB invalidations, use huge pages (fewer PTEs = fewer shootdowns), or use `memfd_secret()` for regions that don't need shootdown broadcast.
+
+---
 
 ### 💻 Code Example
 
@@ -214,6 +234,8 @@ madvise(buf, 256 * 1024 * 1024, MADV_HUGEPAGE);
 // Now only 128 TLB entries needed for same 256 MB
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | TLB Type       | Entries             | Latency       | Scope         | Best For            |
@@ -225,6 +247,8 @@ madvise(buf, 256 * 1024 * 1024, MADV_HUGEPAGE);
 
 How to choose: You don't choose TLB levels — profile with `perf` to find miss rates. If L2 TLB miss rate > 5%, switch to huge pages.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                    | Reality                                                                                                      |
@@ -234,6 +258,8 @@ How to choose: You don't choose TLB levels — profile with `perf` to find miss 
 | "TLB misses only add one extra memory access"    | A 4-level page table walk = 4 extra memory accesses (PGD + PUD + PMD + PTE) each ~100 ns                     |
 | "PCID/ASID eliminates all TLB management cost"   | PCID avoids TLB flushes on context switch but not on page table modifications (shootdowns still needed)      |
 | "Bigger TLB = always better performance"         | If working set fits in L2 TLB, bigger L1 just wastes chip area; real bottleneck is often memory bandwidth    |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -297,6 +323,8 @@ Fix: On supported CPUs (Sandy Bridge+), PCID reduces KPTI overhead. Ensure kerne
 
 Prevention: Reduce syscall rate using `io_uring` batch I/O; upgrade to patched hardware to disable PTI entirely.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -315,6 +343,8 @@ Prevention: Reduce syscall rate using `io_uring` batch I/O; upgrade to patched h
 
 - `Software-managed TLB` — MIPS architecture uses software-filled TLB; OS handles every miss
 - `Inverted Page Table` — one entry per physical frame rather than per virtual page; no TLB structure needed in the same sense
+
+---
 
 ### 📌 Quick Reference Card
 

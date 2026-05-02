@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Dynamic Programming, Tabulation (Bottom-Up DP) | |
 | **Related:** | Tabulation (Bottom-Up DP), Dynamic Programming, LRU Cache | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ Recursive algorithms naturally express problems in terms of subproblems. But whe
 THE INVENTION MOMENT:
 Before returning a recursive result, store it in a cache (typically a HashMap). On the next call with the same arguments, return the cached result immediately. Each unique subproblem is now solved exactly once. The exponential O(2^N) becomes polynomial O(N) because the number of *unique* subproblems is O(N). This is exactly why Memoization was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Memoization** is a top-down dynamic programming technique where recursive calls cache their results so that each unique subproblem is computed at most once. A cache maps function arguments to return values. When a function is called with arguments previously computed, the cached result is returned in O(1). This converts recursive algorithms with overlapping subproblems from exponential time to polynomial time matching the number of unique subproblem combinations.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -52,6 +58,8 @@ Remember what you've already computed so you never solve the same subproblem twi
 
 **One insight:**
 Memoization requires two conditions: **overlapping subproblems** (the same subproblem is encountered multiple times) and **optimal substructure** (the solution to a problem can be built from solutions to subproblems). When both are present, memoization converts any correct-but-slow recursive solution to an efficient one automatically.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -75,6 +83,8 @@ Can we remove the call stack? Yes — convert to iterative bottom-up (tabulation
 THE TRADE-OFFS:
 Gain: Converts exponential to polynomial automatically, easy to implement on any correct recursive solution.
 Cost: O(N) call stack depth (risk of StackOverflowError), O(N) cache memory, HashMap overhead per call.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -111,6 +121,8 @@ Total unique calls: 6 (fib(0)–fib(5)). Each computed once.
 THE INSIGHT:
 Memoization prunes the recursion tree by collapsing all duplicate subproblems into single nodes. The tree becomes a DAG (Directed Acyclic Graph) where each node is computed exactly once.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Memoization is like a lookup table at the entrance to a maze. Before entering a room, check if you've solved it before and what the answer was. If yes, leave immediately with the cached answer. If no, solve it and post the answer at the room's entrance for next time.
@@ -121,6 +133,8 @@ Memoization prunes the recursion tree by collapsing all duplicate subproblems in
 "Leaving with cached answer" → returning cached result in O(1)
 
 Where this analogy breaks down: A maze has a specific topology; memoization works on any pure function with any argument structure — not just tree/graph traversals.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -135,6 +149,8 @@ Memoization transforms the recursion call graph from a tree (re-computing subtre
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Memoization is the top-down view of dynamic programming; tabulation is the bottom-up view. Both compute the same set of subproblems, but memoization only computes subproblems actually needed (lazy), while tabulation computes all subproblems in dependency order (eager). Memoization's lazy evaluation means that for problems where only a fraction of all subproblems are reachable, memoization wins. For problems requiring all subproblems (e.g., matrix chain multiplication), tabulation is typically faster due to better cache locality (iterating arrays vs HashMap lookups). Haskell and other purely functional languages build memoization into the language via lazy evaluation — each thunk is evaluated at most once, effectively memoizing all expressions automatically.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -191,6 +207,8 @@ fib(40):
   With memo:     79 calls
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -213,6 +231,8 @@ Deep recursion before any cache hit (first call to fib(N))
 
 WHAT CHANGES AT SCALE:
 For N > 10,000, the O(N) call stack depth overflows the JVM. Use tabulation (iterative DP) instead. For multi-dimensional memo tables (e.g., `dp[i][j][k]` for 3D DP), memory grows as N³ — quickly unmanageable. Use tabulation with rolling dimensions to reduce space.
+
+---
 
 ### 💻 Code Example
 
@@ -249,6 +269,8 @@ int paths(int i, int j) {
 // Time: O(M*N), Space: O(M*N) + O(M+N) call stack
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Technique | Direction | Space | Call Stack | Best For |
@@ -259,6 +281,8 @@ int paths(int i, int j) {
 
 How to choose: Start with memoization (easiest to code). If N is large (risk of SO) or performance needs to be maximised, convert to tabulation.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -267,6 +291,8 @@ How to choose: Start with memoization (easiest to code). If N is large (risk of 
 | Memoization uses less memory than tabulation | Both use O(unique subproblems) for cache; memoization also uses O(depth) stack space |
 | computeIfAbsent is thread-safe | `HashMap.computeIfAbsent` is NOT thread-safe; use `ConcurrentHashMap.computeIfAbsent` for multi-threaded code |
 | Memoization always converts O(2^N) to O(N) | Only for problems with O(N) unique subproblems; for permutations, unique subproblems = N! → no polynomial speedup |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -304,6 +330,8 @@ Fix: Use a bounded cache (LRU) or clear the cache after each top-level computati
 
 Prevention: Never make a memoization cache a long-lived class field; either pass it as a parameter or clear it after use.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -317,6 +345,8 @@ Prevention: Never make a memoization cache a long-lived class field; either pass
 **Alternatives / Comparisons:**
 - `Tabulation` — same asymptotic complexity, O(1) stack, better cache locality.
 - `LRU Cache` — bounded memoization that evicts old entries to control memory.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -345,6 +375,7 @@ Prevention: Never make a memoization cache a long-lived class field; either pass
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A memoized solution to the 0/1 Knapsack problem uses a `HashMap<String, Integer>` with keys `"i,w"`. An alternative uses a 2D `int[][]` array `dp[i][w]`. For N=100 items, capacity W=10,000, the 2D array uses 100 × 10,000 × 4 bytes = ~4 MB. The HashMap's memory usage depends on which subproblems are actually visited. Under what input conditions would the memoized HashMap use *less* memory than the full 2D array, and when would it use more? How would you decide which to use?

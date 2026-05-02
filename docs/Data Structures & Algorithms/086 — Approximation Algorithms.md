@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Approximation Algorithms"
 parent: "Data Structures & Algorithms"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | TSP Approximation, Scheduling Problems, Network Design | |
 | **Related:** | Greedy Algorithm, Randomized Algorithms, NP-Complete Problems | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Heuristics without provable guarantees are engineering guesswork. A company runn
 THE INVENTION MOMENT:
 For metric TSP (triangle inequality holds), the Christofides algorithm (1976) always produces a tour within 1.5× the optimal length, in polynomial time — a **3/2-approximation ratio**. For Vertex Cover, a simple greedy gives a 2-approximation. These algorithms are polynomial AND come with a mathematical proof of their worst-case quality. This is exactly why **Approximation Algorithms** were created.
 
+---
+
 ### 📘 Textbook Definition
 
 An **approximation algorithm** is a polynomial-time algorithm for an NP-hard optimisation problem that produces a solution S whose value is within a proven factor α of the optimal solution OPT. For minimisation: S ≤ α × OPT. For maximisation: S ≥ (1/α) × OPT. The **approximation ratio** α ≥ 1 characterises quality: α=1 is exact, α=2 is a 2-approximation. A **PTAS** (Polynomial-Time Approximation Scheme) provides a (1+ε)-approximation for any ε > 0 in time O(f(1/ε) × N^c). An **FPTAS** (Fully Polynomial-Time Approximation Scheme) runs in O((N/ε)^c) — polynomial in both N and 1/ε.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Trade optimal for provably-near-optimal: get within a guaranteed ratio of the be
 
 **One insight:**
 The approximation ratio separates approximation algorithms from heuristics: a heuristic might produce a good solution without a bound on how bad it could be. An approximation algorithm comes with a mathematical proof: "On any input, this algorithm's output is at most α× optimal." This proof is what makes approximation algorithms scientifically rigorous and economically plannable.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -79,6 +87,8 @@ THE TRADE-OFFS:
 Gain: Provable quality bound; polynomial time; plannable resource allocation.
 Cost: Not optimal — α× OPT with α > 1. For some problems, improving the ratio below a threshold requires P=NP (inapproximability hardness). FPTAS adds space/time overhead proportional to 1/ε.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -96,6 +106,8 @@ WHAT HAPPENS WITH GREEDY 2-APPROXIMATION:
 THE INSIGHT:
 The greedy 2-approximation produced a cover of size 4 (2× the optimal 2). This is the worst case — the ratio is tight. But the algorithm ran in O(E) — milliseconds for 10M edges. The optimal algorithm might take 10^6 years. Paying 2× is a rational trade for polynomial time.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Approximation algorithms are "good enough" engineers: when asked for the best design, they don't spend 10 years doing exhaustive search. Instead, they apply a principled heuristic and can guarantee: "This design costs at most 1.5× the minimum possible. That's the proof." The client might want perfection, but they get a mathematically bounded near-perfection in budget time.
@@ -107,6 +119,8 @@ The greedy 2-approximation produced a cover of size 4 (2× the optimal 2). This 
 "Budget time" → polynomial runtime
 
 Where this analogy breaks down: Some approximation ratios are tight (cannot be improved without P=NP). In the analogy, clients might want better designs — in inapproximability theory, "better" is simply unavailable in polynomial time.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -121,6 +135,8 @@ Two main proof techniques: (1) **Lower bound comparison:** compute a polynomial-
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Inapproximability results define the "approximation frontier." For metric TSP, best known is Christofides (3/2). Recent improvement: Karlin-Klein-Oveis Gharan 2021 achieved (3/2 - 10^-36)-approximation — barely better, but a major theoretical breakthrough. For General TSP (no triangle inequality): inapproximable to any constant ratio unless P=NP (Sahni-Gonzalez reduction). PCP theorem (probabilistically checkable proofs) provides the mathematical foundation for inapproximability: most NP-hard problems have provable lower bounds on approximation ratio that match (or nearly match) what the best polynomial algorithms achieve, creating a full approximation complexity landscape.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -166,6 +182,8 @@ Inapproximability results define the "approximation frontier." For metric TSP, b
 └────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -193,6 +211,8 @@ Approximation ratio too large for problem requirements
 
 WHAT CHANGES AT SCALE:
 For large-scale logistics (Amazon routing 1M packages/day), Christofides 3/2-approx TSP is too slow (O(N³) for matching step). Production systems use LKH (Lin-Kernighan-Helsgott): no proven ratio but empirically finds near-optimal (~1.002× OPT) solutions in sub-quadratic time via local search. For deadline-constrained scheduling: simple greedy (earliest deadline first or shortest processing time) gives provable 2× for pre-emption-free scheduling with machine constraints.
+
+---
 
 ### 💻 Code Example
 
@@ -269,6 +289,8 @@ int fptas(int[] w, int[] v, int W, double eps) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Problem | Best Approx Ratio | Algorithm | Inapprox. Lower Bound |
@@ -282,6 +304,8 @@ int fptas(int[] w, int[] v, int W, double eps) {
 
 How to choose: FPTAS when problem has pseudo-polynomial DP (Knapsack). PTAS when geometric structure available (Euclidean TSP). Constant-ratio approximation for well-studied problems (Christofides). Logarithmic for Set Cover. Inapproximable beyond constant: design heuristics.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -290,6 +314,8 @@ How to choose: FPTAS when problem has pseudo-polynomial DP (Knapsack). PTAS when
 | Approximation algorithms are for when you don't care about quality | Quite the opposite: the ratio is the WORST CASE guarantee. In practice, approximation algorithms often achieve near-optimal results. The ratio is a mathematical floor on quality. |
 | PTAS is always better than a constant-ratio approximation | PTAS grows with 1/ε. For Euclidean TSP, a PTAS with ε=0.01 may take longer than Christofides 3/2 on large instances, despite theoretically better ratio. |
 | Inapproximability means worst-case is hard, average is easy | Inapproximability applies to worst-case inputs. For many NP-hard problems, average-case instances are easy to solve to near-optimality with local search. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -329,6 +355,8 @@ Fix: Use ε=0.01 (1% error, 100× faster) or branch-and-bound for near-optimal w
 
 Prevention: Profile FPTAS time for target ε and N before committing to the approach.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -344,6 +372,8 @@ Prevention: Profile FPTAS time for target ε and N before committing to the appr
 - `Heuristics (e.g. LKH, Simulated Annealing)` — No ratio guarantee but often better in practice; unknown worst-case quality.
 - `Exact Solvers (Branch & Bound, ILP)` — Optimal but exponential worst case; practical for moderate N.
 - `Parameterised Algorithms (FPT)` — Polynomial for fixed parameter k; exponential in k but polynomial in N.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -372,6 +402,7 @@ Prevention: Profile FPTAS time for target ε and N before committing to the appr
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The greedy Set Cover algorithm achieves O(ln N) approximation ratio, and this is tight — no polynomial algorithm can do better (unless P=NP, by PCP theorem). Yet for special instances of Set Cover (e.g., when all sets have size ≤ 3: "3-Dimensional Matching"), constant-ratio approximations exist. Explain the structural property of these restricted instances that allows better approximation, and show how the Unique Games Conjecture (if true) would make even the 2-approximation for Vertex Cover optimal — despite VC being a special case of Set Cover.

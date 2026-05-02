@@ -28,6 +28,8 @@ tags:
 | **Used by:** | REST APIs, Platform Security, API Gateways | |
 | **Related:** | JWT, OAuth2, CORS, SSRF, SQL Injection, CSRF, API Rate Limiting | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

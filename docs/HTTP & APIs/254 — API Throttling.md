@@ -28,6 +28,8 @@ tags:
 | **Used by:** | REST APIs, API Gateways, Microservices Protection | |
 | **Related:** | API Rate Limiting, API Gateway, Circuit Breaker, Bulkhead | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

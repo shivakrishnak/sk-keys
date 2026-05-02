@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Webhook Verification, API Request Signing, AWS Signature V4, JWT (HS256) | |
 | **Related:** | API Keys, SHA256, JWT, Webhook, AWS S3 | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

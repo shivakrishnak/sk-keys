@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Full GC, G1GC, ZGC, GC Tuning, GC Pause | |
 | **Related:** | Minor GC, Full GC, Stop-The-World, G1GC | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Old Gen objects need collection, but applying Minor GC's "copy the survivors" st
 THE INVENTION MOMENT:
 Major GC uses mark-sweep-compact (or concurrent variants) — an algorithm that identifies dead objects in place and compacts live objects without requiring an equally-sized empty region. This is why Major GC exists as a distinct algorithm from Minor GC.
 
+---
+
 ### 📘 Textbook Definition
 
 Major GC (also called Old Gen GC or Tenured GC) is a garbage collection event targeting the Old Generation. It is triggered when Old Gen space is insufficient to accommodate new promotions from Minor GC. Major GC algorithms differ from Minor GC: they use mark-sweep-compact (or concurrent marking) rather than copying collection, because Old Gen is large and mostly live — copying would require an equally sized free region. A "Major GC" may refer specifically to an Old Gen pass (as in CMS) or may include Young Gen collection as well (as in the HotSpot definition). In modern collectors (G1GC), the equivalent is a sequence of concurrent marking followed by "mixed GC" cycles that collect Old Gen regions incrementally.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Major GC is the deep-clean of the Old Generation — infrequent but slow when it
 
 **One insight:**
 Major GC is the primary target for latency optimisation in JVM applications. Minor GC is fast (1–20ms). Major GC can take hundreds of milliseconds to many seconds depending on live object set size and collection algorithm. All major JVM innovations in the past decade (G1GC, ZGC, Shenandoah) have focused primarily on reducing Major GC pause times by making Old Gen collection concurrent.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -67,6 +75,8 @@ Invariant 1 mandates mark-sweep (in-place identification of garbage) rather than
 THE TRADE-OFFS:
 Gain: Reclaims Old Gen; prevents OOM; compaction eliminates fragmentation.
 Cost: Long stop-the-world pause (STW collectors); CPU overhead from concurrent marking (concurrent collectors); application threads occasionally stalled waiting for STW phases.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -92,6 +102,8 @@ WHAT HAPPENS WITH CONCURRENT MARKING (G1GC):
 THE INSIGHT:
 The key insight of modern GC design: move as much work as possible to concurrent phases (no application pause), then minimise the STW phases to just what requires a consistent heap snapshot.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Major GC is like a library conducting an inventory audit. The library stays open during the first phase (concurrent marking — staff check shelves while patrons use the library). Then the library closes briefly (STW remark) to catch any changes made while auditing. Then a few aisles are closed at a time for reorganisation (G1 mixed GC — collect the worst aisles first). Patrons (application threads) experience brief interruptions, not an all-day closure.
@@ -102,6 +114,8 @@ The key insight of modern GC design: move as much work as possible to concurrent
 "All-day closure (STW Major GC)" → traditional Parallel GC approach
 
 Where this analogy breaks down: unlike a physical library, the JVM must ensure that every reference to a moved object is updated — this "forwarding pointer" maintenance has no physical analogy.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -116,6 +130,8 @@ Mark-sweep-compact for Parallel GC (STW): (1) Mark — traverse from GC roots, m
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The evolution of Major GC algorithms reflects the growing importance of tail latency. CMS (1999) introduced concurrent marking for Old Gen, dramatically reducing Major GC pauses. G1GC (default since Java 9) replaced CMS with region-based collection, enabling better pause prediction. ZGC (experimental Java 11, production Java 15) took the final step: almost all of Major GC (even compaction) runs concurrently, achieving <1ms pauses for terabyte heaps. Each generation of algorithm traded throughput for lower and more predictable tail latency. ZGC's "coloured pointers" (using unused bits in 64-bit pointers as metadata) eliminated the need for stop-the-world phases in most of the collection cycle.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -174,6 +190,8 @@ The evolution of Major GC algorithms reflects the growing importance of tail lat
 └─────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -203,6 +221,8 @@ Concurrent marking too slow / Old Gen fills before cleanup:
 
 WHAT CHANGES AT SCALE:
 At terabyte heaps, even concurrent marking takes tens of seconds. The concurrent marking threads must keep up with the application's object modification rate. If the application creates and modifies references faster than the GC can mark (known as "floating garbage" and "concurrent marking failure"), the GC falls back to STW. ZGC with coloured pointers solves this by intersecting GC state into the reference itself, enabling sub-millisecond phases even at terabyte scale.
+
+---
 
 ### 💻 Code Example
 
@@ -259,6 +279,8 @@ grep -E "Pause|Concurrent" /tmp/gc.log | \
 # to confirm GC is the latency spike cause
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | GC Algorithm | Major GC Max Pause | Throughput | Memory Overhead | Best For |
@@ -272,6 +294,8 @@ grep -E "Pause|Concurrent" /tmp/gc.log | \
 
 How to choose: G1GC for most production services (Java 9+ default). ZGC for strict latency SLAs (<1ms) or heaps >16 GB. Avoid CMS (deprecated/removed).
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -280,6 +304,8 @@ How to choose: G1GC for most production services (Java 9+ default). ZGC for stri
 | "Major GC is always stop-the-world" | G1GC, ZGC, and Shenandoah perform most Major GC work concurrently while the application runs. Only specific STW phases (initial mark, remark) pause all threads. |
 | "Frequent Major GC = memory leak" | Frequent Major GC can also result from undersized Old Gen, premature promotion, or legitimate high live-object count. Memory leak is only one cause. |
 | "System.gc() in production is harmless" | `System.gc()` usually triggers a Full GC — the most expensive event. Always use `-XX:+DisableExplicitGC` in production to block accidental calls. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -352,6 +378,8 @@ Fix:
 java -XX:ConcGCThreads=4 -jar myapp.jar  # default = CPU/4
 ```
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -369,6 +397,8 @@ java -XX:ConcGCThreads=4 -jar myapp.jar  # default = CPU/4
 **Alternatives / Comparisons:**
 - `Minor GC` — fast Young Gen collection — contrast with slow Major GC
 - `Full GC` — complete heap collection; Major GC is sometimes a component of Full GC
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -401,6 +431,7 @@ java -XX:ConcGCThreads=4 -jar myapp.jar  # default = CPU/4
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** G1GC starts concurrent marking when heap occupancy reaches `InitiatingHeapOccupancyPercent` (IHOP, default 45%). A service's live set is 3 GB on a 4 GB heap (75% occupied). After IHOP is exceeded, G1 starts concurrent marking. But the application allocates objects faster than concurrent marking can process them, and Old Gen fills before marking completes — triggering "to-space exhausted" and a fallback STW Full GC. Given a fixed heap of 4 GB, what configuration changes (IHOP, GC threads, heap ratio) could you make to prevent this, and what fundamental trade-off does each change represent?

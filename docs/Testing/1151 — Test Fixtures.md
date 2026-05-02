@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Test Fixtures"
 parent: "Testing"
@@ -27,14 +27,20 @@ tags:
 | **Used by:**    | All Developers                                                                   |                 |
 | **Related:**    | Test Isolation, Test Data Management, BeforeEach, Builder Pattern, Object Mother |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
 Each test method contains 20 lines of setup code (create user, create cart, add items, create discount). The same setup is copy-pasted across 30 test methods. A change to the `User` constructor requires editing 30 tests. The setup code dwarfs the actual test assertion. With test fixtures, the setup is defined once, reused everywhere, and tests read as "given this state, when this happens, then this result."
 
+---
+
 ### 📘 Textbook Definition
 
 A **test fixture** is the set of preconditions or state necessary for running a test. This includes: objects that must be created before the test can run, database records, file system state, mock configurations, and network state. In JUnit 5: `@BeforeEach` (run before each test), `@BeforeAll` (run once before all tests in a class), `@AfterEach` (teardown after each test), `@AfterAll` (teardown after all tests). In the broader sense, fixture also refers to the helpers and patterns used to build consistent test data (Object Mother, Test Data Builder, factory methods).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -44,6 +50,8 @@ Fixtures = the setup your test needs to run + the teardown to clean up.
 **One analogy:**
 
 > A fixture is like the **chef's mise en place** (French: everything in its place): before cooking begins, every ingredient is prepped, measured, and in position. The cooking (the test) starts from a known, prepared state. Without mise en place, cooking is chaotic and inconsistent.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -118,6 +126,8 @@ FIXTURE CATEGORIES:
    → Avoid for automated tests; use only for exploratory testing
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 FIXTURE BLOAT — THE ANTI-PATTERN:
@@ -139,9 +149,13 @@ void setup() {
 // Use @BeforeEach for shared setup; inline extra setup in each test
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A test fixture is the **stage setting before curtain rise**: the theater crew (setup) arranges the props, sets the lighting, positions the actors. The performance (test) happens in this arranged environment. After the performance, the crew strikes the set (teardown). Each performance starts with the same arranged stage — reproducibility guaranteed.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -152,6 +166,8 @@ void setup() {
 **Level 3:** Fixture design patterns: (1) Object Mother (a factory class with named creation methods: `UserMother.aStandardUser()`, `UserMother.anAdminUser()`); (2) Test Data Builder (fluent builder); (3) Parameterized fixtures (`@MethodSource`, `@CsvSource` for data-driven tests). Fixture vs. factory: a fixture is the specific state for a test; a factory is a reusable helper for creating test objects. The most maintainable approach: Object Mother for common scenarios + Builder for customization.
 
 **Level 4:** The relationship between fixture complexity and design quality: a test that requires 40 lines of setup is likely testing a class that does too many things. The fixture complexity mirrors the production code complexity — a Single Responsibility Principle (SRP) violation produces complex fixtures. The refactoring hint: when fixture setup is large, the class under test should be split. Each resulting class will have a small, focused fixture.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -170,6 +186,8 @@ void setup() {
 │  │ (once per class)                                      │
 └──────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -194,6 +212,8 @@ Test method:
   service.confirm(order.getId());
   assertThat(repo.findById(order.getId()).get().getStatus()).isEqualTo(CONFIRMED);
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -236,6 +256,8 @@ class OrderBuilder {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Pattern           | Purpose               | Trade-offs                                                 |
@@ -245,6 +267,8 @@ class OrderBuilder {
 | Object Mother     | Named factory methods | Quick for common cases; can get large                      |
 | Test Data Builder | Fluent customization  | Verbose to write; highly flexible                          |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                        | Reality                                                                                           |
@@ -252,6 +276,8 @@ class OrderBuilder {
 | "More shared fixture = better (less duplication)"    | Shared fixture increases coupling between tests; prefer fresh fixtures per test                   |
 | "Object Mother is just a utility class"              | Object Mother encodes domain knowledge (what makes a valid pending order); it's a design artifact |
 | "Fixtures should create complete, realistic objects" | Fixtures should create MINIMAL objects — only the fields relevant to the test under test          |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -265,10 +291,14 @@ Fix: Prefer `@BeforeEach` (fresh per-test) over `@BeforeAll` for test data. Rese
 Cause: Multiple tests insert records with `id = 1` → duplicate key violation in parallel execution.
 Fix: Use `UUID.randomUUID()` or auto-generated IDs in all test data builders.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Unit Test, Test Isolation
 - **Related:** Test Data Management, `@BeforeEach`, Object Mother, Builder Pattern, Testcontainers
+
+---
 
 ### 📌 Quick Reference Card
 

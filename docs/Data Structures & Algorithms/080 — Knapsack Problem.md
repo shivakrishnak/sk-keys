@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Knapsack Problem"
 parent: "Data Structures & Algorithms"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Resource Allocation, Bin Packing, Approximation Algorithms | |
 | **Related:** | Dynamic Programming, Greedy Algorithm, NP-Complete Problems | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Pure brute-force enumeration is exponential. The observation being wasted: most 
 THE INVENTION MOMENT:
 Define `dp[i][w]` = maximum value using items 1..i with weight limit w. Either item i is included (add its value, reduce capacity by its weight) or excluded. This produces an O(N×W) table — polynomial in N and W. The **0/1 Knapsack** is technically NP-hard (W can be exponentially large in binary representation), but in practice W is bounded, making DP efficient. This is exactly why **Knapsack Problem** DP is a fundamental technique.
 
+---
+
 ### 📘 Textbook Definition
 
 The **0/1 Knapsack Problem** is: given N items each with weight `w[i]` and value `v[i]`, and a knapsack capacity W, select a subset of items to include (each at most once) such that the total weight ≤ W and total value is maximised. The standard dynamic programming solution defines `dp[i][w]` = maximum value achievable using items 1..i with capacity w. Recurrence: `dp[i][w] = max(dp[i-1][w], dp[i-1][w-w[i]] + v[i])` if `w[i] ≤ w`, else `dp[i-1][w]`. Time: O(N×W). Space: O(N×W) or O(W) with rolling array. The **unbounded knapsack** allows unlimited copies of each item; the **fractional knapsack** allows partial items (solvable greedily in O(N log N)).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Fill a bag to maximise value without exceeding weight — try each item: include
 
 **One insight:**
 The DP's O(N×W) complexity looks polynomial, but W can be encoded in log₂(W) bits, making the problem technically **pseudo-polynomial** (polynomial in the numeric value W, exponential in the bit-length of W). This is why 0/1 Knapsack is NP-complete in the classical sense: if W = 2^N, the DP table has 2^N columns — exponential. In practice, W is always bounded, making DP feasible.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -75,6 +83,8 @@ THE TRADE-OFFS:
 Gain: Exact optimal solution in O(N×W) — feasible when W is reasonable (up to ~10⁷).
 Cost: O(N×W) time and space — infeasible for W > 10⁸. NP-hard for arbitrary W (no known polynomial algorithm in terms of input bit-length). Items must be indivisible (0/1).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -96,6 +106,8 @@ Result: dp[5]=7. Only 18 operations (3×6) instead of checking 8 subsets.
 THE INSIGHT:
 DP avoids recomputation by storing intermediate results. When computing `dp[C=5]`, the value `dp[B=2]=3` (best for capacity 3 after item A) is already known — no re-exploration. The overlapping subproblems are all the `(capacity, item-prefix)` pairs, each computed exactly once.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > The DP table is a decision worksheet. Each row is an item; each column is a capacity. Each cell says: "The best I can do with the first i items and exactly j kilograms available." You fill it cell by cell, asking: "Is this item worth including?" — always looking back one row and potentially several columns.
@@ -107,6 +119,8 @@ DP avoids recomputation by storing intermediate results. When computing `dp[C=5]
 "Cell value" → best total value for this item prefix + capacity
 
 Where this analogy breaks down: The 1D space-optimised version fills right-to-left to avoid using the same item twice in a single pass — this "overwrite order" has no direct physical analogy but is a crucial implementation detail.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -121,6 +135,8 @@ Space optimisation: replace the 2D table with a 1D array `dp[W+1]`. Fill from ri
 
 **Level 4 — Why it was designed this way (senior/staff):**
 0/1 Knapsack is in NP (solutions verifiable in polynomial time) and NP-hard (3-Partition, Subset Sum reduce to it). The O(N×W) DP is pseudo-polynomial — it becomes polynomial when W is polynomial in N. The FPTAS (Fully Polynomial-Time Approximation Scheme) rounds item values to reduce effective W, trading a (1+ε) approximation factor for O(N²/ε) time — guaranteeing a solution within (1+ε) of optimal in polynomial time. This makes Knapsack one of the most studied NP-hard problems: it has the best known approximation guarantees of any NP-hard problem.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -161,6 +177,8 @@ Space optimisation: replace the 2D table with a 1D array `dp[W+1]`. Fill from ri
 **Backtracking to find selected items:**
 Start from `dp[N][W]`. For each item i from N to 1: if `dp[i][w] != dp[i-1][w]`, item i was included. Subtract `w[i]` from w.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -189,6 +207,8 @@ In cloud resource optimisation (selecting VM types to minimise cost for given CP
 1. Greedy by value/weight ratio (fractional knapsack: optimal; 0/1: 2-approximation).
 2. LP relaxation + branch-and-bound for near-optimal with pruning.
 3. FPTAS for guaranteed (1+ε)-optimal in O(N²/ε) time.
+
+---
 
 ### 💻 Code Example
 
@@ -261,6 +281,8 @@ double fractionalKnapsack(int[] w, int[] v, int W) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Variant | Algorithm | Time | Optimal | Use Case |
@@ -273,6 +295,8 @@ double fractionalKnapsack(int[] w, int[] v, int W) {
 
 How to choose: Use fractional knapsack when items are divisible (O(N log N), optimal by greedy). Use 0/1 DP when items are indivisible and W is manageable. Use FPTAS when W is too large for exact DP but approximation suffices.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -281,6 +305,8 @@ How to choose: Use fractional knapsack when items are divisible (O(N log N), opt
 | The O(N×W) DP solution proves 0/1 Knapsack is polynomial | Pseudo-polynomial. W can be exponentially large in its binary representation. If W=2^N, the table has 2^N columns — exponential time. The problem is NP-hard in terms of input bit length. |
 | The 1D DP fills left-to-right | 0/1 Knapsack requires right-to-left fill to prevent using the same item twice. Left-to-right solves unbounded knapsack (unlimited copies). Using L→R for 0/1 produces wrong results. |
 | Items not selected don't affect the DP | The order items are processed doesn't affect the final answer for 0/1 knapsack (unlike the 1D fill direction). Any permutation of items produces the same dp[N][W]. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -338,6 +364,8 @@ Fix: Always guard `if (w[i-1] <= cap)` or in 1D: loop from `W` down to `w[i]` (l
 
 Prevention: The 1D right-to-left loop bound `for (cap = W; cap >= w[i]; cap--)` naturally prevents this.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -354,6 +382,8 @@ Prevention: The 1D right-to-left loop bound `for (cap = W; cap >= w[i]; cap--)` 
 - `Greedy Algorithm` — Optimal for fractional knapsack; suboptimal (but fast) for 0/1 knapsack.
 - `Branch and Bound` — Exact algorithm for NP-hard combinatorial problems; better than DP in practice for large W.
 - `Integer Linear Programming` — General framework subsuming knapsack; solved by ILP solvers (CPLEX, Gurobi).
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -382,6 +412,7 @@ Prevention: The 1D right-to-left loop bound `for (cap = W; cap >= w[i]; cap--)` 
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The 0/1 Knapsack DP runs in O(N×W). Yet the problem is NP-complete. The apparent contradiction is resolved by noting O(N×W) is pseudo-polynomial — exponential in the *bit-length* of W. Construct an explicit example where W = 2^N, showing that the DP table has 2^N columns and thus O(N × 2^N) time — exponential in N. Now explain why the FPTAS achieves (1+ε)-optimal in O(N²/ε) time by "scaling and rounding" item values: what exactly is rounded, why does this make W polynomial in N, and what is the worst-case error guarantee?

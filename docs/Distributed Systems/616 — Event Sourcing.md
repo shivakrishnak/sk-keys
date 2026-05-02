@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Event Sourcing"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | CQRS, Domain Events, Append-Only Log, Event-Driven Architecture     |                 |
 | **Used by:**    | CQRS, Audit Logs, Outbox Pattern, Saga Pattern, Time Travel Queries |                 |
 | **Related:**    | CQRS, Outbox Pattern, Saga Pattern, Domain Events, Append-Only Log  |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

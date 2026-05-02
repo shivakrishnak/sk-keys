@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "epoll / kqueue / io_uring"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | Async I/O, Reactive Programming, Node.js, Netty          |                 |
 | **Related:**    | Async I/O, Non-Blocking I/O, select / poll               |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ In 1999, the "C10K problem" paper showed that web servers needed to handle 10,00
 THE INVENTION MOMENT:
 This is exactly why epoll (Linux), kqueue (BSD/macOS), and io_uring (Linux 5.1+) were created — O(1) notification of ready descriptors, no per-call scan, no descriptor set rebuilding.
 
+---
+
 ### 📘 Textbook Definition
 
 **epoll** (Linux), **kqueue** (BSD/macOS/iOS), and **io_uring** (Linux 5.1+) are OS-level I/O event notification mechanisms that allow a single thread to monitor thousands of file descriptors efficiently. They maintain an internal interest list (descriptors registered by the application) and a ready list (descriptors with pending events). The application blocks on a single syscall (`epoll_wait`, `kevent`, or `io_uring_enter`) which returns only when one or more registered descriptors are ready — in O(1) or O(events) time. `io_uring` extends this to support asynchronous I/O submission and completion via shared ring buffers.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ epoll/kqueue registers interest once and notifies you exactly when something is 
 
 **One insight:**
 The key innovation is that registration and waiting are separated. You register once (`epoll_ctl ADD`), then wait many times (`epoll_wait`). The kernel maintains the ready list internally — you only pay for events that actually occurred, not for the total number of monitored descriptors.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -69,6 +77,8 @@ epoll uses a red-black tree to store registered fds (O(log n) insertion/deletion
 THE TRADE-OFFS:
 Gain: O(events) wait time; handles hundreds of thousands of connections with minimal CPU; kernel maintains registration state.
 Cost: epoll is Linux-specific (kqueue for BSD/macOS); io_uring has a large attack surface with a history of CVEs; the event-loop programming model is harder to reason about than blocking I/O; edge-triggered epoll bugs are subtle.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -94,6 +104,8 @@ WHAT HAPPENS WITH epoll:
 THE INSIGHT:
 The performance difference between `select` and `epoll` is not about speed — it's about algorithmic complexity. select is O(max_fd); epoll is O(ready_events). At scale, these are incomparably different.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > epoll is like a hotel front desk with call lights (one per room). Instead of the concierge calling every 1,000 rooms to ask "do you need anything?", each room presses a button when they need service. The concierge waits at the desk — when a light appears, they go to that room. Registration = install the call button. epoll_wait = wait at the desk. Ready event = a light turns on.
@@ -104,6 +116,8 @@ The performance difference between `select` and `epoll` is not about speed — i
 "Concierge services room" → `read()` on the ready fd
 
 Where this analogy breaks down: io_uring goes further — the concierge doesn't need to wait at the desk at all; they submit a list of tasks and get notified when each is done, even while doing other work.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -118,6 +132,8 @@ In Java, `java.nio.Selector` wraps OS-specific mechanisms (epoll on Linux, kqueu
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The separation of `epoll_ctl` (register) from `epoll_wait` (wait) was a deliberate design choice to amortise registration cost. `select`/`poll` re-register on every wait, making them O(n) per call. epoll's registration is persistent, making `epoll_wait` O(ready_events). The level/edge-triggered duality was included because level-triggered is safe (impossible to miss events) while edge-triggered is more efficient (fires only on change). io_uring (2019) supersedes epoll for many use cases: rather than "which fds are ready to do I/O?", io_uring asks "here are 1000 I/O operations — do them and tell me when each is done." This proactor vs reactor distinction is fundamental. io_uring's shared ring buffer design was inspired by SPDK and DPDK's userspace driver ring buffers.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -154,6 +170,8 @@ The separation of `epoll_ctl` (register) from `epoll_wait` (wait) was a delibera
 └─────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -174,6 +192,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At 1M connections (C1M), epoll ready list processing itself becomes a bottleneck. nginx uses a multi-worker model (one process per CPU core, each with its own epoll) to parallelise. io_uring's ring buffer approach avoids any per-event syscall overhead, enabling single-thread throughput beyond 1M I/O ops/sec on NVMe.
+
+---
 
 ### 💻 Code Example
 
@@ -264,6 +284,8 @@ while (io_uring_peek_cqe(&ring, &cqe) == 0) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Mechanism    | Max FDs   | Complexity | Platform   | Best For                |
@@ -276,6 +298,8 @@ while (io_uring_peek_cqe(&ring, &cqe) == 0) {
 
 How to choose: Use epoll for any Linux server with > 1,000 concurrent connections. Use kqueue on macOS/BSD. Use io_uring for I/O-intensive workloads (databases, storage) needing maximum throughput. Use Java NIO Selector or Netty for JVM portability.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                   | Reality                                                                                                             |
@@ -285,6 +309,8 @@ How to choose: Use epoll for any Linux server with > 1,000 concurrent connection
 | "epoll is thread-safe"                          | epoll_wait on a shared epfd from multiple threads can cause double-delivery; use one epfd per thread                |
 | "EPOLLET is always better than level-triggered" | Edge-triggered is faster but any bug that misses a drain causes the connection to permanently stop receiving events |
 | "io_uring works in all container environments"  | io_uring is restricted/disabled in many container security profiles due to CVEs                                     |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -354,6 +380,8 @@ Fix: In seccomp profile, explicitly allow `io_uring_setup`, `io_uring_enter`, `i
 
 Prevention: Design I/O layer to detect capability and fall back: try io_uring, fall back to epoll if EPERM.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -373,6 +401,8 @@ Prevention: Design I/O layer to detect capability and fall back: try io_uring, f
 - `select / poll` — POSIX alternatives; portable but O(n) at scale
 - `IOCP (Windows)` — Windows' completion-port mechanism, analogous to io_uring
 - `DPDK` — kernel bypass that eliminates even epoll overhead for packet processing
+
+---
 
 ### 📌 Quick Reference Card
 

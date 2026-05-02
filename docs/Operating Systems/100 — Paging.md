@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Paging"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | Page Fault, TLB, Swap / Thrashing, Buddy System / Slab Allocator |                 |
 | **Related:**    | Page Fault, TLB, Segmentation                                    |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ As systems ran more and longer-lived processes, fragmentation worsened over time
 THE INVENTION MOMENT:
 This is exactly why Paging was created — fixed-size pages eliminate external fragmentation because any free page frame fits any page, and the page table handles the scattering transparently.
 
+---
+
 ### 📘 Textbook Definition
 
 **Paging** is a memory management scheme that divides both virtual memory and physical memory into fixed-size blocks called **pages** (virtual) and **frames** (physical), typically 4 KB on modern systems. The OS maintains a **page table** per process that maps each virtual page number to a physical frame number. Because all pages and frames are the same size, any free frame can hold any page — eliminating external fragmentation. Internal fragmentation (wasted space within the last page) is bounded to at most one page per allocation.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ Memory is cut into equal-size tiles — any tile fits any slot, so nothing is ev
 
 **One insight:**
 The genius of paging is that physical contiguity is no longer required. A process's code, stack, and heap can be scattered across RAM in any order — the page table makes them appear contiguous to the process. This is what allows the OS to pick up stray physical frames and use them, rather than needing a large contiguous free region.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -69,6 +77,8 @@ A virtual address is split into two fields: the high bits = page number (VPN), t
 THE TRADE-OFFS:
 Gain: No external fragmentation; any free frame usable anywhere; supports demand paging and swapping.
 Cost: Internal fragmentation (last page partially used); page table itself uses memory (4-level table for a process can consume MBs); TLB pressure from many small pages.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -92,6 +102,8 @@ WHAT HAPPENS WITH paging:
 THE INSIGHT:
 With paging, "free memory" is a pool of interchangeable tiles. Fragmentation becomes an internal property of individual allocations, bounded to < 1 page per allocation — not an external property of the entire heap.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Paging is like a parking lot with identically sized spaces. Any car fits any space. The attendant (OS page table) keeps a log of which car is in which space. A truck (large process) occupies multiple spaces, and the log tracks all of them. Contrast with a valet lot that tries to park cars in order — when a van leaves, the gap is too small for a bus.
@@ -102,6 +114,8 @@ With paging, "free memory" is a pool of interchangeable tiles. Fragmentation bec
 "Car at a different space than where it was last time" → page migration during defragmentation
 
 Where this analogy breaks down: Physical frames are not truly interchangeable for performance — NUMA systems have local (fast) and remote (slow) frames; the allocator tries to place pages on the nearest NUMA node.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -116,6 +130,8 @@ x86-64 uses a 4-level page table: PGD (Page Global Directory) → PUD → PMD �
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The 4-level page table structure is a compromise between depth (more levels = less wasted memory for sparse spaces) and walk cost (fewer levels = faster translation). A flat page table for 64-bit addressing would need 2^52 × 8 bytes = 32 PB — absurd. The 4-level tree stores only the path to actually-mapped pages. Huge pages (2 MB via PMD, 1 GB via PUD) skip lower levels entirely, both reducing page table memory and allowing the TLB to cover 512× more memory per entry. The tradeoff: huge pages cannot be partially swapped out — you must swap or keep the full 2 MB.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -147,6 +163,8 @@ The 4-level page table structure is a compromise between depth (more levels = le
 
 **Huge page shortcut:** If PMD entry has the huge-page bit set, translation stops at PMD level — no PTE needed. The offset is now 21 bits (2 MB pages).
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -166,6 +184,8 @@ FAILURE PATH:
 WHAT CHANGES AT SCALE:
 At 1 TB of mapped memory, a process has ~256 million PTEs consuming ~2 GB of page table memory. Linux's `khugepaged` daemon opportunistically collapses 4 KB pages into 2 MB huge pages to reduce this overhead. Database servers (PostgreSQL, MySQL) configure huge pages manually (`vm.nr_hugepages`) to avoid TLB misses on large buffer pools.
 
+---
+
 ### ⚖️ Comparison Table
 
 | Scheme            | External Frag          | Internal Frag | Flexible? | Best For                  |
@@ -177,6 +197,8 @@ At 1 TB of mapped memory, a process has ~256 million PTEs consuming ~2 GB of pag
 
 How to choose: Use default 4 KB paging for most workloads. Enable huge pages (THP or explicit) for applications with > 4 GB working sets to cut TLB miss rate.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                           | Reality                                                                                                   |
@@ -186,6 +208,8 @@ How to choose: Use default 4 KB paging for most workloads. Enable huge pages (TH
 | "Larger pages always perform better"    | Huge pages reduce TLB misses but can't be partially swapped and waste memory for small allocations        |
 | "Page table walks are done in software" | On x86-64, the MMU does the page table walk in hardware; OS only intervenes on page fault (PTE missing)   |
 | "malloc() allocates at page boundaries" | malloc() sub-allocates within pages; the kernel only allocates full pages to processes                    |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -244,6 +268,8 @@ Fix: Use thread-per-request (shared address space, no TLB flush on switch) or `i
 
 Prevention: Prefer event-driven (Node.js/Netty style) over pre-fork multi-process architectures for latency-sensitive services.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -261,6 +287,8 @@ Prevention: Prefer event-driven (Node.js/Netty style) over pre-fork multi-proces
 
 - `Segmentation` — the alternative memory scheme with variable-size regions; prone to external fragmentation
 - `Huge Pages` — a variant using 2 MB or 1 GB pages to reduce TLB pressure
+
+---
 
 ### 📌 Quick Reference Card
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Signal Handling"
 parent: "Operating Systems"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Graceful Shutdown, Process Supervision, Unix Daemons |                 |
 | **Related:**    | SIGTERM, SIGKILL, SIGINT, sigaction, kill()          |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,11 +40,15 @@ Asynchronous events — hardware faults (SIGSEGV, bus error), user interrupts (C
 THE INVENTION MOMENT:
 Unix V1 (1969) had signals as a simple "kill the process" mechanism. Unix V7 (1979) introduced `signal()` — allow processes to install handler functions. POSIX.1 (1988) added `sigaction()` with reliable semantics: masks, restart flags, and the siginfo_t structure. The evolution: from "kill" → "intercept and handle" → "inspect cause and recover".
 
+---
+
 ### 📘 Textbook Definition
 
 A **signal** is an asynchronous notification sent to a process or thread, indicating that a specific event has occurred. Signals are defined by number and name (SIGTERM=15, SIGKILL=9, SIGSEGV=11, etc.). Each signal has a **default disposition**: terminate, terminate+core, ignore, or stop/continue the process. A process may override the default disposition for most signals by installing a **signal handler** using `sigaction()`. **SIGKILL** (9) and **SIGSTOP** (19/17) cannot be caught, blocked, or ignored — they are always delivered.
 
 Signal delivery is asynchronous: the signal is delivered to the process at the next safe kernel-to-userspace transition, not necessarily immediately. Signals can be **blocked** (deferred) using signal masks (`sigprocmask()`, `pthread_sigmask()`). A blocked signal remains **pending** until unblocked. **Real-time signals** (SIGRTMIN to SIGRTMAX) are queued (multiple identical signals are not merged); standard signals are not queued (duplicate pending signals are collapsed).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -55,6 +61,8 @@ Signals = software interrupts; `SIGTERM` = "please stop"; `SIGKILL` = "stop now,
 
 **One insight:**
 The reason signal handlers are hard to write correctly: they're asynchronous — they can interrupt your code at any point, even in the middle of a non-reentrant function. A signal handler must only call async-signal-safe functions (a short list). Nearly all the useful C standard library functions (malloc, printf, pthread_mutex_lock) are NOT async-signal-safe.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -85,6 +93,8 @@ THE TRADE-OFFS:
 Gain: Asynchronous process-level notification without polling; hardware fault interception (SIGSEGV for GC, SIGBUS for mmap errors).
 Cost: Signal handlers are extremely hard to write correctly (async-signal-safety); POSIX signal model has subtleties around fork/threads; real-time signals (queueing) add complexity.
 
+---
+
 ### 🧪 Thought Experiment
 
 GRACEFUL SHUTDOWN WITH SIGTERM:
@@ -113,6 +123,8 @@ If process ignores SIGTERM (SIG_IGN): Kubernetes waits full grace period, then s
 THE INSIGHT:
 A `SIGTERM` handler is the contract between the process and its process supervisor (systemd, Kubernetes, Docker). All production processes must handle SIGTERM gracefully. This is the #1 rule of writing containers.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A process is like a chef working in a kitchen. Signals are messages handed to them:
@@ -127,6 +139,8 @@ A `SIGTERM` handler is the contract between the process and its process supervis
 
 Where this breaks down: signal handlers are not like normal function calls — they interrupt the chef mid-sentence, in the middle of a word. That's why you can't "grab new ingredients" (call malloc) from inside a signal handler — the kitchen's supply chain is mid-operation.
 
+---
+
 ### 📶 Gradual Depth — Four Levels
 
 **Level 1 — What it is (anyone can understand):**
@@ -140,6 +154,8 @@ Signal delivery in Linux (kernel): `send_signal()` → sets bit in `pending.sign
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The "signal handler set a flag, main loop checks flag" pattern emerged because POSIX's async-signal-safety requirement (only ~50 functions are safe) severely limits what you can do directly in a handler. The alternative pattern for complex signal handling: `signalfd()` (Linux 2.6.22) — convert signal delivery to file descriptor reads. The signal is queued as a byte on an fd, readable with `read()` or `epoll`. This makes signals composable with event loops (epoll, io_uring) and eliminates async-signal-safety concerns: you read the signal in the main loop, just like any other I/O event. Golang uses this approach internally; Rust's `signal_hook` crate uses this pattern too.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -173,6 +189,8 @@ The "signal handler set a flag, main loop checks flag" pattern emerged because P
 │                               Resume original code    │
 └────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -210,6 +228,8 @@ Runtime.getRuntime().addShutdownHook(new Thread(() -> {
     log.info("Graceful shutdown complete.");
 }, "shutdown-hook"));
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -299,6 +319,8 @@ close_connections()
 sys.exit(0)
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Signal        | Number | Default Action | Catchable?      | Common Use                  |
@@ -312,6 +334,8 @@ sys.exit(0)
 | **SIGALRM**   | 14     | Terminate      | Yes             | Timer expiry                |
 | **SIGUSR1/2** | 10/12  | Terminate      | Yes             | Application-defined         |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                       | Reality                                                                                           |
@@ -320,6 +344,8 @@ sys.exit(0)
 | "Signal handlers can call any function"             | Only async-signal-safe functions; most useful functions (malloc, printf, locks) are NOT safe      |
 | "kill -9 is always the right way to stop a process" | Only as a last resort; prevents cleanup and data loss; always try SIGTERM first                   |
 | "Java shutdown hooks run on SIGKILL"                | No — JVM hooks only run on SIGTERM/SIGINT/normal exit; SIGKILL is unblockable                     |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -369,6 +395,8 @@ gdb -p <pid>
 
 Fix: Signal handler only sets `volatile sig_atomic_t shutdown = 1;`. Main loop checks and calls cleanup functions (not the signal handler).
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -387,6 +415,8 @@ Fix: Signal handler only sets `volatile sig_atomic_t shutdown = 1;`. Main loop c
 
 - `signalfd()` — Linux file-descriptor-based signal delivery; composable with epoll/io_uring
 - `eventfd()` — simpler fd-based notification for same-process inter-thread events
+
+---
 
 ### 📌 Quick Reference Card
 

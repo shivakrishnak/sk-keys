@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "StampedLock"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Cache implementations, High-throughput reads | |
 | **Related:** | ReadWriteLock, ReentrantLock, volatile | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ A geometry service reads `Point.x` and `Point.y` 50M times/second for distance c
 THE INVENTION MOMENT:
 This is exactly why **`StampedLock`** was created — its optimistic read mode reads without any lock, then validates that no write occurred. For low-write-frequency workloads, validation almost always succeeds, giving reads at ~1ns overhead vs. ~20ns for a full read lock.
 
+---
+
 ### 📘 Textbook Definition
 
 **`StampedLock`** is a non-reentrant lock introduced in Java 8 (Doug Lea) providing three modes: (1) **Write lock** (`writeLock()`) — exclusive, returns a stamp; (2) **Read lock** (`readLock()`) — shared, returns a stamp; (3) **Optimistic read** (`tryOptimisticRead()`) — not a lock at all, returns a stamp representing current lock state. After reading, `validate(stamp)` checks if a write occurred since the stamp was obtained. If validation fails, retry with a full read lock. All modes return a `long` stamp; 0 means acquisition failed. Stamps contain lock state information — not just a counter. **Not reentrant** — re-acquiring the same lock type deadlocks.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ This is exactly why **`StampedLock`** was created — its optimistic read mode r
 
 **One insight:**
 Optimistic reads are not locks — they can be used concurrently with writers. The guarantee is: if `validate(stamp)` returns true after reading, then the data was not modified during the read, and the read is consistent. The key is: reads may observe partially-updated data, and `validate` is the consistency checkpoint.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -86,6 +94,8 @@ THE TRADE-OFFS:
 Gain: Optimistic reads add ~1-2ns vs ~20ns for read lock; no writer starvation; better throughput for read-dominant workloads.
 Cost: Non-reentrant (re-acquiring deadlocks); more complex code (must handle validation failure); partial reads require loop; cannot use with `try/finally` safety pattern (must pass stamp to unlock); not a `Lock` interface implementor.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -117,6 +127,8 @@ return Math.sqrt(localX*localX + localY*localY);
 THE INSIGHT:
 For a workload with 50M reads/second and 1 write/minute, the optimistic read succeeds 99.9999% of the time. Lock overhead drops from 1s/second to 0.1ms/second — a 10,000× improvement.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Taking a photo of a scoreboard vs. getting an official stat printout. You snap a photo (optimistic read), note the game clock (stamp). After looking at your photo, you check if the game clock changed since you snapped (validate). If yes, the scoreboard may have changed — you wait for the official printout (read lock). If no, your photo is accurate facts for that moment.
@@ -128,6 +140,8 @@ For a workload with 50M reads/second and 1 write/minute, the optimistic read suc
 
 Where this analogy breaks down: A photo captures a moment atomically. Optimistic read captures variables sequentially — if a write interleaves between two field reads, `x` is from before the write and `y` is from after. `validate(stamp)` detects this and triggers retry.
 
+---
+
 ### 📶 Gradual Depth — Four Levels
 
 **Level 1:** `StampedLock` reads data without locking, then does a quick "did anything change?" check. If yes, re-reads with a lock. If no, done — saved the overhead of the lock entirely.
@@ -137,6 +151,8 @@ Where this analogy breaks down: A photo captures a moment atomically. Optimistic
 **Level 3:** Optimistic reads are implemented as a versioned write counter in the lock state. Each write increments the version. `validate(stamp)` checks that the version hasn't changed. The optimistic read does a load-acquire barrier at `validate()` to ensure freshness of the read variables. The JIT can often eliminate the barrier on x86 TSO (where loads are already acquire-reads).
 
 **Level 4:** `StampedLock` is not a `Lock` interface implementation — it's a different paradigm. It supports lock conversion: `tryConvertToWriteLock(stamp)` and `tryConvertToReadLock(stamp)` allow conditional mode upgrade. It's non-reentrant by design — simpler state management enables the stamp-based version tracking. Reentrancy would require per-thread tracking that would add overhead negating the optimistic read benefit.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -195,6 +211,8 @@ try {
 }
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (no concurrent write):
@@ -220,6 +238,8 @@ FAILURE PATH (concurrent write):
 
 WHAT CHANGES AT SCALE:
 At scale, StampedLock's advantage compounds: for a 10M read/second workload with rare writes, optimistic reads save the equivalent of a full CPU core vs. `ReentrantReadWriteLock`. For Geospatial services, financial tick data, and sensor data reading — patterns with millions of reads and seconds between writes — StampedLock is the correct choice. However, its non-reentrancy and stamp-based API are error-prone at scale; extensive testing of the retry logic is critical.
+
+---
 
 ### 💻 Code Example
 
@@ -272,6 +292,8 @@ double updateIfNeeded(double threshold) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Lock | Read Cost | Write Cost | Reentrant | Optimistic | Starvation |
@@ -283,6 +305,8 @@ double updateIfNeeded(double threshold) {
 
 How to choose: Use `StampedLock` when: reads >> writes, read performance is critical, and you can accept non-reentrancy. For all other cases, `ReentrantReadWriteLock` is simpler and safer. Never use `StampedLock` when the code path could re-acquire the same lock.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -291,6 +315,8 @@ How to choose: Use `StampedLock` when: reads >> writes, read performance is crit
 | StampedLock is strictly better than ReadWriteLock | StampedLock is NOT reentrant. Any code that re-calls a StampedLock-protected method recursively will deadlock. ReadWriteLock is reentrant — simpler and safer for most code |
 | validate() succeeding means a consistent read | `validate()` means no write COMPLETED during your read. A write that started and finished between your individual field reads is detected by `validate`. But complex reads with intervening computation may still observe inconsistency if your fields are logically interdependent — always copy fields to locals before compute |
 | You can ignore the stamp for unlocking | The stamp encodes version info used to unlock correctly. Discarding the stamp and using a hardcoded value for `unlockWrite`/`unlockRead` will corrupt the lock state |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -335,6 +361,8 @@ Root Cause: Stamp was obtained in a different context (e.g., different thread, s
 
 Fix: Never cache, share, or store stamps across threads or across lock acquisition cycles. Stamps are single-use.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -347,6 +375,8 @@ Fix: Never cache, share, or store stamps across threads or across lock acquisiti
 **Alternatives / Comparisons:**
 - `ReadWriteLock` — simpler, reentrant, less performant for very high-read workloads
 - `volatile` — single-field visibility without locks; even simpler than stamped for individual fields
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -380,6 +410,7 @@ Fix: Never cache, share, or store stamps across threads or across lock acquisiti
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The `distanceFromOrigin()` example reads `x` and `y` separately in the optimistic read section. Between reading `x` and reading `y`, a writer calls `move(3.0, 4.0)`, updating both. After the write, `validate(stamp)` returns false. But what if the write updates ONLY `y` (not x) — and the programmer forgot to include `x` in the "moved" operation? Trace whether `validate(stamp)` still saves the programmer from seeing an inconsistent state, explain exactly what `validate()` checks vs. what it does NOT check, and describe a scenario where the validation succeeds (returns true) but the data is still logically inconsistent for the computation.

@@ -29,6 +29,8 @@ tags:
 | **Used by:** | All APIs, API Gateways, Microservices, SaaS Platforms | |
 | **Related:** | OAuth2, JWT, API Keys, HMAC, OIDC, mTLS | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

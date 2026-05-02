@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Strongly Connected Components"
 parent: "Data Structures & Algorithms"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Deadlock Detection, Compiler Dependency Analysis, Web Crawlers | |
 | **Related:** | Topological Sort, Minimum Spanning Tree, BFS | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Checking all pairs for mutual reachability takes O(V×(V+E)) — for 10 billion 
 THE INVENTION MOMENT:
 DFS finish times carry structural information about the graph. In Kosaraju's algorithm: one DFS on the original graph records finish times; a second DFS on the **reversed** graph, processing vertices in decreasing finish order, visits exactly one SCC per DFS tree. In Tarjan's algorithm: a single DFS uses a stack and "low-link" values to identify SCCs as subtrees. Both run in O(V+E). This is exactly why **Strongly Connected Component** algorithms were invented.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Strongly Connected Component (SCC)** of a directed graph G=(V,E) is a maximal set of vertices S ⊆ V such that for every pair (u,v) ∈ S×S, there exists a directed path from u to v and from v to u. The condensation of G is the DAG obtained by contracting each SCC to a single super-vertex; this DAG is acyclic by definition. **Kosaraju's algorithm** uses two DFS passes (one on G, one on Gᵀ) to identify all SCCs in O(V+E). **Tarjan's algorithm** uses one DFS with a stack and auxiliary `disc` and `low` arrays to identify SCCs as DFS subtrees, also in O(V+E).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Find all groups of vertices in a directed graph that form closed loops — every
 
 **One insight:**
 SCCs partition a directed graph into its "irreducible" mutual-reachability groups. The condensation (the DAG of SCCs) always forms a DAG — topological order on SCCs reveals the hierarchical dependency structure. This condensation is the key insight: you reduce a complex cyclic graph to an acyclic one, enabling topological reasoning.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -69,6 +77,8 @@ DERIVED DESIGN:
 THE TRADE-OFFS:
 Gain: O(V+E) — linear time for complete SCC decomposition; produces DAG condensation enabling topological analysis.
 Cost: Tarjan's is a single pass but requires careful stack management and low-link logic (error-prone to implement). Kosaraju's is two passes with a simpler mental model but allocates the reversed graph.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -89,6 +99,8 @@ Result: 3 SCCs: {E}, {D}, {A,B,C}. Condensation: {A,B,C}→{D}→{E} — a linea
 THE INSIGHT:
 The low-link value propagates up the DFS tree, detecting when a subtree has a back edge to an ancestor — meaning a cycle exists. The SCC root is the vertex where low equals disc, signalling no further cycle escapes this subtree.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Think of a directed graph as a city's one-way road system. An SCC is a "neighbourhood" where you can drive from any intersection to any other using only the roads within the neighbourhood. The condensation DAG is the city's inter-neighbourhood highway system — all highways go one way between neighbourhoods. Once you leave a neighbourhood via a highway, you cannot return by road.
@@ -99,6 +111,8 @@ The low-link value propagates up the DFS tree, detecting when a subtree has a ba
 "Condensation DAG" → the high-level city map without cycles
 
 Where this analogy breaks down: A neighbourhood's border is geographic; SCC membership is determined by reachability, not physical proximity. A node can be its own SCC (no cycles through it), unlike a neighbourhood always containing multiple buildings.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -113,6 +127,8 @@ Tarjan's maintains a monotone disc-time counter and a stack. When DFS finishes a
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Tarjan's SCC is the basis of Hopcroft-Tarjan biconnected components, bridge finding, and 2-SAT solving. 2-SAT (satisfiability with 2-literal clauses) reduces to SCC detection: each variable x creates two nodes (x, ¬x); implication edges encode clauses. 2-SAT is NP-hard in general (3-SAT), but 2-SAT is polynomial because checking if x and ¬x are in the same SCC determines unsatisfiability in O(V+E). This makes Tarjan's algorithm the key subroutine in polynomial 2-SAT solvers, network reliability analysis, and Boolean circuit satisfiability checking.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -161,6 +177,8 @@ Tarjan's SCC is the basis of Hopcroft-Tarjan biconnected components, bridge find
 └────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -190,6 +208,8 @@ Cross edges incorrectly treated as back edges
 
 WHAT CHANGES AT SCALE:
 For web-scale directed graphs (10 billion nodes, 100 billion edges — e.g., Twitter follower graph), single-machine DFS is infeasible. Distributed SCC algorithms (e.g., Forward-Backward Algorithm, FWBW) operate in O(D) rounds where D is the diameter: forward BFS identifies vertices reachable from a pivot; backward BFS identifies vertices that reach the pivot; intersection is one SCC. Repeated iterations find all SCCs in O(D × log V) rounds distributed across a cluster.
+
+---
 
 ### 💻 Code Example
 
@@ -271,6 +291,8 @@ sccMembers.values().stream()
     .forEach(s -> System.out.println("Cycle: " + s));
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Passes | Space | Implementation | Best For |
@@ -282,6 +304,8 @@ sccMembers.values().stream()
 
 How to choose: Use Tarjan's for single-machine implementations (one pass, no graph reversal needed). Use Kosaraju's when a reverse adjacency list is already available. Use FWBW for distributed graph processing.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -290,6 +314,8 @@ How to choose: Use Tarjan's for single-machine implementations (one pass, no gra
 | A single vertex is never its own SCC | A vertex with no cycle through itself (no path back to itself) is its own SCC — a "trivial SCC" of size 1. Most vertices in a real-world directed graph are trivial SCCs. |
 | Tarjan's and Kosaraju's always find identical SCCs | They find the same partition into SCCs, but with different numbering order: Kosaraju's numbers in reverse topological order of the condensation; Tarjan's in reverse topological order (SCCs produced as finished). |
 | Cross edges update the low-link value | Only tree edges and back edges (to vertices on the current DFS stack) update low[v]. Cross edges to already-completed SCCs must NOT update low[v] (would merge separate SCCs). This is the most common implementation bug. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -352,6 +378,8 @@ Fix: Use a `Set<Long>` to deduplicate edges when building the condensation; only
 
 Prevention: Always use a set for condensation edge tracking; deduplicate before building the condensation graph.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -368,6 +396,8 @@ Prevention: Always use a set for condensation edge tracking; deduplicate before 
 - `Weakly Connected Components` — Uses undirected connectivity (e.g., Union-Find); faster but ignores edge direction.
 - `Biconnected Components` — For undirected graphs; finds structures that remain connected after removing any single vertex.
 - `Topological Sort` — Applicable only to DAGs (after SCC condensation); Tarjan's SCC subsumes topological sort.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -396,6 +426,7 @@ Prevention: Always use a set for condensation edge tracking; deduplicate before 
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** In Tarjan's algorithm, why must the low-link update for a back edge use `disc[w]` and NOT `low[w]`? Construct a concrete example where using `low[w]` instead of `disc[w]` for a back edge causes two separate SCCs to be incorrectly merged. Explain the invariant that `low[v]` must satisfy: "the minimum disc time of a vertex reachable from the subtree of v via at most one back edge" — and why `low[w]` violates this invariant.

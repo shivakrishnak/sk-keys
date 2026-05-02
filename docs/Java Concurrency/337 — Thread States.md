@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Thread States"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Thread Lifecycle, synchronized, wait / notify / notifyAll | |
 | **Related:** | Thread Lifecycle, synchronized, ReentrantLock | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Two threads in the same frozen application: one waiting for I/O, one deadlocked.
 THE INVENTION MOMENT:
 `Thread.State` was created to standardize thread state reporting across all JVM implementations, making thread dumps portable and programmatic monitoring of thread health possible.
 
+---
+
 ### 📘 Textbook Definition
 
 **`Thread.State`** is an enum in `java.lang.Thread` (Java 5+) with six values representing the execution state of a Java thread: `NEW`, `RUNNABLE`, `BLOCKED`, `WAITING`, `TIMED_WAITING`, `TERMINATED`. Retrieved via `thread.getState()` or via `ThreadMXBean`. Used in thread dumps produced by `jstack`, JVisualVM, and Java Flight Recorder. Each state corresponds precisely to specific JVM events — what called caused the transition, what event will transition out.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ THE INVENTION MOMENT:
 
 **One insight:**
 The critical diagnostic distinction: BLOCKED threads are competing for resources (fix: reduce lock contention). WAITING threads are cooperating (usually correct — signal them when ready). Treating WAITING threads as a problem leads to wrong fixes.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -82,6 +90,8 @@ TIMED_WAIT  → sleep / wait(ms)  → "sleeping" or "waiting on <object> timeout
 RUNNABLE    → running or I/O    → stack trace at execution point
 TERMINATED  → done              → no stack frames
 ```
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -113,11 +123,15 @@ Analysis:
 THE INSIGHT:
 One RUNNABLE, one legitimate WAITING, and one DEADLOCK — all need different responses. Thread states make diagnosis unambiguous.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Thread states are like a car dashboard's status lights. Red (BLOCKED) = engine overheating (actively competing for something). Yellow (WAITING/TIMED_WAITING) = waiting at a traffic light (legitimate pause). Green (RUNNABLE) = driving. Off (TERMINATED) = engine off. NEW = car assembled but ignition not turned. You read the dashboard to understand the car's status — not by guessing.
 
 Where this analogy breaks down: Dashboard lights are binary (on/off); thread states have specific transition triggers. The RUNNABLE light doesn't tell you if you're moving or stuck in traffic (CPU vs I/O).
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -128,6 +142,8 @@ Where this analogy breaks down: Dashboard lights are binary (on/off); thread sta
 **Level 3 — How it works:** `Thread.getState()` reads `JavaThread::_thread_state` in HotSpot JVM. The state is set atomically during transitions (entering synchronized, calling `Object.wait()`, etc.). Thread dump captures this via a safepoint — all threads are stopped momentarily to capture consistent state.
 
 **Level 4 — Why it matters for virtual threads:** Virtual threads (Java 21) have their own state separate from the carrier thread. A virtual thread's `getState()` shows its logical state (WAITING during I/O) while the carrier OS thread's state is RUNNABLE (executing other virtual threads). Tools like JFR and thread dumps include both the virtual thread stack (user code) and the carrier thread — essential for diagnosing virtual thread issues.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -175,6 +191,8 @@ jfr print --events jdk.JavaMonitorWait,jdk.ThreadPark \
   states.jfr | head -100
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 ```
@@ -188,6 +206,8 @@ jfr print --events jdk.JavaMonitorWait,jdk.ThreadPark \
     → [Sleep expires: RUNNABLE]
     → [run() returns: TERMINATED]
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -228,6 +248,8 @@ void checkThreadHealth() {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | State | CPU Usage | Lock Held | Lock Wanted | Next Action Needed |
@@ -239,6 +261,8 @@ void checkThreadHealth() {
 | TIMED_WAITING | None | Maybe | On timeout/signal | Wait for timer or signal |
 | TERMINATED | None | No | No | N/A |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -246,6 +270,8 @@ void checkThreadHealth() {
 | ReentrantLock contention shows as BLOCKED | ReentrantLock uses `LockSupport.park()` internally → shows as WAITING, not BLOCKED. Only intrinsic `synchronized` lock contention shows as BLOCKED |
 | RUNNABLE means the thread is active and useful | RUNNABLE includes threads blocked on socket/file reads at the OS level — they aren't consuming CPU but show as RUNNABLE to the JVM |
 | TIMED_WAITING and WAITING are interchangeable | WAITING waits indefinitely (must receive notification). TIMED_WAITING has a timeout (resumes automatically if not notified). They have different timeout semantics |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -267,11 +293,15 @@ jstack <pid> | grep "State:" | sort | uniq -c
 # Check executor task queue depth
 ```
 
+---
+
 ### 🔗 Related Keywords
 
 - `Thread Lifecycle` — the transitions between states; Thread States are the nodes in the lifecycle graph
 - `synchronized` — the mechanism causing BLOCKED state
 - `wait / notify / notifyAll` — the mechanisms causing WAITING state
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -291,6 +321,7 @@ jstack <pid> | grep "State:" | sort | uniq -c
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Describe exactly what a thread dump line like `"pool-1-thread-3" #25 prio=5 os_prio=0 tid=0x00007f4a5c001800 nid=0x7b4 waiting on condition [0x00007f4a4f9fe000]` tells you about the thread, and explain how to correlate the `nid` field with an OS-level `top` or `ps -H` command to identify which specific thread is consuming CPU or blocking in the OS — including the base conversion needed and which OS commands to use.

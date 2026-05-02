@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Stack, Queue / Deque, LRU Cache | |
 | **Related:** | Array, ArrayList, Deque | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ Arrays excel at random access but pay O(N) for insertion and deletion in the mid
 THE INVENTION MOMENT:
 If we allow elements to live at non-contiguous addresses, and each element simply remembers where the next one lives, insertion becomes "update two pointers" — O(1) given a reference to the insertion point. This is exactly why the LinkedList was created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **LinkedList** is a linear data structure in which each element (called a *node*) contains a data field and one or more references (pointers) to the next (and optionally previous) node. A *singly linked list* has one pointer per node (to the next); a *doubly linked list* has two pointers per node (to next and previous). Insertion and deletion at a known node position are O(1); access by index is O(N) because traversal from the head is required.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -52,6 +58,8 @@ Nodes scattered in memory, each holding a value and a "next" address.
 
 **One insight:**
 A LinkedList trades random access for O(1) mutation. The "pointer chase" that makes access slow is the same property that makes insertion free — because you never have to move anyone else to make room.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -71,6 +79,8 @@ THE TRADE-OFFS:
 Gain: O(1) insert/delete at known position, dynamic size without copying.
 Cost: O(N) access by index, high memory overhead (pointer storage + GC pressure), poor cache locality.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -85,6 +95,8 @@ Traverse to node #499 in O(499). Set `newNode.next = node499.next`. Set `node499
 THE INSIGHT:
 LinkedList makes insertion free but charges you the traversal. If you already hold a reference to the insertion point (e.g., from a previous iteration), the cost truly is O(1). This is why iterators in Java's `LinkedList` can remove while iterating cheaply — they track the current node.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A LinkedList is a chain of train carriages. Each carriage knows which carriage is directly behind it. To detach carriage 5 and insert a new one, you just re-hook two connections. But to check what's in carriage 500, you must walk from carriage 1.
@@ -95,6 +107,8 @@ LinkedList makes insertion free but charges you the traversal. If you already ho
 "Walk from carriage 1" → O(N) traversal
 
 Where this analogy breaks down: Real carriages are physically adjacent; linked nodes are scattered in memory, so the cache penalty is far higher than just "walking" suggests.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -109,6 +123,8 @@ Java's `LinkedList<E>` is a doubly linked list of `Node<E>` objects. Each node: 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Java's `LinkedList` implements both `List` and `Deque`. The `List` interface forces `get(int index)` to exist, but it's O(N). This is a leaky abstraction — the interface does not communicate the complexity contract. `ArrayDeque` outperforms `LinkedList` as a queue in virtually every benchmark because node allocation + GC churn dominates. Prefer `ArrayDeque` for queue/stack; prefer `ArrayList` for random access. `LinkedList` wins only when you need both ends access AND mid-list mutation via iterator.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -149,6 +165,8 @@ Node<E> node(int index) {
 │  After:  [A] ⇄ [C] ⇄ [B]                            │
 └───────────────────────────────────────────────────────┘
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -169,6 +187,8 @@ Call get(index) in a tight loop
 
 WHAT CHANGES AT SCALE:
 With millions of nodes, GC pause time dominates because each node is a separate heap object to mark and sweep. At scale, chunk-based structures like `ArrayDeque` or skip lists outperform `LinkedList` dramatically. Avoid `LinkedList` in latency-sensitive code with more than ~10,000 elements.
+
+---
 
 ### 💻 Code Example
 
@@ -206,6 +226,8 @@ while (it.hasNext()) {
 // list: [1, 3, 5]
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Structure | Access | Insert mid | Insert ends | Memory/elem | Best For |
@@ -219,6 +241,8 @@ while (it.hasNext()) {
 
 How to choose: If you need a queue or stack, prefer `ArrayDeque` over `LinkedList`. If you need random access, use `ArrayList`. Use `LinkedList` only when you need O(1) mid-list insertion while iterating.
 
+---
+
 ### 🔁 Flow / Lifecycle
 
 ```
@@ -231,6 +255,8 @@ Access → traverse from head/tail
 Remove → update neighbour pointers, GC reclaims node
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -240,6 +266,8 @@ Remove → update neighbour pointers, GC reclaims node
 | Java's LinkedList is a good general-purpose list | For almost all use cases, ArrayList outperforms LinkedList because of cache locality |
 | Removing an element by value from LinkedList is O(1) | Removing by value requires O(N) search first; only removing via an active iterator is O(1) |
 | LinkedList has no overhead compared to arrays | Node objects add GC pressure; millions of nodes cause significant GC pause time |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -313,6 +341,8 @@ while (it.hasNext())
 
 Prevention: Never modify a collection during an enhanced for loop; use `ListIterator.remove()`.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -327,6 +357,8 @@ Prevention: Never modify a collection during an enhanced for loop; use `ListIter
 **Alternatives / Comparisons:**
 - `ArrayList` — contiguous storage, O(1) access, preferred for most workloads.
 - `ArrayDeque` — array-backed double-ended queue, outperforms LinkedList as a queue.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -355,6 +387,7 @@ Prevention: Never modify a collection during an enhanced for loop; use `ListIter
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Java's `LinkedList` implements both `List` and `Deque`. If you need a double-ended queue that supports O(1) add/remove at both ends, you have two options: `LinkedList` and `ArrayDeque`. Both claim O(1) at the ends. In a system processing 100 million events per second, which would you choose and why? What specific hardware characteristic causes one to outperform the other even when big-O is identical?

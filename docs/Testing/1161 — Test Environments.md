@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Test Environments"
 parent: "Testing"
@@ -27,14 +27,20 @@ tags:
 | **Used by:**    | QA Teams, DevOps, Developers                                                |                 |
 | **Related:**    | Test Isolation, Test Data Management, Testcontainers, Docker Compose, CI-CD |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 "IT WORKS ON MY MACHINE":
 Without well-defined test environments, teams face: (1) tests that pass locally but fail in CI (different JVM version, OS, database version), (2) E2E tests sharing a staging environment causing race conditions, (3) no way to test infrastructure changes before production, (4) QA blocking developer workflow because there's only one shared test server. Test environments formalize where, how, and under what conditions different test types run.
 
+---
+
 ### 📘 Textbook Definition
 
 A **test environment** is a controlled, reproducible infrastructure configuration used to execute tests. It includes: compute (servers/containers), data stores, network configuration, application dependencies, test data, and environment-specific configuration (feature flags, credentials). Environments are tiered: **local** (developer machine), **CI** (ephemeral per pipeline run), **integration/dev** (shared, always-on), **staging/pre-prod** (production-like), and sometimes **production** (canary/shadow testing). Each tier serves different test types and has different fidelity vs. cost trade-offs.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -44,6 +50,8 @@ Test environments = where tests run; each tier balances fidelity (how production
 **One analogy:**
 
 > Test environments are like **rehearsal spaces for a theater production**: actors first rehearse lines at home (local dev), then in a rehearsal room (CI), then in a dress rehearsal on the actual stage (staging), then opening night (production). Each space adds more fidelity — costume, lighting, full audience — at increasing cost and visibility.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -93,6 +101,8 @@ PERSISTENT (staging):
   - Periodic reset required
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 ENVIRONMENT PARITY — THE MISSING CONFIG:
@@ -114,9 +124,13 @@ Lesson: environment parity requires:
   4. Config validation on startup: fail fast if required vars are missing
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Environments are **progressive simulation rings**: the inner ring is fast and cheap but low fidelity (unit tests on local machine); each outer ring is slower and more expensive but more realistic. You test as early as possible (inner rings) to fail fast and cheaply, pushing to outer rings only what inner rings can't catch.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -127,6 +141,8 @@ Lesson: environment parity requires:
 **Level 3:** Environment promotion flow: code passes CI (unit + integration) → deployed to staging → E2E tests pass → deployed to production (possibly via canary). Each environment gate must be passed before promotion. Environment-specific feature flags: staging may have experimental features enabled; production has only stable features.
 
 **Level 4:** Ephemeral environments per PR (Kubernetes namespaces, preview environments): each pull request spins up its own complete environment (using Helm + namespace isolation), runs E2E tests, then is destroyed. This gives perfect isolation for E2E testing without a shared staging environment bottleneck. Cost management: preview environments are destroyed when PR is merged/closed. Tools: Argo CD, GitHub Environments, AWS CodePipeline with environment promotion.
+
+---
 
 ### 💻 Code Example
 
@@ -169,6 +185,8 @@ services:
     docker-compose down
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |           | Local     | CI (ephemeral) | Staging           | Production |
@@ -178,6 +196,8 @@ services:
 | Fidelity  | Low       | Medium         | High              | Exact      |
 | Data      | Generated | Generated      | Anonymized        | Real       |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                               | Reality                                                                                                             |
@@ -185,6 +205,8 @@ services:
 | "Staging is identical to production"        | Config drift, scale differences, and data differences are almost always present                                     |
 | "Tests should only run in staging"          | Tests must run in every environment tier; shift left means running tests earlier and more frequently                |
 | "One shared test environment is sufficient" | Shared environments cause bottlenecks and non-deterministic tests; ephemeral or isolated environments are preferred |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -200,10 +222,14 @@ Fix: Ephemeral environments per PR/branch; or queue-based deployment to staging 
 Cause: CI mocks a dependency; staging uses a real service that behaves differently.
 Fix: Use contract tests (Pact) to ensure mocks accurately represent real services.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Integration Test, E2E Test, CI-CD
 - **Related:** Test Isolation, Test Data Management, Docker Compose, Testcontainers, Kubernetes Namespaces, Blue-Green Deployment
+
+---
 
 ### 📌 Quick Reference Card
 

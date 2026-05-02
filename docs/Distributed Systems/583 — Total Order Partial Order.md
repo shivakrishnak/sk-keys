@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Total Order / Partial Order"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Lamport Clock, Happened-Before, Distributed Systems, Set Theory                      |                 |
 | **Used by:**    | Raft, Paxos, Log Replication, Causal Consistency, State Machine Replication          |                 |
 | **Related:**    | Happened-Before, Lamport Clock, Vector Clock, Linearizability, Total Order Broadcast |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

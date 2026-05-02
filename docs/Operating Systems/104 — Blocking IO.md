@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Blocking I/O"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | Non-Blocking I/O, Async I/O, epoll / kqueue / io_uring  |                 |
 | **Related:**    | Non-Blocking I/O, Async I/O, File Descriptor            |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Busy-waiting was catastrophically wasteful. A web server spinning on I/O couldn'
 THE INVENTION MOMENT:
 This is exactly why Blocking I/O was created — instead of busy-waiting, the OS puts the thread to sleep and reschedules it only when the I/O operation is complete, freeing the CPU to run other threads.
 
+---
+
 ### 📘 Textbook Definition
 
 **Blocking I/O** is an I/O model in which the calling thread is suspended (blocked) by the OS scheduler upon initiating an I/O operation (read, write, connect, accept) and does not resume until the operation completes and data is available. The kernel moves the thread from the run queue to the wait queue associated with the I/O event. When the device signals completion (interrupt), the kernel moves the thread back to the run queue. From the programmer's perspective, the I/O function call does not return until the operation is complete.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ Blocking I/O means "wait here, do nothing, until the data arrives" — the threa
 
 **One insight:**
 Blocking I/O is not "slow" — it's the OS working correctly (no busy-waiting). The cost is that a thread is held idle during the wait. For a server handling 10,000 concurrent connections, 10,000 blocked threads means 10,000 threads in memory — which doesn't scale. This is the core motivation for non-blocking I/O models.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -69,6 +77,8 @@ When a thread calls `read(fd, buf, n)` and no data is available, the kernel call
 THE TRADE-OFFS:
 Gain: Extremely simple programming model — sequential code, easy error handling, no callbacks or state machines needed.
 Cost: One thread per concurrent I/O operation. At 10,000 connections, 10,000 threads × ~1 MB stack = 10 GB RAM just for stacks. Context switching between 10,000 threads adds scheduler overhead.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -93,6 +103,8 @@ WHAT HAPPENS WITH non-blocking I/O + event loop:
 THE INSIGHT:
 Blocking I/O's simplicity comes at the cost of one thread per concurrent I/O. This is fine for 100 connections — painful for 100,000. The "C10K problem" (handling 10,000 connections efficiently) is fundamentally a choice between blocking I/O (threads) and non-blocking I/O (events).
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Blocking I/O is like a telephone receptionist who personally takes every call, puts one caller on hold, helps them fully, then takes the next. Every caller gets undivided attention, but the queue grows unbounded with scale. Compare to a call centre with a switchboard (non-blocking I/O): one operator routes dozens of calls simultaneously, connecting callers when an agent becomes available.
@@ -103,6 +115,8 @@ Blocking I/O's simplicity comes at the cost of one thread per concurrent I/O. Th
 "Queue growing at peak hours" → thread pool exhaustion
 
 Where this analogy breaks down: Unlike a human receptionist, OS context switching between threads is fast (~1–10 µs); the problem is memory and kernel overhead, not the switching time itself.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -117,6 +131,8 @@ Blocking I/O is the default in almost every language: `File.read()` in Java, `fs
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Blocking I/O was the natural choice in single-CPU single-process systems: one task, one I/O at a time. As systems moved to multi-process (Unix), thread-per-connection was the obvious scale extension. The model worked until the "C10K problem" paper (Dan Kegel, 1999) quantified the breakdown point. The OS scheduling overhead grows with thread count: Linux's scheduler O(1) algorithm (2.6 kernel) improved scaling, but memory remained the bottleneck. Java's virtual threads (Project Loom, JDK 21) resurrect blocking I/O semantics with low memory cost by mapping millions of virtual threads to a small pool of OS threads — the blocking operation suspends the virtual thread, not the OS thread, giving you the simplicity of blocking I/O with the scalability of event loops.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -148,6 +164,8 @@ Blocking I/O was the natural choice in single-CPU single-process systems: one ta
 
 **Failure path:** Connection closed by peer while thread is blocked → `read()` returns 0 (EOF). Connection reset → returns -1 with `errno = ECONNRESET`.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -167,6 +185,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At 10,000 blocked threads, the scheduler must track 10,000 runnable/waiting threads. Linux kernel scales to ~100K threads but at memory cost (each thread needs kernel stack = 8–16 KB + user stack = 1 MB). Thread context switch time (~1–10 µs) × 10,000 wakeups/second = 10–100 ms of pure scheduling overhead. Java NIO and Netty solve this; Java 21 virtual threads make blocking I/O viable again at scale.
+
+---
 
 ### 💻 Code Example
 
@@ -227,6 +247,8 @@ cat /proc/<PID>/status | grep Threads
 ps -eLf | grep <PID> | wc -l  # thread count
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Model                 | Threads per conn | Complexity | Throughput | Best For           |
@@ -239,6 +261,8 @@ ps -eLf | grep <PID> | wc -l  # thread count
 
 How to choose: Use blocking I/O for internal services with < 500 concurrent connections. Use epoll/io_uring or virtual threads when connection count exceeds thread pool limits.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                             | Reality                                                                                                                |
@@ -248,6 +272,8 @@ How to choose: Use blocking I/O for internal services with < 500 concurrent conn
 | "read() blocks until the buffer is full"  | read() returns as soon as ANY data is available — not necessarily `n` bytes. Always loop on short reads                |
 | "A blocked thread consumes CPU"           | A blocked thread uses zero CPU; it consumes only kernel state (wait queue entry) and its stack memory                  |
 | "Thread-per-request doesn't scale at all" | Java 21 virtual threads make thread-per-request viable again at millions of concurrent tasks                           |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -321,6 +347,8 @@ Fix: Never hold a lock while performing blocking I/O. Release lock before I/O, r
 
 Prevention: Use `tryLock(timeout)` instead of `lock()` to detect lock starvation; architect I/O-heavy code paths to be lock-free.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -339,6 +367,8 @@ Prevention: Use `tryLock(timeout)` instead of `lock()` to detect lock starvation
 
 - `Non-Blocking I/O` — returns `EAGAIN` immediately if no data; requires event loop
 - `Async I/O (io_uring)` — kernel performs I/O, notifies user space when done; no thread blocked
+
+---
 
 ### 📌 Quick Reference Card
 

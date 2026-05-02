@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Binary Search"
 parent: "Data Structures & Algorithms"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Two Pointer, Sliding Window, Divide and Conquer | |
 | **Related:** | Two Pointer, Linear Search, Interpolation Search | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ O(N) linear search is unusable for large sorted datasets. The sorted order is co
 THE INVENTION MOMENT:
 Sorting not only organises data — it creates a map. At any midpoint, you instantly know: target is in the left half or the right half. Each comparison eliminates half the remaining candidates. 500,000 elements → 19 comparisons. This is exactly why **Binary Search** was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Binary Search** is a divide-and-conquer search algorithm that operates on a sorted array by repeatedly halving the search space. It maintains `low` and `high` pointers defining the current candidate range; at each step it computes `mid = (low + high) / 2`, compares `arr[mid]` against the target, and eliminates the half that cannot contain the target. It finds an exact match in O(log N) time and O(1) auxiliary space (iterative), or O(log N) stack space (recursive). A pre-condition of sorted order is required.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Look at the middle, then eliminate the impossible half and repeat until found.
 
 **One insight:**
 Binary Search's power comes from eliminating possibilities, not from finding the answer directly. Each comparison doesn't just check one candidate — it rules out an entire half of all remaining candidates. This compounding elimination is why O(log N) grows so slowly: log₂(1,000,000,000) = 30 comparisons.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -76,6 +84,8 @@ THE TRADE-OFFS:
 Gain: O(log N) search — 30 comparisons finds any element in a billion-element sorted array.
 Cost: Requires sorted input (O(N log N) sort if unsorted). Cannot handle insertions/deletions without re-sorting (use a BST for dynamic sorted data).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -95,6 +105,8 @@ WHAT HAPPENS WITH BINARY SEARCH:
 THE INSIGHT:
 Even in the worst case, Binary Search never needs more than ⌈log₂(N)⌉ steps. For N=10⁹, that's 30 comparisons regardless of where the target is. The sorted array is not just organised data — it's an implicit decision tree of depth log₂(N).
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Binary Search is like the "higher or lower" guessing game for numbers 1–100. Each time the other person says "higher" or "lower," you jump to the exact middle of the remaining range — never wasting a guess. You always guess 50, then 75 or 25, then the midpoint of the survivor — found in at most 7 guesses.
@@ -107,6 +119,8 @@ Even in the worst case, Binary Search never needs more than ⌈log₂(N)⌉ step
 "Number not in range" → `low > high`, return -1
 
 Where this analogy breaks down: In the guessing game, the answer is a single integer; in Binary Search the target is compared to array values at positions. Also, the analogy doesn't capture the off-by-one subtlety of `≤ vs <` when searching for a range boundary (lower_bound / upper_bound variations).
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -121,6 +135,8 @@ Beyond exact-match search, Binary Search generalises to **lower_bound** (first i
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Binary Search embodies the divide-and-conquer principle at its simplest: a sorted array is an implicit balanced BST (arr[mid] is the root, left and right halves are subtrees). The design is optimal: information-theoretically, any comparison-based search on N items requires Ω(log N) comparisons — Binary Search achieves exactly this bound. Its limitation appears in cache performance: for extremely large arrays, linear scan of a small range may outperform binary search due to CPU cache prefetching (sequential access patterns are predicted by hardware). B-trees and database index structures solve this by grouping related nodes into pages matching cache-line size.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -163,6 +179,8 @@ Binary Search embodies the divide-and-conquer principle at its simplest: a sorte
 **Answer-Space Binary Search:**
 Used when the search space is a range of integer values rather than an array. Example: "What is the minimum ship weight W such that all packages can be shipped in D days?" Binary search over W ∈ [max(packages), sum(packages)], checking feasibility for each W in O(N). Total: O(N log(sum)).
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -189,6 +207,8 @@ Array not sorted (or mutated after sort)
 
 WHAT CHANGES AT SCALE:
 Binary Search on a 1-billion-element sorted array takes 30 comparisons, but each comparison may cause a cache miss if the array spans multiple cache lines. Modern CPUs pre-fetch sequential memory; random access patterns at log N positions across a huge array bypass prefetch. Database B-trees group ~100 keys per node, limiting to log₁₀₀(N) ≈ 5 page reads for 10⁹ records — far fewer I/O operations than 30 random cache misses.
+
+---
 
 ### 💻 Code Example
 
@@ -267,6 +287,8 @@ int searchRotated(int[] nums, int target) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach | Time | Space | Requires Sorted | Best For |
@@ -279,6 +301,8 @@ int searchRotated(int[] nums, int target) {
 
 How to choose: Use Binary Search for sorted in-memory arrays with repeated queries. Use HashMap when O(1) lookup justifies O(N) extra space. Use B-Tree for disk-based or database scenarios where page locality matters.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -288,6 +312,8 @@ How to choose: Use Binary Search for sorted in-memory arrays with repeated queri
 | Binary Search only finds exact matches | It generalises to lower_bound, upper_bound, and answer-space searches over any monotone function — not just array element equality. |
 | Binary Search fails on duplicates | It works correctly even with duplicates for exact match (returns one valid index). For all occurrences, use lower_bound and upper_bound to get the range. |
 | You must sort before every search | If the array is already sorted (database index, sorted log, etc.), binary search applies directly. The sort cost is O(N log N) amortized across all future queries. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -380,6 +406,8 @@ Fix: Sort the array before searching, or use linear search for unsorted data.
 
 Prevention: Document the sorted precondition: `// PRECONDITION: arr must be sorted ascending`.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -396,6 +424,8 @@ Prevention: Document the sorted precondition: `// PRECONDITION: arr must be sort
 - `Linear Search` — O(N) but works on unsorted data; only preferred for very small arrays or single queries on unsorted data.
 - `Hash Map` — O(1) average lookup; trades O(N) space for O(1) time; no sorted order available for range queries.
 - `Interpolation Search` — O(log log N) average for uniformly distributed data; uses value-proportional probing rather than midpoint.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -423,6 +453,7 @@ Prevention: Document the sorted precondition: `// PRECONDITION: arr must be sort
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Binary Search on a sorted array runs in O(log N). Now consider a rotated sorted array (e.g., `[4,5,6,7,0,1,2]`). At each `mid`, how do you determine which half is guaranteed sorted, and how does that determination let you still eliminate half the candidates? What property of the rotated array makes this work, and what breaks if the array is rotated more than once or contains duplicates?

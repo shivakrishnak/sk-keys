@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Load Test"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Capacity Planning, SRE, Black Friday Preparation        |                 |
 | **Related:**    | Stress Test, Spike Test, Soak Test, k6, Gatling, JMeter |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,11 +40,15 @@ Traffic growth is non-linear. A system that handles 200 RPS smoothly may fail at
 THE INVENTION MOMENT:
 Load testing as a discipline became critical with internet-scale applications in the late 1990s (dot-com era). The failure of online retailer toysrus.com in 1999 (site went down during Christmas due to load) made load testing mainstream. Netflix's Chaos Engineering (2010s) extended the concept: if failure under load is inevitable, simulate it continuously and build resilience.
 
+---
+
 ### 📘 Textbook Definition
 
 A **load test** is a type of performance test that applies the expected **maximum operational load** to a system — typically the number of concurrent users or requests per second expected at peak traffic — and measures whether the system's throughput, latency, and error rate remain within acceptable bounds throughout the test duration. Load tests answer: "Can our system handle its expected maximum load sustainably?"
 
 Load tests are distinguished from: **stress tests** (load exceeding maximum to find the breaking point), **spike tests** (sudden traffic surges), and **soak tests** (moderate load for extended duration to detect resource leaks).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -55,6 +61,8 @@ Load test = simulate your busiest day, measure if the system survives with accep
 
 **One insight:**
 Bottlenecks don't appear until load exceeds the bottleneck's capacity. Common bottlenecks that only appear under load: database connection pool, HTTP keep-alive connection limit, OS file descriptor limit, GC pause frequency at high allocation rate, mutex contention at high concurrency.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -103,6 +111,8 @@ THE TRADE-OFFS:
 Gain: Identifies bottlenecks before production load events; enables capacity planning; validates horizontal scaling.
 Cost: Requires production-like environment (expensive); risk of accidental production data corruption if run against production; results depend heavily on test data quality.
 
+---
+
 ### 🧪 Thought Experiment
 
 DISCOVERING THE CONNECTION POOL BOTTLENECK:
@@ -132,11 +142,15 @@ Fix: increase pool size to 50 (with DB max_connections validated)
 Re-run: p99 = 92ms at 2,000 RPS → PASS
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A load test is a **capacity audit**. A restaurant serving 50 customers/day has enough tables, chefs, and waiters. Does it have enough if 500 customers arrive on Valentine's Day? A load test is: invite 500 people simultaneously, time how long each gets served, count how many are turned away. No restaurant runs Valentine's Day without a capacity plan.
 
 > In software: connection pool = tables, database = kitchen, API threads = waiters. Run 500 customers at once, find which resource runs out first.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -147,6 +161,8 @@ Re-run: p99 = 92ms at 2,000 RPS → PASS
 **Level 3:** Load test scenario design: use real user journey data from production logs (`GET /api/products` 60%, `POST /api/search` 25%, etc.). Parameterise with realistic product IDs (Pareto distribution: 80% of requests use 20% of IDs). Use k6's `SharedArray` for large test data (memory efficient). Request correlation: response from step 1 (login) feeds JWT to step 2 (purchase). Result analysis: Little's Law to verify test is correctly designed; Apdex score (ratio of satisfied/tolerated/frustrated users) as a single business metric.
 
 **Level 4:** AWS/GCP load test best practices: run load generators in the same region as the service (avoid WAN latency). Coordinate multi-region load (k6 cloud, Gatling Enterprise). Watch out for: DNS caching during load test (use IPs or long-running connections), TLS handshake overhead (first request), TCP connection creation overhead (keep-alive reduces this). At Netflix/Amazon scale: "production canary" IS the load test — a percentage of real traffic is the test. The load test environment that perfectly mirrors production is always more expensive to maintain than the production environment itself.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -178,6 +194,8 @@ Re-run: p99 = 92ms at 2,000 RPS → PASS
 └──────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 BLACK FRIDAY LOAD PREPARATION:
@@ -196,6 +214,8 @@ BLACK FRIDAY LOAD PREPARATION:
 9. Sign off: system ready for Black Friday
 10. Black Friday: peak 1,850 RPS; p99 = 108ms; no errors → success
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -278,6 +298,8 @@ export default function ({ token }) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Type        | Load Level                       | Duration   | Goal                    |
@@ -288,6 +310,8 @@ export default function ({ token }) {
 | Soak        | 70% load                         | 8–24h      | Resource leak detection |
 | Scalability | Incremental (100→200→400 RPS)    | Multi-step | Scaling efficiency      |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                          | Reality                                                                                        |
@@ -296,6 +320,8 @@ export default function ({ token }) {
 | "All test requests should be identical"                | Real users access different URLs; identical requests = unrealistic cache hit rate              |
 | "Staging load test results predict production exactly" | Staging tests reveal bottlenecks; exact numbers differ based on hardware, data volume, network |
 | "Load test once a year"                                | Load test before every significant traffic event and after major architecture changes          |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -309,11 +335,15 @@ Fix: Use production data volume in staging (or anonymised copy). Add EXPLAIN ANA
 Cause: JVM JIT not warmed up, shared environment, GC timing variation.
 Fix: 5-minute warmup run excluded from metrics. Dedicated isolated environment. Run 3 times and use median.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Performance Test, HTTP and APIs
 - **Builds on:** Stress Test, Spike Test, Soak Test, Capacity Planning
 - **Tools:** k6, Gatling, JMeter, Locust
+
+---
 
 ### 📌 Quick Reference Card
 

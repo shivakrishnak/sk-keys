@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Test Diamond"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Microservices Teams, API-First Teams                                    |                 |
 | **Related:**    | Test Pyramid, Test Honeycomb, Contract Test, API Testing, Microservices |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 MISMATCH BETWEEN PYRAMID AND MICROSERVICES:
@@ -38,9 +40,13 @@ A team with 10 microservices, each with 80% unit test coverage. Their incident r
 THE DIAMOND INSIGHT:
 For microservices, service interaction testing (contract tests, service-level integration tests) is more valuable than unit testing each service's internal logic. The diamond shape puts the widest layer at service/contract tests, not unit tests.
 
+---
+
 ### 📘 Textbook Definition
 
 The **Test Diamond** (also associated with the "testing honeycomb" by Spotify) is a testing strategy where: (1) **Unit tests** (bottom) are the fewest — used only where complex domain logic exists; (2) **Service/Integration tests** (middle — widest) are the most numerous — test the service in isolation with its real dependencies (DB, cache) and contract tests; (3) **E2E tests** (top) are the fewest — just enough to verify critical user journeys end-to-end. The diamond recognises that in API-centric architectures, the integration layer carries the most risk.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -50,6 +56,8 @@ Test Diamond = most tests at the service interaction layer, fewer unit + fewer E
 **One analogy:**
 
 > In microservices, the risk is at the **junctions** (service boundaries) — like road intersections are where most accidents happen. The test diamond puts the most test coverage at the junctions (contract tests, service tests), fewer tests on individual road segments (unit tests), and fewer tests on full-city routes (E2E).
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -112,6 +120,8 @@ Result: if Service B changes its response schema, contract test fails immediatel
   → Integration bug caught before deployment, not in production
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 THE MICROSERVICES BUG THAT UNIT TESTS CAN'T CATCH:
@@ -131,9 +141,13 @@ Contract test (diamond middle layer): would catch this immediately.
   Provider (Service B) verifies: "I read field 'amount'" ← fails immediately
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > The Test Diamond is an **API-first testing philosophy**: your service's primary identity is its API contract, not its internal code. Testing the internal code (unit tests) without testing the contract is like proofreading the internal company memo without ever checking what was said to customers. The widest test layer covers what matters most: "does our service honor its public contract?"
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -144,6 +158,8 @@ Contract test (diamond middle layer): would catch this immediately.
 **Level 3:** Pact contract testing workflow: consumer writes a Pact test (what it expects from the provider), publishes the pact to a Pact Broker, provider downloads the pact and verifies its API fulfills the consumer's expectations. If the provider changes its API in a way that breaks consumers, the provider's contract verification fails before deployment. This decouples consumer and provider deployment cycles — services can be deployed independently as long as contract tests pass.
 
 **Level 4:** The diamond is not the final word — it's a model for a specific context. The "testing honeycomb" (Spotify 2018) makes a similar case. The underlying principle both share: test distribution should match risk distribution. In microservices, risk lives at boundaries; in monoliths, risk lives in logic. Advanced teams model their test distribution empirically: track where production bugs were found, what test level would have caught them, and adjust the distribution accordingly. The test strategy is a living document, not a one-time decision.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -164,6 +180,8 @@ Contract test (diamond middle layer): would catch this immediately.
 │           /───────────────────\                          │
 └──────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -191,6 +209,8 @@ E2E tests (2 tests — top of diamond):
 Total test suite: 47 tests, CI time: ~3 minutes
 Risk coverage: service contract, DB schema, HTTP layer, critical flows
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -242,6 +262,8 @@ class PaymentServiceConsumerPactTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                    | Test Pyramid         | Test Diamond (Honeycomb)           |
@@ -252,6 +274,8 @@ class PaymentServiceConsumerPactTest {
 | Unit test role     | Central              | Supporting (where logic exists)    |
 | Contract test role | Optional             | Central                            |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                           | Reality                                                                                     |
@@ -259,6 +283,8 @@ class PaymentServiceConsumerPactTest {
 | "Diamond replaces pyramid everywhere"   | Diamond suits microservices; pyramid suits logic-rich systems; match to your risk profile   |
 | "Unit tests are unimportant in diamond" | They're fewer, but still important for complex logic; don't skip them where logic exists    |
 | "E2E tests verify contract too"         | E2E tests verify user journeys; contract tests verify API schemas — different failure modes |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -272,10 +298,14 @@ Fix: Add Pact consumer-driven contract tests between every service pair that com
 Cause: Each test class starts a new Spring context.
 Fix: Use `@SpringBootTest` with shared application context; share Testcontainers containers via static lifecycle.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Test Pyramid, Integration Test, Contract Test
 - **Related:** Test Honeycomb, Pact, Consumer-Driven Contract Testing, Microservices Testing
+
+---
 
 ### 📌 Quick Reference Card
 

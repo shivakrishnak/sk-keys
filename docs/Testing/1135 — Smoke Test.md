@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Smoke Test"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Deployment Verification, CI-CD, Blue-Green Deployments |                 |
 | **Related:**    | Sanity Test, E2E Test, Health Check, Canary Deployment |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,11 +40,15 @@ You need a fast sanity check between "the process started" and "it's handling re
 THE INVENTION MOMENT:
 The term comes from hardware testing: power on a new circuit board and check it doesn't "smoke" (catch fire). The electrical engineer doesn't run full diagnostics — just "did it survive powering on?" Applied to software deployment: does the application survive starting up and handling a basic request?
 
+---
+
 ### 📘 Textbook Definition
 
 A **smoke test** (also called **build verification test** or **BVT**) is a minimal set of automated tests executed immediately after a deployment to verify that the most critical functionality of the system is operational. Smoke tests are intentionally shallow — they do not test edge cases or full user flows. Their goal is to detect catastrophic failures (misconfigured environment, broken startup, unavailable database, missing configuration) within seconds or minutes, before full test suites run or production traffic is routed.
 
 A **sanity test** is similar but typically verifies a specific area after a focused change, not the whole system.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -55,6 +61,8 @@ Smoke test = "is it alive and not on fire?" — run right after deploy, before r
 
 **One insight:**
 A smoke test's value is in what it checks first and fast. It runs in 30–60 seconds; a full E2E suite might take 30 minutes. Those 30 minutes of broken production exposure are eliminated by the smoke test gate.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -91,6 +99,8 @@ THE TRADE-OFFS:
 Gain: Catches catastrophic failures within 60s of deployment; prevents broken code from reaching users; fast feedback on deployment issues.
 Cost: Must be maintained alongside deployment process; too many smoke tests = slow feedback (should be < 2 minutes total); false positives (flaky smoke tests block deployments).
 
+---
+
 ### 🧪 Thought Experiment
 
 SMOKE TEST SAVES PRODUCTION:
@@ -110,9 +120,13 @@ User impact: 0 (no traffic was routed to broken version)
 Without smoke test: 5 minutes of failed payments before human notices
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A smoke test is a **tripwire** — it's placed at the entrance to production traffic. If the deployment is broken in the most obvious ways, it trips the wire and the deployment is stopped. It's not comprehensive — it's positioned to catch the 80% of deployment failures that are trivially detectable (service doesn't start, can't connect to DB, missing env vars) in under 60 seconds.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -123,6 +137,8 @@ Without smoke test: 5 minutes of failed payments before human notices
 **Level 3:** Smoke tests in blue-green deployments: deploy to blue (inactive), run smoke tests, if pass switch ingress to blue. If smoke tests fail, rollback (keep green active) — zero user impact. In canary deployments: deploy to 5% of traffic, run smoke tests on canary + monitor error rates for 5 minutes, if all good increase to 25%, 50%, 100%. Smoke test infrastructure as code: smoke test scripts should be version-controlled alongside deployment scripts.
 
 **Level 4:** Smoke tests should not share state with each other (create own test data, clean up). They should be idempotent: running the same smoke test twice shouldn't leave the system in a different state (use dedicated smoke-test user accounts, not production data). In chaos engineering: smoke tests are the "steady state" definition — before injecting failures, verify the smoke tests pass (system is healthy); after chaos experiment, verify smoke tests still pass (system recovered).
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -154,6 +170,8 @@ Without smoke test: 5 minutes of failed payments before human notices
 │  (async)                                                │
 └──────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -191,6 +209,8 @@ curl --fail --silent --max-time 10 \
 kubectl patch service app-svc -p '{"spec":{"selector":{"color":"blue"}}}'
 echo "Deployment successful: traffic switched to blue"
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -240,6 +260,8 @@ echo "✓ Products endpoint passed"
 echo "All smoke tests passed ✓"
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Test Type        | When Run            | Duration | Coverage       | Purpose                   |
@@ -250,6 +272,8 @@ echo "All smoke tests passed ✓"
 | E2E test         | Post-deploy (async) | 5–30min  | User journeys  | Full confidence           |
 | Load test        | Scheduled           | Hours    | Performance    | Capacity planning         |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                          | Reality                                                                                      |
@@ -258,6 +282,8 @@ echo "All smoke tests passed ✓"
 | "Health check endpoint = smoke test"   | Health check is part of a smoke test; a smoke test also includes basic API calls             |
 | "Smoke tests replace regression tests" | They complement; smoke tests are fast gates; regression tests are comprehensive verification |
 | "More smoke tests = safer deployment"  | More tests = slower deployment gate; keep smoke tests under 2 minutes                        |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -271,11 +297,15 @@ Fix: Health checks should reflect critical-path dependencies only. Use retries i
 Cause: Smoke test covers happy path; production failure is in an edge case; OR smoke test uses a different code path than production.
 Fix: Smoke tests must exercise the same code paths users take. After production incident: add a smoke test for the specific failure scenario.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** E2E Test, Integration Test, CI-CD
 - **Builds on:** Blue-Green Deployment, Canary Deployment, Health Check
 - **Alternatives:** Readiness Probe (Kubernetes equivalent for pod lifecycle), Sanity Test (scoped to a specific changed area)
+
+---
 
 ### 📌 Quick Reference Card
 

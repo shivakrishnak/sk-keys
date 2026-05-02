@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Spring Core, Logging, Security | |
 | **Related:** | Decorator Pattern, Proxy Pattern, Metaprogramming | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -57,6 +59,8 @@ in Spring adds full transaction management to any method with
 a single annotation — zero lines of transaction code in your
 business class.
 
+---
+
 ### 📘 Textbook Definition
 
 Aspect-Oriented Programming (AOP) is a paradigm that addresses
@@ -69,6 +73,8 @@ existing classes). The aspect weaver injects advice into the
 target code at join points, either at compile time (AspectJ),
 class load time (AspectJ LTW), or at runtime via proxies
 (Spring AOP). The original class code is unmodified.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -89,6 +95,8 @@ AOP's power is that it separates WHAT a method does from
 WHAT HAPPENS TO the method. The business logic author writes
 clean code; the infrastructure author applies the concern
 globally via aspects. The two authors never need to coordinate.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -128,6 +136,8 @@ has 3 aspects running); debugging is harder (proxy
 stack frames); circular dependency issues with proxy
 creation; not all method calls are interceptable (same-class
 calls bypass the proxy in Spring AOP).
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -180,6 +190,8 @@ The business method has zero knowledge of security or timing —
 the separation is total. Adding timing to 50 methods is done
 by writing ONE aspect, not editing 50 files.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > AOP aspects are like airport security checkpoints. The airline
@@ -199,6 +211,8 @@ Where this analogy breaks down: unlike airport security which
 is visible, AOP advice is invisible — a developer reading the
 business method has no indication that aspects are running.
 This is both its strength and its danger.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -236,6 +250,8 @@ is bypassed). This is a fundamental limitation: `this.method()`
 inside a Spring bean calls the real object, not the proxy.
 AspectJ's compile-time weaving has no such limit — it modifies
 bytecode directly.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -282,6 +298,8 @@ method call. `pjp.proceed()` is the call to the original method.
 The advice can modify arguments before proceeding and modify
 the return value before returning.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -311,6 +329,8 @@ pointcuts are essential. At 1000x distributed scale, aspects
 like distributed tracing become critical infrastructure for
 observability — without them, tracing 1000 microservices is
 impossible.
+
+---
 
 ### 💻 Code Example
 
@@ -402,6 +422,8 @@ public class OrderService {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Mechanism            | Scope             | Weaving Time    | Self-call? | Best For                     |
@@ -416,6 +438,8 @@ for standard cross-cutting concerns in Spring apps. Use AspectJ
 when you need to intercept field access, constructors, or
 handle self-invocation.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                              | Reality                                                                                                                               |
@@ -424,6 +448,8 @@ handle self-invocation.
 | AOP adds zero overhead                     | Proxy creation at startup and pointcut evaluation per-call add measurable overhead (~1–5μs/call); negligible for most workloads       |
 | Aspects always run in a predictable order  | Multiple aspects on the same method run in an undefined order unless `@Order` is specified                                            |
 | AOP replaces the Decorator Pattern         | AOP is transparent and invisible; Decorator is explicit and type-safe — use Decorator when the behaviour should be visible to callers |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -567,6 +593,8 @@ public Object safeCall(ProceedingJoinPoint pjp) throws Throwable {
 Prevention: Around advice must either return `pjp.proceed()`
 or throw; returning null on error creates silent failures.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -586,6 +614,8 @@ or throw; returning null on error creates silent failures.
 - `Decorator Pattern` — explicit, type-safe, visible cross-cutting; no proxy needed
 - `Metaprogramming` — the broader paradigm; AOP is a specific application
 - `Interceptors / Filters` — EE standard cross-cutting mechanism for HTTP
+
+---
 
 ### 📌 Quick Reference Card
 

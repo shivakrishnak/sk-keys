@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Retry with Backoff"
 parent: "Distributed Systems"
@@ -26,6 +26,8 @@ tags:
 | **Depends on:** | Circuit Breaker, Timeout, Idempotency (Distributed), Failure Modes    |                 |
 | **Used by:**    | HTTP Clients, gRPC, AWS SDK, Spring Retry, Resilience4j               |                 |
 | **Related:**    | Circuit Breaker, Idempotency (Distributed), Timeout, Jitter, Bulkhead |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

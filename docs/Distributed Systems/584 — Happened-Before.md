@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Happened-Before"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Distributed Systems, Concurrency vs Parallelism, Causality                    |                 |
 | **Used by:**    | Lamport Clock, Vector Clock, Causal Consistency, Total Order, CRDT            |                 |
 | **Related:**    | Lamport Clock, Vector Clock, Total Order, Causal Consistency, Linearizability |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

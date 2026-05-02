@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Apache Iceberg"
 parent: "Data Fundamentals"
@@ -33,13 +33,19 @@ tags:
 
 **Apache Iceberg** is an open-source table format specification designed for huge analytic tables stored in object storage. It defines a metadata layer above Parquet/ORC/Avro files that provides: ACID transaction guarantees, full schema evolution without rewrites, hidden partitioning (separating physical layout from query logic), snapshot-based time travel, partition and column stats-based query pruning, and row-level deletes/updates. Iceberg is engine-agnostic — Spark, Flink, Trino, Presto, Hive, and Dremio all read/write Iceberg tables via the same open specification.
 
+---
+
 ### 🟢 Simple Definition (Easy)
 
 Iceberg is a smart table format for a data lake — it adds a metadata "brain" on top of raw Parquet files that enables SQL updates/deletes, time travel queries, safe concurrent writes, and schema changes without moving any data.
 
+---
+
 ### 🔵 Simple Definition (Elaborated)
 
 Traditional data lakes store raw Parquet files in S3. This gives you cheap storage but no transactions, no way to UPDATE or DELETE rows, and painful partition management. Apache Iceberg adds an open metadata layer — a set of JSON manifest files — that tracks exactly which files belong to which snapshot of the table. This enables: reading the table as it looked 7 days ago (time travel), multiple writers without corruption (optimistic concurrency), deleting specific rows without rewriting everything (position-based row deletes), and changing column types or adding columns without any data migration.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -124,6 +130,8 @@ Both attempt to commit new metadata pointing to snapshot 43:
   → Serializability via snapshot CAS (Compare-And-Swap) on metadata
 ```
 
+---
+
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Iceberg (raw data lakes):
@@ -136,9 +144,13 @@ WITH Iceberg:
 → Row deletes via delete files, not full rewrites.
 → Schema evolution without breaking downstream consumers.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Iceberg is like a database's transaction log and catalog system, but for files in S3. The raw Parquet files are the data pages of a database. The Iceberg metadata files are the B-tree index, the transaction log, and the system catalog combined. Just as a database tracks which pages belong to which table version (via WAL), Iceberg tracks which files belong to which snapshot. The database can roll back — so can Iceberg (via snapshot rollback). The database enforces ACID — so does Iceberg (for file-level operations).
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -172,6 +184,8 @@ CALL catalog.system.expire_snapshots(
 | Hidden partitioning | ✅ Yes | ❌ No | ❌ No |
 | Catalog agnostic | ✅ Yes | Partial | Partial |
 
+---
+
 ### 🔄 How It Connects (Mini-Map)
 
 ```
@@ -188,6 +202,8 @@ Hive Metastore | AWS Glue | Nessie | REST Catalog
         ↓ competes with
 Delta Lake | Apache Hudi
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -238,6 +254,8 @@ spark.sql("""
 # With CopyOnWrite: rewrites affected files (safe, slower)
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -246,6 +264,8 @@ spark.sql("""
 | Iceberg requires Spark | Iceberg is engine-agnostic. Trino, Flink, Presto, Dremio, and many others natively support it. |
 | Iceberg replaces a data warehouse | Iceberg is a table format for a data lakehouse. It brings warehouse-like features to a data lake but doesn't replace operational databases. |
 | Time travel queries are expensive | Time travel reads the same data files; only the metadata pointer changes. It's as fast as reading the current table (no extra computation). |
+
+---
 
 ### 🔥 Pitfalls in Production
 
@@ -274,6 +294,8 @@ PARTITIONED BY (timestamp)  # ← too granular, millions of files
 PARTITIONED BY (hours(event_time))  # aggregate to hourly partitions
 ```
 
+---
+
 ### 🔗 Related Keywords
 
 - `Delta Lake` — competing open table format, primarily in Azure/Databricks ecosystem.
@@ -281,6 +303,8 @@ PARTITIONED BY (hours(event_time))  # aggregate to hourly partitions
 - `Parquet` — the default columnar file format for Iceberg data files.
 - `Data Lakehouse` — the architecture combining lake storage + warehouse features via Iceberg/Delta/Hudi.
 - `Schema Registry` — manages schemas for Avro/Protobuf; Iceberg has built-in schema evolution.
+
+---
 
 ### 📌 Quick Reference Card
 

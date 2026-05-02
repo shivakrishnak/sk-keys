@@ -28,6 +28,8 @@ tags:
 | **Used by:** | JIT Compiler, Escape Analysis, Debugger | |
 | **Related:** | Operand Stack, Stack Frame, Bytecode | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ You need to use a variable multiple times in different expressions: `x * 2` in o
 THE INVENTION MOMENT:
 The Local Variable Table is the indexed array within each Stack Frame that provides named, reusable storage for all the method's variables. This is why the Local Variable Table exists: it is the persistent-within-frame storage that the operand stack lacks.
 
+---
+
 ### 📘 Textbook Definition
 
 The Local Variable Table (LVT) is a numbered array of slots within a JVM Stack Frame that stores method parameters and local variables. Each slot holds exactly one word (32 bits); `long` and `double` values occupy two consecutive slots. Slot 0 is reserved for `this` in instance methods (absent in static methods). Parameters are assigned slots immediately following `this` in declaration order. Local variables declared within the method body are assigned remaining slots as needed. The number of slots required is fixed at compile time and stored as `max_locals` in the class file's `Code` attribute.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ The Local Variable Table is the method's named storage cabinet — indexed slots
 
 **One insight:**
 The LVT enables random-access retrieval of variables (`iload_1`, `iload_2` can be called in any order), while the Operand Stack only supports LIFO access. This distinction — random-access (LVT) vs sequential-access (operand stack) — is the fundamental split in the JVM execution model.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -67,6 +75,8 @@ Invariant 1 mandates an indexed (array) storage, not a stack. Invariant 2 enable
 THE TRADE-OFFS:
 Gain: O(1) random access to any local variable; compile-time predictable size enabling zero-overhead frame allocation.
 Cost: Slot reuse across scopes can obscure debugging; 64-bit types use 2 slots, making slot indexing slightly surprising.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -90,6 +100,8 @@ Slot 1=a=3, slot 2=b=4 (loaded from parameters). Compute `a + b = 7`, store to s
 THE INSIGHT:
 Random-access storage (LVT) and sequential-access computation (operand stack) are complementary models. Variables need random access; intermediate computation needs LIFO. The JVM separates these concerns cleanly inside each frame.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > The Local Variable Table is a row of light switches on a control panel, each labelled with a slot number. Any switch can be flipped on or off at any time (iload/istore), in any order. The Operand Stack, by contrast, is a stack of sticky notes — you can only read or remove the top note.
@@ -101,6 +113,8 @@ Random-access storage (LVT) and sequential-access computation (operand stack) ar
 "Sticky notes stack" → operand stack (strictly LIFO)
 
 Where this analogy breaks down: unlike light switches, slots hold typed values (int, long, reference) and can only hold one value at a time per slot — setting a slot overwrites its previous value.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -115,6 +129,8 @@ Every `iload_N` / `istore_N` bytecode operates on a slot in the LVT. The `max_lo
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The distinction between compile-time naming (variable names exist only in source + debug info) and runtime indexing (only slot numbers in bytecode) is a deliberate JVM design choice: it enables obfuscators (ProGuard, R8) to strip all variable names from production JARs, reducing size and making reverse engineering harder, without changing actual execution behaviour. The `LocalVariableTable` debug attribute is optional — its only consumer is the debugger.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -187,6 +203,8 @@ Variables that go out of scope before others are declared share slots:
 }
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -215,6 +233,8 @@ Accessing uninitialised local variable (Java level)
 
 WHAT CHANGES AT SCALE:
 At scale, the LVT is irrelevant to performance — JIT-compiled methods have their LVT slots optimised to CPU registers. The LVT becomes important again only during deoptimisation: the JIT must have enough information to reconstruct the LVT state from register values (via the DebugInfo data structure) so that, if deoptimisation is needed (e.g., for exception handling), the interpreter can resume from the correct LVT state.
+
+---
 
 ### 💻 Code Example
 
@@ -284,6 +304,8 @@ javap -c -l StaticExample.class
 # and why 'this' is unavailable in static context
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Storage in JVM Frame | Access Pattern | Scope | Used For |
@@ -295,6 +317,8 @@ javap -c -l StaticExample.class
 
 How to choose: LVT is for persistence within a method; operand stack is for in-flight computation. Data flows from operand stack→LVT (istore) and LVT→operand stack (iload) constantly during method execution.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -304,6 +328,8 @@ How to choose: LVT is for persistence within a method; operand stack is for in-f
 | "Each local variable always gets a unique slot" | Slot reuse is legal and common — variables in different scopes that don't overlap in lifetime can share a slot. |
 | "The LVT stores objects directly" | LVT stores object REFERENCES (pointers). The objects themselves are always on the heap. |
 | "max_locals is always equal to the number of declared variables" | Not necessarily — slot reuse means fewer slots than variables; `long`/`double` use 2 slots inflating the count; and the compiler may allocate slots for compiler-generated temporaries. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -360,6 +386,8 @@ javap -l Calculator.class
 
 Prevention: For debugging, ensure debug compilation; consider initialising variables on declaration for predictable scope start.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -375,6 +403,8 @@ Prevention: For debugging, ensure debug compilation; consider initialising varia
 **Alternatives / Comparisons:**
 - `Operand Stack` — the computation scratch pad; contrast with LVT's persistence-oriented storage
 - `Heap` — where objects referenced by LVT slots live; LVT holds references, heap holds the objects
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -406,6 +436,7 @@ Prevention: For debugging, ensure debug compilation; consider initialising varia
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Consider a method that declares `int x = 5; { int y = 10; } int z = 15;`. The compiler may assign `x` slot 1, `y` slot 2, and `z` either slot 2 (reusing `y`'s slot) or slot 3 (new slot). The choice of slot reuse is legal but makes the LocalVariableTable debug attribute non-contiguous. How does an IDE debugger's expression evaluation feature handle a breakpoint inside the `z = 15` statement when slot 2 was reused — specifically, what does the debugger show if you ask it to evaluate `y` at that point?

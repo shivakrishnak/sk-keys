@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Minimum Spanning Tree"
 parent: "Data Structures & Algorithms"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Network Design, Cluster Analysis, Approximation Algorithms | |
 | **Related:** | Kruskal / Prim, Shortest Path, Strongly Connected Components | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ You need connectivity (all cities reachable from each other) but not redundancy.
 THE INVENTION MOMENT:
 The greedy insight: always add the cheapest edge that does NOT create a cycle. After V-1 additions, the result is connected (by induction: each addition connects a new vertex to the growing tree). This is Kruskal's algorithm. Prim's grows a single tree by always adding the cheapest edge reachable from the current tree. Both find the unique MST in O(E log E). This is exactly why **Minimum Spanning Tree** algorithms were created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Spanning Tree** of a connected weighted undirected graph G=(V,E) is a connected acyclic subgraph that includes all V vertices. A **Minimum Spanning Tree (MST)** is a spanning tree whose total edge weight is minimised. For a graph with unique edge weights, the MST is unique; with ties, there may be multiple MSTs of equal total weight. **Kruskal's algorithm** sorts edges by weight and adds each if it doesn't form a cycle (Union-Find for cycle detection): O(E log E). **Prim's algorithm** grows a tree from one vertex, always adding the minimum-weight edge connecting the tree to a non-tree vertex: O(E log V) with a binary heap, O(E + V log V) with a Fibonacci heap.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Connect all vertices at the lowest total cost — add the cheapest safe edge unt
 
 **One insight:**
 The MST property: for any cut (partition of vertices into two non-empty groups), the minimum-weight edge crossing the cut is always in some MST. This **cut property** is the fundamental theorem behind both Kruskal's and Prim's correctness. It means greedy works: always picking the minimum safe edge can never make the wrong choice.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -71,6 +79,8 @@ Both algorithms are greedy and provably correct via the cut property. Their corr
 THE TRADE-OFFS:
 Gain: Optimal connectivity with minimum total edge weight; provably correct; O(E log E) or O(E log V) time.
 Cost: Undirected graphs only (directed graphs need "minimum spanning arborescence" — much harder). Does not minimise path length between pairs (that's shortest path). Handles negative weights correctly (unlike shortest-path algorithms that require Dijkstra's non-negative constraint).
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -91,6 +101,8 @@ Sort edges: B-C(1), A-C(2), B-D(3), A-B(4), C-D(5).
 THE INSIGHT:
 The cycle check ensures no redundant edges. Each U-F union merges components; the MST is complete when 1 component remains. Kruskal's never "undoes" a choice — the cut property guarantees each greedy selection is permanently correct.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Prim's algorithm is like growing a coral reef. Start with one piece of coral. Each time step, add the nearest unattached sea creature (cheapest edge to a new vertex) to the existing reef. The reef grows outward, always picking the nearest addition. After V-1 additions the entire area is covered.
@@ -103,6 +115,8 @@ The cycle check ensures no redundant edges. Each U-F union merges components; th
 "Kruskal's" → different analogy: "cheapest powerline first, skip if it causes a ring"
 
 Where this analogy breaks down: Prim's always grows a contiguous tree; Kruskal's processes all edges globally and can add edges between disjoint components. The reef analogy captures Prim's geographic growth but not Kruskal's global edge sorting.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -117,6 +131,8 @@ Union-Find with path compression and union by rank gives near-O(1) amortized ope
 
 **Level 4 — Why it was designed this way (senior/staff):**
 MST appears naturally in approximation algorithms: the 2-MST approximation for TSP (Hamiltonian cycle ≤ 2× MST weight for metric spaces, via Euler tour interpretation). Borůvka's algorithm — the oldest MST algorithm (1926) — is optimal for parallel computation: each component simultaneously selects its cheapest outgoing edge, halving components each round in O(log V) rounds. GHD oracle (Gómory-Hu tree) precomputes all-pairs minimum cuts in O(V) MST calls. In clustering, removing the k-1 heaviest edges from a MST instantly partitions the graph into k clusters — Euclidean MST clustering.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -164,6 +180,8 @@ MST appears naturally in approximation algorithms: the 2-MST approximation for T
 └────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -191,6 +209,8 @@ Graph is disconnected
 
 WHAT CHANGES AT SCALE:
 For a network graph with 10 billion edges (social network), sorting all edges is infeasible. Borůvka's algorithm is preferred for parallelism: each vertex independently selects its cheapest edge, then contracted nodes repeat — O(E log V) total but naturally parallelisable. Apache Spark implementations use Borůvka's in O(log V) supersteps for distributed MST computation.
+
+---
 
 ### 💻 Code Example
 
@@ -260,6 +280,8 @@ mstEdges.subList(V-k, V-1).clear();
 // Union-Find gives cluster membership
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Time | Best For | Data Structure |
@@ -272,6 +294,8 @@ mstEdges.subList(V-k, V-1).clear();
 
 How to choose: For sparse graphs use Kruskal's (simple to implement, O(E log E)). For dense graphs use Prim's (O(E log V) = O(V² log V) < O(V² log V²) = O(V² log V) – tied but Prim's wins with Fibonacci heap). For parallel systems use Borůvka's.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -280,6 +304,8 @@ How to choose: For sparse graphs use Kruskal's (simple to implement, O(E log E))
 | MST requires non-negative edge weights | Unlike Dijkstra, both Kruskal's and Prim's work correctly with negative edge weights. The greedy correctness proof via cut property holds regardless. |
 | There is only one MST | For graphs with unique edge weights there is exactly one MST. With ties (equal edge weights), multiple MSTs of equal total weight may exist. |
 | Directed graphs have MSTs | Undirected only. Directed graphs need "minimum spanning arborescence" (Edmonds' Chu-Liu algorithm) — O(EV) and considerably harder. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -341,6 +367,8 @@ Fix: Use Dijkstra's algorithm for shortest paths. Use MST only for network conne
 
 Prevention: Clearly separate the two use cases in design documents: "MST = cheapest network; Dijkstra = fastest routes."
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -356,6 +384,8 @@ Prevention: Clearly separate the two use cases in design documents: "MST = cheap
 **Alternatives / Comparisons:**
 - `Shortest Path (Dijkstra)` — Solves a different problem: minimum distance from source to all vertices; not the same as MST.
 - `Strongly Connected Components` — For directed graphs: finds groups where all vertices reach each other. Not related to spanning trees directly.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -384,6 +414,7 @@ Prevention: Clearly separate the two use cases in design documents: "MST = cheap
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The cut property proves greedy MST algorithms are correct: the minimum-weight edge crossing any cut is in some MST. Now consider a graph where the minimum cut edge has weight w and an equal-weight edge also crosses the cut. Is the MST still unique? Prove whether modifying Kruskal's to break ties by vertex index produces a canonical MST, and whether two different tie-breaking rules can produce two different spanning trees, both of which are valid MSTs.

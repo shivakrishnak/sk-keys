@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "FLP Impossibility"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Two Generals Problem, Byzantine Fault Tolerance, Consensus, Raft, Paxos   |                 |
 | **Used by:**    | Consensus Algorithm Design, Distributed Systems Research, CAP Theorem     |                 |
 | **Related:**    | Two Generals Problem, Byzantine Fault Tolerance, CAP Theorem, Raft, Paxos |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

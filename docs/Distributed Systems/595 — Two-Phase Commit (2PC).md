@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Two-Phase Commit (2PC)"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Distributed Transactions, Distributed Systems, ACID, Consensus         |                 |
 | **Used by:**    | Distributed Locking, Three-Phase Commit, Saga Pattern, XA Transactions |                 |
 | **Related:**    | Three-Phase Commit, Saga Pattern, Distributed Locking, ACID, Paxos     |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

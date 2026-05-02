@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Dynamic Programming, Longest Common Subsequence, Knapsack Problem | |
 | **Related:** | Memoization, Dynamic Programming, Space Complexity | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ Memoization is limited by call stack depth. Even with caching, N recursive frame
 THE INVENTION MOMENT:
 Instead of computing from the top (large N) down to the base cases, compute from the bottom (base cases) up to the target. No recursion. No call stack. Just a loop filling an array in dependency order: compute `dp[i]` only after all values it depends on are already filled. This is exactly why Tabulation was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Tabulation** (bottom-up dynamic programming) constructs a table of DP values starting from base cases and iteratively filling in higher values in dependency order, until the target value is computed. Unlike memoization (which is recursive/top-down), tabulation uses iterative loops — eliminating call stack overhead and StackOverflowError risk. Time and space complexity match memoization, but tabulation often achieves better cache performance due to sequential array access patterns.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -52,6 +58,8 @@ Fill the answer table from small to big — base cases first, target last.
 
 **One insight:**
 Tabulation and memoization compute the exact same set of subproblems. The difference is *direction* and *execution model*. Tabulation is often more space-efficient (can discard rows once calculated) and always safe from stack overflow, at the cost of computing subproblems you may not need.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -75,6 +83,8 @@ THE TRADE-OFFS:
 Gain: O(1) call stack, better cache locality (sequential array access), space optimisation possible.
 Cost: Computes ALL subproblems even if only a few are needed (vs memoization's lazy evaluation), harder to reason about for non-linear dependency orders.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -94,6 +104,8 @@ No recursion, no stack. Each cell filled exactly once. Answer at dp[12]=3.
 THE INSIGHT:
 The order matters: compute dp[5] before dp[10] before dp[12]. Tabulation enforces this order explicitly by looping from 0 to 12. Memoization enforces it implicitly through the call stack. Both produce the same dp[12]=3.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Tabulation is filling a tax form from the top line down: line 1 is given (income), line 2 depends on line 1, line 3 depends on lines 1 and 2, and so on until the final total. You fill each line once, in order. No backtracking, no uncertainty — every required value is available before you need it.
@@ -104,6 +116,8 @@ The order matters: compute dp[5] before dp[10] before dp[12]. Tabulation enforce
 "Final total" → target subproblem answer
 
 Where this analogy breaks down: Tax forms are filled once; DP tables for different inputs require refilling from scratch. Also, tax forms are 1D; many DP tables are 2D or more.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -118,6 +132,8 @@ Loop order determines correctness. For LCS `dp[i][j] = max(dp[i-1][j], dp[i][j-1
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The term "dynamic programming" was coined by Richard Bellman in the 1950s. "Dynamic" was chosen partly to avoid military funding oversight (a clever naming choice). Tabulation maps directly to matrix operations — edit distance, LCS, and optimal subsequences are naturally expressed as matrix fills. Hardware prefetching strongly favours sequential array access (tabulation's pattern) over HashMap-scattered access (memoization's pattern). For problems computed billions of times (sequence alignment in bioinformatics), the cache-efficiency of tabulation vs memoization causes 10–50× performance differences in practice.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -184,6 +200,8 @@ return dp[m][n];
 │  dp[3][3] = 2 → LCS length of "AC","ABC"=2  │
 └──────────────────────────────────────────────┘
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -207,6 +225,8 @@ Wrong loop order (dp[i] reads dp[i+1] which isn't filled)
 
 WHAT CHANGES AT SCALE:
 For N=1,000,000, a 1D tabulation uses 8 MB (long[]) — comfortable. For 2D with N=1,000,000: N² = 1 trillion cells — impossible. In bioinformatics, sequence alignment with 100M-character strings uses banded DP (only the diagonal ±B cells), Hirschberg's algorithm (O(N) space with traceback), or divide-and-conquer DP.
+
+---
 
 ### 💻 Code Example
 
@@ -255,6 +275,8 @@ int editDistSpaceOpt(String s1, String s2) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Aspect | Tabulation | Memoization |
@@ -268,6 +290,8 @@ int editDistSpaceOpt(String s1, String s2) {
 
 How to choose: Start with memoization for clarity. Convert to tabulation when N is large (SO risk) or when profiling shows HashMap overhead or cache misses dominate.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -275,6 +299,8 @@ How to choose: Start with memoization for clarity. Convert to tabulation when N 
 | Tabulation requires more space than memoization | Both use O(unique subproblems) for storage; tabulation can often be space-optimised further |
 | Tabulation always computes more work than memoization | For fully-connected DP problems, they compute the same subproblems; for sparse problems, memoization may compute fewer |
 | The order of loops doesn't matter | Loop order is critical — `dp[i][j]` must be filled after all its dependencies; wrong order gives silently wrong answers |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -320,6 +346,8 @@ Diagnostic: Always check: what is the maximum index accessed? If `dp[amount]` is
 
 Prevention: Table size = (max index) + 1. Write this as `new int[amount + 1]`, not `new int[amount]`.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -334,6 +362,8 @@ Prevention: Table size = (max index) + 1. Write this as `new int[amount + 1]`, n
 **Alternatives / Comparisons:**
 - `Memoization` — top-down, recursive, easier to write, O(depth) stack.
 - `Space-Time Trade-off` — tabulation's rolling-row optimisation is a direct application.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -363,6 +393,7 @@ Prevention: Table size = (max index) + 1. Write this as `new int[amount + 1]`, n
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Longest Common Subsequence with tabulation uses a 2D table of M×N. For sequences of length 1,000, this is 1,000,000 cells. A rolling-row optimisation reduces this to 2×N cells. However, if you need to also reconstruct the actual LCS sequence (not just its length), the rolling-row optimisation fails — you need the full table to trace back. Explain precisely why reconstruction requires the full table, and describe one alternative algorithm (Hirschberg's) that achieves O(N) space while still enabling reconstruction.

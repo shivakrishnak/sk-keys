@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Monte Carlo vs Las Vegas Algorithms"
 parent: "Data Structures & Algorithms"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Primality Testing, Hashing Techniques, Numerical Integration | |
 | **Related:** | Randomized Algorithms, Approximation Algorithms, Bloom Filter | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ A Miller-Rabin primality test called 40 times gives a primality answer right wit
 THE INVENTION MOMENT:
 Solovay and Strassen formalised the distinction in 1977: Monte Carlo algorithms bind time but not correctness; Las Vegas algorithms bind correctness but not time. This taxonomy enables rigorous analysis of randomized algorithm trade-offs. This is exactly why **Monte Carlo vs Las Vegas** is the foundational classification for randomized algorithms.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Las Vegas algorithm** is a randomized algorithm that always produces the correct output, but whose running time is a random variable with finite expectation. If it fails to terminate, it is retried. Examples: randomized QuickSort (always sorts correctly, expected O(N log N)), randomized SELECT, randomized hashing with rehash on collision. A **Monte Carlo algorithm** is a randomized algorithm with deterministic time complexity but that produces incorrect output with bounded probability δ. The error probability can be reduced by independent repetitions: running k times and taking the majority vote reduces error from δ to δ^k (for two-sided error). Examples: Miller-Rabin primality test, Karger's min-cut, Monte Carlo integration.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Las Vegas: always right, sometimes slow. Monte Carlo: always fast, sometimes wro
 
 **One insight:**
 The critical design choice: which is worse for your system — unpredictably long execution or occasionally incorrect output? For security-critical systems (cryptography, financial calculations), incorrect output is catastrophic → use Las Vegas. For time-bounded systems (real-time games, monitoring), slow execution is catastrophic → use Monte Carlo. The classification guides this trade-off.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -74,6 +82,8 @@ THE TRADE-OFFS:
 Las Vegas gain: guaranteed correctness. Cost: unpredictable runtime (dangerous for real-time systems).
 Monte Carlo gain: bounded deterministic runtime. Cost: probabilistic correctness (dangerous for safety-critical, cryptographic use).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -91,6 +101,8 @@ For each random base a: check Miller-Rabin witness condition. 40 rounds → erro
 THE INSIGHT:
 Miller-Rabin's Monte Carlo error is so small it's practically non-existent. The trade-off (bounded time, extremely small error) is asymmetrically good: the error probability per run approaches 1/4^40 → 10^-24, which is smaller than the probability of a cosmic ray corrupting the chip during computation. Correctness and time guarantees both effectively achieved.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Las Vegas algorithm = a gambler who always leaves with exactly what they came with (correctness) but may stay at the casino arbitrarily long before leaving (variable time). Monte Carlo algorithm = a gambler who always leaves after exactly one hour (time bound) but occasionally leaves with wrong change (error). Which is safer depends on: is your flight leaving in 2 hours (time constraint) or is every dollar critical (correctness constraint)?
@@ -101,6 +113,8 @@ Miller-Rabin's Monte Carlo error is so small it's practically non-existent. The 
 "Occasionally wrong change" → bounded error probability
 
 Where this analogy breaks down: Casinos can't control whether a customer stays — the analogy works in reverse (the algorithm controls its own termination, the casino doesn't). Also, in Las Vegas algorithms the expected time is finite and well-analyzed — the analogy suggests potentially infinite time, which is technically true but practically bounded.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -115,6 +129,8 @@ Identify your algorithm type before use. Randomised QuickSort: Las Vegas — saf
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The Monte Carlo/ Las Vegas distinction corresponds to the BPP/RP/co-RP/ZPP hierarchy in complexity theory: ZPP (Zero-error Probabilistic Polynomial) = Las Vegas algorithms in poly expected time = RP ∩ co-RP. RP = one-sided Monte Carlo, poly time. co-RP = other side one-sided. BPP = two-sided Monte Carlo, poly time. Known resolutions: ZPP ⊆ P (not known but: if you can verify output in poly time, Las Vegas equals ZPP). BPP likely equals P (derandomization conjecture). This means Monte Carlo algorithms can likely be made Las Vegas (and then deterministic) — but we don't know how for all cases.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -163,6 +179,8 @@ The Monte Carlo/ Las Vegas distinction corresponds to the BPP/RP/co-RP/ZPP hiera
 └────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -191,6 +209,8 @@ Monte Carlo error materialises in production
 
 WHAT CHANGES AT SCALE:
 At 10^9 operations/day with Monte Carlo error δ=10^-9: expected 1 error per day. At 10^12 ops/day: ~1000 errors/day. Scale amplifies Monte Carlo errors. For safety-critical systems at scale: use Las Vegas or deterministic algorithms. For statistical systems at scale (analytics): Monte Carlo error is acceptable (false positives in Bloom filter: 1% rate, expected 10M/day false positives for 1B queries, which is acceptable for a cache).
+
+---
 
 ### 💻 Code Example
 
@@ -274,6 +294,8 @@ Optional<Integer> lasVegasWithTimeout(
 // Returns correct if found, "not found" may be wrong (MC)
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Property | Las Vegas | Monte Carlo | Deterministic |
@@ -287,6 +309,8 @@ Optional<Integer> lasVegasWithTimeout(
 
 How to choose: Use Las Vegas when output correctness is non-negotiable. Use Monte Carlo when time constraints are strict and error can be bounded below any threshold by repetition. Use deterministic when reproducibility and absolute guarantees are required.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -295,6 +319,8 @@ How to choose: Use Las Vegas when output correctness is non-negotiable. Use Mont
 | Monte Carlo algorithms are just "fast approximations" | Monte Carlo gives exact answers with high probability. Miller-Rabin either declares COMPOSITE (certain) or PRIME (error < 10^-24 with 40 rounds). This isn't approximate — it's almost certainly exact. |
 | Reducing error in Monte Carlo requires re-solving the full problem | Amplification via independent runs is cheap: k runs reduce error exponentially. For one-sided error: error = δ^k. Cost = k × T(N) vs T(N) for a single run. |
 | Las Vegas algorithms have unbounded worst-case runtime | They have unbounded worst-case runtime in theory, but the probability of exceeding c × E[T] decreases exponentially with c. In practice, they are as reliable as deterministic algorithms. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -355,6 +381,8 @@ Fix: Understand one-sided: only PRIME answers may be wrong. Increase k to reduce
 
 Prevention: Document error model clearly: one-sided vs two-sided. One-sided: COMPOSITE always certain; PRIME has bounded error.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -370,6 +398,8 @@ Prevention: Document error model clearly: one-sided vs two-sided. One-sided: COM
 **Alternatives / Comparisons:**
 - `Deterministic Algorithms` — Absolute correctness, deterministic worst-case runtime; use when neither probabilistic correctness nor timing uncertainty is acceptable.
 - `Approximation Algorithms` — Different axis: approximation sacrifices optimality, not correctness; MC/LV sacrifice time or correctness.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -398,6 +428,7 @@ Prevention: Document error model clearly: one-sided vs two-sided. One-sided: COM
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A Las Vegas algorithm A has expected runtime E[T_A(N)] = N log N and a Monte Carlo algorithm B has runtime T_B(N) = N log N deterministically with error δ = 0.01. To convert A to Monte Carlo: run A until time budget N log N × 3, then output "not found" if unfinished. What is the error probability of this converted Monte Carlo algorithm (hint: use Markov's inequality)? To convert B to Las Vegas: run B until result verified correct (assuming O(N) verifier). What is the expected runtime of the Las Vegas B?

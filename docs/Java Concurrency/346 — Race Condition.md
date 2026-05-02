@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Race Condition"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | synchronized, CAS (Compare-And-Swap), Atomic Classes | |
 | **Related:** | Deadlock Detection (Java), CAS (Compare-And-Swap), synchronized | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT (understanding):
@@ -39,9 +41,13 @@ A race condition in a banking service causes intermittent over-drafting. Two con
 THE INVENTION MOMENT:
 Understanding **race conditions** enables developers to: identify shared mutable state in concurrent code, recognize check-then-act patterns as inherently racy, apply appropriate synchronization mechanisms (`synchronized`, CAS, `AtomicInteger`), and write concurrent code that is correct by construction.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Race Condition** is a software defect where the outcome of a computation depends on the timing or interleaving of multiple threads executing concurrently, such that different orderings produce different (and potentially incorrect) results. Formally in the JMM: a data race occurs when two threads access the same variable concurrently, at least one access is a write, and there is no happens-before ordering between the accesses. Race conditions typically manifest as: **check-then-act** patterns (read-check-write); **read-modify-write** patterns (counter increment); **lazy initialization** patterns (create-if-absent).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ A race condition is a bug that only shows up when two threads hit the same code 
 
 **One insight:**
 Race conditions are found at **compound non-atomic operations**. `count++` looks atomic but is read-modify-write (3 operations). `if (cache == null) cache = compute()` looks safe but is check-then-act (2 operations). Any time you have "read, then do something based on the read," with another thread possibly modifying between the read and the action, you have a potential race condition.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -86,6 +94,8 @@ Pattern 3: Lazy Initialization
 THE TRADE-OFFS:
 Race conditions trade performance (no synchronization overhead) for correctness. The goal is not eliminating all sharing but ensuring all shared mutable state has proper HB guarantees.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -110,6 +120,8 @@ for (int i = 0; i < 10_000; i++) {
 THE INSIGHT:
 `count++` "looks" atomic from the source code. At the bytecode level it's `getfield`, `iadd`, `putfield` — three separate JVM operations. Any interleaving between these is a race.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A race condition is like two people filling out the last form at a government office. Both check if the form is available (yes). Both start filling it out. Both turn it in — but only one can be processed. The other is invalid. The office didn't coordinate who could take the form — a race condition in form access.
@@ -121,6 +133,8 @@ THE INSIGHT:
 
 Where this analogy breaks down: In the form analogy, one form is invalid and caught. In code, the race condition often produces a silently wrong result with no indication of failure — a counter at 9,999 instead of 10,000 produces no exception.
 
+---
+
 ### 📶 Gradual Depth — Four Levels
 
 **Level 1:** A race condition is a bug caused by two threads doing things "at the same time" that interfere with each other on shared data.
@@ -130,6 +144,8 @@ Where this analogy breaks down: In the form analogy, one form is invalid and cau
 **Level 3:** Race conditions in Java are formalised as data races in the JMM. A data race = two threads access the same variable, at least one write, no HB ordering. Data races produce undefined JMM behavior — any value is technically legal. Use static analysis (FindBugs, SpotBugs, ErrorProne) and thread safety testing frameworks (JCStress) to detect races systematically.
 
 **Level 4:** Race conditions are a specific subset of concurrency bugs. Related bugs: **deadlock** (threads wait for each other's locks forever), **livelock** (threads continuously change state in response to each other without progress), **starvation** (a thread can never acquire a needed resource). Race conditions are the most common and best candidates for prevention through lock-free algorithms (CAS, AtomicX) that eliminate the compound operation problem.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -207,6 +223,8 @@ ThreadLocal<Formatter> fmt = ThreadLocal.withInitial(Formatter::new);
 // Each thread has own copy — no sharing — no race
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 RACE CONDITION FLOW:
@@ -234,6 +252,8 @@ FIX FLOW:
 
 WHAT CHANGES AT SCALE:
 At high concurrency (10K+ requests/second), race conditions that appear 1-in-a-million at 100 RPS become 1-in-a-hundred at 10K RPS. What seems like a "rare edge case" in testing is a near-certain occurrence at scale. The severity of race conditions grows nonlinearly with load.
+
+---
 
 ### 💻 Code Example
 
@@ -267,6 +287,8 @@ void cacheResult(String key) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Bug Type | Involves | Result | Detectable | Fix |
@@ -278,6 +300,8 @@ void cacheResult(String key) {
 
 How to distinguish: Wrong/corrupted data → race condition. Application hangs, threads BLOCKED → deadlock. CPU high but no progress → livelock.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -286,6 +310,8 @@ How to distinguish: Wrong/corrupted data → race condition. Application hangs, 
 | Using synchronized everywhere prevents all race conditions | synchronized on different objects provides no mutual exclusion between them. `synchronized(this)` in two different instances of the same class = two different locks = still racy |
 | volatile prevents race conditions | volatile provides visibility, not mutual exclusion. `volatile count++` is still a race condition (3-operation non-atomicity) |
 | Race conditions always produce incorrect results | Race conditions may produce correct results BY COINCIDENCE (common in low-load tests). This is what makes them dangerous — the program appears correct but is fundamentally wrong |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -311,6 +337,8 @@ Fix pattern for all races:
 2. Identify all access points (reads AND writes).
 3. Ensure all accesses have HB ordering: add `synchronized`, `volatile`, atomic operations, or immutability.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -325,6 +353,8 @@ Fix pattern for all races:
 **Alternatives / Comparisons:**
 - `CAS (Compare-And-Swap)` — hardware-level atomic operation that eliminates many race conditions without locks
 - `synchronized` — lock-based solution that prevents races through mutual exclusion
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -352,6 +382,7 @@ Fix pattern for all races:
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A developer claims their code avoids race conditions by using `ConcurrentHashMap` for all shared state. However, the cache has a subtle race: `computeIfAbsent(key, k -> expensiveCompute(k))` is correct, but the code does `if (!map.containsKey(key)) map.put(key, compute(key))` instead. Explain exactly why this check-then-put pattern has a race condition even with `ConcurrentHashMap`, what specific scenario causes two calls to `compute(key)` simultaneously, why `computeIfAbsent` solves this, and whether `ConcurrentHashMap.computeIfAbsent` guarantees `compute(key)` is called exactly once.

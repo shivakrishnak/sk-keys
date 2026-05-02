@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Randomized Algorithms"
 parent: "Data Structures & Algorithms"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Hashing Techniques, Approximation Algorithms, Bloom Filter | |
 | **Related:** | Monte Carlo vs Las Vegas Algorithms, Approximation Algorithms, Greedy Algorithm | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Deterministic algorithms have exploitable worst-case inputs. Any algorithm that 
 THE INVENTION MOMENT:
 If the pivot is chosen uniformly at random, no adversary can reliably craft a bad input — each particular input is "bad" with only 1/N probability for any given choice. Randomise the pivot: expected O(N log N) with high probability regardless of input order. No adversary can predict the coin flip. This is exactly why **Randomized Algorithms** are valuable.
 
+---
+
 ### 📘 Textbook Definition
 
 A **randomized algorithm** uses random bits (coin flips, random samples, random permutations) during execution. Its correctness or performance guarantees are probabilistic rather than deterministic. **Las Vegas algorithms** always produce correct output but have random running time (e.g., randomised QuickSort: always sorts correctly, expected O(N log N) runtime). **Monte Carlo algorithms** always terminate in bounded time but may produce incorrect output with bounded probability (e.g., Miller-Rabin primality test: O(k log²N) time, error probability ≤ 1/4^k). Randomized algorithms typically achieve: (1) better expected complexity than deterministic worst case, (2) algorithmic simplicity, (3) resistance to adversarial inputs.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Flip coins during the algorithm to prevent adversaries from crafting bad inputs 
 
 **One insight:**
 Randomization achieves two fundamentally different goals: (1) **Adversarial resistance** — no deterministic input can always trigger worst-case behaviour if the algorithm's choices are unpredictable. (2) **Symmetry breaking** — when multiple equally valid choices exist, a random choice removes the need for complex tie-breaking logic while maintaining correct expected behaviour.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -70,6 +78,8 @@ THE TRADE-OFFS:
 Gain: Expected O(N log N) QuickSort regardless of input; O(1) expected hash table operations without adversarial vulnerability; algorithmic simplicity.
 Cost: Non-deterministic behaviour — debugging harder; tests may pass/fail non-reproducibly; security-critical systems need cryptographically secure RNG (slower than PRNG); error probability in Monte Carlo (must be handled).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -84,6 +94,8 @@ Pivot chosen uniformly at random. For [1,...,N], a random pivot has a 50% chance
 THE INSIGHT:
 The adversarial input [1,...,1M] perfectly exploits deterministic pivot selection. Randomised selection makes no input consistently bad. The adversary would need to predict the random bits — impossible if the RNG is unpredictable.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A randomized algorithm is like a taxi driver who chooses a random route each day. An adversary (traffic jam orchestrator) can't reliably make them late — they don't know which route was chosen. The deterministic driver (always takes Route 1) is perfectly predictable and always gets stuck if the adversary chooses to block Route 1.
@@ -95,6 +107,8 @@ The adversarial input [1,...,1M] perfectly exploits deterministic pivot selectio
 "Expected travel time" → expected algorithm runtime
 
 Where this analogy breaks down: A taxi driver remembers past routes (no memory); a randomized algorithm makes fresh random choices each time. Also, the driver's RNG (which route to choose) must be truly random, not just "varied" — a pseudorandom but predictable sequence still allows adversarial exploitation.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -109,6 +123,8 @@ Use `Collections.shuffle(list)` before QuickSort to randomise pivot selection. U
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The power of randomization in algorithms is formalised by the probabilistic method (Erdős): if a random object has a positive probability of satisfying a property, then an object satisfying the property must exist. This is a non-constructive proof technique of enormous reach. Derandomization — removing randomness from randomized algorithms using pseudorandom generators — is a central goal of complexity theory. If P = BPP (derandomization is generally possible), every randomized poly-time algorithm has a deterministic poly-time equivalent. Most researchers believe P = BPP, making randomization a "convenience" rather than fundamental power.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -151,6 +167,8 @@ The power of randomization in algorithms is formalised by the probabilistic meth
 └────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -177,6 +195,8 @@ Predictable PRNG in security context
 
 WHAT CHANGES AT SCALE:
 At 100M requests/second, Java HashMap with per-JVM random seed resists HashDoS. But ConcurrentHashMap in high-concurrency workloads benefits from additional randomization in key distribution. For distributed systems, Consistent Hashing uses random virtual nodes to achieve uniform load balance — the randomness absorbs hotspot patterns. In machine learning, Stochastic Gradient Descent (SGD) randomly samples mini-batches — the randomness escapes local optima and accelerates convergence over full-batch gradient descent.
+
+---
 
 ### 💻 Code Example
 
@@ -253,6 +273,8 @@ class BloomFilter {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm Type | Correctness | Runtime | Error | Best For |
@@ -265,6 +287,8 @@ class BloomFilter {
 
 How to choose: Use Las Vegas when correctness must be guaranteed (randomized QuickSort). Use Monte Carlo when a polynomial time bound is more important than perfect correctness and errors are controllable by repetition (Miller-Rabin, HyperLogLog).
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -273,6 +297,8 @@ How to choose: Use Las Vegas when correctness must be guaranteed (randomized Qui
 | rand() is sufficient for randomized algorithms | `rand()` in most languages uses a PRNG with known seed that can be predicted. For adversarial resistance (HashDoS protection), use a CSPRNG or hash map with randomised seed per start. |
 | Randomized algorithms are faster than deterministic ones | They achieve better EXPECTED complexity vs WORST-CASE deterministic. Deterministic algorithms with provably optimal worst-case complexity (like HeapSort: O(N log N) worst) can be faster for specific inputs. |
 | Monte Carlo results need to be exact after enough repetitions | Monte Carlo output is probabilistically correct; running it more times increases confidence but never provides certainty (unlike Las Vegas). For Boolean decisions: run k times, vote; majority is correct with probability 1 - 2^(-k). |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -335,6 +361,8 @@ Fix: In tests, fix the seed to a constant; in production, use unpredictable seed
 
 Prevention: Parameterise `Random` instance in algorithm; pass seeded `Random` in tests, unseeded in production.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -349,6 +377,8 @@ Prevention: Parameterise `Random` instance in algorithm; pass seeded `Random` in
 **Alternatives / Comparisons:**
 - `Deterministic Algorithms` — Always correct, always bounded; preferred when worst-case guarantees are required and adversarial inputs exist.
 - `Greedy Algorithm` — Makes locally optimal choices deterministically; different trade-off: often sub-optimal but always fast and deterministic.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -377,6 +407,7 @@ Prevention: Parameterise `Random` instance in algorithm; pass seeded `Random` in
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Randomized QuickSort achieves expected O(N log N) for ANY fixed input. Now consider an adaptive adversary that can observe the random bits chosen during execution (e.g., through a timing side channel). If the adversary knows the pivot selected at each recursive call, they can now construct a bad input in real-time, sending N elements just as heavy as the current pivot. Does this adaptive adversary break the O(N log N) expected guarantee? What security model does this require, and how does it relate to cryptographically secure pseudorandom number generators vs insecure PRNGs?

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Page Cache"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | Zero-Copy (sendfile), Memory-Mapped File (mmap), Async I/O |                 |
 | **Related:**    | Buffer Cache, Dirty Page, Write-Back, fsync                |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Even with fast SSDs (0.1ms), a server doing 100,000 reads/second of the same fil
 THE INVENTION MOMENT:
 The page cache (merged with the buffer cache in Linux 2.4) solves both: reads fill the cache on first access, subsequent reads are served from DRAM (nanoseconds); writes go to cache immediately (acknowledged to the caller) and are flushed to disk asynchronously by kernel writeback threads.
 
+---
+
 ### 📘 Textbook Definition
 
 The **page cache** (also called the **buffer cache** in older Unix terminology) is a region of physical memory managed by the OS kernel that holds copies of disk blocks and file data. File I/O is transparently mediated through the page cache: on `read()`, the kernel checks whether the requested pages are cached; on a cache miss, it fetches the data from disk, stores it in the cache, and returns it to the caller. On `write()`, data is written into cache pages (which become "dirty") and the call returns immediately; writeback kernel threads flush dirty pages to disk asynchronously. The page cache is global to the system and shared among all processes accessing the same file — two processes reading the same file share the same physical cache pages.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ The page cache is the kernel's transparent read/write buffer between user progra
 
 **One insight:**
 The page cache is global — when process A reads `/etc/hosts`, the pages are cached. When process B reads the same file, it hits the same cache pages. This is why loading a library that hundreds of processes use (like libc) only causes one disk read — the shared pages live in the page cache.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -70,6 +78,8 @@ Each page cache entry is a `struct page` indexed in a radix tree (or xarray in n
 THE TRADE-OFFS:
 Gain: Read latency from cache = nanoseconds vs microseconds from SSD; write latency = nanoseconds (no disk wait); same file shared in memory across all processes; reduces disk wear.
 Cost: Writes are not durable until writeback completes (power loss = data loss for unfsync'd writes); page cache consumes RAM (competes with application heap); O_DIRECT bypasses cache but is complex to use correctly; `mmap` + page cache interaction has subtle consistency rules.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -91,11 +101,15 @@ WITH PAGE CACHE (default):
 THE INSIGHT:
 The page cache makes file reading behave like memory access for hot data. This is why Redis can boast "sub-millisecond reads" — its data is in the page cache (or its own heap), not on disk.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > The page cache is your browser's disk cache. The first time you visit a website, the browser downloads all the assets (disk read). Next visit, it serves them from cache — instant. Your browser invalidates entries when they expire (LRU eviction). But unlike your browser cache, the OS page cache is shared: if 100 tabs need the same image (file), it's stored once.
 
 Where this breaks down: browser cache is per-user, page cache is system-wide (cross-process). Browser cache invalidation is content-controlled (ETags), page cache coherence is maintained by the VFS layer. And the OS page cache holds dirty data that must be committed — your browser never has "dirty" entries.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -110,6 +124,8 @@ Page cache is indexed by `address_space` (one per inode) + offset. `read()` call
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The page cache was designed around the principle that the access pattern for files looks like the access pattern for virtual memory — both are random-access over a large address space. By using a radix tree (now xarray) indexed by page offset, the kernel reused the same infrastructure for file I/O and `mmap`. The unification in Linux 2.4 that merged the buffer cache (block-level) with the page cache (file-level) eliminated double-caching: before, a file read cashed it once at the block layer and once at the file layer. After unification, one physical page serves both, reducing memory overhead. The dirty throttling system (dirty_bytes, dirty_ratio) exists to prevent write-heavy workloads from flooding the page cache with dirty pages faster than writeback can drain them, which would cause kernel OOM.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -149,6 +165,8 @@ The page cache was designed around the principle that the access pattern for fil
 └────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (database write path):
@@ -178,6 +196,8 @@ Large file copy: 50GB write at 10GB/s
   → Application latency spikes
   → Fix: reduce dirty_ratio, add backpressure, use O_DIRECT
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -251,6 +271,8 @@ sync
 cat /proc/vmstat | grep -E "nr_dirty|writeback"
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | I/O Mode                 | Cache Used          | Durability           | Latency                         | Use For                                |
@@ -261,6 +283,8 @@ cat /proc/vmstat | grep -E "nr_dirty|writeback"
 | `O_DIRECT`               | Bypassed            | App's responsibility | Varies (no OS buffering)        | Databases with own buffer pool         |
 | `mmap`                   | Yes (same pages)    | Not until msync      | Lowest (page fault then cached) | Large file random access               |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                     | Reality                                                                                                                   |
@@ -270,6 +294,8 @@ cat /proc/vmstat | grep -E "nr_dirty|writeback"
 | "close() flushes dirty pages"                     | close() does NOT fsync; dirty pages may still be in cache after close() returns                                           |
 | "Page cache is wasted RAM"                        | It's the most valuable use of RAM — it makes previously-accessed files free to re-read                                    |
 | "Linux uses separate buffer cache and page cache" | True before Linux 2.4; since 2.4 they are unified — one page cache for both file and block I/O                            |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -336,6 +362,8 @@ Fix: Increase available RAM; use `mlock()` for critical data; `MADV_WILLNEED` to
 
 Prevention: Monitor cache hit ratio; alert when page-in rate on hot paths increases.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -355,6 +383,8 @@ Prevention: Monitor cache hit ratio; alert when page-in rate on hot paths increa
 - `O_DIRECT` — bypass page cache for application-managed buffering (databases)
 - `tmpfs` — file system stored entirely in RAM, backed by page cache/swap
 - `Buffer pool (PostgreSQL/InnoDB)` — application-level analog of page cache for database pages
+
+---
 
 ### 📌 Quick Reference Card
 

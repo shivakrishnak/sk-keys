@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Async I/O"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | epoll / kqueue / io_uring, Reactive Programming, Node.js  |                 |
 | **Related:**    | Non-Blocking I/O, epoll / kqueue / io_uring, Blocking I/O |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ High-performance databases and storage engines that issue hundreds of I/O operat
 THE INVENTION MOMENT:
 This is exactly why true Async I/O was created — you submit an I/O request, continue doing other work, and are notified via a completion event when the kernel finishes the operation. No polling, no state machines for readiness, no `EAGAIN` handling.
 
+---
+
 ### 📘 Textbook Definition
 
 **Asynchronous I/O (Async I/O)** is an I/O model in which the application submits an I/O request to the kernel and immediately receives control back — the operation is performed in the background. When the kernel completes the operation, it notifies the application via a completion event (callback, signal, completion queue, or future/promise). The application never blocks waiting for I/O, and never needs to poll for readiness. The two primary models are: **proactor** (completion-based, as in Windows IOCP and Linux `io_uring`), and **reactor** (readiness-based, as in `epoll` + non-blocking I/O — technically NOT async I/O, but often called that loosely).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ Async I/O means: "here's my request, call me when it's done" — your code does 
 
 **One insight:**
 The critical difference between async I/O and non-blocking I/O: non-blocking returns "not ready" (readiness model) — you must do the actual I/O yourself when ready. Async I/O submits the entire operation — the kernel does the actual read/write, copies the data to your buffer, and notifies you when done. You never handle `EAGAIN`.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -75,6 +83,8 @@ True async I/O requires the kernel to retain a reference to the user buffer and 
 THE TRADE-OFFS:
 Gain: Maximum I/O throughput; zero blocking; kernel does the copies; simpler application logic (no EAGAIN, no partial reads) than non-blocking I/O.
 Cost: More complex initial setup; buffer lifetime management is tricky (buffer must live until completion); cancellation is harder; debugging completion-based code is harder than blocking code.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -104,6 +114,8 @@ WHAT HAPPENS WITH async I/O (io_uring):
 THE INSIGHT:
 Async I/O is the only model that matches the parallelism of modern hardware. NVMe SSDs handle 1M IOPS natively; a single-threaded async application can exploit all of it. Blocking I/O can too, but only if you create as many threads as outstanding I/O operations — which has memory and scheduling overhead.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Async I/O is like handing your dry cleaning to a valet service. You give them the clothes (submit I/O with buffer), go about your day (application runs), and they text you when everything is pressed and ready (completion event). You didn't stand at the dry cleaner (blocking), you didn't keep calling them (non-blocking polling) — you simply left a number and continued.
@@ -114,6 +126,8 @@ Async I/O is the only model that matches the parallelism of modern hardware. NVM
 "Picking up clothes" → reading the completion event and using the data
 
 Where this analogy breaks down: With async I/O, you can submit thousands of operations simultaneously — the valet analogy breaks down at scale, but it captures the fundamental completion-notification model.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -128,6 +142,8 @@ In Java, `java.nio.channels.AsynchronousFileChannel` and `AsynchronousSocketChan
 
 **Level 4 — Why it was designed this way (senior/staff):**
 POSIX AIO was the first async I/O standard but was broken: it used a thread pool under the hood (fake async), only worked with `O_DIRECT` (no page cache), and had terrible error reporting. Linux `aio_read()` had the same problems. `io_uring` (Jens Axboe, 2019) was designed from scratch to: (1) truly submit to the block layer without extra threads, (2) work with any file descriptor (sockets, pipes, files), (3) support batching via ring buffers (amortising syscall cost), (4) support fixed buffers (pre-registered user buffers the kernel can DMA directly into). The proactor pattern (completion-based) that io_uring implements was standard on Windows via IOCP for 20 years — io_uring finally brought true async I/O to Linux. Java's Structured Concurrency and virtual threads (JDK 21) use io_uring on Linux under the hood for file I/O, making async I/O transparent to the programmer.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -160,6 +176,8 @@ POSIX AIO was the first async I/O standard but was broken: it used a thread pool
 5. On completion: CQE placed in CQ ring with result (bytes read or error code).
 6. App reads CQE from CQ head.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -180,6 +198,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 With 1M IOPS from NVMe, a single io_uring loop can saturate the device. `IORING_SETUP_SQPOLL` eliminates ALL syscall overhead — kernel thread polls the SQ ring continuously (at the cost of one dedicated CPU core). Fixed buffers (`io_uring_register_buffers`) allow the kernel to pin user buffers and DMA directly into them, eliminating all copies. Used by storage engines like RocksDB, Ceph, and SPDK.
+
+---
 
 ### 💻 Code Example
 
@@ -252,6 +272,8 @@ while (completed < 1000) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Model                    | Blocks Thread | Polling    | Syscalls/op     | Best For               |
@@ -264,6 +286,8 @@ while (completed < 1000) {
 
 How to choose: Use io_uring for new Linux storage-heavy applications needing maximum throughput. Use epoll + non-blocking for network servers where Linux 5.1+ io_uring is not available. Use blocking I/O + virtual threads (Java 21) for simplicity with good concurrency.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                           | Reality                                                                                                                                        |
@@ -273,6 +297,8 @@ How to choose: Use io_uring for new Linux storage-heavy applications needing max
 | "POSIX AIO is real async I/O"           | POSIX AIO on Linux uses a thread pool under the hood — it simulates async I/O, it doesn't use kernel-native async operations                   |
 | "Async I/O is always the fastest model" | For low-concurrency or CPU-bound workloads, blocking I/O with threads avoids the complexity overhead with equivalent performance               |
 | "io_uring eliminates all syscalls"      | io_uring reduces syscalls to near zero for batched I/O; the `io_uring_enter()` syscall is still needed unless SQPOLL mode is used              |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -333,6 +359,8 @@ Fix: On container hosts, restrict io_uring: `sysctl -w kernel.io_uring_disabled=
 
 Prevention: Keep kernel updated (io_uring bugs are actively fixed). For containers, apply seccomp profile blocking io_uring until explicitly needed.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -352,6 +380,8 @@ Prevention: Keep kernel updated (io_uring bugs are actively fixed). For containe
 - `Non-Blocking I/O` — readiness model (EAGAIN) vs completion model; different code structure
 - `Virtual Threads (JDK 21)` — blocking semantics with async I/O under the hood
 - `IOCP (Windows)` — Windows' mature completion-port-based async I/O, analogous to io_uring
+
+---
 
 ### 📌 Quick Reference Card
 

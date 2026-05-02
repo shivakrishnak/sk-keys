@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Scheduler / Preemption, Thread Pool, Performance Tuning | |
 | **Related:** | Fiber / Coroutine, Scheduler / Preemption, TLB | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -51,6 +53,8 @@ every detail of Program A's execution state, give the CPU to Program B,
 and later restore Program A exactly where it left off, creating the
 illusion that all programs run simultaneously.
 
+---
+
 ### 📘 Textbook Definition
 
 A **context switch** is the procedure by which the operating system saves
@@ -62,6 +66,8 @@ the program counter, stack pointer, CPU flags, and (for process switches)
 the memory management unit page table base register. Context switches are
 triggered by timer interrupts (preemptive), I/O completion, system calls,
 or explicit yield operations.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -81,6 +87,8 @@ The context switch is not free. Every switch costs 1–10 microseconds of
 real time where the CPU does no useful work — it's pure overhead. High
 context switch rates (thousands per second per core) visibly reduce
 throughput. This is the hidden cost of "just add more threads."
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -108,6 +116,8 @@ Cost: each switch costs ~1–10 µs of pure overhead; CPU caches and TLB
 contain the previous process's data and become "cold" after switching;
 high switch rate reduces throughput measurably.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -131,6 +141,8 @@ THE INSIGHT:
 Context switching converts "wasted wait time" into productive CPU time
 for other threads. The CPU never idles while there's runnable work.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A context switch is like a video game save-and-load. The OS hits
@@ -149,6 +161,8 @@ for other threads. The CPU never idles while there's runnable work.
 Where this analogy breaks down: video game saves are user-initiated and
 slow; OS context switches are automatic, sub-millisecond, and transparent
 to the running code.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -180,6 +194,8 @@ actually needed (lazy FPU switching). This optimization was critical
 because full SIMD register sets (512 bytes for AVX-512) make context
 saves expensive. The kernel tracks whether a process has used FPU and
 only saves/restores those registers if needed.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -236,6 +252,8 @@ only saves/restores those registers if needed.
 └──────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -269,6 +287,8 @@ At 100,000 context switches/second per core, the overhead is
 bookkeeping. Profiling shows high `%sy` (system time) in `top`.
 Solutions: reduce thread count (async IO), pin CPU-bound threads to
 cores (reduce cache churn), increase scheduler time slice (HZ tuning).
+
+---
 
 ### 💻 Code Example
 
@@ -325,6 +345,8 @@ Example 3 — Pinning threads to CPU cores (reduce cache churn):
 // } finally { al.release(); }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Switch Type        | Cost       | TLB Flush | Cache Impact | Trigger         |
@@ -337,6 +359,8 @@ Example 3 — Pinning threads to CPU cores (reduce cache churn):
 How to choose: minimize process switches for cache-sensitive workloads;
 use fibers/coroutines to eliminate OS context switches for IO-heavy code.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                              | Reality                                                                                                        |
@@ -346,6 +370,8 @@ use fibers/coroutines to eliminate OS context switches for IO-heavy code.
 | "Voluntary yielding avoids context switch overhead"        | Voluntary yield still enters kernel mode and executes the scheduler — the register save/restore still happens  |
 | "Context switches only happen between different processes" | Thread switches within the same process are also context switches — just without the address space switch      |
 | "High context switch rate always means a problem"          | A busy IO-bound server naturally has high cs rates — the issue is when cs rate exceeds useful work             |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -429,6 +455,8 @@ use `PriorityBlockingQueue` with correct priority assignment.
 Prevention: avoid holding mutexes across preemption points; design lock
 hierarchies to prevent priority inversion scenarios.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -447,6 +475,8 @@ hierarchies to prevent priority inversion scenarios.
 
 - `Fiber / Coroutine` — user-space switching; avoids OS context switch overhead
 - `Async I/O` — eliminates blocked-thread context switches for IO waits
+
+---
 
 ### 📌 Quick Reference Card
 

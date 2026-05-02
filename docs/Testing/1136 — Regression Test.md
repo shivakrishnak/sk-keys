@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Regression Test"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | CI-CD, Release Gating, Bug Fix Verification    |                 |
 | **Related:**    | Test Suite, Test Coverage, Flaky Tests, Bisect |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,11 +40,15 @@ Software has non-linear dependencies. Changing function X can break function Y t
 THE INVENTION MOMENT:
 Regression testing emerged as a discipline in the 1970s–80s alongside the growth of large software projects where individual developers couldn't hold the entire system in their heads. The practice of codifying bugs as tests before fixing them (so the same bug never reappears) became standard by the 1990s.
 
+---
+
 ### 📘 Textbook Definition
 
 A **regression test** is any automated test that verifies previously working functionality still works after a code change. The term "regression" refers to a **regression bug** — when a change causes previously correct behavior to become incorrect. A regression test suite is typically the accumulation of all tests written over a project's lifetime: unit tests, integration tests, and E2E tests — collectively forming the safety net for future changes.
 
 The specific practice of writing a regression test before fixing a bug (**bug-driven testing**) ensures the bug cannot silently reappear: if the fix is reverted or the code is refactored to re-introduce the bug, the regression test will fail.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -55,6 +61,8 @@ Regression test = "this worked yesterday — prove it still works today."
 
 **One insight:**
 The most valuable regression tests come from production bugs. Every production incident should generate a test that would have caught it. Over time, your test suite's "scar tissue" encodes years of production experience.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -87,6 +95,8 @@ THE TRADE-OFFS:
 Gain: Automatic detection of regression bugs; confidence to refactor; documented production bug history.
 Cost: Growing test suite = slower CI; maintaining tests as code evolves; flaky regression tests erode trust in the suite.
 
+---
+
 ### 🧪 Thought Experiment
 
 THE DATE PARSING REGRESSION:
@@ -112,9 +122,13 @@ With regression test (written after original date parsing feature):
   → Developer catches regression before release
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A regression test suite is a **net under a trapeze act**. The net doesn't prevent you from doing new, ambitious acts (new features). It catches you if you fall (introduce a regression). The net gets stronger and bigger over time as more safety lines are added (tests from each bug fixed, each feature added). A circus with a good net = a team that can move fast and take risks.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -125,6 +139,8 @@ With regression test (written after original date parsing feature):
 **Level 3:** Test suite health metrics: flaky test rate (target < 1%), test execution time (target < 10 min for PR checks), test coverage trends (coverage should not decrease over time). Git bisect automation: `git bisect run mvn test -pl module -Dtest=MyRegressionTest` → automatically finds the commit that introduced the regression. Mutation testing (PIT): introduces small code mutations (change `>` to `>=`) and verifies tests catch them — ensures tests are actually verifying behavior, not just executing code.
 
 **Level 4:** The "zero-bug policy" approach (Microsoft teams): every bug gets a regression test before the fix is committed. Over time, the regression suite encodes the team's collective debugging experience. The test suite becomes a "scar tissue" map of the codebase's failure modes. Correlation: teams with high regression test density have lower bug escape rates (Google's research shows a strong correlation between test coverage density and production incident rate). The diminishing returns curve: going from 0% to 80% coverage eliminates ~80% of bugs; going from 80% to 100% eliminates only ~10% more — the remaining 10% require different approaches (formal verification, fuzzing).
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -150,6 +166,8 @@ With regression test (written after original date parsing feature):
 └──────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 ```
@@ -167,6 +185,8 @@ With regression test (written after original date parsing feature):
 6. PR: CI runs 3000+ tests including new regression test
 7. Forever: any future change that re-introduces this bug fails CI
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -209,6 +229,8 @@ void checkout_internationalNames_succeed(String lastName) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Practice            | Goal                                | Trigger                  |
@@ -218,6 +240,8 @@ void checkout_internationalNames_succeed(String lastName) {
 | Smoke Test          | Verify deploy health                | Post-deployment          |
 | E2E Test            | Verify user journeys                | Release gates            |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                              | Reality                                                                               |
@@ -226,6 +250,8 @@ void checkout_internationalNames_succeed(String lastName) {
 | "Only write regression tests for bugs"     | Write them for any behavior you want to preserve through future changes               |
 | "100% regression test pass = no bugs"      | Tests can't cover unknown scenarios; they cover known scenarios                       |
 | "Regression tests slow down development"   | Regression tests prevent the 10× more expensive rework of fixing same bugs repeatedly |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -239,11 +265,15 @@ Fix: Parallel execution (`forkCount=1C` in Maven Surefire = 1× CPU count); sepa
 Root Cause: Tests share state (static fields, shared DB, non-reset mocks); timing-dependent tests; environment-specific behavior.
 Fix: Quarantine flaky tests (`@Disabled` + ticket); investigate root cause systematically; require `@BeforeEach` cleanup; use test-specific DB schemas.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Unit Test, Integration Test, CI-CD
 - **Builds on:** Flaky Tests, Test Coverage, Mutation Testing
 - **Related:** Smoke Test, E2E Test, Test Pyramid
+
+---
 
 ### 📌 Quick Reference Card
 

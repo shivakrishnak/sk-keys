@@ -27,6 +27,8 @@ tags:
 | **Used by:** | LRU Cache, Consistent Hash Ring, Graph, Memoization | |
 | **Related:** | TreeMap, HashSet, LinkedHashMap | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ Sequential search is O(N). Every key lookup in an unsorted list walks all entrie
 THE INVENTION MOMENT:
 If we could convert a key directly into an index — without searching at all — lookup becomes O(1). A hash function converts any key to an integer; `integer % array_size` becomes the bucket index. This is exactly why the HashMap was created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **HashMap** is a data structure that implements an associative array (a map from keys to values). It uses a hash function to compute an integer bucket index from each key, enabling average O(1) `get`, `put`, and `remove` operations. Collisions (two keys mapping to the same bucket) are resolved by chaining (linked list or tree per bucket) or open addressing. Worst-case performance degrades to O(N) if all keys collide into one bucket.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -52,6 +58,8 @@ A table that converts any key into a direct address so lookup never requires sea
 
 **One insight:**
 A HashMap's O(1) average access is not magic — it is O(1) array access in disguise. The hash function converts the key into an array index, and everything else follows from the O(1) property of arrays.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -73,6 +81,8 @@ THE TRADE-OFFS:
 Gain: O(1) average get/put/remove, flexible key types.
 Cost: No ordering, O(N) worst-case on hash collisions, rehashing pauses, extra memory per entry.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -87,6 +97,8 @@ Each word is hashed directly to a bucket. `put("hello", count+1)` is two array a
 THE INSIGHT:
 HashMap transforms an O(N) search problem into an O(1) address problem. The hash function is not about finding the needle in the haystack — it converts the needle into a GPS coordinate that takes you directly to the exact position.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A HashMap is like a filing cabinet where each drawer is labelled by the first letter of the surname. To file Alice's record, you go straight to drawer 'A'. To retrieve it, you go straight to 'A' and look only in that drawer. The filing rule (first letter) is the hash function.
@@ -97,6 +109,8 @@ HashMap transforms an O(N) search problem into an O(1) address problem. The hash
 "Two people with same first letter" → hash collision
 
 Where this analogy breaks down: Real filing cabinets use alphabetical order within a drawer (still O(N) scan). A HashMap's bucket chain is unordered; only Java 8's tree-ification gives O(log N) within an over-full bucket.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -111,6 +125,8 @@ Java `HashMap<K,V>`: backing array `Node<K,V>[] table`. Default initial capacity
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The capacity must be a power of 2 to avoid modulo division (use bitwise AND instead). The secondary hash `h ^ (h >>> 16)` prevents poor distributions from hash functions that cluster in low bits — common in hash codes from `Object.hashCode()` (typically derived from memory address). The tree-ification threshold of 8 balances memory (TreeNode is 2× the size of Node) against worst-case attack resistance. Pre-Java 8, hash-flooding attacks (adversarially chosen keys all colliding) could degrade a HashMap to O(N) per operation, effectively DoSing any service that stored attacker-controlled keys.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -158,6 +174,8 @@ Rehash all entries: bucket = hash & 31
 All entries redistributed — O(N) operation
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -180,6 +198,8 @@ All keys hash to same bucket (collision attack)
 
 WHAT CHANGES AT SCALE:
 At millions of entries, rehash events (capacity doublings) cause GC pressure and latency spikes. Pre-size the map: `new HashMap<>(expectedSize * 2)`. At 10M+ entries in a single HashMap, consider `ConcurrentHashMap` for read-heavy concurrent access, or segment the map across multiple partitions to reduce lock contention.
+
+---
 
 ### 💻 Code Example
 
@@ -229,6 +249,8 @@ int initialCapacity = (int)(1_000_000 / 0.75) + 1;
 Map<String, Long> cache = new HashMap<>(initialCapacity);
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Map | Ordering | Get/Put | Memory | Best For |
@@ -240,6 +262,8 @@ Map<String, Long> cache = new HashMap<>(initialCapacity);
 | EnumMap | Enum order | O(1) | Low | Enum keys only |
 
 How to choose: Use `HashMap` for general-purpose key-value. Use `LinkedHashMap` for LRU or insertion-ordered iteration. Use `TreeMap` when you need keys in sorted order or range queries like `subMap()`.
+
+---
 
 ### 🔁 Flow / Lifecycle
 
@@ -258,6 +282,8 @@ remove() → hash → bucket → unlink node; size--
 GC reclaims Node objects after removal
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -267,6 +293,8 @@ GC reclaims Node objects after removal
 | HashMap iterates in insertion order | Iteration order is undefined; use `LinkedHashMap` for insertion order |
 | Overriding `equals()` is enough for custom keys | Must override both `equals()` AND `hashCode()`; equal objects must have equal hash codes |
 | HashMap wastes memory | Each entry is one Node object (~32 bytes); for primitive keys, use specialized maps (Trove, Eclipse Collections) |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -336,6 +364,8 @@ Fix: Use `String.hashCode()` (Java randomises it from Java 9 via Compact Strings
 
 Prevention: Never use attacker-controlled strings as HashMap keys without input validation; consider using `--enable-preview` randomised hash seeds.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -351,6 +381,8 @@ Prevention: Never use attacker-controlled strings as HashMap keys without input 
 - `TreeMap` — sorted key access at O(log N) cost; use when iteration order matters.
 - `LinkedHashMap` — preserves insertion order or access order (LRU pattern).
 - `ConcurrentHashMap` — thread-safe variant without full-map locking.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -379,6 +411,7 @@ Prevention: Never use attacker-controlled strings as HashMap keys without input 
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Two Java developers argue: one says `new HashMap<>(1000)` is wasteful because the map will never hold more than 50 entries in practice. The other says `new HashMap<>()` is dangerous for a map that will hold exactly 900 entries at peak. Who is correct about what, and what is the exact calculation that determines when the default-constructed map will resize, and how many times?

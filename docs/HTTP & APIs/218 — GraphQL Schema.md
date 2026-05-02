@@ -28,6 +28,8 @@ tags:
 | **Used by:** | GraphQL Resolvers, GraphQL N+1 Problem, API Design Best Practices | |
 | **Related:** | OpenAPI Specification, Protocol Buffers, JSON Schema | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

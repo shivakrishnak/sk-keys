@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Records (Java 16+)"
 parent: "Java Language"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Pattern Matching (Java 21+), Sealed Classes (Java 17+), Stream API | |
 | **Related:** | Sealed Classes (Java 17+), Pattern Matching (Java 21+), Serialization / Deserialization | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ A data pipeline processes 30 types of business events. Each event is a small DTO
 THE INVENTION MOMENT:
 This is exactly why **Records** were created — to provide a language-native concise declaration of a "data class" where the compiler automatically generates all the standard tedium, with immutability as the default.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Record** is a restricted class kind introduced as a preview in Java 14 and made final in Java 16 (JEP 395). A record declaration `record Point(int x, int y) {}` implicitly declares: (1) private final fields for each component; (2) a canonical constructor; (3) public accessor methods named after each component (`x()` and `y()`, not `getX()`); (4) `equals()` and `hashCode()` that compare all components; (5) `toString()` listing all components. Records cannot extend other classes (they implicitly extend `java.lang.Record`), cannot declare instance fields beyond the header, and all components are effectively final.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Declare your data fields once; the compiler writes all the boilerplate for free.
 
 **One insight:**
 Records express an intent beyond "here is a class with these fields" — they say "this class IS its data." A Record has no hidden state, no mutable fields, and no identity beyond its component values. This is a semantic contract the compiler can exploit: two `Point(3, 5)` records are always equal because records are defined by their values, not their identity.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -104,6 +112,8 @@ THE TRADE-OFFS:
 Gain: Dramatic reduction in boilerplate; enforced immutability; correct `equals`/`hashCode` by default; improved readability and fewer bugs.
 Cost: No inheritance from other classes (records extend `Record` implicitly); no mutable fields; accessor naming convention (`x()` not `getX()`) breaks some older frameworks expecting JavaBean convention; requires Java 16+.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -121,6 +131,8 @@ record Coordinate(double lat, double lon, double altitude) {}
 THE INSIGHT:
 The record compiler guarantee isn't just convenience — it's a correctness guarantee. The set of fields in `equals` and `hashCode` is always exactly the set of declared record components. There is no possibility of drift between field declarations and comparison logic.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A record is like a value on a number line. The number `42` IS its value — two `42`s are identical because they ARE the same value, not because they happen to be equivalent objects. A record's identity is its data, just as a number's identity is its value.
@@ -130,6 +142,8 @@ The record compiler guarantee isn't just convenience — it's a correctness guar
 "You can't have a 'special' version of 42" → no mutable state hidden in a record.
 
 Where this analogy breaks down: Numbers are deeply immutable; records are only shallowly immutable — a `record Bag(List<Item> items)` has a mutable list inside even though the record reference is final.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -144,6 +158,8 @@ The compiler generates a canonical constructor (all components as parameters) an
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Records are a deliberate restriction: the "restriction" (no mutable state, no inheritance, no extra instance fields) IS the feature. By restricting what a record can be, the compiler can guarantee what it IS — a pure data class. This is the distinction between "support data classes" and "be a data class." The JEP explicitly states: "the goal is not simply to reduce boilerplate, but to express a semantic constraint." Records pair powerfully with sealed classes (sum types) and pattern matching to enable algebraic data type patterns common in functional languages. The accessor naming convention (`x()` not `getX()`) is intentionally different from JavaBeans to signal that records are not beans and not subject to beans-centric frameworks' conventions.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -210,6 +226,8 @@ record Order(Long id, String status) implements Serializable {
 }
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (record as HTTP response DTO):
@@ -234,6 +252,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 Records are lightweight and create no overhead beyond equivalent manual classes — the bytecode is identical. At scale, records improve codebase quality by preventing the silent `equals`/`hashCode` drift that causes subtle cache and map bugs in large systems. Using records as value objects in `Stream` pipelines is idiomatic Java 16+ style — they are naturally compatible with functional-style processing.
+
+---
 
 ### 💻 Code Example
 
@@ -310,6 +330,8 @@ double area(Shape s) {
 // Record deconstruction pattern: extracts components directly
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach | Boilerplate | Immutable | equals/hashCode | Java Version | Best For |
@@ -321,6 +343,8 @@ double area(Shape s) {
 
 How to choose: Use records for all new immutable data classes on Java 16+. Use `@Value` Lombok for the same purpose on older Java. Use POJOs for domain objects that need mutation or JPA entities (JPA requires no-arg constructor and mutable fields, incompatible with records).
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -330,6 +354,8 @@ How to choose: Use records for all new immutable data classes on Java 16+. Use `
 | Records cannot have methods | Records can have any number of instance methods, static methods, static fields, and interfaces. Only additional instance fields (beyond header components) are prohibited |
 | The accessor is `getX()` like JavaBeans | Record accessors are named after the component: `x()`, not `getX()`. This is intentional to signal that records are NOT beans. Jackson 2.12+ supports record accessor naming natively |
 | Records are a Kotlin data class equivalent | Records are similar but not identical. Kotlin data classes generate `copy()` methods; Java records do not (by design — mutation is not the record contract). Kotlin data classes can extend other classes; records cannot |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -438,6 +464,8 @@ record Person(String name, int age) {
 
 Prevention: Verify framework record support before adopting records broadly. Spring Boot 2.7+ and Jackson 2.12+ have native record support.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -451,6 +479,8 @@ Prevention: Verify framework record support before adopting records broadly. Spr
 **Alternatives / Comparisons:**
 - `Sealed Classes (Java 17+)` — the control-flow counterpart to records' data declaration; together they form algebraic data types
 - `Serialization / Deserialization` — records use the canonical constructor during serialization (safe); regular class serialization bypasses the constructor (unsafe)
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -486,6 +516,7 @@ Prevention: Verify framework record support before adopting records broadly. Spr
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A `record Transaction(BigDecimal amount, Currency currency, Instant timestamp)` is used as a key in a `ConcurrentHashMap<Transaction, ProcessingResult>`. A colleague insists this is correct because records have auto-generated `hashCode()`. Trace the exact conditions under which this could still produce incorrect map lookups or performance degradation — specifically examining what BigDecimal's `hashCode()` and `equals()` implementations do with scale (e.g., `1.0` vs `1.00`), and what the developer must do to guarantee correct map behaviour.

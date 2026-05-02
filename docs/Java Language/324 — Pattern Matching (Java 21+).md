@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Pattern Matching (Java 21+)"
 parent: "Java Language"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Sealed Classes (Java 21+), Records (Java 16+) | |
 | **Related:** | Sealed Classes (Java 17+), Records (Java 16+), invokedynamic | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -49,9 +51,13 @@ An AST interpreter processes 20 node types. The evaluation function chains 20 `i
 THE INVENTION MOMENT:
 This is exactly why **Pattern Matching** was created — to combine the type test and binding into one expression, and to pair with sealed types for compile-enforced exhaustiveness that catches missing cases before deployment.
 
+---
+
 ### 📘 Textbook Definition
 
 **Pattern Matching** in Java is a family of language features (JEP 305 preview in Java 14, finalized in Java 16 for `instanceof`; JEP 441 for `switch` finalized in Java 21) that allow matching a value against a pattern — a combination of a type test and a binding — in a single expression. `instanceof` patterns bind the matched variable: `if (obj instanceof String s)` tests and binds in one step. `switch` expressions support type patterns, guarded patterns (`case String s when s.length() > 0`), and record deconstruction patterns (`case Point(int x, int y)` — directly destructuring record components). Combined with sealed types, switch expressions are verified exhaustive by the compiler.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -63,6 +69,8 @@ Pattern matching tests a type AND binds a variable in one expression — no sepa
 
 **One insight:**
 Pattern matching is most powerful when combined with sealed types and `switch` expressions. The three-way combination — sealed hierarchy (closed types) + records (structured data) + pattern switch (exhaustive dispatch) — gives Java algebraic data type power comparable to Haskell or Rust, with compile-time correctness guarantees previously impossible in Java.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -89,6 +97,8 @@ Pattern types:
 THE TRADE-OFFS:
 Gain: Eliminates redundant casts; exhaustive checking with sealed types; enables algebraic data processing; cleaner visitor-pattern replacement.
 Cost: Requires Java 21+; record deconstruction patterns require Java 21 (record patterns in switch); nested patterns can become complex; `default` suppresses exhaustiveness checking.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -123,6 +133,8 @@ int eval(Expr e) {
 THE INSIGHT:
 Pattern matching with sealed types turns the visitor pattern's boilerplate into a single expression. The compiler proves the switch is exhaustive at compile time. Adding `Sub` to the `Expr` hierarchy breaks the `eval` switch — a compile error, not a runtime exception.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Pattern matching is like a sorting machine with shape-specific slots. A coin goes through the first slot that matches its shape — round slot for pennies, rectangular for cards. Each slot not only sorts but also labels the item for what to do next. You know the machine handles all shapes because the manufacturer listed all slot shapes explicitly.
@@ -133,6 +145,8 @@ Pattern matching with sealed types turns the visitor pattern's boilerplate into 
 "Machine handles all shapes" → exhaustiveness check.
 
 Where this analogy breaks down: The sorting machine processes each item once. Java's pattern switch tries cases in order — the first matching case wins, unlike a machine that might try all slots simultaneously.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -147,6 +161,8 @@ Use `instanceof` patterns: `if (obj instanceof String s)` — no explicit cast. 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Java's pattern matching is use-site — you write patterns where dispatch happens. Haskell uses pattern matching as the primary function definition syntax (declaration-site). Java's approach integrates into the existing method body syntax without restructuring how methods are defined. The JEP evolution (305→394→441) was careful to build up from simple `instanceof` patterns to complete `switch` patterns over sealed types, ensuring each step was independently useful and backward-compatible with existing code. The phased rollout as "preview" features allowed the community to provide feedback before finalization.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -218,6 +234,8 @@ String describeOriginLine(Line line) {
 }
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -243,6 +261,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 In large codebases, pattern matching with sealed types makes type-based dispatch refactor-safe. When a domain type evolves, all dispatch points are found immediately by the compiler. The transition from `instanceof` chains to pattern switches is safe incrementally: `instanceof` patterns are backward-compatible additions; sealed + switch exhaustiveness is opt-in per type hierarchy.
+
+---
 
 ### 💻 Code Example
 
@@ -292,6 +312,8 @@ String toDisplay(JsonValue v) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach | Exhaustiveness | Type Safety | Java Version | Boilerplate | Best For |
@@ -303,6 +325,8 @@ String toDisplay(JsonValue v) {
 
 How to choose: Use pattern switch over sealed types for any domain where the set of types is closed and known. Use `instanceof` patterns for simple individual type checks. Use Visitor for pre-Java-21 code or open hierarchies.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -312,6 +336,8 @@ How to choose: Use pattern switch over sealed types for any domain where the set
 | Guarded patterns (`when`) are evaluated first | Guards are only evaluated AFTER the type test succeeds. `case String s when s.length() > 0` first tests `instanceof String`, then evaluates `s.length() > 0`. The order matters for NPE safety |
 | A default in switch always loses exhaustiveness | A `default` silences the exhaustiveness check. However, `default -> throw new AssertionError()` is a safe transitional pattern — it restores the runtime error but loses the compile-time check |
 | Pattern matching is only a switch feature | `instanceof` pattern matching was finalized in Java 16. You can use `if (x instanceof Foo f)` without switch expressions in any Java 16+ code |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -386,6 +412,8 @@ String result = switch (obj) {
 
 Prevention: Always add `case null` in pattern switches when the selector can be null.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -398,6 +426,8 @@ Prevention: Always add `case null` in pattern switches when the selector can be 
 **Alternatives / Comparisons:**
 - `Sealed Classes (Java 17+)` — the type declaration counterpart; pattern matching is the consumption mechanism, sealed types are the declaration mechanism
 - `Records (Java 16+)` — combined with patterns for algebraic data type deconstruction
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -431,6 +461,7 @@ Prevention: Always add `case null` in pattern switches when the selector can be 
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** You have a sealed hierarchy: `sealed interface Notification permits Email, SMS, Push, InApp`. A method uses an exhaustive `switch` with no `default`. In a microservices deployment, Service A generates `Notification` objects and Service B pattern-matches them. Service A ships a update adding `Slack extends Notification` to the sealed hierarchy. Service B uses library v1 (old). Trace what happens at each layer: at compile time in Service B, at class loading time when B's code loads A's new class, and at `switch` dispatch time — and explain at exactly which point the JVM enforces the sealed contract.

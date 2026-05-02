@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Carrier Thread"
 parent: "Java Concurrency"
@@ -28,14 +28,20 @@ tags:
 | **Used by:** | Continuation, Structured Concurrency | |
 | **Related:** | Virtual Threads (Project Loom), Continuation, ForkJoinPool | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
 Without understanding carrier threads, developers cannot diagnose why virtual thread performance degrades when `synchronized` blocks contain I/O (carrier pinning), why the `-Djdk.tracePinnedThreads` flag matters, or how to tune the carrier pool size. Carrier threads are the execution resource that virtual threads share — understanding the mount/unmount lifecycle is key to virtual thread performance.
 
+---
+
 ### 📘 Textbook Definition
 
 A **carrier thread** is a platform thread (OS thread) from `ForkJoinPool` that executes virtual thread code. Virtual threads are **mounted** onto a carrier when they have work to do, and **unmounted** when they block on I/O or `LockSupport.park()`. One carrier can serve many virtual threads sequentially — mounting the next one immediately after the current one unmounts. Carrier threads are managed by `VirtualThread.ForkJoinPool` (default parallelism = `Runtime.availableProcessors()`). Virtual threads cannot choose their carrier; the ForkJoinPool scheduler assigns one.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -47,6 +53,8 @@ A carrier thread is the actual OS thread that a virtual thread uses when running
 
 **One insight:**
 The number of carrier threads = number of simultaneously executing virtual threads. For CPU-bound work, more carriers = more CPU used. For I/O-bound work, a few carriers serve thousands of VTs — carriers are only used when VTs actually execute, not when they wait.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -82,6 +90,8 @@ synchronized (sharedLock) {         // pin begins
 THE TRADE-OFFS:
 Carrier threads provide efficient I/O multiplexing at the cost of **pinning** risk — any `synchronized` block or native call that contains I/O blocks the carrier fully.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -105,9 +115,13 @@ WITH PINNING (synchronized + I/O):
 THE INSIGHT:
 Pinning is the primary performance risk with virtual threads. Even one pinned carrier per request can eliminate virtual thread benefits.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Carriers are like hospital operating rooms. Virtual threads are surgeries. When a surgery needs to pause (anesthesia setting = I/O wait), the surgeon (carrier) can go use another operating room for a ready surgery. But if the pause happens in a locked-down procedure (synchronized block), the surgeon must stay in that OR the whole time — blocking other surgeries.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -118,6 +132,8 @@ Pinning is the primary performance risk with virtual threads. Even one pinned ca
 **Level 3:** Carrier threads are workers in `VirtualThread.ForkJoinPool` — a dedicated `ForkJoinPool` separate from `ForkJoinPool.commonPool()`. Virtual thread continuations are submitted to this pool on mount. On unmount, the continuation is saved to heap; the FJPool worker (carrier) becomes available for the next submitted continuation.
 
 **Level 4:** In Java 23+, Loom developers work on removing synchronized pinning via "Structured Pinning" solutions. The challenge: JVM's monitor ownership is stored in the object header and identified by the carrier thread — moving the VT to another carrier mid-synchronized would require re-associating the monitor with the new carrier, changing monitor semantics. This is a deep JVM engineering problem without a simple solution.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -155,6 +171,8 @@ java -Djdk.virtualThreadScheduler.parallelism=32 \
 # The correct fix is to eliminate synchronized+IO pinning
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 ```
@@ -170,6 +188,8 @@ java -Djdk.virtualThreadScheduler.parallelism=32 \
     → [FJWorker-3 (when free) MOUNTS VT "order-1" again]
     → [socket.read() returns — VT continues]
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -197,6 +217,8 @@ void safeBlockingMethod() {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Concept | Resource | Count | Blocking I/O Behaviour |
@@ -205,6 +227,8 @@ void safeBlockingMethod() {
 | **Carrier thread** | OS thread (~1MB) | CPU count | Platform thread when VT is mounted |
 | Platform thread | OS thread | Thousands | Fully blocks OS thread |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -212,6 +236,8 @@ void safeBlockingMethod() {
 | More carrier threads = more virtual thread concurrency | Carriers are only used DURING execution. Adding more carriers helps only if VTs are CPU-bound (pinned or computing). For I/O, adding carriers has diminishing returns |
 | Virtual threads have their own stack | Virtual threads have their own call stack stored as a heap continuation (linked `StackChunk` objects), NOT a dedicated OS stack. The carrier's stack is used during mount |
 | One carrier per virtual thread | One carrier per MOUNTED virtual thread at any instant. Carriers are time-shared across many VTs sequentially |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -225,11 +251,15 @@ jstack <pid> | grep "ForkJoinPool.*VirtualThread" -A5
 java -Djdk.tracePinnedThreads=full MyApp
 ```
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites:** `Virtual Threads (Project Loom)`, `ForkJoinPool`, `Thread (Java)`
 **Builds on:** `Continuation` (the mechanism enabling unmount)
 **Related:** `Virtual Threads (Project Loom)`, `Structured Concurrency`
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -250,6 +280,7 @@ java -Djdk.tracePinnedThreads=full MyApp
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Describe the exact JVM internal data flow when a virtual thread running on `ForkJoinPool-VirtualThread-worker-3` calls `LockSupport.park()` (not I/O, just a plain park): what happens to the VT's call stack, what data structure stores it, which carrier is freed and when, and what mechanism eventually causes the VT to be remounted when `LockSupport.unpark(vt)` is called from a different thread.

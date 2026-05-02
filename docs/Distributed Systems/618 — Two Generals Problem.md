@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Two Generals Problem"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Consensus, FLP Impossibility, Byzantine Fault Tolerance              |                 |
 | **Used by:**    | TCP Handshake Design, Consensus Algorithms, Distributed Transactions |                 |
 | **Related:**    | FLP Impossibility, Byzantine Fault Tolerance, Consensus, CAP Theorem |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

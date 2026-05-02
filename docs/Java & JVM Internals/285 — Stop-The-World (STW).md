@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Stop-The-World (STW)"
 parent: "Java & JVM Internals"
@@ -76,6 +76,8 @@ Stop-The-World is required because GC traverses object graphs to find live objec
 3. **Object movement causes pointer invalidation** — during compaction, moving objects while references are live causes segfaults
 
 STW ensures a **consistent heap snapshot**: GC sees a frozen view of all object references.
+
+---
 
 ### Safepoints
 
@@ -158,6 +160,8 @@ High-frequency trading systems, real-time games, telecom signaling — any domai
 
 ## 8. Under the Hood (Deep Dive)
 
+---
+
 ### Safepoint polling mechanism
 
 ```
@@ -175,6 +179,8 @@ TTSP problem:
 - This appears as "time to safepoint" latency in GC logs
 ```
 
+---
+
 ### Logging TTSP
 
 ```bash
@@ -190,6 +196,8 @@ TTSP problem:
 #                         Time spent spinning/blocking to reach safepoint:   0.0001234 seconds
 #                                                                             ^^^^^ TTSP
 ```
+
+---
 
 ### Concurrent GC reduces STW
 
@@ -207,6 +215,8 @@ ZGC (Almost fully concurrent):
 Concurrent: [Mark, relocate, remap]             ← no STW
 STW:        [Load barriers + safepoint]         ← < 1ms
 ```
+
+---
 
 ### Non-GC STW events
 

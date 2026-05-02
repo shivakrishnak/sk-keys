@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Graph Coloring"
 parent: "Data Structures & Algorithms"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Compiler Register Allocation, Scheduling Problems, Map Coloring | |
 | **Related:** | Backtracking, Greedy Algorithm, Approximation Algorithms | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ With 100 variables and overlapping live ranges, naïve assignment might use 100 
 THE INVENTION MOMENT:
 Model variables as graph vertices; draw an edge between any two variables whose live ranges overlap. Now "assign registers" becomes "colour the graph such that no two adjacent vertices share a colour." Minimum registers needed = chromatic number χ(G). This is exactly why **Graph Coloring** is the fundamental model for conflict-avoidance problems.
 
+---
+
 ### 📘 Textbook Definition
 
 **Graph Coloring** is the assignment of labels ("colors") to the vertices of a graph such that no two adjacent vertices (connected by an edge) receive the same color. The **chromatic number** χ(G) is the minimum number of colors required for a valid coloring. The **k-coloring problem** asks whether a graph can be colored with at most k colors; for k ≥ 3, this is NP-complete (no polynomial-time algorithm is known). The **greedy coloring algorithm** achieves at most Δ(G)+1 colors (Δ = maximum vertex degree) in O(V+E) but may not be optimal. Exact algorithms use backtracking with pruning.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Assign colors to vertices so neighbours always differ — then find the minimum 
 
 **One insight:**
 Graph Coloring is NP-complete for k ≥ 3, but several special graph classes are solvable in polynomial time: bipartite graphs (k=2, use BFS), planar graphs (k≤4, Four Color Theorem), interval graphs (k=ω(G), greedy on sorted intervals), and perfect graphs (k=ω(G), polynomial via ellipsoid method). Real-world applications exploit these special structures rather than solving the general NP-complete problem.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -69,6 +77,8 @@ DERIVED DESIGN:
 THE TRADE-OFFS:
 Gain: Models a wide class of conflict-avoidance problems exactly; provides optimal register allocation, exam scheduling, frequency assignment.
 Cost: NP-complete for k ≥ 3 on general graphs; exact algorithms only practical for small graphs (<100 vertices). Production systems use approximation algorithms (greedy, tabu search, DSATUR heuristic) or polynomial-time algorithms on structured (interval/chordal) graphs.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -89,6 +99,8 @@ Result: 2 slots: {Math in slot 1}, {Physics, Chemistry in slot 2}. Physics and C
 THE INSIGHT:
 Graph coloring reduces "can these two things simultaneously occur?" to an edge existence check. The chromatic number directly translates to the minimum resource count (slots, registers, frequencies). Every conflict-avoidance problem that can be expressed as a graph is immediately solved by graph coloring.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Graph Coloring is a map-maker's problem. On a map, countries sharing a border must get different colors so they're visually distinct. The Four Color Theorem says 4 colors always suffice for any flat map. A country's color is assigned by looking at its neighbours and picking any unused color — that's greedy coloring.
@@ -100,6 +112,8 @@ Graph coloring reduces "can these two things simultaneously occur?" to an edge e
 "No two bordering countries same color" → no two adjacent vertices same color
 
 Where this analogy breaks down: Real maps are planar graphs (always 4-colorable); general graphs like register interference graphs are non-planar and may require more colors. The map analogy doesn't communicate the NP-completeness of the general case.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -114,6 +128,8 @@ DSATUR (Degree of Saturation) heuristic: always color the vertex with the most d
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Chaitin's 1982 paper proved register allocation is equivalent to graph coloring, converting compiler optimisation into a graph theory problem. Modern compilers (LLVM, GCC) use a simplified coalescing-friendly coloring where **copy-related** variables (from phi-nodes) are preferentially assigned the same color when possible (copy elimination). General graph coloring being NP-complete is a practical concern: for 1000-variable functions, exact coloring is infeasible. LLVM uses Linear Scan Register Allocation (O(N log N)) instead — solving an interval graph (always optimal for 1D intervals). The distinction between special graph structures (interval, chordal, perfect) that permit polynomial-time coloring and general NP-complete coloring is fundamental to understanding when to apply which algorithm.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -169,6 +185,8 @@ boolean isSafe(int[][] graph, int[] colors,
 **Bipartite check (2-coloring via BFS):**
 Graph is 2-colorable iff it is bipartite (no odd cycles). BFS from each unvisited vertex; alternately assign colors. If a neighbour has the same color: not bipartite → χ(G) ≥ 3.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -195,6 +213,8 @@ Graph is k-colorable but greedy uses k+2 colors
 
 WHAT CHANGES AT SCALE:
 For VLSI chip design with 10,000 nets needing frequency assignment, exact coloring is infeasible. Production tools use simulated annealing or tabu search to find near-optimal k-colorings. For distributed graph coloring (graph partitioned across 1,000 servers), distributed DSATUR-style algorithms require multi-round message passing — O(Δ) rounds for Δ-colorings, where each round broadcasts and receives neighbour colors.
+
+---
 
 ### 💻 Code Example
 
@@ -269,6 +289,8 @@ boolean[][] interferes(int[][] liveRanges) {
 // Then greedyColor(adj) = registers needed
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Time | Colors Used | Optimality | Best For |
@@ -281,6 +303,8 @@ boolean[][] interferes(int[][] liveRanges) {
 
 How to choose: Use BFS 2-coloring to first check bipartiteness. Use greedy for large-scale approximations. Use DSATUR for better practical results. Use backtracking only for small exact problems.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -289,6 +313,8 @@ How to choose: Use BFS 2-coloring to first check bipartiteness. Use greedy for l
 | The greedy algorithm always finds the chromatic number | Greedy depends heavily on vertex ordering. For the same graph, different orderings can produce k and k+3 colors. Greedy is a heuristic, not an exact algorithm. |
 | 4 colors suffice for any graph | The Four Color Theorem applies only to planar graphs (maps). Non-planar graphs can require any number of colors. Complete graph Kₙ requires n colors. |
 | Register allocation always uses the minimum registers | Chaitin's algorithm may spill variables to memory when the graph cannot be k-colored (k = available registers). Perfect coloring is not guaranteed — some spilling is accepted as a practical trade-off. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -346,6 +372,8 @@ Fix: Switch to approximation algorithms (DSATUR, tabu search) or exploit graph s
 
 Prevention: Profile graph structure before choosing algorithm. Reserve exact coloring for V < 50.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -362,6 +390,8 @@ Prevention: Profile graph structure before choosing algorithm. Reserve exact col
 - `Greedy Algorithm` — O(V+E) but suboptimal; use as approximation baseline.
 - `Randomized Algorithms` — Random restarts with greedy can find better colorings on average.
 - `SAT Solver` — k-coloring encodes directly as a SAT formula; industrial SAT solvers (CaDiCaL) can handle hundreds of vertices exactly.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -390,6 +420,7 @@ Prevention: Profile graph structure before choosing algorithm. Reserve exact col
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A compiler's register allocator builds an interference graph G where each variable is a vertex and each overlapping live-range pair is an edge. The target CPU has k=8 registers. Greedy coloring gives 11 colors (3 variables must spill). DSATUR gives 9 colors (1 spill). Trace why DSATUR outperforms greedy for interference graphs specifically — what property of interference graphs (which are perfect graphs) guarantees DSATUR achieves χ(G)?

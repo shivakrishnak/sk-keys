@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Runnable"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Thread (Java), ExecutorService, CompletableFuture | |
 | **Related:** | Callable, Thread (Java), Functional Interfaces | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ A data processing task extends `Thread` and overrides `run()`. Now the task can 
 THE INVENTION MOMENT:
 This is exactly why **`Runnable`** was created — to separate "what to do" (the task, implementing `Runnable`) from "how to execute it" (the thread or executor). The same `Runnable` can be passed to any execution mechanism.
 
+---
+
 ### 📘 Textbook Definition
 
 **`Runnable`** is a functional interface in `java.lang` with a single abstract method `void run()`. It represents a task or unit of work that produces no result and carries no checked exception (unlike `Callable<T>`). Since Java 8, a lambda expression or method reference with `() -> void` signature satisfies `Runnable`. Instances are passed to: `new Thread(runnable).start()`, `executor.submit(runnable)`, `executor.execute(runnable)`, `ScheduledExecutor.schedule(runnable, delay, unit)`, and `CompletableFuture.runAsync(runnable)`.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ This is exactly why **`Runnable`** was created — to separate "what to do" (the
 
 **One insight:**
 As a functional interface, `Runnable` works seamlessly with lambdas: `() -> doSomething()`. This makes Java 8+ code dramatically more concise for fire-and-forget tasks. `Runnable` separates the concern of "what to do" from "when and how to do it."
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -88,6 +96,8 @@ THE TRADE-OFFS:
 Gain: Simplest task contract; works with all Java concurrency APIs; functional interface-compatible; fire-and-forget pattern.
 Cost: No return value — cannot retrieve a result from the task; no checked exceptions — error handling must be done inside `run()`; no way to cancel the task in flight (use `Future` from `Callable` for that).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -119,6 +129,8 @@ archiveTask.run(); // call directly in tests
 THE INSIGHT:
 `Runnable` decouples the task from its executor. The same task definition runs in any execution context without modification. This is the Strategy pattern at the task level.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > `Runnable` is a task card in a work queue. The card says what to do but doesn't care who does it — a fast worker, a slow intern, or a team of five. The `Thread` or executor is the worker; `Runnable` is the card. You can hand the same card to any worker.
@@ -128,6 +140,8 @@ THE INSIGHT:
 "Any worker can execute it" → executor agnosticism.
 
 Where this analogy breaks down: Unlike a card that describes work, a `Runnable` lambda captures variables from its context. The "task card" carries contextual state (closures) that binds it to its creation site.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -142,6 +156,8 @@ Implement `Runnable` or use a lambda: `Runnable r = () -> myWork()`. Pass to thr
 
 **Level 4 — Why it was designed this way (senior/staff):**
 `Runnable` predates Java generics and lambdas (it's in Java 1.0). It was designed as the minimal abstraction for a thread task. The `void run()` with no checked exceptions signature was chosen to be maximally simple, at the cost of forcing error handling inside the task. `Callable<V>`, added in Java 5 with the `java.util.concurrent` package, was designed as a richer alternative supporting return values and checked exceptions — a deliberate upgrade to `Runnable` without breaking backward compatibility.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -198,6 +214,8 @@ Runnable safe = () -> {
 pool.execute(safe);
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -223,6 +241,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At scale, `Runnable` tasks in executor pools must be short-lived or clearly bounded in execution time. Long-running tasks starve the pool. The absence of a return value means errors are silent unless logging or uncaught exception handlers are configured. For long-duration tasks, `Callable<T>` with `Future.get(timeout)` is more appropriate — it provides both result retrieval and error propagation.
+
+---
 
 ### 💻 Code Example
 
@@ -269,6 +289,8 @@ orderTask.run(); // synchronous in test
 verify(orderService).processQueue();
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Interface | Returns | Checked Exceptions | Function Type | Best For |
@@ -280,6 +302,8 @@ verify(orderService).processQueue();
 
 How to choose: Use `Runnable` for fire-and-forget background tasks. Use `Callable<T>` when you need the result, need to handle checked exceptions, or need to cancel the task. Use `CompletableFuture.runAsync(runnable)` for chained async pipelines.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -288,6 +312,8 @@ How to choose: Use `Runnable` for fire-and-forget background tasks. Use `Callabl
 | Runnable exceptions are always logged | Exceptions thrown from `Runnable.run()` go to the `UncaughtExceptionHandler`. If not configured, they may be silently swallowed or logged only to stderr depending on the executor |
 | Using lambda as Runnable creates an anonymous class | Lambda `() -> doWork()` uses `invokedynamic` — NO anonymous class file generated. This is a common misconception from Java 7 era |
 | `run()` can be called multiple times | `run()` can be called multiple times technically, but doing so from multiple threads simultaneously without synchronization is a race condition. Executors typically call it once per task submission |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -345,6 +371,8 @@ inner.get(); // waits forever if pool is full
 
 Prevention: Never call `future.get()` inside an executor task on the same bounded executor. Use `CompletableFuture.thenCompose()` for chained async work without blocking threads.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -359,6 +387,8 @@ Prevention: Never call `future.get()` inside an executor task on the same bounde
 **Alternatives / Comparisons:**
 - `Callable` — returns a value and can throw checked exceptions; more powerful but more complex
 - `Thread (Java)` — the executor of Runnables; Runnable separates the task from the thread
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -392,6 +422,7 @@ Prevention: Never call `future.get()` inside an executor task on the same bounde
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A Spring `@Scheduled` method is annotated with `@Async` and returns `void`. Under the hood, Spring wraps the method body in a `Runnable` passed to an `ExecutorService`. If the method throws an unchecked exception, trace exactly what happens: does Spring log it, does the scheduled task continue executing on schedule, does the `@Scheduled` task become stuck, and what must the developer configure to ensure exceptions are both logged and do not prevent future scheduled executions?

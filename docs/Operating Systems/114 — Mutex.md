@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Mutex"
 parent: "Operating Systems"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Critical Sections, Monitor, ReentrantLock, synchronized         |                 |
 | **Related:**    | Semaphore, Spinlock, Condition Variable, Monitor                |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ Any operation on shared mutable state that takes more than one instruction (read
 THE INVENTION MOMENT:
 Edsger Dijkstra introduced the concept of mutual exclusion in 1965 with the critical section problem. The mutex is the hardware-supported implementation: use an atomic instruction (compare-and-swap, test-and-set) to acquire a lock before entering a critical section and release it after, ensuring only one thread executes the section at a time.
 
+---
+
 ### 📘 Textbook Definition
 
 A **mutex** (mutual exclusion lock) is a synchronisation primitive that prevents concurrent execution of a critical section (code that accesses shared mutable state). A mutex has two states: **locked** and **unlocked**. A thread **acquires** (locks) the mutex before entering the critical section; if the mutex is already locked by another thread, the acquiring thread **blocks** (is descheduled) until the mutex is released. The mutex is **released** (unlocked) by the holding thread when it exits the critical section, at which point the OS unblocks one waiting thread. A mutex is **non-reentrant** by default: a thread attempting to acquire a mutex it already holds will deadlock. A **reentrant (recursive) mutex** allows the same thread to acquire it multiple times (with a matching number of releases).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ A mutex is a token — only the thread holding it can enter a protected region; 
 
 **One insight:**
 A mutex doesn't protect data — it protects code paths. You must ensure every code path that accesses the shared data acquires the mutex. Missing even one path breaks the guarantee. This is why higher-level abstractions (monitors, lock guards) are preferred: they make it structurally impossible to forget the lock.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -71,6 +79,8 @@ The Linux **futex** (fast userspace mutex) optimises the common case: if no cont
 THE TRADE-OFFS:
 Gain: Prevents data races; provides happens-before guarantee; enables safe shared state.
 Cost: Lock contention serialises threads (reduces parallelism); potential for deadlock (if multiple mutexes acquired in inconsistent order); priority inversion (high-priority thread blocked behind low-priority mutex holder); context-switch overhead when blocking occurs.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -99,6 +109,8 @@ Time 5: Thread B: loads count = 6, adds 1, stores count = 7  ✓
 THE INSIGHT:
 The mutex transforms a concurrent read-modify-write into a sequential one. The price is the serial execution — during the critical section, only one thread makes progress.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A mutex is a single-occupancy office with a door lock. You enter, lock the door, do your work, and unlock on the way out. No one can enter while the door is locked. Everyone waiting outside is blocked. The first person to try the door after it unlocks gets in.
@@ -110,6 +122,8 @@ The mutex transforms a concurrent read-modify-write into a sequential one. The p
 > - "Lock guard": the door has a spring — it automatically unlocks when you leave (RAII in C++, try-with-resources in Java).
 
 Where the analogy breaks down: real mutexes don't guarantee FIFO ordering of waiting threads. The OS may wake any waiting thread. Fairness policies (like `ReentrantLock(true)` in Java) add FIFO queuing at additional overhead.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -124,6 +138,8 @@ Linux mutex = **futex** (fast userspace mutex). State: 1 `int` in user memory (0
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The futex design (2002) solved a fundamental inefficiency: POSIX `pthread_mutex_lock` originally always made a syscall, even when no contention. At 100,000 lock/unlock pairs per second, this was measurable. The key insight was: contention is the rare case. The futex places the lock state in user memory, visible to both user and kernel, and only escalates to the kernel when a thread must truly block. The atomic CAS in user space is lock-free — paradoxically, the mutex's uncontested path is lock-free. Contended acquisitions are blocking, but that's unavoidable for mutual exclusion. Modern JVM: `synchronized` uses biased locking (JDK 8–14), lightweight locking (CAS spin), and inflation to a monitor (OS mutex) as contention increases — the same futex layering, reimplemented in the JVM.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -150,6 +166,8 @@ The futex design (2002) solved a fundamental inefficiency: POSIX `pthread_mutex_
 │  Thread B: resumes → CAS(mutex, 0, 1) → lock acquired  │
 └────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -186,6 +204,8 @@ try {
     lock.unlock();  // ALWAYS executed
 }
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -285,6 +305,8 @@ perf stat -e sched:sched_stat_blocked -p <PID>
 valgrind --tool=helgrind ./my_program
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Primitive          | Threads              | Use For                                | Reentrant?                 | Blocking?      |
@@ -295,6 +317,8 @@ valgrind --tool=helgrind ./my_program
 | RWLock             | N readers / 1 writer | Read-heavy shared data                 | Usually no                 | Yes (on write) |
 | Condition Variable | — (used with mutex)  | Wait for condition                     | —                          | Yes            |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                      | Reality                                                                                                                            |
@@ -304,6 +328,8 @@ valgrind --tool=helgrind ./my_program
 | "synchronized(this) is always safe"                | Synchronized on 'this' is vulnerable to external lock acquisition if callers also synchronize on your object                       |
 | "ReentrantLock is always faster than synchronized" | Modern JVM synchronized has JIT-optimised biased locking; ReentrantLock is faster for tryLock/timed scenarios, not universally     |
 | "Locking once per method is enough"                | If two methods each lock separately, the gap between them is unprotected; compound operations need a single, consistent lock scope |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -371,6 +397,8 @@ Fix: Priority inheritance protocols (`PTHREAD_PRIO_INHERIT` mutex protocol); car
 
 Prevention: Avoid sharing mutexes between threads of widely different priority; use lock-free data structures for RT-to-non-RT communication.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -390,6 +418,8 @@ Prevention: Avoid sharing mutexes between threads of widely different priority; 
 - `Spinlock` — non-blocking busy-wait instead of blocking; faster for very short waits
 - `Lock-Free Data Structures` — CAS-based; no blocking, but complex and not universally applicable
 - `Atomic variables` — for single-variable operations; eliminates the need for a mutex for simple counter/flag patterns
+
+---
 
 ### 📌 Quick Reference Card
 

@@ -27,6 +27,8 @@ tags:
 | **Used by:** | String Matching (KMP, Rabin-Karp), Prefix Search | |
 | **Related:** | HashMap, Radix Tree, Aho-Corasick | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ A HashMap finds an exact key in O(1) — but it has no concept of "starts with" 
 THE INVENTION MOMENT:
 If you store words letter-by-letter in a tree where each level represents one character position, then all words sharing a prefix share a tree path. "prog" navigates to a single node from which all descendants are words with that prefix. This is exactly why the Trie was created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Trie** (also called a prefix tree or digital tree) is a multiway tree data structure for storing strings where each node represents one character of a key. The path from root to any node spells a prefix; a "terminal" flag at a node indicates a complete word. Insert, search, and prefix-search operations complete in O(L) where L is the length of the key or prefix — independent of the number of stored strings. Nodes typically store child references as an array of 26 (for lowercase alphabet) or a HashMap for sparse alphabets.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -52,6 +58,8 @@ A tree where each path from root to a node spells a word's prefix, sharing stora
 
 **One insight:**
 Unlike a HashMap, a Trie is not just about retrieving a single key — it is about navigating a *shared prefix tree* where structure encodes relationships between strings. All words with the same prefix physically share the same tree path, making prefix queries a single traversal rather than N individual lookups.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -75,6 +83,8 @@ THE TRADE-OFFS:
 Gain: O(L) all operations, O(L + K) prefix enumeration, shared prefix storage.
 Cost: High memory for dense alphabets with many nodes; slower than HashMap for exact-key lookups due to L comparisons vs 1 hash.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -89,6 +99,8 @@ Traverse 3 nodes ('p'→'r'→'e'). Collect all words in subtree rooted at 'e' n
 THE INSIGHT:
 The Trie's structure makes prefix queries output-sensitive: time is proportional to the result size (K), not the total data size (N). This is impossible with a HashMap because it has no structural notion of prefix.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A Trie is like a city's street directory organised by address. To find all buildings on "Progress Street", you go to the 'P-R-O-G-R-E-S-S' path in the directory. Every building on that street is a child of the last node — you find them all without scanning the entire city.
@@ -99,6 +111,8 @@ The Trie's structure makes prefix queries output-sensitive: time is proportional
 "Shared address prefix" → shared trie path
 
 Where this analogy breaks down: A city directory is static; a trie can be modified (insert/delete) dynamically while maintaining its structure.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -113,6 +127,8 @@ Children stored as `TrieNode[26]` — index is `ch - 'a'`. Memory per node: 26 r
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The standard 26-array implementation is a time-space trade-off: array indexing is branchless and cache-friendly (O(1) child access) but wastes ~200 bytes per node for rarely-filled children. Real-world autocomplete systems use **compressed tries** (radix trees) or DAWG (Directed Acyclic Word Graph) which further deduplicate shared suffixes. Linux routing tables use radix-2 tries (binary tries) for IP prefix matching — O(32) lookup for IPv4 regardless of routing table size.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -159,6 +175,8 @@ Found "app" node → DFS all descendants with isEndOfWord=true
 // startsWith("ap") → found node at 'p', exists → true
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -180,6 +198,8 @@ Too many words share a common prefix
 
 WHAT CHANGES AT SCALE:
 A 5-million-word English trie with 26-array nodes uses ~5M × 208 bytes ≈ 1 GB of memory — impractical. Production autocomplete systems use compressed tries (radix trees), DAWG, or suffix arrays with burrows-wheeler transform. Redis's autocomplete feature uses a sorted set of prefix-expanded keys. Elasticsearch uses FST (Finite State Transducers) — a form of minimal DAWG — for 10× memory compression.
+
+---
 
 ### 💻 Code Example
 
@@ -246,6 +266,8 @@ private void dfs(TrieNode node,
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Structure | Exact lookup | Prefix search | Memory | Best For |
@@ -258,6 +280,8 @@ private void dfs(TrieNode node,
 
 How to choose: Use a Trie when prefix queries are the primary operation. Use a HashMap when only exact lookups are needed. Use a radix tree (PATRICIA trie) when memory is a constraint for large dictionaries.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -266,6 +290,8 @@ How to choose: Use a Trie when prefix queries are the primary operation. Use a H
 | Tries are only for lowercase letters | Tries work with any alphabet; use HashMap<Character, TrieNode> for Unicode, numbers, or mixed alphabets |
 | A Trie automatically uses less memory than storing all strings | Each node uses ~200 bytes for a 26-branch array; a trie can use MORE memory than a HashMap for sparse word sets |
 | search() and startsWith() return the same result for exact words | `search("app")` requires `isEndOfWord=true`; `startsWith("app")` only requires the path to exist |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -336,6 +362,8 @@ private void dfs(TrieNode node, StringBuilder prefix,
 
 Prevention: Always add a results limit to autocomplete DFS; common default is 10–20 suggestions.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -349,6 +377,8 @@ Prevention: Always add a results limit to autocomplete DFS; common default is 10
 **Alternatives / Comparisons:**
 - `HashMap` — O(1) exact lookup but O(N) prefix search; use when prefix queries are not needed.
 - `TreeMap` — O(log N) prefix scan via `subMap`; simpler but slower than a trie for large dictionaries.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -377,6 +407,7 @@ Prevention: Always add a results limit to autocomplete DFS; common default is 10
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A spell checker must find all dictionary words within edit distance 1 of a user's input (one character added, deleted, or changed). A HashMap checks exact matches in O(1) but cannot find "near misses." A trie allows prefix traversal. Design an algorithm using a trie to find all words within edit distance 1 in O(26L) rather than O(N×L) where N is the dictionary size. What trie traversal technique enables this, and how does the branching factor of 26 replace N in the complexity?

@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Strong vs Weak Typing, Java Language, TypeScript | |
 | **Related:** | Strong vs Weak Typing, Compiled vs Interpreted Languages, Type Inference | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -54,6 +56,8 @@ and a string (unless the language explicitly defines that
 operation). The debate between static and dynamic typing is
 about WHEN this verification happens — and who pays the cost.
 
+---
+
 ### 📘 Textbook Definition
 
 A type system is a set of rules that associates a type (integer,
@@ -67,6 +71,8 @@ and type errors are detected only when the mismatched operation
 is actually executed. Type inference (Kotlin, Haskell, modern
 Java with `var`) allows static typing without explicit type
 annotations.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -88,6 +94,8 @@ cost is that you must declare types explicitly (or rely on type
 inference). Dynamic types offer flexibility and speed of
 prototyping at the cost of discovering type errors later and
 harder to trace.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -127,6 +135,8 @@ or inference; can be too restrictive.
 Dynamic: Rapid prototyping; duck typing flexibility; shorter code;
 type errors only at runtime; harder to maintain at scale.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -160,6 +170,8 @@ Static typing shifts the debugging cost from "runtime investigation"
 to "compile-time red squiggle." For large codebases with many
 callers, the static version's benefit compounds with scale.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Static typing is a strict recipe: "add 200g of sugar (type:
@@ -179,6 +191,8 @@ Where this analogy breaks down: in real cooking, a scale
 can't check all incompatibilities (wrong flavour combination);
 type systems CAN check arbitrary compatibility constraints
 through dependent types and contracts.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -220,6 +234,8 @@ what matters most and leave the rest dynamic. Dependent types
 type level. Java's generics are a deliberate compromise: they
 provide static type safety but are erased at runtime (type
 erasure), which is why `List<String>.class` is just `List.class`.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -263,6 +279,8 @@ like `+` dispatch through the type's `__add__` method — if it
 returns `NotImplemented`, Python tries the right-hand operand's
 `__radd__`. If both return `NotImplemented`, Python raises `TypeError`.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (Static — Java):
@@ -290,6 +308,8 @@ At 100x, TypeScript over JavaScript prevents entire classes of
 production bugs. At 1000x (platform engineering), type correctness
 across service boundaries requires API contracts — gRPC's Protobuf
 or OpenAPI schemas provide cross-service static typing.
+
+---
 
 ### 💻 Code Example
 
@@ -350,6 +370,8 @@ var scores = new HashMap<String, List<Integer>>();
 // just without repetitive declaration
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Dimension          | Static (Java, TS)            | Dynamic (Python, JS)       | Gradual (TS, Python hints) |
@@ -366,6 +388,8 @@ scripts, rapid prototyping, and small codebases. Use gradual
 typing (TypeScript) to add safety incrementally to existing
 dynamic codebases.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                    | Reality                                                                                                                             |
@@ -374,6 +398,8 @@ dynamic codebases.
 | Static typing requires more code                 | Modern type inference (Kotlin `val`, TypeScript, Scala `val`) means static types often require no more syntax than dynamic types    |
 | TypeScript is fully statically typed at runtime  | TypeScript types are erased during compilation to JavaScript — at runtime, TypeScript code is JavaScript with no type checks        |
 | Java's generics provide full runtime type safety | Java generics are erased at runtime — `List<String>` becomes `List`; casting errors are only caught if explicit casts are attempted |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -502,6 +528,8 @@ Prevention: Enable `strict: true` in tsconfig; treat `any` as
 a code smell requiring justification; use `unknown` instead of
 `any` when type is genuinely unknown.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -521,6 +549,8 @@ a code smell requiring justification; use `unknown` instead of
 - `Strong vs Weak Typing` — orthogonal axis: how strictly the language enforces types
 - `Type Inference` — automatic static type deduction without explicit annotations
 - `Dependent Types` — types that depend on values — the extreme of static typing
+
+---
 
 ### 📌 Quick Reference Card
 

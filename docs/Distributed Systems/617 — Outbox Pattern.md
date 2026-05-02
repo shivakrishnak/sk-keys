@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Outbox Pattern"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Event Sourcing, CQRS, Idempotency (Distributed), Database Fundamentals             |                 |
 | **Used by:**    | Saga Pattern, CQRS Projections, Microservices, Transactional Messaging             |                 |
 | **Related:**    | Event Sourcing, Saga Pattern, CQRS, Idempotency (Distributed), Change Data Capture |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

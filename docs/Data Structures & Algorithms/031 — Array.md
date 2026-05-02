@@ -28,6 +28,8 @@ tags:
 | **Used by:** | HashMap, Heap (Min/Max), Sorting Stability, Sliding Window, Two Pointer | |
 | **Related:** | LinkedList, ArrayList, Deque | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Arbitrary memory placement makes direct-index access impossible. Any "jump to el
 THE INVENTION MOMENT:
 If all elements are the same size and stored back-to-back in memory, then `address(i) = base + i * element_size`. Any element is reachable in one arithmetic operation — O(1). This is exactly why the Array was created.
 
+---
+
 ### 📘 Textbook Definition
 
 An **array** is a fixed-size, ordered collection of elements of the same type stored in contiguous memory locations. Each element is identified by an integer index starting at zero. Random access to any element is O(1) because the memory address of element `i` is computed directly as `base_address + i × element_size`. Insertion and deletion in the middle are O(N) due to the need to shift elements.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ A numbered row of same-size boxes sitting side-by-side in memory.
 
 **One insight:**
 The power of an array is not just storage — it's *predictable addressing*. Because every element occupies the same number of bytes and positions are sequential, the CPU can prefetch the next element before you ask for it, making array iteration the fastest loop in computing.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -75,6 +83,8 @@ THE TRADE-OFFS:
 Gain: O(1) random access, excellent cache locality, minimal overhead.
 Cost: Fixed size (resize requires full copy), O(N) insert/delete in the middle.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -89,6 +99,8 @@ Elements live at addresses 100, 104, 108, 112, 116 (4 bytes each). Element 3 →
 THE INSIGHT:
 O(1) access is not a feature of clever algorithms — it is a direct consequence of physical memory layout. Structure your data in memory correctly, and the laws of physics give you speed for free.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > An array is a spreadsheet column: each cell is the same size, numbered from row 1, and you can jump to row 500 instantly without scrolling past rows 1–499.
@@ -99,6 +111,8 @@ O(1) access is not a feature of clever algorithms — it is a direct consequence
 "Jump to row N" → O(1) address calculation
 
 Where this analogy breaks down: A spreadsheet column can grow without limit; a fixed-size array cannot — you must allocate a new, larger column and copy.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -113,6 +127,8 @@ The JVM allocates a contiguous block on the heap. Every `arr[i]` access compiles
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The zero-based index convention (`base + i*size` with `i=0` for first) simplifies the address formula and avoids a subtraction. C and Java both chose this. Fortran chose 1-based indexing incurring a silent `base - 1*size` constant every access. For multi-dimensional arrays, row-major (C) vs column-major (Fortran) ordering determines which nested loop direction hits cache — choosing the wrong order causes 5–10× slowdowns on large matrices.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -143,6 +159,8 @@ Java's `ArrayList` maintains an internal array. When full, it allocates a new ar
 **Cache behaviour:**
 A 64-byte cache line holds 16 ints. A sequential scan of a 1,000-element array generates ~63 cache line loads. The same traversal on a linked list of 1,000 nodes generates up to 1,000 cache line loads (each node at an arbitrary address). This explains why array iteration is 5–20× faster in practice.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -163,6 +181,8 @@ arr[i] where i >= arr.length
 
 WHAT CHANGES AT SCALE:
 A 100M-element array occupies 400 MB for ints. Allocation becomes a GC pressure event. At this scale, prefer chunked arrays (array of arrays) or off-heap buffers (`ByteBuffer.allocateDirect`) to avoid GC pauses. Sequential access stays cache-friendly regardless of size.
+
+---
 
 ### 💻 Code Example
 
@@ -208,6 +228,8 @@ for (int c = 0; c < 1000; c++)
         matrix[r][c]++;
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Structure | Access | Insert (mid) | Memory | Best For |
@@ -221,6 +243,8 @@ for (int c = 0; c < 1000; c++)
 
 How to choose: Use array/ArrayList when you read more than you insert. Use LinkedList or Deque when you insert/remove frequently at ends and access pattern is sequential.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -230,6 +254,8 @@ How to choose: Use array/ArrayList when you read more than you insert. Use Linke
 | Multi-dimensional array is a 2D block in memory | `int[M][N]` in Java is an array of M references to N-element arrays — not a single contiguous block |
 | Resizing is O(1) in ArrayList | Each individual resize is O(N); the amortized cost per append is O(1), but a single resize call is O(N) |
 | Arrays cannot hold objects | Arrays hold object *references* (4–8 bytes each); the objects themselves are elsewhere on the heap |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -310,6 +336,8 @@ for (int r = 0; r < M; r++)
 
 Prevention: Always iterate row-by-row in Java 2D arrays; for truly 2D work, use a 1D array with manual indexing `m[r*N + c]` for guaranteed contiguity.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -324,6 +352,8 @@ Prevention: Always iterate row-by-row in Java 2D arrays; for truly 2D work, use 
 **Alternatives / Comparisons:**
 - `LinkedList` — favours O(1) insert/delete at known positions at the cost of O(N) access and poor cache locality.
 - `ArrayList` — a resizable wrapper around an array; trades some memory and occasional O(N) resize for unlimited growth.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -352,6 +382,7 @@ Prevention: Always iterate row-by-row in Java 2D arrays; for truly 2D work, use 
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** An in-memory search index must store 500 million integers and support both random access by position and frequent insertions at arbitrary positions. A team proposes using a plain `int[]` resized by doubling. What is the maximum memory footprint during a resize and why? What alternative data structure would cut the insert cost while preserving O(log N) access, and what does it trade away?

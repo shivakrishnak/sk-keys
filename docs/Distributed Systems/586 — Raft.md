@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Raft"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Leader Election, Log Replication, Quorum, Consensus, State Machine Replication |                 |
 | **Used by:**    | etcd, Kubernetes, CockroachDB, TiKV, Distributed Locking                       |                 |
 | **Related:**    | Paxos, Zab, Multi-Paxos, Log Replication, State Machine Replication            |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

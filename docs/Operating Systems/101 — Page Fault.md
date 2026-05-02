@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Page Fault"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | TLB, Swap / Thrashing, Memory-Mapped File (mmap)   |                 |
 | **Related:**    | TLB, Swap / Thrashing, Segmentation Fault          |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Mainframes in the 1960s faced this exact problem. Programmers had to manually ma
 THE INVENTION MOMENT:
 This is exactly why the Page Fault mechanism was created — it allows the OS to load pages lazily, on demand, only when a process actually accesses them. Programs start instantly, memory is allocated only when used, and processes larger than RAM become possible.
 
+---
+
 ### 📘 Textbook Definition
 
 A **page fault** is a hardware exception raised by the CPU's MMU when a process accesses a virtual address whose page table entry (PTE) has the Present bit cleared. The CPU saves the faulting address in the CR2 register, transfers control to the OS page fault handler, and suspends the faulting process. The handler determines the fault type, takes the appropriate action (allocate a physical page, load from swap or file, or send SIGSEGV), updates the page table entry, and resumes the process. There are three types: minor faults (page exists but not mapped yet), major faults (page must be read from disk), and invalid faults (illegal address → SIGSEGV).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ A page fault is a "please load this page now" interrupt — the OS pauses your p
 
 **One insight:**
 Most page faults are minor and invisible — they are the normal mechanism by which the OS delivers pages on first access (demand paging). An application that starts and runs flawlessly is generating thousands of minor page faults during startup; you just never notice because each takes < 1 microsecond. It's major page faults (disk reads) that matter for performance.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -69,6 +77,8 @@ The CPU cannot distinguish "this page is swapped out" from "this address is comp
 THE TRADE-OFFS:
 Gain: Demand paging (lazy allocation), programs larger than RAM, fast startup, memory overcommit.
 Cost: Major faults add 1–10 ms latency (disk read); first-access page faults add 1–10 µs (minor). Latency-sensitive apps must pre-fault pages with `mlock()` to avoid runtime faults.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -93,6 +103,8 @@ WHAT HAPPENS WITH page fault (demand paging):
 THE INSIGHT:
 Page faults turn memory allocation from an eager, physical operation into a lazy, virtual contract. "Allocating" memory is just making a promise; the OS only pays with real RAM when the process collects on the promise.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A page fault is an on-demand printing system. A book exists as a master template (disk/swap). Your personal copy only prints pages when you actually open to them. The first time you turn to a page, the printer fires up (minor/major fault). If you reference a page number that doesn't exist in the book at all, you get an error.
@@ -103,6 +115,8 @@ Page faults turn memory allocation from an eager, physical operation into a lazy
 "Page number doesn't exist" → invalid fault → SIGSEGV
 
 Where this analogy breaks down: Unlike printing, a major page fault can be eliminated by pre-loading ("prefaulting") — `mlock()` pre-prints all pages before runtime access.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -117,6 +131,8 @@ When a page fault occurs, the CPU saves `RIP` (instruction pointer), sets CR2 to
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The fault-and-retry design (CPU retries the faulting instruction after handling) was chosen over alternatives like interrupt-driven prefetch because it requires no compiler support — any instruction can trigger a fault. This is why demand paging is transparent to user code. The cost is that faults are synchronous and expensive on the critical path. Modern alternatives: `userfaultfd` allows user-space to handle page faults (useful for live migration, checkpoint/restore — CRIU uses it). `io_uring`'s `IORING_REGISTER_PBUFFERS` pre-registers buffers to avoid fault-on-first-access latency in I/O paths. Trading systems use `mlock()` + huge pages + `MADV_POPULATE_WRITE` (Linux 5.14) to eliminate all fault latency from the hot path.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -147,6 +163,8 @@ The fault-and-retry design (CPU retries the faulting instruction after handling)
 
 **Invalid fault path:** No VMA covers the address. Kernel sends SIGSEGV. ~1 µs, but fatal.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -166,6 +184,8 @@ FAILURE PATH (major):
 WHAT CHANGES AT SCALE:
 A JVM starting with a 32 GB heap on a cold machine triggers 8 million minor page faults — visible as a 2–5 second pause before the first request is served. Production JVMs use `-XX:+AlwaysPreTouch` to pre-fault all heap pages at startup, eliminating runtime fault latency at the cost of longer startup. At 10K containers starting simultaneously on a host, page fault storms can saturate the kernel's page allocator lock.
 
+---
+
 ### ⚖️ Comparison Table
 
 | Fault Type        | Trigger                  | Latency | Action                  | User Impact   |
@@ -177,6 +197,8 @@ A JVM starting with a 32 GB heap on a cold machine triggers 8 million minor page
 
 How to choose: You don't choose fault types — the OS determines them. Optimise by: using `mlock()` to prevent major faults, huge pages to reduce minor fault frequency, and `madvise(MADV_WILLNEED)` to trigger prefetch.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                    | Reality                                                                                                                          |
@@ -186,6 +208,8 @@ How to choose: You don't choose fault types — the OS determines them. Optimise
 | "Major page faults only happen on the first run" | Major faults recur whenever a page is evicted from RAM to swap — under memory pressure this happens constantly                   |
 | "mlock() prevents page faults forever"           | mlock() prevents the OS from evicting locked pages; it doesn't prevent COW faults or initial minor faults                        |
 | "More RAM = no page faults"                      | Minor faults still occur for first-access demand paging even with infinite RAM                                                   |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -257,6 +281,8 @@ Fix: Optimise the userfaultfd handler to use larger batch transfers and minimise
 
 Prevention: Benchmark userfaultfd handler throughput vs required fault-handling rate before relying on it in latency-sensitive paths.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -276,6 +302,8 @@ Prevention: Benchmark userfaultfd handler throughput vs required fault-handling 
 - `mlock()` — prevents pages from being evicted, eliminating major faults at the cost of locked memory
 - `madvise(MADV_WILLNEED)` — hints to the OS to prefetch pages before they are needed
 - `io_uring IORING_REGISTER_PBUFFERS` — pre-registers I/O buffers to avoid fault overhead in I/O paths
+
+---
 
 ### 📌 Quick Reference Card
 

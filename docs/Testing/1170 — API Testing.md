@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "API Testing"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Developers, QA Engineers                                               |                 |
 | **Related:**    | Integration Test, Contract Test, Postman, REST Assured, WireMock, Pact |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 UI TESTS ARE SLOW AND BRITTLE:
@@ -35,9 +37,13 @@ Selenium/Playwright tests drive a browser, wait for page loads, interact with UI
 BACKEND VERIFICATION WITHOUT FRONTEND:
 The frontend team is still building the UI. Backend APIs are done. How do you verify the backend is correct? API testing — test the API contract directly without waiting for the UI.
 
+---
+
 ### 📘 Textbook Definition
 
 **API testing** is the practice of testing application programming interfaces (APIs) — primarily HTTP/REST APIs — by sending requests and verifying responses, without the involvement of a UI layer. API tests verify: (1) **functional correctness** — does the API return the expected data for given inputs? (2) **contract adherence** — does the response schema match the API specification (OpenAPI)? (3) **error handling** — does the API return correct HTTP status codes and error messages for invalid inputs? (4) **security** — does the API enforce authentication, authorization, and input validation? (5) **performance** — does the API respond within acceptable latency? Tools: REST Assured (Java), Postman/Newman (JavaScript/collections), HTTPie, curl.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -47,6 +53,8 @@ API testing = verify HTTP APIs directly (no UI) — faster, more stable, and bro
 **One analogy:**
 
 > API testing is **calling a restaurant kitchen directly** (rather than going through the dining room): you speak directly to the chef, order a specific dish, and verify what comes out of the kitchen — without waiting for a waiter, table setting, or menu. You can test the kitchen's output faster, more accurately, and test things the dining room experience never would (kitchen safety, ingredient quality, preparation time).
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -123,6 +131,8 @@ given()
     .header("Location", containsString("/api/v1/orders/"));
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 THE API THAT RETURNS 200 FOR EVERYTHING:
@@ -146,9 +156,13 @@ Terrible API design (but it exists):
   If your API always returns 200, tests lose their signal value.
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > API testing is a **contract enforcement conversation**: "I'll send you this input; you must respond with that output." The API test is the contract; the API implementation is the party that must honor it. Any deviation — wrong status code, wrong schema, wrong business logic — is a contract breach.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -159,6 +173,8 @@ Terrible API design (but it exists):
 **Level 3:** API test organization: group by resource (UserApiTest, OrderApiTest). Use test data builders for request construction. Test non-functional aspects: response time assertions (`time(lessThan(200L))`), header presence (`Content-Type: application/json`), security headers (`Strict-Transport-Security`). Contract testing (Pact) is a specialized form of API testing focused on inter-service contracts.
 
 **Level 4:** API testing in CI: Postman collections run via Newman (CLI) in CI pipeline. API test as documentation: Postman's published collections serve as living documentation of the API. OpenAPI validation: run `dredd` against the OpenAPI specification — ensures every documented endpoint actually behaves as specified. API testing for versioned APIs: test that v1 and v2 coexist correctly; test that deprecated v1 still functions during transition period.
+
+---
 
 ### 💻 Code Example
 
@@ -253,6 +269,8 @@ class UserApiIntegrationTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                       | Unit Test      | API Test (MockMvc)   | API Test (REST Assured) | E2E (Playwright)   |
@@ -262,6 +280,8 @@ class UserApiIntegrationTest {
 | Scope                 | Single class   | Controller + service | Full app stack          | Full app + browser |
 | Brittle to UI changes | N/A            | N/A                  | No (no UI)              | Yes                |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                        | Reality                                                                                                           |
@@ -269,6 +289,8 @@ class UserApiIntegrationTest {
 | "API tests = E2E tests"              | API tests test the API layer; E2E tests drive a UI. API tests are faster and more stable                          |
 | "Postman is just for manual testing" | Postman collections run via Newman in CI pipelines as automated API tests                                         |
 | "200 status code = success"          | 200 only means HTTP-level success; business logic errors can return 200 (bad design) — test the response body too |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -286,10 +308,14 @@ Cause: Tests check specific fields but not the full response schema.
 Result: API response adds unexpected fields or removes expected ones — clients break silently.
 Fix: Validate response against OpenAPI schema in every API test.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** HTTP & APIs, Integration Test, REST
 - **Related:** REST Assured, MockMvc, Postman, Newman, OpenAPI, Contract Test, Pact, WireMock
+
+---
 
 ### 📌 Quick Reference Card
 

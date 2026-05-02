@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Choreography vs Orchestration"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Saga Pattern, Event-Driven Architecture, Message Broker, Microservices |                 |
 | **Used by:**    | Saga Pattern, Order Processing, Distributed Workflows, BPMN            |                 |
 | **Related:**    | Saga Pattern, Event Sourcing, Outbox Pattern, Service Mesh, CQRS       |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "A/B Testing"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Product Managers, Developers, Data Scientists                          |                 |
 | **Related:**    | Feature Flags, Canary Deployment, Blue-Green Deployment, Observability |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 OPINION-DRIVEN PRODUCT DECISIONS:
@@ -35,9 +37,13 @@ OPINION-DRIVEN PRODUCT DECISIONS:
 NOT THE SAME AS SOFTWARE TESTING:
 A/B testing is NOT a software testing technique (like unit tests). It's a **product experimentation technique** — testing product hypotheses against real users in production to make data-driven decisions. It requires live traffic, real users, and statistical rigor.
 
+---
+
 ### 📘 Textbook Definition
 
 **A/B testing** (also called split testing or bucket testing) is a randomized controlled experiment run in production: users are randomly assigned to a **control group** (variant A — current behavior) or a **treatment group** (variant B — new behavior). Both groups are measured on a **primary metric** (e.g., conversion rate, click-through rate, session duration). After collecting sufficient data (determined by power analysis), statistical significance testing determines whether the observed difference is real or due to chance. If statistically significant AND practically significant, the winning variant is rolled out to all users.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -47,6 +53,8 @@ A/B test = two groups, two variants, real users, data decides — not opinion.
 **One analogy:**
 
 > A/B testing is a **randomized clinical trial for product decisions**: Group A gets the placebo (current design), Group B gets the treatment (new design). After N weeks, measure outcomes. If the treatment group shows statistically significant improvement — roll it out. Same scientific rigor as medicine, applied to software products.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -132,6 +140,8 @@ public ResponseEntity<?> placeOrder(...) {
 }
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 THE MULTIPLE TESTING PROBLEM:
@@ -154,9 +164,13 @@ Solutions:
 This is why discipline matters: pre-register hypothesis, don't peek, correct for multiple testing.
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A/B testing is **democracy for product decisions**: instead of a single decision-maker (HiPPO), thousands of users "vote" through their behavior. The statistical test is the vote-counting mechanism — it separates real preferences from noise. Like democracy, it requires rules (proper randomization, sufficient turnout/sample size) to produce valid results.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -167,6 +181,8 @@ This is why discipline matters: pre-register hypothesis, don't peek, correct for
 **Level 3:** Implementation: feature flag service (LaunchDarkly, Optimizely, custom) assigns users deterministically using hash of user ID + experiment ID. Events tracked to analytics (Segment, Mixpanel, custom data pipeline). Analysis: t-test for means, chi-squared for proportions, Mann-Whitney U for non-normal distributions. Multiple variant testing (A/B/C/D): ANOVA + post-hoc tests for multiple comparisons.
 
 **Level 4:** Industry-scale A/B testing: Google runs 10,000+ experiments per year; Netflix runs 200+ simultaneously. Challenges: (1) network effects — users interact, so A group behavior is influenced by B group (e.g., social features); (2) novelty effect — new features get inflated engagement initially; measure long-term; (3) holdout groups — a small % of users permanently excluded from all experiments to measure the cumulative effect of shipped changes; (4) Bayesian A/B testing — alternative to frequentist (provides probability B beats A rather than p-values; allows continuous monitoring without peeking problem); (5) multi-armed bandit — dynamically allocate more traffic to winning variant during the experiment (trading statistical purity for faster deployment of winners).
+
+---
 
 ### 💻 Code Example
 
@@ -207,6 +223,8 @@ public class ExperimentService {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                    | A/B Test                     | Canary Deployment              | Feature Flag            |
@@ -216,6 +234,8 @@ public class ExperimentService {
 | Statistical rigor  | Required                     | Not required                   | Not required            |
 | Who decides winner | Statistics (p-value)         | Engineer (error rate)          | Product/business        |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                  | Reality                                                                                                      |
@@ -223,6 +243,8 @@ public class ExperimentService {
 | "Stop the test when p < 0.05"                  | "Peeking" inflates false positive rate — run to predetermined sample size                                    |
 | "A/B test everything"                          | Only test decisions with high uncertainty and sufficient traffic; low-traffic pages can't reach significance |
 | "Statistical significance = we should ship it" | Also requires practical significance — a 0.01% improvement isn't worth shipping                              |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -240,10 +262,14 @@ Fix: Run experiment longer; analyze returning users separately.
 Cause: User in experiment 1 Treatment × experiment 2 Treatment — interaction unknown.
 Fix: Mutual exclusivity for related experiments; interaction analysis for known interactions.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Feature Flags, Statistical Significance, Metrics
 - **Related:** Canary Deployment, Blue-Green Deployment, LaunchDarkly, Optimizely, Bayesian Statistics
+
+---
 
 ### 📌 Quick Reference Card
 

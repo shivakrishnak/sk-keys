@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "AssertJ"
 parent: "Testing"
@@ -26,6 +26,8 @@ tags:
 | **Depends on:** | JUnit 5, Unit Test                           |                 |
 | **Used by:**    | Java Developers                              |                 |
 | **Related:**    | JUnit 5, Mockito, Hamcrest, Test Readability |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 
@@ -56,9 +58,13 @@ assertEquals(user.getName(), "Alice");  // WRONG ORDER! Error message backwards
 assertThat(user.getName()).isEqualTo("Alice");
 ```
 
+---
+
 ### 📘 Textbook Definition
 
 **AssertJ** is a Java assertion library providing a fluent, method-chaining API for writing test assertions. Starting from `assertThat(actualValue)`, it provides type-specific assertion methods depending on the type of the actual value: string assertions (contains, startsWith, matches), collection assertions (hasSize, contains, doesNotContain), exception assertions (isInstanceOf, hasMessage), Optional assertions (isPresent, hasValue), and more. AssertJ is included by default in Spring Boot Test (`spring-boot-starter-test`).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -68,6 +74,8 @@ AssertJ = `assertThat(x).isEqualTo(y)` and many readable, type-specific assertio
 **One analogy:**
 
 > AssertJ turns test assertions from terse mathematical notation (`assertEquals(a, b)`) into English sentences (`assertThat(cart.total).isEqualTo(100.0)`). The test reads like a specification: "assert that cart total is equal to 100.0."
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -179,9 +187,13 @@ public class OrderAssert extends AbstractAssert<OrderAssert, Order> {
 assertThat(order).isConfirmed().hasTotalOf(99.90);
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > AssertJ is a **conversation in English**: instead of `assertEquals(expected, actual)` (mathematical notation with unclear argument order), you write `assertThat(actual).isEqualTo(expected)` (a sentence: "assert that actual is equal to expected"). The test reads like a specification, not a formula.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -192,6 +204,8 @@ assertThat(order).isConfirmed().hasTotalOf(99.90);
 **Level 3:** Use custom assertions for your domain objects — extend `AbstractAssert`. These become part of your domain vocabulary in tests: `assertThat(order).isConfirmed().hasTotalOf(50.0)`. Import AssertJ's static `assertThat` alongside Mockito's BDDMockito's `given()` / `then()` for a consistent BDD-style test vocabulary.
 
 **Level 4:** AssertJ's failure messages are generated lazily using `%s` substitution — the performance cost is zero if the assertion passes. Custom assertion failure messages: `.as("user should be active after registration").isTrue()` — the description appears before the assertion failure message, providing context. The `usingComparatorForType()` method customizes how specific types are compared — e.g., compare BigDecimal by value not scale (0.50 equals 0.5), compare LocalDate with tolerance.
+
+---
 
 ### 💻 Code Example
 
@@ -234,6 +248,8 @@ void userProfile_hasAllRequiredFields() {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                    | JUnit Assertions         | AssertJ                            |
@@ -245,6 +261,8 @@ void userProfile_hasAllRequiredFields() {
 | Soft assertions    | `assertAll()`            | `SoftAssertions`                   |
 | Custom assertions  | ✗                        | `AbstractAssert` extension         |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                              | Reality                                                                                  |
@@ -252,6 +270,8 @@ void userProfile_hasAllRequiredFields() {
 | "AssertJ replaces JUnit"                   | AssertJ replaces JUnit's assertion methods; JUnit 5 still provides the test runner       |
 | "More assertion methods = more test logic" | Rich assertions still verify one thing; they just do it more expressively                |
 | "Soft assertions hide failures"            | Soft assertions collect ALL failures before reporting — you see more failures, not fewer |
+
+---
 
 ### 📌 Quick Reference Card
 

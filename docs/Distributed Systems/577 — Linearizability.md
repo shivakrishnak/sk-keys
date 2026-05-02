@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Distributed Locks, Leader Election, CAS Operations, etcd | |
 | **Related:** | Serializability, Sequential Consistency, CAP Theorem, Raft | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT LINEARIZABILITY:**

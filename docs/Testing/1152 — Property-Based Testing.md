@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Property-Based Testing"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Developers, QA Engineers                                   |                 |
 | **Related:**    | Fuzzing, QuickCheck, jqwik, Hypothesis, Generative Testing |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -41,9 +43,13 @@ You feel confident. But there's a bug: `sort` fails when the list has more than 
 THE INSIGHT:
 Example-based tests verify: "given THIS input, I get THIS output." Property-based tests verify: "for ANY valid input, THIS invariant holds." The invariants (properties) are higher-level: "sorted list is always sorted," "sorted list has same length as input," "sorted list is a permutation of input." These three properties together fully specify correct sort behavior.
 
+---
+
 ### 📘 Textbook Definition
 
 **Property-Based Testing (PBT)** is a testing technique where instead of writing specific input-output examples, you write **properties** — invariants that must hold for all (or a statistically representative sample of) valid inputs. A PBT framework generates random inputs, runs the test for each, and if a property fails, automatically **shrinks** the failing input to the minimal example that still causes failure (making debugging easier). Originated with Haskell's QuickCheck (1999); major implementations: Hypothesis (Python), jqwik (Java), fast-check (JavaScript), ScalaCheck.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ PBT = define invariants + let the framework generate 1,000 random tests to break
 **One analogy:**
 
 > PBT is like hiring a **tireless adversarial QA engineer** who tries every possible input combination, looking for any case that breaks your stated invariant. Unlike a human QA who picks a few representative cases, this QA never gets tired and can check thousands of variations — including the weird ones at the edges.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -114,6 +122,8 @@ With shrinking:    you immediately see the minimal case
                    "sort fails when list contains Integer.MIN_VALUE"
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 THE SERIALIZATION BUG HUNT:
@@ -135,9 +145,13 @@ void jsonSerializationRoundTrip(@ForAll Order order) {
 // Found in 3 seconds; would have hit production with customer names
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Property-based testing is the **mathematician's approach** to verification: instead of checking specific examples ("is 2+2=4?"), it proves general theorems ("for all integers a, b: add(a,b) == add(b,a)"). You can't check all integers, but checking 10,000 random ones gives statistical confidence. If it's true for 10,000 random pairs, the chances it's false are astronomically low — and if it IS false, the framework finds the simplest counterexample.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -148,6 +162,8 @@ void jsonSerializationRoundTrip(@ForAll Order order) {
 **Level 3:** Stateful property-based testing: generating sequences of operations and verifying invariants hold after each. Example: generate random sequences of `add(item)`, `remove(item)`, `clear()` operations on a shopping cart; verify after each operation that `cart.size() >= 0` and `cart.total() == sum(cart.items())`. This finds race conditions and state machine bugs.
 
 **Level 4:** PBT and TDD: use PBT where the property is easy to express (serialization, parsing, mathematical operations, state machines). Use example-based TDD where the behavior is specific and hard to express as a general property (business rules with specific edge cases). They complement: TDD for known edge cases, PBT for unknown edge cases. The "free theorem" insight: if your function satisfies the round-trip property for 10,000 random inputs, the chance of a latent bug is lower than most security CVEs. PBT is particularly powerful for: parsers/serializers, algorithms (sort, search, compression), cryptography, state machines.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -171,6 +187,8 @@ void jsonSerializationRoundTrip(@ForAll Order order) {
 │          "Seed: 42 (reproduce with @Seed(42))"           │
 └──────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -200,6 +218,8 @@ PBT session (jqwik, 1,000 tries):
   Minimal: null
   Fix: null check at entry
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -245,6 +265,8 @@ class StringEncoderPropertyTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                     | Example-Based (Unit)             | Property-Based                           |
@@ -256,6 +278,8 @@ class StringEncoderPropertyTest {
 | Maintenance         | Low                              | Medium (properties need thought)         |
 | Best for            | Known business cases             | Algorithms, serialization, parsers       |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                          | Reality                                                                                        |
@@ -264,6 +288,8 @@ class StringEncoderPropertyTest {
 | "PBT is just random testing"           | PBT is systematic: it uses shrinking to find minimal failures; random testing has no shrinking |
 | "PBT is only for functional languages" | jqwik (Java), Hypothesis (Python), fast-check (JS) bring PBT to mainstream languages           |
 | "Properties are hard to find"          | Start with round-trip properties (serialize/deserialize); these are easy and very effective    |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -277,11 +303,15 @@ Fix: Increase `tries`. Once a failure is found, the seed is logged — add `@See
 Cause: Property allows too many outcomes (e.g., "result is not null" — true even if result is completely wrong).
 Fix: Strengthen the property: combine multiple invariants. Use the oracle pattern: compare with a simple reference implementation.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Unit Test, TDD
 - **Builds on:** jqwik, QuickCheck, Hypothesis, Fuzzing
 - **Related:** Generative Testing, Randomized Testing, Specification-Based Testing
+
+---
 
 ### 📌 Quick Reference Card
 

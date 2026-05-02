@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Fallback"
 parent: "Distributed Systems"
@@ -26,6 +26,8 @@ tags:
 | **Depends on:** | Circuit Breaker, Timeout, Graceful Degradation, Bulkhead                     |                 |
 | **Used by:**    | Graceful Degradation, Service Mesh, Resilience4j, Hystrix                    |                 |
 | **Related:**    | Circuit Breaker, Graceful Degradation, Bulkhead, Retry with Backoff, Timeout |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Enterprise SSO, Social Login, Identity Federation, Mobile Apps | |
 | **Related:** | OAuth2, JWT, API Authentication, SAML, Federation | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

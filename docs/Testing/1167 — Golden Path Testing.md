@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Golden Path Testing"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | QA Teams, Platform Engineers, Developers                                 |                 |
 | **Related:**    | Smoke Test, E2E Test, Approval Testing, Canary Deployment, Observability |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 1,000 E2E TESTS, 45 MINUTES, NO SIGNAL:
@@ -35,9 +37,13 @@ A large test suite with 1,000 E2E tests takes 45 minutes to run. All must pass b
 THE DEPLOYMENT CONFIDENCE QUESTION:
 "Is it safe to deploy?" requires answering quickly. You need to know: "Can users log in? Can users buy? Can users find their orders?" — not "Does the obscure account merge edge case work?" Golden path tests answer the deployment confidence question in under 5 minutes.
 
+---
+
 ### 📘 Textbook Definition
 
 **Golden path testing** is the practice of identifying and continuously testing the most critical user journeys — the paths through the application that are used most frequently and whose failure would most severely impact the business. "Golden path" comes from platform engineering (Spotify's "paved road" / "golden path" concept): the recommended, well-supported path for common tasks. In testing, it means: (1) identify the top 5-10 user journeys critical to core business value, (2) automate them as fast, reliable E2E tests, (3) run them on every deployment as the primary gate, (4) treat any failure as a high-severity incident blocker. Golden path tests are a subset of the full E2E suite — selected for coverage of critical value, not comprehensive coverage.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -47,6 +53,8 @@ Golden path tests = the vital few user journeys that must work — fast, automat
 **One analogy:**
 
 > Golden path tests are the **hospital vital signs check** (heart rate, blood pressure, oxygen) — not a full body scan. If vitals are stable, the patient is stable enough for discharge. The full diagnostic work-up comes later. Vitals give confidence quickly; comprehensive testing provides completeness slowly.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -119,6 +127,8 @@ IMPLEMENTATION STRATEGY:
    Full E2E failure = track and fix before next release (not immediate blocker)
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 WHEN THE SEARCH BROKE AND NOBODY KNEW:
@@ -141,9 +151,13 @@ Lesson: a fast, focused golden path suite gives faster feedback on critical fail
         than a slow, comprehensive suite that runs infrequently.
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > The golden path is the **main artery of your system** — if it's blocked, the patient (business) is in critical condition regardless of whether peripheral capillaries are healthy. Golden path tests monitor the aorta, not every capillary.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -154,6 +168,8 @@ Lesson: a fast, focused golden path suite gives faster feedback on critical fail
 **Level 3:** Golden path curation is a business conversation, not just a QA decision. Product, engineering, and business stakeholders define what "critical" means: loss of checkout = critical; loss of coupon redemption = not critical for blocking deployment. Review golden paths quarterly as product evolves. Flakiness in golden path tests is treated as a P1 — golden paths must be 100% reliable (never cry wolf).
 
 **Level 4:** Golden path testing at scale: each team owns their domain's golden paths (microservices architecture). Platform team runs a cross-service golden path that exercises the critical customer journey end-to-end across services. Contract tests (Pact) validate between services; golden path validates the full integration. Progressive delivery: golden path tests run against canary traffic — if golden paths fail for canary (5% of users), automatic rollback before full rollout.
+
+---
 
 ### 💻 Code Example
 
@@ -208,6 +224,8 @@ jobs:
         run: npx playwright test
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                  | Smoke Test        | Golden Path           | Full E2E         |
@@ -217,6 +235,8 @@ jobs:
 | Deployment gate  | Yes (pre-deploy)  | Yes (primary gate)    | No (nightly)     |
 | Failure severity | Critical (outage) | Critical (value path) | Medium (feature) |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                           | Reality                                                                                                                   |
@@ -224,6 +244,8 @@ jobs:
 | "Golden path = happy path only"         | Golden path can include critical error paths (e.g., "card declined handled gracefully") — critical, not necessarily happy |
 | "More E2E tests = more confidence"      | A fast, reliable golden path suite gives more actionable deployment confidence than a slow, comprehensive suite           |
 | "Golden path is the only test you need" | Golden paths are the MINIMUM, not sufficient — the full test pyramid still applies                                        |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -237,10 +259,14 @@ Cause: A golden path test has timing issues; fails 10% of the time.
 Impact: Blocks valid deployments; team loses trust; starts re-running to bypass.
 Fix: Zero flakiness tolerance for golden paths — fix flakiness immediately (higher priority than features).
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** E2E Test, Smoke Test, Test Environments
 - **Related:** Smoke Test, E2E Test, Playwright, Cypress, Canary Deployment, Observability, Feature Flags
+
+---
 
 ### 📌 Quick Reference Card
 

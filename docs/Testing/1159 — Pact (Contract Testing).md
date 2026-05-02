@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Pact (Contract Testing)"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Microservices Teams, API Teams                                                |                 |
 | **Related:**    | Contract Test, WireMock, Consumer-Driven Contracts, Pact Broker, Test Diamond |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 MICROSERVICES INTEGRATION HELL:
@@ -35,9 +37,13 @@ Service A consumes Service B's API. When Service B changes its response schema (
 CONSUMER-DRIVEN = CONSUMER IN CONTROL:
 Standard API-first (provider-driven): provider publishes spec → consumers adapt. Risks: provider changes spec without knowing which consumers rely on which fields. Consumer-driven (Pact): consumers publish what they NEED → provider verifies it satisfies all consumers before deploying. If a provider change would break a consumer's pact, the provider's CI fails — before deployment.
 
+---
+
 ### 📘 Textbook Definition
 
 **Pact** is a consumer-driven contract testing framework. The **consumer** writes a Pact test that: (1) defines the HTTP interaction it expects (request/response), (2) runs the test against a Pact mock server (which verifies the consumer code can handle the response), (3) generates a **pact file** (JSON) describing the contract. The **provider** downloads the pact file and runs a **provider verification test** — verifying that its real API fulfills every interaction in the pact. The **Pact Broker** is a service that stores and distributes pact files between consumer and provider CI pipelines. The `can-i-deploy` tool checks if it's safe to deploy a version based on verified contracts.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -47,6 +53,8 @@ Pact = consumer writes what it needs, provider proves it delivers — without di
 **One analogy:**
 
 > Pact is a **supplier agreement** process: the restaurant (consumer) tells the food supplier (provider) exactly what quality and specification they need ("10kg free-range eggs, grade A"). The supplier verifies they can supply that specification before accepting the order. If the supplier changes their egg source, they verify the new source still meets the restaurant's spec before delivering. No surprises on delivery day.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -136,6 +144,8 @@ pact-broker can-i-deploy \
 # RESULT: can-i-deploy = NO
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 THE FIELD RENAME BUG — PACT CATCHES IT:
@@ -166,9 +176,13 @@ With Pact:
   Result: coordinated, safe API evolution without integration incidents
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Pact is a **living contract repository**: consumers deposit their requirements, providers make withdrawals (verify they can fulfill them). The Pact Broker is the contract vault — any time a provider wants to deploy, they check the vault to ensure they're not breaking any deposited requirements. Deposits (consumer pacts) drive provider requirements; the provider can never claim ignorance of consumer needs.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -179,6 +193,8 @@ With Pact:
 **Level 3:** Provider states: each pact interaction can specify a state ("given order 123 exists"). The provider must implement `@State("order 123 exists")` — a setup method that creates the required test data. This ensures the provider test creates the correct preconditions for each interaction being verified. Consumer version tagging: tag consumer versions by environment (`main`, `staging`, `production`). Provider uses `from-environment=production` to only verify against pacts from currently deployed consumers.
 
 **Level 4:** Pact in enterprise context: 20 services with 50 consumer-provider pairs. Pact Broker's network graph shows all contracts and verification status. Webhook configuration: when a consumer publishes a new pact, the Pact Broker triggers a CI job on the provider automatically — continuous contract verification without manual coordination. The `can-i-deploy` check in every deployment pipeline is the key enforcement mechanism — no service deploys to production if it breaks any consumer's pact. Pact for messaging/events: beyond HTTP, Pact supports message contracts (Kafka, SNS) — consumer defines what event format it expects, producer verifies its events match.
+
+---
 
 ### 💻 Code Example
 
@@ -245,6 +261,8 @@ class ProductServicePactProviderTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                           | Integration Test (Testcontainers) | Pact Contract Test             | E2E Test           |
@@ -255,6 +273,8 @@ class ProductServicePactProviderTest {
 | Catches schema drift      | ✗                                 | ✓                              | ✓ (eventually)     |
 | Feedback loop             | Minutes                           | Minutes (per service)          | Hours              |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                          | Reality                                                                    |
@@ -262,6 +282,8 @@ class ProductServicePactProviderTest {
 | "Pact replaces integration tests"                      | Pact verifies the contract; integration tests verify behavior; both needed |
 | "Provider-driven contracts (OpenAPI) is equivalent"    | OpenAPI spec can drift; Pact verification runs against the real API        |
 | "Pact requires both services to change simultaneously" | Pact enables independent deployment; `can-i-deploy` ensures safety         |
+
+---
 
 ### 📌 Quick Reference Card
 

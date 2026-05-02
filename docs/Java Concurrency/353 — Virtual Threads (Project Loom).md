@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Virtual Threads (Project Loom)"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Carrier Thread, Continuation, Structured Concurrency | |
 | **Related:** | Thread (Java), Carrier Thread, Continuation | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Java reactive frameworks (Spring WebFlux, Vert.x) exist BECAUSE of platform thre
 THE INVENTION MOMENT:
 **Virtual threads** (Project Loom, Java 21 GA) solve this at the JVM level — making each blocking I/O call efficiently unmount the thread from the OS, with no programmer effort. Blocking code remains readable and correct; scalability matches reactive without the complexity.
 
+---
+
 ### 📘 Textbook Definition
 
 **Virtual threads** are JVM-managed lightweight threads introduced in Java 21 (JEP 444). They are mapped M:N to platform (OS) threads: many virtual threads share a small pool of platform "carrier" threads managed by `ForkJoinPool`. When a virtual thread blocks (on I/O, `sleep()`, `LockSupport.park()`), it is **unmounted** from the carrier thread — the carrier is freed immediately to run another virtual thread. When the blocking operation completes, the virtual thread is **mounted** onto an available carrier to continue. Created via `Thread.ofVirtual().start(task)` or `Executors.newVirtualThreadPerTaskExecutor()`.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Virtual threads park on I/O without consuming an OS thread — you get blocking 
 
 **One insight:**
 Virtual threads do NOT improve CPU-bound code — only I/O-bound blocking code benefits. If the task is doing heavy computation (no I/O waits), adding more virtual threads doesn't help (still limited by CPU cores). The win is: I/O-waiting code occupying near-zero resources instead of blocking a platform thread.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -92,6 +100,8 @@ THE TRADE-OFFS:
 Gain: Millions of concurrent threads at low cost; no reactive framework needed for scalability; existing blocking code runs efficiently; structured concurrency enabled.
 Cost: Pinning in `synchronized` blocks cancels benefit; CPU-bound code gains nothing; `ThreadLocal` semantics change (performance — each VT can have its own TL copy, increasing memory for millions of VTs); debugging is more complex.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -116,6 +126,8 @@ Throughput: 10,000 req/10ms = 1,000,000 req/sec theoretical
 THE INSIGHT:
 The database connection pool is now the bottleneck, not the thread count. Virtual threads expose the actual system constraints (DB pool size, network bandwidth) rather than creating artificial thread-count constraints.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Virtual threads are like browser tabs in a computer. Each tab is a "virtual process" (virtual thread) — you can have 100 tabs open. Most are idle (waiting for page load = waiting for I/O). The actual CPU work (renderer = carrier thread) jumps between tabs — rendering a page here, processing JS there. Tabs waiting for network data don't use the CPU.
@@ -127,6 +139,8 @@ The database connection pool is now the bottleneck, not the thread count. Virtua
 
 Where this analogy breaks down: Browser tabs are isolated (no shared memory). Virtual threads share heap — all the concurrent access rules still apply. Virtual threads are NOT a concurrency correctness tool — only a scalability tool.
 
+---
+
 ### 📶 Gradual Depth — Four Levels
 
 **Level 1:** Virtual threads let you write blocking code that scales like non-blocking code — the JVM handles the "don't actually block" part.
@@ -136,6 +150,8 @@ Where this analogy breaks down: Browser tabs are isolated (no shared memory). Vi
 **Level 3:** Virtual threads are implemented via **continuations** (`java.lang.Continuation` - JVM internal). A continuation captures the entire call stack of a virtual thread. On unmount, the continuation (stack snapshot + local variables) is stored on the heap. On remount, the continuation is restored onto a carrier's stack. The carrier pool is `ForkJoinPool` (default parallelism = CPU cores).
 
 **Level 4:** Virtual threads make the thread-per-request model scale again — the original Java servlet model before reactive frameworks. Spring Boot 3.2+ supports virtual threads via `spring.threads.virtual.enabled=true`. Structured Concurrency (JEP 428/453) builds on virtual threads: `StructuredTaskScope` ensures all virtual threads in a scope complete (or fail) before the scope exits — eliminating the leak-on-exception problem of `ExecutorService` pools.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -196,6 +212,8 @@ try {
 }
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 ```
@@ -224,6 +242,8 @@ PINNING PATH:
 
 WHAT CHANGES AT SCALE:
 At scale, the connection pool (database, HTTP client) becomes the bottleneck instead of thread count. Size connection pools large enough for the concurrency level. JVM metric: `jdk.VirtualThreadPinned` JFR event — monitor pinning frequency to identify `synchronized` block performance issues.
+
+---
 
 ### 💻 Code Example
 
@@ -276,6 +296,8 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 // StructuredTaskScope ensures cleanup if either fails
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Thread Type | Memory/Thread | Max Threads | Blocking I/O | Best For |
@@ -286,6 +308,8 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 
 How to choose: Virtual threads for I/O-heavy workloads (HTTP servers, DB-calling services). Platform threads for CPU-bound computation. Virtual threads with `StructuredTaskScope` to replace `CompletableFuture` chains for concurrent fanout.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -295,6 +319,8 @@ How to choose: Virtual threads for I/O-heavy workloads (HTTP servers, DB-calling
 | Virtual threads are thread-safe | Virtual threads have the same concurrency semantics as platform threads — shared state still requires synchronization |
 | Virtual threads replace reactive frameworks entirely | For simple blocking code, yes. For advanced reactive patterns (backpressure, streaming), reactive frameworks (Reactor, RxJava) still have advantages |
 | synchronized blocks are forbidden in virtual threads | synchronized is legal but causes **pinning** (carrier blocked). Use `ReentrantLock` for I/O inside critical sections. Pinning is a perf issue, not a correctness issue |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -334,6 +360,8 @@ Root Cause: 10,000 VTs all trying to use a 10-connection pool — 9,990 VTs bloc
 
 Fix: Size connection pool for expected concurrency: `spring.datasource.hikari.maximum-pool-size=100` (or appropriate for workload).
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -349,6 +377,8 @@ Fix: Size connection pool for expected concurrency: `spring.datasource.hikari.ma
 **Alternatives / Comparisons:**
 - `Carrier Thread` — the execution vehicle; directly paired with VT
 - `Thread (Java)` — platform thread; the predecessor VT is designed to replace for I/O workloads
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -383,6 +413,7 @@ Fix: Size connection pool for expected concurrency: `spring.datasource.hikari.ma
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A service running 1,000,000 concurrent virtual threads calls `ThreadLocal.get()` on a ThreadLocal that stores a 10KB `HashMap`. Calculate: (a) the approximate total heap used when all 1M VTs have initialised this ThreadLocal, (b) how this compares to the same workload using `ScopedValues` (which is immutable and shared), (c) why `ThreadLocal.remove()` is even more critical for VT workloads than platform thread pools, and (d) what JVM monitoring data would reveal this pattern.

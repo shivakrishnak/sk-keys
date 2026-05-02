@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Security Test (SAST—DAST)"
 parent: "Testing"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | Security Engineers, DevSecOps, SRE, Compliance                  |                 |
 | **Related:**    | SonarQube, OWASP, Penetration Testing, Dependency Scanning, CVE |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -35,6 +37,8 @@ A developer writes `String query = "SELECT * FROM users WHERE id = " + userId;` 
 
 THE CRITICAL INSIGHT:
 Security vulnerabilities are not bugs in the traditional sense. The code does exactly what the developer intended — it just also does what the attacker intended. Only security-specific testing can find them.
+
+---
 
 ### 📘 Textbook Definition
 
@@ -44,6 +48,8 @@ Security vulnerabilities are not bugs in the traditional sense. The code does ex
 
 **SCA (Software Composition Analysis):** Scans dependencies for known CVEs. Tools: Snyk, OWASP Dependency-Check, GitHub Dependabot.
 
+---
+
 ### ⏱️ Understand It in 30 Seconds
 
 **One line:**
@@ -52,6 +58,8 @@ SAST = security code review at scale (automated); DAST = automated pen test agai
 **One analogy:**
 
 > SAST is a structural inspection of a building's blueprints for fire code violations (before the building is built). DAST is a fire marshal walking through the completed building, trying every door and exit to find actual hazards.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -86,6 +94,8 @@ Deploy to pre-prod →
   [Pen test: manual] → quarterly, by external team
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 SAST FINDS WHAT DAST MISSES:
@@ -109,9 +119,13 @@ SAST couldn't find this because the algorithm check was in a third-party library
   the library version had a known vulnerability that SAST didn't flag
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > SAST + DAST = a dual security audit. SAST is the **inside auditor** who reads all the source code, policies, and configurations looking for violations. DAST is the **external red team** who is given only the URL and tries every known attack. Both find different things; neither is complete without the other.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -122,6 +136,8 @@ SAST couldn't find this because the algorithm check was in a third-party library
 **Level 3:** SAST false positive management: SAST tools have 20-40% false positive rates; teams must triage and suppress confirmed false positives with in-code annotations (`// NOSONAR` for SonarQube). DAST scoping: define which URLs to include/exclude in scans; authenticated DAST (provide session cookie to scan authenticated areas); avoid scanning third-party URLs. IAST (Interactive Application Security Testing): instruments the running application (JVM agent) to observe security issues from the inside while DAST exercises it from the outside — lower false positive rate.
 
 **Level 4:** Threat modeling (pre-SAST/DAST): before writing code, model threats using STRIDE (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege). Threat modeling identifies design-level security issues that neither SAST nor DAST can find (e.g., "the design assumes only admins can access this endpoint, but there is no enforcement mechanism"). Shift-left security: the cost to fix a vulnerability grows exponentially from design → code → test → production. NIST estimates: $100 to fix at design, $1,500 at code, $10,000 in QA, $30,000 in production.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -142,6 +158,8 @@ SAST couldn't find this because the algorithm check was in a third-party library
 │  TOGETHER: comprehensive coverage of OWASP Top 10       │
 └──────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -167,6 +185,8 @@ Pre-prod:
 
 Result: security issues found and fixed BEFORE production
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -232,6 +252,8 @@ public class UserController {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                 | SAST           | DAST             | SCA             | Manual Pen Test |
@@ -242,6 +264,8 @@ public class UserController {
 | Speed           | Fast (minutes) | Slow (hours)     | Fast            | Slow (days)     |
 | Cost            | Low            | Medium           | Low             | High            |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                        | Reality                                                                            |
@@ -250,6 +274,8 @@ public class UserController {
 | "DAST replaces manual pen testing"   | DAST tools can't reason about business logic; manual pen testers find design flaws |
 | "100% SAST clean = secure"           | SAST has 20-40% false negatives; "clean SAST" is necessary, not sufficient         |
 | "Security testing slows development" | Shift-left: fixing in CI is 100× cheaper than fixing in production                 |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -263,11 +289,15 @@ Fix: Tune rules for your framework (disable irrelevant rules, add custom rules).
 Cause: Full ZAP active scan takes 2-4 hours; not practical for every PR.
 Fix: Run passive (baseline) scan on every PR (fast); active scan only on staging/release branches.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** CI-CD, HTTP and APIs, Code Quality
 - **Builds on:** Penetration Testing, Threat Modeling, DevSecOps
 - **Related:** SonarQube Quality Gate, OWASP, CVE, Dependency Scanning
+
+---
 
 ### 📌 Quick Reference Card
 

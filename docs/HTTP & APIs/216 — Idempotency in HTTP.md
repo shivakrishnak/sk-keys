@@ -28,6 +28,8 @@ tags:
 | **Used by:** | API Design Best Practices, Retry Strategy, Idempotency Key | |
 | **Related:** | REST, API Rate Limiting, Retry with Backoff | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Leader Election"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Distributed Systems, Consensus, Quorum, Failure Modes, Networking            |                 |
 | **Used by:**    | Raft, Paxos, Distributed Locking, Log Replication, State Machine Replication |                 |
 | **Related:**    | Raft, Paxos, Split Brain, Quorum, Fencing / Epoch                            |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

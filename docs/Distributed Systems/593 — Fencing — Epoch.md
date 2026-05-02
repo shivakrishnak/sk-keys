@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Fencing / Epoch"
 parent: "Distributed Systems"
@@ -28,6 +28,8 @@ tags:
 │ Used by:     │ HDFS, ZooKeeper, etcd, DB HA        │                      │
 │ Related:     │ Split Brain, Distributed Locking    │                      │
 └──────────────────────────────────────────────────────────────────────────┘
+
+---
 
 ### 🔥 The Problem This Solves
 

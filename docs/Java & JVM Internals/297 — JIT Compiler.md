@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "JIT Compiler"
 parent: "Java & JVM Internals"
@@ -41,6 +41,8 @@ tags:
 | **Used by:** | C1/C2 Compiler, Tiered Compilation, Method Inlining, Deoptimization, OSR | |
 | **Related:** | AOT Compilation, GraalVM, Tiered Compilation | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -52,9 +54,13 @@ A financial trading engine written in Java in 1998 processes market data. A crit
 THE INVENTION MOMENT:
 This is exactly why the **JIT (Just-In-Time) Compiler** was created — to bridge the speed gap between portable bytecode and native machine code by compiling hot code paths at runtime, using profiling data that a static compiler could never have.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Just-In-Time (JIT) Compiler** is a component of the JVM that monitors bytecode execution at runtime, identifies frequently executed ("hot") methods and loops, and compiles them directly to native machine code specific to the host CPU. Unlike an Ahead-Of-Time (AOT) compiler that compiles before execution, the JIT has access to actual runtime profiling data (call frequencies, type feedback, branch outcomes) enabling aggressive optimizations — method inlining, dead code elimination, loop unrolling — that a static compiler could only approximate. The JIT operates concurrently with the application on background threads.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -66,6 +72,8 @@ A background system that turns slow interpreted bytecode into fast native code w
 
 **One insight:**
 The JIT's superpower is that it can make stronger assumptions than a static compiler ever could. It may see that a virtual method call always dispatches to one concrete type — so it inlines the entire call. If that assumption later breaks, it deoptimizes back to the interpreter. Static compilers must be conservative; the JIT can be *optimistic with a fallback*.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -105,6 +113,8 @@ THE TRADE-OFFS:
 Gain: Native-speed execution for hot code paths; adaptive to actual workload.
 Cost: Warmup time (application runs slow initially); JIT background threads consume CPU; code cache has finite size; compiled code may be discarded (deoptimization or cache eviction).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -119,6 +129,8 @@ First 1,000 calls: interpreted (profiling gathers type feedback, call counts acc
 THE INSIGHT:
 JIT delivers native performance with zero programmer effort, but it requires warmup time. This makes JIT-based runtimes temporarily slower at startup and makes performance benchmarks notoriously unreliable if warmup is not accounted for.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Picture a chef who has never made a dish. The first time, they read the recipe step by step (interpreter). After making the dish 20 times, they have the steps memorized and can run through them without consulting the recipe — faster, and with personalized shortcuts based on their kitchen layout (JIT-compiled code). But if the restaurant gets a new oven (hardware change), they might need to unlearn some shortcuts.
@@ -130,6 +142,8 @@ JIT delivers native performance with zero programmer effort, but it requires war
 "New oven deoptimizes" → deoptimization when assumptions become invalid.
 
 Where this analogy breaks down: Unlike the chef, JIT compilation happens fully in parallel — the "reading" never stops until the "memorized procedure" is ready, so there is no interruption to service.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -144,6 +158,8 @@ The JVM uses a two-tier history counter per method: method invocation count + ba
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The key design tension is: compilation cost vs quality vs latency. Compiling everything at startup (like C) gives max performance but unacceptable startup time. Interpreting everything (like early Java) gives zero startup but poor peak. The answer is tiered compilation: a fast, lower-quality compiler (C1) for quick wins, and a slow, high-quality optimizer (C2) for truly hot methods. C2's globally optimizing SSA-based IR (the "Sea of Nodes" graph) enables optimizations (global value numbering, alias analysis, vectorization) impossible in a single-pass compiler. The tradeoff: C2 uses significant CPU and memory for compilation, which is why compilation runs on dedicated background threads and is subject to queue depth limits.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -184,6 +200,8 @@ All JIT-compiled code lives in the Code Cache — a fixed off-heap memory region
 **Deoptimization:**
 If a speculative optimization (e.g., "always Dog, never Cat") becomes invalid (a `Cat` object appears), the JIT invalidates the compiled code and falls back to the interpreter — called deoptimization (see entry 0301).
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -214,6 +232,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 With many short-lived JVM instances (serverless functions, Kubernetes pods), warmup time means each instance performs poorly for its entire short lifetime. This drove development of AOT (GraalVM Native Image) and Class Data Sharing (CDS). At 100x scale, JIT compilation threads can themselves become CPU bottlenecks on startup — tune with `-XX:CICompilerCount` to control how many JIT threads run.
+
+---
 
 ### 💻 Code Example
 
@@ -276,6 +296,8 @@ java -XX:+UnlockDiagnosticVMOptions \
      MyApp 2>&1 | head -100
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Execution Strategy | Startup Speed | Peak Throughput | Memory Use | Best For |
@@ -289,6 +311,8 @@ java -XX:+UnlockDiagnosticVMOptions \
 
 How to choose: Use default tiered JIT for most applications. Switch to Native Image (GraalVM) for cloud functions or CLI tools where cold start matters more than peak throughput. Never use C1-only in production for data-intensive workloads.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -299,6 +323,8 @@ How to choose: Use default tiered JIT for most applications. Switch to Native Im
 | Increasing thread count always improves JIT performance | More threads = faster compilation, but also more CPU stolen from application threads. The default is usually optimal |
 | JIT results are stable and reproducible across runs | JIT decisions are influenced by object allocation patterns, class loading order, and CPU state — perfect reproducibility requires controlled environments |
 | JIT compiles to platform-independent bytecode | JIT compiles to native machine code specific to the exact CPU architecture (including SIMD instruction availability) |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -375,6 +401,8 @@ Reduce polymorphism in hot paths. If your hot loop always processes `ArrayList`,
 Prevention:
 Use `-XX:+PrintInlining` in load testing to identify megamorphic callsites and refactor them before production.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -392,6 +420,8 @@ Use `-XX:+PrintInlining` in load testing to identify megamorphic callsites and r
 **Alternatives / Comparisons:**
 - `AOT (Ahead-of-Time Compilation)` — compiles before startup; sacrifices adaptiveness for fast cold start
 - `GraalVM` — next-generation JIT and AOT compiler written in Java itself
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -424,6 +454,7 @@ Use `-XX:+PrintInlining` in load testing to identify megamorphic callsites and r
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A microservice deployed on Kubernetes receives traffic for exactly 90 seconds, then the pod is terminated and replaced. Your profiling shows that the JIT only finishes warming up at around 60 seconds. Describe the exact options available to you to improve this service's performance — including how Class Data Sharing, GraalVM AOT profile-guided optimization, and readiness probe timing interact — and the precise trade-offs each approach makes.

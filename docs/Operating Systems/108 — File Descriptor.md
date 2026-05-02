@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "File Descriptor"
 parent: "Operating Systems"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | epoll / kqueue, Blocking I/O, Non-Blocking I/O, Linux Namespaces |                 |
 | **Related:**    | inode, File Handle, open(), read(), write()                      |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ Unix's design goal was that "everything is a file" — regular files, directorie
 THE INVENTION MOMENT:
 The solution was to give each process a small integer per open resource. The integer is an opaque handle — it means nothing to user code except "this is my resource." The OS maintains a table mapping integers to open file descriptions. This gave Unix the uniform I/O interface that made "everything is a file" possible.
 
+---
+
 ### 📘 Textbook Definition
 
 A **file descriptor** (fd) is a non-negative integer assigned by the OS to a process when it opens (or creates) a file, socket, pipe, device, or other I/O resource. It serves as an abstract handle: the process passes the fd to system calls (`read`, `write`, `close`, `epoll_ctl`, `sendmsg`, etc.) and the kernel resolves it to the actual OS resource. Each process has its own **file descriptor table** (indexed by fd number) pointing to shared **open file descriptions** (tracking position, flags) which in turn point to **inodes** (actual filesystem entries). Standard streams have fixed fds: 0=stdin, 1=stdout, 2=stderr.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ A file descriptor is a process-scoped integer that stands for any open I/O resou
 
 **One insight:**
 The level of indirection (process fd table → open file description → inode) allows two critical behaviours: `dup2(fd, 2)` redirects stderr to a file by replacing entry #2 in the fd table, while a `fork()` child shares the parent's open file descriptions through separate fd tables — the file position is shared, but the fd number is independent.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -75,6 +83,8 @@ This layering means: after `fork()`, parent and child share the same file offset
 THE TRADE-OFFS:
 Gain: Uniform interface for all I/O resources; cheap integer-based reference; composable with all syscalls; epoll/select/poll all work on fds enabling heterogeneous wait sets.
 Cost: Finite per-process limit (`ulimit -n`, default 1024 or 65536); fd leaks cause `EMFILE` errors; fds inherited across `exec()` unless `FD_CLOEXEC` set (security risk).
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -106,6 +116,8 @@ Child (before exec):
 THE INSIGHT:
 Every `open()` in a library you call, every socket the framework opens, every temporary file — if not marked `O_CLOEXEC`, it leaks into child processes via `exec()`. This is both a resource leak and a security vulnerability (child inherits your database socket).
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > The three-level fd system is like a building directory:
@@ -117,6 +129,8 @@ Every `open()` in a library you call, every socket the framework opens, every te
 If you copy your badge (`dup2`), both badges lead to the same office. If the directory entry is "temporary contractor" (file opened with specific position), you and your copy share the same position in the room. If you leave the building and re-join (`close`/`open`), you might get the same badge number but it now points to a different office.
 
 Where the analogy breaks down: in the real fd model, `dup2(fd, 2)` doesn't copy — it atomically replaces what badge #2 means. This is the mechanism that makes shell `2>&1` redirection work.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -131,6 +145,8 @@ In the kernel, `open()` calls `do_sys_open()` which allocates a `struct file` (o
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The per-process fd table design reflects Unix's process isolation model: each process has its own address space view of its resources, even when they share underlying objects. The `dup2` mechanism was essential to implementing shell I/O redirection without modifying programs: `dup2(file_fd, STDOUT_FILENO)` makes fd 1 point to the file, then any program that writes to stdout (fd 1) writes to the file — zero program changes needed. This composability is the core Unix philosophy: programs don't need to know about redirection. The `FD_CLOEXEC` flag was added later (as a retrofix) because the original design leaked fds into exec'd children — modern code always uses `O_CLOEXEC` in `open()` flags to set this atomically.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -153,6 +169,8 @@ The per-process fd table design reflects Unix's process isolation model: each pr
 │    [OFD: pos=1024, flags=O_WRONLY] ──────────────────┘ │
 └────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -183,6 +201,8 @@ open() returns EMFILE: process has too many fds open
 open() returns ENFILE: system-wide limit reached
 Fix: raise ulimit -n; audit for fd leaks; ensure close() in finally
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -255,6 +275,8 @@ cat /proc/sys/fs/file-nr
 # [allocated fds] [free (kernel reuse)] [max]
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Concept               | Scope           | Shared after fork?       | Shared after dup?      |
@@ -263,6 +285,8 @@ cat /proc/sys/fs/file-nr
 | Open File Description | Per open() call | Yes (shared struct file) | Yes (same struct file) |
 | Inode                 | Filesystem      | Yes (same inode)         | Yes (same inode)       |
 | File position         | Per OFD         | Yes (shared after fork)  | Yes (shared after dup) |
+
+---
 
 ### ⚠️ Common Misconceptions
 
@@ -273,6 +297,8 @@ cat /proc/sys/fs/file-nr
 | "dup2 copies the file descriptor value"        | dup2(3, 5) does NOT make fd 5 = 3 numerically; it makes fd slot 5 point to the same OFD as fd slot 3                    |
 | "fd 0/1/2 are always the terminal"             | Only if not redirected; shell redirection replaces them before exec                                                     |
 | "Closing one dup'd fd closes all"              | No — each dup'd fd is independent; the underlying OFD is freed only when all duplicates are closed (refcount → 0)       |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -335,6 +361,8 @@ Fix: Always use `O_CLOEXEC` on every `open()` and `SOCK_CLOEXEC` on every `socke
 
 Prevention: Audit with `lsof -p <exec'd PID>` in tests. Add `fcntl(fd, F_SETFD, FD_CLOEXEC)` as a belt-and-suspenders measure.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -354,6 +382,8 @@ Prevention: Audit with `lsof -p <exec'd PID>` in tests. Add `fcntl(fd, F_SETFD, 
 - `Windows HANDLE` — Windows analog; typed handles rather than int indices
 - `Java FileDescriptor` — thin wrapper exposing the OS fd in Java
 - `POSIX FILE*` — stdio buffered layer on top of raw fds (fileno() gives the underlying fd)
+
+---
 
 ### 📌 Quick Reference Card
 

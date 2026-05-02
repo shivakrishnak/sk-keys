@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "volatile"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | synchronized, Thread Lifecycle, Double-Checked Locking | |
 | **Related:** | synchronized, Memory Barrier, Happens-Before | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -48,9 +50,13 @@ The JIT compiler sees `running` never changes inside `run()` and optimizes it to
 THE INVENTION MOMENT:
 This is exactly why **`volatile`** was created — to tell the JVM and CPU "this variable is shared across threads — never cache it, always read from and write to main memory, and don't reorder accesses to it."
 
+---
+
 ### 📘 Textbook Definition
 
 **`volatile`** is a Java keyword (part of the Java Memory Model, JMM) that declares a field as directly read from and written to main memory, preventing CPU caches and JIT register optimisation from serving stale values. A write to a volatile variable **happens-before** every subsequent read of that variable by any thread — the JMM guarantees this explicitly. `volatile` INSERT memory barriers: a write-release barrier after each volatile write, and a load-acquire barrier before each volatile read. `volatile` does NOT provide mutual exclusion — concurrent read-modify-write operations (`count++`) are still races.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -62,6 +68,8 @@ This is exactly why **`volatile`** was created — to tell the JVM and CPU "this
 
 **One insight:**
 `volatile` solves visibility. `synchronized` solves visibility AND mutual exclusion. Using `volatile` for `count++` is still wrong because `count++` is 3 operations (read-add-write). Use `AtomicInteger` for atomic increment, `synchronized` for compound operations, `volatile` for simple flags.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -90,6 +98,8 @@ Java Memory Model volatile semantics:
 THE TRADE-OFFS:
 Gain: Visibility guarantee; prevents JIT caching in registers; prevents instruction reorder around volatile access; cheaper than `synchronized`.
 Cost: No mutual exclusion; compound operations still race; memory barriers add latency (~5-40ns on x86 vs ~1ns for cached reads); heavy use on hot paths can impede JIT optimization.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -130,6 +140,8 @@ void increment() { count++; } // STILL a race!
 THE INSIGHT:
 `volatile` makes each individual read/write atomic (for long and double, `volatile` also prevents word tearing). But it doesn't make sequences of reads and writes atomic. `count++` is a sequence — it needs synchronized or AtomicInteger.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > `volatile` is like a public whiteboard in a shared workspace vs. a personal notepad. Without volatile: each developer copies info to their notepad and updates it occasionally. With volatile: there's one whiteboard — every read and write happens on the whiteboard directly. You see exactly what others wrote and in the order they wrote it. But if two people simultaneously try to update "count" on the whiteboard (read-add-write), they can still overwrite each other.
@@ -141,6 +153,8 @@ THE INSIGHT:
 
 Where this analogy breaks down: Main memory is shared but CPUs can still serve stale cache values without hardware cache coherence. `volatile` triggers memory barriers that force cache coherence — not exactly "all reads go to a single board" but functionally equivalent at the JVM level.
 
+---
+
 ### 📶 Gradual Depth — Four Levels
 
 **Level 1:** `volatile` means "when one thread changes this variable, other threads see the change immediately."
@@ -150,6 +164,8 @@ Where this analogy breaks down: Main memory is shared but CPUs can still serve s
 **Level 3:** The JMM specifies that a volatile write happens-before any subsequent volatile read by any thread. This creates a visibility guarantee via transitivity: all writes before the volatile write are visible after the volatile read. The JVM implements this with store-release barriers after writes and load-acquire barriers before reads.
 
 **Level 4 — TSO model:** On x86 hardware (TSO — Total Store Order), every store is already a release store and every load is a load-acquire. Volatile on x86 costs almost nothing for reads (free) and slightly more for writes (need `SFENCE` or `MFENCE`). On ARM (weakly ordered), volatile adds more barriers. The JMM abstracts hardware specifics — code using `volatile` is portable.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -204,6 +220,8 @@ class Singleton {
 
 Without `volatile`, a JIT can reorder steps to 1→3→2. Thread T2 reads non-null `instance` but sees uninitialized fields. `volatile` prevents this reorder via the store-release barrier.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (stop flag):
@@ -230,6 +248,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At high-frequency access (millions/second), volatile reads and writes add measurable latency compared to entirely CPU-local data. On x86, reads are free but writes have ~40ns latency (memory fence). On ARM, both can be expensive. Hot-path metrics should never use volatile — use `AtomicLong` with `lazySet()` for metrics that don't need immediate visibility.
+
+---
 
 ### 💻 Code Example
 
@@ -289,6 +309,8 @@ list.add("item"); // not thread-safe! volatile = just the reference
 CopyOnWriteArrayList<String> safeList = new CopyOnWriteArrayList<>();
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Mechanism | Mutual Exclusion | Visibility | Atomic Compound Ops | Overhead |
@@ -300,6 +322,8 @@ CopyOnWriteArrayList<String> safeList = new CopyOnWriteArrayList<>();
 
 How to choose: `volatile` for simple flag/reference updates checked in multiple threads. `synchronized` for multi-step operations on shared state. `AtomicInteger/Reference` for lock-free single-variable atomic operations: `volatile` is cheapest, `AtomicInteger` is second, `synchronized` is most expensive.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -309,6 +333,8 @@ How to choose: `volatile` for simple flag/reference updates checked in multiple 
 | volatile is obsolete since synchronized handles everything | volatile is faster than synchronized for simple visibility cases. The DCL pattern requires volatile, not synchronized, to prevent construction reordering |
 | `volatile int[] arr` = each array element is volatile | `volatile` on an array reference means the reference itself is volatile — individual array elements are NOT volatile. Changes to `arr[0]` are not guaranteed visible to other threads |
 | volatile prevents all instruction reordering | volatile prevents reordering around the volatile access (the barrier). Reordering between non-volatile reads/writes NOT crossing a volatile access is still allowed |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -341,6 +367,8 @@ Fix: Declare `long`/`double` fields `volatile` if shared across threads.
 
 Prevention: Any `long` or `double` field accessed from multiple threads should be `volatile` or synchronized. Modern 64-bit JVMs typically treat 64-bit writes as atomic, but the JMM does not guarantee it without `volatile`.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -355,6 +383,8 @@ Prevention: Any `long` or `double` field accessed from multiple threads should b
 **Alternatives / Comparisons:**
 - `synchronized` — provides both visibility and mutual exclusion; heavier than volatile
 - `Memory Barrier` — the low-level hardware instruction that implements volatile
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -388,6 +418,7 @@ Prevention: Any `long` or `double` field accessed from multiple threads should b
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The double-checked locking pattern requires `volatile` on the `instance` field. Without `volatile`, a non-null `instance` reference could be returned to a caller before the Singleton's constructor has completed executing. Trace at the JIT instruction level: exactly which JIT reordering makes this possible (name the reordering that moves the reference assignment before field initialisation), what the caller sees when it dereferences the partially-constructed result, and why adding `volatile` prevents this with a specific barrier type (store-store, store-load, load-load, or load-store — which one?).

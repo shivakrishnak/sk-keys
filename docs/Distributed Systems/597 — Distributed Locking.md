@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Distributed Locking"
 parent: "Distributed Systems"
@@ -28,6 +28,8 @@ tags:
 │ Used by:     │ Job Schedulers, Resource Coord.     │                      │
 │ Related:     │ Fencing, Split Brain, Leader Elect. │                      │
 └──────────────────────────────────────────────────────────────────────────┘
+
+---
 
 ### 🔥 The Problem This Solves
 

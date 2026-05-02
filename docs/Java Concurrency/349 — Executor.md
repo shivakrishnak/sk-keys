@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Executor"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | ExecutorService, ThreadPoolExecutor, ForkJoinPool | |
 | **Related:** | ExecutorService, Runnable, ThreadPoolExecutor | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -36,9 +38,13 @@ Code that submits work to threads is coupled to the threading mechanism. `new Th
 THE INVENTION MOMENT:
 **`Executor`** separates "what to run" (`Runnable`) from "how to run it" — enabling the threading strategy to change without modifying task code.
 
+---
+
 ### 📘 Textbook Definition
 
 **`Executor`** is a functional interface in `java.util.concurrent` with one method: `void execute(Runnable command)`. It is the base interface for all executor-style task submission in Java. Implementations include: `ThreadPoolExecutor`, `ForkJoinPool`, inline/direct executor (`r -> r.run()`), and scheduled executors. `ExecutorService` extends `Executor` with lifecycle management (`shutdown`, `awaitTermination`) and `Callable`/`Future` support (`submit`).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -50,6 +56,8 @@ THE INVENTION MOMENT:
 
 **One insight:**
 The `Executor` interface enables strategy pattern for execution. `execute(task)` always means "run this task" — whether synchronously, in a pool, delayed, or distributed. Changing the `Executor` implementation changes the execution strategy without touching task code.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -79,6 +87,8 @@ THE TRADE-OFFS:
 Gain: Decouples task from execution; enables strategy pattern; the interface is minimal.
 Cost: `execute(Runnable)` only — no result retrieval, no lifecycle. For richer functionality, use `ExecutorService`.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -103,9 +113,13 @@ void processOrders(List<Order> orders, Executor exec) {
 THE INSIGHT:
 Injecting `Executor` as a dependency enables test-friendly synchronous execution alongside production thread pool execution — the code never changes, only the injected strategy.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > `Executor` is like a "done for you" button with no specification of who does it. Your task is the button's label. The implementation decides whether a robot, intern, or you yourself does the job.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -116,6 +130,8 @@ Injecting `Executor` as a dependency enables test-friendly synchronous execution
 **Level 3:** `Executor` is the base abstraction. `ExecutorService` extends it with `submit()`, `shutdown()`, and `invokeAll()`. `AbstractExecutorService` provides default implementations. `ThreadPoolExecutor` is the canonical implementation.
 
 **Level 4:** The `Executor` interface enables inversion of control for concurrent execution — a cornerstone of testable, configurable concurrent systems. Dependency injection of `Executor` (or `ExecutorService`) rather than using static `Executors.newX()` methods is a critical production practice.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -151,6 +167,8 @@ executor.execute(() -> processRequest(request));
 // - Need submitAll/invokeAny patterns
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 ```
@@ -160,6 +178,8 @@ executor.execute(() -> processRequest(request));
     → [Runnable.run() executes: processOrder(id)]
     → [Thread returns to pool]
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -186,6 +206,8 @@ new OrderProcessor(Executors.newFixedThreadPool(4));
 new OrderProcessor(Runnable::run); // synchronous
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Interface | Submit Style | Returns Future | Lifecycle | Best For |
@@ -196,12 +218,16 @@ new OrderProcessor(Runnable::run); // synchronous
 
 How to choose: Use `ExecutorService` in production (richer API). Use `Executor` for dependency injection of execution strategy (includes synchronous implementations for testing).
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
 |---|---|
 | `Executor.execute()` guarantees async execution | An `Executor` can run tasks synchronously (`command -> command.run()`). Async execution is implementation-dependent |
 | `Executor` and `Thread` are interchangeable | `Thread` IS the execution unit. `Executor` is the submission abstraction. Thread pools reuse threads across many Executor.execute() calls |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -210,11 +236,15 @@ Symptom: `RejectedExecutionException` on `execute()`.
 
 Fix: Configure `RejectedExecutionHandler` or use unbounded queue (with caution for memory).
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites:** `Runnable`, `Thread (Java)` 
 **Builds on:** `ExecutorService`, `ThreadPoolExecutor`
 **Alternatives:** `ExecutorService` (richer), direct `new Thread(r).start()` (simpler but unmanaged)
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -233,6 +263,7 @@ Fix: Configure `RejectedExecutionHandler` or use unbounded queue (with caution f
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A developer uses a direct `Executor` (`command -> command.run()`) in a Spring `@Async` bean. The `@Async` annotation is supposed to run methods asynchronously, but the direct executor runs them synchronously in the calling thread. Explain why this defeats the purpose of `@Async`, what the `.execute()` contract actually guarantees vs. what developers assume, and how Spring's `@Async` could detect and warn about the direct executor configuration.

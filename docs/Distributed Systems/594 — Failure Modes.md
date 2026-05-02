@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Failure Modes (Crash, Byzantine)"
 parent: "Distributed Systems"
@@ -29,6 +29,8 @@ tags:
 │ Used by:     │ BFT protocols, Blockchain           │                      │
 │ Related:     │ BFT, FLP Impossibility, Raft        │                      │
 └──────────────────────────────────────────────────────────────────────────┘
+
+---
 
 ### 🔥 The Problem This Solves
 

@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Payment Processing, CI/CD, SaaS Integrations, Event Notifications | |
 | **Related:** | API Polling, Event-Driven Architecture, API Gateway, HMAC | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

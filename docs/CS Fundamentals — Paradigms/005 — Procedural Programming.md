@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Object-Oriented Programming, Structured Programming | |
 | **Related:** | Imperative Programming, Functional Programming, Object-Oriented Programming | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -52,6 +54,8 @@ that can be called from anywhere, you write the tax calculation
 once and call it three times. Change it once — it's correct
 everywhere. This was the first major step toward modular software.
 
+---
+
 ### 📘 Textbook Definition
 
 Procedural programming is a paradigm that organises imperative
@@ -62,6 +66,8 @@ return values, and call other procedures. The structured
 programming movement (Dijkstra, 1968) formalised the discipline
 by restricting control flow to sequence, selection (if/else), and
 iteration (loops), banning GOTO statements.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -81,6 +87,8 @@ Procedural programming's core contribution is the call stack —
 a mechanism that lets any procedure call any other, return a value,
 and resume exactly where it left off. This seemingly simple
 mechanism is what makes modular, non-linear code possible.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -115,6 +123,8 @@ you more than 20 lines of arithmetic).
 Cost: Data is still shared through global variables in naive
 procedural code; there's no encapsulation of state —
 any function can modify any global. OOP addressed this.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -155,6 +165,8 @@ Naming a block of code is an act of abstraction — you're saying
 "this logic has a single identity." One identity means one place
 to change and one place to test.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Procedural programming is like a company's operations manual.
@@ -172,6 +184,8 @@ to change and one place to test.
 Where this analogy breaks down: unlike manual chapters, functions
 can call themselves (recursion) and the order of execution can
 change dynamically through parameters.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -205,6 +219,8 @@ code is functions, data is structs, no methods bound to data.
 C is still used in OS kernels (Linux) and embedded systems
 precisely because procedural code maps transparently to machine
 instructions with no runtime overhead.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -250,6 +266,8 @@ and destroyed cleanly. Stack depth stays within limits.
 creates stack frames faster than they're destroyed. The stack
 grows until it hits the OS-imposed limit (typically 512KB–8MB).
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -278,6 +296,8 @@ longer — no inherent parallelism. At 100x, procedures that
 access global data become bottlenecks. Procedural code at scale
 requires partitioning work explicitly, whereas OOP or FP
 frameworks handle this more naturally.
+
+---
 
 ### 💻 Code Example
 
@@ -335,6 +355,8 @@ int main() {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Style           | Code Reuse       | State Management | Abstraction Level | Best For              |
@@ -348,6 +370,8 @@ How to choose: Use procedural when you need simple, direct code
 close to the hardware or for scripts. Move to OOP when you need
 to manage state across many related operations.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                | Reality                                                                                                                                                         |
@@ -356,6 +380,8 @@ to manage state across many related operations.
 | OOP replaced procedural programming          | OOP methods ARE procedures — they're just bound to an object; OOP is procedural programming with encapsulated state                                             |
 | GOTO was always bad                          | In some contexts (error handling in C, finite state machines), GOTO is still the clearest solution — structured programming principles are guidelines, not laws |
 | Procedural code can't be modular             | A well-structured procedural codebase (e.g., the Linux kernel in C) can be highly modular — the discipline comes from the programmer, not the language          |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -474,6 +500,8 @@ Prevention: Name procedures accurately; procedures that query
 should not modify; procedures that modify should be explicitly
 named as actions.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -493,6 +521,8 @@ named as actions.
 - `Imperative Programming` — the lower-level paradigm without procedure abstraction
 - `Functional Programming` — replaces mutable state with pure functions and immutability
 - `Object-Oriented Programming` — adds state encapsulation to procedural methods
+
+---
 
 ### 📌 Quick Reference Card
 

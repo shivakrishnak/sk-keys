@@ -29,6 +29,8 @@ tags:
 | **Used by:** | REST APIs, Web Applications, Multi-format APIs | |
 | **Related:** | REST, HTTP Headers, OpenAPI/Swagger, API Versioning | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

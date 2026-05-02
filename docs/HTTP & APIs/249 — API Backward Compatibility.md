@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Public APIs, Microservices, SDK Design | |
 | **Related:** | API Versioning, OpenAPI/Swagger, API Deprecation Strategy, Breaking Changes | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

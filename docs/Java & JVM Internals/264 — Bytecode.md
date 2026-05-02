@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Class Loader, JIT Compiler, Reflection, invokedynamic | |
 | **Related:** | JIT Compiler, AOT Compilation, GraalVM Native Image | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Neither native compilation nor pure interpretation worked for cross-platform dep
 THE INVENTION MOMENT:
 An intermediate representation — compact, typed, and architecture-neutral — could be interpreted faster than source code and could be JIT-compiled to native code on each platform separately. This is exactly why bytecode was created: it is the sweet spot between portability and performance.
 
+---
+
 ### 📘 Textbook Definition
 
 Java bytecode is a compact, platform-independent instruction set defined by the JVM specification. It is the output of the Java compiler (`javac`) and the input to the JVM's execution engine. Each `.class` file contains bytecode for one class, encoded as a sequence of one-byte opcodes (with optional multi-byte operands), stored in a structured binary format defined by the class file specification. The JVM either interprets bytecode directly or JIT-compiles frequently executed sequences to native machine instructions.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Bytecode is the universal language that every JVM speaks, regardless of the comp
 
 **One insight:**
 Bytecode is not binary machine code and not source code — it is a typed, stack-based intermediate language designed to be verified for type safety before execution. This verification step is why Java programs cannot have buffer overflows or arbitrary memory access, regardless of what the bytecode does.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -68,6 +76,8 @@ THE TRADE-OFFS:
 Gain: Platform portability, static type verification, enables JIT optimisation with profiling data.
 Cost: Requires JIT warmup time before reaching peak performance; bytecode is larger than equivalent native code; requires a JVM to run.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -82,6 +92,8 @@ WHAT HAPPENS WITH BYTECODE:
 THE INSIGHT:
 Bytecode separates the "what" (typed logic) from the "how" (machine instructions). This indirection enables every JVM to produce the most efficient native code for its specific CPU — something impossible if source code was compiled to native directly.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Bytecode is like Braille instructions for a machine. Braille is a universal tactile encoding. A Braille reader in Japan and one in Germany both read the same dots and get the same text. The JVM is the reader; bytecode is the Braille dots; native machine code is the understood meaning.
@@ -92,6 +104,8 @@ Bytecode separates the "what" (typed logic) from the "how" (machine instructions
 "Understood meaning" → native CPU instructions actually executed
 
 Where this analogy breaks down: unlike Braille (which is a 1:1 encoding of text), the JIT compiler may translate one bytecode instruction into dozens of optimised native instructions — highly context-dependent.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -106,6 +120,8 @@ Each bytecode instruction is 1 byte (the opcode) followed by optional operands. 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The choice of a stack machine over a register machine for bytecode was deliberate: generating bytecode from a source language is simpler with a stack model (no register allocation required at compile time). The JIT handles register allocation when translating to native code, where it has full profiling information to make optimal decisions. The `invokedynamic` instruction (Java 7) was added to support dynamic languages on the JVM (JRuby, Groovy, JavaScript) by allowing method resolution to be deferred to a MethodHandle bootstrap — a design that later enabled efficient lambda implementation in Java 8.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -166,6 +182,8 @@ This static verification means the JVM can skip runtime type checks for verified
 └─────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -192,6 +210,8 @@ Bytecode Verifier rejects class
 
 WHAT CHANGES AT SCALE:
 At scale, JIT compilation dominates performance. Methods called millions of times per second get compiled to highly optimised native code with inlining across call boundaries. The bytecode itself is essentially irrelevant after warmup — performance depends on the quality of JIT optimisation, not bytecode efficiency. At 1000x load, JIT compilation threads can become CPU bottlenecks; profiling with `-XX:+PrintCompilation` reveals which methods take longest to compile.
+
+---
 
 ### 💻 Code Example
 
@@ -272,6 +292,8 @@ method.insertAfter(
 Class<?> modified = ctClass.toClass();
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Representation | Portability | Startup | Peak Performance | Best For |
@@ -284,6 +306,8 @@ Class<?> modified = ctClass.toClass();
 | Python bytecode | CPython only | Fast | Medium | CPython programs |
 
 How to choose: Java bytecode is the right choice when you need the JVM ecosystem (GC, monitoring, library support) with long-running processes. For serverless or CLI where coldstart matters, consider GraalVM Native Image (compiles bytecode to native ahead of time).
+
+---
 
 ### 🔁 Flow / Lifecycle
 
@@ -314,6 +338,8 @@ How to choose: Java bytecode is the right choice when you need the JVM ecosystem
 └─────────────────────────────────────────────┘
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -323,6 +349,8 @@ How to choose: Java bytecode is the right choice when you need the JVM ecosystem
 | "Bytecode is secure and tamper-proof" | Bytecode can be decompiled to near-original Java source with tools like Fernflower or Procyon. Obfuscation (ProGuard) is needed for IP protection. |
 | "The Bytecode Verifier prevents all bugs" | The Verifier prevents type safety and memory safety violations. It does not prevent logical bugs, null pointer exceptions, or infinite loops. |
 | "Newer class file major versions have better bytecode" | New major versions add new instructions (e.g., invokedynamic in Java 7) but most bytecode has been unchanged since Java 1.0. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -392,6 +420,8 @@ java -XX:+PrintCompilation -jar myapp.jar \
 
 Prevention: Use JVM-level profiling during load tests to collect compilation data; with GraalVM Enterprise, use Profile-Guided Optimisation (PGO) to compile all hot paths ahead of time.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -407,6 +437,8 @@ Prevention: Use JVM-level profiling during load tests to collect compilation dat
 **Alternatives / Comparisons:**
 - `AOT Compilation` — compiles bytecode to native ahead of time, eliminating JIT warmup
 - `GraalVM Native Image` — compiles all bytecode to a native binary at build time, not at runtime
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -437,6 +469,7 @@ Prevention: Use JVM-level profiling during load tests to collect compilation dat
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A Spring Boot application using CGLIB for bean proxying fails to start on JDK 17 with a `VerifyError` that didn't appear on JDK 11. CGLIB generates bytecode at runtime. What changed between JDK 11 and JDK 17 in bytecode verification that might cause this, and what are the two ways to resolve it — one that requires code change and one that doesn't?

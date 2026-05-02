@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Web APIs, SPA (React/Vue/Angular), API Gateways | |
 | **Related:** | XSS, CSRF, HTTP Headers, API Gateway | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT (Same-Origin Policy only):**

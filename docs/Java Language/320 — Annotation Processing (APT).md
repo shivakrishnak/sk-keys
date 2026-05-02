@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Annotation Processing (APT)"
 parent: "Java Language"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Spring Core, Serialization / Deserialization, Records (Java 16+) | |
 | **Related:** | Reflection, invokedynamic, Metaprogramming | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ A microservice needs to start in under 1 second (Kubernetes readiness probe time
 THE INVENTION MOMENT:
 This is exactly why **Annotation Processing** was created — to move annotation discovery and code generation from runtime reflection to compile time, so that generated wiring code exists as regular `.java` files before the application ever runs.
 
+---
+
 ### 📘 Textbook Definition
 
 **Annotation Processing** (APT — Annotation Processing Tool, now integrated into `javac`) is a compile-time metaprogramming facility where user-defined `Processor` implementations are invoked by the Java compiler during compilation. Processors receive a model of the source code's abstract syntax tree, can read annotations, emit diagnostic messages, and generate new `.java` or resource files. The generated files are compiled in subsequent rounds. Standard library: `javax.annotation.processing`. Common users: Lombok (code generation), MapStruct (type-safe mappers), Dagger (DI), Immutables (value types), Micronaut (DI/AOP at compile time).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Annotation processors run as plugins inside javac to read your annotations and g
 
 **One insight:**
 The key distinction is WHEN code runs: reflection reads annotations at JVM startup (runtime); annotation processors generate code at `javac` time (compile time). The generated code is plain Java, compiled like any other class — type-safe, JIT-optimised, GraalVM-compatible, and zero overhead at runtime.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -86,6 +94,8 @@ THE TRADE-OFFS:
 Gain: Zero runtime overhead for generated code; compile-time validation of annotation constraints; GraalVM native image compatible; fast startup.
 Cost: Build time increases (processor execution per module); generated code debugging requires understanding generated files; processor errors manifest as confusing `javac` errors; IDE support varies (IntelliJ handles most processors well; edge cases exist).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -111,6 +121,8 @@ Runtime: direct Java method calls — JIT-inlineable. Zero reflection. ~10ns per
 THE INSIGHT:
 APT shifts the work of introspection from every program run to a single compile. The generated code is as fast as hand-written code. The developer still writes only annotations — the framework generates the implementation automatically at compile time.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > An annotation processor is a printing press for boilerplate code. A developer stamps `@GenerateBuilder` on a class. The printing press (processor) reads the stamp during compilation, checks the class layout, and prints a `Builder` class file. The application ships with the pre-printed Builder — no printing at runtime.
@@ -122,6 +134,8 @@ APT shifts the work of introspection from every program run to a single compile.
 "Pre-printed file in the app" → generated class compiled with the rest of the application.
 
 Where this analogy breaks down: A printing press produces a fixed design. Annotation processors can produce arbitrarily complex, dynamic code based on the annotated class's structure — closer to a typewriter that writes custom text per stamp.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -136,6 +150,8 @@ Implement `javax.annotation.processing.AbstractProcessor`. Declare supported ann
 
 **Level 4 — Why it was designed this way (senior/staff):**
 APT (the original JSR-269 standard, replacing the earlier `apt` tool) was designed as a strictly additive, source-level API deliberately to avoid the instability of AST mutation (which Lombok uses). This prevents processors from interfering with each other or with the compiler's internal state. The tradeoff is that APT cannot add methods to existing classes — it can only create new classes. This forces patterns like generated `*Impl` or `*Builder` companions. Project Lombok works around this using `com.sun.tools.javac.tree.JCTree` manipulation — not standardised, not guaranteed to work across JDK versions. The GraalVM native image use case (Micronaut, Quarkus) has strongly revived APT interest because native image requires all reflection to be declared upfront, and APT-generated code avoids the runtime reflection problem entirely.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -201,6 +217,8 @@ Processors are registered in
 </plugin>
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -228,6 +246,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 In large mono-repo builds, annotation processing adds per-module compile time. A Maven project with 200 modules each running MapStruct, Lombok, and Dagger processors can add minutes to incremental builds. Solutions: incremental annotation processing (Gradle supports this; Maven does not natively); parallel module builds; splitting generated code into separate modules so processors run once.
+
+---
 
 ### 💻 Code Example
 
@@ -314,6 +334,8 @@ public class OrderMapperImpl implements OrderMapper {
 // Zero reflection. Direct calls. JIT-inlineable.
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach | When Runs | Runtime Overhead | Native Image | Debug Ease | Best For |
@@ -325,6 +347,8 @@ public class OrderMapperImpl implements OrderMapper {
 
 How to choose: Prefer APT for any framework feature where the class structure is known at compile time. Use reflection for code that genuinely cannot know its targets at compile time (plugins, script engines). Use MethodHandle for performance-critical dynamic dispatch.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -334,6 +358,8 @@ How to choose: Prefer APT for any framework feature where the class structure is
 | Generated files don't need to be committed | Convention varies: Lombok-generated code appears only in memory (AST mutation), never in files. MapStruct generates `.java` files in `target/generated-sources` that are NOT committed. Always check your VCS ignore rules |
 | Annotation processors slow down compilation dramatically | Modern processors (MapStruct, Dagger) are well-optimised and add milliseconds per module. Complex or naive processors that re-scan entire element trees cause problems. Initial Maven builds feel slow; incremental Gradle builds are fast with caching |
 | APT and runtime annotation reading are mutually exclusive | They work together. `@Transactional` is both processed at compile time (validation via APT in some frameworks) and read at runtime via Spring's proxy-based AOP. The same annotation can have both compile-time and runtime processors |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -432,6 +458,8 @@ IntelliJ: Enable annotation processing in settings. Use "Delegate to Maven" so I
 
 Prevention: Add `target/generated-sources/annotations` to IDE source roots. For Gradle, use `idea { module { generatedSourceDirs += ... } }`.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -446,6 +474,8 @@ Prevention: Add `target/generated-sources/annotations` to IDE source roots. For 
 **Alternatives / Comparisons:**
 - `Reflection` — runtime annotation reading; required when class structure is unknown at compile time; much slower than APT-generated code
 - `invokedynamic` — a dynamic dispatch mechanism; orthogonal to APT but both address the "late-bound code execution" problem at different levels
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -479,6 +509,7 @@ Prevention: Add `target/generated-sources/annotations` to IDE source roots. For 
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** MapStruct generates `OrderMapperImpl` implementing `OrderMapper` at compile time. At runtime, Spring injects this generated implementation as a `@Component`. Trace the complete path: from the developer writing `@Mapper(componentModel = "spring")` to Spring successfully autowiring `OrderMapper orderMapper` in a service — listing every tool (APT processor, javac, Spring boot autoconfiguration, Spring DI) involved in each step, and explaining why removing MapStruct from the annotationProcessorPaths but keeping it in regular dependencies causes a specific, identifiable runtime error rather than a compile error.

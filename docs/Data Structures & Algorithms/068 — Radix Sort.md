@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Integer Sorting, IP Address Sorting, Suffix Array Construction | |
 | **Related:** | Counting Sort, Bucket Sort, Mergesort | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ The O(N log N) lower bound applies **only to comparison-based algorithms** — a
 THE INVENTION MOMENT:
 Sort by the least significant digit first, then by the next digit, and so on — using a stable sort for each digit. "Stable" means elements with the same digit preserve their order from the previous pass. After sorting by all D digits, the entire array is sorted. Each pass is O(N + radix) counting sort. Total: O(D × (N + radix)) = O(D × N) for fixed radix. For 32-bit integers with radix=256: D=4 passes. For N=10^7, that's 40 million operations — beating comparison sort's 230 million. This is exactly why **Radix Sort** was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Radix Sort** is a non-comparative integer sorting algorithm that sorts by processing individual digits from least significant to most significant (LSD radix sort) or most significant to least significant (MSD radix sort). Each pass uses a stable sub-sort (typically counting sort) on one digit position. For N elements with maximum value M and radix r, time complexity is O(D × (N + r)) where D = log_r(M). For fixed-width integers, this is O(N). Space complexity: O(N + r).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Sort numbers by their last digit, then second-to-last, then so on — using a st
 
 **One insight:**
 Radix sort can only beat comparison sort when the key size is bounded. If numbers can be arbitrarily large (log N bits), then D = O(log N) and Radix Sort becomes O(N log N) — same as comparison sort. The speedup only materialises when the key size (number of digits D) is sub-logarithmic in N. For 32-bit integers sorted by 4 bytes (D=4), N must be > 2^(4×8) = 4 billion before D starts growing — for practical N, D is constant.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -75,6 +83,8 @@ THE TRADE-OFFS:
 Gain: O(N × D) total, beating O(N log N) comparison sort when D is small.
 Cost: Only applicable to integers or fixed-structure keys; O(N + r) extra space; not in-place; radix choice affects performance (large radix = fewer passes but more memory).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -96,6 +106,8 @@ Output: [2, 24, 45, 66, 75, 90, 170, 802]. Sorted! ✓
 THE INSIGHT:
 After pass 2, [802, 2] appear before [170] — correct because both have smaller tens digit than 1. Pass 3 finalises by hundreds — 2, 24, 45 etc. all start with 0 (implicit) so they stay before 170. The stability of each pass preserves the previous pass's ordering — this is the key invariant that makes the whole algorithm correct.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Radix Sort is like sorting a stack of envelopes by ZIP code. First, sort by last digit of ZIP (0-9). Then re-sort by fourth digit, then third, second, first — keeping the sub-sorted order within each digit group (stable). After 5 rounds for 5-digit ZIPs, all envelopes are in order. Each round is just grouping into 10 buckets and collecting — no head-to-head comparisons needed.
@@ -106,6 +118,8 @@ After pass 2, [802, 2] appear before [170] — correct because both have smaller
 "5 rounds for 5-digit ZIP" → D passes for D-digit numbers
 
 Where this analogy breaks down: ZIP codes always have exactly 5 digits. For variable-length strings (words of different lengths), MSD radix sort is more natural — LSD requires padding shorter strings which wastes work.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -120,6 +134,8 @@ Optimal radix choice: r = N^(1/D) minimises total time D × (N + r). For 32-bit 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The information-theoretic lower bound of O(N log N) for comparison sort is escaped by Radix Sort because Radix Sort does not sort via comparisons — it partitions into buckets. This is analogous to Counting Sort's O(N + k) for keys in [0,k). Radix Sort extends Counting Sort to larger ranges by processing D "digits" in base r. The relationship between D, N, and r determines when Radix Sort beats comparison sort: D × (N + r) < N log N → roughly D < log₂ N / (1 + r/N). For fixed-domain integers, this always holds at sufficient N. Radix Sort is used in suffix array construction (DC3/Skew algorithm uses radix sort on triplets to build suffix arrays in O(N)), in high-frequency trading (sort order books by price in O(N) instead of O(N log N)), and in GPU sorting (highly parallelisable per-digit counting).
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -145,6 +161,8 @@ The information-theoretic lower bound of O(N log N) for comparison sort is escap
 
 **Why iterate right-to-left for stability:**
 If we process elements left-to-right when writing to output, later elements with the same digit overwrite earlier positions — losing stability. Right-to-left processing with prefix sums ensures earlier input elements go to earlier output positions within the same digit group.
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -173,6 +191,8 @@ Negative integers present
 
 WHAT CHANGES AT SCALE:
 For N=10⁹ (1 billion integers, ~4 GB), Radix Sort with r=256 needs D=4 auxiliary arrays of 4 GB each — 16 GB total. Impractical. Solution: stream-process in chunks fitting in L3 cache (say 4M integers); radix-sort each chunk; then merge the sorted chunks using K-way merge. This is essentially parallel external radix sort used in Hadoop sort benchmark winners.
+
+---
 
 ### 💻 Code Example
 
@@ -276,6 +296,8 @@ void msdRadixSort(String[] arr,
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Time | Comparisons | Space | In-Place | Best For |
@@ -288,6 +310,8 @@ void msdRadixSort(String[] arr,
 
 How to choose: Use Radix Sort for large arrays of fixed-width integers where the digit count D is small relative to log N. Use Counting Sort for small integer ranges. Use comparison-based sorts for general comparable objects.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -297,6 +321,8 @@ How to choose: Use Radix Sort for large arrays of fixed-width integers where the
 | Stability of the sub-sort is optional | Stability in each counting-sort pass is MANDATORY for correctness. Without stability, earlier passes' ordering is destroyed by later passes |
 | LSD and MSD Radix Sort produce identical results | Both produce the same sorted output. LSD processes all elements per pass; MSD recursively divides into groups. LSD is simpler for fixed-width integers; MSD is better for variable-length strings |
 | Radix Sort works for arbitrary data types | Radix Sort requires **digit extractability** — a way to decompose keys into a fixed number of sub-keys (digits). Floating-point numbers, strings with variable lengths, and custom objects need special handling |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -359,6 +385,8 @@ Fix: Use r=256 (byte-level radix) as the default. Only increase radix if profili
 
 Prevention: Benchmark D×(N+r) vs (N+r)×D for different r values before choosing. Default to r=256.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -375,6 +403,8 @@ Prevention: Benchmark D×(N+r) vs (N+r)×D for different r values before choosin
 - `Counting Sort` — O(N+k) for keys in [0,k); radix sort is counting sort extended to larger ranges via digit decomposition.
 - `Bucket Sort` — partitions into uniformly-distributed buckets; requires uniform distribution; Radix Sort makes no distribution assumptions.
 - `Mergesort` — general, works on any comparable type; O(N log N); stable; use when Radix Sort is inapplicable.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -404,6 +434,7 @@ Prevention: Benchmark D×(N+r) vs (N+r)×D for different r values before choosin
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The comparison-sort lower bound of Ω(N log N) is proven by the decision tree argument: any comparison sort corresponds to a binary decision tree with at least N! leaves (one per permutation). The tree height ≥ log₂(N!) = Ω(N log N). Radix Sort "escapes" this lower bound. Explain precisely at which step the decision tree argument breaks down for Radix Sort. What opertion does Radix Sort use instead of comparisons, and why is the decision tree model inapplicable?

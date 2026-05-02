@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Distributed Tracing"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Correlation ID, Observability, Microservices, HTTP & APIs     |                 |
 | **Used by:**    | Service Mesh, OpenTelemetry, Jaeger, Zipkin, SRE              |                 |
 | **Related:**    | Correlation ID, Logging, Metrics, Service Mesh, OpenTelemetry |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

@@ -29,6 +29,8 @@ tags:
 | **Used by:** | gRPC, Event Streaming (Kafka), Data Interchange | |
 | **Related:** | JSON, Avro, Thrift, MessagePack, FlatBuffers | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

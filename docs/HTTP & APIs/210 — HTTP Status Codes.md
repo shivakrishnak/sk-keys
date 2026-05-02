@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "HTTP Status Codes"
 parent: "HTTP & APIs"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | HTTP/1.1, HTTP Methods                                                  |                 |
 | **Used by:**    | REST, API Design Best Practices, API Error Handling, Client Retry Logic |                 |
 | **Related:**    | HTTP Methods, HTTP Headers, REST, API Design Best Practices             |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

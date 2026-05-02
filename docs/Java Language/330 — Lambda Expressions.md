@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Lambda Expressions"
 parent: "Java Language"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Stream API, Functional Interfaces, Method References | |
 | **Related:** | Method References, Functional Interfaces, invokedynamic | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -47,9 +49,13 @@ A UI application with 50 button handlers, 20 comparators, 30 thread tasks, and 1
 THE INVENTION MOMENT:
 This is exactly why **Lambda Expressions** were created — to replace anonymous inner classes implementing functional interfaces with concise inline function literals, enabling behaviour to be coded where it's used, not in a named detour.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Lambda Expression** is a Java 8 feature providing a concise syntax for creating instances of functional interfaces. A lambda is written as `(parameters) -> expression` or `(parameters) -> { statements; }`. The parameter types are inferred from the target functional interface's abstract method signature. Lambdas can capture effectively final local variables from the enclosing scope (closure semantics). Captured variables must be effectively final — changing a captured variable inside the lambda is a compile error. Internally, lambdas are compiled to private static (or instance, for `this`-capturing) methods in the enclosing class and instantiated via `invokedynamic` with `LambdaMetafactory`.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -61,6 +67,8 @@ A lambda is a mini-function written inline, passed as a value wherever a functio
 
 **One insight:**
 Lambda expressions are NOT closures in the traditional sense — they cannot modify captured variables from the enclosing scope (must be effectively final). This restriction exists deliberately: allowing lambda mutation of outer variables would create shared mutable state that breaks thread safety in parallel stream pipelines. The constraint enforces functional purity at the capture boundary.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -89,6 +97,8 @@ Lambda syntax forms:
 THE TRADE-OFFS:
 Gain: Concise inline behaviour; eliminates anonymous class files; enables functional stream pipelines; supports closure over effectively final variables.
 Cost: Debugging lambda stack traces is harder (lambda name is generated, e.g., `lambda$main$0`); effectively final restriction surprises newcomers; `this` semantics differ from anonymous classes; capturing lambdas allocate per-call.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -119,6 +129,8 @@ count++; // COMPILE ERROR if this line exists: count must be effectively final
 THE INSIGHT:
 The `count++` after the lambda is forbidden — making `count` effectively mutable would allow data races in parallel pipelines. The compiler prevents you from creating a lambda that captures a mutable local, which would require synchronisation to be thread-safe. The restriction is the safety guarantee.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A lambda is like a recipe card written on the spot. Rather than saying "go to the recipe book, find recipe #47, cook that," you write the recipe directly on a note and hand it over. It's just text with instructions — no name, no filing, no ceremony. The person following it doesn't need to know where it came from.
@@ -128,6 +140,8 @@ The `count++` after the lambda is forbidden — making `count` effectively mutab
 "Person following it doesn't need to know origin" → functional interface caller doesn't know lambda vs anonymous class.
 
 Where this analogy breaks down: Recipe cards can reference ingredients not on the card (captures). Lambda captures must be effectively final — the "ingredients" can't change after the card is written.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -142,6 +156,8 @@ The compiler desugars a lambda to a private method in the enclosing class: non-c
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Lambda semantics in Java were deliberately NOT closures in the traditional (mutable state capture) sense. The design team (Brian Goetz et al.) chose effectively-final semantics to align with the primary use case: functional stream pipelines, which should be stateless and thread-safe. Allowing mutable capture would require synchronisation in parallel streams and defeat the composability goal. The `invokedynamic` implementation was chosen over anonymous class generation to avoid the startup overhead of thousands of class files in lambda-heavy applications. GraalVM native image pre-generates all lambda implementations at build time, converting the `invokedynamic` bootstrap work to AOT compilation.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -217,6 +233,8 @@ javap -p MyClass.class
 #   → the body of u -> u.isActive()
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -242,6 +260,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At scale, the most important distinction is between stateless and capturing lambdas. Stateless lambdas are JVM-level singletons after first call — zero allocation per use. Capturing lambdas allocate a new instance for each set of captured values. In tight loops, a capturing lambda in a `forEach` allocates one object per element. Profiling tools (async-profiler, JFR) identify lambda allocation sites.
+
+---
 
 ### 💻 Code Example
 
@@ -300,6 +320,8 @@ orders.sort(
 );
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach | Boilerplate | Class File | `this` Semantics | Mutable Capture | Best For |
@@ -311,6 +333,8 @@ orders.sort(
 
 How to choose: Use lambdas for all single-method functional interface implementations. Use method references when the lambda body is just a method call. Use anonymous classes when you need to override multiple methods or need `this` to refer to the anonymous class. Use named classes for complex, reusable behaviour.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -320,6 +344,8 @@ How to choose: Use lambdas for all single-method functional interface implementa
 | Captured variables are copies | Captured variables are NOT copied — the lambda closes over the variable's VALUE at capture time IF it's a primitive. For object references, the REFERENCE is captured (not a copy of the object). Changes to the object's state ARE visible through the reference |
 | Effectively final means declared final | A variable is "effectively final" if it's NEVER reassigned after initial assignment — whether or not the `final` keyword is present. The compiler infers effective finality |
 | Lambda performance is identical to direct method calls | After JVM warmup, stateless lambdas approach direct call speed. On first call and for capturing lambdas, there is measurable overhead. For extremely tight loops, a direct method call is slightly faster |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -427,6 +453,8 @@ process((Runnable) () -> System.out.println("hello"));
 
 Prevention: Avoid overloading methods with different functional interface types that accept the same lambda body shape.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -440,6 +468,8 @@ Prevention: Avoid overloading methods with different functional interface types 
 **Alternatives / Comparisons:**
 - `Method References` — a shorthand for lambdas that delegate to one method; same underlying mechanism
 - `Functional Interfaces` — the type that a lambda implements; the two are inseparable
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -473,6 +503,7 @@ Prevention: Avoid overloading methods with different functional interface types 
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A Java service stores 10,000 lambdas in a `List<Runnable>` for a job queue. Half are stateless (`() -> processStatic()`); half capture different `Order` objects (`() -> order.process()`). During a heap dump analysis, the stateless lambdas show 1 class instance shared across all 5,000 uses, while each capturing lambda is a distinct instance with a reference to `Order`. Explain the JVM memory layout: why stateless lambdas share an instance, what the `LambdaMetafactory` bootstrap does differently for capturing vs non-capturing lambdas, and calculate the approximate memory footprint difference between the two halves of the queue.

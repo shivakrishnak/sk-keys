@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Consistent Hashing"
 parent: "Distributed Systems"
@@ -28,6 +28,8 @@ tags:
 │ Used by:     │ Cassandra, DynamoDB, Riak, CDNs     │                      │
 │ Related:     │ Virtual Nodes, Gossip Protocol      │                      │
 └──────────────────────────────────────────────────────────────────────────┘
+
+---
 
 ### 🔥 The Problem This Solves
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Contract Test"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Microservices, Consumer-Driven Contract Testing, CI-CD       |                 |
 | **Related:**    | Pact, Spring Cloud Contract, CDC Testing, Consumer, Provider |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,11 +40,15 @@ At 10 microservices, the interaction matrix is 45 pairs. A shared staging enviro
 THE INVENTION MOMENT:
 Consumer-Driven Contract Testing (Beth Skurrie, 2011 at REA Group) and the Pact framework (2014) formalised the pattern: consumer generates a pact file (expectations), provider verifies against the pact file. Teams can deploy independently with confidence that contracts are honoured.
 
+---
+
 ### 📘 Textbook Definition
 
 A **contract test** (specifically **Consumer-Driven Contract test**) is a testing methodology for distributed systems where: (1) the **consumer** (calling service) writes a test that records its expectations of a **provider** (called service) as a **contract** (Pact file, Spring Cloud Contract stub); (2) the **provider** runs the consumer's contract against its real implementation, verifying it meets all consumers' expectations without deploying the consumer.
 
 **Consumer-Driven** means consumers specify what they need, not what the provider offers. The provider may return more fields than the consumer needs — as long as it returns at least what consumers require. This prevents breaking changes while allowing additive changes (adding new fields).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -55,6 +61,8 @@ Contract test = consumer writes its expectations as a test; provider proves it m
 
 **One insight:**
 Pact specifically tests that the consumer can parse what the provider actually returns — not that the provider's full API works. Pact tests are narrower than E2E tests (which verify full user flows) but catch the specific class of bugs that cause consumer parse failures.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -103,6 +111,8 @@ THE TRADE-OFFS:
 Gain: Teams deploy independently; catches interface breaking changes before staging; documents API expectations explicitly.
 Cost: Requires Pact Broker infrastructure; test setup complexity; contracts are limited to request/response matching (not business logic); teams must share and update contracts.
 
+---
+
 ### 🧪 Thought Experiment
 
 BREAKING CHANGE DETECTION:
@@ -128,11 +138,15 @@ With contract test:
   → B either: keeps 'plan', coordinates deprecation, or contacts A
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Contract testing is like a restaurant **order slip system**. The waiter (consumer) writes exactly what the customer ordered on the slip (contract). The kitchen (provider) must verify they can fulfil any slip before the restaurant opens. The kitchen tests: "can we make order X from slip X?" — without needing the actual customer present. If the kitchen can fulfil every possible slip from every waiter, they can open with confidence.
 
 > Pact Broker is the slip archive: all historical order slips are stored, and the kitchen must verify against all of them.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -143,6 +157,8 @@ With contract test:
 **Level 3:** Pact specification v3 adds message contracts (Kafka/async). Provider states: before replaying the request, provider sets up specific state (e.g., "user 123 exists with premium plan"). State is communicated via `@State` annotation + a state change endpoint. Provider test calls the state handler before replaying each interaction. This decouples provider's test data setup from consumer's contract.
 
 **Level 4:** Consumer-Driven Contracts are about **collaborative API design**, not just testing. The consumer's pact file is a negotiation: "this is what I need — can you provide it?" When a consumer adds a new field expectation, the provider team sees this via the Pact Broker. The conversation happens around contract changes, not production incidents. The Pact Broker's "can-i-deploy" endpoint implements a compatibility matrix: for any pair (consumer version, provider version), it checks all interaction verifications. This enables the branching strategy: main → main compatibility is verified; feature branches are checked against main before merge.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -184,6 +200,8 @@ With contract test:
 └──────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 ```
@@ -216,6 +234,8 @@ With contract test:
 5. Provider verifies: GET /users/123 response matches pact
 6. can-i-deploy passes for both services → deploy
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -281,6 +301,8 @@ class UserServiceProviderTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Test Type        | Tests What                  | Environment         | Speed   | Coupling    |
@@ -290,6 +312,8 @@ class UserServiceProviderTest {
 | Integration test | Real DB/service behavior    | Docker              | 5–30s   | Docker      |
 | E2E test         | Full user flow              | Full stack deployed | Minutes | Full stack  |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                  | Reality                                                                                           |
@@ -298,6 +322,8 @@ class UserServiceProviderTest {
 | "Pact tests all edge cases of the provider"    | Pact only tests what the consumer uses; not the provider's full API surface                       |
 | "Provider breaking its own contract is caught" | Only if consumers test for that behavior; new provider features not consumed won't be in any pact |
 | "Contract tests are only for HTTP"             | Pact v3/v4 supports async messaging (Kafka, SQS) contracts too                                    |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -317,11 +343,15 @@ Root Cause: `@State` handler doesn't create the test data correctly, or test is 
 
 Fix: Add logging in state handler, verify state setup creates expected data before request replay.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Integration Test, HTTP and APIs, Microservices
 - **Builds on:** Pact (Contract Testing), Spring Cloud Contract, Pact Broker
 - **Alternatives:** E2E Test (higher fidelity, slower), Integration Test (requires both services)
+
+---
 
 ### 📌 Quick Reference Card
 

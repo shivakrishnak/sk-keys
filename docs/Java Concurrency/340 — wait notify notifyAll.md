@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "wait / notify / notifyAll"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | ReentrantLock, BlockingQueue, Semaphore | |
 | **Related:** | synchronized, ReentrantLock, Condition | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -43,9 +45,13 @@ A producer-consumer system with 100 consumer threads. Without wait/notify, all 1
 THE INVENTION MOMENT:
 This is exactly why **`wait/notify`** was created — to allow a thread to release its lock, park itself efficiently (no CPU consumption), and be awakened precisely when the condition it's waiting for might be true.
 
+---
+
 ### 📘 Textbook Definition
 
 **`Object.wait()`** suspends the calling thread: it releases the object's monitor lock and enters WAITING state, parking without consuming CPU. **`Object.notify()`** wakes one arbitrary thread waiting on the object's monitor. **`Object.notifyAll()`** wakes ALL waiting threads. The awakened thread must re-acquire the monitor lock before continuing. All three methods must be called from within a `synchronized` block on the same object, or `IllegalMonitorStateException` is thrown. Spurious wakeups — a thread waking without being notified — are possible and must be handled with a `while` loop guard.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -65,6 +71,8 @@ synchronized (lock) {
     // condition is now guaranteed true
 }
 ```
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -97,6 +105,8 @@ POSIX `pthread_cond_wait` (which `Object.wait()` may use internally on Linux) ca
 THE TRADE-OFFS:
 Gain: Efficient cooperative waiting (no CPU spin); lock-integrated (condition check and state change in same critical section).
 Cost: Must always be in `synchronized`; must use `while` loop; `notify()` picks arbitrary waiter (may pick wrong one); multiple conditions need multiple objects or `Condition` (ReentrantLock); missed notifications if `notify()` fires before `wait()`.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -134,6 +144,8 @@ synchronized (lock) {
 THE INSIGHT:
 `if(condition) wait()` is always wrong because: (1) spurious wakeups exist; (2) multiple waiters may be woken by `notifyAll()` but only one can consume the item — the rest find the condition false.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > `wait()` is like a chef going on break when there's nothing to cook: they hand back the kitchen key (release lock), go to the break room, and wait. When the maître d' has ingredients ready (notify), they wake one chef, who returns to the kitchen, picks up the key (re-acquire lock), checks if there's actually food to cook (while loop — could have been false alarm), and either cooks or waits again.
@@ -145,6 +157,8 @@ THE INSIGHT:
 
 Where this analogy breaks down: `notifyAll()` wakes all chefs — only one needs to cook. The others check and go back to break (re-wait). This is correct but "thundering herd" — all woken, most immediately wait again.
 
+---
+
 ### 📶 Gradual Depth — Four Levels
 
 **Level 1:** `wait()` pauses a thread efficiently (no CPU waste) until another thread says "go check again" (`notify()`).
@@ -154,6 +168,8 @@ Where this analogy breaks down: `notifyAll()` wakes all chefs — only one needs
 **Level 3:** `Object.wait()` uses the monitor's wait queue (separate from the entry queue). JVM calls `LockSupport.park()` internally. On `notify()`, one thread moves from wait queue to entry queue (still blocked until notifier releases lock). The re-check loop handles "condition was met when notified but another thread consumed it before I acquired the lock."
 
 **Level 4:** `wait/notify` is a low-level primitive — correct use is error-prone. `java.util.concurrent.locks.Condition` (from `ReentrantLock`) provides the same semantics with named conditions (multiple per lock), interruptible waits, and timed waits without the API complexity of `Object`. `BlockingQueue` (LinkedBlockingQueue, ArrayBlockingQueue) encapsulates the producer-consumer pattern correctly — use these instead of hand-coded wait/notify.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -219,6 +235,8 @@ synchronized (lock) {
 }
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (producer-consumer):
@@ -253,6 +271,8 @@ At scale, hand-written `wait/notify` is replaced by `java.util.concurrent` class
 - `Semaphore` — resource pool management
 
 These are safer, better-tested implementations of wait/notify patterns. Only use raw `wait/notify` when no standard primitive fits.
+
+---
 
 ### 💻 Code Example
 
@@ -295,6 +315,8 @@ queue.put(task);    // blocks if full — no wait/notify needed
 Task task = queue.take(); // blocks if empty — no wait/notify needed
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Mechanism | Efficiency | Spurious Wakeup | Multiple Conditions | Best For |
@@ -307,6 +329,8 @@ Task task = queue.take(); // blocks if empty — no wait/notify needed
 
 How to choose: Use `BlockingQueue` for producer-consumer. Use `CountDownLatch` for one-time coordination. Use `ReentrantLock.Condition` when you need multiple conditions on one lock. Only use raw `wait/notify` for custom protocols not covered by the above.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -316,6 +340,8 @@ How to choose: Use `BlockingQueue` for producer-consumer. Use `CountDownLatch` f
 | Spurious wakeups are rare and can be ignored | The JMM explicitly allows spurious wakeups. `if (condition) wait()` is ALWAYS WRONG — `while (condition) wait()` is required |
 | `notifyAll()` guarantees deadlock freedom | `notifyAll()` prevents some notify-related deadlocks but not lock-ordering deadlocks. Calling `notifyAll()` when everything is locked in wrong order still deadlocks |
 | `wait()` and `sleep()` are interchangeable | `sleep()` does NOT release any lock. `wait()` RELEASES the monitor lock. They have completely different semantics |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -356,6 +382,8 @@ Root Cause: Waiter called `wait()` with wrong object. Notifier called `notify()`
 
 Fix: Ensure both `wait()` and `notify()` are called on the SAME object.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -369,6 +397,8 @@ Fix: Ensure both `wait()` and `notify()` are called on the SAME object.
 **Alternatives / Comparisons:**
 - `ReentrantLock + Condition` — more powerful than `wait/notify`; supports named conditions, interruptible waits
 - `BlockingQueue` — encapsulates producer-consumer correctly; prefer over custom wait/notify
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -401,6 +431,7 @@ Fix: Ensure both `wait()` and `notify()` are called on the SAME object.
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A hand-coded `BoundedBuffer` using `wait()/notifyAll()` has a subtle performance issue when all 100 producers are waiting (buffer full) and a consumer takes one item and calls `notifyAll()`. Trace exactly what happens: how many producer threads wake up, how many will find the buffer still full (and return to wait immediately), what this costs in terms of monitor re-acquisition, and what change (using `notify()` vs `notifyAll()`) would be correct HERE — and why switching to `notify()` in a buffer used by both producers AND consumers simultaneously creates a correctness bug.

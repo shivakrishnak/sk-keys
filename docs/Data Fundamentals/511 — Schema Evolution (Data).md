@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Schema Evolution (Data)"
 parent: "Data Fundamentals"
@@ -34,13 +34,19 @@ tags:
 
 **Schema evolution** is the process of modifying a data schema while maintaining compatibility with previously serialized data and existing code. It is governed by two compatibility directions: **backward compatibility** (new schema can read data written by old schema) and **forward compatibility** (old schema can read data written by new schema). In streaming systems (Kafka + Avro), schema evolution rules define safe vs. breaking changes. In analytical storage (Parquet/Iceberg), schema evolution is handled at the table level via metadata updates. The key mechanic: default values enable missing fields to be handled gracefully, and stable identifiers (Avro field names, Protobuf field numbers) map old data to new schemas.
 
+---
+
 ### 🟢 Simple Definition (Easy)
 
 Schema evolution means changing your data format over time without breaking code that already exists — like a backwards-compatible software update but for the structure of your data.
 
+---
+
 ### 🔵 Simple Definition (Elaborated)
 
 A system produces user records with {id, name, email}. A year later you need to add {phone}. If you just start sending {id, name, email, phone}, every consumer written before this change will fail when it sees the unexpected phone field. Schema evolution defines the rules that make this change safe: adding phone as an optional field with a default value means old consumers see their expected schema (phone missing → default null), and new consumers see the full schema including phone. The challenge grows as schemas change over months and years — you need rules governing what's allowed, tracked versions, and tooling to enforce it.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -123,6 +129,8 @@ ALTER TABLE events RENAME COLUMN event_type TO type;
 -- (Iceberg's schema IDs ensure mapping is preserved)
 ```
 
+---
+
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT schema evolution:
@@ -135,9 +143,13 @@ WITH schema evolution:
 → Add optional Avro field to Kafka topic: producers and consumers can deploy independently.
 → Rename Protobuf field: add alias, old clients use number-based matching.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Schema evolution is like versioning a tax form. Form 2025 has 10 fields. Form 2026 adds a new optional field (line 11: "Capital gains from crypto"). Old accountants (consumers) don't know about line 11 — they ignore it, default to zero, and their calculations still work. New Form 2026 users who receive a 2025 return missing line 11 apply a default of zero. Both old and new forms coexist without error. A BREAKING change would be renaming existing line 5 to line 6 — now every accountant's software breaks.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -168,6 +180,8 @@ For Parquet/Iceberg tables:
   ❌ Change between primitive types
 ```
 
+---
+
 ### 🔄 How It Connects (Mini-Map)
 
 ```
@@ -180,6 +194,8 @@ Avro in Kafka | Protobuf in gRPC | Parquet/Iceberg in data lake
         ↓ tools
 Confluent Schema Registry | AWS Glue | Iceberg ALTER TABLE
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -227,6 +243,8 @@ with open("old_message.avro", "rb") as f:
     print(user)
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -234,6 +252,8 @@ with open("old_message.avro", "rb") as f:
 | Adding any new field is backward compatible | Adding a REQUIRED field without default breaks backward compatibility. Only optional fields (with defaults) are safe additions. |
 | Renaming a field in Avro is safe with an alias | Adding an alias enables backward reads, but old writers don't know the alias. Old messages with old field name → read by new schema using alias. New messages with new name → old readers don't find it. Renaming is still complex. |
 | Iceberg/Delta schema evolution changes physical data | Table format schema evolution only changes metadata. Physical Parquet files are never rewritten during ALTER TABLE ADD COLUMN. |
+
+---
 
 ### 📌 Quick Reference Card
 

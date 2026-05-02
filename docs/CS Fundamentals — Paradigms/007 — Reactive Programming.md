@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Spring WebFlux, RxJava, Reactive Streams | |
 | **Related:** | Event-Driven Programming, Functional Programming, Actor Model | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -57,6 +59,8 @@ userEvents merged with apiResults, filtered by X, batched by Y,
 with a 500ms timeout." The reactive library handles threading,
 backpressure, error propagation, and cancellation automatically.
 
+---
+
 ### 📘 Textbook Definition
 
 Reactive programming is a paradigm for building asynchronous,
@@ -70,6 +74,8 @@ Observer/Subscriber (a consumer of those events), and Operators
 a fast producer to slow down — is a first-class concern.
 Implementations include RxJava, Project Reactor (Spring WebFlux),
 RxJS, and the JDK's `java.util.concurrent.Flow`.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -89,6 +95,8 @@ The spreadsheet insight is the essence: you declare WHAT
 depends on WHAT, not HOW to propagate changes. When a new
 HTTP request arrives, the entire pipeline from "request received"
 to "response sent" is already declared. The library wires it.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -120,6 +128,8 @@ Cost: Steep learning curve; debugging requires understanding
 the subscription model; stack traces are unreadable
 (operators, not your code, appear at the top); not
 appropriate for CPU-bound work.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -166,6 +176,8 @@ Reactive programming makes concurrent async workflows look as
 simple as synchronous ones — the complexity is absorbed by the
 library's operator implementations.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Reactive programming is a factory assembly line. Raw materials
@@ -184,6 +196,8 @@ library's operator implementations.
 Where this analogy breaks down: unlike a physical assembly line,
 reactive streams can fork (one source to multiple subscribers)
 and have hot vs. cold semantics that have no physical equivalent.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -225,6 +239,8 @@ concurrent requests vs. 1 thread per request in Tomcat. The
 cost: reactive code doesn't compose with imperative `try/catch`
 or standard Java generics — you must stay inside the reactive
 context (no `Mono.block()` in production).
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -269,6 +285,8 @@ Concurrency is limited by `flatMap(fn, concurrency)` parameter.
 The source only emits `n` items. `Flux.onBackpressureDrop()`
 drops items if the subscriber can't keep up.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -297,6 +315,8 @@ threads. At 100x, the bottleneck shifts to DB connection pool
 size (R2DBC). At 1000x, backpressure prevents OOM when DB is
 slower than the producer; without it, `Flux` buffers grow
 unboundedly and cause heap exhaustion.
+
+---
 
 ### 💻 Code Example
 
@@ -367,6 +387,8 @@ userService.findById(id)
     );
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach                      | Concurrency | Backpressure | Composability | Best For                    |
@@ -381,6 +403,8 @@ high throughput and stream processing. Use CompletableFuture
 for simpler async coordination. Use blocking threads for CPU-bound
 computation or when the reactive learning curve isn't justified.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                             | Reality                                                                                                                       |
@@ -389,6 +413,8 @@ computation or when the reactive learning curve isn't justified.
 | Calling .block() is a safe escape hatch   | `Mono.block()` inside a reactive pipeline deadlocks on the event loop thread — never use in production code                   |
 | reactive = concurrent by default          | Reactor executes on a single thread unless you explicitly add `subscribeOn`/`publishOn` with a scheduler                      |
 | Reactive programming is RxJava or Reactor | Reactive programming is the paradigm; RxJava, Reactor, RxJS, and Akka Streams are implementations of different specifications |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -516,6 +542,8 @@ Prevention: Use Reactor Context (not ThreadLocal) for values
 that must survive across async boundaries; configure MDC with
 Reactor's MDC support hooks.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -535,6 +563,8 @@ Reactor's MDC support hooks.
 - `Event-Driven Programming` — reactive's predecessor; less composable
 - `Actor Model` — Akka's alternative: isolated actors with message passing
 - `CompletableFuture` — Java's simpler async primitive; no backpressure
+
+---
 
 ### 📌 Quick Reference Card
 

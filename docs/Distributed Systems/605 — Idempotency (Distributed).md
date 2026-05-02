@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Idempotency (Distributed)"
 parent: "Distributed Systems"
@@ -26,6 +26,8 @@ tags:
 | **Depends on:** | Retry with Backoff, Distributed Locking, HTTP Semantics, Database Fundamentals |                 |
 | **Used by:**    | Payment APIs, Saga Pattern, Outbox Pattern, Event Sourcing, Retry with Backoff |                 |
 | **Related:**    | Retry with Backoff, Outbox Pattern, Two-Phase Commit, Distributed Locking, CAS |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

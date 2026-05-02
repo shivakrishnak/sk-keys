@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Real-time Apps, gRPC Streaming, GraphQL Subscriptions | |
 | **Related:** | Server-Sent Events, Long Polling, gRPC Streaming | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

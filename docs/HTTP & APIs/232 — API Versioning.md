@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Public APIs, Mobile Apps, Enterprise Integrations | |
 | **Related:** | API Deprecation Strategy, API Gateway, OpenAPI/Swagger, Backward Compatibility | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

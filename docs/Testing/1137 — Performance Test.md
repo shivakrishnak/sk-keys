@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Performance Test"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | CI-CD, SRE, Capacity Planning, SLA Verification          |                 |
 | **Related:**    | Load Test, Stress Test, Latency, Throughput, Gatling, k6 |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ Correctness and performance are orthogonal. A function can return the right answ
 THE INVENTION MOMENT:
 Apache JMeter (1998) was the first widely adopted HTTP load testing tool. Gatling (2011, Scala) brought a code-first, high-throughput approach. k6 (2017) brought modern JavaScript-based performance tests as code, with CI/CD integration. The shift: from "performance test before release (QA team)" to "performance test in every CI pipeline."
 
+---
+
 ### 📘 Textbook Definition
 
 **Performance testing** is the practice of testing a system's speed, scalability, and stability under defined workloads to verify it meets non-functional requirements (NFRs). Performance tests are categorised by their purpose: **load tests** (verify normal + expected peak load), **stress tests** (find breaking point), **soak/endurance tests** (detect memory leaks over extended runs), **spike tests** (sudden load increase), and **scalability tests** (verify horizontal scaling). Key metrics: **throughput** (requests/second), **latency** (response time percentiles: p50, p95, p99), **error rate**, **resource utilisation** (CPU, memory, connections).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Performance test = run many concurrent users at the system, measure latency and 
 
 **One insight:**
 Always measure **percentiles**, not averages. Average latency can be 50ms while p99 is 5 seconds — 1% of users have terrible experience. SLAs are written in terms of percentiles for this reason.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -98,6 +106,8 @@ THE TRADE-OFFS:
 Gain: Catches performance regressions before production; documents capacity; enables SLA commitments.
 Cost: Requires production-like environment + production-like data volumes; expensive to run continuously; results affected by test environment noise.
 
+---
+
 ### 🧪 Thought Experiment
 
 N+1 QUERY DETECTION BY PERFORMANCE TEST:
@@ -122,11 +132,15 @@ Fix: eager-load addresses (JOIN instead of N+1)
 After fix: p50: 42ms, p99: 115ms → PASS
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Performance testing is like a capacity assessment for a highway. You run cars (load) at different volumes: normal daily traffic, rush hour, holiday weekend. You measure: how fast they move (throughput), how long it takes to get from A to B (latency), how often there are accidents (errors). When a new construction project (code change) threatens to add a bottleneck, you re-run the capacity assessment before opening the new section.
 
 > The key: the assessment must happen with representative traffic (the right number of cars), not just 10 test cars.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -137,6 +151,8 @@ After fix: p50: 42ms, p99: 115ms → PASS
 **Level 3:** Performance tests in CI: use dedicated environment with representative data. Resource isolation: run performance test alone (not alongside other services that share CPU/network). Warm-up period: exclude first 30s from metrics (JIT compilation, connection pool warming). Compare against stored baseline (InfluxDB/Grafana for time series). The Little's Law approximation: `N = λ × R` (concurrent users = throughput × response time) — helps size load tests correctly: if you target 200 RPS at 100ms response time, you need 200 × 0.1 = 20 concurrent users minimum.
 
 **Level 4:** The performance test reliability problem: test results are noisy. Two consecutive runs of identical code can show 10% latency variance due to: JIT compilation state, GC timing, OS scheduling, network variance. Solution: run multiple warmup iterations, discard first N results, compute moving average, use statistical significance (Mann-Whitney U test) for regression detection rather than fixed percentage thresholds. At Google/Netflix scale: performance testing moves to production via gradual rollouts (canary) with automatic rollback on latency regression — the production load IS the performance test.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -164,6 +180,8 @@ After fix: p50: 42ms, p99: 115ms → PASS
 └──────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 ```
@@ -181,6 +199,8 @@ CI Performance Gate Pipeline:
 8. Publish report to CI (HTML/Grafana link in PR)
 9. Pass → promote to staging → production canary
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -226,6 +246,8 @@ export default function () {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Test            | Goal                | Duration | Load Type          | Key Metric                      |
@@ -236,6 +258,8 @@ export default function () {
 | Soak            | Stability           | 8–24h    | Sustained moderate | Memory growth, error rate trend |
 | Spike           | Sudden peak         | 15–30min | Instant surge      | Recovery time                   |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                                   | Reality                                                                                                         |
@@ -244,6 +268,8 @@ export default function () {
 | "Performance test once before release"                          | Performance regressions are introduced by any code change; test in every CI pipeline                            |
 | "More VUs = more realistic"                                     | Test must reflect real user patterns (think time, user journeys); 1000 VUs with 0ms think time is not realistic |
 | "Performance test environment doesn't need to match production" | 10x smaller environment gives completely different results; must use production-like data volumes and hardware  |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -256,11 +282,15 @@ Tools: APM traces (Datadog, Dynatrace, Jaeger) — correlate high-latency reques
 Cause: GC pauses (G1GC stop-the-world), JIT compilation (not warmed up), test environment load.
 Fix: 5-minute warmup run before measurement. Pin JVM: `-server -XX:+UseG1GC`. Use dedicated performance environment. Run multiple iterations and average.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Integration Test, HTTP and APIs, Observability
 - **Builds on:** Load Test, Stress Test, Gatling, k6, APM
 - **Related:** Latency, Throughput, SLA/SLO, Little's Law
+
+---
 
 ### 📌 Quick Reference Card
 

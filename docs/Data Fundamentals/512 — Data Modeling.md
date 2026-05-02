@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Data Modeling"
 parent: "Data Fundamentals"
@@ -33,13 +33,19 @@ tags:
 
 **Data modeling** is the discipline of creating an abstract representation of how data is organised, stored, and related within a system. Three levels: **Conceptual model** (business entities and relationships, technology-agnostic), **Logical model** (entities, attributes, relationships with data types — no physical storage), and **Physical model** (actual table/column definitions, indexes, partitions for a specific database). Key paradigms: **3NF/normalised** (eliminates redundancy, optimised for OLTP write throughput), **Dimensional modeling** (denormalised star/snowflake schemas, optimised for OLAP query performance), and **Data Vault** (hub-link-satellite pattern for auditability and historisation).
 
+---
+
 ### 🟢 Simple Definition (Easy)
 
 Data modeling is deciding how to organise your data tables — which fields go where, how tables relate to each other, and what structure makes queries fast.
 
+---
+
 ### 🔵 Simple Definition (Elaborated)
 
 Every database system requires decisions: should orders and customers be in one table or separate, linked by a foreign key? Should you store the city name in every order row (redundant but fast to query) or store it once in a customers table and join when needed (clean but slower)? These structural decisions — data modeling — determine query performance, storage cost, data integrity, and ease of analysis. OLTP systems (order processing, banking) normalise to avoid redundancy and ensure write consistency. OLAP systems (analytics, reporting) deliberately denormalise to avoid expensive joins.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -122,6 +128,8 @@ Graph relationships   Graph model    Nodes and edges, adjacency lists
 Time series           Time-series    Sorted by time, rollup aggregates
 ```
 
+---
+
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT intentional data modeling:
@@ -135,9 +143,13 @@ WITH good data modeling:
 → Update anomalies eliminated (3NF ensures one source of truth).
 → Reporting teams can self-serve without understanding complex joins.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Data modeling is like designing a supermarket layout. Normalised design is the warehouse: every product in one place, no duplicates — efficient for stocking (writes) but shoppers must walk to multiple sections for a full meal. Dimensional modeling is the customer-facing layout: pre-arranged "meal kits" section (star schema) where everything needed is co-located — efficient for shopping (queries) but requires duplicating items. A data vault is like a meticulous archive with full history — who received what shelf item and when.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -169,6 +181,8 @@ CREATE TABLE dim_customer (
 );
 ```
 
+---
+
 ### 🔄 How It Connects (Mini-Map)
 
 ```
@@ -184,6 +198,8 @@ Data Vault (auditability, history)
         ↓ stored in
 Data Warehouse | Data Lake | OLTP Database
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -217,6 +233,8 @@ CREATE TABLE fact_sales (
 );
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -224,6 +242,8 @@ CREATE TABLE fact_sales (
 | Normalisation is always better | Normalisation optimises write efficiency and eliminates redundancy. For read-heavy analytics, deliberate denormalisation (star schema) dramatically improves query performance. |
 | Star schema is outdated for modern data warehouses | Most modern cloud warehouses (Snowflake, BigQuery, Redshift) are optimised for star schema patterns. Columnar storage + MPP makes star schema the standard for OLAP. |
 | Data modeling is only for relational databases | Data modeling applies to NoSQL (document structure), data lakes (Parquet schema), event streams (Avro schema), and graph databases. The principles transcend the technology. |
+
+---
 
 ### 📌 Quick Reference Card
 

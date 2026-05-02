@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Java Arrays.sort (objects), Python sorted(), Android Arrays.sort | |
 | **Related:** | Mergesort, Quicksort, Adaptive Sorting | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Real-world data is rarely random. Arrays arrive partially sorted (database query
 THE INVENTION MOMENT:
 Tim Peters designed Timsort in 2002 for Python. The key insight: scan the array for **natural runs** (already-sorted sequences, ascending or descending). Extend each run to a minimum length using insertion sort (insertion sort is O(N²) overall but O(N) on nearly-sorted data for small N). Then merge runs together using a carefully designed merge order that balances run sizes using a stack — the "galloping" merge accelerates through long ordered sequences. This is exactly why **Timsort** was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Timsort** is a hybrid stable sorting algorithm derived from mergesort and insertion sort. It identifies and extends natural sorted **runs** of minimum length `minrun` (typically 32–64), then merges them using a merge stack that maintains size-balance invariants to ensure O(N log N) worst-case performance. Best case (already sorted): O(N). Average and worst case: O(N log N). Space: O(N). Timsort is the default sort in Python (`sorted()`, `list.sort()`), Java (`Arrays.sort` for objects), Android, V8, and many other platforms.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Find existing sorted chunks, extend them to minimum size, then merge them strate
 
 **One insight:**
 Timsort is an **adaptive** algorithm — its work is proportional to the disorder in the input, not the input size. For fully sorted data, it detects one run and stops in O(N). For random data, it creates N/minrun runs and merges them in O(N log N). The genius is that it detects and exploits the existing structure without degrading worst-case performance.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -75,6 +83,8 @@ THE TRADE-OFFS:
 Gain: O(N) on nearly-sorted data; O(N log N) worst case; stable; excellent real-world performance.
 Cost: Complex implementation (~500 lines in CPython vs ~30 lines for naive mergesort); O(N) auxiliary space.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -89,6 +99,8 @@ Scan: finds run 1 = first 80 elements (already sorted). Run 2 = last 20 elements
 THE INSIGHT:
 Timsort's adaptive behaviour means it performs work proportional to the **entropy** of the input, not just its size. The fewer sorted runs that need merging, the less work is done. For random data, the work is similar to plain mergesort; for real-world data (which has significant existing order), Timsort is substantially faster.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Timsort is like a professional archivist sorting documents. Instead of blindly shuffling everything into a single pile and sorting from scratch, the archivist first identifies which files are already in order (runs). They slightly re-organise small clusters (insertion sort small runs to minrun size), then systematically merge the ordered clusters in the most balanced possible order. The already-ordered work is never redone.
@@ -99,6 +111,8 @@ Timsort's adaptive behaviour means it performs work proportional to the **entrop
 "Never redo ordered work" → O(N) for already-sorted input
 
 Where this analogy breaks down: Real archivists can see the whole document set at once. Timsort makes one sequential pass to identify runs, then merges blindly — it cannot skip ahead to see future optimal run boundaries.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -113,6 +127,8 @@ Timsort scans the array once identifying runs (O(N)). For each run shorter than 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The merge invariants were designed to ensure that the total number of merges is O(N log N) regardless of run distribution. The proof uses a potential function argument: each element participates in O(log N) merges because each merge doubles the size of at least one participant. The galloping mode is Timsort's most clever innovation: it transitions from comparison-based to rank-based (binary search) as patterns are detected. Tim Peters described Timsort in a 2002 email as running faster than any general comparison sort at the time on a wide variety of real-world data. It has since been found to have a bug (the invariant was slightly wrong, triggering an ArrayIndexOutOfBoundsException discovered by formal verification in 2015 via model checking with OpenJDK). The fix changed the stack size from `2×ceil(log₂(n)) + 1` to `ceil(log₂(n)) + 4`.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -138,6 +154,8 @@ The merge invariants were designed to ensure that the total number of merges is 
 │  At end: merge all remaining on stack      │
 └────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -166,6 +184,8 @@ violate balance invariant implementation assumptions
 
 WHAT CHANGES AT SCALE:
 For N=10⁸ elements, Timsort's run detection phase (O(N)) avoids the O(N log N) overhead of naive mergesort for partially-sorted inputs. In practice (database results, log files), 30-70% of real data has significant existing order, making Timsort 2-4x faster than theoretical random-data analysis would suggest.
+
+---
 
 ### 💻 Code Example
 
@@ -255,6 +275,8 @@ System.out.printf("Mergesort: %dms%n",
     mergesortTime/1_000_000);
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Best | Average | Worst | Stable | Adaptive | Space |
@@ -267,6 +289,8 @@ System.out.printf("Mergesort: %dms%n",
 
 How to choose: Use language-provided sort (Timsort) by default for objects. Use Quicksort for primitives (Java's default for primitives). Use Heapsort only when O(1) extra space is required.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -276,6 +300,8 @@ How to choose: Use language-provided sort (Timsort) by default for objects. Use 
 | Python's sorted() is slower than C qsort | Timsort in CPython's `sorted()` is implemented in C and is consistently faster than C's `qsort` on real-world data due to adaptive behaviour. On purely random data, they are comparable |
 | Timsort's formal verification bug was serious | The bug (2015, formal verification by Brandeis team) caused ArrayIndexOutOfBoundsException only for arrays with > 2^49 ≈ 500 trillion elements — never triggered in practice. Fixed in Java 8u40 anyway |
 | Galloping mode is always faster | Galloping mode is a net win only when long monotone sequences are present. For random data, the overhead of galloping threshold tracking makes it slightly slower. Timsort disables galloping when it's not helping |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -342,6 +368,8 @@ Fix: Move side effects out of the comparator. Log before/after sort, not inside.
 
 Prevention: Comparators must be pure functions (no side effects). Java's documentation explicitly requires this.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -356,6 +384,8 @@ Prevention: Comparators must be pure functions (no side effects). Java's documen
 - `Mergesort` — simpler implementation, same asymptotic bounds; less adaptive (no O(N) best case).
 - `Quicksort` — faster for primitives on random data; not stable; O(N²) worst case.
 - `Introsort` — Quicksort hybrid with O(N log N) guarantee; not stable; used in C++ `std::sort`.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -385,6 +415,7 @@ Prevention: Comparators must be pure functions (no side effects). Java's documen
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Timsort's merge stack invariant requires `|A| > |B| + |C|` and `|B| > |C|` for consecutive stack entries A, B, C. The 2015 formal verification found that the stack size was miscalculated: the implementation allocated `2*ceil(log_phi(n)) + 1` stack slots (where phi ≈ 1.618, Fibonacci growth), but rare inputs could create stack entries not bounded by this Fibonacci-related formula. Construct a sequence of run sizes that would minimally violate the original (buggy) stack size calculation. What property of the merge invariant enforcement allows a run sequence to grow the stack beyond the Fibonacci bound?

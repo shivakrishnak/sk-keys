@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Stress Test"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | SRE, Capacity Planning, Chaos Engineering, Incident Prevention |                 |
 | **Related:**    | Load Test, Soak Test, Chaos Test, Breaking Point, Autoscaling  |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ Load tests verify "can we handle expected maximum?" Stress tests answer "what AC
 THE INVENTION MOMENT:
 Destructive testing (stress testing physical materials to failure) has been engineering practice for centuries. Applied to software: Amazon's GameDays (2004+), Netflix's Chaos Monkey (2010), and the SRE discipline formalised the concept of deliberately inducing failures to understand system limits before users discover them.
 
+---
+
 ### 📘 Textbook Definition
 
 A **stress test** is a type of performance test that increases load beyond the system's expected maximum capacity until it fails — or until a predetermined saturation point is reached. The goal is to: (1) find the **breaking point** (load level where acceptable performance degrades to unacceptable); (2) observe **failure mode** (does the system fail gracefully with error messages, or catastrophically?); (3) verify **recovery** (after stress is removed, does the system return to normal, or does it require intervention?). Stress tests answer: "How does our system break, and does it break safely?"
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Stress test = push past maximum until it breaks, observe HOW it breaks, verify i
 
 **One insight:**
 The most important outcome of a stress test is not the breaking point itself — it's the **failure mode**. A system that breaks at 3,000 RPS with clean 503 responses is far better than a system that breaks at 5,000 RPS with data corruption. You'd rather have a lower breaking point with graceful degradation than a higher breaking point with catastrophic failure.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -106,6 +114,8 @@ THE TRADE-OFFS:
 Gain: Discovers real failure modes before production; enables capacity planning with safety margin; validates autoscaling; tests graceful degradation.
 Cost: Requires dedicated environment (stress can damage or leave residual state); stress tests can cascade to dependent systems; time-consuming to design well.
 
+---
+
 ### 🧪 Thought Experiment
 
 DISCOVERING THE CASCADING FAILURE:
@@ -133,11 +143,15 @@ With circuit breakers (stress test reveals they work):
 Stress test outcome: circuit breakers are correctly configured. ✓
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A stress test is a **controlled demolition** with cameras at every structural joint. You apply increasing force, observe every joint's behavior, note when the first joint fails (breaking point), and observe whether the failure propagates (cascade) or is contained. The goal is NOT to see the building stand forever — it's to learn exactly how it fails so you can design better containment.
 
 > Graceful degradation = the building loses its upper floors but the lower structure holds. Brittle failure = the building collapses all at once with no warning.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -148,6 +162,8 @@ Stress test outcome: circuit breakers are correctly configured. ✓
 **Level 3:** Stress test infrastructure requirements: use the same hardware/Kubernetes node types as production (not a smaller staging environment). Ensure dependent services can handle the stress test load or mock them (stress testing your service vs. stress testing your dependencies are different goals). Monitor during stress test: DB slow query log, GC logs (JVM), connection pool metrics, thread pool queue depth. After stress test: check for resource leaks (compare memory/connection counts before and after).
 
 **Level 4:** The SRE perspective on stress tests: the breaking point defines the **safety margin** = (breaking point - expected peak) / expected peak. A safety margin of 50% means you can absorb a 50% traffic surge above peak before hitting the breaking point. Safety margins should drive autoscaling triggers: if breaking point is 3,000 RPS, autoscaling should trigger at ~2,000 RPS (67% of breaking point) to ensure scale-out completes before saturation. Amazon's 10× traffic sizing rule: each service must handle 10× steady-state traffic. Derived from the distribution of traffic spikes: marketing emails, breaking news, viral social media posts can drive 5–10× normal traffic in minutes — before autoscaling can respond.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -173,6 +189,8 @@ Stress test outcome: circuit breakers are correctly configured. ✓
 │  t+45s: p99 back to 98ms ← RECOVERED                   │
 └──────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -203,6 +221,8 @@ Pre-release stress test for new search feature:
    Recovery: automatic, 10 seconds (vs. manual restart before)
    → PASS (graceful degradation verified)
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -273,6 +293,8 @@ public class SearchController {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Type            | Load                    | Goal                               | Pass/Fail                 |
@@ -282,6 +304,8 @@ public class SearchController {
 | Soak Test       | 70% load, long duration | Detect resource leaks              | Resource growth threshold |
 | Spike Test      | Sudden surge            | Verify autoscaling response        | Recovery time threshold   |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                 | Reality                                                                                                         |
@@ -290,6 +314,8 @@ public class SearchController {
 | "High breaking point = better"                | Breaking point matters less than failure mode; graceful degradation at 3,000 RPS > data corruption at 5,000 RPS |
 | "Recovery is automatic"                       | Recovery must be TESTED — many systems require manual intervention after stress                                 |
 | "Stress test and load test are the same"      | Load test: verify SLA at expected load; stress test: find limits beyond expected load                           |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -305,11 +331,15 @@ Fix: Implement health check that verifies recovery; circuit breaker `halfOpen` t
 Cause: Stress test on Service A overflows its retry/timeout behavior → Service B (calls A) also overwhelmed.
 Prevention: Use WireMock or mocks for downstream dependencies during stress tests (isolate the system under test). OR: deliberately include downstream services and verify circuit breakers contain the cascade.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Load Test, Performance Test, Observability
 - **Builds on:** Chaos Test, Circuit Breaker, Bulkhead, Autoscaling
 - **Related:** Soak Test (duration), Spike Test (sudden surge)
+
+---
 
 ### 📌 Quick Reference Card
 

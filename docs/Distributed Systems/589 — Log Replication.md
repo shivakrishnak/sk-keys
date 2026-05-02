@@ -28,6 +28,8 @@ tags:
 | **Used by:** | etcd, CockroachDB, MySQL Replication, Kafka | |
 | **Related:** | Raft, State Machine Replication, Write-Ahead Log, Replication Strategies | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WITHOUT LOG REPLICATION:**

@@ -28,6 +28,8 @@ tags:
 | **Used by:** | API Consumers, Developer Portals, SDK Generation | |
 | **Related:** | OpenAPI/Swagger, API Design Best Practices, API Contract Testing | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

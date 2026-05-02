@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Kruskal MST, Connected Components, Cycle Detection in Undirected Graphs | |
 | **Related:** | BFS, DFS, Kruskal / Prim | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Maintaining and querying connected components dynamically — as edges are added
 THE INVENTION MOMENT:
 Represent each connected component as a tree with a designated root (representative). Store only `parent[i]` — the parent of element `i` in its tree. "Find" the representative by walking to the root. "Union" two elements by merging their trees (link one root to the other). With two optimisations — **path compression** (flatten the tree on every find) and **union by rank** (always attach smaller tree under larger) — the amortised cost per operation becomes nearly O(1): formally O(α(N)) where α is the inverse Ackermann function, effectively constant for all practical N. This is exactly why **Union-Find** was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Union-Find (Disjoint Set Union / DSU)** is a data structure that maintains a partition of a set into disjoint subsets, supporting two operations: `find(x)` returns the representative (root) of x's subset, and `union(x, y)` merges the subsets containing x and y. With **path compression** and **union by rank** (or size), both operations run in O(α(N)) amortised time, where α is the inverse Ackermann function — practically constant for all real inputs. Supports N elements and Q queries in O((N+Q)α(N)) total time.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Track which items are in the same group with nearly-instant merge and query oper
 
 **One insight:**
 The magic of Union-Find is that path compression and union by rank together reduce a potentially linear-depth tree to nearly flat over a series of operations. The inverse Ackermann function grows so slowly (α(10^80) = 4) that this is effectively constant time. This combination is a rare example of a data structure that is simple to code yet achieves near-optimal theoretical bounds through two independently simple ideas.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -86,6 +94,8 @@ THE TRADE-OFFS:
 Gain: O(α(N)) ≈ O(1) amortised per operation; O(N) space.
 Cost: Does not support split (un-union) operations; only works for offline connectivity queries (edges are added, not removed). For edge removal, more complex structures (Link-Cut Trees) are needed.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -105,6 +115,8 @@ find(4): 4→4 (root of its own component). O(1).
 THE INSIGHT:
 Union-Find tracks connectivity with O(1) per operation after optimisations, whereas general list/set merging takes O(N). The tree with a path-compressed root structure is the minimal representation that achieves this — no simpler solution exists.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Union-Find is like a corporate hierarchy where each department has a CEO. To check if two people work for the same company, ask each: "who's your CEO?" If they have the same CEO, they're in the same company. When two companies merge, one CEO becomes the boss of the other. Over time, everyone learns to call the top CEO directly (path compression) instead of going through a chain of managers.
@@ -115,6 +127,8 @@ Union-Find tracks connectivity with O(1) per operation after optimisations, wher
 "Everyone calls CEO directly" → path compression flattens the tree
 
 Where this analogy breaks down: Real companies don't instantly update everyone's "CEO" pointer when merging. Path compression is purely algorithmic — it happens automatically during each find operation, with no explicit restructuring step needed.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -129,6 +143,8 @@ The amortised complexity proof of O(α(N)) uses the "weighted union lemma": tree
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Union-Find is the canonical example of an "online" dynamic connectivity algorithm for acyclically-growing graphs (edges only added, never removed). The O(α(N)) bound was proven tight by Tarjan (1975) — no comparison-based union-find can do better. For fully dynamic connectivity (edges added AND removed), the best known structure is the HDT (Holm-de Lichtenberg-Thorup) tree, running in O(log²N) per operation. Union-Find's simplicity makes it the default for Kruskal's MST and related algorithms where edges are processed once in sorted order without deletion.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -187,6 +203,8 @@ boolean union(int x, int y) {
 }
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -212,6 +230,8 @@ edge (u,v) arrives → find(u)==find(v)
 
 WHAT CHANGES AT SCALE:
 For N=10⁹ elements, the `parent[]` and `rank[]` arrays use 8 GB of memory — infeasible. Solutions: use a HashMap for sparse union-find (only store elements that have been referenced); use union-find on a compressed ID space (map original IDs to sequential integers). For distributed systems, union-find cannot be run naively in parallel — concurrent updates to `parent[]` require locks. Parallel union-find algorithms use CAS (Compare-And-Swap) operations to merge components in parallel with O(log N × α(N)) amortised time.
+
+---
 
 ### 💻 Code Example
 
@@ -304,6 +324,8 @@ for (int[] event : edgeStream) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach | Find | Union | Space | Dynamic (add edge) | Dynamic (remove edge) |
@@ -315,6 +337,8 @@ for (int[] event : edgeStream) {
 
 How to choose: Use Union-Find when edges are only added (not removed) and you need fast online connectivity queries. Use BFS/DFS for one-time queries. Use Link-Cut Trees when edges can also be removed.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -324,6 +348,8 @@ How to choose: Use Union-Find when edges are only added (not removed) and you ne
 | Union-by-rank and union-by-size are equivalent | Both give O(log N) tree height and O(α(N)) amortised find, but union-by-size provides tighter constants in practice. The choice rarely matters in competitive programming but can matter in high-performance C++ |
 | find(x)==find(y) is O(1) | find(x) is O(α(N)) amortised — nearly O(1), but not strictly O(1) in the worst case for any single find. Over N operations, the total cost is O(Nα(N)) |
 | Union-Find detects cycles in directed graphs | Union-Find detects cycles in undirected graphs (via "both endpoints already in same component" check). For directed graph cycle detection, use DFS with three-color marking instead |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -388,6 +414,8 @@ Fix: Cap rank at 31 (`if (rank[rx] < 31) rank[rx]++`). Correctness is unaffected
 
 Prevention: Not a practical concern for N ≤ 10⁹; document theoretically.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -403,6 +431,8 @@ Prevention: Not a practical concern for N ≤ 10⁹; document theoretically.
 - `BFS` — can find connected components in O(V+E) but requires re-running for each query; not suitable for dynamic edge insertion.
 - `DFS` — same limitations as BFS for dynamic connectivity; use DFS for directed cycle detection where Union-Find is inappropriate.
 - `Link-Cut Trees` — supports both edge insertion and deletion in O(log N); use when edges can be removed.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -433,6 +463,7 @@ Prevention: Not a practical concern for N ≤ 10⁹; document theoretically.
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Consider a Union-Find with N=8 elements where the following union operations are performed in sequence: union(0,1), union(2,3), union(4,5), union(6,7), union(0,2), union(4,6), union(0,4). After all unions, what does the tree look like with union-by-rank? Now perform find(7): trace each step of path compression. What does the tree look like after find(7)? How many parent pointer updates occurred, and what is the amortised significance of those updates for future queries?

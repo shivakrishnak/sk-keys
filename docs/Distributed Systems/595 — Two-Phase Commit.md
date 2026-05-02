@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Two-Phase Commit (2PC)"
 parent: "Distributed Systems"
@@ -28,6 +28,8 @@ tags:
 │ Used by:     │ XA Transactions, Distributed DBs   │                      │
 │ Related:     │ 3PC, Saga Pattern, Dist. Locking   │                      │
 └──────────────────────────────────────────────────────────────────────────┘
+
+---
 
 ### 🔥 The Problem This Solves
 

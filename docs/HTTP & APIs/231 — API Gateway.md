@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Microservices, API Management, Multi-client Apps | |
 | **Related:** | Reverse Proxy, Service Mesh, BFF, API Rate Limiting, API Authentication | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

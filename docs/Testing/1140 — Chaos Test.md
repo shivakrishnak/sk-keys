@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Chaos Test"
 parent: "Testing"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | SRE, Resilience Engineering, Netflix, Google                               |                 |
 | **Related:**    | Chaos Monkey, GameDay, Fault Injection, Circuit Breaker, Chaos Engineering |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Distributed systems fail in ways that are impossible to reason about statically.
 THE INVENTION MOMENT:
 Netflix's Chaos Monkey (2010) by Yury Izrailevsky and Ariel Tseitlin was the first automated chaos tool: it randomly terminates production instances during business hours. The thesis: if you know that instances can die randomly, you engineer for it. Systems that can survive random instance death are fundamentally more resilient than systems that assume instances never die.
 
+---
+
 ### 📘 Textbook Definition
 
 **Chaos engineering** is the discipline of experimenting on a system to build confidence in its ability to withstand turbulent conditions in production. A **chaos test** (chaos experiment) follows the scientific method: (1) define the **steady state** (measurable normal behavior — e.g., p99 < 200ms, error rate < 0.1%); (2) hypothesize that the steady state continues when a specific **failure is injected**; (3) inject the failure in a controlled environment; (4) observe whether steady state is maintained; (5) document the finding. Chaos engineering is NOT about breaking things randomly — it's about controlled, hypothesis-driven failure injection to verify resilience.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ Chaos test = deliberately break something, verify the system survives, find out 
 
 **One insight:**
 Chaos engineering is not just about the failures you can think of — it's about discovering **unknown unknowns**. The most valuable chaos experiments reveal failure modes that the architects never considered. "We didn't know the health check endpoint queried the database and timing out under load caused the circuit breaker to open on healthy services."
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -114,6 +122,8 @@ THE TRADE-OFFS:
 Gain: Discover unknown failure modes before production; verify resilience mechanisms work; build organisational confidence in system reliability.
 Cost: Risk of unintended impact (blast radius must be controlled); requires mature observability to know if steady state is maintained; organisational maturity (must be ready to not panic when failures are injected).
 
+---
+
 ### 🧪 Thought Experiment
 
 THE HEALTH CHECK CASCADE BUG:
@@ -141,6 +151,8 @@ Fix: health check should NOT query the database
       Separate readiness check for DB: /ready (only used by Kubernetes)
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Chaos engineering is **vaccination**: you introduce a controlled, weakened version of a pathogen (failure) so the system (immune system = resilience mechanisms) can develop an appropriate response. The goal is not to cause disease — it's to prepare the response so that when the real pathogen arrives, the reaction is known, practiced, and effective.
@@ -148,6 +160,8 @@ Fix: health check should NOT query the database
 > The Simian Army (Netflix's suite of chaos tools: Chaos Monkey, Latency Monkey, Conformity Monkey, Security Monkey) is the systematic program of injecting different "pathogens" — not just instance death, but also latency, security misconfigurations, and conformity violations.
 
 Where the analogy breaks down: vaccines provide full immunity; chaos experiments reduce blast radius and improve recovery, but don't eliminate all failure scenarios.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -158,6 +172,8 @@ Where the analogy breaks down: vaccines provide full immunity; chaos experiments
 **Level 3:** Chaos Mesh setup in Kubernetes: define `PodChaos` (kill pods), `NetworkChaos` (partition, latency, bandwidth limit), `IOChaos` (disk failure), `StressChaos` (CPU/memory pressure) as Kubernetes CRDs. Schedule experiments: run chaos experiments in CI (staging) on every release. Blast radius control: namespace scoping, pod label selectors. Observability requirement: chaos experiments are useless without metrics to observe — you need Prometheus/Grafana dashboards showing steady state before you can know if steady state is maintained during chaos.
 
 **Level 4:** Chaos engineering maturity model: (1) Reactive: incidents happen → fix → no test; (2) Proactive: GameDays → manual chaos; (3) Continuous: automated chaos in staging on every deployment; (4) Production chaos: automated experiments in production with blast radius control (Netflix, Google). The key insight from Google's SRE book: "Hope is not a strategy." The reliability of a distributed system cannot be mathematically derived from the reliability of its components (due to correlated failures, cascade effects, partial failures). Empirical validation through chaos engineering is the only reliable method. AWS re:Invent 2022: "We chaos test every service before it handles real customer traffic. Our production readiness review requires proof of chaos experiment results."
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -190,6 +206,8 @@ Where the analogy breaks down: vaccines provide full immunity; chaos experiments
 │  Result: steady state maintained → PASS                 │
 └──────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -225,6 +243,8 @@ Action items:
   Fix error handling: DB exception → 503 not 500
   Schedule follow-up chaos experiment to verify fixes
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -289,6 +309,8 @@ toxiproxy-cli toxic add order-service -t reset_peer -a timeout=5000
 toxiproxy-cli toxic remove order-service -n packet_loss
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Testing Type     | What is Tested           | Failure Mode          | Goal        |
@@ -299,6 +321,8 @@ toxiproxy-cli toxic remove order-service -n packet_loss
 | Stress test      | Performance beyond max   | Breaking point        | Capacity    |
 | **Chaos test**   | Resilience under failure | Unknown failure modes | Resilience  |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                | Reality                                                                                                        |
@@ -307,6 +331,8 @@ toxiproxy-cli toxic remove order-service -n packet_loss
 | "Chaos tests should have pass/fail criteria" | Chaos tests document what happens; the finding may be "PASS: resilient" or "FAIL: cascade" — both are valuable |
 | "Only large companies need chaos testing"    | Any distributed system with > 3 services benefits; the simpler the experiment, the more accessible             |
 | "Chaos testing is only for production"       | Start in staging; progress to production only after staging experiments pass                                   |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -320,11 +346,15 @@ Prevention: Define and test recovery procedures before chaos experiments. Have r
 Symptom: Intended to test payment service; accidentally took down entire cluster.
 Prevention: Use Kubernetes namespace selectors. Start with `mode: one` (one pod), not `mode: all`. Test chaos configuration on a single non-critical pod before scheduling.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Stress Test, Distributed Systems, Observability, Circuit Breaker
 - **Builds on:** Chaos Mesh, Gremlin, Netflix Simian Army, SRE, GameDay
 - **Related:** Fault Injection Testing, Property-Based Testing, Resilience Engineering
+
+---
 
 ### 📌 Quick Reference Card
 

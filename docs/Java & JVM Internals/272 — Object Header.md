@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Escape Analysis, GC Roots, synchronized, Biased Locking | |
 | **Related:** | GC Roots, synchronized, Escape Analysis, TLAB | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ External lookup tables add synchronisation overhead and memory fragmentation. Ob
 THE INVENTION MOMENT:
 Prefixing every object with a compact header that encodes all this metadata inline makes every per-object operation an O(1) pointer dereference. This is why every Java object has a header: it is the index card prepended to every object, enabling constant-time metadata access.
 
+---
+
 ### 📘 Textbook Definition
 
 The JVM Object Header is a hidden per-object metadata region prepended to every Java heap object before its user-visible fields. In HotSpot JVM, the header consists of two components: (1) the Mark Word (8 bytes on 64-bit JVM) — a multipurpose field whose bits encode the object's identity hash code, GC age (tenuring counter), lock state (unlocked, biased-locked, lightweight-locked, heavyweight-locked), GC forwarding pointer, and other GC flags; (2) the Klass Pointer (4–8 bytes) — a reference to the class's metadata in Metaspace. Together, the header occupies 8–16 bytes per object before any user-declared fields.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Every Java object starts with a hidden system header encoding its type, lock sta
 
 **One insight:**
 The Object Header's Mark Word is the most reused piece of memory in the JVM — its bits are repurposed for identity hash, lock state, and GC forwarding pointer over the object's lifetime. Understanding the header explains: why `synchronized` on small objects is not "free" (it changes header bits), why identity hash code generation has a one-time cost (hash is stored in the header), and why Java objects have a minimum memory footprint even for empty classes.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -69,6 +77,8 @@ THE TRADE-OFFS:
 Gain: O(1) class type check, lock acquisition, hash code retrieval, GC age access — all without external lookup.
 Cost: 8–16 bytes of memory overhead per object. For applications creating billions of small objects (Integer cache entries, small DTOs), this overhead is significant. The minimum object size on a 64-bit JVM is 16 bytes (8-byte header + 8-byte padding alignment), even for an entirely empty class.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -83,6 +93,8 @@ Each object occupies 16 bytes (8-byte header + 8 bytes user data). GC age, lock 
 THE INSIGHT:
 Per-object overhead is justified when operations on those objects are frequent. The object header trades memory for constant-time metadata access — a fundamental engineering trade-off between space and time.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > The Object Header is like a UPC barcode on every product on a grocery store shelf. The barcode contains the product's category (class pointer), the item's shelf expiry counter (GC age), and a security tag status (lock state). The store's self-checkout (JVM) scans the barcode for everything it needs to know. The shopper (programmer) never handles the barcode directly.
@@ -94,6 +106,8 @@ Per-object overhead is justified when operations on those objects are frequent. 
 "Self-checkout scanner" → JVM runtime operations
 
 Where this analogy breaks down: unlike a barcode, the header bits change during object lifetime — lock bits flip when synchronized; GC bits flip during collection; hash code is generated lazily on first request and then permanently stored.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -113,6 +127,8 @@ The Mark Word (8 bytes on 64-bit) uses bit encoding to multiplex multiple states
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The Mark Word's bit-multiplexing design reflects a decades-long optimisation battle. Biased locking (deprecated in Java 15, removed in Java 18) assumed that a monitor was usually locked by the same thread — the thread ID was encoded in the header to avoid CAS operations for repeated locking. When wrong (multiple threads contesting), the deoptimisation cost was high. The decision to remove it in Java 18 reflected the observation that modern workloads with virtual threads and structured concurrency no longer match the "one thread dominates" assumption. This is a case where an optimisation's premise became invalid as the ecosystem evolved.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -176,6 +192,8 @@ Example: class Point { int x; int y; }
 └────────────────────────┴────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -206,6 +224,8 @@ Mark Word corruption (rare, often JNI bug)
 
 WHAT CHANGES AT SCALE:
 At very large JVM heaps (>32 GB), compressed oops (`-XX:+UseCompressedOops`) cannot be used — the Klass Pointer expands to 8 bytes, increasing every object's header to 16 bytes. For applications with billions of small objects, this doubles header memory overhead. ZGC and Shenandoah handle large heaps without requiring this trade-off by using coloured pointers in the reference bits themselves.
+
+---
 
 ### 💻 Code Example
 
@@ -294,6 +314,8 @@ System.out.println(
 );
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Object Layout | Header Size | User Fields Offset | Compressed Oops | Heap Limit |
@@ -305,6 +327,8 @@ System.out.println(
 
 How to choose: Always use `-XX:+UseCompressedOops` (default for heaps < 32 GB) to save 4 bytes per object in the Klass Pointer. For heaps > 32 GB, accept the full 16-byte header or split into multiple JVM instances.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -314,6 +338,8 @@ How to choose: Always use `-XX:+UseCompressedOops` (default for heaps < 32 GB) t
 | "Garbage collection (GC) doesn't modify objects" | GC does modify the Mark Word — it temporarily overwrites it with a forwarding pointer during object copying, then restores/updates it at the new address. |
 | "Identity hash code is random every call" | It is random on FIRST call, then permanently stored in the Mark Word. After the first call, it is always the same value for the same object. |
 | "Smaller classes use less memory" | Minimum object size is 16 bytes (headers + padding), regardless of how few fields the class declares. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -389,6 +415,8 @@ jcmd <pid> VM.flags | grep CompressedOops
 
 Prevention: Keep heap <= 32 GB per JVM instance to enable compressed oops; or use multiple JVM instances horizontally rather than one very large heap.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -404,6 +432,8 @@ Prevention: Keep heap <= 32 GB per JVM instance to enable compressed oops; or us
 **Alternatives / Comparisons:**
 - `Project Lilliput (JEP 450)` — experimental JVM project to shrink the Object Header from 12–16 bytes to 8 bytes, reducing per-object overhead
 - `Off-heap` — native memory storage that has no Java object header overhead
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -438,6 +468,7 @@ Prevention: Keep heap <= 32 GB per JVM instance to enable compressed oops; or us
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** An application creates 100 million `Point` objects (two int fields). With default 64-bit JVM settings and compressed oops, each Point is 24 bytes (8 mark word + 4 klass ptr + 4 x + 4 y + 4 padding). Disabling compressed oops (heap > 32 GB) makes each Point 32 bytes. Calculate the total memory increase for 100 million objects, and explain why increasing heap size past 32 GB can paradoxically INCREASE live memory usage (not just overhead) — creating a reinforcing cycle.

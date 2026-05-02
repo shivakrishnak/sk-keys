@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Data Compression (gzip, snappy, zstd, lz4)"
 parent: "Data Fundamentals"
@@ -33,13 +33,19 @@ tags:
 
 **Data compression** is the process of encoding data using fewer bits than the original representation. Lossless compression algorithms used in data engineering preserve exact data fidelity. Key algorithms: **gzip** (DEFLATE/LZ77+Huffman — high ratio, slow); **Snappy** (Google, developed for Hadoop — fast, moderate ratio, not streaming-friendly); **LZ4** (extremely fast compression/decompression — optimal for low-latency pipelines); **Zstd** (Facebook's Zstandard — tunable ratio/speed, superior to gzip in most benchmarks). Columnar formats (Parquet, ORC) apply both column encoding (dictionary, RLE) and file-level compression, achieving much higher ratios than row-based formats.
 
+---
+
 ### 🟢 Simple Definition (Easy)
 
 Compression squeezes data into smaller files. LZ4 is the fastest but saves less space. Zstd saves the most space while being reasonably fast. Pick based on whether you care more about speed or storage cost.
 
+---
+
 ### 🔵 Simple Definition (Elaborated)
 
 Every byte stored in a data lake costs money and every byte transferred over a network costs time. Compression reduces both. The trade-off is CPU: compressing and decompressing takes cycles. For hot pipelines (real-time streaming, fast ETL), use LZ4 or Snappy — they compress/decompress in microseconds with 2–3× compression ratio. For cold storage (archival, bulk analytics), use Zstd level 3–19 — it achieves 5–10× compression ratio at the cost of more CPU. gzip is the legacy standard, often beaten by Zstd on both ratio AND speed in modern benchmarks.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -101,6 +107,8 @@ REST API responses           gzip, brotli   Browser / HTTP client support
 Network file transfer        zstd            Best ratio/speed overall
 ```
 
+---
+
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT compression:
@@ -113,9 +121,13 @@ WITH compression:
 → Parquet + Zstd: 8-15× smaller than raw CSV on structured data.
 → Less data transferred = faster queries = lower Spark scan costs.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Compression algorithms are like different types of luggage packing. LZ4 is like cramming things in quickly — not perfectly organised but incredibly fast to pack and unpack. gzip is like a meticulous packer who folds everything perfectly — takes longer but uses far less space. Zstd is the modern smart packer — nearly as compact as gzip but nearly as fast as LZ4. And columnar dictionary encoding is like packing a suitcase full of identical T-shirts by writing "50× red T-shirt" instead of packing 50 shirts individually.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -142,6 +154,8 @@ props.put("compression.type", "lz4"); // or snappy, gzip, zstd
 // LZ4 preferred: lowest latency per message, good ratio
 ```
 
+---
+
 ### 🔄 How It Connects (Mini-Map)
 
 ```
@@ -156,6 +170,8 @@ Query performance | Storage cost | Network transfer time
         ↓ applied also in
 Kafka topics | REST API responses | HTTP (gzip/brotli)
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -183,6 +199,8 @@ for codec in ["none", "snappy", "lz4", "zstd", "gzip"]:
 # gzip:    5.2s write,  1.3 GB (6.3× smaller, 3× slower write)
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -191,6 +209,8 @@ for codec in ["none", "snappy", "lz4", "zstd", "gzip"]:
 | Snappy is always best for Parquet | Snappy was the Hadoop-era default but Zstd level 3 typically provides better ratio with similar decompression speed on modern CPUs. |
 | Compression is only for storage savings | Compression can actually IMPROVE query performance by reducing I/O bandwidth (data transfer from S3/disk). Reading 1 GB compressed is faster than 5 GB uncompressed if CPU is faster than I/O. |
 | gzip and Zstd produce similar results | Zstd at level 3 typically equals gzip at level 6 in ratio, while being 5× faster to compress and 3× faster to decompress. |
+
+---
 
 ### 📌 Quick Reference Card
 

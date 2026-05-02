@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Graceful Degradation"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Circuit Breaker, Bulkhead, Fallback, Timeout, Feature Flags       |                 |
 | **Used by:**    | Netflix, Amazon, Service Mesh, Platform Engineering, SRE          |                 |
 | **Related:**    | Fallback, Circuit Breaker, Bulkhead, Feature Flags, Load Shedding |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

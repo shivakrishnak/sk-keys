@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Test Pyramid"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Engineering Teams, QA, Tech Leads                                  |                 |
 | **Related:**    | Test Diamond, Unit Test, Integration Test, E2E Test, Test Strategy |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT (The Ice Cream Cone Anti-Pattern):
@@ -36,9 +38,13 @@ THE SPEED/COVERAGE TRADE-OFF:
 Unit test: < 1ms per test. Integration test: 100ms–5s per test. E2E test: 5s–3min per test.
 With the inverted pyramid (many E2E, few unit): 1,000 × 30s = 8 hours. With the correct pyramid (1,000 unit, 100 integration, 10 E2E): 1s + 50s + 5min = ~6 minutes.
 
+---
+
 ### 📘 Textbook Definition
 
 The **Test Pyramid** (coined by Mike Cohn in _Succeeding with Agile_, popularised by Martin Fowler) is a visual metaphor for the recommended distribution of automated tests across three levels: (1) **Unit tests** (base — most numerous, fastest, cheapest to write/maintain); (2) **Integration tests** (middle — test component interactions, slower, fewer); (3) **End-to-End tests** (top — fewest, slowest, most expensive, highest confidence). The pyramid shape encodes: the higher the level, the fewer tests you need, because higher-level tests are slower, more flaky, and harder to maintain.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -48,6 +54,8 @@ Many unit tests, some integration tests, few E2E tests — faster feedback at lo
 **One analogy:**
 
 > The test pyramid is like a building's **inspection schedule**: daily inspections at the component level (unit tests — fast, cheap, frequent), monthly inspections at the floor level (integration tests), annual full-building inspection (E2E — slow, expensive, infrequent). The daily inspections catch most problems fast; the annual inspection verifies the whole building but rarely finds issues the daily inspections missed.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -109,6 +117,8 @@ THE ANTI-PATTERN — ICE CREAM CONE:
 Result: slow CI, flaky tests, late feedback, expensive maintenance
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 THE FLAKINESS TRAP:
@@ -134,11 +144,15 @@ Unit test coverage of the same scenarios:
   → Deterministic: fails when and only when code is wrong
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Tests at different pyramid levels are like **different zoom levels on a map**: unit tests are street-level (high resolution, fast to navigate, catch small errors); integration tests are city-level (see how streets connect); E2E tests are satellite view (see the whole country, but individual streets invisible). You use all three, but use satellite view sparingly because it's slow and misses detail.
 
 > The pyramid's shape is a **cost/benefit encoding**: wide base = high value per test (cheap, fast, specific); narrow top = low value per test (expensive, slow, flaky). Invert the pyramid and you have high cost, low return.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -149,6 +163,8 @@ Unit test coverage of the same scenarios:
 **Level 3:** The pyramid is a guideline, not a law. Different systems have different optimal distributions. A CRUD API with thin business logic: fewer unit tests needed (logic is in the framework), more integration tests valuable (DB interactions are the core). A complex pricing engine: heavily unit tested (logic is the core), fewer integration tests. The key principle: test at the lowest level where the risk exists. SQL query bugs → integration tests. Business logic bugs → unit tests. Full flow bugs → E2E.
 
 **Level 4:** Google's testing pyramid (from _Software Engineering at Google_) uses different terminology: small tests (unit) / medium tests (integration within a single binary) / large tests (multi-binary, E2E). Google's observation: teams that violate the pyramid spend 5-10× more time fighting flaky tests than teams that follow it. The "testing honeycomb" for microservices (Spotify model): more integration tests, fewer unit tests, still few E2E — recognizing that in microservices, the interactions between services (integration) are the primary risk, not individual service logic.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -168,6 +184,8 @@ Unit test coverage of the same scenarios:
 │              /─────────────────\  cheapest               │
 └──────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -193,6 +211,8 @@ Coverage: complete, at the right level of abstraction
 Feedback time: unit (1ms), integration (2s), E2E (30s)
 Total: ~33 seconds for full coverage of the registration feature
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -224,6 +244,8 @@ class RegistrationControllerTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Level       | Speed    | Cost   | Confidence             | Flakiness |
@@ -231,6 +253,8 @@ class RegistrationControllerTest {
 | Unit        | < 1ms    | Low    | Logic only             | Very low  |
 | Integration | 100ms–5s | Medium | Component interactions | Low       |
 | E2E         | 5s–3min  | High   | Full user journey      | High      |
+
+---
 
 ### ⚠️ Common Misconceptions
 
@@ -240,6 +264,8 @@ class RegistrationControllerTest {
 | "The pyramid ratios are exact rules"      | They are guidelines; optimize for your risk profile and system type                                              |
 | "More tests = better"                     | Wrong tests (too many E2E) slow CI and increase flakiness                                                        |
 | "Unit tests don't catch integration bugs" | Correct — that's why integration tests exist. Each level catches different bugs.                                 |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -253,10 +279,14 @@ Fix: Identify which E2E tests cover things that could be unit/integration tested
 Symptom: "Unit tests" use `@SpringBootTest` — they spin up the full context in 30 seconds each.
 Fix: Unit tests should NOT use Spring context. Use Mockito-only tests for unit level.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Unit Test, Integration Test, E2E Test
 - **Related:** Test Diamond, Test Honeycomb, Test Strategy, CI-CD
+
+---
 
 ### 📌 Quick Reference Card
 

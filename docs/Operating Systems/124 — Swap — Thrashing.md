@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Swap — Thrashing"
 parent: "Operating Systems"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Memory Management, Container Resource Limits, Performance Tuning |                 |
 | **Related:**    | OOM Killer, Huge Pages, mlock, cgroups memory.limit              |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,11 +40,15 @@ Swap solves the "not enough RAM" problem by using disk space as an overflow. But
 THE INVENTION MOMENT:
 Peter Denning's 1968 "working set" model showed that thrashing occurs when the sum of working sets exceeds physical memory, and introduced the solution: working set policy — only keep processes whose working sets fit in memory; swap out (suspend) entire processes that can't fit.
 
+---
+
 ### 📘 Textbook Definition
 
 **Swap space** is disk space designated to hold memory pages that are evicted from RAM by the OS virtual memory manager. When physical memory is insufficient, the **page frame reclaim algorithm (PFRA)** (Linux: via `kswapd` daemon) identifies candidate pages to evict: anonymous pages (heap, stack) are written to swap; file-backed pages are simply evicted (they can be re-read from the file). When an evicted page is accessed, a **page fault** occurs, the page is read back from swap (swap-in), and another page may be evicted (swap-out).
 
 **Thrashing** is a condition in which a system spends the majority of its time servicing page faults, resulting in negligible useful work. Thrashing occurs when the combined **working set** (set of recently-used pages) of all active processes exceeds physical memory. The system is simultaneously paging in and out continuously, with CPU utilization at 100% but effective throughput near zero.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -55,6 +61,8 @@ Swap = overflow RAM to disk (slow, but workable); thrashing = so much swapping t
 
 **One insight:**
 Thrashing is self-reinforcing: each page fault blocks a process (waiting for disk I/O) → CPU switch to another process → another page fault → all processes are blocked on page I/O → CPU spins servicing faults → zero useful throughput despite 100% CPU. Breaking out requires either reducing working set size or adding RAM.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -111,6 +119,8 @@ THE TRADE-OFFS:
 Gain: System remains functional under moderate overcommit; processes don't OOM on occasional memory spikes.
 Cost: Swap-in latency is 5–6 orders of magnitude higher than RAM; under overcommit, swap can make the system worse (thrashing) compared to just killing processes (OOM killer).
 
+---
+
 ### 🧪 Thought Experiment
 
 KUBERNETES CONTAINER SWAP DEBATE:
@@ -123,11 +133,15 @@ Which is better?
 
 This is why Kubernetes historically recommended `vm.swappiness=0` (disable swap): container restarts are clean and fast; thrashing is unpredictable and hard to debug. Kubernetes 1.28+ adds swap support (opt-in) with `LimitedSwap` policy for exactly this reason — but only for cgroup v2 where swap limits are enforceable per-container.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Physical RAM = your desk. Swap = filing cabinet (slow, across the room). Your working set = the documents you need right now. Normal work: desk holds everything you need; filing cabinet rarely accessed. Memory pressure: some documents go to filing cabinet. Thrashing: desk is so small that every time you pick up Document A, you have to return Documents B and C to the cabinet; but B and C are needed immediately after A — so you're constantly walking to and from the cabinet. Actual document-reading time: 5% of your day.
 
 > Fix: bigger desk (more RAM), fewer simultaneous projects (fewer processes), or park a whole project in a drawer (swap out entire process — working set model).
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -142,6 +156,8 @@ Monitor: `free -h` (swap usage), `vmstat 1` (si/so columns = swap-in/swap-out pa
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Peter Denning's working set model (1968): process's working set W(t, Δ) = set of pages referenced in the last Δ time units. Optimal: only schedule processes whose working sets fit in memory. Linux's approximation: LRU-based active/inactive lists. The fundamental tension: LRU is Belady's "furthest in future" approximation; clock algorithm approximates LRU with single reference bit. Linux 5.2+ introduced `MGLRU` (Multi-Generational LRU): tracks page age across 4 generations rather than 2 (active/inactive), giving better reclaim decisions under adversarial workloads. The research insight (Alibaba, Google, Meta): traditional LRU severely misranks pages for mixed workloads; MGLRU reduces page reclaim cost by 40% in production.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -173,6 +189,8 @@ Peter Denning's working set model (1968): process's working set W(t, Δ) = set o
 └────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 JAVA HEAP SWAPPED OUT (worst case):
@@ -197,6 +215,8 @@ JAVA HEAP SWAPPED OUT (worst case):
    c. Container --memory-swap=<limit>: explicit swap limit
    d. vm.swappiness=0 on the node
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -248,6 +268,8 @@ resources:
 # Kubernetes detects: restarts container (exponential backoff)
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Memory State              | Description           | CPU impact      | Response time          |
@@ -258,6 +280,8 @@ resources:
 | **Thrashing**             | Continuous swap cycle | ~100% iowait    | Seconds per operation  |
 | OOM kill                  | Process terminated    | —               | Process restart time   |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                     | Reality                                                                                                                             |
@@ -266,6 +290,8 @@ resources:
 | "Swap to SSD is fast enough"      | SSD swap: ~0.1ms per page; RAM: ~0.0001ms. For GC scanning 2GB heap: 200M page faults × 0.1ms = 20,000 seconds of potential latency |
 | "More swap = more memory"         | Swap trades latency for capacity; under overcommit, more swap extends the thrashing window rather than preventing it                |
 | "kswapd at 100% CPU is normal"    | kswapd sustained at > 5–10% CPU = memory pressure; 100% = thrashing                                                                 |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -306,6 +332,8 @@ dmesg | grep -i "oom"
 
 Fix: Increase memory limit, profile for memory leaks (heap dump), enable swap with container cgroup v2 limit as temporary measure.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -324,6 +352,8 @@ Fix: Increase memory limit, profile for memory leaks (heap dump), enable swap wi
 
 - `mlock()` — lock specific pages in RAM, preventing their swap
 - `zswap` / `zram` — compressed in-memory swap (faster than disk, still slower than RAM)
+
+---
 
 ### 📌 Quick Reference Card
 

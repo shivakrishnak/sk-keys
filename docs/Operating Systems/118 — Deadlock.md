@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Deadlock"
 parent: "Operating Systems"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Database Transaction Management, OS Resource Scheduling, Distributed Systems |                 |
 | **Related:**    | Livelock, Starvation, Resource Allocation Graph, Banker's Algorithm          |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -37,6 +39,8 @@ Deadlock is particularly dangerous because: (1) it's non-deterministic (depends 
 
 THE INVENTION MOMENT:
 Dijkstra identified and formalised deadlock conditions in the 1960s. The four Coffman conditions (1971) provide the definitive model. Detection, prevention, and avoidance algorithms (Banker's algorithm, lock ordering, timeout-based breaking) are all responses to these conditions.
+
+---
 
 ### 📘 Textbook Definition
 
@@ -49,6 +53,8 @@ Dijkstra identified and formalised deadlock conditions in the 1960s. The four Co
 
 Breaking any single Coffman condition prevents deadlock.
 
+---
+
 ### ⏱️ Understand It in 30 Seconds
 
 **One line:**
@@ -60,6 +66,8 @@ Deadlock = circular wait where everyone holds what others need and no one will r
 
 **One insight:**
 The simplest and most practical prevention strategy is **consistent lock ordering**: always acquire Lock A before Lock B, across all threads. If no thread ever holds B while waiting for A (and vice versa), circular wait is impossible.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -84,6 +92,8 @@ DETECTION STRATEGIES (allow, then detect):
 
 THE TRADE-OFFS:
 Prevention (lock ordering): simple and effective but requires discipline across the entire codebase. Detection + recovery: allows higher concurrency but requires victim selection and transaction rollback. Avoidance (Banker's algorithm): guarantees no deadlock but requires knowing maximum resource needs in advance — not practical for most software.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -121,6 +131,8 @@ Thread 2: lockA.lock() → lockB.lock() → ... → unlock both
 THE INSIGHT:
 The deadlock arose solely from inconsistent acquisition order. The fix requires no algorithm, no timeouts — just a convention enforced by code review and static analysis.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Four cars at a 4-way intersection (Coffman conditions mapped):
@@ -133,6 +145,8 @@ The deadlock arose solely from inconsistent acquisition order. The fix requires 
 > Fix 4 (circular wait): traffic rule — always yield to your left. One direction of yielding breaks the cycle. Same as lock ordering.
 
 Where the analogy breaks down: in a real 4-way intersection, deadlock is rare because humans will eventually back up (preemption). In software, threads don't give up unless coded to do so (`tryLock()` with timeout).
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -147,6 +161,8 @@ JVM deadlock detection: `jstack` uses JVM's built-in deadlock detector that trac
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Database deadlock detection was chosen over prevention because database transactions don't know in advance which rows they'll access — prevention via lock ordering would require acquiring all locks before starting a transaction, which would drastically reduce concurrency. Detection + rollback trades some overhead (cycle detection every 0.1s, occasional rollback) for maximum concurrency. OS-level deadlock prevention (Banker's algorithm) is theoretically sound but practically unusable in general OS contexts because: (a) processes don't declare maximum resource needs, (b) resource types are diverse (files, sockets, memory, semaphores). Most OS deadlock "prevention" is actually "ignore it" — the assumption that deadlock is rare and can be resolved by killing a process or rebooting.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -167,6 +183,8 @@ Database deadlock detection was chosen over prevention because database transact
 │  If cycle in RAG: deadlock (single-instance resources) │
 └────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -199,6 +217,8 @@ Result: both services hang; no database-level detection
          (two separate database connections, no shared wait graph)
 Fix: timeout + retry; or distributed lock manager; or order requests
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -287,6 +307,8 @@ ThreadMXBean tmx = ManagementFactory.getThreadMXBean();
 long[] deadlockedIds = tmx.findDeadlockedThreads();  // null if none
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Condition            | Prevention                | Detection           | Cost                 |
@@ -295,6 +317,8 @@ long[] deadlockedIds = tmx.findDeadlockedThreads();  // null if none
 | **Hold and wait**    | tryLock + release all     | N/A                 | Medium (retry logic) |
 | **No preemption**    | tryLock timeout           | N/A                 | Low (add timeout)    |
 | **Circular wait**    | Lock ordering             | RAG cycle detection | Low (convention)     |
+
+---
 
 ### ⚠️ Common Misconceptions
 
@@ -305,6 +329,8 @@ long[] deadlockedIds = tmx.findDeadlockedThreads();  // null if none
 | "ReentrantLock deadlock is detected by JVM" | jstack detects both synchronized and ReentrantLock deadlocks                             |
 | "Deadlock only involves two threads"        | Any cycle works: T1→T2→T3→T1 is a three-thread deadlock                                  |
 | "Increasing thread count fixes deadlock"    | More threads increases deadlock probability by increasing concurrent lock acquisition    |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -352,6 +378,8 @@ Fix: Ensure all transactions accessing the same rows do so in consistent order; 
 
 Prevention: Test with concurrent load using `pgbench` (PostgreSQL) or `sysbench` (MySQL) before production.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -370,6 +398,8 @@ Prevention: Test with concurrent load using `pgbench` (PostgreSQL) or `sysbench`
 
 - `Livelock` — threads active but stuck looping (e.g., two people walking toward each other, both step aside to the same side, repeat)
 - `Starvation` — one thread never runs; not a mutual cycle but unfair scheduling
+
+---
 
 ### 📌 Quick Reference Card
 

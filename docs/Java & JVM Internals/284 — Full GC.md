@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Full GC"
 parent: "Java & JVM Internals"
@@ -76,7 +76,10 @@ A **Full GC** is a complete heap collection that:
 
 Full GC is the JVM's nuclear option. It guarantees maximum memory reclamation at the cost of application availability. Modern low-pause collectors (G1, ZGC, Shenandoah) go to great lengths to **avoid** Full GC by performing concurrent work instead.
 
+---
+
 ### Key distinction from Major GC:
+
 | Term | Scope | STW? |
 |------|-------|------|
 | Minor GC | Young Generation only | Yes (short) |
@@ -159,6 +162,8 @@ Understanding Full GC is essential for:
 
 ## 8. Under the Hood (Deep Dive)
 
+---
+
 ### Triggers in detail
 
 ```
@@ -172,6 +177,8 @@ Full GC Triggers (JVM Hotspot):
 └── G1: evacuation failure (cannot move objects from CSet)
 ```
 
+---
+
 ### What makes Full GC slow
 
 ```
@@ -183,6 +190,8 @@ Pause time factors:
 5. Fragmentation      → Compaction moves many objects
 6. Class unloading    → Metaspace scan + code cache purge
 ```
+
+---
 
 ### Concurrent vs Full GC
 
@@ -197,6 +206,8 @@ Pause time factors:
 // ZGC / Shenandoah keep STW pauses < 1ms via fully concurrent
 // collection — but can still trigger Full GC in extreme cases
 ```
+
+---
 
 ### Metaspace and Full GC
 

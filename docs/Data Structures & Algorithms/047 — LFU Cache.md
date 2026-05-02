@@ -28,6 +28,8 @@ tags:
 | **Used by:** | CDN Caching, Browser Cache | |
 | **Related:** | LRU Cache, TinyLFU, MFU Cache | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ LRU evicts based on *recency*, not *importance*. One scan through mostly-unique 
 THE INVENTION MOMENT:
 Track how many times each entry has been accessed. When eviction is needed, evict the entry with the lowest access count. Items accessed frequently stay in cache regardless of when they were last accessed. For ties in frequency, use LRU among the least-frequent group. This is exactly why the LFU Cache was created.
 
+---
+
 ### 📘 Textbook Definition
 
 An **LFU (Least Frequently Used) Cache** maintains access counts per entry and evicts the entry with the minimum access count when the cache is full. Among entries with equal minimum counts, the *least recently used* within that frequency group is evicted. An O(1) implementation uses three HashMaps: `{key→value}`, `{key→freq}`, `{freq→LRU-ordered-set-of-keys}`, plus a `minFreq` variable tracking the current minimum frequency bucket.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ A cache that keeps the most-used items, evicting the least-accessed one when ful
 
 **One insight:**
 LFU's critical implementation challenge is: when you access an entry, its frequency increases — and it must move from one frequency bucket to the next *in O(1)*. The "bucket-per-frequency" design with doubly linked lists inside each bucket achieves this by making bucket transitions O(1) pointer operations.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -90,6 +98,8 @@ THE TRADE-OFFS:
 Gain: Better hit rates than LRU for frequency-skewed workloads (Zipf distribution).
 Cost: Higher implementation complexity, 3 HashMaps, "frequency recency bias" — a newly inserted item may never overcome an old item's head start in access counts.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -113,6 +123,8 @@ LFU: D, E, F each get freq 1. Each displaces the min-freq entry — but A (freq 
 THE INSIGHT:
 LFU resists scan pollution because frequently accessed items accumulate high counts that cannot be evicted just because a scan of unique items happened. LRU has no such defence — recency is vulnerable to bulkscans.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > An LFU cache is like a music chart based on total streams. Songs are ranked by total listens. A new viral hit climbs the chart over weeks by accumulating streams. Legacy hits with massive total streams stay at the top even if they weren't played today. When the chart needs to cut entries, the least-streamed track goes first.
@@ -123,6 +135,8 @@ LFU resists scan pollution because frequently accessed items accumulate high cou
 "Legacy hit" → old entry with high accumulated frequency
 
 Where this analogy breaks down: Real charts don't have a fixed capacity that forces eviction; they can add entries. Also, real charts often weight recent streams more heavily — that's TinyLFU's approach, not pure LFU.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -137,6 +151,8 @@ The `freqToLRU` map uses `LinkedHashSet<K>` per frequency bucket — insertion-o
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The O(1) LFU algorithm published by Ding & Lin (2010) was a breakthrough — previously, best known was O(log N). The key insight: frequency buckets, not a global sorted structure, avoids re-sorting. The `LinkedHashSet` inside each bucket provides both O(1) removal-by-key and LRU ordering for tie-breaking. Caffeine's W-TinyLFU improves on pure LFU by using a frequency sketch (Count-Min Sketch) that forgets old accesses — preventing "frequency aging" where old entries with high counts block new hot entries forever. This aging is the core weakness of pure LFU.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -177,6 +193,8 @@ freqToLRU: {1→[D], 2→[C], 3→[A]}
 minFreq: 1
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -199,6 +217,8 @@ Workload: millions of unique items, each accessed once
 
 WHAT CHANGES AT SCALE:
 At millions of entries, the three-HashMap approach uses O(N) memory per entry — more than LRU's two structures. The `freqToLRU` map can have millions of frequency buckets for long-running caches where items accumulate high counts. Caffeine avoids this by periodically halving all frequency counts ("aging") or using a probabilistic Count-Min Sketch that naturally forgets old accesses.
+
+---
 
 ### 💻 Code Example
 
@@ -258,6 +278,8 @@ class LFUCache {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Policy | Scan Resistant | Freq Aware | Recency Aware | Best For |
@@ -270,6 +292,8 @@ class LFUCache {
 
 How to choose: In practice, use Caffeine (W-TinyLFU) for all new Java caches — it outperforms both pure LRU and pure LFU. Implement pure LFU for interview problems and learning. Use LRU in simple cases where implementation simplicity matters.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -278,6 +302,8 @@ How to choose: In practice, use Caffeine (W-TinyLFU) for all new Java caches —
 | LFU is just LRU with a counter | LFU requires fundamentally different data structures to achieve O(1); adding a counter to LRU still gives O(log N) |
 | LFU is immune to all cache pollution | Very long-running items can accumulate counts so high that new hot entries can never displace them |
 | LFU tracks how recently an item was accessed | Pure LFU only tracks count; recency is only used as a tie-breaker within the minimum-frequency bucket |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -341,6 +367,8 @@ Fix: Remove the frequency bucket from `freqToKeys` immediately when it becomes e
 
 Prevention: Every time you remove a key from a bucket, always check and remove the bucket if empty.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -354,6 +382,8 @@ Prevention: Every time you remove a key from a bucket, always check and remove t
 **Alternatives / Comparisons:**
 - `LRU Cache` — simpler implementation; better for recent-biased workloads.
 - `Caffeine W-TinyLFU` — outperforms both LRU and LFU in practice.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -383,6 +413,7 @@ Prevention: Every time you remove a key from a bucket, always check and remove t
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Pure LFU has the "cold start" problem: a newly popular item (freq=1) is immediately evicted when the cache is full of items with high historical frequencies. Caffeine's W-TinyLFU uses a "window" LRU for recently inserted items and an LFU "main" cache. Explain how this window design solves the cold start problem, and why simply periodically halving all frequencies (aging) is not sufficient on its own.

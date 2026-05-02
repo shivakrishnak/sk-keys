@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Schema Registry"
 parent: "Data Fundamentals"
@@ -34,13 +34,19 @@ tags:
 
 A **Schema Registry** is a centralised repository that manages schema lifecycle for event streaming and data pipeline systems. It stores schemas as versioned documents, assigns each a unique integer ID, and enforces **compatibility policies** (BACKWARD, FORWARD, FULL, NONE) governing whether new schemas break existing producers or consumers. Confluent Schema Registry is the de-facto standard for Kafka; AWS Glue Schema Registry, Karapace, and Apicurio are alternatives. At runtime, Kafka producers embed the schema ID (not the full schema) in message payloads; consumers retrieve schemas by ID from the registry, enabling compact messages while maintaining schema-driven deserialization.
 
+---
+
 ### 🟢 Simple Definition (Easy)
 
 A Schema Registry is a shared dictionary for data formats — producers register what format they're sending, consumers look up the format by ID, and the registry enforces rules so nobody accidentally breaks all consumers by changing the format.
 
+---
+
 ### 🔵 Simple Definition (Elaborated)
 
 Without a Schema Registry, every Kafka consumer must agree on the message format out-of-band (via documentation or code). When a producer changes the format, all consumers break simultaneously. A Schema Registry solves this by: (1) giving each schema a globally unique ID, (2) producing messages that embed just the schema ID (5 bytes overhead), (3) consumers fetch the schema by ID on first encounter (cached thereafter), and (4) enforcing compatibility rules that prevent a producer from registering a schema that would break existing consumers. It's the governance layer for your data contracts.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -114,6 +120,8 @@ Subject naming strategies:
     → most flexible, allows different record types per topic
 ```
 
+---
+
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Schema Registry:
@@ -128,9 +136,13 @@ WITH Schema Registry:
 → Full schema version history with timestamps.
 → Automatic deserialization in consumers — no boilerplate.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A Schema Registry is like a country's company registration office. Any company (producer) must register its official name and description (schema) before doing business. Every transaction (message) includes only the company registration number (schema ID) — not the full description. Anyone (consumer) can look up the registration number to get the full details. The office enforces rules: you can't change your company name mid-operation (breaking change) without re-registering under a new ID. The history of all registrations is preserved.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -181,6 +193,8 @@ producer.send(new ProducerRecord<>("users", "alice", user));
 // KafkaAvroSerializer: registers schema → gets ID → encodes [0x00][id][avro bytes]
 ```
 
+---
+
 ### 🔄 How It Connects (Mini-Map)
 
 ```
@@ -196,6 +210,8 @@ Schema Evolution (Data) rules
         ↓ alternatives
 AWS Glue Schema Registry | Karapace | Apicurio
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -227,6 +243,8 @@ while True:
         print(f"Schema error: {e}")
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -235,6 +253,8 @@ while True:
 | BACKWARD compatibility means consumers can run old code | BACKWARD means new schema can READ old data. Old code (not new code) reads old data. The direction is about which schema version reads which data. |
 | Schema Registry prevents all breaking changes | It prevents breaking changes at serialization level. Business logic changes (field semantics, value ranges) are not enforced by schema compatibility rules. |
 | Schema Registry is only for Kafka | Confluent Schema Registry supports Kafka natively, but its REST API can be used for any system needing schema management (Flink, Spark, JDBC connectors). |
+
+---
 
 ### 🔥 Pitfalls in Production
 
@@ -246,6 +266,8 @@ while True:
 # Configure client-side schema caching
 props.put("schema.registry.url", "http://sr-primary:8081,http://sr-secondary:8081");
 ```
+
+---
 
 ### 📌 Quick Reference Card
 

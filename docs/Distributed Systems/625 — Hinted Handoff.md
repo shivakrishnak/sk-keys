@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Hinted Handoff"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Quorum, Replication Strategies, Read Repair                              |                 |
 | **Used by:**    | Cassandra, DynamoDB, Riak, ScyllaDB                                      |                 |
 | **Related:**    | Anti-Entropy, Read Repair, Gossip Protocol, Quorum, Eventual Consistency |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

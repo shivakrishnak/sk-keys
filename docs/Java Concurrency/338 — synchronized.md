@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "synchronized"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | wait / notify / notifyAll, Thread States, ReentrantLock | |
 | **Related:** | volatile, ReentrantLock, Memory Barrier | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ A banking service processes concurrent withdrawals. Two threads both pass the "s
 THE INVENTION MOMENT:
 This is exactly why **`synchronized`** was created — to enforce that only one thread at a time executes a critical section, and to guarantee that all changes made inside the critical section are visible to the next thread entering the same section.
 
+---
+
 ### 📘 Textbook Definition
 
 **`synchronized`** is a Java keyword that uses an intrinsic monitor lock (or "mutex") associated with every Java object to enforce mutual exclusion. When a thread enters a `synchronized` block or method, it acquires the monitor lock of the specified object (or `this` for instance methods, or the class object for static methods). Other threads attempting to acquire the same lock are put in BLOCKED state until the lock is released. `synchronized` also establishes a **happens-before** relationship: all actions in the releasing thread prior to unlocking are visible to the thread that subsequently acquires the same lock.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ This is exactly why **`synchronized`** was created — to enforce that only one 
 
 **One insight:**
 `synchronized` does TWO things: (1) mutual exclusion — one thread at a time; (2) memory visibility — the next thread sees all writes from the previous thread in the critical section. Both are required for correct concurrent programs. Using `volatile` alone provides only visibility (no mutual exclusion); `synchronized` provides both.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -89,6 +97,8 @@ THE TRADE-OFFS:
 Gain: Mutual exclusion + memory visibility in one construct; simple model; JVM-native (no library needed); reentrancy.
 Cost: Coarse granularity (whole method or block); no timeout (can block indefinitely); no ability to interrupt a waiting thread; no distinguish between read and write (readers block each other unnecessarily); can cause deadlock with improper lock ordering.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -121,6 +131,8 @@ void increment() { count.incrementAndGet(); }
 THE INSIGHT:
 `synchronized` guarantees correctness at the cost of contention overhead. `AtomicInteger` achieves the same correctness with better performance for simple operations. For complex multi-step operations, `synchronized` is still required.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > `synchronized` is like a single-toilet office bathroom with a key:
@@ -136,6 +148,8 @@ THE INSIGHT:
 
 Where this analogy breaks down: The bathroom key analogy doesn't convey reentranacy. A synchronized block allows the same thread to re-enter — as if the person already inside can open another door within the same bathroom (reentrant).
 
+---
+
 ### 📶 Gradual Depth — Four Levels
 
 **Level 1:** `synchronized` means "only one thread can run this code at a time."
@@ -145,6 +159,8 @@ Where this analogy breaks down: The bathroom key analogy doesn't convey reentran
 **Level 3 — How it works:** Each Java object has a monitor. In HotSpot JVM, monitors start as "biased" (single-thread optimised), become "thin locks" on first contention, then "fat locks" (inflated to OS mutex) on sustained contention. Monitor entry uses `monitorenter` bytecode; exit uses `monitorexit`. The JVM inserts a hardware memory barrier (e.g., `mfence` on x86) at lock release and acquisition.
 
 **Level 4 — Why still use it?** `synchronized` has the advantage of automatic lock release on exceptions (the JVM always calls `monitorexit` even if an exception is thrown) and simplicity. `ReentrantLock` provides more control (timed try, interruptible, condition variables) at the cost of manual `try/finally` lock release. For simple atomic operations, prefer `Atomic*` classes. For complex state transitions, `synchronized` remains the clearest option.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -211,6 +227,8 @@ public List<Order> getOrders() {
 }
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -237,6 +255,8 @@ FAILURE PATH (deadlock):
 
 WHAT CHANGES AT SCALE:
 At high concurrency, `synchronized` on a single object becomes a bottleneck — all threads serialize through the critical section. Solutions: reduce lock scope (fine-grained locking), use `ReadWriteLock` for read-heavy workloads, use lock striping (ConcurrentHashMap approach), or use lock-free algorithms (`AtomicReference`, CAS).
+
+---
 
 ### 💻 Code Example
 
@@ -283,6 +303,8 @@ public class Cache<K, V> {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach | Mutual Exclusion | Memory Visibility | Timeout | Interruptible | Best For |
@@ -295,6 +317,8 @@ public class Cache<K, V> {
 
 How to choose: Use `synchronized` for simple critical sections. Use `ReentrantLock` when you need timeout, interruption, or multiple conditions. Use `volatile` for simple flags with no compound operations. Use `Atomic*` for single-variable atomic operations.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -304,6 +328,8 @@ How to choose: Use `synchronized` for simple critical sections. Use `ReentrantLo
 | `volatile` is a lighter version of `synchronized` | `volatile` provides visibility only — no mutual exclusion. `count++` on a volatile field is STILL a race condition (read-modify-write is not atomic). `synchronized` (or `AtomicInteger`) is required |
 | nested synchronized blocks on different objects are reentrancy | Reentrancy is same-thread acquiring the SAME lock recursively. Acquiring a different object's lock in sequence is not reentrancy — it's nested locking (potential deadlock risk) |
 | synchronized guarantees ordering between unrelated threads | `synchronized` guarantees happens-before ONLY between threads sharing the SAME lock. Two threads using different locks have no ordering guarantee relative to each other |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -342,6 +368,8 @@ Root Cause: Developer assumed mutual exclusion was sufficient but the variable i
 
 Fix: All reads AND writes of shared mutable state must be synchronized on the same lock (or use volatile for single variables with no compound operations).
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -357,6 +385,8 @@ Fix: All reads AND writes of shared mutable state must be synchronized on the sa
 **Alternatives / Comparisons:**
 - `volatile` — lightweight visibility-only; no mutual exclusion
 - `ReentrantLock` — full-featured alternative to synchronized with timeout and condition variables
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -390,6 +420,7 @@ Fix: All reads AND writes of shared mutable state must be synchronized on the sa
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Two developers debate: Developer A says a `HashMap` should be wrapped in `synchronized` on `this` for thread safety. Developer B says `ConcurrentHashMap` is always better. Construct a specific scenario where Developer A's approach is CORRECT and `ConcurrentHashMap` would give wrong results — specifically involving a compound operation (check-then-act on the map) — and then construct a different scenario where `ConcurrentHashMap`'s internal lock striping makes it dramatically outperform `synchronized HashMap` at a specific thread count threshold.

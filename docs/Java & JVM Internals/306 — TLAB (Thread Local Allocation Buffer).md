@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "TLAB (Thread Local Allocation Buffer)"
 parent: "Java & JVM Internals"
@@ -40,6 +40,8 @@ tags:
 | **Used by:** | Minor GC, Escape Analysis, GC Tuning | |
 | **Related:** | Eden Space, Minor GC, Escape Analysis, Heap Memory | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -51,9 +53,13 @@ A high-throughput trading system allocates 50 million objects per second across 
 THE INVENTION MOMENT:
 This is exactly why **TLAB** was created — to eliminate heap allocation contention by giving each thread a pre-reserved private chunk of Eden. Within a thread's TLAB, object allocation is a single pointer increment — zero synchronization, zero contention.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Thread Local Allocation Buffer (TLAB)** is a thread-private region of the JVM's Eden heap space that each thread uses for its own object allocations. When a thread creates a new object, the JVM first attempts to satisfy the allocation within the thread's current TLAB by advancing its internal pointer — an operation requiring no synchronization. Only when the TLAB is exhausted (or the object is too large for the remaining TLAB space) does the thread interact with the shared Eden space to acquire a new TLAB or perform a slow-path allocation. TLAB size is dynamically tuned by the JVM based on observed allocation rates.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -65,6 +71,8 @@ Each thread gets its own private memory pad so it can allocate objects without a
 
 **One insight:**
 TLAB makes `new Object()` a two-instruction operation: load a pointer and increment it. There is no lock, no atomic, no fence. This is why Java can allocate millions of objects per second per thread at minimal CPU cost — allocation speed rivals C's `malloc` despite Java's managed runtime. The cost of this design is that each thread "wastes" some TLAB space that it may not fully use before GC reclaims it.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -102,6 +110,8 @@ THE TRADE-OFFS:
 Gain: Lock-free per-thread allocation; near-zero allocation cost; better cache locality; eliminates allocation bottleneck.
 Cost: TLAB waste (unused space at end of TLAB when retired); larger effective Eden needed to accommodate all TLABs; objects from different threads are not co-located in memory (reducing cross-thread object co-locality).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -116,6 +126,8 @@ Thread requests new TLAB (1 CAS) for 512KB (~170,000 small objects). Per-object 
 THE INSIGHT:
 TLAB converts O(allocations) synchronization operations to O(TLABs) operations — reducing synchronization by 1,000-100,000x for typical workloads. This makes Java's managed allocation competitive with C's bump allocator.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Each thread has a checkbook (TLAB). The thread writes checks freely without going to the bank for each transaction. When the checkbook runs out, the thread visits the bank (Eden) once to get a new checkbook. The bank visit requires locking (CAS), but it happens only once per 1,000 checks rather than once per check.
@@ -127,6 +139,8 @@ TLAB converts O(allocations) synchronization operations to O(TLABs) operations �
 "Bank runs out of checks" → Eden full → Minor GC triggered.
 
 Where this analogy breaks down: Unused checks at the end of a checkbook are wasted. TLABs have the same waste problem — the unused space at the end of a TLAB when it is retired is filled with a dummy object and counted as "TLAB waste" in GC statistics.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -141,6 +155,8 @@ Each thread maintains three pointers: `tlab.start`, `tlab.top` (current allocati
 
 **Level 4 — Why it was designed this way (senior/staff):**
 TLAB waste is the fundamental trade-off. When a new TLAB is acquired, the old TLAB's remaining space may be non-trivially large. If the remaining space cannot fit the new allocation but could fit future smaller allocations, the JVM has a choice: waste the space (retire the TLAB) or walk through the remaining space looking for a fit. Walking is O(n) and breaks the O(1) allocation guarantee. The JVM uses a "TLAB allocation fraction" heuristic: if the remaining space is less than `TLABWasteTargetPercent` (default 1%) of TLAB size, retire and get a new TLAB. If remaining space is large, request the new larger allocation directly from Eden (slow path, one CAS) without retiring the TLAB. G1GC and ZGC have per-region allocation variants of TLAB for their concurrent compaction models.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -186,6 +202,8 @@ Result: High-allocation threads get large TLABs;
 **TLAB in G1GC:**
 G1GC uses per-region allocation. TLABs are allocated within G1's regions (regions are typically 1–32MB). When a TLAB extends across a G1 region boundary, G1 ensures the TLAB stays within a single region (allocates smaller TLAB at region end). This maintains G1's invariant that regions are independently collectible.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -219,6 +237,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 With 1,000 threads (common in virtual thread workloads — Java 21+), 1,000 simultaneous TLABs could consume 1,000 × default_TLAB_size = 1,000 × 512KB = 512MB of Eden — before any actual object allocation. The JVM's adaptive TLAB resizing reduces this by giving smaller TLABs to threads with low allocation rates. Monitor via `-XX:+PrintTLAB` to ensure virtual thread workloads don't exhaust Eden with TLAB overhead.
+
+---
 
 ### 💻 Code Example
 
@@ -267,6 +287,8 @@ java -XX:StartFlightRecording=
 # TLAB refill frequency, waste percentage
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Allocation Strategy | Synchronization | Speed | Waste | GC Collection |
@@ -279,6 +301,8 @@ java -XX:StartFlightRecording=
 
 How to choose: TLAB covers 95%+ of all Java object allocations automatically. Only care about the alternatives when profiling shows allocation as a bottleneck or when using off-heap patterns for GC-free designs.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -289,6 +313,8 @@ How to choose: TLAB covers 95%+ of all Java object allocations automatically. On
 | Increasing TLAB size always improves performance | Larger TLABs reduce refill frequency but increase waste (unused space at retirement). Too large: Eden fills with waste without actually storing live objects → more frequent GC |
 | TLAB is unique to HotSpot JVM | TLAB-like mechanisms exist in most high-performance managed runtimes: CLR (.NET), V8 (JavaScript), and Go's runtime all use thread-local allocation caching concepts |
 | Setting TLABSize=0 disables TLAB | `-XX:-UseTLAB` disables TLAB entirely. Setting `TLABSize=0` makes the JVM compute an adaptive initial size (not disable it) |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -377,6 +403,8 @@ java -Djdk.virtualThreadScheduler.parallelism=16 \
 Prevention:
 Load test virtual thread applications specifically for TLAB pressure with representative concurrent load.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -392,6 +420,8 @@ Load test virtual thread applications specifically for TLAB pressure with repres
 **Alternatives / Comparisons:**
 - `Escape Analysis` — stack allocation via escape analysis bypasses TLAB entirely; the ideal outcome when it applies
 - `Off-heap allocation (Unsafe)` — bypasses both GC and TLAB; used for GC-free, allocation-critical code in specialized libraries
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -424,6 +454,7 @@ Load test virtual thread applications specifically for TLAB pressure with repres
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A Java service migrates from 100 platform threads to 100,000 virtual threads (Java 21+) to handle concurrent HTTP connections. Assuming 16 carrier threads, trace the impact on TLAB behavior: how many TLABs are active simultaneously, what happens to a TLAB when a virtual thread parks (e.g., during an I/O await), and what is the net impact on Eden consumption compared to the 100-thread model at equivalent throughput?

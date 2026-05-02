@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Real-time Data Pipelines, Microservices, Service Mesh | |
 | **Related:** | WebSocket, GraphQL Subscriptions, Server-Sent Events | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

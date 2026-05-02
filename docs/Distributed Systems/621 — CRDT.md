@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "CRDT"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Eventual Consistency, Vector Clock, Conflict Resolution Strategies                                |                 |
 | **Used by:**    | Redis, Riak, Collaborative Editing (Figma, Google Docs internals), Offline-First Apps             |                 |
 | **Related:**    | Conflict Resolution Strategies, Gossip Protocol, Anti-Entropy, Eventual Consistency, Vector Clock |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

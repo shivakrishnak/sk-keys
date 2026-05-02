@@ -29,6 +29,8 @@ tags:
 | **Used by:** | JIT Compiler, Stack Allocation, Lock Elision | |
 | **Related:** | JIT Compiler, Stack Memory, Object Header, TLAB | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -40,9 +42,13 @@ When a profiler reveals that 90% of GC work is collecting objects that were imme
 THE INVENTION MOMENT:
 Escape Analysis is the compile-time proof that determines whether an object's reference "escapes" the creating method or thread. If it provably does not, the JIT can eliminate the heap allocation entirely. This is exactly why Escape Analysis exists: to eliminate heap allocation overhead for objects that don't need to outlive their creating method.
 
+---
+
 ### 📘 Textbook Definition
 
 Escape Analysis (EA) is a compile-time/JIT-time analysis technique that determines the dynamic scope of object references — specifically, whether an object allocated in a method can be accessed by other methods or threads (escapes). If an object does not escape its creating method, the JIT can apply three optimisations: (1) Stack Allocation — allocate the object on the stack frame instead of the heap, so it is freed instantly when the method returns; (2) Scalar Replacement — decompose the object into its primitive field values and keep them in registers, eliminating object allocation entirely; (3) Lock Elision — remove `synchronized` operations on non-escaping objects, since no other thread can ever contest the lock.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ Escape Analysis proves an object never leaves a method, so the JVM skips the hea
 
 **One insight:**
 The most powerful form of Escape Analysis is Scalar Replacement — the object is not allocated anywhere at all. Its fields become local variables (CPU registers). A `new Point(x, y)` used only within a method might generate no allocation at all if the JIT proves it doesn't escape — `x` and `y` live in registers. From the program's perspective, the object existed; from the hardware's perspective, it never did.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -68,6 +76,8 @@ Invariant 1 enables stack allocation or scalar replacement for non-escaping obje
 THE TRADE-OFFS:
 Gain: Reduced GC pressure, reduced heap allocation rate, elimination of lock contention for local monitors, potentially improved CPU cache locality.
 Cost: EA requires complex whole-method analysis; JIT time increases slightly; EA may fail conservatively if a method is too complex or inlining budget is exceeded; EA is opaque — no standard tool shows per-allocation EA decisions.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -85,6 +95,8 @@ JIT analyses: does `p`'s reference escape `processPoint()`? No — it's only use
 THE INSIGHT:
 The best GC is no GC. Escape Analysis enables the JIT to prove that certain allocations are unnecessary, eliminating them at the source. The impact on allocation-heavy hot paths is dramatic.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Escape Analysis is like a hotel's key card policy. If a guest only uses their key card in their own room (local use), the security desk doesn't need to log it in the master system — it's just a temporary room key. But if the guest might use it to access shared areas (other methods/threads), it must be formally registered. EA determines which key cards need formal registration (heap allocation) vs. can remain informal (stack/register).
@@ -95,6 +107,8 @@ The best GC is no GC. Escape Analysis enables the JIT to prove that certain allo
 "Security desk" → JIT compiler performing Escape Analysis
 
 Where this analogy breaks down: unlike key cards, the JVM never asks the programmer to explicitly mark objects as "local." The analysis is entirely automatic and transparent.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -109,6 +123,8 @@ The JIT (specifically C2 in HotSpot) performs EA during the optimisation phase, 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Escape Analysis was introduced to HotSpot JVM in Java 6 update 14 (2009). The analysis is intentionally conservative — it gives up under certain conditions (too complex graph, virtual calls that couldn't be devirtualised, `finalizer` present, native methods) rather than risking incorrect optimisations. The conservative design means EA isn't a guaranteed optimisation: you can't rely on it in performance-critical code without verification. Graal JIT (GraalVM's JIT compiler) has a more aggressive EA implementation that succeeds in more cases than C2. As of Java 21, scalable EA improvements are being made through Project Leyden (build-time profile-driven compilation) to make EA decisions more predictable.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -169,6 +185,8 @@ void process(int x, int y) {
 // No heap allocation. No GC pressure.
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -198,6 +216,8 @@ EA unable to optimise (common causes):
 
 WHAT CHANGES AT SCALE:
 At high scale, EA's elimination of short-lived object allocation dramatically reduces Minor GC frequency, extending the GC-free run intervals from seconds to minutes in some allocation-heavy workloads. The effect is most visible in tight loops processing large datasets: each loop iteration may create several temporary objects that are all scalar-replaced, turning what would be millions of heap allocations into CPU register operations.
+
+---
 
 ### 💻 Code Example
 
@@ -266,6 +286,8 @@ open /tmp/alloc.html  # allocation flame graph
 # Tiny/absent blocks = EA successfully eliding allocations
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Optimisation | What EA Enables | Condition | Impact |
@@ -277,6 +299,8 @@ open /tmp/alloc.html  # allocation flame graph
 
 How to choose: You don't choose — EA applies automatically based on analysis result. Write code favouring local scope (short methods, no unnecessary field stores from hot methods) to give EA the best possible chance.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -286,6 +310,8 @@ How to choose: You don't choose — EA applies automatically based on analysis r
 | "Scalar replacement physically removes the object" | From the programmer's perspective the object semantics are preserved. Scalar replacement is a transparent internal JIT transformation. |
 | "EA is the same as interning or object pooling" | Completely different: interning/pooling reuses heap objects; EA eliminates heap allocation entirely by proving it's unnecessary. |
 | "You can force EA by using 'new' inside small methods" | Object creation location only hints at potential — EA depends on the full reference flow graph, not just allocation location. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -368,6 +394,8 @@ class Resource implements AutoCloseable {
 
 Prevention: Never use `finalize()` in new code; migrate legacy code to `AutoCloseable` / `Cleaner` API.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -384,6 +412,8 @@ Prevention: Never use `finalize()` in new code; migrate legacy code to `AutoClos
 **Alternatives / Comparisons:**
 - `Object Pooling` — manually reuses heap objects; contrasts with EA which eliminates allocation entirely; pooling is a fallback when EA cannot apply
 - `Value Types (Project Valhalla)` — a different approach: make certain objects flat in-line in arrays/fields without reference semantics, eliminating headers fundamentally
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -419,6 +449,7 @@ Prevention: Never use `finalize()` in new code; migrate legacy code to `AutoClos
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A Java lambda `() -> x + y` creates an anonymous inner class instance that captures `x` and `y`. If this lambda is created inside a tight loop and only used locally (never stored, never passed outside the method), can Escape Analysis scalar-replace the lambda closure object? What specific property of `invokedynamic`-based lambda implementation (Java 8+) determines whether EA can analyse the lambda as a local non-escaping object?

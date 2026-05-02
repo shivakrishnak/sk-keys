@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Minor GC, Survivor Space, Object Header | |
 | **Related:** | Young Generation, Survivor Space, TLAB, Minor GC | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ High-throughput Java servers allocate millions of objects per second across doze
 THE INVENTION MOMENT:
 Eden Space enables pointer-bump allocation: all free space is at the end of the region, and allocating an object simply advances a pointer. Combined with Thread-Local Allocation Buffers (TLABs), this makes allocation lock-free and nearly as fast as stack allocation. This is why Eden Space exists as a dedicated, contiguous allocation region.
 
+---
+
 ### 📘 Textbook Definition
 
 Eden Space is the primary allocation region within the Young Generation where all new Java objects are created (unless they are "humongous" objects exceeding half the Eden size, which bypass to Old Generation or humongous regions). Allocation in Eden uses pointer-bump allocation within a Thread-Local Allocation Buffer (TLAB): each thread has a private slice of Eden, and allocation consists of advancing a pointer within that slice — no locks required. When Eden fills, a Minor GC is triggered. After Minor GC, Eden is emptied (reset to empty) and surviving objects are copied to one of the Survivor spaces.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Eden is where all Java objects start their lives — a fast, compact, nearly alw
 
 **One insight:**
 Eden's key property is that it is collected by ABANDONMENT, not by scanning dead objects. When Minor GC runs, only live objects are copied out. Eden (and the old Survivor) are then reset by simply moving a pointer — the "dead" objects in Eden are never visited by the GC. This is why Minor GC time is proportional to the number of surviving objects, not the total allocated volume.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -68,6 +76,8 @@ THE TRADE-OFFS:
 Gain: Near-zero allocation cost per object; GC cost proportional to survivors (not garbage); no fragmentation in Eden.
 Cost: Eden must be contiguous memory; the collecting node must stop-the-world to safely enumerate GC roots; TLABs waste some Eden space when threads get refilled (partial TLABs at GC time).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -82,6 +92,8 @@ Each of the 100 threads has its own TLAB in Eden (e.g., 256KB each). Within the 
 THE INSIGHT:
 TLABs eliminate allocation lock contention by giving each thread a private allocation area within Eden. Most allocations need zero synchronisation, making allocation effectively free in the steady state.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Eden is like the daily intake area of a sorting facility. Trucks (threads) unload packages (objects) at their own unloading bay (TLAB). At end of day (Minor GC), packages not claimed by anyone (unreachable objects) are discarded in bulk, and the bays are instantly reset to empty. A tiny fraction of packages are forwarded to long-term storage (Survivor → Old Gen). The intake area starts fresh every day.
@@ -93,6 +105,8 @@ TLABs eliminate allocation lock contention by giving each thread a private alloc
 "Bay reset" → Eden freed by pointer reset (no per-object cleanup)
 
 Where this analogy breaks down: unlike a physical bay, Eden's "reset" doesn't sweep or clean — it just moves the allocation pointer back to the start. The old data remains in memory until overwritten by new allocations.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -107,6 +121,8 @@ TLAB allocation: each thread has a start, end, and top pointer in its private Ed
 
 **Level 4 — Why it was designed this way (senior/staff):**
 TLAB was introduced to solve the "allocation lock" problem: a single atomic CAS on the Eden allocation pointer serialises all threads. TLABs replace a per-allocation CAS with a per-TLAB CAS (one CAS per ~1000 allocations per thread). This is the "lock amortisation" technique: make the expensive operation rare by doing bulk work. The G1GC implementation further evolved this: Eden is no longer one contiguous region but a set of same-sized regions (e.g., 2MB each). When a thread needs a new TLAB region, an unused region is claimed atomically. This enables better NUMA memory placement (TLABs assigned to regions near the CPU's local NUMA node).
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -164,6 +180,8 @@ After Minor GC:
   Old Gen: [promoted objects from this GC]
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -195,6 +213,8 @@ Object too large for TLAB / Eden
 
 WHAT CHANGES AT SCALE:
 At 1,000 concurrent threads with aggressive allocation, the frequency of TLAB refills increases proportionally. Each refill requires an atomic operation on the Eden allocation pointer. At extreme thread counts (hundreds), refill contention can become measurable. G1GC addresses this with region-level TLAB allocation — each thread gets an entire region (1–32 MB), drastically reducing refill frequency.
+
+---
 
 ### 💻 Code Example
 
@@ -255,6 +275,8 @@ java -XX:+UseG1GC \
      -jar myapp.jar
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Allocation Region | Allocation Speed | Thread Safety | Fragmentation | Contiguous? |
@@ -266,6 +288,8 @@ java -XX:+UseG1GC \
 
 How to choose: No choice needed — all `new` allocations go to Eden via TLAB automatically. The choice is whether to reduce allocations (object pooling) or tune TLAB/Eden size for your workload's allocation rate.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -274,6 +298,8 @@ How to choose: No choice needed — all `new` allocations go to Eden via TLAB au
 | "Dead objects in Eden are actively freed" | Dead objects are never touched — Eden is reset by moving the allocation pointer. The dead objects' memory is simply overwritten by future allocations. |
 | "Eden is half the heap" | Eden is typically ~80% of the Young Generation, which itself is 25–33% of the heap. So Eden is about 20–26% of total heap. Exact %s vary by GC and configuration. |
 | "Large objects go through Eden" | Objects larger than half the Eden size or TLAB size bypass Eden and go directly to Old Generation (or G1 humongous regions). |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -331,6 +357,8 @@ java -Xlog:gc+tlab=debug -jar myapp.jar 2>&1 | \
 
 Prevention: Use thread pools with bounded, long-lived threads; virtual threads (Java 21) use smaller TLABs, reducing waste per virtual thread.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -346,6 +374,8 @@ Prevention: Use thread pools with bounded, long-lived threads; virtual threads (
 **Alternatives / Comparisons:**
 - `Survivor Space` — Eden's sibling in Young Generation; objects "graduate" from Eden to Survivor
 - `Old Generation` — bypass destination for large objects that cannot fit in Eden
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -377,6 +407,7 @@ Prevention: Use thread pools with bounded, long-lived threads; virtual threads (
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** TLAB allocation is "lock-free" within the TLAB, but TLAB refill requires updating the Eden allocation pointer atomically (CAS). At 500 threads each refilling their TLAB every 1 second, there are 500 CAS operations per second on a single hot cache line (the Eden top pointer). On a 100-core NUMA system, all 100 CPUs may contend for this cache line. Explain the hardware cache coherency protocol (MESI) events that occur during this contention, and describe how G1GC's region-based TLAB assignment reduces this specific bottleneck.

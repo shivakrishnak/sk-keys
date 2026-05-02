@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Method References"
 parent: "Java Language"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Stream API, Functional Interfaces | |
 | **Related:** | Lambda Expressions, Functional Interfaces, Stream API | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -46,9 +48,13 @@ A data processing pipeline chains 15 operations, each a thin lambda wrapping one
 THE INVENTION MOMENT:
 This is exactly why **Method References** were created — to directly name the method without the redundant parameter-passing scaffolding, letting the compiler infer the functional interface binding.
 
+---
+
 ### 📘 Textbook Definition
 
 **Method References** are a compact syntax added in Java 8 for creating instances of functional interfaces by referring to an existing method by name, using the `::` operator. There are four forms: (1) static method reference (`ClassName::staticMethod`); (2) instance method of a particular instance (`instance::method`); (3) instance method of an arbitrary instance of a type (`ClassName::instanceMethod`); (4) constructor reference (`ClassName::new`). The compiler verifies that the referenced method's parameter signature and return type match the target functional interface's abstract method.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -60,6 +66,8 @@ This is exactly why **Method References** were created — to directly name the 
 
 **One insight:**
 The real power of method references is readability: `map(String::toUpperCase)` reads as "map to uppercase." The method name IS the documentation. `map(s -> s.toUpperCase())` reads as "for each s, call toUpperCase on s" — twice the words, same meaning.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -97,6 +105,8 @@ THE TRADE-OFFS:
 Gain: Cleaner syntax when a lambda does only one method call; method names serve as self-documenting intent.
 Cost: Four different forms require knowing which applies; method references can be ambiguous when method names are overloaded; nested method references are unreadable.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -121,6 +131,8 @@ users.stream()
 THE INSIGHT:
 Method references replace lambdas that are pure method calls. The `email.contains("@")` check must remain a lambda because it adds a non-method-call argument. Method references are not always applicable — only when the lambda is a direct passthrough to a method.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A method reference is like a shortcut key on a keyboard. Instead of typing out the full command (lambda), you press Ctrl+C (method reference). The shortcut is only valid when the action exactly matches a predefined operation. Custom multi-step actions need full lambda expressions.
@@ -130,6 +142,8 @@ Method references replace lambdas that are pure method calls. The `email.contain
 "Shortcut works only exactly" → method reference works only when lambda calls exactly one method.
 
 Where this analogy breaks down: Keyboard shortcuts do a fixed action; method references are generic — `String::length` applies to any `String`, not one specific instance (for the unbound form).
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -144,6 +158,8 @@ Method references compile to `invokedynamic` call sites, just like lambdas. The 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Method references were explicitly designed as a readability optimization over lambdas, not a performance optimization. The `::` syntax was chosen because `.` is already used for field access and method calls, avoiding ambiguity. The four forms were designed to cover all dispatch patterns: static, virtual on a known receiver, virtual on an unknown receiver, and construction. The design rejected a "partial application" syntax (like Scala's `String.toUpperCase _`) to keep the feature simple and consistent with Java's nominative type system.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -203,6 +219,8 @@ ArrayList<String> sized = sizedListFactory.apply(16);
 // new ArrayList<>(16)
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -226,6 +244,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 Method references and lambdas have identical performance characteristics — both use `invokedynamic` + `LambdaMetafactory`. At scale, the advantage of method references is code review and readability. In codebases with hundreds of stream pipelines, method references reduce visual noise, making reviews faster and bugs more visible.
+
+---
 
 ### 💻 Code Example
 
@@ -270,6 +290,8 @@ Example 3 — When lambda is better (complex logic):
 // = u -> u.getAge() > 18 && u.isVerified()
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Syntax | When the lambda is... | Example |
@@ -282,6 +304,8 @@ Example 3 — When lambda is better (complex logic):
 
 How to choose: Use method references for lambdas that directly call exactly one method. Use lambdas for multi-step or conditional logic. Extract complex lambdas to named private methods and then reference those.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -291,6 +315,8 @@ How to choose: Use method references for lambdas that directly call exactly one 
 | You can pass method references with multiple arguments | Unbound instance method references have the receiver as the implicit first argument. `String::compareTo` used as `Comparator<String>` — the two arguments are the two Strings to compare |
 | `ClassName::new` always maps to `Supplier<ClassName>` | Constructor references match whichever constructor matches the target functional interface. `ArrayList::new` maps to `Supplier<ArrayList>` (no-arg) or `Function<Integer, ArrayList>` (int-arg) based on context |
 | Method references bypass lambda best practices | Method references are lambdas — same rules apply for capturing, thread safety, and side effects |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -334,6 +360,8 @@ List<String> names = users.stream()
     .collect(toList());
 ```
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -345,6 +373,8 @@ List<String> names = users.stream()
 
 **Alternatives / Comparisons:**
 - `Lambda Expressions` — the general case; method references are specified lambdas for single-method calls
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -377,6 +407,7 @@ List<String> names = users.stream()
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** `Comparator.comparing(User::getName)` is a common idiom. Trace the exact type inference chain: what is the type of `User::getName` in this context, what is the return type of `Comparator.comparing(...)`, how does the compiler resolve `User::getName` to a `Function<User, String>` without an explicit cast, and what happens if `User.getName()` is overloaded with `getName(Locale)` — specifically what compiler error appears and what the developer must do to resolve it.

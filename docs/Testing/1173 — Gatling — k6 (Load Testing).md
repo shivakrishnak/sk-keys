@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Gatling / k6 (Load Testing)"
 parent: "Testing"
@@ -28,14 +28,20 @@ tags:
 | **Used by:**    | Performance Engineers, DevOps, SREs                                  |                 |
 | **Related:**    | Performance Test, Load Test, Stress Test, Observability, Grafana, k6 |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 "IT WORKS FOR 10 USERS — WHAT ABOUT 10,000?":
 Unit and integration tests verify correctness for a single user. Load testing verifies behavior under concurrent load — does the API still respond in < 200ms when 5,000 users hit it simultaneously? Does it degrade gracefully under 10,000? When does it fall over (stress test)? Without load testing, performance problems are discovered in production, often during your highest-traffic event (Black Friday, product launch, marketing campaign).
 
+---
+
 ### 📘 Textbook Definition
 
 **Gatling** is a Scala-based, high-performance load testing tool where test scenarios are defined as code (Gatling DSL or Java API). It generates detailed HTML reports and can simulate thousands of concurrent virtual users from a single machine using a non-blocking Netty/Akka architecture. **k6** (Grafana k6) is a modern, Go-based load testing tool with test scripts written in JavaScript. It's designed for developer workflows: tests in version control, CLI-driven, integrates with Grafana for live metrics, and supports cloud execution (Grafana Cloud k6) for distributing load across multiple regions. Both tools execute **scenarios** (sequences of HTTP requests) from multiple **virtual users** simultaneously and report: **response time** (p50, p90, p95, p99), **throughput** (requests/second), and **error rate**.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -45,6 +51,8 @@ Load testing = simulate N concurrent users hitting your app; measure response ti
 **One analogy:**
 
 > Load testing is a **fire drill for your infrastructure**: instead of discovering your building's evacuation capacity when there's a real fire, you schedule a drill — 500 people, all at once, through the exit doors. You measure: how long does evacuation take? When does it become chaotic? Where are the bottlenecks (narrow staircase = database connection pool)? You fix them before the real emergency.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -199,6 +207,8 @@ RED FLAGS:
   p95 OK but p99 spikes → occasional slow queries (missing index? lock contention?)
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 THE CONNECTION POOL SOAK TEST DISCOVERY:
@@ -225,9 +235,13 @@ Fix: try-with-resources / proper connection management.
 Lesson: soak tests find what load tests miss — gradual resource exhaustion.
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A load test is a **stress test for infrastructure**: just as materials engineers test steel by applying increasing load until it yields (to know its tensile strength and behavior near failure), performance engineers apply increasing virtual users to discover: the system's capacity, the failure mode (crash vs. graceful degradation), and the recovery behavior.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -238,6 +252,8 @@ Lesson: soak tests find what load tests miss — gradual resource exhaustion.
 **Level 3:** Performance SLOs as test thresholds: p95 < 500ms, error rate < 0.1%, throughput > 1000 req/s. These become CI gates: if performance degrades beyond threshold → fail the pipeline. Live metrics with Grafana: k6 can stream metrics to InfluxDB or Prometheus → Grafana dashboard shows real-time percentiles, throughput, and error rates during the test.
 
 **Level 4:** Distributed load generation: single machine can generate ~10k-20k RPS. For higher loads, use k6 Cloud (Grafana Cloud) or distributed k6 with multiple instances. Test environment isolation: load tests must not run against production (except controlled canary load tests). Dedicated staging environment with same sizing as production — load test results only translate to production if the environment is identical. Load test data: test must use realistic data volume (10M records in DB, not 100) for valid query performance.
+
+---
 
 ### 💻 Code Example
 
@@ -274,6 +290,8 @@ k6 run \
 ```
 {% endraw %}
 
+---
+
 ### ⚖️ Comparison Table
 
 |                | Gatling            | k6               | JMeter     |
@@ -285,6 +303,8 @@ k6 run \
 | Cloud support  | Gatling Enterprise | Grafana Cloud k6 | BlazeMeter |
 | Learning curve | Medium             | Low              | High       |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                     | Reality                                                                                        |
@@ -292,6 +312,8 @@ k6 run \
 | "Load tests should always run against production" | Use staging (same size as prod); load testing production risks real user impact                |
 | "Passing load test = ready for production"        | If staging ≠ production (different DB size, different caching), results don't transfer         |
 | "1,000 VUs = 1,000 concurrent requests"           | VUs include think time (sleep); actual concurrent requests = VUs × (request_time / cycle_time) |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -308,10 +330,14 @@ Fix: Gradual ramp-up (`rampUsers(1000).during(60)`) — allows connection pool t
 Cause: Load test generates so many requests that monitoring data (Prometheus/CloudWatch) is overwhelmed; dashboards become unreadable.
 Fix: Dedicate a separate monitoring stack for load test runs; or use a different Grafana data source.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Performance Test, Load Test, Stress Test
 - **Related:** k6, Gatling, JMeter, Grafana, InfluxDB, Prometheus, Response Time SLOs, Throughput
+
+---
 
 ### 📌 Quick Reference Card
 

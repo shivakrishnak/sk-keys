@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Minor GC, Major GC, Reference Types, Stop-The-World | |
 | **Related:** | Heap Memory, Reference Types, Young Generation, GC Pause | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -40,9 +42,13 @@ Java programs frequently create circular structures: doubly linked lists, bidire
 THE INVENTION MOMENT:
 Tracing GC from a set of known live starting points — GC Roots — eliminates the circular reference problem entirely. If an object cannot be reached by following any chain of references starting from a GC Root, it is dead — regardless of how many other objects point to it. This is exactly why GC Roots exist: they define the set of definitively-alive objects that everything else must be connected to.
 
+---
+
 ### 📘 Textbook Definition
 
 GC Roots are the initial set of object references that the JVM's garbage collector uses as starting points for the reachability analysis that determines which heap objects are live. An object is "live" (not collectible) if and only if there exists a path of references from at least one GC Root to the object. The primary categories of GC Roots in HotSpot JVM are: local variables and method parameters on active thread stacks, static fields of loaded classes (stored in Metaspace), active Java threads themselves (thread objects are roots), references held by JNI (Java Native Interface) code, and synchronisation monitor objects.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ GC Roots are the "live anchors" — any object attached to one survives; everyth
 
 **One insight:**
 The real-world impact of GC Roots is memory leaks. The most common Java memory leak is NOT a reference counting problem — it is an object that IS reachable from a GC Root but shouldn't be. A forgotten entry in a static `Map`, an event listener never removed, a ThreadLocal not cleaned up — all these keep objects "alive" via GC Root connectivity even when the programmer considers them "unused." Memory leaks in Java = unintended GC Root connectivity.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -69,6 +77,8 @@ THE TRADE-OFFS:
 Gain: Handles circular references correctly; no per-object reference count overhead on pointer updates; simple correctness argument.
 Cost: Requires global heap tracing (touching all live objects) — pause time proportional to live object set; requires "stop the world" at some phase (or sophisticated concurrent tracing with write barriers).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -83,6 +93,8 @@ Before null: GC Root → local variable → A → {B, C} → C. All reachable. S
 THE INSIGHT:
 Root-based tracing means circular references are never a memory leak problem in tracing GC systems. Liveness is defined absolutely by root connectivity, not by relative reference counts.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > GC Roots are like anchor points on a cave wall. Climbers (heap objects) are roped together (references). Any climber attached by an unbroken rope chain to an anchor point is safe (alive). Climbers with no rope path to any anchor, no matter how many other climbers they're tied to, are dangling in free fall (unreachable = collectable).
@@ -94,6 +106,8 @@ Root-based tracing means circular references are never a memory leak problem in 
 "Rescue team" → GC collector reclaiming dangling climbers
 
 Where this analogy breaks down: Unlike climbers, Java objects don't know they're unreachable — the GC determines this through the full traversal. Also, unlike climbers, "dangling" objects may have active reference counts > 0 (circular refs) but still be unreachable.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -108,6 +122,8 @@ During GC's Mark phase, the collector begins with the GC Root set: all object re
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The GC Root enumeration is the most disruptive phase of GC because it requires knowing all stack variables across all threads — which requires either stopping all threads (stop-the-world) or using precise pointer tracking (OopMaps) tied to JIT-compiled code safepoints. OopMaps record, for every instruction in JIT-compiled code, which registers and stack slots contain object references (as opposed to integers). At a safepoint, the GC consults OopMaps to enumerate roots precisely. This tight coupling between the JIT and GC is one reason embedding a GC in a JIT-compiled system is extraordinarily complex — it drives much of the JVM's implementation complexity.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -168,6 +184,8 @@ The GC Root enumeration is the most disruptive phase of GC because it requires k
 └─────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -197,6 +215,8 @@ StaticMap.cache grows indefinitely
 
 WHAT CHANGES AT SCALE:
 At terabyte heap scales, the live object set is enormous. Even though GC Roots are typically small (stack vars, statics), the live object graph can contain billions of objects. The mark phase must visit every live object — making it O(live set size). This is why terabyte-heap collectors (ZGC, Shenandoah) perform concurrent marking (mark while application runs), intersecting with write barriers to handle concurrent modification of the reference graph.
+
+---
 
 ### 💻 Code Example
 
@@ -274,6 +294,8 @@ jcmd <pid> GC.roots
 # from a GC Root to your object
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | GC Strategy | Handles Cycles | Overhead Per Write | Mark Cost | Best For |
@@ -285,6 +307,8 @@ jcmd <pid> GC.roots
 
 How to choose: Java uses tracing from GC Roots — elegant for correctness, requires periodic stop/scan. For deterministic latency without GC, use Rust's ownership system or manual memory management.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -293,6 +317,8 @@ How to choose: Java uses tracing from GC Roots — elegant for correctness, requ
 | "Objects with reference count zero are automatically garbage" | Java's GC is not reference counting. An object is garbage if and only if not reachable from GC Roots — not when its count drops to zero. |
 | "Setting an object to null immediately frees memory" | Setting to null removes one reference. The object is only collectable if this was the LAST reference chain to a GC Root. The GC still runs on its own schedule. |
 | "GC Roots are only local variables" | GC Roots include static fields, active threads, JNI references — not just local variables. Static fields are a major source of unintended object retention. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -343,6 +369,8 @@ jcmd <pid> VM.native_memory summary | grep JNI
 
 Prevention: Always pair `NewGlobalRef` with `DeleteGlobalRef` in native code; document ownership of all JNI global references.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -360,6 +388,8 @@ Prevention: Always pair `NewGlobalRef` with `DeleteGlobalRef` in native code; do
 **Alternatives / Comparisons:**
 - `Reference Counting` — alternative GC strategy (Python, Swift) that does not require GC Roots but fails with cycles
 - `Safepoints` — the JVM mechanism that ensures all threads are in a consistent state for GC Root enumeration
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -392,6 +422,7 @@ Prevention: Always pair `NewGlobalRef` with `DeleteGlobalRef` in native code; do
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** `WeakHashMap<K, V>` uses weak references as keys. When the key object has no other strong references, the key becomes weakly reachable and the entry is removed on the next GC. However, the VALUE in the entry is a strong reference. Describe the exact GC root chain that keeps the value alive BEFORE the key is collected, and trace what happens to the value AFTER the key is collected — specifically, why doesn't the value immediately become garbage when the key's strong references disappear?

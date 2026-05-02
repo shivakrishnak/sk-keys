@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "HTTP Methods (GET, POST, PUT, PATCH, DELETE)"
 parent: "HTTP & APIs"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | HTTP/1.1, REST, URLs                                                |                 |
 | **Used by:**    | RESTful Constraints, API Design Best Practices, Idempotency in HTTP |                 |
 | **Related:**    | HTTP Status Codes, REST, Idempotency in HTTP, HTTP Headers          |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

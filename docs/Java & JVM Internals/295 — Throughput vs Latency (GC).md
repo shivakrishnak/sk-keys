@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Throughput vs Latency (GC)"
 parent: "Java & JVM Internals"
@@ -72,6 +72,8 @@ Legend: p = sub-millisecond pause; pause = longer STW pause
 
 ## 3. Core Concept
 
+---
+
 ### Throughput definition
 
 **GC Throughput = (Application Time) / (Total Time)**
@@ -85,11 +87,15 @@ Examples:
 - ZGC on latency-critical: 83% app, 17% GC → throughput = 83%
 ```
 
+---
+
 ### Latency definition
 
 **GC Latency = Max (or P99/P999) individual pause duration**
 
 Not average! Tail latency is what matters for SLAs.
+
+---
 
 ### The tension
 
@@ -169,6 +175,8 @@ Trade-off quantified:
 
 ## 8. Under the Hood (Deep Dive)
 
+---
+
 ### GCTimeRatio (Parallel GC throughput knob)
 
 ```bash
@@ -183,6 +191,8 @@ Trade-off quantified:
 # If GC overhead < threshold: may shrink heap
 ```
 
+---
+
 ### MaxGCPauseMillis (G1GC latency knob)
 
 ```bash
@@ -196,6 +206,8 @@ Trade-off quantified:
 # Higher MaxGCPauseMillis → larger CSet → less frequent collections → higher throughput
 # Trade-off visible in GC overhead %
 ```
+
+---
 
 ### Real benchmark comparison
 

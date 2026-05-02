@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Fencing / Epoch"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Split Brain, Leader Election, Distributed Locking, Clock Skew |                 |
 | **Used by:**    | Distributed Locking, Raft, Split Brain prevention, STONITH    |                 |
 | **Related:**    | Split Brain, Distributed Locking, Clock Skew, Raft, Quorum    |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

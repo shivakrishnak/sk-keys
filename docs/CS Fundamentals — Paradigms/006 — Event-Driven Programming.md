@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Reactive Programming, Node.js, JavaScript | |
 | **Related:** | Reactive Programming, Observer Pattern, Message-Driven Architecture | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -57,6 +59,8 @@ of "I'll keep asking if something happened" — programs sleep
 cheaply, wake instantly, and handle thousands of concurrent
 events on a single thread.
 
+---
+
 ### 📘 Textbook Definition
 
 Event-driven programming is a paradigm in which the flow of
@@ -68,6 +72,8 @@ invokes the appropriate handler. Control is inverted: the
 framework calls your code, not the other way around. JavaScript
 in browsers, Node.js, GUI frameworks (Swing, Qt, WPF), and
 messaging systems (Kafka consumers) all use this model.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -88,6 +94,8 @@ code asking "is there work?" in a loop, the event loop asks
 "who wants to handle this?" when work arrives. One thread can
 handle thousands of concurrent connections because it's
 sleeping between events, not busy-waiting.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -125,6 +133,8 @@ execution trace to follow when debugging; shared mutable
 state between handlers is tricky; CPU-bound tasks
 block the event loop.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -152,6 +162,8 @@ For I/O-bound work, one event-driven thread can outperform
 100 blocking threads by keeping the CPU busy between I/O waits
 instead of blocking.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > An event-driven system is like a smoke detector network.
@@ -171,6 +183,8 @@ Where this analogy breaks down: unlike a smoke detector,
 software events can queue up — if handlers are slow, the queue
 grows and memory is consumed. A smoke detector doesn't have
 a backlog.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -207,6 +221,8 @@ made 10K threads infeasible. The event loop avoids context
 switching by never blocking — the kernel's `epoll` does the
 waiting, not threads. The trade-off: CPU-bound tasks can't
 be event-loop-friendly without worker threads.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -263,6 +279,8 @@ operation (e.g., `fs.readFileSync`). The loop is blocked for
 the duration — ALL other events queue up and are not processed
 until the blocking operation completes.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -294,6 +312,8 @@ thread count. At 100x, CPU-bound handlers become bottlenecks
 1000x, the event loop model distributes across multiple
 processes/machines; event routing must be handled by a message
 broker (Kafka, RabbitMQ).
+
+---
 
 ### 💻 Code Example
 
@@ -371,6 +391,8 @@ async function getFirstProduct(userId) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Model              | Concurrency     | CPU-bound?         | Memory           | Best For                     |
@@ -383,6 +405,8 @@ async function getFirstProduct(userId) {
 How to choose: Use event-driven for I/O-bound servers (APIs,
 websockets, file serving). Use thread pools for CPU-bound work
 (image processing, encryption). Combine both with worker threads.
+
+---
 
 ### 🔁 Flow / Lifecycle
 
@@ -406,6 +430,8 @@ websockets, file serving). Use thread pools for CPU-bound work
 └──────────────────────────────────────────────────┘
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                | Reality                                                                                                                          |
@@ -414,6 +440,8 @@ websockets, file serving). Use thread pools for CPU-bound work
 | async/await means the code runs in parallel  | async/await is syntactic sugar for event-driven callbacks — it doesn't add threads; code still runs on the event loop            |
 | Event-driven is always faster than threaded  | For CPU-bound work, threads are faster; event-driven wins only for I/O-bound work                                                |
 | Events are queued in order they were emitted | Different event types have different priorities in the event loop phases; `setImmediate` fires before `setTimeout(0)` in Node.js |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -563,6 +591,8 @@ emitter.on("request", async (req) => {
 Prevention: Always add `try/catch` inside async event handlers;
 set up a global unhandledRejection listener as a safety net.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -582,6 +612,8 @@ set up a global unhandledRejection listener as a safety net.
 - `Reactive Programming` — extends EDP with composable, backpressure-aware streams
 - `Actor Model` — independent actors with message passing; similar but with isolation
 - `Thread-per-request` — the alternative concurrency model using blocking threads
+
+---
 
 ### 📌 Quick Reference Card
 

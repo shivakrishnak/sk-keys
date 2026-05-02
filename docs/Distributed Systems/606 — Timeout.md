@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Timeout"
 parent: "Distributed Systems"
@@ -26,6 +26,8 @@ tags:
 | **Depends on:** | Distributed Locking, Heartbeat, Failure Modes                                  |                 |
 | **Used by:**    | Circuit Breaker, Retry with Backoff, Bulkhead, HTTP Clients, gRPC              |                 |
 | **Related:**    | Circuit Breaker, Retry with Backoff, Deadline Propagation, Heartbeat, Bulkhead |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

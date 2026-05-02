@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Sidecar Pattern"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Containers, Kubernetes, Service Mesh, Distributed Tracing           |                 |
 | **Used by:**    | Service Mesh, Istio, Envoy, Dapr, Log Forwarding, Secret Management |                 |
 | **Related:**    | Service Mesh, Ambassador Pattern, Adapter Pattern, Kubernetes, Dapr |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

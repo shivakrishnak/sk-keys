@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Timsort, External Sort, Parallel Sort | |
 | **Related:** | Quicksort, Timsort, Heapsort | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ For sorting objects (not just primitives), two requirements often conflict: stab
 THE INVENTION MOMENT:
 Divide the array in half. Sort each half independently. Merge the two sorted halves by comparing front-to-front and always choosing the smaller element — if equal, choose the left half's element (preserving order = stability). This merge step is O(N) — two sorted arrays can be merged without any backtracking. The recursion produces O(log N) levels, each doing O(N) work in total. This is exactly why **Mergesort** was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Mergesort** is a divide-and-conquer sorting algorithm that recursively divides arrays into halves until trivially sorted (size ≤ 1), then merges them back using a two-pointer merge operation. Time complexity: O(N log N) in all cases (best, average, worst). Space complexity: O(N) auxiliary. Mergesort is **stable** — equal elements retain their original relative order. It is optimal for fully general comparison-based sorting: no comparison sort can beat O(N log N) in worst case.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Split into halves, sort each half, then merge them — works perfectly every tim
 
 **One insight:**
 Mergesort's strength is its predictability — O(N log N) regardless of input, no adversarial cases, stable. Its weakness is the O(N) extra space for the merge buffer. This space cost is why production systems use Timsort (mergesort variant) for objects, which reuses existing sorted runs to reduce auxiliary memory usage.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -73,6 +81,8 @@ Mergesort writes to an auxiliary buffer then back — two passes per merge. Quic
 THE TRADE-OFFS:
 Gain: O(N log N) guaranteed (no adversarial cases); stable; parallelisable; ideal for linked lists and external sort.
 Cost: O(N) auxiliary space; worse cache performance than Quicksort for in-memory random data.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -95,6 +105,8 @@ Merge [2,4,5]+[1,3,6]=[1,2,3,4,5,6]. Done.
 THE INSIGHT:
 Each merge level does O(N) total work across all merge operations at that level (all sub-arrays together span the full array). With O(log N) levels, total work is O(N log N) — and this is the same regardless of the initial order of elements. Mergesort's tree is always perfectly balanced — unlike Quicksort where adversarial inputs can create a degenerate tree.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Mergesort is like a library reorganisation project. You sort all books by category, then by author within each category, then by title within each author — each step works with already-organised smaller groups and just merges them. The merge operation is clean: always take whichever book comes next alphabetically from either pile. You never have to re-examine a book you've already filed.
@@ -105,6 +117,8 @@ Each merge level does O(N) total work across all merge operations at that level 
 "Final merge = fully sorted" → merging two sorted halves produces sorted whole
 
 Where this analogy breaks down: A real library reorganisation would reorder books in-place (no extra shelf space). Mergesort requires an auxiliary array for the merge buffer — the equivalent of a temporary staging shelf, which real libraries often don't have.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -119,6 +133,8 @@ Bottom-up mergesort avoids recursion entirely: start with sub-arrays of size 1 (
 
 **Level 4 — Why it was designed this way (senior/staff):**
 John von Neumann invented mergesort in 1945 — predating computers. It was the foundational algorithm for early computing because it maps perfectly to sequential tape storage: two tapes can be merged into a sorted output tape without random access. This "external sort" application remains relevant today for big-data sorting (Hadoop's map phase produces sorted partitions that are then merge-sorted in the reduce phase). The information-theoretic lower bound proof (O(N log N) is optimal for comparison sort) was developed partly in response to trying to prove mergesort could be improved — leading to the fundamental negative result.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -160,6 +176,8 @@ void mergesortBottomUp(int[] arr) {
 }
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -186,6 +204,8 @@ Very large N with constrained memory
 
 WHAT CHANGES AT SCALE:
 Mergesort is the basis for **external sorting** — data too large for RAM. Write sorted chunks to disk (run generation phase), then K-way merge the sorted chunks. Apache Spark's sort shuffle uses distributed mergesort: each task sorts its partition, and the shuffle merge combines sorted partitions across machines. For N=1 TB of data on 100 machines, each machine processes 10 GB, sorts it (mergesort), and the sorted outputs are merged using a priority queue.
+
+---
 
 ### 💻 Code Example
 
@@ -284,6 +304,8 @@ int[] externalKWayMerge(
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Time (all cases) | Stable | Space | Cache | Best For |
@@ -296,6 +318,8 @@ int[] externalKWayMerge(
 
 How to choose: Use Mergesort for objects requiring stable sort, linked list sorting, or external sorting. Use Quicksort for primitives when stability is not required. Use Timsort (Java's default) for the best overall practical performance.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -305,6 +329,8 @@ How to choose: Use Mergesort for objects requiring stable sort, linked list sort
 | Stable sort is just a "nice to have" | Stability is required for multi-key sorts: sort by salary, then by name. Only a stable re-sort preserves name order within same-salary groups. Python's `sorted()` and Java's `Arrays.sort(objects)` are stable for exactly this reason |
 | Bottom-up mergesort is harder to understand | Bottom-up avoids recursion and can be simpler to reason about for non-recursive programmers. It also avoids recursion stack depth concerns |
 | Mergesort is O(N log N) on linked lists | On linked lists, merge is O(N log N) time AND O(1) space (nodes are re-linked, not copied). This makes mergesort the optimal sort for linked lists — unlike arrays where O(N) auxiliary space is needed |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -374,6 +400,8 @@ Fix: Change to `if (temp[i] <= temp[j])` — when equal, left wins (preserves or
 
 Prevention: Comment stability requirement explicitly. Document: `<=` for stable, `<` for unstable.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -390,6 +418,8 @@ Prevention: Comment stability requirement explicitly. Document: `<=` for stable,
 - `Quicksort` — faster in practice for primitives (cache efficiency); not stable; O(N²) worst case.
 - `Heapsort` — O(N log N) worst case, O(1) space; not stable; poor cache performance.
 - `Timsort` — adaptive mergesort; significantly faster on real-world partially-sorted data.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -419,6 +449,7 @@ Prevention: Comment stability requirement explicitly. Document: `<=` for stable,
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The merge step of mergesort writes to an auxiliary array and then copies back. This means each element is written twice per merge level (once to temp, once back to arr). Total writes = 2N per level × O(log N) levels = O(N log N) writes. Design an optimisation — used in some production implementations — that alternates the role of `arr` and `temp` between recursion levels, eliminating the copy-back step. What invariant must the recursion maintain, and how does the bottom-up version simplify this alternation?

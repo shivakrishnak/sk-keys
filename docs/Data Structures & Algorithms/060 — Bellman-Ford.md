@@ -28,6 +28,8 @@ tags:
 | **Used by:** | OSPF/BGP Routing, Arbitrage Detection, SSSP with Negative Weights | |
 | **Related:** | Dijkstra, Floyd-Warshall, SPFA (Shortest Path Faster Algorithm) | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Financial routing graphs, VLSI timing analysis graphs, and difference-constraint
 THE INVENTION MOMENT:
 Instead of greedily finalising nodes one by one, relax ALL edges in the graph, V-1 times. After k iterations, `dist[v]` holds the shortest path using at most k edges. After V-1 iterations, all shortest paths of length up to V-1 edges are found — which covers all simple paths (simple paths have at most V-1 edges). A final V-th pass checks if any distance can still be relaxed: if yes, a negative cycle exists (distances would decrease forever). This is exactly why **Bellman-Ford** was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Bellman-Ford** is a single-source shortest path algorithm that works on graphs with negative edge weights (but no negative cycles reachable from the source). It relaxes all E edges in V-1 passes; after pass k, `dist[v]` holds the shortest path of at most k edges. An additional V-th pass detects negative cycles: if any distance decreases, a negative cycle reachable from the source exists. Time complexity: `O(VE)`. Space: `O(V)`.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Try improving every route V-1 times, then check if anything can still be improve
 
 **One insight:**
 Dijkstra locks in distances greedily; Bellman-Ford keeps all distances "negotiable" until V-1 rounds of negotiation are complete. This patience is what allows negative edges to propagate their savings correctly. The V-th round negative-cycle detection reveals whether any "loop of savings" exists — a structural defect that makes the problem unsolvable.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -76,6 +84,8 @@ THE TRADE-OFFS:
 Gain: Handles negative edges; detects negative cycles; simpler to implement correctly than Dijkstra.
 Cost: O(VE) vs Dijkstra's O((V+E) log V) — much slower for large graphs. For a graph with V=1000, E=500000: Bellman-Ford needs 500,000,000 operations; Dijkstra needs ~6,500,000.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -94,6 +104,8 @@ After V-1=2 passes: dist[A] = -1. CORRECT.
 THE INSIGHT:
 Bellman-Ford "re-negotiates" A's distance in pass 1 when it processes B→A after setting dist[A]=4. Dijkstra cannot do this because it finalises A immediately. The key difference is not algorithmic cleverness — it is the willingness to reconsider.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Bellman-Ford is like a price negotiation network. Everyone starts with "infinite price" except the seller (source = 0). Each round, everyone asks their neighbours: "Could you sell to me cheaper via you than my current best offer?" After V-1 rounds, all stable minimum prices are found. If in round V someone gets a lower price — there's a loop deal where everyone in the cycle can keep lowering prices forever. That loop is the negative cycle.
@@ -105,6 +117,8 @@ Bellman-Ford "re-negotiates" A's distance in pass 1 when it processes B→A afte
 "Loop deal" → prices decrease forever = no stable shortest path
 
 Where this analogy breaks down: In real negotiation, loops don't create infinite savings. In weighted graphs, negative cycles allow paths of arbitrarily small total weight — the "shortest path" becomes undefined (−∞).
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -119,6 +133,8 @@ Bellman-Ford is a DP algorithm on the "shortest path with at most k edges" recur
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Bellman-Ford is the canonical algorithm for difference constraint systems: given constraints `x_j - x_i ≤ w_{ij}`, transform to a graph where each constraint is an edge (i→j, weight `w_{ij}`), add a supersource with 0-weight edges to all nodes. Bellman-Ford on this graph finds a feasible solution, or reports infeasibility if a negative cycle exists. This connection makes Bellman-Ford essential in STAs (Static Timing Analysis) for VLSI chip design — path delays create constraints that must be solved efficiently. In distributed routing (BGP, RIP), each router runs a distributed version of Bellman-Ford: nodes exchange their current distance estimates with neighbours and update if a shorter path is found. This is the "distributed Bellman-Ford" — correct but vulnerable to the "counting to infinity" problem that BGP mitigates via other mechanisms.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -152,6 +168,8 @@ The V-th pass only reveals nodes directly relaxable by the cycle. To mark ALL no
 **Early termination:**
 If a complete pass makes no updates to any `dist[v]`, the algorithm has converged early. Add a `boolean updated = false` flag — if false after a complete pass, terminate.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -178,6 +196,8 @@ Negative cycle reachable from source
 
 WHAT CHANGES AT SCALE:
 For dense networks (V=10000, E=10⁸), Bellman-Ford's O(VE) = 10¹² operations is infeasible. Use SPFA (queue-based Bellman-Ford) for average O(kE) where k ≪ V in practice. For Internet routing, distributed Bellman-Ford (RIP protocol) runs asynchronously — each router only re-relaxes when it receives an update from a neighbour. The "counting to infinity" problem (slow convergence on link failures with negative distance loops) is managed by split-horizon and route poisoning heuristics.
+
+---
 
 ### 💻 Code Example
 
@@ -294,6 +314,8 @@ int[] spfa(int n, List<int[]>[] graph, int src) {
 // Worst case still O(VE)
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Negative Edges | Negative Cycle | Time | Space | Best For |
@@ -305,6 +327,8 @@ int[] spfa(int n, List<int[]>[] graph, int src) {
 | A* | No | N/A | O(E log V) | O(V) | Heuristic, map routing |
 
 How to choose: Use Bellman-Ford when negative edges exist and you need guaranteed correctness. Use SPFA for average-case speed improvement over Bellman-Ford. Use Dijkstra when all weights are non-negative.
+
+---
 
 ### 🔁 Flow / Lifecycle
 
@@ -324,6 +348,8 @@ How to choose: Use Bellman-Ford when negative edges exist and you need guarantee
 └──────────────────────────────────────────────┘
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -333,6 +359,8 @@ How to choose: Use Bellman-Ford when negative edges exist and you need guarantee
 | Bellman-Ford detects all negative cycles in a graph | Bellman-Ford only detects negative cycles reachable from the source. Negative cycles in disconnected components or not reachable from the source are not detected |
 | SPFA always runs in O(VE) | SPFA's worst case is O(VE) like Bellman-Ford, but the average case is much better (O(kE), k≈2 in practice). Adversarial inputs can force worst-case behavior |
 | Bellman-Ford is obsolete given Dijkstra's better complexity | Bellman-Ford remains essential for graphs with negative weights (financial networks, VLSI timing), and its distributed version underlies RIP and BGP routing protocols |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -403,6 +431,8 @@ Fix: Implement split-horizon (don't advertise a route back to the neighbour from
 
 Prevention: Use BGP or OSPF (which use link-state, not distance-vector algorithms) for production Internet routing where convergence speed matters.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -419,6 +449,8 @@ Prevention: Use BGP or OSPF (which use link-state, not distance-vector algorithm
 - `Dijkstra` — faster O((V+E) log V) but requires non-negative weights; use it when weights are non-negative.
 - `SPFA` — Bellman-Ford with a queue; faster in practice but same worst-case complexity; less predictable runtime.
 - `Johnson's Algorithm` — uses Bellman-Ford to re-weight edges (eliminating negatives), then runs Dijkstra from every source; gives all-pairs shortest paths in O(V² log V + VE).
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -448,6 +480,7 @@ Prevention: Use BGP or OSPF (which use link-state, not distance-vector algorithm
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Bellman-Ford is described as a Dynamic Programming algorithm. Write the DP recurrence explicitly: let `dp[k][v]` be the length of the shortest path from source `s` to node `v` using at most `k` edges. Express `dp[k][v]` in terms of `dp[k-1]`. How does this recurrence relate to the Bellman-Ford outer loop? Why is `k = V-1` a sufficient upper bound on the number of edges in a shortest simple path?

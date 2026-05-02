@@ -28,6 +28,8 @@ tags:
 | **Used by:** | REST APIs, Self-Describing APIs, Workflow APIs | |
 | **Related:** | REST, API Design Best Practices, Richardson Maturity Model | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

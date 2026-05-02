@@ -27,6 +27,8 @@ tags:
 | **Used by:** | GraphQL N+1 Problem, DataLoader, GraphQL Subscriptions | |
 | **Related:** | GraphQL Schema, REST Controller, Repository Pattern | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

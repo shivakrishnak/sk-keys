@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Selenium / Playwright"
 parent: "Testing"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | QA Engineers, Frontend Developers                                |                 |
 | **Related:**    | E2E Test, Flaky Tests, Golden Path Testing, API Testing, Cypress |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 "WORKS FOR ME" (IN THE BROWSER):
@@ -36,9 +38,13 @@ Unit and API tests verify logic and API behavior. But a React rendering bug, a C
 SELENIUM'S LEGACY PROBLEMS:
 Selenium WebDriver (2004) was the industry standard for 20 years. It works but has significant pain points: verbose API, poor async support, flaky due to implicit waits, no built-in test assertions. Playwright (2020, Microsoft) addresses all of these: auto-wait (no manual waits), built-in assertions, multi-browser support, faster, and first-class TypeScript support.
 
+---
+
 ### 📘 Textbook Definition
 
 **Selenium WebDriver** is an open-source browser automation API that provides a programming interface to control web browsers (Chrome, Firefox, Safari, Edge). The WebDriver protocol sends commands to a browser driver (ChromeDriver, GeckoDriver) which translates them to browser-native commands. **Playwright** is a modern browser automation library by Microsoft that provides: a single API for Chromium, Firefox, and WebKit; auto-waiting (no explicit sleeps); network interception; test isolation via browser contexts; and a test runner with built-in assertions and retries. Both are used for **E2E (end-to-end) testing** — testing the full application stack through the browser UI.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -48,6 +54,8 @@ Browser automation = programmatically control a browser to simulate user behavio
 **One analogy:**
 
 > Selenium/Playwright is a **robot typing at a keyboard and clicking a mouse** through your application — exactly like a user would. The difference: the robot never forgets a step, runs at 3am, and reports exactly what went wrong when a step fails.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -143,6 +151,8 @@ RATIONALE:
   → Most resilient to UI changes
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 SELENIUM vs PLAYWRIGHT FLAKINESS COMPARISON:
@@ -169,9 +179,13 @@ RESULT:
 This is the core reason the industry has largely shifted to Playwright (2024).
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Selenium is an older **command-and-response protocol**: you say "click button", the driver clicks it, you immediately check the result. If the page wasn't ready, you fail. Playwright is a **contract-based protocol**: you say "click the button and wait until something actionable happens", Playwright handles all the timing internally. You describe intent; Playwright handles the mechanics.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -182,6 +196,8 @@ This is the core reason the industry has largely shifted to Playwright (2024).
 **Level 3:** Page Object Model (POM): encapsulate page interactions in a class (e.g., `LoginPage.fillCredentials()`, `LoginPage.submit()`). Test code uses the Page Object; page details are abstracted. Network interception: `page.route()` mocks API calls — tests run without backend, or test specific API response scenarios. Trace viewer: `--trace on` in CI; download and open `trace.zip` to see every step, screenshot, and network call that led to a failure.
 
 **Level 4:** Playwright at scale: parallel test execution across browsers (`--workers=4`). Sharding (`--shard=1/4`) for CI distribution. Component testing (Playwright for components — experimental): test React/Vue components in isolation without full E2E overhead. Playwright Test's fixtures system: define `page`, `context`, `browser` fixtures with custom setup — e.g., a `authenticatedPage` fixture that logs in before each test, making test code clean. Screenshots on failure, video recording, accessibility testing with `page.accessibility.snapshot()`.
+
+---
 
 ### 💻 Code Example
 
@@ -253,6 +269,8 @@ test("checkout shows error when payment fails", async ({ page }) => {
 });
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                   | Selenium | Playwright                         | Cypress                |
@@ -265,6 +283,8 @@ test("checkout shows error when payment fails", async ({ page }) => {
 | Speed             | Slower   | Fast                               | Fast                   |
 | Flakiness         | Higher   | Lower                              | Lower                  |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                             | Reality                                                                                     |
@@ -272,6 +292,8 @@ test("checkout shows error when payment fails", async ({ page }) => {
 | "E2E tests should cover everything"       | E2E tests are slow and costly; use sparingly for golden paths; test logic in unit/API tests |
 | "Selenium is dead"                        | Selenium is still widely used; Playwright is the modern choice for new projects             |
 | "Browser automation replaces API testing" | Browser tests verify UI behavior; API tests verify service behavior — both are needed       |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -287,10 +309,14 @@ Fix: Playwright handles most cases with auto-wait. For custom animations: `locat
 Cause: Headless browser has different viewport, font rendering, or missing environment variables.
 Fix: Match CI environment locally: `playwright test --headed=false`. Use Playwright's Docker image in CI for consistency.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** E2E Test, Test Environments, HTML, JavaScript
 - **Related:** Selenium WebDriver, Playwright, Cypress, Page Object Model, Test Fixtures, Flaky Tests, Golden Path Testing
+
+---
 
 ### 📌 Quick Reference Card
 

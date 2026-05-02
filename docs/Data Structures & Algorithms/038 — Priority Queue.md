@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Dijkstra, A* Search, Huffman Coding, Event Simulation | |
 | **Related:** | Heap (Min/Max), Queue / Deque, TreeMap | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ A regular Queue ignores priority entirely — it serves whoever arrived first, n
 THE INVENTION MOMENT:
 An abstract interface that guarantees "remove the highest-priority element" without specifying how the ordering is maintained internally. The Heap is the natural implementation: O(1) peek at highest priority, O(log N) insert and remove. This is exactly why the Priority Queue was created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Priority Queue** is an abstract data type that operates like a queue but where each element has an associated priority. Elements are dequeued in priority order (highest priority first), not insertion order. The priority queue interface specifies: `insert(element, priority)`, `extractMax/Min()`, and `peekMax/Min()`. The standard implementation is a binary heap, which provides O(log N) insert and extract, and O(1) peek at the extremum.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -52,6 +58,8 @@ A queue that always gives you the most important item next, not the oldest.
 
 **One insight:**
 Priority Queue is an *interface contract*, not an implementation. You can back it with a heap (standard), a sorted array (if writes are rare), or a Fibonacci heap (if decrease-key operations dominate). Choosing the right implementation depends on your operation mix — the interface stays the same.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -74,6 +82,8 @@ THE TRADE-OFFS:
 Gain: Always O(1) access to extremum, O(log N) insert and remove.
 Cost: O(N) arbitrary search, no ordering among equal-priority elements, O(N log N) full sorted extraction.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -88,6 +98,8 @@ All 100 packets are inserted with their QoS priority. Each send cycle polls the 
 THE INSIGHT:
 A priority queue is not just about performance — it is about *policy enforcement*. The data structure itself embodies the ordering rule: you define priority once (in the comparator), and the structure guarantees every extraction respects it.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A Priority Queue is like a hospital emergency triage system. Patients enter in any order (insertion), but the next patient seen is always the most critical (highest priority extraction). A FIFO queue is first-come-first-served; the priority queue is most-critical-first — always.
@@ -98,6 +110,8 @@ A priority queue is not just about performance — it is about *policy enforceme
 "Check who's most critical" → `peek()`
 
 Where this analogy breaks down: In a real hospital, the triage nurse re-assesses severity continuously (effectively "decreasing the key"). Java's `PriorityQueue` does not support efficient decrease-key; for that, use a Fibonacci heap or re-insert.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -112,6 +126,8 @@ Java `PriorityQueue` is backed by a binary min-heap in an `Object[]` array. `off
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The lack of O(log N) decrease-key in Java's `PriorityQueue` is a deliberate simplification. Decrease-key requires the queue to find the element in O(1) (via a position hashtable). Java's implementation avoids this overhead for the common case. In Dijkstra implementations, this is worked around by inserting duplicate entries with updated distances and using a "visited" check to skip stale ones — an accepted trade-off. For true decrease-key support, third-party Fibonacci or d-ary heap libraries are needed.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -152,6 +168,8 @@ Heap always contains K smallest elements seen so far.
 │            → next min becomes root → O(log N)│
 └──────────────────────────────────────────────┘
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -175,6 +193,8 @@ Element's priority field mutated after insertion
 
 WHAT CHANGES AT SCALE:
 At 10M elements, Java's `PriorityQueue` performs well but `siftDown` on extraction involves cache-inefficient pointer chasing through a large array. A **4-ary heap** (`d=4`) reduces tree height and improves cache occupancy per node. For ultra-high-throughput scenarios (financial tick processing), consider lock-free priority queues from libraries like Chronicle Queue or Agrona. For concurrent access, `PriorityBlockingQueue` exists but serialises all operations through a single lock.
+
+---
 
 ### 💻 Code Example
 
@@ -226,6 +246,8 @@ int[] mergeKSortedArrays(int[][] arrays) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Implementation | insert | extract | decrease-key | Best For |
@@ -238,6 +260,8 @@ int[] mergeKSortedArrays(int[][] arrays) {
 
 How to choose: Use Java `PriorityQueue` (binary heap) for all standard cases. Use Fibonacci heap (3rd party) only when decrease-key is called more than extract-min. For cache performance at scale, use a 4-ary heap.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -247,6 +271,8 @@ How to choose: Use Java `PriorityQueue` (binary heap) for all standard cases. Us
 | remove(Object) is O(log N) | `PriorityQueue.remove(Object)` is O(N) — requires linear scan |
 | PriorityQueue is thread-safe | Not thread-safe; use `PriorityBlockingQueue` for concurrent access |
 | Priority Queue equals Heap | Priority Queue is the abstract interface; Heap is the implementation — a PQ can be backed by any ordered structure |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -326,6 +352,8 @@ pq.offer(newElement);
 
 Prevention: Always bound priority queues in streaming scenarios; monitor queue depth as a metric.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -339,6 +367,8 @@ Prevention: Always bound priority queues in streaming scenarios; monitor queue d
 **Alternatives / Comparisons:**
 - `TreeMap` — also provides min/max access but additionally supports range queries; higher constant factor.
 - `Heap (Min/Max)` — the implementation detail; Priority Queue is the abstract contract.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -369,6 +399,7 @@ Prevention: Always bound priority queues in streaming scenarios; monitor queue d
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Dijkstra's algorithm uses a priority queue to process the nearest unvisited node first. Java's `PriorityQueue` has no O(log N) decrease-key operation. The workaround is to re-insert a node with its updated distance and skip stale entries when polled. For a dense graph with V=10,000 vertices and E=50,000,000 edges, how many total queue entries can accumulate with this approach, and at what point does the memory overhead of stale entries make this approach impractical compared to a true decrease-key heap?

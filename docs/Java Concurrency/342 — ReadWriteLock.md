@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "ReadWriteLock"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | StampedLock, Cache implementations | |
 | **Related:** | ReentrantLock, StampedLock, synchronized | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ A product catalog service has 10,000 reads/second and 1 write/minute. With `sync
 THE INVENTION MOMENT:
 This is exactly why **`ReadWriteLock`** was created — reads are safe to run simultaneously (they don't modify state), so they should not block each other. Only writes need exclusive access.
 
+---
+
 ### 📘 Textbook Definition
 
 **`ReadWriteLock`** is an interface in `java.util.concurrent.locks` representing a pair of locks: a read lock (shared — multiple holders allowed simultaneously) and a write lock (exclusive — must be the sole holder). `ReentrantReadWriteLock` is the standard implementation. Rules: multiple threads may hold the read lock simultaneously if no thread holds the write lock; the write lock can only be acquired when no threads hold the read lock or write lock. Read lock and write lock are derived from the same `ReentrantReadWriteLock` instance. Supports optional fairness and lock downgrading (write → read).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Many readers can read at once; writers get exclusive access — maximising throu
 
 **One insight:**
 `ReadWriteLock` is only beneficial when reads are frequent AND reads significantly outnumber writes. For write-heavy workloads, the overhead of tracking read lock holders makes `ReadWriteLock` SLOWER than `synchronized`. Always measure before switching.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -82,6 +90,8 @@ THE TRADE-OFFS:
 Gain: Parallel reads — dramatically improves throughput for read-heavy workloads; reads don't block each other.
 Cost: Write lock must wait for ALL readers to release — write starvation possible if readers continuously hold; overhead of read count tracking; no lock upgrade (read→write); more complex than synchronized.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -100,6 +110,8 @@ WITH `ReadWriteLock`:
 THE INSIGHT:
 `synchronized` turns reads into a sequential operation unnecessarily. `ReadWriteLock` preserves the natural concurrency of reads. The tradeoff appears when writers compete: writes can be starved if readers continuously hold, depending on the fairness policy.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A highway with "shared lanes" (reads) and one "exclusive lane" for construction (writes). Shared lane vehicles (readers) travel simultaneously — no mutual blocking. Construction crew (writer) needs to close all shared lanes — they wait until all vehicles exit, do their work, then reopen all lanes.
@@ -110,6 +122,8 @@ THE INSIGHT:
 
 Where this analogy breaks down: On a real highway, construction can start with "one lane closed" — partial closures. `ReadWriteLock` is all-or-nothing: write requires ALL readers to be gone.
 
+---
+
 ### 📶 Gradual Depth — Four Levels
 
 **Level 1:** Instead of everyone waiting for a locked door (synchronized), readers can all peek through a window simultaneously. Only the writer needs to lock the door.
@@ -119,6 +133,8 @@ Where this analogy breaks down: On a real highway, construction can start with "
 **Level 3:** `ReentrantReadWriteLock` stores reader count in upper 16 bits and writer count in lower 16 bits of a single AQS `state` int. Read lock tracks thread-local hold counts in a `ThreadLocal`. Write lock is reentrant (same thread can acquire again). Read lock is NOT reentrant from a write context by default — downgrade is supported (acquire read while holding write, release write), upgrade is not (deadlock).
 
 **Level 4:** `ReadWriteLock` is fundamentally limited by write starvation on high-read-load systems. `StampedLock` (Java 8) solves this with optimistic reads: read without acquiring any lock, validate afterward; if data changed during read, retry with lock. `StampedLock` offers potentially higher throughput at the cost of more complex usage (no reentrancy, hard to use correctly).
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -174,6 +190,8 @@ ReentrantReadWriteLock fairRwLock =
 // Prevents write starvation but reduces throughput
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (read-heavy):
@@ -203,6 +221,8 @@ FAILURE PATH (write starvation):
 
 WHAT CHANGES AT SCALE:
 At scale, `CopyOnWriteArrayList` and `CopyOnWriteArraySet` provide an alternative: both use a similar "readers don't block" principle but via copy-on-write rather than locks — reads are completely non-blocking (no lock at all), writes create a new copy and do an atomic reference swap. For read-dominant data with infrequent writes, this is simpler and faster than `ReadWriteLock`.
+
+---
 
 ### 💻 Code Example
 
@@ -239,6 +259,8 @@ public class UserCache {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Lock Type | Read Concurrency | Write Exclusivity | Starvation | Reentrancy | Best For |
@@ -250,6 +272,8 @@ public class UserCache {
 
 How to choose: Use `ReadWriteLock` when the access pattern is >90% reads and <10% writes. Use `StampedLock` for maximum performance with acceptable complexity. Use `synchronized` or `ReentrantLock` for balanced or write-heavy workloads.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -258,6 +282,8 @@ How to choose: Use `ReadWriteLock` when the access pattern is >90% reads and <10
 | Read lock allows concurrent writes | No — the read lock BLOCKS write lock acquisition and vice versa. Concurrent reads only |
 | You can upgrade read lock to write lock | Lock UPGRADE (read→write) is not supported and causes deadlock: reader waiting for other readers to release, while another thread tries to write |
 | ReadWriteLock prevents write starvation | In non-fair mode (default), continuous readers can starve writers indefinitely. Use `new ReentrantReadWriteLock(true)` for fair mode to prevent starvation |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -302,6 +328,8 @@ if (needsUpdate) {
 }
 ```
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -314,6 +342,8 @@ if (needsUpdate) {
 **Alternatives / Comparisons:**
 - `StampedLock` — adds optimistic reads for even better read performance
 - `CopyOnWriteArrayList` — lock-free reads via copy-on-write; simpler model for infrequent writes
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -345,6 +375,7 @@ if (needsUpdate) {
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A distributed product catalog serves 50,000 reads/second and refreshes all data every 5 seconds (bulk write). Compare three implementation strategies for thread-safe access: (1) `ReentrantReadWriteLock`, (2) `CopyOnWriteArrayList` (reference swap), (3) `StampedLock` with optimistic reads. For each, calculate the approximate lock overhead per operation at 50,000 RPS, analyse the impact of the 5-second bulk write on read throughput, and identify which strategy provides zero read blocking during the write.

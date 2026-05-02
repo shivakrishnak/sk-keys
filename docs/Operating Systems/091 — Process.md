@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Thread, Context Switch, Fork / Exec, Scheduler / Preemption, Signal Handling | |
 | **Related:** | Thread, Fiber / Coroutine, Process vs Thread | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -54,6 +56,8 @@ This is exactly why the **Process** was created — a protected, isolated
 execution environment giving each program the illusion of owning the CPU
 and memory, while the OS enforces boundaries between programs.
 
+---
+
 ### 📘 Textbook Definition
 
 A **process** is an instance of a program in execution, consisting of the
@@ -64,6 +68,8 @@ OS assigns each process a unique Process ID (PID) and maintains a Process
 Control Block (PCB) tracking its state, memory maps, open file descriptors,
 signal handlers, and scheduling information. Processes are isolated from
 each other by virtual memory address spaces enforced by the hardware MMU.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -82,6 +88,8 @@ The critical insight is that a process does not run directly on hardware —
 it runs inside a virtual machine created by the OS. The process believes it
 owns the entire CPU and all memory; the OS maintains this illusion while
 secretly time-sharing resources between hundreds of processes.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -109,6 +117,8 @@ inter-process communication (IPC) requires explicit mechanisms
 (pipes, sockets, shared memory) and has higher overhead than
 intra-process communication.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -133,6 +143,8 @@ THE INSIGHT:
 Virtual address spaces make isolation both simple and complete. Each
 process believes it owns all of memory, yet programs never interfere.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A process is like a virtual machine running inside the real machine.
@@ -149,6 +161,8 @@ process believes it owns all of memory, yet programs never interfere.
 
 Where this analogy breaks down: unlike a real hypervisor, the OS kernel
 runs in the same physical CPU — it just switches privilege levels.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -177,6 +191,8 @@ deliberate security tradeoff. Copy-on-Write (COW) in `fork()` makes
 process creation cheap despite apparent full copy semantics — physical
 pages are shared until a write occurs. Linux's `/proc` filesystem exposes
 live PCB data as virtual files, enabling zero-overhead introspection.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -234,6 +250,8 @@ The **Process Control Block** stores:
 - Scheduling priority and CPU time accounting
 - Exit status
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -267,6 +285,8 @@ linearly — each PCB consumes ~7 KB in the kernel; 10,000 processes = 70 MB
 kernel memory. Context switch cost (1–10 µs) becomes a throughput limiter
 if processes are too short-lived.
 
+---
+
 ### ⚖️ Comparison Table
 
 | Unit        | Memory Isolation | Creation Cost | Comm. Overhead   | Best For            |
@@ -279,6 +299,8 @@ if processes are too short-lived.
 How to choose: use processes when fault isolation or security boundaries
 matter most; use threads when shared state and low overhead matter more.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                        | Reality                                                                                                                                             |
@@ -288,6 +310,8 @@ matter most; use threads when shared state and low overhead matter more.
 | "Processes on the same host can't communicate"       | They can via pipes, Unix domain sockets, shared memory (mmap), message queues, and signals                                                          |
 | "fork() copies all memory"                           | fork() uses Copy-on-Write: physical pages are shared until one process writes, making fork() nearly free                                            |
 | "The PID is the only process identifier"             | Linux also uses thread group ID (TGID), session ID, and process group ID for different purposes                                                     |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -379,6 +403,8 @@ username hard nproc 1000
 Prevention: Apply `ulimit -u` limits in containerized or untrusted
 environments. Use cgroups `pids` subsystem for hard process limits.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -398,6 +424,8 @@ environments. Use cgroups `pids` subsystem for hard process limits.
 
 - `Thread` — shares memory with siblings; much cheaper to create than a process
 - `Fiber / Coroutine` — user-space cooperative multitasking; no OS involvement
+
+---
 
 ### 📌 Quick Reference Card
 

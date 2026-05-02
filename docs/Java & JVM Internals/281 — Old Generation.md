@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Major GC, Full GC, G1GC, ZGC, GC Tuning | |
 | **Related:** | Young Generation, Major GC, Full GC, Metaspace | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Long-lived objects that survive all Minor GC cycles must live somewhere. They ca
 THE INVENTION MOMENT:
 Separating long-lived objects into their own generation — collected far less frequently than Young Generation — matches collection frequency to the actual death rate of objects in each generation. This is why the Old Generation exists.
 
+---
+
 ### 📘 Textbook Definition
 
 The Old Generation (also called the Tenured Generation) is the heap region where long-lived Java objects reside — specifically, objects promoted from the Young Generation after surviving `MaxTenuringThreshold` Minor GC cycles (default: 15), or objects too large for Eden/Survivor (large arrays, humongous objects). The Old Generation is collected by Major GC or Full GC — significantly more expensive operations than Minor GC because the Old Gen is typically large (2–3× the Young Gen) and requires different collection algorithms (mark-sweep-compact rather than copying). Old Generation exhaustion causes `java.lang.OutOfMemoryError: Java heap space`.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ The Old Generation is long-term heap storage — rarely swept, but a slow sweep 
 
 **One insight:**
 The Old Generation's performance story is about Major GC pauses, not allocation. Because Old Gen is rarely collected but large, when it is collected, the pause is proportional to live object set size — which can be gigabytes. Tuning Old Gen means minimising Major GC frequency AND duration.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -68,6 +76,8 @@ THE TRADE-OFFS:
 Gain: Minor GC is fast because it ignores Old Gen objects (except via card table for cross-gen refs).
 Cost: Old Gen Major GC is slow; Old Gen filling too quickly causes frequent Major GC; memory leaks manifest as unbounded Old Gen growth.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -82,6 +92,8 @@ Sessions promoted to Old Gen. Young Gen Minor GC runs every 500ms: scans 10,000 
 THE INSIGHT:
 Object death rate determines optimal collection frequency. Young objects die at 99%/cycle — collect every cycle. Old objects die at 0.01%/cycle — collect every 1,000 cycles. Matching collection frequency to death rate is the fundamental insight.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Old Generation is like a city's permanent archive building. Records (long-lived objects) are moved here after passing through the temporary files area (Young Gen) and proving they're worth keeping. The archive is cleaned only during scheduled maintenance (quarterly audits / Major GC). Cleaning is thorough but disruptive — the building is closed during the audit (Stop-The-World).
@@ -93,6 +105,8 @@ Object death rate determines optimal collection frequency. Young objects die at 
 "Permanent archive staff (long-lived services)" → application-level caches, singletons
 
 Where this analogy breaks down: unlike a physical archive where records can be sorted in advance, the JVM's Old Gen compaction rearranges objects in memory to eliminate fragmentation — a process that requires moving all live objects.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -107,6 +121,8 @@ Old Gen occupies ~66% of the total heap by default (with `NewRatio=2`). Allocati
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The Old Generation's existence reflects a critical GC design insight: you cannot change the frequency of an event (object death) to match your collection strategy. You must change your collection strategy to match the object death frequency. The two-generation model was first described by D. Ungar and R. Jackson in 1984 for Smalltalk, validated by empirical studies showing >90% of objects die in the first GC cycle. The decision to use mark-sweep-compact (rather than copying) for Old Gen reflects space constraints: a copying collector needs 2× the live space available as free space. For large heaps, this is prohibitive.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -141,6 +157,8 @@ When a Young Gen object is referenced from Old Gen (e.g., a cache in Old Gen hol
 3. Large allocation (> Eden/2 or TLAB limit) → allocate directly in Old Gen
 4. Humongous object (> G1 region/2) in G1GC → humongous region (acts as Old Gen)
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -169,6 +187,8 @@ Memory leak via static collection:
 
 WHAT CHANGES AT SCALE:
 At very large heaps (32+ GB), Old Gen Major GC becomes the primary concern. Low-pause collectors (ZGC, Shenandoah) perform Old Gen collection concurrently with the application. At terabyte scale, even G1GC's incremental mixed GC is insufficient — ZGC's scalable concurrent collection is required to avoid minutes-long pauses.
+
+---
 
 ### 💻 Code Example
 
@@ -231,6 +251,8 @@ java -XX:+UseG1GC \
      -jar myapp.jar
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Old Gen Collector | Algorithm | Pause | Throughput | Best For |
@@ -244,6 +266,8 @@ java -XX:+UseG1GC \
 
 How to choose: G1GC for most production services. ZGC for strict latency SLAs (<1ms) or very large heaps. Avoid CMS (deprecated Java 9, removed Java 14).
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -252,6 +276,8 @@ How to choose: G1GC for most production services. ZGC for strict latency SLAs (<
 | "Increasing heap (-Xmx) always prevents OOM" | Only if the leak is bounded. An unbounded memory leak fills any heap size eventually. Larger heap only delays the OOM. |
 | "Old Gen is always 2/3 of the heap" | `NewRatio=2` (default for many collectors) means Old Gen = 2× Young Gen = 2/3 total. But this is configurable. G1GC dynamically adjusts the ratio. |
 | "Objects never move in Old Gen" | Incorrect. During Major GC compaction (and G1 mixed GC), live Old Gen objects are moved to compact the region. The JVM updates all references to the moved objects. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -304,6 +330,8 @@ grep "concurrent mode failure" /tmp/gc.log
 
 Prevention: Migrate from CMS to G1GC or ZGC (both compact). If stuck on CMS, use `-XX:+UseCMSCompactAtFullCollection`.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -319,6 +347,8 @@ Prevention: Migrate from CMS to G1GC or ZGC (both compact). If stuck on CMS, use
 **Alternatives / Comparisons:**
 - `Metaspace` — confused with Old Gen; stores class metadata, not object instances
 - `Young Generation` — the complementary region for new objects
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -349,6 +379,7 @@ Prevention: Migrate from CMS to G1GC or ZGC (both compact). If stuck on CMS, use
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A microservice uses an in-memory cache of 50,000 customer objects (200 bytes each = 10 MB). The cache is evicted using LRU with a max size of 50,000. Over time, `jstat` shows Old Gen (`OU`) stabilises at ~15 MB and never grows further. Is this a memory leak? Explain how to distinguish between a healthy, stable Old Gen usage and a slowly-growing memory leak — what specific monitoring pattern would distinguish them?

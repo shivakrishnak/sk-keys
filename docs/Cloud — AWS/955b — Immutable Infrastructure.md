@@ -232,6 +232,8 @@ Fix: enforce read-only SSH or bastion host with session recording; any fix must 
 └─────────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** How does immutable infrastructure change the approach to debugging production issues?  

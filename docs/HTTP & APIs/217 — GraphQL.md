@@ -27,6 +27,8 @@ tags:
 | **Used by:** | GraphQL Schema, GraphQL Resolvers, GraphQL N+1 Problem | |
 | **Related:** | REST, gRPC, API Gateway, SOAP | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

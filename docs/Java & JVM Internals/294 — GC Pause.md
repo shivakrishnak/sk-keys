@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "GC Pause"
 parent: "Java & JVM Internals"
@@ -71,6 +71,8 @@ GC pause is not a single atomic event — it breaks down into:
 
 4. **Class Unloading:** During Full GC, unloading dead classes extends the pause.
 
+---
+
 ### Why pause time matters more than pause frequency
 
 For user-facing applications, a single 500ms pause is far more impactful than 100 pauses of 5ms each. P99 and P999 latency percentiles directly reflect GC pause behavior, and this is what SLAs measure.
@@ -141,6 +143,8 @@ GC Pause Lifecycle:
 
 ## 8. Under the Hood (Deep Dive)
 
+---
+
 ### Measuring GC pauses
 
 ```bash
@@ -154,6 +158,8 @@ GC Pause Lifecycle:
 [0.235s][info][safepoint] Total time for which application threads were stopped: 0.045234 seconds
 [0.235s][info][safepoint]   Stopping threads took: 0.000123 seconds  ← TTSP
 ```
+
+---
 
 ### Reference processing extending pauses
 
@@ -174,6 +180,8 @@ LoadingCache<String, Image> cache = Caffeine.newBuilder()
     .build(key -> loadImage(key));
 ```
 
+---
+
 ### JVM metrics for GC pause tracking
 
 ```java
@@ -192,6 +200,8 @@ for (GarbageCollectorMXBean gc : ManagementFactory.getGarbageCollectorMXBeans())
         }, null, null);
 }
 ```
+
+---
 
 ### G1GC pause components
 

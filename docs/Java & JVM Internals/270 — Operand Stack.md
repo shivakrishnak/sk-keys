@@ -28,6 +28,8 @@ tags:
 | **Used by:** | JIT Compiler, invokedynamic, Local Variable Table | |
 | **Related:** | Stack Frame, Local Variable Table, Bytecode | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ If JVM instructions named real hardware registers, the bytecode wouldn't be port
 THE INVENTION MOMENT:
 A LIFO stack for intermediate values is architecture-neutral (no register naming), trivially verifiable (stack depth is statically known), and simple to target from source code (no register allocation needed at compile time). This is exactly why the Operand Stack exists as the JVM's computation model.
 
+---
+
 ### 📘 Textbook Definition
 
 The Operand Stack is a LIFO (Last-In-First-Out) stack of typed values, part of the JVM Stack Frame, used as the working memory for bytecode instruction execution. Each bytecode instruction either pushes value(s) onto the stack, pops value(s) from it, or both. The maximum depth of the operand stack for a method (`max_stack`) is determined at compile time by `javac` and stored in the `Code` attribute of the class file, allowing the JVM to pre-allocate the exact space needed. The operand stack is typed: the Bytecode Verifier tracks the type at each stack position statically.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ The Operand Stack is the JVM's scratch pad: instructions put values on it, compu
 
 **One insight:**
 The Operand Stack is a stack machine, not a register machine. The key implication: no explicit register allocation is needed at the bytecode level — generating bytecode from source code is simpler because you just push operands and pop results. The JIT compiler handles register allocation when translating to native code.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -67,6 +75,8 @@ Invariant 1 means the operand stack is the universal data bus between instructio
 THE TRADE-OFFS:
 Gain: Architecture-neutral intermediate representation; simple code generation; static type verification.
 Cost: More bytecode operations than a register model (requires explicit push/pop); JIT must translate these to register-based native code; operand stack bytes per instruction slightly larger than register-encoded instructions.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -96,6 +106,8 @@ No registers named — bytecode is architecture-neutral. The `imul` instruction 
 THE INSIGHT:
 The operand stack is an abstraction layer between language semantics ("multiply these two values") and hardware implementation ("use THIS CPU's multiply instruction"). Abstraction layers enable portability.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > The Operand Stack is like a kitchen counter. You put ingredients on it (push values), use them to cook (arithmetic/logic instructions pop+compute+push result), and the finished dish sits on the counter until the next cook picks it up (push to caller's stack on return). The counter has a fixed size (max_stack) set when the kitchen is configured.
@@ -107,6 +119,8 @@ The operand stack is an abstraction layer between language semantics ("multiply 
 "Next cook picks up the dish" → ireturn passes top of stack to caller
 
 Where this analogy breaks down: unlike a kitchen counter that holds physical objects, the Operand Stack is strictly LIFO — you can only access the top value, not reach in and pull from the middle.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -121,6 +135,8 @@ Each bytecode instruction has a statically defined stack effect on the operand s
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The operand stack model (stack machine) was also used in the original Pascal p-code machine and the Smalltalk VM — Sun's engineers drew on this prior art. An alternative considered was a register-based bytecode (like Dalvik/ART for Android, which chose a register model explicitly). Android's Dalvik chose registers to reduce instruction count and improve interpreter efficiency on mobile CPUs where JIT was initially less aggressive. The JVM's stack model produces more bytecode instructions but enables simpler code generation and superior static verification — valid trade-offs for a server-side platform with aggressive JIT.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -187,6 +203,8 @@ Before call to: int service.process(int x, int y)
    → stack: [result]
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -215,6 +233,8 @@ Operand stack underflow (invalid bytecode)
 
 WHAT CHANGES AT SCALE:
 At scale, the operand stack itself is irrelevant to performance — after JIT compilation, the operand stack is compiled away into CPU registers. What matters is the JIT's ability to allocate the optimal registers for the values that were on the stack. High-frequency methods compiled by C2 (the optimizing JIT compiler) typically have their operand stack operations completely eliminated — all intermediate values live in CPU registers.
+
+---
 
 ### 💻 Code Example
 
@@ -287,6 +307,8 @@ int result = (x + y) * (z - 1);
 // max_stack = 3  ← the deepest point was 3
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Compute Model | JVM Stack | x86-64 Register | Dalvik (Android) Register |
@@ -300,6 +322,8 @@ int result = (x + y) * (z - 1);
 
 How to choose: As a JVM developer you cannot choose; the JVM uses the operand stack. Android chose the register model to reduce instruction decoding overhead on mobile where JIT was initially optional. The JVM keeps the stack model because server workloads run long enough for the JIT to eliminate all stack overhead.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -309,6 +333,8 @@ How to choose: As a JVM developer you cannot choose; the JVM uses the operand st
 | "max_stack must be large for fast performance" | max_stack only affects pre-allocated frame size at bytecode level. JIT-compiled code uses CPU registers, making max_stack irrelevant to performance. |
 | "You can read operand stack values like local variables" | No — the operand stack is strictly LIFO. You can only access the top value. To reuse a value multiple times, use `dup`, or store it in a local variable first. |
 | "The operand stack is shared between threads" | Each thread has its own stack, containing its own frames, each with their own operand stack. Completely isolated. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -374,6 +400,8 @@ javap -c -verbose ProblematicClass.class
 
 Prevention: Never manually code dup variants for `long`/`double`. Use ASM's `Type` class to determine word size and select the correct dup instruction.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -389,6 +417,8 @@ Prevention: Never manually code dup variants for `long`/`double`. Use ASM's `Typ
 **Alternatives / Comparisons:**
 - `Local Variable Table` — not an alternative but a complement; permanent per-frame storage vs transient computation scratch pad
 - `CPU Registers` — what the JIT replaces the operand stack with in native code: x86-64 RAX, RBX, etc.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -423,6 +453,7 @@ Prevention: Never manually code dup variants for `long`/`double`. Use ASM's `Typ
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The JVM's `invokedynamic` instruction calls a bootstrap method the first time it is encountered, which returns a `CallSite` object linking to a `MethodHandle`. The arguments to the bootstrap method and the dynamic arguments to the call site are passed through the operand stack. Compare how a regular `invokevirtual` passes arguments (fixed-arity, statically typed) versus how `invokedynamic` can accept completely dynamic argument counts. What constraint does the operand stack model impose on `invokedynamic`'s ability to handle variable argument lists?

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Bit Manipulation"
 parent: "Data Structures & Algorithms"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Bloom Filter, Hashing Techniques, Dynamic Programming | |
 | **Related:** | Bitwise Operators, Integer Overflow, Space-Time Trade-off | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Many algorithms with loop-based solutions can be replaced by constant-time bitwi
 THE INVENTION MOMENT:
 CPUs operate on integers natively at the bit level. By treating an integer as a set of 64 Boolean flags, you perform 64 logical operations in one CPU instruction. Finding the lowest set bit (`n & -n`), clearing the lowest bit (`n & (n-1)`), checking power-of-two (`n & (n-1) == 0`) — all become single expressions. This is exactly why **Bit Manipulation** is a fundamental technique.
 
+---
+
 ### 📘 Textbook Definition
 
 **Bit Manipulation** is the use of bitwise operators (AND `&`, OR `|`, XOR `^`, NOT `~`, left shift `<<`, right shift `>>`, unsigned right shift `>>>`) to operate directly on the binary representation of integers. Because CPUs execute these operations in O(1) on their native word size (32 or 64 bits), bit manipulation replaces loops over individual flags with single-instruction alternatives. Common applications include set operations using integer bitmasks, power-of-two checks, population count, lowest/highest bit extraction, and XOR-based identity/cancellation tricks.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Use single CPU instructions on integer binary patterns instead of loops over ind
 
 **One insight:**
 The most non-obvious bit trick is `n & (n-1)` — it clears the lowest set bit of `n` in O(1). This is the foundation of **Brian Kernighan's algorithm** for counting bits: instead of looping 32 times, loop only as many times as there are 1-bits. For sparse integers (few 1-bits), this is dramatically faster.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -78,6 +86,8 @@ THE TRADE-OFFS:
 Gain: O(1) per operation vs O(N) loops; no extra memory; exploits CPU native instruction set.
 Cost: Code readability suffers severely — `n & -n` is opaque without comment. Restricted to fixed-size integers (32 or 64 bits). Bitmask DP explodes at N > 20 (2^20 = 1M states; 2^30 = 1B — impractical).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -92,6 +102,8 @@ Represent visited set as a single integer `mask` where bit k = 1 means item k is
 THE INSIGHT:
 An integer is a compressed Boolean array. When N ≤ 20, fitting the entire visited-set into one 32-bit integer reduces memory by 32× and eliminates all per-state allocation. This "bitmask DP" approach makes TSP on 20 cities tractable in milliseconds.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Think of a 32-bit integer as a row of 32 light bulbs, each either ON (1) or OFF (0). Bitwise AND with a mask turns off all bulbs not in the mask simultaneously. Bitwise XOR with a mask toggles exactly the masked bulbs. All 32 bulbs update in one CPU clock cycle — not one by one.
@@ -104,6 +116,8 @@ An integer is a compressed Boolean array. When N ≤ 20, fitting the entire visi
 "Check bulb k" → `(n >> k) & 1`
 
 Where this analogy breaks down: Physical bulbs are independent; integer bits interact in two's complement arithmetic (e.g., `-n` in two's complement flips all bits and adds 1 — not a simple toggle). This is why `n & -n` (isolate lowest bit) is non-obvious from the light bulb model.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -118,6 +132,8 @@ XOR has three key properties: self-inverse (`a ^ a = 0`), identity (`a ^ 0 = a`)
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Bit manipulation exploits the algebraic structure of the ring Z/2^nZ and the Galois field GF(2). XOR is addition in GF(2); AND is multiplication. LFSR (Linear Feedback Shift Register) pseudo-random generators exploit GF(2) polynomial arithmetic. In cryptography, AES S-boxes are defined over GF(2^8) with operations implementable as bit manipulations for performance. SIMD (AVX-512) extends the concept: 512-bit registers process 8 doubles or 64 bytes simultaneously — the "all bits at once" model extended to entire vectors. Understanding bit manipulation is the prerequisite to understanding SIMD, LFSR, CRC computation, and cryptographic primitives.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -169,6 +185,8 @@ For n=1:   Kernighan=1 loop,  Naive=8 loops
 **XOR trick — find the single non-duplicate:**
 XOR all elements. Duplicates cancel (`x ^ x = 0`). Single element remains (`x ^ 0 = x`). O(N) time, O(1) space.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -194,6 +212,8 @@ N > 64 → single integer insufficient
 
 WHAT CHANGES AT SCALE:
 At scale, hardware population count (`POPCNT`) and bit-scan instructions (`BSF`, `BSR`) execute in 1 clock cycle with perfect pipelining. Language runtimes expose these: Java `Integer.bitCount` → `POPCNT`, Java `Integer.numberOfTrailingZeros` → `BSF`. In columnar databases, Roaring Bitmaps store billions of integer sets using packed bit arrays with run-length encoding, enabling set intersection/union at billions of integers per second — all built on bit manipulation primitives.
+
+---
 
 ### 💻 Code Example
 
@@ -269,6 +289,8 @@ int lowestSetBit(int n) { return n & -n; }
 int clearLowestBit(int n) { return n & (n - 1); }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach | Time | Space | Clarity | Best For |
@@ -281,6 +303,8 @@ int clearLowestBit(int n) { return n & (n - 1); }
 
 How to choose: Use bit manipulation for N ≤ 64 performance paths. Use `BitSet` for N > 64. Use HashSet when elements are not small integers or when code clarity is paramount.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -290,6 +314,8 @@ How to choose: Use bit manipulation for N ≤ 64 performance paths. Use `BitSet`
 | XOR swap (`a^=b; b^=a; a^=b`) is always better | XOR swap is NOT safe when `a` and `b` are the same variable or alias — it zeroes out the value. Always use a temp variable for aliasing cases. |
 | Right shift `>>` and `>>>` are identical | `>>` is arithmetic (preserves sign bit for negatives); `>>>` is logical (always fills with 0). For negative numbers: `(-1) >> 1 = -1`, `(-1) >>> 1 = Integer.MAX_VALUE`. |
 | Bit counting loops are always 32 iterations | Brian Kernighan's algorithm loops once per set bit (popcount), not per total bits. For sparse integers this is dramatically faster. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -350,6 +376,8 @@ Fix: Use `>>` for signed arithmetic; `>>>` only when treating the value as unsig
 
 Prevention: Default to `>>` unless you explicitly need unsigned shift.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -365,6 +393,8 @@ Prevention: Default to `>>` unless you explicitly need unsigned shift.
 - `Boolean Array` — More readable, O(N) space; use when N > 64 or clarity is priority.
 - `java.util.BitSet` — Java standard library bit array for arbitrary N; slower per operation than native int due to object overhead.
 - `Set<Integer>` — O(1) average operations but O(N) space with high constant; use when elements are non-consecutive.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -393,6 +423,7 @@ Prevention: Default to `>>` unless you explicitly need unsigned shift.
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The XOR trick finds the single number in `O(N)` time and `O(1)` space. Now the problem changes: exactly two numbers appear an odd number of times. The XOR of all elements gives `a ^ b` (where a and b are the two unique numbers). How do you use `(a^b) & -(a^b)` to split all numbers into two groups and XOR-find each unique number separately? Walk through the algorithm for `[1,2,1,3,2,5]`.

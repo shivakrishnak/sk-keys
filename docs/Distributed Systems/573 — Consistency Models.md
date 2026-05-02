@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Database Selection, API Design, Distributed Transactions | |
 | **Related:** | Linearizability, Serializability, Eventual Consistency, Causal Consistency | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT CONSISTENCY MODELS:**

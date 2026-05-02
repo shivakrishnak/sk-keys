@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Deoptimization"
 parent: "Java & JVM Internals"
@@ -39,6 +39,8 @@ tags:
 | **Used by:** | GC Tuning, OSR (On-Stack Replacement) | |
 | **Related:** | Method Inlining, Tiered Compilation, OSR, Safepoint | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -50,9 +52,13 @@ An optimistic JIT optimizer without a fallback mechanism would be unsafe. It cou
 THE INVENTION MOMENT:
 This is exactly why **Deoptimization** was created — to allow the JIT to make aggressive, potentially-wrong optimistic bets while ensuring correctness is never violated by providing a mechanism to transparently undo the optimization when it turns out to be wrong.
 
+---
+
 ### 📘 Textbook Definition
 
 **Deoptimization** is the JVM process of invalidating JIT-compiled code and restoring execution to the interpreter (or a less-optimized tier) when an optimistic compilation assumption is violated at runtime. During deoptimization, the JVM must reconstruct the interpreter state (local variables, operand stack, program counter) from the compiled code's state — a process called *state reconstruction* or *frame materialization*. The deoptimization is typically triggered by an *uncommon trap* — a code stub inserted at each speculative optimization point that captures control flow when the speculation fails.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -64,6 +70,8 @@ When the JIT's gamble turns out to be wrong, the JVM pulls the fire alarm, stops
 
 **One insight:**
 The deep insight is that deoptimization makes the JIT's *optimism safe*. Without deoptimization, JIT compilers would have to be conservative: they could only make assumptions backed by formal proofs. With deoptimization as a safety net, the JIT can bet on what it has *observed* being the common case, and correctness is guaranteed by rolling back when the bet fails. This architectural choice is why Java JIT can outperform statically-compiled code for long-running adaptive workloads.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -99,6 +107,8 @@ THE TRADE-OFFS:
 Gain: JIT can make aggressive speculative optimizations; correctness is guaranteed.
 Cost: Deoptimization is expensive (~microseconds to milliseconds); code must maintain "debug metadata" (mapping compiled state → interpreter state) even for optimized code paths; repeated deoptimization of the same method is a performance cliff.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -117,6 +127,8 @@ FIRST `StopLimitOrder` ARRIVES (invocation 1,000,001):
 THE INSIGHT:
 One deoptimization event is cheap and nearly invisible (~1µs). Repeated deoptimization of the same method every millisecond is catastrophic — a constant trap/recompile cycle that keeps the method at interpreted speed.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Imagine a stunt coordinator who pre-rigs a "safe fall" mat under every dangerous stunt. Most stunts go perfectly — the mat is never used. But its existence is what allows the stuntperson to attempt the dangerous stunt at all. Deoptimization is the mat: it's expensive to set up (debug metadata in compiled code), rarely used, but makes the aggressive stunt (speculative optimization) safe to attempt.
@@ -128,6 +140,8 @@ One deoptimization event is cheap and nearly invisible (~1µs). Repeated deoptim
 "Coordinator learning" → JVM re-profiling and re-compiling with updated knowledge.
 
 Where this analogy breaks down: The mat is used once and reset. Deoptimization can happen repeatedly for the same code path — and if it happens too often, it signals a fundamental design problem in the code's type structure.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -142,6 +156,8 @@ Every deoptimization point in compiled code has associated *debug info* — a ta
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The debug metadata requirement is the key design cost: compiled code must maintain PC→state mapping information even though it is never used during normal execution. This information is compressed but never trivially small. C2 code uses `OopMaps` to tell the GC where object references are in registers and stack slots (needed at safepoints), and `DebugInfo` for deoptimization state reconstruction. These tables can comprise 20–40% of the total compiled code size. The architectural consequence: JIT-compiled code is larger than equivalent statically-compiled code, partly due to this safety metadata. This was a conscious design trade-off for correctness and adaptability.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -195,6 +211,8 @@ If a method's compiled code is invalidated (type assumption fundamentally wrong)
 | `intrinsic_or_type_checked_inlining` | Intrinsic assumption violated |
 | `range_check` | Array bounds assumption violated |
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -225,6 +243,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 In a microservice fleet processing diverse request types, deoptimization events can cascade during a feature flag rollout that introduces a new code path. At 10,000 instances, all simultaneously receiving a new type after a deploy, a simultaneous deoptimization storm can create a brief cluster-wide throughput cliff lasting 5–30 seconds while all instances re-profile and re-compile.
+
+---
 
 ### 💻 Code Example
 
@@ -285,6 +305,8 @@ public void drawAll(List<Shape> shapes) {
 // while correctly handling other types
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Optimization Approach | Risk of Deopt | Performance at Scale | Correctness Risk |
@@ -297,6 +319,8 @@ public void drawAll(List<Shape> shapes) {
 
 How to choose: Speculative inlining with deopt is optimal for stable, throughput-focused services. Use `final` or `private` on hot-path methods to eliminate speculation overhead entirely when the type is truly never subclassed.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -307,6 +331,8 @@ How to choose: Speculative inlining with deopt is optimal for stable, throughput
 | Once deoptimized, code never gets recompiled | After deoptimization, the JVM re-profiles and re-submits the method for compilation with updated profile data — it typically recovers to near-original performance |
 | Deoptimization is the same as JIT recompilation | Deoptimization (slow path: interpreter fallback) is distinct from recompilation (a new, better native code compiled from updated profiles). The deoptimization triggers the recompilation pipeline |
 | `final` classes prevent deoptimization | `final` would prevent the CAUSE (subclass violating type assumption). But deoptimization also triggers for null checks, array bounds, and class loading. `final` addresses only type-related deoptimizations |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -383,6 +409,8 @@ If the class hierarchy must be open (plugin architectures), avoid relying on "le
 Prevention:
 Load plugins at startup (before JIT compiles the hot path) rather than lazily mid-operation.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -397,6 +425,8 @@ Load plugins at startup (before JIT compiles the hot path) rather than lazily mi
 **Alternatives / Comparisons:**
 - `Tiered Compilation` — the framework that determines what tier to fall back to after deoptimization; tier transitions are tightly coupled to deoptimization events
 - `AOT (Ahead-of-Time Compilation)` — avoids deoptimization entirely by not using speculative optimizations; pays with less peak performance
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -426,6 +456,7 @@ Load plugins at startup (before JIT compiles the hot path) rather than lazily mi
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A high-frequency trading system runs for 6 hours without incident. At 14:23:17, a new instrument type `EuropeanOption` is introduced via a configuration change and begins appearing on the order processing hot path. Within 50ms, P99 latency spikes from 5µs to 45µs and then recovers to 8µs after 2 seconds. Reconstruct the exact sequence of JVM events during those 2 seconds: what compiles, what deoptimizes, what state is reconstructed, and why does performance settle at 8µs rather than the original 5µs?

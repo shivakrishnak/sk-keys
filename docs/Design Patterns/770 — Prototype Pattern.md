@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Prototype Pattern"
 parent: "Design Patterns"

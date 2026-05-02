@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Caching, Database Query Optimisation, Networking | |
 | **Related:** | HashMap, Count-Min Sketch, Cuckoo Filter | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -40,9 +42,13 @@ You need membership testing for billions of items with limited memory. HashSets 
 THE INVENTION MOMENT:
 Use a bit array (not byte array). Hash each element to k positions and set those bits. A query checks if all k bits are set. If any bit is 0 → definitely not in set. If all bits are 1 → probably in set (might be a false positive from other elements setting the same bits). This structure uses ~10 bits per element vs ~64 bits for a 64-bit pointer. This is exactly why the Bloom Filter was created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Bloom Filter** is a space-efficient probabilistic data structure that supports membership testing with one-sided errors. It consists of a bit array of m bits (initially all 0) and k independent hash functions. To **add** element x: compute k hash values and set the corresponding bits. To **query** x: check if all k bits are set — if any is 0, x is definitely absent; if all are 1, x is probably present (false positive possible). **False negatives are impossible**; false positives occur with probability ≈ (1 - e^(-kn/m))^k for n elements.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ A bit array where hashed elements set bits — any missing bit means definitely 
 
 **One insight:**
 The Bloom filter's power is its asymmetric error model: **no false negatives, some false positives**. This is precisely what you need for cache optimization — if the filter says "definitely not in cache/database," you skip an expensive lookup. You never miss a real hit (no false negative), though you occasionally do a redundant lookup (false positive), which is cheap to verify.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -75,6 +83,8 @@ THE TRADE-OFFS:
 Gain: 10–100× smaller than HashMap, O(k) = O(1) insert and query, zero false negatives.
 Cost: Cannot enumerate members, cannot delete (standard), false positives require tuning, FP rate grows as elements added beyond design capacity.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -89,6 +99,8 @@ WHAT HAPPENS WITH BLOOM FILTER:
 THE INSIGHT:
 The key question is "which error is more expensive?" In many systems, false negatives (missing a real match) are catastrophic, while false positives (doing one redundant expensive check) are acceptable. Bloom filters are designed for exactly this cost asymmetry.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A Bloom filter is like a passport stamp. When you visit a country, the border officer stamps your passport. To check "have you been to France?", they look at the French stamps ink marks. If no French marks: you've never been. If marks exist: you probably have — but marks can bleed and look similar. The filter is the ink-mark check; your actual passport history is the ground truth.
@@ -99,6 +111,8 @@ The key question is "which error is more expensive?" In many systems, false nega
 "Ink bleed from another stamp" → false positive
 
 Where this analogy breaks down: Passport stamps are unique per page; hash positions in a Bloom filter are truly shared — multiple elements can set the same bit. There's no way to tell which element set a given bit.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -113,6 +127,8 @@ Internally: bit array of `m` bits. `put(x)`: for each hash function h₁..hₖ, 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The Kirsch-Mitzenmacher optimisation (using linear combinations of two hash values to simulate k independent hash functions) is a theoretical result showing no loss of performance vs truly independent hashes, while drastically reducing hash computation. Bloom filters are deployed at scale in: Cassandra (per-SSTable bloom filters to skip disk reads for absent keys), Bitcoin (SPV client transaction monitoring), Chrome Safe Browsing (malicious URL detection), Akamai CDN (one-hit wonder detection to decide whether to cache a response). Facebook's social graph uses them to check if a user has seen a story. The key production concern is: what is the capacity? A filter filled beyond design capacity has a rapidly increasing false positive rate — monitor `n / capacity` ratio.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -161,6 +177,8 @@ filter.mightContain("carol@example.com"); // false (definitely NOT in)
 filter.mightContain("dave@example.com");  // rare: might be true (FP)
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -184,6 +202,8 @@ More elements than design capacity inserted
 
 WHAT CHANGES AT SCALE:
 At 10 billion elements, with 10 bits/element, you need 12.5 GB per Bloom filter — may exceed single-machine memory. Partition the problem: each shard maintains its own filter for its key range. Distributed Bloom filters across multiple nodes require careful routing. Alternatively, use Count-Min Sketch for approximate frequency counting, or Quotient Filter for deletable membership.
+
+---
 
 ### 💻 Code Example
 
@@ -241,6 +261,8 @@ class BloomFilter {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Structure | Space | FP | FN | Delete | Best For |
@@ -253,6 +275,8 @@ class BloomFilter {
 
 How to choose: Use Bloom filter when you need membership testing, can tolerate false positives, and memory is constrained. Use HashMap for exact membership when memory allows. Use Cuckoo filter when deletion is also needed.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -262,6 +286,8 @@ How to choose: Use Bloom filter when you need membership testing, can tolerate f
 | A filled-to-capacity Bloom filter is still accurate | False positive rate rises rapidly when n > planned capacity; monitor and rebuild before this happens |
 | Bloom filter with 0% FP rate is possible | Zero FP rate requires exact set representation — that's a HashSet, not a Bloom filter |
 | All hash functions must be truly independent | Kirsch-Mitzenmacher shows two hash functions with linear combinations suffice — fewer hash computations |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -329,6 +355,8 @@ Fix: Serialise filter state to disk on shutdown; load on startup. Guava: `filter
 
 Prevention: Treat Bloom filter as a persistent component if it protects against I/O — always persist and restore.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -342,6 +370,8 @@ Prevention: Treat Bloom filter as a persistent component if it protects against 
 **Alternatives / Comparisons:**
 - `HashMap` — exact membership with no false positives; 10–100× more memory per element.
 - `Cuckoo Filter` — supports deletion with similar or better FP rates than Bloom filter.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -370,6 +400,7 @@ Prevention: Treat Bloom filter as a persistent component if it protects against 
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Apache Cassandra stores one Bloom filter per SSTable on disk. When a read request arrives for a key, Cassandra checks all SSTable Bloom filters (oldest to newest) before performing any disk reads. As more SSTables accumulate (before compaction), the total false positive rate for a single key lookup increases because you're consulting multiple filters. Derive the combined false positive probability for K filters each with FP rate p, and explain why this makes compaction (reducing SSTable count) a critical correctness and performance operation, not just a storage optimization.

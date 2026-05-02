@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Spinlock"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | OS Kernel, Lock-Free Data Structures, Real-Time Systems | |
 | **Related:** | Mutex, Busy-Wait, CAS, TTAS, MCS Lock | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ For extremely short critical sections (< 1–2µs), the overhead of a mutex — 
 THE INVENTION MOMENT:
 The spinlock trades CPU time for latency: instead of sleeping, the waiting thread loops (spins) on a CAS or test-and-set instruction until the lock is free. No context switch. No syscall. The CPU burns cycles, but the lock is acquired the instant it's released — microsecond-latency acquisition vs millisecond for mutex.
 
+---
+
 ### 📘 Textbook Definition
 
 A **spinlock** is a synchronisation primitive where a thread attempting to acquire an already-held lock repeatedly executes a test-and-set (or compare-and-swap) instruction in a tight loop ("spin") without yielding the CPU or blocking. When the lock is released, the spinning thread immediately detects the state change and acquires the lock — with no OS scheduling involvement. Spinlocks are efficient when the lock is held for very short durations (nanoseconds to microseconds) and when the waiting thread can afford to consume CPU. They are inappropriate for locks held for longer durations (would burn CPU for milliseconds), for uniprocessors (spinning prevents the holder from running on the same CPU), or for user-space code where other threads also need the CPU.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ A spinlock keeps the CPU busy-looping until the lock is free — no OS involveme
 
 **One insight:**
 A spinlock is only correct on a multi-core machine where the lock holder is running on a different CPU. On a single CPU, spinning prevents the holder from running — the lock never gets released while you spin. This is why spinlocks are used in the OS kernel (always multi-core, short critical sections) but rarely in user-space applications.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -85,6 +93,8 @@ THE TRADE-OFFS:
 Gain: Zero latency on acquisition (no context switch, no syscall); ideal for < 100ns critical sections; deterministic latency (no scheduler jitter).
 Cost: Wastes CPU cycles while spinning; one spinning thread on a 2-core machine burns 50% CPU; not appropriate for user-space application code (preemptable threads); starvation possible under unfair implementations.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -105,6 +115,8 @@ SPINLOCK (contended):
 THE INSIGHT:
 When the critical section is shorter than the mutex overhead, a spinlock is 50–100× faster. When the critical section is longer than the mutex overhead (> ~5µs), a mutex is better because a spinlock wastes CPU that could be given to the holder to finish faster.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A mutex is a queue at a deli counter: you take a number, sit down, and wait. When your number is called, you walk up. Fast for long waits. A spinlock is standing at the counter saying "are you done yet? are you done yet?" every millisecond. Obnoxious for long waits, but you'll get served the instant the counter is free.
@@ -112,6 +124,8 @@ When the critical section is shorter than the mutex overhead, a spinlock is 50�
 > TTAS (test-and-test-and-set): instead of repeatedly asking "are you done yet?", you watch the counter from across the room (read the lock flag). When you see it become free, THEN you walk up and ask (do the CAS). Less shouting (less cache traffic), same first-available response.
 
 Where the analogy breaks down: in a real spinlock under heavy contention, all waiting threads simultaneously try the CAS when the lock is released — the thundering herd. Solutions like the MCS lock (each thread spins on a private queue node) solve this by having only one thread try the CAS when the predecessor releases.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -126,6 +140,8 @@ Linux kernel spinlock: `spin_lock(lock)`: `LOCK XCHG [lock], 1` instruction. If 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Modern kernel spinlocks use the **qspinlock** (queued spinlock) design (Linux 4.2+). Classic spinlock has O(N²) cache coherence traffic (N threads all spinning on the same variable, all invalidating each other on release). qspinlock uses an MCS-like queue: each waiter has a per-CPU node in the lock's wait queue; each CPU spins on its own node variable (not the shared lock). The lock holder updates only the next waiter's node — only one CPU gets the cache line invalidation on release, not all N. This reduces coherence traffic from O(N²) to O(1) per unlock. The qspinlock implementation on x86 uses 3 bytes: locked (1 byte), pending (1 byte), and tail (2 bytes, encoding the queue tail). The 4-byte atomic fits in a single L1 cache line access.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -158,6 +174,8 @@ Modern kernel spinlocks use the **qspinlock** (queued spinlock) design (Linux 4.
 └────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 OS KERNEL INTERRUPT HANDLER FLOW:
@@ -187,6 +205,8 @@ Thread A holds spinlock
   → Thread B wasted 10ms of CPU spinning for a 50ns wait
   → With 4 threads: 3 spinning = 75% CPU wasted
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -286,6 +306,8 @@ void kernel_function(void) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Primitive | Wait Strategy | Overhead | Best For | Bad For |
@@ -296,6 +318,8 @@ void kernel_function(void) {
 | TTAS | Test then CAS | Less coherence than TAS | Multi-core, short critical sections | Very high contention (thundering herd) |
 | MCS/qspinlock | Per-node spin | O(1) coherence traffic | High-contention, multi-socket NUMA | Simple implementations (complex code) |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -305,6 +329,8 @@ void kernel_function(void) {
 | "Spinlocks work fine on a single core" | No — on a single core, spinning prevents the lock holder from running; only preemptive multitasking (OS interrupt) can release the holder, but spinlocks typically disable interrupts |
 | "JVM spinlocks are a good idea in application code" | Almost never — JVM has preemptive scheduling; a spinning thread may be preempted, wasting its quantum; use AtomicReference CAS for lock-free or ReentrantLock for blocking |
 | "The `pause` instruction makes spinlocks faster" | Indirectly — `pause` prevents pipeline speculation during spin, reducing the pipeline flush penalty when the lock is released; it also gives the HyperThread sibling more execution resources |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -366,6 +392,8 @@ Fix: Align the spinlock variable to its own cache line (64-byte aligned, padded)
 
 Prevention: Place spinlock at the start of a struct; add `char pad[60]` after it before the protected data.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -382,6 +410,8 @@ Prevention: Place spinlock at the start of a struct; add `char pad[60]` after it
 - `Adaptive mutex` — spins briefly, then blocks (JVM synchronized, Linux futex with spin-before-sleep)
 - `MCS lock` — queued spinlock with O(1) coherence; preferred in high-contention scenarios
 - `RCU (Read-Copy-Update)` — kernel's most scalable read-concurrent protection; replaces spinlocks for read-heavy kernel data
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -413,6 +443,7 @@ Prevention: Place spinlock at the start of a struct; add `char pad[60]` after it
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The Linux kernel introduced `qspinlock` (queued spinlock) in Linux 4.2 to replace ticket spinlocks. A ticket spinlock uses two counters: `head` (next to be served) and `tail` (next ticket). A thread acquires by atomically incrementing `tail` and then spinning until `head == my_ticket`. This guarantees FIFO ordering and avoids thundering herd (each thread spins on its own local ticket value copy). The MCS lock (on which qspinlock is based) goes further: each thread has a private node on which it spins, and the unlock operation only modifies the immediate successor's node. Explain the exact memory ordering problem that ticket locks solve that TAS doesn't, and why qspinlock fits in 4 bytes while a naive MCS lock requires a node pointer (8 bytes). What compression does qspinlock use?

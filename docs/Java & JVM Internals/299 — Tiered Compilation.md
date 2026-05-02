@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Tiered Compilation"
 parent: "Java & JVM Internals"
@@ -39,6 +39,8 @@ tags:
 | **Used by:** | Deoptimization, GC Tuning, GraalVM | |
 | **Related:** | C1 / C2 Compiler, Method Inlining, OSR (On-Stack Replacement), AOT | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -50,9 +52,13 @@ A high-traffic e-commerce site rolls out new pods during a traffic surge. Each n
 THE INVENTION MOMENT:
 This is exactly why **Tiered Compilation** was created — to automatically orchestrate all compilation levels in a single JVM, starting fast with C1 and progressively improving to C2, handling both startup latency and peak throughput without any configuration.
 
+---
+
 ### 📘 Textbook Definition
 
 **Tiered Compilation** is a JVM execution strategy (enabled by default since Java 8 via `-XX:+TieredCompilation`) that organizes code execution into five tiers: Tier 0 (interpreter), Tiers 1–3 (C1 at various profiling levels), and Tier 4 (C2). Methods migrate upward through tiers as their invocation counts cross tier-specific thresholds, with profiling data gathered at each tier feeding the next. The JVM's compilation controller (CompilationPolicy) dynamically manages tier transitions, compile queues, and load-shedding to balance the tradeoff between compilation overhead and execution performance.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -64,6 +70,8 @@ Five training levels — methods start at slowest/cheapest and automatically gra
 
 **One insight:**
 The tier transition is not just "faster code" — each tier transition also changes the *profiling depth*. A method sitting at Tier 3 (C1 with full profiling) is actively gathering rich data that will make Tier 4 (C2) aggressively better. The tiers are a data pipeline, not just a speed ladder.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -96,6 +104,8 @@ THE TRADE-OFFS:
 Gain: Auto-tuning across startup and peak; single JVM mode works for all use cases.
 Cost: Added JVM complexity; profiling overhead at Tier 3 (a few percent); more compiler threads needed for optimal performance; Code Cache must accommodate both C1 and C2 code simultaneously.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -115,6 +125,8 @@ SERVER B (tiered):
 THE INSIGHT:
 Server A has 5 minutes of SLA violations. Server B has 30 seconds of elevated latency, then 90 seconds of acceptable performance, then optimal. Tiered compilation's warmup curve is fundamentally smoother — it never leaves hot code at interpreter speed if any compiled version exists.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Think of tiered compilation as an express lane highway system. All cars start in the slowest lane (interpreter). After a few miles (invocations), they can merge into a faster lane (C1, no profiling). After more miles with consistent good driving, GPS traffic analysis kicks in (C1 full profiling). Eventually, frequent drivers get a personalized AI-optimized route suggested (C2). The highway system monitors all lanes in real time and manages congestion (compiler queue load shedding) by temporarily holding some cars in slower lanes when the fast lanes are full.
@@ -125,6 +137,8 @@ Server A has 5 minutes of SLA violations. Server B has 30 seconds of elevated la
 "Congestion management" → CompilationPolicy load shedding.
 
 Where this analogy breaks down: Unlike a highway, tiers are not about physical capacity — a method at Tier 2 can occupy exactly the same CPU as a method at Tier 4. The "lanes" here represent code quality levels, not resource slots.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -139,6 +153,8 @@ Each method has two counters: `invocation_counter` and `backedge_counter` (count
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The tiered compilation design emerged from the recognition that C2 compilation latency (50–500ms) is unacceptable for short-lived methods, but simply using C1 for everything wastes massive peak throughput potential. The profiling tier (Tier 3) is specifically designed to generate the type-feedback and method call site profiles that C2 needs to inline aggressively. The load-shedding behavior under C2 queue pressure is a subtle but critical design: during startup, when dozens of methods all hit C2 threshold simultaneously, the system self-regulates by routing some methods to Tier 2 (cheap, no detailed profiling) rather than flooding the C2 queue — at the cost of those methods never getting C2-optimized unless they stay hot long enough to re-enter the queue.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -178,6 +194,8 @@ The JVM's CompilationPolicy applies these rules at each compile checkpoint:
 **Compiler Queue Management:**
 Each compilation level has its own queue. When Tier 4 (C2) queue depth exceeds a threshold, the policy starts redirecting methods to Tier 2 instead of Tier 3 (to avoid producing profiling data that C2 will take too long to consume). This prevents the profile data from going stale.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -203,6 +221,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At 100 JVM instances starting simultaneously (Kubernetes rolling deploy), the aggregate compilation load compounds: each JVM runs its own compiler threads, stealing CPU from application threads. With 4 compiler threads per pod and 100 pods on shared nodes, compilation overhead can cause node-level CPU saturation. Modern container-aware JVMs (Java 10+) detect CPU quotas correctly, but `CICompilerCount` should still be explicitly tuned for containerized deployments.
+
+---
 
 ### 💻 Code Example
 
@@ -250,6 +270,8 @@ java -XX:TieredStopAtLevel=1 -jar dev-tool.jar
 # Do NOT use in production for throughput-critical services
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Compilation Mode | Cold Start | Warmup Speed | Peak Throughput | Best For |
@@ -262,6 +284,8 @@ java -XX:TieredStopAtLevel=1 -jar dev-tool.jar
 
 How to choose: Default tiered compilation is the right answer for 95% of Java services. Use GraalVM Native Image for CLIs and serverless. Never use C2-only in production.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -272,6 +296,8 @@ How to choose: Default tiered compilation is the right answer for 95% of Java se
 | TieredStopAtLevel=4 is the same as default | Level 4 means C1 with full profiling and C2 enabled — that IS effectively the default. Setting `TieredStopAtLevel=4` explicitly is fine but redundant |
 | Tiered compilation was added in Java 8 | Tiered compilation was added in Java 7 as an experimental feature (`-XX:+TieredCompilation`) and became the default in Java 8 |
 | Higher tier number = always faster | Tier 3 (C1 + full profiling) can be slightly *slower* than Tier 1 (C1 no profiling) due to instrumentation overhead — Tier 3 is the sacrifice-speed-for-data phase |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -346,6 +372,8 @@ Remove `-XX:-TieredCompilation` from JVM args.
 Prevention:
 Document and version-control all JVM startup flags. Add automated checks that validate JVM flags match expected configuration on startup.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -360,6 +388,8 @@ Document and version-control all JVM startup flags. Add automated checks that va
 **Alternatives / Comparisons:**
 - `AOT (Ahead-of-Time Compilation)` — skips all tiers entirely by compiling before JVM start; no warmup, no adaptive optimization
 - `GraalVM` — replaces C2 with a more advanced compiler; tiered compilation still applies with Graal as the Tier 4 engine
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -390,6 +420,7 @@ Document and version-control all JVM startup flags. Add automated checks that va
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Tiered Compilation includes a load-shedding mechanism that routes methods to lower tiers (1 or 2) when the C2 queue is overloaded. If a microservice starts with a burst of exactly 50,000 requests in the first 10 seconds (a Black Friday surge), and the C2 queue sheds 30% of methods to Tier 2, what is the long-term throughput impact? Specifically: will those Tier-2 methods eventually get promoted to Tier 4, and if not, what condition would need to change for them to reach C2?

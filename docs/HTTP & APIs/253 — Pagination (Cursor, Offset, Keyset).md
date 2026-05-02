@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Pagination (Cursor, Offset, Keyset)"
 parent: "HTTP & APIs"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | REST, HTTP Methods, HTTP Status Codes, SQL Fundamentals, Database Indexes |                 |
 | **Used by:**    | API Design Best Practices, GraphQL, REST                                  |                 |
 | **Related:**    | HATEOAS, Rate Limiting, API Throttling, Caching, HTTP Headers             |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

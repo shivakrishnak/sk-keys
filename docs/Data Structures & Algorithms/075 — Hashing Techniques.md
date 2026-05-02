@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Hashing Techniques"
 parent: "Data Structures & Algorithms"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | String Matching (KMP, Rabin-Karp), Bloom Filter, Consistent Hash Ring | |
 | **Related:** | HashMap, Bloom Filter, Consistent Hash Ring | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ O(log N) is not O(1). For a 64-key table vs 64 million keys, binary search takes
 THE INVENTION MOMENT:
 What if you could compute the exact storage location of a key in O(1), regardless of how many other keys exist? A **hash function** converts any key to an integer index. Given a fixed-size array, `index = hash(key) % arraySize` directly locates the bucket with no comparisons. O(1) insert, O(1) lookup, O(1) delete — independent of N. This is why **Hashing Techniques** were created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **hash function** maps a key of arbitrary size to a fixed-size integer (the **hash code**) deterministically and efficiently. A **hash table** uses this hash code, reduced modulo table capacity, to determine an array bucket for each key. **Collision resolution** handles cases where two distinct keys hash to the same bucket; strategies include chaining (linked list per bucket) and open addressing (linear/quadratic probing, double hashing). A well-designed hash function distributes keys uniformly, minimises collisions, and executes in O(1). Under uniform distribution with load factor α = N/capacity, expected operations are O(1) average, O(N) worst case.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Convert any key to a number, use that number as an array index — find anything
 
 **One insight:**
 A hash function's quality is measured by two properties: **uniformity** (evenly distributes keys across all buckets, minimising collisions) and **avalanche effect** (changing even one bit of the key completely scrambles the hash, preventing patterns). A bad hash function — like using just the last digit of a number — clusters keys in a few buckets and degrades O(1) to O(N).
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -77,6 +85,8 @@ THE TRADE-OFFS:
 Gain: O(1) average operations; no dependency on data size N.
 Cost: O(N) worst case (all keys collide); non-deterministic ordering (unsorted); requires a good hash function; memory overhead (unused buckets; load factor < 1 wastes space).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -91,6 +101,8 @@ WHAT HAPPENS WITH GOOD HASH FUNCTION (keys: 11, 13, 17, 19, 23):
 THE INSIGHT:
 The choice of table capacity matters: use a prime number as table size to reduce patterns in key distributions. Using a power-of-2 capacity with `key & (cap-1)` is fast but exposes clustering for keys that are multiples of the capacity. Java HashMap uses power-of-2 capacity with additional hash mixing (upper bits folded in) to compensate.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Hashing is like a filing system where the folder label is derived from the document's content. You scan the first paragraph of a document, run a formula, and that formula tells you: "This document belongs in drawer 42." To find it later, run the same formula on the title — immediately go to drawer 42. No need to scan all drawers. If two documents hash to drawer 42 (collision), the drawer holds both — you scan only that drawer's contents.
@@ -102,6 +114,8 @@ The choice of table capacity matters: use a prime number as table size to reduce
 "Filing once, finding instantly" → O(1) average
 
 Where this analogy breaks down: Unlike a filing cabinet, hash tables can resize (rehash all entries when capacity is exceeded) — no physical filing cabinet doubles in size. Also, the analogy doesn't capture why uniformity of the formula matters for performance.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -116,6 +130,8 @@ Java's `HashMap` uses chaining with a twist: above 8 entries per bucket, the cha
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The choice of prime vs power-of-2 table size reflects a fundamental trade-off: power-of-2 enables `hash & (cap-1)` (1 cycle) vs prime modulo `hash % prime` (multiple cycles). Java chose power-of-2 with supplemental hash mixing to get both speed and uniformity. Universal hashing — choosing a random hash function from a family at table creation time — provides expected O(1) regardless of input distribution, even adversarial. This is the basis of Cuckoo hashing (O(1) worst-case lookup), HopScotch hashing (cache-friendly, O(1) worst lookup), and Robin Hood hashing (reduces variance, not average). At 10B keys, consistent hashing distributes across machines while maintaining O(1) node membership changes.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -169,6 +185,8 @@ h("abc") = ('a' * 31^2 + 'b' * 31^1 + 'c' * 31^0) % large_prime
 ```
 Used in Java `String.hashCode()` with base=31. Prime base 31 provides good distribution; 31 = 2^5 - 1, enabling fast computation: `31*n == (n<<5) - n`.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -196,6 +214,8 @@ All keys hash to same bucket
 
 WHAT CHANGES AT SCALE:
 At 1 billion keys distributed across 1,000 servers, consistent hashing assigns each key to a server in O(1) + O(K) (K virtual nodes per server) without remapping all keys when servers join/leave. This is a distributed extension of the same hash-to-bucket concept, but the "bucket" is now a server node on a ring, and resizing (adding a server) only remaps N/S keys (N total, S servers) instead of all N. CockroachDB, Cassandra, and Redis Cluster use consistent hashing or virtual-node variants of it.
+
+---
 
 ### 💻 Code Example
 
@@ -265,6 +285,8 @@ for (int i = 0; i < nums.length; i++) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Structure | Lookup | Insert | Delete | Space | Ordered |
@@ -277,6 +299,8 @@ for (int i = 0; i < nums.length; i++) {
 
 How to choose: Use HashMap for O(1) operations on unordered data. Use TreeMap when you need sorted iteration or range queries. Use a sorted array when data is mostly static and binary search suffices.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -286,6 +310,8 @@ How to choose: Use HashMap for O(1) operations on unordered data. Use TreeMap wh
 | Two objects that are equal don't need the same hashCode | WRONG. The Java contract: if `a.equals(b)` then `a.hashCode() == b.hashCode()`. Violation causes `get` to always return null even for equal keys. |
 | A larger table always means better performance | A 10× oversized table wastes memory and may increase CPU cache misses (table doesn't fit in L2 cache), hurting performance for small N. |
 | HashCode must be unique across all objects | Only `equals()`-equal objects must share the same hashCode. Different objects can and do share hashCodes (collisions); the table handles this via chaining or probing. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -344,6 +370,8 @@ Fix: Java HashMap uses randomised hash key per JVM start (JEPS 180, Java 8) to p
 
 Prevention: Set `-Djdk.map.althashing.threshold=0` in older JVMs; use `ConcurrentHashMap` for concurrent access.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -360,6 +388,8 @@ Prevention: Set `-Djdk.map.althashing.threshold=0` in older JVMs; use `Concurren
 - `TreeMap` — O(log N) operations but maintains sorted order; use for range queries or ordered iteration.
 - `Trie` — O(M) per operation (M = key length): preferable for string prefix matching; uses more memory.
 - `Skip List` — O(log N) probabilistic; sorted; used in Redis sorted sets as an alternative to balanced BST.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -389,6 +419,7 @@ Prevention: Set `-Djdk.map.althashing.threshold=0` in older JVMs; use `Concurren
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Java's `String.hashCode()` is pure (same string always returns same code), deterministic, and uses a 31-based polynomial. A HashDoS attack constructs thousands of strings that all hash to the same value, forcing O(N²) performance. Java 8 introduced randomised seeds for HashMap hash keys. But `String.hashCode()` itself is still deterministic — how does Java prevent HashDoS if `hashCode()` hasn't changed? What is the exact mechanism (JEPS 180), and does this fully protect against specially crafted key inputs?

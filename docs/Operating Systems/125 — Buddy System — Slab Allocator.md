@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Buddy System — Slab Allocator"
 parent: "Operating Systems"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Kernel Memory Allocation, malloc, JVM, Database Buffer Pools |                 |
 | **Related:**    | Fragmentation, SLAB, SLUB, kmalloc, mmap                     |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,11 +40,15 @@ Two levels of fragmentation problem: (1) Page-level: the kernel needs contiguous
 THE INVENTION MOMENT:
 **Buddy system** (Knowlton, 1965): page-level allocator. **Slab allocator** (Bonwick, 1994, SunOS 5.4): object-level allocator on top of buddy. Slab observation: object creation (constructor + cache warming) is expensive; if you never destroy the object (just "free to free-list"), the next allocation gets a warm, already-initialised object. The slab allocator is a per-object-type free-list that keeps objects initialised and cache-hot.
 
+---
+
 ### 📘 Textbook Definition
 
 The **buddy system** is the Linux kernel's page frame allocator. It manages physical memory in **free lists** indexed by order (0 to MAX_ORDER=10, representing 1 to 1024 contiguous 4KB pages = 4KB to 4MB blocks). Allocations are rounded up to the nearest power-of-2. When a block of order N is needed but only order N+1 is free, the N+1 block is split into two "buddies" of order N; one is returned, one goes to the order-N free list. On free, if a block's buddy is also free, they are merged back into an order N+1 block (coalescing).
 
 The **slab allocator** (implemented as **SLUB** in Linux 2.6.23+) sits above the buddy system and provides efficient allocation of small, fixed-size kernel objects. For each object type (inode, task_struct, sk_buff, dentry), a **cache** (kmem_cache) is created. Each cache has one or more **slabs** (one or more physically-contiguous pages holding N pre-initialised objects). Free objects are maintained on per-CPU free-lists, enabling lock-free allocation in the common case.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -56,6 +62,8 @@ Buddy = splits/merges RAM pages in power-of-2; slab = caches pre-made kernel obj
 
 **One insight:**
 The slab allocator's key insight is not just reuse — it's **NUMA and cache locality**. Per-CPU slabs mean that on a 64-core machine, allocating an inode on CPU 3 always comes from CPU 3's local cache (no cross-CPU locking, L1/L2 cache warm).
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -105,6 +113,8 @@ THE TRADE-OFFS:
 Gain: O(1) allocation and deallocation for both page-level (buddy) and object-level (slab); minimal fragmentation; CPU-local allocation avoids NUMA penalties.
 Cost: Buddy wastes up to 50% of allocation (rounding to power-of-2); slab wastes memory holding objects that will be reused (memory "committed" to each cache can be large); SLUB debugging (`CONFIG_SLUB_DEBUG`) has significant overhead.
 
+---
+
 ### 🧪 Thought Experiment
 
 SLAB OBJECT REUSE PERFORMANCE:
@@ -130,6 +140,8 @@ Total: 0.12 seconds
 
 27× faster. The slab allocator's win is: objects are never destroyed — their initialisation cost is paid once.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > **Buddy system** = library book stacks, arranged in sections of 1, 2, 4, 8 shelves. Need a 3-shelf section? Get a 4-shelf section, leave 1 shelf on the "1-shelf" list. Return your 4 shelves? Check if the adjacent 4-shelf section is also free → merge to 8. Fast because address arithmetic immediately locates the buddy.
@@ -137,6 +149,8 @@ Total: 0.12 seconds
 > **Slab allocator** = cafeteria tray return. Trays go back to a warm stack (not to a dishwasher). When you need a tray, you grab from the warm stack — it's already clean and room temperature. The "clean and room temperature" corresponds to the object's initialised state and cache hotness.
 
 > Where this breaks down: in userspace, tcmalloc (Google) and jemalloc (Meta/FreeBSD) use similar slab-like per-thread caches — the same insight applied to userspace malloc.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -151,6 +165,8 @@ SLUB (Linux 2.6.23+, superseded SLAB): Each `kmem_cache` has per-CPU slabs. Allo
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Bonwick's original slab paper (1994) identified three costs: (1) object construction/destruction (solved by object reuse), (2) data structure allocation for the slab book-keeping (solved by storing metadata in the slab pages themselves), and (3) cache coloring — different slabs for the same size object are placed at different offsets to ensure objects land on different cache lines across slabs, preventing cache-line contention. SLUB (Christoph Lameter, 2007) simplified by removing coloring (it helped on older CPUs; modern CPUs with larger L1 caches benefit less) and focusing on per-CPU locality. The result: SLUB has fewer code paths, is more debuggable, and has better worst-case behavior under NUMA-heavy workloads. Google's `tcmalloc` (2005) and jemalloc (2006) independently arrived at the same design for userspace: per-thread size-class caches of free objects.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -184,6 +200,8 @@ Bonwick's original slab paper (1994) identified three costs: (1) object construc
 └─────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NETWORK PACKET RECEIVE PATH (sk_buff allocation):
@@ -212,6 +230,8 @@ Performance: 10Gbps NIC = 14.8M packets/sec
 sk_buff allocation: <100ns each (from slab)
 Without slab (raw kmalloc): ~1000ns each → can't keep up
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -282,6 +302,8 @@ free_pages((unsigned long)vaddr, 2);
 // buddy system: checks buddy block → merge if free → coalesce upward
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Allocator        | Level     | Granularity           | Algorithm                         | Best For                   |
@@ -293,6 +315,8 @@ free_pages((unsigned long)vaddr, 2);
 | **jemalloc**     | Userspace | Objects               | Per-thread arenas                 | Firefox, Redis, FreeBSD    |
 | **JVM TLAB**     | JVM       | Java objects          | Bump pointer in thread-local area | Java object allocation     |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                          | Reality                                                                                                                                         |
@@ -301,6 +325,8 @@ free_pages((unsigned long)vaddr, 2);
 | "Slab allocator is just a free list"   | It also provides CPU locality (per-CPU caches), NUMA awareness (per-node partial lists), and keeps objects initialised between uses             |
 | "kmalloc(N) allocates exactly N bytes" | Rounds up to the nearest size class; `kmalloc(200)` gets a 256-byte slab object                                                                 |
 | "SLAB and SLUB are the same"           | SLAB (older): complex with coloring and per-CPU/per-node caches separately. SLUB (modern): simplified, per-CPU active slab pointer, no coloring |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -341,6 +367,8 @@ echo 1 > /proc/sys/vm/compact_memory
 
 Fix: `vm.min_free_kbytes` increase forces more aggressive reclaim before fragmentation; `khugepaged` (THP daemon) performs compaction; for critical workloads use `hugetlbfs` with pre-reserved huge pages at boot.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -359,6 +387,8 @@ Fix: `vm.min_free_kbytes` increase forces more aggressive reclaim before fragmen
 
 - `tcmalloc / jemalloc` — userspace equivalents of slab (per-thread caches, size classes)
 - `JVM TLAB` — thread-local allocation buffers: same insight as per-CPU slab caches applied to JVM heap
+
+---
 
 ### 📌 Quick Reference Card
 

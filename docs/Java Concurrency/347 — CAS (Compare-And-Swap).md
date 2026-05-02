@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "CAS (Compare-And-Swap)"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Atomic Classes, ConcurrentHashMap, VarHandle | |
 | **Related:** | Atomic Classes, Optimistic Locking (Java), volatile | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ A metrics collection service receives 1,000,000 HTTP requests/second, each incre
 THE INVENTION MOMENT:
 This is exactly why **CAS** was created — to perform a compare-and-update atomically at the hardware level, without the overhead of OS-managed locks, enabling **lock-free** concurrent algorithms.
 
+---
+
 ### 📘 Textbook Definition
 
 **Compare-And-Swap (CAS)** is an atomic CPU instruction that does in one hardware operation: read a memory location, compare it with an expected value, and if equal, write a new value — returning whether the swap succeeded. In Java: `Unsafe.compareAndExchangeInt(obj, offset, expect, update)` (raw access), or `AtomicInteger.compareAndSet(expected, update)` (public API), or `VarHandle.compareAndSet(obj, expect, update)` (modern low-level API). CAS returns false if the value has changed since reading (another thread wrote it) — the caller retries: this is the **CAS loop** pattern.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ CAS = "update this value, but ONLY if it's still what I expect — tell me if so
 
 **One insight:**
 CAS resolves the race condition problem without a lock. If ten threads all try CAS on the same variable simultaneously, exactly one succeeds (the hardware guarantees this). The nine that fail retry — no thread is blocked, no context switch — they just spin briefly and try again. For low-contention workloads, this is dramatically faster than locking.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -92,6 +100,8 @@ THE TRADE-OFFS:
 Gain: No OS lock overhead; threads spin instead of park (no context switch for uncontended + briefly contested); enables lock-free algorithms; scales better than synchronized under moderate contention.
 Cost: ABA problem (value changed from A→B→A — CAS doesn't detect); high contention = CAS spinning wastes CPU; no guarantee of fairness (starvation possible); complex to implement correct lock-free algorithms.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -121,6 +131,8 @@ WITH CAS (AtomicInteger.incrementAndGet()):
 THE INSIGHT:
 CAS eliminates the OS overhead for uncontended and briefly-contended operations. Under very high contention (hundreds of threads spinning), CAS loops waste CPU — at that point, contention avoidance (partitioning the counter) is more effective than either lock or CAS.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > CAS is like optimistic ticket buying. You see ticket row-5-seat-3 is available (read). You try to book it: "book row-5-seat-3 IF it's still available" (CAS). If someone else booked it millisecond before you (failure), you try another strategy — maybe row-5-seat-4 (retry). No theater staff blocking the seat for you (no lock) — you either succeed instantly or try again. The ticket system (hardware) guarantees two people can't book the exact same seat simultaneously.
@@ -132,6 +144,8 @@ CAS eliminates the OS overhead for uncontended and briefly-contended operations.
 
 Where this analogy breaks down: In ticket booking with many users, you eventually find a seat. In CAS under extreme contention, you might spend many retries before succeeding. This is why `LongAdder` (striped counters) beats `AtomicLong` under truly extreme contention.
 
+---
+
 ### 📶 Gradual Depth — Four Levels
 
 **Level 1:** CAS is a single atomic operation that checks a value and updates it, failing gracefully if the value changed since you checked. No locks needed.
@@ -141,6 +155,8 @@ Where this analogy breaks down: In ticket booking with many users, you eventuall
 **Level 3:** CAS uses the hardware `CMPXCHG` instruction (x86) or `STXR/LDREX` pair (ARM). Java exposes it through `sun.misc.Unsafe.compareAndSwapInt` (direct hotspot intrinsic) and `VarHandle` API (Java 9+). `AtomicInteger` wraps a `volatile int value` field and uses `Unsafe.compareAndSetInt()`. The JIT compiles `AtomicInteger.incrementAndGet()` to a single `LOCK XADD` instruction on x86 — no JVM loop.
 
 **Level 4:** CAS enables building lock-free data structures: `ConcurrentLinkedQueue`, `ConcurrentHashMap`, lock-free stacks, and skip lists. These are defined by: (1) non-blocking — every thread makes progress in finite steps; (2) wait-free — every thread completes in a bounded number of steps regardless of other threads. The ABA problem (A→B→A looks like no change to CAS) is solved using `AtomicStampedReference` or `AtomicMarkableReference`.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -204,6 +220,8 @@ stamped.compareAndSet(val, 10, stamp[0], stamp[0] + 1);
 # vs synchronized: multiple instructions + potential OS call
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (AtomicInteger.incrementAndGet):
@@ -227,6 +245,8 @@ CONTENTION FLOW (two threads):
 
 WHAT CHANGES AT SCALE:
 At extreme scale (1000+ threads contending on one CAS), retry loops dominate — cache line bouncing causes `MESI` protocol invalidations across cores, adding ~100ns per CAS. Solution: `LongAdder` (Java 8) uses striped counters — each thread typically updates its own stripe, combining at read time. `LongAdder.increment()` under extreme contention is 10-100× faster than `AtomicLong.incrementAndGet()`.
+
+---
 
 ### 💻 Code Example
 
@@ -280,6 +300,8 @@ class ConcurrentStack<T> {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Mechanism | Overhead | Blocking | Fairness | Scalability | Best For |
@@ -291,6 +313,8 @@ class ConcurrentStack<T> {
 
 How to choose: CAS (`AtomicInteger`, `AtomicReference`) for single-variable atomic operations. `LongAdder` for counters under extreme contention. `synchronized`/`ReentrantLock` for multi-step operations on multiple variables.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -299,6 +323,8 @@ How to choose: CAS (`AtomicInteger`, `AtomicReference`) for single-variable atom
 | CAS is sufficient for all concurrent problems | CAS solves single-variable atomicity. For coordinating updates to multiple variables, a lock is still needed. The ABA problem can corrupt CAS-based algorithms without `AtomicStampedReference` |
 | A failed CAS discards my work | A failed CAS means "the value changed since I read it — start over." No data corruption occurs; the failed thread simply retries with the current value |
 | CAS is equivalent to `volatile` | `volatile` ensures visibility. CAS provides atomic compare-and-update. They solve different aspects of concurrency — CAS also has implicit `volatile` semantics but does more |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -342,6 +368,8 @@ head.compareAndSet(current, newNode, stamp[0], stamp[0] + 1);
 
 Prevention: Always examine lock-free algorithms for ABA susceptibility. Use `AtomicStampedReference` or `AtomicMarkableReference` when ABA is possible.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -356,6 +384,8 @@ Prevention: Always examine lock-free algorithms for ABA susceptibility. Use `Ato
 **Alternatives / Comparisons:**
 - `synchronized` — lock-based alternative; simpler but blocking
 - `Optimistic Locking (Java)` — database-level CAS analogue using version numbers
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -388,6 +418,7 @@ Prevention: Always examine lock-free algorithms for ABA susceptibility. Use `Ato
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** `AtomicInteger.incrementAndGet()` is implemented as a CAS loop: read, add 1, CAS. The JIT on x86 compiles this to a single `LOCK XADD` instruction. Explain: why `LOCK XADD` is correctly translated as a CAS (it doesn't have a compare step) — what difference from `LOCK CMPXCHG` makes `LOCK XADD` correct for increment, why these two instructions are not interchangeable, and what specific optimization the JIT is making that is NOT a CAS semantically but IS equivalent for the specific use case of increment.

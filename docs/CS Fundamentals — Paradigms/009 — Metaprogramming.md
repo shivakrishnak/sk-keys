@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Aspect-Oriented Programming, Annotations, Code Generation | |
 | **Related:** | Aspect-Oriented Programming, Reflection, Annotations | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -54,6 +56,8 @@ time), you define the mapping rule ONCE — "for each field, generate
 a column" — and it applies to all 200 classes automatically.
 Change the class, the behaviour changes automatically.
 
+---
+
 ### 📘 Textbook Definition
 
 Metaprogramming is a programming technique in which programs have
@@ -66,6 +70,8 @@ compile time (annotation processors, macros, generics), or through
 code generation (source code generators, template engines).
 Languages with strong metaprogramming capabilities include Python,
 Ruby, Lisp, Scala, and — to a more limited extent — Java.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -86,6 +92,8 @@ your program's types and values. Normal code asks "what is the
 value of x?" Metaprogramming asks "what are the FIELDS of this
 class?" or "what is the RETURN TYPE of this method?" — it reasons
 about the structure of code itself.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -124,6 +132,8 @@ Cost: Loss of compile-time type safety; difficult to debug
 (errors appear at runtime, not compile time); performance
 overhead (reflection bypasses JIT optimisation); code
 that's hard to navigate and understand.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -168,6 +178,8 @@ Metaprogramming trades compile-time safety for code generality —
 you write code that works for unknown types, enabling frameworks
 that "adapt" to any class you write.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Metaprogramming is like a universal adapter. A specific adapter
@@ -185,6 +197,8 @@ that "adapt" to any class you write.
 Where this analogy breaks down: unlike a physical adapter,
 metaprogramming generates NEW code, not just configures existing
 behaviour — the analogy understates the creative power.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -228,6 +242,8 @@ frameworks from accessing private fields across modules. Java 21's
 `MethodHandles` (LambdaMetafactory) and, in the future, Value
 Types — which will ultimately make many reflection use cases
 unnecessary by providing better compile-time abstractions.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -282,6 +298,8 @@ The JVM generates a new class at runtime that implements
 `MyInterface`. Every method call routes through the lambda
 above — enabling Spring AOP, Mockito, and ORM proxies.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (Hibernate entity mapping):
@@ -308,6 +326,8 @@ switching from reflection to `MethodHandles.Lookup` or
 compile-time generation (Lombok, MapStruct) recovers performance.
 At 1000x, the overhead of dynamic class generation (proxies)
 in JVM warm-up time matters for serverless/cold starts.
+
+---
 
 ### 💻 Code Example
 
@@ -395,6 +415,8 @@ String name = (String) getName.invoke(user);
 // JIT can inline MethodHandle calls — not possible with reflection
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Technique              | Timing        | Type Safe | Performance            | Best For                         |
@@ -411,6 +433,8 @@ cost. Use reflection only for genuinely dynamic scenarios.
 Switch to MethodHandles when reflection performance is a
 measured bottleneck.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                                     | Reality                                                                                                                                |
@@ -419,6 +443,8 @@ measured bottleneck.
 | `setAccessible(true)` permanently bypasses Java's module system   | Java 9+ modules can deny `setAccessible` entirely; frameworks requiring deep reflection need explicit `--add-opens` JVM flags          |
 | Compile-time annotation processors run at runtime                 | Annotation processors run during `javac` and generate source files; the generated code is compiled normally with zero runtime overhead |
 | All metaprogramming is reflection                                 | Metaprogramming includes compile-time macros, code generators, template engines — reflection is just the runtime variant               |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -535,6 +561,8 @@ UserService svc = (UserService) ctx.getBean("userService");
 Prevention: Always program to interfaces; never inject or cast
 to a concrete Spring bean class in application code.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -554,6 +582,8 @@ to a concrete Spring bean class in application code.
 - `Aspect-Oriented Programming` — a specific, structured use of metaprogramming for cross-cutting
 - `Generics` — compile-time type parameterisation (a limited, safe form of metaprogramming)
 - `Macros (Lisp/Scala)` — code-level metaprogramming at parse time; more powerful, less portable
+
+---
 
 ### 📌 Quick Reference Card
 

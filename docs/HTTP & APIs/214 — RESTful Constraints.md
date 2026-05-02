@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "RESTful Constraints"
 parent: "HTTP & APIs"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | REST, HTTP/1.1, HTTP Methods, HTTP Status Codes, Statelessness |                 |
 | **Used by:**    | HATEOAS, API Design Best Practices, API Gateway, Hypermedia    |                 |
 | **Related:**    | REST, HATEOAS, GraphQL, gRPC, Uniform Interface                |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

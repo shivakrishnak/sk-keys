@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Knapsack Problem, Longest Common Subsequence, Dijkstra, Bellman-Ford | |
 | **Related:** | Greedy Algorithm, Divide and Conquer, Backtracking | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -40,9 +42,13 @@ The fundamental issue is **overlapping subproblems**: the same sub-computation `
 THE INVENTION MOMENT:
 What if instead of recomputing `fib(30)` 800 times, you compute it once and **store** the result? Every future call simply looks up the table. Suddenly `fib(40)` takes exactly 40 additions. This is the core insight of Dynamic Programming: identify subproblems that recur, solve each exactly once, and cache the result. Bellman coined the term in the 1950s to describe this pattern formally. This is exactly why Dynamic Programming was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Dynamic Programming (DP)** is an algorithmic technique for solving optimisation or counting problems by breaking them into overlapping subproblems, solving each subproblem once, and storing solutions in a cache (memoisation table or bottom-up table). DP applies when a problem exhibits two properties: **optimal substructure** (the optimal solution to the full problem can be assembled from optimal solutions to subproblems) and **overlapping subproblems** (the same subproblems recur many times during recursion). DP transforms an exponential brute-force search into a polynomial-time algorithm by eliminating redundant computation.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ Solve each smaller version of your problem once, cache the answer, never repeat 
 
 **One insight:**
 The hardest part of DP is not coding the cache — it is *recognising* the recurrence relation: "the answer to problem[N] can be expressed in terms of smaller problem[N-k]." Once you see the recurrence, the implementation is mechanical. The insight separates engineers who "memorise DP problems" from those who can derive solutions to unseen problems on a whiteboard.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -76,6 +84,8 @@ THE TRADE-OFFS:
 Gain: Polynomial time (often `O(N²)` or `O(N×W)`) from exponential brute force.
 Cost: Memory proportional to the state space — `O(N²)` or `O(N×W)` space, which is prohibitive for very large inputs. Also, recognising the correct state definition requires significant problem-solving skill.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -90,6 +100,8 @@ Allocate `dp[0..5]`. Set `dp[0]=1, dp[1]=1`. Iterate: `dp[i] = dp[i-1] + dp[i-2]
 THE INSIGHT:
 The exponential blowup in naive recursion comes entirely from recomputing identical subproblems. DP's cache converts the recursion tree into a DAG — instead of `O(2^N)` nodes, it has `O(N)` nodes. The algorithm is not fundamentally smarter; it simply refuses to repeat work.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Dynamic Programming is like filling out a tax form. You don't know your final tax until you compute boxes A, B, and C first. Each box is a subproblem — you fill it once, write the number, and every later box that needs it just reads from the form. You never recompute a box.
@@ -100,6 +112,8 @@ The exponential blowup in naive recursion comes entirely from recomputing identi
 "The final tax amount" → `dp[N]` — the answer to the full problem
 
 Where this analogy breaks down: Tax forms have a fixed structure dictated externally. In DP, *you* must discover the subproblem decomposition from the problem structure. The hardest work in DP is designing the form, not filling it in.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -114,6 +128,8 @@ DP works on DAGs of subproblems. The state tuple must capture all information th
 
 **Level 4 — Why it was designed this way (senior/staff):**
 DP is the algorithmically correct response to problems with **matroid complement structure** where greedy fails. Bellman's principle of optimality formalises it: *a globally optimal policy has the property that, regardless of initial state and decision, the remaining decisions constitute an optimal policy with regard to the state resulting from the first decision.* This is optimal substructure stated precisely. DP fails when this principle does not hold — e.g., shortest path in graphs with negative cycles (no finite substructure exists). In competitive programming and interview contexts, recognising DP problems requires pattern matching across problem classes: interval DP, bitmask DP, tree DP, digit DP, profile DP.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -165,6 +181,8 @@ If transition only reads from the previous row/column, replace the full 2D table
 - Time: `O(states × transitions per state)`
 - Space: `O(states)` for naive table; reducible with rolling arrays
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -190,6 +208,8 @@ Wrong state definition (missing a parameter)
 
 WHAT CHANGES AT SCALE:
 For large state spaces (e.g., N=10⁶ items, W=10⁶ capacity), the `O(N×W)` table requires 10¹² entries — physically impossible. This forces problem reformulation: use greedy if applicable, heuristics, or segment-tree-optimised DP (for convex hull trick, divide-and-conquer DP optimisation), which reduces `O(N²)` transitions to `O(N log N)` for problems with the quadrangle inequality property.
+
+---
 
 ### 💻 Code Example
 
@@ -290,6 +310,8 @@ int lcs(String a, String b) {
 // dp table backwards from dp[m][n] to dp[0][0]
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Paradigm | Time | Space | Globally Optimal | When to Use |
@@ -302,6 +324,8 @@ int lcs(String a, String b) {
 
 How to choose: Use DP when subproblems overlap and you need the global optimum. Use greedy when you can prove the greedy choice property. Use divide-and-conquer when subproblems are independent.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -312,6 +336,8 @@ How to choose: Use DP when subproblems overlap and you need the global optimum. 
 | DP guarantees optimal solution for any problem | DP only guarantees optimal solutions when optimal substructure holds. Problems with non-optimal substructure (e.g., longest path in a graph with cycles) cannot be solved with standard DP |
 | Once you see the recurrence, DP is easy | Finding the recurrence is the hard part. The coding is mechanical once the state and transition are correctly defined |
 | DP is only for competitive programming | DP is used in production: route planning (Bellman-Ford), NLP (Viterbi algorithm), resource scheduling, diff algorithms (Myers diff uses LCS) |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -424,6 +450,8 @@ Fix: Apply divide-and-conquer DP optimisation or the convex hull trick if the pr
 
 Prevention: Analyse DP complexity with state count × transition count before coding. n=1000 is fine for O(N²); n=5000 requires O(N² log N) or better.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -442,6 +470,8 @@ Prevention: Analyse DP complexity with state count × transition count before co
 - `Greedy Algorithm` — faster (O(N log N)) but only correct when greedy choice property holds; DP is the fallback when greedy fails.
 - `Divide and Conquer` — similar decomposition but subproblems do not overlap; merge sort uses D&C, not DP.
 - `Backtracking` — exhaustive search that can explore all solutions; DP prunes the space when optimal substructure guarantees you never need suboptimal sub-solutions.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -470,6 +500,7 @@ Prevention: Analyse DP complexity with state count × transition count before co
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The coin change problem with denominations `[1, 5, 6, 9]` and target `T = 11` yields different results from greedy (which picks 9+1+1 = 3 coins) vs DP (which finds 6+5 = 2 coins). Trace the DP table for `dp[0..11]` using the recurrence `dp[t] = 1 + min(dp[t - c] for c in coins)`. At which value of `t` does DP first diverge from the greedy choice, and what does this reveal about the relationship between overlapping subproblems and the coin denominations structure?

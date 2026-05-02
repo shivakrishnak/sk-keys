@@ -29,6 +29,8 @@ tags:
 | **Used by:** | API Design, Documentation, Code Generation, Contract Testing | |
 | **Related:** | API Contract Testing, API Documentation, REST, API Versioning | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

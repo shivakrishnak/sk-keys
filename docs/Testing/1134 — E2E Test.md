@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "E2E Test"
 parent: "Testing"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | CI-CD, Release Gating, Acceptance Testing               |                 |
 | **Related:**    | Selenium, Playwright, Cypress, Smoke Test, Test Pyramid |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Unit and integration tests verify components in isolation or small combinations.
 THE INVENTION MOMENT:
 Selenium (2004) introduced browser automation as a testing tool: programmatically drive a real browser, click buttons, fill forms, assert page content. Playwright (Microsoft, 2020) modernised the model: native Chrome DevTools Protocol, auto-wait semantics, network interception, and multi-browser support without flakiness.
 
+---
+
 ### 📘 Textbook Definition
 
 An **End-to-End (E2E) test** is an automated test that exercises a complete user workflow through a fully deployed system. It interacts with the system from the user's perspective: operating a real browser (Playwright, Selenium, Cypress) or making real HTTP API calls against a running service stack. E2E tests verify that all components (frontend, backend, databases, third-party integrations) function together correctly. They are the highest level of the Test Pyramid — fewest in number, slowest to run, but highest in confidence.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ E2E test = a robot that uses your app like a real user and checks that everythin
 
 **One insight:**
 E2E tests should be few in number (Test Pyramid: 10x fewer E2E than integration tests). They are slow (minutes), brittle (UI changes break them), and expensive to maintain. Use them only for **critical user journeys** — the top 5 flows that must work for the business.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -85,6 +93,8 @@ THE TRADE-OFFS:
 Gain: Highest confidence that the system works end-to-end; tests real user flows; catches cross-layer assumptions.
 Cost: Slowest (minutes per test); flakiest (UI changes, timing, network); most expensive to maintain; requires full environment.
 
+---
+
 ### 🧪 Thought Experiment
 
 THE PERFECT SETUP THAT STILL FAILS E2E:
@@ -107,11 +117,15 @@ E2E test: FAILS (hits the real HTTP layer with real headers)
 
 E2E tests catch integration assumptions that no lower-level test can reach.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > An E2E test is a **quality assurance tester** who uses the application exactly like a customer: opens the browser, navigates to the page, clicks "Buy", enters payment details, submits, and checks if the confirmation email arrives. The tester has no knowledge of the internal code — they only see what a customer sees.
 
 > The automation (Playwright/Selenium) is a robot that can do this thousands of times without getting tired, runs it after every code change, and alerts you if any step fails.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -122,6 +136,8 @@ E2E tests catch integration assumptions that no lower-level test can reach.
 **Level 3:** Page Object Model (POM): abstract page interactions into classes. `LoginPage.login(user)` not `page.fill('#email', ...)` directly. This way, when the UI changes, you update one POM class, not 20 tests. Playwright trace viewer: `playwright show-trace trace.zip` → full request/response log + screenshots + video for each test step. Network interception: `page.route('**/api/external', route => route.fulfill({...}))` — mock external APIs while keeping internal stack real.
 
 **Level 4:** E2E tests in CI have three reliability challenges: (1) **Flakiness** — non-deterministic failures from race conditions; solve with retry mechanisms (`test.retries(2)` in Playwright) + root cause analysis of retried failures. (2) **Speed** — 20 E2E tests × 2min each = 40min CI pipeline; solve with parallel execution (`workers: 4`) + sharding across CI nodes. (3) **Environment** — full stack must be running; solve with Docker Compose or Kubernetes namespace per branch. The Netflix/Google approach: E2E tests run in production on synthetic (canary) traffic — "production verification tests" — rather than maintaining a separate full-stack test environment.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -150,6 +166,8 @@ E2E tests catch integration assumptions that no lower-level test can reach.
 └──────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 CRITICAL USER JOURNEY: "User purchases a product"
@@ -177,6 +195,8 @@ Playwright test:
 8. const order = await apiClient.getOrder(orderId)
    expect(order.status).toBe('CONFIRMED')
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -240,6 +260,8 @@ export default defineConfig({
 });
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Test Level  | Speed  | Coverage      | Maintenance | # Tests |
@@ -249,6 +271,8 @@ export default defineConfig({
 | Contract    | 1–10s  | API interface | Medium      | 10s     |
 | **E2E**     | 1–5min | User journey  | High        | 5–20    |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                            | Reality                                                                                                          |
@@ -257,6 +281,8 @@ export default defineConfig({
 | "E2E tests replace manual testing"       | Cover critical happy paths + top error paths; exploratory testing still finds unexpected issues                  |
 | "Selenium and Playwright are equivalent" | Playwright is significantly less flaky (auto-wait, modern browser protocols); prefer Playwright for new projects |
 | "E2E tests should cover every edge case" | Edge cases belong in unit tests; E2E tests should cover user journeys, not all combinations                      |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -270,11 +296,15 @@ Fix: Playwright auto-wait handles most cases. Use `expect(locator).toBeVisible()
 Cause: 20+ E2E tests × 3min each = 60min pipeline.
 Fix: Run E2E tests in parallel (`workers: 4`), shard across CI nodes, run only on main/release branches (not every feature branch PR).
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Integration Test, HTTP and APIs, Browser Automation
 - **Builds on:** Selenium, Playwright, Cypress, Page Object Model
 - **Alternatives:** Contract Test (API-level, faster), Smoke Test (subset of E2E for post-deploy verification)
+
+---
 
 ### 📌 Quick Reference Card
 

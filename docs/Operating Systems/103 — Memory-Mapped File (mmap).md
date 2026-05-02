@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Memory-Mapped File (mmap)"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | Zero-Copy (sendfile), Page Cache, Blocking I/O      |                 |
 | **Related:**    | Page Cache, Zero-Copy (sendfile), File Descriptor   |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Database engines, JVM class loaders, and compilers all need fast, random access 
 THE INVENTION MOMENT:
 This is exactly why `mmap` was created — to map a file directly into the process's virtual address space, letting the OS page-fault mechanism lazily load only the needed pages, with zero explicit I/O syscalls for reads.
 
+---
+
 ### 📘 Textbook Definition
 
 **Memory-mapped file (`mmap`)** is an OS mechanism that maps a file (or anonymous region) into a process's virtual address space, backed by the file's data through the **page cache**. Reading the mapped region triggers demand-paging: the first access to a page causes a page fault, the OS reads the file page into the page cache and maps it into the process. Subsequent accesses hit either the page cache or the TLB with no syscalls. For writable maps, modified pages are marked dirty and written back to the file by the kernel (via `msync()` or writeback).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ mmap turns a file into an array in your program's memory — read and write it l
 
 **One insight:**
 The most important insight about mmap is that there is no "copy" — the file data lives in the page cache (kernel), and your virtual address is simply mapped to those same physical pages. A read() would copy kernel pages to your heap; mmap shares the physical pages directly. This is why `mmap` enables zero-copy file access.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -69,6 +77,8 @@ DERIVED DESIGN:
 THE TRADE-OFFS:
 Gain: Zero-copy access to files; lazy loading (only accessed pages use RAM); sharing between processes (multiple processes can mmap the same file, sharing physical pages); pointer arithmetic instead of offset management.
 Cost: Address space consumption; TLB pressure from many pages; page fault latency for cold pages; complex error handling (`SIGBUS` on I/O error instead of return value); no read-ahead control (though `madvise` helps).
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -93,6 +103,8 @@ WHAT HAPPENS WITH mmap():
 THE INSIGHT:
 mmap eliminates the kernel→user copy entirely. Both `read()` and `mmap` load pages through the page cache; `mmap` just removes the extra copy step and replaces it with a virtual address mapping.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > mmap is like mounting a filesystem inside your apartment. The entire filing cabinet (file) appears as a folder on your desk (virtual address range). Grabbing a document (reading a byte) retrieves it from the cabinet on demand — the building manager (OS) fetches it from storage (disk) if not already in the lobby (page cache). Any documents you annotate (write) are automatically filed back.
@@ -104,6 +116,8 @@ mmap eliminates the kernel→user copy entirely. Both `read()` and `mmap` load p
 "Your own notebook copy" → MAP_PRIVATE (copy-on-write)
 
 Where this analogy breaks down: Unlike a physical folder, multiple processes can share the same mmap'd pages in RAM — changes in one process's MAP_SHARED region are immediately visible to all others mapping the same file.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -118,6 +132,8 @@ Common use cases: reading configuration files without parsing into heap (avoids 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The design of sharing page cache pages directly (rather than copying) was a deliberate choice to eliminate double-buffering. The tradeoff is that mmap error handling is fundamentally different from I/O errors: a `read()` that fails returns `-1`; an mmap fault that encounters a bad disk sector delivers `SIGBUS`. Production databases that mmap files must install a `SIGBUS` handler to catch and handle disk errors gracefully — a subtle source of bugs. LMDB uses mmap exclusively for reads (zero-copy, zero-allocation per read) but takes a write lock for writes. RocksDB uses mmap for SST file reads in production configurations. The JVM uses mmap for loading class files (`ClassLoader`) — a 100 MB JAR becomes a set of mmap'd pages, with classes loaded lazily on first use.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -155,6 +171,8 @@ read():  disk → page cache → (copy) → user heap
 mmap():  disk → page cache → (mapped) → user VA  [no copy]
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -173,6 +191,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 A database process mapping 1 TB of data files has 256 million PTE entries. Page table memory itself can be gigabytes. At 1000 concurrent processes all mapping the same shared files, Linux deduplicates the page cache pages — all share the same physical pages — but each process has its own PTE chain, multiplying page table overhead by 1000. Production DBs use `madvise(MADV_SEQUENTIAL)` or `MADV_RANDOM` to tune read-ahead behaviour.
+
+---
 
 ### 💻 Code Example
 
@@ -243,6 +263,8 @@ if (sigsetjmp(sigbus_jmp, 1) != 0) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach   | Copy Overhead   | Syscalls  | Random Access      | Error Handling | Best For                  |
@@ -253,6 +275,8 @@ if (sigsetjmp(sigbus_jmp, 1) != 0) {
 | Direct I/O | Single          | Per-chunk | O_DIRECT           | Return value   | DB bypass page cache      |
 
 How to choose: Use mmap for large files with random access patterns (databases, indexes, sparse access). Use `read()` for sequential streaming where read-ahead is important. Use `sendfile` for serving files to sockets without user-space involvement.
+
+---
 
 ### 🔁 Flow / Lifecycle
 
@@ -278,6 +302,8 @@ How to choose: Use mmap for large files with random access patterns (databases, 
 └────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                           | Reality                                                                                                             |
@@ -287,6 +313,8 @@ How to choose: Use mmap for large files with random access patterns (databases, 
 | "munmap() writes changes to disk"                       | munmap flushes dirty pages but doesn't guarantee durability; call msync(MS_SYNC) before munmap for durability       |
 | "MAP_PRIVATE writes are not visible to other processes" | Correct — but the copy-on-write means your write consumes extra physical RAM for the modified pages                 |
 | "File must exist on disk for mmap to work"              | MAP_ANONYMOUS mmap creates memory with no file backing — used for large heap-like allocations (e.g., by malloc)     |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -361,6 +389,8 @@ msync(ptr, total, MS_SYNC);
 
 Prevention: Tune `vm.dirty_ratio` and `vm.dirty_background_ratio` to control when writeback threads run; call `msync(MS_ASYNC)` periodically to amortise flush cost.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -380,6 +410,8 @@ Prevention: Tune `vm.dirty_ratio` and `vm.dirty_background_ratio` to control whe
 - `read() / write()` — explicit I/O with copies; simpler error handling but higher copy overhead
 - `sendfile()` — zero-copy for file→socket, but no user-space access to data
 - `Direct I/O (O_DIRECT)` — bypasses page cache entirely; useful for databases managing their own cache
+
+---
 
 ### 📌 Quick Reference Card
 

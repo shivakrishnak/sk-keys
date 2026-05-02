@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "ExecutorService"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | ThreadPoolExecutor, ForkJoinPool, CompletableFuture | |
 | **Related:** | ThreadPoolExecutor, ForkJoinPool, CompletableFuture | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -36,9 +38,13 @@ WORLD WITHOUT IT:
 THE INVENTION MOMENT:
 **`ExecutorService`** adds lifecycle control and result-returning task support to the base `Executor` abstraction — the production-grade thread pool interface.
 
+---
+
 ### 📘 Textbook Definition
 
 **`ExecutorService`** extends `Executor` with: `submit(Callable<T>)` — returns `Future<T>`; `submit(Runnable)` — returns `Future<?>`; `invokeAll(List<Callable<T>>)` — submits all, returns all Futures; `invokeAny(List<Callable<T>>)` — returns first completed result; `shutdown()` — orderly shutdown (accepts no new tasks, runs pending); `shutdownNow()` — immediate stop attempt (interrupts running); `awaitTermination(timeout, unit)` — waits for completion after shutdown; `isShutdown()` / `isTerminated()` — state checks. Factory: `Executors` utility class creates standard implementations.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -50,6 +56,8 @@ THE INVENTION MOMENT:
 
 **One insight:**
 Proper shutdown is critical. An `ExecutorService` without shutdown prevents JVM exit — daemon threads aside. Always call `shutdown()` + `awaitTermination()` on application lifecycle hooks (Spring `@PreDestroy`, try-with-resources with `ExecutorService.close()` in Java 19+).
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -91,6 +99,8 @@ THE TRADE-OFFS:
 Gain: Lifecycle management; Future results; batch submit.
 Cost: Must call shutdown; `FixedThreadPool` with unbounded queue can OOM; `CachedThreadPool` can create unlimited threads.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP: Parallel report generation with results.
@@ -116,9 +126,13 @@ pool.awaitTermination(60, SECONDS);
 
 THE INSIGHT: All submissions happen before any `.get()` call — this ensures concurrent execution. Then results are collected sequentially without reducing throughput.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > ExecutorService is a staffing agency that accepts job orders (submit), provides order tracking (Future), and has a close-of-business procedure (shutdown + awaitTermination).
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -129,6 +143,8 @@ THE INSIGHT: All submissions happen before any `.get()` call — this ensures co
 **Level 3:** `AbstractExecutorService` provides default `submit()` implementations by wrapping Runnables/Callables in `FutureTask`. The concrete `ThreadPoolExecutor` manages a worker queue, core/max thread counts, keep-alive time, and rejection handler.
 
 **Level 4:** `ExecutorService.close()` (Java 19+) follows the `AutoCloseable` pattern — `close() = shutdown() + awaitTermination(Long.MAX_VALUE, NANOSECONDS)`. This enables try-with-resources usage, preventing the common "forgot shutdown" bug and enabling the "scoped structured concurrency" pattern.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -174,6 +190,8 @@ try (ExecutorService vThreads =
 }
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 ```
@@ -194,6 +212,8 @@ FAILURE PATH (forgot shutdown):
     → [SIGKILL: data loss for in-flight tasks]
     → [Fix: always shutdown executors in @PreDestroy]
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -233,6 +253,8 @@ class ReportService {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Factory | Thread Count | Queue | Best For |
@@ -244,6 +266,8 @@ class ReportService {
 
 How to choose: Fixed thread pool for CPU tasks (n = core count). Virtual thread executor for I/O. Single thread for sequential ordering guarantee.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -251,6 +275,8 @@ How to choose: Fixed thread pool for CPU tasks (n = core count). Virtual thread 
 | `shutdown()` stops running tasks | `shutdown()` stops NEW submissions; running tasks finish normally. `shutdownNow()` interrupts running tasks (but they may ignore interrupts) |
 | CachedThreadPool is always appropriate | CachedThreadPool creates a new thread for each task if pool is full. Under load spikes: OOM from unlimited thread creation |
 | Fixed thread pool can't OOM | Fixed pool has bounded threads but unbounded queue — millions of queued tasks = OOM |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -268,11 +294,15 @@ jcmd <pid> GC.heap_info
 ```
 Fix: Use `ThreadPoolExecutor` with bounded `ArrayBlockingQueue` + rejection handler.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites:** `Executor`, `Callable`, `Future`
 **Builds on:** `ThreadPoolExecutor`, `ForkJoinPool`
 **Alternatives:** `CompletableFuture.supplyAsync()` for non-blocking chains
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -294,6 +324,7 @@ Fix: Use `ThreadPoolExecutor` with bounded `ArrayBlockingQueue` + rejection hand
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A developer uses `Executors.newFixedThreadPool(10)` for a service that calls an external API. The API sometimes takes 30 seconds to respond. At 100 RPS, 10 threads × 30s = 10 threads occupied for 30 seconds → backpressure after 10 concurrent, queue grows unbounded. Trace: what happens to `submit()` calls after pool is saturated, why the queue grows to OOM without bounded queue configuration, and what the exact `ThreadPoolExecutor` constructor arguments are for: 10 core threads, max 10, bounded queue of 100, reject policy that blocks caller until space is available (the `CallerRunsPolicy` variant that blocks rather than runs-in-caller).

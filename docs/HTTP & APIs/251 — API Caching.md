@@ -29,6 +29,8 @@ tags:
 | **Used by:** | REST APIs, CDN, Browser Caching, Microservices | |
 | **Related:** | ETag/Cache-Control, API Rate Limiting, CDN, Redis | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

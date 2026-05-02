@@ -28,6 +28,8 @@ tags:
 | **Used by:** | DataLoader, GraphQL Performance Optimization, Query Complexity | |
 | **Related:** | ORM N+1 Problem, Eager Loading, Batch Processing | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

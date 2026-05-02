@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Reactive Programming, Side Effects, Referential Transparency | |
 | **Related:** | Object-Oriented Programming, Declarative Programming, Lambda Calculus | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -55,6 +57,8 @@ simultaneously with zero coordination. The output of any
 computation is determined solely by its inputs — no hidden
 dependencies, no shared state bugs.
 
+---
+
 ### 📘 Textbook Definition
 
 Functional programming is a paradigm that treats computation as
@@ -66,6 +70,8 @@ as values), and function composition (building complex operations
 from simple functions). FP languages include Haskell, Erlang, and
 Clojure; multi-paradigm languages (Java, Scala, JavaScript, Python)
 support functional style alongside imperative and OOP styles.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -84,6 +90,8 @@ The key breakthrough of functional programming is that a pure
 function can be called by 100 threads simultaneously with zero
 locks — because it never modifies shared state, there's nothing
 to synchronise. Correctness becomes provable, not just testable.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -117,6 +125,8 @@ Cost: Higher memory use (new objects instead of mutations);
 performance overhead from immutable data structures;
 steeper learning curve; I/O must be explicitly managed
 (monads in Haskell, futures in Scala).
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -160,6 +170,8 @@ Immutability turns "might be correct" into "is correct" — a
 pure function's output is a mathematical fact, not a runtime
 coincidence.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Functional programming is like a water treatment pipeline.
@@ -177,6 +189,8 @@ coincidence.
 Where this analogy breaks down: unlike physical pipelines,
 functional pipelines create multiple copies of data at each
 stage, which consumes memory — real water pipelines don't fork.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -213,6 +227,8 @@ passing directly derives from FP principles. The JVM's GC is
 optimised for the "young generation" of short-lived objects
 that functional style generates, making FP in Java far more
 performant than naive analysis would suggest.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -254,6 +270,8 @@ pure data flow.
 splits the list across CPU cores. Since `f` is pure, each core
 operates on its own data with no shared state — no locks needed.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -280,6 +298,8 @@ At 100x, distributed FP frameworks (Apache Spark RDDs) shard
 immutable datasets across nodes — the same map/filter API works
 on 1,000 machines as on 1. At 1000x, immutability eliminates an
 entire class of distributed coordination bugs.
+
+---
 
 ### 💻 Code Example
 
@@ -346,6 +366,8 @@ double totalHighValue = transactions
 // No locks needed — pure functions, immutable input
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Paradigm       | Shared State         | Concurrency         | Testability           | Best For                    |
@@ -359,6 +381,8 @@ How to choose: Use functional style when data transformation,
 parallelism, or correctness are primary concerns. Fall back to OOP
 when modelling complex entities with rich lifecycles.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                      | Reality                                                                                                                                    |
@@ -367,6 +391,8 @@ when modelling complex entities with rich lifecycles.
 | FP is impractical because copying data is too slow | Persistent data structures use structural sharing — most operations are O(log n), not O(n); JVM GC is optimised for short-lived objects    |
 | You must use Haskell or Scala for FP               | Java 8+, Python, JavaScript all support FP style — most modern codebases use FP techniques in a multi-paradigm way                         |
 | Pure functions can't do I/O                        | I/O is deliberately pushed to the edges; business logic is pure; frameworks use monads or effect systems to manage I/O in a controlled way |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -486,6 +512,8 @@ List<String> result = list.stream()
 Prevention: Chain stream operations in one pipeline; avoid
 `collect()` except as the terminal operation.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -505,6 +533,8 @@ Prevention: Chain stream operations in one pipeline; avoid
 - `Object-Oriented Programming` — manages state via encapsulation rather than elimination
 - `Lambda Calculus` — the mathematical foundation FP is built on
 - `Declarative Programming` — the broader paradigm of which FP is a discipline
+
+---
 
 ### 📌 Quick Reference Card
 

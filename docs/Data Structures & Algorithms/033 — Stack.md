@@ -26,6 +26,8 @@ tags:
 | **Used by:** | DFS, Backtracking, Recursion vs Iteration Trade-offs | |
 | **Related:** | Queue / Deque, Recursion, Call Stack | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -37,9 +39,13 @@ Nested processing — function calls, expression parsing, undo history, browser 
 THE INVENTION MOMENT:
 If you restrict a collection to add-to-top and remove-from-top only, the structure automatically guarantees that whatever you added most recently is what you get back first. This mirrors how function call frames work in hardware. This is exactly why the Stack was created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Stack** is an abstract data type that implements a collection with two primary operations: `push` (add an element to the top) and `pop` (remove and return the top element). It enforces Last-In, First-Out (LIFO) ordering: the element most recently pushed is always the next to be popped. `peek` (or `top`) reads the top element without removing it. All three operations are O(1).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -51,6 +57,8 @@ A pile where you can only add or remove from the top.
 
 **One insight:**
 A Stack's value is not what it stores — it's the *order guarantee* it enforces. Any code that needs "undo the last thing first" or "process the most nested context first" can delegate that bookkeeping to a Stack rather than writing custom tracking logic.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -68,6 +76,8 @@ THE TRADE-OFFS:
 Gain: O(1) push/pop/peek, enforced LIFO semantics simplify nested-processing code.
 Cost: Only the top is accessible; retrieving arbitrary elements requires popping and saving everything above.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -82,6 +92,8 @@ Push each new URL visited. "Back" is a `pop`. Navigate forward invalidates the f
 THE INSIGHT:
 The Stack's LIFO guarantee is not just about storage — it's about making "reverse-order processing" a zero-logic operation. The discipline of the data structure replaces the discipline of manual bookkeeping.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A Stack is like the "Undo" list in a text editor. Every action is pushed on the undo stack. Pressing Ctrl+Z pops the top action and reverses it. You can only undo in reverse order of how you typed — the structure enforces the contract automatically.
@@ -92,6 +104,8 @@ The Stack's LIFO guarantee is not just about storage — it's about making "reve
 "Can't undo actions from the middle" → no random access
 
 Where this analogy breaks down: Some editors support selective undo (undo a specific action, not necessarily the last). That feature requires a more complex structure than a plain stack.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -106,6 +120,8 @@ In Java, use `Deque<T> stack = new ArrayDeque<>()`. Use `push()` to add, `pop()`
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The JVM's call stack is itself a hardware-level Stack: each `invokevirtual` bytecode pushes a stack frame (local variables + operand stack); `return` pops it. This is why recursive algorithms have a natural stack analogy and can be re-implemented iteratively using an explicit Stack. Stack-based architectures (JVM, Python interpreter, WASM) are simpler and more portable than register-based architectures, which is why language VMs often choose them.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -151,6 +167,8 @@ while (!stack.isEmpty()) {
 ```
 This replaces recursion, avoids `StackOverflowError` for deep trees.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -174,6 +192,8 @@ Recursive algorithm on deep input without explicit Stack
 
 WHAT CHANGES AT SCALE:
 At scale (millions of events per second), the overhead of `ArrayDeque` is negligible — all operations touch one cache line. The risk at scale is stack depth: a DFS on a graph with 1M nodes will overflow the JVM call stack if implemented recursively. Always use an explicit stack for graph traversal at production scale.
+
+---
 
 ### 💻 Code Example
 
@@ -221,6 +241,8 @@ void dfsIterative(Node root) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Structure | LIFO | FIFO | Both-ends | Best For |
@@ -232,6 +254,8 @@ void dfsIterative(Node root) {
 
 How to choose: Use `ArrayDeque` as a Stack for all new code. Use `Deque` when you need both ends. Never use `java.util.Stack` — it is synchronised and inherits inappropriate `Vector` methods.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -240,6 +264,8 @@ How to choose: Use `ArrayDeque` as a Stack for all new code. Use `Deque` when yo
 | A stack can only be array-based | Stacks are commonly implemented with linked lists — Java's `ArrayDeque` happens to use an array |
 | Stack and Queue are fundamentally different | Both are restricted Deques — the only difference is which end is used for removal |
 | Recursion is a better Stack than coding one explicitly | Recursion uses the limited JVM call stack; an explicit heap Stack avoids `StackOverflowError` for deep inputs |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -305,6 +331,8 @@ Fix: Always allocate stacks locally within method scope, not as shared fields.
 
 Prevention: Never make a mutable Stack a class-level or static field in concurrent code.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -319,6 +347,8 @@ Prevention: Never make a mutable Stack a class-level or static field in concurre
 **Alternatives / Comparisons:**
 - `Queue / Deque` — FIFO version; same O(1) ends but opposite ordering.
 - `Recursion` — implicit call stack; limited in depth, cleaner syntax for naturally recursive problems.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -346,6 +376,7 @@ Prevention: Never make a mutable Stack a class-level or static field in concurre
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A production service processes deeply-nested JSON configs (up to 50,000 levels deep) using recursive descent parsing. On most inputs it works fine, but on adversarially crafted inputs it throws `StackOverflowError`. You cannot increase JVM stack size (-Xss) because thousands of threads share the pool. Describe step-by-step how you would refactor the recursive parser to use an explicit stack while preserving identical output semantics.

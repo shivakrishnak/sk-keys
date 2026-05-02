@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Web Application Security, API Security | |
 | **Related:** | XSS, CORS, SameSite Cookie, API Authentication, JWT | |
 
+---
+
 ### 🔥 The Problem This Solves (The Threat)
 
 **THE ATTACK:**

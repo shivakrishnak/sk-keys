@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Financial Systems, Distributed Locking, Leader Election | |
 | **Related:** | Linearizability, Serializability, CAP Theorem, PACELC | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT STRONG CONSISTENCY:**

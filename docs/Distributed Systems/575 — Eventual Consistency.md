@@ -28,6 +28,8 @@ tags:
 | **Used by:** | NoSQL Databases, DNS, Shopping Carts, Social Feeds | |
 | **Related:** | Strong Consistency, Causal Consistency, CRDTs, BASE | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT EVENTUAL CONSISTENCY (forced strong consistency for all):**

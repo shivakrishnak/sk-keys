@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Test Isolation"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | All Developers                                                              |                 |
 | **Related:**    | Test Fixtures, Mocking, Flaky Tests, Test Data Management, Database Cleanup |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -41,9 +43,13 @@ Test 3: creates user "bob" in DB
 Test 4: counts all users → expects 1 → gets 2 ✗ ← contaminated by Tests 1 and 3
 ```
 
+---
+
 ### 📘 Textbook Definition
 
 **Test isolation** is the property that each test: (1) sets up its own required state (does not depend on previous tests), (2) cleans up after itself (does not leave state for subsequent tests), (3) produces the same result regardless of execution order, (4) can be run alone or in parallel. An isolated test suite is a prerequisite for reliable CI — if tests pass individually but fail in a suite, isolation is broken. Isolation violations are the primary cause of flaky tests.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Each test is an island — sets up what it needs, cleans up what it made.
 **One analogy:**
 
 > A well-isolated test is like a **hotel room**: cleaned before each guest (setup), and cleaned after (teardown). Each guest finds the same blank-slate room, regardless of who stayed before. If cleaning is skipped, the next guest finds someone else's mess.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -119,6 +127,8 @@ class CartServiceTest {
 }
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 TEST ORDER SENSITIVITY BUG:
@@ -140,9 +150,13 @@ Fix: Test C must either:
   c. Create an admin and assert count is exactly +1 from baseline
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Test isolation is the **scientific control condition**: in an experiment, you change one variable at a time and keep everything else constant. A test suite without isolation is like a chemistry experiment where the beakers aren't cleaned between experiments — the results are meaningless because you don't know which "previous experiment" contaminated the result.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -153,6 +167,8 @@ Fix: Test C must either:
 **Level 3:** Parallel test execution requires stricter isolation: unique test data (use UUID or timestamp in test email addresses), database isolation per test (Testcontainers with `TRUNCATE` instead of delete, or per-test schemas in PostgreSQL). Spring's test context caching: by default, Spring reuses the application context across tests in the same JVM — this can cause state leakage if the context holds mutable singletons or `@MockBean` state.
 
 **Level 4:** Test isolation and test design quality: tests that require complex setup to isolate are a signal that the production code has poor separation of concerns (too much shared state, global state). The effort to isolate a test is proportional to the coupling in the production code. TDD practitioners use "test isolation difficulty" as a design feedback signal: if it's hard to isolate, the code needs refactoring. The principle of "test hermiticity" (from Google's SWE book): a test is hermetic when it contains all information necessary to understand and run it. Hermetic tests never reach out to shared databases, file systems, or external services.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -174,6 +190,8 @@ Fix: Test C must either:
 │  Next test: same blank slate guaranteed                  │
 └──────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -205,6 +223,8 @@ class UserServiceIntegrationTest {
 // Tests can run in any order, in parallel, or individually
 // Each starts with empty DB (due to rollback)
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -238,6 +258,8 @@ class IsolatedServiceTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Isolation Strategy        | Mechanism          | Pros                  | Cons                                  |
@@ -247,6 +269,8 @@ class IsolatedServiceTest {
 | Per-test Testcontainer    | Fresh DB container | Perfect isolation     | Very slow startup                     |
 | Unique test data (UUID)   | No collision       | Parallel-safe         | State accumulates                     |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                               | Reality                                                                                                        |
@@ -254,6 +278,8 @@ class IsolatedServiceTest {
 | "Tests pass in CI so isolation is fine"                     | Tests may pass in serial but fail when parallelized — isolation issues hidden by serial execution              |
 | "@Transactional on test = real transaction behavior tested" | `@Transactional` on test rolls back — you're NOT testing commit behavior; use a separate test for transactions |
 | "Isolation only matters for DB tests"                       | Unit tests also need isolation: static mutable state, singletons, shared caches can contaminate unit tests     |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -267,10 +293,14 @@ Fix: `@BeforeEach` cleanup, or `@Transactional` on test class.
 Diagnosis: Parallel execution (CI uses multiple threads). Tests share a database user/schema, or tests create data with the same fixed IDs.
 Fix: Use unique data per test (UUID-based), or use database transaction isolation per test.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Unit Test, Test Fixtures
 - **Related:** Flaky Tests, Test Data Management, Testcontainers, @Transactional
+
+---
 
 ### 📌 Quick Reference Card
 

@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Third-party Integrations, Social Login, Enterprise SSO, Mobile Apps | |
 | **Related:** | OIDC, JWT, API Authentication, API Keys, PKCE | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

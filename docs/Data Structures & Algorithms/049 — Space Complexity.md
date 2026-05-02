@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Amortized Analysis, Space-Time Trade-off | |
 | **Related:** | Time Complexity / Big-O, Space-Time Trade-off, Amortized Analysis | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ Optimising only for time complexity ignores a critical resource: memory. An algo
 THE INVENTION MOMENT:
 Apply the same scaling analysis to auxiliary memory usage as to time. Express how much additional memory grows with input size, drop constants, keep dominant terms. This gives a language for comparing algorithms on both dimensions simultaneously. This is exactly why Space Complexity analysis was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Space complexity** is the amount of additional memory an algorithm requires as a function of its input size N, expressed in Big-O notation. It typically measures *auxiliary space* — the extra memory beyond the input itself. Key values: O(1) (constant; in-place algorithms), O(log N) (recursive call stack for balanced algorithms), O(N) (linear extra storage), O(N²) (two-dimensional tables). Total space = input space + auxiliary space; algorithms are usually evaluated on auxiliary space alone.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -52,6 +58,8 @@ Space complexity is Big-O applied to memory: how much extra RAM does your algori
 
 **One insight:**
 Space complexity includes the **call stack**. A recursive algorithm with N nested calls uses O(N) stack space even if it creates no data structures. Deep recursion on large inputs causes `StackOverflowError` — an out-of-space error, not a time error.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -81,6 +89,8 @@ DERIVED DESIGN:
 THE TRADE-OFFS:
 Gain: Identifies memory bottlenecks, enables embedded/constrained deployment.
 Cost: Space optimisation often increases time complexity or code complexity (space-time trade-off is nearly universal).
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -112,6 +122,8 @@ WHAT CHANGES: For N=1,000,000, Approach 1 allocates ~4 MB; Approach 2 allocates 
 THE INSIGHT:
 Often, the previous computation's intermediate results can be discarded immediately. Recognising which prior values are still needed (and which aren't) is the key to space optimisation. Here, only `prev2` and `prev1` are needed — the rest of the array is waste.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Space complexity is like your desk space: an in-place algorithm solves the puzzle by rearranging pieces on the same table (O(1) extra). A copy-based algorithm moves all pieces to a second table, works there, then brings results back (O(N) extra). The more data you need on the second table simultaneously, the more desks you need.
@@ -121,6 +133,8 @@ Often, the previous computation's intermediate results can be discarded immediat
 "How many desks do you need?" → space complexity
 
 Where this analogy breaks down: Real desk space can be reclaimed by clearing it; memory allocations must be explicitly freed or garbage-collected — unused space still counts until released.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -135,6 +149,8 @@ Mergesort: T=O(N log N), S=O(N) — needs O(N) temp array for merge. Heapsort: T
 
 **Level 4 — Why it was designed this way (senior/staff):**
 In-place algorithms (Quicksort, Heapsort) were critical when RAM was measured in kilobytes. Today's trade-off has shifted: O(N) space is often acceptable if it enables 2× speedup. Streaming algorithms pioneered O(1) space for data too large to fit in RAM — hyperloglog (O(log log N) space for cardinality counting), Bloom filter (O(N/8) bits vs O(N) full storage), Count-Min Sketch. JVM GC pressure becomes a space consideration too: an algorithm that allocates and discards many O(N) objects triggers frequent GC pauses, creating tail latency even if average throughput is fine.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -201,6 +217,8 @@ Total auxiliary: O(N) temp array + O(log N) stack
 │  Same tree, same O(N) time, different space! │
 └──────────────────────────────────────────────┘
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -225,6 +243,8 @@ O(N²) DP table in production with N=10,000
 
 WHAT CHANGES AT SCALE:
 Space complexity becomes critical in three scenarios: (1) embedded/mobile with limited RAM (O(1) algorithms preferred), (2) distributed systems where each node handles large partitions, (3) high-frequency services where GC pressure from large allocations creates latency spikes. Modern JVMs with large heaps tolerate O(N) space for N up to ~100M elements; beyond that, off-heap or streaming approaches are needed.
+
+---
 
 ### 💻 Code Example
 
@@ -272,6 +292,8 @@ for (int i = 1; i <= m; i++) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Time | Space | Notes |
@@ -285,6 +307,8 @@ for (int i = 1; i <= m; i++) {
 
 How to choose: When memory is tight (embedded, streaming), prefer in-place algorithms even at slight time cost. When memory is abundant and time matters, accept O(N) space for simpler code.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -293,6 +317,8 @@ How to choose: When memory is tight (embedded, streaming), prefer in-place algor
 | In-place algorithms use zero extra memory | "In-place" usually means O(1) *auxiliary* space; the input itself still counts as input space |
 | Space is less important than time | On memory-constrained systems (mobile, embedded, containers), space complexity directly determines feasibility |
 | BFS always uses less memory than DFS | BFS uses O(width) = O(N/2) for balanced trees; DFS uses O(depth) = O(log N) — DFS is more memory-efficient for balanced trees |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -349,6 +375,8 @@ Fix: Pre-allocate and reuse object pools; use primitive arrays instead of boxed 
 
 Prevention: In hot paths, prefer primitive arrays over `ArrayList<Integer>`; use `int[]` instead of `List<Integer>` for numeric data.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -361,6 +389,8 @@ Prevention: In hot paths, prefer primitive arrays over `ArrayList<Integer>`; use
 
 **Alternatives / Comparisons:**
 - `Time Complexity` — the same framework applied to operation count instead of memory.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -390,6 +420,7 @@ Prevention: In hot paths, prefer primitive arrays over `ArrayList<Integer>`; use
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Mergesort uses O(N) auxiliary space for the temp merge array. A common claim is this is "unavoidable" for a stable sort with O(N log N) time. Yet Timsort, used in Python and Java, achieves O(N) auxiliary space worst case while being stable and O(N log N). What does this tell us about the relationship between "O(N) space is required" and "O(N) space is unavoidable"? When is an O(N) space lower bound provable, and when is it just a property of naive approaches?

@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Mobile Apps, SPAs, Smart TVs, Multi-channel Products | |
 | **Related:** | API Gateway, GraphQL, Microservices, CQRS | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

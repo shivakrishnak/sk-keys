@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Financial Transactions, Distributed Databases, OLTP Systems | |
 | **Related:** | Linearizability, ACID, Isolation Levels, Snapshot Isolation | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT SERIALIZABILITY (snapshot isolation only):**

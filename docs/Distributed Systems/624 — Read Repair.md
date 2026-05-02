@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Read Repair"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Quorum, Replication Strategies, Eventual Consistency                    |                 |
 | **Used by:**    | Cassandra, Riak, DynamoDB, ScyllaDB                                     |                 |
 | **Related:**    | Anti-Entropy, Hinted Handoff, Quorum, Eventual Consistency, Merkle Tree |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

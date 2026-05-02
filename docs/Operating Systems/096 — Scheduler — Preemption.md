@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Thread Pool, Real-Time Systems, Java Thread Priority | |
 | **Related:** | Context Switch, Starvation, Priority Inversion | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -52,6 +54,8 @@ This is exactly why the **Preemptive Scheduler** was invented — a hardware
 timer fires at regular intervals, the OS takes control regardless of what
 the current program is doing, and fairly distributes CPU time.
 
+---
+
 ### 📘 Textbook Definition
 
 The **scheduler** is the OS component that selects which runnable
@@ -64,6 +68,8 @@ schedulers are preemptive, ensuring that no single process can monopolize
 the CPU indefinitely. The Linux Completely Fair Scheduler (CFS) uses a
 red-black tree keyed on virtual runtime to select the task that has run
 the least.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -83,6 +89,8 @@ Preemption is not just a performance feature — it is a security and
 reliability mechanism. Without preemption, any program can deny service
 to all other programs. Preemption is what makes "fair time-sharing"
 enforceable rather than just requested.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -109,6 +117,8 @@ Cost: timer interrupt overhead (1,000 interrupts/second at HZ=1000),
 context switch cost on each preemption, reduced throughput for
 CPU-bound tasks (time sliced away unnecessarily).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -132,6 +142,8 @@ Priority-based preemption turns CPU scheduling from "who holds the
 token" into "who needs it most right now." Interactive tasks get the
 CPU when they need it; background tasks get leftovers.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > The scheduler is an air traffic controller. Planes (threads) are
@@ -151,6 +163,8 @@ CPU when they need it; background tasks get leftovers.
 
 Where this analogy breaks down: planes choose their own speed and route
 (some autonomy); threads have no autonomy — the scheduler is absolute.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -182,6 +196,8 @@ could lose out to batch tasks depending on array flip timing. CFS
 O(log n) scheduling that is naturally fair without heuristics. The
 `nice` value maps to a weight in the CFS weight table — `nice 0` = 1024,
 `nice -20` = 88761. The ratio of weights determines CPU share proportion.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -231,6 +247,8 @@ nice +10  → weight   110
 nice +19  → weight     1
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -263,6 +281,8 @@ With 1,000 runnable threads on 4 cores, each thread gets
 The context switch rate hits 1000/4ms × 4 cores = 250,000 switches/sec.
 This saturates scheduler overhead. Solution: reduce runnable thread count
 (async IO) or use CPU affinity to partition work.
+
+---
 
 ### 💻 Code Example
 
@@ -302,6 +322,8 @@ bulkThread.start();
 // Note: JVM maps to OS nice values; exact behavior is OS-dependent
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm     | Fairness  | Latency   | Throughput | Best For           |
@@ -315,6 +337,8 @@ bulkThread.start();
 How to choose: use CFS (default) for most workloads; use SCHED_FIFO or
 SCHED_DEADLINE only for hardware control, audio/video with strict deadlines.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                          | Reality                                                                                                                                               |
@@ -324,6 +348,8 @@ SCHED_DEADLINE only for hardware control, audio/video with strict deadlines.
 | "Java thread priorities directly map to OS priorities" | JVM maps Java priorities 1–10 to OS-specific values; on Linux, SCHED_OTHER threads all have the same priority — `nice` value is used instead          |
 | "The scheduler runs every millisecond"                 | Timer interrupt fires every 1ms at HZ=1000, but the scheduler only does a context switch if a higher-priority task became runnable                    |
 | "Preemptive scheduling prevents starvation"            | Preemption prevents CPU monopoly but priority inversion can still cause starvation if a low-priority thread holds a lock a high-priority thread needs |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -409,6 +435,8 @@ threads; increase time slice via `kernel.sched_min_granularity_ns`.
 Prevention: set thread pool size = 2 × CPU cores for CPU-bound; use
 async IO for IO-bound tasks.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -427,6 +455,8 @@ async IO for IO-bound tasks.
 
 - `Fiber / Coroutine` — user-space scheduling, bypasses OS scheduler
 - `Real-Time Scheduling` — SCHED_FIFO/DEADLINE for hard time constraints
+
+---
 
 ### 📌 Quick Reference Card
 

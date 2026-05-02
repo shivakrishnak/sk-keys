@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Future"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | CompletableFuture, ExecutorService | |
 | **Related:** | CompletableFuture, Callable, ExecutorService | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ A service submits 10 database queries in parallel using raw `Thread` objects. Th
 THE INVENTION MOMENT:
 This is exactly why **`Future<V>`** was created — to be the standard contract for "I will give you the result eventually" — handling waiting, result retrieval, exception propagation, timeout, and cancellation in one standard interface.
 
+---
+
 ### 📘 Textbook Definition
 
 **`Future<V>`** is an interface in `java.util.concurrent` introduced in Java 5 representing the result of an asynchronous computation. It provides: `get()` — blocks until result is available; `get(timeout, unit)` — blocks with a time limit; `isDone()` — non-blocking check; `isCancelled()` — check if cancelled; `cancel(mayInterruptIfRunning)` — attempt cancellation. `Future` is typically obtained by submitting a `Callable<V>` to an `ExecutorService`. `FutureTask<V>` is the standard implementation — it implements both `Future<V>` and `Runnable`.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ This is exactly why **`Future<V>`** was created — to be the standard contract 
 
 **One insight:**
 `Future.get()` blocks — this is both its power and its limitation. Calling it immediately after submission negates the concurrency benefit. The pattern is: submit ALL tasks first → do other work → collect results. `CompletableFuture` (Java 8) solves the blocking problem with non-blocking callbacks.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -86,6 +94,8 @@ THE TRADE-OFFS:
 Gain: Standard result retrieval interface; exception propagation; timeout; cancellation.
 Cost: `get()` is synchronous/blocking; no chaining or composition; cannot react to completion without polling; `cancel()` doesn't guarantee task termination.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -113,6 +123,8 @@ Report2 r2 = f2.get(); // report2 may already be done
 THE INSIGHT:
 The key to using `Future` correctly is **submitting before blocking**. Each `get()` blocks only on its specific task; parallel tasks run simultaneously. Submit all first, block for results later.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A `Future` is a claim ticket at a dry cleaner. You drop off your clothes (submit task), get a numbered ticket (`Future`). You can come back and check ("is order #42 ready?" — `isDone()`). When you show up, you either get your clothes or hear "we had a problem" (`ExecutionException`). You can also say "I changed my mind, discard it" (`cancel()`).
@@ -123,6 +135,8 @@ The key to using `Future` correctly is **submitting before blocking**. Each `get
 "Problem with order" → `ExecutionException(cause)`.
 
 Where this analogy breaks down: A dry cleaner gives you your item and you keep it. `Future.get()` can be called multiple times — after the first call, the result is cached and returned immediately.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -137,6 +151,8 @@ Submit a `Callable` to an executor, get a `Future`. Call `get()` when you need t
 
 **Level 4 — Why it was designed this way (senior/staff):**
 `Future` was designed in JSR 166 (2004) as a minimal contract for async result retrieval. The blocking `get()` was a deliberate design choice for the era: hardware was transitioning to multi-core, and the primary use case was "parallelize CPU-bound work and collect results." The limitation (blocking, no callbacks) was addressed in Java 8 with `CompletableFuture`, which provides non-blocking `.thenApply()`, `.thenCompose()`, and `.handle()` — a reactive model. `Future` remains in use for `ExecutorService.submit()` compatibility.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -188,6 +204,8 @@ List<Data> results = futures.stream()
     .collect(toList());
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -211,6 +229,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At scale, blocking `future.get()` in a loop creates a bottleneck — results are processed sequentially. Use `CompletableFuture` for reactive, non-blocking result handling. For batch processing, `ExecutorService.invokeAll()` submits all and returns when all complete (more efficient than manual submit + get loop).
+
+---
 
 ### 💻 Code Example
 
@@ -245,6 +265,8 @@ try {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | API | Blocking | Callbacks | Chain | Cancel | Best For |
@@ -255,6 +277,8 @@ try {
 
 How to choose: Use `Future` for simple "submit then collect" patterns. Use `CompletableFuture` for async chains, reactive handling, or when blocking is unacceptable.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -263,6 +287,8 @@ How to choose: Use `Future` for simple "submit then collect" patterns. Use `Comp
 | `cancel(true)` guarantees task termination | If the task doesn't check `Thread.isInterrupted()` inside its `call()`, the interrupt signal is ignored and the task runs to completion |
 | `isDone() == true` means task succeeded | `isDone()` returns true for completion (success, exception, OR cancellation). Check `isCancelled()` and `get()` to determine how it completed |
 | `Future` supports result callbacks | Standard `Future` has no callback mechanism. You must poll (`isDone()`) or block (`get()`). Use `CompletableFuture` for callbacks |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -290,6 +316,8 @@ catch (ExecutionException e) {
 }
 ```
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -301,6 +329,8 @@ catch (ExecutionException e) {
 
 **Alternatives / Comparisons:**
 - `CompletableFuture` — richer, non-blocking alternative; preferred for new code
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -330,6 +360,7 @@ catch (ExecutionException e) {
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A service that calls two external APIs in parallel and combines their results uses `Future<A> fa = pool.submit(callA)` and `Future<B> fb = pool.submit(callB)`, then calls `fa.get()` followed by `fb.get()`. CallA takes 3 seconds; callB takes 1 second. Trace the execution timeline and explain: why the total wait time is 3 seconds (not 4), what happens if callB completes while the caller is blocked on `fa.get()`, and why `fb.get()` returns immediately even though the caller just finished waiting for `fa`.

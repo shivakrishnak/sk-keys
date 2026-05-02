@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Database Design, Distributed Storage, Cloud Databases | |
 | **Related:** | CAP Theorem, Consistency Models, Eventual Consistency | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT CAP EXTENSION:**

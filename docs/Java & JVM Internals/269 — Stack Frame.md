@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Operand Stack, JIT Compiler, Escape Analysis | |
 | **Related:** | Operand Stack, Local Variable Table, Stack Memory | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Function calls with local state and recursion require that each function invocat
 THE INVENTION MOMENT:
 The Stack Frame is the activation record — a structured block of memory created per method invocation that holds all the per-call state. This is exactly why Stack Frames exist: to give each method call a complete, isolated workspace that evaporates cleanly when the method returns.
 
+---
+
 ### 📘 Textbook Definition
 
 A JVM Stack Frame is a data structure created in the thread's JVM stack when a method is invoked. It contains three components: (1) the Local Variable Array — a numbered array of slots holding method parameters, local variable values, and `this`; (2) the Operand Stack — a LIFO stack used as the working area for bytecode instruction execution; (3) a reference to the Runtime Constant Pool of the current class, enabling symbolic reference resolution. When the method completes (normally or with an exception), the frame is popped from the stack and its memory is immediately reclaimed.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ A Stack Frame is the complete working environment for one method call — create
 
 **One insight:**
 Understanding stack frames reveals why stack traces are so informative: a `NullPointerException` stack trace is literally a snapshot of all active stack frames at the moment of the exception — each line represents one frame, showing which method, file, and line number is currently executing in that invocation context.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -67,6 +75,8 @@ Invariant 1 requires per-call storage. Invariant 2 mandates a stack structure. I
 THE TRADE-OFFS:
 Gain: O(1) allocation/deallocation, thread safety by isolation, recursive call support, clean call semantics.
 Cost: Fixed maximum frame size per method (determined at compile time); deep call chains can overflow the stack; large local arrays in deeply nested calls consume significant stack memory.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -88,6 +98,8 @@ WHAT HAPPENS WITH STACK FRAMES:
 THE INSIGHT:
 Recursion is only possible because each call gets its own isolated variable storage. Stack Frames are not just an implementation detail — they are the enabling mechanism for function abstraction itself.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Stack Frames are like a stack of spreadsheets. Each method call creates a new spreadsheet and places it on top of the pile. The spreadsheet has two sections: a "data cells" section (local variable array) and a "calculation scratch pad" (operand stack). When the method finishes, the top spreadsheet is torn off and discarded. The spreadsheet below is now on top and contains the calling method's state exactly as it was.
@@ -99,6 +111,8 @@ Recursion is only possible because each call gets its own isolated variable stor
 "Tearing off the top sheet" → method return, frame popped
 
 Where this analogy breaks down: unlike spreadsheets where you can look at any sheet in the pile, in a JVM stack the interpreter can only access the top frame. Frames below are frozen until the frame above them returns.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -113,6 +127,8 @@ The frame size is fixed at compile time: `javac` encodes `max_locals` and `max_s
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The JVM stack machine design (using an operand stack within each frame) was chosen over a register machine for bytecode to simplify code generation from source. A stack machine requires no register allocation at the bytecode level — values are simply pushed and popped. The JIT compiler then handles register allocation when translating to native code, where it has profiling information to make optimal per-architecture decisions. This two-phase design separates the concerns of language compilation (javac → bytecode) and platform optimisation (JIT → native).
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -177,6 +193,8 @@ java.lang.NullPointerException
 ```
 Each `at` line = one active frame, with the current executing line in each.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -207,6 +225,8 @@ Unbounded recursion
 
 WHAT CHANGES AT SCALE:
 At 1000 concurrent threads, 1000 thread stacks exist in memory. Each thread's stack depth (number of active frames) depends on the call chain depth. A reactive framework (Spring WebFlux, Netty) typically has very shallow call stacks (few frames per thread), while a traditional servlet stack can have 30–50 nested frames (filters, interceptors, ORM layers). Deep stacks consume more memory per thread. Virtual Threads (Java 21) use resizable, heap-stored stacks that can grow/shrink per frame depth.
+
+---
 
 ### 💻 Code Example
 
@@ -286,6 +306,8 @@ Map<Thread, StackTraceElement[]> allStacks =
     Thread.getAllStackTraces();
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Machine Model | Uses Register? | Frame Complexity | JIT Target? | Used By |
@@ -297,6 +319,8 @@ Map<Thread, StackTraceElement[]> allStacks =
 | LLVM IR (SSA form) | SSA virtual registers | Complex | Yes | Clang, Rust compiler |
 
 How to choose: You don't choose — the JVM uses a stack machine for bytecode execution. Understanding this informs why the JIT compiler exists: converting the simple stack model to optimal native register-machine code is the JIT's primary job.
+
+---
 
 ### 🔁 Flow / Lifecycle
 
@@ -329,6 +353,8 @@ How to choose: You don't choose — the JVM uses a stack machine for bytecode ex
 └─────────────────────────────────────────────┘
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -338,6 +364,8 @@ How to choose: You don't choose — the JVM uses a stack machine for bytecode ex
 | "Stack frames exist in JIT-compiled code" | After JIT compilation, the JVM may eliminate individual frames or use CPU registers directly. The 'logical' frame still exists for stack trace reporting (deoptimisation recreates it). |
 | "StackOverflowError cannot be caught" | It can be caught with `catch (StackOverflowError e)` — but this is dangerous because the stack is still full; even simple operations in the catch block may trigger another StackOverflowError. |
 | "The max_stack size is the full stack depth" | max_stack is the maximum operand stack depth within ONE frame — not the total thread stack depth. Thread stack depth depends on how many frames are stacked. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -416,6 +444,8 @@ log.error("Operation failed", exception); // always log
 
 Prevention: Always chain exceptions with the cause parameter; always log the full exception object (not just `getMessage()`).
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -431,6 +461,8 @@ Prevention: Always chain exceptions with the cause parameter; always log the ful
 **Alternatives / Comparisons:**
 - `Operand Stack` — not an alternative but a component; the computation area inside a Stack Frame
 - `Heap Allocation` — the alternative for storing state that must outlive a method call; objects escape the frame to the heap
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -463,6 +495,7 @@ Prevention: Always chain exceptions with the cause parameter; always log the ful
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A tail-recursive function like `int sum(int n, int accumulator)` that calls itself as the last operation technically creates one new frame per call — risking StackOverflow for large n. Most JVM implementations do NOT perform Tail Call Optimisation (TCO) unlike many functional languages. Why does the JVM not implement TCO, and how does this absence interact with the JVM's design guarantee that stack traces are always accurate? What trade-off does TCO represent in the context of the JVM?

@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Replicated State Machines, ZooKeeper, Kafka, Total Order Broadcast | |
 | **Related:** | Lamport Clock, Raft, Paxos, Happened-Before, Sequential Consistency | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **REPLICATED STATE MACHINE WITHOUT TOTAL ORDER:**

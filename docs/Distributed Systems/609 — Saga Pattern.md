@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Saga Pattern"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Two-Phase Commit, Idempotency (Distributed), Choreography vs Orchestration, Event Sourcing |                 |
 | **Used by:**    | Microservices, Distributed Transactions, Order Processing, Choreography vs Orchestration   |                 |
 | **Related:**    | Two-Phase Commit, Outbox Pattern, Idempotency (Distributed), Event Sourcing, CQRS          |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

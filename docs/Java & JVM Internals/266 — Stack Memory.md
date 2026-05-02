@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Stack Frame, Heap Memory, Escape Analysis | |
 | **Related:** | Heap Memory, Stack Frame, Metaspace | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Method call/return is the most frequent operation in any program. Making it requ
 THE INVENTION MOMENT:
 The LIFO (last-in, first-out) nature of function call frames maps perfectly to a stack structure. The most recently called function is always the first to return — so memory can be claimed by simply moving a pointer, with zero GC involvement. This is exactly why stack memory was designed as a separate region.
 
+---
+
 ### 📘 Textbook Definition
 
 In Java, each thread has its own private stack, created when the thread is created. The JVM stack stores stack frames — one frame per active method invocation. Each frame contains the method's local variables array, its operand stack, and a reference to the method's constant pool. When a method is called, a frame is pushed onto the stack; when it returns, the frame is popped and its memory is immediately reclaimed by advancing the stack pointer. Stack memory is not managed by the garbage collector.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Each thread has its own stack that grows and shrinks automatically as methods ar
 
 **One insight:**
 Stack memory is not garbage collected — that is the key performance secret. When a method returns, the frame's memory is reclaimed in nanoseconds by moving a single pointer. This makes method calls effectively free compared to heap allocations, enabling the deep call chains that object-oriented code relies on.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -68,6 +76,8 @@ THE TRADE-OFFS:
 Gain: Extremely fast allocation/deallocation (pointer move only), no GC overhead, thread-safe by design.
 Cost: Fixed maximum size (default 256KB–1MB per thread); exceeding it causes `StackOverflowError`; objects must go on the heap (only primitives and references fit natively on the stack).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -82,6 +92,8 @@ WHAT HAPPENS WITH STACK:
 THE INSIGHT:
 LIFO lifecycle enables O(1) memory management without garbage collection. Matching the memory management strategy to the data's lifetime pattern is the foundation of efficient memory design.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > The stack is like a spring-loaded plate dispenser at a cafeteria. New plates (frames) push down the spring (grow the stack). Removing a plate (method return) pops the spring back up. There is always an upper limit to how many plates fit in the dispenser before it overflows. Each cafeteria (thread) has its own independent dispenser.
@@ -93,6 +105,8 @@ LIFO lifecycle enables O(1) memory management without garbage collection. Matchi
 "Separate dispensers per cafeteria" → each thread has its own stack
 
 Where this analogy breaks down: unlike physical plates, stack frames can reference objects on the heap — stack memory holds references (pointers), not the objects themselves.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -107,6 +121,8 @@ Each thread's stack is created with a fixed size at thread creation time. A fram
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The separation between stack and heap is not just performance — it's the foundation of Java's memory safety model. Local variables cannot escape their scope (they can't be returned by reference in Java), so they can safely live on the stack. This limitation is deliberate: it prevents the dangling pointer bugs endemic to C/C++. Escape Analysis in modern JVMs blurs the line slightly — objects whose references don't escape a method can be allocated on the stack or even optimised away entirely, without changing program semantics.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -155,6 +171,8 @@ Default stack sizes (varies by OS and JVM):
 Set with: java -Xss1m MyApp   (1 MB per thread)
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -185,6 +203,8 @@ Infinite recursion / unbounded call chain
 
 WHAT CHANGES AT SCALE:
 At 1000 concurrent threads, stack memory becomes significant: 1000 threads × 256 KB = 256 MB of stack memory. In high-concurrency systems, reducing thread stack size (`-Xss128k`) or switching to Virtual Threads (Project Loom, Java 21) — which use small, resizable stacks — dramatically reduces memory footprint.
+
+---
 
 ### 💻 Code Example
 
@@ -245,6 +265,8 @@ jcmd <pid> Thread.print > /tmp/threaddump.txt
 grep -A 30 "StackOverflow" /tmp/threaddump.txt
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Memory Region | Allocation | Lifetime | GC Managed | Thread Safe | Best For |
@@ -256,6 +278,8 @@ grep -A 30 "StackOverflow" /tmp/threaddump.txt
 
 How to choose: Stack for local variables (automatic). Heap for objects that outlive a single method. Off-heap for large datasets that should not be GC'd (used in caching libraries like Ehcache).
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -264,6 +288,8 @@ How to choose: Stack for local variables (automatic). Heap for objects that outl
 | "More threads = more stack memory" | Exactly. Each thread allocates -Xss bytes of stack. 1000 threads × 512KB = 512 MB. This is a hidden memory cost of thread-per-request models. |
 | "StackOverflowError always means infinite recursion" | Not always. Very deep-but-finite call chains with large local variable arrays can also overflow legitimately. Consider -Xss increase before refactoring. |
 | "Stack memory is GC'd like heap" | Stack memory is never touched by the GC. When a method returns, the frame memory is immediately reclaimed by pointer arithmetic — no GC scan needed. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -342,6 +368,8 @@ jcmd <pid> VM.native_memory summary
 
 Prevention: Always monitor native memory, not just heap, in production. Use NativeMemoryTracking or OS-level tools like `/proc/<pid>/smaps`.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -357,6 +385,8 @@ Prevention: Always monitor native memory, not just heap, in production. Use Nati
 **Alternatives / Comparisons:**
 - `Heap Memory` — the GC-managed region for objects; contrast with stack's automatic scope-based management
 - `Metaspace` — stores class metadata; also native memory, not heap
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -386,6 +416,7 @@ Prevention: Always monitor native memory, not just heap, in production. Use Nati
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A web application uses a thread-per-request model with 1000 concurrent threads, each with `-Xss512k`. The team plans to migrate to Java 21 Virtual Threads to handle 100,000 concurrent requests. Explain what happens to stack memory usage in the migration. Why can virtual threads use far less memory per thread, and what is the trade-off introduced by their resizable stack design?

@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Enterprise Integration, Legacy Systems, Banking APIs | |
 | **Related:** | REST, gRPC, GraphQL, WSDL, XML Schema | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT (1990s context):**

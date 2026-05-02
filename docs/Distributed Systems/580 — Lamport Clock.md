@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Distributed Tracing, Event Ordering, Causal Consistency | |
 | **Related:** | Vector Clock, Happened-Before, Causal Consistency, Total Order | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT LOGICAL CLOCKS:**

@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Web APIs, Cloud-hosted Applications | |
 | **Related:** | SQL Injection, XSS, API Security, Cloud Metadata Service | |
 
+---
+
 ### 🔥 The Problem This Solves (The Threat)
 
 **THE ATTACK:**

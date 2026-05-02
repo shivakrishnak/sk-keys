@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Introsort (fallback), Priority Queues, k-largest element problems | |
 | **Related:** | Quicksort, Mergesort, Heap (Min/Max) | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ The combination of O(N log N) worst-case time with O(1) space appears impossible
 THE INVENTION MOMENT:
 A heap is a partially-sorted array that supports extracting the maximum in O(log N). Build a max-heap in O(N) (Floyd's algorithm). Then repeatedly extract the maximum: swap it to the end (O(1)) and heapify down (O(log N)). After N extractions, the array is sorted — entirely in-place. Build O(N) + N × heapify O(log N) = O(N log N), O(1) extra space. This is exactly why **Heapsort** was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Heapsort** is a comparison-based sorting algorithm that first builds a max-heap from the input array, then repeatedly extracts the maximum element by swapping it to the end of the unsorted portion and restoring the heap property via `heapify` (sift-down). Time complexity: O(N log N) in all cases. Space complexity: O(1) (in-place). Heapsort is **not stable** — equal elements may be reordered. Phase 1 (build): O(N). Phase 2 (sort): O(N log N).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Build a max-heap, then repeatedly pull the max out and put it at the end — in-
 
 **One insight:**
 Heapsort's uniqueness is proven: it is the only classic comparison sort to achieve O(N log N) worst case AND O(1) extra space. However, this comes at a cache cost — heap operations (sift-down) jump to index `2i+1` and `2i+2` from parent `i`, causing scattered memory accesses that miss CPU cache frequently. This makes heap operations 2-5x slower than sequential array scans, despite same asymptotic complexity.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -77,6 +85,8 @@ For i from N-1 to 1:
 THE TRADE-OFFS:
 Gain: O(N log N) worst case guaranteed; O(1) extra space.
 Cost: Not stable; worse cache performance than Quicksort (non-sequential memory access pattern during sift-down); rarely used as stand-alone sort in practice.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -103,6 +113,8 @@ Done. Array = [1,3,4,5,10]. ✓
 THE INSIGHT:
 Each extraction of the maximum places it in its final position (from right to left). The heap structure ensures the next maximum is always at index 0. This is a perfect marriage of the heap's "fast maximum extraction" property with in-place sorting.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Heapsort is like a single-elimination tournament where you find the winner and permanently retire them. Build a bracket ensuring each player beats their children. Find the champion (top of heap). Retire them to the "hall of fame" (sorted end). Find the next champion from the remaining players by running a targeted mini-tournament (heapify). Repeat until everyone is in the hall of fame — all in the same trophy room (in-place).
@@ -113,6 +125,8 @@ Each extraction of the maximum places it in its final position (from right to le
 "Mini-tournament to find next champion" → sift-down heapify (O(log N))
 
 Where this analogy breaks down: Real tournaments have fixed brackets; changing participants after each round is unusual. Heapify's "sift-down" restructures the heap after each extraction — more like recalculating the bracket from the top for each new tournament.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -127,6 +141,8 @@ Floyd's build-heap algorithm is provably O(N) via amortised analysis: the sum of
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Heapsort (J. W. J. Williams, 1964) was the first sorting algorithm achieving both O(N log N) worst-case and O(1) space. Robert Floyd (1964) contributed the build-heap O(N) insight. Heapsort is theoretically near-optimal: the N log N lower bound applies to worst case, and Heapsort matches it. In practice, Heapsort is used as the fallback in Introsort (C++ `std::sort`): when Quicksort recursion depth exceeds 2×log₂(N), Introsort switches to Heapsort to guarantee O(N log N) worst case. This combines Quicksort's cache-friendly average performance with Heapsort's worst-case guarantee — using Heapsort as insurance, not the primary sort.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -160,6 +176,8 @@ Heapsort (J. W. J. Williams, 1964) was the first sorting algorithm achieving bot
 └────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -184,6 +202,8 @@ Heapsort used for stable sort
 
 WHAT CHANGES AT SCALE:
 For N=10⁷ elements, Heapsort's O(N log N) ≈ 230 million operations, but each sift-down on a heap larger than L2 cache (512KB, ~130K integers) causes cache misses. Each L3 miss costs ~100 cycles. At N=10⁷, each of the ~23 sift-down levels accesses a "random" position — 23 × cache misses × cycles/miss creates significant overhead. Quicksort's sequential scan hits cache much better. This is why Heapsort, despite theoretical equivalence, is measurably slower.
+
+---
 
 ### 💻 Code Example
 
@@ -273,6 +293,8 @@ void sort(int[] arr) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Time | Worst | Stable | Space | Cache | Best For |
@@ -285,6 +307,8 @@ void sort(int[] arr) {
 
 How to choose: Use Heapsort only when O(1) space is required AND O(N log N) worst case is required (rare combination). Otherwise use Introsort (Quicksort + Heapsort fallback) for primitives or Timsort for objects.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -294,6 +318,8 @@ How to choose: Use Heapsort only when O(1) space is required AND O(N log N) wors
 | Build-heap is O(N log N) | Build-heap (Floyd's algorithm) is O(N), not O(N log N). This is a non-obvious result: most nodes are near the bottom and have small sift-down costs |
 | Heapsort is widely used in practice | Heapsort is rarely used as the primary sort. It appears as the fallback in Introsort (C++ `std::sort`) and for k-largest element problems. Language libraries prefer Quicksort or Timsort |
 | A min-heap is needed for ascending sort | Heapsort uses a MAX-heap for ascending sort. The max is placed at the end repeatedly, building the sorted array from right to left. Using a min-heap would sort in descending order |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -359,6 +385,8 @@ Fix: Ensure heapify is called with the **current heap size** (`heapify(arr, i, 0
 
 Prevention: The heap size must be the second argument to heapify, and it must decrease with each extraction.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -373,6 +401,8 @@ Prevention: The heap size must be the second argument to heapify, and it must de
 - `Quicksort` — faster in practice due to cache efficiency; O(N²) worst case; not stable.
 - `Mergesort` — guaranteed O(N log N), stable, O(N) space; better cache than Heapsort.
 - `Smooth Sort` — a variant of Heapsort using Leonardo heaps; better best-case performance (O(N) on nearly-sorted data); complex implementation.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -402,6 +432,7 @@ Prevention: The heap size must be the second argument to heapify, and it must de
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Floyd's build-heap algorithm builds a max-heap bottom-up in O(N) by calling heapify on internal nodes from index N/2-1 down to 0. The naive approach of heapifying N elements top-down (inserting one by one) runs in O(N log N). The key to Floyd's O(N) bound is that most nodes are near the leaves and have small sift-down distances. Prove formally that the total cost of Floyd's build-heap is O(N) by computing the exact sum Σ (N / 2^h) × h over all heights h from 1 to log N. Why does this sum converge to O(N) while top-down insertion does not?

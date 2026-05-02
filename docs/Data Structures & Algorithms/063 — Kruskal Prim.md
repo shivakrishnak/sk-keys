@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Network Design, Cluster Analysis, Approximate TSP | |
 | **Related:** | Dijkstra, Minimum Spanning Tree, Union-Find (Disjoint Set) | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -45,9 +47,13 @@ Two independent greedy strategies both produce the optimal MST:
 
 Both algorithms exploit that MSTs are matroid-structured: any greedy approach respecting the "no cycles" constraint always finds the optimal solution. This is exactly why **Kruskal and Prim** were created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Minimum Spanning Tree (MST)** of a connected weighted undirected graph is a spanning tree with minimum total edge weight. A spanning tree connects all V vertices with exactly V-1 edges and no cycles. **Kruskal's algorithm** sorts edges by weight and uses Union-Find to greedily add edges that don't create cycles. **Prim's algorithm** greedily extends a growing tree by always choosing the minimum-weight cross-edge. Both run in O(E log E) = O(E log V) time. The MST is unique if all edge weights are distinct.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -59,6 +65,8 @@ Connect all points as cheaply as possible by always picking the cheapest safe ed
 
 **One insight:**
 The correctness of both algorithms rests on a single graph theory property: for any partition of graph vertices into two sets, the minimum-weight edge crossing the cut is in every MST. This "cut property" is the greedy invariant — it guarantees that every locally cheapest safe choice is globally consistent with the optimal solution.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -86,6 +94,8 @@ THE TRADE-OFFS:
 | When best | Sparse graphs (E ≈ V) | Dense graphs (E ≈ V²) |
 | Data structure | Union-Find | Min-heap priority queue |
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -108,6 +118,8 @@ MST edges: A-B(1), A-D(3), D-C(2). Total: 1+3+2=6. Same MST.
 THE INSIGHT:
 Both algorithms produce the same MST (cost 6: A-B, A-D, C-D). They make different traversal choices but both are guided by the same underlying cut/cycle property. For this graph, A-D(3) was cheaper to connect {C,D} to the tree than B-C(4) — both algorithms discovered this independently through their different strategies.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > MST algorithms are like building the cheapest water supply network to serve all houses in a city. Kruskal is the accountant approach: list all possible pipes, sort by cost, and lay the cheapest ones that connect new areas. Prim is the surveyor approach: start from the water tower and always extend to the nearest unserved house. Both strategies lay the same minimum-cost network — they just think about it differently.
@@ -118,6 +130,8 @@ Both algorithms produce the same MST (cost 6: A-B, A-D, C-D). They make differen
 "Total pipe cost" → MST weight
 
 Where this analogy breaks down: Real pipe networks may require multiple water towers (multiple sources). MST assumes a single connected graph — for disconnected graphs, both algorithms produce a Minimum Spanning Forest.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -132,6 +146,8 @@ Kruskal complexity: O(E log E) for sort + O(E α(V)) for V union-find operations
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Both algorithms are special cases of a general matroid greedy algorithm: given a graphic matroid (where independent sets are forests in the graph), the greedy algorithm always finds the minimum-weight basis (spanning tree). The correctness proof reduces to showing that graphic matroids satisfy the exchange property — any smaller-weight basis can replace edges in a larger-weight basis. Kruskal is the "edge-centric" view of this greedy; Prim is the "vertex-frontier" view. In practice, MST is the core subroutine in: (1) approximation algorithms for TSP (MST weight is a 2-approximation of TSP), (2) network design problems (optical fibre routing, VLSI routing), (3) clustering (cut the k-1 most expensive edges of MST to get k clusters).
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -175,6 +191,8 @@ Both algorithms are special cases of a general matroid greedy algorithm: given a
 
 Note: Prim's `dist[v]` is the minimum edge weight to connect v to the current tree, not total distance from source (unlike Dijkstra).
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (Kruskal):
@@ -203,6 +221,8 @@ Graph is disconnected
 
 WHAT CHANGES AT SCALE:
 For VLSI chip routing (V=10⁷ nodes), Kruskal's sort of 10⁸ edges takes ~3 seconds. Borůvka's algorithm (O(E log V)) with parallel component processing suits distributed computing. For dynamic MST (edges added/removed), dynamic tree structures maintain MST in O(log²N) per update — essential for live network topology changes.
+
+---
 
 ### 💻 Code Example
 
@@ -305,6 +325,8 @@ List<List<Integer>> cluster(int n,
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Approach | Time (sparse) | Time (dense) | Best For |
@@ -316,6 +338,8 @@ List<List<Integer>> cluster(int n,
 
 How to choose: Use Kruskal for sparse graphs or when edges arrive sorted. Use Prim for dense graphs. Use Borůvka for distributed/parallel settings.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -325,6 +349,8 @@ How to choose: Use Kruskal for sparse graphs or when edges arrive sorted. Use Pr
 | MST is unique | MST is unique if all edge weights are distinct. If multiple edges have the same weight, multiple MSTs may exist with identical total weight |
 | Prim's algorithm is similar to Dijkstra | Prim and Dijkstra use similar priority queue expansion, but Prim tracks "cheapest edge to connect to tree" (edge weight only), while Dijkstra tracks "cheapest total path from source" (cumulative sum). Using Dijkstra's distance tracking in Prim produces wrong results |
 | MST works on directed graphs | Standard Kruskal and Prim work only on undirected graphs. For directed MST (minimum spanning arborescence), Edmonds' (Chu-Liu/Edmonds') algorithm is required |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -396,6 +422,8 @@ Fix: Return a Minimum Spanning Forest (one tree per component). Report disconnec
 
 Prevention: Check graph connectivity before claiming MST; assert `edgesAdded == V-1` after Kruskal completes.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -413,6 +441,8 @@ Prevention: Check graph connectivity before claiming MST; assert `edgesAdded == 
 - `Dijkstra` — finds shortest paths from a source; structurally similar to Prim but minimises cumulative distance, not edge weight.
 - `Borůvka's Algorithm` — parallel MST algorithm; each component picks cheapest outgoing edge simultaneously; O(log V) rounds.
 - `Edmonds' Algorithm` — directed MST (minimum cost arborescence); the directed counterpart to Kruskal/Prim.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -445,6 +475,7 @@ Prevention: Check graph connectivity before claiming MST; assert `edgesAdded == 
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Prim's algorithm is structurally almost identical to Dijkstra's algorithm — both use a min-heap priority queue and process nodes one by one. The only difference is in what value is stored in the priority queue: Dijkstra stores `g(u) + edge_weight` (cumulative distance), while Prim stores `edge_weight` only. Consider a graph where nodes are placed on a number line at positions 1, 2, 4, 8 (total 4 nodes), with edges between consecutive nodes weighted by their distance. Starting from position 1, show that Dijkstra and Prim produce different spanning trees. What does this reveal about the fundamental difference between MST and shortest-path trees?

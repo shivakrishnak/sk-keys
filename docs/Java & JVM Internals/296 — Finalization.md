@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Finalization"
 parent: "Java & JVM Internals"
@@ -39,6 +39,8 @@ tags:
 | **Used by:** | GC Tuning, GC Pause | |
 | **Related:** | Reference Types, GC Roots, Stop-The-World, Phantom References | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -50,9 +52,13 @@ A server runs for three hours. Every request creates a `FileInputStream`. Caller
 THE INVENTION MOMENT:
 This is exactly why **Finalization** was created — to give objects a last-chance callback before their memory is reclaimed, so they can release non-heap resources even if the developer forgot to call a cleanup method. The intention was good. The execution was fatally flawed.
 
+---
+
 ### 📘 Textbook Definition
 
 **Finalization** is a JVM mechanism that invokes an object's `finalize()` method (inherited from `java.lang.Object`) before the GC reclaims its heap memory. Objects with a non-trivial `finalize()` override are called *finalizable objects* and require at least two GC cycles to collect: one to detect unreachability and enqueue them on the finalizer queue, and one to actually reclaim their memory after the finalizer runs. As of Java 9, `finalize()` is deprecated; as of Java 18 it is deprecated-for-removal.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -64,6 +70,8 @@ A "last rites" callback the JVM calls on an object just before erasing it from m
 
 **One insight:**
 The deep problem with finalization is that it turns a one-cycle reclamation into a two-cycle reclamation. The object that should die in GC cycle N is kept alive until its `finalize()` runs, then potentially promoted to old-gen and only freed in GC cycle N+1 or later — creating GC pressure from the very mechanism meant to help with cleanup.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -90,6 +98,8 @@ Cost:
 - Objects can "resurrect" themselves in `finalize()` by storing `this` in a global reference — causing memory corruption-style bugs.
 - JVM exit can skip `finalize()` entirely.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -104,6 +114,8 @@ Each unreachable `NativeBuffer` is enqueued. The Finalizer thread processes them
 THE INSIGHT:
 Finalization does not solve resource leaks — it only delays them unless the production rate of finalizable objects is slower than the Finalizer thread can process. The correct solution is always explicit cleanup via `AutoCloseable` and `try-with-resources`.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Think of finalization as a **dead-letter office**. When a letter has no valid address (the object is unreachable), instead of burning it immediately, the post office holds it in a special bin and sends one more notification to the sender. The sender (the `finalize()` method) can do some last-minute cleanup when notified. But the dead-letter office has a single employee, the bin can overflow, and the notification may never come if the office closes (JVM shuts down) before the employee processes it.
@@ -115,6 +127,8 @@ Finalization does not solve resource leaks — it only delays them unless the pr
 "Office closing" → JVM shutdown without running finalizers.
 
 Where this analogy breaks down: Unlike a dead-letter office, the sender (object) can in theory refuse to die by re-inserting itself into live references inside `finalize()` — a "resurrection" the postal analogy does not capture.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -129,6 +143,8 @@ When GC marks an object unreachable, it checks whether the object overrides `fin
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Java 1.0 designers wanted C++ destructor semantics without the dangers of manual memory management. They chose lazy, GC-driven finalization over reference counting. The fundamental flaw is that GC is not designed for resource management — its goal is memory efficiency, not timeliness. The Finalizer thread is a single-threaded design that cannot scale, and there is no backpressure mechanism. Java 9 introduced `java.lang.ref.Cleaner` as the approved replacement: it uses phantom references (not strong re-reachability), runs in its own configurable thread, and avoids object resurrection. Java 18 deprecated `finalize()` for removal (JEP 421).
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -176,6 +192,8 @@ The Finalizer thread runs at `Thread.MAX_PRIORITY - 2` (priority 8). On a heavil
 **Java 9+ Cleaner API:**
 `java.lang.ref.Cleaner` avoids all these problems by using `PhantomReference` (which the referent cannot be resurrected through), supports multiple threads, and the `Cleanable` action is a plain `Runnable` that does not hold a reference to the cleaned object.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -205,6 +223,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At high object creation rates (>10,000 finalizable objects/sec), the single-threaded Finalizer becomes a bottleneck. Objects pile up in old-gen waiting for finalization, triggering premature Full GCs. At 100x scale, the Finalizer queue can grow to millions of entries, consuming gigabytes of heap and causing multi-second STW pauses. This is why frameworks like Netty explicitly avoid finalizers on hot-path objects.
+
+---
 
 ### 💻 Code Example
 
@@ -314,6 +334,8 @@ jmap -histo:live <pid> | grep Finalizer
 java -Xlog:gc*,ref*=debug MyApp 2>&1 | grep -i final
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Cleanup Mechanism | Timeliness | Thread-safe | GC Overhead | Resurrection Risk | Best For |
@@ -325,6 +347,8 @@ java -Xlog:gc*,ref*=debug MyApp 2>&1 | grep -i final
 | `WeakReference` callbacks | GC-driven | Manual | Low | Possible | Caches, listeners |
 
 How to choose: Always prefer `AutoCloseable` + `try-with-resources` for explicit resource management. Use `Cleaner` only as a safety net for objects that are used via external APIs where callers cannot be trusted to call `close()`.
+
+---
 
 ### 🔁 Flow / Lifecycle
 
@@ -352,6 +376,8 @@ How to choose: Always prefer `AutoCloseable` + `try-with-resources` for explicit
 └─────────────────────────────────────────────────┘
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -362,6 +388,8 @@ How to choose: Always prefer `AutoCloseable` + `try-with-resources` for explicit
 | Calling `System.gc()` triggers finalizers immediately | `System.gc()` is a hint; even if GC runs, finalizers run asynchronously in the Finalizer thread — call `System.runFinalization()` to process the queue, but this is still not guaranteed |
 | Objects with `finalize()` are just slightly slower to collect | They require two full GC cycles, often get promoted to old-gen, and a slow Finalizer thread can cause the entire heap to fill with uncollected finalizable objects |
 | `super.finalize()` is automatically called | Unlike constructors, `super.finalize()` is NOT automatically chained — you must call it explicitly in a `finally` block |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -457,6 +485,8 @@ Register a `Runtime.addShutdownHook(Thread)` that explicitly closes resources. D
 Prevention:
 Add a JVM shutdown hook that iterates a `ConcurrentHashMap` of open resources and closes each one.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -472,6 +502,8 @@ Add a JVM shutdown hook that iterates a `ConcurrentHashMap` of open resources an
 - `java.lang.ref.Cleaner` — Java 9+ replacement that uses phantom references, avoids all finalization pitfalls
 - `AutoCloseable` — the preferred deterministic resource cleanup mechanism via `try-with-resources`
 - `PhantomReference` — lower-level mechanism that `Cleaner` is built on; allows cleanup without the resurrection risk of `finalize()`
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -500,6 +532,7 @@ Add a JVM shutdown hook that iterates a `ConcurrentHashMap` of open resources an
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** You are reviewing a legacy codebase where every DAO object overrides `finalize()` to close its JDBC connection. The system handles 5,000 requests/second and has recently started experiencing random `OutOfMemoryError` bursts every few hours. Walk through the exact causal chain from finalize() overrides to the OOM — what role does the minor GC promotion heuristic play, and how would you diagnose and fix this without rewriting all DAOs at once?

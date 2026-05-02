@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Spying"
 parent: "Testing"
@@ -27,13 +27,19 @@ tags:
 | **Used by:**    | Developers, TDD Practitioners                        |                 |
 | **Related:**    | Mocking, Stubbing, Faking, Test Doubles, Mockito Spy |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 Sometimes you have a class with real logic you want to exercise, but you also need to: (1) verify that specific internal methods were called, or (2) override just ONE method without replacing the whole object with a mock. A full mock replaces all logic. A spy gives you the real logic with observation and selective override capability.
 
+---
+
 ### 📘 Textbook Definition
 
 A **spy** (or partial mock) is a test double that wraps a real object. By default, all method calls delegate to the real implementation. The spy records all interactions (like a mock), enabling `verify()` calls. Specific methods can be selectively stubbed using `doReturn(...).when(spy).method()` while all other methods use the real implementation. In Mockito: created with `spy(realObject)` or `@Spy` annotation.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -43,6 +49,8 @@ Spy = real object with a wiretap + selective method override capability.
 **One analogy:**
 
 > A spy is a **surveillance camera** on a real employee: the employee does their actual job (real implementation), but a camera records every action (interaction recording). If needed, you can also intercept specific actions ("if they try to open the safe, redirect them to a dummy safe" — selective stubbing).
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -97,6 +105,8 @@ Spies used CORRECTLY: testing integration within a class
 Spies used AS CODE SMELL: hiding design problems (class is too large to mock cleanly)
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 SPYING ON AN ABSTRACT CLASS TEMPLATE METHOD:
@@ -127,9 +137,13 @@ verify(exporter).format(filteredData);
 // Real write() was NOT called (stubbed)
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A spy is a **method interceptor**: transparent to the object under test (it executes real code), but each method call passes through an observation layer first. You can see all traffic (verify calls), and you can intercept specific calls to return different responses (selective stubbing). Like a proxy server that normally passes traffic through but can intercept specific requests.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -140,6 +154,8 @@ verify(exporter).format(filteredData);
 **Level 3:** Spy with `@InjectMocks`: combining `@Spy` and `@InjectMocks` allows injecting a partially-real object. Use case: `@Spy @InjectMocks UserService service` — spy on the service itself (record its own method calls), inject real or mock dependencies. Advanced use: verifying internal method delegation without changing the class. Warning: this is often a design smell — if you need to spy on the class under test, consider refactoring.
 
 **Level 4:** Spies in the context of hexagonal architecture: spies are most appropriate at the domain/application layer boundary when you want to verify that a domain service triggered the right application-level events or callbacks, while the domain logic itself runs for real. They become problematic when used to "fix" a class that has too many responsibilities — the right fix is to extract the responsibility into a separate, mockable dependency.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -161,6 +177,8 @@ verify(exporter).format(filteredData);
 │    → Return 42 (real method NOT called)                 │
 └──────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -193,6 +211,8 @@ Test:
   // Real UserService logic ran → user actually created in fakeRepo
   assertThat(fakeRepo.findById(created.getId())).isPresent();
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -231,6 +251,8 @@ class NotificationServiceTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                 | Mock                                           | Spy                                        |
@@ -241,6 +263,8 @@ class NotificationServiceTest {
 | Use case        | Replace entire dependency                      | Observe/partially override real object     |
 | Risk            | Tests don't exercise real logic                | May cause real side effects if not careful |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                        | Reality                                                                                  |
@@ -248,6 +272,8 @@ class NotificationServiceTest {
 | "Spy is a safer mock"                | Spy exercises real code — real side effects (DB writes, emails) can occur if not stubbed |
 | "`when(spy.method())` is correct"    | Calls real method first! Use `doReturn().when(spy).method()` instead                     |
 | "Spies are always better than mocks" | Spies are better when you WANT real logic; mocks are better for external dependencies    |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -261,10 +287,14 @@ Fix: Always use `doReturn(x).when(spy).riskyMethod()` with spies.
 Cause: A method that wasn't stubbed executed its real implementation.
 Fix: Identify all methods with side effects and stub them with `doNothing()` or `doReturn()`. Or: use a Fake instead of a Spy.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Mocking, Stubbing
 - **Related:** Partial Mock, Test Doubles, Mockito, Interceptor, Proxy Pattern
+
+---
 
 ### 📌 Quick Reference Card
 

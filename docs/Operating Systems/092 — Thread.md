@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Context Switch, Java Concurrency, Thread Pool, Deadlock | |
 | **Related:** | Fiber / Coroutine, Process vs Thread, Green Thread | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -53,6 +55,8 @@ This is exactly why the **Thread** was created — a second execution
 pointer running inside the same process, sharing its memory, so parallel
 work can happen cheaply without IPC.
 
+---
+
 ### 📘 Textbook Definition
 
 A **thread** (or thread of execution) is the smallest schedulable unit
@@ -63,6 +67,8 @@ stack (for local variables and call frames). The OS schedules threads
 independently — multiple threads from the same process can run
 simultaneously on different CPU cores. Thread creation, context switch,
 and communication are significantly cheaper than the process equivalents.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -82,6 +88,8 @@ Threads make sharing data cheap (it's already in the same memory), but
 they make coordination hard (any thread can corrupt shared data at any
 time). This tradeoff — easy sharing, hard safety — is the root cause of
 most concurrency bugs.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -109,6 +117,8 @@ explicit synchronization (mutexes, locks) to be correct; one crashed
 thread (unhandled exception, stack overflow) can kill the entire
 process.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -132,6 +142,8 @@ THE INSIGHT:
 Threads make sharing trivially easy and safety non-trivially hard.
 The mutex is the price of sharing without IPC overhead.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Think of a process as a single-screen cinema. Threads are the
@@ -150,6 +162,8 @@ The mutex is the price of sharing without IPC overhead.
 Where this analogy breaks down: in a cinema two projectors would show
 overlapping images (visible corruption); in code the corruption is silent
 and intermittent — much harder to detect.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -180,6 +194,8 @@ abandoned because it couldn't exploit multiple cores and kernel blocking
 calls blocked all user threads. Java 21 Project Loom revisits this with
 virtual threads, but using structured concurrency and cooperative
 preemption at blocking points only.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -236,6 +252,8 @@ unlock(mutex)             lock(mutex) acquired
                           unlock(mutex)
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -268,6 +286,8 @@ address space before physical RAM. The OS scheduler overhead for 10,000
 ready threads becomes measurable. This is why thread pools cap at
 100–500 threads per JVM instance, and why virtual threads (Java 21)
 use 1 KB carrier stacks with grow-on-demand heap stacks.
+
+---
 
 ### 💻 Code Example
 
@@ -331,6 +351,8 @@ void handleRequest(Request req) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Concurrency Unit | Memory Share | Creation Cost | OS Visible | Best For             |
@@ -344,6 +366,8 @@ How to choose: use threads when you need true parallelism on multi-core
 hardware with shared mutable state; use virtual threads (Java 21+) or
 async/await when concurrency is IO-bound with thousands of concurrent tasks.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                           | Reality                                                                                                                                |
@@ -353,6 +377,8 @@ async/await when concurrency is IO-bound with thousands of concurrent tasks.
 | "synchronized makes code thread-safe"                   | synchronized prevents concurrent access to one block, but compound operations across multiple synchronized blocks are still not atomic |
 | "Thread.sleep() releases locks"                         | sleep() does NOT release held monitors; only wait() (on a monitor) releases the lock                                                   |
 | "Daemon threads are garbage-collected after main exits" | Daemon threads are forcibly terminated when all non-daemon threads finish — they don't run to completion                               |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -432,6 +458,8 @@ for all shared mutable state access.
 Prevention: prefer immutable objects; use `ConcurrentHashMap`,
 `AtomicInteger`, `CopyOnWriteArrayList`; minimize shared mutable state.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -452,6 +480,8 @@ Prevention: prefer immutable objects; use `ConcurrentHashMap`,
 - `Fiber / Coroutine` — user-space cooperative concurrency; no OS involvement
 - `Process` — stronger isolation; no shared memory; higher overhead
 - `Virtual Thread` — JVM-managed lightweight threads (Java 21+)
+
+---
 
 ### 📌 Quick Reference Card
 

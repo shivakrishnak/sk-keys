@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Native Image"
 parent: "Java & JVM Internals"
@@ -37,6 +37,8 @@ tags:
 | **Used by:** | GC Tuning | |
 | **Related:** | GraalVM, AOT Compilation, JIT Compiler, Tiered Compilation | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -48,9 +50,13 @@ A developer writes a Java CLI tool that converts file formats. Running it takes 
 THE INVENTION MOMENT:
 This is exactly why **Native Image** was created — to produce a self-contained compiled binary from Java code, with no JVM startup overhead, sub-100ms startup, and a compact memory footprint, making Java competitive with Go and Rust in deployment environments where a JVM is unacceptable.
 
+---
+
 ### 📘 Textbook Definition
 
 **Native Image** is a GraalVM technology that performs ahead-of-time compilation of Java bytecode to a native platform executable using the closed-world assumption. The `native-image` build tool runs points-to analysis to determine all reachable code, compiles it with the Graal AOT compiler, links it with SubstrateVM (a minimal Java runtime providing GC, thread management, and JNI), and produces a standalone binary. The binary contains the compiled application code, a pre-initialized heap (the "image heap"), and the SubstrateVM runtime, requiring no external JVM installation to execute.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -62,6 +68,8 @@ Package your entire Java application — code, libraries, and tiny runtime — i
 
 **One insight:**
 The "image heap" is Native Image's secret weapon for framework startup performance. In JVM mode, Spring Boot's `ApplicationContext` initialization builds thousands of bean definitions, proxy classes, and component graphs at runtime. With Native Image, Spring Boot performs this initialization at build time and serializes the result into the image heap. When the binary starts, it reads that pre-computed data directly from memory — 3 seconds of work becomes 20ms of I/O.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -111,6 +119,8 @@ THE TRADE-OFFS:
 Gain: <100ms startup; 50–80% lower memory; no JVM installation required; smaller attack surface; deterministic performance.
 Cost: Build time 2–15 minutes; dynamic Java features restricted (reflection, dynamic proxies, classpath scanning must be declared); peak throughput may be 10–20% below JIT without PGO; debugging harder (no bytecode-level tooling unless DWARF debug info included).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -136,6 +146,8 @@ Result: Native Image is the only viable Java option for this deployment pattern.
 THE INSIGHT:
 Native Image's value is deployment-pattern-specific. For always-on services with stationary traffic, JIT wins at peak. For any environment with cold starts, scale-to-zero, or strict startup SLAs, Native Image is the only viable Java approach.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Think of a native image as a pre-packaged meal-kit vs a restaurant kitchen. The JVM is a fully-equipped restaurant kitchen: capable of cooking anything, but needs setup time. Native Image is a vacuum-sealed meal-kit: everything is pre-assembled for the specific meal, requires only 2 minutes to heat (startup), uses minimal counter space (memory), but cannot make dishes not in the kit (no dynamic class loading). For home delivery (serverless/edge), the meal-kit wins. For a busy restaurant (high-volume always-on service), the full kitchen wins.
@@ -146,6 +158,8 @@ Native Image's value is deployment-pattern-specific. For always-on services with
 "Only dishes in the kit" → closed-world: only classes reachable at build time.
 
 Where this analogy breaks down: Unlike a meal-kit that cannot be modified, GraalVM Native Image supports some runtime dynamism through explicit configuration — it is not entirely static, just explicitly bounded.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -174,6 +188,8 @@ The native-image tool runs points-to analysis in a single JVM process that can i
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The image heap is the most architecturally interesting Native Image feature. In Java, class loading triggers `<clinit>` (static initializer) execution. In a JVM, this happens lazily at runtime. Native Image can execute `<clinit>` at build time and serialize the resulting object graph into the image heap — then the binary starts with those objects already in memory, as if they had run at startup. This is how Spring AOT achieves fast startup: the entire BeanFactory is constructed at build time and stored in the image heap. Runtime startup just reads the pre-built factory from a memory-mapped file segment. The tradeoff: build-time initialization must not depend on runtime state (no reading environment variables, no network calls, no file system paths that differ). Spring AOT processor validates this constraint.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -243,6 +259,8 @@ native-image \
 }
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 BUILD TIME (CI):
@@ -284,6 +302,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At scale, native image binary deployment in Kubernetes dramatically reduces pod startup time (70ms vs 3500ms) — enabling aggressive autoscaling without "pre-warming" buffers. Container images are smaller (80MB vs 500MB), reducing registry bandwidth and pull time. However, the build pipeline becomes more complex: each service needs a native image build step that takes 5–15 minutes. Teams with 50+ services adopt dedicated native image CI build caches and GraalVM reachability metadata management workflows.
+
+---
 
 ### 💻 Code Example
 
@@ -373,6 +393,8 @@ public class MyFeature implements Feature {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Metric | JVM (Spring Boot) | Native Image (Spring Boot 3) | Quarkus Native | Go Binary |
@@ -386,6 +408,8 @@ public class MyFeature implements Feature {
 
 How to choose: Native image for Kubernetes-native microservices, serverless, CLIs, and edge. JVM for services requiring maximum peak throughput, heavy use of dynamic frameworks, or where build time is a constraint.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -396,6 +420,8 @@ How to choose: Native image for Kubernetes-native microservices, serverless, CLI
 | Building native image requires installing GraalVM locally | GraalVM provides Docker-based build containers and Maven/Gradle plugins that handle the build environment — no local GraalVM installation needed for CI |
 | Once reflection-config.json is generated, it never changes | Config must be regenerated whenever a new library is added or new code paths are added that use reflection. Automated regeneration via CI agent runs is essential |
 | Native Image doesn't support Spring Boot | Spring Boot 3+ has first-class native image support with AOT processing. The Spring AOT processor automatically generates reflection configs, proxy configs, and resource configs for the vast majority of Spring features |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -484,6 +510,8 @@ Upgrade to Spring Boot 3+. Ensure `@EnableAspectJAutoProxy(proxyTargetClass=fals
 Prevention:
 Spring Boot 3.x compatibility guide lists all supported and unsupported features for native image. Validate at project inception.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -496,6 +524,8 @@ Spring Boot 3.x compatibility guide lists all supported and unsupported features
 **Alternatives / Comparisons:**
 - `JIT Compiler` — the runtime alternative to AOT; the long-running service choice when peak throughput matters
 - `GraalVM` — the broader project that Native Image is part of; Graal JIT is an alternative mode of GraalVM usage
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -529,6 +559,7 @@ Spring Boot 3.x compatibility guide lists all supported and unsupported features
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A team migrates 20 Spring Boot services to native image for a Kubernetes platform. They achieve 70ms cold starts for most services, but one service — a critical order processor — takes 850ms to start as a native image. This is still faster than JVM mode (3.2s) but fails the team's 200ms readiness target. The service uses extensive Jackson polymorphic deserialization, multiple `@EventListener` classes, and a complex Flyway database migration at startup. Diagnose the likely causes for the slow native image startup, and describe the steps to profile and optimize it below 200ms.

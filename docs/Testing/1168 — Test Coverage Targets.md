@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Test Coverage Targets"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Developers, QA, Tech Leads                                  |                 |
 | **Related:**    | TDD, Code Quality, SonarQube Quality Gate, CI-CD, Unit Test |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 "HOW MUCH OF OUR CODE IS TESTED?":
@@ -35,9 +37,13 @@ Without coverage metrics, it's impossible to know if the test suite is comprehen
 THE 80% MYTH:
 "We require 80% coverage." Teams game the metric: write tests that execute code without asserting meaningful behavior. 80% coverage is achieved; code quality is unchanged. Understanding what coverage means — and doesn't mean — is critical for using it effectively.
 
+---
+
 ### 📘 Textbook Definition
 
 **Code coverage** measures which lines, branches, or paths in the source code are executed during test runs. Key types: (1) **line/statement coverage** — which lines are executed (most common); (2) **branch coverage** — which `if/else` branches are taken (stronger; catches untested else branches); (3) **path coverage** — which execution paths are taken (exponential — impractical above toy size); (4) **mutation coverage** (mutation testing — strongest) — verifies assertions actually catch bugs by injecting bugs and checking if tests fail. A **coverage target** is a minimum threshold enforced in CI — if coverage drops below N%, the build fails.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -47,6 +53,8 @@ Coverage = % of code executed by tests; targets prevent regression; but high cov
 **One analogy:**
 
 > Coverage is like **reading comprehension as measured by page-turn count**: you can turn every page of a textbook (100% line coverage) without understanding any of it (no meaningful assertions). Coverage measures whether the tests VISITED the code, not whether they VERIFIED it correctly.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -145,6 +153,8 @@ PRAGMATIC APPROACH:
   4. Don't game: if a test has no assertions, the coverage is fraudulent
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 THE COVERAGE GAMING DISASTER:
@@ -171,9 +181,13 @@ Lesson: coverage targets require test quality enforcement too.
         Mutation testing is the antidote.
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Coverage is a **safety net measure**: a 70% coverage safety net has 30% of the net missing — you might fall through. But even a 95% coverage net doesn't tell you how strong the net is (are the assertions tight?). Coverage measures the net's extent; mutation testing measures its strength. Both matter.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -184,6 +198,8 @@ Lesson: coverage targets require test quality enforcement too.
 **Level 3:** Mutation testing with PITest: run `mvn org.pitest:pitest-maven:mutationCoverage`. Reviews mutation score alongside line coverage. High line coverage + low mutation score = tests are not asserting meaningfully. Focus coverage on business-critical paths: 95% coverage on the payment processing module, 60% on the admin report generator.
 
 **Level 4:** Coverage philosophy: coverage is a floor, not a ceiling. The goal is confidence, not a number. TDD naturally produces 80-90% coverage as a byproduct — not by chasing coverage, but by writing tests first. The most dangerous uncovered code is the rarely-executed error handling path — the one that only triggers in production under specific conditions. Risk-based coverage: map coverage gaps to business risk — high-risk code with low coverage is the priority, not low-risk utility code.
+
+---
 
 ### 💻 Code Example
 
@@ -245,6 +261,8 @@ Lesson: coverage targets require test quality enforcement too.
 </plugin>
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Coverage Type  | What It Measures        | Strength             | Tool   |
@@ -254,6 +272,8 @@ Lesson: coverage targets require test quality enforcement too.
 | Path           | All execution paths     | Strong (impractical) | N/A    |
 | Mutation       | Assertion effectiveness | Strongest            | PITest |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                       | Reality                                                                                                |
@@ -261,6 +281,8 @@ Lesson: coverage targets require test quality enforcement too.
 | "100% coverage = no bugs"           | Coverage measures execution, not correctness; 100% with no assertions = 0% bugs caught                 |
 | "80% is the magic number"           | The "right" target depends on: risk of the code, cost of testing, technology (generated code excluded) |
 | "Decreasing coverage is always bad" | Deleting unused code decreases coverage (lines removed were covered) — coverage% drop can be fine      |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -273,10 +295,14 @@ Fix: Require meaningful assertions in code review; run PITest on critical module
 Cause: Large legacy codebase with no tests brings overall coverage down.
 Fix: Enforce `new_coverage > 80%` (SonarQube: `new_lines_to_cover`) instead of overall coverage. Prevents penalizing teams for legacy they can't easily retrofit.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Unit Test, TDD, Code Quality
 - **Related:** JaCoCo, PITest, SonarQube, Mutation Testing, TDD, Branch Coverage
+
+---
 
 ### 📌 Quick Reference Card
 

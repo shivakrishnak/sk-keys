@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Optimistic Locking (Java)"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Database Fundamentals, StampedLock | |
 | **Related:** | CAS (Compare-And-Swap), StampedLock, Pessimistic Locking | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT (pessimistic locking):
@@ -39,9 +41,13 @@ A global product catalog receives 100,000 reads/second and updates once per hour
 THE INVENTION MOMENT:
 **Optimistic locking** assumes conflicts are rare and expensive verification is preferable to the constant overhead of locks.
 
+---
+
 ### 📘 Textbook Definition
 
 **Optimistic Locking** is a concurrency control strategy where reads proceed without acquiring any lock, and a conflict detection check is performed at the point where state is committed (written). If no conflict occurred (no other writer modified the data), the write proceeds. If a conflict is detected, the operation is retried. Implemented in Java as: CAS operations (`AtomicInteger.compareAndSet()`), `StampedLock.tryOptimisticRead()` + `validate()`, JPA `@Version` annotation with an integer/timestamp column, and custom version-based in-memory updates.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ THE INVENTION MOMENT:
 
 **One insight:**
 Optimistic locking wins when: conflicts are rare AND the cost of re-doing work on conflict is low AND lock overhead is significant. JPA `@Version` is the canonical production pattern — version column detects stale reads before committing database changes.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -86,6 +94,8 @@ THE TRADE-OFFS:
 Gain: No lock contention overhead for reads; high read throughput; no blocking.
 Cost: Writes may fail and require retry (wasted work); under high write contention, retry storms can degrade throughput; ABA problem exists if version not used (CAS-based optimistic); more complex code.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -112,6 +122,8 @@ Throughput: effectively unlimited reads (CPU/memory bound)
 THE INSIGHT:
 In the 10,000-read / 1-update scenario, optimistic locking has ~10,000× higher read throughput. Every conflict triggers a retry, but conflicts are rare (< 0.01% of reads coincide with the single update per testing cycle).
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Optimistic locking is like editing a Wikipedia article without coordination. You read the current version (timestamp noted), make your edits, and try to save — the system checks if the article changed since you read. If yes, your edit is rejected (conflict) and you must re-read and redo. For most edits, no one else is editing the same section simultaneously, so saves succeed first try.
@@ -123,6 +135,8 @@ In the 10,000-read / 1-update scenario, optimistic locking has ~10,000× higher 
 
 Where this analogy breaks down: Wikipedia shows you the conflict clearly. Code retries silently — unless the developer implements conflict logging, retries are invisible and hard to diagnose under unexpected write contention.
 
+---
+
 ### 📶 Gradual Depth — Four Levels
 
 **Level 1:** Optimistic locking: read freely, check at the end if anything changed, redo if so. Pessimistic: lock first, no need to check.
@@ -132,6 +146,8 @@ Where this analogy breaks down: Wikipedia shows you the conflict clearly. Code r
 **Level 3:** CAS-based optimistic locking: the "version" is the value itself. `compareAndSet(expected, new)` succeeds only if value = expected. `StampedLock.tryOptimisticRead()` uses a clock/version stamp separate from the read locks, allowing detect if any write lock was acquired since the stamp was taken. JPA `@Version` adds a numeric column that's incremented on each UPDATE, and the WHERE clause includes `version = old_version` — if 0 rows updated (version mismatch), throw `OptimisticLockException`.
 
 **Level 4:** Optimistic vs pessimistic is a throughput-under-conflict tradeoff. At conflict rate p: optimistic expected work = 1/(1-p) × single operation cost; pessimistic = 1 operation + average blocking time. For p < 0.1, optimistic dominates. For p > 0.5 (high write contention), pessimistic is better (no wasted work from retries). The crossover point depends on operation cost and contention topology.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -178,6 +194,8 @@ if (!sl.validate(stamp)) {
 return Math.hypot(x, y);
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (JPA):
@@ -202,6 +220,8 @@ CONFLICT FLOW:
 
 WHAT CHANGES AT SCALE:
 Under write contention, optimistic retries compound. 100 threads updating the same entity: on average `N/2` retries per successful update. At extreme contention, optimistic locking degrades to N² work per N threads — much worse than pessimistic. Monitor retry rates with metrics: >5% retry rate indicates optimistic is wrong choice for this workload.
+
+---
 
 ### 💻 Code Example
 
@@ -236,6 +256,8 @@ Product findForUpdate(@Param("id") Long id);
 // Use when reads >> writes (most catalog scenarios)
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Strategy | Read Lock | Write Lock | Conflict Handling | Best For |
@@ -246,6 +268,8 @@ Product findForUpdate(@Param("id") Long id);
 
 How to choose: Use optimistic for catalog-style data (reads >> writes). Use pessimistic for booking/inventory with high concurrent writes to same row. Use serializable for financial transactions requiring strict isolation.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -254,6 +278,8 @@ How to choose: Use optimistic for catalog-style data (reads >> writes). Use pess
 | Optimistic locking is always faster | Under high write contention (many concurrent writers to same data), the retry overhead makes optimistic worse than pessimistic. Always measure |
 | `@Version` field must be managed manually | JPA/Hibernate manages `@Version` automatically: reading, incrementing, and checking on every UPDATE. You should NOT update the version field in application code |
 | Optimistic locking prevents lost updates | Only if every reader checks the version before writing. If any write path bypasses the version check (native queries, direct JDBC), the optimistic lock is bypassed |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -280,6 +306,8 @@ Symptom: `OptimisticLockException` logged but no retry. Update silently discarde
 
 Fix: Implement retry logic — use `@Retryable` (Spring Retry), manual retry loop, or return conflict to the caller to decide.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -292,6 +320,8 @@ Fix: Implement retry logic — use `@Retryable` (Spring Retry), manual retry loo
 **Alternatives / Comparisons:**
 - `CAS` — the hardware mechanism underlying optimistic locking
 - Pessimistic locking — the complement strategy; use when conflicts are frequent
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -321,6 +351,7 @@ Fix: Implement retry logic — use `@Retryable` (Spring Retry), manual retry loo
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** JPA `@Version` with `OptimisticLockException` handling is a common pattern. A service calls `decrementStock()` in a transaction, catches `OptimisticLockException`, and retries 3 times. Under a Black Friday flash sale with 10,000 concurrent users trying to buy the last ticket simultaneously: trace how many `UPDATE` statements are executed against the database per successful purchase, calculate the maximum number of retries across all 10,000 transactions, explain why 9,999 of those transactions must fail (not just retry once), and describe the exponential backoff strategy that prevents the database from being overwhelmed by simultaneous retries.

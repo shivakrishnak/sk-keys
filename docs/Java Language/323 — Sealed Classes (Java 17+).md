@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Sealed Classes (Java 17+)"
 parent: "Java Language"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Pattern Matching (Java 21+), Records (Java 16+) | |
 | **Related:** | Records (Java 16+), Pattern Matching (Java 21+), Generics | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ The `Disputed` branch is missing in the revenue recognition service. Disputed tr
 THE INVENTION MOMENT:
 This is exactly why **Sealed Classes** were created — to close a type hierarchy so the compiler knows all permitted subtypes and can verify that every `switch` expression handles every case, turning a runtime logic hole into a compile error in every consuming service.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Sealed Class** (finalized in Java 17, JEP 409) is a class or interface declared with the `sealed` modifier and a `permits` clause that explicitly names all permitted direct subclasses. Each permitted subclass must be declared as `final`, `sealed`, or `non-sealed`. `final` closes the branch; `sealed` extends the sealed hierarchy; `non-sealed` opens the branch to arbitrary further extension. The compiler enforces: (1) all permitted subclasses must be in the same compilation unit or named module; (2) `switch` expressions over a sealed type are checked for exhaustiveness — a missing case is a compile error (not a warning).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Sealed classes say "only THESE types can extend me" — making the compiler's ex
 
 **One insight:**
 The real value of sealed types is not inheritance control — it's exhaustive switching. When you `switch` on a sealed type in Java 17+, the compiler verifies you've handled every permitted subtype. Adding a new subtype automatically breaks every switch that doesn't handle it — turning a silent runtime bug into a visible compile error that propagates to every consumer.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -92,6 +100,8 @@ THE TRADE-OFFS:
 Gain: Compiler-enforced exhaustive handling; closed type hierarchy for clear domain modeling; enables pattern matching; documents all valid states in one place.
 Cost: Requires Java 17+; all permitted subclasses must be in same compilation unit (module limitation); `non-sealed` escape hatch weakens the guarantee; breaks "open-closed principle" — adding a new variant forces all consumers to update.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -126,6 +136,8 @@ String render(Shape s) {
 THE INSIGHT:
 Without sealing, the type hierarchy is open — new subtypes can appear silently. With sealing, the hierarchy is closed — the compiler knows every possible type and can verify that every switch handles them all. The shift from runtime surprises to compile-time errors is the entire value.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A sealed type is like a formal menu at a restaurant. The kitchen makes exactly these 5 dishes — no substitutions. When a waiter takes orders, the restaurant can verify at order time (compile time) that every order is for a listed dish. No order can arrive for an unlisted dish. A regular class hierarchy is an open menu where new dishes can appear any time — the waiter can only check at serving time (runtime).
@@ -135,6 +147,8 @@ Without sealing, the type hierarchy is open — new subtypes can appear silently
 "New dish added: waiter must be retrained" → new subtype: all switch expressions must be updated or won't compile.
 
 Where this analogy breaks down: `non-sealed` is like putting "other items available" at the bottom of the menu — it re-opens that branch. A `non-sealed` permitted subclass breaks the exhaustiveness guarantee for anything that extends it.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -149,6 +163,8 @@ The `permits` clause is stored in the class file (`PermittedSubclasses` attribut
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Sealed types were designed together with pattern matching (JEP 406, 441, 441) as a unified feature for algebraic data type modeling. Haskell's data types, Scala's sealed traits, Rust's enums, and Swift's enums are all variants of this concept. Java's design explicitly allows `non-sealed` as an escape hatch — a compromise between strict algebraic types and Java's tradition of open extensibility. The "same compilation unit" restriction ensures that the full set of permitted types is visible to the compiler and can be verified statically. Future enhancements (Project Amber) will extend the pattern matching and deconstruction to work even more naturally with sealed hierarchies.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -212,6 +228,8 @@ javap -verbose PaymentResult.class | grep -A5 "PermittedSubclasses"
 #   Refunded
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -236,6 +254,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 In a large monorepo with many services, a sealed type change propagates compile errors to every consumer immediately — forcing all teams to update before the new code ships. This is the "Strangler Fig" pattern's compile-time equivalent: the type system itself prevents gradual, uncontrolled migration. Balancing safety (no default) with change velocity (teams need time to update) leads to the transitional helper pattern: keep a default that throws with a deprecation warning, remove it in the next API version.
+
+---
 
 ### 💻 Code Example
 
@@ -311,6 +331,8 @@ String format(Response r) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Mechanism | Type Safety | Exhaustiveness | Java Version | Extensible | Best For |
@@ -322,6 +344,8 @@ String format(Response r) {
 
 How to choose: Use sealed interfaces with records when modeling a closed domain with data (payment states, AST nodes, HTTP responses). Use enums when variants carry no data. Use abstract classes for open hierarchies designed for extension.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -331,6 +355,8 @@ How to choose: Use sealed interfaces with records when modeling a closed domain 
 | Sealed classes are the same as enums | Enums are constants with no per-value data fields (only shared static data). Sealed classes with record subtypes can carry different data per variant. `record Success(BigDecimal amount)` cannot be an enum variant |
 | Adding a subtype to sealed is backward compatible | It is NOT backward compatible for any consumer that uses exhaustive switch without `default`. Adding a new permitted type is a breaking API change that forces all exhaustive switches to be updated |
 | `permits` must list classes in the same file | Classes in the same PACKAGE or named module can be permitted even if in separate files. In unnamed modules (most apps), they must be in the same package |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -435,6 +461,8 @@ String describe(Plugin p) {
 
 Prevention: Use `non-sealed` only when third-party extension is genuinely needed. Document the exhaustiveness tradeoff explicitly in the API contract.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -448,6 +476,8 @@ Prevention: Use `non-sealed` only when third-party extension is genuinely needed
 **Alternatives / Comparisons:**
 - `Records (Java 16+)` — the data declaration counterpart to sealed types' control declaration; together they form algebraic data types
 - `Pattern Matching (Java 21+)` — the consumption mechanism that sealed types enable; sealed types declare the structure, pattern matching processes it
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -484,6 +514,7 @@ Prevention: Use `non-sealed` only when third-party extension is genuinely needed
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A payment processing library defines `sealed interface PaymentResult permits Success, Failure, Pending` and is published as a Maven dependency (version 1.0). A consuming service has an exhaustive `switch` over `PaymentResult` with no `default`. The library team releases version 2.0, adding `Disputed` to the `permits` clause. Trace exactly what happens in a Kubernetes deployment using rolling updates: some pods run with library v1.0, some with v2.0. What runtime errors occur? At which specific class-loading point does the JVM enforce the sealed contract? How does the `UnsupportedClassVersionError` vs `IncompatibleClassChangeError` differ in this scenario?

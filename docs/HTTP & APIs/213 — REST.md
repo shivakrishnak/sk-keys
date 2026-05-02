@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "REST"
 parent: "HTTP & APIs"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | HTTP/1.1, HTTP Methods, HTTP Status Codes, URLs                  |                 |
 | **Used by:**    | RESTful Constraints, API Gateway, API Design Best Practices, BFF |                 |
 | **Related:**    | GraphQL, gRPC, SOAP, RESTful Constraints, HATEOAS                |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

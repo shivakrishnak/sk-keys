@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Procedural Programming, Object-Oriented Programming, Event-Driven Programming | |
 | **Related:** | Declarative Programming, Functional Programming, Procedural Programming | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -50,6 +52,8 @@ programmers a vocabulary: assign values, loop, branch, call
 routines — a direct mapping from human intent to machine execution.
 Every CPU instruction set is imperative at its core.
 
+---
+
 ### 📘 Textbook Definition
 
 Imperative programming is a paradigm in which programs describe a
@@ -58,6 +62,8 @@ explicitly specifies WHAT the computer should do and HOW it should
 do it — step by step, instruction by instruction. It encompasses
 direct mutation of variables, explicit looping constructs, and
 conditional branching that controls execution flow.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -76,6 +82,8 @@ the HOW. When you change a variable, loop over an array, or branch
 on a condition, you're directly manipulating the machine's state.
 Most code you write every day is imperative, even inside OOP or
 other paradigms.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -104,6 +112,8 @@ direct correspondence to how hardware actually works.
 Cost: Programs describe the "how" not the "what" — as complexity
 grows, managing mutable state across many functions becomes
 the primary source of bugs.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -137,6 +147,8 @@ Mutable state + explicit iteration = the ability to describe
 algorithms for arbitrary inputs. This is the foundation of all
 computation expressed in code.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Imperative programming is like a chef's recipe card. Each line is
@@ -155,6 +167,8 @@ Where this analogy breaks down: unlike a recipe, programs can have
 millions of steps and side-effects that interact in non-obvious
 ways — a "stir" in one function can inadvertently affect a "simmer"
 in another via shared state.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -187,6 +201,8 @@ made stateful sequential execution the practical choice for decades.
 The limits of imperative code at scale — race conditions, shared
 mutable state, debugging complexity — drove the rise of functional
 and reactive paradigms.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -227,6 +243,8 @@ is thrown (in languages like Java/Python), the runtime unwinds the
 call stack searching for a matching `catch` block. If none found,
 the program terminates with an unhandled exception.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -252,6 +270,8 @@ multiple threads mutating the same variable require locks, creating
 contention. At 100x, bugs in state management (race conditions,
 stale reads) multiply. At 1000x, functional and immutable
 approaches become necessary to maintain correctness.
+
+---
 
 ### 💻 Code Example
 
@@ -297,6 +317,8 @@ int[] sortCopy(int[] arr) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Paradigm       | State        | Control         | Best For                         |
@@ -310,6 +332,8 @@ How to choose: Use imperative when you need full control over
 execution order and performance. Shift toward functional or
 declarative when shared mutable state becomes a source of bugs.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                     | Reality                                                                                                             |
@@ -318,6 +342,8 @@ declarative when shared mutable state becomes a source of bugs.
 | OOP replaced imperative programming               | OOP is built ON imperative — methods are just named blocks of imperative statements                                 |
 | Functional programming avoids imperative code     | Most FP code contains imperative sections; the goal is to minimise mutable shared state, not eliminate all mutation |
 | Imperative code is always faster than declarative | Declarative code (e.g., SQL) often runs faster because the engine can optimise the execution plan                   |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -432,6 +458,8 @@ Prevention: Functions should either return a value OR modify state —
 not both. Prefer pure functions that take input and return output
 with no side effects.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -451,6 +479,8 @@ with no side effects.
 - `Declarative Programming` — describes WHAT not HOW; opposite paradigm
 - `Functional Programming` — minimises mutable state; treats code as math
 - `Reactive Programming` — event streams replace explicit loops
+
+---
 
 ### 📌 Quick Reference Card
 

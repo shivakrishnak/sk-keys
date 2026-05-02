@@ -28,6 +28,8 @@ tags:
 | **Used by:** | NoSQL Databases, Large-Scale Web Applications, Microservices | |
 | **Related:** | ACID, Eventual Consistency, CAP Theorem, CRDTs | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WHERE EVERYTHING MUST BE ACID:**

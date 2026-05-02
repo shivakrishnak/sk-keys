@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "HATEOAS"
 parent: "HTTP & APIs"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | REST, RESTful Constraints, HTTP Methods, Hypermedia, HTTP Headers |                 |
 | **Used by:**    | API Design Best Practices, Hypermedia, API Discoverability        |                 |
 | **Related:**    | REST, RESTful Constraints, Hypermedia, OpenAPI, GraphQL           |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

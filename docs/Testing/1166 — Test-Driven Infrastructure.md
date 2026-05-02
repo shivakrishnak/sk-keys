@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Test-Driven Infrastructure"
 parent: "Testing"
@@ -28,14 +28,20 @@ tags:
 | **Used by:**    | DevOps Engineers, Platform Engineers, SREs                  |                 |
 | **Related:**    | TDD, CI-CD, Terraform, Terratest, InSpec, Test Environments |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 INFRASTRUCTURE HAS NO TESTS:
 Application code has unit tests, integration tests, CI pipelines. Infrastructure code (Terraform, Ansible, shell scripts)? Mostly: "apply it and hope." A Terraform change that opens security group 0.0.0.0/0 to port 22 (SSH to everyone) gets merged because nobody tested the security posture. An Ansible playbook that was working a year ago no longer works because a package version changed. Infrastructure drift: actual cloud state diverges from IaC definition — no tests to detect it.
 
+---
+
 ### 📘 Textbook Definition
 
 **Test-Driven Infrastructure (TDI)** is the practice of applying automated testing to infrastructure code, potentially in a TDD style. Infrastructure tests verify: (1) **unit tests** — static analysis of IaC files (security misconfigurations, naming conventions); (2) **integration tests** — deploy real infrastructure in a test environment and verify its properties (is the S3 bucket private? Is the RDS instance in a private subnet? Does the load balancer respond?); (3) **compliance tests** — verify infrastructure meets security and compliance policies (no public RDS, all EBS volumes encrypted, no SSH open to 0.0.0.0/0). Tools include: **Terratest** (Go, integration tests for Terraform), **InSpec/Chef** (compliance testing), **tfsec/Checkov** (static analysis), **AWS Config Rules** (continuous compliance).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -45,6 +51,8 @@ Test infrastructure the same way you test application code — unit, integration
 **One analogy:**
 
 > Testing infrastructure is like **home inspection**: before a building is occupied, inspectors verify: electrical wiring is correct, plumbing holds pressure, fire exits are accessible, load-bearing walls are intact. Without inspection, the building might look fine but fail under load. Infrastructure testing is the automated inspector — running after every IaC change.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -120,6 +128,8 @@ run "s3_bucket_is_private" {
 }
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 THE SECURITY GROUP DRIFT:
@@ -139,9 +149,13 @@ With TDI (InSpec daily compliance scan):
   → Security incident prevented
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Infrastructure tests are **circuit breakers for deployment pipelines**: when infrastructure code changes, tests run. If a security misconfiguration is introduced, the circuit breaks (pipeline fails), preventing bad infrastructure from reaching production. Compliance tests are **continuous monitoring** — running daily to catch manual drift before it becomes a security incident.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -152,6 +166,8 @@ With TDI (InSpec daily compliance scan):
 **Level 3:** Compliance-as-code with InSpec: write human-readable compliance controls (`it { should_not have_public_ip_address }`). Run daily against all environments. Alert on failures. This catches manual drift that IaC can't prevent. Integrate with `terraform plan` output testing: write tests against the planned changes (not the applied state) to validate intent before apply.
 
 **Level 4:** Full TDI workflow: write InSpec/Terratest compliance test first → it fails (infrastructure doesn't meet requirement) → write Terraform code to satisfy it → test passes. Treat every security requirement and architecture constraint as a test. Infrastructure ADRs implemented as compliance tests — the test IS the documentation of intent. Policy-as-Code at enterprise scale: Open Policy Agent (OPA) with Terraform → Conftest validates Terraform plans against Rego policies before any apply.
+
+---
 
 ### 💻 Code Example
 
@@ -212,6 +228,8 @@ func TestS3BucketSecurity(t *testing.T) {
     terraform validate
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Tool                     | Level            | Cloud Access      | Speed           | Coverage          |
@@ -222,6 +240,8 @@ func TestS3BucketSecurity(t *testing.T) {
 | Terratest                | Integration      | Yes (real deploy) | Minutes-hours   | Full behavior     |
 | InSpec                   | Compliance       | Yes (live infra)  | Minutes         | Ongoing drift     |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                             | Reality                                                                                                                          |
@@ -229,6 +249,8 @@ func TestS3BucketSecurity(t *testing.T) {
 | "Terraform plan shows what will change — no tests needed" | Plan shows intent but not correctness; tests verify properties of actual deployed infrastructure                                 |
 | "Static analysis is enough"                               | tfsec catches known patterns; Terratest verifies actual cloud behavior (permissions, network connectivity, service availability) |
 | "Compliance tests only for regulated industries"          | Security hygiene (no SSH to 0.0.0.0/0, all buckets private) applies everywhere                                                   |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -240,10 +262,14 @@ Fix: Always use `defer` for destroy. Use Terratest's `defer terraform.Destroy` i
 Cause: Full Terratest suite deploys real infrastructure (VPC, RDS, EKS) → 30+ minutes.
 Fix: Fast path in PR: unit-only (tfsec + validate); Terratest runs on merge to main only. Cache Terraform providers between runs.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** TDD, Infrastructure as Code, Terraform
 - **Related:** Terratest, InSpec, tfsec, Checkov, Open Policy Agent, Conftest, AWS Config, GitOps
+
+---
 
 ### 📌 Quick Reference Card
 

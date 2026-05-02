@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Stubbing"
 parent: "Testing"
@@ -27,13 +27,19 @@ tags:
 | **Used by:**    | Developers, TDD Practitioners                  |                 |
 | **Related:**    | Mocking, Faking, Spying, Test Doubles, Mockito |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 Testing code that depends on external state (database queries, API responses, file reads) requires controlling what that external state returns. Stubs replace the dependency with a pre-programmed response — no network, no database, just the exact value needed for the test scenario.
 
+---
+
 ### 📘 Textbook Definition
 
 A **stub** is a test double that provides canned answers to calls made during a test. Unlike mocks, stubs do not verify that specific interactions occurred — they only control what values are returned. Stubs are used to put the system under test (SUT) into a specific state required for the test. Stubbing in Mockito: `when(dependency.method()).thenReturn(value)`.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -43,6 +49,8 @@ Stub = fake return value; no verification of whether it was called.
 **One analogy:**
 
 > A stub is a **pre-recorded answer line**: when the code dials the number for "what's the user's credit score?" the stub answers "750" — regardless of what the question was or how many times the code asks. The stub doesn't care about the conversation; it just has a scripted answer.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -89,6 +97,8 @@ when(repo.findByEmail(anyString())).thenReturn(Optional.empty());
 when(repo.findByEmail("admin@company.com")).thenReturn(Optional.of(admin));
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 CONTROLLING TEST SCENARIOS WITH STUBS:
@@ -114,9 +124,13 @@ Three distinct test scenarios with zero database calls.
 Each test is deterministic and isolated.
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A stub is a **pre-written deposition**: before the test begins, you "depose" the dependency ("if asked for user 1, say Alice; if asked for user 2, say Bob"). The test then runs, and the dependency says exactly what was scripted. No surprise answers, no network failures, no database state.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -127,6 +141,8 @@ Each test is deterministic and isolated.
 **Level 3:** Stubbing in WireMock (HTTP stubs for integration tests): `stubFor(get("/api/users/1").willReturn(aResponse().withBody("{...}").withStatus(200)))`. WireMock stubs allow integration-level testing without real services. The same conceptual pattern: script the response to a specific request.
 
 **Level 4:** Strict stubbing (Mockito 2.x+): `MockitoSettings(strictness = STRICT_STUBS)` fails tests with unused stubs (you programmed a response but the code never asked for it). This prevents "dead" stubs accumulating in tests after refactoring. The "unnecessary stubbing" failure is a valuable signal: either the test scenario is wrong, or the production code path no longer exercises that dependency.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -141,6 +157,8 @@ Each test is deterministic and isolated.
 │                 arg != 1L? → return null (default)       │
 └──────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -160,6 +178,8 @@ Test: stub all three repos for fast, isolated unit test
   assertThat(profile.getDisplayName()).isEqualTo("Alice Smith")
   // No database. Runs in < 5ms.
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -197,6 +217,8 @@ class WeatherAlertServiceTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                         | Stub | Mock | Fake              |
@@ -206,6 +228,8 @@ class WeatherAlertServiceTest {
 | Has real logic          | ✗    | ✗    | ✓                 |
 | Framework needed        | Yes  | Yes  | No (hand-written) |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                             | Reality                                                                 |
@@ -213,6 +237,8 @@ class WeatherAlertServiceTest {
 | "Stubbing and mocking are the same thing" | Stubs provide responses; mocks also verify interactions                 |
 | "Stubs should have verify() calls"        | Stubs intentionally do NOT verify; use mock if you need verification    |
 | "Unnecessary stubs are harmless"          | They indicate either dead code paths or misaligned tests; clean them up |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -226,10 +252,14 @@ Fix: Always return sensible defaults from stubs: empty collections, empty Option
 Cause: Stub set up with `eq("Alice")` but production code calls with `"alice"` (case mismatch).
 Fix: Use `any()` for flexible matching, or debug argument values with `ArgumentCaptor`.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Unit Test, Mocking
 - **Related:** Faking, Spying, WireMock, Mockito, Test Doubles
+
+---
 
 ### 📌 Quick Reference Card
 

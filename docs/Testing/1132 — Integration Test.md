@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Integration Test"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Test Pyramid, CI-CD, Spring Boot Testing               |                 |
 | **Related:**    | Testcontainers, WireMock, @SpringBootTest, Embedded DB |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,11 +40,15 @@ Mocks lie. They return what you told them to return — not what the real system
 THE INVENTION MOMENT:
 Spring's `@SpringBootTest` (2014) and Testcontainers (2016) made integration testing practical: spin up a real Spring context with a real Docker-containerised database in the test lifecycle. Previously, integration tests required a maintained shared database — slow, fragile, environment-dependent. Testcontainers isolated each test suite with a fresh, real database in a Docker container.
 
+---
+
 ### 📘 Textbook Definition
 
 An **integration test** verifies that two or more components (classes, services, layers) work correctly together. Unlike unit tests (which mock dependencies), integration tests use **real implementations** of one or more dependencies — real databases, real HTTP clients, real message queues. Integration tests are slower than unit tests (seconds, not milliseconds) but catch a class of bugs that unit tests cannot: **integration bugs** — mismatches between how components expect to interact.
 
 In practice, "integration test" has two distinct meanings: (1) **component integration test**: tests multiple internal layers (service → repository → real database) with external infrastructure mocked by test containers; (2) **service integration test**: tests the interaction between two deployed services (one real, one WireMocked or containerised).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -55,6 +61,8 @@ Integration test = real database + real Spring context + real SQL — no mocks f
 
 **One insight:**
 The most common integration bug: unit test mocks `repo.save()` returning the saved entity; real repository does `save()` but the entity has a cascade mapping error so the returned entity is null. Unit test: passes (mock returns non-null). Integration test with real DB: fails immediately.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -96,6 +104,8 @@ THE TRADE-OFFS:
 Gain: Catches integration bugs that unit tests miss; builds confidence for production; documents how layers interact.
 Cost: Slow (1–30s per test); requires Docker for Testcontainers; test setup complexity; parallel execution requires isolated databases.
 
+---
+
 ### 🧪 Thought Experiment
 
 FINDING THE H2 VS POSTGRESQL BUG:
@@ -118,11 +128,15 @@ SELECT * FROM users WHERE email = 'alice@test.com'  -- fails!
 
 The integration test catches the mapping mismatch. The unit test never runs SQL.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Integration tests are like dress rehearsals: the full cast, real costumes, real stage — not the individual line-reading sessions (unit tests) or the full opening night with a paying audience (E2E). Dress rehearsals catch things that individual rehearsals miss: the door that sticks, the costume that doesn't fit the set, the lighting cue that fires too early.
 
 > Testcontainers is the stage crew that sets up and tears down the stage for each rehearsal automatically.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -133,6 +147,8 @@ The integration test catches the mapping mismatch. The unit test never runs SQL.
 **Level 3:** Testcontainers' `@Container` with `@DynamicPropertySource` injects the container's port into Spring's `application.properties` at runtime. Singleton pattern: share one container across all tests in a class with `static` field + `Lifecycle.CLASS`. `@DataJpaTest` with `replace=NONE` uses the Testcontainers PostgreSQL, not H2 — this is strongly recommended for production-fidelity. Flyway/Liquibase migrations run in test context — catches migration SQL errors early.
 
 **Level 4:** The integration test pyramid trade-off: full `@SpringBootTest` starts the entire Spring context (2–5s cold start). Multiple test classes each starting their own context = 10+ seconds overhead per class. Spring's `ApplicationContext` caching (`@TestConfiguration`, `@DirtiesContext` avoidance) is critical: if all tests share the same Spring context configuration, the context is built once and reused. `@DirtiesContext` (which forces context reload) should be used sparingly. This is why Spring slice tests (`@DataJpaTest`, `@WebMvcTest`) are faster — smaller context, reusable across more tests.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -161,6 +177,8 @@ The integration test catches the mapping mismatch. The unit test never runs SQL.
 └──────────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 FULL INTEGRATION TEST EXAMPLE:
@@ -182,6 +200,8 @@ Test: POST /api/orders → verify order saved to DB + notification sent
    Kafka: KafkaConsumer.poll() → message received (real broker)
 5. Cleanup: @Sql("DELETE FROM orders") or @Transactional rollback
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -238,6 +258,8 @@ class OrderIntegrationTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach                         | Speed   | Fidelity  | Use Case                          |
@@ -248,6 +270,8 @@ class OrderIntegrationTest {
 | @SpringBootTest + Testcontainers | ~5–30s  | Very High | Full layer integration            |
 | Deployed service test            | Minutes | Highest   | Post-deploy smoke test            |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                   | Reality                                                                                                          |
@@ -256,6 +280,8 @@ class OrderIntegrationTest {
 | "@SpringBootTest is always the right choice"    | Slice tests (@DataJpaTest, @WebMvcTest) are faster and test specific layers; use SpringBootTest only when needed |
 | "Integration tests replace unit tests"          | No — unit tests catch logic bugs faster; integration tests catch integration bugs; both are required             |
 | "@Transactional in tests = production behavior" | @Transactional in tests ROLLS BACK after each test; it masks missing @Transactional in production code           |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -269,11 +295,15 @@ Fix: Always use `@DynamicPropertySource` to inject dynamic container ports.
 Cause: `@DirtiesContext` on multiple test classes forces Spring context rebuild.
 Fix: Share context by using identical configuration across tests. Remove unnecessary `@DirtiesContext`. Use `@MockBean` consistently (adding/removing `@MockBean` invalidates context cache).
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Unit Test, JPA/Hibernate, HTTP and APIs
 - **Builds on:** Testcontainers, WireMock, @SpringBootTest, Contract Test
 - **Alternatives:** Unit Test (faster, less fidelity), E2E Test (full fidelity, much slower)
+
+---
 
 ### 📌 Quick Reference Card
 

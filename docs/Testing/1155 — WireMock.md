@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "WireMock"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Java Developers, API Integration Testers                              |                 |
 | **Related:**    | Stubbing, Testcontainers, Mockito, Contract Test, HTTP Client Testing |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -34,9 +36,13 @@ WORLD WITHOUT IT:
 
 WireMock fills the gap: it's a real HTTP server that runs in your test, returns exactly what you tell it to, and records all requests — so you can verify your service sends the correct HTTP requests.
 
+---
+
 ### 📘 Textbook Definition
 
 **WireMock** is a mock HTTP server library for Java (and available standalone) that: (1) **stubs HTTP responses** — program specific URLs to return specific status codes, headers, and response bodies; (2) **records requests** — capture all incoming requests for later verification; (3) **verifies requests** — assert that specific HTTP requests were made; (4) **simulates fault conditions** — inject delays, connection resets, chunked encoding errors. WireMock can run embedded in JUnit tests or as a standalone server for manual testing.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -46,6 +52,8 @@ WireMock = fake HTTP server in your test — program it like a mock, but for rea
 **One analogy:**
 
 > WireMock is a **traffic roundabout** redirecting your service's outbound HTTP calls: instead of reaching Stripe's servers, the call is intercepted by WireMock, which returns a scripted response. Your service code doesn't know the difference — it sent a real HTTP request and got a real HTTP response.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -138,6 +146,8 @@ stubFor(get("/api/data")
     .willReturn(aResponse().withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 FINDING THE HEADER BUG WITH WIREMOCK:
@@ -159,9 +169,13 @@ WireMock would have caught it:
   → Bug found in test, not in staging
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > WireMock is a **flight simulator for HTTP clients**: the pilot (your service code) sends real control inputs (HTTP requests), the simulator (WireMock) responds with realistic feedback (HTTP responses), including failures (turbulence = 500 errors, out of fuel = 429 rate limits). The pilot learns and adapts (retry logic tested) without any real aircraft (external API) being involved.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -172,6 +186,8 @@ WireMock would have caught it:
 **Level 3:** Scenarios (stateful stubs): use `inScenario()` / `whenScenarioStateIs()` / `willSetStateTo()` to model stateful sequences (first call returns one thing, subsequent calls return another). Request templating: return dynamic responses based on request content (Handlebars templates). Recording: WireMock can record real API calls to generate stubs automatically (`record/playback` mode — hit real Stripe once, save the response, use saved response in all future tests).
 
 **Level 4:** WireMock in microservices: each service has its own WireMock stubs for its downstream dependencies. This creates a risk: if Stripe changes their API, WireMock stubs stay the same — tests pass but production fails. Solution: Consumer-Driven Contract Testing (Pact) combined with WireMock — stubs are generated from Pact contracts, ensuring they match the real API. WireMock Cloud: SaaS version of WireMock for non-Java teams. WireMock Standalone: run as a Docker container for manual testing / cross-service integration environments.
+
+---
 
 ### 💻 Code Example
 
@@ -219,6 +235,8 @@ class WeatherServiceTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                           | Mockito Mock          | WireMock           |
@@ -230,6 +248,8 @@ class WeatherServiceTest {
 | Speed                     | Microseconds          | Milliseconds       |
 | Use case                  | Internal dependencies | External HTTP APIs |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                          | Reality                                                                                            |
@@ -237,6 +257,8 @@ class WeatherServiceTest {
 | "WireMock replaces Mockito"            | They operate at different layers; use both: Mockito for domain logic, WireMock for HTTP boundaries |
 | "WireMock stubs are always up-to-date" | Stubs can drift from real APIs; use contract tests (Pact) to keep stubs synchronized               |
 | "WireMock requires a running server"   | WireMock can run embedded in JUnit — no separate server needed                                     |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -250,10 +272,14 @@ Fix: Verify `spring.datasource.url` / `api.url` property is set to WireMock URL.
 Cause: Stripe updated their API response format; WireMock stubs still return old format.
 Fix: Use Pact consumer-driven contract testing to generate stubs, or run a periodic "stub freshness check" against the real API in a separate job.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Integration Test, HTTP and APIs
 - **Related:** Testcontainers, Pact, Contract Test, MockMvc, HttpClient
+
+---
 
 ### 📌 Quick Reference Card
 

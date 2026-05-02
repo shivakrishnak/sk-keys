@@ -28,6 +28,8 @@ tags:
 | **Used by:** | API Design, Backend Development, Platform Engineering | |
 | **Related:** | REST, OpenAPI/Swagger, API Versioning, API Documentation | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

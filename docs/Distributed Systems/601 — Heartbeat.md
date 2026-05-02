@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Heartbeat"
 parent: "Distributed Systems"
@@ -26,6 +26,8 @@ tags:
 | **Depends on:** | Gossip Protocol, Failure Detection, Timeouts                         |                 |
 | **Used by:**    | Leader Election, Raft, Paxos, Service Mesh, Kubernetes               |                 |
 | **Related:**    | Gossip Protocol, Phi Accrual Detector, Circuit Breaker, Health Check |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

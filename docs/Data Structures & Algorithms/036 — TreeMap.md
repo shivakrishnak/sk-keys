@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Segment Tree, Consistent Hash Ring | |
 | **Related:** | HashMap, LinkedHashMap, TreeSet | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ HashMap sacrifices key ordering for O(1) speed. Once ordering is gone, range que
 THE INVENTION MOMENT:
 Store keys in a balanced binary search tree. Every node's left subtree has smaller keys, right subtree has larger. Finding all keys in range [lo, hi] is a single guided traversal — O(log N + K) where K is the number of results. This is exactly why the TreeMap was created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **TreeMap** is a `NavigableMap` implementation backed by a red-black tree. Keys are stored in sorted order according to their natural ordering or a `Comparator` provided at construction. `get`, `put`, and `remove` operations are O(log N). Additionally, it provides O(log N) range operations: `subMap(lo, hi)`, `headMap(hi)`, `tailMap(lo)`, `floorKey(k)`, `ceilingKey(k)`, `lowerKey(k)`, and `higherKey(k)`.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -52,6 +58,8 @@ A key-value map that keeps its keys sorted, enabling range queries that a HashMa
 
 **One insight:**
 TreeMap makes you pay O(log N) per operation instead of O(1) — but in return, it gives you something HashMap fundamentally cannot provide: the ability to ask "what is the next key after X?" or "give me all keys from A to B?" without scanning everything.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -74,6 +82,8 @@ THE TRADE-OFFS:
 Gain: Sorted order, O(log N) range queries, nearest-key operations.
 Cost: O(log N) vs O(1) for basic get/put, higher constant factor, more memory per node.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -88,6 +98,8 @@ Orders stored by price as keys. Each query calls `ceilingKey(limitPrice)` — fi
 THE INSIGHT:
 The "sorted order" that TreeMap maintains is not just cosmetic — it is a structural property that enables sub-linear range queries. HashMap cannot do this at any cost because it has structurally thrown away ordering information.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A TreeMap is like a sorted filing cabinet where files are alphabetically ordered. Finding files between "Mango" and "Mute" means opening the 'M' drawer and pulling all consecutive files — no searching other drawers.
@@ -98,6 +110,8 @@ The "sorted order" that TreeMap maintains is not just cosmetic — it is a struc
 "Adding a new file in order" → rebalanced tree insertion
 
 Where this analogy breaks down: Filing cabinets don't self-balance. TreeMap automatically restructures itself on each insert to maintain O(log N) height — you never do this in a physical filing cabinet.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -112,6 +126,8 @@ Backed by a `TreeMap.Entry` red-black tree. Each entry: key, value, left, right,
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Red-black trees were chosen over AVL trees because they require fewer rotations on insertion/deletion (at most 3 rotations vs up to O(log N) for AVL). The cost is slightly taller trees (≤ 2 log N vs log N for AVL), but the constant factor on mutations is better. `TreeMap.subMap()` returns a view rather than a copy — O(1) view creation, lazy traversal. This is an important API design decision: if it copied, a range query on 1 element of a 10M map would allocate 10M entries. The view approach makes chained range queries efficient.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -157,6 +173,8 @@ SortedMap<K,V> sub = map.subMap(3, true, 7, false);
 // Any put(4, x) on sub reflects immediately in original map
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -177,6 +195,8 @@ Custom key class without Comparable and no Comparator
 
 WHAT CHANGES AT SCALE:
 At 10M+ entries, TreeMap works correctly but has higher memory footprint (~64 bytes per entry with object headers and 5 pointers). Cache miss rate increases for random key lookups because red-black tree nodes are scattered in memory. At extreme scale, a B-tree (like those in databases) provides better cache efficiency because child nodes fill entire cache lines together. Java's TreeMap has no concurrency support; use `ConcurrentSkipListMap` for thread-safe sorted access at scale.
+
+---
 
 ### 💻 Code Example
 
@@ -222,6 +242,8 @@ SortedMap<LocalDate, List<Event>> march =
 // march is a live view — O(log N) creation, O(K) iteration
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Map | Ordering | get/put | Range Query | Thread-safe | Best For |
@@ -234,6 +256,8 @@ SortedMap<LocalDate, List<Event>> march =
 
 How to choose: Use TreeMap when you need sorted keys or range queries. Use HashMap for maximum throughput with no ordering requirement. Use `ConcurrentSkipListMap` when you need thread-safe sorted access.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -243,6 +267,8 @@ How to choose: Use TreeMap when you need sorted keys or range queries. Use HashM
 | TreeMap works with any object as key | Keys must implement `Comparable` or a `Comparator` must be provided; otherwise `ClassCastException` |
 | TreeMap is thread-safe like ConcurrentHashMap | `TreeMap` has no synchronization; use `Collections.synchronizedSortedMap()` or `ConcurrentSkipListMap` |
 | Iteration order of TreeMap equals insertion order | TreeMap iterates in key-sorted order, not insertion order |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -306,6 +332,8 @@ Fix: Replace TreeMap with HashMap if sorted iteration is not required.
 
 Prevention: Choose TreeMap only when range queries or sorted iteration are a stated requirement.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -319,6 +347,8 @@ Prevention: Choose TreeMap only when range queries or sorted iteration are a sta
 **Alternatives / Comparisons:**
 - `HashMap` — O(1) access but no ordering; prefer when range queries are not needed.
 - `ConcurrentSkipListMap` — thread-safe sorted map; O(log N) reads with better concurrent throughput than synchronised TreeMap.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -347,6 +377,7 @@ Prevention: Choose TreeMap only when range queries or sorted iteration are a sta
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A ride-sharing service needs to find the nearest available driver to a customer, where "nearest" is determined by a 1D distance metric on a mapped road segment. You have 50,000 drivers updated 5 times per second each. Design a solution using `TreeMap` and evaluate its time complexity for both driver-position updates and nearest-driver queries. What happens when two drivers have identical position keys, and how does that affect your design?

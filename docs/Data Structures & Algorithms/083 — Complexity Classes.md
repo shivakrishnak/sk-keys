@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Complexity Classes"
 parent: "Data Structures & Algorithms"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Algorithm Design, Cryptography, Compiler Design | |
 | **Related:** | P vs NP, NP-Complete Problems, Approximation Algorithms | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Without complexity classes, every algorithm is judged in isolation. The accumula
 THE INVENTION MOMENT:
 Complexity classes formalise: "all problems solvable with polynomial time" is P; "all problems verifiable in polynomial time" is NP; "all problems solvable in polynomial space" is PSPACE; and so on. Problems within each class are equivalent up to polynomial transformations. The class hierarchy (P ⊆ NP ⊆ PSPACE ⊆ EXP) organises all known problems by their computational resource requirements. This is exactly why **Complexity Classes** were created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **complexity class** is a set of computational decision problems that can be solved (or verified) within a specific resource bound on a Turing machine. **P** = problems solvable in polynomial time (deterministic). **NP** = problems with solutions verifiable in polynomial time. **co-NP** = complement problems of NP (verifying NO-certificates in poly time). **PSPACE** = solvable in polynomial space (possibly exponential time). **EXP** = solvable in exponential time. Classes are related: P ⊆ NP ∩ co-NP ⊆ PSPACE ⊆ EXP. These inclusions are proven; whether they are strict (whether P ≠ NP) remains open. Each class has complete problems — the hardest problems in the class.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Complexity classes are bins that sort all computational problems by how many res
 
 **One insight:**
 The distinction between PSPACE and NP is subtle but profound: PSPACE problems might take exponential TIME but only polynomial SPACE. These are fundamentally different resources. PSPACE-complete problems (like generalised chess) are believed strictly harder than NP-complete problems, yet both are "hard" to humans. The hierarchy P ⊆ NP ⊆ PSPACE ⊆ EXP is known; which inclusions are strict remains open except EXP ⊋ P (Time Hierarchy Theorem proves EXP is strictly larger than P).
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -77,6 +85,8 @@ THE TRADE-OFFS:
 Gain: Formal vocabulary for classifying all problems; enables universal statements ("harder than all NP problems").
 Cost: Highly abstract; focuses on worst-case asymptotic complexity, which may not match practical performance; doesn't capture constants or real-world I/O performance.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -93,6 +103,8 @@ WHAT HAPPENS WITH COMPLEXITY CLASSES:
 THE INSIGHT:
 Problems (A) and (B) are both "hard," but they're in different complexity classes. Chess is PSPACE-complete, which is at least as hard as NP-complete (PSPACE ⊇ NP) and likely strictly harder. The formal classification system reveals relationships invisible to informal analysis.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Complexity classes are like geological strata. P is bedrock (solid, fundamental, polynomial time). NP is the overlying sediment (you can dig through it quickly to verify a path, but finding a new path may require drilling through). PSPACE is deeper sediment — harder but still finite space used. EXP is magma — exponential time required. Time Hierarchy: deeper strata always exist, and nothing dissolves down.
@@ -104,6 +116,8 @@ Problems (A) and (B) are both "hard," but they're in different complexity classe
 "Drilling down" → more resources required to solve
 
 Where this analogy breaks down: Geological strata don't reduce into each other; complexity classes have polynomial-time reductions connecting them. Also, the hierarchy has known inclusions but many separation conjectures remain unproven.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -118,6 +132,8 @@ Completeness: A problem is C-complete if it is in class C and every problem in C
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The classification infrastructure enables the entire study of algorithm lower bounds. The Oracle Separation Theorem shows that relative to certain oracles, P ≠ NP and relative to others P = NP — meaning the question cannot be resolved by diagonalisation alone (Baker-Gill-Solovay). Modern complexity research uses tools from algebraic geometry (GCT), proof complexity (optimal refutation systems), and average-case complexity (Levin). The class BQP (quantum polynomial time) is a new stratum added by quantum computing: BQP ⊆ PSPACE and contains factoring, but BQP vs NP is unresolved. Post-quantum cryptography lives in the gap between BQP and NP.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -154,6 +170,8 @@ The classification infrastructure enables the entire study of algorithm lower bo
 **Proof sketch — PSPACE ⊇ NP:**
 Any NP problem has a polynomial-length certificate verifiable in polynomial time. A PSPACE algorithm can try all 2^(poly) certificates in sequence, reusing the polynomial space for each trial. This search uses polynomial space (one certificate at a time) and exponential time — within PSPACE.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -182,6 +200,8 @@ Problem misclassified (put in wrong class)
 
 WHAT CHANGES AT SCALE:
 For practical engineering: P problems scale to any input size. NP-complete scale to ~N=50 (exact), ~N=10,000 (heuristics). PSPACE-complete scale to tiny game boards. EXP-complete: intractable beyond N=20. These limits are engineering constraints in games, AI planning, formal verification.
+
+---
 
 ### 💻 Code Example
 
@@ -258,6 +278,8 @@ int hopcroftKarp(List<Integer>[] adj, int L, int R) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Class | Resource | Determinism | Complete Problem | Practical Impact |
@@ -269,6 +291,8 @@ int hopcroftKarp(List<Integer>[] adj, int L, int R) {
 | **PSPACE** | Poly space | Det. | TQBF | Exponential time typical |
 | **EXP** | Exp time | Det. | Succinct-Circuit | Intractable for N>20 |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -278,6 +302,8 @@ int hopcroftKarp(List<Integer>[] adj, int L, int R) {
 | BPP is larger than NP | BPP and NP are incomparable under standard assumptions. A BPP algorithm may not solve NP-complete problems efficiently; randomness doesn't help with NP-hardness unless NP ⊆ BPP (widely disbelieved). |
 | PSPACE problems are always impractical | Many PSPACE-complete problems have practical solutions for small instances: chess endgame tablebases (all 7-piece positions solved, ~140 TB stored), model checking in VLSI verification. |
 | All complexity classes are about time | No — PSPACE and LOGSPACE are about memory (space). L (LOGSPACE) contains many problems solvable with O(log N) memory (graph reachability in undirected graphs via Reingold 2004). |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -318,6 +344,8 @@ Fix: Validate that randomised correctness claim has a formal error probability <
 
 Prevention: Distinguish "Monte Carlo correctness" from "deterministic correctness" in algorithm descriptions.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -333,6 +361,8 @@ Prevention: Distinguish "Monte Carlo correctness" from "deterministic correctnes
 **Alternatives / Comparisons:**
 - `Average-Case Complexity` — Instead of worst-case class membership, classifies problems by average distribution hardness.
 - `Communication Complexity` — Lower bounds on the number of bits two parties must exchange to solve a problem; connects to circuit complexity.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -361,6 +391,7 @@ Prevention: Distinguish "Monte Carlo correctness" from "deterministic correctnes
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The Time Hierarchy Theorem proves EXP ⊋ P: there exist problems solvable in O(2^N) but not O(N^k) for any constant k. The Space Hierarchy Theorem similarly proves PSPACE ⊋ LOGSPACE. These theorems use diagonalisation. Yet diagonalisation CANNOT resolve P vs NP (Baker-Gill-Solovay oracle theorem). Explain the structural difference between the Time/Space Hierarchy proofs and why that structure cannot be applied to separate P from NP — specifically, what property of oracle computations makes diagonalisation fail for P vs NP?

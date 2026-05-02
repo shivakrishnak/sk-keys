@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "String Matching (KMP, Rabin-Karp)"
 parent: "Data Structures & Algorithms"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Suffix Array, Full-Text Search, Intrusion Detection Systems | |
 | **Related:** | Trie, Suffix Array, Aho-Corasick | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ For a virus scanner checking a 1 GB log file for a malicious 100-byte signature,
 THE INVENTION MOMENT:
 When the naïve algorithm encounters a mismatch after matching k characters of the pattern, it discards all information about those k matched characters. But that matched prefix tells you exactly how far you can shift the pattern forward without missing a match — because the longest proper prefix of the matched portion that is also a suffix determines the next valid alignment. This is the KMP insight. Rabin-Karp uses a different insight: hash the pattern, then slide a rolling hash over the text — full comparison only on hash matches. Both achieve O(N+M). This is exactly why **String Matching algorithms** were created.
 
+---
+
 ### 📘 Textbook Definition
 
 **String Matching** is the problem of finding all occurrences of a pattern string P (length M) within a text string T (length N). **Knuth-Morris-Pratt (KMP)** preprocesses the pattern into a **failure function** (or partial match table) `lps[]` that encodes, for each prefix of P, the length of its longest proper prefix which is also a suffix. This allows the pattern to skip positions on mismatch without re-examining text characters, achieving O(N+M). **Rabin-Karp** uses polynomial rolling hashing to compute window hashes in O(1) per slide, reducing comparisons to hash mismatches; it runs O(N+M) average but O(N×M) worst case (many hash collisions). Both algorithms are optimal for single-pattern matching in the RAM model.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Pre-process the pattern to avoid re-reading text you've already matched when a m
 
 **One insight:**
 KMP's `lps` (longest proper prefix/suffix) array is the key. `lps[i]` tells you: "after a mismatch at pattern position i+1, you can safely jump the pattern to position `lps[i]` and resume — the text pointer never moves backward." Building `lps` takes O(M) and the search takes O(N) — one forward pass of the text, total O(N+M).
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -71,6 +79,8 @@ THE TRADE-OFFS:
 KMP: guaranteed O(N+M), O(M) preprocessing, no false positives, text pointer never retreats. Cost: moderate implementation complexity; the `lps` table logic is non-obvious.
 Rabin-Karp: O(N+M) expected, O(N×M) worst case (many collisions), but trivially extends to multiple patterns (check against a hash set). Naturally handles 2D pattern matching.
 Both: O(M) extra space for the failure function / pattern hash.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -96,6 +106,8 @@ WHAT HAPPENS WITH KMP:
 THE INSIGHT:
 KMP's text pointer `i` only ever moved forward — never back. Even in the worst case of "AAAA...AB"-style inputs that cost O(N×M) naïvely, KMP stays O(N+M) because the lps table encodes the "already matched" prefix length, preventing re-examination.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > KMP is a detective reviewing evidence. When you fail to match a suspect's alibi at step 7, you don't throw away everything you verified in steps 1–6. Instead, you look at your notes: "I confirmed steps 1–4 already match the beginning of the alibi. So when I resume, start from step 4, not step 1." The `lps` array is your notes.
@@ -107,6 +119,8 @@ KMP's text pointer `i` only ever moved forward — never back. Even in the worst
 "Text pointer i never retreats" → never re-examine confirmed text
 
 Where this analogy breaks down: The analogy suggests going backward in the investigation; KMP never re-examines text characters — only the pattern pointer retreats. The text pointer is strictly monotone.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -121,6 +135,8 @@ KMP builds the `lps` table in O(M) using the invariant that `lps[i]` is computed
 
 **Level 4 — Why it was designed this way (senior/staff):**
 KMP was independently published by Knuth, Morris, and Pratt in 1977. Its `lps` function is equivalent to the **border function** in stringology — the pattern's self-overlapping structure. This generalises: Aho-Corasick builds a trie of all patterns and computes failure links (equivalent to `lps` across the trie), enabling simultaneous O(N + total pattern length) matching for thousands of patterns — used in intrusion detection systems (Snort), virus scanners (ClamAV), and DNA sequence analysis. The lower bound for single-pattern matching is Ω(N/M) — KMP achieves O(N) which is optimal for M ≥ 1. For very short patterns (M ≤ 4), CPU SIMD instructions (SSE4.2 `pcmpistri`) outperform KMP due to instruction-level parallelism.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -180,6 +196,8 @@ KMP was independently published by Knuth, Morris, and Pratt in 1977. Its `lps` f
 └────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -206,6 +224,8 @@ Hash collision in Rabin-Karp
 
 WHAT CHANGES AT SCALE:
 In production search engines (Elasticsearch), full-text search is NOT done with KMP/Rabin-Karp per query. Text is preprocessed into an inverted index: each word → [list of document IDs + positions]. At query time, lookup is O(1) per term, O(K log D) to intersect K result lists of D documents. KMP is used at index-build time for tokenization and at the data-structure level for wildcard queries. For DNA databases (~3 billion base pairs), suffix arrays and BWT (FM-index) enable O(M log N) search with sublinear space.
+
+---
 
 ### 💻 Code Example
 
@@ -292,6 +312,8 @@ while ((pos = text.indexOf(pattern, pos)) != -1) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Algorithm | Preprocessing | Search | Worst Case | Multiple Patterns |
@@ -304,6 +326,8 @@ while ((pos = text.indexOf(pattern, pos)) != -1) {
 
 How to choose: Use KMP for guaranteed O(N+M) single-pattern matching. Use Rabin-Karp when matching against a set of patterns (use a hash set of pattern hashes). Use Boyer-Moore in practice for long patterns (best-case O(N/M)). Use Aho-Corasick for simultaneous multi-pattern matching.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -313,6 +337,8 @@ How to choose: Use KMP for guaranteed O(N+M) single-pattern matching. Use Rabin-
 | Java `String.indexOf()` is O(N×M) | Modern JVMs (HotSpot) often optimise `indexOf` to use Boyer-Moore-Horspool or SIMD instructions at the JIT level, making it faster than hand-coded KMP for typical inputs. |
 | The LPS (failure function) is about failure | `lps[i]` represents the *success* information — it encodes how much of the pattern you've already matched that you don't need to re-check. "Failure" means the algorithm's response to a character mismatch was designed correctly. |
 | String matching is trivially solved by regex | Regex matching is not O(N+M) in general — it can be exponential for backtracking-based engines (Java `Pattern`, Python `re`) on adversarial inputs. Guaranteed O(N+M) requires finite automaton or Thompson NFA evaluation. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -371,6 +397,8 @@ Fix: After recording a match, set `j = lps[j-1]` (not `j = 0`) to continue findi
 
 Prevention: Explicitly test with overlapping patterns: "AA" in "AAAA" should return 3 matches.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -387,6 +415,8 @@ Prevention: Explicitly test with overlapping patterns: "AA" in "AAAA" should ret
 - `Boyer-Moore` — O(N/M) best case on long patterns; superior for natural language text search; more complex implementation.
 - `Trie` — Preprocesses patterns for fast lookup; excellent for prefix matching but not infix/substring matching.
 - `Suffix Tree` — O(N) build, O(M) search for arbitrary pattern in fixed text; memory-intensive.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -415,6 +445,7 @@ Prevention: Explicitly test with overlapping patterns: "AA" in "AAAA" should ret
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** KMP guarantees O(N+M) even for worst-case inputs like `T="AAAAAAAAB"` and `P="AAAAB"`. Trace the LPS table for P and show how, when the mismatch occurs after matching "AAAA", the j pointer jumps to lps[3] instead of 0. Count the total text pointer movements — verify they total exactly N. Now consider: what is the maximum number of times the pattern pointer `j` can decrease across the entire search, and how does that bound the total operation count?

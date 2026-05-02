@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Distributed Transactions, Event Ordering, Lease Management | |
 | **Related:** | Lamport Clock, Vector Clock, Linearizability, Spanner TrueTime | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **THE DISTRIBUTED CLOCK PROBLEM:**

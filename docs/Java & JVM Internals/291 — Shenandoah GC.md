@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Shenandoah GC"
 parent: "Java & JVM Internals"
@@ -77,7 +77,10 @@ Each object in the heap has an extra word in its header — a Brooks pointer —
 
 **Result:** Concurrent compaction without STW "pointer fix-up" phase.
 
+---
+
 ### Regions:
+
 Like G1GC, Shenandoah uses a region-based heap. The concurrent collector selects a collection set of regions to compact, moves objects out, then marks old regions as free.
 
 ---
@@ -164,6 +167,8 @@ Phase 9: Concurrent Cleanup (no STW)
 
 ## 8. Under the Hood (Deep Dive)
 
+---
+
 ### Brooks Pointer overhead
 
 ```
@@ -185,6 +190,8 @@ Comparison with ZGC:
   Both have similar real-world overhead (~10-15%)
 ```
 
+---
+
 ### Failure mode: Allocation stall
 
 ```
@@ -200,6 +207,8 @@ Monitoring: Allocation stalls visible in GC logs
 -Xlog:gc+ergo*:file=shenandoah.log:time,uptime
 ```
 
+---
+
 ### Shenandoah traversal mode (experimental)
 
 ```
@@ -209,6 +218,8 @@ Alternative GC mode for very large heaps with pointer-dense workloads
 - Enable: -XX:ShenandoahGCMode=traversal (experimental)
 - Most production workloads should use default (passive/satb)
 ```
+
+---
 
 ### Key tuning flags
 

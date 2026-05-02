@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Functional Interfaces"
 parent: "Java Language"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Lambda Interfaces, Stream API, Method References | |
 | **Related:** | Lambda Expressions, Stream API, Method References | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -47,9 +49,13 @@ A UI event handling system registers 200 button click handlers. Each is a unique
 THE INVENTION MOMENT:
 This is exactly why **Functional Interfaces** were formalised in Java 8 — to provide a type system for lambdas. A lambda `x -> x.getName()` is a `Function<User, String>`. The compiler can infer the functional interface type from context. The `java.util.function` package provides a complete standard library of common function types.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Functional Interface** is a Java interface with exactly one abstract method (SAM — Single Abstract Method). It may have default and static methods. The `@FunctionalInterface` annotation validates this constraint at compile time. A lambda expression, method reference, or anonymous class implementing that one abstract method can be assigned to a variable of the functional interface type. The `java.util.function` package provides standard functional interfaces: `Function<T,R>`, `Predicate<T>`, `Consumer<T>`, `Supplier<T>`, `BiFunction<T,U,R>`, `UnaryOperator<T>`, `BinaryOperator<T>`, and their primitive specialisations.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -61,6 +67,8 @@ A functional interface is a one-method contract that lets a lambda be assigned a
 
 **One insight:**
 The magic of functional interfaces is that they make Java functions first-class values. You can pass `User::getName` as a `Function<User, String>`, store it in a variable, pass it to a stream, and compose it with another function using `.andThen()`. Functions become data.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -103,6 +111,8 @@ THE TRADE-OFFS:
 Gain: Functions as values; composability; clean lambdas and method references; eliminates anonymous class boilerplate.
 Cost: Abstract standard library requires learning the interface names; `@FunctionalInterface` doesn't prevent accidental SAM breakage if annotation omitted; generic functional interfaces don't work with primitives without boxing.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -134,6 +144,8 @@ valid.test("a".repeat(200)); // false
 THE INSIGHT:
 `Predicate<T>` already has the composition methods built in. There's no need to invent a `Validator` interface or a `CompositeValidator` — the standard library provides the contract and the composition tools.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Functional interfaces are electrical socket standards. A `Function<T,R>` socket accepts any plug (lambda, method reference, anonymous class) that takes T and gives R. The socket doesn't care if the plug is a new Apple charger or an old Nokia charger — just that it fits the standard shape. All the devices that need "a T-to-R function" accept any plug that fits.
@@ -144,6 +156,8 @@ THE INSIGHT:
 "USB-C standard" → specific interface like `Predicate<T>`.
 
 Where this analogy breaks down: Electrical sockets are typed by physical shape; functional interfaces are typed by their method signature. Two interfaces with identical method signatures are still different types — `Runnable` and `Callable<Void>` both have one method, but they're not interchangeable.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -158,6 +172,8 @@ The `@FunctionalInterface` annotation causes the compiler to verify that the int
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Functional interfaces in Java are explicitly a retrocompatible mechanism: since existing Java interfaces with one abstract method (`Runnable`, `Callable`, `Comparator`) are automatically functional interfaces, all existing APIs accept lambdas without modification. This was a deliberate design constraint of Java 8 — no new language constructs for functions (like a `Function` keyword), only annotations on existing interface types. This sacrifices some type safety (two interfaces with the same signature are still different types, unlike structural typing) for backward compatibility.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -213,6 +229,8 @@ int[] result2 = intArray.stream()
     .toArray();
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -236,6 +254,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 In large functional codebases, function composition enables building complex pipelines from reusable atomic functions. The `andThen`/`compose`/`and`/`or` composition methods allow building transformation pipelines declaratively. At scale, prefer method references over lambdas for frequently invoked functions (method references may result in slightly more efficient invokedynamic dispatch in some JVMs).
+
+---
 
 ### 💻 Code Example
 
@@ -297,6 +317,8 @@ BiFunction<User, Order, Invoice> makeInvoice =
     (user, order) -> new Invoice(user, order, LocalDate.now());
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Interface | Input | Output | SAM Name | Example Use |
@@ -311,6 +333,8 @@ BiFunction<User, Order, Invoice> makeInvoice =
 
 How to choose: Match to the number of inputs and the type of output. Use primitive specialisations (IntFunction, ToIntFunction) whenever the types are primitives to avoid boxing overhead.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -320,6 +344,8 @@ How to choose: Match to the number of inputs and the type of output. Use primiti
 | Functional interfaces cannot have any methods besides the SAM | Functional interfaces can have any number of default static methods, provided exactly one method is abstract. `Comparator` has 8 default methods but is still functional |
 | Function.andThen creates a new lambda each call | `Function.andThen(f)` returns a new `Function` object that wraps both functions. Calling `andThen` itself is cheap; the returned Function adds one level of indirection per composed function |
 | Consumer<T> and Function<T,Void> are the same | `Consumer<T>` accepts T and returns void; `Function<T,Void>` accepts T and must return `null` as `Void`. They are different types and different contracts |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -380,6 +406,8 @@ IntStream.range(0, 1_000_000)
 
 Prevention: Prefer `IntStream`, `LongStream`, `DoubleStream` and their primitive functional interfaces for numeric stream pipelines.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -393,6 +421,8 @@ Prevention: Prefer `IntStream`, `LongStream`, `DoubleStream` and their primitive
 **Alternatives / Comparisons:**
 - `Lambda Expressions` — the most common way to implement functional interfaces; lambdas and functional interfaces are two sides of the same feature
 - `Method References` — alternative to lambda expressions for implementing functional interfaces when the lambda body is just a method call
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -424,6 +454,7 @@ Prevention: Prefer `IntStream`, `LongStream`, `DoubleStream` and their primitive
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A caching utility method needs a `Function<K, V>` that is also thread-safe for concurrent callers. The signature is `Function<K,V> memoize(Function<K,V> fn)`. The implementation uses `ConcurrentHashMap.computeIfAbsent(key, fn)`. Identify one specific threading scenario where this implementation has a known issue (see Java's `ConcurrentHashMap.computeIfAbsent` documentation), explain why the standard `Function` interface's contract cannot express thread-safety, and design a safer implementation that avoids the issue.

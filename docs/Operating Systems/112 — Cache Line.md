@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Cache Line"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | False Sharing, Java volatile, Lock-Free Data Structures |                 |
 | **Related:**    | CPU cache, L1/L2/L3, Cache Coherence (MESI), @Contended |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ Modern CPUs can execute 4+ instructions per nanosecond. DRAM latency is 60–80n
 THE INVENTION MOMENT:
 The cache line is the solution: instead of fetching 1 byte, always fetch 64 bytes (the cache line). This exploits **spatial locality** — if you accessed address X, you'll likely access X+1, X+2, ..., X+63 soon. Pay one 60ns round trip to DRAM, fill the cache line, then serve the next 63 accesses from L1 cache at 4 cycles (~1ns).
 
+---
+
 ### 📘 Textbook Definition
 
 A **cache line** (also called a **cache block**) is the minimum unit of data transfer between the CPU cache hierarchy and main memory. On x86-64, cache lines are 64 bytes. When a CPU reads any address, the entire 64-byte cache line containing that address is loaded into the L1 (and L2, L3) cache. Subsequent accesses to any address within that 64-byte range are served from cache (nanoseconds) without going to RAM. Cache coherence protocols (e.g., MESI) ensure that when multiple CPUs cache the same line, modifications are propagated correctly — a modified line is either invalidated or updated in all other CPU caches before the modifying CPU writes a new value.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ The CPU always fetches 64 bytes at once from RAM — not just the byte you asked
 
 **One insight:**
 The cache line is the reason that iterating an array is 10× faster than iterating a linked list of the same size. An array access loads 8 adjacent `long` values (64 bytes = 8 × 8 bytes) in one DRAM round trip; a linked list pointer may point anywhere in memory — each element might be in a different cache line, requiring a new DRAM round trip for each.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -73,6 +81,8 @@ Cache lines create two important phenomena:
 THE TRADE-OFFS:
 Gain: Exploits spatial locality dramatically; single DRAM access serves 8 longs / 16 ints / 64 bytes; prefetching can hide DRAM latency entirely for sequential access.
 Cost: Wasted bandwidth if accessed data has no spatial locality (e.g., pointer-chasing); false sharing in concurrent code causes cache coherence traffic that serialises "independent" operations.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -105,6 +115,8 @@ long counter1 = 0;  // at offset 8 — same 64-byte cache line!
 THE INSIGHT:
 False sharing makes two independent variables behave as if they were sharing a lock, with no lock visible in the code. The "lock" is the cache line itself.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Imagine a shared whiteboard (cache line) where two colleagues each own one column. Every time someone writes in their column (modifies their field), the other person's copy of the board is stamped INVALID and they must request a fresh copy before writing again. Even though they never write in each other's column, the board-copying process (cache coherence protocol) serialises their work.
@@ -112,6 +124,8 @@ False sharing makes two independent variables behave as if they were sharing a l
 > The solution is to give each person their own whiteboard (pad to a different cache line). Now they can write independently at full speed — their whiteboards are never confused.
 
 Where this analogy breaks down: whiteboards don't have the MESI complexity (Modified, Exclusive, Shared, Invalid states). The real protocol is more nuanced: a line can be "Shared" (read by multiple CPUs, valid) or "Modified" (written by one CPU, all others must invalidate). The "Exclusive" state allows the CPU to know it has the only copy and can upgrade to Modified without a coherence message.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -126,6 +140,8 @@ CPU L1 cache is typically 32–48KB, 8-way set-associative, 4-cycle hit latency.
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Cache line size (64 bytes) is an engineering balance between two competing pressures: larger cache lines exploit more spatial locality per DRAM round trip, but waste bandwidth if the extra bytes are never accessed (prefetched but useless). At 8-byte words, a 64-byte line = 8 consecutive longs — empirically the right balance for typical application access patterns. The choice of 64 bytes dates to the Pentium 4 (2000) and has remained stable because: (1) DRAM row access latency dominates (not column latency), so reading 64 vs 32 bytes has minimal extra cost; (2) typical struct fields cluster within 64 bytes; (3) the MESI coherence overhead is per-line, so larger lines reduce coherence message frequency. The alternative (128-byte lines) would double false-sharing impact for most workloads.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -151,6 +167,8 @@ Cache line size (64 bytes) is an engineering balance between two competing press
 │  I(nvalid) → cache line stale/not present              │
 └────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -181,6 +199,8 @@ Thread 1's counter: cache line [64..127]
   → No coherence messages between CPUs
   → Full parallelism
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -269,6 +289,8 @@ perf c2c report
 # Shows "True Sharing" and "False Sharing" hotspots with source lines
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Access Pattern                       | Cache Line Efficiency      | Miss Rate      | Performance |
@@ -279,6 +301,8 @@ perf c2c report
 | Packed struct (hot fields first)     | 80–100%                    | Low            | Good        |
 | False sharing (adjacent thread data) | 100% loaded, 12% useful    | Coherence miss | Very poor   |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                | Reality                                                                                                                      |
@@ -288,6 +312,8 @@ perf c2c report
 | "Only concurrent code has cache line issues" | Single-threaded code suffers from poor spatial locality (linked lists, pointer chasing) without any concurrency              |
 | "Padding wastes memory"                      | Padding 4 bytes to 64 bytes = 60 bytes wasted but eliminates false sharing; in high-contention paths this is always worth it |
 | "@Contended works without JVM flag"          | In JDK 8–15, @Contended is restricted to JDK internal classes by default; needs -XX:-RestrictContended for application use   |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -357,6 +383,8 @@ Fix: G1 with region-based GC naturally groups related objects; use `AlwaysPreTou
 
 Prevention: Structure objects to follow field reference chains for GC traversal in same cache lines (memory-efficient object graphs).
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -376,6 +404,8 @@ Prevention: Structure objects to follow field reference chains for GC traversal 
 - `Software prefetch` — explicitly hint the CPU to pre-load a cache line before it's needed (`__builtin_prefetch` in GCC)
 - `Non-temporal stores` — bypass cache for streaming writes (`_mm_stream_si32` in Intel intrinsics)
 - `clflush` — explicitly flush a cache line to memory (used by NVDIMMs and persistent memory)
+
+---
 
 ### 📌 Quick Reference Card
 

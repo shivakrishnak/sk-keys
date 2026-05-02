@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "ThreadPoolExecutor"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | ForkJoinPool, ExecutorService | |
 | **Related:** | ExecutorService, ForkJoinPool, BlockingQueue | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -36,9 +38,13 @@ WORLD WITHOUT IT:
 THE INVENTION MOMENT:
 `ThreadPoolExecutor` is the fully-configurable thread pool — all factory methods in `Executors` delegate to it with preset parameters. Direct usage enables production-tuned configurations.
 
+---
+
 ### 📘 Textbook Definition
 
 **`ThreadPoolExecutor`** is the primary implementation of `ExecutorService` providing a configurable thread pool. Constructor parameters: `corePoolSize` — threads maintained even when idle; `maximumPoolSize` — max threads when queue is full; `keepAliveTime` — how long excess threads wait before termination; `unit` — time unit for keepAliveTime; `workQueue` — `BlockingQueue` for pending tasks; `threadFactory` — creates new threads (optional); `handler` — `RejectedExecutionHandler` when queue is full and max threads reached. Thread lifecycle: threads created on demand up to `corePoolSize`; if all busy, tasks queue; if queue full, threads up to `maximumPoolSize`; if max reached, apply rejection handler.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -50,6 +56,8 @@ THE INVENTION MOMENT:
 
 **One insight:**
 The counterintuitive ThreadPoolExecutor growth: new threads are only created when the queue is FULL and thread count is below max. So for `new ThreadPoolExecutor(2, 10, 60s, SECONDS, new LinkedBlockingQueue<>(100))`, the pool has 2 threads by default, queues up to 100, THEN scales to 10. Think "queue first, then scale."
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -86,6 +94,8 @@ THE TRADE-OFFS:
 Gain: Full control over all pool parameters; configurable rejection; custom thread factories; performance tuning.
 Cost: Complex to configure correctly; wrong parameters cause OOM, starvation, or excessive thread creation; developers must understand growth model.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP: Service needing backpressure for external API calls.
@@ -115,9 +125,13 @@ ThreadPoolExecutor pool = new ThreadPoolExecutor(
 THE INSIGHT:
 `CallerRunsPolicy` as rejection handler provides natural backpressure — when the pool is full, the submitting thread runs the task itself, slowing submission rate to match processing rate.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > `ThreadPoolExecutor` is a factory floor configuration panel. Dial 1: minimum staff (corePoolSize). Dial 2: maximum staff during peak (maximumPoolSize). Buffer: the work order queue (workQueue). Overflow protocol: what happens when everything is full (rejectionHandler). Go-home timer: how long idle extra staff wait (keepAliveTime).
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -128,6 +142,8 @@ THE INSIGHT:
 **Level 3:** `ThreadPoolExecutor` uses an internal `AtomicInteger ctl` combining thread count (low 29 bits) and pool state (high 3 bits). Workers are `HashSet<Worker>` (each `Worker` wraps a thread + `Runnable`). `getTask()` from queue blocks workers when idle. `processWorkerExit()` handles thread termination and potential replacement. Pool state: RUNNING → SHUTDOWN → TIDYING → TERMINATED.
 
 **Level 4:** The design of thread creation order (core first, queue second, scale-out third) was deliberate. For CPU-bound workloads: core should equal CPU count, queue acts as buffer absorbing burst. For I/O-bound: virtual threads (`Executors.newVirtualThreadPerTaskExecutor()`) are the modern replacement — no queue depth needed because virtual threads don't consume OS threads during blocking I/O.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -180,6 +196,8 @@ log.info("Pool stats: active={}, queue={}, completed={}, pool={}",
 );
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 ```
@@ -199,6 +217,8 @@ REJECTION FLOW:
     → [Caller is slowed — natural backpressure]
     → [Pool drains: caller resumes submitting]
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -231,6 +251,8 @@ ExecutorService io = Executors
     .newVirtualThreadPerTaskExecutor();
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Factory Method | coreSize | maxSize | Queue | Rejection |
@@ -242,6 +264,8 @@ ExecutorService io = Executors
 
 How to choose: Direct `ThreadPoolExecutor` for production when you need bounded queues, custom rejection, or named threads. Factory methods for quick/demo code only.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -249,6 +273,8 @@ How to choose: Direct `ThreadPoolExecutor` for production when you need bounded 
 | ThreadPoolExecutor scales up first, queues second | WRONG — it queues up to `queueCapacity` FIRST, then scales beyond `corePoolSize`. With unbounded queue, it NEVER scales beyond corePoolSize! |
 | Setting high maxPoolSize solves scaling | With unbounded queue, maxPoolSize is irrelevant — the queue absorbs all tasks before scaling. Need bounded queue for maxPoolSize to matter |
 | shutdown() calls are immediate | `shutdown()` is non-blocking: it initiates shutdown but returns immediately. `awaitTermination()` is the blocking wait for drain. |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -262,11 +288,15 @@ Fix: Use `new ArrayBlockingQueue<>(maxCapacity)` + appropriate rejection handler
 **Threads not scaling (stuck at corePoolSize):**
 Fix: Use `SynchronousQueue` instead of bounded queue to force direct thread creation, or pre-start core threads: `executor.prestartAllCoreThreads()`.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites:** `ExecutorService`, `BlockingQueue`, `Runnable`
 **Builds on:** `ForkJoinPool` — work-stealing alternative; virtual threads — replacement for I/O pools
 **Related:** `BlockingQueue`, `RejectedExecutionHandler`
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -287,6 +317,7 @@ Fix: Use `SynchronousQueue` instead of bounded queue to force direct thread crea
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Explain with exact thread counts and queue sizes what happens in a `ThreadPoolExecutor(5, 20, 60s, SECONDS, new ArrayBlockingQueue<>(50))` under these sequential events: (a) 5 tasks submitted; (b) all 5 run for 60s, then 10 more tasks submitted; (c) all 15 run for 60s, then 60 tasks submitted simultaneously. At each point, how many threads are active, how many tasks are queued, and what happens to the 61st task submitted?

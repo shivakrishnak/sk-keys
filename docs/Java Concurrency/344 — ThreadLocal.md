@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "ThreadLocal"
 parent: "Java Concurrency"
@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Scoped Values, Virtual Threads (Project Loom) | |
 | **Related:** | synchronized, Scoped Values, InheritableThreadLocal | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ A transaction processing service stores the current user context (userId, tenant
 THE INVENTION MOMENT:
 This is exactly why **`ThreadLocal`** was created — to give each thread its own isolated copy of a variable, eliminating the need for synchronization for thread-scoped state.
 
+---
+
 ### 📘 Textbook Definition
 
 **`ThreadLocal<T>`** is a Java class where each thread accessing the `get()`/`set()` methods accesses its own thread-specific copy of the variable. Internally, each `Thread` object holds a `ThreadLocalMap` — a hash map keyed by `ThreadLocal` instances (using weak references) with values being each thread's copy. `ThreadLocal.withInitial(Supplier<T>)` provides lazy initialization. Must call `remove()` after use in thread pool environments to prevent memory leaks and stale state from thread reuse.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ This is exactly why **`ThreadLocal`** was created — to give each thread its ow
 
 **One insight:**
 The most common `ThreadLocal` bug is memory leaks in thread pools. A thread pool reuses threads — `ThreadLocal` values from request A persist in request B's thread unless `remove()` is called. This causes: (1) memory leaks (values never GC'd); (2) stale data bugs (request B reads request A's userId). Always call `ThreadLocal.remove()` at the end of a request lifecycle.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -85,6 +93,8 @@ Given invariant 2: when the thread terminates, its `threadLocals` map is GC'd �
 THE TRADE-OFFS:
 Gain: Thread isolation without synchronization; no contention; easy per-thread state management.
 Cost: Must `remove()` in thread pools (memory leaks and stale data on reuse); invisible in method signatures (hidden state); hard to debug; incompatible with virtual threads in their full form; `InheritableThreadLocal` adds complexity for parent-child thread propagation.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -122,6 +132,8 @@ currentUser.remove(); // MANDATORY in thread pool!
 THE INSIGHT:
 `ThreadLocal` enables "implicit context" — request-scoped data accessible anywhere in the call stack without being passed explicitly. Spring Security, MDC logging (SLF4J), JPA EntityManager contexts — all use `ThreadLocal`. The `remove()` discipline is the price.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A doctor's office with prescription pads: each doctor (thread) has their own personalized prescription pad (ThreadLocal). Dr. Alice writes "aspirin" on her pad; Dr. Bob writes "ibuprofen" on his. They don't share pads and don't need to coordinate writing. But when a doctor leaves the practice (thread pool recycles the thread), they must clean out their desk (remove()) or the next doctor finds old prescriptions left behind.
@@ -133,6 +145,8 @@ THE INSIGHT:
 
 Where this analogy breaks down: In a real practice, new doctors get a fresh clean pad by default. With `ThreadLocal` in thread pools, reused threads have leftover values — the "stale prescription" problem that `remove()` fixes.
 
+---
+
 ### 📶 Gradual Depth — Four Levels
 
 **Level 1:** `ThreadLocal` gives each thread its own private variable. Two threads can both have a `ThreadLocal<String>` but see different values — T1 sees "Alice", T2 sees "Bob" — even though it's the "same" variable.
@@ -142,6 +156,8 @@ Where this analogy breaks down: In a real practice, new doctors get a fresh clea
 **Level 3:** Inside `ThreadLocal.get()`, the JVM reads `Thread.currentThread().threadLocals` (the `ThreadLocalMap`), performs a table probe using the `ThreadLocal` instance as the hash key (with ThreadLocal's identity hash code), and returns the stored value. The key is a `WeakReference<ThreadLocal>` — if the `ThreadLocal` is GC'd (its `static` field dropped), the key is cleared, but the VALUE is NOT automatically cleared — hence memory leak risk.
 
 **Level 4:** `ThreadLocal` is fundamentally incompatible with virtual thread patterns where a single request may execute across many carrier threads. Scoped Values (Java 21 preview) replace `ThreadLocal` for this use case: immutable, no `remove()` needed, works correctly with virtual threads and structured concurrency. `InheritableThreadLocal` propagates parent to child thread values (e.g., `ForkJoinPool` tasks) — but pool reuse makes this also risky.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -207,6 +223,8 @@ child.start(); // inherits parent's traceId
 // CAUTION: pool threads may inherit wrong value on reuse
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW (request-scoped context):
@@ -235,6 +253,8 @@ FAILURE PATH (missing remove):
 
 WHAT CHANGES AT SCALE:
 At scale with thousands of threads, undeclared `ThreadLocal` values accumulate — each thread holds references to objects that can't be GC'd. A thread pool of 200 threads, each leaking 1MB of ThreadLocal data = 200MB permanent heap loss. JVM heap dumps reveal `ThreadLocalMap$Entry` chains in thread stacks. The fix requires code changes — can't be patched with GC tuning.
+
+---
 
 ### 💻 Code Example
 
@@ -282,6 +302,8 @@ void closeConnection() {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach | Thread Safety | Isolation | Memory | Visibility | Best For |
@@ -293,6 +315,8 @@ void closeConnection() {
 
 How to choose: Use `ThreadLocal` for request-scoped context (session, trace IDs) and thread-unsafe reuse (SimpleDateFormat). Use `Scoped Values` for virtual thread workloads. Never use `ThreadLocal` as a substitute for proper method parameters.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -301,6 +325,8 @@ How to choose: Use `ThreadLocal` for request-scoped context (session, trace IDs)
 | ThreadLocal values are automatically cleaned when a request ends | In thread pools, threads are reused and never "end." ThreadLocal values persist until explicitly `remove()`'d or the JVM shuts down. Forgetting `remove()` = stale state + memory leak |
 | ThreadLocal works correctly with virtual threads | Virtual threads may mount/unmount on multiple carrier threads. `ThreadLocal` in virtual threads is supported but has different performance characteristics. `ScopedValues` is the preferred alternative for virtual thread workloads |
 | InheritableThreadLocal always propagates correctly in pools | Pool threads are reused from previous tasks — `InheritableThreadLocal` inheritance only works for NEWLY CREATED threads. Pool threads don't get re-inherited on task reuse |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -333,6 +359,8 @@ Diagnostic: Enable thread pool monitoring. Log thread names. If log shows "threa
 
 Fix: Add `remove()` in finally block of all request entry points.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -346,6 +374,8 @@ Fix: Add `remove()` in finally block of all request entry points.
 **Alternatives / Comparisons:**
 - `Scoped Values` — Java 21 alternative; better for virtual threads and structured concurrency
 - `synchronized` — for shared state (not isolated state); both solve thread safety in different ways
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -379,6 +409,7 @@ Fix: Add `remove()` in finally block of all request entry points.
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Spring Security stores `SecurityContextHolder` using a `ThreadLocal<SecurityContext>` (the default strategy). A developer migrates a Spring MVC application to Spring WebFlux (reactive). The security context is now attached to a reactive subscription, not a thread. Explain: why `ThreadLocal`-based `SecurityContextHolder` breaks in WebFlux (which thread executes which request handler), what Spring WebFlux uses instead of ThreadLocal for security context propagation, and why Reactor's `Hooks.onEachOperator()` can propagate context while staying compatible with backpressure.

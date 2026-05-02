@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Priority Queue, Heapsort, Dijkstra, A* Search | |
 | **Related:** | Priority Queue, Segment Tree, Sorted Array | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ You need O(1) find-minimum but O(log N) insert/remove. A sorted array gives O(1)
 THE INVENTION MOMENT:
 You don't need the entire array sorted — you only need the minimum always at the front. A partially-ordered tree where every parent is smaller than its children guarantees the minimum is always the root, and both insert and remove-min are O(log N). Storing this tree in an array (by level order) eliminates pointer overhead. This is exactly why the Heap was created.
 
+---
+
 ### 📘 Textbook Definition
 
 A **Heap** is a complete binary tree stored in an array satisfying the **heap property**: in a min-heap, every node's value is ≤ its children's values; in a max-heap, every node's value is ≥ its children's values. The minimum (or maximum) element is always at index 0 — accessible in O(1). Insertion and extraction of the root are O(log N) via the `sift-up` and `sift-down` operations. Building a heap from N elements is O(N) using the Floyd algorithm (not O(N log N)).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -52,6 +58,8 @@ An array disguised as a tree where the smallest element is always first.
 
 **One insight:**
 A Heap deliberately maintains only *partial* order — not full sorting. This is why it achieves O(log N) for both insert and extract-min, while a fully sorted structure pays O(N) or O(log N) respectively; no structure can do both in O(1).
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -81,6 +89,8 @@ THE TRADE-OFFS:
 Gain: O(1) find-min, O(log N) insert and extract-min, O(N) build.
 Cost: No O(log N) search for arbitrary elements, no sorted iteration (only partial order).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -95,6 +105,8 @@ New job appended at end: O(1). Sifted up to its correct position: O(log N) compa
 THE INSIGHT:
 The heap achieves O(log N) insert without shifting because it uses tree hierarchy instead of array contiguity to encode order. The "shape" of the tree — not the index — carries the ordering information.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A Heap is like a corporate hierarchy where the CEO (minimum value) is always at the top and every manager earns less than both their direct reports (employees). When the CEO leaves, the most junior employee temporarily takes the chair, then everyone shuffles up one level until proper order is restored.
@@ -105,6 +117,8 @@ The heap achieves O(log N) insert without shifting because it uses tree hierarch
 "Reshuffle up one level" → sift-down O(log N)
 
 Where this analogy breaks down: A corporate hierarchy has unique reporting chains; a heap has no ordering between siblings (left child may be larger or smaller than right child), so the analogy breaks for "lateral comparisons."
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -119,6 +133,8 @@ Java's `PriorityQueue` stores elements in `Object[] queue`. `offer(e)` places at
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The choice of array over pointer-based tree is deliberate: array access has perfect cache locality because parent-child relationships are adjacent in memory. Floyd's O(N) build (starting from the bottom) rather than N insertions (O(N log N)) works because the total work of sifting all interior nodes is bounded by the sum of tree heights = O(N) — a non-obvious mathematical result. The heap's partial order (not full sort) is why Heapsort is O(N log N) worst-case unlike Quicksort's O(N²) worst-case — the heap never degrades.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -171,6 +187,8 @@ Children of 3: out of bounds → stop
 │  Result:  2 at root (new minimum)           │
 └──────────────────────────────────────────────┘
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -193,6 +211,8 @@ Mutable element changes comparison value after insertion
 
 WHAT CHANGES AT SCALE:
 At 10 million elements, Java's `PriorityQueue` performs well (arrays up to ~40MB for objects). However, `siftDown` causes cache misses as it chases far-apart indices. At extreme scale, a **d-ary heap** (d=4 or d=8 children per node) reduces tree height and improves cache efficiency — used in production schedulers. For concurrent priority queues, `PriorityBlockingQueue` exists but serialises all operations; Fibonacci heaps offer O(1) decrease-key but are rarely practical in Java due to pointer overhead.
+
+---
 
 ### 💻 Code Example
 
@@ -262,6 +282,8 @@ int[] dijkstra(int[][] graph, int src) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Structure | find-min | insert | extract-min | Build | Best For |
@@ -273,6 +295,8 @@ int[] dijkstra(int[][] graph, int src) {
 | Fibonacci Heap | O(1) | O(1) | O(log N) | O(N) | Decrease-key heavy graphs |
 
 How to choose: Use `PriorityQueue` (min-heap) for all priority-queue needs in Java. Use Fibonacci heap only in graph algorithms requiring frequent `decreaseKey` and you can afford complexity. Use sorted array only when reads vastly outnumber writes.
+
+---
 
 ### 🔁 Flow / Lifecycle
 
@@ -291,6 +315,8 @@ Operating phase:
 Heap property maintained after every operation
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -300,6 +326,8 @@ Heap property maintained after every operation
 | Building a heap from N elements is O(N log N) | Floyd's algorithm builds a heap in O(N) — significantly better than N insertions |
 | Heap supports O(log N) search for an arbitrary element | Heaps do not support efficient arbitrary-element search; only the root is O(1) accessible |
 | A max-heap and min-heap store elements in opposite order in memory | The array layout depends on insertion order and sift operations; the same values can produce different arrays |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -373,6 +401,8 @@ PriorityQueue<Integer> minH = new PriorityQueue<>();
 
 Prevention: Write the invariant in a comment: `// max-heap: top = largest of K smallest so far`.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -387,6 +417,8 @@ Prevention: Write the invariant in a comment: `// max-heap: top = largest of K s
 **Alternatives / Comparisons:**
 - `TreeMap` — provides O(log N) min/max with range queries, but higher constant factor and no O(N) build.
 - `Sorted Array` — O(1) find-min but O(N) insert; use when data is static.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -415,6 +447,7 @@ Prevention: Write the invariant in a comment: `// max-heap: top = largest of K s
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** You are implementing a real-time leaderboard that must emit the top-10 players at every second from a stream of 1 million score updates per second. A max-heap of size 10 is proposed. At 1 million updates per second, what is the exact time complexity of each update, and what is the total throughput in operations per second? At what point would this approach fail to keep up in real time, and what architectural change would be needed?

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Flaky Tests"
 parent: "Testing"
@@ -27,14 +27,20 @@ tags:
 | **Used by:**    | Developers, QA, DevOps                                                        |                 |
 | **Related:**    | Test Isolation, Test Environments, Test Parallelization, Test Data Management |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 THE FLAKY CI NIGHTMARE:
 A test fails. Developer checks the code — nothing changed. Reruns CI — it passes. "Just a flaky test." This cycle repeats 10 times per week. Eventually, teams stop trusting CI failures and re-run until green — which means they start ignoring real failures too. Google's research found that flaky tests at scale (millions of test runs per day) caused developers to spend ~2% of their total development time investigating false failures. The deeper problem: flaky tests erode the fundamental contract of automated testing — "if it's red, something is wrong."
 
+---
+
 ### 📘 Textbook Definition
 
 A **flaky test** is a test that is non-deterministic — it does not consistently produce the same pass/fail result for the same code under identical conditions. Flakiness causes include: **timing dependencies** (race conditions, async operations without proper awaiting), **test order dependency** (shared state contaminated by a previous test), **environment dependency** (network calls, external services, system time), **resource contention** (parallel tests competing for ports, files, database rows), and **random data** (tests that use random inputs without fixed seeds). Flaky tests are distinct from legitimately failing tests — a flaky test does not indicate a bug; it indicates a poorly written or poorly isolated test.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -44,6 +50,8 @@ Flaky = sometimes red, sometimes green, same code — destroys CI trust.
 **One analogy:**
 
 > A flaky test is like a **faulty smoke detector** that sometimes goes off for no reason. You start ignoring it. Then there's a real fire, and you ignore that too. The detector has destroyed its own credibility and the safety system it was meant to provide.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -135,6 +143,8 @@ DETECTING FLAKY TESTS:
    → Fix flaky tests with target SLA
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 THE CASCADING IGNORE:
@@ -152,9 +162,13 @@ The flaky tests didn't just waste time — they destroyed the diagnostic value
 of the test suite. Zero flaky tests = zero tolerance culture.
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Think of flaky tests as **broken gauges in an aircraft cockpit**. An altitude gauge that sometimes reads wrong doesn't just fail to provide information — it actively misleads. Pilots learn to distrust it, and over time, start doubting all gauges. One broken gauge degrades the whole instrument panel's credibility. Tests have the same dynamics: one flaky test makes developers distrust all test failures.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -165,6 +179,8 @@ of the test suite. Zero flaky tests = zero tolerance culture.
 **Level 3:** Quarantine strategy: `@Tag("flaky")` + `@Disabled` with JIRA link. Separate CI stage for quarantined tests (don't block main pipeline). Flakiness budget: track flakiness rate; if suite-wide flakiness > 1%, stop merging until it's fixed. Test retry: `surefire.rerunFailingTestsCount` — detect flakiness but don't hide it; log when a test passes on retry as a warning.
 
 **Level 4:** At scale (Google, Meta): flakiness detection as a platform service. Every test run's result stored. ML model predicts if a specific failure is "likely flaky" (based on historical pass rate, error message, test duration variance). Automatically quarantine tests with >2% failure rate. Require teams to fix quarantined tests within N days (SLA). The lesson from industry: flakiness at scale is a product quality metric — tracked by engineering leadership, not just individual teams.
+
+---
 
 ### 💻 Code Example
 
@@ -212,6 +228,8 @@ void orderHasCorrectTimestamp() {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Cause             | Symptom                        | Fix                                   |
@@ -222,6 +240,8 @@ void orderHasCorrectTimestamp() {
 | Hardcoded port    | BindException                  | RANDOM_PORT                           |
 | LocalDate.now()   | Fails at midnight              | Inject fixed Clock                    |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                            | Reality                                                                      |
@@ -229,6 +249,8 @@ void orderHasCorrectTimestamp() {
 | "Just re-run it, flaky tests are normal" | Flaky tests are test bugs — they must be fixed; re-running hides the problem |
 | "Retrying in CI fixes flakiness"         | Retry masks flakiness; only fixing the root cause eliminates it              |
 | "Flaky = the test is wrong, delete it"   | Flaky tests often cover real behavior — fix the flakiness, keep the coverage |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -245,10 +267,14 @@ Fix: Increase timeouts when running in parallel; reduce shared resource contenti
 Cause: Test constructs expected date before midnight, assertion runs after midnight.
 Fix: Inject `Clock` and fix it for all date/time operations in the system under test.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Test Isolation, Integration Test, E2E Test
 - **Related:** Awaitility, WireMock, Testcontainers, Test Parallelization, Test Order Dependency
+
+---
 
 ### 📌 Quick Reference Card
 

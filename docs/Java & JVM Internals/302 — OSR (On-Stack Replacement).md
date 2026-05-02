@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "OSR (On-Stack Replacement)"
 parent: "Java & JVM Internals"
@@ -39,6 +39,8 @@ tags:
 | **Used by:** | GC Tuning, Deoptimization | |
 | **Related:** | Deoptimization, Method Inlining, Tiered Compilation, Safepoint | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -50,9 +52,13 @@ A data migration job loads 50 million records in a single loop: `for (int i = 0;
 THE INVENTION MOMENT:
 This is exactly why **On-Stack Replacement (OSR)** was created — to allow the JVM to JIT-compile a method *while it is currently executing* on the stack and switch execution to the compiled version mid-loop, without waiting for the method to return and be called again.
 
+---
+
 ### 📘 Textbook Definition
 
 **On-Stack Replacement (OSR)** is a JIT technique that transfers execution of a currently-active method from the interpreter to compiled native code (or vice versa) without waiting for the method to return. Upon detecting that a loop back-edge counter exceeds the OSR threshold (`Tier4BackEdgeThreshold`, default ~40,000), the JVM compiles the method with the loop body as the entry point, reconstructs the interpreter's state (local variables, operand stack values) into a format compatible with the compiled code, and replaces the interpreter stack frame with a compiled frame — while the method is running. OSR also works in reverse: if compiled code has an uncommon trap inside a loop, execution transfers back to the interpreter via a "reverse OSR" (deoptimization on-stack).
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -64,6 +70,8 @@ The JVM can swap out your slow-running loop's engine while it's still driving �
 
 **One insight:**
 OSR closes the gap between "invoked many times" JIT optimization and "long single invocation" scenarios. Without OSR, JIT would be useless for batch processing, startup-time initialization, and any long-running computation that's structured as a single method call. OSR is what makes JIT useful for the full spectrum of Java workloads.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -100,6 +108,8 @@ THE TRADE-OFFS:
 Gain: Long-running loops benefit from JIT compilation even when the method is only called once; startup tasks and batch jobs run at near-native speed.
 Cost: OSR-compiled code is typically slightly less optimized than normally-compiled code (special entry point constraints limit some optimizations, particularly around variables live across the back-edge); OSR transitions have a one-time overhead for state transfer; method must be re-profiled on next normal invocation.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -114,6 +124,8 @@ At iteration 40,000 (backedge count threshold), the JVM submits the loop for OSR
 THE INSIGHT:
 OSR's 200ms compilation and 20µs transfer overhead is invisible against the 189 seconds of savings. Even with marginal overhead at the OSR entry point vs. normally-compiled code, the benefit is enormous for long-running loops.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > imagine a factory assembly line running in manual mode (workers doing each step by hand). A factory manager observes that a certain section of the line is used intensely. While the line keeps running, the manager installs automated machines alongside the manual workers. At the right moment, the manager taps the next worker on the shoulder, tells them to stand aside, and the automated machine seamlessly takes over their station — the product never stops moving on the conveyor belt.
@@ -125,6 +137,8 @@ OSR's 200ms compilation and 20µs transfer overhead is invisible against the 189
 "Automated machine takes over" → compiled code resumes the loop.
 
 Where this analogy breaks down: Unlike the factory where the product is physical, the JVM must precisely reconstruct the exact processor state from the interpreter frame into the compiled frame's expected format — a precision requirement the factory analogy doesn't capture.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -139,6 +153,8 @@ The interpreter increments `BackedgeCounter` at every loop back-edge. When it ex
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The OSR entry point constraint creates a subtle limitation: variables that are live across the OSR entry point cannot be as aggressively optimized as variables that are first created inside the compiled code. Specifically, objects that were allocated by the interpreter before OSR transition are "already escaping" from the optimizer's perspective — they exist on the heap already, so the optimizer cannot fold them to the stack even if their scope is local. This is why OSR-compiled code is sometimes measurably slower than the same code compiled normally (from method entry). For extreme performance, rewrite the problematic loop as a separate method called many times rather than one long-running method — this enables normal compilation instead of OSR.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -172,6 +188,8 @@ A special compilation request is submitted: "compile method X with OSR entry at 
 
 The `%` marker in `-XX:+PrintCompilation` output identifies OSR compilations.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -200,6 +218,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 In containerized batch jobs, OSR transitions can race with JVM process startup — if the container has a CPU limit of 0.5 cores, the JIT compilation (running in background) may stall, delaying OSR transition well beyond the 40,000-iteration mark. Monitor: OSR compilation delay (method stays flagged for compilation for many thousands of iterations) as a containerized performance issue distinct from bare-metal behavior.
+
+---
 
 ### 💻 Code Example
 
@@ -257,6 +277,8 @@ java -XX:Tier4BackEdgeThreshold=10000 MyApp
 # WARNING: more aggressive compilation = more CPU during warmup
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Scenario | Normal JIT | OSR | Best Strategy |
@@ -268,6 +290,8 @@ java -XX:Tier4BackEdgeThreshold=10000 MyApp
 | AOT (GraalVM) | No JIT | No OSR needed | Native compilation |
 
 How to choose: OSR is automatic and typically correct. For maximum JIT optimization of long loops, refactor them so the loop body is a short separate method called many times — normal JIT produces better code than OSR for such cases.
+
+---
 
 ### 🔁 Flow / Lifecycle
 
@@ -298,6 +322,8 @@ How to choose: OSR is automatic and typically correct. For maximum JIT optimizat
 └─────────────────────────────────────────────────┘
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -308,6 +334,8 @@ How to choose: OSR is automatic and typically correct. For maximum JIT optimizat
 | The `%` marker in PrintCompilation means OSR is complete | The `%` marks when OSR compilation was submitted/completed — not when the transition actually happens. The transition occurs at the next back-edge after compilation is done |
 | Lowering OSR threshold always helps performance | A lower threshold means less profiling data before compilation. C2 makes worse decisions with fewer backedge iterations of profiling data, potentially producing suboptimal OSR-compiled code |
 | OSR is not needed in Java 21+ virtual threads | Virtual threads do not change the JIT model. A virtual thread running a long loop still benefits from (and relies on) OSR |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -382,6 +410,8 @@ Find the rarely-hit type/condition within the batch loop and either handle it be
 Prevention:
 Test batch jobs with data that includes edge-case records to expose OSR-invalidating types before production.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -395,6 +425,8 @@ Test batch jobs with data that includes edge-case records to expose OSR-invalida
 **Alternatives / Comparisons:**
 - `Method Inlining` — the complementary JIT optimization for hot code; together OSR and inlining cover the full case: frequently-invoked methods (inlining) and long single-invocation methods (OSR)
 - `Tiered Compilation` — the framework in which OSR operates; OSR can occur at any tier transition, not just Tier 0→4
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -428,6 +460,7 @@ Test batch jobs with data that includes edge-case records to expose OSR-invalida
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A data science team writes Java code that processes a NumPy-equivalent dataset in a single loop over 200 million rows, called exactly once. When they convert this to use virtual threads instead of the main thread for parallelism across 8 threads, each processing 25 million rows, does OSR still apply? If yes, describe how OSR interacts with the virtual thread model — specifically what happens to the OSR state transfer when a virtual thread is unmounted and remounted on different carrier threads during the loop execution.

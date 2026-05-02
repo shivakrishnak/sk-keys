@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Byzantine Fault Tolerance"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Two Generals Problem, Consensus, Raft, FLP Impossibility         |                 |
 | **Used by:**    | Blockchain, PBFT, Tendermint, Hyperledger, Multi-Party Systems   |                 |
 | **Related:**    | Two Generals Problem, FLP Impossibility, Raft, Paxos, Blockchain |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

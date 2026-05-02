@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Split Brain"
 parent: "Distributed Systems"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | Quorum, Leader Election, Network Partitions, CAP Theorem, Replication Strategies |                 |
 | **Used by:**    | Fencing / Epoch, Distributed Locking, STONITH, Raft                              |                 |
 | **Related:**    | Quorum, Fencing / Epoch, CAP Theorem, Leader Election, Raft                      |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

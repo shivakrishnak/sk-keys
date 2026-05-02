@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Design Patterns, Spring Core, Java Language | |
 | **Related:** | Functional Programming, Procedural Programming, Composition over Inheritance | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -53,6 +55,8 @@ into an object, OOP enforced a contract: only an `Account` object
 knows how to modify an account balance. The rest of the system
 calls `account.deposit(100)` without knowing the internals.
 
+---
+
 ### 📘 Textbook Definition
 
 Object-Oriented Programming is a paradigm that organises software
@@ -63,6 +67,8 @@ relevant interfaces), Inheritance (deriving specialised types from
 general ones), and Polymorphism (different objects responding to
 the same interface differently). Objects communicate by sending
 messages — calling each other's methods.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -82,6 +88,8 @@ OOP's power isn't classes or inheritance — it's the principle that
 data and the code that mutates it should live together. When you
 change a data structure, you only change one class. The rest of
 the system is insulated from that change through the interface.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -118,6 +126,8 @@ inheritance and polymorphism.
 Cost: Can lead to deep inheritance hierarchies that are brittle;
 mutable shared objects cause concurrency bugs; not all
 problems map naturally to "things with behaviour."
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -159,6 +169,8 @@ THE INSIGHT:
 Polymorphism means "add new types without changing existing code."
 OOP's biggest design win is enabling extension without modification.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Objects are like departments in a company. The Payroll department
@@ -176,6 +188,8 @@ OOP's biggest design win is enabling extension without modification.
 Where this analogy breaks down: unlike real departments, objects
 can be cloned instantly, and object identity (reference vs. value)
 has no real-world equivalent.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -212,6 +226,8 @@ design centres on SOLID principles, not pillars. The ongoing
 debate between OOP and FP (functional programming) is really a
 debate about mutable state: OOP manages it with encapsulation;
 FP eliminates it with immutability.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -261,6 +277,8 @@ threads without synchronisation cause race conditions. Deep
 inheritance with method overriding causes surprising dispatch
 to the wrong method (fragile base class problem).
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -288,6 +306,8 @@ functional style applied within OOP) dramatically reduce locking
 overhead. At 1000x distributed scale, objects can no longer
 span process boundaries — you need serialisation and distributed
 proxies, which break the "send a message" mental model.
+
+---
 
 ### 💻 Code Example
 
@@ -364,6 +384,8 @@ class Car {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Paradigm      | State Model            | Code Reuse               | Concurrency Safety     | Best For                        |
@@ -376,6 +398,8 @@ class Car {
 How to choose: Use OOP when modelling entities with complex
 lifecycles and many operations. Use functional when data
 transformations dominate and concurrency correctness is critical.
+
+---
 
 ### 🔁 Flow / Lifecycle
 
@@ -399,6 +423,8 @@ transformations dominate and concurrency correctness is critical.
 └──────────────────────────────────────────────────┘
 ```
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                        | Reality                                                                                                               |
@@ -407,6 +433,8 @@ transformations dominate and concurrency correctness is critical.
 | Inheritance is the core of OOP       | Polymorphism and encapsulation are more important; deep inheritance hierarchies are widely considered an anti-pattern |
 | OOP is always better than procedural | For simple scripts and data pipelines, procedural code is cleaner; OOP's benefit shows at scale                       |
 | private means completely hidden      | In Java/Python, reflection can bypass private access — "private" is a design contract, not a security guarantee       |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -533,6 +561,8 @@ class Order {
 Prevention: Ask "should this logic belong to the object?" before
 placing business rules in service classes.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -552,6 +582,8 @@ placing business rules in service classes.
 - `Functional Programming` — treats code as mathematical functions; minimises mutable state
 - `Procedural Programming` — functions and global state without the object abstraction
 - `Composition over Inheritance` — the modern OOP best practice that replaces deep hierarchies
+
+---
 
 ### 📌 Quick Reference Card
 

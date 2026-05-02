@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Space Complexity, Amortized Analysis, All Algorithm Analysis | |
 | **Related:** | Space Complexity, Amortized Analysis, Master Theorem | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ Measuring wall-clock time to compare algorithms is hardware-dependent, input-dep
 THE INVENTION MOMENT:
 Express runtime as a function of input size N and keep only the dominant term (the one that grows fastest). Drop constants and lower-order terms — they're swamped at large N. "My algorithm does at most 3N²+2N+5 operations" becomes simply O(N²). This notation captures the *scaling behaviour* without machinery. This is exactly why Big-O was created.
 
+---
+
 ### 📘 Textbook Definition
 
 **Big-O notation** (O) expresses an asymptotic upper bound on an algorithm's time (or space) requirements as a function of input size N. Formally, T(N) = O(f(N)) if there exist constants c > 0 and n₀ such that T(N) ≤ c·f(N) for all N ≥ n₀. Complementary notations: Ω (lower bound), Θ (tight bound). In practice, O is used informally to mean Θ (both upper and lower), describing worst-case growth rate with constants and lower-order terms dropped.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -52,6 +58,8 @@ Big-O asks "when N doubles, how much slower does the algorithm get?"
 
 **One insight:**
 Big-O is not about speed — it is about *scaling*. O(N log N) may be slower than O(N²) for N=10, but always faster for large enough N. The point at which complexity matters is hardware-dependent; the direction is not.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -84,6 +92,8 @@ THE TRADE-OFFS:
 Gain: Machine-independent comparison, identifies bottlenecks, predicts scalability.
 Cost: Ignores constant factors (O(100N) is technically O(N)), ignores lower-order terms that dominate at small N, worst-case can be misleading if typical case is much better (see amortized analysis).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -100,6 +110,8 @@ You identify A = O(N²) and B = O(N). You know: for large N, B always wins. The 
 THE INSIGHT:
 Big-O analysis predicts the crossover point. Any O(N) algorithm eventually outperforms any O(N²) algorithm — the constant factor only affects *when*, not *whether*.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Big-O is like a fuel efficiency rating on a car. "30 MPG" tells you how range scales with fuel — it doesn't tell you the actual speed, acceleration, or the driver's skill. Two cars with the same MPG rating may have vastly different speed profiles, but for a long-distance trip, MPG dominates.
@@ -110,6 +122,8 @@ Big-O analysis predicts the crossover point. Any O(N) algorithm eventually outpe
 "Two cars, same MPG" → two O(N log N) sorts with different constants
 
 Where this analogy breaks down: Fuel efficiency is constant; Big-O is a growth rate. An O(N log N) "car" gets progressively "more efficient" relative to an O(N²) "car" as N grows — unlike fuel efficiency, which is constant.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -124,6 +138,8 @@ Analyse recursive algorithms with the Master Theorem or recurrence relations. T(
 
 **Level 4 — Why it was designed this way (senior/staff):**
 Donald Knuth popularised Big-O in *The Art of Computer Programming* (1968). The formal definitions of O, Ω, Θ come from Hardy (1910) and Landau (1909). The informal convention of using "O" to mean "tight bound" (both upper and lower) is technically an abuse of notation — it should be Θ — but is universal in industry. The decision to drop constants was deliberate: hardware speed changes (Moore's Law) but algorithmic complexity classes remain stable. An O(N²) algorithm was slow in 1970 and still slow in 2025; an O(N log N) algorithm was fast in 1970 and still fast in 2025.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -193,6 +209,8 @@ Rule 4: Nested blocks → MULTIPLY
 │  O(2^N)    = 2^1000 ≈ 10^301 ops (infeas.)  │
 └──────────────────────────────────────────────┘
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -217,6 +235,8 @@ Rely only on Big-O — ignore constant factors
 
 WHAT CHANGES AT SCALE:
 Big-O becomes decisive at production scale. An O(N²) algorithm processing 10,000 records takes 1 second; at 100,000 records: 100 seconds; at 1,000,000 records: 10,000 seconds. An O(N log N) algorithm: 1.3 seconds at 100,000, 20 seconds at 1,000,000. The crossover point depends on constants, but the outcome at large N is determined by complexity class alone.
+
+---
 
 ### 💻 Code Example
 
@@ -267,6 +287,8 @@ int fib(int n) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Notation | Meaning | Usage |
@@ -278,6 +300,8 @@ int fib(int n) {
 
 How to choose: Use O in conversation and code — it's the industry standard. Use Θ when precision matters (academic papers). Say "O(N log N) worst case" explicitly when distinguishing from average case.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
@@ -287,6 +311,8 @@ How to choose: Use O in conversation and code — it's the industry standard. Us
 | Average case = O notation | O is typically worst case; average case needs separate analysis (e.g., quicksort average O(N log N), worst O(N²)) |
 | Dropping constants is always safe | For N=10, O(1000N) and O(N²) are comparable; Big-O hides this; benchmark realistic sizes |
 | O(1) means instantaneous | O(1) means constant time — but that constant might be 1 ms or 1 second |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -344,6 +370,8 @@ Fix: Use a better hash function; sanitise untrusted keys before use as HashMap k
 
 Prevention: Never use HashMaps with user-controlled keys without input validation in security-critical code.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -356,6 +384,8 @@ Prevention: Never use HashMaps with user-controlled keys without input validatio
 **Alternatives / Comparisons:**
 - `Space-Time Trade-off` — different algorithms may offer different time vs space complexities for the same problem.
 - `Amortized Analysis` — extends worst-case Big-O to sequences of operations.
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -385,6 +415,7 @@ Prevention: Never use HashMaps with user-controlled keys without input validatio
 └──────────────────────────────────────────────────────────┘
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A developer presents two solutions for finding the k-th largest element: Solution A uses sorting (O(N log N)) and Solution B uses a min-heap of size k (O(N log k)). For k=N/2 (median), Solution B reduces to O(N log(N/2)) = O(N log N - N) = O(N log N). For k=1 (maximum), Solution B is O(N). At what value of k are the two solutions identical in complexity, and what does this reveal about when the heap approach offers a real advantage versus when it's just a more complex O(N log N)?

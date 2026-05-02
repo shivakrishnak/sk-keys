@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Zero-Copy (sendfile)"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | Kafka, Nginx, Netty, HTTP file serving                      |                 |
 | **Related:**    | DMA, mmap, splice, io_uring, sendfile                       |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ In 2003, Kafka's designers ran benchmarks: at 600MB/s throughput (their SSD spee
 THE INVENTION MOMENT:
 `sendfile()` was introduced in Linux 2.2 (1999) and was used by the Solaris kernel even earlier. The insight: the OS already has the file data in the page cache AND controls the socket buffers — there's no reason to route the data through user space. The kernel can move it internally.
 
+---
+
 ### 📘 Textbook Definition
 
 **Zero-copy** refers to OS mechanisms that transfer data between I/O devices without requiring the CPU to copy data through user-space buffers. The canonical Linux mechanism is `sendfile(out_sock_fd, in_file_fd, &offset, count)`, which instructs the kernel to transfer `count` bytes from a file to a socket starting at `offset`, using a kernel-internal path that avoids copying to user space. In "true" zero-copy with hardware support (DMA gather), even the copy from page cache to the NIC's DMA buffer is eliminated: the NIC reads directly from page cache pages, achieving literally zero CPU copies for the data path.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ sendfile tells the kernel "move file data to this socket yourself" — data neve
 
 **One insight:**
 Every copy is CPU time and memory bandwidth consumed. At 10 Gbps, copying 1.25 GB/s through user space consumes ~50% of a CPU core just for memory bandwidth. `sendfile` moves that cost from CPU to the memory bus with zero user-space involvement.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -94,6 +102,8 @@ THE TRADE-OFFS:
 Gain: Up to 65% reduction in CPU usage for file serving; higher throughput per CPU; less memory bandwidth consumed.
 Cost: Data cannot be modified in flight (no TLS without additional mechanism); requires both source and destination to be kernel-managed; `mmap`+`write` is more flexible but has different trade-offs; sendfile is Linux/Unix specific (no Windows sendfile equivalent — use `TransmitFile`).
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -115,6 +125,8 @@ SENDFILE (with scatter-gather DMA):
 THE INSIGHT:
 Zero-copy is not about speed of individual transfers — it's about keeping the data path off the CPU, leaving CPU cycles for actual application logic.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Traditional I/O: a warehouse worker reads each item off a truck (disk read to page cache), writes it in a log book (copies to user buffer), then carries it to the shipping dock (copies to socket buffer), where another worker loads it on the delivery truck (DMA to NIC). Three handoffs, two involving the log book clerk (user space) who adds no value.
@@ -122,6 +134,8 @@ Zero-copy is not about speed of individual transfers — it's about keeping the 
 > sendfile: the warehouse supervisor (kernel) directly relabels the delivery truck's manifest. Goods go from receiving dock to delivery truck without anyone opening boxes. The log book clerk (user space) is never involved.
 
 > True zero-copy (scatter-gather DMA): the delivery truck (NIC) is given the dock locations (page cache addresses) and loads itself.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -136,6 +150,8 @@ In Java, `FileChannel.transferTo()` uses `sendfile` on Linux and `TransmitFile` 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 `sendfile` was a pragmatic API addition — the kernel already had both endpoints but the POSIX model had no cross-descriptor operation. The challenge is TLS: `sendfile` bypasses user space where TLS encryption normally happens. Kernel TLS (`kTLS`, Linux 4.13+) solves this: TLS state is pushed into the kernel, and `sendfile` can encrypt in-place at the kernel layer. Nginx supports `ssl_sendfile on;` using kTLS. This is the frontier of zero-copy in production: `sendfile` → `kTLS` → scatter-gather DMA = zero CPU involvement in serving encrypted static content.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -169,6 +185,8 @@ In Java, `FileChannel.transferTo()` uses `sendfile` on Linux and `TransmitFile` 
 └────────────────────────────────────────────────────────┘
 ```
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 KAFKA CONSUMER FLOW (zero-copy):
@@ -194,6 +212,8 @@ sendfile with TLS (without kTLS):
   → Solution: kTLS (Kernel TLS) — push TLS state to kernel
   → Then sendfile works for TLS too
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -286,6 +306,8 @@ strace -e trace=sendfile64 -p $(pgrep -f kafka) 2>&1 | head -20
 strace -e trace=sendfile -p $(pgrep nginx) 2>&1 | head -20
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Technique         | CPU Copies | User-Space | Modifiable | TLS       | Use For                           |
@@ -296,6 +318,8 @@ strace -e trace=sendfile -p $(pgrep nginx) 2>&1 | head -20
 | `splice`          | 0–1        | No         | No         | No        | Pipe-to-socket or pipe-to-pipe    |
 | `io_uring splice` | 0          | No         | No         | No        | Async zero-copy chains            |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                        | Reality                                                                                                                             |
@@ -305,6 +329,8 @@ strace -e trace=sendfile -p $(pgrep nginx) 2>&1 | head -20
 | "sendfile works with SSL/TLS"        | Standard sendfile doesn't go through user-space OpenSSL; kTLS + sendfile works for TLS but requires kernel TLS support              |
 | "sendfile is only for files"         | `splice()` is the more general form — works between any two fds backed by a pipe                                                    |
 | "Java NIO always uses sendfile"      | FileChannel.transferTo() attempts sendfile but falls back to read+write if the OS or configuration doesn't support it               |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -360,6 +386,8 @@ Fix: Enable kTLS in kernel (5.2+) + Nginx with `ssl_sendfile on` + OpenSSL 3.0 k
 
 Prevention: Benchmark TLS throughput during capacity planning; plan for 3–5× more CPU for TLS vs plaintext at line rate.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -379,6 +407,8 @@ Prevention: Benchmark TLS throughput during capacity planning; plan for 3–5× 
 - `mmap + write` — alternative: maps file pages to virtual address space then writes; one less copy than read+write but more complex and not zero-copy
 - `splice` — more general form of sendfile: works between any two fds via an intermediate pipe
 - `io_uring IORING_OP_SPLICE` — async splice; avoids even the splice syscall overhead
+
+---
 
 ### 📌 Quick Reference Card
 

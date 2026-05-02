@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "False Sharing"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | Lock-Free Data Structures, Java volatile, Thread-per-core patterns |                 |
 | **Related:**    | Cache Line, @Contended, perf c2c, MESI protocol                    |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ The counters are adjacent in memory. Both fit in the same 64-byte cache line. Wh
 THE INVENTION MOMENT:
 This problem was formally described in the early 1990s as multi-core systems became common. The term "false sharing" distinguishes it from "true sharing" (where threads actually share data). The fix — cache-line padding — was adopted in the JDK itself: `java.util.concurrent.atomic.LongAdder` (JDK 8), `ForkJoinPool`, and `ConcurrentHashMap` all use `@Contended` padding.
 
+---
+
 ### 📘 Textbook Definition
 
 **False sharing** is a cache coherence performance hazard that occurs when multiple CPU cores repeatedly write to different variables that reside within the same cache line. Even though the variables are logically independent, the hardware coherence protocol (e.g., MESI) enforces ownership of the entire cache line — not individual bytes. Consequently, every write by one core invalidates the cache line in all other cores, forcing them to re-acquire ownership before their next write. The result is serialised writes despite no logical data dependency, causing throughput degradation of 4–20× compared to code without contention.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ Two threads writing different variables in the same 64-byte block cause the hard
 
 **One insight:**
 False sharing is uniquely dangerous because it is invisible. No lock appears in code review. Profilers show CPU utilization at 100%. The bug manifests only under load on multi-core hardware, making it hard to reproduce in single-threaded tests or low-concurrency environments.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -82,6 +90,8 @@ Cost of false sharing: 10–40× slowdown on contended cache lines.
 Cost of fix (padding): memory per padded object increases by 60 bytes (per 64-byte line).
 Trade-off decision: always pad in hot-path concurrent data structures; evaluate memory cost for large arrays.
 
+---
+
 ### 🧪 Thought Experiment
 
 SETUP:
@@ -106,6 +116,8 @@ With false sharing: 90,000,000 increments/sec (each thread)
 THE INSIGHT:
 The CPU is not "idle" — it's 100% busy transferring cache line ownership. From the OS and profiler perspective, both CPUs are saturated. No lock is visible. The degradation looks like an algorithmic issue, not a hardware one.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Think of a cache line as a shared hotel key card (one per room). Two guests (two threads) in the same room share one key card. Guest A needs the card to enter (modify their side of the room). While A has the card, Guest B (also in the same room but accessing their own dresser) must wait. Even though neither person is touching the other's belongings, they share the access mechanism.
@@ -113,6 +125,8 @@ The CPU is not "idle" — it's 100% busy transferring cache line ownership. From
 > The fix: give each guest their own room — pad variables to different cache lines. Each guest has their own key card.
 
 Where the analogy breaks down: in the real hardware, the "room" (cache line) can hold 64 bytes and multiple guests can read from it simultaneously (Shared state). The contention only arises when a guest needs to WRITE. Pure read-sharing is efficient; it's write-write contention that causes false sharing.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -127,6 +141,8 @@ Detect with `perf c2c report` (Linux) or Intel VTune's memory profiling. Fix in 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The MESI protocol enforces coherence at cache-line granularity because sub-line coherence would require tracking the state of every byte — an exponential increase in control overhead. At 64-byte lines, a 4MB L1 has 65,536 entries, each needing 2 MESI bits + tags. Byte-level coherence of a 4MB L1 would need 4M state bits + vastly more complex coherence messages. The 64-byte granularity is the engineering balance between tracking overhead and false sharing probability. Hardware vendors considered word-level coherence (8 bytes) for some designs but rejected it due to 8× increase in coherence traffic for read-sharing scenarios.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -156,6 +172,8 @@ The MESI protocol enforces coherence at cache-line granularity because sub-line 
 │  [Both CPUs ping-pong cache line ownership forever]    │
 └────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -190,6 +208,8 @@ Thread 2 writes Cell[2].value   → cache line [512..575]
 → No coherence traffic between threads
 → N threads: N× throughput
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -304,6 +324,8 @@ public class NUMAFriendlyCounter {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Scenario                                              | Sharing Type      | Cause                         | Fix                                |
@@ -312,6 +334,8 @@ public class NUMAFriendlyCounter {
 | **Two threads write different vars, same cache line** | **False sharing** | **Memory layout coincidence** | **Cache line padding**             |
 | Two threads read same cache line                      | Read sharing      | —                             | No fix needed (S state, efficient) |
 | Two threads: one reads, one writes same line          | Mixed sharing     | Could be true sharing         | Validate logic first; then pad     |
+
+---
 
 ### ⚠️ Common Misconceptions
 
@@ -322,6 +346,8 @@ public class NUMAFriendlyCounter {
 | "@Contended always works in application code" | In JDK 8–17, @Contended is restricted to JDK internal classes by default; use -XX:-RestrictContended for application code |
 | "Only concurrent code has false sharing"      | False sharing requires concurrent writes; purely sequential single-threaded code has no false sharing                     |
 | "Padding to 64 bytes is always enough"        | ARM's L3 may have 128-byte prefetch lines; AMD EPYC within-socket topology complicates this; 128-byte padding is safer    |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -387,6 +413,8 @@ Fix: Align each thread's write region to 64-byte boundaries; use `ByteBuf.slice(
 
 Prevention: When allocating per-thread regions in shared buffers, always round start offset up to next 64-byte boundary.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -406,6 +434,8 @@ Prevention: When allocating per-thread regions in shared buffers, always round s
 - `True sharing` — intentional shared data with proper synchronisation; distinct from false sharing in cause and fix
 - `ThreadLocal` — JVM's per-thread heap segments; naturally avoids false sharing for thread-local data
 - `Disruptor (LMAX)` — ring buffer design explicitly designed to eliminate false sharing; benchmark reference for false-sharing-free concurrent queue
+
+---
 
 ### 📌 Quick Reference Card
 

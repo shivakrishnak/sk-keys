@@ -29,6 +29,8 @@ tags:
 | **Used by:** | CI/CD Pipelines, Microservices Integration, API Design | |
 | **Related:** | OpenAPI/Swagger, API Mocking, Consumer-Driven Contract Testing, Pact | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

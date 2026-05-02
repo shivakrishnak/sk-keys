@@ -27,6 +27,8 @@ tags:
 | **Used by:** | Functional Programming, Reactive Programming, SQL | |
 | **Related:** | Imperative Programming, Functional Programming, Domain-Specific Languages | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -49,6 +51,8 @@ This is exactly why Declarative Programming was created. SQL in
 the execution plan. HTML lets you say "this is a heading" — the
 browser figures out how to render it.
 
+---
+
 ### 📘 Textbook Definition
 
 Declarative programming is a paradigm in which programs specify
@@ -58,6 +62,8 @@ result; the underlying engine, runtime, or compiler determines the
 optimal execution strategy. SQL, HTML, CSS, Prolog, and functional
 languages (when used without explicit recursion patterns) are
 canonical examples.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -76,6 +82,8 @@ imperative equivalent because it removes the accidental complexity
 of HOW — loops, counters, temporary variables — and leaves only
 the essential complexity of WHAT. The trade-off is less control
 over performance.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -104,6 +112,8 @@ Gain: Conciseness, readability, engine-level optimisation, less
 code to maintain, queries that survive schema changes.
 Cost: Less control over execution; harder to express irregular
 procedural logic; debugging requires understanding the engine.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -140,6 +150,8 @@ Declarative abstraction lets the engine exploit knowledge you
 don't have — index structures, statistics, parallelism — to
 execute far better than hand-written imperative code would.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Declarative programming is like filing a tax form. You fill in the
@@ -156,6 +168,8 @@ execute far better than hand-written imperative code would.
 Where this analogy breaks down: unlike tax forms, declarative
 programs can compose and nest — you can build complex pipelines
 from simple declarative expressions.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -188,6 +202,8 @@ loss of execution control for gain in correctness and optimisability.
 Modern systems like Apache Spark DataFrames and TensorFlow graphs
 adopt declarative APIs precisely to enable distributed execution
 optimisation invisible to the user.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -238,6 +254,8 @@ the optimiser picks a bad plan. A filter that matches 80% of rows
 gets pushed down, but it's slower than a full scan. Performance
 degrades invisibly because the programmer has no control.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -264,6 +282,8 @@ exponentially — a wrong join order on 10M rows vs 1M rows
 increases cost by 100x. At 100x, declarative frameworks like Spark
 transparently distribute execution across a cluster while the
 `DataFrame.filter().groupBy()` API stays identical to single-node.
+
+---
 
 ### 💻 Code Example
 
@@ -329,6 +349,8 @@ function Counter({ count }) {
 ```
 {% endraw %}
 
+---
+
 ### ⚖️ Comparison Table
 
 | Style           | Control | Optimisable | Readability | Best For                |
@@ -342,6 +364,8 @@ How to choose: Use declarative when the engine can optimise better
 than you can, or when expressing WHAT is more stable than HOW.
 Switch to imperative when you need precise control over every step.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                 | Reality                                                                                                                                       |
@@ -350,6 +374,8 @@ Switch to imperative when you need precise control over every step.
 | Declarative is always slower than imperative  | A SQL query planner often beats hand-written loops because it exploits indexes and statistics you can't see                                   |
 | HTML is a programming language                | HTML is declarative markup — it describes structure, not computation — but the distinction matters less than understanding what it expresses  |
 | Declarative programming means no state        | SQL queries operate on stateful tables; React components have state — declarative describes the EXPRESSION of logic, not the absence of state |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -453,6 +479,8 @@ filtered.show(10)  # inspect before aggregation
 Prevention: Add intermediate checkpoints during development;
 write unit tests for each stage of a declarative pipeline.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -471,6 +499,8 @@ write unit tests for each stage of a declarative pipeline.
 - `Imperative Programming` — the contrasting paradigm; explicit HOW
 - `Domain-Specific Languages` — extreme form of declarative design for one domain
 - `Logic Programming` — fully declarative using rules and unification (Prolog)
+
+---
 
 ### 📌 Quick Reference Card
 

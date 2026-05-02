@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Microservices, Service Mesh, gRPC Streaming, Protocol Buffers | |
 | **Related:** | REST, GraphQL, Protocol Buffers, WebSocket | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

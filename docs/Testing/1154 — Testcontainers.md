@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Testcontainers"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Java Developers, Spring Boot Teams                      |                 |
 | **Related:**    | Docker, Integration Test, Faking, WireMock, H2 Database |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 THE H2 FALLACY:
@@ -35,9 +37,13 @@ Team uses H2 in-memory database for integration tests. Tests pass. In production
 THE SHARED DATABASE PROBLEM:
 Alternative: "just use a shared dev PostgreSQL database." Problems: (1) developers step on each other (Test A creates user "alice"; Test B assumes no alice); (2) CI pipeline needs network access to shared DB; (3) schema migrations in CI break shared DB for all developers; (4) CI tests are non-deterministic (depend on shared state). Testcontainers solves both: real PostgreSQL, isolated per test run.
 
+---
+
 ### 📘 Textbook Definition
 
 **Testcontainers** is a Java library (also available for other languages) that provides lightweight, throwaway instances of common databases, message brokers, web browsers, and any Docker container as part of integration tests. Each test (or test class) can start a fresh container, run tests against it, and destroy the container when tests finish. Containers are managed automatically through the JUnit lifecycle. This enables testing against the exact same database engine used in production, with complete isolation and no persistent external infrastructure.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -47,6 +53,8 @@ Testcontainers = start a real PostgreSQL (or Redis, Kafka, etc.) Docker containe
 **One analogy:**
 
 > Testcontainers is like **renting a hotel room for each test**: you get a fresh, real room (real database), use it for your test, and check out (container destroyed). Compare to the H2 fake — using a cardboard cutout of a hotel room. The real room has all the real properties (real plumbing = real SQL engine); the cardboard room looks similar but isn't.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -119,6 +127,8 @@ Browser:    BrowserWebDriverContainer (Selenium)
 Custom:     GenericContainer("any-image:tag")
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 THE KAFKA CONSUMER TEST:
@@ -151,9 +161,13 @@ class OrderEventConsumerTest {
 }
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Testcontainers is the difference between **testing a recipe on the real stove** vs. testing it in a cooking simulator. The simulator (H2) looks similar but doesn't burn things the same way, doesn't have the same heat distribution, and can't handle the same cookware. The real stove (PostgreSQL in Docker) is exactly what your recipe will encounter in the restaurant (production). Testcontainers brings the real stove into your test kitchen.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -164,6 +178,8 @@ class OrderEventConsumerTest {
 **Level 3:** Performance optimization: container startup is slow (5-30s). Use static containers (`static PostgreSQLContainer`) to share across test methods in a class — one startup per class. Use `withReuse(true)` to share containers across test classes — one startup per JVM run. Spring Boot 3.1+: `@ServiceConnection` annotation automatically configures datasource from container properties without `@DynamicPropertySource`. Parallel test safety: each test uses `@Transactional` rollback or unique schemas to isolate when sharing a container.
 
 **Level 4:** Testcontainers and CI: Docker daemon must be available in CI. GitHub Actions: Docker is available by default. Kubernetes-based CI (Jenkins on k8s): requires Docker-in-Docker (DinD) or a Docker socket mount — both have security implications. Alternative: Ryuk (Testcontainers cleanup service) ensures containers are removed even if tests crash. Production-parity principle: if production runs PostgreSQL 15, test with PostgreSQL 15 container — never test with a different version. Schema migration testing: run Flyway/Liquibase migrations inside the test container before tests — ensures migrations work against the real DB engine.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -187,6 +203,8 @@ class OrderEventConsumerTest {
 │    → docker stop + docker rm (Ryuk cleanup)             │
 └──────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -212,6 +230,8 @@ Integration test run:
 vs H2 alternative: 2s but misses PostgreSQL-specific behavior
 vs shared DB: non-deterministic, requires network
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -251,6 +271,8 @@ class OrderRepositoryTest {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                     | H2 In-Memory           | Testcontainers            | Shared Dev DB         |
@@ -261,6 +283,8 @@ class OrderRepositoryTest {
 | CI setup            | Zero                   | Docker required           | Network access needed |
 | Dialect differences | High risk              | Zero risk                 | Zero risk             |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                     | Reality                                                                                     |
@@ -268,6 +292,8 @@ class OrderRepositoryTest {
 | "Testcontainers requires a running Docker daemon" | Yes — this is a CI requirement; Docker is available in GitHub Actions, GitLab CI by default |
 | "Use Testcontainers for every unit test"          | Testcontainers is for integration tests; unit tests should use mocks/fakes                  |
 | "withReuse=true makes tests non-isolated"         | Reuse containers, but isolate data with @Transactional or TRUNCATE in @BeforeEach           |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -281,10 +307,14 @@ Fix: Pre-pull image in CI warm-up step. Use `withStartupTimeout(Duration.ofMinut
 Cause: Local Docker Desktop vs. CI Linux Docker have different behavior (usually file permissions or networking).
 Fix: Test with `docker run` in CI to replicate locally. Check if CI uses Docker-in-Docker (privilege issues).
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Docker, Integration Test
 - **Related:** WireMock, H2 Database, Spring Boot Test, Flyway, Liquibase
+
+---
 
 ### 📌 Quick Reference Card
 

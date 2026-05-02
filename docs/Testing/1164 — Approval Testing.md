@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Approval Testing"
 parent: "Testing"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Developers, QA                                                        |                 |
 | **Related:**    | Snapshot Testing, Golden Path Testing, Regression Test, ApprovalTests |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 THE ASSERTION MAINTENANCE BURDEN:
@@ -35,9 +37,13 @@ Some code produces complex output — a full HTML report, a JSON document with 5
 LEGACY SYSTEM TESTING (CHARACTERIZATION):
 You inherit 10,000 lines of untested legacy code. You don't know what it's supposed to do — only what it currently does. Approval tests let you capture the current behavior as the "approved" baseline, giving you a regression safety net before refactoring.
 
+---
+
 ### 📘 Textbook Definition
 
 **Approval testing** (also called "golden master testing" or "characterization testing") is a testing technique where: (1) the test runs the system under test and captures its output (the "received" artifact — text, HTML, JSON, image); (2) the output is compared to a pre-approved "approved" artifact stored as a file; (3) if they match → test passes; if they differ → test fails, showing a diff; (4) a human reviews the diff and either: fixes the code (if the change is a bug) or "approves" the new output (updates the approved file, if the change is intentional). Approval tests replace manual assertion writing with a human-approval workflow for output changes.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -47,6 +53,8 @@ Approval testing = capture output as "golden file"; if output changes, diff is s
 **One analogy:**
 
 > Approval testing is like a **visual diff for documents**: a lawyer approves a contract template once. Every time the template-generating code runs, the output is shown to the lawyer as a redline (tracked changes). The lawyer approves or rejects the changes. No need to manually check every clause — just review the diff.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -104,6 +112,8 @@ DIFF TOOL INTEGRATION:
   On CI: CI reporter shows textual diff in build output
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 CHARACTERIZATION TEST FOR LEGACY CODE:
@@ -130,9 +140,13 @@ Step 3: Once refactoring is complete, write proper unit tests
   → Approval test becomes a backstop regression test
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Approval testing is **change control for code output**: software has a "baseline" (approved file in git). Any change to the output is a "change request" (diff shown on test failure). A human authorizes (approves) or rejects the change. The baseline tracks the system's intended behavior over time, making every output change explicit and intentional.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -143,6 +157,8 @@ Step 3: Once refactoring is complete, write proper unit tests
 **Level 3:** Best for: complex output (HTML, JSON, reports), legacy code characterization, and visual regression (screenshot approval). Workflow: write the test → first run fails → review output → approve if correct → future changes require explicit re-approval. The key discipline: never auto-approve without reviewing the diff.
 
 **Level 4:** Approval testing at scale: combinatorial testing with approval tests. Instead of 50 individual assertions for a report generator, create one approval test with a representative complex input — the entire report becomes the assertion. Multi-approval: different approved files per operating system (date/time formatting differences), per locale. Integration: approval test results in CI show full diff in pull request — reviewer sees exactly what output changed, enabling code review of behavior changes alongside code changes.
+
+---
 
 ### 💻 Code Example
 
@@ -193,6 +209,8 @@ Discount (10%):       -$19.99
 TOTAL:                $179.89
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                             | Assertion-based Test | Approval Test          | Snapshot Test (Jest)   |
@@ -203,6 +221,8 @@ TOTAL:                $179.89
 | Git diff on behavior change | No                   | Yes (approved file)    | Yes (snapshot file)    |
 | Best for                    | Simple values        | Complex output, legacy | React component output |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                   | Reality                                                                                                        |
@@ -210,6 +230,8 @@ TOTAL:                $179.89
 | "Approval tests are the same as snapshot tests" | Conceptually similar; approval tests emphasize the human review step; snapshot tests (Jest) are more automated |
 | "Auto-approving CI failures is fine"            | Auto-approving defeats the purpose — the human review of diffs IS the test value                               |
 | "Approval tests replace all assertions"         | Not for simple values — they're most valuable for complex, multi-field output                                  |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -223,10 +245,14 @@ Cause: Developer runs `approvals.approve_all()` without reading the diff.
 Result: Bugs captured as "approved" baseline.
 Fix: Approval workflow in code review — PR reviewer sees the `.approved.txt` diff in the PR.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** Snapshot Testing, Unit Test, Test Data Management
 - **Related:** Characterization Testing, Golden Master Testing, ApprovalTests, Jest Snapshots, Regression Test
+
+---
 
 ### 📌 Quick Reference Card
 

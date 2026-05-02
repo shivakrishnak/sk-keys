@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Starvation"
 parent: "Operating Systems"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Thread Priority, Fair Scheduling, ReadWriteLock   |                 |
 | **Related:**    | Deadlock, Livelock, Priority Inversion, Aging     |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,9 +40,13 @@ Any unfair scheduling policy can cause starvation in the presence of high-priori
 THE INVENTION MOMENT:
 OS scheduling research in the 1960s–70s introduced **aging**: gradually increase a waiting thread's priority the longer it waits, until it eventually overtakes the high-priority threads. This prevents indefinite postponement without changing the basic priority-based scheduling model.
 
+---
+
 ### 📘 Textbook Definition
 
 **Starvation** (also called **indefinite postponement**) is a scheduling failure mode in which a thread is perpetually denied the CPU or a resource it needs, even though it is not involved in a deadlock or livelock. Starvation occurs when a scheduling or resource allocation policy systematically favours some threads over others, causing certain threads to wait indefinitely. Unlike deadlock (circular wait) and livelock (active but unproductive), starvation involves a thread that is simply never selected. Solutions include: **fair scheduling** (FIFO queuing, time-sliced algorithms), **priority aging** (increase priority of waiting threads over time), and **read-write lock fairness** policies.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -53,6 +59,8 @@ Starvation = a thread waits forever not because of a cycle or bug, but because t
 
 **One insight:**
 Starvation is the expected result of priority-based scheduling without aging or fairness bounds. It's a design choice: a system that prioritises high-priority work will starve low-priority work if high-priority work is continuous. The fix (aging) says: if you've waited long enough, you become high priority.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -82,6 +90,8 @@ THE TRADE-OFFS:
 Gain: Fairness guarantees — every runnable thread eventually runs.
 Cost: Throughput: a fair FIFO lock has higher overhead than unfair; aging complicates scheduler implementation; writer preference increases write latency for reads-dominated workloads.
 
+---
+
 ### 🧪 Thought Experiment
 
 READER-WRITER LOCK WRITER STARVATION:
@@ -108,6 +118,8 @@ ReadWriteLock (writer preference, blocks new readers if writer waiting):
 THE INSIGHT:
 A subtle policy change (block new readers when a writer waits) converts writer starvation to bounded wait. The write latency increases slightly (must drain in-flight readers) but unbounded starvation is eliminated.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A highway on-ramp with a zipper merge. If the existing highway traffic (high-priority threads) never leaves a gap (never yields), on-ramp cars (low-priority threads) wait forever. Aging is a traffic law: after waiting 5 minutes, on-ramp cars have priority and highway traffic must stop. Forced fairness via time.
@@ -115,6 +127,8 @@ A subtle policy change (block new readers when a writer waits) converts writer s
 > In ReadWriteLock terms: the "writer waiting" flag is a physical barrier placed on the on-ramp: new readers see it and stop. Once all in-flight readers pass, the writer goes.
 
 Where this breaks down: aging in software is explicit and configurable; natural fairness mechanisms (like humans yielding out of social pressure) don't exist for threads.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -129,6 +143,8 @@ Linux CFS (Completely Fair Scheduler) prevents starvation via virtual runtime: e
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The tension between "highest priority runs" and "all threads eventually run" is fundamental to scheduling theory. Early batch systems used pure priority (easy to implement, maximum throughput for high-priority work). Time-sharing systems (1960s) introduced fairness as a requirement (users pay for time and expect proportional service). CFS (2007, Ingo Molnár) resolved the tension with weighted-fair queuing: each task's `vruntime` grows at a rate inversely proportional to its weight (priority). Low-priority tasks accumulate `vruntime` slowly — they get less CPU — but they always make some progress. This is mathematically equivalent to weighted fair queuing in networking (WFQ), applied to CPU scheduling.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -152,6 +168,8 @@ The tension between "highest priority runs" and "all threads eventually run" is 
 │  Low always makes progress — no starvation             │
 └────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -181,6 +199,8 @@ Thread A: unlock()
   → With continuous new arrivals: B never gets the lock
   → STARVATION
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -244,6 +264,8 @@ public class MonitoredLock {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Progress Failure   | Threads Active?   | CPU?            | Detectable?          | Fix                  |
@@ -253,6 +275,8 @@ public class MonitoredLock {
 | **Starvation**     | Starved = WAITING | Low for starved | Possible (wait time) | Fair lock, aging     |
 | Priority Inversion | Mixed             | Normal          | Possible             | Priority inheritance |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                 | Reality                                                                                                                                                                                    |
@@ -261,6 +285,8 @@ public class MonitoredLock {
 | "Thread.setPriority() prevents starvation"    | High priority can CAUSE starvation in low-priority threads; it doesn't prevent starvation in the prioritised thread                                                                        |
 | "Fair=true in ReentrantLock is always better" | Fair lock has higher overhead (CLH queue maintenance); only use when starvation is actually a concern                                                                                      |
 | "Low-priority JVM threads never starve"       | On JVM with OS-mapped threads and a preemptive OS (Linux/macOS), low-priority threads still run (CFS prevents true starvation), but on Windows with priority 1 threads, starvation is real |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -307,6 +333,8 @@ log.info("Read hold count: {}", rwl.getReadHoldCount());
 
 Fix: Use `new ReentrantReadWriteLock(true)` (fair) or `StampedLock` for optimistic reads.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -325,6 +353,8 @@ Fix: Use `new ReentrantReadWriteLock(true)` (fair) or `StampedLock` for optimist
 
 - `Priority Inversion` — high-priority thread starved specifically because it's waiting for a mutex held by a low-priority thread (Mars Pathfinder bug)
 - `Thundering Herd` — many threads stall, then all rush; related to starvation recovery
+
+---
 
 ### 📌 Quick Reference Card
 

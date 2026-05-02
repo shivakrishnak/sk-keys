@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Virtual Nodes"
 parent: "Distributed Systems"
@@ -29,6 +29,8 @@ tags:
 │ Used by:     │ Cassandra, Riak, DynamoDB           │                      │
 │ Related:     │ Consistent Hashing, Replication     │                      │
 └──────────────────────────────────────────────────────────────────────────┘
+
+---
 
 ### 🔥 The Problem This Solves
 

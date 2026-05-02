@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Postman / REST Assured"
 parent: "Testing"
@@ -28,14 +28,20 @@ tags:
 | **Used by:**    | Developers, QA Engineers                                      |                 |
 | **Related:**    | API Testing, REST Assured, MockMvc, Integration Test, OpenAPI |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 MANUAL API TESTING DOESN'T SCALE:
 Manually testing APIs with curl or a GUI tool after every deployment is error-prone and time-consuming. These tools exist to: (1) make ad-hoc API exploration fast (Postman), (2) turn manual tests into automated, repeatable collections (Postman Newman), and (3) write API tests as first-class code with fluent assertions in the same codebase as the application (REST Assured).
 
+---
+
 ### 📘 Textbook Definition
 
 **Postman** is a GUI-based HTTP client and API testing platform. It allows sending HTTP requests, organizing them into **Collections** (groups of related requests), adding **test scripts** (JavaScript) to validate responses, and running collections via **Newman** (CLI) in CI pipelines. **REST Assured** is a Java DSL (domain-specific language) library for writing HTTP API tests as code, integrated with JUnit/TestNG. It provides a fluent `given().when().then()` syntax for constructing requests, sending them, and asserting responses — natively integrated into the Java test ecosystem.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -45,6 +51,8 @@ Postman = GUI-first API testing (great for exploration + collections); REST Assu
 **One analogy:**
 
 > Postman is the **workshop for building and testing API requests** — you tinker interactively until the request is right, then save it as a recipe. REST Assured is the **factory floor** — you codify the recipes as automated tests that run at scale, every build, without a human.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -181,6 +189,8 @@ REST ASSURED:
   ✗ Less visual than Postman
 ```
 
+---
+
 ### 🧪 Thought Experiment
 
 FROM POSTMAN TO CI:
@@ -202,9 +212,13 @@ Limitation: Collection JSON in git → merge conflicts are painful
              → large teams often migrate to REST Assured as codebase matures
 ```
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > Postman is to REST Assured as **Excel is to Python**: Excel is great for ad-hoc analysis, easy to use, visual, shareable. Python is better for complex automation, version control, integration with other systems, and scalability. You might start with Excel (Postman) and migrate to Python (REST Assured) as your needs grow.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -215,6 +229,8 @@ Limitation: Collection JSON in git → merge conflicts are painful
 **Level 3:** Postman Collections 2.1 format supports pre-request scripts (set auth token before each request), post-response scripts (extract and store values), and collection-level variables. REST Assured filter support: custom filters for logging, request signing (HMAC), OAuth token refresh. JSON path and XML path assertions: `body("data.users.findAll { it.role == 'admin' }.size()", equalTo(2))`.
 
 **Level 4:** Postman at enterprise: API Governance — shared team collections, centralized test environments, API versioning in collections, integration with CI/CD via Newman. REST Assured in a microservices context: shared test utility library containing `RequestSpecBuilder` configurations, authentication helpers, and common response validators — used across all service test suites for consistency. Integration with contract testing: REST Assured tests serve as the consumer-side tests in Pact, generating pact files from REST Assured requests.
+
+---
 
 ### 💻 Code Example
 
@@ -289,6 +305,8 @@ pm.test("Status is PENDING", () => {
 pm.environment.set("lastOrderId", pm.response.json().orderId);
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 |                 | Postman               | REST Assured       | MockMvc                   |
@@ -299,6 +317,8 @@ pm.environment.set("lastOrderId", pm.response.json().orderId);
 | CI integration  | Newman CLI            | JUnit/Maven        | JUnit/Maven               |
 | Best for        | Exploration, QA teams | Java project tests | Fast unit-level API tests |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                            | Reality                                                                                                               |
@@ -306,6 +326,8 @@ pm.environment.set("lastOrderId", pm.response.json().orderId);
 | "Postman is just a manual testing tool"  | Postman Collections + Newman provide full CI automation capability                                                    |
 | "REST Assured replaces unit tests"       | REST Assured is for integration-level HTTP tests; unit tests (MockMvc or Mockito) are still needed for business logic |
 | "REST Assured requires a running server" | Can use Spring Boot Test with `MockMvc` adapter for in-process testing with REST Assured's DSL                        |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -317,10 +339,14 @@ Fix: One collection owner per team; or migrate to REST Assured for code-controll
 Cause: `RestAssured.baseURI` set statically; tests run in parallel with different base URIs.
 Fix: Use `RequestSpecBuilder` per test class instead of static `RestAssured.` configuration.
 
+---
+
 ### 🔗 Related Keywords
 
 - **Prerequisites:** API Testing, HTTP & APIs, REST
 - **Related:** Newman, Postman, REST Assured, MockMvc, OpenAPI, Pact, Integration Test
+
+---
 
 ### 📌 Quick Reference Card
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Correlation ID"
 parent: "Distributed Systems"
@@ -26,6 +26,8 @@ tags:
 | **Depends on:** | Distributed Tracing, Logging, HTTP & APIs, Microservices                          |                 |
 | **Used by:**    | Distributed Tracing, Observability, API Gateway, Service Mesh                     |                 |
 | **Related:**    | Distributed Tracing, Idempotency (Distributed), Request-Response Pattern, Logging |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

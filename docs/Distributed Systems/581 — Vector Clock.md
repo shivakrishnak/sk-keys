@@ -28,6 +28,8 @@ tags:
 | **Used by:** | Conflict Detection, CRDTs, Distributed Version Control, DynamoDB | |
 | **Related:** | Lamport Clock, Causal Consistency, Happened-Before, CRDTs | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **LAMPORT CLOCK LIMITATION:**

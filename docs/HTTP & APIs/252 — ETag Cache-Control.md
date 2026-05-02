@@ -28,6 +28,8 @@ tags:
 | **Used by:** | REST APIs, CDN, Browser Caching | |
 | **Related:** | API Caching, HTTP Headers, Content Negotiation | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

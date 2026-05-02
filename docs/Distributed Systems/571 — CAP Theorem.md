@@ -29,6 +29,8 @@ tags:
 | **Used by:** | Database Design, NoSQL, Distributed Storage | |
 | **Related:** | PACELC, Consistency Models, Eventual Consistency, BASE | |
 
+---
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**

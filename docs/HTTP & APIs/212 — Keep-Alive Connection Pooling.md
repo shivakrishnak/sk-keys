@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Keep-Alive / Connection Pooling"
 parent: "HTTP & APIs"
@@ -27,6 +27,8 @@ tags:
 | **Depends on:** | HTTP/1.1, TCP, Sockets, HTTP Headers                                      |                 |
 | **Used by:**    | HTTP/2, API Performance, Database Connection Pools, HTTP Client Libraries |                 |
 | **Related:**    | TCP, HTTP/2, Connection Management, HikariCP, Thread Pools                |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 

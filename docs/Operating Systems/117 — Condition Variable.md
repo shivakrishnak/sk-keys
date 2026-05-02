@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Condition Variable"
 parent: "Operating Systems"
@@ -27,6 +27,8 @@ tags:
 | **Used by:**    | Producer-Consumer, Monitor, BlockingQueue, Object.wait/notify |                 |
 | **Related:**    | Mutex, Semaphore, Monitor, spurious wakeup                    |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -38,6 +40,8 @@ Neither approach is correct: polling wastes CPU, sleep-and-check misses events o
 THE INVENTION MOMENT:
 Condition variables were introduced in the CAR Hoare monitor abstraction (1974). The key insight: `wait(cv, mutex)` atomically releases the mutex and puts the thread to sleep — in one indivisible operation. The producer acquires the mutex, adds an item, calls `signal(cv)` to wake the consumer, and releases the mutex. The consumer is woken, re-acquires the mutex, and finds the item.
 
+---
+
 ### 📘 Textbook Definition
 
 A **condition variable** is a synchronisation primitive that enables threads to wait (block) until a particular condition is satisfied, with the associated mutex atomically released during the wait. Core operations:
@@ -47,6 +51,8 @@ A **condition variable** is a synchronisation primitive that enables threads to 
 - **broadcast(cv)** (also `notify_all`): wakes all waiting threads.
 
 A condition variable is always used with a mutex. The typical pattern is: `lock mutex → check condition → if false: wait(cv, mutex) → re-check condition (spurious wakeup!) → proceed`.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -59,6 +65,8 @@ Condition variable: release the mutex and sleep atomically; the signaller wakes 
 
 **One insight:**
 The atomicity of "release mutex + sleep" is crucial. Without it, there's a race: release mutex → producer adds item → producer signals → you go to sleep (never woken). The condition variable prevents this lost signal by making the check-and-sleep atomic with respect to the mutex.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -87,6 +95,8 @@ POSIX allows implementations to wake `wait()` for reasons other than a `signal()
 THE TRADE-OFFS:
 Gain: Efficient blocking without polling; zero CPU usage while waiting; correct signal-wait ordering.
 Cost: Always used with a mutex (adds locking overhead); spurious wakeups require while-loop; signal is "fire and forget" — if no one is waiting, the signal is lost (use semaphore if you need to remember signals).
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -119,11 +129,15 @@ SCENARIO: Buffer empty, Consumer runs first:
 
 THE INSIGHT: No busy-wait, no lost signal, no data race. The `while` loop handles spurious wakeups and the case where multiple consumers race to dequeue the same item.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A condition variable is like a phone notification system for a shared kitchen. You hold the key (mutex), open the fridge (shared resource), find it empty. You put the key on the hook (release mutex) and register for "food added" notifications (add to wait queue). When someone adds food (signal), your phone buzzes. You take the key back (re-acquire mutex) and check the fridge (re-check condition — another person may have taken the food first). If empty: register again. If food: take it.
 
 Where the analogy breaks down: in real condition variables, `signal()` with no registered receivers loses the notification. Unlike phone apps that show unread count, condition variable signals do not accumulate. This is why semaphores (which count signals) are used for producer-consumer variants where the consumer might not be waiting when the producer fires.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -138,6 +152,8 @@ Java `Object.wait()` / `notify()` are tied to the monitor (implicit mutex of syn
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The condition variable design directly implements the monitor abstraction from Hoare (1974). The critical requirement is atomicity of "release mutex + block" — without it, there is a window where: (1) thread A releases mutex, (2) thread B acquires mutex, adds item, signals (no one waiting yet), (3) thread A goes to sleep (never woken). The condvar's internal lock prevents this race by making the "add to wait queue" step visible to the signaller before the mutex is released. Java's `Object.wait()` and `notifyAll()` are a simplified version of Hoare monitors that avoid condition variable stacks (threads go back to waiting for the monitor, not back to the condition) — this is why `while (!condition) wait()` is required rather than `if`.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -168,6 +184,8 @@ The condition variable design directly implements the monitor abstraction from H
 │  4. mutex.unlock()                                     │
 └────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
@@ -206,6 +224,8 @@ public E take() throws InterruptedException {
     }
 }
 ```
+
+---
 
 ### 💻 Code Example
 
@@ -281,6 +301,8 @@ public class SimpleBlockingQueue<T> {
 // different conditions are waited on (avoids lost signal)
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Primitive                | Signal Queued?       | Ownership       | Best For                                             |
@@ -290,6 +312,8 @@ public class SimpleBlockingQueue<T> {
 | CountDownLatch           | N/A (decremented)    | None            | One-time "wait for N events"                         |
 | Future/CompletableFuture | N/A                  | None            | Wait for one async result                            |
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                 | Reality                                                                                                                                                                                                                          |
@@ -298,6 +322,8 @@ public class SimpleBlockingQueue<T> {
 | "notifyAll is always correct over notify"     | notifyAll wakes all waiting threads; they all compete; with a single condition, one proceeds, others re-wait. It's safe but may have thundering herd overhead. Use notify only if ALL waiting threads would handle the condition |
 | "signal() is remembered if no one is waiting" | No — signals on a condition variable are lost if no thread is waiting. This is why Semaphore (which counts) is different from Condition (which doesn't)                                                                          |
 | "Condition variable without mutex is fine"    | Always wrong — the atomicity of "check condition + wait" requires the mutex; without it, there's a lost-signal race condition                                                                                                    |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -331,6 +357,8 @@ Root Cause: Two different conditions (notFull and notEmpty) using the same `wait
 
 Fix: Use `notifyAll()` to wake all waiters; or use two separate Condition objects (`notFull` and `notEmpty`) with `ReentrantLock` and call the correct `signal()`.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -350,6 +378,8 @@ Fix: Use `notifyAll()` to wake all waiters; or use two separate Condition object
 - `Semaphore` — stores signal count; correct when producer may signal before consumer starts waiting
 - `CompletableFuture` — async equivalent; no blocking thread; signal = complete()
 - `SynchronousQueue` — rendez-vous: one producer and one consumer meet; no buffer
+
+---
 
 ### 📌 Quick Reference Card
 

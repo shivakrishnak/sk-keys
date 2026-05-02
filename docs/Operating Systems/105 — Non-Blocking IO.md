@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Non-Blocking I/O"
 parent: "Operating Systems"
@@ -28,6 +28,8 @@ tags:
 | **Used by:**    | epoll / kqueue / io_uring, Async I/O, Reactive Programming |                 |
 | **Related:**    | Blocking I/O, Async I/O, epoll / kqueue / io_uring         |                 |
 
+---
+
 ### 🔥 The Problem This Solves
 
 WORLD WITHOUT IT:
@@ -39,9 +41,13 @@ In 1999, the "C10K problem" paper formally documented that web servers couldn't 
 THE INVENTION MOMENT:
 This is exactly why Non-Blocking I/O was created — by setting `O_NONBLOCK` on a file descriptor, I/O operations return instantly with `EAGAIN` if no data is ready, freeing one thread to service all connections by checking which ones are ready.
 
+---
+
 ### 📘 Textbook Definition
 
 **Non-blocking I/O** is an I/O mode where syscalls such as `read()`, `write()`, `accept()`, and `connect()` on a file descriptor marked with `O_NONBLOCK` (or `SOCK_NONBLOCK`) return immediately, regardless of data availability. If the operation cannot be completed (no data to read, send buffer full), the syscall returns `-1` with `errno = EAGAIN` (or `EWOULDBLOCK`). The caller must retry later — typically by using a readiness-notification mechanism (`select`, `poll`, `epoll`, `kqueue`) to know when the descriptor is ready before attempting the operation again.
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -54,6 +60,8 @@ Non-blocking I/O asks "is there data?" — if not, it immediately says "no" and 
 
 **One insight:**
 Non-blocking I/O alone is insufficient — you need a multiplexer (epoll/kqueue) to efficiently tell you WHICH descriptors are ready without polling all of them in a loop. `O_NONBLOCK` + `epoll` is the combination that enables a single thread to handle 100,000 simultaneous connections.
+
+---
 
 ### 🔩 First Principles Explanation
 
@@ -69,6 +77,8 @@ Setting `O_NONBLOCK` via `fcntl(fd, F_SETFL, O_NONBLOCK)` changes the kernel's b
 THE TRADE-OFFS:
 Gain: One thread can multiplex thousands of connections; no wasted thread stacks; deterministic throughput.
 Cost: Code complexity increases dramatically — sequential code becomes a state machine; every operation must handle `EAGAIN`; partial reads/writes must be handled explicitly.
+
+---
 
 ### 🧪 Thought Experiment
 
@@ -96,6 +106,8 @@ WHAT HAPPENS WITH non-blocking I/O + epoll:
 THE INSIGHT:
 Non-blocking I/O + a multiplexer converts the "wait for one" model to a "which of many is ready?" model. This is the foundation of every high-performance server: Nginx, Node.js, Redis, Netty.
 
+---
+
 ### 🧠 Mental Model / Analogy
 
 > A restaurant with one experienced waiter who handles 20 tables. Each table's order (I/O) is placed with the kitchen. The waiter doesn't stand at any table waiting — they check each table quickly ("ready?"), skip tables still being cooked (EAGAIN), and attend to tables where food has arrived. `epoll` is the waiter's peripheral vision — telling them exactly which tables need attention without checking all 20.
@@ -106,6 +118,8 @@ Non-blocking I/O + a multiplexer converts the "wait for one" model to a "which o
 "Waiter stands at one table waiting" → blocking I/O model
 
 Where this analogy breaks down: In real event loops, the "waiter" processes one table at a time (single-threaded event loop); with CPU-bound tasks (heavy computation per event), this model stalls. Node.js worker threads address this.
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -120,6 +134,8 @@ In Java, use `java.nio.channels.SocketChannel` with `configureBlocking(false)`. 
 
 **Level 4 — Why it was designed this way (senior/staff):**
 The `O_NONBLOCK` flag design predates Linux — it's part of POSIX. The decision to use `EAGAIN` as the "not ready" signal (rather than returning 0) allows the caller to distinguish "no data yet" from "EOF" (which returns 0). `epoll`'s level-triggered default was chosen for correctness — edge-triggered is an optimisation that trades simplicity for performance, and edge-triggered bugs (missing data due to not fully draining a socket) are notoriously hard to debug. Linux `io_uring` supersedes `epoll` for most I/O: it submits and completes I/O asynchronously without any readiness-notification loop — the application never needs to handle `EAGAIN` at all.
+
+---
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -150,6 +166,8 @@ The `O_NONBLOCK` flag design predates Linux — it's part of POSIX. The decision
 - Level-triggered (default): `epoll_wait` returns as long as data is available. Safe but slightly less efficient.
 - Edge-triggered (`EPOLLET`): `epoll_wait` returns ONCE when state changes from "not ready" to "ready". Must read until `EAGAIN` to avoid missing data.
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NORMAL FLOW:
@@ -169,6 +187,8 @@ FAILURE PATH:
 
 WHAT CHANGES AT SCALE:
 At 1M concurrent connections (C1M problem), even epoll has overhead: 1M file descriptors × ~64 bytes kernel state = 64 MB. The main bottleneck shifts from thread memory to the OS scheduler and interrupt coalescing. Kernel bypass (DPDK, io_uring with registered buffers) eliminates the kernel event loop overhead entirely.
+
+---
 
 ### 💻 Code Example
 
@@ -223,6 +243,8 @@ while (1) {
 }
 ```
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach                 | Concurrency | Complexity | CPU Use (idle) | Best For                 |
@@ -235,6 +257,8 @@ while (1) {
 
 How to choose: Use epoll for high-connection Linux servers (Nginx/Node.js style). Use virtual threads for JVM services needing simplicity + scale. Use io_uring for maximum I/O throughput.
 
+---
+
 ### ⚠️ Common Misconceptions
 
 | Misconception                                        | Reality                                                                                                                |
@@ -244,6 +268,8 @@ How to choose: Use epoll for high-connection Linux servers (Nginx/Node.js style)
 | "EAGAIN means an error occurred"                     | EAGAIN means "operation would block, try later" — it's a normal status, not an error                                   |
 | "Edge-triggered epoll is safer than level-triggered" | Level-triggered is safer (harder to miss events); edge-triggered is faster but requires careful draining               |
 | "Node.js uses O_NONBLOCK everywhere"                 | Node.js uses libuv which uses epoll for network sockets; file I/O uses a thread pool (blocking) on Linux               |
+
+---
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -327,6 +353,8 @@ while (sent < len) {
 
 Prevention: Use a write-buffer abstraction that handles partial writes automatically; test with artificially small socket send buffers.
 
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -346,6 +374,8 @@ Prevention: Use a write-buffer abstraction that handles partial writes automatic
 - `Blocking I/O` — simpler code, one thread per connection, doesn't scale beyond ~10K connections
 - `Async I/O (io_uring)` — no EAGAIN handling needed; kernel completes I/O and notifies
 - `Virtual Threads (JDK 21)` — blocking I/O semantics with non-blocking scalability in the JVM
+
+---
 
 ### 📌 Quick Reference Card
 

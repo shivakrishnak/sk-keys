@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Circuit Breaker"
 parent: "Distributed Systems"
@@ -26,6 +26,8 @@ tags:
 | **Depends on:** | Timeout, Heartbeat, Failure Modes, Retry with Backoff                         |                 |
 | **Used by:**    | Service Mesh, Bulkhead, Fallback, Graceful Degradation, Hystrix, Resilience4j |                 |
 | **Related:**    | Retry with Backoff, Bulkhead, Fallback, Timeout, Graceful Degradation         |                 |
+
+---
 
 ### 🔥 The Problem This Solves
 
