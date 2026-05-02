@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #resilience, #microservices, #fault-tolerance
 
 ⚡ TL;DR — **Circuit Breaker** monitors calls to a downstream service and automatically "opens" (stops calls) when failures exceed a threshold — protecting the caller from slow/failed dependencies and giving the downstream time to recover.
 
-| #809 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Bulkhead Pattern, Microservices, Resilience4j, Distributed Systems | |
-| **Used by:** | Microservices resilience, API gateway, service mesh, fault tolerance | |
+| #809            | Category: Design Patterns                                            | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Bulkhead Pattern, Microservices, Resilience4j, Distributed Systems   |                 |
+| **Used by:**    | Microservices resilience, API gateway, service mesh, fault tolerance |                 |
 
 ---
 
@@ -54,28 +54,28 @@ STATE MACHINE:
   ├── Calls pass through to downstream
   ├── Failures recorded in sliding window
   └── Failure rate > threshold → transition to OPEN
-  
+
   OPEN (fast-fail):
   ├── All calls immediately rejected (CallNotPermittedException)
   ├── Fallback invoked (if configured)
   ├── Wait duration timer starts
   └── Wait duration expires → transition to HALF-OPEN
-  
+
   HALF-OPEN (testing recovery):
   ├── Limited calls permitted (permittedNumberOfCallsInHalfOpenState)
   ├── If all test calls succeed → transition to CLOSED
   └── If any test call fails → transition to OPEN
-  
+
 SLIDING WINDOW TYPES:
 
   COUNT_BASED:
   Last N calls recorded. If failure rate in last N > threshold: open.
   Example: last 10 calls, 50% failure threshold → open if 5+ fail.
-  
+
   TIME_BASED:
   All calls in last N seconds recorded. If failure rate > threshold: open.
   Example: last 60 seconds, 50% failure threshold → open if >50% fail.
-  
+
   TIME_BASED is more appropriate for latency-sensitive services.
   COUNT_BASED is simpler and predictable for low-traffic services.
 
@@ -88,19 +88,19 @@ RESILIENCE4J CIRCUIT BREAKER CONFIGURATION:
           # Sliding window:
           slidingWindowType: COUNT_BASED
           slidingWindowSize: 10          # last 10 calls
-          
+
           # Thresholds:
           failureRateThreshold: 50       # open if 50%+ calls fail
           slowCallRateThreshold: 80      # open if 80%+ calls are slow
           slowCallDurationThreshold: 2s  # "slow" = > 2 seconds
-          
+
           # Recovery:
           waitDurationInOpenState: 30s   # wait 30s before HALF-OPEN
           permittedNumberOfCallsInHalfOpenState: 5   # test with 5 calls
-          
+
           # Minimum calls before evaluating:
           minimumNumberOfCalls: 5        # don't open on first failure
-          
+
           # Which exceptions count as failures:
           recordExceptions:
             - java.io.IOException
@@ -114,7 +114,7 @@ WHAT COUNTS AS FAILURE:
   ✓ Remote call takes longer than slowCallDurationThreshold
   ✗ Business validation exception (not a downstream failure)
   ✗ User not found (not a downstream failure — downstream responded correctly)
-  
+
   Configure recordExceptions and ignoreExceptions precisely.
   Misconfiguration: business exceptions incorrectly opening the circuit.
 
@@ -124,7 +124,7 @@ METRICS TO MONITOR:
   resilience4j_circuitbreaker_calls_total  (by kind: successful, failed, not_permitted)
   resilience4j_circuitbreaker_failure_rate
   resilience4j_circuitbreaker_slow_call_rate
-  
+
   Alert on: circuit breaker state = OPEN for > N minutes
   Alert on: failure rate > 30% (early warning before circuit opens)
 ```
@@ -134,6 +134,7 @@ METRICS TO MONITOR:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Circuit Breaker:
+
 - Callers keep hammering a failing service → threads fill up waiting → cascading failure
 - One downstream service failure cascades to total application failure
 
@@ -165,22 +166,22 @@ CIRCUIT BREAKER TIMING DIAGRAM:
   Downstream fails:  [OK][OK][FAIL][FAIL][FAIL][FAIL][FAIL]
                                    ↑ 5 failures in 10-call window
                                    → OPEN
-  
+
   Open state:        [REJECT][REJECT][REJECT]  ← fast-fail, no network calls
   (30-second wait)
-  
+
   Half-open:         [OK][OK][OK][OK][OK]     ← 5 test calls, all succeed
                                               → CLOSE
-  
+
   Normal resumed:    [OK][OK][OK][OK][OK]
-  
+
 COMBINED WITH FALLBACK:
 
   @CircuitBreaker(name = "inventory", fallbackMethod = "inventoryFallback")
   public InventoryStatus checkInventory(Long productId) {
       return inventoryService.check(productId);
   }
-  
+
   // Called in BOTH: OPEN state AND when exception occurs in CLOSED state
   public InventoryStatus inventoryFallback(Long productId, Exception ex) {
       if (ex instanceof CallNotPermittedException) {
@@ -219,7 +220,7 @@ Circuit Breaker Pattern ◄──── (you are here)
 
 @Configuration
 public class CircuitBreakerConfig {
-    
+
     @Bean
     public RegistryEventConsumer<CircuitBreaker> circuitBreakerEventConsumer(
             MeterRegistry registry, ApplicationEventPublisher events) {
@@ -227,7 +228,7 @@ public class CircuitBreakerConfig {
             @Override
             public void onEntryAddedEvent(EntryAddedEvent<CircuitBreaker> event) {
                 CircuitBreaker cb = event.getAddedEntry();
-                
+
                 // State transition events (for alerting):
                 cb.getEventPublisher()
                     .onStateTransition(e -> {
@@ -235,7 +236,7 @@ public class CircuitBreakerConfig {
                                  cb.getName(),
                                  e.getStateTransition().getFromState(),
                                  e.getStateTransition().getToState());
-                        
+
                         // Alert when circuit opens:
                         if (e.getStateTransition().getToState() == CircuitBreaker.State.OPEN) {
                             alertingService.sendAlert(
@@ -250,14 +251,14 @@ public class CircuitBreakerConfig {
 @Service @RequiredArgsConstructor @Slf4j
 public class InventoryFacade {
     private final ExternalInventoryService inventoryService;
-    
+
     @CircuitBreaker(name = "inventoryService", fallbackMethod = "fallback")
     @TimeLimiter(name = "inventoryService")   // 2s timeout
     @Retry(name = "inventoryService")         // 2 retries before circuit records failure
     public CompletableFuture<InventoryStatus> checkStock(Long productId) {
         return CompletableFuture.supplyAsync(() -> inventoryService.getStock(productId));
     }
-    
+
     // Fallback signature must match (+ Exception param):
     public CompletableFuture<InventoryStatus> fallback(Long productId, Exception ex) {
         log.warn("Inventory fallback for product {}: {}", productId, ex.getClass().getSimpleName());
@@ -271,11 +272,11 @@ public class InventoryFacade {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Circuit Breaker prevents all failures | Circuit Breaker prevents failure amplification (cascading). It does not prevent the underlying failure. When the circuit is OPEN, the downstream is still failing — the circuit breaker just stops your callers from waiting for failures. The underlying issue must be fixed independently; Circuit Breaker gives the system breathing room while repairs happen. |
-| Circuit Breaker replaces timeouts | Both are needed. Without a timeout: a slow response never triggers the circuit breaker's failure detection (it's waiting, not failing). Timeout makes slow responses into failures that the circuit breaker can count. Without a circuit breaker: each request still waits for the timeout. Together: timeout converts slow responses to failures; circuit breaker detects the pattern and fast-fails subsequent requests. |
-| Circuit Breaker in every service is always beneficial | Adding a circuit breaker adds complexity: configuration, tuning, monitoring, fallback behavior. For a simple internal service call with a fast SLA and low consequence of failure: a circuit breaker may add more complexity than benefit. Apply circuit breakers to: downstream dependencies that are slow, unreliable, or critical enough to cause cascading failure. Don't add to every method call indiscriminately. |
+| Misconception                                         | Reality                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Circuit Breaker prevents all failures                 | Circuit Breaker prevents failure amplification (cascading). It does not prevent the underlying failure. When the circuit is OPEN, the downstream is still failing — the circuit breaker just stops your callers from waiting for failures. The underlying issue must be fixed independently; Circuit Breaker gives the system breathing room while repairs happen.                                                         |
+| Circuit Breaker replaces timeouts                     | Both are needed. Without a timeout: a slow response never triggers the circuit breaker's failure detection (it's waiting, not failing). Timeout makes slow responses into failures that the circuit breaker can count. Without a circuit breaker: each request still waits for the timeout. Together: timeout converts slow responses to failures; circuit breaker detects the pattern and fast-fails subsequent requests. |
+| Circuit Breaker in every service is always beneficial | Adding a circuit breaker adds complexity: configuration, tuning, monitoring, fallback behavior. For a simple internal service call with a fast SLA and low consequence of failure: a circuit breaker may add more complexity than benefit. Apply circuit breakers to: downstream dependencies that are slow, unreliable, or critical enough to cause cascading failure. Don't add to every method call indiscriminately.   |
 
 ---
 

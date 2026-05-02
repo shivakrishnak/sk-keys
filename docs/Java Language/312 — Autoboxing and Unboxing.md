@@ -18,10 +18,10 @@ tags: #java, #primitives, #wrappers, #performance, #nullpointerexception
 
 ⚡ TL;DR — **Autoboxing** is automatic `int → Integer` conversion; **unboxing** is `Integer → int`. Convenient but hides heap allocations and NPE traps when the wrapper is `null`.
 
-| #312 | Category: Java Language | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Primitives, Integer Cache, Heap Memory | |
-| **Used by:** | Collections, Stream API, generics, arithmetic with wrapper types | |
+| #312            | Category: Java Language                                          | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Primitives, Integer Cache, Heap Memory                           |                 |
+| **Used by:**    | Collections, Stream API, generics, arithmetic with wrapper types |                 |
 
 ---
 
@@ -52,18 +52,18 @@ AUTOBOXING DESUGARING:
 
   Source:              Compiler generates:
   Integer i = 42;  →  Integer i = Integer.valueOf(42);
-  
+
   Integer.valueOf(int i):
   if (i >= -128 && i <= 127) {
       return IntegerCache.cache[i + 128];  // cached instance
   }
   return new Integer(i);  // new heap allocation
-  
+
 UNBOXING DESUGARING:
 
   Source:              Compiler generates:
   int j = i;       →  int j = i.intValue();
-  
+
   NullPointerException trap:
   Integer i = null;
   int j = i;       →  int j = i.intValue();  // NPE: i is null!
@@ -87,27 +87,27 @@ COMPARISON TRAP:
   Integer b = 1000;
   System.out.println(a == b);  // false! (both outside -128..127, different heap objects)
   System.out.println(a.equals(b)); // true (content comparison)
-  
+
   Integer a = 100;
   Integer b = 100;
   System.out.println(a == b);  // true (both from Integer Cache: same instance)
-  
+
   → ALWAYS use .equals() for Integer comparison (see Integer Cache #313)
 
 NULL UNBOXING NPE (COMMON BUG):
 
   Map<String, Integer> scores = new HashMap<>();
   scores.put("alice", null);  // intentional null
-  
+
   int aliceScore = scores.get("alice");  // NPE! unboxes null Integer → intValue() on null
-  
+
   // FIX 1: null check:
   Integer val = scores.get("alice");
   int aliceScore = (val != null) ? val : 0;
-  
+
   // FIX 2: Map.getOrDefault:
   int aliceScore = scores.getOrDefault("alice", 0);
-  
+
   // FIX 3: Optional:
   int aliceScore = Optional.ofNullable(scores.get("alice")).orElse(0);
 
@@ -118,7 +118,7 @@ PERFORMANCE-SENSITIVE CODE:
   for (int i = 0; i < 1_000_000; i++) {
       sum += i;  // unbox sum (longValue()) + i, then rebox result → 1M Long allocations
   }
-  
+
   // GOOD: primitive
   long sum = 0L;
   for (int i = 0; i < 1_000_000; i++) {
@@ -131,6 +131,7 @@ PERFORMANCE-SENSITIVE CODE:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Autoboxing:
+
 - Java generics work only with reference types (due to type erasure → Object)
 - `List<int>` is impossible; must use `List<Integer>` with manual boxing/unboxing
 - Verbose: `list.add(Integer.valueOf(42));`, `int x = list.get(0).intValue();`
@@ -163,7 +164,7 @@ JAVAP DISASSEMBLY — autoboxing/unboxing visible:
       Integer x = 42;      // autoboxing
       int y = x;           // unboxing
   }
-  
+
   Bytecode (javap -c):
   public void demo();
     Code:
@@ -236,11 +237,11 @@ int sumPrimitive = IntStream.rangeClosed(1, 1_000_000).sum();  // no boxing
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Autoboxing/unboxing has no performance cost | Each boxing creates a heap allocation (for values outside -128..127). In tight loops, this causes GC pressure. Benchmark: `Long sum = 0L; for(...) sum += i` is measurably slower than `long sum = 0L`. |
-| `Integer a = 100; Integer b = 100; a == b` is always true | Only for values in the Integer Cache range (-128..127). The cache range for `Integer` can be extended with `-XX:AutoBoxCacheMax`, but relying on this is fragile. Always use `.equals()`. |
-| Unboxing is safe if the list was populated with real integers | A `List<Integer>` can hold `null` (unlike `int[]`). If any entry is null and you iterate with `for (int x : list)`, you'll get NPE on the null entry. |
+| Misconception                                                 | Reality                                                                                                                                                                                                 |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Autoboxing/unboxing has no performance cost                   | Each boxing creates a heap allocation (for values outside -128..127). In tight loops, this causes GC pressure. Benchmark: `Long sum = 0L; for(...) sum += i` is measurably slower than `long sum = 0L`. |
+| `Integer a = 100; Integer b = 100; a == b` is always true     | Only for values in the Integer Cache range (-128..127). The cache range for `Integer` can be extended with `-XX:AutoBoxCacheMax`, but relying on this is fragile. Always use `.equals()`.               |
+| Unboxing is safe if the list was populated with real integers | A `List<Integer>` can hold `null` (unlike `int[]`). If any entry is null and you iterate with `for (int x : list)`, you'll get NPE on the null entry.                                                   |
 
 ---
 

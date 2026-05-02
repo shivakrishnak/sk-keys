@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #structural, #oop, #integration
 
 ⚡ TL;DR — **Adapter** converts the interface of a class into another interface that clients expect — like a travel plug adapter that lets a US plug work in a European socket, bridging incompatible interfaces without modifying either the client or the adaptee.
 
-| #771 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, SOLID Principles, Interface Segregation | |
-| **Used by:** | Legacy integration, Third-party libraries, API compatibility, Wrapping | |
+| #771            | Category: Design Patterns                                              | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, SOLID Principles, Interface Segregation   |                 |
+| **Used by:**    | Legacy integration, Third-party libraries, API compatibility, Wrapping |                 |
 
 ---
 
@@ -54,33 +54,33 @@ THE PROBLEM:
   interface MediaPlayer {
       void play(String audioType, String fileName);
   }
-  
+
   // CLIENT code uses MediaPlayer:
   class AudioPlayer {
       void playMusic(MediaPlayer player, String file) {
           player.play("mp3", file);
       }
   }
-  
+
   // ADAPTEE — third-party library with incompatible interface:
   class AdvancedMediaPlayer {
       void playVlc(String fileName) { ... }   // VLC files only
       void playMp4(String fileName) { ... }   // MP4 files only
   }
-  
+
   // Can't use AdvancedMediaPlayer as MediaPlayer — different interface!
   // Can't modify AdvancedMediaPlayer (third-party library).
-  
+
 OBJECT ADAPTER SOLUTION (composition):
 
   class MediaAdapter implements MediaPlayer {
       private final AdvancedMediaPlayer advanced;  // wraps the adaptee
-      
+
       MediaAdapter(String audioType) {
           // Select which adaptee implementation to wrap:
           this.advanced = new AdvancedMediaPlayer();
       }
-      
+
       @Override
       public void play(String audioType, String fileName) {
           // TRANSLATE: MediaPlayer.play() → AdvancedMediaPlayer.playVlc/playMp4()
@@ -91,31 +91,31 @@ OBJECT ADAPTER SOLUTION (composition):
           }
       }
   }
-  
+
   // Usage:
   MediaPlayer player = new MediaAdapter("vlc");
   player.play("vlc", "movie.vlc");  // works! adapter translates.
-  
+
 COORDINATE TRANSLATION ADAPTER:
 
   // Target interface — new system uses two-corner coordinates:
   interface Shape {
       void draw(int x1, int y1, int x2, int y2);  // (top-left, bottom-right)
   }
-  
+
   // Adaptee — legacy system uses origin + dimensions:
   class LegacyRectangle {
       void display(int x, int y, int width, int height) { ... }
   }
-  
+
   // Adapter — translates coordinate systems:
   class LegacyRectangleAdapter implements Shape {
       private final LegacyRectangle legacy;
-      
+
       LegacyRectangleAdapter(LegacyRectangle legacy) {
           this.legacy = legacy;
       }
-      
+
       @Override
       public void draw(int x1, int y1, int x2, int y2) {
           // Translate: (x1,y1,x2,y2) → (x, y, width, height)
@@ -126,38 +126,38 @@ COORDINATE TRANSLATION ADAPTER:
           legacy.display(x, y, width, height);
       }
   }
-  
+
 JAVA CLASS ADAPTER (interface-only — since Java has no multi-class inheritance):
 
   // Instead of holding a reference to adaptee, IMPLEMENT the adaptee's interface:
   // Useful when adaptee is an interface (e.g., java.util.Iterator vs legacy Enumeration)
-  
+
   class IteratorToEnumerationAdapter<T> implements Enumeration<T> {
       private final Iterator<T> iterator;
-      
+
       IteratorToEnumerationAdapter(Iterator<T> iterator) { this.iterator = iterator; }
-      
+
       @Override public boolean hasMoreElements() { return iterator.hasNext(); }
       @Override public T nextElement()           { return iterator.next(); }
   }
-  
+
 SPRING ADAPTER EXAMPLES:
 
   // Spring's HandlerAdapter — adapts different controller types to the same handler invocation:
   // Controller implements interface → HandlerAdapter bridges DispatcherServlet and the controller.
-  
+
   // Spring's HttpMessageConverter — adapts Java objects to/from HTTP request/response bodies:
   // Converts Object → JSON (Jackson), Object → XML, etc.
   // All implement HttpMessageConverter<T> — same interface — different serialization logic.
-  
+
 ADAPTER vs FACADE vs DECORATOR:
 
   Adapter:    "I have this interface, I need that interface." Translates incompatible interfaces.
               Wraps ONE class. Interface CHANGES.
-              
+
   Facade:     "This subsystem is complex. I want a simpler interface to it."
               Wraps MULTIPLE classes. Simplifies (not translates).
-              
+
   Decorator:  "I want to add behavior to this object."
               Same interface as wrapped object. ENHANCES without changing interface.
 ```
@@ -167,6 +167,7 @@ ADAPTER vs FACADE vs DECORATOR:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Adapter:
+
 - Can't use third-party / legacy class — incompatible interface
 - Must modify legacy code (risky) or duplicate it (violates DRY)
 
@@ -199,10 +200,10 @@ ADAPTER STRUCTURE (Object Adapter):
   +request()             +specificRequest()
       ▲                       ▲
       │                       │ (holds reference)
-  Adapter ──────────────────── 
+  Adapter ────────────────────
   +request()
       → adaptee.specificRequest()  (translation)
-      
+
   Client → Target interface → Adapter → Adaptee
 ```
 
@@ -245,23 +246,23 @@ class LegacyPaymentSystem {
 class LegacyPaymentAdapter implements PaymentGateway {
     private final LegacyPaymentSystem legacy;
     private final int merchantId;
-    
+
     LegacyPaymentAdapter(LegacyPaymentSystem legacy, int merchantId) {
         this.legacy = legacy;
         this.merchantId = merchantId;
     }
-    
+
     @Override
     public PaymentResult charge(String customerId, BigDecimal amount, Currency currency) {
         // TRANSLATE 1: BigDecimal → double in cents
         double cents = amount.multiply(BigDecimal.valueOf(100)).doubleValue();
-        
+
         // TRANSLATE 2: Currency → String code
         String currencyCode = currency.getCurrencyCode();
-        
+
         // DELEGATE to adaptee:
         String response = legacy.processPayment(merchantId, cents, currencyCode, customerId);
-        
+
         // TRANSLATE 3: legacy "SUCCESS:txn123" → PaymentResult object
         if (response.startsWith("SUCCESS:")) {
             return PaymentResult.success(response.substring(8));  // extract txnId
@@ -281,11 +282,11 @@ PaymentResult result = gateway.charge("cust-123", new BigDecimal("49.99"), USD);
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Adapter and Facade are the same thing | Key difference — intent and scope: Adapter makes an INCOMPATIBLE interface match an EXPECTED interface (translation). Facade SIMPLIFIES a complex subsystem with a new, simpler interface (abstraction). Adapter doesn't simplify — it translates. Facade doesn't translate — it simplifies. |
-| You can only adapt one class at a time | An adapter can wrap multiple adaptee classes internally if needed. However, typically an adapter targets one specific incompatible class or interface. If you're wrapping multiple subsystem classes into one interface, that's leaning toward a Facade. |
-| Adapter always requires creating a new class | In languages with first-class functions (or Java lambdas), adapter can be achieved with a lambda if the target interface is functional: `Shape shape = (x1, y1, x2, y2) -> legacyRect.display(x1, y1, x2-x1, y2-y1);` — no new class needed. |
+| Misconception                                | Reality                                                                                                                                                                                                                                                                                      |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Adapter and Facade are the same thing        | Key difference — intent and scope: Adapter makes an INCOMPATIBLE interface match an EXPECTED interface (translation). Facade SIMPLIFIES a complex subsystem with a new, simpler interface (abstraction). Adapter doesn't simplify — it translates. Facade doesn't translate — it simplifies. |
+| You can only adapt one class at a time       | An adapter can wrap multiple adaptee classes internally if needed. However, typically an adapter targets one specific incompatible class or interface. If you're wrapping multiple subsystem classes into one interface, that's leaning toward a Facade.                                     |
+| Adapter always requires creating a new class | In languages with first-class functions (or Java lambdas), adapter can be achieved with a lambda if the target interface is functional: `Shape shape = (x1, y1, x2, y2) -> legacyRect.display(x1, y1, x2-x1, y2-y1);` — no new class needed.                                                 |
 
 ---
 
@@ -298,7 +299,7 @@ PaymentResult result = gateway.charge("cust-123", new BigDecimal("49.99"), USD);
 // TemperatureLogger wants Celsius; LegacyThermometer returns Fahrenheit:
 class ThermometerAdapter implements TemperatureLogger {
     private final LegacyThermometer thermometer;
-    
+
     // BAD: "adapts" by just calling legacy — no unit conversion:
     public double getTemperature() {
         return thermometer.readFahrenheit();  // Returns 98.6°F — passed as if it's °C!

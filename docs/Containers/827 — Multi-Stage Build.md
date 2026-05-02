@@ -18,10 +18,10 @@ tags: #containers, #docker, #multi-stage, #build-optimization, #image-size
 
 ⚡ TL;DR — **Multi-stage builds** use multiple `FROM` instructions in one Dockerfile to separate build-time and runtime concerns. Build stage: install compilers, run tests, compile. Final stage: copy only the output artifact into a minimal image. Build tools, source code, and test dependencies are NOT in the final image. Result: 10-20x smaller images with no build tools attack surface.
 
-| #827 | Category: Containers | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Dockerfile, Docker Layer, Docker Build Context | |
-| **Used by:** | Container Registry, Kubernetes deployments, CI-CD pipelines | |
+| #827            | Category: Containers                                        | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------- | :-------------- |
+| **Depends on:** | Dockerfile, Docker Layer, Docker Build Context              |                 |
+| **Used by:**    | Container Registry, Kubernetes deployments, CI-CD pipelines |                 |
 
 ---
 
@@ -44,6 +44,7 @@ Multi-stage build: Stage 1 uses the Go image, compiles the binary. Stage 2 start
 Multi-stage builds solve the fundamental tension in container images: build-time needs (compilers, package managers, SDKs, test frameworks) vs runtime needs (minimal attack surface, small image, fast pull). Before multi-stage builds, teams maintained two Dockerfiles: one for building (large) and one for deploying (small), with a shell script to orchestrate: build → extract binary → build small image. Multi-stage builds collapse this into one Dockerfile, keeping the build/runtime separation without the complexity.
 
 Common pattern:
+
 - **Stage 1 (deps)**: install exact dependencies with lockfile (`npm ci`, `pip sync`)
 - **Stage 2 (builder)**: copy deps + source, compile/test, produce artifacts
 - **Stage 3 (runtime)**: copy ONLY artifacts into minimal base (alpine, distroless, scratch)
@@ -61,7 +62,7 @@ BEFORE MULTI-STAGE (anti-pattern):
   RUN npm install          ← installs dev + prod deps (300MB)
   RUN npm run build        ← TypeScript compile
   CMD ["node", "dist/server.js"]
-  
+
   Final image: ~1.2GB
   Contents: Node runtime + npm + TypeScript compiler + source code + test deps + dist/
   Security: TypeScript compiler and test dependencies in production? npm in production?
@@ -73,7 +74,7 @@ AFTER MULTI-STAGE:
   WORKDIR /app
   COPY package.json package-lock.json ./
   RUN npm ci --only=production   ← only production deps; no devDependencies
-  
+
   # Stage 2: build (has devDependencies for TypeScript)
   FROM node:18-alpine AS builder
   WORKDIR /app
@@ -82,7 +83,7 @@ AFTER MULTI-STAGE:
   COPY --from=deps /app/node_modules ./node_modules  ← wait, override with prod deps
   COPY src/ ./
   RUN npm run build              ← TypeScript compile → dist/
-  
+
   # Stage 3: minimal runtime (no TypeScript, no devDeps, no source)
   FROM node:18-alpine AS runtime
   RUN addgroup -S app && adduser -S app -G app
@@ -92,7 +93,7 @@ AFTER MULTI-STAGE:
   COPY package.json ./
   USER app
   CMD ["node", "dist/server.js"]
-  
+
   Final image: ~120MB (vs 1.2GB)
   Contents: Node runtime + prod node_modules + compiled JS
   Security: no TypeScript, no jest, no eslint, no source code in production
@@ -106,14 +107,14 @@ LANGUAGE-SPECIFIC PATTERNS:
   RUN go mod download              ← download dependencies
   COPY . .
   RUN CGO_ENABLED=0 GOOS=linux go build -o app .  ← static binary (no libc needed)
-  
+
   FROM scratch AS runtime          ← empty image (0 bytes base)
   COPY --from=builder /build/app /app
   EXPOSE 8080
   ENTRYPOINT ["/app"]
-  
+
   Final image: ~5MB (static binary only)
-  
+
   JAVA (Spring Boot):
   FROM eclipse-temurin:17-jdk-alpine AS builder
   WORKDIR /build
@@ -122,27 +123,27 @@ LANGUAGE-SPECIFIC PATTERNS:
   RUN ./mvnw dependency:go-offline -B
   COPY src/ src/
   RUN ./mvnw package -DskipTests -B
-  
+
   # Use JLink to create minimal JRE (only needed modules):
   RUN jlink --add-modules $(jdeps --ignore-missing-deps -q \
         --recursive --multi-release 17 \
         --print-module-deps /build/target/app.jar) \
       --no-header-files --no-man-pages \
       --compress=2 --output /jre
-  
+
   FROM debian:11-slim AS runtime
   COPY --from=builder /jre /jre
   COPY --from=builder /build/target/app.jar /app.jar
   ENV JAVA_HOME=/jre
   ENTRYPOINT ["/jre/bin/java", "-jar", "/app.jar"]
   # Final: ~120MB vs ~350MB (JDK) vs ~180MB (JRE)
-  
+
   PYTHON:
   FROM python:3.11-slim AS builder
   WORKDIR /app
   COPY requirements.txt .
   RUN pip install --user --no-cache-dir -r requirements.txt  ← to ~/.local/
-  
+
   FROM python:3.11-slim AS runtime
   WORKDIR /app
   COPY --from=builder /root/.local /root/.local  ← copy installed packages
@@ -155,10 +156,10 @@ PARTIAL BUILDS (target a specific stage):
   # Build and test in CI without creating final image:
   docker build --target builder -t myapp-builder:latest .
   docker run myapp-builder:latest npm test  ← run tests in builder stage
-  
+
   # If tests pass, build the final image:
   docker build --target runtime -t myapp:latest .
-  
+
   # Parallel stage builds (BuildKit automatically parallelizes independent stages)
 
 COPY --from external registry:
@@ -267,11 +268,11 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Each stage starts fresh (no layer cache from previous stages) | Each stage independently caches its layers based on its `FROM` image + instructions. The `python:3.11-slim` base layer in the runtime stage is cached and reused across builds. Cache works per-stage. |
-| COPY --from copies the entire stage's filesystem | `COPY --from=builder /app/dist ./dist` copies only the specified path (`/app/dist`). You must explicitly specify what to copy — there's no automatic "copy everything from stage." |
-| Multi-stage builds slow down the build | BuildKit builds independent stages in parallel. Stages that don't depend on each other run simultaneously. Multi-stage can actually be faster than single-stage by parallelizing dependency installation and compilation. |
+| Misconception                                                 | Reality                                                                                                                                                                                                                   |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Each stage starts fresh (no layer cache from previous stages) | Each stage independently caches its layers based on its `FROM` image + instructions. The `python:3.11-slim` base layer in the runtime stage is cached and reused across builds. Cache works per-stage.                    |
+| COPY --from copies the entire stage's filesystem              | `COPY --from=builder /app/dist ./dist` copies only the specified path (`/app/dist`). You must explicitly specify what to copy — there's no automatic "copy everything from stage."                                        |
+| Multi-stage builds slow down the build                        | BuildKit builds independent stages in parallel. Stages that don't depend on each other run simultaneously. Multi-stage can actually be faster than single-stage by parallelizing dependency installation and compilation. |
 
 ---
 
@@ -282,21 +283,21 @@ PITFALL: forgetting to COPY runtime dependencies (only copying binary)
 
   FROM golang:1.21 AS builder
   RUN go build -o app .
-  
+
   FROM scratch
   COPY --from=builder /build/app /app
   ENTRYPOINT ["/app"]
-  
+
   # If app uses dynamic linking (e.g., uses CGO or net package without DNS override):
   # → /app fails: "no such file or directory" (missing libc, libpthread, etc.)
-  
+
   # FIX 1: static build (CGO disabled)
   RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o app .
-  
+
   # FIX 2: use distroless/static (includes glibc for dynamic binaries)
   FROM gcr.io/distroless/static-debian11
   COPY --from=builder /build/app /app
-  
+
   # FIX 3: alpine (has musl libc, small but has a libc)
   FROM alpine:3.18
   COPY --from=builder /build/app /app
@@ -306,10 +307,10 @@ PITFALL: not testing in the builder stage before building final image
   # ❌ Tests never run; broken code deployed
   FROM builder AS test
   RUN npm test     ← add this stage
-  
+
   FROM runtime
   # ...
-  
+
   # CI: run tests explicitly before final build:
   docker build --target test -t myapp-test .   ← fails if tests fail
   docker build --target runtime -t myapp:$VERSION .  ← only runs after test passes

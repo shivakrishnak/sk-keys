@@ -18,10 +18,10 @@ tags: #testing, #integration-test, #testcontainers, #spring-boot-test, #database
 
 ⚡ TL;DR — An **integration test** verifies that multiple components work together correctly — typically testing a service with its real database, real HTTP clients, or real message broker. Slower than unit tests (seconds to minutes) but catches issues that unit tests can't: SQL query correctness, ORM mapping errors, real network behavior. In Java/Spring Boot: `@SpringBootTest` + Testcontainers (real PostgreSQL in Docker during tests).
 
-| #1132 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, Maven Lifecycle | |
-| **Used by:** | Contract Test, E2E Test, Testcontainers, Spring Boot Test | |
+| #1132           | Category: Testing                                         | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------- | :-------------- |
+| **Depends on:** | Unit Test, Maven Lifecycle                                |                 |
+| **Used by:**    | Contract Test, E2E Test, Testcontainers, Spring Boot Test |                 |
 
 ---
 
@@ -46,6 +46,7 @@ Integration tests live between unit tests and E2E tests:
 - **E2E test**: full production-like environment with real UI/API → slowest but most realistic
 
 **What integration tests catch that unit tests miss**:
+
 - SQL query bugs (wrong joins, missing indexes, constraint violations)
 - JPA mapping errors (wrong column names, type mismatches)
 - Transaction behavior (does rolling back actually undo the inserts?)
@@ -67,17 +68,17 @@ Integration tests live between unit tests and E2E tests:
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 class OrderIT {
-    
+
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
         .withDatabaseName("testdb")
         .withUsername("testuser")
         .withPassword("testpass");
-    
+
     @Container
     static GenericContainer<?> redis = new GenericContainer<>("redis:7-alpine")
         .withExposedPorts(6379);
-    
+
     @DynamicPropertySource   // override Spring properties with container-specific values
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
@@ -86,13 +87,13 @@ class OrderIT {
         registry.add("spring.redis.host", redis::getHost);
         registry.add("spring.redis.port", () -> redis.getMappedPort(6379));
     }
-    
+
     @Autowired
     private TestRestTemplate restTemplate;  // real HTTP client to the running app
-    
+
     @Autowired
     private OrderRepository orderRepository;
-    
+
     @Test
     @DisplayName("POST /orders creates order and persists to database")
     void createOrder_persistsToDatabase() {
@@ -100,28 +101,28 @@ class OrderIT {
         CreateOrderRequest request = new CreateOrderRequest("Widget", 2, 49.99);
         ResponseEntity<OrderResponse> response = restTemplate.postForEntity(
             "/orders", request, OrderResponse.class);
-        
+
         // ASSERT: HTTP response
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody().getId()).isNotNull();
-        
+
         // ASSERT: data actually persisted to real PostgreSQL
         Optional<Order> saved = orderRepository.findById(response.getBody().getId());
         assertThat(saved).isPresent();
         assertThat(saved.get().getProductName()).isEqualTo("Widget");
         assertThat(saved.get().getQuantity()).isEqualTo(2);
     }
-    
+
     @Test
     @Transactional  // rollback after test
     void updateOrder_transactionRollback_onError() {
         // Test transaction boundary behavior
         Order order = orderRepository.save(new Order("Widget", 1, 49.99));
-        
+
         // simulate error mid-transaction
         assertThatThrownBy(() -> orderService.updateOrderWithError(order.getId()))
             .isInstanceOf(ServiceException.class);
-        
+
         // verify rollback: order status unchanged
         Order fromDb = orderRepository.findById(order.getId()).orElseThrow();
         assertThat(fromDb.getStatus()).isEqualTo(OrderStatus.PENDING);
@@ -132,14 +133,14 @@ class OrderIT {
 @DataJpaTest  // loads only JPA/Hibernate; auto-configures H2 or TestContainers
 @Testcontainers
 class OrderRepositoryIT {
-    
+
     @Container
     @ServiceConnection  // Spring Boot 3.1+: auto-configures datasource from container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine");
-    
+
     @Autowired
     private OrderRepository orderRepository;
-    
+
     @Test
     @DisplayName("findByCustomerId returns only that customer's orders")
     void findByCustomerId_returnsCorrectOrders() {
@@ -147,10 +148,10 @@ class OrderRepositoryIT {
         orderRepository.save(new Order("customer-1", "Widget", 1));
         orderRepository.save(new Order("customer-1", "Gadget", 2));
         orderRepository.save(new Order("customer-2", "Thing", 3));
-        
+
         // ACT
         List<Order> orders = orderRepository.findByCustomerId("customer-1");
-        
+
         // ASSERT
         assertThat(orders).hasSize(2);
         assertThat(orders).extracting(Order::getProductName)
@@ -161,13 +162,13 @@ class OrderRepositoryIT {
 // PATTERN 3: @WebMvcTest - only web layer (controller + serialization)
 @WebMvcTest(OrderController.class)
 class OrderControllerIT {
-    
+
     @Autowired
     private MockMvc mockMvc;       // MockMvc: HTTP requests without starting real server
-    
+
     @MockBean
     private OrderService orderService;  // mock the service layer
-    
+
     @Test
     void createOrder_invalidInput_returns400() throws Exception {
         // Test: controller validation + error response format
@@ -177,12 +178,12 @@ class OrderControllerIT {
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.error").exists());
     }
-    
+
     @Test
     void createOrder_validInput_callsServiceAndReturns201() throws Exception {
         when(orderService.create(any()))
             .thenReturn(new Order(UUID.randomUUID(), "Widget", 1));
-        
+
         mockMvc.perform(post("/orders")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"productName\": \"Widget\", \"quantity\": 1}"))
@@ -196,16 +197,16 @@ class OrderControllerIT {
 INTEGRATION TEST SCOPE SPECTRUM:
 
   Narrow ←────────────────────────────────────→ Broad
-  
+
   @DataJpaTest        @SpringBootTest(MOCK)        @SpringBootTest(RANDOM_PORT)
   (JPA only,         (full context,              (full context,
    no web,            MockMvc,                    real HTTP server,
    fastest)           medium speed)               slowest)
-  
+
   Tests: SQL queries  Tests: MVC + service        Tests: full stack including
          ORM mapping         HTTP contract              actual HTTP
          transactions        serialization              multiple services
-  
+
   TESTCONTAINERS BENEFIT:
   - Real PostgreSQL (not H2) → catches dialect-specific SQL
   - Real Redis → catches serialization, TTL, eviction behavior
@@ -215,7 +216,7 @@ INTEGRATION TEST SCOPE SPECTRUM:
 MAVEN CONVENTION:
   Unit tests:           *Test.java → maven-surefire-plugin → test phase
   Integration tests:    *IT.java  → maven-failsafe-plugin  → integration-test phase
-  
+
   Run unit only:        mvn test
   Run all:              mvn verify
   Run integration only: mvn failsafe:integration-test (rarely done)
@@ -260,27 +261,27 @@ Integration Test ◄── (you are here)
 @SpringBootTest
 @Testcontainers
 class ProductServiceIT {
-    
+
     @Container
     @ServiceConnection
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine");
     // @ServiceConnection auto-configures spring.datasource.* from the container
     // No @DynamicPropertySource needed!
-    
-    @Container  
+
+    @Container
     @ServiceConnection
     static RedisContainer redis = new RedisContainer("redis:7-alpine");
-    
+
     @Autowired
     private ProductService productService;
-    
+
     @Test
     void getProduct_cachesResult_reducesDbCalls() {
         // First call: hits database
         Product first = productService.getById("prod-123");
         // Second call: should hit Redis cache
         Product second = productService.getById("prod-123");
-        
+
         assertThat(first).isEqualTo(second);
         // Verify caching worked: second call didn't go to DB
         // (verify via metrics or spy on the repository)
@@ -292,11 +293,11 @@ class ProductServiceIT {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                                | Reality                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Integration tests should always use an in-memory H2 database | H2 has different SQL dialect, different constraint behavior, different type handling than PostgreSQL/MySQL. Tests passing with H2 can fail with the real database. Testcontainers makes it easy to test with the actual database. Use H2 for ultra-fast smoke tests only when real DB behavior is not important. |
-| `@SpringBootTest` is the only way to write integration tests | `@DataJpaTest`, `@WebMvcTest`, `@DataMongoTest` etc. are "slice tests" that load only the relevant layer. They start faster (smaller context) and are appropriate for testing specific layers. Use `@SpringBootTest` only when you need the full application context. |
-| All integration tests must test the full stack | Integration tests exist on a spectrum. A repository test (`@DataJpaTest`) that tests SQL queries against a real database is an integration test, even without a web layer. Choose the appropriate scope: don't use `@SpringBootTest` (full context) when `@DataJpaTest` (JPA-only) is sufficient. |
+| `@SpringBootTest` is the only way to write integration tests | `@DataJpaTest`, `@WebMvcTest`, `@DataMongoTest` etc. are "slice tests" that load only the relevant layer. They start faster (smaller context) and are appropriate for testing specific layers. Use `@SpringBootTest` only when you need the full application context.                                            |
+| All integration tests must test the full stack               | Integration tests exist on a spectrum. A repository test (`@DataJpaTest`) that tests SQL queries against a real database is an integration test, even without a web layer. Choose the appropriate scope: don't use `@SpringBootTest` (full context) when `@DataJpaTest` (JPA-only) is sufficient.                |
 
 ---
 

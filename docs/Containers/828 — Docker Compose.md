@@ -18,10 +18,10 @@ tags: #containers, #docker, #docker-compose, #multi-container, #local-dev
 
 ⚡ TL;DR — **Docker Compose** is a tool for defining and running multi-container applications. A `compose.yaml` file declares all services (app, database, cache, message broker) with their images, ports, volumes, networks, and environment variables. `docker compose up` starts the entire environment; `docker compose down` tears it down. Primary use: local development and integration testing where spinning up the full stack (app + dependencies) replaces "it works on my machine" problems.
 
-| #828 | Category: Containers | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Docker, Dockerfile, Docker Image | |
-| **Used by:** | Local development environments, integration testing, CI pipelines | |
+| #828            | Category: Containers                                              | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Docker, Dockerfile, Docker Image                                  |                 |
+| **Used by:**    | Local development environments, integration testing, CI pipelines |                 |
 
 ---
 
@@ -57,7 +57,7 @@ Docker Compose solves the local development problem: production services depend 
 compose.yaml STRUCTURE:
 
   version: "3.9"     ← deprecated; Compose v2 doesn't need this
-  
+
   services:          ← each service = one container (or scaled set)
     app:             ← service name (also: hostname on the default network)
       build:         ← build from Dockerfile (alternative to image:)
@@ -84,7 +84,7 @@ compose.yaml STRUCTURE:
       networks:
         - backend
       restart: unless-stopped
-    
+
     postgres:
       image: postgres:15-alpine
       environment:
@@ -104,7 +104,7 @@ compose.yaml STRUCTURE:
         start_period: 10s
       networks:
         - backend
-    
+
     redis:
       image: redis:7-alpine
       ports:
@@ -114,7 +114,7 @@ compose.yaml STRUCTURE:
       command: redis-server --appendonly yes   ← override default CMD
       networks:
         - backend
-    
+
     worker:
       build: .
       command: ["node", "dist/worker.js"]    ← override CMD from Dockerfile
@@ -127,11 +127,11 @@ compose.yaml STRUCTURE:
         replicas: 2       ← run 2 worker containers
       networks:
         - backend
-  
+
   volumes:             ← named volumes (persist across down/up)
     postgres-data:
     redis-data:
-  
+
   networks:            ← custom network (default: bridge)
     backend:
       driver: bridge
@@ -140,7 +140,7 @@ COMPOSE FILE OVERRIDE (compose.override.yaml):
 
   # docker compose up automatically merges this with compose.yaml
   # Use for: dev-only settings (debug ports, volume mounts, relaxed auth)
-  
+
   services:
     app:
       environment:
@@ -149,7 +149,7 @@ COMPOSE FILE OVERRIDE (compose.override.yaml):
       volumes:
         - .:/app           ← dev: mount source for hot-reload
       command: ["npm", "run", "dev"]   ← override prod CMD with dev server
-    
+
     postgres:
       ports:
         - "5432:5432"   ← expose in dev; not in prod compose
@@ -179,11 +179,11 @@ NETWORKING: service discovery
 
   # All services in same Compose project are on the same network
   # Services can reach each other via service name (DNS resolution)
-  
+
   # From 'app' container:
   psql -h postgres -U postgres mydb   ← 'postgres' resolves to postgres container IP
   redis-cli -h redis                  ← 'redis' resolves to redis container IP
-  
+
   # NOT localhost! The app cannot reach postgres via localhost:5432
   # Each container has its own network namespace
 ```
@@ -254,7 +254,7 @@ services:
       target: dev
     ports:
       - "8080:8080"
-      - "5005:5005"    # JVM remote debug port
+      - "5005:5005" # JVM remote debug port
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/appdb
       SPRING_DATASOURCE_USERNAME: appuser
@@ -263,7 +263,7 @@ services:
       SPRING_REDIS_HOST: redis
       JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     volumes:
-      - ./target:/app/target    # hot-reload with Spring DevTools
+      - ./target:/app/target # hot-reload with Spring DevTools
     depends_on:
       postgres:
         condition: service_healthy
@@ -312,7 +312,11 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     healthcheck:
-      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092"]
+      test:
+        [
+          "CMD-SHELL",
+          "kafka-broker-api-versions --bootstrap-server localhost:9092",
+        ]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -325,11 +329,11 @@ volumes:
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `depends_on` waits until the service is READY | By default, `depends_on` only waits until the container STARTS (not until the process is ready). For databases, use `condition: service_healthy` with a `healthcheck:` to actually wait until ready. Without this, the app starts before PostgreSQL is accepting connections. |
-| Docker Compose is for production | Compose is for single-host local dev and testing. It has no auto-restart for failed nodes, no cross-host networking, no zero-downtime deployments, no autoscaling. Use Kubernetes for production. Docker Swarm (built on Compose file format) handles multi-host but is largely deprecated in favor of Kubernetes. |
-| Stopping Compose removes data | `docker compose down` removes containers and networks but NOT named volumes. `docker compose down -v` is required to also remove volumes. This is intentional: you don't lose your database data when restarting the stack. |
+| Misconception                                 | Reality                                                                                                                                                                                                                                                                                                            |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `depends_on` waits until the service is READY | By default, `depends_on` only waits until the container STARTS (not until the process is ready). For databases, use `condition: service_healthy` with a `healthcheck:` to actually wait until ready. Without this, the app starts before PostgreSQL is accepting connections.                                      |
+| Docker Compose is for production              | Compose is for single-host local dev and testing. It has no auto-restart for failed nodes, no cross-host networking, no zero-downtime deployments, no autoscaling. Use Kubernetes for production. Docker Swarm (built on Compose file format) handles multi-host but is largely deprecated in favor of Kubernetes. |
+| Stopping Compose removes data                 | `docker compose down` removes containers and networks but NOT named volumes. `docker compose down -v` is required to also remove volumes. This is intentional: you don't lose your database data when restarting the stack.                                                                                        |
 
 ---
 
@@ -340,7 +344,7 @@ PITFALL: .env file with real secrets committed to git
 
   # .env (auto-loaded by docker compose):
   POSTGRES_PASSWORD=mypassword123    ← if committed to git → secret exposure
-  
+
   # FIX:
   echo ".env" >> .gitignore          ← never commit .env
   cp .env.example .env               ← developers copy and fill in their own values
@@ -354,7 +358,7 @@ PITFALL: bind mount overwrites container's installed dependencies
       volumes:
         - .:/app    ← bind mounts entire project, including host's (empty) node_modules
         # host node_modules overwrites container's node_modules → app breaks
-  
+
   # FIX: anonymous volume for node_modules takes precedence over bind mount
       volumes:
         - .:/app

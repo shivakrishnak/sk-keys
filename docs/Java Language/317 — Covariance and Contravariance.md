@@ -18,10 +18,10 @@ tags: #java, #generics, #covariance, #contravariance, #type-theory, #wildcards
 
 ⚡ TL;DR — **Covariance** preserves subtype order (`Dog[]` is `Animal[]`); **contravariance** reverses it (`Consumer<Animal>` is usable as `Consumer<Dog>`). Java arrays are covariant (unsafely); generics are invariant; wildcards simulate both.
 
-| #317 | Category: Java Language | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Generics, Bounded Wildcards, Type Erasure, Inheritance | |
-| **Used by:** | Generics API design, Comparator, Function, Kotlin in/out, type systems | |
+| #317            | Category: Java Language                                                | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Generics, Bounded Wildcards, Type Erasure, Inheritance                 |                 |
+| **Used by:**    | Generics API design, Comparator, Function, Kotlin in/out, type systems |                 |
 
 ---
 
@@ -53,12 +53,12 @@ COVARIANCE (arrays — unsafe):
   class Animal {}
   class Dog extends Animal {}
   class Cat extends Animal {}
-  
+
   Dog[] dogs = new Dog[1];
   Animal[] animals = dogs;    // OK: Dog[] IS-A Animal[] (covariant)
   animals[0] = new Cat();     // Compiles! But runtime: ArrayStoreException
   // JVM checks element type at array store time — runtime safety check
-  
+
   // This is the "array covariance problem" — subtype relationship allows type-unsafe writes
 
 INVARIANCE (generics — safe):
@@ -66,7 +66,7 @@ INVARIANCE (generics — safe):
   List<Dog> dogList = new ArrayList<>();
   List<Animal> animalList = dogList;  // COMPILE ERROR: invariant generics
   // Prevents: animalList.add(new Cat()) → ClassCastException later
-  
+
   // Invariant: List<Dog> and List<Animal> are UNRELATED types
   // (even though Dog extends Animal)
 
@@ -75,7 +75,7 @@ COVARIANCE VIA WILDCARD (? extends — read-only):
   List<? extends Animal> covariantList = dogList;  // OK: covariant reference
   Animal a = covariantList.get(0);   // safe: always an Animal (or subtype)
   covariantList.add(new Dog());      // COMPILE ERROR: write unsafe (unknown exact subtype)
-  
+
   // Use case: reading from collection; method that processes any Animal list
   static void processAnimals(List<? extends Animal> animals) {
       for (Animal a : animals) a.makeSound();  // read only ✓
@@ -87,13 +87,13 @@ CONTRAVARIANCE VIA WILDCARD (? super — write-safe):
 
   // Contravariance: if B extends A, Consumer<A> is a Consumer<B>
   // A method that processes Animals can certainly process Dogs (more specific)
-  
+
   List<? super Dog> contravariantList = new ArrayList<Animal>();  // OK
   contravariantList.add(new Dog());     // safe: whatever supertype it is, accepts Dog
   contravariantList.add(new Husky());   // safe: Husky extends Dog ✓
   Animal a = contravariantList.get(0);  // COMPILE ERROR: type is ? super Dog (might be Object)
   Object o = contravariantList.get(0);  // OK: everything is Object
-  
+
   // Real example: Comparator<? super T>
   // A Comparator<Animal> can compare Dogs (knows how to compare all Animals)
   Comparator<Animal> byName = Comparator.comparing(Animal::getName);
@@ -103,7 +103,7 @@ CONTRAVARIANCE VIA WILDCARD (? super — write-safe):
 FUNCTION VARIANCE:
 
   // Function<A, B>: contravariant in A (input), covariant in B (output)
-  
+
   Function<Object, Dog> objectToDog = obj -> new Dog();
   Function<String, Animal> stringToAnimal = objectToDog;
   // Wait — is this valid? Let's check:
@@ -112,7 +112,7 @@ FUNCTION VARIANCE:
   // Output: Dog is more specific than Animal
   //   → Function<..., Dog> returns Dog, which IS-A Animal (covariance ✓)
   // Result: Function<Object, Dog> can be used as Function<String, Animal>
-  
+
   // Java functional types (Kotlin is explicit):
   // java.util.function.Function<? super T, ? extends R> — PECS applied to Function
 
@@ -120,15 +120,15 @@ KOTLIN DECLARATION-SITE VARIANCE:
 
   // Java: use-site variance (wildcards at each use site)
   // Kotlin: declaration-site variance (in/out modifiers on class declaration)
-  
+
   // Covariant producer (Kotlin):
   interface Producer<out T> { fun produce(): T }  // out T = covariant
   // Producer<Dog> IS-A Producer<Animal>
-  
+
   // Contravariant consumer (Kotlin):
   interface Consumer<in T> { fun consume(item: T) }  // in T = contravariant
   // Consumer<Animal> IS-A Consumer<Dog>
-  
+
   // In Java: must redeclare ? extends / ? super at each use site
   // In Kotlin: declared once on the class = cleaner for consistently covariant/contravariant types
 ```
@@ -138,6 +138,7 @@ KOTLIN DECLARATION-SITE VARIANCE:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT understanding variance:
+
 - Overly restrictive generic APIs (exact types only: `Comparator<Dog>` doesn't work for `List<Husky>`)
 - Array covariance bugs: `ArrayStoreException` at runtime
 - PECS rules seem arbitrary without variance theory
@@ -168,19 +169,19 @@ VARIANCE SUMMARY TABLE:
   List<Dog>    | NOT List<Animal>          | Java generics — invariant by default
   List<Dog> IS | List<? extends Animal>   | ? extends = covariant reading
   List<Anim> IS| List<? super Dog>         | ? super = contravariant writing
-  
+
   LISKOV CHECK FOR COVARIANT PARAMETER (WHY IT'S UNSAFE):
-  
+
   class Animal { void eat(Animal food); }
   class Dog extends Animal {
       // If covariant: void eat(Dog food)  ← UNSAFE: breaks LSP
       // Dog.eat(Dog) is MORE restrictive than Animal.eat(Animal)
       // → violates Liskov: Dog can't be used where Animal is expected
   }
-  
+
   Covariant RETURN type: safe (more specific return = always satisfies "is-a")
   Covariant PARAMETER type: unsafe (more restrictive parameter breaks substitutability)
-  
+
   Java: return types are covariant (allowed to narrow return type in subclass)
   Java: parameter types are invariant (same signature required for overriding)
 ```
@@ -240,11 +241,11 @@ System.out.println(words);  // [apple, banana, cherry]
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Java arrays being covariant is good design | Array covariance in Java is widely considered a design mistake. It provides no useful feature (generics `? extends` solve the same problem safely) while enabling `ArrayStoreException` at runtime. It exists for backward compatibility with Java 1.0 before generics existed. |
-| Contravariance means reversing method behavior | Contravariance is a subtype relationship — `Consumer<Animal>` is substitutable where `Consumer<Dog>` is expected (because Animal is "bigger" — can do more). It doesn't reverse behavior; it reverses the direction of the subtype relationship for that parameterized type. |
-| Java generics are always invariant | Java generics are invariant by default. Wildcards (`? extends`, `? super`) provide use-site covariance and contravariance. Declaration-site variance (like Kotlin's `in`/`out`) is not available in Java — each use site must declare its variance. |
+| Misconception                                  | Reality                                                                                                                                                                                                                                                                         |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Java arrays being covariant is good design     | Array covariance in Java is widely considered a design mistake. It provides no useful feature (generics `? extends` solve the same problem safely) while enabling `ArrayStoreException` at runtime. It exists for backward compatibility with Java 1.0 before generics existed. |
+| Contravariance means reversing method behavior | Contravariance is a subtype relationship — `Consumer<Animal>` is substitutable where `Consumer<Dog>` is expected (because Animal is "bigger" — can do more). It doesn't reverse behavior; it reverses the direction of the subtype relationship for that parameterized type.    |
+| Java generics are always invariant             | Java generics are invariant by default. Wildcards (`? extends`, `? super`) provide use-site covariance and contravariance. Declaration-site variance (like Kotlin's `in`/`out`) is not available in Java — each use site must declare its variance.                             |
 
 ---
 

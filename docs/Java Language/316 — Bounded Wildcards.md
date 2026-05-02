@@ -18,16 +18,16 @@ tags: #java, #generics, #wildcards, #pecs, #covariance, #contravariance
 
 ⚡ TL;DR — **Bounded wildcards** extend generic flexibility: `? extends T` (upper bound, read-only) and `? super T` (lower bound, write-safe). Rule: **PECS — Producer Extends, Consumer Super**.
 
-| #316 | Category: Java Language | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Generics, Type Erasure, Covariance / Contravariance | |
-| **Used by:** | Collections utility methods, generic API design, Spring generics | |
+| #316            | Category: Java Language                                          | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Generics, Type Erasure, Covariance / Contravariance              |                 |
+| **Used by:**    | Collections utility methods, generic API design, Spring generics |                 |
 
 ---
 
 ### 📘 Textbook Definition
 
-**Bounded wildcards** are generic type arguments that express constraints on an unknown type `?`. **Upper-bounded wildcard** (`? extends T`): the unknown type is `T` or a subtype of `T` — safe for reading (produces `T` or subtypes), unsafe for writing (exact subtype unknown). **Lower-bounded wildcard** (`? super T`): the unknown type is `T` or a supertype of `T` — safe for writing `T` instances, read only as `Object`. The **PECS** principle (Joshua Bloch, "Effective Java") summarizes the usage rule: *Producer Extends, Consumer Super*. Unbounded wildcard (`?`): equivalent to `? extends Object`; useful when the type doesn't matter (reading as Object or using non-type-dependent methods).
+**Bounded wildcards** are generic type arguments that express constraints on an unknown type `?`. **Upper-bounded wildcard** (`? extends T`): the unknown type is `T` or a subtype of `T` — safe for reading (produces `T` or subtypes), unsafe for writing (exact subtype unknown). **Lower-bounded wildcard** (`? super T`): the unknown type is `T` or a supertype of `T` — safe for writing `T` instances, read only as `Object`. The **PECS** principle (Joshua Bloch, "Effective Java") summarizes the usage rule: _Producer Extends, Consumer Super_. Unbounded wildcard (`?`): equivalent to `? extends Object`; useful when the type doesn't matter (reading as Object or using non-type-dependent methods).
 
 ---
 
@@ -51,10 +51,10 @@ Why does `List<Dog>` not work as a `List<Animal>` (invariance)? Because if it di
 WILDCARD SCENARIOS:
 
   1. UPPER-BOUNDED: List<? extends Number>
-     
+
      List<Integer> ints = List.of(1, 2, 3);
      List<Double> doubles = List.of(1.1, 2.2);
-     
+
      // Works with both:
      double sum(List<? extends Number> list) {
          double total = 0;
@@ -63,45 +63,45 @@ WILDCARD SCENARIOS:
      }
      sum(ints);    // List<Integer> ✓ (Integer extends Number)
      sum(doubles); // List<Double>  ✓ (Double extends Number)
-     
+
      // CANNOT WRITE to ? extends Number:
      void add(List<? extends Number> list) {
          list.add(1);    // COMPILE ERROR — is it List<Integer>? List<Double>? Unknown.
          list.add(1.0);  // COMPILE ERROR
          list.add(null); // Only null can be added (has no type)
      }
-  
+
   2. LOWER-BOUNDED: List<? super Integer>
-     
+
      // Works with: List<Integer>, List<Number>, List<Object>
      void addIntegers(List<? super Integer> list) {
          list.add(1);   // safe: Integer can be added to List<Integer>, List<Number>, List<Object>
          list.add(2);
      }
-     
+
      List<Integer> intList = new ArrayList<>();
      List<Number> numList = new ArrayList<>();
      List<Object> objList = new ArrayList<>();
-     
+
      addIntegers(intList); // ✓
      addIntegers(numList); // ✓
      addIntegers(objList); // ✓
-     
+
      // READ from ? super Integer → only Object:
      void readFromSuper(List<? super Integer> list) {
          Integer i = list.get(0);  // COMPILE ERROR — could be Number or Object
          Object o = list.get(0);   // OK — all types are Object
      }
-  
+
   3. PECS APPLIED — Collections.copy:
-     
+
      public static <T> void copy(List<? super T> dest, List<? extends T> src) {
          for (int i = 0; i < src.size(); i++) {
              T element = src.get(i);  // read from src (extends T: produces T)
              dest.set(i, element);    // write to dest (super T: consumes T)
          }
      }
-     
+
      // Use:
      List<Integer> source = Arrays.asList(1, 2, 3);
      List<Number> destination = new ArrayList<>(Arrays.asList(0.0, 0.0, 0.0));
@@ -109,9 +109,9 @@ WILDCARD SCENARIOS:
      // T inferred as Integer
      // dest: List<? super Integer> → List<Number> ✓ (Number super Integer)
      // src: List<? extends Integer> → List<Integer> ✓ (Integer extends Integer)
-  
+
   4. UNBOUNDED WILDCARD: List<?>
-     
+
      // Use when type doesn't matter:
      void printAll(List<?> list) {
          for (Object element : list) {
@@ -120,16 +120,16 @@ WILDCARD SCENARIOS:
      }
      // Can call with List<String>, List<Integer>, any List<X>
      // Cannot add (except null) — unknown type
-     
+
      // list.size(), list.clear(), list.isEmpty() work — not type-dependent
-     
+
   5. WILDCARD CAPTURE — compiler trick:
-     
+
      // Compiler can infer T from ?:
      static <T> void swap(List<T> list, int i, int j) {
          T temp = list.get(i); list.set(i, list.get(j)); list.set(j, temp);
      }
-     
+
      static void swapHelper(List<?> list, int i, int j) {
          swap(list, i, j);  // compiler infers T (wildcard capture helper)
      }
@@ -147,6 +147,7 @@ DECISION GUIDE:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT bounded wildcards:
+
 - `sum(List<Number>)` can't be called with `List<Integer>` (invariant generics)
 - Must write N overloads: `sum(List<Integer>)`, `sum(List<Double>)`, `sum(List<Long>)`
 
@@ -173,20 +174,20 @@ WITH bounded wildcards:
 TYPE CHECKING WITH WILDCARDS:
 
   List<? extends Number> exList = new ArrayList<Integer>();
-  
+
   // GET: compiler knows the erased type is at most Number (the bound)
   Number n = exList.get(0);  // safe: actual type is Integer, which is-a Number
-  
+
   // SET: compiler refuses (could be List<Integer> or List<Double> or List<Long>)
   exList.add(new Integer(5));  // ERROR: required capture#1 of ? extends Number
-  
+
   // WHY: if allowed: exList.add(5.0) would break type safety for List<Integer>
-  
+
   List<? super Integer> supList = new ArrayList<Number>();
-  
+
   // SET: compiler knows Integer can go into any supertype of Integer
   supList.add(5);   // safe: Number (or Object) always has room for Integer
-  
+
   // GET: compiler only knows it's a supertype of Integer, so only Object guaranteed
   Number n = supList.get(0);  // ERROR: might be List<Object>, not List<Number>
   Object o = supList.get(0);  // safe: everything is an Object
@@ -246,11 +247,11 @@ static <T> void transfer(List<? extends T> src, List<? super T> dst) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `List<? extends Number>` allows adding `Number` objects | False. `? extends Number` is read-only for any element (null is the only addable value). The wildcard means "some specific subtype of Number, unknown which" — adding any Number subtype would be unsafe for some actual types. |
-| Unbounded wildcard `List<?>` is the same as `List<Object>` | `List<?>` accepts `List<String>`, `List<Integer>`, any `List<X>`. `List<Object>` only accepts `List<Object>`. You can assign `List<String>` to `List<?>` but not to `List<Object>`. And `List<?>` is read-only (can't add); `List<Object>` is writable. |
-| PECS only applies to collections | PECS applies to any generic parameterized type used as a producer (you read from it) or consumer (you write to it). A `Supplier<? extends T>` produces T. A `Consumer<? super T>` consumes T. Java's `Function<? super T, ? extends R>` follows PECS for both input and output type. |
+| Misconception                                              | Reality                                                                                                                                                                                                                                                                              |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `List<? extends Number>` allows adding `Number` objects    | False. `? extends Number` is read-only for any element (null is the only addable value). The wildcard means "some specific subtype of Number, unknown which" — adding any Number subtype would be unsafe for some actual types.                                                      |
+| Unbounded wildcard `List<?>` is the same as `List<Object>` | `List<?>` accepts `List<String>`, `List<Integer>`, any `List<X>`. `List<Object>` only accepts `List<Object>`. You can assign `List<String>` to `List<?>` but not to `List<Object>`. And `List<?>` is read-only (can't add); `List<Object>` is writable.                              |
+| PECS only applies to collections                           | PECS applies to any generic parameterized type used as a producer (you read from it) or consumer (you write to it). A `Supplier<? extends T>` produces T. A `Consumer<? super T>` consumes T. Java's `Function<? super T, ? extends R>` follows PECS for both input and output type. |
 
 ---
 

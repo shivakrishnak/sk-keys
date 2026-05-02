@@ -18,10 +18,10 @@ tags: #testing, #chaos-test, #chaos-engineering, #resilience, #fault-injection, 
 
 ⚡ TL;DR — **Chaos testing** (chaos engineering) deliberately injects failures into a running system — kill a pod, inject network latency, corrupt a dependency response — to verify that the system remains resilient and that alerts/recovery mechanisms work as expected. "Break things on purpose in a controlled way, before reality breaks them uncontrolled." Pioneered by Netflix (Chaos Monkey). Tools: **Chaos Monkey**, **Gremlin**, **LitmusChaos** (Kubernetes), **Chaos Toolkit**.
 
-| #1140 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Stress Test, Resilience, Observability | |
-| **Used by:** | Netflix Chaos Monkey, chaos engineering, SRE, production readiness | |
+| #1140           | Category: Testing                                                  | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Stress Test, Resilience, Observability                             |                 |
+| **Used by:**    | Netflix Chaos Monkey, chaos engineering, SRE, production readiness |                 |
 
 ---
 
@@ -40,12 +40,14 @@ Netflix runs Chaos Monkey in production: it randomly kills servers. Why? Because
 ### 🔵 Simple Definition (Elaborated)
 
 Chaos engineering differs from stress testing:
+
 - **Stress test**: apply more load than expected — does the system handle volume?
 - **Chaos test**: inject infrastructure/application failures — does the system handle faults?
 
 **The chaos engineering mindset**: "Everything will fail eventually. Let's practice now, under controlled conditions, so we're prepared when it happens unexpectedly."
 
 **Chaos experiment structure**:
+
 1. **Define steady state**: what does "normal" look like? (error rate < 0.1%, p99 < 500ms)
 2. **Hypothesize**: "If we kill one of three API pods, the load balancer should route traffic to the remaining two, and steady state will be maintained."
 3. **Run experiment**: kill one pod; observe system behavior
@@ -53,6 +55,7 @@ Chaos engineering differs from stress testing:
 5. **Fix** (if failed): improve resilience; repeat experiment until hypothesis holds
 
 **Common hypotheses (and what fails)**:
+
 - "If a database replica fails, the app switches to the primary." (fails if connection pool doesn't reconnect)
 - "If the payment service is down, orders are queued and processed later." (fails if there's no queue — orders are lost)
 - "If a pod crashes, Kubernetes restarts it within 30 seconds." (fails if liveness probe misconfigured)
@@ -76,23 +79,23 @@ spec:
     appns: production
     applabel: "app=order-service"
     appkind: deployment
-  
+
   chaosServiceAccount: litmus-admin
-  
+
   experiments:
     - name: pod-delete
       spec:
         components:
           env:
             - name: TOTAL_CHAOS_DURATION
-              value: "300"     # run for 5 minutes
+              value: "300" # run for 5 minutes
             - name: CHAOS_INTERVAL
-              value: "60"      # kill a pod every 60 seconds
+              value: "60" # kill a pod every 60 seconds
             - name: FORCE
-              value: "false"   # graceful termination (SIGTERM first)
+              value: "false" # graceful termination (SIGTERM first)
             - name: PODS_AFFECTED_PERC
-              value: "33"      # kill 33% of pods (1 of 3)
-  
+              value: "33" # kill 33% of pods (1 of 3)
+
   # STEADY STATE HYPOTHESIS: verified before and after experiment
   steadyStateHypothesis:
     title: "Order service handles pod deletion gracefully"
@@ -107,7 +110,7 @@ spec:
             type: float
             criteria: "<"
             value: "0.005"
-      
+
       - name: "p99 latency stays below 1000ms"
         type: promProbe
         mode: Continuous
@@ -137,13 +140,13 @@ spec:
             - name: TARGET_CONTAINER
               value: "postgres"
             - name: NETWORK_LATENCY
-              value: "500"        # inject 500ms of network latency
+              value: "500" # inject 500ms of network latency
             - name: JITTER
-              value: "100"        # ±100ms jitter
+              value: "100" # ±100ms jitter
             - name: TOTAL_CHAOS_DURATION
-              value: "120"        # for 2 minutes
+              value: "120" # for 2 minutes
             - name: DESTINATION_IPS
-              value: "10.0.0.50"  # only inject latency to DB IP
+              value: "10.0.0.50" # only inject latency to DB IP
 ```
 
 ```python
@@ -152,7 +155,7 @@ spec:
 {
   "title": "If the inventory service returns 500 errors, the checkout flow degrades gracefully",
   "description": "Inject HTTP 500 errors into inventory service and verify checkout handles them",
-  
+
   "steady-state-hypothesis": {
     "title": "System is operating normally",
     "probes": [
@@ -168,7 +171,7 @@ spec:
       }
     ]
   },
-  
+
   "method": [
     {
       "type": "action",
@@ -185,7 +188,7 @@ spec:
       "duration": 180
     }
   ],
-  
+
   "rollbacks": [
     {
       "type": "action",
@@ -266,33 +269,33 @@ Chaos Test ◄── (you are here)
 
 @SpringBootTest
 class OrderServiceResilienceTest {
-    
+
     @MockBean
     private InventoryServiceClient inventoryClient;
-    
-    @MockBean  
+
+    @MockBean
     private PaymentServiceClient paymentClient;
-    
+
     @Test
     @DisplayName("Order proceeds when inventory service is unavailable (circuit breaker open)")
     void orderProceeds_whenInventoryUnavailable_withFallback() {
         // INJECT FAULT: inventory service throws exception (simulates downtime)
         when(inventoryClient.checkStock(anyString()))
             .thenThrow(new ServiceUnavailableException("Inventory service is down"));
-        
+
         // VERIFY: circuit breaker fallback is triggered
         when(inventoryClient.checkStock(anyString()))
             .thenReturn(new InventoryResponse("prod-1", true, -1));  // fallback: assume available
-        
+
         // ACT: place an order
         OrderResponse response = orderService.createOrder(buildTestOrder());
-        
+
         // ASSERT: order created (with degraded inventory info)
         assertThat(response.getStatus()).isEqualTo("CONFIRMED");
         assertThat(response.getInventoryWarning())
             .isEqualTo("INVENTORY_UNAVAILABLE");  // flagged for manual review
     }
-    
+
     @Test
     @DisplayName("Slow payment service triggers timeout and retry")
     void paymentTimeout_triggersRetryAndEventualSuccess() {
@@ -301,9 +304,9 @@ class OrderServiceResilienceTest {
             .thenThrow(new TimeoutException("Payment service timeout"))  // attempt 1
             .thenThrow(new TimeoutException("Payment service timeout"))  // attempt 2 (retry)
             .thenReturn(new PaymentResponse("SUCCEEDED", "pay-123"));   // attempt 3 (success)
-        
+
         OrderResponse response = orderService.createOrder(buildTestOrder());
-        
+
         assertThat(response.getStatus()).isEqualTo("CONFIRMED");
         verify(paymentClient, times(3)).charge(any());  // verify 3 attempts
     }
@@ -314,11 +317,11 @@ class OrderServiceResilienceTest {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                   | Reality                                                                                                                                                                                                                                                                                                                                                                              |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Chaos testing is only for Netflix-scale systems | Chaos engineering scales to any size. A 3-service system still benefits from knowing: "What happens when service B is down? Does service A fail gracefully or crash? Do alerts fire?" Start with staging and simple experiments (kill a pod; inject 500ms latency). You don't need Chaos Monkey on Day 1 — manual chaos experiments via `kubectl delete pod` give most of the value. |
-| Chaos testing means randomly breaking things | Chaos engineering is disciplined and hypothesis-driven: "We hypothesize that killing one database replica will cause automatic failover in < 30 seconds with < 0.1% error rate impact." If the experiment disproves the hypothesis, you've found a real weakness. Random destruction without hypotheses and metrics is just vandalism, not chaos engineering. |
-| Chaos testing replaces observability | Chaos engineering REQUIRES observability to be useful. If you kill a pod and have no metrics to observe the impact, you can't tell if the hypothesis held. Observability (metrics, traces, logs) is the feedback loop that makes chaos experiments meaningful. A chaos experiment without observability is like a medical trial without measuring patient outcomes. |
+| Chaos testing means randomly breaking things    | Chaos engineering is disciplined and hypothesis-driven: "We hypothesize that killing one database replica will cause automatic failover in < 30 seconds with < 0.1% error rate impact." If the experiment disproves the hypothesis, you've found a real weakness. Random destruction without hypotheses and metrics is just vandalism, not chaos engineering.                        |
+| Chaos testing replaces observability            | Chaos engineering REQUIRES observability to be useful. If you kill a pod and have no metrics to observe the impact, you can't tell if the hypothesis held. Observability (metrics, traces, logs) is the feedback loop that makes chaos experiments meaningful. A chaos experiment without observability is like a medical trial without measuring patient outcomes.                  |
 
 ---
 

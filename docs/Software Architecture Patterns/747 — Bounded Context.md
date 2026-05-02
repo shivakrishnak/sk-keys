@@ -18,10 +18,10 @@ tags: #advanced, #architecture, #ddd, #domain, #microservices
 
 ⚡ TL;DR — A **Bounded Context** is an explicit boundary within which a domain model applies — inside the boundary, terms have precise meanings; outside the boundary, the same word may mean something different, requiring explicit translation.
 
-| #747 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Domain Model, Ubiquitous Language, Microservices | |
-| **Used by:** | DDD, Microservices design, Context Map, Anti-Corruption Layer | |
+| #747            | Category: Software Architecture Patterns                      | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Domain Model, Ubiquitous Language, Microservices              |                 |
+| **Used by:**    | DDD, Microservices design, Context Map, Anti-Corruption Layer |                 |
 
 ---
 
@@ -51,55 +51,55 @@ An e-commerce company has multiple teams: Sales, Orders, Shipping, Billing, Cust
 THE PROBLEM BOUNDED CONTEXTS SOLVE:
 
   Large software systems: multiple subdomains, multiple teams, multiple models.
-  
+
   Single shared model (the "big ball of mud"):
-  
+
     class Customer {
         // Sales team needs:
         String salesRepId;
         BigDecimal lifetimeValue;
         String leadSource;
         String contractTier;
-        
+
         // Shipping team needs:
         Address defaultShippingAddress;
         String preferredCarrier;
         Boolean signatureRequired;
-        
+
         // Billing team needs:
         String paymentMethodId;
         String billingAddress;
         Integer netPaymentTerms;
-        
+
         // Support team needs:
         String preferredContactMethod;
         String supportTierId;
         List<Ticket> openTickets;
     }
-    
+
     Problems:
     - Every team changes this class → constant merge conflicts
     - Sales doesn't understand shipping fields; shipping doesn't need billing fields
     - "Customer" means different things to each team
     - Invariants impossible: sales wants "contractTier" required; support doesn't care
     - God class grows without bound
-    
+
   Bounded Contexts (explicit separation):
-  
+
     Sales Context:
       Customer = { id, name, salesRepId, lifetimeValue, contractTier }
       Order = { id, customerId, proposalDate, totalValue, discount, salesperson }
-      
+
     Shipping Context:
       Customer = { id, name, defaultAddress, preferredCarrier, signatureRequired }
       Order = { id, customerId, items, weight, dimensions, carrier, trackingNumber }
-      
+
     Billing Context:
       Customer = { id, name, billingAddress, paymentMethod, netPaymentTerms, creditLimit }
       Invoice = { id, customerId, lineItems, total, dueDate, status }
-      
+
     Each context: consistent, focused model. Each team: owns their context.
-    
+
   BOUNDED CONTEXT CONTENTS:
 
     A bounded context contains:
@@ -108,75 +108,75 @@ THE PROBLEM BOUNDED CONTEXTS SOLVE:
     - Application services (use cases specific to this context)
     - Repository interfaces (for loading/saving the context's aggregates)
     - Domain events (published by this context)
-    
+
     A bounded context does NOT contain:
     - Another bounded context's domain model (cross-context: explicit integration)
-    
+
 BOUNDED CONTEXT IDENTIFICATION HEURISTICS:
 
   1. TEAM BOUNDARY:
      One team → one bounded context. Conway's Law: system architecture mirrors
      communication structure. Each team owns and is responsible for one bounded context.
-     
+
   2. LINGUISTIC BOUNDARY:
      When the same word means different things in different conversations:
      "Order" (sales opportunity) vs "Order" (fulfillment task) → likely two contexts.
-     
+
   3. INVARIANT BOUNDARY:
-     What needs to be consistent together? 
+     What needs to be consistent together?
      Sales order consistency: discount ≤ max allowed for customer tier.
      Shipping order consistency: all items must have valid shipping dimensions.
      Different invariants → different contexts.
-     
+
   4. RATE-OF-CHANGE BOUNDARY:
      Sales model changes when sales process changes (frequently).
      Shipping model changes when carrier integrations change.
      Different change drivers → different contexts.
-     
+
 BOUNDED CONTEXT RELATIONSHIPS:
 
   DDD Context Map: visualizes how bounded contexts relate.
-  
+
   PARTNERSHIP: Two contexts evolve together. Teams coordinate.
-  
+
   SHARED KERNEL: Two contexts share a small, carefully maintained subset of domain model.
-  
+
   CUSTOMER-SUPPLIER:
     Upstream: Supplier publishes API.
     Downstream: Customer uses the API.
     Customer: relies on supplier not breaking the interface.
-    
+
   CONFORMIST: Downstream adopts upstream model without translation.
     "We'll use the ERP's model as-is." Simplest but gives up domain purity.
-    
+
   ANTI-CORRUPTION LAYER: Downstream protects its model from upstream's model.
     "We translate ERP concepts to our domain concepts." Protects domain purity.
-    
+
   OPEN HOST SERVICE: Upstream publishes a well-designed, stable API.
     "We publish a formal API; downstream integrates without modification."
-    
+
   PUBLISHED LANGUAGE: Formal shared language for integration (e.g., domain events).
     "We publish events in a standard schema; anyone can consume."
-    
+
 BOUNDED CONTEXT ≠ MICROSERVICE:
 
   Common misconception: 1 bounded context = 1 microservice.
-  
+
   Reality: 1 bounded context may be:
     - A microservice (ideal for independent deployment)
     - A module within a monolith (Modular Monolith)
     - A package within a monorepo
     - A subdomain within a large service
-    
+
   Start: bounded context as a module in a monolith.
   If deployment independence needed: extract to microservice.
-  
+
   Rule: define bounded context first (model boundary); deployment unit is separate decision.
-  
+
   Starting with microservices without clear bounded contexts:
   → Distributed monolith (services coupled across context boundaries)
   → Wrong service decomposition (too fine-grained or too coarse-grained)
-  
+
   Correct order: Bounded Context first → decide if it needs to be its own service.
 ```
 
@@ -185,6 +185,7 @@ BOUNDED CONTEXT ≠ MICROSERVICE:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Bounded Contexts:
+
 - Single shared "Customer" class: 50 fields, impossible to understand, constant team conflicts
 - Same word used for different concepts: "Order" in five different ways across the codebase
 - Teams block each other: changing one field for one team breaks another team's invariants
@@ -219,7 +220,7 @@ BOUNDED CONTEXT IN A CODEBASE:
           Discount.java
       application/
           CreateQuoteService.java
-      
+
   com.company.shipping/           ← Shipping Bounded Context
       domain/
           Customer.java           (shipping concept of Customer — DIFFERENT class)
@@ -227,7 +228,7 @@ BOUNDED CONTEXT IN A CODEBASE:
           DeliveryAddress.java
       application/
           ScheduleShipmentService.java
-          
+
   com.company.integration/        ← Integration (ACL)
       SalesOrderToShipmentTranslator.java
       (translates Sales context order → Shipping context shipment)
@@ -292,7 +293,7 @@ class SalesOrderFulfillmentAdapter {
     ShipmentRequest createShipmentRequest(SalesOrder salesOrder) {
         // Load customer from SHIPPING context (not sales context):
         shipping.Customer shippingCustomer = shippingCustomerRepo.findById(salesOrder.customerId());
-        
+
         // Translate Sales model → Shipping model:
         return new ShipmentRequest(
             ShipmentId.generate(),
@@ -309,11 +310,11 @@ class SalesOrderFulfillmentAdapter {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Bounded Context = Microservice | Not necessarily. A bounded context defines a model boundary; a microservice is a deployment unit. A monolith can have multiple well-defined bounded contexts as modules. Microservices are one way to enforce context boundaries (separate deployment = separate code), but you can also use packages, modules, or namespaces in a monolith |
+| Misconception                                   | Reality                                                                                                                                                                                                                                                                                                                                                             |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bounded Context = Microservice                  | Not necessarily. A bounded context defines a model boundary; a microservice is a deployment unit. A monolith can have multiple well-defined bounded contexts as modules. Microservices are one way to enforce context boundaries (separate deployment = separate code), but you can also use packages, modules, or namespaces in a monolith                         |
 | Each entity belongs to only one bounded context | An entity may exist in multiple bounded contexts with different representations. `Customer` in Sales context has one structure; in Shipping context, a different structure. They share the same `CustomerId` (cross-context identifier), but the model is context-specific. The KEY (CustomerId) is shared; the VALUE (attributes and behavior) is context-specific |
-| Bounded contexts must communicate via APIs | Not necessarily. Integration options: synchronous API calls, asynchronous events, shared database with bounded table ownership (less ideal but sometimes pragmatic), or in-process calls in a monolith. The bounded context defines the MODEL boundary, not necessarily the deployment or communication boundary |
+| Bounded contexts must communicate via APIs      | Not necessarily. Integration options: synchronous API calls, asynchronous events, shared database with bounded table ownership (less ideal but sometimes pragmatic), or in-process calls in a monolith. The bounded context defines the MODEL boundary, not necessarily the deployment or communication boundary                                                    |
 
 ---
 

@@ -18,10 +18,10 @@ tags: #advanced, #architecture, #monolith, #modules, #deployment
 
 ⚡ TL;DR — A **Modular Monolith** is a single deployable unit with clearly defined internal module boundaries — combining the operational simplicity of a monolith with the domain organization of microservices, without the distributed systems complexity.
 
-| #748 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Bounded Context, Microservices, Layered Architecture | |
-| **Used by:** | Medium-complexity systems, Pre-microservices migration | |
+| #748            | Category: Software Architecture Patterns               | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------- | :-------------- |
+| **Depends on:** | Bounded Context, Microservices, Layered Architecture   |                 |
+| **Used by:**    | Medium-complexity systems, Pre-microservices migration |                 |
 
 ---
 
@@ -51,9 +51,9 @@ A Spring Boot application structured as modules: `ordering-module`, `inventory-m
 THE THREE OPTIONS:
 
   1. BIG BALL OF MUD MONOLITH:
-  
+
      One deployment. No module boundaries. All code entangled.
-     
+
      com.company/
          services/
              OrderService.java  — imports InventoryService, BillingService, UserService
@@ -62,7 +62,7 @@ THE THREE OPTIONS:
              // Every class imports every other class.
              // "Business logic" spread everywhere.
              // Change one thing: ripple effects everywhere.
-             
+
      Characteristics:
        ✓ Simple to start (no structure required)
        ✓ Simple deployment (one JAR)
@@ -70,11 +70,11 @@ THE THREE OPTIONS:
        ✗ Hard to change without breaking things
        ✗ No team ownership
        ✗ No domain model clarity
-       
+
   2. MODULAR MONOLITH:
-  
+
      One deployment. Strong module boundaries. Modules are independent by design.
-     
+
      modules/
          ordering/
              api/             — public interface (allowed to import from other modules)
@@ -94,7 +94,7 @@ THE THREE OPTIONS:
          billing/
              api/
              internal/
-             
+
      Characteristics:
        ✓ Simple deployment (one JAR, one CI/CD)
        ✓ No network latency between modules
@@ -105,15 +105,15 @@ THE THREE OPTIONS:
        ✗ One JVM: one module's memory leak affects all
        ✗ Cannot scale individual modules independently
        ✗ One technology stack (all Java, all Spring)
-       
+
   3. MICROSERVICES:
-  
+
      Multiple deployments. Strong service boundaries. Network between services.
-     
+
      order-service/ — deploys independently. Own DB. Own CI/CD.
      inventory-service/ — deploys independently.
      billing-service/ — deploys independently.
-     
+
      Characteristics:
        ✓ Independent deployment and scaling
        ✓ Technology diversity
@@ -122,58 +122,58 @@ THE THREE OPTIONS:
        ✗ Distributed transaction complexity
        ✗ Operational complexity (many services to manage)
        ✗ Hard to debug across services
-       
+
 MODULAR MONOLITH BOUNDARY ENFORCEMENT:
 
   In Java: Architectural tests (ArchUnit) enforce boundaries:
-  
+
     @Test
     void ordering_should_not_depend_on_inventory_internals() {
         JavaClasses classes = new ClassFileImporter().importPackages("com.company");
-        
+
         ArchRule rule = noClasses()
             .that().resideInAPackage("com.company.ordering..")
             .should().dependOnClassesThat()
             .resideInAPackage("com.company.inventory.internal..");
-            
+
         rule.check(classes);
     }
-    
+
   Or: Java 9 modules (module-info.java):
-  
+
     // ordering/module-info.java:
     module ordering {
         exports com.company.ordering.api;      // Only this is visible to others
         // com.company.ordering.internal: NOT exported — invisible to other modules
     }
-    
+
     // inventory/module-info.java:
     module inventory {
         exports com.company.inventory.api;     // Only this is visible
         requires ordering;                     // Can import ordering.api
     }
-    
+
 DATABASE MODULE ISOLATION:
 
   Option 1: Separate schemas in one database:
     schema: ordering   → tables: orders, order_items
     schema: inventory  → tables: inventory_items, stock_reservations
     schema: billing    → tables: invoices, payments
-    
+
     Rule: No cross-schema JOINs in application code.
     Ordering can't: SELECT o.*, i.name FROM orders o JOIN inventory.inventory_items i...
-    
+
   Option 2: Separate databases per module (stronger isolation):
     ordering_db   — separate connection pool, separate instance
     inventory_db  — separate connection pool
-    
+
     Stronger isolation. Harder operational management (still one JVM).
-    
+
   Why data isolation matters:
     Without data isolation: OrderService queries InventoryService's tables directly.
     This is WORSE than cross-module code imports: schema coupling without type safety.
     Data isolation forces explicit cross-module communication via module APIs.
-    
+
 WHEN TO CHOOSE MODULAR MONOLITH:
 
   PERFECT FIT:
@@ -182,7 +182,7 @@ WHEN TO CHOOSE MODULAR MONOLITH:
     - Load: single deployment can handle (no massive per-module scaling needs).
     - Stage: early product (high uncertainty about what will change).
     - Plan: potentially extract microservices later (modules become service boundaries).
-    
+
   CONSIDER MICROSERVICES INSTEAD:
     - Team > 50 engineers, multiple fully independent teams.
     - Proven high-load module that needs independent scaling.
@@ -195,10 +195,12 @@ WHEN TO CHOOSE MODULAR MONOLITH:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Modular Monolith structure (Big Ball of Mud):
+
 - No team ownership: every team touches every file — constant merge conflicts
 - No domain clarity: business logic scattered, impossible to find where "order cancellation" is
 
 WITHOUT jumping to Microservices:
+
 - Network calls replace method calls → distributed transaction complexity, latency
 - 10 services on day 1: operational overhead larger than team can handle
 
@@ -230,7 +232,7 @@ MODULAR MONOLITH CROSS-MODULE COMMUNICATION:
       │
       ├─ InventoryModule.on(OrderPlacedEvent) → reserves inventory
       └─ BillingModule.on(OrderPlacedEvent)  → creates invoice
-      
+
   Or via public API:
       InventoryModule.api.checkAvailability(productId, quantity)
       // OrderingModule calls Inventory's PUBLIC API. Not internals.
@@ -277,7 +279,7 @@ package com.company.inventory.internal.application;
 
 @Service
 class InventoryAvailabilityService implements InventoryModule {
-    
+
     public InventoryAvailability checkAvailability(ProductId productId, Quantity qty) {
         // Internal domain logic — not visible outside module:
         InventoryItem item = inventoryRepo.findByProductId(productId).orElseThrow();
@@ -291,12 +293,12 @@ package com.company.ordering.internal.application;
 @Service
 class PlaceOrderService {
     private final InventoryModule inventoryModule; // Uses INTERFACE, not internal class
-    
+
     void placeOrder(PlaceOrderCommand cmd) {
         // Check availability via module's public API:
-        InventoryAvailability availability = 
+        InventoryAvailability availability =
             inventoryModule.checkAvailability(cmd.productId(), cmd.quantity());
-            
+
         if (!availability.inStock()) throw new OutOfStockException(cmd.productId());
         // ... rest of order placement
     }
@@ -307,11 +309,11 @@ class PlaceOrderService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                     | Reality                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Modular Monolith is just a monolith with packages | No. Packages in Java are organizational, not enforced. Modular Monolith uses enforced boundaries: Java 9 modules (module-info.java exports), ArchUnit tests, separate Maven subprojects, or package-by-module with access enforcement. The key: OTHER modules CANNOT access internals — not just "they shouldn't" but "they can't compile if they try" |
-| Modular Monolith doesn't scale | Single deployment can scale horizontally (run 3 instances of the monolith). What it doesn't support: scaling individual modules independently. If one module needs 10x the resources of others: microservices. If the whole system scales proportionally: Modular Monolith horizontal scaling works fine |
-| Modular Monolith = steppingstone to microservices | Sometimes, but not always. For many organizations: Modular Monolith is the correct long-term architecture. The operational overhead of microservices is real. Not every system needs independent service deployment. If no module requires independent scaling or independent deployment: Modular Monolith may be the right permanent choice |
+| Modular Monolith doesn't scale                    | Single deployment can scale horizontally (run 3 instances of the monolith). What it doesn't support: scaling individual modules independently. If one module needs 10x the resources of others: microservices. If the whole system scales proportionally: Modular Monolith horizontal scaling works fine                                               |
+| Modular Monolith = steppingstone to microservices | Sometimes, but not always. For many organizations: Modular Monolith is the correct long-term architecture. The operational overhead of microservices is real. Not every system needs independent service deployment. If no module requires independent scaling or independent deployment: Modular Monolith may be the right permanent choice           |
 
 ---
 

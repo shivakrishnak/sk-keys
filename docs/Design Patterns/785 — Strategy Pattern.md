@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #behavioral, #oop, #solid, #extensibility
 
 ⚡ TL;DR — **Strategy** defines a family of algorithms, encapsulates each one, and makes them interchangeable — enabling the algorithm to vary independently from clients that use it, and eliminating conditionals that select behavior at runtime.
 
-| #785 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Dependency Injection, Open-Closed Principle | |
-| **Used by:** | Sorting, payment processing, validation, compression, routing | |
+| #785            | Category: Design Patterns                                                | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Dependency Injection, Open-Closed Principle |                 |
+| **Used by:**    | Sorting, payment processing, validation, compression, routing            |                 |
 
 ---
 
@@ -64,7 +64,7 @@ WITHOUT STRATEGY — CONDITIONAL LOGIC IN CONTEXT:
           // Algorithm code mixed with selection logic.
       }
   }
-  
+
 WITH STRATEGY PATTERN:
 
   // STRATEGY INTERFACE:
@@ -72,7 +72,7 @@ WITH STRATEGY PATTERN:
   interface SortStrategy {
       void sort(List<Integer> data);
   }
-  
+
   // CONCRETE STRATEGIES — each algorithm fully encapsulated:
   class BubbleSort implements SortStrategy {
       @Override
@@ -87,73 +87,73 @@ WITH STRATEGY PATTERN:
           }
       }
   }
-  
+
   class QuickSort implements SortStrategy {
       @Override
       public void sort(List<Integer> data) { /* quick sort */ }
   }
-  
+
   class TimSort implements SortStrategy {
       @Override
       public void sort(List<Integer> data) { /* tim sort */ }
   }
-  
+
   // CONTEXT:
   class Sorter {
       private SortStrategy strategy;
-      
+
       Sorter(SortStrategy strategy) {
           this.strategy = strategy;    // inject strategy
       }
-      
+
       void setStrategy(SortStrategy strategy) {
           this.strategy = strategy;   // swap at runtime
       }
-      
+
       void sort(List<Integer> data) {
           strategy.sort(data);         // delegate — no algorithm knowledge here
       }
   }
-  
+
   // Client selects strategy:
   Sorter sorter = new Sorter(new QuickSort());
   sorter.sort(data);
-  
+
   sorter.setStrategy(new TimSort());  // switch algorithm at runtime
   sorter.sort(bigData);
-  
+
   // Lambda strategy (Java 8+, @FunctionalInterface):
   sorter.setStrategy(data -> Collections.sort(data));  // strategy as lambda
-  
+
 JAVA CANONICAL: java.util.Comparator<T>
 
   // Comparator<T> IS the Strategy interface.
   // Different comparators = different strategies for comparison.
   // Context = sort(), TreeMap, PriorityQueue.
-  
+
   List<Person> people = ...;
-  
+
   // Strategy 1: sort by age (ascending):
   people.sort(Comparator.comparing(Person::getAge));
-  
+
   // Strategy 2: sort by last name then first name:
   people.sort(Comparator.comparing(Person::getLastName)
                         .thenComparing(Person::getFirstName));
-  
+
   // Strategy 3: custom sort — descending age, nulls last:
   people.sort(Comparator.comparing(Person::getAge, Comparator.reverseOrder())
                         .thenComparing(Comparator.nullsLast(
                             Comparator.comparing(Person::getEmail))));
-  
+
   // TreeMap with custom ordering strategy:
   new TreeMap<>(Comparator.comparing(String::length)
                           .thenComparing(Comparator.naturalOrder()));
-  
+
   // PriorityQueue with custom priority strategy:
   PriorityQueue<Task> taskQueue = new PriorityQueue<>(
       Comparator.comparing(Task::getPriority).reversed()
   );
-  
+
 PAYMENT STRATEGY WITH SPRING:
 
   // Strategy interface:
@@ -161,36 +161,36 @@ PAYMENT STRATEGY WITH SPRING:
       PaymentResult pay(BigDecimal amount, PaymentDetails details);
       boolean supports(PaymentMethod method);
   }
-  
+
   // Concrete strategies:
   @Component
   class CreditCardStrategy implements PaymentStrategy {
       public PaymentResult pay(BigDecimal amount, PaymentDetails details) { ... }
       public boolean supports(PaymentMethod method) { return method == CREDIT_CARD; }
   }
-  
+
   @Component
   class PayPalStrategy implements PaymentStrategy {
       public PaymentResult pay(BigDecimal amount, PaymentDetails details) { ... }
       public boolean supports(PaymentMethod method) { return method == PAYPAL; }
   }
-  
+
   // Context (Strategy Selector + Executor):
   @Service
   class PaymentService {
       private final List<PaymentStrategy> strategies;
-      
+
       @Autowired
       PaymentService(List<PaymentStrategy> strategies) {
           this.strategies = strategies;   // Spring injects ALL PaymentStrategy beans
       }
-      
+
       public PaymentResult processPayment(Order order) {
           PaymentStrategy strategy = strategies.stream()
               .filter(s -> s.supports(order.getPaymentMethod()))
               .findFirst()
               .orElseThrow(() -> new UnsupportedPaymentException(order.getPaymentMethod()));
-          
+
           return strategy.pay(order.getTotal(), order.getPaymentDetails());
           // New payment method: add new @Component implementing PaymentStrategy.
           // PaymentService: zero changes (OCP).
@@ -203,6 +203,7 @@ PAYMENT STRATEGY WITH SPRING:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Strategy:
+
 - Algorithm selection mixed with algorithm execution — `if/else` chains in context
 - Adding new algorithm: modify context (OCP violation)
 
@@ -296,13 +297,13 @@ class NoCompression implements CompressionStrategy {
 // Context:
 class FileStorage {
     private CompressionStrategy compression;
-    
+
     FileStorage(CompressionStrategy compression) {
         this.compression = compression;
     }
-    
+
     void setCompression(CompressionStrategy c) { this.compression = c; }
-    
+
     void store(String filename, byte[] data) {
         byte[] compressed = compression.compress(data);
         storageDriver.write(filename, compressed);
@@ -324,11 +325,11 @@ storage.store("config.json", smallData);
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                           | Reality                                                                                                                                                                                                                                                                                                                                                                 |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Strategy and State are the same pattern | Structurally similar (both delegate to interface). Behavioral difference: Strategy algorithm is selected by the client/externally; context doesn't change it during execution. State: the state transitions happen internally; state objects or context transitions between states. Strategy = what HOW to do something. State = WHAT behavior the object exhibits now. |
-| Strategy requires a class per algorithm | Java 8+ functional interfaces make Strategy expressible as a lambda. `SortStrategy sortByAge = list -> list.sort(Comparator.comparing(Person::getAge));` is a valid strategy. Only create a full class when the algorithm has constructor parameters, internal state, or complex behavior. `Comparator.comparing()` chains are typical lambda strategies. |
-| Strategy over-engineers simple cases | True for trivial single-use cases. But as soon as you find yourself writing `if (type == X) doX() else if (type == Y) doY()` for algorithm selection, Strategy is the right tool. Especially when new algorithm variants are anticipated, or when algorithms need to be independently testable. |
+| Strategy requires a class per algorithm | Java 8+ functional interfaces make Strategy expressible as a lambda. `SortStrategy sortByAge = list -> list.sort(Comparator.comparing(Person::getAge));` is a valid strategy. Only create a full class when the algorithm has constructor parameters, internal state, or complex behavior. `Comparator.comparing()` chains are typical lambda strategies.               |
+| Strategy over-engineers simple cases    | True for trivial single-use cases. But as soon as you find yourself writing `if (type == X) doX() else if (type == Y) doY()` for algorithm selection, Strategy is the right tool. Especially when new algorithm variants are anticipated, or when algorithms need to be independently testable.                                                                         |
 
 ---
 
@@ -340,7 +341,7 @@ storage.store("config.json", smallData);
 // ANTI-PATTERN: stateful strategy — shared across threads breaks:
 class StatisticsStrategy implements AnalysisStrategy {
     private List<Double> results = new ArrayList<>();  // ← mutable instance state!
-    
+
     @Override
     public double analyze(List<Double> data) {
         results.addAll(data);       // accumulates across calls

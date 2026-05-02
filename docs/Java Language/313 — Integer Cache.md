@@ -18,10 +18,10 @@ tags: #java, #jvm, #cache, #integers, #wrappers, #autoboxing
 
 ⚡ TL;DR — JVM caches `Integer` objects for -128..127; within this range `Integer.valueOf(42) == Integer.valueOf(42)` is `true` (same instance). Outside: `false`. Always use `.equals()`.
 
-| #313 | Category: Java Language | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Autoboxing / Unboxing, String Pool, Heap Memory | |
-| **Used by:** | Integer comparison, autoboxing behavior, JVM performance tuning | |
+| #313            | Category: Java Language                                         | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Autoboxing / Unboxing, String Pool, Heap Memory                 |                 |
+| **Used by:**    | Integer comparison, autoboxing behavior, JVM performance tuning |                 |
 
 ---
 
@@ -54,7 +54,7 @@ INTEGER CACHE IMPLEMENTATION (JDK source, java.lang.Integer):
       static final int low = -128;
       static final int high;
       static final Integer cache[];
-      
+
       static {
           // Upper bound: 127 by default; configurable via JVM flag:
           int h = 127;
@@ -66,7 +66,7 @@ INTEGER CACHE IMPLEMENTATION (JDK source, java.lang.Integer):
               h = Math.min(i, Integer.MAX_VALUE - (-low) - 1);
           }
           high = h;
-          
+
           cache = new Integer[(high - low) + 1];
           int j = low;
           for (int k = 0; k < cache.length; k++)
@@ -77,7 +77,7 @@ INTEGER CACHE IMPLEMENTATION (JDK source, java.lang.Integer):
           // cache[127]  = new Integer(127)
       }
   }
-  
+
   public static Integer valueOf(int i) {
       if (i >= IntegerCache.low && i <= IntegerCache.high)
           return IntegerCache.cache[i + (-IntegerCache.low)];  // O(1) array lookup
@@ -101,19 +101,19 @@ IDENTITY COMPARISON BEHAVIOR:
   Integer a = 128;   Integer b = 128;    a == b → FALSE (cache miss)
   Integer a = -128;  Integer b = -128;   a == b → TRUE  (cache boundary)
   Integer a = -129;  Integer b = -129;   a == b → FALSE (below cache)
-  
+
   new Integer(127) == new Integer(127) → FALSE (constructor bypasses cache)
   Integer.valueOf(127) == Integer.valueOf(127) → TRUE
-  
+
 CONFIGURING THE UPPER BOUND:
 
   JVM flag:  -XX:AutoBoxCacheMax=1000
   Maps to:   java.lang.Integer.IntegerCache.high=1000
-  
+
   Effect:    Integer.valueOf(500) == Integer.valueOf(500) → TRUE
   Risk:      code that "works" with default cache (≤127) may break if cache extended;
              code that relies on == failing above 127 will malfunction if cache extended.
-  
+
   RECOMMENDATION: Never rely on Integer == behavior. Always .equals().
 
 LONG CACHE: non-configurable, always -128..127:
@@ -126,6 +126,7 @@ LONG CACHE: non-configurable, always -128..127:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Integer Cache:
+
 - `Integer.valueOf(1)` called millions of times: millions of heap allocations for the same small values
 - GC pressure from short-lived Integer objects for common values (0, 1, -1, loop counters)
 
@@ -154,11 +155,11 @@ INTEGER CACHE LOOKUP (array-indexed, O(1)):
   Integer.valueOf(50):
   50 >= -128 && 50 <= 127 → cache hit
   return cache[50 - (-128)] = cache[178]  ← pre-allocated Integer(50)
-  
+
   Integer.valueOf(200):
   200 > 127 → cache miss
   return new Integer(200)  ← heap allocation
-  
+
   Memory:
   IntegerCache.cache: Integer[-128], Integer[-127], ..., Integer[127]
                        (256 objects, allocated at class loading time)
@@ -223,11 +224,11 @@ System.out.println(ch1 == ch2); // true ('A' = 65, within 0..127 cache)
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Integer Cache is a JVM global singleton shared across classloaders | Each classloader has its own `IntegerCache`. In multi-classloader environments (OSGi, app servers), `Integer.valueOf(50)` from two different classloaders → two different objects → `==` fails even within cache range. |
-| `-XX:AutoBoxCacheMax` applies to all wrapper types | Only `Integer` has a configurable upper bound. `Long`, `Short`, `Byte`, `Character` have fixed cache ranges and are not configurable. |
-| Avoiding `new Integer(x)` is only about deprecation | `new Integer(x)` is deprecated (Java 9) and removed (Java 17) because it bypasses the cache, allocates unnecessarily, and signals intent to compare with `==` (which will always fail). Use `Integer.valueOf(x)` or autoboxing. |
+| Misconception                                                      | Reality                                                                                                                                                                                                                         |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Integer Cache is a JVM global singleton shared across classloaders | Each classloader has its own `IntegerCache`. In multi-classloader environments (OSGi, app servers), `Integer.valueOf(50)` from two different classloaders → two different objects → `==` fails even within cache range.         |
+| `-XX:AutoBoxCacheMax` applies to all wrapper types                 | Only `Integer` has a configurable upper bound. `Long`, `Short`, `Byte`, `Character` have fixed cache ranges and are not configurable.                                                                                           |
+| Avoiding `new Integer(x)` is only about deprecation                | `new Integer(x)` is deprecated (Java 9) and removed (Java 17) because it bypasses the cache, allocates unnecessarily, and signals intent to compare with `==` (which will always fail). Use `Integer.valueOf(x)` or autoboxing. |
 
 ---
 

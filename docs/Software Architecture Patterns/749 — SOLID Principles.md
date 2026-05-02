@@ -18,10 +18,10 @@ tags: #advanced, #architecture, #oop, #design, #principles
 
 ⚡ TL;DR — **SOLID** is five object-oriented design principles (Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion) that, applied together, produce code that is easier to change, extend, and test.
 
-| #749 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Design Patterns | |
-| **Used by:** | Clean Code, Refactoring, Spring DI, Domain Model | |
+| #749            | Category: Software Architecture Patterns         | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Design Patterns     |                 |
+| **Used by:**    | Clean Code, Refactoring, Spring DI, Domain Model |                 |
 
 ---
 
@@ -51,7 +51,7 @@ A `UserService` that handles: user registration, email sending, password hashing
 S — SINGLE RESPONSIBILITY PRINCIPLE (SRP):
 
   "A class should have only one reason to change."
-  
+
   VIOLATION:
     class OrderReport {
         Order loadOrder(Long id) { return orderRepo.findById(id); } // Data access
@@ -61,14 +61,14 @@ S — SINGLE RESPONSIBILITY PRINCIPLE (SRP):
     }
     // Changes when: data access changes, discount rules change, PDF format changes, or email changes.
     // 4 reasons to change = 4 responsibilities.
-    
+
   FIX:
     class OrderRepository { Order findById(Long id) { ... } }
     class DiscountCalculator { BigDecimal calculate(Order order) { ... } }
     class OrderPdfFormatter { String format(Order order) { ... } }
     class OrderEmailSender { void send(Order order, Email to) { ... } }
     // Each: 1 reason to change. Change email provider: touch only OrderEmailSender.
-    
+
   NOTE: SRP ≠ "one method per class". Responsibility = "one reason to change."
     A rich domain entity (Order) with methods confirm(), cancel(), ship(): ONE responsibility.
     All those methods serve "maintaining order lifecycle" — one reason to change.
@@ -76,7 +76,7 @@ S — SINGLE RESPONSIBILITY PRINCIPLE (SRP):
 O — OPEN/CLOSED PRINCIPLE (OCP):
 
   "Open for extension, closed for modification."
-  
+
   VIOLATION:
     class DiscountCalculator {
         BigDecimal calculate(Order order, CustomerType type) {
@@ -86,41 +86,41 @@ O — OPEN/CLOSED PRINCIPLE (OCP):
             // Add new customer type? MODIFY this method. Risk: break existing types.
         }
     }
-    
+
   FIX (Strategy pattern / polymorphism):
     interface DiscountStrategy {
         Money calculateDiscount(Order order);
     }
-    
+
     class RegularCustomerDiscount implements DiscountStrategy {
         public Money calculateDiscount(Order order) { return order.total().times(0.05); }
     }
-    
+
     class PremiumCustomerDiscount implements DiscountStrategy {
         public Money calculateDiscount(Order order) { return order.total().times(0.10); }
     }
-    
+
     // Add new customer type: ADD new class. Don't modify existing classes.
     class EnterpriseCustomerDiscount implements DiscountStrategy {
         public Money calculateDiscount(Order order) { return order.total().times(0.20); }
     }
-    
+
 L — LISKOV SUBSTITUTION PRINCIPLE (LSP):
 
   "Subtypes must be substitutable for their base types."
-  
+
   VIOLATION:
     class Rectangle {
         void setWidth(int w) { this.width = w; }
         void setHeight(int h) { this.height = h; }
         int area() { return width * height; }
     }
-    
+
     class Square extends Rectangle {
         void setWidth(int w) { this.width = w; this.height = w; }  // Forces square constraint
         void setHeight(int h) { this.width = h; this.height = h; } // Both dimensions change
     }
-    
+
     // Code that works with Rectangle:
     void resizeToExpectedArea(Rectangle r) {
         r.setWidth(5);
@@ -128,14 +128,14 @@ L — LISKOV SUBSTITUTION PRINCIPLE (LSP):
         assert r.area() == 15;  // FAILS for Square: setting height to 3 also set width to 3
         // Square is NOT a substitutable Rectangle. LSP violated.
     }
-    
+
   FIX: Don't inherit Square from Rectangle. Use a common interface (Shape.area()).
     Or: make both immutable (value objects: no setters; constructor-based).
-    
+
 I — INTERFACE SEGREGATION PRINCIPLE (ISP):
 
   "Clients should not depend on interfaces they don't use."
-  
+
   VIOLATION:
     interface UserService {
         User findById(Long id);
@@ -149,54 +149,54 @@ I — INTERFACE SEGREGATION PRINCIPLE (ISP):
     // Admin panel: needs findAll() + exportToCsv().
     // Registration form: needs register().
     // Both implement/depend on ALL 7 methods. Change exportToCsv: admin and registration affected.
-    
+
   FIX: Multiple small interfaces:
     interface UserQueryService { User findById(Long id); List<User> findAll(); }
     interface UserRegistrationService { void register(RegisterRequest req); }
     interface UserAdminService extends UserQueryService { void exportToCsv(OutputStream out); }
     // Admin panel: implements UserAdminService (3 methods). Registration: UserRegistrationService.
-    
+
 D — DEPENDENCY INVERSION PRINCIPLE (DIP):
 
   "Depend on abstractions, not concretions."
-  
+
   VIOLATION:
     class OrderService {
         private final MySqlOrderRepository repo;  // Concrete class! Hardwired to MySQL.
         private final SendGridEmailService email; // Concrete class! Hardwired to SendGrid.
-        
+
         // Test: must use real MySQL + real SendGrid. Slow. Expensive. Fragile.
         // Swap to PostgreSQL: must change OrderService. Swap email: must change OrderService.
     }
-    
+
   FIX: Depend on interfaces (abstractions):
     class OrderService {
         private final OrderRepository repo;        // Interface.
         private final EmailPort emailPort;          // Interface.
-        
+
         // Test: inject MockOrderRepository, MockEmailPort. Fast. No network.
         // Production: inject JpaOrderRepository + SendGridEmailAdapter.
         // Swap MySQL → PostgreSQL: only the implementation changes; OrderService unchanged.
     }
-    
+
     // Spring DI: the framework injects the concrete implementation at runtime.
     @Service
     class OrderService {
         OrderService(OrderRepository repo, EmailPort email) { ... }  // DIP via constructor injection.
     }
-    
+
 APPLYING SOLID TOGETHER:
 
   class OrderFulfillmentService {
       private final OrderRepository orderRepo;        // DIP: interface, not JPA class
       private final FulfillmentStrategy fulfillment; // DIP + OCP: strategy for fulfillment
       private final OrderEventPublisher events;       // DIP: interface, not Kafka class
-      
+
       // SRP: this class does ONE thing — orchestrate fulfillment.
       // ISP: depends on focused interfaces (not a giant "OrderService" interface).
       // LSP: any OrderRepository substitutable; any FulfillmentStrategy substitutable.
       // OCP: add new fulfillment strategy — extend, don't modify this class.
-      
+
       void fulfill(OrderId orderId) {
           Order order = orderRepo.findById(orderId).orElseThrow();
           fulfillment.fulfill(order);
@@ -210,6 +210,7 @@ APPLYING SOLID TOGETHER:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT SOLID:
+
 - God classes: one class changes when anything in the system changes
 - Modification requires understanding the whole system (high coupling)
 - Tests require real databases, real email servers (dependencies not inverted)
@@ -241,11 +242,11 @@ DEPENDENCY INJECTION (DIP in practice — Spring):
   High-level: OrderService
   Abstraction: OrderRepository (interface)
   Low-level:   JpaOrderRepository (implements OrderRepository)
-  
+
   Spring creates and injects:
     new OrderService(new JpaOrderRepository(entityManager))
     // OrderService never sees JpaOrderRepository. Only the interface.
-    
+
   Test injection:
     new OrderService(mock(OrderRepository.class))
     // Instant unit test: no DB, no network.
@@ -292,7 +293,7 @@ class TwilioSmsNotifier implements SmsNotifier {
 class OrderConfirmationNotifier { // Sends order confirmations only.
     private final EmailNotifier email; // DIP: depends on interface
     private final SmsNotifier sms;     // DIP: depends on interface
-    
+
     // LSP: any EmailNotifier subtype works (SendGrid, SES, Mailgun)
     void notifyOrderConfirmed(Order order, Customer customer) {
         email.sendEmail(customer.email(), OrderConfirmationEmail.for(order));
@@ -307,11 +308,11 @@ class OrderConfirmationNotifier { // Sends order confirmations only.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| SOLID means one method per class / interface per class | SRP: one REASON TO CHANGE, not one method. A rich domain object with 10 methods all serving its single domain responsibility satisfies SRP. Over-applying SRP creates a fragmented codebase with dozens of trivial classes. Use judgment: "does this class have multiple reasons to change?" If no: it's fine |
-| DIP means always using an interface | DIP: depend on abstractions. In many cases: a well-designed abstract class, a concrete class that won't change, or a simple function serves as the abstraction. Not every dependency needs a Java interface. Rule: interface needed when (1) multiple implementations possible, (2) need to mock in tests, or (3) implementation might change |
-| SOLID is always worth applying | Misapplied SOLID produces over-engineered code. A simple 3-class application doesn't need the Strategy pattern for every if/else. SOLID principles are DESIGN PRINCIPLES for managing COMPLEXITY. Apply them where code IS complex and likely to change. A simple CRUD form with 1 rule doesn't need an Abstract Factory |
+| Misconception                                          | Reality                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SOLID means one method per class / interface per class | SRP: one REASON TO CHANGE, not one method. A rich domain object with 10 methods all serving its single domain responsibility satisfies SRP. Over-applying SRP creates a fragmented codebase with dozens of trivial classes. Use judgment: "does this class have multiple reasons to change?" If no: it's fine                                 |
+| DIP means always using an interface                    | DIP: depend on abstractions. In many cases: a well-designed abstract class, a concrete class that won't change, or a simple function serves as the abstraction. Not every dependency needs a Java interface. Rule: interface needed when (1) multiple implementations possible, (2) need to mock in tests, or (3) implementation might change |
+| SOLID is always worth applying                         | Misapplied SOLID produces over-engineered code. A simple 3-class application doesn't need the Strategy pattern for every if/else. SOLID principles are DESIGN PRINCIPLES for managing COMPLEXITY. Apply them where code IS complex and likely to change. A simple CRUD form with 1 rule doesn't need an Abstract Factory                      |
 
 ---
 

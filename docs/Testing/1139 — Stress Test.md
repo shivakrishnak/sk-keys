@@ -18,10 +18,10 @@ tags: #testing, #stress-test, #breaking-point, #capacity, #resilience, #saturati
 
 ⚡ TL;DR — **Stress testing** pushes a system beyond its expected capacity to find its breaking point and observe failure behavior. Unlike load tests (which validate normal conditions), stress tests deliberately overload the system. Goals: find maximum capacity, observe how the system fails (gracefully or catastrophically), verify it recovers after load drops. A system under stress should degrade gracefully (return 503, reject new work) rather than crash or corrupt data.
 
-| #1139 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Load Test, Performance Test | |
-| **Used by:** | Capacity planning, breaking point analysis, resilience engineering | |
+| #1139           | Category: Testing                                                  | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Load Test, Performance Test                                        |                 |
+| **Used by:**    | Capacity planning, breaking point analysis, resilience engineering |                 |
 
 ---
 
@@ -40,16 +40,19 @@ Load test checks if the system handles normal traffic. Stress test checks what h
 ### 🔵 Simple Definition (Elaborated)
 
 Stress tests deliberately break the system to understand its failure mode. There are two types of failure:
+
 1. **Graceful degradation**: system returns 503 Service Unavailable, rate-limits excess requests, queues work — users experience slowness or retry-able errors, but no data is lost
 2. **Catastrophic failure**: system crashes, deadlocks, corrupts data, or silently drops requests — much worse
 
 A well-designed system under extreme stress should:
+
 - Return `503 Service Unavailable` or `429 Too Many Requests` to excess requests
 - Keep serving existing requests (even if slowly)
 - Not corrupt or lose data
 - Recover automatically when load drops (no manual restart needed)
 
 **What stress tests reveal**:
+
 - **Connection pool exhaustion**: when DB connections run out, requests hang indefinitely (no timeout configured)
 - **Thread pool saturation**: executor queue fills up, `RejectedExecutionException` thrown — is it caught and returned as 503, or does it bubble up as 500?
 - **Memory leak under load**: heap grows under high concurrency, eventually causing OOM crash
@@ -62,42 +65,42 @@ A well-designed system under extreme stress should:
 ```javascript
 // K6 STRESS TEST: find breaking point by gradually increasing load
 
-import http from 'k6/http';
-import { check } from 'k6';
-import { Rate } from 'k6/metrics';
+import http from "k6/http";
+import { check } from "k6";
+import { Rate } from "k6/metrics";
 
-const errorRate = new Rate('errors');
+const errorRate = new Rate("errors");
 
 export const options = {
   // INCREASING LOAD STRESS PROFILE: keep adding VUs until system breaks
   stages: [
-    { duration: '2m', target: 100  },   // normal load (baseline)
-    { duration: '5m', target: 100  },   // hold normal load
-    { duration: '2m', target: 500  },   // 5x load
-    { duration: '5m', target: 500  },   // hold 5x load
-    { duration: '2m', target: 1000 },   // 10x load
-    { duration: '5m', target: 1000 },   // hold 10x load → usually where systems break
-    { duration: '2m', target: 2000 },   // 20x load (extreme)
-    { duration: '5m', target: 2000 },   // hold extreme load
-    { duration: '5m', target: 0    },   // RECOVERY: ramp down
-    { duration: '5m', target: 100  },   // hold normal load post-stress
+    { duration: "2m", target: 100 }, // normal load (baseline)
+    { duration: "5m", target: 100 }, // hold normal load
+    { duration: "2m", target: 500 }, // 5x load
+    { duration: "5m", target: 500 }, // hold 5x load
+    { duration: "2m", target: 1000 }, // 10x load
+    { duration: "5m", target: 1000 }, // hold 10x load → usually where systems break
+    { duration: "2m", target: 2000 }, // 20x load (extreme)
+    { duration: "5m", target: 2000 }, // hold extreme load
+    { duration: "5m", target: 0 }, // RECOVERY: ramp down
+    { duration: "5m", target: 100 }, // hold normal load post-stress
     // Watch: does it recover to normal latency? Or stay degraded?
   ],
-  
+
   // Thresholds are NOT used for pass/fail in stress tests
   // (the system is expected to fail at high load — that's the point)
   // Instead: record metrics at each stage and analyze the curve
 };
 
-export default function() {
-  const resp = http.get('/api/products', { timeout: '10s' });
-  
+export default function () {
+  const resp = http.get("/api/products", { timeout: "10s" });
+
   const passed = check(resp, {
-    'status 200': r => r.status === 200,
-    'status 503 (graceful)': r => r.status === 503,   // 503 is ACCEPTABLE under stress
-    'NOT status 500': r => r.status !== 500,           // 500 is NOT acceptable (bug)
+    "status 200": (r) => r.status === 200,
+    "status 503 (graceful)": (r) => r.status === 503, // 503 is ACCEPTABLE under stress
+    "NOT status 500": (r) => r.status !== 500, // 500 is NOT acceptable (bug)
   });
-  
+
   errorRate.add(!passed);
 }
 ```
@@ -223,21 +226,21 @@ Stress Test ◄── (you are here)
 
 @Service
 public class InventoryServiceClient {
-    
+
     // Resilience4j circuit breaker
     private final CircuitBreaker circuitBreaker = CircuitBreaker.ofDefaults("inventory");
-    
+
     public InventoryResponse checkStock(String productId) {
         // Under normal load: calls real inventory service
         // Under stress: if >50% of calls fail in 60s → circuit OPENS
         // While open: all calls fail fast (return fallback immediately)
         // After 30s: circuit HALF-OPENS (try 1 real call; if OK, close circuit)
-        
+
         return circuitBreaker.executeSupplier(() ->
             inventoryHttpClient.get("/inventory/" + productId)
         );
     }
-    
+
     // FALLBACK: when circuit is open, serve degraded response
     @Recover
     public InventoryResponse fallback(String productId, CallNotPermittedException ex) {
@@ -253,11 +256,11 @@ public class InventoryServiceClient {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Stress tests should pass | Stress tests are DESIGNED to push the system until it fails — the goal is to observe HOW it fails. A stress test where the system "passes" at 50x normal load just means you haven't found the breaking point yet (increase load further). The stress test is useful when it reveals: the breaking point, the failure mode, the safety margin above expected load, and the recovery behavior. |
+| Misconception                                | Reality                                                                                                                                                                                                                                                                                                                                                                                               |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Stress tests should pass                     | Stress tests are DESIGNED to push the system until it fails — the goal is to observe HOW it fails. A stress test where the system "passes" at 50x normal load just means you haven't found the breaking point yet (increase load further). The stress test is useful when it reveals: the breaking point, the failure mode, the safety margin above expected load, and the recovery behavior.         |
 | A system that crashes under stress is broken | A system under 50x normal load crashing is expected and often acceptable — if it crashes gracefully (returns 503, recovers automatically, loses no data). The failure mode matters more than the fact of failure. A system that returns 503 under 10x load and recovers in 2 minutes is better than one that corrupts data at 3x load. Stress tests help you understand and accept the failure modes. |
-| Stress tests and load tests are the same | Distinct purposes: load test → "does it meet SLO at expected load?"; stress test → "what happens beyond expected load?" Load tests have pass/fail criteria (SLO thresholds). Stress tests explore behavior — the "failure" at high load is expected; what's being validated is HOW it fails and whether it recovers. |
+| Stress tests and load tests are the same     | Distinct purposes: load test → "does it meet SLO at expected load?"; stress test → "what happens beyond expected load?" Load tests have pass/fail criteria (SLO thresholds). Stress tests explore behavior — the "failure" at high load is expected; what's being validated is HOW it fails and whether it recovers.                                                                                  |
 
 ---
 

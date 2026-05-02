@@ -18,10 +18,10 @@ tags: #java, #varargs, #arrays, #method-overloading, #heap-pollution
 
 ⚡ TL;DR — **Varargs** (`Type... args`) allow a method to accept zero or more arguments of a type; desugared to an array. Use `@SafeVarargs` with generics to suppress heap pollution warnings.
 
-| #318 | Category: Java Language | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Generics, Arrays, Method Overloading | |
-| **Used by:** | String.format, Arrays.asList, printf, logging, Spring @Value | |
+| #318            | Category: Java Language                                      | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------- | :-------------- |
+| **Depends on:** | Generics, Arrays, Method Overloading                         |                 |
+| **Used by:**    | String.format, Arrays.asList, printf, logging, Spring @Value |                 |
 
 ---
 
@@ -55,22 +55,22 @@ VARARGS DESUGARING:
       System.out.print(label + ": ");
       for (int v : values) System.out.print(v + " ");
   }
-  
+
   Bytecode equivalent:
   public void print(String label, int[] values) { ... }
-  
+
   Source: call sites:
   print("nums", 1, 2, 3)   → print("nums", new int[]{1, 2, 3})
   print("empty")            → print("empty", new int[0])  ← zero-length array
   print("arr", myArr)       → print("arr", myArr)          ← array passed directly
-  
+
 VARARGS WITH ARRAYS — AMBIGUITY:
 
   void method(Object... args) { ... }
-  
+
   method("a", "b");         // args = new Object[]{"a", "b"}
   method(new Object[]{"a", "b"});  // args = {"a", "b"} (array IS the varargs)
-  
+
   // GOTCHA:
   Object[] arr = {1, 2, 3};
   method(arr);              // args = {1, 2, 3} (array is unwrapped)
@@ -81,11 +81,11 @@ OVERLOADING WITH VARARGS:
 
   void foo(int a, int b) { System.out.println("two ints"); }
   void foo(int... nums)  { System.out.println("varargs"); }
-  
+
   foo(1, 2);    // "two ints" — exact match takes priority over varargs
   foo(1, 2, 3); // "varargs" — only varargs matches
   foo(1);       // "varargs" — only varargs matches
-  
+
   // AMBIGUITY — avoid:
   void bar(int a, int... b) {}
   void bar(int... a) {}
@@ -98,16 +98,16 @@ GENERIC VARARGS + HEAP POLLUTION:
   public static <T> List<T> listOf(T... elements) {
       return Arrays.asList(elements);  // SAFE: elements not stored/cast
   }
-  
+
   // UNSAFE — NEVER do this:
   static <T> T[] toArray(T... args) {
       return args;  // UNSAFE: caller gets Object[] due to erasure, ClassCastException possible
   }
   String[] result = toArray("a", "b");  // ClassCastException: Object[] cannot be String[]
-  
+
   // WHY: new T[]{...} with erasure → actually new Object[]{...}
   // Caller expects String[], gets Object[] → ClassCastException at assignment
-  
+
   // RULE FOR @SafeVarargs: safe if:
   // 1. Method doesn't store anything into the varargs array
   // 2. Method doesn't expose the varargs array to untrusted code
@@ -128,6 +128,7 @@ COMMON VARARGS IN JDK:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Varargs:
+
 - `void log(String msg, Object[] args)` — caller must create array: `log("msg", new Object[]{a, b})`
 - `printf`-style methods: verbose, error-prone array construction at every call site
 
@@ -155,7 +156,7 @@ BYTECODE VIEW (javap):
   Source:
   void print(int... values) { System.out.println(values.length); }
   print(1, 2, 3);
-  
+
   Bytecode for call:
   iconst_3
   newarray int        ← creates new int[3]
@@ -172,7 +173,7 @@ BYTECODE VIEW (javap):
   iconst_3            ← values[2] = 3
   iastore
   invokevirtual print([I)  ← passes int[]
-  
+
   // Zero-arg call: print() → compiler creates new int[0] (not null!)
 ```
 
@@ -236,11 +237,11 @@ void debug(String msg, Object... args) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `void foo(Object... args)` called with `null` produces an empty array | `foo(null)` sets `args = null` (not an empty array). The null is treated as the array itself, not as a missing argument. `foo((Object) null)` wraps null as a single element: `args = new Object[]{null}`. Always null-check varargs: `if (args == null) args = new Object[0]`. |
-| `@SafeVarargs` makes generic varargs actually safe | `@SafeVarargs` only suppresses the warning — it doesn't make unsafe code safe. It's a programmer assertion that the code is safe. If you use `@SafeVarargs` on a method that exposes the varargs array or stores alien types into it, heap pollution still occurs. |
-| `String.format(pattern, arr)` works as expected for Object[] | If `arr` is an `Object[]`, it's treated as the entire varargs array (the elements are the format args). If `arr` is a `String[]`, same thing. But if you intended the array itself to be one format arg, cast: `String.format("%s", (Object) arr)`. This is a common bug with format methods and arrays. |
+| Misconception                                                         | Reality                                                                                                                                                                                                                                                                                                  |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `void foo(Object... args)` called with `null` produces an empty array | `foo(null)` sets `args = null` (not an empty array). The null is treated as the array itself, not as a missing argument. `foo((Object) null)` wraps null as a single element: `args = new Object[]{null}`. Always null-check varargs: `if (args == null) args = new Object[0]`.                          |
+| `@SafeVarargs` makes generic varargs actually safe                    | `@SafeVarargs` only suppresses the warning — it doesn't make unsafe code safe. It's a programmer assertion that the code is safe. If you use `@SafeVarargs` on a method that exposes the varargs array or stores alien types into it, heap pollution still occurs.                                       |
+| `String.format(pattern, arr)` works as expected for Object[]          | If `arr` is an `Object[]`, it's treated as the entire varargs array (the elements are the format args). If `arr` is a `String[]`, same thing. But if you intended the array itself to be one format arg, cast: `String.format("%s", (Object) arr)`. This is a common bug with format methods and arrays. |
 
 ---
 

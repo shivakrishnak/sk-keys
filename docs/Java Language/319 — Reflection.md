@@ -18,10 +18,10 @@ tags: #java, #reflection, #runtime, #introspection, #spring, #performance
 
 ⚡ TL;DR — **Reflection** is Java's runtime introspection API: inspect and invoke any class, field, method, or constructor — even private ones — bypassing compile-time type checking. Powers Spring, Hibernate, and JUnit.
 
-| #319 | Category: Java Language | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Class Loader, Type Erasure, Annotations, JVM Bytecode | |
-| **Used by:** | Spring DI, Hibernate ORM, JUnit 5, Jackson, Mockito, Java modules | |
+| #319            | Category: Java Language                                           | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Class Loader, Type Erasure, Annotations, JVM Bytecode             |                 |
+| **Used by:**    | Spring DI, Hibernate ORM, JUnit 5, Jackson, Mockito, Java modules |                 |
 
 ---
 
@@ -51,55 +51,55 @@ Reflection is the foundation of most Java frameworks. Spring's dependency inject
 REFLECTION CORE API:
 
   1. OBTAINING Class OBJECT:
-  
+
   // From class literal (compile-time known):
   Class<User> clazz = User.class;
-  
+
   // From instance:
   User user = new User("Alice");
   Class<?> clazz = user.getClass();
-  
+
   // From name (runtime; class must be on classpath):
   Class<?> clazz = Class.forName("com.example.User");  // throws ClassNotFoundException
-  
+
   2. INSPECTING STRUCTURE:
-  
+
   Class<?> clazz = User.class;
-  
+
   // Fields:
   Field[] publicFields  = clazz.getFields();           // public fields (including inherited)
   Field[] allFields     = clazz.getDeclaredFields();   // all fields (incl private, excl inherited)
-  
+
   Field nameField = clazz.getDeclaredField("name");
   nameField.setAccessible(true);   // bypass private access control
   Object value = nameField.get(user);  // get field value
   nameField.set(user, "Bob");          // set field value
-  
+
   // Methods:
   Method[] methods = clazz.getDeclaredMethods();
   Method setName = clazz.getDeclaredMethod("setName", String.class);
   setName.setAccessible(true);
   setName.invoke(user, "Charlie");  // invoke method on instance
-  
+
   // Static method (no instance needed):
   Method staticMethod = clazz.getDeclaredMethod("createDefault");
   staticMethod.invoke(null);  // null = no instance
-  
+
   // Constructors:
   Constructor<?> constructor = clazz.getDeclaredConstructor(String.class, int.class);
   Object newUser = constructor.newInstance("Dave", 30);
-  
+
   // Annotations:
   if (clazz.isAnnotationPresent(Entity.class)) {
       Entity entity = clazz.getAnnotation(Entity.class);
       String tableName = entity.name();
   }
-  
+
   Field ageField = clazz.getDeclaredField("age");
   Column column = ageField.getAnnotation(Column.class);
-  
+
   3. MODIFIERS:
-  
+
   int mods = clazz.getModifiers();
   Modifier.isPublic(mods)    → true/false
   Modifier.isAbstract(mods)  → true/false
@@ -109,20 +109,20 @@ JAVA 9 MODULE SYSTEM IMPACT:
 
   Pre-Java 9: setAccessible(true) works on any field in any package
   Java 9+: modules control access:
-  
+
   // Accessing a private field in an unexported package:
   field.setAccessible(true);
   // → InaccessibleObjectException: "Unable to make private accessible:
   //    module com.example does not 'opens com.example' to unnamed module"
-  
+
   FIX (module-info.java):
   module com.example {
       opens com.example to my.framework;  // allow deep reflection from my.framework
   }
-  
+
   OR JVM flag (for legacy tools):
   --add-opens java.base/java.lang=ALL-UNNAMED
-  
+
   IMPLICATION: Spring Boot, Hibernate, Mockito required --add-opens for Java 17+
   Spring 6 + Hibernate 6: moved to compile-time generation (annotation processing)
   to reduce reflection dependency
@@ -133,7 +133,7 @@ PERFORMANCE COMPARISON:
   Direct call:         ~15ms
   Reflective invoke:   ~180ms  (12x slower)
   With MethodHandle:   ~20ms   (near direct; JIT-optimizable)
-  
+
   // Spring 6: AOT compilation pre-generates bean factory code
   // Avoids reflection for most bean operations at runtime → near-direct performance
 
@@ -144,7 +144,7 @@ METHOD HANDLES (Java 7 — modern alternative):
   MethodHandle setter = lookup.findVirtual(User.class, "setName",
       MethodType.methodType(void.class, String.class));
   setter.invokeExact(user, "Eve");  // JIT-friendly; faster than Method.invoke
-  
+
   // Java 9 VarHandle: field access via MethodHandle mechanism
   VarHandle nameHandle = MethodHandles.lookup().findVarHandle(User.class, "name", String.class);
   nameHandle.set(user, "Frank");
@@ -155,6 +155,7 @@ METHOD HANDLES (Java 7 — modern alternative):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Reflection:
+
 - Frameworks cannot instantiate user classes without importing them (circular dependency)
 - DI containers cannot discover and wire beans at runtime
 - ORMs cannot map unknown Java classes to database schemas
@@ -191,7 +192,7 @@ REFLECTION INVOCATION PIPELINE:
      After 15 calls: JVM inflates to a faster bytecode accessor (ReflectionFactory)
   5. Invoke: actual method execution
   6. Return boxing/unboxing
-  
+
   Why slower than direct call:
   - No JIT inlining across reflection boundary
   - Argument boxing for primitive types
@@ -265,11 +266,11 @@ injectField(orderService, "paymentGateway", mockGateway);
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `setAccessible(true)` is always sufficient for field access | Since Java 9, modules control deep reflection. If the target field's module doesn't `opens` the package, `setAccessible(true)` throws `InaccessibleObjectException`. Spring 6+, Hibernate 6+, and other frameworks require either module `opens` declarations or migrate to compile-time generation. |
-| Reflection is too slow for production use | Reflection is slower than direct calls (~12×), but in context: if you call a reflective method once per HTTP request (e.g., Spring's bean wiring), the overhead is microseconds — irrelevant. The cost is in hot paths: reflective calls in tight loops, per-element processing. Spring caches Method objects and uses MethodHandles internally to minimize overhead. |
-| `Class.forName("com.example.Foo")` always finds the class | `forName` uses the current thread's context class loader. In multi-classloader environments (OSGi, app servers), the class may not be visible. Explicitly pass the classloader: `Class.forName("com.example.Foo", true, targetClassLoader)`. |
+| Misconception                                               | Reality                                                                                                                                                                                                                                                                                                                                                               |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `setAccessible(true)` is always sufficient for field access | Since Java 9, modules control deep reflection. If the target field's module doesn't `opens` the package, `setAccessible(true)` throws `InaccessibleObjectException`. Spring 6+, Hibernate 6+, and other frameworks require either module `opens` declarations or migrate to compile-time generation.                                                                  |
+| Reflection is too slow for production use                   | Reflection is slower than direct calls (~12×), but in context: if you call a reflective method once per HTTP request (e.g., Spring's bean wiring), the overhead is microseconds — irrelevant. The cost is in hot paths: reflective calls in tight loops, per-element processing. Spring caches Method objects and uses MethodHandles internally to minimize overhead. |
+| `Class.forName("com.example.Foo")` always finds the class   | `forName` uses the current thread's context class loader. In multi-classloader environments (OSGi, app servers), the class may not be visible. Explicitly pass the classloader: `Class.forName("com.example.Foo", true, targetClassLoader)`.                                                                                                                          |
 
 ---
 

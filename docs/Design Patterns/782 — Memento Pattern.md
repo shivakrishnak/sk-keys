@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #behavioral, #oop, #undo-redo, #state-managem
 
 ⚡ TL;DR — **Memento** captures and externalizes an object's internal state so it can be restored later — without violating encapsulation by allowing only the originator to create and restore from mementos, while the caretaker stores mementos without knowing their contents.
 
-| #782 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Command Pattern, Encapsulation | |
-| **Used by:** | Undo/redo systems, Snapshots, Save/restore state, Game checkpoints | |
+| #782            | Category: Design Patterns                                          | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Command Pattern, Encapsulation        |                 |
+| **Used by:**    | Undo/redo systems, Snapshots, Save/restore state, Game checkpoints |                 |
 
 ---
 
@@ -55,82 +55,82 @@ MEMENTO STRUCTURE:
   -text: String
   -cursorPos: int
   -selection: Range
-  
+
   +save(): TextEditorMemento
       return new TextEditorMemento(text, cursorPos, selection)
-      
+
   +restore(TextEditorMemento m):
       this.text      = m.getText()        // only Originator calls getText()
       this.cursorPos = m.getCursorPos()
       this.selection = m.getSelection()
-  
+
   MEMENTO: TextEditorMemento
   ───────────────────────────
   -text: String              // package-private or nested class in Originator
   -cursorPos: int            // Caretaker cannot access these fields
   -selection: Range
-  
+
   // Constructor: package-private (only Originator can create)
   TextEditorMemento(String text, int cursorPos, Range selection) { ... }
-  
+
   // Getters: package-private or only accessible to Originator
   String getText()      { return text; }
   int getCursorPos()    { return cursorPos; }
   Range getSelection()  { return selection; }
-  
+
   CARETAKER: UndoStack
   ────────────────────
   -history: Deque<TextEditorMemento>
-  
+
   +push(TextEditorMemento m): history.push(m)
   +pop(): TextEditorMemento:  return history.pop()
   // Caretaker stores mementos but NEVER reads their contents!
-  
+
 ENCAPSULATION IN JAVA:
 
   // Java doesn't have "friend" access like C++, so the pattern uses:
   // 1. INNER CLASS: Memento is a private inner class of Originator
   //    Only Originator can access its internals.
-  
+
   public class TextEditor {
       private String text;
       private int cursorPos;
-      
+
       // Memento as PRIVATE INNER CLASS — Caretaker holds it as opaque object:
       public class Memento {
           private final String text;
           private final int cursorPos;
-          
+
           private Memento(String text, int cursorPos) {
               this.text = text;
               this.cursorPos = cursorPos;
           }
           // No public getters! Only TextEditor (outer class) can access fields.
       }
-      
+
       public Memento save() {
           return new Memento(text, cursorPos);   // creates memento (encapsulated)
       }
-      
+
       public void restore(Memento m) {
           this.text      = m.text;           // outer class accesses private fields
           this.cursorPos = m.cursorPos;      // of inner class — Java allows this
       }
   }
-  
+
   // Caretaker:
   class UndoManager {
       private final Deque<TextEditor.Memento> history = new ArrayDeque<>();
-      
+
       void save(TextEditor editor) {
           history.push(editor.save());  // holds Memento but can't inspect it
       }
-      
+
       void undo(TextEditor editor) {
           if (!history.isEmpty()) editor.restore(history.pop());
       }
   }
-  
+
 MEMENTO vs COMMAND FOR UNDO:
 
   COMMAND UNDO:
@@ -139,31 +139,31 @@ MEMENTO vs COMMAND FOR UNDO:
   - DeleteCommand.undo() → re-insert what was deleted.
   - Compact: only stores what changed.
   - Better for: operations where reversal logic is simple and state changes are small.
-  
+
   MEMENTO UNDO:
   - Save full state snapshot before each operation.
   - Restore full state on undo.
   - Simpler undo logic: just restore snapshot.
   - More memory: stores full state for each step (even if only 1 char changed, stores all text).
   - Better for: complex state where computing reversal is hard; state is small; snapshots are cheap.
-  
+
 INCREMENTAL SNAPSHOTS (optimization):
 
   // For large state: don't snapshot entire state each time — store diffs (deltas):
-  
+
   class GameStateMemento {
       private final Map<String, Object> changedFields;   // only changed fields
       private final GameStateMemento previous;           // link to previous (for full restore)
-      
+
       GameStateMemento(Map<String, Object> changed, GameStateMemento previous) {
           this.changedFields = changed;
           this.previous      = previous;
       }
   }
-  
+
   // Full restore = apply all deltas from oldest to newest.
   // This is the basis of event sourcing: each event is a delta memento.
-  
+
   // Git commit = Memento: stores diff (delta) against parent commit.
   // Full file content = replay all diffs from initial commit.
 ```
@@ -173,6 +173,7 @@ INCREMENTAL SNAPSHOTS (optimization):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Memento:
+
 - Undo: expose internal state in getters → break encapsulation (caretaker reads internals)
 - OR: give caretaker the full state copy → caretaker becomes coupled to originator's internals
 
@@ -202,7 +203,7 @@ MEMENTO FLOW:
   Save:
   Originator.save() → creates Memento(copy of internal state)
   Caretaker.push(memento) → stores opaque Memento
-  
+
   Restore:
   Caretaker.pop() → returns Memento to Originator
   Originator.restore(memento) → reads Memento contents, restores internal state
@@ -238,7 +239,7 @@ public class GameCharacter {
     private int level;
     private int gold;
     private Position position;
-    
+
     // MEMENTO — private nested class; only GameCharacter can access internals:
     public class Checkpoint {
         private final int health;
@@ -246,7 +247,7 @@ public class GameCharacter {
         private final int gold;
         private final Position position;
         private final String timestamp;
-        
+
         private Checkpoint(int health, int level, int gold, Position position) {
             this.health    = health;
             this.level     = level;
@@ -254,16 +255,16 @@ public class GameCharacter {
             this.position  = position.copy();   // defensive copy
             this.timestamp = Instant.now().toString();
         }
-        
+
         public String getTimestamp() { return timestamp; }
         // NOTE: other fields are private — only GameCharacter can access them
     }
-    
+
     // ORIGINATOR creates memento:
     public Checkpoint save() {
         return new Checkpoint(health, level, gold, position);
     }
-    
+
     // ORIGINATOR restores from memento:
     public void restore(Checkpoint cp) {
         this.health   = cp.health;     // inner class field — accessible to outer class
@@ -271,7 +272,7 @@ public class GameCharacter {
         this.gold     = cp.gold;
         this.position = cp.position.copy();
     }
-    
+
     // Game methods:
     public void takeDamage(int dmg) { this.health -= dmg; }
     public void gainGold(int amount) { this.gold += amount; }
@@ -281,12 +282,12 @@ public class GameCharacter {
 // CARETAKER — stores checkpoints, knows nothing about their contents:
 class SaveSlotManager {
     private final Map<String, GameCharacter.Checkpoint> slots = new LinkedHashMap<>();
-    
+
     void save(String slotName, GameCharacter character) {
         slots.put(slotName, character.save());
         System.out.println("Saved to: " + slotName);
     }
-    
+
     void load(String slotName, GameCharacter character) {
         GameCharacter.Checkpoint cp = slots.get(slotName);
         if (cp != null) {
@@ -294,7 +295,7 @@ class SaveSlotManager {
             System.out.println("Loaded from: " + slotName + " (" + cp.getTimestamp() + ")");
         }
     }
-    
+
     List<String> listSlots() { return new ArrayList<>(slots.keySet()); }
 }
 
@@ -318,11 +319,11 @@ saves.load("slot1", hero);       // restore: 80 HP, 500 gold ← back from save
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Memento and Command undo are interchangeable | They solve the same problem (undo) differently. Command undo: each command knows how to reverse itself (compact; only stores delta). Memento undo: save full state snapshot (simpler; potentially more memory). Choose Command when reversal logic is straightforward. Choose Memento when state is complex/hard to reverse programmatically, or when state is small enough that snapshots are cheap. |
-| Caretaker can read memento contents for its own purposes | Violates the pattern's encapsulation contract. Caretaker is an opaque holder — no business logic based on memento contents. If caretaker needs to display "last saved at 3pm," use a single descriptive string exposed from the memento (as in `getTimestamp()` above). But caretaker must not access the originator's internal data. |
-| Memento must save ALL internal state | Partial state mementos are valid if you only need to restore a subset of state. Example: save only the undo-relevant text without UI layout state. The key is that what's saved is sufficient to restore the originator to a correct previous state. Optimization: save only the changed fields (delta memento). |
+| Misconception                                            | Reality                                                                                                                                                                                                                                                                                                                                                                                               |
+| -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Memento and Command undo are interchangeable             | They solve the same problem (undo) differently. Command undo: each command knows how to reverse itself (compact; only stores delta). Memento undo: save full state snapshot (simpler; potentially more memory). Choose Command when reversal logic is straightforward. Choose Memento when state is complex/hard to reverse programmatically, or when state is small enough that snapshots are cheap. |
+| Caretaker can read memento contents for its own purposes | Violates the pattern's encapsulation contract. Caretaker is an opaque holder — no business logic based on memento contents. If caretaker needs to display "last saved at 3pm," use a single descriptive string exposed from the memento (as in `getTimestamp()` above). But caretaker must not access the originator's internal data.                                                                 |
+| Memento must save ALL internal state                     | Partial state mementos are valid if you only need to restore a subset of state. Example: save only the undo-relevant text without UI layout state. The key is that what's saved is sufficient to restore the originator to a correct previous state. Optimization: save only the changed fields (delta memento).                                                                                      |
 
 ---
 
@@ -334,9 +335,9 @@ saves.load("slot1", hero);       // restore: 80 HP, 500 gold ← back from save
 // ANTI-PATTERN: Unlimited undo stack — each keystroke saves full document text:
 class UndoManager {
     private final Deque<TextEditor.Memento> history = new ArrayDeque<>();
-    
+
     void saveState(TextEditor editor) {
-        history.push(editor.save());  // no limit! 
+        history.push(editor.save());  // no limit!
         // Document: 1MB text × 10,000 keystrokes = 10GB of undo history!
     }
 }
@@ -345,7 +346,7 @@ class UndoManager {
 class UndoManager {
     private static final int MAX_HISTORY = 100;
     private final Deque<TextEditor.Memento> history = new ArrayDeque<>();
-    
+
     void saveState(TextEditor editor) {
         if (history.size() >= MAX_HISTORY) {
             history.pollLast();  // remove oldest to make room
@@ -360,7 +361,7 @@ class TextEditorMemento {
     private final String oldText;      // text that was replaced
     private final String newText;      // what replaced it
     private final int cursorPos;
-    
+
     // Restore: apply inverse delta — much smaller than full snapshot
 }
 

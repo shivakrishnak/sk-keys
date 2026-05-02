@@ -18,10 +18,10 @@ tags: #testing, #contract-test, #pact, #consumer-driven, #microservices, #api-co
 
 ⚡ TL;DR — A **contract test** verifies that a service's API (the "contract") matches what its consumers expect. In microservices, Service A (consumer) calls Service B (provider). Consumer-Driven Contract Testing (CDC): the consumer defines the contract (what it sends, what it expects back), the provider verifies it can fulfill that contract. Tools: **Pact** (polyglot) and **Spring Cloud Contract**. Prevents API breaking changes from reaching production without coordination.
 
-| #1133 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Integration Test, Microservices, HTTP APIs | |
-| **Used by:** | Consumer-Driven Contract Testing, Pact, Spring Cloud Contract, CI-CD pipelines | |
+| #1133           | Category: Testing                                                              | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Integration Test, Microservices, HTTP APIs                                     |                 |
+| **Used by:**    | Consumer-Driven Contract Testing, Pact, Spring Cloud Contract, CI-CD pipelines |                 |
 
 ---
 
@@ -48,6 +48,7 @@ Contract testing sits between unit tests and E2E tests for microservices:
 - **Contract test**: offline verification of the API contract — no real services running, but tests the actual contract (request/response shape, types, required fields)
 
 **CDC Flow**:
+
 1. Consumer team writes a Pact test: "when I send GET /orders/123, I expect `{id: 123, status: 'PAID', total: 99.99}`"
 2. Pact generates a `.json` contract file from the consumer test
 3. Contract is published to Pact Broker (shared repository for contracts)
@@ -65,7 +66,7 @@ Contract testing sits between unit tests and E2E tests for microservices:
 @ExtendWith(PactConsumerTestExt.class)
 @PactTestFor(providerName = "inventory-service")
 class InventoryServicePactConsumerTest {
-    
+
     // Define the contract: what request I send, what response I expect
     @Pact(consumer = "order-service")
     public V4Pact checkInventory(PactDslWithProvider builder) {
@@ -87,22 +88,22 @@ class InventoryServicePactConsumerTest {
                 )
             .toPact(V4Pact.class);
     }
-    
+
     @Test
     @PactTestFor(pactMethod = "checkInventory")
     void checkInventory_whenProductExists_returnsStockInfo(MockServer mockServer) {
         // Pact starts a mock server that returns the response we defined above
         InventoryClient client = new InventoryClient(mockServer.getUrl());
-        
+
         // ACT: call our real InventoryClient with the mock server
         InventoryResponse response = client.checkStock("prod-123");
-        
+
         // ASSERT: does our client correctly parse the response?
         assertThat(response.getProductId()).isNotNull();
         assertThat(response.getAvailableStock()).isGreaterThanOrEqualTo(0);
         assertThat(response.isInStock()).isNotNull();
     }
-    
+
     // This test generates: target/pacts/order-service-inventory-service.json
     // That file is the CONTRACT
 }
@@ -114,26 +115,26 @@ class InventoryServicePactConsumerTest {
 @Provider("inventory-service")
 @PactBroker(url = "${pact.broker.url}")   // download contracts from Pact Broker
 class InventoryServicePactProviderIT {
-    
+
     @TestTemplate
     @ExtendWith(PactVerificationInvocationContextProvider.class)
     void pactVerificationTestTemplate(PactVerificationContext context) {
         context.verifyInteraction();  // runs the contract against the real service
     }
-    
+
     @BeforeEach
     void before(PactVerificationContext context) {
         // Start the real Inventory Service (Spring Boot)
         context.setTarget(new HttpTestTarget("localhost", 8081));
     }
-    
+
     // Provider states: set up the data that the consumer's test requires
     @State("product prod-123 exists with stock 50")
     void setupProduct() {
         // Insert test data into the real database (Testcontainers PostgreSQL)
         productRepository.save(new Product("prod-123", "Widget", 50));
     }
-    
+
     // If this test passes: Inventory Service can fulfill Order Service's contract
     // Pact Broker records: order-service@current + inventory-service@current = COMPATIBLE
 }
@@ -145,13 +146,13 @@ PACT BROKER WORKFLOW:
   Consumer CI:
   1. Run consumer tests → generate .json contract file
   2. Publish contract to Pact Broker: pact publish target/pacts/
-  
+
   Provider CI:
   3. mvn verify (or gradle test)
   4. Provider test downloads contracts from Pact Broker
   5. For each contract: sets up provider state → runs request → verifies response
   6. Reports result to Pact Broker: PASSED or FAILED
-  
+
   Deployment gate (can-i-deploy):
   7. Before deploying ANY service: pact-broker can-i-deploy
      --pacticipant order-service --version 1.2.3 --to production
@@ -173,11 +174,11 @@ SPRING CLOUD CONTRACT (alternative to Pact, Spring-native):
       headers { contentType(applicationJson()) }
     }
   }
-  
+
   Maven plugin generates:
   - Provider test: verifies the real provider fulfills the contract
   - Consumer stub JAR: published to Maven Central/Nexus
-  
+
   Consumer: downloads the stub JAR → runs against the stub in tests
   (no Pact Broker needed; stubs in Maven repo)
 ```
@@ -220,35 +221,40 @@ Contract Test ◄── (you are here)
 {
   "consumer": { "name": "order-service" },
   "provider": { "name": "inventory-service" },
-  "interactions": [
-    {
-      "description": "a request to check inventory for prod-123",
-      "providerStates": [
-        { "name": "product prod-123 exists with stock 50" }
-      ],
-      "request": {
-        "method": "GET",
-        "path": "/inventory/prod-123",
-        "headers": { "Accept": "application/json" }
+  "interactions":
+    [
+      {
+        "description": "a request to check inventory for prod-123",
+        "providerStates": [{ "name": "product prod-123 exists with stock 50" }],
+        "request":
+          {
+            "method": "GET",
+            "path": "/inventory/prod-123",
+            "headers": { "Accept": "application/json" },
+          },
+        "response":
+          {
+            "status": 200,
+            "headers": { "Content-Type": "application/json" },
+            "body":
+              {
+                "productId": "some-string",
+                "availableStock": 100,
+                "inStock": true,
+              },
+            "matchingRules":
+              {
+                "body":
+                  {
+                    "$.productId": { "matchers": [{ "match": "type" }] },
+                    "$.availableStock":
+                      { "matchers": [{ "match": "integer" }] },
+                    "$.inStock": { "matchers": [{ "match": "type" }] },
+                  },
+              },
+          },
       },
-      "response": {
-        "status": 200,
-        "headers": { "Content-Type": "application/json" },
-        "body": {
-          "productId": "some-string",
-          "availableStock": 100,
-          "inStock": true
-        },
-        "matchingRules": {
-          "body": {
-            "$.productId": { "matchers": [{"match": "type"}] },
-            "$.availableStock": { "matchers": [{"match": "integer"}] },
-            "$.inStock": { "matchers": [{"match": "type"}] }
-          }
-        }
-      }
-    }
-  ]
+    ],
 }
 ```
 
@@ -256,11 +262,11 @@ Contract Test ◄── (you are here)
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Contract tests replace integration tests | Contract tests verify API compatibility (shape, types, required fields). They don't test business logic, data correctness, or complex flows. You still need integration tests to verify that the provider service returns the RIGHT data for specific business scenarios, not just data of the right SHAPE. |
-| The provider writes the contracts in CDC | In Consumer-Driven Contract Testing, the CONSUMER writes the contracts based on what IT needs. The provider verifies it can fulfill consumer-defined contracts. This is intentional — it ensures the API is driven by actual consumer needs, not hypothetical provider assumptions. |
-| All fields must match exactly in Pact contracts | Pact supports flexible matching: `type` matchers (value must be the same type, not the same value), `regex` matchers, `datetime` matchers, and more. You should use type matchers for IDs and values that change — the contract tests the SHAPE and TYPES, not the specific data values. |
+| Misconception                                   | Reality                                                                                                                                                                                                                                                                                                     |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Contract tests replace integration tests        | Contract tests verify API compatibility (shape, types, required fields). They don't test business logic, data correctness, or complex flows. You still need integration tests to verify that the provider service returns the RIGHT data for specific business scenarios, not just data of the right SHAPE. |
+| The provider writes the contracts in CDC        | In Consumer-Driven Contract Testing, the CONSUMER writes the contracts based on what IT needs. The provider verifies it can fulfill consumer-defined contracts. This is intentional — it ensures the API is driven by actual consumer needs, not hypothetical provider assumptions.                         |
+| All fields must match exactly in Pact contracts | Pact supports flexible matching: `type` matchers (value must be the same type, not the same value), `regex` matchers, `datetime` matchers, and more. You should use type matchers for IDs and values that change — the contract tests the SHAPE and TYPES, not the specific data values.                    |
 
 ---
 

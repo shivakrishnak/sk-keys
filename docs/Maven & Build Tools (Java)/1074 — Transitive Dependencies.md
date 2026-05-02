@@ -18,10 +18,10 @@ tags: #maven, #transitive-dependencies, #dependency-mediation, #classpath, #vers
 
 ⚡ TL;DR — **Transitive dependencies** are the dependencies of your dependencies — pulled in automatically by Maven. You declare Spring Boot; Maven also pulls in Tomcat, Jackson, SLF4J, and 50+ more. Convenient, but creates risks: version conflicts (two deps need different versions of the same library), unexpected classpath bloat, and security vulnerabilities in libraries you didn't know you had. Tools: `mvn dependency:tree` to see them all; `<exclusions>` to remove unwanted ones; `<dependencyManagement>` to override versions.
 
-| #1074 | Category: Maven & Build Tools (Java) | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Maven Dependencies, Dependency Scope | |
-| **Used by:** | Dependency Exclusion, pom.xml | |
+| #1074           | Category: Maven & Build Tools (Java) | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------- | :-------------- |
+| **Depends on:** | Maven Dependencies, Dependency Scope |                 |
+| **Used by:**    | Dependency Exclusion, pom.xml        |                 |
 
 ---
 
@@ -44,6 +44,7 @@ Transitive dependencies are both Maven's superpower and its primary source of pr
 **Superpower**: declare `spring-boot-starter-data-jpa` → Maven pulls in Hibernate, Spring Data JPA, JDBC, Spring ORM, Bean Validation, and all their dependencies. You get a working JPA stack with one `<dependency>` declaration.
 
 **Problems**:
+
 1. **Version conflicts**: dep-A needs `jackson:2.12`; dep-B needs `jackson:2.15`. Maven picks one (nearest wins). Wrong choice → `NoSuchMethodError` at runtime.
 2. **Security vulnerabilities**: you depend on library A; A depends on B (old version with CVE). Security scanners find vulnerabilities in B — but you didn't explicitly add B.
 3. **Classpath pollution**: a 5-line utility library brings in 50 transitive deps you don't need.
@@ -57,7 +58,7 @@ Transitive dependencies are both Maven's superpower and its primary source of pr
 DEPENDENCY TREE VISUALIZATION:
 
   mvn dependency:tree output for a Spring Boot project:
-  
+
   com.example:my-service:jar:1.0.0
   ├── org.springframework.boot:spring-boot-starter-web:jar:3.2.0:compile
   │   ├── org.springframework.boot:spring-boot-starter:jar:3.2.0:compile
@@ -86,18 +87,18 @@ DEPENDENCY MEDIATION (version conflict resolution):
   YOUR PROJECT (root)
   ├── dep-A:1.0 → depends on jackson-databind:2.12.0
   └── dep-B:1.0 → depends on jackson-databind:2.15.0
-  
+
   Both at depth 2 (same distance from root) → FIRST DECLARED WINS
   If dep-A declared before dep-B → jackson-databind:2.12.0 chosen
-  
+
   dep-B was compiled against 2.15.0 features → runtime NoSuchMethodError!
-  
+
   FIX 1: Declare the version you need directly (depth 1 wins):
   YOUR PROJECT (root)
   ├── jackson-databind:2.15.0  ← declared directly! depth=1
   ├── dep-A:1.0 → jackson:2.12 ← depth 2, loses to your direct declaration
   └── dep-B:1.0 → jackson:2.15 ← depth 2, same version → OK
-  
+
   FIX 2: Use <dependencyManagement> to pin the version (even without declaring the dep directly):
   <dependencyManagement>
     <dependencies>
@@ -108,7 +109,7 @@ DEPENDENCY MEDIATION (version conflict resolution):
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
   dependencyManagement version → always wins (regardless of depth in tree)
   → preferred approach: explicit, doesn't pollute direct dependencies
 
@@ -116,7 +117,7 @@ SCOPE PROPAGATION RULES:
 
   Your dependency X has scope A. X depends on Y with scope B.
   What scope does Y appear in YOUR project?
-  
+
   B (X→Y scope)  A (your scope of X)  →  Your scope of Y
   ─────────────────────────────────────────────────────────
   compile         compile              →  compile
@@ -127,7 +128,7 @@ SCOPE PROPAGATION RULES:
   runtime         test                 →  test
   test            ANY                  →  NOT propagated (test never transitive)
   provided        ANY                  →  NOT propagated (provided never transitive)
-  
+
   CRITICAL: provided and test are "dead ends" in the dependency tree.
   If spring-boot-starter-web has test-scope dep on H2 → you do NOT get H2.
   Each project must declare its own test dependencies.
@@ -140,25 +141,25 @@ OPTIONAL DEPENDENCIES:
     <artifactId>jackson-databind</artifactId>
     <optional>true</optional>
   </dependency>
-  
+
   Meaning: "If you use B's Jackson integration, you must declare Jackson yourself."
   Common in: Spring Boot autoconfigure (optional features), utility libraries.
-  
+
   If YOUR code uses B's Jackson support → declare jackson-databind yourself.
   If not → don't declare it; you don't get it (optional = not transitive).
 
 DETECTING UNDECLARED DIRECT USAGE:
 
   mvn dependency:analyze → output:
-  
+
   [WARNING] Used undeclared dependencies:
     com.fasterxml.jackson.core:jackson-databind:jar:2.15.3:compile
   ← Your code imports Jackson, but you didn't declare it in pom.xml!
   ← You're relying on it as a transitive dep of spring-boot-starter-web
   ← If spring-boot changes its Jackson dep → your code breaks
-  
+
   FIX: Declare jackson-databind directly in your pom.xml
-  
+
   [WARNING] Unused declared dependencies:
     org.apache.commons:commons-lang3:jar:3.13.0:compile
   ← You declared it but your code doesn't import from it
@@ -182,7 +183,7 @@ ENFORCING DEPENDENCY CONVERGENCE (no silent version mismatches):
       </execution>
     </executions>
   </plugin>
-  
+
   With this: if dep-A and dep-B require different Jackson versions → BUILD FAILS
   You MUST resolve the conflict explicitly → prevents silent version mismatch
 ```
@@ -244,11 +245,11 @@ mvn dependency:resolve -Dclassifier=sha1
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Maven always picks the newest version in a conflict | Maven picks the NEAREST (fewest tree hops from root), not the newest. The closest declaration to your root POM wins. This is often not the newest version. Explicitly declare the version in `<dependencyManagement>` to override this behavior with the version you actually want. |
+| Misconception                                                      | Reality                                                                                                                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Maven always picks the newest version in a conflict                | Maven picks the NEAREST (fewest tree hops from root), not the newest. The closest declaration to your root POM wins. This is often not the newest version. Explicitly declare the version in `<dependencyManagement>` to override this behavior with the version you actually want.                                                 |
 | You don't need to declare transitive dependencies you use directly | If your code imports classes from a transitive dependency, you SHOULD declare it directly. If the library that brought it in transitively upgrades and removes or changes that dep, your code breaks. Rule: if you import it in your code, declare it in your POM. `mvn dependency:analyze` catches "used undeclared dependencies." |
-| `<exclusions>` permanently removes a transitive dependency | `<exclusions>` removes the exclusion only for dependencies pulled through THAT specific parent dependency. If the same artifact is pulled in transitively through a different path, it still appears. `<dependencyManagement>` with the desired version is more reliable for version control across all paths. |
+| `<exclusions>` permanently removes a transitive dependency         | `<exclusions>` removes the exclusion only for dependencies pulled through THAT specific parent dependency. If the same artifact is pulled in transitively through a different path, it still appears. `<dependencyManagement>` with the desired version is more reliable for version control across all paths.                      |
 
 ---
 

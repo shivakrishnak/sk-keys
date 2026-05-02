@@ -18,10 +18,10 @@ tags: #intermediate, #anti-patterns, #design-patterns, #dry, #duplication, #refa
 
 ⚡ TL;DR — **Copy-Paste Programming** is duplicating logic instead of abstracting it — violating DRY (Don't Repeat Yourself) — so every bug must be fixed in 5 places and every behavior change requires touching 10 files.
 
-| #805 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Anti-Patterns Overview, DRY Principle, Refactoring | |
-| **Used by:** | Code review, refactoring planning, code quality analysis | |
+| #805            | Category: Design Patterns                                | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------- | :-------------- |
+| **Depends on:** | Anti-Patterns Overview, DRY Principle, Refactoring       |                 |
+| **Used by:**    | Code review, refactoring planning, code quality analysis |                 |
 
 ---
 
@@ -40,6 +40,7 @@ Validate email in 5 different places: `if (!email.contains("@") || email.length(
 ### 🔵 Simple Definition (Elaborated)
 
 A payment service, order service, and subscription service all have this logic:
+
 - Validate user has a valid payment method
 - Check account has sufficient credit
 - Apply tax based on user's region
@@ -57,38 +58,38 @@ All three services have a copy of this logic, written by three different develop
 DRY VIOLATION SPECTRUM (from minor to severe):
 
   LEVEL 1 — MINOR: Repeated utility snippets (low risk)
-  
+
   // 3 places: null-safe string length check
   if (str != null && !str.isEmpty()) { ... }
-  
+
   // Fix: extract to utility or use Objects.requireNonNullElse + String methods
   // Modern Java: StringUtils.hasText(str) (Spring)
-  
+
   LEVEL 2 — MODERATE: Repeated business validation (medium risk)
-  
+
   // In UserController:
   if (email == null || !email.matches("[^@]+@[^@]+\\.[^@]+")) {
       throw new ValidationException("Invalid email");
   }
-  
+
   // In CustomerService:
   if (email == null || !email.matches("[^@]+@[^@]+\\.[^@]+")) {
       throw new IllegalArgumentException("Email format invalid");
   }
-  
+
   // In SignupService:
   if (email == null || !email.matches("[^@]+@[^@]+\\.[^@]+")) {
       throw new BadRequestException("Bad email");
   }
-  
+
   // 3 different exception types, 3 copies of the regex.
   // Regex update: 3 places. Different exceptions confuse callers.
-  
+
   // FIX — Extract Method to shared utility or domain object:
   @Value  // Lombok value object
   public class Email {
       private final String value;
-      
+
       public Email(String raw) {
           if (raw == null || !raw.matches("[^@]+@[^@]+\\.[^@]+")) {
               throw new InvalidEmailException(raw);
@@ -97,29 +98,29 @@ DRY VIOLATION SPECTRUM (from minor to severe):
       }
   }
   // One class, one regex, one exception type. Validate at construction = validate everywhere.
-  
+
   LEVEL 3 — SEVERE: Duplicated business logic with divergence (high risk)
-  
+
   // TaxCalculator in OrderService:
   BigDecimal calculateTax(BigDecimal amount, String region) {
       BigDecimal rate = TAX_RATES.get(region);
       return amount.multiply(rate).setScale(2, HALF_UP);
   }
-  
+
   // TaxCalculator in SubscriptionService (copied 6 months later):
   BigDecimal computeTax(BigDecimal subtotal, String countryCode) {
       BigDecimal rate = TAX_RATES.get(countryCode);
       if (rate == null) rate = DEFAULT_RATE;   // added: handles null
       return subtotal.multiply(rate).setScale(4, HALF_UP);  // different scale!
   }
-  
+
   // Differences:
   // - method name (calculateTax vs. computeTax)
   // - parameter name (region vs. countryCode) — same concept
   // - null handling: OrderService throws NPE; SubscriptionService uses default
   // - scale: 2 decimal places vs. 4 decimal places
   // - tax law change (rate update): must be made in BOTH places
-  
+
   // FIX: single TaxService in a shared module
   @Service
   public class TaxService {
@@ -131,17 +132,17 @@ DRY VIOLATION SPECTRUM (from minor to severe):
   }
   // OrderService and SubscriptionService both @Autowired TaxService.
   // One implementation. One test suite. One change point.
-  
+
   LEVEL 4 — CRITICAL: Duplicated entire layers
-  
+
   // Microservices team: each service copies the auth middleware,
   //                     the pagination logic, the error response builder
   // 8 services, 8 copies, 8 diverged implementations
-  
+
   // FIX: shared library (Maven/Gradle module) for cross-cutting concerns
   // auth, pagination, error formatting: in shared-lib/
   // Each service: dependency on shared-lib.
-  
+
 DETECTING COPY-PASTE CODE:
 
   1. IDE: Refactor → Find Duplicates (IntelliJ IDEA)
@@ -157,6 +158,7 @@ DETECTING COPY-PASTE CODE:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT DRY (copy-paste approach):
+
 - Faster for the first copy — no abstraction design needed
 - Works immediately; feels productive
 
@@ -185,26 +187,26 @@ REFACTORING MOVES FOR COPY-PASTE CODE:
   Extract Method:
   // Multiple methods share a 10-line block → extract to private method
   // Effect: single definition, called from multiple sites
-  
+
   Extract Class:
   // Multiple classes share a cluster of related methods/fields
   // → extract to a new class with a clear responsibility
-  
+
   Extract Module/Library:
   // Multiple services share logic
   // → shared library (Maven module / Gradle subproject)
   // Published as artifact; declared as dependency
-  
+
   Value Object:
   // Validation + representation of a domain concept repeated everywhere
   // → Email, Money, TaxRegion value objects
   // Validate at construction; reuse everywhere
-  
+
   Template Method Pattern:
   // Multiple algorithms share the same structure but differ in steps
   // → abstract base class with template method;
   //    subclasses override steps that differ
-  
+
   Strategy Pattern:
   // Multiple algorithms differ in implementation but share an interface
   // → Strategy interface + concrete implementations
@@ -268,13 +270,13 @@ public PagedResult<Customer> getCustomers(int page, int size) {
 public class PaginationUtils {
     private static final int DEFAULT_PAGE_SIZE = 20;
     private static final int MAX_PAGE_SIZE = 100;
-    
+
     public PageRequest validatedPageRequest(int page, int size, Sort sort) {
         int validPage = Math.max(0, page);
         int validSize = (size <= 0 || size > MAX_PAGE_SIZE) ? DEFAULT_PAGE_SIZE : size;
         return PageRequest.of(validPage, validSize, sort);
     }
-    
+
     public <T> PagedResult<T> toPagedResult(Page<T> page, int requestedPage, int requestedSize) {
         return new PagedResult<>(page.getContent(), page.getTotalElements(),
                                   requestedPage, requestedSize);
@@ -286,7 +288,7 @@ public class PaginationUtils {
 public class OrderService {
     private final OrderRepository orderRepo;
     private final PaginationUtils pagination;
-    
+
     public PagedResult<Order> getOrders(int page, int size) {
         PageRequest req = pagination.validatedPageRequest(page, size,
                                 Sort.by("createdAt").descending());
@@ -301,10 +303,10 @@ public class OrderService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| A little copy-paste is fine for "simple" things | The problem is not the first copy — it's the second, third, and the maintenance trajectory. The exact logic that seems "simple enough to copy" today becomes the logic that diverges, gets partially updated, and produces subtle production bugs 18 months later. The DRY principle applies proportionally to: how often the code changes AND how many copies exist. If it will never change AND there's only one copy: acceptable. If it changes quarterly AND has 5 copies: always abstract. |
-| DRY means never having similar-looking code | DRY is about knowledge, not text. Two methods that happen to have a similar structure but represent genuinely different domain concepts should NOT be merged into a single abstraction just to avoid textual duplication. "Wrong abstraction" (forcing unrelated concepts into one function) is worse than duplication. The WET (Write Everything Twice) guideline: duplicate once, abstract on the third occurrence — by then you understand the true shape of the abstraction. |
+| Misconception                                     | Reality                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A little copy-paste is fine for "simple" things   | The problem is not the first copy — it's the second, third, and the maintenance trajectory. The exact logic that seems "simple enough to copy" today becomes the logic that diverges, gets partially updated, and produces subtle production bugs 18 months later. The DRY principle applies proportionally to: how often the code changes AND how many copies exist. If it will never change AND there's only one copy: acceptable. If it changes quarterly AND has 5 copies: always abstract.           |
+| DRY means never having similar-looking code       | DRY is about knowledge, not text. Two methods that happen to have a similar structure but represent genuinely different domain concepts should NOT be merged into a single abstraction just to avoid textual duplication. "Wrong abstraction" (forcing unrelated concepts into one function) is worse than duplication. The WET (Write Everything Twice) guideline: duplicate once, abstract on the third occurrence — by then you understand the true shape of the abstraction.                          |
 | Shared libraries always solve copy-paste problems | Shared libraries introduce coupling: all consumers upgrade together, or pin different versions, leading to split dependency management. For microservices: shared domain logic in a library creates tight coupling between independently deployable services. The solution per team/service boundary context: sometimes duplication across microservice boundaries is acceptable to maintain service autonomy. Apply DRY strictly within a bounded context; evaluate carefully across service boundaries. |
 
 ---

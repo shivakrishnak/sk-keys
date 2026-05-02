@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #creational, #cloning, #oop
 
 ⚡ TL;DR — **Prototype** creates new objects by **cloning an existing object** (the prototype) rather than constructing from scratch — useful when object creation is expensive, when the exact type is unknown at compile time, or when you need copies of pre-configured objects without re-running their initialization logic.
 
-| #770 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Builder Pattern | |
-| **Used by:** | Object copying, Game entities, Test fixtures, Expensive initialization | |
+| #770            | Category: Design Patterns                                              | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Builder Pattern                           |                 |
+| **Used by:**    | Object copying, Game entities, Test fixtures, Expensive initialization |                 |
 
 ---
 
@@ -54,17 +54,17 @@ SHALLOW COPY:
       String name;                    // immutable — safe to share
       List<String> allowedHosts;      // mutable — DANGER if shared
   }
-  
+
   Config original = new Config("production", new ArrayList<>(List.of("api.example.com")));
   Config copy     = original.clone();  // SHALLOW copy
-  
+
   // After shallow copy:
   // copy.name           → same "production" String (safe — String is immutable)
   // copy.allowedHosts   → SAME LIST OBJECT as original.allowedHosts
-  
+
   copy.allowedHosts.add("evil.com");   // ← modifies BOTH original AND copy!
   System.out.println(original.allowedHosts);  // ["api.example.com", "evil.com"] OOPS!
-  
+
 DEEP COPY:
 
   @Override
@@ -77,54 +77,54 @@ DEEP COPY:
           throw new AssertionError(); // won't happen if Config implements Cloneable
       }
   }
-  
+
   // Now: copy.allowedHosts is a NEW list with the same elements.
   // Modifying copy.allowedHosts doesn't affect original. ✓
-  
+
 JAVA CLONEABLE PROBLEMS:
 
   Problems with Java's Cloneable + Object.clone():
   1. Cloneable is a MARKER INTERFACE — no clone() method in the interface!
      Object.clone() checks if class implements Cloneable at runtime.
      If not: throws CloneNotSupportedException.
-     
+
   2. Object.clone() creates a SHALLOW copy without calling constructor.
      Final fields cannot be reassigned during clone → deep copy of final fields is impossible.
-     
+
   3. Must call super.clone() everywhere in the hierarchy — fragile.
-  
+
   4. Exception handling ceremony: CloneNotSupportedException is checked.
-  
+
   Joshua Bloch (Effective Java, Item 13): "Cloneable is deeply flawed."
-  
+
 BETTER ALTERNATIVES TO Object.clone():
 
   1. COPY CONSTRUCTOR:
-  
+
      class Config {
          String name;
          List<String> allowedHosts;
-         
+
          Config(Config other) {             // copy constructor
              this.name         = other.name;                        // String is immutable: safe
              this.allowedHosts = new ArrayList<>(other.allowedHosts);  // deep copy
          }
      }
-     
+
      Config copy = new Config(original);   // clear, explicit, no checked exceptions
-     
+
   2. COPY FACTORY METHOD:
-  
+
      class Config {
          static Config copyOf(Config other) {  // static factory for copy
              return new Config(other.name, new ArrayList<>(other.allowedHosts));
          }
      }
-     
+
      Config copy = Config.copyOf(original);
-     
+
   3. SERIALIZATION-BASED DEEP COPY (for complex graphs):
-  
+
      // Java serialization:
      static <T extends Serializable> T deepCopy(T obj) throws Exception {
          ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -134,31 +134,31 @@ BETTER ALTERNATIVES TO Object.clone():
      }
      // Works for complex object graphs.
      // Expensive. Only if all objects in graph are Serializable.
-     
+
   4. JACKSON DEEP COPY:
-  
+
      ObjectMapper mapper = new ObjectMapper();
      Config copy = mapper.readValue(mapper.writeValueAsString(original), Config.class);
      // Easy to read. JSON round-trip. OK for DTOs.
-     
+
 PROTOTYPE REGISTRY:
 
   // Store named prototypes — clone from registry instead of constructing:
   class ShapeRegistry {
       private final Map<String, Shape> prototypes = new HashMap<>();
-      
+
       void register(String name, Shape shape) { prototypes.put(name, shape); }
-      
+
       Shape create(String name) {
           Shape prototype = prototypes.get(name);
           if (prototype == null) throw new IllegalArgumentException("Unknown: " + name);
           return prototype.clone();  // or copy constructor
       }
   }
-  
+
   registry.register("filled-red-circle", new Circle(RED, FILLED, 10));
   registry.register("outlined-blue-rect", new Rectangle(BLUE, OUTLINED, 20, 15));
-  
+
   Shape circle = registry.create("filled-red-circle");  // cheap clone, pre-configured
 ```
 
@@ -167,6 +167,7 @@ PROTOTYPE REGISTRY:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Prototype:
+
 - Creating each game enemy from scratch: 200ms × 50 enemies = 10 seconds of loading
 - Re-running complex initialization (disk I/O, texture loading) for every instance
 
@@ -196,13 +197,13 @@ PROTOTYPE PATTERN:
   Prototype
   ──────────
   +clone(): Prototype
-  
+
   ConcretePrototype
   ──────────────────
   -field1, field2, ...
   +clone(): ConcretePrototype
       → copy constructor OR deep copy
-      
+
   CLIENT:
   ConcretePrototype p1 = original.clone();  // don't call new!
   p1.setField1("modified");                 // modify clone independently
@@ -235,21 +236,21 @@ public class EmailTemplate {
     private final String subject;       // immutable — shared safely
     private final List<String> to;      // mutable — must deep copy
     private final Map<String, String> variables;  // mutable — must deep copy
-    
+
     // Primary constructor:
     public EmailTemplate(String subject, List<String> to, Map<String, String> vars) {
         this.subject   = subject;
         this.to        = List.copyOf(to);    // defensive: immutable list
         this.variables = Map.copyOf(vars);   // defensive: immutable map
     }
-    
+
     // Copy constructor (Prototype):
     public EmailTemplate(EmailTemplate other) {
         this.subject   = other.subject;                // String: immutable, safe to share
         this.to        = new ArrayList<>(other.to);    // deep copy: mutable list
         this.variables = new HashMap<>(other.variables);  // deep copy: mutable map
     }
-    
+
     public EmailTemplate withVariable(String key, String value) {
         EmailTemplate copy = new EmailTemplate(this);    // clone
         copy.variables.put(key, value);                  // modify clone
@@ -278,10 +279,10 @@ EmailTemplate forBob = welcomeTemplate
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Cloneable is the right way to implement Prototype in Java | Joshua Bloch (Effective Java, Item 13) explicitly recommends AGAINST `Cloneable` and `Object.clone()`. Cloneable has fundamental design flaws: no method in the interface, constructor is bypassed, final fields can't be reassigned, CloneNotSupportedException ceremony. Prefer copy constructors or copy factory methods |
-| Shallow copy is fine if fields are immutable | Partially true. Fields holding immutable objects (String, Integer, primitive wrappers, records) are safe to share via shallow copy. Fields holding mutable objects (ArrayList, HashMap, custom mutable classes) MUST be deep copied. You must analyze each field |
+| Misconception                                                         | Reality                                                                                                                                                                                                                                                                                                                                                   |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cloneable is the right way to implement Prototype in Java             | Joshua Bloch (Effective Java, Item 13) explicitly recommends AGAINST `Cloneable` and `Object.clone()`. Cloneable has fundamental design flaws: no method in the interface, constructor is bypassed, final fields can't be reassigned, CloneNotSupportedException ceremony. Prefer copy constructors or copy factory methods                               |
+| Shallow copy is fine if fields are immutable                          | Partially true. Fields holding immutable objects (String, Integer, primitive wrappers, records) are safe to share via shallow copy. Fields holding mutable objects (ArrayList, HashMap, custom mutable classes) MUST be deep copied. You must analyze each field                                                                                          |
 | Prototype is only about performance (avoiding expensive construction) | Performance is one motivation, but not the only one. Prototype also: (1) enables creating objects when the exact class is unknown at compile time (runtime polymorphism); (2) provides pre-configured "template" objects in a registry; (3) simplifies creating objects with complex initialization state that is hard to reproduce via constructor calls |
 
 ---
@@ -294,7 +295,7 @@ EmailTemplate forBob = welcomeTemplate
 // ANTI-PATTERN — shallow copy of mutable collection:
 class OrderTemplate implements Cloneable {
     List<OrderItem> items;   // mutable
-    
+
     @Override
     public OrderTemplate clone() {
         try {

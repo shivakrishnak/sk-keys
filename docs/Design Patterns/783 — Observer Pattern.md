@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #behavioral, #oop, #event-driven, #pub-su
 
 ⚡ TL;DR — **Observer** defines a one-to-many dependency so that when a subject changes state, all registered observers are notified automatically — decoupling publishers from subscribers so that the subject doesn't know who is listening or what they do with the notification.
 
-| #783 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Event-Driven Pattern, Publish-Subscribe | |
-| **Used by:** | Event systems, GUI listeners, Spring events, ReactiveX, MVC pattern | |
+| #783            | Category: Design Patterns                                            | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Event-Driven Pattern, Publish-Subscribe |                 |
+| **Used by:**    | Event systems, GUI listeners, Spring events, ReactiveX, MVC pattern  |                 |
 
 ---
 
@@ -53,38 +53,38 @@ OBSERVER STRUCTURE:
   interface Observer {
       void update(Subject subject, Object data);  // notified when subject changes
   }
-  
+
   interface Subject {
       void addObserver(Observer o);
       void removeObserver(Observer o);
       void notifyObservers();
   }
-  
+
   class StockPrice implements Subject {
       private double price;
       private final List<Observer> observers = new CopyOnWriteArrayList<>();
       // CopyOnWriteArrayList: thread-safe; allows observers to deregister during notification
-      
+
       void setPrice(double newPrice) {
           this.price = newPrice;
           notifyObservers();                  // automatically notify on change
       }
-      
+
       void addObserver(Observer o)    { observers.add(o); }
       void removeObserver(Observer o) { observers.remove(o); }
-      
+
       void notifyObservers() {
           for (Observer o : observers) {
               o.update(this, price);          // push: send new price directly
           }
       }
   }
-  
+
   class PriceAlert implements Observer {
       private final double threshold;
-      
+
       PriceAlert(double threshold) { this.threshold = threshold; }
-      
+
       @Override
       public void update(Subject subject, Object data) {
           double currentPrice = (double) data;
@@ -93,15 +93,15 @@ OBSERVER STRUCTURE:
           }
       }
   }
-  
+
   // Usage:
   StockPrice apple = new StockPrice("AAPL", 150.0);
   apple.addObserver(new PriceAlert(160.0));
   apple.addObserver(new PriceAlert(170.0));
   apple.addObserver(new PortfolioTracker());
-  
+
   apple.setPrice(165.0);  // notifies all 3 observers automatically
-  
+
 PUSH vs PULL MODELS:
 
   PUSH MODEL:
@@ -110,7 +110,7 @@ PUSH vs PULL MODELS:
   ✓ Observer gets data immediately without querying subject.
   ✗ Subject may push data observers don't need — wasted data.
   ✗ Less flexible: all observers get the same pushed data.
-  
+
   PULL MODEL:
   Subject notifies that something changed; observer pulls what it needs:
     observer.update(this);  // only reference to subject; no data
@@ -118,7 +118,7 @@ PUSH vs PULL MODELS:
   ✓ Observer queries only what it needs.
   ✓ More flexible: observers can query different aspects.
   ✗ Multiple query calls needed; subject must expose getter methods.
-  
+
 SPRING APPLICATION EVENTS:
 
   // Event (the "state change" payload):
@@ -128,12 +128,12 @@ SPRING APPLICATION EVENTS:
           this.order = order;
       }
   }
-  
+
   // Subject (publisher):
   @Service
   class OrderService {
       @Autowired ApplicationEventPublisher eventPublisher;
-      
+
       @Transactional
       void placeOrder(Order order) {
           orderRepository.save(order);
@@ -141,7 +141,7 @@ SPRING APPLICATION EVENTS:
           // OrderService doesn't know who listens — observers are decoupled
       }
   }
-  
+
   // Observers (multiple, independent, zero coupling to each other):
   @Component
   class EmailNotificationListener {
@@ -150,7 +150,7 @@ SPRING APPLICATION EVENTS:
           emailService.sendConfirmation(event.order());
       }
   }
-  
+
   @Component
   class InventoryReservationListener {
       @EventListener
@@ -158,7 +158,7 @@ SPRING APPLICATION EVENTS:
           inventoryService.reserve(event.order());
       }
   }
-  
+
   // ASYNC observers (non-blocking):
   @Component
   class AnalyticsListener {
@@ -168,31 +168,31 @@ SPRING APPLICATION EVENTS:
           analyticsService.track(event.order());
       }
   }
-  
+
 REACTIVE OBSERVER (Java 9 Flow / RxJava / Project Reactor):
 
   // Observable: stream of price updates (backpressure-aware):
   Flux<Double> priceStream = priceService.subscribe("AAPL");
-  
+
   priceStream
       .filter(price -> price > 160.0)         // observer 1: alert on threshold
       .subscribe(price -> sendAlert(price));
-      
+
   priceStream
       .scan(0.0, (sum, price) -> sum + price) // observer 2: running total
       .subscribe(total -> updatePortfolio(total));
-  
+
   // Reactive: composable, lazy, backpressure-capable, async-native Observer.
-  
+
 COMMON PATTERNS WITH OBSERVER:
 
   MVC: Model = Subject. View = Observer.
   Model changes → notifies View. View calls getters to update display.
-  
+
   Event Sourcing: events = state changes. Projections = observers.
-  
+
   Database triggers: trigger = observer on table change.
-  
+
 OBSERVER MEMORY LEAK:
 
   // Classic bug: observers added to subject but never removed:
@@ -203,17 +203,17 @@ OBSERVER MEMORY LEAK:
       // PriceWidget removed from UI but still referenced by stock!
       // stock holds strong reference to PriceWidget → GC can't collect it.
   }
-  
+
   // Fix: deregister when widget is destroyed:
   class PriceWidget {
       private final StockPrice stock;
       private final Observer listener = this::updateDisplay;
-      
+
       PriceWidget(StockPrice stock) {
           this.stock = stock;
           stock.addObserver(listener);
       }
-      
+
       void destroy() {
           stock.removeObserver(listener);  // explicit deregistration
       }
@@ -226,6 +226,7 @@ OBSERVER MEMORY LEAK:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Observer:
+
 - Subject knows all dependents: `if (uiListener != null) uiListener.update()...` — tightly coupled
 - Adding new listener: modify subject code (OCP violation)
 
@@ -255,7 +256,7 @@ OBSERVER FLOW:
   2. Subject state changes: subject.setState(newValue)
   3. Subject iterates observer list: for each o: o.update(this, data)
   4. Each observer reacts independently: handler logic in update()
-  
+
   Adding observer: O(1). Removing: O(n) typically.
   Notification: O(n) — calls every registered observer.
 ```
@@ -289,7 +290,7 @@ record UserRegisteredEvent(String userId, String email, Instant registeredAt) {}
 @Service
 class UserService {
     @Autowired ApplicationEventPublisher events;
-    
+
     @Transactional
     public User register(RegisterUserCommand cmd) {
         User user = User.create(cmd.email(), cmd.password());
@@ -312,7 +313,7 @@ class WelcomeEmailObserver {
 @Component
 class UserMetricsObserver {
     @Autowired MeterRegistry metrics;
-    
+
     @EventListener
     void on(UserRegisteredEvent e) {
         metrics.counter("users.registered").increment();
@@ -335,11 +336,11 @@ class OnboardingWorkflowObserver {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Observer and Pub/Sub are the same | Similar but different. Observer: subject holds direct references to observers; notifications are synchronous by default; no broker between them. Pub/Sub: typically involves a broker (message queue, event bus); publishers and subscribers are completely decoupled (may be in different processes/services). Observer = in-process, direct. Pub/Sub = usually cross-process, broker-mediated. |
-| Observer notifications are always synchronous | Default GoF Observer is synchronous — subject calls each observer in the notification loop. This means: slow observers block the subject; exceptions in one observer may prevent others from being notified. Spring's `@Async @EventListener` makes observers asynchronous. Reactive Streams (Flux) are inherently async. |
-| Subject should expose its internals to observers | The PULL model requires observers to call getters on the subject. The subject should expose a well-designed interface — not all internals. Or use the PUSH model: pass only the changed data to the observer update method. In Spring ApplicationEvent, the event object carries exactly what observers need. |
+| Misconception                                    | Reality                                                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Observer and Pub/Sub are the same                | Similar but different. Observer: subject holds direct references to observers; notifications are synchronous by default; no broker between them. Pub/Sub: typically involves a broker (message queue, event bus); publishers and subscribers are completely decoupled (may be in different processes/services). Observer = in-process, direct. Pub/Sub = usually cross-process, broker-mediated. |
+| Observer notifications are always synchronous    | Default GoF Observer is synchronous — subject calls each observer in the notification loop. This means: slow observers block the subject; exceptions in one observer may prevent others from being notified. Spring's `@Async @EventListener` makes observers asynchronous. Reactive Streams (Flux) are inherently async.                                                                        |
+| Subject should expose its internals to observers | The PULL model requires observers to call getters on the subject. The subject should expose a well-designed interface — not all internals. Or use the PUSH model: pass only the changed data to the observer update method. In Spring ApplicationEvent, the event object carries exactly what observers need.                                                                                    |
 
 ---
 
@@ -354,7 +355,7 @@ class PriceAdjuster implements Observer {
     void update(Subject subject, Object data) {
         StockPrice stock = (StockPrice) subject;
         double currentPrice = (double) data;
-        
+
         if (currentPrice > 200.0) {
             stock.setPrice(195.0);  // MODIFIES the subject → triggers notifyObservers() again!
             // PriceAdjuster.update() → stock.setPrice() → notifyObservers() → PriceAdjuster.update() → ∞

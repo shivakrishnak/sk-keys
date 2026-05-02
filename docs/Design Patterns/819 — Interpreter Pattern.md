@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #gof, #behavioral, #ast, #compiler, #expressi
 
 ⚡ TL;DR — **Interpreter Pattern** (GoF behavioral) defines a grammar for a language and an interpreter that processes sentences in that grammar — representing grammar rules as classes, each with an `interpret()` method that evaluates in context.
 
-| #819 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Composite Pattern, Visitor Pattern, Abstract Syntax Tree | |
-| **Used by:** | Expression evaluators, SQL parsers, rule engines, Spring SpEL, scripting engines | |
+| #819            | Category: Design Patterns                                                        | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Composite Pattern, Visitor Pattern, Abstract Syntax Tree                         |                 |
+| **Used by:**    | Expression evaluators, SQL parsers, rule engines, Spring SpEL, scripting engines |                 |
 
 ---
 
@@ -49,23 +49,23 @@ Spring Expression Language (SpEL): `#{customer.age > 18 && (customer.balance > 1
 
 ```
 GRAMMAR (simplified SQL WHERE):
-  
+
   Expression    := AndExpression | OrExpression | ComparisonExpression
   AndExpression := Expression 'AND' Expression
   OrExpression  := Expression 'OR' Expression
   ComparisonExpression := field operator value
   operator      := '=' | '>' | '<' | '>='
-  
+
 STRUCTURE:
 
   AbstractExpression (interface):
     boolean interpret(Map<String, Object> context)
-  
+
   TerminalExpression (leaf node — no children):
     EqualsExpression: field = value
     GreaterThanExpression: field > value
     LessThanExpression: field < value
-  
+
   NonTerminalExpression (composite node — has children):
     AndExpression: left.interpret(ctx) && right.interpret(ctx)
     OrExpression: left.interpret(ctx) || right.interpret(ctx)
@@ -78,33 +78,33 @@ JAVA IMPLEMENTATION:
   public interface Expression {
       boolean interpret(Map<String, Object> context);
   }
-  
+
   // Terminal Expressions:
   public class EqualsExpression implements Expression {
       private final String field;
       private final Object value;
-      
+
       public EqualsExpression(String field, Object value) {
           this.field = field;
           this.value = value;
       }
-      
+
       @Override
       public boolean interpret(Map<String, Object> context) {
           return value.equals(context.get(field));
       }
   }
-  
+
   public class GreaterThanExpression implements Expression {
       private final String field;
       private final Comparable<Object> value;
-      
+
       @SuppressWarnings("unchecked")
       public GreaterThanExpression(String field, Comparable<?> value) {
           this.field = field;
           this.value = (Comparable<Object>) value;
       }
-      
+
       @Override
       public boolean interpret(Map<String, Object> context) {
           Object fieldValue = context.get(field);
@@ -112,38 +112,38 @@ JAVA IMPLEMENTATION:
               && value.compareTo(fieldValue) < 0;   // value < fieldValue → fieldValue > value
       }
   }
-  
+
   // Non-Terminal Expressions (Composite):
   public class AndExpression implements Expression {
       private final Expression left;
       private final Expression right;
-      
+
       public AndExpression(Expression left, Expression right) {
           this.left = left;
           this.right = right;
       }
-      
+
       @Override
       public boolean interpret(Map<String, Object> context) {
           return left.interpret(context) && right.interpret(context);
       }
   }
-  
+
   public class OrExpression implements Expression {
       private final Expression left;
       private final Expression right;
-      
+
       public OrExpression(Expression left, Expression right) {
           this.left = left;
           this.right = right;
       }
-      
+
       @Override
       public boolean interpret(Map<String, Object> context) {
           return left.interpret(context) || right.interpret(context);
       }
   }
-  
+
   // Build AST manually (parser would generate this from a string):
   // Rule: age > 18 AND (balance > 1000 OR premium = true)
   Expression rule = new AndExpression(
@@ -153,12 +153,12 @@ JAVA IMPLEMENTATION:
           new EqualsExpression("premium", true)
       )
   );
-  
+
   // Evaluate against different customers:
   Map<String, Object> customer1 = Map.of("age", 25, "balance", 500.0, "premium", false);
   Map<String, Object> customer2 = Map.of("age", 25, "balance", 500.0, "premium", true);
   Map<String, Object> customer3 = Map.of("age", 16, "balance", 5000.0, "premium", true);
-  
+
   System.out.println(rule.interpret(customer1));   // false (balance not > 1000, not premium)
   System.out.println(rule.interpret(customer2));   // true  (age > 18 AND premium = true)
   System.out.println(rule.interpret(customer3));   // false (age NOT > 18, even though premium)
@@ -168,7 +168,7 @@ SPRING SpEL USAGE (built-in Interpreter Pattern):
   @Service
   public class EligibilityService {
       private final ExpressionParser parser = new SpelExpressionParser();
-      
+
       public boolean evaluate(String ruleExpression, Customer customer) {
           // SpEL internally: parses → AST → interprets against context
           Expression spel = parser.parseExpression(ruleExpression);
@@ -176,7 +176,7 @@ SPRING SpEL USAGE (built-in Interpreter Pattern):
           return Boolean.TRUE.equals(spel.getValue(context, Boolean.class));
       }
   }
-  
+
   // Usage:
   eligibilityService.evaluate("age > 18 && (balance > 1000 || premium)", customer);
   // SpEL handles parsing; you provide the grammar as a string.
@@ -191,7 +191,7 @@ VISITOR PATTERN INTEGRATION (operation separation):
       void visit(AndExpression expr);
       void visit(OrExpression expr);
   }
-  
+
   class ExpressionPrinter implements ExpressionVisitor {
       @Override public void visit(EqualsExpression e) {
           System.out.println(e.field + " = " + e.value);
@@ -209,6 +209,7 @@ VISITOR PATTERN INTEGRATION (operation separation):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Interpreter:
+
 - Business rules hardcoded in Java if-else chains: changing rules requires recompilation and redeployment
 - New operators or combinations require new code paths
 - Rules cannot be stored in a database or configured at runtime
@@ -236,16 +237,16 @@ WITH Interpreter:
 INTERPRETER PATTERN TREE TRAVERSAL:
 
   Rule: age > 18 AND (balance > 1000 OR premium = true)
-  
+
   AST:
   AndExpression
   ├── GreaterThanExpression("age", 18)       [Terminal]
   └── OrExpression
       ├── GreaterThanExpression("balance", 1000)  [Terminal]
       └── EqualsExpression("premium", true)       [Terminal]
-  
+
   Evaluation (customer: age=25, balance=500, premium=false):
-  
+
   AndExpression.interpret(ctx):
     left = GreaterThanExpression("age", 18).interpret(ctx)
            → ctx["age"]=25 > 18 → TRUE
@@ -256,9 +257,9 @@ INTERPRETER PATTERN TREE TRAVERSAL:
                       → ctx["premium"]=false == true → FALSE
               → FALSE || FALSE → FALSE
     → TRUE && FALSE → FALSE
-  
+
   Result: customer not eligible.
-  
+
   Traversal: depth-first, post-order (children evaluated before parent).
 ```
 
@@ -289,11 +290,11 @@ Interpreter Pattern ◄──── (you are here)
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Interpreter Pattern requires building a parser | The Interpreter Pattern only covers the AST structure and evaluation mechanism. Building a parser (turning a string into an AST) is a separate concern: ANTLR, parser combinators, or manual recursive descent parsers. The GoF pattern assumes the AST is already constructed. In practice: if you need to parse rule strings, use ANTLR or SpEL; if you already have structured rule data (e.g., from a JSON rule definition), build the AST directly from the structure. |
-| Interpreter Pattern scales to complex languages | GoF explicitly notes: "Interpreter is not suitable for complex grammars. The class hierarchy becomes too large and hard to maintain." For simple DSLs (10-20 grammar rules): Interpreter Pattern works well. For SQL, Java, HTML (hundreds of grammar rules): use a purpose-built parser generator (ANTLR) and a separate evaluation/compilation framework. SpEL, OGNL, and similar work because they have a bounded, carefully designed grammar. |
-| Interpreter and Strategy Pattern solve the same problem | Strategy Pattern: selects one algorithm from a fixed, known set at runtime. Interpreter Pattern: evaluates a composable expression built from a grammar — unlimited combinations of grammar rules. Strategy: "which algorithm?" (choice). Interpreter: "evaluate this expression" (computation from structure). A rule engine: Interpreter (composable rules). Feature flags: Strategy (one of N fixed strategies). |
+| Misconception                                           | Reality                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Interpreter Pattern requires building a parser          | The Interpreter Pattern only covers the AST structure and evaluation mechanism. Building a parser (turning a string into an AST) is a separate concern: ANTLR, parser combinators, or manual recursive descent parsers. The GoF pattern assumes the AST is already constructed. In practice: if you need to parse rule strings, use ANTLR or SpEL; if you already have structured rule data (e.g., from a JSON rule definition), build the AST directly from the structure. |
+| Interpreter Pattern scales to complex languages         | GoF explicitly notes: "Interpreter is not suitable for complex grammars. The class hierarchy becomes too large and hard to maintain." For simple DSLs (10-20 grammar rules): Interpreter Pattern works well. For SQL, Java, HTML (hundreds of grammar rules): use a purpose-built parser generator (ANTLR) and a separate evaluation/compilation framework. SpEL, OGNL, and similar work because they have a bounded, carefully designed grammar.                           |
+| Interpreter and Strategy Pattern solve the same problem | Strategy Pattern: selects one algorithm from a fixed, known set at runtime. Interpreter Pattern: evaluates a composable expression built from a grammar — unlimited combinations of grammar rules. Strategy: "which algorithm?" (choice). Interpreter: "evaluate this expression" (computation from structure). A rule engine: Interpreter (composable rules). Feature flags: Strategy (one of N fixed strategies).                                                         |
 
 ---
 
@@ -307,11 +308,11 @@ Interpreter Pattern ◄──── (you are here)
 @RestController
 public class FilterController {
     private final ExpressionParser parser = new SpelExpressionParser();
-    
+
     @GetMapping("/filter")
     public boolean filter(@RequestParam String rule, @RequestParam Long customerId) {
         Customer customer = customerRepo.findById(customerId).orElseThrow();
-        
+
         // DANGEROUS: user-provided rule string evaluated as SpEL expression:
         Expression spel = parser.parseExpression(rule);   // INJECTION RISK!
         // Attacker sends rule = "T(java.lang.Runtime).getRuntime().exec('rm -rf /')"
@@ -324,12 +325,12 @@ public class FilterController {
 @GetMapping("/filter")
 public boolean filter(@RequestParam String rule, @RequestParam Long customerId) {
     Customer customer = customerRepo.findById(customerId).orElseThrow();
-    
+
     // SimpleEvaluationContext: only allows property access, no Java class invocation:
     ExpressionParser parser = new SpelExpressionParser();
     EvaluationContext restrictedContext =
         SimpleEvaluationContext.forReadOnlyDataBinding().withRootObject(customer).build();
-    
+
     Expression spel = parser.parseExpression(rule);
     return Boolean.TRUE.equals(spel.getValue(restrictedContext, Boolean.class));
     // T(java.lang.Runtime).getRuntime()... → EvaluationException (Type access not allowed)

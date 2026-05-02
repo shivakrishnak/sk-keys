@@ -18,10 +18,10 @@ tags: #advanced, #architecture, #ddd, #integration, #strategy
 
 ⚡ TL;DR — A **Context Map** is a DDD strategic tool that explicitly documents how bounded contexts relate to each other — naming the relationship type (Partnership, Shared Kernel, Customer-Supplier, Conformist, ACL, Open Host, Published Language, Separate Ways) to make integration contracts and team dynamics visible.
 
-| #756 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Bounded Context, Domain-Driven Design, Microservices | |
-| **Used by:** | DDD strategy, Integration design, Service decomposition, Architecture review | |
+| #756            | Category: Software Architecture Patterns                                     | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Bounded Context, Domain-Driven Design, Microservices                         |                 |
+| **Used by:**    | DDD strategy, Integration design, Service decomposition, Architecture review |                 |
 
 ---
 
@@ -54,13 +54,13 @@ CONTEXT MAP RELATIONSHIP PATTERNS (Evans):
    ┌──────────┐  partnership  ┌──────────┐
    │  Order   │◄────────────►│  Payment │
    └──────────┘               └──────────┘
-   
+
    Both teams coordinate closely. If Order changes its model, Payment must adapt
    simultaneously — and vice versa. Mutual dependence. Both succeed or both fail.
-   
+
    Use when: two bounded contexts are so closely related that separate evolution
    is impossible without coordination. Typically: same team, or very close teams.
-   
+
    Risk: tight coordination overhead. Both contexts evolve at the same pace.
    If teams lose alignment, partnership degrades.
 
@@ -69,10 +69,10 @@ CONTEXT MAP RELATIONSHIP PATTERNS (Evans):
    │  Order   │◄─kernel─►│ Billing  │
    └──────────┘           └──────────┘
         shared: Money, CustomerId (explicit shared subdomain)
-   
+
    A small, explicitly agreed-upon subset of the domain model is shared.
    Both teams own it jointly. Neither can change it without the other's agreement.
-   
+
    Use when: duplication is clearly worse than the coordination cost.
    Risk: shared kernel becomes a bottleneck; changes require consensus.
 
@@ -81,11 +81,11 @@ CONTEXT MAP RELATIONSHIP PATTERNS (Evans):
    │Inventory │──────►│   Order      │
    │(supplier)│       │  (customer)  │
    └──────────┘       └──────────────┘
-   
+
    Upstream (supplier) provides an API. Downstream (customer) uses it.
    Downstream has NEGOTIATING POWER: can request changes to the upstream API.
    Upstream prioritizes downstream's needs.
-   
+
    Use when: downstream has legitimate ability to influence upstream.
    Risk: upstream feels "owned" by downstream; multiple downstream customers
    with conflicting demands.
@@ -94,11 +94,11 @@ CONTEXT MAP RELATIONSHIP PATTERNS (Evans):
    ┌──────────┐  conforms to  ┌──────────────────┐
    │  Portal  │──────────────►│  CRM (external)  │
    └──────────┘               └──────────────────┘
-   
+
    Downstream adopts upstream's model as-is. No translation. No ACL.
    Downstream team has NO leverage to request changes (external vendor, legacy system).
    They simply accept whatever model the upstream provides.
-   
+
    Use when: upstream won't/can't change; downstream cost of translation
    is higher than cost of adopting upstream model.
    Risk: upstream's model pollutes downstream's domain language.
@@ -108,10 +108,10 @@ CONTEXT MAP RELATIONSHIP PATTERNS (Evans):
    │  Order   │──────►│  OrderToSAP       │─►│  SAP (legacy)    │
    └──────────┘       │  Translator       │  └──────────────────┘
                       └───────────────────┘
-   
+
    Downstream creates a translation layer (ACL) to protect its model from
    the upstream's model. The ACL converts upstream concepts to downstream concepts.
-   
+
    Use when: upstream model would corrupt downstream if adopted directly
    (legacy system, different paradigm, external vendor).
    The ACL is an INVESTMENT: it adds complexity but preserves downstream model integrity.
@@ -121,21 +121,21 @@ CONTEXT MAP RELATIONSHIP PATTERNS (Evans):
    │  Order   │─────────►│Reporting │  event   │  Analytics   │
    └──────────┘          └──────────┘  schema  └──────────────┘
    (Open Host Service with Published Language)
-   
+
    Upstream defines a well-documented, stable integration protocol (REST API, event schema).
    Multiple downstreams consume it without special negotiation.
    Published Language: the shared schema/vocabulary used in the integration.
-   
+
    Use when: upstream serves many downstream consumers; API must be stable and generic.
 
 7. SEPARATE WAYS:
    ┌──────────┐           ┌──────────────────┐
    │  Order   │  ✗ no    │  HR System        │
    └──────────┘  integration └──────────────────┘
-   
+
    Two bounded contexts have no integration. Teams work completely independently.
    If needs overlap: each implements its own solution, no sharing.
-   
+
    Use when: integration cost > duplication cost; contexts are truly independent.
    Risk: duplicate logic, data sync issues if they DO interact later.
 
@@ -147,9 +147,9 @@ DRAWING A CONTEXT MAP:
   Step 4: Mark upstream (U) and downstream (D) direction on each line.
   Step 5: Note team ownership for each context.
   Step 6: Highlight problematic relationships (Conformist = team pain point; Shared Kernel = coordination burden).
-  
+
 EXAMPLE:
-  
+
   [Order] ─────────── Partnership ─────────── [Payment]
   [Order] ─── C/S (Order=Customer) ────────── [Inventory]
   [Order] ─── ACL ──────────────────────────► [Legacy ERP]
@@ -162,6 +162,7 @@ EXAMPLE:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Context Map:
+
 - Teams assume "all services integrate cleanly" — surprise when Shipping can't change an API Order depends on
 - "Why does Order have so many fields we don't use?" — unknown Conformist relationship polluting the model
 
@@ -190,16 +191,16 @@ CONTEXT MAP NOTATION:
 
   [ContextA] ──U────────D── [ContextB]
                 C/S
-  
+
   U = upstream (supplier), D = downstream (customer)
   C/S = Customer/Supplier relationship
-  
+
   [ContextA] ──U── ACL ──D── [ContextB]
   ACL owned by [ContextB] team to protect their model.
-  
+
   [ContextA] ──── SK ───── [ContextB]
   SK = Shared Kernel (dotted boundary shared subdomain)
-  
+
   Common context map colors/symbols:
     Red border: Conformist (pain point — team has no control)
     Orange: Shared Kernel (coordination overhead)
@@ -251,7 +252,7 @@ class ErpOrderTranslator {
             .status(translateStatus(erp.stat_code))  // "01" → OrderStatus.PENDING
             .build();
     }
-    
+
     private OrderStatus translateStatus(String erpCode) {
         return switch (erpCode) {
             case "01" -> OrderStatus.PENDING;
@@ -273,10 +274,10 @@ class OrderService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| A Context Map is a system architecture diagram | A Context Map is a RELATIONSHIP map, not a deployment diagram. It shows how bounded contexts relate (integration pattern, team dynamics) — not how they are deployed (containers, services, databases). Two bounded contexts can share a process (monolith) and still have a C/S relationship |
-| ACL is always the right choice between bounded contexts | ACL is an investment that adds complexity. If the upstream model is clean and compatible with downstream, a Conformist or C/S relationship (with minimal translation) might be simpler. ACL is justified when upstream model would genuinely corrupt downstream domain language — not just as a reflex |
+| Misconception                                           | Reality                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A Context Map is a system architecture diagram          | A Context Map is a RELATIONSHIP map, not a deployment diagram. It shows how bounded contexts relate (integration pattern, team dynamics) — not how they are deployed (containers, services, databases). Two bounded contexts can share a process (monolith) and still have a C/S relationship                    |
+| ACL is always the right choice between bounded contexts | ACL is an investment that adds complexity. If the upstream model is clean and compatible with downstream, a Conformist or C/S relationship (with minimal translation) might be simpler. ACL is justified when upstream model would genuinely corrupt downstream domain language — not just as a reflex           |
 | Partnership means sharing code between bounded contexts | Partnership is a RELATIONSHIP TYPE that describes close team coordination, not necessarily shared code. Two teams with a Partnership relationship coordinate their development (deploy together, plan together), but each bounded context maintains its own model. Shared Kernel is the pattern for sharing code |
 
 ---

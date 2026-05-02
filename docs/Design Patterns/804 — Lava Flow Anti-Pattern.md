@@ -18,10 +18,10 @@ tags: #intermediate, #anti-patterns, #design-patterns, #legacy-code, #dead-code,
 
 ⚡ TL;DR — **Lava Flow** is dead or legacy code that nobody understands and everyone is afraid to remove — solidified like hardened lava: looks solid, is internally hollow, and any disturbance causes system instability.
 
-| #804 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Anti-Patterns Overview, Technical Debt, Refactoring | |
-| **Used by:** | Legacy codebase assessment, code review, technical debt prioritization | |
+| #804            | Category: Design Patterns                                              | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Anti-Patterns Overview, Technical Debt, Refactoring                    |                 |
+| **Used by:**    | Legacy codebase assessment, code review, technical debt prioritization |                 |
 
 ---
 
@@ -51,7 +51,7 @@ An e-commerce platform migrated from Oracle to PostgreSQL 18 months ago. The Ora
 LAVA FLOW ACCUMULATION PATTERNS:
 
   1. DEVELOPER DEPARTURE WITHOUT DOCUMENTATION:
-  
+
   // Senior developer leaves. Their code:
   public class EnhancedFraudDetector {
       // 800 lines of logic
@@ -59,15 +59,15 @@ LAVA FLOW ACCUMULATION PATTERNS:
       // No tests
       // Used by: ???
   }
-  
+
   // New team: "Don't touch it — it's doing something important."
   // 18 months later: FraudDetectorV2 is used. EnhancedFraudDetector: ???
   // @Deprecated added (but never removed)
   // Build warnings: "EnhancedFraudDetector has never been referenced"
   // (But nobody removes it — "might be called via reflection")
-  
+
   2. MIGRATION LEFTOVERS:
-  
+
   // REST API migration: was SOAP, now REST.
   // SOAP endpoints disabled in config.
   // But SoapOrderService, SoapCustomerService, SoapPaymentService remain.
@@ -75,20 +75,20 @@ LAVA FLOW ACCUMULATION PATTERNS:
   // Build time: +4 seconds per compile (JAX-WS annotation processing).
   // Nobody removed it: "We might need SOAP for Partner X"
   // Partner X migrated to REST 2 years ago.
-  
+
   3. "MIGHT BE IMPORTANT" COMMENTED-OUT CODE:
-  
+
   // DO NOT DELETE
   // void legacyCalculate(Order order) {
   //     // Original calculation before the tax law change in 2019
   //     // BigDecimal rate = new BigDecimal("0.175"); ...
   // }
-  
+
   // 2024: still there. 2019 tax law long since superseded.
   // If needed: git history has it. No need to keep in source.
-  
+
   4. ABSTRACT ARCHITECTURE ARTIFACTS:
-  
+
   // Developer read about hexagonal architecture in 2021.
   // Created 15 interface/impl pairs:
   // OrderUseCasePort, OrderUseCasePortImpl
@@ -106,16 +106,16 @@ SAFE LAVA FLOW REMOVAL PROCESS:
   //   "0 usages" = candidate for removal
   // Jacoco code coverage: 0% coverage on class = not tested, likely dead
   // IDE: "Unused declaration" warnings
-  
+
   // Maven dependency analysis:
   mvn dependency:analyze
   // Lists: used but undeclared, declared but unused dependencies
-  
+
   Step 2: PROVE IT'S DEAD (dynamic analysis):
   // For critical code: add a log.warn() and deploy to production:
   public class LegacyOrderProcessor {
       private static final Logger log = LoggerFactory.getLogger(LegacyOrderProcessor.class);
-      
+
       public ProcessingResult process(Order order) {
           log.warn("LAVA_FLOW_PROBE: LegacyOrderProcessor.process() called. " +
                    "Caller: {}", Thread.currentThread().getStackTrace()[2]);
@@ -123,14 +123,14 @@ SAFE LAVA FLOW REMOVAL PROCESS:
       }
   }
   // If no log in 2 weeks of production: confirmed dead.
-  
+
   Step 3: REMOVE (with version control safety):
   // Version control IS the safety net.
   // No need to comment out first.
   // Delete the file. Commit with description: "Remove dead LegacyOrderProcessor"
   // If needed: git log -- docs/LegacyOrderProcessor.java
   //            git show <hash>:src/main/java/.../LegacyOrderProcessor.java
-  
+
   Step 4: VERIFY (CI/CD pipeline):
   // Compilation failure: real reference found — restore, update reference
   // All tests pass: confirmed dead, removal safe
@@ -142,6 +142,7 @@ SAFE LAVA FLOW REMOVAL PROCESS:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Lava Flow removal:
+
 - Code feels "safer" — removing code feels risky; adding code feels productive
 - No consequence for leaving dead code (nobody can see what's not there)
 
@@ -170,21 +171,21 @@ TOOLS FOR DETECTING LAVA FLOW:
   1. IntelliJ IDEA "Unused Declaration" Inspection:
      Analyze → Inspect Code → Unused declaration
      Reports: unused classes, methods, fields, parameters
-  
+
   2. JaCoCo Code Coverage:
      mvn jacoco:report
      Classes with 0% instruction coverage: not exercised by any test.
      But: coverage doesn't prove production use. Some classes tested via integration only.
-  
+
   3. Find Usages (IDE):
      Right-click class/method → Find Usages
      0 usages + no @Deprecated = candidate
      0 usages + @Deprecated = strong candidate
-  
+
   4. Git Log Analysis:
      git log --all --full-history -- "src/main/java/com/app/LegacyClass.java"
      Last modified: 3 years ago? Strong Lava Flow indicator.
-  
+
   5. Architecture Fitness Functions (ArchUnit):
      @Test void noUnusedPublicClasses() {
          noClasses().that().areNotAnnotatedWith(Component.class)
@@ -194,7 +195,7 @@ TOOLS FOR DETECTING LAVA FLOW:
                     .check(importedClasses);
      }
      // Custom ArchUnit rules to enforce architecture and catch dead code patterns
-  
+
   PREVENTION:
   Boy Scout Rule: "Leave the campsite cleaner than you found it."
   → When touching a class: remove any dead methods you encounter
@@ -230,10 +231,10 @@ Lava Flow Anti-Pattern ◄──── (you are here)
 public class LegacyCsvExporter {
     // Written for a reporting feature removed in 2021
     // Find Usages: 0 direct references
-    
+
     // STEP 2: Add probe before removal (for code you're uncertain about):
     private static final Logger log = LoggerFactory.getLogger(LegacyCsvExporter.class);
-    
+
     public byte[] exportOrdersCsv(List<Order> orders) {
         log.warn("DEAD_CODE_PROBE: LegacyCsvExporter.exportOrdersCsv called. " +
                  "Stack: {}", new Exception("stack probe").getStackTrace()[1]);
@@ -264,11 +265,11 @@ public class LegacyCsvExporter {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Commented-out code should stay "just in case" | Git is the "just in case" mechanism. Every line ever written is in git history. Commented-out code in the active source file is Lava Flow: it confuses readers, triggers "is this important?" questions, and pollutes diffs. Remove commented-out code. If needed: `git log -S "searchString" -- file.java` to find when it existed. |
-| Zero test coverage means dead code | Not exactly. Integration-only code may have no unit test coverage. Code called via reflection (JPA entity lifecycle callbacks, Spring event listeners, framework callbacks) may show 0 coverage in unit tests but be live in production. Use runtime probes for code that may be called via reflection or dynamic dispatch, not just static analysis. |
-| Removing dead code can break things | With proper version control, CI/CD, and a comprehensive test suite: removing dead code cannot break production in a way you can't recover from. If removing code breaks the build: the code was alive (a caller exists). If all tests pass and production smoke tests pass: safe. The "removing things breaks things" fear is the psychological root of Lava Flow accumulation. |
+| Misconception                                 | Reality                                                                                                                                                                                                                                                                                                                                                                         |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Commented-out code should stay "just in case" | Git is the "just in case" mechanism. Every line ever written is in git history. Commented-out code in the active source file is Lava Flow: it confuses readers, triggers "is this important?" questions, and pollutes diffs. Remove commented-out code. If needed: `git log -S "searchString" -- file.java` to find when it existed.                                            |
+| Zero test coverage means dead code            | Not exactly. Integration-only code may have no unit test coverage. Code called via reflection (JPA entity lifecycle callbacks, Spring event listeners, framework callbacks) may show 0 coverage in unit tests but be live in production. Use runtime probes for code that may be called via reflection or dynamic dispatch, not just static analysis.                           |
+| Removing dead code can break things           | With proper version control, CI/CD, and a comprehensive test suite: removing dead code cannot break production in a way you can't recover from. If removing code breaks the build: the code was alive (a caller exists). If all tests pass and production smoke tests pass: safe. The "removing things breaks things" fear is the psychological root of Lava Flow accumulation. |
 
 ---
 
@@ -284,12 +285,12 @@ class LegacyAuthController {
     // Replaced by OAuth2/JWT in 2021.
     // "Left in case some old clients still use it"
     // No monitoring. No rate limiting. No security review.
-    
+
     @PostMapping("/api/v1/auth/login")
     ResponseEntity<String> legacyLogin(@RequestBody Map<String, String> creds) {
         String user = creds.get("username");
         String pass = creds.get("password");
-        
+
         // Original: plain password check against DB — no bcrypt!
         // Was "temporary" in 2019. Never secured. Never removed.
         User found = userRepository.findByUsernameAndPassword(user, pass); // plaintext!

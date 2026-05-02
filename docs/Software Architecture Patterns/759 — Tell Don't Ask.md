@@ -18,10 +18,10 @@ tags: #intermediate, #architecture, #oop, #coupling, #domain-model
 
 ⚡ TL;DR — **Tell Don't Ask (TDA)** says objects should be TOLD to do something, not ASKED for their data so the caller can make decisions — keeping behavior and the data it operates on together in the same object, enforcing encapsulation and high cohesion.
 
-| #759 | Category: Software Architecture Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Law of Demeter, Cohesion and Coupling, Object-Oriented Programming | |
-| **Used by:** | OOP design, Domain Model, Code review, Refactoring | |
+| #759            | Category: Software Architecture Patterns                           | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Law of Demeter, Cohesion and Coupling, Object-Oriented Programming |                 |
+| **Used by:**    | OOP design, Domain Model, Code review, Refactoring                 |                 |
 
 ---
 
@@ -63,23 +63,23 @@ THE ANTI-PATTERN: ASK
           if (order.getItems().isEmpty()) {
               throw new EmptyOrderException();
           }
-          
+
           // MAKING DECISIONS outside the object:
           order.setStatus(OrderStatus.CONFIRMED);
           order.setConfirmedAt(Instant.now());
           order.setPaymentReference(payment.getReference());
-          
+
           // ACTING on Order's data externally:
           eventBus.publish(new OrderConfirmedEvent(order.getId(), order.getTotal()));
       }
   }
-  
+
   Problems:
     1. Business rules scattered in service — not in Order object.
     2. Order has no behavior. It's a data bag with setters.
     3. 5 different services call order.getStatus() + different logic: duplicated rules.
     4. ORDER cannot protect its own invariants — status can be set to anything from outside.
-    
+
 THE PATTERN: TELL
 
   // TELL pattern (OO encapsulation):
@@ -92,17 +92,17 @@ THE PATTERN: TELL
               throw new InsufficientPaymentException(payment.amount(), this.total);
           if (this.items.isEmpty())
               throw new EmptyOrderException();
-              
+
           // Order makes its OWN decisions:
           this.status = OrderStatus.CONFIRMED;
           this.confirmedAt = Instant.now();
           this.paymentReference = payment.reference();
-          
+
           // Order fires its OWN events:
           this.events.add(new OrderConfirmedEvent(this.id, this.total));
       }
   }
-  
+
   class OrderService {
       void confirmOrder(OrderId id, Payment payment) {
           Order order = orderRepository.findById(id).orElseThrow();
@@ -111,40 +111,40 @@ THE PATTERN: TELL
           eventBus.publishAll(order.domainEvents());
       }
   }
-  
+
   Benefits:
     1. Business rules in Order — where the data lives. High cohesion.
     2. Order protects its own invariants — no external setter abuse.
     3. Confirmation logic in ONE place — no duplication across services.
     4. Service is a thin orchestrator: find → tell → save → publish.
-    
+
 WHERE TDA APPLIES (and where it doesn't):
 
   APPLIES: Domain model (aggregates, entities, value objects).
     The rich domain model is the TDA goal for domain objects.
-    
+
   BORDERLINE: Service layer.
     Services orchestrate — they often need to check conditions before calling.
     But they should not re-implement domain logic that belongs in the domain object.
-    
+
   DOESN'T APPLY (and shouldn't be forced):
     Data Transfer Objects (DTOs): pure data, no behavior expected.
     Query models (CQRS read side): flat projections, no domain logic.
     Configuration objects: properties, no behavior.
     Report generation: reading state is the point.
-    
+
   WARNING — over-applying TDA:
-  
+
     // DON'T force TDA on simple value access:
     boolean isEligibleForDiscount = customer.checkAndComputeEligibility(order);
     // vs.
     boolean isEligible = customer.isPremium() && order.total().isGreaterThan(MIN_ORDER);
-    
+
     // The second might be cleaner when the condition is simple and the decision
     // BELONGS to the caller (e.g., a policy object, not the domain object).
-    
+
     TDA is a GUIDELINE, not a law. Apply it where domain behavior belongs in the domain object.
-    
+
 ANEMIC DOMAIN MODEL (TDA anti-pattern):
 
   Recognized by:
@@ -152,7 +152,7 @@ ANEMIC DOMAIN MODEL (TDA anti-pattern):
     - Service classes: ALL business logic, calling getters + setters on domain objects
     - Domain objects: easy to serialize/deserialize (just data)
     - Business rule change: must find service code, not domain code
-    
+
   Martin Fowler calls it "anemic domain model" — objects that LOOK like OO
   (have classes, inheritance, etc.) but ARE NOT OO in the behavioral sense.
   Result: procedural programming with class names.
@@ -163,6 +163,7 @@ ANEMIC DOMAIN MODEL (TDA anti-pattern):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Tell Don't Ask (Anemic Model):
+
 - Domain logic scattered across 5 services — each re-implements variations of the same rule
 - `Order.setStatus()` called from anywhere — invariants unenforceable
 
@@ -195,7 +196,7 @@ TDA TRANSFORMATION:
     user.setDeactivationReason(r);     // fires event internally
     eventBus.publish(event);
   }
-  
+
   TRANSFORMATION STEPS:
   1. Find: "caller gets state from object, makes decision, calls setters."
   2. Create: new method on the object: deactivate(reason)
@@ -248,13 +249,13 @@ class Subscription {  // Domain aggregate owns its behavior:
     void renew() {
         if (this.status != EXPIRED)
             throw new CannotRenewException("Only expired subscriptions can be renewed");
-        
+
         // Object makes its OWN state decisions:
         this.status = ACTIVE;
         this.expiresAt = Instant.now().plus(365, DAYS);
         this.renewedAt = Instant.now();
         this.renewalCount++;
-        
+
         // Records domain event internally:
         this.events.add(new SubscriptionRenewedEvent(this.userId, this.expiresAt));
     }
@@ -275,11 +276,11 @@ class SubscriptionService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                          | Reality                                                                                                                                                                                                                                                                                                                                                                                   |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Tell Don't Ask means never use getters | TDA applies to BEHAVIORAL decisions: don't get state to make a decision that belongs in the object. Getters for display, reporting, serialization, or cross-boundary data transfer are fine. The key test: "Am I getting this data to make a decision that should be the object's responsibility?" If yes: TDA applies. If the data is read for display or external use: getters are fine |
-| TDA means all services should be empty | Service classes are legitimate orchestrators. They coordinate between aggregates, call repositories, publish events. TDA means services should not contain DOMAIN LOGIC that operates on a single aggregate's data. Cross-aggregate orchestration belongs in services. Single-aggregate behavior belongs in the aggregate |
-| TDA conflicts with CQRS | CQRS and TDA serve different purposes. CQRS separates write models (commands/tell) from read models (queries/ask-read-only). The WRITE side should use TDA — tell commands to aggregates that own behavior. The READ side is purely about reading — getting data for display. No conflict: TDA applies to the write side, not the read projections |
+| TDA means all services should be empty | Service classes are legitimate orchestrators. They coordinate between aggregates, call repositories, publish events. TDA means services should not contain DOMAIN LOGIC that operates on a single aggregate's data. Cross-aggregate orchestration belongs in services. Single-aggregate behavior belongs in the aggregate                                                                 |
+| TDA conflicts with CQRS                | CQRS and TDA serve different purposes. CQRS separates write models (commands/tell) from read models (queries/ask-read-only). The WRITE side should use TDA — tell commands to aggregates that own behavior. The READ side is purely about reading — getting data for display. No conflict: TDA applies to the write side, not the read projections                                        |
 
 ---
 
@@ -294,11 +295,11 @@ class LoanService {
         if (loan.getDueDate().isBefore(LocalDate.now()) &&
             loan.getStatus() == LoanStatus.OUTSTANDING &&
             loan.getOutstandingAmount().isGreaterThan(Money.ZERO)) {
-            
+
             Money penalty = loan.getOutstandingAmount()
                                .multiply(loan.getInterestRate())
                                .multiply(BigDecimal.valueOf(0.05));
-            
+
             loan.setOutstandingAmount(loan.getOutstandingAmount().add(penalty));
             loan.setPenaltyAppliedAt(LocalDate.now());
             loan.setPenaltyCount(loan.getPenaltyCount() + 1);
@@ -314,7 +315,7 @@ class Loan {
         if (!today.isAfter(this.dueDate)) return;  // not late
         if (this.status != LoanStatus.OUTSTANDING) return;
         if (this.outstandingAmount.isZero()) return;
-        
+
         Money penalty = this.outstandingAmount.multiply(this.interestRate).multiply(FIVE_PERCENT);
         this.outstandingAmount = this.outstandingAmount.add(penalty);
         this.penaltyAppliedAt = today;

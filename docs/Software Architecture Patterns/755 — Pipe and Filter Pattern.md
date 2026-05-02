@@ -18,10 +18,10 @@ tags: #advanced, #architecture, #data-pipeline, #functional, #streaming
 
 ⚡ TL;DR — **Pipe and Filter** structures a processing system as a sequence of independent **filters** (each transforms data) connected by **pipes** (data channels) — enabling composable, reusable processing stages where each filter is unaware of its neighbors and can be reordered, replaced, or parallelized independently.
 
-| #755 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Plugin Architecture, Functional Programming, Stream Processing | |
-| **Used by:** | Data pipelines, ETL, Compiler design, Stream Processing, CI-CD | |
+| #755            | Category: Software Architecture Patterns                       | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Plugin Architecture, Functional Programming, Stream Processing |                 |
+| **Used by:**    | Data pipelines, ETL, Compiler design, Stream Processing, CI-CD |                 |
 
 ---
 
@@ -51,103 +51,103 @@ A log processing pipeline: raw log files → Filter 1: parse log format (text �
 FILTER CONTRACT:
 
   A filter is a function: Input → Output
-  
+
   Properties a filter must have:
   1. Single responsibility: one transformation only.
-  2. Stateless (ideally): output depends only on current input. 
+  2. Stateless (ideally): output depends only on current input.
      (Stateful filters exist but complicate parallelism and reorder safety.)
   3. Black box: no knowledge of preceding or following filters.
   4. Consistent interface: output type matches next filter's expected input type.
-  
+
   interface Filter<IN, OUT> {
       OUT process(IN input);
       // Or for streaming:
       Flux<OUT> process(Flux<IN> input);
   }
-  
+
   A pipe is just the channel between filters:
     In Unix: stdout → stdin (OS pipe, character stream)
     In Java: java.util.stream.Stream<T>
     In reactive: Flux<T> / Observable<T>
     In async: Kafka topic, RabbitMQ queue, in-memory BlockingQueue
-    
+
 COMPOSITION MODELS:
 
   1. SEQUENTIAL (simple pipeline):
-  
+
      Data → [F1] → [F2] → [F3] → Result
-     
+
      F1 → F2 → F3 run in order. Each waits for previous to finish.
      Synchronous: simple, debuggable.
-     
+
   2. PARALLEL (fan-out / fan-in):
-  
+
      Data → [Splitter] → [F2a] → [Merger] → Result
                        → [F2b] →
                        → [F2c] →
-     
+
      Splitter distributes work across parallel filter instances.
      Merger collects and combines results.
      Use: CPU-bound transformations that don't have ordering dependencies.
-     
+
   3. STREAMING (continuous, unbounded input):
-  
+
      ─────────────────────────────────────────────────►  (continuous stream)
      Events → [Parse] → [Filter] → [Enrich] → [Sink]
-     
+
      Each filter processes events as they arrive. No batch boundary.
      Kafka Streams, Flink, Spark Streaming, RxJava.
-     
+
   4. PULL vs. PUSH:
-  
+
      PUSH: upstream filter pushes data to downstream filter when ready.
            Reactive streams (Flux): upstream pushes events, downstream backpressures.
-           
+
      PULL: downstream filter pulls data from upstream when ready to process.
            Iterator pattern: downstream controls pace.
-           
+
      Java Stream API: pull-based (terminal operation triggers evaluation).
      Reactive (Project Reactor): push with backpressure signaling.
-     
+
 FILTER CATEGORIES:
 
   1. TRANSFORMER: changes structure/format of data.
      Example: TextParser converts String → LogEntry
-     
+
   2. FILTER (in the narrow sense): selects/rejects items.
      Example: SeverityFilter keeps only ERROR records
-     
+
   3. ENRICHER: adds data to the record.
      Example: IPEnricher adds hostname field from IP
-     
+
   4. SPLITTER: one record → many records (fan-out).
      Example: OrderLineSplitter: one Order → N OrderLine records
-     
+
   5. AGGREGATOR: many records → one record (fan-in / window).
      Example: WindowAggregator: 5-second window of events → summary
-     
+
   6. SINK: terminal filter; writes to external system.
      Example: ElasticsearchSink writes final records to ES
-     
+
   7. SOURCE: entry filter; reads from external system.
      Example: KafkaSource reads events from Kafka topic
-     
+
 BACKPRESSURE (critical for streaming):
 
   If Filter 1 produces 10,000 records/sec and Filter 3 can only process 1,000/sec:
-  
+
   Without backpressure: Pipe between F2 and F3 fills → OutOfMemoryError.
-  
+
   Backpressure: F3 signals "I can only accept 1,000/sec" upstream.
   F2 slows down. F1 slows down. System operates at the rate of the slowest filter.
-  
+
   Reactive Streams specification (Java): defines standard backpressure protocol.
   Project Reactor Flux, RxJava, Akka Streams all implement it.
-  
+
 UNIX PIPE ANATOMY:
 
   cat access.log | grep "ERROR" | awk '{print $5}' | sort | uniq -c | sort -rn
-  
+
   Filter 1: cat  — SOURCE: reads file, writes to stdout
   Pipe:    |     — OS pipe, buffers data between processes
   Filter 2: grep — FILTER: only lines containing "ERROR"
@@ -159,7 +159,7 @@ UNIX PIPE ANATOMY:
   Filter 5: uniq -c — AGGREGATOR: count duplicate lines
   Pipe:    |
   Filter 6: sort -rn — SORTER: numerical sort descending (most frequent first)
-  
+
   Each Unix command: knows only stdin and stdout. No knowledge of neighbors.
   Replace any step: pipeline still works.
 ```
@@ -169,6 +169,7 @@ UNIX PIPE ANATOMY:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Pipe and Filter:
+
 - One large `processLogs()` method: 300 lines handling parsing + filtering + enrichment + output — impossible to test steps independently
 - Change one step: risk breaking others (all interleaved)
 
@@ -204,11 +205,11 @@ PIPELINE ASSEMBLY:
       .then(new PIIMasker())            // Filter 5: TRANSFORMER
       .then(new JsonFormatter())        // Filter 6: TRANSFORMER
       .sink(elasticsearchSink);         // Filter 7: SINK
-      
+
   pipeline.start();
 
   DATA FLOW:
-  
+
   Kafka → "ERROR 2024-01-15 10:23:45 192.168.1.100 Payment failed"
        ↓ (parse)
        LogEntry{level=ERROR, timestamp=..., ip="192.168.1.100", msg="Payment failed"}
@@ -288,11 +289,11 @@ StepVerifier.create(errorFilter.apply(Flux.just(errorEntry, debugEntry, warnEntr
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Pipe and Filter is only for stream/real-time processing | Pipe and Filter is a general pattern applicable to any sequential data transformation — batch ETL (read CSV → transform → load database), request processing (middleware stacks in Express, Spring's filter chain), compiler phases, and HTTP interceptor chains. Real-time streaming is one application |
-| Filters must be stateless | Filters CAN be stateful (e.g., a windowing aggregator maintains state between events). However, stateful filters: (1) cannot be trivially parallelized, (2) complicate failure recovery (state must be checkpointed). Stateless filters are strongly preferred for parallelism and fault tolerance; use stateful filters only when the transformation requires state |
-| Order of filters doesn't matter | Order matters significantly. Put cheap filters (simple boolean checks) FIRST to reduce data volume before expensive filters (network enrichment, ML inference). Filtering early reduces work for all downstream filters. This is the "predicate pushdown" optimization: filter as early and as aggressively as possible |
+| Misconception                                           | Reality                                                                                                                                                                                                                                                                                                                                                              |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pipe and Filter is only for stream/real-time processing | Pipe and Filter is a general pattern applicable to any sequential data transformation — batch ETL (read CSV → transform → load database), request processing (middleware stacks in Express, Spring's filter chain), compiler phases, and HTTP interceptor chains. Real-time streaming is one application                                                             |
+| Filters must be stateless                               | Filters CAN be stateful (e.g., a windowing aggregator maintains state between events). However, stateful filters: (1) cannot be trivially parallelized, (2) complicate failure recovery (state must be checkpointed). Stateless filters are strongly preferred for parallelism and fault tolerance; use stateful filters only when the transformation requires state |
+| Order of filters doesn't matter                         | Order matters significantly. Put cheap filters (simple boolean checks) FIRST to reduce data volume before expensive filters (network enrichment, ML inference). Filtering early reduces work for all downstream filters. This is the "predicate pushdown" optimization: filter as early and as aggressively as possible                                              |
 
 ---
 
@@ -304,17 +305,17 @@ StepVerifier.create(errorFilter.apply(Flux.just(errorEntry, debugEntry, warnEntr
 // ANTI-PATTERN: filters sharing mutable state:
 class Pipeline {
     private List<LogEntry> processedEntries = new ArrayList<>(); // shared state!
-    
+
     void parse(String raw) {
         LogEntry entry = parser.parse(raw);
         processedEntries.add(entry);  // Filter 1 writes to shared list
     }
-    
+
     void filter() {
         // Filter 2 reads AND MODIFIES the shared list:
         processedEntries.removeIf(e -> e.level() != Level.ERROR);
     }
-    
+
     void enrich() {
         processedEntries.forEach(e -> e.setHostname(geoIp.lookup(e.ip()))); // mutates!
     }

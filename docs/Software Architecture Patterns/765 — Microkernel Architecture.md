@@ -18,10 +18,10 @@ tags: #advanced, #architecture, #extensibility, #plugin, #product-design
 
 ⚡ TL;DR — **Microkernel Architecture** structures an application as a minimal, stable **core system** plus independently deployable **plugin components** — the core provides essential functionality and a plugin API; plugins add domain-specific or optional capabilities without modifying the core.
 
-| #765 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Plugin Architecture, SOLID Principles, Dependency Injection Pattern | |
-| **Used by:** | Product software, IDE design, CMS platforms, Workflow engines | |
+| #765            | Category: Software Architecture Patterns                            | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Plugin Architecture, SOLID Principles, Dependency Injection Pattern |                 |
+| **Used by:**    | Product software, IDE design, CMS platforms, Workflow engines       |                 |
 
 ---
 
@@ -51,60 +51,60 @@ A tax processing platform. Core: ingests tax filings, routes them, manages users
 MICROKERNEL ARCHITECTURE COMPONENTS:
 
   1. CORE SYSTEM (the microkernel):
-  
+
      Responsibilities:
      - Minimal, stable business logic common to ALL use cases
      - Plugin registry: knows what plugins are registered
      - Plugin invocation: routes processing to appropriate plugin
      - Shared infrastructure: database access, HTTP, authentication (if needed by all)
-     
+
      Properties:
      - Changes RARELY (adding a plugin never changes core)
      - Small relative to the full system
      - Thoroughly tested (everything depends on it)
      - Defines the plugin API (contract)
-     
+
   2. PLUG-IN COMPONENTS:
-  
+
      Responsibilities:
      - Domain-specific or optional processing
      - Custom business rules for a specific tenant/region/use case
      - Extended functionality (additional features)
-     
+
      Properties:
      - Independent of each other (ideally — cross-plugin calls are a design smell)
      - Independently deployable (can add/remove without touching core or other plugins)
      - Replaceable (swap plugin A version 1 for plugin A version 2)
-     
+
   3. PLUGIN API (the contract between core and plugins):
-  
+
      interface TaxCalculationPlugin {
          String jurisdiction();           // "US", "DE", "CH"
          boolean appliesTo(TaxFiling f);  // does this plugin handle this filing?
          TaxResult calculate(TaxFiling f, TaxContext ctx);
      }
-     
+
      Core calls appliesTo() then calculate() on whichever plugin claims the filing.
      Core never imports a specific plugin class. Only the interface.
-     
+
   4. PLUGIN REGISTRY:
-  
+
      Map<String, TaxCalculationPlugin> pluginRegistry = new HashMap<>();
-     
+
      At startup: plugins register themselves (via ServiceLoader, DI container, config).
      At runtime: core looks up the right plugin for each request.
-     
+
 MICROKERNEL VS. PLUGIN ARCHITECTURE:
 
   In Richards & Ford's definition: Microkernel Architecture = the architectural style.
   Plugin Architecture = the design pattern that implements it.
-  
+
   They are the same concept at different abstraction levels:
     Microkernel Architecture: architectural style name (for system-level design)
     Plugin Architecture: design pattern name (for class/module-level design)
-    
+
   Both describe: minimal core + extension points + independently deployed extensions.
-  
+
 TOPOLOGY:
 
   ┌─────────────────────────────────────────────────────────────┐
@@ -119,35 +119,35 @@ TOPOLOGY:
       [Plugin A] [Plugin B] [Plugin C] [Plugin D] [Plugin E]
       (deployed  (deployed  (deployed  (deployed  (deployed
        separately) separately) separately) separately) separately)
-       
+
 PLUGIN COMMUNICATION:
 
   Plugins → Core: through the Plugin API (invoke services the core provides).
   Core → Plugins: through the Plugin API (invoke plugin's processing methods).
-  
-  Plugin → Plugin (AVOID): 
+
+  Plugin → Plugin (AVOID):
     Creates coupling between plugins. Core becomes a pass-through for plugin-to-plugin calls.
     If needed: define a plugin-to-plugin communication protocol through the core,
     never direct plugin-to-plugin imports.
-    
+
 DEPLOYMENT MODELS:
 
   1. MONOLITHIC DEPLOYMENT: all plugins + core deployed as one JAR/WAR.
      Simpler operations. Less flexibility for independent plugin updates.
      Most desktop apps (IntelliJ bundled plugins).
-     
+
   2. RUNTIME DEPLOYMENT (hot-plug):
      Plugins deployed as separate JARs, loaded at runtime via OSGi or custom ClassLoader.
      Eclipse uses OSGi for this.
      Runtime updates without restart.
      More complex class loading, potential ClassLoader conflicts.
-     
+
   3. EXTERNAL PLUGINS (SaaS/Platform model):
      Plugins deployed as separate microservices.
      Core calls plugin via HTTP/gRPC.
      Maximum independence. Network latency added.
      GitHub Apps, Slack Apps, Shopify Apps.
-     
+
 TRADE-OFFS (Richards & Ford ratings):
 
   ✓ High Modularity: plugin boundary = natural module boundary
@@ -157,7 +157,7 @@ TRADE-OFFS (Richards & Ford ratings):
   ✗ Low Scalability: core is a single unit; can't scale specific plugins independently
   ✗ Low Fault Tolerance: core failure = entire system down
   ✗ Low Elasticity: adding load requires scaling the whole core
-  
+
   BEST FIT: product software with varied customer needs (different plugins per customer),
   rule-based processing engines, content management systems, workflow engines.
 ```
@@ -167,6 +167,7 @@ TRADE-OFFS (Richards & Ford ratings):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Microkernel Architecture:
+
 - Adding Germany-specific tax rules: modify the core tax engine (risk to US, UK, AU rules)
 - Removing an unused feature: tightly coupled to core, can't remove cleanly
 
@@ -199,7 +200,7 @@ PLUGIN LIFECYCLE IN MICROKERNEL:
     3. Each plugin: initialize(PluginContext ctx) → receives core services
     4. Each plugin: register(ExtensionRegistry reg) → announces capabilities
     5. Core: ready. All extension points populated.
-    
+
   REQUEST HANDLING:
     1. Request arrives (HTTP, message, file)
     2. Core: determine which plugin handles this request
@@ -207,7 +208,7 @@ PLUGIN LIFECYCLE IN MICROKERNEL:
     3. Core: invoke plugin's processing method
     4. Plugin: processes, returns result to core
     5. Core: returns response
-    
+
   PLUGIN DEACTIVATION (hot-plug):
     1. Signal to deactivate plugin
     2. Core stops routing new requests to plugin
@@ -242,12 +243,12 @@ Microkernel Architecture ◄──── (you are here)
 // MICROKERNEL CORE — stable, never modified for new plugins:
 public class WorkflowEngine {  // The core
     private final Map<String, WorkflowStep> steps = new LinkedHashMap<>();
-    
+
     // Plugin registration:
     public void registerStep(WorkflowStep step) {
         steps.put(step.name(), step);
     }
-    
+
     // Core processing — routes to plugins:
     public WorkflowResult execute(WorkflowContext ctx, List<String> stepNames) {
         WorkflowResult result = WorkflowResult.empty();
@@ -304,11 +305,11 @@ class WorkflowConfig {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Microkernel Architecture is only for operating systems | The term originates from OS design (Mach OS, GNU Hurd), but the architectural pattern applies to any software system: IDEs (Eclipse, IntelliJ), CI/CD tools (Jenkins), CMS platforms (WordPress), tax processing systems, workflow engines, browser extension architectures. Richards & Ford explicitly describe it as an enterprise application architecture pattern |
+| Misconception                                           | Reality                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Microkernel Architecture is only for operating systems  | The term originates from OS design (Mach OS, GNU Hurd), but the architectural pattern applies to any software system: IDEs (Eclipse, IntelliJ), CI/CD tools (Jenkins), CMS platforms (WordPress), tax processing systems, workflow engines, browser extension architectures. Richards & Ford explicitly describe it as an enterprise application architecture pattern                                                                |
 | Microkernel Architecture and Microservices are the same | They are different patterns. Microkernel: one deployable unit (monolith or modular JAR) with a plugin architecture. Plugins are typically in-process. Microservices: many independently deployable network services. A Microkernel system can be deployed as a single process; a Microservices system requires network communication. Some platforms (Shopify, GitHub) implement "external plugins" via HTTP, blending both patterns |
-| The core should contain all shared business logic | The core should contain MINIMAL business logic — only what is truly universal to ALL use cases. Anything domain-specific or optional goes in plugins. A bloated core defeats the purpose: if every plugin needs the core to change to add a feature, the Open/Closed principle is violated |
+| The core should contain all shared business logic       | The core should contain MINIMAL business logic — only what is truly universal to ALL use cases. Anything domain-specific or optional goes in plugins. A bloated core defeats the purpose: if every plugin needs the core to change to add a feature, the Open/Closed principle is violated                                                                                                                                           |
 
 ---
 
@@ -322,7 +323,7 @@ class FraudCheckPlugin implements WorkflowStep {
     // Direct dependency on another PLUGIN (not the core):
     @Autowired
     private TaxCalculationPlugin taxPlugin;  // Plugin importing Plugin!
-    
+
     public WorkflowResult execute(WorkflowContext ctx, WorkflowResult prev) {
         Money tax = taxPlugin.calculateTax(ctx); // Direct plugin-to-plugin call
         // ...

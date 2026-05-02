@@ -18,10 +18,10 @@ tags: #intermediate, #architecture, #ioc, #spring, #testability
 
 ⚡ TL;DR — **Dependency Injection (DI)** inverts who creates an object's dependencies — instead of an object creating its own collaborators with `new`, they are provided (injected) from outside — enabling swappable implementations, loose coupling, and easy testing with mocks.
 
-| #762 | Category: Software Architecture Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | SOLID Principles, Cohesion and Coupling, Inversion of Control | |
-| **Used by:** | Spring, Guice, Angular, Testability, Clean Architecture | |
+| #762            | Category: Software Architecture Patterns                      | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------ | :-------------- |
+| **Depends on:** | SOLID Principles, Cohesion and Coupling, Inversion of Control |                 |
+| **Used by:**    | Spring, Guice, Angular, Testability, Clean Architecture       |                 |
 
 ---
 
@@ -53,122 +53,122 @@ THE PROBLEM WITHOUT DI:
   class OrderService {
       private final EmailService email;
       private final PaymentGateway payment;
-      
+
       OrderService() {
           this.email   = new SmtpEmailService("smtp.gmail.com", 587, "user", "pass");
           this.payment = new StripePaymentGateway("sk_live_abc123...");
       }
   }
-  
+
   Problems:
   1. HARD TO TEST: Constructor creates real SMTP connection, real Stripe call.
      Testing requires real email server + real credit card = impossible in unit tests.
-     
+
   2. HARD TO SWAP: Need SendGrid? Modify OrderService. Violates OCP.
-  
+
   3. TIGHT COUPLING: OrderService knows about SmtpEmailService, StripePaymentGateway.
      Transitive knowledge: also knows about SMTP configuration, Stripe API keys.
-     
+
   4. SECRET DEPENDENCIES: OrderService has hidden dependencies (credentials) baked in.
      Not visible from the outside. Hard to audit or configure.
-     
+
 DI FIXES ALL FOUR:
 
   // CONSTRUCTOR INJECTION (recommended):
   class OrderService {
       private final EmailService email;       // interface
       private final PaymentGateway payment;   // interface
-      
+
       OrderService(EmailService email, PaymentGateway payment) {
           this.email   = Objects.requireNonNull(email);
           this.payment = Objects.requireNonNull(payment);
       }
   }
-  
+
   Benefits:
-  1. TESTABLE: 
+  1. TESTABLE:
      OrderService service = new OrderService(
          new FakeEmailService(),           // captures emails, no network
          new FakePaymentGateway()          // returns canned responses
      );
-     
+
   2. SWAPPABLE:
      // Production: Spring wires SmtpEmailService + StripeGateway
      // Test: inject fakes
      // Staging: inject MockPaymentGateway that always succeeds
-     
+
   3. LOOSE COUPLING: OrderService only knows EmailService and PaymentGateway interfaces.
      No knowledge of SMTP, Stripe, configuration.
-     
+
   4. VISIBLE DEPENDENCIES: Dependencies declared in constructor — you can see them all.
-     
+
 THE THREE DI FORMS:
 
   1. CONSTRUCTOR INJECTION (preferred):
-  
+
      class Service {
          Service(Dependency dep) { this.dep = dep; }
      }
-     
+
      ✓ Dependencies required at construction — object always valid.
      ✓ Dependencies clearly visible in constructor signature.
      ✓ Easy to use without a DI container (just pass in constructors).
      ✓ Supports immutability (final fields).
-     
+
   2. SETTER INJECTION (for optional dependencies):
-  
+
      class Service {
          Dependency dep = new DefaultDependency(); // reasonable default
          void setDependency(Dependency dep) { this.dep = dep; }
      }
-     
+
      ✓ Optional dependencies with defaults.
      ✓ Allows reconfiguration after construction.
      ✗ Object can be in invalid state (missing mandatory deps).
      ✗ Dependencies not visible from constructor.
-     
+
   3. FIELD INJECTION (@Autowired — Spring):
-  
+
      @Service
      class OrderService {
          @Autowired EmailService email;   // injected by Spring directly into field
      }
-     
+
      ✗ Not testable without Spring container (can't inject without container).
      ✗ Hides dependencies — can't see what's needed just by reading class.
      ✗ Breaks final fields.
      ✓ Concise — popular but considered an anti-pattern outside frameworks.
-     
+
 DI CONTAINER vs. MANUAL DI:
 
   MANUAL DI (pure DI, composition root):
-  
+
     EmailService email    = new SmtpEmailService(config.smtpHost(), config.smtpPort());
     PaymentGateway pay    = new StripeGateway(config.stripeKey());
     OrderRepository repo  = new JpaOrderRepository(dataSource);
     OrderService service  = new OrderService(email, pay, repo);
     OrderController ctrl  = new OrderController(service);
-    
+
     All in "composition root" — one place wires everything.
     ✓ No magic, fully transparent.
     ✗ Verbose for large applications.
-    
+
   DI CONTAINER (Spring, Guice):
-  
+
     @Service class OrderService { @Autowired EmailService e; @Autowired PaymentGateway p; }
-    
+
     Container: scans classes, builds dependency graph, instantiates in right order, injects.
     ✓ Eliminates wiring boilerplate.
     ✓ Lifecycle management (singletons, request scope, session scope).
     ✗ Magic wiring — hard to debug when something doesn't wire correctly.
-    
+
   Spring constructor injection (best of both):
-  
+
     @Service
     class OrderService {
         private final EmailService email;
         private final PaymentGateway payment;
-        
+
         @Autowired  // or omit in Spring 4.3+ (single constructor auto-wired)
         OrderService(EmailService email, PaymentGateway payment) {
             this.email = email;
@@ -182,6 +182,7 @@ DI CONTAINER vs. MANUAL DI:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT DI:
+
 - Unit test requires real database, real SMTP, real payment gateway — tests are slow, flaky, expensive
 - New implementation: modify the class that uses it (OCP violation)
 
@@ -211,20 +212,20 @@ DI CONTAINER LIFECYCLE:
      context.register(EmailService.class, SmtpEmailService.class)
      context.register(PaymentGateway.class, StripeGateway.class)
      context.register(OrderService.class) // Spring: @Service
-     
+
   2. RESOLVE (startup phase):
      Container builds dependency graph:
      OrderService needs EmailService and PaymentGateway.
      SmtpEmailService needs SmtpConfig.
      StripeGateway needs StripeConfig.
      Order: SmtpConfig → SmtpEmailService → OrderService
-     
+
   3. INSTANTIATE (create in dependency order):
      SmtpConfig.new() → SmtpEmailService(config) → StripeGateway(stripeKey) → OrderService(email, pay)
-     
+
   4. INJECT (wire):
      OrderService receives the constructed SmtpEmailService and StripeGateway.
-     
+
   5. USE:
      Application uses fully-wired OrderService.
 ```
@@ -255,7 +256,7 @@ Dependency Injection ◄──── (you are here)
 class ReportService {
     private final ReportRepository repo = new PostgresReportRepository("jdbc:postgresql://...");
     private final EmailService email    = new SmtpEmailService("smtp.example.com", 587);
-    
+
     void generateAndSend(ReportId id, String recipient) {
         // Can't test without real PostgreSQL + real SMTP. No mock possible.
     }
@@ -267,12 +268,12 @@ class ReportService {
 class ReportService {
     private final ReportRepository repo;
     private final EmailService email;
-    
+
     ReportService(ReportRepository repo, EmailService email) {
         this.repo  = Objects.requireNonNull(repo);
         this.email = Objects.requireNonNull(email);
     }
-    
+
     void generateAndSend(ReportId id, String recipient) {
         Report report = repo.findById(id).orElseThrow();
         email.send(recipient, report.asEmailBody());
@@ -284,10 +285,10 @@ class ReportService {
 void sendsReportToRecipient() {
     var fakeRepo  = new InMemoryReportRepository(List.of(testReport));
     var fakeEmail = new CapturingEmailService();
-    
+
     var service = new ReportService(fakeRepo, fakeEmail);
     service.generateAndSend(testReport.id(), "user@example.com");
-    
+
     assertThat(fakeEmail.sentMessages())
         .hasSize(1)
         .first().satisfies(msg -> assertThat(msg.to()).isEqualTo("user@example.com"));
@@ -305,11 +306,11 @@ class ReportService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Dependency Injection requires a DI container (Spring, Guice) | DI is a pattern, not a framework. Manual DI (pure DI): pass dependencies as constructor arguments. A "composition root" (one place in main() that wires everything together) is a valid, framework-free DI approach. DI containers automate the wiring but are not required for the pattern |
-| @Autowired field injection is the idiomatic Spring DI approach | Spring's own documentation (since Spring 4.x) recommends constructor injection over field injection. Field injection (@Autowired on fields) is concise but: (1) requires Spring to test (can't inject without container), (2) hides dependencies, (3) breaks final fields. Constructor injection is idiomatic Spring DI |
-| DI and IoC are the same thing | IoC (Inversion of Control) is a broad principle: the framework calls your code, rather than your code calling the framework. DI is one form of IoC (the "where does this object get its dependencies from" inversion). Other IoC forms: template method pattern, event-driven callbacks, reactive programming. DI is a specific, widely used form of IoC |
+| Misconception                                                  | Reality                                                                                                                                                                                                                                                                                                                                                  |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dependency Injection requires a DI container (Spring, Guice)   | DI is a pattern, not a framework. Manual DI (pure DI): pass dependencies as constructor arguments. A "composition root" (one place in main() that wires everything together) is a valid, framework-free DI approach. DI containers automate the wiring but are not required for the pattern                                                              |
+| @Autowired field injection is the idiomatic Spring DI approach | Spring's own documentation (since Spring 4.x) recommends constructor injection over field injection. Field injection (@Autowired on fields) is concise but: (1) requires Spring to test (can't inject without container), (2) hides dependencies, (3) breaks final fields. Constructor injection is idiomatic Spring DI                                  |
+| DI and IoC are the same thing                                  | IoC (Inversion of Control) is a broad principle: the framework calls your code, rather than your code calling the framework. DI is one form of IoC (the "where does this object get its dependencies from" inversion). Other IoC forms: template method pattern, event-driven callbacks, reactive programming. DI is a specific, widely used form of IoC |
 
 ---
 

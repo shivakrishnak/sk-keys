@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #behavioral, #oop, #collections, #travers
 
 ⚡ TL;DR — **Iterator** provides a way to access elements of a collection sequentially without exposing the underlying data structure — so the client code can traverse an array, linked list, tree, or any other structure using the same interface (`hasNext()` / `next()`).
 
-| #780 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Data Structures and Algorithms, Collections | |
-| **Used by:** | java.util.Iterator, for-each loops, Stream API, Database cursors | |
+| #780            | Category: Design Patterns                                                | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Data Structures and Algorithms, Collections |                 |
+| **Used by:**    | java.util.Iterator, for-each loops, Stream API, Database cursors         |                 |
 
 ---
 
@@ -55,43 +55,43 @@ JAVA ITERATOR INTERFACE:
       E next();            // return current element and advance
       default void remove() { throw new UnsupportedOperationException(); }
   }
-  
+
   interface Iterable<E> {
       Iterator<E> iterator();   // creates a new iterator for this collection
   }
-  
+
   // Any class implementing Iterable<E> can be used in for-each.
-  
+
 CUSTOM ITERATOR — Binary Tree In-Order Traversal:
 
   class BinaryTree<T extends Comparable<T>> implements Iterable<T> {
       private Node<T> root;
-      
+
       static class Node<T> {
           T value; Node<T> left, right;
           Node(T value) { this.value = value; }
       }
-      
+
       // ---- In-order iterator (left → root → right) ----
       @Override
       public Iterator<T> iterator() {
           return new InOrderIterator(root);
       }
-      
+
       private class InOrderIterator implements Iterator<T> {
           private final Deque<Node<T>> stack = new ArrayDeque<>();
-          
+
           InOrderIterator(Node<T> root) {
               pushLeft(root);   // push all left-spine nodes
           }
-          
+
           private void pushLeft(Node<T> node) {
               while (node != null) { stack.push(node); node = node.left; }
           }
-          
+
           @Override
           public boolean hasNext() { return !stack.isEmpty(); }
-          
+
           @Override
           public T next() {
               if (!hasNext()) throw new NoSuchElementException();
@@ -100,60 +100,60 @@ CUSTOM ITERATOR — Binary Tree In-Order Traversal:
               return node.value;
           }
       }
-      
+
       // BONUS: Could add a different traversal:
       public Iterator<T> preOrderIterator()  { ... }
       public Iterator<T> postOrderIterator() { ... }
       public Iterator<T> breadthFirstIterator() { ... }
       // Same collection, multiple traversal strategies — all via Iterator!
   }
-  
+
   // Usage — identical to iterating an ArrayList:
   BinaryTree<Integer> tree = new BinaryTree<>();
   tree.insert(5); tree.insert(3); tree.insert(7); tree.insert(1);
-  
+
   for (int val : tree) {         // for-each works because tree is Iterable<Integer>
       System.out.print(val + " ");   // prints: 1 3 5 7 (in-order: sorted)
   }
-  
+
 MULTIPLE ITERATORS ON SAME COLLECTION:
 
   // Two independent iterators on the same list — no interference:
   List<String> names = List.of("Alice", "Bob", "Charlie", "Dave");
-  
+
   Iterator<String> it1 = names.iterator();   // independent state
   Iterator<String> it2 = names.iterator();   // independent state
-  
+
   it1.next();  // "Alice"  — it1 at index 1
   it2.next();  // "Alice"  — it2 still at index 0 → 1
   it1.next();  // "Bob"    — it1 at index 2
   it2.next();  // "Bob"    — it2 at index 1 → 2
-  
+
   // Each iterator maintains its own traversal position.
   // No shared state between it1 and it2.
-  
+
 FAIL-FAST ITERATORS:
 
   // Java's ArrayList iterator is fail-fast:
   List<String> names = new ArrayList<>(List.of("Alice", "Bob", "Charlie"));
   Iterator<String> it = names.iterator();
-  
+
   names.add("Dave");  // structural modification after iterator created
   it.next();          // throws ConcurrentModificationException!
-  
+
   // Fail-fast: detects concurrent modification via modCount.
   // Iterator stores modCount snapshot at creation; checks on each next().
   // If collection's modCount changed → throw CME.
-  
+
   // SAFE: use Iterator.remove() for removal during iteration:
   Iterator<String> it = names.iterator();
   while (it.hasNext()) {
       if (it.next().startsWith("A")) it.remove();  // safe: updates modCount
   }
-  
+
   // Or use removeIf() (Java 8):
   names.removeIf(name -> name.startsWith("A"));
-  
+
 DATABASE CURSOR AS ITERATOR:
 
   // ResultSet is Iterator over database rows:
@@ -161,7 +161,7 @@ DATABASE CURSOR AS ITERATOR:
   while (rs.next()) {               // hasNext() + advance in one call
       String name = rs.getString("name");
   }
-  
+
   // Spring JDBC JdbcTemplate uses RowMapper — wraps ResultSet iterator:
   jdbcTemplate.query("SELECT * FROM users",
       (rs, rowNum) -> new User(rs.getLong("id"), rs.getString("name")));
@@ -172,6 +172,7 @@ DATABASE CURSOR AS ITERATOR:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Iterator:
+
 - Client must know internal data structure to traverse: arrays use index, linked lists use pointer, trees use recursion — different code per structure
 - Traversal code mixed with business logic
 
@@ -199,12 +200,12 @@ WITH Iterator:
 ITERATOR INTERACTION:
 
   Collection → iterator() → Iterator object (encapsulates traversal state)
-  
+
   while (iterator.hasNext()) {
       Element e = iterator.next();  // returns current, advances position
       process(e);
   }
-  
+
   Collection's internal structure: irrelevant to client.
   Multiple iterators: each has independent position cursor.
 ```
@@ -237,19 +238,19 @@ class PaginatedIterator<T> implements Iterator<T> {
     private int currentPage = 0;
     private Iterator<T> currentPageIterator;
     private boolean hasMorePages = true;
-    
+
     PaginatedIterator(Function<PageRequest, Page<T>> pageLoader) {
         this.pageLoader = pageLoader;
         loadNextPage();
     }
-    
+
     private void loadNextPage() {
         if (!hasMorePages) return;
         Page<T> page = pageLoader.apply(PageRequest.of(currentPage++, 100));
         currentPageIterator = page.getContent().iterator();
         hasMorePages = page.hasNext();
     }
-    
+
     @Override
     public boolean hasNext() {
         if (currentPageIterator.hasNext()) return true;
@@ -257,7 +258,7 @@ class PaginatedIterator<T> implements Iterator<T> {
         loadNextPage();
         return currentPageIterator.hasNext();
     }
-    
+
     @Override
     public T next() {
         if (!hasNext()) throw new NoSuchElementException();
@@ -279,10 +280,10 @@ for (User user : allUsers) {        // for-each: seamlessly crosses page boundar
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Java Stream and Iterator are the same | Both traverse sequences but with different paradigms. Iterator: imperative (explicit hasNext/next loop), stateful, can be used only once. Stream: declarative (pipeline of operations: map/filter/collect), lazy, supports parallel execution. Stream is built on top of Spliterator (parallel-capable Iterator), but the usage model and capabilities are very different. |
-| Iterator is only for in-order traversal | Iterators can traverse in any order. Java's TreeSet iterator traverses in sorted order. LinkedList iterator: insertion order. Reverse iterators: `List.listIterator(list.size())` then `previous()`. Custom iterators: any order (random, shuffled, depth-first, breadth-first). |
+| Misconception                                                         | Reality                                                                                                                                                                                                                                                                                                                                                                               |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Java Stream and Iterator are the same                                 | Both traverse sequences but with different paradigms. Iterator: imperative (explicit hasNext/next loop), stateful, can be used only once. Stream: declarative (pipeline of operations: map/filter/collect), lazy, supports parallel execution. Stream is built on top of Spliterator (parallel-capable Iterator), but the usage model and capabilities are very different.            |
+| Iterator is only for in-order traversal                               | Iterators can traverse in any order. Java's TreeSet iterator traverses in sorted order. LinkedList iterator: insertion order. Reverse iterators: `List.listIterator(list.size())` then `previous()`. Custom iterators: any order (random, shuffled, depth-first, breadth-first).                                                                                                      |
 | Removing elements from a collection during iteration is always unsafe | It's unsafe to use `collection.remove()` during iteration (throws ConcurrentModificationException for fail-fast iterators). But `Iterator.remove()` IS safe — it removes the element returned by the last `next()` call and updates the iterator's state accordingly. Also: `Collection.removeIf()`, `Stream.filter().collect()`, `List.subList().clear()` are all safe alternatives. |
 
 ---

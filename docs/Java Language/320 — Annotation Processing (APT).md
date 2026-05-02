@@ -18,10 +18,10 @@ tags: #java, #annotation-processing, #code-generation, #compile-time, #lombok, #
 
 ⚡ TL;DR — **Annotation Processing (APT)** runs custom processors during `javac` compilation to inspect annotations and generate new source/class files — enabling zero-runtime-cost code generation (Lombok `@Data`, MapStruct mappers, Dagger DI).
 
-| #320 | Category: Java Language | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Reflection, Annotations, Generics, javac compilation pipeline | |
-| **Used by:** | Lombok, MapStruct, Dagger, AutoValue, Spring AOT, Hibernate Metamodel | |
+| #320            | Category: Java Language                                               | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Reflection, Annotations, Generics, javac compilation pipeline         |                 |
+| **Used by:**    | Lombok, MapStruct, Dagger, AutoValue, Spring AOT, Hibernate Metamodel |                 |
 
 ---
 
@@ -70,43 +70,43 @@ CUSTOM ANNOTATION PROCESSOR EXAMPLE:
   @Retention(RetentionPolicy.SOURCE)  // only needed at compile time
   @Target(ElementType.TYPE)           // applies to classes
   public @interface Builder {}
-  
+
   // 2. Write the processor:
   @SupportedAnnotationTypes("com.example.Builder")
   @SupportedSourceVersion(SourceVersion.RELEASE_17)
   public class BuilderProcessor extends AbstractProcessor {
-      
+
       @Override
       public boolean process(Set<? extends TypeElement> annotations,
                              RoundEnvironment roundEnv) {
-          
+
           for (Element element : roundEnv.getElementsAnnotatedWith(Builder.class)) {
               TypeElement classElement = (TypeElement) element;
               String className = classElement.getSimpleName().toString();
               String packageName = processingEnv.getElementUtils()
                   .getPackageOf(classElement).getQualifiedName().toString();
-              
+
               // Generate builder class:
               try {
                   JavaFileObject file = processingEnv.getFiler()
                       .createSourceFile(packageName + "." + className + "Builder");
-                  
+
                   try (PrintWriter writer = new PrintWriter(file.openWriter())) {
                       writer.println("package " + packageName + ";");
                       writer.println("public class " + className + "Builder {");
-                      
+
                       // Write fields, setters, build() method based on classElement fields
                       for (Element enclosed : classElement.getEnclosedElements()) {
                           if (enclosed.getKind() == ElementKind.FIELD) {
                               String fieldName = enclosed.getSimpleName().toString();
                               String fieldType = enclosed.asType().toString();
-                              
+
                               writer.println("  private " + fieldType + " " + fieldName + ";");
                               writer.println("  public " + className + "Builder " + fieldName +
                                   "(" + fieldType + " v) { this." + fieldName + "=v; return this; }");
                           }
                       }
-                      
+
                       writer.println("  public " + className + " build() {");
                       writer.println("    " + className + " obj = new " + className + "();");
                       // set fields...
@@ -122,11 +122,11 @@ CUSTOM ANNOTATION PROCESSOR EXAMPLE:
           return true;  // claim the annotation (don't pass to other processors)
       }
   }
-  
+
   // 3. Register the processor:
   // META-INF/services/javax.annotation.processing.Processor:
   // com.example.BuilderProcessor
-  
+
   // 4. Maven pom.xml: add to compiler plugin:
   // <annotationProcessors>
   //   <annotationProcessor>com.example.BuilderProcessor</annotationProcessor>
@@ -139,18 +139,18 @@ POPULAR APT-BASED LIBRARIES:
   - @Data: generates getters, setters, equals, hashCode, toString
   - @Builder: generates builder pattern
   - @Slf4j: adds private static final Logger log = LoggerFactory.getLogger(...)
-  
+
   MAPSTRUCT (@Mapper):
   - Generates mapper implementation from interface:
     @Mapper interface UserMapper { UserDto toDto(User user); }
   - Generates: UserMapperImpl implements UserMapper with field-by-field copy code
   - Type-safe, null-safe, no reflection at runtime
-  
+
   DAGGER 2 (@Component, @Module, @Inject):
   - Generates complete DI component code at compile time
   - DaggerAppComponent implements AppComponent
   - No runtime reflection → faster startup (vs Spring's reflection-based DI)
-  
+
   HIBERNATE METAMODEL:
   - Generates: User_.class with SingularAttribute<User, String> name
   - Enables type-safe JPA criteria queries: criteriaBuilder.equal(root.get(User_.name), "Alice")
@@ -160,7 +160,7 @@ LOMBOK vs STANDARD APT:
   Lombok: modifies AST (compiler-internal API) → adds methods to existing class
   Standard APT: can only GENERATE new files (cannot modify existing classes)
   MapStruct/Dagger: standard APT → generates new .java files
-  
+
   Lombok requires IDE plugin (IntelliJ Lombok plugin) to understand generated methods.
   Standard APT generates real .java files visible to IDE without plugins.
 ```
@@ -170,6 +170,7 @@ LOMBOK vs STANDARD APT:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT APT:
+
 - Boilerplate code written manually (getters, setters, builders, equals/hashCode)
 - DI framework uses runtime reflection → slower startup, harder native image compilation
 - Mapper implementations written by hand → error-prone, maintenance burden
@@ -199,17 +200,17 @@ APT EXECUTION MODEL:
   javac -processorpath processors.jar \
         -processor com.example.BuilderProcessor \
         src/com/example/User.java
-  
+
   Round 1:
     Input: User.java (has @Builder)
     Processor: reads User's fields, writes UserBuilder.java to generated-sources/
     Output: UserBuilder.java
-  
+
   Round 2:
     Input: UserBuilder.java (new file from Round 1)
     Processor: no @Builder on UserBuilder → process() returns false (not claiming)
     Output: no new files
-  
+
   Final compilation: User.java + UserBuilder.java → User.class + UserBuilder.class
 
 MAVEN CONFIGURATION:
@@ -306,10 +307,10 @@ CreateOrderRequest request = CreateOrderRequest.builder()
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Annotation processors modify existing source files | Standard APT can ONLY generate new files. It cannot modify existing `.java` files. Lombok appears to modify classes because it uses internal javac AST manipulation APIs (not standard APT) — this is why Lombok is controversial and requires an IDE plugin to understand the generated methods. |
-| APT-generated code has no performance cost | The generation has compile-time cost (adds to build time), but zero runtime overhead. Generated code is plain Java — compiled to bytecode, JIT-compiled, and executed as efficiently as hand-written code. This is the key advantage over runtime reflection. |
+| Misconception                                                 | Reality                                                                                                                                                                                                                                                                                                                                              |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Annotation processors modify existing source files            | Standard APT can ONLY generate new files. It cannot modify existing `.java` files. Lombok appears to modify classes because it uses internal javac AST manipulation APIs (not standard APT) — this is why Lombok is controversial and requires an IDE plugin to understand the generated methods.                                                    |
+| APT-generated code has no performance cost                    | The generation has compile-time cost (adds to build time), but zero runtime overhead. Generated code is plain Java — compiled to bytecode, JIT-compiled, and executed as efficiently as hand-written code. This is the key advantage over runtime reflection.                                                                                        |
 | All Java annotation processors work with GraalVM native image | GraalVM native image requires all reflection/resource metadata to be declared ahead of time. APT-generated code that itself uses runtime reflection still needs native image configuration. Dagger (pure APT, no runtime reflection) works natively; Spring (historically reflection-based) required Spring AOT (Spring 6) for native image support. |
 
 ---

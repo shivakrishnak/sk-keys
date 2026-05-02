@@ -18,10 +18,10 @@ tags: #maven, #plugins, #mojo, #build-extensions, #compiler-plugin, #surefire
 
 ⚡ TL;DR — **Maven plugins** are the execution engine of Maven builds. Every build action is performed by a plugin: `maven-compiler-plugin` compiles Java, `maven-surefire-plugin` runs tests, `maven-jar-plugin` creates JARs, `spring-boot-maven-plugin` creates fat JARs. Plugins are JARs containing Mojo classes (one class = one goal). Plugins are configured in `pom.xml` under `<build><plugins>`. Plugins themselves are Maven artifacts — they're downloaded from Maven Central just like dependencies.
 
-| #1071 | Category: Maven & Build Tools (Java) | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Maven Goals, Maven Phases, pom.xml | |
-| **Used by:** | Maven Lifecycle, CI-CD pipelines | |
+| #1071           | Category: Maven & Build Tools (Java) | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------- | :-------------- |
+| **Depends on:** | Maven Goals, Maven Phases, pom.xml   |                 |
+| **Used by:**    | Maven Lifecycle, CI-CD pipelines     |                 |
 
 ---
 
@@ -40,10 +40,12 @@ Maven is like a general contractor who delegates all specialized work to subcont
 ### 🔵 Simple Definition (Elaborated)
 
 Plugins divide into two categories:
+
 1. **Maven Core plugins** (maintained by Apache): compiler, surefire, jar, install, deploy, resources, clean. These implement the default lifecycle.
 2. **Third-party plugins**: spring-boot-maven-plugin, jacoco-maven-plugin, checkstyle-maven-plugin, dockerfile-maven-plugin, openapi-generator-maven-plugin. These extend the lifecycle with additional capabilities.
 
 Plugin configuration in `pom.xml` has two levels:
+
 - **Global plugin configuration** (`<configuration>` directly under `<plugin>`): applies to all executions of that plugin
 - **Execution-level configuration** (`<configuration>` under `<execution>`): applies only when that execution runs
 
@@ -60,7 +62,7 @@ ESSENTIAL MAVEN PLUGINS (REFERENCE):
    Goal: compile, testCompile
    Default bindings: compile → compile phase; testCompile → test-compile phase
    Key config:
-   
+
    <plugin>
      <groupId>org.apache.maven.plugins</groupId>
      <artifactId>maven-compiler-plugin</artifactId>
@@ -86,7 +88,7 @@ ESSENTIAL MAVEN PLUGINS (REFERENCE):
    Default binding: test phase
    Runs: *Test.java, Test*.java, *Tests.java, *TestCase.java
    Key config:
-   
+
    <plugin>
      <groupId>org.apache.maven.plugins</groupId>
      <artifactId>maven-surefire-plugin</artifactId>
@@ -107,7 +109,7 @@ ESSENTIAL MAVEN PLUGINS (REFERENCE):
    Bindings: integration-test → integration-test; verify → verify
    Runs: *IT.java, IT*.java, *ITCase.java
    Difference from surefire: does NOT fail immediately → allows post-integration-test cleanup
-   
+
    <plugin>
      <groupId>org.apache.maven.plugins</groupId>
      <artifactId>maven-failsafe-plugin</artifactId>
@@ -125,7 +127,7 @@ ESSENTIAL MAVEN PLUGINS (REFERENCE):
 4. spring-boot-maven-plugin
    Goals: repackage (package phase), run, start, stop, build-image
    Key function: creates executable "fat JAR" with all dependencies bundled
-   
+
    <plugin>
      <groupId>org.springframework.boot</groupId>
      <artifactId>spring-boot-maven-plugin</artifactId>
@@ -141,7 +143,7 @@ ESSENTIAL MAVEN PLUGINS (REFERENCE):
 5. maven-jar-plugin
    Goal: jar (package phase)
    Creates the standard JAR (thin JAR without dependencies)
-   
+
    <plugin>
      <groupId>org.apache.maven.plugins</groupId>
      <artifactId>maven-jar-plugin</artifactId>
@@ -160,7 +162,7 @@ ESSENTIAL MAVEN PLUGINS (REFERENCE):
 
 6. jacoco-maven-plugin (JaCoCo code coverage)
    Goals: prepare-agent, report, check
-   
+
    <plugin>
      <groupId>org.jacoco</groupId>
      <artifactId>jacoco-maven-plugin</artifactId>
@@ -213,7 +215,7 @@ PLUGIN MANAGEMENT (in parent POM):
       </plugins>
     </pluginManagement>
   </build>
-  
+
   <!-- Child module pom.xml: just declare the plugin, no version needed -->
   <build>
     <plugins>
@@ -290,11 +292,11 @@ mvn spring-boot:run              # run Spring Boot app
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Plugins and dependencies are the same thing | Both are Maven artifacts (JARs in Maven Central), but they serve different purposes. `<dependencies>` are added to the application classpath. `<build><plugins>` are tools used during the build — they run IN the Maven process (or a forked JVM) and are NOT added to the application classpath. Surefire is not in your JAR; it just runs your tests. |
-| Specifying a plugin in `<pluginManagement>` activates it | `<pluginManagement>` only declares version and default configuration. The plugin is not active until it appears in `<build><plugins>` (or until a lifecycle phase that it's bound to by default is invoked). This is analogous to `<dependencyManagement>` vs `<dependencies>`. |
-| Plugin configuration merges with parent configuration | By default, child module configuration REPLACES parent configuration (not merges). To merge: set `<combine.children="append">` or `<combine.self="merge">` attributes on the XML element. For lists (like `<argLine>`), replacement can cause missing parent args in the child. |
+| Misconception                                            | Reality                                                                                                                                                                                                                                                                                                                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Plugins and dependencies are the same thing              | Both are Maven artifacts (JARs in Maven Central), but they serve different purposes. `<dependencies>` are added to the application classpath. `<build><plugins>` are tools used during the build — they run IN the Maven process (or a forked JVM) and are NOT added to the application classpath. Surefire is not in your JAR; it just runs your tests. |
+| Specifying a plugin in `<pluginManagement>` activates it | `<pluginManagement>` only declares version and default configuration. The plugin is not active until it appears in `<build><plugins>` (or until a lifecycle phase that it's bound to by default is invoked). This is analogous to `<dependencyManagement>` vs `<dependencies>`.                                                                          |
+| Plugin configuration merges with parent configuration    | By default, child module configuration REPLACES parent configuration (not merges). To merge: set `<combine.children="append">` or `<combine.self="merge">` attributes on the XML element. For lists (like `<argLine>`), replacement can cause missing parent args in the child.                                                                          |
 
 ---
 

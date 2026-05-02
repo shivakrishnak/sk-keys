@@ -18,10 +18,10 @@ tags: #testing, #load-test, #throughput, #rps, #virtual-users, #k6, #gatling
 
 ⚡ TL;DR — **Load testing** validates that a system performs correctly under **expected production load**. Unlike stress tests (which push beyond limits), load tests simulate realistic user volumes and verify that SLOs (response time, error rate) are met. Key metrics: throughput (RPS), latency percentiles (p95, p99), error rate. Tools: k6, Gatling, JMeter. Always run in a production-equivalent environment.
 
-| #1138 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Performance Test | |
-| **Used by:** | Stress Test, Spike Test, capacity planning, SLO validation | |
+| #1138           | Category: Testing                                          | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------- | :-------------- |
+| **Depends on:** | Performance Test                                           |                 |
+| **Used by:**    | Stress Test, Spike Test, capacity planning, SLO validation |                 |
 
 ---
 
@@ -42,14 +42,16 @@ Load testing asks: "Can your system handle its normal, expected traffic?" You si
 Load testing is the most common and most important type of performance test. It answers: **"Does the system meet its SLOs under expected production load?"**
 
 **Defining "expected load"**:
+
 1. **Current peak**: analyze production logs — what's the p99 concurrent users, peak RPS?
 2. **Target load**: what must the system support? (e.g., planned marketing campaign, seasonal peak)
 3. **Growth projection**: 6-12 months ahead if the system needs to scale
 
 **Load test anatomy**:
+
 ```
 Concurrent Virtual Users
-                                    
+
 500 ─────────────────────────────────────────────────────
     ...........................████████████████████.........
 100 ──────────────────────────/                    \──────
@@ -59,6 +61,7 @@ Concurrent Virtual Users
 ```
 
 **What load tests find**:
+
 - Database connection pool too small → connection timeout errors under load
 - Thread pool exhaustion → request queuing and latency spikes
 - Slow queries that are fine at 10 req/s but cause CPU saturation at 500 req/s
@@ -66,6 +69,7 @@ Concurrent Virtual Users
 - Unoptimized code paths that are "fast enough" for a single user but bottleneck at 500
 
 **Difference from other test types**:
+
 - **Load test**: expected load → does it MEET SLOs?
 - **Stress test**: increasing beyond capacity → WHEN does it fail?
 - **Spike test**: sudden burst → SURVIVES unexpected spikes?
@@ -77,78 +81,80 @@ Concurrent Virtual Users
 
 ```javascript
 // K6 LOAD TEST: validate SLO under expected production load
-import http from 'k6/http';
-import { check, sleep } from 'k6';
-import { Counter, Rate, Trend } from 'k6/metrics';
+import http from "k6/http";
+import { check, sleep } from "k6";
+import { Counter, Rate, Trend } from "k6/metrics";
 
 // LOAD PROFILE based on production traffic analysis
 export const options = {
   stages: [
-    { duration: '5m',  target: 200 },  // ramp up to 200 VUs over 5 min
-    { duration: '20m', target: 200 },  // hold 200 VUs for 20 min (steady state)
-    { duration: '5m',  target: 0 },    // ramp down
+    { duration: "5m", target: 200 }, // ramp up to 200 VUs over 5 min
+    { duration: "20m", target: 200 }, // hold 200 VUs for 20 min (steady state)
+    { duration: "5m", target: 0 }, // ramp down
   ],
-  
+
   // SLO-BASED THRESHOLDS: build fails if violated
   thresholds: {
     // Latency SLO
-    'http_req_duration{name:browse_products}': ['p(95)<200', 'p(99)<500'],
-    'http_req_duration{name:create_order}':    ['p(95)<500', 'p(99)<1500'],
-    'http_req_duration{name:get_order}':       ['p(95)<100', 'p(99)<300'],
-    
+    "http_req_duration{name:browse_products}": ["p(95)<200", "p(99)<500"],
+    "http_req_duration{name:create_order}": ["p(95)<500", "p(99)<1500"],
+    "http_req_duration{name:get_order}": ["p(95)<100", "p(99)<300"],
+
     // Availability SLO
-    http_req_failed: ['rate<0.005'],   // < 0.5% error rate
-    
+    http_req_failed: ["rate<0.005"], // < 0.5% error rate
+
     // Custom business metric
-    'order_success_rate': ['rate>0.995'],  // 99.5% of orders complete successfully
+    order_success_rate: ["rate>0.995"], // 99.5% of orders complete successfully
   },
 };
 
-const orderSuccessRate = new Rate('order_success_rate');
-const browseProducts = new Trend('browse_products_duration');
+const orderSuccessRate = new Rate("order_success_rate");
+const browseProducts = new Trend("browse_products_duration");
 
 // REALISTIC USER SCENARIO: models actual user behavior with think times
-export default function() {
+export default function () {
   const params = {
-    headers: { 'Authorization': `Bearer ${getToken()}` },
-    tags: { name: 'browse_products' },  // name for threshold targeting
-    timeout: '10s',
+    headers: { Authorization: `Bearer ${getToken()}` },
+    tags: { name: "browse_products" }, // name for threshold targeting
+    timeout: "10s",
   };
-  
+
   // Browse products (most common user action)
-  const products = http.get('/api/products?page=1&limit=20', params);
-  check(products, { 'browse ok': r => r.status === 200 });
-  
-  sleep(1.5);  // think time: user reads product list
-  
+  const products = http.get("/api/products?page=1&limit=20", params);
+  check(products, { "browse ok": (r) => r.status === 200 });
+
+  sleep(1.5); // think time: user reads product list
+
   // 30% of users proceed to product detail
   if (Math.random() < 0.3) {
-    const productId = products.json('items.0.id');
+    const productId = products.json("items.0.id");
     http.get(`/api/products/${productId}`, {
-      ...params, tags: { name: 'get_product' }
+      ...params,
+      tags: { name: "get_product" },
     });
-    
-    sleep(3);  // user reads product detail
-    
+
+    sleep(3); // user reads product detail
+
     // 20% of those users add to cart and checkout
     if (Math.random() < 0.2) {
-      http.post('/api/cart/items',
-        JSON.stringify({ productId, quantity: 1 }),
-        { ...params, tags: { name: 'add_to_cart' } }
-      );
-      
+      http.post("/api/cart/items", JSON.stringify({ productId, quantity: 1 }), {
+        ...params,
+        tags: { name: "add_to_cart" },
+      });
+
       sleep(2);
-      
-      const orderResp = http.post('/api/orders/checkout',
-        JSON.stringify({ paymentToken: 'tok_visa' }),
-        { ...params, tags: { name: 'create_order' } }
+
+      const orderResp = http.post(
+        "/api/orders/checkout",
+        JSON.stringify({ paymentToken: "tok_visa" }),
+        { ...params, tags: { name: "create_order" } },
       );
-      
+
       orderSuccessRate.add(orderResp.status === 201);
     }
   }
-  
-  sleep(Math.random() * 2 + 1);  // inter-request pause
+
+  sleep(Math.random() * 2 + 1); // inter-request pause
 }
 ```
 
@@ -243,7 +249,7 @@ Load Test ◄── (you are here)
 scenarios: (1) default: 200 looping VUs for 30m0s (gracefulStop: 30s)
 
      ✓ browse ok (100% pass)
-     
+
      checks.........................: 99.82% ✓ 48,420 ✗ 87
      data_received..................: 412 MB 229 kB/s
      data_sent......................: 45 MB 25 kB/s
@@ -253,7 +259,7 @@ scenarios: (1) default: 200 looping VUs for 30m0s (gracefulStop: 30s)
      ✓ { name:create_order }.......: avg=215ms  p(95)=412ms  p(99)=890ms
      http_req_failed................: 0.18% ✓ 87 ✗ 48,420   ← 87 failures
      http_reqs......................: 48,507 269/s
-     
+
      RESULT: PASS — all SLO thresholds met
      NOTE: 87 failures investigated → all DNS timeout on external payment API
            (network blip, not application issue) → acceptable
@@ -263,11 +269,11 @@ scenarios: (1) default: 200 looping VUs for 30m0s (gracefulStop: 30s)
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                         | Reality                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Load tests can run against production | Running a load test against production is dangerous: it can degrade service for real users, trigger rate limits and fraud detection on payment APIs, and pollute production data with test orders. Always use a dedicated performance test environment. Exception: canary traffic profiling (passive monitoring of production traffic patterns) is different from active load testing. |
-| Higher throughput is always better | Throughput (RPS) and latency are inversely related at load — at some point, pushing more requests per second causes queuing and latency to increase sharply (Little's Law). The goal is to find the throughput level where SLOs are met, not to maximize throughput. A system that serves 1,000 RPS at p99 200ms is better than one serving 2,000 RPS at p99 5,000ms. |
-| Load test pass = production is safe | Load tests model expected behavior. Production is full of surprises: unusual request patterns, bots, correlated failures, infrastructure instability. A load test pass is necessary but not sufficient for production confidence. Combine with observability (APM, dashboards, alerting) to catch production anomalies that load tests miss. |
+| Higher throughput is always better    | Throughput (RPS) and latency are inversely related at load — at some point, pushing more requests per second causes queuing and latency to increase sharply (Little's Law). The goal is to find the throughput level where SLOs are met, not to maximize throughput. A system that serves 1,000 RPS at p99 200ms is better than one serving 2,000 RPS at p99 5,000ms.                  |
+| Load test pass = production is safe   | Load tests model expected behavior. Production is full of surprises: unusual request patterns, bots, correlated failures, infrastructure instability. A load test pass is necessary but not sufficient for production confidence. Combine with observability (APM, dashboards, alerting) to catch production anomalies that load tests miss.                                           |
 
 ---
 

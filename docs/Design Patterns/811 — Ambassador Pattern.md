@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #microservices, #proxy, #outbound, #service-m
 
 ⚡ TL;DR — **Ambassador Pattern** is a Sidecar variant that acts as an outbound proxy for the application — handling retries, circuit breaking, authentication, and protocol translation for ALL outbound calls, so the application only calls `localhost`.
 
-| #811 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Sidecar Pattern, Microservices, Kubernetes, Circuit Breaker Pattern | |
-| **Used by:** | Service mesh, outbound traffic management, legacy service modernization | |
+| #811            | Category: Design Patterns                                               | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Sidecar Pattern, Microservices, Kubernetes, Circuit Breaker Pattern     |                 |
+| **Used by:**    | Service mesh, outbound traffic management, legacy service modernization |                 |
 
 ---
 
@@ -52,11 +52,11 @@ AMBASSADOR vs. SIDECAR:
 
   Sidecar:     handles BOTH inbound AND outbound traffic
                Examples: Envoy (Istio), Linkerd proxy — full mesh proxy
-  
+
   Ambassador:  focused on OUTBOUND (egress) traffic only
                Examples: HAProxy ambassador, Envoy as egress-only proxy
                The application still receives inbound requests directly.
-  
+
   USE AMBASSADOR (not full sidecar) when:
   ✓ You need outbound resilience for a legacy application
   ✓ Inbound is handled elsewhere (API Gateway, Nginx)
@@ -67,12 +67,12 @@ AMBASSADOR PATTERN MECHANICS:
 
   Without Ambassador:
   App → (direct HTTP + custom retry + custom circuit breaker) → External Service
-  
+
   With Ambassador:
   App → localhost:9000 (Ambassador) → (retry + CB + auth + TLS) → External Service
-  
+
   ENVOY AS AMBASSADOR (Kubernetes pod):
-  
+
   spec:
     containers:
     - name: legacy-app
@@ -80,7 +80,7 @@ AMBASSADOR PATTERN MECHANICS:
       env:
       - name: INVENTORY_URL
         value: http://localhost:9000  # Calls Ambassador, not external service
-    
+
     - name: ambassador-proxy
       image: envoyproxy/envoy:v1.28.0
       ports:
@@ -88,9 +88,9 @@ AMBASSADOR PATTERN MECHANICS:
       volumeMounts:
       - name: envoy-config
         mountPath: /etc/envoy
-  
+
   Envoy config (envoy.yaml — ambassador for inventory service):
-  
+
   static_resources:
     listeners:
     - name: listener_0
@@ -113,7 +113,7 @@ AMBASSADOR PATTERN MECHANICS:
                       retry_on: "5xx,connect-failure,reset"
                       num_retries: 3
                       per_try_timeout: 2s
-  
+
     clusters:
     - name: inventory_service
       connect_timeout: 0.5s
@@ -138,12 +138,12 @@ AMBASSADOR FOR PROTOCOL TRANSLATION:
 
   Legacy app: only speaks REST HTTP/1.1
   New internal service: gRPC (HTTP/2)
-  
+
   Ambassador: receives REST from app → translates to gRPC → sends to service
   → receives gRPC response → translates to REST → returns to app
-  
+
   Application: zero gRPC code. Ambassador handles protocol translation.
-  
+
   Envoy supports: REST-to-gRPC transcoding via grpc-json transcoder filter.
 ```
 
@@ -152,6 +152,7 @@ AMBASSADOR FOR PROTOCOL TRANSLATION:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Ambassador:
+
 - Each application must implement: retry logic, circuit breaking, auth header injection, TLS, tracing
 - Legacy apps cannot gain these capabilities without code changes
 - Multi-language fleet: each language implements differently (varying quality)
@@ -228,14 +229,14 @@ Ambassador Pattern ◄──── (you are here)
 @Service
 @RequiredArgsConstructor
 public class InventoryClient {
-    
+
     private final RestTemplate restTemplate;
-    
+
     // Application configuration:
     // inventory.url = http://localhost:9000   ← points to Ambassador
     @Value("${inventory.url}")
     private String inventoryUrl;
-    
+
     public InventoryStatus checkStock(Long productId) {
         // Application calls localhost — no retry, no circuit breaker code here.
         // ALL resilience handled by Ambassador proxy.
@@ -264,11 +265,11 @@ public class InventoryClient {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Ambassador Pattern and API Gateway are the same | API Gateway handles INBOUND traffic (client → gateway → service). Ambassador handles OUTBOUND traffic (service → ambassador → downstream). They are complementary: a Gateway at the edge handles external traffic; an Ambassador in the pod handles inter-service outbound calls. Both can implement routing, retries, and auth — but at different network positions. |
-| Service Mesh (Istio) is the only way to implement Ambassador | Service mesh is one implementation. You can implement Ambassador with: HAProxy sidecar, Nginx sidecar, custom Envoy config — without a full service mesh. Service mesh adds: control plane, mTLS, traffic management UI, global policy. Ambassador without a service mesh: simpler, fewer features, less operational overhead. Choose based on complexity needs. |
-| Ambassador Pattern creates a single point of failure | The Ambassador is co-located with the application in the same pod. If the Ambassador fails, the pod is restarted (Kubernetes liveness probe). The Ambassador doesn't add a network hop outside the pod — it's on localhost. The failure domain of the Ambassador = the failure domain of the pod itself. It doesn't create a network-level SPOF. |
+| Misconception                                                | Reality                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ambassador Pattern and API Gateway are the same              | API Gateway handles INBOUND traffic (client → gateway → service). Ambassador handles OUTBOUND traffic (service → ambassador → downstream). They are complementary: a Gateway at the edge handles external traffic; an Ambassador in the pod handles inter-service outbound calls. Both can implement routing, retries, and auth — but at different network positions. |
+| Service Mesh (Istio) is the only way to implement Ambassador | Service mesh is one implementation. You can implement Ambassador with: HAProxy sidecar, Nginx sidecar, custom Envoy config — without a full service mesh. Service mesh adds: control plane, mTLS, traffic management UI, global policy. Ambassador without a service mesh: simpler, fewer features, less operational overhead. Choose based on complexity needs.      |
+| Ambassador Pattern creates a single point of failure         | The Ambassador is co-located with the application in the same pod. If the Ambassador fails, the pod is restarted (Kubernetes liveness probe). The Ambassador doesn't add a network hop outside the pod — it's on localhost. The failure domain of the Ambassador = the failure domain of the pod itself. It doesn't create a network-level SPOF.                      |
 
 ---
 
@@ -280,33 +281,33 @@ public class InventoryClient {
 # ANTI-PATTERN — Ambassador proxy with no resource limits in high-throughput pod:
 
 containers:
-- name: high-throughput-service
-  image: payment-processor:1.0
-  # 10,000 requests/second, each processed in < 5ms
-  resources:
-    requests: { cpu: "2000m", memory: "2Gi" }
-    limits:   { cpu: "4000m", memory: "4Gi" }
+  - name: high-throughput-service
+    image: payment-processor:1.0
+    # 10,000 requests/second, each processed in < 5ms
+    resources:
+      requests: { cpu: "2000m", memory: "2Gi" }
+      limits: { cpu: "4000m", memory: "4Gi" }
 
-- name: ambassador
-  image: envoyproxy/envoy:v1.28.0
-  # NO resource limits set!
-  
-# Under load: Envoy CPU saturates (10,000 req/s × proxy overhead)
-# Envoy starts queuing requests
-# P99 latency: 5ms → 250ms (proxy queue buildup)
-# Payment processor: healthy. Envoy: bottleneck.
+  - name: ambassador
+    image: envoyproxy/envoy:v1.28.0
+    # NO resource limits set!
 
-# FIX 1: Profile Envoy CPU usage at peak throughput BEFORE production.
-# FIX 2: Set appropriate Envoy resource limits based on measured usage.
-# FIX 3: For ultra-high-throughput (>10K rps): evaluate if per-pod proxy overhead
-#         justifies the benefits. At extreme scale: consider service mesh at
-#         node level (DaemonSet) instead of per-pod sidecar.
+  # Under load: Envoy CPU saturates (10,000 req/s × proxy overhead)
+  # Envoy starts queuing requests
+  # P99 latency: 5ms → 250ms (proxy queue buildup)
+  # Payment processor: healthy. Envoy: bottleneck.
 
-- name: ambassador
-  image: envoyproxy/envoy:v1.28.0
-  resources:
-    requests: { cpu: "500m", memory: "128Mi" }
-    limits:   { cpu: "1000m", memory: "256Mi" }
+  # FIX 1: Profile Envoy CPU usage at peak throughput BEFORE production.
+  # FIX 2: Set appropriate Envoy resource limits based on measured usage.
+  # FIX 3: For ultra-high-throughput (>10K rps): evaluate if per-pod proxy overhead
+  #         justifies the benefits. At extreme scale: consider service mesh at
+  #         node level (DaemonSet) instead of per-pod sidecar.
+
+  - name: ambassador
+    image: envoyproxy/envoy:v1.28.0
+    resources:
+      requests: { cpu: "500m", memory: "128Mi" }
+      limits: { cpu: "1000m", memory: "256Mi" }
 # FIX 4: tune Envoy worker threads: `--concurrency 4` (matching CPU limit)
 ```
 

@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #creational, #oop, #concurrency
 
 ⚡ TL;DR — **Singleton** ensures a class has only one instance throughout the application's lifetime and provides a global access point to it — useful for shared resources (config, logging, connection pools) but often overused and misunderstood as a pattern for global state.
 
-| #766 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Dependency Injection Pattern | |
-| **Used by:** | Configuration objects, Logger, Connection pools, Thread pools | |
+| #766            | Category: Design Patterns                                     | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Dependency Injection Pattern     |                 |
+| **Used by:**    | Configuration objects, Logger, Connection pools, Thread pools |                 |
 
 ---
 
@@ -53,26 +53,26 @@ An application config: `AppConfig.getInstance()`. All classes that need configur
    class DatabaseConnectionPool {
        // Created when class is loaded — before any thread calls getInstance():
        private static final DatabaseConnectionPool INSTANCE = new DatabaseConnectionPool();
-       
+
        private DatabaseConnectionPool() {
            // Initialize pool: open connections, configure...
        }
-       
+
        public static DatabaseConnectionPool getInstance() {
            return INSTANCE;
        }
    }
-   
+
    ✓ Thread-safe: class loading is thread-safe (JVM handles it).
    ✓ Simple. No synchronization overhead.
    ✗ Created eagerly even if never used (wasteful if expensive to create).
    ✗ No lazy initialization (if constructor can fail: exception at class load time).
-   
+
 2. LAZY INITIALIZATION — BROKEN (non-thread-safe):
 
    class Config {
        private static Config instance;
-       
+
        public static Config getInstance() {
            if (instance == null) {         // ← Thread A and B both see null
                instance = new Config();    // ← BOTH create an instance!
@@ -82,7 +82,7 @@ An application config: `AppConfig.getInstance()`. All classes that need configur
    }
    ✗ RACE CONDITION: Thread A checks instance == null (true). Context switch.
      Thread B checks instance == null (true). Both create instances. BROKEN.
-   
+
 3. SYNCHRONIZED METHOD (thread-safe but slow):
 
    public static synchronized Config getInstance() {
@@ -91,12 +91,12 @@ An application config: `AppConfig.getInstance()`. All classes that need configur
    }
    ✓ Thread-safe.
    ✗ Every call synchronizes — contention when many threads call frequently.
-   
+
 4. DOUBLE-CHECKED LOCKING (thread-safe, fast after initialization):
 
    class Config {
        private static volatile Config instance;  // volatile required!
-       
+
        public static Config getInstance() {
            if (instance == null) {               // Check 1: avoid sync if initialized
                synchronized (Config.class) {     // Lock only for initialization
@@ -111,18 +111,18 @@ An application config: `AppConfig.getInstance()`. All classes that need configur
    ✓ Thread-safe (volatile prevents reordering + memory visibility issues).
    ✓ Fast after initialization (no sync on hot path).
    ✗ Complex. volatile required (Java Memory Model).
-   
+
 5. INITIALIZATION-ON-DEMAND HOLDER (preferred in Java):
 
    class Config {
        private Config() {}
-       
+
        private static class Holder {
            // Class loaded lazily on first access to Holder.
            // Class loading is thread-safe. No explicit synchronization needed.
            static final Config INSTANCE = new Config();
        }
-       
+
        public static Config getInstance() {
            return Holder.INSTANCE;  // triggers Holder class loading on first call
        }
@@ -131,44 +131,44 @@ An application config: `AppConfig.getInstance()`. All classes that need configur
    ✓ Thread-safe: JVM guarantees class initialization is thread-safe.
    ✓ No synchronization overhead.
    ✓ Simpler than double-checked locking.
-   
+
 6. ENUM SINGLETON (serialization-safe, reflection-safe):
 
    enum AppConfig {
        INSTANCE;
-       
+
        private final Properties props = loadProperties();
-       
+
        public String get(String key) { return props.getProperty(key); }
    }
-   
+
    // Usage: AppConfig.INSTANCE.get("db.url")
-   
+
    ✓ Thread-safe by JVM.
    ✓ Serialization-safe (enum values are always the same instance across JVM boundaries).
    ✓ Reflection-safe (cannot call constructor via reflection).
    ✗ Unusual for non-simple singletons. Cannot extend a class.
-   
+
 SINGLETON ANTI-PATTERN CONCERNS:
 
   1. GLOBAL STATE:
      Singleton IS global state. Tests depend on each other through shared singleton state.
      One test modifies singleton. Next test gets polluted state. Tests are order-dependent.
-     
+
   2. HIDDEN DEPENDENCY:
      Classes using Config.getInstance() have a HIDDEN dependency on Config.
      Like Service Locator: dependency not visible in constructor.
      Makes classes harder to test and harder to understand.
-     
+
   3. FIX: Inject the singleton:
-  
+
      // BAD: class uses singleton directly:
      class OrderService {
          void place(Order o) {
              String limit = AppConfig.getInstance().get("max.order");  // hidden dep
          }
      }
-     
+
      // GOOD: inject singleton as a dependency:
      class OrderService {
          private final AppConfig config;
@@ -176,7 +176,7 @@ SINGLETON ANTI-PATTERN CONCERNS:
          // In tests: inject a test AppConfig with test values.
          // In production: Spring injects the Singleton bean.
      }
-     
+
   Spring @Bean + @Scope("singleton") is the canonical modern Java Singleton:
   Spring manages lifecycle, injection, and thread safety.
   You don't implement Singleton pattern manually — Spring does it for you.
@@ -187,6 +187,7 @@ SINGLETON ANTI-PATTERN CONCERNS:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Singleton:
+
 - Each class creates its own `AppConfig` — N config file reads, N inconsistent views
 - Connection pool: 20 classes each create a pool of 10 connections = 200 connections (overloads DB)
 
@@ -214,15 +215,15 @@ SINGLETON STRUCTURE:
 
   class Singleton {
       private static Singleton instance;  // 1. Private static field
-      
+
       private Singleton() {}              // 2. Private constructor
-      
+
       public static Singleton getInstance() {  // 3. Public static accessor
           if (instance == null) instance = new Singleton();
           return instance;
       }
   }
-  
+
   MODERN JAVA: Use enum or Initialization-on-Demand Holder.
   SPRING: @Bean singleton scope (default) — Spring is your Singleton container.
 ```
@@ -252,22 +253,22 @@ Singleton Pattern ◄──── (you are here)
 // BEST JAVA SINGLETON — Initialization-on-Demand Holder:
 public class DatabaseConnectionPool {
     private final HikariDataSource dataSource;
-    
+
     private DatabaseConnectionPool() {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(System.getenv("DATABASE_URL"));
         config.setMaximumPoolSize(20);
         this.dataSource = new HikariDataSource(config);
     }
-    
+
     private static class Holder {
         static final DatabaseConnectionPool INSTANCE = new DatabaseConnectionPool();
     }
-    
+
     public static DatabaseConnectionPool getInstance() {
         return Holder.INSTANCE;
     }
-    
+
     public Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }
@@ -296,10 +297,10 @@ class OrderRepository {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Singleton is the same as global variable | Singleton controls instantiation (one instance guaranteed). A global variable is just a variable that happens to be globally accessible — no instantiation control. Singleton adds: private constructor (no external creation), controlled access point, lazy/eager initialization logic |
-| Singleton is always an anti-pattern | Singleton is overused, but not always wrong. Logger, application config, connection pool — genuinely benefit from one instance. The problem: Singleton is often used as a shortcut for global state when DI would be cleaner. Use Spring's singleton scope or inject the single instance rather than calling `getInstance()` directly in application code |
+| Misconception                                           | Reality                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Singleton is the same as global variable                | Singleton controls instantiation (one instance guaranteed). A global variable is just a variable that happens to be globally accessible — no instantiation control. Singleton adds: private constructor (no external creation), controlled access point, lazy/eager initialization logic                                                                   |
+| Singleton is always an anti-pattern                     | Singleton is overused, but not always wrong. Logger, application config, connection pool — genuinely benefit from one instance. The problem: Singleton is often used as a shortcut for global state when DI would be cleaner. Use Spring's singleton scope or inject the single instance rather than calling `getInstance()` directly in application code  |
 | Double-checked locking without volatile is safe in Java | Before Java 5 and the updated memory model, double-checked locking was broken. The `volatile` keyword on the instance field is REQUIRED in Java: without it, the JIT compiler or CPU can reorder the write to `instance` before the constructor finishes, causing another thread to see a partially constructed object via the non-null instance reference |
 
 ---
@@ -313,7 +314,7 @@ class OrderRepository {
 class FeatureFlags {
     private static FeatureFlags instance = new FeatureFlags();
     private final Map<String, Boolean> flags = new HashMap<>();
-    
+
     static FeatureFlags getInstance() { return instance; }
     void enable(String flag) { flags.put(flag, true); }
     boolean isEnabled(String flag) { return flags.getOrDefault(flag, false); }

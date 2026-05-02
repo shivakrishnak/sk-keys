@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #microservices, #kubernetes, #service-mesh, #
 
 ⚡ TL;DR — **Sidecar Pattern** deploys a secondary container alongside the main application container in the same pod, handling cross-cutting concerns (logging, metrics, proxying, TLS) without modifying the application code.
 
-| #810 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Microservices, Containers, Kubernetes, Service Mesh | |
-| **Used by:** | Service mesh, observability, cross-cutting concerns, multi-language microservices |  |
+| #810            | Category: Design Patterns                                                         | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Microservices, Containers, Kubernetes, Service Mesh                               |                 |
+| **Used by:**    | Service mesh, observability, cross-cutting concerns, multi-language microservices |                 |
 
 ---
 
@@ -54,7 +54,7 @@ SIDECAR IN KUBERNETES (pod anatomy):
   - Network namespace (localhost, same IP)
   - Volumes (shared filesystem paths)
   - Lifecycle (co-scheduled, co-terminated)
-  
+
   ┌─────────────────────────────────────────────────────┐
   │  Pod                                                │
   │                                                     │
@@ -70,14 +70,14 @@ SIDECAR IN KUBERNETES (pod anatomy):
   │  Shared: network namespace (same IP address)        │
   │  Shared: /var/log volume (log shipping)             │
   └─────────────────────────────────────────────────────┘
-  
+
 SIDECAR USE CASES:
 
   1. SERVICE MESH PROXY (Istio + Envoy):
-  
+
   Automatic injection (in Kubernetes namespace labeled istio-injection=enabled):
   kubectl label namespace production istio-injection=enabled
-  
+
   Envoy sidecar injected by mutating webhook on pod creation.
   Handles:
   - mTLS: encrypts all service-to-service traffic automatically
@@ -87,10 +87,10 @@ SIDECAR USE CASES:
   - Timeouts: configurable via VirtualService
   - Distributed tracing: injects B3/W3C trace headers
   - Access logging: all requests logged to stdout (Envoy)
-  
+
   Application code: connects to localhost:8080 (or direct host)
   Envoy: intercepts via iptables rules injected into pod network namespace
-  
+
   VirtualService (circuit breaking config — no code changes):
   apiVersion: networking.istio.io/v1beta1
   kind: DestinationRule
@@ -109,9 +109,9 @@ SIDECAR USE CASES:
         consecutive5xxErrors: 5     # Circuit break after 5 consecutive 500s
         interval: 30s
         baseEjectionTime: 30s       # Eject for 30 seconds
-  
+
   2. LOG SHIPPING (Fluentd/Fluent Bit sidecar):
-  
+
   # Pod with app + Fluentd sidecar:
   spec:
     containers:
@@ -120,24 +120,24 @@ SIDECAR USE CASES:
       volumeMounts:
       - name: log-volume
         mountPath: /var/log/app      # App writes logs here
-    
+
     - name: fluentd
       image: fluent/fluentd:v1.16
       volumeMounts:
       - name: log-volume
         mountPath: /var/log/app      # Fluentd reads from same path
       # Fluentd ships to Elasticsearch/CloudWatch/Splunk
-    
+
     volumes:
     - name: log-volume
       emptyDir: {}
-  
+
   3. SECRET INJECTION (Vault agent sidecar):
-  
+
   # Vault agent sidecar: fetches secrets from Vault, writes to shared volume
   # App: reads secrets from /vault/secrets/ path
   # No Vault SDK in app code. No secret in environment variables.
-  
+
   spec:
     annotations:
       vault.hashicorp.com/agent-inject: "true"
@@ -147,9 +147,9 @@ SIDECAR USE CASES:
     - name: app
       # App reads /vault/secrets/db-password at runtime
       # Vault agent (injected sidecar) renews secrets automatically
-  
+
   4. METRICS COLLECTION (Prometheus exporter sidecar):
-  
+
   # App produces business metrics on :8080/metrics
   # Prometheus exporter sidecar: transforms app metrics to Prometheus format
   # Common for legacy apps that don't support Prometheus natively
@@ -160,6 +160,7 @@ SIDECAR USE CASES:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Sidecar:
+
 - Cross-cutting concerns implemented per service in every language
 - Different quality/completeness of logging/tracing per team
 - Library upgrades require redeploying every service
@@ -190,10 +191,10 @@ ISTIO SIDECAR TRAFFIC INTERCEPTION (iptables):
   - All OUTBOUND traffic → redirect to Envoy port 15001
   - All INBOUND traffic → redirect to Envoy port 15006
   - Envoy processes, then forwards to app on localhost:8080
-  
+
   App only sees: localhost. Knows nothing about Envoy.
   Envoy handles: mTLS, circuit breaking, tracing, load balancing.
-  
+
   SIDECAR CONTAINER STATES:
   - Init containers: run before app + sidecar (e.g., Istio init: sets up iptables)
   - Sidecar containers: run alongside app (Kubernetes 1.29+: native sidecar support)
@@ -232,62 +233,61 @@ spec:
   template:
     spec:
       containers:
-      
-      # PRIMARY CONTAINER: application
-      - name: order-service
-        image: order-service:2.1.0
-        ports:
-        - containerPort: 8080
-        volumeMounts:
-        - name: app-logs
-          mountPath: /var/log/app
-        resources:
-          requests:
-            cpu: "500m"
-            memory: "512Mi"
-          limits:
-            cpu: "1000m"
-            memory: "1Gi"
-      
-      # SIDECAR 1: log shipping
-      - name: fluent-bit
-        image: fluent/fluent-bit:2.2
-        volumeMounts:
-        - name: app-logs
-          mountPath: /var/log/app
-          readOnly: true
-        - name: fluent-bit-config
-          mountPath: /fluent-bit/etc
-        resources:
-          requests:
-            cpu: "50m"
-            memory: "64Mi"
-          limits:
-            cpu: "100m"
-            memory: "128Mi"
-      
-      # SIDECAR 2: Prometheus metrics exporter
-      - name: jmx-exporter
-        image: bitnami/jmx-exporter:0.20.0
-        ports:
-        - containerPort: 9090    # Prometheus scrapes this
-        volumeMounts:
-        - name: jmx-config
-          mountPath: /opt/jmx-exporter
-        resources:
-          requests:
-            cpu: "25m"
-            memory: "32Mi"
-      
+        # PRIMARY CONTAINER: application
+        - name: order-service
+          image: order-service:2.1.0
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: app-logs
+              mountPath: /var/log/app
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+
+        # SIDECAR 1: log shipping
+        - name: fluent-bit
+          image: fluent/fluent-bit:2.2
+          volumeMounts:
+            - name: app-logs
+              mountPath: /var/log/app
+              readOnly: true
+            - name: fluent-bit-config
+              mountPath: /fluent-bit/etc
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "100m"
+              memory: "128Mi"
+
+        # SIDECAR 2: Prometheus metrics exporter
+        - name: jmx-exporter
+          image: bitnami/jmx-exporter:0.20.0
+          ports:
+            - containerPort: 9090 # Prometheus scrapes this
+          volumeMounts:
+            - name: jmx-config
+              mountPath: /opt/jmx-exporter
+          resources:
+            requests:
+              cpu: "25m"
+              memory: "32Mi"
+
       volumes:
-      - name: app-logs
-        emptyDir: {}
-      - name: fluent-bit-config
-        configMap:
-          name: fluent-bit-config
-      - name: jmx-config
-        configMap:
-          name: jmx-exporter-config
+        - name: app-logs
+          emptyDir: {}
+        - name: fluent-bit-config
+          configMap:
+            name: fluent-bit-config
+        - name: jmx-config
+          configMap:
+            name: jmx-exporter-config
 
 ---
 # Istio VirtualService: circuit breaking via Envoy sidecar (NO application code changes):
@@ -297,27 +297,27 @@ metadata:
   name: order-service
 spec:
   hosts:
-  - order-service
+    - order-service
   http:
-  - timeout: 5s              # 5s timeout — applied by Envoy sidecar
-    retries:
-      attempts: 3
-      perTryTimeout: 2s
-      retryOn: "5xx,reset,connect-failure"
-    route:
-    - destination:
-        host: order-service
+    - timeout: 5s # 5s timeout — applied by Envoy sidecar
+      retries:
+        attempts: 3
+        perTryTimeout: 2s
+        retryOn: "5xx,reset,connect-failure"
+      route:
+        - destination:
+            host: order-service
 ```
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| The Sidecar Pattern is only for Kubernetes | The Sidecar Pattern existed before Kubernetes: HAProxy + application, Nginx + application on the same VM, Consul agent + application on the same host. Kubernetes made it easier and standardized it via pods. The pattern: co-located process handling infrastructure concerns. The runtime can be a VM, bare metal, or a pod. |
-| Sidecars are free (zero overhead) | Each sidecar container consumes CPU and memory. Envoy (Istio) proxy: ~50-100MB memory per pod, ~0.5-2% CPU overhead per request hop. At 1,000-pod scale: significant resource overhead. Measure and budget sidecar resources explicitly. Istio's value (mTLS, observability) must outweigh its per-pod overhead. For simple deployments: a service mesh sidecar may be overkill. |
-| Sidecar handles all cross-cutting concerns | Sidecars handle infrastructure-level concerns: networking, logging, metrics. They cannot handle application-level cross-cutting concerns: transaction management, domain-specific validation, business rule enforcement. Those still belong in application code. Sidecar scope: infrastructure. Application scope: business logic. Don't conflate. |
+| Misconception                              | Reality                                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The Sidecar Pattern is only for Kubernetes | The Sidecar Pattern existed before Kubernetes: HAProxy + application, Nginx + application on the same VM, Consul agent + application on the same host. Kubernetes made it easier and standardized it via pods. The pattern: co-located process handling infrastructure concerns. The runtime can be a VM, bare metal, or a pod.                                                  |
+| Sidecars are free (zero overhead)          | Each sidecar container consumes CPU and memory. Envoy (Istio) proxy: ~50-100MB memory per pod, ~0.5-2% CPU overhead per request hop. At 1,000-pod scale: significant resource overhead. Measure and budget sidecar resources explicitly. Istio's value (mTLS, observability) must outweigh its per-pod overhead. For simple deployments: a service mesh sidecar may be overkill. |
+| Sidecar handles all cross-cutting concerns | Sidecars handle infrastructure-level concerns: networking, logging, metrics. They cannot handle application-level cross-cutting concerns: transaction management, domain-specific validation, business rule enforcement. Those still belong in application code. Sidecar scope: infrastructure. Application scope: business logic. Don't conflate.                               |
 
 ---
 
@@ -328,32 +328,32 @@ spec:
 ```yaml
 # ANTI-PATTERN — sidecar with no resource limits:
 containers:
-- name: app
-  image: order-service:1.0
-  resources:
-    requests: { cpu: "500m", memory: "512Mi" }
-    limits:   { cpu: "1000m", memory: "1Gi" }
+  - name: app
+    image: order-service:1.0
+    resources:
+      requests: { cpu: "500m", memory: "512Mi" }
+      limits: { cpu: "1000m", memory: "1Gi" }
 
-- name: fluent-bit
-  image: fluent/fluent-bit:2.2
-  # NO resource requests/limits!
-  
-# During log flood (app logging at 100MB/sec due to a bug):
-# Fluent Bit CPU: spikes to consume available CPU on the node
-# App CPU: starved — Kubernetes scheduler doesn't know to protect it
-# App latency: spikes because it has no CPU
-# Root cause: the LOG SHIPPER sidecar starved the APPLICATION.
+  - name: fluent-bit
+    image: fluent/fluent-bit:2.2
+    # NO resource requests/limits!
 
-# FIX — always set resource limits on sidecars:
-- name: fluent-bit
-  image: fluent/fluent-bit:2.2
-  resources:
-    requests:
-      cpu: "50m"
-      memory: "64Mi"
-    limits:
-      cpu: "200m"     # Cap: sidecar cannot consume more than this
-      memory: "256Mi" # Cap: OOM kills sidecar, not the app
+  # During log flood (app logging at 100MB/sec due to a bug):
+  # Fluent Bit CPU: spikes to consume available CPU on the node
+  # App CPU: starved — Kubernetes scheduler doesn't know to protect it
+  # App latency: spikes because it has no CPU
+  # Root cause: the LOG SHIPPER sidecar starved the APPLICATION.
+
+  # FIX — always set resource limits on sidecars:
+  - name: fluent-bit
+    image: fluent/fluent-bit:2.2
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "64Mi"
+      limits:
+        cpu: "200m" # Cap: sidecar cannot consume more than this
+        memory: "256Mi" # Cap: OOM kills sidecar, not the app
 # If Fluent Bit hits CPU limit: it throttles (log shipping slows)
 # App: unaffected — its CPU quota is protected by the scheduler.
 ```

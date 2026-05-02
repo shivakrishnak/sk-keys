@@ -18,10 +18,10 @@ tags: #java, #generics, #type-erasure, #jvm, #bytecode, #runtime
 
 ⚡ TL;DR — **Type Erasure** removes all generic type parameters at compile time: `List<String>` becomes `List` in bytecode. Generic safety exists only at compile time; the JVM never knows `T`.
 
-| #315 | Category: Java Language | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Generics, JVM Bytecode, Reflection | |
-| **Used on:** | Generic collections, Spring framework internals, serialization, Reflection API | |
+| #315            | Category: Java Language                                                        | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Generics, JVM Bytecode, Reflection                                             |                 |
+| **Used on:**    | Generic collections, Spring framework internals, serialization, Reflection API |                 |
 
 ---
 
@@ -54,13 +54,13 @@ ERASURE RULES:
      Box<T>         compiles to    Box            (raw type)
      T get()        compiles to    Object get()
      void set(T v)  compiles to    void set(Object v)
-  
+
   2. Bounded type parameter (T extends Comparable<T>) → replaced by leftmost bound:
      <T extends Comparable<T>> T max(T a, T b)
      compiles to:  Comparable max(Comparable a, Comparable b)
-  
+
   3. Multiple bounds (<T extends Serializable & Comparable<T>>) → leftmost bound (Serializable)
-  
+
   4. Wildcard (? extends Number) → erased to Number (the bound)
      Wildcard (?) → erased to Object
 
@@ -72,7 +72,7 @@ SOURCE vs BYTECODE:
       public void push(T item) { elements.add(item); }
       public T pop() { return elements.remove(elements.size() - 1); }
   }
-  
+
   After erasure (equivalent bytecode):
   public class Stack {
       private List elements = new ArrayList();       // T erased to Object
@@ -85,22 +85,22 @@ BRIDGE METHODS (preserving polymorphism after erasure):
 
   Source:
   interface Comparable<T> { int compareTo(T other); }
-  
+
   class MyString implements Comparable<MyString> {
       @Override
       public int compareTo(MyString other) {
           return this.value.compareTo(other.value);
       }
   }
-  
+
   Problem: after erasure, Comparable becomes compareTo(Object), but MyString has compareTo(MyString).
   The signatures don't match → polymorphism breaks.
-  
+
   Compiler-generated bridge method (synthetic):
   public int compareTo(Object other) {        // matches erased interface method
       return this.compareTo((MyString) other); // delegates to typed method
   }
-  
+
   javap -verbose MyString.class shows:
   compareTo(MyString): flags: ACC_PUBLIC
   compareTo(Object):   flags: ACC_PUBLIC, ACC_BRIDGE, ACC_SYNTHETIC
@@ -109,12 +109,12 @@ TYPE ERASURE + UNCHECKED WARNINGS:
 
   @SuppressWarnings("unchecked") suppresses warnings from unchecked casts.
   These casts exist because erasure loses type info that the compiler used to know.
-  
+
   Example — Jackson deserialization:
   List<User> users = objectMapper.readValue(json, List.class);
   // compiler: "unchecked assignment: List to List<User>"
   // risk: if JSON contains non-User objects, ClassCastException at point of use
-  
+
   FIX — TypeReference preserves generic type info for Jackson:
   List<User> users = objectMapper.readValue(json, new TypeReference<List<User>>(){});
   // TypeReference subclass: superclass generic type info survives erasure (see below)
@@ -122,19 +122,19 @@ TYPE ERASURE + UNCHECKED WARNINGS:
 PRESERVING GENERIC TYPE INFO AT RUNTIME:
 
   Java does NOT erase type info from class/field/method SIGNATURES — only from instance usage.
-  
+
   Field declaration:  List<String> myField;
   getClass().getDeclaredField("myField").getGenericType()
   → ParameterizedType: java.util.List<java.lang.String>  ← type info preserved!
-  
+
   Superclass generic type (TypeReference trick):
   class TypeRef<T> {}
   class UserListRef extends TypeRef<List<User>> {}  // superclass type preserved!
-  
+
   UserListRef ref = new UserListRef();
   ((ParameterizedType) ref.getClass().getGenericSuperclass())
       .getActualTypeArguments()[0]  // → List<User>
-  
+
   Spring's ResolvableType:
   ResolvableType.forClass(UserService.class)
       .getInterfaces()[0].getGeneric(0)  // resolves T in implemented generic interface
@@ -145,6 +145,7 @@ PRESERVING GENERIC TYPE INFO AT RUNTIME:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Type Erasure (alternative: reified generics like C#):
+
 - Would require JVM bytecode changes for every generics use
 - All existing pre-Java 5 `.class` files and libraries: incompatible with new JVM
 - New JVM required for existing `.jar` libraries to work with generics
@@ -187,11 +188,11 @@ RUNTIME REFLECTION — what survives erasure:
 
   Survives: class/field/method declaration signatures (from .class file metadata)
   Erased:   local variable types, instance/cast expressions
-  
+
   // Survives:
   class Service<T extends Repository> {}
   Service.class.getTypeParameters()[0].getBounds()  // → Repository
-  
+
   // Erased:
   void method() {
       List<String> list = new ArrayList<>();  // local variable: type erased
@@ -258,11 +259,11 @@ User u = deserialize(json, User.class);  // type safe: Class<User> is a runtime 
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Type erasure means ALL generic information is lost at runtime | Generic type information in class, field, and method DECLARATIONS is preserved in `.class` file metadata (Signature attribute). `getGenericType()`, `getGenericSuperclass()`, `getGenericInterfaces()` return full generic type info. Only instance-level usage (local variables, cast expressions) is erased. |
-| C# generics are "better" than Java generics unconditionally | C#'s reified generics allow `new T()`, `typeof(T)`, and `T[]` — more powerful. But reification requires all generic code to exist in every compiled version (increases binary size, requires more JIT compilation). Java's erasure compiles once to one bytecode version — simpler compilation model. Each approach has tradeoffs. |
-| Type erasure is a bug or design flaw | It was a deliberate choice for backward compatibility. All existing Java libraries and bytecode remained compatible with Java 5 generics without recompilation. The cost (no runtime generic types) was considered acceptable given the benefit (universal compatibility). |
+| Misconception                                                 | Reality                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Type erasure means ALL generic information is lost at runtime | Generic type information in class, field, and method DECLARATIONS is preserved in `.class` file metadata (Signature attribute). `getGenericType()`, `getGenericSuperclass()`, `getGenericInterfaces()` return full generic type info. Only instance-level usage (local variables, cast expressions) is erased.                     |
+| C# generics are "better" than Java generics unconditionally   | C#'s reified generics allow `new T()`, `typeof(T)`, and `T[]` — more powerful. But reification requires all generic code to exist in every compiled version (increases binary size, requires more JIT compilation). Java's erasure compiles once to one bytecode version — simpler compilation model. Each approach has tradeoffs. |
+| Type erasure is a bug or design flaw                          | It was a deliberate choice for backward compatibility. All existing Java libraries and bytecode remained compatible with Java 5 generics without recompilation. The cost (no runtime generic types) was considered acceptable given the benefit (universal compatibility).                                                         |
 
 ---
 

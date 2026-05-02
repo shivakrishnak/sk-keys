@@ -18,10 +18,10 @@ tags: #maven, #dependency-exclusion, #classpath, #transitive, #version-conflict
 
 ⚡ TL;DR — **Dependency exclusion** removes specific transitive dependencies from the classpath using `<exclusions>` in `pom.xml`. Common uses: remove a logging implementation pulled in transitively (replace with your preferred one), eliminate security-vulnerable libraries, resolve classloader conflicts, or substitute a dependency with an alternative. Exclusions are a last resort — prefer `<dependencyManagement>` for version conflicts. Exclusions can cause `ClassNotFoundException` if you exclude something genuinely needed.
 
-| #1075 | Category: Maven & Build Tools (Java) | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Transitive Dependencies, Dependency Scope, pom.xml | |
-| **Used by:** | Maven Dependencies, Security scanning, Classpath optimization | |
+| #1075           | Category: Maven & Build Tools (Java)                          | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Transitive Dependencies, Dependency Scope, pom.xml            |                 |
+| **Used by:**    | Maven Dependencies, Security scanning, Classpath optimization |                 |
 
 ---
 
@@ -46,6 +46,7 @@ Dependency exclusions are a scalpel for classpath surgery. They solve specific p
 3. **Conflict resolution when versions can't be unified**: two libraries need fundamentally incompatible versions of a shared dependency. Excluding from one path and declaring the compatible version directly.
 
 **Warning signs when using exclusions**:
+
 - Excluding something that the included library actually calls → `ClassNotFoundException` at runtime (you excluded what it needed)
 - Excluding without replacing → `NoClassDefFoundError` if any code path references the excluded class
 - Excluding in multiple places for the same artifact → sign that `<dependencyManagement>` would be cleaner
@@ -187,7 +188,7 @@ EXCLUSION vs DEPENDENCYMANAGEMENT DECISION MATRIX:
   Need to REPLACE with different dep    → <exclusions> + declare replacement
   Version conflict in deep transitive   → <dependencyManagement> first; exclusion if not enough
   Library switches API (javax→jakarta)  → <exclusions> + replacement
-  
+
   PREFER dependencyManagement OVER exclusions:
   - dependencyManagement affects ALL paths bringing in the artifact
   - exclusion only affects the specific dependency it's declared on
@@ -199,15 +200,15 @@ DIAGNOSING WHEN TO USE EXCLUSION:
   Step 1: mvn dependency:tree
   → Find the problematic artifact: which library brings it in?
   → Find all paths that bring it in
-  
+
   Step 2: Determine if version or full exclusion needed
   → Version change? → <dependencyManagement>
   → Full removal? → <exclusions>
-  
+
   Step 3: If exclusion: does anything else NEED this transitive dep?
   → mvn dependency:analyze to check for "used" deps
   → Test thoroughly — ClassNotFoundException = you excluded something needed
-  
+
   Step 4: After exclusion: mvn dependency:tree again
   → Verify artifact is gone (or replaced with correct version)
   → Check if still comes through another path
@@ -320,7 +321,7 @@ mvn dependency:tree | grep commons-logging
 mvn dependency:tree | grep -E "logback|log4j|slf4j|commons-logging"
 
 # If "Class path contains multiple SLF4J bindings" warning at runtime:
-mvn dependency:tree | grep "slf4j" 
+mvn dependency:tree | grep "slf4j"
 # Look for multiple SLF4J bindings (logback-classic AND slf4j-log4j12 → conflict)
 ```
 
@@ -328,11 +329,11 @@ mvn dependency:tree | grep "slf4j"
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Exclusions affect all paths to the excluded artifact | An `<exclusion>` only affects the specific dependency it's nested under. If artifact X is reachable through both dep-A and dep-B, excluding from dep-A still leaves X reachable through dep-B. Use `<dependencyManagement>` for global version control; use the enforcer plugin to globally ban artifacts. |
-| You should exclude duplicates to "clean up" the classpath | Maven's classpath contains only one version of each artifact (after mediation). Multiple paths to the same artifact don't add it multiple times — Maven deduplicates. Don't exclude unless there's a specific problem: wrong version, ClassLoader conflict, security vulnerability, or genuine removal need. |
-| Excluding a dependency is safe as long as the app starts | The excluded dep might only be needed in certain code paths (error handling, specific features, edge cases). Unit tests might pass but production load triggers a code path that needs the excluded class → `ClassNotFoundException` under load. Always test after exclusions; use integration tests that exercise all features. |
+| Misconception                                             | Reality                                                                                                                                                                                                                                                                                                                          |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Exclusions affect all paths to the excluded artifact      | An `<exclusion>` only affects the specific dependency it's nested under. If artifact X is reachable through both dep-A and dep-B, excluding from dep-A still leaves X reachable through dep-B. Use `<dependencyManagement>` for global version control; use the enforcer plugin to globally ban artifacts.                       |
+| You should exclude duplicates to "clean up" the classpath | Maven's classpath contains only one version of each artifact (after mediation). Multiple paths to the same artifact don't add it multiple times — Maven deduplicates. Don't exclude unless there's a specific problem: wrong version, ClassLoader conflict, security vulnerability, or genuine removal need.                     |
+| Excluding a dependency is safe as long as the app starts  | The excluded dep might only be needed in certain code paths (error handling, specific features, edge cases). Unit tests might pass but production load triggers a code path that needs the excluded class → `ClassNotFoundException` under load. Always test after exclusions; use integration tests that exercise all features. |
 
 ---
 

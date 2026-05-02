@@ -18,10 +18,10 @@ tags: #testing, #unit-test, #tdd, #junit, #isolation, #fast-feedback
 
 ⚡ TL;DR — A **unit test** verifies a single unit of code (a method, class, or small component) in isolation from its dependencies. Dependencies are replaced with test doubles (mocks/stubs). Unit tests are fast (milliseconds), numerous (hundreds in a project), and run on every code change. They give the fastest feedback cycle and form the base of the testing pyramid: many unit tests → fewer integration tests → even fewer E2E tests.
 
-| #1131 | Category: Testing | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Java Language, OOP | |
-| **Used by:** | Integration Test, TDD, JUnit, Mockito | |
+| #1131           | Category: Testing                     | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------ | :-------------- |
+| **Depends on:** | Java Language, OOP                    |                 |
+| **Used by:**    | Integration Test, TDD, JUnit, Mockito |                 |
 
 ---
 
@@ -40,6 +40,7 @@ A unit test checks one small piece of your code — like testing that a single m
 ### 🔵 Simple Definition (Elaborated)
 
 Unit tests verify your code's logic by testing units in isolation:
+
 - **What's a "unit"**: typically one class or one method. In practice, a small cluster of closely related classes that form a logical unit (e.g., a service class + its supporting value objects).
 - **Isolation**: if `OrderService` depends on `OrderRepository` (a database interface), you mock the repository. The test verifies `OrderService`'s logic without needing a real database.
 - **Test doubles**: mocks (verify interactions), stubs (return pre-configured responses), fakes (lightweight implementations — in-memory repo), spies (partial mocks: real object with some methods overridden).
@@ -58,29 +59,29 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final PaymentGateway paymentGateway;
     private final EmailService emailService;
-    
+
     public OrderService(OrderRepository repo, PaymentGateway payment, EmailService email) {
         this.orderRepository = repo;
         this.paymentGateway = payment;
         this.emailService = email;
     }
-    
+
     public Order placeOrder(Cart cart, PaymentInfo payment) {
         if (cart.isEmpty()) {
             throw new IllegalArgumentException("Cart cannot be empty");
         }
-        
+
         Order order = Order.from(cart);
         PaymentResult result = paymentGateway.charge(payment, order.getTotal());
-        
+
         if (!result.isSuccess()) {
             throw new PaymentException("Payment failed: " + result.getError());
         }
-        
+
         order.markAsPaid();
         orderRepository.save(order);
         emailService.sendConfirmation(order);
-        
+
         return order;
     }
 }
@@ -88,95 +89,95 @@ public class OrderService {
 // UNIT TEST:
 @ExtendWith(MockitoExtension.class)   // JUnit 5 Mockito integration
 class OrderServiceTest {
-    
+
     @Mock
     private OrderRepository orderRepository;    // mock dependency
-    
+
     @Mock
     private PaymentGateway paymentGateway;      // mock dependency
-    
+
     @Mock
     private EmailService emailService;          // mock dependency
-    
+
     @InjectMocks
     private OrderService orderService;          // unit under test (dependencies injected)
-    
+
     // GIVEN-WHEN-THEN (AAA: Arrange-Act-Assert) pattern
-    
+
     @Test
     @DisplayName("should place order successfully when payment succeeds")
     void placeOrder_success() {
         // ARRANGE (Given)
         Cart cart = CartBuilder.aCart().withItem("Widget", 99.99).build();
         PaymentInfo payment = new PaymentInfo("4242-4242-4242-4242");
-        
+
         // Configure mock behavior (stub)
         when(paymentGateway.charge(payment, 99.99))
             .thenReturn(PaymentResult.success("txn-123"));
-        
+
         // ACT (When)
         Order result = orderService.placeOrder(cart, payment);
-        
+
         // ASSERT (Then)
         assertThat(result.getStatus()).isEqualTo(OrderStatus.PAID);
         assertThat(result.getTotal()).isEqualTo(99.99);
-        
+
         // VERIFY interactions (mock assertions)
         verify(orderRepository).save(result);           // was save() called?
         verify(emailService).sendConfirmation(result);  // was email sent?
     }
-    
+
     @Test
     @DisplayName("should throw IllegalArgumentException when cart is empty")
     void placeOrder_emptyCart_throwsException() {
         // ARRANGE
         Cart emptyCart = Cart.empty();
         PaymentInfo payment = new PaymentInfo("4242-4242-4242-4242");
-        
+
         // ACT + ASSERT
         assertThatThrownBy(() -> orderService.placeOrder(emptyCart, payment))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Cart cannot be empty");
-        
+
         // VERIFY no interactions with payment or email (early exit)
         verifyNoInteractions(paymentGateway, emailService);
     }
-    
+
     @Test
     @DisplayName("should throw PaymentException when payment fails")
     void placeOrder_paymentFails_throwsException() {
         // ARRANGE
         Cart cart = CartBuilder.aCart().withItem("Widget", 99.99).build();
         PaymentInfo payment = new PaymentInfo("invalid-card");
-        
+
         when(paymentGateway.charge(payment, 99.99))
             .thenReturn(PaymentResult.failure("Insufficient funds"));
-        
+
         // ACT + ASSERT
         assertThatThrownBy(() -> orderService.placeOrder(cart, payment))
             .isInstanceOf(PaymentException.class)
             .hasMessageContaining("Insufficient funds");
-        
+
         // Order should NOT be saved if payment fails
         verify(orderRepository, never()).save(any());
     }
-    
+
     @Test
     @DisplayName("should not send email if order save fails")
     void placeOrder_saveFails_noEmail() {
         // ARRANGE
         Cart cart = CartBuilder.aCart().withItem("Widget", 99.99).build();
         PaymentInfo payment = new PaymentInfo("4242");
-        
+
         when(paymentGateway.charge(any(), anyDouble()))
             .thenReturn(PaymentResult.success("txn-456"));
         doThrow(new RuntimeException("DB down"))
             .when(orderRepository).save(any());
-        
+
         // ACT + ASSERT
         assertThatThrownBy(() -> orderService.placeOrder(cart, payment))
             .isInstanceOf(RuntimeException.class);
-        
+
         verifyNoInteractions(emailService);
     }
 }
@@ -245,25 +246,25 @@ Unit Test ◄── (you are here)
 ```java
 // Pure unit test: no mocks needed (no dependencies)
 class TaxCalculatorTest {
-    
+
     private TaxCalculator calculator = new TaxCalculator();
-    
+
     @ParameterizedTest
     @CsvSource({
         "100.0, US, 10.0",
-        "100.0, EU, 20.0", 
+        "100.0, EU, 20.0",
         "100.0, UK, 17.5",
         "0.0, US, 0.0"
     })
     @DisplayName("should calculate correct tax for each region")
     void calculateTax(double amount, String region, double expectedTax) {
         double tax = calculator.calculate(amount, region);
-        
+
         assertThat(tax)
             .as("Tax for %s in %s", amount, region)
             .isCloseTo(expectedTax, within(0.001));
     }
-    
+
     @Test
     void calculateTax_negativeAmount_throwsException() {
         assertThatThrownBy(() -> calculator.calculate(-1.0, "US"))
@@ -276,11 +277,11 @@ class TaxCalculatorTest {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| 100% code coverage means the code is fully tested | Coverage measures which lines were EXECUTED, not which behaviors were VERIFIED. You can have 100% coverage with tests that have no assertions. Coverage is a useful metric for finding untested code, but it's not a quality metric. A focused test suite with 80% meaningful coverage > 100% coverage with shallow tests. |
-| Unit tests should test every method, including getters/setters | Test behaviors, not implementations. Simple getters/setters generated by Lombok have no logic — testing them adds noise with no value. Test: business rules, conditional logic, error cases, boundary conditions. Don't test: getters, setters, constructors that just assign fields. |
-| Mocking is always the right approach for unit tests | For pure functions (no I/O, no side effects), no mocking is needed. Over-mocking leads to tests that verify the implementation (how it's done) rather than the behavior (what it does) — making refactoring break tests unnecessarily. Use mocks only when a real collaborator is slow, non-deterministic, or has side effects. |
+| Misconception                                                  | Reality                                                                                                                                                                                                                                                                                                                         |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 100% code coverage means the code is fully tested              | Coverage measures which lines were EXECUTED, not which behaviors were VERIFIED. You can have 100% coverage with tests that have no assertions. Coverage is a useful metric for finding untested code, but it's not a quality metric. A focused test suite with 80% meaningful coverage > 100% coverage with shallow tests.      |
+| Unit tests should test every method, including getters/setters | Test behaviors, not implementations. Simple getters/setters generated by Lombok have no logic — testing them adds noise with no value. Test: business rules, conditional logic, error cases, boundary conditions. Don't test: getters, setters, constructors that just assign fields.                                           |
+| Mocking is always the right approach for unit tests            | For pure functions (no I/O, no side effects), no mocking is needed. Over-mocking leads to tests that verify the implementation (how it's done) rather than the behavior (what it does) — making refactoring break tests unnecessarily. Use mocks only when a real collaborator is slow, non-deterministic, or has side effects. |
 
 ---
 

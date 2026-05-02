@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #behavioral, #oop, #decoupling, #coordination
 
 ⚡ TL;DR — **Mediator** centralizes complex communications between multiple objects — instead of components communicating directly with each other (O(n²) connections), they all communicate through one mediator (O(n) connections), reducing coupling and making it easy to change coordination logic.
 
-| #781 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Observer Pattern, Event-Driven Pattern | |
-| **Used by:** | Chat rooms, Air traffic control, UI component coordination, Event buses | |
+| #781            | Category: Design Patterns                                               | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Observer Pattern, Event-Driven Pattern     |                 |
+| **Used by:**    | Chat rooms, Air traffic control, UI component coordination, Event buses |                 |
 
 ---
 
@@ -54,21 +54,21 @@ WITHOUT MEDIATOR — N×(N-1)/2 CONNECTIONS:
       │   ↑           ↑    │
       │   └──── C ────┘    │
       └──────────────── Component D
-      
+
   4 components → 6 direct connections.
   10 components → 45 connections.
   Each component knows about others — tightly coupled.
   Change component A's interface → update all that depend on A.
-  
+
 WITH MEDIATOR — N CONNECTIONS:
 
   Component A ←──── Mediator ────→ Component B
   Component C ←──────────────────→ Component D
-  
+
   4 components → 4 connections to mediator.
   10 components → 10 connections.
   Each component knows only mediator. Components are independent.
-  
+
 CHAT ROOM MEDIATOR:
 
   // WITHOUT MEDIATOR: each user knows all other users:
@@ -78,18 +78,18 @@ CHAT ROOM MEDIATOR:
           for (User u : otherUsers) u.receive(message);  // knows all others
       }
   }
-  
+
   // WITH MEDIATOR:
   interface ChatMediator {
       void sendMessage(String message, User sender);
       void addUser(User user);
   }
-  
+
   class ChatRoom implements ChatMediator {
       private final List<User> users = new ArrayList<>();
-      
+
       void addUser(User user) { users.add(user); }
-      
+
       void sendMessage(String message, User sender) {
           for (User user : users) {
               if (user != sender) {             // don't send to self
@@ -98,50 +98,50 @@ CHAT ROOM MEDIATOR:
           }
       }
   }
-  
+
   class User {
       private final String name;
       private final ChatMediator mediator;     // knows ONLY mediator — not other users
-      
+
       User(String name, ChatMediator mediator) {
           this.name = name;
           this.mediator = mediator;
           mediator.addUser(this);
       }
-      
+
       void send(String message) {
           mediator.sendMessage(message, this);   // sends via mediator
       }
-      
+
       void receive(String message) {
           System.out.println(name + " received: " + message);
       }
   }
-  
+
   // Usage:
   ChatRoom room = new ChatRoom();
   User alice = new User("Alice", room);
   User bob   = new User("Bob",   room);
   User carol = new User("Carol", room);
-  
+
   alice.send("Hello everyone!");
   // Alice → mediator → Bob receives "Alice: Hello everyone!"
   //                  → Carol receives "Alice: Hello everyone!"
-  
+
   // Adding Dave: one new User. No changes to Alice, Bob, or Carol.
   User dave = new User("Dave", room);
-  
+
 GUI COMPONENT COORDINATION — CLASSIC MEDIATOR USE CASE:
 
   interface DialogMediator {
       void notify(Component component, String event);
   }
-  
+
   class LoginDialog implements DialogMediator {
       private final Checkbox rememberMe;
       private final TextField daysField;  // "remember for N days"
       private final Button loginButton;
-      
+
       @Override
       public void notify(Component component, String event) {
           if (component == rememberMe && event.equals("CHECK")) {
@@ -153,48 +153,48 @@ GUI COMPONENT COORDINATION — CLASSIC MEDIATOR USE CASE:
               loginButton.setEnabled(isValidForm());
           }
       }
-      
+
       private boolean isValidForm() { ... }
   }
-  
+
   // Each component sends events to mediator — doesn't know what else to do:
   class Checkbox extends Component {
       private final DialogMediator mediator;
-      
+
       void setChecked(boolean checked) {
           this.checked = checked;
           mediator.notify(this, "CHECK");   // tell mediator; let mediator decide consequences
       }
   }
-  
+
   // All component interaction logic: centralized in LoginDialog.
   // Change "when checkbox checked → what happens": only change LoginDialog.
-  
+
 MEDIATOR vs FACADE:
 
   FACADE:
   - External client uses simplified interface to access a subsystem.
   - Unidirectional: client → facade → subsystem.
   - Subsystem components don't know about facade.
-  
+
   MEDIATOR:
   - INTERNAL components use mediator to communicate with EACH OTHER.
   - Bidirectional: components → mediator → other components.
   - Components know about mediator; mediator knows about all components.
   - "Air traffic controller" — coordinates between equals, not simplifies from outside.
-  
+
 MEDIATOR vs OBSERVER:
 
   OBSERVER:
   - Subject broadcasts to subscribers.
   - Subject doesn't know who the subscribers are.
   - Subscribers decide what to do with the notification.
-  
+
   MEDIATOR:
   - Components send events to mediator.
   - Mediator decides which other components to notify and HOW to react.
   - Centralized coordination logic; the mediator IS the orchestration.
-  
+
   EVENT BUS = Observer + Mediator concepts combined:
   Components publish events. Event bus routes to subscribers.
   Coordination logic: in subscribers (Observer-style) or in the bus routing rules (Mediator-style).
@@ -205,6 +205,7 @@ MEDIATOR vs OBSERVER:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Mediator:
+
 - N components × N-1 references = O(n²) connections; change one interface → update N-1 others
 - Coordination logic scattered across all components
 
@@ -235,7 +236,7 @@ MEDIATOR STRUCTURE:
   ───────────       ────────          ───────────
   +notify(event) ──►+notify(C, event)
                     ──────────────────► B.receive(event)
-                    
+
   Each component holds reference to Mediator only.
   Mediator holds references to all components.
   Mediator decides who to notify and how.
@@ -281,7 +282,7 @@ class OrderFulfillmentMediator implements WorkflowMediator {
     @Autowired PaymentService payment;
     @Autowired ShippingService shipping;
     @Autowired NotificationService notification;
-    
+
     @Override
     public void handle(WorkflowEvent event) {
         switch (event.getType()) {
@@ -309,7 +310,7 @@ class OrderFulfillmentMediator implements WorkflowMediator {
 // Each service only knows about the mediator — not each other:
 class InventoryServiceImpl implements InventoryService {
     @Autowired WorkflowMediator mediator;
-    
+
     public void reserve(String orderId, List<OrderItem> items) {
         // ... reserve stock ...
         mediator.handle(new WorkflowEvent(INVENTORY_RESERVED, loadOrder(orderId)));
@@ -321,11 +322,11 @@ class InventoryServiceImpl implements InventoryService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Mediator is the same as Facade | Key difference: Facade is used by EXTERNAL clients to simplify access to a subsystem. Mediator is used by INTERNAL components to communicate with each other through a central coordinator. Facade: one-directional (client → facade → subsystem). Mediator: bidirectional (component A → mediator → component B → mediator → component A). |
-| Mediator and Observer are interchangeable | Both reduce coupling between communicating objects. Observer: publisher broadcasts; subscribers are decoupled from publisher; subscribers decide what to do. Mediator: central coordinator knows all components and orchestrates specific interactions. Observer: multiple independent reactions. Mediator: one coordinated response. |
-| Mediator prevents direct component communication | Mediator REDUCES the need for direct communication — it doesn't prevent it. If two components have a simple, stable relationship with no coordination complexity, direct communication may still be appropriate. Mediator addresses the "O(n²) connections" problem — don't apply it where there's no such complexity. |
+| Misconception                                    | Reality                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mediator is the same as Facade                   | Key difference: Facade is used by EXTERNAL clients to simplify access to a subsystem. Mediator is used by INTERNAL components to communicate with each other through a central coordinator. Facade: one-directional (client → facade → subsystem). Mediator: bidirectional (component A → mediator → component B → mediator → component A). |
+| Mediator and Observer are interchangeable        | Both reduce coupling between communicating objects. Observer: publisher broadcasts; subscribers are decoupled from publisher; subscribers decide what to do. Mediator: central coordinator knows all components and orchestrates specific interactions. Observer: multiple independent reactions. Mediator: one coordinated response.       |
+| Mediator prevents direct component communication | Mediator REDUCES the need for direct communication — it doesn't prevent it. If two components have a simple, stable relationship with no coordination complexity, direct communication may still be appropriate. Mediator addresses the "O(n²) connections" problem — don't apply it where there's no such complexity.                      |
 
 ---
 

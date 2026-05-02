@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #structural, #oop, #composition, #wrappin
 
 ⚡ TL;DR — **Decorator** dynamically adds behavior to an object by wrapping it — each decorator wraps the previous, forming a chain that adds functionality incrementally, while all layers implement the same interface so the client sees no difference.
 
-| #774 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Composite Pattern, Composition over Inheritance | |
-| **Used by:** | Java I/O streams, HTTP filters, Middleware chains, Logging wrappers | |
+| #774            | Category: Design Patterns                                                    | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Composite Pattern, Composition over Inheritance |                 |
+| **Used by:**    | Java I/O streams, HTTP filters, Middleware chains, Logging wrappers          |                 |
 
 ---
 
@@ -58,10 +58,10 @@ WITHOUT DECORATOR — SUBCLASS EXPLOSION:
   MilkVanillaCoffee extends Coffee
   CaramelVanillaCoffee extends Coffee
   MilkCaramelVanillaCoffee extends Coffee
-  
+
   3 toppings = 8 subclasses.
   10 toppings = 1024 subclasses (2^10). UNWORKABLE.
-  
+
 WITH DECORATOR — STACKABLE:
 
   // COMPONENT INTERFACE:
@@ -69,55 +69,55 @@ WITH DECORATOR — STACKABLE:
       double getCost();
       String getDescription();
   }
-  
+
   // CONCRETE COMPONENT (base):
   class PlainCoffee implements Coffee {
       public double getCost()          { return 1.00; }
       public String getDescription()   { return "Plain coffee"; }
   }
-  
+
   // ABSTRACT DECORATOR (wraps a Coffee):
   abstract class CoffeeDecorator implements Coffee {
       protected final Coffee coffee;  // wraps any Coffee (including other decorators!)
-      
+
       CoffeeDecorator(Coffee coffee) { this.coffee = coffee; }
-      
+
       // Default: delegate to inner coffee:
       public double getCost()        { return coffee.getCost(); }
       public String getDescription() { return coffee.getDescription(); }
   }
-  
+
   // CONCRETE DECORATORS:
   class MilkDecorator extends CoffeeDecorator {
       MilkDecorator(Coffee coffee) { super(coffee); }
-      
+
       public double getCost()        { return super.getCost() + 0.30; }
       public String getDescription() { return super.getDescription() + ", milk"; }
   }
-  
+
   class CaramelDecorator extends CoffeeDecorator {
       CaramelDecorator(Coffee coffee) { super(coffee); }
-      
+
       public double getCost()        { return super.getCost() + 0.50; }
       public String getDescription() { return super.getDescription() + ", caramel"; }
   }
-  
+
   // STACKING DECORATORS:
   Coffee order = new CaramelDecorator(
                    new MilkDecorator(
                      new PlainCoffee()   // inner: $1.00
                    )                     // +milk: $0.30
                  );                      // +caramel: $0.50
-  
+
   order.getCost();           // 1.80
   order.getDescription();   // "Plain coffee, milk, caramel"
-  
+
   // Can add same decorator multiple times:
   Coffee extraShots = new ShotDecorator(new ShotDecorator(new PlainCoffee()));
-  
+
   // Can combine any combination:
   Coffee fancy = new VanillaDecorator(new CaramelDecorator(new MilkDecorator(new PlainCoffee())));
-  
+
 JAVA I/O — THE CANONICAL DECORATOR EXAMPLE:
 
   // FileInputStream: leaf — reads bytes from file
@@ -125,7 +125,7 @@ JAVA I/O — THE CANONICAL DECORATOR EXAMPLE:
   // DataInputStream: decorator — adds typed reads (readInt, readUTF)
   // GZIPInputStream: decorator — adds decompression
   // CipherInputStream: decorator — adds decryption
-  
+
   // Stack however needed:
   InputStream in = new CipherInputStream(
                      new GZIPInputStream(
@@ -135,31 +135,31 @@ JAVA I/O — THE CANONICAL DECORATOR EXAMPLE:
                      ),
                      cipher
                    );
-  
+
   // All are InputStream. read() call flows through:
   // CipherInputStream.read() → decrypts → GZIPInputStream.read() → decompresses →
   // BufferedInputStream.read() → uses buffer / reads FileInputStream.read() → disk
-  
+
 SERVLET FILTER CHAIN — DECORATOR IN HTTP:
 
   // Each Filter wraps the next:
   // LoggingFilter → AuthFilter → RateLimitFilter → CompressionFilter → Servlet
-  
+
   // Spring's OncePerRequestFilter is a Decorator:
   // Each filter: do before → chain.doFilter() (delegates to next) → do after
-  
+
   class LoggingFilter extends OncePerRequestFilter {
       protected void doFilterInternal(request, response, FilterChain chain) {
           log.info("Request: {} {}", request.getMethod(), request.getUri());
           long start = System.currentTimeMillis();
-          
+
           chain.doFilter(request, response);  // ← delegate to next in chain (inner)
-          
-          log.info("Response: {} in {}ms", response.getStatus(), 
+
+          log.info("Response: {} in {}ms", response.getStatus(),
                    System.currentTimeMillis() - start);
       }
   }
-  
+
 DECORATOR ORDERING MATTERS:
 
   // Encryption THEN compression vs. compression THEN encryption:
@@ -167,7 +167,7 @@ DECORATOR ORDERING MATTERS:
   //   → compress first, then encrypt compressed data (better compression)
   // Order 2: GZIPOutputStream(CipherOutputStream(FileOutputStream))
   //   → encrypt first, then try to compress encrypted data (encrypted data is random → poor compression)
-  
+
   // Order of HTTP filters matters: auth before business logic, logging around everything.
   // Decorator order = pipeline order.
 ```
@@ -177,6 +177,7 @@ DECORATOR ORDERING MATTERS:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Decorator (subclassing for each combination):
+
 - 10 optional features × combinations = hundreds/thousands of subclasses
 - Adding a feature: add N subclasses (one per existing combination)
 
@@ -209,7 +210,7 @@ DECORATOR CHAIN:
                → calls inner.op() (before/after logic)
            ConcreteComponent.op()
                → actual work
-           
+
   Result flows back up through each decorator layer.
   Each layer can transform result or add side effects.
 ```
@@ -247,7 +248,7 @@ interface HttpResponse {
 class SimpleHttpResponse implements HttpResponse {
     private final int status;
     private final String body;
-    
+
     SimpleHttpResponse(int status, String body) {
         this.status = status;
         this.body = body;
@@ -261,7 +262,7 @@ class SimpleHttpResponse implements HttpResponse {
 abstract class ResponseDecorator implements HttpResponse {
     protected final HttpResponse inner;
     ResponseDecorator(HttpResponse inner) { this.inner = inner; }
-    
+
     public int getStatus()    { return inner.getStatus(); }
     public String getBody()   { return inner.getBody(); }
     public Map<String, String> getHeaders() { return new HashMap<>(inner.getHeaders()); }
@@ -270,7 +271,7 @@ abstract class ResponseDecorator implements HttpResponse {
 // Concrete decorators:
 class CorsDecorator extends ResponseDecorator {
     CorsDecorator(HttpResponse inner) { super(inner); }
-    
+
     public Map<String, String> getHeaders() {
         Map<String, String> headers = super.getHeaders();
         headers.put("Access-Control-Allow-Origin", "*");
@@ -285,7 +286,7 @@ class CacheControlDecorator extends ResponseDecorator {
         super(inner);
         this.maxAgeSeconds = maxAgeSeconds;
     }
-    
+
     public Map<String, String> getHeaders() {
         Map<String, String> headers = super.getHeaders();
         headers.put("Cache-Control", "max-age=" + maxAgeSeconds);
@@ -309,11 +310,11 @@ response.getHeaders();  // → {Access-Control-Allow-Origin: *, Cache-Control: m
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Decorator and Proxy are interchangeable | Both wrap a component implementing the same interface. Intent differs: Decorator adds behavior (enriches). Proxy controls access (lazy init, caching, security, remote). In practice: Spring AOP `@Transactional`, `@Cacheable` use Proxy (control access behavior). Java I/O streams use Decorator (add features). |
-| Decorator must always delegate to inner — can't override completely | Decorator CAN override completely without delegation (though this defeats the purpose in most cases). What makes a Decorator is: same interface + holds inner component + TYPICALLY delegates with added behavior. |
-| Java annotations like @Transactional are Decorators | `@Transactional` is implemented via AOP proxy (Proxy pattern), not the Decorator pattern. AOP generates a proxy class that wraps the bean. Though structurally similar to Decorator, intent is access control / cross-cutting concern management — not feature addition. |
+| Misconception                                                       | Reality                                                                                                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Decorator and Proxy are interchangeable                             | Both wrap a component implementing the same interface. Intent differs: Decorator adds behavior (enriches). Proxy controls access (lazy init, caching, security, remote). In practice: Spring AOP `@Transactional`, `@Cacheable` use Proxy (control access behavior). Java I/O streams use Decorator (add features). |
+| Decorator must always delegate to inner — can't override completely | Decorator CAN override completely without delegation (though this defeats the purpose in most cases). What makes a Decorator is: same interface + holds inner component + TYPICALLY delegates with added behavior.                                                                                                  |
+| Java annotations like @Transactional are Decorators                 | `@Transactional` is implemented via AOP proxy (Proxy pattern), not the Decorator pattern. AOP generates a proxy class that wraps the bean. Though structurally similar to Decorator, intent is access control / cross-cutting concern management — not feature addition.                                            |
 
 ---
 

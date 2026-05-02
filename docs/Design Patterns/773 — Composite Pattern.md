@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #structural, #oop, #recursion, #tree
 
 ⚡ TL;DR — **Composite** lets you treat individual objects and compositions of objects uniformly — by organizing them in a tree structure where both leaf nodes and branch nodes implement the same interface, so clients don't need to know if they're dealing with one item or a nested group.
 
-| #773 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Recursion, Tree Data Structure | |
-| **Used by:** | File systems, UI component trees, Organization hierarchies, XML/HTML DOM | |
+| #773            | Category: Design Patterns                                                | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Recursion, Tree Data Structure              |                 |
+| **Used by:**    | File systems, UI component trees, Organization hierarchies, XML/HTML DOM |                 |
 
 ---
 
@@ -55,12 +55,12 @@ COMPOSITE STRUCTURE:
   +getSize(): long
   +getName(): String
   +print(indent: int): void
-  
+
   Leaf: File                    Composite: Folder
   ──────────────────            ─────────────────────────
   -name: String                 -name: String
   -size: long                   -children: List<Component>
-  
+
   +getSize(): long              +getSize(): long
       return size;                  return children.stream()
                                              .mapToLong(Component::getSize)
@@ -71,23 +71,23 @@ COMPOSITE STRUCTURE:
                                 +print(indent):
                                     print(" ".repeat(indent) + name + "/")
                                     for each child: child.print(indent + 2)
-  
+
 RECURSIVE TREE OPERATIONS:
 
   FileSystemItem root = new Folder("root");
   FileSystemItem docs = new Folder("docs");
   FileSystemItem src  = new Folder("src");
-  
+
   docs.add(new File("readme.md",  1200));
   docs.add(new File("design.pdf", 50000));
-  
+
   src.add(new File("Main.java",   3000));
   src.add(new File("Util.java",   1500));
-  
+
   root.add(docs);
   root.add(src);
   root.add(new File("pom.xml",    800));
-  
+
   // Single call works regardless of depth or structure:
   root.getSize();     // 1200 + 50000 + 3000 + 1500 + 800 = 56500
   root.print(0);      // prints tree:
@@ -99,38 +99,38 @@ RECURSIVE TREE OPERATIONS:
                       //     Main.java
                       //     Util.java
                       //   pom.xml
-  
+
   docs.getSize();     // 51200 — same method, subtree scope
-  
+
 COMPOSITE TRANSPARENCY vs. SAFETY:
 
   TWO DESIGN CHOICES:
-  
+
   1. TRANSPARENCY (GoF default): Component interface includes add()/remove()/getChildren()
      Leaf: add() throws UnsupportedOperationException (or does nothing)
      ✓ Client code uniform — can call add() on any Component
      ✗ Leaf violates Liskov: throws exception for valid interface method
-     
+
   2. SAFETY: add()/remove() only in Composite, not in Component interface
      Client must cast to Composite before calling add():
      if (component instanceof Folder folder) folder.add(child);
      ✓ No unexpected exceptions from Leaf
      ✗ Client must distinguish Composite from Leaf (breaks uniformity somewhat)
-     
+
   Java consensus: prefer SAFETY. Only put shared behavior in Component interface.
-  
+
 COMPOSITE PATTERN IN JAVA ECOSYSTEM:
 
   java.awt.Container extends Component:
     Component: paint(), setVisible(), getPreferredSize()
     Container: add(Component), remove(Component), getComponents()
     JPanel is a Container (composite). JButton is a Component (leaf).
-    
+
   org.w3c.dom.Node (XML/HTML DOM):
     Node has: getNodeName(), getChildNodes(), appendChild()
     Element is a Node that can have children (composite).
     Text is a Node with no children (leaf).
-    
+
   Spring Security GrantedAuthority:
     Simple string authorities (leaf).
     CompositeGrantedAuthority wrapping multiple (composite).
@@ -141,6 +141,7 @@ COMPOSITE PATTERN IN JAVA ECOSYSTEM:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Composite:
+
 - Client code: `if (item instanceof File) processFile(file); else if (item instanceof Folder) processFolder(folder)` everywhere
 - Add new node type (SymLink): modify all client switch/if blocks (OCP violation)
 
@@ -174,7 +175,7 @@ COMPOSITE TREE:
   implements          implements
   Component           Component
   directly            by delegating to children (recursion)
-  
+
   Operation on Composite = Operation on each child + combine results
 ```
 
@@ -210,9 +211,9 @@ interface UIComponent {
 // LEAF — renders itself, no children:
 class Button implements UIComponent {
     private final String label;
-    
+
     Button(String label) { this.label = label; }
-    
+
     public void render(int depth) {
         System.out.println("  ".repeat(depth) + "[Button: " + label + "]");
     }
@@ -223,7 +224,7 @@ class Button implements UIComponent {
 class TextField implements UIComponent {
     private final int columns;
     TextField(int columns) { this.columns = columns; }
-    
+
     public void render(int depth) {
         System.out.println("  ".repeat(depth) + "[TextField: " + columns + " cols]");
     }
@@ -235,22 +236,22 @@ class TextField implements UIComponent {
 class Panel implements UIComponent {
     private final String id;
     private final List<UIComponent> children = new ArrayList<>();
-    
+
     Panel(String id) { this.id = id; }
-    
+
     public void add(UIComponent component) { children.add(component); }
-    
+
     public void render(int depth) {
         System.out.println("  ".repeat(depth) + "[Panel: " + id + "]");
         for (UIComponent child : children) {
             child.render(depth + 1);   // recursive delegation
         }
     }
-    
+
     public int getPreferredWidth() {
         return children.stream().mapToInt(UIComponent::getPreferredWidth).max().orElse(0) + 10;
     }
-    
+
     public int getPreferredHeight() {
         return children.stream().mapToInt(UIComponent::getPreferredHeight).sum() + 5;
     }
@@ -275,11 +276,11 @@ System.out.println("Total height: " + mainWindow.getPreferredHeight());
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Composite Pattern requires that all tree operations are recursive | Not all operations are recursive. A leaf's `getSize()` is not recursive — it returns its own size. Only the composite's `getSize()` recurses over children. The COMPOSITE delegates to children recursively; the LEAF implements directly. The pattern just ensures both respond to the same method. |
+| Misconception                                                           | Reality                                                                                                                                                                                                                                                                                                                                                             |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Composite Pattern requires that all tree operations are recursive       | Not all operations are recursive. A leaf's `getSize()` is not recursive — it returns its own size. Only the composite's `getSize()` recurses over children. The COMPOSITE delegates to children recursively; the LEAF implements directly. The pattern just ensures both respond to the same method.                                                                |
 | add()/remove() should be in the Component interface for full uniformity | This is the "transparency vs. safety" tradeoff. Putting add()/remove() in Component means leaves must implement them (throwing UnsupportedOperationException — a Liskov violation). Many modern implementations put management methods only in Composite. Client code that needs to build the tree casts to Composite; code that traverses the tree uses Component. |
-| Composite is for binary trees | Composite is for N-ary trees: each composite can have any number of children (0 to N). A folder can contain 0 files or 1000. The canonical examples (file systems, UI hierarchies, DOM) are all N-ary trees. |
+| Composite is for binary trees                                           | Composite is for N-ary trees: each composite can have any number of children (0 to N). A folder can contain 0 files or 1000. The canonical examples (file systems, UI hierarchies, DOM) are all N-ary trees.                                                                                                                                                        |
 
 ---
 

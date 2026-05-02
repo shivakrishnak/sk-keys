@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #behavioral, #oop, #undo-redo, #queuing
 
 ⚡ TL;DR — **Command** encapsulates a request as an object — decoupling the sender from the receiver, enabling queuing, logging, and undoable operations by packaging all information needed to perform an action (what to do, on what, with what parameters) into a standalone object.
 
-| #779 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Strategy Pattern, Queue Data Structure | |
-| **Used by:** | Undo/redo, Job queues, Transaction scripts, Macro recording | |
+| #779            | Category: Design Patterns                                           | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Strategy Pattern, Queue Data Structure |                 |
+| **Used by:**    | Undo/redo, Job queues, Transaction scripts, Macro recording         |                 |
 
 ---
 
@@ -54,81 +54,81 @@ COMMAND PATTERN STRUCTURE:
   ──────────────────
   +execute(): void
   +undo():    void   // optional — for undoable commands
-  
+
   «class» TextEditor                    «class» InsertCommand implements Command
   ──────────────────────                ──────────────────────────────────────
   +insertText(text, pos): void          -editor: TextEditor
   +deleteText(pos, length): void        -text: String
   +getText(): String                    -position: int
-                   ▲                    
+                   ▲
                    │ (receiver)         +execute():
                    └─ InsertCommand         editor.insertText(text, position)
-                   └─ DeleteCommand     
+                   └─ DeleteCommand
                                         +undo():
                                             editor.deleteText(position, text.length())
-  
+
   «class» DeleteCommand implements Command
   ──────────────────────────────────────
   -editor: TextEditor
   -position: int
   -length: int
   -deletedText: String  // saved for undo
-  
+
   +execute():
       deletedText = editor.getText(position, length);  // save for undo
       editor.deleteText(position, length);
-      
+
   +undo():
       editor.insertText(deletedText, position);   // restore
-  
+
   «class» CommandHistory (Invoker)
   ─────────────────────────────────
   -history: Deque<Command>    // undo stack
   -undone: Deque<Command>     // redo stack
-  
+
   +execute(Command cmd):
       cmd.execute();
       history.push(cmd);
       undone.clear();   // new command clears redo stack
-      
+
   +undo():
       if (history.isEmpty()) return;
       Command cmd = history.pop();
       cmd.undo();
       undone.push(cmd);
-      
+
   +redo():
       if (undone.isEmpty()) return;
       Command cmd = undone.pop();
       cmd.execute();
       history.push(cmd);
-  
+
 JOB QUEUE / TASK SCHEDULER:
 
   // Commands as jobs to execute asynchronously:
   interface Job {
       void execute();
   }
-  
+
   class EmailJob implements Job {
       private final String to, subject, body;
       EmailJob(String to, String subject, String body) { ... }
       void execute() { emailService.send(to, subject, body); }
   }
-  
+
   class ReportJob implements Job {
       private final String reportId;
       ReportJob(String reportId) { ... }
       void execute() { reportService.generate(reportId); }
   }
-  
+
   // Queue of commands:
   BlockingQueue<Job> queue = new LinkedBlockingQueue<>();
-  
+
   // Producer:
   queue.put(new EmailJob("user@example.com", "Welcome!", "..."));
   queue.put(new ReportJob("monthly-sales"));
-  
+
   // Worker (invoker):
   Executors.newFixedThreadPool(4).submit(() -> {
       while (true) {
@@ -136,54 +136,54 @@ JOB QUEUE / TASK SCHEDULER:
           job.execute();
       }
   });
-  
+
   // Worker doesn't know email vs report — just calls execute().
-  
+
 COMMAND WITH COMPOSITE (MACRO COMMANDS):
 
   class MacroCommand implements Command {
       private final List<Command> commands;
-      
+
       MacroCommand(List<Command> commands) { this.commands = commands; }
-      
+
       void execute() { commands.forEach(Command::execute); }
-      
+
       void undo() {
           // Undo in REVERSE order:
           ListIterator<Command> it = commands.listIterator(commands.size());
           while (it.hasPrevious()) it.previous().undo();
       }
   }
-  
+
   // Record a macro:
   MacroCommand macro = new MacroCommand(List.of(
       new InsertCommand(editor, "Hello", 0),
       new InsertCommand(editor, " World", 5),
       new BoldTextCommand(editor, 0, 5)
   ));
-  
+
   history.execute(macro);  // executes all 3 as one undoable unit
   history.undo();          // undoes all 3 in reverse
-  
+
 COMMAND IN SPRING (various forms):
 
   // 1. ApplicationEvent + @EventListener = Command + Observer combo:
   //    Events are command-like objects published and handled asynchronously.
-  
+
   // 2. @Async methods: Spring wraps them in Callable/Runnable (Command).
-  
+
   // 3. Spring Batch Step/Job: each step is a Command with execute() and rollback().
-  
+
   // 4. CompletableFuture: the task passed to supplyAsync() is a Command.
-  
+
 COMMAND vs STRATEGY:
 
   Both: encapsulate behavior as an object.
-  
-  Strategy:  Defines HOW to do something (algorithm). 
+
+  Strategy:  Defines HOW to do something (algorithm).
              Injected into a class to vary algorithm behavior.
              No notion of "execute once and remember."
-             
+
   Command:   Defines WHAT to do and to whom, with what params.
              Designed to be stored, queued, logged, undone.
              Encapsulates a specific ACTION with its state.
@@ -194,6 +194,7 @@ COMMAND vs STRATEGY:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Command:
+
 - Undo: complex state snapshots of entire application state for each operation
 - Job queue: `if (action.equals("email")) sendEmail(to, subject)` — switch/case in worker
 
@@ -224,7 +225,7 @@ COMMAND FLOW:
   Client creates Command → sets receiver + parameters
   Client passes Command to Invoker (or puts in queue)
   Invoker calls command.execute() → Command delegates to Receiver
-  
+
   UNDO FLOW:
   Invoker pushes command to history stack after execute()
   Undo: invoker.undo() → pops stack → calls command.undo() → Command reverses action on Receiver
@@ -262,12 +263,12 @@ interface DatabaseCommand {
 class InsertUserCommand implements DatabaseCommand {
     private final UserRepository repo;
     private final User user;
-    
+
     InsertUserCommand(UserRepository repo, User user) {
         this.repo = repo;
         this.user = user;
     }
-    
+
     public void execute() { repo.save(user); }
     public void undo()    { repo.deleteById(user.getId()); }
     public String describe() { return "INSERT user: " + user.getEmail(); }
@@ -278,35 +279,35 @@ class UpdateUserEmailCommand implements DatabaseCommand {
     private final String userId;
     private final String newEmail;
     private String oldEmail;  // saved on execute for undo
-    
+
     UpdateUserEmailCommand(UserRepository repo, String userId, String newEmail) {
         this.repo = repo; this.userId = userId; this.newEmail = newEmail;
     }
-    
+
     public void execute() {
         User user = repo.findById(userId).orElseThrow();
         oldEmail = user.getEmail();  // save for undo
         repo.save(user.withEmail(newEmail));
     }
-    
+
     public void undo() {
         User user = repo.findById(userId).orElseThrow();
         repo.save(user.withEmail(oldEmail));  // restore old email
     }
-    
+
     public String describe() { return "UPDATE user " + userId + " email → " + newEmail; }
 }
 
 // Invoker with undo/redo:
 class DatabaseCommandHistory {
     private final Deque<DatabaseCommand> history = new ArrayDeque<>();
-    
+
     public void execute(DatabaseCommand cmd) {
         cmd.execute();
         history.push(cmd);
         log.info("Executed: {}", cmd.describe());
     }
-    
+
     public void undoLast() {
         if (!history.isEmpty()) {
             DatabaseCommand cmd = history.pop();
@@ -321,11 +322,11 @@ class DatabaseCommandHistory {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Command Pattern requires undo functionality | Undo is one USE CASE of Command, not required. Command is valuable without undo: job queuing (workers call execute(), don't need undo), logging (record all executed commands), transactional batching. Many Command implementations only have execute(). |
-| Command and Strategy are the same | Both encapsulate behavior as an object. Key differences: Strategy: configures HOW an algorithm works (injected into a class, varies the algorithm). Command: captures WHAT ACTION to perform (with specific receiver and parameters), designed to be stored/queued/undone. Strategy is about polymorphism; Command is about parameterized actions. |
-| Commands must be synchronous | Command is perfect for async execution. The invoker may put commands in a queue, a thread pool, or a message broker. The receiver executes later — worker thread calls `command.execute()`. This is the basis of Actor model, message queues, and reactive programming: messages (commands) are delivered asynchronously to handlers (receivers). |
+| Misconception                               | Reality                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Command Pattern requires undo functionality | Undo is one USE CASE of Command, not required. Command is valuable without undo: job queuing (workers call execute(), don't need undo), logging (record all executed commands), transactional batching. Many Command implementations only have execute().                                                                                          |
+| Command and Strategy are the same           | Both encapsulate behavior as an object. Key differences: Strategy: configures HOW an algorithm works (injected into a class, varies the algorithm). Command: captures WHAT ACTION to perform (with specific receiver and parameters), designed to be stored/queued/undone. Strategy is about polymorphism; Command is about parameterized actions. |
+| Commands must be synchronous                | Command is perfect for async execution. The invoker may put commands in a queue, a thread pool, or a message broker. The receiver executes later — worker thread calls `command.execute()`. This is the basis of Actor model, message queues, and reactive programming: messages (commands) are delivered asynchronously to handlers (receivers).  |
 
 ---
 
@@ -338,14 +339,14 @@ class DatabaseCommandHistory {
 class UpdateOrderCommand implements DatabaseCommand {
     private final Order order;   // reference to mutable order
     private String oldStatus;
-    
+
     UpdateOrderCommand(Order order, String newStatus) {
         this.order     = order;
         this.oldStatus = order.getStatus();   // saved AT CREATION TIME
     }
-    
+
     public void execute() { order.setStatus("SHIPPED"); }
-    
+
     public void undo() { order.setStatus(oldStatus); }  // restores status saved at creation
 }
 
@@ -365,7 +366,7 @@ class UpdateOrderCommand implements DatabaseCommand {
     private final String orderId;    // just the ID — not the live object
     private final String newStatus;
     private String oldStatus;
-    
+
     public void execute() {
         Order order = orderRepo.findById(orderId);  // fresh load from DB
         oldStatus = order.getStatus();

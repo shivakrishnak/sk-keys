@@ -18,10 +18,10 @@ tags: #maven, #dependencies, #classpath, #jar, #dependency-resolution
 
 ⚡ TL;DR — **Maven dependencies** are the external libraries your project needs, declared in `pom.xml`'s `<dependencies>` section using `groupId:artifactId:version`. Maven downloads them from Maven Central (or a configured private repo), caches them in `~/.m2/repository`, and adds them to the appropriate classpath (compile, test, runtime). Maven also resolves **transitive dependencies** — the dependencies of your dependencies — automatically.
 
-| #1072 | Category: Maven & Build Tools (Java) | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | pom.xml, Maven Overview | |
-| **Used by:** | Dependency Scope, Transitive Dependencies, Dependency Exclusion | |
+| #1072           | Category: Maven & Build Tools (Java)                            | Difficulty: ★☆☆ |
+| :-------------- | :-------------------------------------------------------------- | :-------------- |
+| **Depends on:** | pom.xml, Maven Overview                                         |                 |
+| **Used by:**    | Dependency Scope, Transitive Dependencies, Dependency Exclusion |                 |
 
 ---
 
@@ -40,6 +40,7 @@ Instead of downloading `spring-web.jar`, `jackson.jar`, `slf4j.jar`, and 50 more
 ### 🔵 Simple Definition (Elaborated)
 
 Dependencies have a lifecycle in the build:
+
 1. **Declared**: you write `<dependency>spring-boot-starter-web:3.2.0</dependency>`
 2. **Resolved**: Maven reads the POM of `spring-boot-starter-web` to find its dependencies (Spring Web, Spring WebMVC, Tomcat, Jackson...) — recursively
 3. **Downloaded**: Maven downloads any JARs not in `~/.m2/repository`
@@ -70,7 +71,7 @@ Dependencies have a lifecycle in the build:
     <version>3.2.0</version>
     <!-- scope: compile (default; don't need to specify) -->
   </dependency>
-  
+
   <!-- ══════════════════════════════════
        TEST SCOPE
        On: test compile + test runtime classpaths only
@@ -82,14 +83,14 @@ Dependencies have a lifecycle in the build:
     <version>3.2.0</version>
     <scope>test</scope>
   </dependency>
-  
+
   <dependency>
     <groupId>org.testcontainers</groupId>
     <artifactId>postgresql</artifactId>
     <version>1.19.3</version>
     <scope>test</scope>
   </dependency>
-  
+
   <!-- ══════════════════════════════════
        PROVIDED SCOPE
        On: compile classpath only
@@ -100,10 +101,10 @@ Dependencies have a lifecycle in the build:
     <artifactId>jakarta.servlet-api</artifactId>
     <version>6.0.0</version>
     <scope>provided</scope>
-    <!-- Tomcat/Jetty provides servlet-api at runtime; 
+    <!-- Tomcat/Jetty provides servlet-api at runtime;
          if included in WAR → classpath conflict -->
   </dependency>
-  
+
   <!-- Lombok: annotation processor; not needed at runtime -->
   <dependency>
     <groupId>org.projectlombok</groupId>
@@ -112,7 +113,7 @@ Dependencies have a lifecycle in the build:
     <scope>provided</scope>
     <!-- Lombok generates code at compile time; not in final JAR -->
   </dependency>
-  
+
   <!-- ══════════════════════════════════
        RUNTIME SCOPE
        On: runtime + test classpaths only
@@ -127,7 +128,7 @@ Dependencies have a lifecycle in the build:
     <!-- Code uses javax.sql.DataSource (compile scope) not PostgreSQL classes directly -->
     <!-- PostgreSQL driver loads via JDBC ServiceLoader at runtime -->
   </dependency>
-  
+
   <!-- ══════════════════════════════════
        CLASSIFIER (optional)
        Distinguish multiple artifacts from same GAV
@@ -168,14 +169,14 @@ DEPENDENCY RESOLUTION PROCESS:
      compile dep's transitive test → excluded ✗
      compile dep's transitive runtime → runtime ✓
   5. Version conflict resolution (nearest-definition wins):
-     
+
      YOUR PROJECT
      ├── dep-A:1.0 → requires jackson:2.12
      └── dep-B:2.0 → requires jackson:2.15
-     
+
      Both at the same depth → first one declared wins → jackson:2.12
      (can cause problems if dep-B uses 2.15 features)
-     
+
      Fix: declare jackson:2.15 directly in YOUR pom.xml (closer = wins)
      <dependency>
        <groupId>com.fasterxml.jackson.core</groupId>
@@ -254,11 +255,11 @@ mvn dependency:purge-local-repository -DincludeArtifactIds=spring-web
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `provided` scope means Maven won't download it | Maven DOES download `provided` dependencies (to put on the compile classpath). `provided` just means: don't bundle it in the WAR/JAR, because the runtime container (Tomcat, WildFly) will provide it. The dependency IS downloaded; it just doesn't ship in your artifact. |
+| Misconception                                                         | Reality                                                                                                                                                                                                                                                                                                                              |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `provided` scope means Maven won't download it                        | Maven DOES download `provided` dependencies (to put on the compile classpath). `provided` just means: don't bundle it in the WAR/JAR, because the runtime container (Tomcat, WildFly) will provide it. The dependency IS downloaded; it just doesn't ship in your artifact.                                                          |
 | Test-scope dependencies are not on the classpath when running the app | Correct — `test` scope dependencies are ONLY on the classpath during `mvn test` and `mvn verify`. They're not available in the packaged JAR or when running with `mvn spring-boot:run` (which uses runtime scope). If you accidentally put a needed class in test scope, the app will fail with `ClassNotFoundException` at runtime. |
-| Adding a dependency always increases JAR size | Only `compile` and `runtime` scope dependencies are included in the final JAR/WAR. `test` and `provided` scope dependencies do NOT increase the final artifact size. Spring Boot's fat JAR includes `compile` + `runtime` scope dependencies. |
+| Adding a dependency always increases JAR size                         | Only `compile` and `runtime` scope dependencies are included in the final JAR/WAR. `test` and `provided` scope dependencies do NOT increase the final artifact size. Spring Boot's fat JAR includes `compile` + `runtime` scope dependencies.                                                                                        |
 
 ---
 

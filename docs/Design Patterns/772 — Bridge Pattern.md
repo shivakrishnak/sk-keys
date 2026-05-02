@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #structural, #oop, #decoupling
 
 ⚡ TL;DR — **Bridge** decouples an abstraction from its implementation so both can vary independently — avoiding a cartesian product of subclasses by separating two dimensions of variation (e.g., Shape and Color) into two independent hierarchies connected by composition.
 
-| #772 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Adapter Pattern, Composition over Inheritance | |
-| **Used by:** | Cross-platform UI, Driver layers, Plugin systems, Decoupled hierarchies | |
+| #772            | Category: Design Patterns                                                  | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Adapter Pattern, Composition over Inheritance |                 |
+| **Used by:**    | Cross-platform UI, Driver layers, Plugin systems, Decoupled hierarchies    |                 |
 
 ---
 
@@ -51,104 +51,104 @@ TV and Remote Control. The TV is the implementation — Sony TV, Samsung TV, LG 
 PROBLEM — INHERITANCE CAUSES CLASS EXPLOSION:
 
   2 DIMENSIONS: Shape type × Rendering platform
-  
+
   WITHOUT BRIDGE:
   ───────────────
   Circle                 → draw on Vector
   CircleOnRaster         → draw on Raster
-  Square                 → draw on Vector  
+  Square                 → draw on Vector
   SquareOnRaster         → draw on Raster
-  
+
   Add a 3rd platform (OpenGL)?
   CircleOnOpenGL, SquareOnOpenGL — now 6 classes.
-  
+
   Add Triangle?
   TriangleOnVector, TriangleOnRaster, TriangleOnOpenGL — now 9.
-  
+
   3 shapes × 3 platforms = 9 classes. Every new shape: +3. Every new platform: +3 shapes.
-  
+
 BRIDGE SOLUTION:
 
   SEPARATE INTO TWO HIERARCHIES:
-  
+
   // IMPLEMENTOR hierarchy (platform-specific drawing):
   interface DrawingAPI {
       void drawCircle(double x, double y, double radius);
       void drawRectangle(double x1, double y1, double x2, double y2);
   }
-  
+
   class VectorDrawingAPI implements DrawingAPI {
       void drawCircle(...)    { /* SVG vector circle */ }
       void drawRectangle(...) { /* SVG vector rectangle */ }
   }
-  
+
   class RasterDrawingAPI implements DrawingAPI {
       void drawCircle(...)    { /* Pixel-based circle */ }
       void drawRectangle(...) { /* Pixel-based rectangle */ }
   }
-  
+
   class OpenGLDrawingAPI implements DrawingAPI {
       void drawCircle(...)    { /* OpenGL circle */ }
       void drawRectangle(...) { /* OpenGL rectangle */ }
   }
-  
+
   // ABSTRACTION hierarchy (shape types):
   abstract class Shape {
       protected DrawingAPI api;  // ← THE BRIDGE: holds reference to implementor
-      
+
       Shape(DrawingAPI api) { this.api = api; }
-      
+
       abstract void draw();
       abstract void resize(double factor);
   }
-  
+
   class Circle extends Shape {
       private double x, y, radius;
-      
+
       Circle(double x, double y, double radius, DrawingAPI api) {
           super(api);
           this.x = x; this.y = y; this.radius = radius;
       }
-      
+
       void draw()               { api.drawCircle(x, y, radius); }  // delegates to implementor
       void resize(double factor) { radius *= factor; }
   }
-  
+
   class Square extends Shape {
       private double x, y, side;
-      
+
       Square(double x, double y, double side, DrawingAPI api) {
           super(api); this.x = x; this.y = y; this.side = side;
       }
-      
+
       void draw()                { api.drawRectangle(x, y, x+side, y+side); }
       void resize(double factor)  { side *= factor; }
   }
-  
+
   // Usage:
   Shape circle = new Circle(5, 5, 10, new VectorDrawingAPI());    // Circle on Vector
   Shape square = new Square(0, 0, 20, new OpenGLDrawingAPI());    // Square on OpenGL
-  
+
   // Add new shape (Triangle): 1 new class. ALL platforms supported automatically.
   // Add new platform (Metal): 1 new DrawingAPI class. ALL shapes supported automatically.
-  
+
   // 3 shapes + 3 platforms = 6 classes (not 9). Scales: N + M, not N × M.
-  
+
 BRIDGE WITH DEPENDENCY INJECTION (modern style):
 
   // Instead of passing api in constructor, inject via DI:
   @Component
   class ShapeRenderer {
       private final DrawingAPI drawingAPI;  // injected (Vector/Raster/OpenGL by config)
-      
+
       ShapeRenderer(DrawingAPI drawingAPI) { this.drawingAPI = drawingAPI; }
-      
+
       void render(Shape shape) { shape.drawWith(drawingAPI); }
   }
-  
+
   // Spring selects which DrawingAPI implementation to inject based on config.
   // Application code never sees concrete DrawingAPI.
-  
+
 BRIDGE vs ADAPTER:
 
   ADAPTER:
@@ -156,19 +156,19 @@ BRIDGE vs ADAPTER:
   - AFTER the fact — fixes incompatibility between existing classes.
   - Wraps an existing adaptee to expose a different interface.
   - You don't design with Adapter upfront.
-  
+
   BRIDGE:
   - Intent: "Design two hierarchies that can vary independently from the start."
   - UPFRONT design decision to avoid class explosion.
   - Both abstraction and implementor are designed to be extended independently.
-  
+
   ADAPTER: post-hoc compatibility. BRIDGE: proactive separation of concerns.
-  
+
 BRIDGE IN JAVA — JDBC:
 
   java.sql.Connection/Statement/ResultSet = ABSTRACTION hierarchy
   MySQL Driver / PostgreSQL Driver        = IMPLEMENTOR hierarchy
-  
+
   Your code uses Connection (abstraction).
   JDBC driver (implementor) handles the actual DB protocol.
   New database (e.g., Oracle): add Oracle driver = new implementor.
@@ -180,6 +180,7 @@ BRIDGE IN JAVA — JDBC:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Bridge (inheritance-based):
+
 - N shapes × M platforms = N×M subclasses
 - Adding 1 platform: N new classes. Adding 1 shape: M new classes. Combinatorial explosion.
 
@@ -210,10 +211,10 @@ BRIDGE STRUCTURE:
   -impl: Implementor ──────►  +operationImpl()
   +operation()
       → impl.operationImpl()
-  
+
   RefinedAbstractionA      ConcreteImplementorA
   RefinedAbstractionB      ConcreteImplementorB
-  
+
   Abstraction holds reference to Implementor.
   Both hierarchies extend independently.
   New abstractions and new implementors never require cross changes.
@@ -269,15 +270,15 @@ class PushChannel implements NotificationChannel {
 // ABSTRACTION — WHAT kind of notification:
 abstract class Notification {
     protected final NotificationChannel channel;  // ← THE BRIDGE
-    
+
     Notification(NotificationChannel channel) { this.channel = channel; }
-    
+
     abstract void notify(String recipient, String content);
 }
 
 class NormalNotification extends Notification {
     NormalNotification(NotificationChannel channel) { super(channel); }
-    
+
     public void notify(String recipient, String content) {
         channel.send(recipient, "[INFO] " + content);
     }
@@ -285,7 +286,7 @@ class NormalNotification extends Notification {
 
 class UrgentNotification extends Notification {
     UrgentNotification(NotificationChannel channel) { super(channel); }
-    
+
     public void notify(String recipient, String content) {
         channel.send(recipient, "🚨 URGENT: " + content.toUpperCase());
         channel.send(recipient, "Confirmation required for: " + content);
@@ -304,11 +305,11 @@ alert.notify("ops-team@example.com", "Database CPU at 95%");
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Bridge and Adapter are the same — both use composition | Key difference is INTENT and timing. Adapter: post-hoc fix for incompatible existing interfaces. Bridge: proactive upfront design to enable independent variation. Adapter wraps an existing class to make it conform. Bridge creates two parallel hierarchies designed to be mixed. |
-| Bridge always requires two full class hierarchies | Sometimes one side has only one implementation or no hierarchy at all. The pattern value comes from enabling independent extension — even if today only one implementor exists, the Bridge structure allows adding more without touching abstractions. |
-| Bridge is the same as Strategy | Strategy: an object whose algorithm can be swapped at runtime; focused on interchangeable behaviors. Bridge: structural pattern focused on separating abstraction from implementation hierarchies. Bridge's implementor is a more fundamental structural concept; Strategy is about behavioral variation. However, in code they look similar — both use composition to delegate. |
+| Misconception                                          | Reality                                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bridge and Adapter are the same — both use composition | Key difference is INTENT and timing. Adapter: post-hoc fix for incompatible existing interfaces. Bridge: proactive upfront design to enable independent variation. Adapter wraps an existing class to make it conform. Bridge creates two parallel hierarchies designed to be mixed.                                                                                             |
+| Bridge always requires two full class hierarchies      | Sometimes one side has only one implementation or no hierarchy at all. The pattern value comes from enabling independent extension — even if today only one implementor exists, the Bridge structure allows adding more without touching abstractions.                                                                                                                           |
+| Bridge is the same as Strategy                         | Strategy: an object whose algorithm can be swapped at runtime; focused on interchangeable behaviors. Bridge: structural pattern focused on separating abstraction from implementation hierarchies. Bridge's implementor is a more fundamental structural concept; Strategy is about behavioral variation. However, in code they look similar — both use composition to delegate. |
 
 ---
 
@@ -341,7 +342,7 @@ class OrderRepository extends Repository { ... }
 // ANOTHER PITFALL: Leaking implementor details through abstraction:
 abstract class Shape {
     protected DrawingAPI api;
-    
+
     // BAD: exposes the bridge seam:
     DrawingAPI getDrawingAPI() { return api; }  // clients bypass abstraction!
 }

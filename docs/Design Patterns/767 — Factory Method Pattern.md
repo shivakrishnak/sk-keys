@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #creational, #oop, #polymorphism
 
 ⚡ TL;DR — **Factory Method** defines an interface for creating objects but lets subclasses decide which class to instantiate — decoupling the object creation logic from the code that uses the created objects, enabling subclasses to override the type of object that will be created.
 
-| #767 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, SOLID Principles, Polymorphism | |
-| **Used by:** | Object creation, Framework design, Plugin Architecture, OCP | |
+| #767            | Category: Design Patterns                                   | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, SOLID Principles, Polymorphism |                 |
+| **Used by:**    | Object creation, Framework design, Plugin Architecture, OCP |                 |
 
 ---
 
@@ -67,14 +67,14 @@ THE PROBLEM:
       }
   }
   // Add CSV: modify ReportGenerator (OCP violated).
-  
+
 FACTORY METHOD SOLUTION:
 
   // CREATOR (abstract — defines factory method):
   abstract class ReportGenerator {
       // Factory method — creates the right type of report:
       protected abstract Report createReport();  // ← Factory Method
-      
+
       // Template method uses factory method (doesn't know concrete type):
       public Report generate() {
           Report report = createReport();  // Polymorphic creation
@@ -83,22 +83,22 @@ FACTORY METHOD SOLUTION:
           return report;
       }
   }
-  
+
   // CONCRETE CREATORS (subclasses override factory method):
   class PdfReportGenerator extends ReportGenerator {
       protected Report createReport() { return new PdfReport(); }
   }
-  
+
   class ExcelReportGenerator extends ReportGenerator {
       protected Report createReport() { return new ExcelReport(); }
   }
-  
+
   class CsvReportGenerator extends ReportGenerator {
       protected Report createReport() { return new CsvReport(); }
   }
-  
+
   // Add new type: add new subclass. ReportGenerator: ZERO changes. OCP.
-  
+
   // PRODUCT HIERARCHY:
   interface Report {
       void addData(Data data);
@@ -107,42 +107,42 @@ FACTORY METHOD SOLUTION:
   class PdfReport implements Report { ... }
   class ExcelReport implements Report { ... }
   class CsvReport implements Report { ... }
-  
+
 FACTORY METHOD VARIANTS:
 
   1. PARAMETERIZED FACTORY METHOD:
-  
+
      // Factory method with parameter to decide what to create:
      abstract class Transport {
          abstract Vehicle createVehicle(int capacity);
-         
+
          void deliver(Cargo cargo, int capacity) {
              Vehicle v = createVehicle(capacity);
              v.load(cargo);
              v.drive();
          }
      }
-     
+
   2. STATIC FACTORY METHOD (NOT the GoF pattern — but widely used):
-  
+
      // A static method that creates objects — often called "Factory Method" colloquially:
      class Money {
          static Money of(BigDecimal amount, Currency currency) { return new Money(amount, currency); }
          static Money zero(Currency currency) { return new Money(BigDecimal.ZERO, currency); }
          static Money parse(String expression) { ... }
      }
-     
+
      // These are STATIC FACTORY METHODS (Joshua Bloch, Effective Java):
      // - Can have descriptive names
      // - Can return cached/shared instances
      // - Can return subtypes
      // Not the same as GoF Factory Method, but frequently called that.
-     
+
   3. FACTORY METHOD IN INTERFACES (Java 8+):
-  
+
      interface ButtonFactory {
          Button createButton();
-         
+
          static ButtonFactory forPlatform(Platform p) {
              return switch (p) {
                  case WINDOWS -> new WindowsButtonFactory();
@@ -150,15 +150,15 @@ FACTORY METHOD VARIANTS:
              };
          }
      }
-     
+
 FACTORY METHOD vs. SIMPLE FACTORY vs. ABSTRACT FACTORY:
 
   Simple Factory:    One class, one static method, switch/if to decide type.
                      Not a GoF pattern. Centralizes creation but violates OCP.
-                     
+
   Factory Method:    Abstract method in base class. Subclass overrides.
                      Achieves OCP through inheritance/polymorphism.
-                     
+
   Abstract Factory:  Interface with MULTIPLE factory methods.
                      Creates FAMILIES of related objects (Button + Dialog + Panel).
 ```
@@ -168,6 +168,7 @@ FACTORY METHOD vs. SIMPLE FACTORY vs. ABSTRACT FACTORY:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Factory Method:
+
 - Add a new product type: modify the creator class (OCP violation)
 - Creator tightly coupled to all concrete product types via if/switch
 
@@ -199,12 +200,12 @@ FACTORY METHOD STRUCTURE:
   +anOperation()
       Product p = createProduct()
       p.use()
-      
+
   ConcreteCreatorA                      ConcreteProductA
   ───────────────                       ────────────────
   +createProduct(): Product             +use(): void
       → new ConcreteProductA()
-      
+
   ConcreteCreatorB                      ConcreteProductB
   ───────────────                       ────────────────
   +createProduct(): Product             +use(): void
@@ -252,13 +253,13 @@ class XmlParser implements Parser {
 // CREATOR (abstract — uses factory method):
 abstract class DataProcessor {
     protected abstract Parser createParser();  // ← Factory Method
-    
+
     public ProcessedData process(String raw) {
         Parser parser = createParser();        // Polymorphic — doesn't know concrete type
         Document doc = parser.parse(raw);
         return transform(doc);
     }
-    
+
     private ProcessedData transform(Document doc) { ... }
 }
 
@@ -280,11 +281,11 @@ ProcessedData result = processor.process(yamlInput);
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                                         | Reality                                                                                                                                                                                                                                                                                                                                                                       |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Static Factory Methods (like `Money.of()`) are Factory Method pattern | Static factory methods are a Java idiom (Bloch's Effective Java Item 1) and are often colloquially called "factory methods," but they are NOT the GoF Factory Method pattern. GoF Factory Method: abstract/overridable method in a class hierarchy. Static factory: a static method on a class. Both create objects but serve different purposes and have different structure |
-| Factory Method requires inheritance | The classic GoF Factory Method uses inheritance (subclass overrides the factory method). However, a similar decoupling can be achieved with interfaces and composition (inject a factory as a strategy). The core idea — separate creation from use — can be implemented without classic inheritance in languages with first-class functions or interfaces |
-| Factory Method and Abstract Factory are interchangeable | Factory Method: single factory method, typically in a class hierarchy. Creates ONE type of product. Abstract Factory: an interface with MULTIPLE factory methods, creating a FAMILY of related products. Abstract Factory often USES Factory Methods in its implementations |
+| Factory Method requires inheritance                                   | The classic GoF Factory Method uses inheritance (subclass overrides the factory method). However, a similar decoupling can be achieved with interfaces and composition (inject a factory as a strategy). The core idea — separate creation from use — can be implemented without classic inheritance in languages with first-class functions or interfaces                    |
+| Factory Method and Abstract Factory are interchangeable               | Factory Method: single factory method, typically in a class hierarchy. Creates ONE type of product. Abstract Factory: an interface with MULTIPLE factory methods, creating a FAMILY of related products. Abstract Factory often USES Factory Methods in its implementations                                                                                                   |
 
 ---
 
@@ -307,12 +308,12 @@ class ExcelFrenchReportGenerator  extends ReportGenerator { ... }
 class ReportGenerator {
     private final ReportFormat format;
     private final Language language;
-    
+
     ReportGenerator(ReportFormat format, Language language) {
         this.format = format;
         this.language = language;
     }
-    
+
     Report generate() {
         Report report = format.createReport();  // Factory Method replaced by Strategy
         report.translate(language);

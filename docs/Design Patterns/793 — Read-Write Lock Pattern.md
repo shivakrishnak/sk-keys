@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #concurrency, #threading, #locking, #performa
 
 ⚡ TL;DR — **Read-Write Lock** allows multiple concurrent readers OR one exclusive writer — maximizing read throughput in read-heavy workloads where plain `synchronized` would block all readers when any thread holds the lock.
 
-| #793 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Thread Safety, Happens-Before, volatile, ReentrantLock | |
-| **Used by:** | Caches, configuration stores, in-memory data structures, read-heavy shared state | |
+| #793            | Category: Design Patterns                                                        | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Thread Safety, Happens-Before, volatile, ReentrantLock                           |                 |
+| **Used by:**    | Caches, configuration stores, in-memory data structures, read-heavy shared state |                 |
 
 ---
 
@@ -53,18 +53,18 @@ READ-WRITE LOCK RULES:
   READ LOCK:
   ✓ Multiple threads can hold read lock simultaneously
   ✗ Cannot be acquired while write lock is held
-  
+
   WRITE LOCK:
   ✓ One thread holds write lock exclusively
   ✗ Cannot be acquired while read lock is held by ANY thread
   ✗ Cannot be acquired while write lock is held by another thread
-  
+
   UPGRADE:
   Cannot upgrade read lock to write lock directly (would deadlock):
   Thread A holds read lock. Tries to upgrade to write lock.
   Write lock waits for all readers. Thread A holds read lock.
   Thread A waits for write lock. DEADLOCK.
-  
+
   DOWNGRADE:
   CAN downgrade write lock to read lock:
   1. Acquire write lock
@@ -72,16 +72,16 @@ READ-WRITE LOCK RULES:
   3. Acquire read lock (while holding write lock — allowed)
   4. Release write lock (now only read lock held)
   → Other readers can now proceed; no writer can proceed.
-  
+
 JAVA ReentrantReadWriteLock:
 
   class ConfigStore {
       private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
       private final Lock readLock  = rwLock.readLock();
       private final Lock writeLock = rwLock.writeLock();
-      
+
       private volatile Map<String, String> config = new HashMap<>();
-      
+
       // READ — multiple threads can execute concurrently:
       String get(String key) {
           readLock.lock();
@@ -91,7 +91,7 @@ JAVA ReentrantReadWriteLock:
               readLock.unlock();         // ALWAYS unlock in finally!
           }
       }
-      
+
       // WRITE — exclusive; blocks all readers and other writers:
       void refresh(Map<String, String> newConfig) {
           writeLock.lock();
@@ -102,30 +102,30 @@ JAVA ReentrantReadWriteLock:
           }
       }
   }
-  
+
   // Concurrent reads — ALL proceed simultaneously:
   // Thread 1: readLock.lock() → get("host")     → readLock.unlock()
-  // Thread 2: readLock.lock() → get("port")     → readLock.unlock()  
+  // Thread 2: readLock.lock() → get("port")     → readLock.unlock()
   // Thread 3: readLock.lock() → get("timeout")  → readLock.unlock()
   // All 3 overlap — no blocking.
-  
+
   // Write — exclusive:
   // Thread W: writeLock.lock() → waits for Thread 1,2,3 to finish → refresh() → unlock
   // Thread 1,2,3 resume after write.
-  
+
 STAMPEDLOCK (JAVA 8) — OPTIMISTIC READS:
 
   class PointCache {
       private final StampedLock lock = new StampedLock();
       private double x, y;
-      
+
       // OPTIMISTIC READ — no lock acquired! Just reads a stamp.
       // If data wasn't modified since stamp: read is valid. No lock cost.
       // If data WAS modified: validate() returns false → fall back to read lock.
       double distanceFromOrigin() {
           long stamp = lock.tryOptimisticRead();  // get stamp (no locking)
           double curX = x, curY = y;              // read (might be inconsistent if writer ran)
-          
+
           if (!lock.validate(stamp)) {            // was there a write? stamp invalidated?
               // Optimistic read FAILED — writer ran between stamp and validate.
               // Fall back to full read lock:
@@ -138,7 +138,7 @@ STAMPEDLOCK (JAVA 8) — OPTIMISTIC READS:
           }
           return Math.sqrt(curX * curX + curY * curY);
       }
-      
+
       void move(double deltaX, double deltaY) {
           long stamp = lock.writeLock();
           try {
@@ -149,37 +149,37 @@ STAMPEDLOCK (JAVA 8) — OPTIMISTIC READS:
           }
       }
   }
-  
+
   // Optimistic read: ZERO lock cost on no-contention paths. Ultra-fast for read-heavy.
   // Falls back to read lock only if writer ran during read — rare in practice.
-  
+
 READ-WRITE LOCK vs synchronized:
 
   synchronized (same as ReentrantLock):
   Only ONE thread at a time — even multiple readers block each other.
   Simple to use. Always correct.
-  
+
   ReentrantReadWriteLock:
   N concurrent readers. 1 exclusive writer.
   Faster for read-heavy workloads.
   More complex to use correctly (must always unlock in finally).
-  
+
   StampedLock:
   N concurrent readers + 1 writer.
   PLUS: optimistic reads (zero lock cost in no-contention case).
   Fastest for read-dominated, write-rare scenarios.
   Most complex. Non-reentrant! (Cannot lock twice from same thread.)
-  
+
 WRITER STARVATION:
 
   Default ReentrantReadWriteLock (non-fair):
   Writers can starve if readers continuously hold the read lock.
   New reader can acquire read lock even while a writer is waiting.
-  
+
   Fair mode: ReentrantReadWriteLock(true):
   Waiting writer blocks new readers — ensures writer eventually proceeds.
   Lower throughput (limits reader concurrency) but prevents starvation.
-  
+
   Generally: non-fair mode unless write starvation is observed.
 ```
 
@@ -188,6 +188,7 @@ WRITER STARVATION:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Read-Write Lock:
+
 - `synchronized` on reads: only 1 thread reads at a time — serialized reads for a shared, read-mostly data structure
 
 WITH Read-Write Lock:
@@ -214,19 +215,19 @@ WITH Read-Write Lock:
 READ-WRITE LOCK STATE MACHINE:
 
   State: (readCount, writeHeld)
-  
+
   readLock.lock():
   - If writeHeld: BLOCK (writer holds exclusive lock)
   - Else: readCount++ (proceed concurrently)
-  
+
   readLock.unlock():
   - readCount--
   - If readCount == 0 AND writer waiting: signal writer
-  
+
   writeLock.lock():
   - If readCount > 0 OR writeHeld: BLOCK
   - Else: writeHeld = true (exclusive)
-  
+
   writeLock.unlock():
   - writeHeld = false
   - Signal all waiting readers (and next writer)
@@ -317,11 +318,11 @@ public class UserCache {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Read-Write Lock is always faster than synchronized | Only for read-heavy workloads. Read-Write Lock has higher overhead per operation than `synchronized`. For write-heavy or balanced workloads, `synchronized` can be faster (lower overhead). Profile first. Rule: Read-Write Lock pays off when reads dominate (>80% reads). `ConcurrentHashMap` is often better than a `HashMap` wrapped with a `ReadWriteLock`. |
-| Read lock → write lock upgrade is safe | WRONG. Attempting to upgrade (read→write) while holding a read lock will deadlock in `ReentrantReadWriteLock`. No thread can hold a read lock while another holds or is waiting for the write lock. The solution: release read lock first, then acquire write lock (with double-check for race condition in between). |
-| StampedLock is always better than ReentrantReadWriteLock | `StampedLock` is NOT reentrant — a thread cannot lock it twice (would deadlock). It also doesn't support the standard `Lock` interface, making it harder to compose. For simple use cases, `ReentrantReadWriteLock` is safer. `StampedLock` is the choice for maximum performance in non-reentrant, read-optimistic scenarios (coordinates, cached values). |
+| Misconception                                            | Reality                                                                                                                                                                                                                                                                                                                                                          |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Read-Write Lock is always faster than synchronized       | Only for read-heavy workloads. Read-Write Lock has higher overhead per operation than `synchronized`. For write-heavy or balanced workloads, `synchronized` can be faster (lower overhead). Profile first. Rule: Read-Write Lock pays off when reads dominate (>80% reads). `ConcurrentHashMap` is often better than a `HashMap` wrapped with a `ReadWriteLock`. |
+| Read lock → write lock upgrade is safe                   | WRONG. Attempting to upgrade (read→write) while holding a read lock will deadlock in `ReentrantReadWriteLock`. No thread can hold a read lock while another holds or is waiting for the write lock. The solution: release read lock first, then acquire write lock (with double-check for race condition in between).                                            |
+| StampedLock is always better than ReentrantReadWriteLock | `StampedLock` is NOT reentrant — a thread cannot lock it twice (would deadlock). It also doesn't support the standard `Lock` interface, making it harder to compose. For simple use cases, `ReentrantReadWriteLock` is safer. `StampedLock` is the choice for maximum performance in non-reentrant, read-optimistic scenarios (coordinates, cached values).      |
 
 ---
 
@@ -333,15 +334,15 @@ public class UserCache {
 // ANTI-PATTERN: exception causes lock to never be released:
 class BadConfigStore {
     private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
-    
+
     String get(String key) {
         rwLock.readLock().lock();
         String value = config.get(key);
-        
+
         if (value == null) {
             throw new ConfigNotFoundException(key);  // EXCEPTION! readLock NEVER UNLOCKED!
         }
-        
+
         rwLock.readLock().unlock();  // never reached if exception thrown
         return value;
     }

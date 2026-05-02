@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #creational, #oop, #polymorphism
 
 ⚡ TL;DR — **Abstract Factory** provides an interface for creating **families of related objects** without specifying concrete classes — like a UI factory that creates matching Windows-style (or Mac-style) buttons, checkboxes, and dialogs, ensuring all created components belong to the same consistent family.
 
-| #769 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Factory Method Pattern, Object-Oriented Programming, SOLID Principles | |
-| **Used by:** | Cross-platform UI, Theme engines, Database drivers, GUI frameworks | |
+| #769            | Category: Design Patterns                                             | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Factory Method Pattern, Object-Oriented Programming, SOLID Principles |                 |
+| **Used by:**    | Cross-platform UI, Theme engines, Database drivers, GUI frameworks    |                 |
 
 ---
 
@@ -54,9 +54,9 @@ THE PROBLEM — INCONSISTENCY WITHOUT ABSTRACT FACTORY:
   Button  button   = new WindowsButton();   // Windows style
   Checkbox checkbox = new MacCheckbox();    // Mac style ← INCONSISTENT!
   Dialog  dialog   = new WindowsDialog();   // Windows style
-  
+
   // Nothing in the type system prevents mixing. UI looks broken.
-  
+
 ABSTRACT FACTORY STRUCTURE:
 
   // 1. ABSTRACT PRODUCTS (interfaces for each product type):
@@ -64,63 +64,63 @@ ABSTRACT FACTORY STRUCTURE:
       void render();
       void onClick();
   }
-  
+
   interface Checkbox {
       void render();
       boolean isChecked();
   }
-  
+
   // 2. ABSTRACT FACTORY (interface declaring all factory methods):
   interface GUIFactory {
       Button   createButton();    // factory method for each product type
       Checkbox createCheckbox();
   }
-  
+
   // 3. CONCRETE PRODUCTS for Family A (Windows):
   class WindowsButton implements Button {
       void render()  { System.out.println("Rendering Windows button [▣]"); }
       void onClick() { /* Windows click behavior */ }
   }
-  
+
   class WindowsCheckbox implements Checkbox {
       void render()    { System.out.println("Rendering Windows checkbox [☑]"); }
       boolean isChecked() { return state; }
   }
-  
+
   // 4. CONCRETE PRODUCTS for Family B (Mac):
   class MacButton   implements Button   { void render() { /* Mac button styling */ } ... }
   class MacCheckbox implements Checkbox { void render() { /* Mac checkbox styling */ } ... }
-  
+
   // 5. CONCRETE FACTORIES (one per product family):
   class WindowsFactory implements GUIFactory {
       Button   createButton()   { return new WindowsButton(); }   // same family!
       Checkbox createCheckbox() { return new WindowsCheckbox(); } // same family!
   }
-  
+
   class MacFactory implements GUIFactory {
       Button   createButton()   { return new MacButton(); }
       Checkbox createCheckbox() { return new MacCheckbox(); }
   }
-  
+
   // 6. CLIENT CODE (works with factory interface — never knows family):
   class Application {
       private final Button   button;
       private final Checkbox checkbox;
-      
+
       Application(GUIFactory factory) {      // inject factory (DI)
           this.button   = factory.createButton();    // guaranteed consistent
           this.checkbox = factory.createCheckbox();  // same family as button
       }
-      
+
       void render() { button.render(); checkbox.render(); }
   }
-  
+
   // STARTUP:
   GUIFactory factory = detectOS() == WINDOWS
       ? new WindowsFactory()
       : new MacFactory();
   Application app = new Application(factory);  // inject factory
-  
+
 ADDING A NEW FAMILY (Linux) — OCP:
 
   class LinuxButton   implements Button   { ... }
@@ -131,7 +131,7 @@ ADDING A NEW FAMILY (Linux) — OCP:
   }
   // GUIFactory interface: ZERO changes. Application code: ZERO changes.
   // Only add: 3 new classes.
-  
+
 ADDING A NEW PRODUCT TYPE (Dialog) — OPEN/CLOSED VIOLATION:
 
   // Adding Dialog to GUIFactory forces ALL existing concrete factories to implement it:
@@ -142,14 +142,14 @@ ADDING A NEW PRODUCT TYPE (Dialog) — OPEN/CLOSED VIOLATION:
   }
   // Abstract Factory is NOT OCP for new product types — only for new families.
   // This is the key tradeoff of the pattern.
-  
+
 ABSTRACT FACTORY IN JAVA ECOSYSTEM:
 
   // javax.xml.parsers.DocumentBuilderFactory — creates XML parsers:
   DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
   DocumentBuilder builder = factory.newDocumentBuilder();
   Document doc = builder.newDocument();
-  
+
   // java.sql (JDBC) — Connection, Statement, ResultSet are products from a factory:
   DataSource dataSource = ...;  // Abstract Factory
   Connection conn  = dataSource.getConnection();   // product 1
@@ -164,6 +164,7 @@ ABSTRACT FACTORY IN JAVA ECOSYSTEM:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Abstract Factory:
+
 - Code creates products from different families: `new WindowsButton()` + `new MacCheckbox()` — inconsistent UI
 - Adding a new family requires modifying all the if/switch creation logic across the codebase
 
@@ -198,8 +199,8 @@ ABSTRACT FACTORY STRUCTURE:
        ▲                   ▲                   ▲
        │            ┌──────┴──────┐    ┌───────┴───────┐
   WindowsFactory  WinButton   MacButton  WinCheckbox  MacCheckbox
-  MacFactory      
-  
+  MacFactory
+
   Client uses GUIFactory interface only.
   Concrete factory determines entire product family.
 ```
@@ -259,9 +260,9 @@ class PostgresFactory implements DatabaseFactory {
 // Client — works with DatabaseFactory only, never knows MySQL vs Postgres:
 class UserRepository {
     private final DatabaseFactory db;
-    
+
     UserRepository(DatabaseFactory db) { this.db = db; }
-    
+
     void save(User user) {
         Connection conn = db.createConnection(url);
         Transaction tx  = db.createTransaction(conn);  // consistent with conn
@@ -283,11 +284,11 @@ UserRepository repo = new UserRepository(factory);
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                     | Reality                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Abstract Factory is just multiple Factory Methods | The distinction is INTENT. Multiple Factory Methods in a class becomes an Abstract Factory when the factory methods form a coherent CONTRACT — all created products are meant to be used together (they form a family). The key constraint: products from one factory must be compatible with each other |
-| Adding a new product to Abstract Factory is easy | Adding a new product type (e.g., adding Dialog to GUIFactory) forces ALL concrete factories to be updated. Abstract Factory is open to new FAMILIES, but closed to new PRODUCT TYPES within the family — the opposite of what you might expect. This is the primary tradeoff |
-| Abstract Factory must be an interface | Can be an abstract class with some default implementations. Modern Java sometimes uses interface with default methods. But the pattern's contract — one factory creates all products in a family — is the key, not the specific Java construct used |
+| Adding a new product to Abstract Factory is easy  | Adding a new product type (e.g., adding Dialog to GUIFactory) forces ALL concrete factories to be updated. Abstract Factory is open to new FAMILIES, but closed to new PRODUCT TYPES within the family — the opposite of what you might expect. This is the primary tradeoff                             |
+| Abstract Factory must be an interface             | Can be an abstract class with some default implementations. Modern Java sometimes uses interface with default methods. But the pattern's contract — one factory creates all products in a family — is the key, not the specific Java construct used                                                      |
 
 ---
 

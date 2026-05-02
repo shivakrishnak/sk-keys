@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #concurrency, #async, #command, #actor-model
 
 ⚡ TL;DR — **Active Object** decouples method invocation from execution — an object has its own thread and a request queue; callers submit method requests asynchronously and receive Futures, while the object's private thread processes requests sequentially, eliminating shared-state concurrency problems.
 
-| #794 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Producer-Consumer Pattern, Thread Pool Pattern, CompletableFuture, Command Pattern | |
-| **Used by:** | Async actors, GUI event queues, game AI, actor model frameworks | |
+| #794            | Category: Design Patterns                                                          | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Producer-Consumer Pattern, Thread Pool Pattern, CompletableFuture, Command Pattern |                 |
+| **Used by:**    | Async actors, GUI event queues, game AI, actor model frameworks                    |                 |
 
 ---
 
@@ -56,31 +56,31 @@ ACTIVE OBJECT STRUCTURE:
   3. Scheduler:  the object's dedicated thread; dequeues and executes Commands
   4. Servant:    the actual implementation (only accessed by Scheduler thread)
   5. Future:     result handle returned to caller
-  
+
   FLOW:
   Caller → Proxy.methodCall() → creates MethodRequest (Command) → queue → Scheduler → Servant.method()
                               → returns CompletableFuture to caller
-  
+
 IMPLEMENTATION:
 
   // SERVANT — the actual logic, only ever accessed by the active object's thread:
   class BankAccountServant {
       private double balance;
-      
+
       double getBalance() { return balance; }
-      
+
       void deposit(double amount) {
           if (amount <= 0) throw new IllegalArgumentException("Amount must be positive");
           balance += amount;
       }
-      
+
       boolean withdraw(double amount) {
           if (amount > balance) return false;  // insufficient funds
           balance -= amount;
           return true;
       }
   }
-  
+
   // ACTIVE OBJECT — proxy with own thread and queue:
   class ActiveBankAccount {
       private final BankAccountServant servant = new BankAccountServant();
@@ -90,26 +90,26 @@ IMPLEMENTATION:
       // Single-thread executor IS the activation queue + scheduler.
       // All submitted tasks run sequentially on the "bank-account-worker" thread.
       // servant is ONLY accessed from this single thread — no synchronization needed!
-      
+
       // ASYNC METHOD — returns Future; caller doesn't block:
       CompletableFuture<Double> getBalance() {
           return CompletableFuture.supplyAsync(servant::getBalance, executor);
       }
-      
+
       CompletableFuture<Void> deposit(double amount) {
           return CompletableFuture.runAsync(() -> servant.deposit(amount), executor);
       }
-      
+
       CompletableFuture<Boolean> withdraw(double amount) {
           return CompletableFuture.supplyAsync(() -> servant.withdraw(amount), executor);
       }
-      
+
       void shutdown() { executor.shutdown(); }
   }
-  
+
   // CLIENT — non-blocking, async interaction:
   ActiveBankAccount account = new ActiveBankAccount();
-  
+
   // All calls async — return immediately with CompletableFuture:
   account.deposit(1000.0)
       .thenCompose(v -> account.withdraw(500.0))
@@ -117,17 +117,17 @@ IMPLEMENTATION:
           if (success) System.out.println("Withdrawal successful");
           else         System.out.println("Insufficient funds");
       });
-  
+
   // Multiple concurrent callers — serialized by single-thread executor:
   account.deposit(100.0);    // queued: 1
   account.deposit(200.0);    // queued: 2
   account.withdraw(50.0);    // queued: 3 — guaranteed to run AFTER deposits complete
   account.getBalance()       // queued: 4 — sees final balance after all above complete
       .thenAccept(System.out::println);
-  
+
   // No explicit synchronization. servant.balance only accessed from single thread.
   // Thread safety: by confinement (single-thread executor owns servant).
-  
+
 ACTOR MODEL COMPARISON:
 
   Active Object is essentially a single Actor.
@@ -136,11 +136,11 @@ ACTOR MODEL COMPARISON:
   - Has a dispatcher (scheduler)
   - Actor body (servant) runs in one thread at a time
   - Sends messages (method requests) to other actors
-  
+
   Akka example (conceptually same as Active Object):
   class BankAccountActor extends AbstractActor {
       private double balance = 0.0;
-      
+
       @Override
       public Receive createReceive() {
           return receiveBuilder()
@@ -157,15 +157,15 @@ ACTOR MODEL COMPARISON:
               .build();
       }
   }
-  
+
 SWING EDT AS ACTIVE OBJECT:
 
   // EDT is an Active Object for UI component state:
   // All UI method calls must be submitted via invokeLater or invokeAndWait.
-  
+
   // WRONG — calling from non-EDT thread:
   label.setText("Progress: 50%");  // If called from background thread → thread safety violation
-  
+
   // CORRECT — submit to EDT's activation queue:
   SwingUtilities.invokeLater(() -> label.setText("Progress: 50%"));
   // Equivalent to: edtActiveObject.submit(new SetTextCommand(label, "Progress: 50%"))
@@ -176,6 +176,7 @@ SWING EDT AS ACTIVE OBJECT:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Active Object:
+
 - Multiple threads access object's state → need locks everywhere → deadlock risk, complex synchronization
 
 WITH Active Object:
@@ -284,11 +285,11 @@ log.write("[2024-01-01] Transfer: $500");     // queued 3
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                  | Reality                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Active Object is the same as Producer-Consumer | Active Object IS a specialized Producer-Consumer, but with additional semantics: the queue belongs to a specific object, the executor is always single-threaded (to ensure sequential state access), and the pattern includes the proxy and Future-returning interface. Pure Producer-Consumer doesn't imply a single consumer or any relationship between the queue and a specific object's private state. |
-| Single-thread executor is inefficient | For I/O-bound or state-management Active Objects, single-thread is correct — the point is thread confinement of state, not parallelism. For CPU-bound parallel work, thread pools are used. The Active Object pattern addresses thread safety of a single stateful object, not throughput. Throughput comes from having MANY independent Active Objects running concurrently. |
-| Active Object prevents all concurrency bugs | Active Object eliminates races on the Active Object's OWN state. The caller still needs to handle async patterns correctly: futures can be awaited from wrong threads, shared state outside the Active Object still needs synchronization, and unhandled exceptions in CompletableFutures are silently swallowed (must handle with `.exceptionally()`). |
+| Single-thread executor is inefficient          | For I/O-bound or state-management Active Objects, single-thread is correct — the point is thread confinement of state, not parallelism. For CPU-bound parallel work, thread pools are used. The Active Object pattern addresses thread safety of a single stateful object, not throughput. Throughput comes from having MANY independent Active Objects running concurrently.                               |
+| Active Object prevents all concurrency bugs    | Active Object eliminates races on the Active Object's OWN state. The caller still needs to handle async patterns correctly: futures can be awaited from wrong threads, shared state outside the Active Object still needs synchronization, and unhandled exceptions in CompletableFutures are silently swallowed (must handle with `.exceptionally()`).                                                     |
 
 ---
 
@@ -301,7 +302,7 @@ log.write("[2024-01-01] Transfer: $500");     // queued 3
 class ActivePriceEngine {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     // newSingleThreadExecutor uses LinkedBlockingQueue — UNBOUNDED!
-    
+
     CompletableFuture<Price> calculatePrice(Order order) {
         return CompletableFuture.supplyAsync(() -> doCalculate(order), executor);
         // doCalculate takes 100ms per order.
@@ -318,7 +319,7 @@ class ActivePriceEngine {
         new LinkedBlockingQueue<>(500),         // bounded: max 500 pending requests
         new ThreadPoolExecutor.CallerRunsPolicy()  // back-pressure: caller blocks if full
     );
-    
+
     CompletableFuture<Price> calculatePrice(Order order) {
         CompletableFuture<Price> future = new CompletableFuture<>();
         try {

@@ -18,10 +18,10 @@ tags: #testing, #performance-test, #latency, #throughput, #sla, #jmeter, #gatlin
 
 ⚡ TL;DR — **Performance testing** measures how a system behaves under load — validating response time, throughput, and resource utilization against defined targets (SLAs/SLOs). Umbrella term covering: **load test** (expected load), **stress test** (beyond capacity), **spike test** (sudden surge), **soak test** (prolonged load). Tools: **Gatling**, **k6**, **JMeter**, **Locust**. Run in a production-like environment; results are meaningless if the environment is undersized.
 
-| #1137 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Load Test, Stress Test, E2E Test | |
-| **Used by:** | SLO/SLA validation, capacity planning, release validation | |
+| #1137           | Category: Testing                                         | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------- | :-------------- |
+| **Depends on:** | Load Test, Stress Test, E2E Test                          |                 |
+| **Used by:**    | SLO/SLA validation, capacity planning, release validation |                 |
 
 ---
 
@@ -42,6 +42,7 @@ Your API handles 1,000 users/day normally. Black Friday is coming — maybe 50,0
 Performance testing is about answering: "Does the system meet its performance requirements?" Those requirements are defined as SLOs (Service Level Objectives): "p99 response time ≤ 500ms under 1,000 RPS; error rate < 0.1%."
 
 **Key metrics and why percentiles matter**:
+
 - **Average response time** is misleading: if 95% of requests take 10ms but 5% take 5,000ms, the average might look fine but 5% of users have a terrible experience
 - **p50**: median — 50% of requests are faster than this
 - **p95**: 95% of requests are faster than this (the slow tail)
@@ -49,6 +50,7 @@ Performance testing is about answering: "Does the system meet its performance re
 - **p999**: 1 in 1,000 requests (important for high-traffic systems: 1 million RPS × 0.1% = 1,000 slow requests per second)
 
 **Performance test types visualized**:
+
 ```
 Load test:     ████████████ (constant expected load → validate SLO)
 Stress test:   ████████████████████░ (increase until failure → find limit)
@@ -57,6 +59,7 @@ Soak test:     █████████████████████�
 ```
 
 **Common performance bugs discovered**:
+
 - N+1 query problem: 1 request → 1,000 database queries (not visible in unit tests)
 - Missing database indexes: fine for 100 rows, slow for 1 million rows
 - Memory leaks: stable at first, gradual degradation over hours
@@ -70,90 +73,105 @@ Soak test:     █████████████████████�
 ```javascript
 // K6 PERFORMANCE TEST (JavaScript DSL - modern, cloud-native)
 
-import http from 'k6/http';
-import { check, sleep } from 'k6';
-import { Rate, Trend } from 'k6/metrics';
+import http from "k6/http";
+import { check, sleep } from "k6";
+import { Rate, Trend } from "k6/metrics";
 
 // Custom metrics
-const errorRate = new Rate('errors');
-const orderCreationDuration = new Trend('order_creation_duration');
+const errorRate = new Rate("errors");
+const orderCreationDuration = new Trend("order_creation_duration");
 
 // TEST CONFIGURATION: define load profile
 export const options = {
   stages: [
-    { duration: '2m', target: 100 },   // ramp-up to 100 VUs in 2 min
-    { duration: '5m', target: 100 },   // steady state at 100 VUs for 5 min
-    { duration: '2m', target: 500 },   // ramp-up to 500 VUs (stress)
-    { duration: '5m', target: 500 },   // steady state at 500 VUs
-    { duration: '2m', target: 0 },     // ramp-down
+    { duration: "2m", target: 100 }, // ramp-up to 100 VUs in 2 min
+    { duration: "5m", target: 100 }, // steady state at 100 VUs for 5 min
+    { duration: "2m", target: 500 }, // ramp-up to 500 VUs (stress)
+    { duration: "5m", target: 500 }, // steady state at 500 VUs
+    { duration: "2m", target: 0 }, // ramp-down
   ],
-  
+
   // SLO thresholds: test FAILS if these are violated
   thresholds: {
     http_req_duration: [
-      'p(95)<500',    // 95% of requests under 500ms
-      'p(99)<2000',   // 99% of requests under 2s
+      "p(95)<500", // 95% of requests under 500ms
+      "p(99)<2000", // 99% of requests under 2s
     ],
-    errors: ['rate<0.01'],            // error rate < 1%
-    http_req_failed: ['rate<0.01'],
-    order_creation_duration: ['p(95)<1000'],
+    errors: ["rate<0.01"], // error rate < 1%
+    http_req_failed: ["rate<0.01"],
+    order_creation_duration: ["p(95)<1000"],
   },
 };
 
 // Authentication (run once, reuse token)
 export function setup() {
-  const loginResponse = http.post(`${BASE_URL}/auth/login`, JSON.stringify({
-    email: 'perf-test@example.com',
-    password: 'password'
-  }), { headers: { 'Content-Type': 'application/json' } });
-  
-  return { token: loginResponse.json('accessToken') };
+  const loginResponse = http.post(
+    `${BASE_URL}/auth/login`,
+    JSON.stringify({
+      email: "perf-test@example.com",
+      password: "password",
+    }),
+    { headers: { "Content-Type": "application/json" } },
+  );
+
+  return { token: loginResponse.json("accessToken") };
 }
 
 // VIRTUAL USER SCENARIO: simulates a real user browsing + ordering
-export default function(data) {
+export default function (data) {
   const headers = {
-    'Authorization': `Bearer ${data.token}`,
-    'Content-Type': 'application/json',
+    Authorization: `Bearer ${data.token}`,
+    "Content-Type": "application/json",
   };
-  
+
   // 1. Browse products
-  const productsResponse = http.get(`${BASE_URL}/products?category=electronics`, { headers });
+  const productsResponse = http.get(
+    `${BASE_URL}/products?category=electronics`,
+    { headers },
+  );
   check(productsResponse, {
-    'products status 200': r => r.status === 200,
-    'products response time < 200ms': r => r.timings.duration < 200,
+    "products status 200": (r) => r.status === 200,
+    "products response time < 200ms": (r) => r.timings.duration < 200,
   });
   errorRate.add(productsResponse.status !== 200);
-  
-  sleep(1);  // simulate user reading
-  
+
+  sleep(1); // simulate user reading
+
   // 2. View product detail
-  const productId = productsResponse.json('items.0.id');
-  const detailResponse = http.get(`${BASE_URL}/products/${productId}`, { headers });
-  check(detailResponse, { 'product detail 200': r => r.status === 200 });
-  
-  sleep(2);  // simulate user deciding
-  
+  const productId = productsResponse.json("items.0.id");
+  const detailResponse = http.get(`${BASE_URL}/products/${productId}`, {
+    headers,
+  });
+  check(detailResponse, { "product detail 200": (r) => r.status === 200 });
+
+  sleep(2); // simulate user deciding
+
   // 3. Add to cart
-  const cartResponse = http.post(`${BASE_URL}/cart/items`,
-    JSON.stringify({ productId, quantity: 1 }), { headers });
-  check(cartResponse, { 'add to cart 201': r => r.status === 201 });
-  
+  const cartResponse = http.post(
+    `${BASE_URL}/cart/items`,
+    JSON.stringify({ productId, quantity: 1 }),
+    { headers },
+  );
+  check(cartResponse, { "add to cart 201": (r) => r.status === 201 });
+
   sleep(1);
-  
+
   // 4. Checkout (CRITICAL PATH - track separately)
   const startTime = Date.now();
-  const orderResponse = http.post(`${BASE_URL}/orders/checkout`,
-    JSON.stringify({ paymentToken: 'tok_visa' }), { headers });
+  const orderResponse = http.post(
+    `${BASE_URL}/orders/checkout`,
+    JSON.stringify({ paymentToken: "tok_visa" }),
+    { headers },
+  );
   orderCreationDuration.add(Date.now() - startTime);
-  
+
   const orderOk = check(orderResponse, {
-    'order created 201': r => r.status === 201,
-    'order has id': r => r.json('orderId') !== null,
+    "order created 201": (r) => r.status === 201,
+    "order has id": (r) => r.json("orderId") !== null,
   });
   errorRate.add(!orderOk);
-  
-  sleep(Math.random() * 3);  // random think time (realistic user behavior)
+
+  sleep(Math.random() * 3); // random think time (realistic user behavior)
 }
 ```
 
@@ -161,36 +179,36 @@ export default function(data) {
 // GATLING PERFORMANCE TEST (Scala DSL - CI-friendly, generates HTML reports)
 
 class CheckoutSimulation extends Simulation {
-  
+
   val httpProtocol = http
     .baseUrl("http://staging.myapp.com")
     .acceptHeader("application/json")
     .contentTypeHeader("application/json")
-  
+
   // Scenario: critical checkout flow
   val checkoutScenario = scenario("Checkout Flow")
     .exec(http("Login")
       .post("/auth/login")
       .body(StringBody("""{"email":"perf@test.com","password":"password"}"""))
       .check(jmesPath("accessToken").saveAs("token")))
-    
+
     .pause(1)
-    
+
     .exec(http("Browse Products")
       .get("/products")
       .header("Authorization", "Bearer #{token}")
       .check(status.is(200))
       .check(responseTimeInMillis.lt(200)))   // inline assertion
-    
+
     .pause(2)
-    
+
     .exec(http("Place Order")
       .post("/orders/checkout")
       .header("Authorization", "Bearer #{token}")
       .body(StringBody("""{"paymentToken":"tok_visa"}"""))
       .check(status.is(201))
       .check(responseTimeInMillis.lt(1000)))  // order creation < 1s
-  
+
   // LOAD PROFILE
   setUp(
     checkoutScenario.inject(
@@ -213,7 +231,7 @@ class CheckoutSimulation extends Simulation {
 PERFORMANCE TEST METRICS EXAMPLE REPORT:
 
   Scenario: Checkout Flow (500 concurrent VUs, 5 minutes)
-  
+
   Request         | Count | p50  | p95   | p99   | Errors
   ──────────────────────────────────────────────────────────
   Login           | 2,500 | 45ms | 87ms  | 120ms | 0.0%
@@ -221,7 +239,7 @@ PERFORMANCE TEST METRICS EXAMPLE REPORT:
   View Product    | 2,498 | 28ms | 61ms  | 85ms  | 0.1%
   Add to Cart     | 2,495 | 55ms | 134ms | 289ms | 0.2%
   Place Order     | 2,490 | 189ms| 487ms | 1,204ms| 0.4%  ← ⚠ p99 > SLO 1000ms
-  
+
   RESULT: FAIL — Place Order p99 exceeds 1000ms SLO
   INVESTIGATION: database index missing on orders.user_id + status
 ```
@@ -266,15 +284,15 @@ Performance Test ◄── (you are here)
 name: Performance Tests
 on:
   schedule:
-    - cron: '0 2 * * *'    # run nightly at 2 AM
-  workflow_dispatch:         # or manually trigger
+    - cron: "0 2 * * *" # run nightly at 2 AM
+  workflow_dispatch: # or manually trigger
 
 jobs:
   performance:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Run k6 performance test
         uses: grafana/k6-action@v0.3.0
         with:
@@ -282,7 +300,7 @@ jobs:
         env:
           BASE_URL: ${{ secrets.STAGING_URL }}
           K6_CLOUD_TOKEN: ${{ secrets.K6_CLOUD_TOKEN }}
-      
+
       # k6 exits with code 99 if thresholds are violated → CI fails
       # Grafana Cloud k6 shows detailed results with graphs
 ```
@@ -291,11 +309,11 @@ jobs:
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                            | Reality                                                                                                                                                                                                                                                                                                                                                            |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Performance tests can run in the development environment | Performance test results depend entirely on the environment. A laptop with 16 GB RAM and a local database will show very different numbers than a production cluster. Always run performance tests in a production-like environment — same hardware class, same database size, same network topology. Otherwise the results are meaningless for capacity planning. |
-| Average response time is the key metric | Average response time is severely misleading for web applications. If 95% of requests take 50ms but 5% take 10 seconds, the average might be 550ms — which looks acceptable but 5% of users are having a terrible experience. Always measure percentiles: p95, p99 (and p999 for high-traffic systems). |
-| Performance testing is a one-time activity before launch | Performance characteristics change with every deployment: new code, database growth, traffic pattern changes, infrastructure changes. Performance tests should be automated and run regularly (nightly or per-release). Establish a performance baseline and alert when metrics regress. |
+| Average response time is the key metric                  | Average response time is severely misleading for web applications. If 95% of requests take 50ms but 5% take 10 seconds, the average might be 550ms — which looks acceptable but 5% of users are having a terrible experience. Always measure percentiles: p95, p99 (and p999 for high-traffic systems).                                                            |
+| Performance testing is a one-time activity before launch | Performance characteristics change with every deployment: new code, database growth, traffic pattern changes, infrastructure changes. Performance tests should be automated and run regularly (nightly or per-release). Establish a performance baseline and alert when metrics regress.                                                                           |
 
 ---
 

@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #structural, #oop, #memory-optimization, #cac
 
 ⚡ TL;DR — **Flyweight** reduces memory by sharing common state among many fine-grained objects — separating **intrinsic state** (shared, immutable, stored in flyweight) from **extrinsic state** (unique per context, passed in at runtime), enabling millions of logical objects while only storing a handful of actual objects.
 
-| #776 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Prototype Pattern, Immutable Objects | |
-| **Used by:** | Text rendering, Game entities, String interning, Icon libraries | |
+| #776            | Category: Design Patterns                                         | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Prototype Pattern, Immutable Objects |                 |
+| **Used by:**    | Text rendering, Game entities, String interning, Icon libraries   |                 |
 
 ---
 
@@ -55,100 +55,100 @@ FLYWEIGHT STRUCTURE:
       private final String name;           // "Oak", "Pine"
       private final String color;          // "#3A5A40"
       private final byte[] texture;        // 50MB mesh data — stored ONCE
-      
+
       TreeType(String name, String color, byte[] texture) {
           this.name    = name;
           this.color   = color;
           this.texture = texture;   // immutable — safe to share
       }
-      
+
       // Extrinsic state (position) passed in at draw time:
       void draw(Canvas canvas, int x, int y, double scale) {
           canvas.drawImage(texture, x, y, scale);  // uses shared texture + per-tree position
       }
   }
-  
+
   // FLYWEIGHT FACTORY (cache — returns existing instances):
   class TreeTypeFactory {
       private static final Map<String, TreeType> types = new HashMap<>();
-      
+
       static TreeType getTreeType(String name, String color, byte[] texture) {
           String key = name + "_" + color;
           return types.computeIfAbsent(key, k -> new TreeType(name, color, texture));
           // computeIfAbsent: only creates new if not cached.
       }
   }
-  
+
   // CONTEXT (stores extrinsic state + reference to flyweight):
   class Tree {
       private final int x;               // extrinsic — unique per tree
       private final int y;               // extrinsic
       private final double scale;        // extrinsic
       private final TreeType type;       // flyweight reference (shared)
-      
+
       Tree(int x, int y, double scale, TreeType type) { ... }
-      
+
       void draw(Canvas canvas) {
           type.draw(canvas, x, y, scale);  // pass extrinsic to flyweight
       }
   }
-  
+
   // FOREST:
   class Forest {
       private final List<Tree> trees = new ArrayList<>();
-      
+
       void plantTree(int x, int y, double scale, String name, String color, byte[] texture) {
           TreeType type = TreeTypeFactory.getTreeType(name, color, texture);  // cached!
           trees.add(new Tree(x, y, scale, type));  // Tree is small — just extrinsic + ref
       }
-      
+
       void render(Canvas canvas) {
           trees.forEach(t -> t.draw(canvas));
       }
   }
-  
+
   // Memory analysis:
   // 1,000,000 trees: 3 TreeType flyweights × 50MB = 150MB (mesh/texture data)
   //                + 1,000,000 Tree contexts × ~20 bytes = ~20MB (position/scale/type-ref)
   // TOTAL: ~170MB vs naive approach (1M × 50MB = 50TB)
-  
+
 FLYWEIGHT IN JAVA STANDARD LIBRARY:
 
   // 1. String Pool (String interning):
   String a = "hello";
   String b = "hello";
   a == b;   // true — same instance from string constant pool
-  
+
   // String.intern():
   String c = new String("hello");   // forces new object on heap
   String d = c.intern();            // returns pooled instance
   d == a;   // true
-  
+
   // 2. Integer cache (-128 to 127):
   Integer x = 100;  Integer y = 100;  x == y;   // true — cached
   Integer p = 200;  Integer q = 200;  p == q;   // false — not cached (> 127)
-  
+
   // 3. Boolean.TRUE / Boolean.FALSE — singleton flyweights
-  
+
   // 4. java.awt.Font: shared font metrics objects
-  
+
 FLYWEIGHT vs. PROTOTYPE vs. SINGLETON:
 
   SINGLETON:   One global instance. Represents a single entity (config, logger).
                Not about memory — about one-instance constraint.
-               
+
   PROTOTYPE:   Copies a template. Each copy is INDEPENDENT — can be modified.
-               
+
   FLYWEIGHT:   Shared instances of fine-grained objects. Intrinsic state shared (immutable).
                Extrinsic state NOT stored in flyweight — passed at call time.
                About MEMORY EFFICIENCY with many small objects.
-               
+
 THREAD SAFETY:
 
   Flyweight objects are shared across many contexts (often many threads).
   They MUST be immutable or thread-safe.
   If intrinsic state is mutable, concurrent modification = data corruption.
-  
+
   // SAFE: TreeType.texture is final byte[] — immutable reference (though bytes mutable)
   // Better: use genuinely immutable types for intrinsic state.
 ```
@@ -158,6 +158,7 @@ THREAD SAFETY:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Flyweight:
+
 - 1M trees × 50MB texture = 50TB memory (impossible)
 - Each character in a word processor = full glyph object (millions of objects, huge heap)
 
@@ -187,9 +188,9 @@ FLYWEIGHT PATTERN:
   Client → FlyweightFactory.get(key)
            → if cached: return existing flyweight
            → if not: create, cache, return
-           
+
   Client stores: flyweight reference + extrinsic state (in Context object)
-  
+
   Client → context.operation(extrinsicState)
            → flyweight.operation(extrinsicState)   // passes extrinsic
            → uses intrinsic + extrinsic to do work
@@ -227,7 +228,7 @@ record ParticleType(String name, Color color, BufferedImage texture, double base
 // FLYWEIGHT FACTORY:
 class ParticleTypeFactory {
     private static final Map<String, ParticleType> cache = new ConcurrentHashMap<>();
-    
+
     static ParticleType get(String name, Color color, BufferedImage texture, double size) {
         return cache.computeIfAbsent(name,
             k -> new ParticleType(name, color, texture, size));
@@ -240,15 +241,15 @@ class Particle {
     private double velocityX, velocityY;  // extrinsic
     private double scale;        // extrinsic
     private final ParticleType type;      // flyweight — shared
-    
+
     Particle(double x, double y, double vx, double vy, ParticleType type) {
         this.x = x; this.y = y; this.velocityX = vx; this.velocityY = vy;
         this.scale = 1.0;
         this.type = type;
     }
-    
+
     void update() { x += velocityX; y += velocityY; scale *= 0.99; }
-    
+
     void render(Graphics2D g) {
         // type.texture is SHARED — not copied:
         g.drawImage(type.texture(), (int)x, (int)y, (int)(type.baseSize() * scale), null);
@@ -270,11 +271,11 @@ for (int i = 0; i < 100_000; i++) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Flyweight is the same as caching | Caching stores previously computed results to avoid recomputation. Flyweight shares object instances to reduce memory. A Flyweight factory uses a cache-like structure internally, but the goal is structural sharing of object state, not computation memoization. The shared flyweight objects are not "cached results" — they are the canonical shared objects. |
-| All state in a flyweight must be immutable | Intrinsic state MUST be immutable (shared across contexts/threads). Extrinsic state is NOT stored in the flyweight at all — it's passed at call time. The flyweight object itself should be immutable for thread safety. |
-| Flyweight always requires a factory | In theory, clients could manage flyweight instances directly. In practice, a Flyweight Factory is almost always used — it encapsulates the caching/sharing logic, ensuring clients get the shared instance rather than creating new ones. Without a factory, clients might accidentally create new instances instead of reusing shared ones. |
+| Misconception                              | Reality                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Flyweight is the same as caching           | Caching stores previously computed results to avoid recomputation. Flyweight shares object instances to reduce memory. A Flyweight factory uses a cache-like structure internally, but the goal is structural sharing of object state, not computation memoization. The shared flyweight objects are not "cached results" — they are the canonical shared objects. |
+| All state in a flyweight must be immutable | Intrinsic state MUST be immutable (shared across contexts/threads). Extrinsic state is NOT stored in the flyweight at all — it's passed at call time. The flyweight object itself should be immutable for thread safety.                                                                                                                                           |
+| Flyweight always requires a factory        | In theory, clients could manage flyweight instances directly. In practice, a Flyweight Factory is almost always used — it encapsulates the caching/sharing logic, ensuring clients get the shared instance rather than creating new ones. Without a factory, clients might accidentally create new instances instead of reusing shared ones.                       |
 
 ---
 
@@ -287,10 +288,10 @@ for (int i = 0; i < 100_000; i++) {
 class TreeType {
     String name;
     byte[] texture;
-    
+
     // BAD: position is EXTRINSIC state — must NOT be stored in flyweight:
     int x, y;  // ← shared object now stores per-tree position!
-    
+
     void draw(Canvas c) {
         c.drawImage(texture, x, y);  // x, y are "this tree's position" — but shared!
     }
@@ -305,7 +306,7 @@ class TreeType {
 class TreeType {
     final String name;
     final byte[] texture;
-    
+
     // NO position fields! Extrinsic state is a PARAMETER:
     void draw(Canvas c, int x, int y) {   // ← extrinsic passed as parameter
         c.drawImage(texture, x, y);

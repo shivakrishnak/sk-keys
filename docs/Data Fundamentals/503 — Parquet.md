@@ -18,10 +18,10 @@ tags: #data, #parquet, #columnar, #compression, #analytics, #data-lake, #spark
 
 ⚡ TL;DR — **Apache Parquet** is the dominant open-source columnar file format for data lake analytics. Stores data column-by-column with per-column compression (snappy/zstd/gzip). Column statistics and predicate pushdown enable skipping irrelevant data. The de facto standard for S3-based data lakes (Spark/Athena/Trino/BigQuery external).
 
-| #503 | Category: Data Fundamentals | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Columnar vs Row Storage, Binary Formats (Avro, Parquet, ORC, Protobuf) | |
-| **Used by:** | Delta Lake, Spark analytics, Athena, Trino, BigQuery external tables, Iceberg | |
+| #503            | Category: Data Fundamentals                                                   | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Columnar vs Row Storage, Binary Formats (Avro, Parquet, ORC, Protobuf)        |                 |
+| **Used by:**    | Delta Lake, Spark analytics, Athena, Trino, BigQuery external tables, Iceberg |                 |
 
 ---
 
@@ -94,26 +94,26 @@ PARQUET FILE STRUCTURE:
 HOW PREDICATE PUSHDOWN WORKS:
 
   Query: SELECT SUM(amount) FROM orders WHERE city='Seattle' AND date='2024-01-15'
-  
+
   Step 1: Open Parquet file → read last 4 bytes (magic) → read footer length
   Step 2: Read footer metadata (tiny! maybe 100KB for a 10GB file)
   Step 3: For each row group, check column statistics:
-  
+
   Row Group 1: city column stats: min="Austin", max="Seattle"
     → "Seattle" is in range [Austin, Seattle] → might match → READ
-  Row Group 2: city column stats: min="NYC", max="Portland"  
+  Row Group 2: city column stats: min="NYC", max="Portland"
     → "Seattle" not in [NYC, Portland] → SKIP ENTIRE ROW GROUP
   Row Group 3: date column stats: min="2024-01-01", max="2024-01-14"
     → "2024-01-15" not in range → SKIP ENTIRE ROW GROUP
   Row Group 4: city and date stats match → READ
-  
+
   Result: read maybe 2 out of 10 row groups → 80% less I/O
 
 BLOOM FILTERS (Parquet 2.0+):
 
   High-cardinality columns (UUIDs, user IDs): min/max statistics are nearly useless
   (every row group has min="00000..." max="ffffffff..." → no filtering)
-  
+
   Bloom filter per column chunk: compact probabilistic structure
   → "does value X exist in this column chunk?"
   → False positives possible (says "maybe"); no false negatives (says "no" = certain)
@@ -127,21 +127,21 @@ PARTITIONING (Hive-style on S3):
     date=2024-01-14/country=EU/part-002.parquet
     date=2024-01-15/country=US/part-003.parquet
     date=2024-01-15/country=EU/part-004.parquet
-  
+
   Query: WHERE date='2024-01-15' AND country='US'
   → Only read: s3://bucket/orders/date=2024-01-15/country=US/
   → Skip: 3 other partitions entirely (never even open those files)
-  
+
   Partition pruning happens at the file listing level, before any file is opened
   Predicate pushdown happens inside files (row group level)
   Column pruning happens inside row groups (column chunk level)
-  
+
   3 levels of pruning: partition → row group → column
 
 COMPRESSION PERFORMANCE (real-world):
 
   100M order records (5 columns: id, customer, amount, city, status):
-  
+
   Format           │ Size     │ Query time (SUM amount WHERE city='Seattle')
   ─────────────────┼──────────┼─────────────────────────────────────────────
   CSV (no compress)│ 8.0 GB   │ 120s (read all 8GB, parse all rows)
@@ -184,13 +184,13 @@ SCHEMA EVOLUTION IN PARQUET:
 
   File v1 schema: {id: INT64, amount: DOUBLE}
   File v2 schema: {id: INT64, amount: DOUBLE, currency: STRING}
-  
+
   Spark reads both files together (schema merging):
   spark.read.option("mergeSchema","true").parquet("s3://bucket/orders/")
   → Merged schema: {id: INT64, amount: DOUBLE, currency: STRING}
   → v1 files: currency column = null (not present in old files)
   → v2 files: all three columns present
-  
+
   Delta Lake: handles schema evolution explicitly (ALTER TABLE ADD COLUMN)
   without needing mergeSchema (more controlled, explicit)
 ```
@@ -261,11 +261,11 @@ print(pf.metadata.row_group(0).column(2).statistics)  # min/max for column 2
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Parquet is write-once, cannot be updated | Parquet files themselves are immutable. But Delta Lake / Iceberg / Hudi add an ACID layer: updates write new Parquet files + a transaction log; old files are marked as deleted. The abstraction is a mutable table; the physical layer is immutable Parquet files. |
-| Larger row groups are always better | Larger row groups (256MB+) give better statistics and compression. But they increase memory requirements during write (must buffer 256MB per column in memory). They also mean coarser granularity for row group skipping. The sweet spot is 128MB–512MB depending on memory and query patterns. |
-| Parquet files are directly readable with a text editor | Parquet is binary. The first 4 bytes are the ASCII magic `PAR1`. After that, it's binary-encoded data. Use `parquet-tools show --head 100 file.parquet` or `pq.read_table("file.parquet").to_pandas().head()` to read Parquet data. |
+| Misconception                                          | Reality                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Parquet is write-once, cannot be updated               | Parquet files themselves are immutable. But Delta Lake / Iceberg / Hudi add an ACID layer: updates write new Parquet files + a transaction log; old files are marked as deleted. The abstraction is a mutable table; the physical layer is immutable Parquet files.                              |
+| Larger row groups are always better                    | Larger row groups (256MB+) give better statistics and compression. But they increase memory requirements during write (must buffer 256MB per column in memory). They also mean coarser granularity for row group skipping. The sweet spot is 128MB–512MB depending on memory and query patterns. |
+| Parquet files are directly readable with a text editor | Parquet is binary. The first 4 bytes are the ASCII magic `PAR1`. After that, it's binary-encoded data. Use `parquet-tools show --head 100 file.parquet` or `pq.read_table("file.parquet").to_pandas().head()` to read Parquet data.                                                              |
 
 ---
 
@@ -278,13 +278,13 @@ PITFALL: small files problem (too many small Parquet files)
   # 5-minute micro-batch × 100 Hive partitions × 6 months = 525,600 files
   # Athena: scans metadata for ALL 525K files before reading any data
   # S3 LIST requests: expensive and slow at this scale
-  
+
   # FIX: use Delta Lake OPTIMIZE command (merges small files):
   # delta_table.optimize().executeCompaction()
   # or schedule periodic Spark compaction job:
   df = spark.read.parquet("s3://bucket/orders/date=2024-01-15/")
   df.coalesce(10).write.mode("overwrite").parquet("s3://bucket/orders/date=2024-01-15/")
-  
+
   # RULE: target 128MB–1GB per Parquet file
   # RULE: if streaming, batch writes or use Delta Lake
 
@@ -293,15 +293,15 @@ PITFALL: wrong compression codec for your workload
   # Snappy: fast compression + decompression; moderate ratio (2-4x)
   # → Best for: interactive queries where decompression speed matters
   # → Default in Spark, Parquet-cpp
-  
+
   # GZIP: slow compression; high ratio (4-8x)
   # → Best for: archival storage, cold data, S3 costs matter most
   # → Bad for: interactive queries (decompression is slow)
-  
+
   # ZSTD: good compression ratio (3-5x) + fast decompression
   # → Best for: most production workloads (Parquet default since version 2.0)
   # → Recommended default
-  
+
   spark.conf.set("spark.sql.parquet.compression.codec", "zstd")
 ```
 

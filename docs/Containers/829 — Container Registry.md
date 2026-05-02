@@ -18,10 +18,10 @@ tags: #containers, #docker, #registry, #ecr, #gcr, #image-distribution
 
 ⚡ TL;DR — A **container registry** is a storage and distribution system for Docker images. You `docker push` images to it from CI; your Kubernetes cluster (or any host) `docker pull` images from it at deploy time. Docker Hub is the public default. Enterprise deployments use private registries: AWS ECR, Google Artifact Registry, Azure ACR, or self-hosted Harbor. Tags (`:v1.2.3`, `:latest`, `:main-abc123`) identify image versions stored in the registry.
 
-| #829 | Category: Containers | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Docker Image, Docker Layer | |
-| **Used by:** | Kubernetes, CI-CD pipelines, Multi-Stage Build | |
+| #829            | Category: Containers                           | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------- | :-------------- |
+| **Depends on:** | Docker Image, Docker Layer                     |                 |
+| **Used by:**    | Kubernetes, CI-CD pipelines, Multi-Stage Build |                 |
 
 ---
 
@@ -68,14 +68,14 @@ IMAGE NAME ANATOMY:
   docker.io/library/nginx:1.24-alpine
   ─────────┬────────┬─────┬──────────
   registry │  org   │repo │  tag
-  
+
   docker.io/library/nginx:latest         ← Docker Hub official image
   ghcr.io/myorg/myapp:v1.2.3            ← GitHub Container Registry
   123456789.dkr.ecr.us-east-1.amazonaws.com/myapp:v1.2.3  ← AWS ECR
   us.gcr.io/myproject/myapp:v1.2.3      ← Google Container Registry
   myregistry.azurecr.io/myapp:v1.2.3    ← Azure Container Registry
   registry.mycompany.com/myapp:v1.2.3   ← self-hosted
-  
+
   SHORT NAMES (Docker Hub defaults):
   nginx          → docker.io/library/nginx:latest
   nginx:1.24     → docker.io/library/nginx:1.24
@@ -85,17 +85,17 @@ TAG vs DIGEST:
 
   # Tag (mutable): same tag can point to different manifests over time
   docker pull nginx:latest   ← today: SHA256:abc; tomorrow: SHA256:xyz (updated)
-  
+
   # Digest (immutable): always the exact same image
   docker pull nginx@sha256:abc123def456...
-  
+
   # Production rule: pin to digest (immutable) for reproducibility
   # CI: tag with commit SHA + semantic version
   myapp:v1.2.3-abc123  ← semantic version + git SHA
   myapp:v1.2.3         ← semantic version (reproducible)
   myapp:main-abc123    ← branch + commit SHA (CI artifact)
   myapp:latest         ← mutable; DO NOT use in Kubernetes deployments
-  
+
   # Why :latest is dangerous in K8s:
   imagePullPolicy: Always  ← pulls :latest on every pod start
   # → different pods may run different image versions if :latest was updated
@@ -110,7 +110,7 @@ PUSH/PULL PROTOCOL (OCI Distribution Spec):
   3. For each layer: HEAD /v2/myapp/blobs/{sha} → 404 (not found) or 200 (exists)
   4. If not found: PUT /v2/myapp/blobs/uploads/{uuid} → upload layer bytes
   5. PUT /v2/myapp/manifests/v1.0 → upload manifest (references all layer SHAs)
-  
+
   PULL:
   1. docker pull myregistry/myapp:v1.0
   2. GET /v2/myapp/manifests/v1.0 → manifest (list of layer SHAs)
@@ -125,7 +125,7 @@ REGISTRY COMPARISON:
   ✗ Rate limits: 100 pulls/6h (anonymous), 200 pulls/6h (free account)
   ✗ Outage = CI/CD blocked for everyone using public images
   → Use pull-through cache to avoid rate limits
-  
+
   AWS ECR:
   ✓ Private by default; tight IAM integration
   ✓ Image scanning (Clair/Trivy integration)
@@ -133,22 +133,22 @@ REGISTRY COMPARISON:
   ✓ Cross-region replication
   ✗ Authentication via aws ecr get-login-password (expires 12 hours)
   → Best for: AWS-native deployments; EKS clusters
-  
+
   Google Artifact Registry (successor to GCR):
   ✓ Private; IAM integration; regional by default
   ✓ Multi-format: Docker, Maven, npm, Python
   ✓ Vulnerability scanning
   → Best for: GKE clusters
-  
+
   Azure Container Registry (ACR):
   ✓ Private; Azure AD integration; geo-replication
   → Best for: AKS clusters
-  
+
   GitHub Container Registry (ghcr.io):
   ✓ Integrated with GitHub Actions; per-repo/org
   ✓ Free for public repos; linked to GitHub packages
   → Best for: open source, GitHub Actions CI
-  
+
   Harbor (self-hosted):
   ✓ Full control; RBAC; image signing; scanning
   ✓ Pull-through cache (proxy Docker Hub)
@@ -158,7 +158,7 @@ REGISTRY COMPARISON:
 PULL-THROUGH CACHE:
 
   Problem: k8s nodes pull from Docker Hub → rate limits hit → deployment fails
-  
+
   Solution: Harbor or ECR Pull-Through Cache
   1. Configure: registry.mycompany.com proxies → docker.io
   2. First pull: cache misses → downloads from Docker Hub → stores in Harbor
@@ -231,14 +231,14 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}   # myorg/myapp
+  IMAGE_NAME: ${{ github.repository }} # myorg/myapp
 
 jobs:
   build-push:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write   # permission to push to ghcr.io
+      packages: write # permission to push to ghcr.io
 
     steps:
       - uses: actions/checkout@v4
@@ -271,7 +271,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha    # GitHub Actions cache for layers
+          cache-from: type=gha # GitHub Actions cache for layers
           cache-to: type=gha,mode=max
 ```
 
@@ -279,11 +279,11 @@ jobs:
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `:latest` tag is always up-to-date | `:latest` is just a tag like any other — it's only updated if you explicitly `docker push myimage:latest`. If your CI only pushes `:v1.2.3`, `:latest` is stale. Many registries/workflows push both the versioned tag AND update `:latest`. Always pin to versioned tags in Kubernetes. |
-| Deleting a tag deletes the image layers | Deleting a tag only removes the tag reference to the manifest. The layers (blobs) remain in the registry until garbage collection runs. Most registries have a separate GC process that reclaims unreferenced blobs. This is intentional: multiple tags may reference the same layers. |
-| Private registry = secure by default | Authentication prevents unauthorized pulls, but doesn't prevent: pushing a compromised image from a compromised CI system, images with embedded secrets (see Docker Build Context), unpatched CVEs in base images. Image scanning + signing (Cosign) are required for a secure supply chain. |
+| Misconception                           | Reality                                                                                                                                                                                                                                                                                      |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `:latest` tag is always up-to-date      | `:latest` is just a tag like any other — it's only updated if you explicitly `docker push myimage:latest`. If your CI only pushes `:v1.2.3`, `:latest` is stale. Many registries/workflows push both the versioned tag AND update `:latest`. Always pin to versioned tags in Kubernetes.     |
+| Deleting a tag deletes the image layers | Deleting a tag only removes the tag reference to the manifest. The layers (blobs) remain in the registry until garbage collection runs. Most registries have a separate GC process that reclaims unreferenced blobs. This is intentional: multiple tags may reference the same layers.       |
+| Private registry = secure by default    | Authentication prevents unauthorized pulls, but doesn't prevent: pushing a compromised image from a compromised CI system, images with embedded secrets (see Docker Build Context), unpatched CVEs in base images. Image scanning + signing (Cosign) are required for a secure supply chain. |
 
 ---
 
@@ -294,15 +294,15 @@ PITFALL: Docker Hub rate limits breaking CI
 
   # Pull from Docker Hub in CI: FROM nginx:alpine
   # 100 pulls/6h anonymous → CI fails with "toomanyrequests"
-  
+
   # FIX 1: authenticate to Docker Hub in CI (200 pulls/6h free, more on paid)
   docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
-  
+
   # FIX 2: mirror to private registry (best for production)
   # Replace: FROM nginx:alpine
   # With: FROM myregistry.com/cache/library/nginx:alpine
   # Harbor pull-through cache: myregistry.com/cache proxies docker.io
-  
+
   # FIX 3: ECR public gallery (no rate limits for ECR auth'd pulls)
   FROM public.ecr.aws/nginx/nginx:alpine
 
@@ -313,9 +313,9 @@ PITFALL: :latest tag used in Kubernetes deployment
   - name: app
     image: myregistry.io/myapp:latest
     imagePullPolicy: Always
-  
+
   # Problem: "latest" can change; can't roll back; pods may run different versions
-  
+
   # ✅ Pin to immutable tag (git SHA or semantic version):
   containers:
   - name: app

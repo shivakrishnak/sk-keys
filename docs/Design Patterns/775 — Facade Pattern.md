@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #structural, #oop, #simplification
 
 ⚡ TL;DR — **Facade** provides a simplified, unified interface to a complex subsystem — hiding the complexity of multiple interacting classes behind a single, easy-to-use entry point, so clients don't need to understand the internal workings of the subsystem.
 
-| #775 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Adapter Pattern, SOLID Principles | |
-| **Used by:** | API simplification, Legacy subsystem wrapping, SDK design, Home theater example | |
+| #775            | Category: Design Patterns                                                       | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Adapter Pattern, SOLID Principles                  |                 |
+| **Used by:**    | API simplification, Legacy subsystem wrapping, SDK design, Home theater example |                 |
 
 ---
 
@@ -66,12 +66,12 @@ WITHOUT FACADE — client knows the subsystem:
           popcorn.pop();
       }
   }
-  
+
   // PROBLEMS:
   // - Every client of the home theater must know all 5 subsystem classes.
   // - Every client must know the correct sequence (amplifier before DVDPlayer, etc.)
   // - Changes to subsystem classes (e.g., new projector model) affect ALL clients.
-  
+
 FACADE SOLUTION:
 
   // SUBSYSTEM CLASSES (unchanged):
@@ -81,7 +81,7 @@ FACADE SOLUTION:
       void setVolume(int level) { ... }
       void setSurroundSound() { ... }
   }
-  
+
   class DVDPlayer {
       void on() { ... }
       void off() { ... }
@@ -89,17 +89,17 @@ FACADE SOLUTION:
       void stop() { ... }
       void eject() { ... }
   }
-  
+
   class Projector {
       void on() { ... }
       void off() { ... }
       void setInput(DVDPlayer player) { ... }
       void setWidescreen() { ... }
   }
-  
+
   class Lights { void dim(int level) { ... } void on() { ... } }
   class PopcornMaker { void on() { ... } void off() { ... } void pop() { ... } }
-  
+
   // FACADE — simplified interface:
   class HomeTheaterFacade {
       private final Amplifier amp;
@@ -107,13 +107,13 @@ FACADE SOLUTION:
       private final Projector projector;
       private final Lights lights;
       private final PopcornMaker popcorn;
-      
+
       HomeTheaterFacade(Amplifier amp, DVDPlayer dvd, Projector projector,
                         Lights lights, PopcornMaker popcorn) {
           this.amp = amp; this.dvd = dvd;
           this.projector = projector; this.lights = lights; this.popcorn = popcorn;
       }
-      
+
       void watchMovie(String title) {
           System.out.println("Get ready to watch a movie...");
           popcorn.on();
@@ -128,7 +128,7 @@ FACADE SOLUTION:
           dvd.on();
           dvd.play(title);
       }
-      
+
       void endMovie() {
           System.out.println("Shutting movie theater down...");
           popcorn.off();
@@ -140,15 +140,15 @@ FACADE SOLUTION:
           dvd.off();
       }
   }
-  
+
   // CLIENT:
   HomeTheaterFacade homeTheater = new HomeTheaterFacade(amp, dvd, proj, lights, popcorn);
   homeTheater.watchMovie("Inception");   // 1 call. Client knows only HomeTheaterFacade.
   homeTheater.endMovie();
-  
+
   // If client needs fine-grained control: can still use subsystem classes directly.
   // Facade doesn't hide them — just provides a convenient shortcut.
-  
+
 FACADE AS PACKAGE BOUNDARY IN JAVA:
 
   // Spring's JdbcTemplate is a Facade over JDBC:
@@ -164,26 +164,26 @@ FACADE AS PACKAGE BOUNDARY IN JAVA:
       return null;
   } catch (SQLException e) { throw new RuntimeException(e); }
   finally { try { conn.close(); } catch (Exception e) { ... } }
-  
+
   // With JdbcTemplate (Facade):
   return jdbcTemplate.queryForObject(
       "SELECT * FROM users WHERE id = ?",
       (rs, rowNum) -> new User(rs.getLong("id"), rs.getString("name")),
       userId
   );
-  // JdbcTemplate hides: connection management, exception translation, 
+  // JdbcTemplate hides: connection management, exception translation,
   //   ResultSet iteration, resource cleanup. Facade reduces JDBC ceremony.
-  
+
 FACADE vs ADAPTER:
 
   ADAPTER:    "I have a UK plug. I need it to fit in an EU socket."
               Translates an existing interface to a different expected interface.
               Wraps ONE class. Intent: interface compatibility.
-              
+
   FACADE:     "This system is too complex. I want a simpler API."
               Provides a simplified interface to MULTIPLE classes.
               Wraps a SUBSYSTEM. Intent: simplification.
-              
+
   KEY: Adapter changes interface. Facade simplifies interface (but doesn't change it to satisfy a pre-existing contract).
 
 FACADE LAYERS IN MICROSERVICES — BFF (BACKEND FOR FRONTEND):
@@ -200,6 +200,7 @@ FACADE LAYERS IN MICROSERVICES — BFF (BACKEND FOR FRONTEND):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Facade:
+
 - Client must know and coordinate 5 subsystem classes with correct call order
 - Changes to subsystem propagate to all clients (high coupling)
 
@@ -232,7 +233,7 @@ FACADE STRUCTURE:
                → SubsystemC.step3()
                → SubsystemA.step4()
                → return result
-               
+
   Subsystem classes exist and are still accessible.
   Facade coordinates their use for common scenarios.
   Complex clients may bypass facade for fine-grained control.
@@ -265,24 +266,24 @@ public class EmailFacade {
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
     private final RetryPolicy retryPolicy;
-    
+
     EmailFacade(JavaMailSender mailSender, TemplateEngine templateEngine, RetryPolicy retry) {
         this.mailSender    = mailSender;
         this.templateEngine = templateEngine;
         this.retryPolicy   = retry;
     }
-    
+
     // SIMPLIFIED interface: callers just provide template name + variables:
     public void sendWelcomeEmail(String toAddress, String userName) {
-        sendTemplatedEmail(toAddress, "Welcome to Acme!", "welcome", 
+        sendTemplatedEmail(toAddress, "Welcome to Acme!", "welcome",
                            Map.of("name", userName));
     }
-    
+
     public void sendPasswordReset(String toAddress, String resetToken) {
         sendTemplatedEmail(toAddress, "Reset your password", "password-reset",
                            Map.of("token", resetToken, "expiry", "24 hours"));
     }
-    
+
     // Internal method: coordinates template + SMTP + retry (hidden from clients):
     private void sendTemplatedEmail(String to, String subject, String template,
                                     Map<String, Object> variables) {
@@ -290,14 +291,14 @@ public class EmailFacade {
             // 1. Render template:
             String htmlBody = templateEngine.render(template + ".html", variables);
             String textBody = templateEngine.render(template + ".txt",  variables);
-            
+
             // 2. Build MIME message:
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(textBody, htmlBody);
-            
+
             // 3. Send:
             mailSender.send(message);
         });
@@ -308,7 +309,7 @@ public class EmailFacade {
 @Service
 class UserRegistrationService {
     @Autowired EmailFacade email;
-    
+
     void register(User user) {
         userRepository.save(user);
         email.sendWelcomeEmail(user.getEmail(), user.getName());  // 1 call
@@ -320,11 +321,11 @@ class UserRegistrationService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Facade locks you out of subsystem access | Facade does NOT prevent direct subsystem access — it just doesn't require it. If a client needs fine-grained control over, say, SMTP settings, it can still use JavaMailSender directly. Facade is a convenience layer, not an access control layer (that's Proxy). |
-| Facade is always a class | In practice, Facade can be a class, a service, an API endpoint, a module, or even a microservice (BFF). The principle — provide a simplified interface to a complex system — applies at multiple levels of architecture. JdbcTemplate, RestTemplate, Spring's Facade beans are all Facade pattern at the component level. |
-| Facade is the same as Mediator | Facade: coordinates CLIENT access to a subsystem (mostly one-directional — client calls facade). Mediator: coordinates communication BETWEEN subsystem components (the subsystem components communicate through the mediator, not the other way). Facade simplifies external access. Mediator reduces coupling between internal components. |
+| Misconception                            | Reality                                                                                                                                                                                                                                                                                                                                     |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Facade locks you out of subsystem access | Facade does NOT prevent direct subsystem access — it just doesn't require it. If a client needs fine-grained control over, say, SMTP settings, it can still use JavaMailSender directly. Facade is a convenience layer, not an access control layer (that's Proxy).                                                                         |
+| Facade is always a class                 | In practice, Facade can be a class, a service, an API endpoint, a module, or even a microservice (BFF). The principle — provide a simplified interface to a complex system — applies at multiple levels of architecture. JdbcTemplate, RestTemplate, Spring's Facade beans are all Facade pattern at the component level.                   |
+| Facade is the same as Mediator           | Facade: coordinates CLIENT access to a subsystem (mostly one-directional — client calls facade). Mediator: coordinates communication BETWEEN subsystem components (the subsystem components communicate through the mediator, not the other way). Facade simplifies external access. Mediator reduces coupling between internal components. |
 
 ---
 
@@ -338,21 +339,21 @@ class ApplicationFacade {
     // Email subsystem:
     void sendWelcomeEmail(String email) { ... }
     void sendPasswordReset(String email) { ... }
-    
+
     // Order subsystem:
     Order createOrder(Cart cart) { ... }
     void cancelOrder(String orderId) { ... }
-    
+
     // Payment subsystem:
     Payment processPayment(Order order, CreditCard card) { ... }
-    
+
     // Inventory subsystem:
     void updateStock(String sku, int delta) { ... }
     List<Product> searchProducts(String query) { ... }
-    
+
     // Report subsystem:
     Report generateSalesReport(DateRange range) { ... }
-    
+
     // ... 40 more methods
 }
 // "Facade" has become a God Object — knows everything, coordinates everything.

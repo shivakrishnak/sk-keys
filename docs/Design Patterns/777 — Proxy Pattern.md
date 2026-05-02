@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #structural, #oop, #aop, #access-control
 
 ⚡ TL;DR — **Proxy** provides a surrogate or placeholder for another object to **control access** to it — intercepting method calls to add lazy initialization, access control, caching, logging, or remote communication, all while presenting the same interface as the real object.
 
-| #777 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Decorator Pattern, Adapter Pattern | |
-| **Used by:** | Spring AOP, Lazy loading, Access control, Caching proxies, Remote proxies | |
+| #777            | Category: Design Patterns                                                 | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Decorator Pattern, Adapter Pattern           |                 |
+| **Used by:**    | Spring AOP, Lazy loading, Access control, Caching proxies, Remote proxies |                 |
 
 ---
 
@@ -53,7 +53,7 @@ PROXY STRUCTURE:
   «interface» Subject
   ───────────────────
   +request(): Response
-  
+
   RealSubject implements Subject        Proxy implements Subject
   ─────────────────────────────         ────────────────────────────
   +request(): Response                  -realSubject: Subject
@@ -61,20 +61,20 @@ PROXY STRUCTURE:
                                             // BEFORE: check access, open tx
                                             realSubject.request()
                                             // AFTER: commit tx, log, return
-                                            
+
   Client → Subject (interface) → might get RealSubject OR Proxy.
   Client doesn't know which — same interface.
-  
+
 PROXY TYPES:
 
   1. VIRTUAL PROXY — lazy initialization:
-  
+
      class HeavyImageProxy implements Image {
          private Image realImage;       // created lazily
          private final String filename;
-         
+
          HeavyImageProxy(String filename) { this.filename = filename; }
-         
+
          @Override
          public void display() {
              if (realImage == null) {
@@ -84,19 +84,19 @@ PROXY TYPES:
              realImage.display();   // delegate
          }
      }
-     
+
      // Client:
      Image img = new HeavyImageProxy("photo.jpg");  // NO disk I/O yet
      // ... user may never call display() — RealImage never created
      img.display();  // FIRST call: loads image, then displays
      img.display();  // subsequent calls: image already loaded
-     
+
   2. PROTECTION PROXY — access control:
-  
+
      class SecureServiceProxy implements UserService {
          private final UserService realService;
          private final SecurityContext security;
-         
+
          @Override
          public User getUser(String userId) {
              if (!security.currentUserHasRole("ROLE_ADMIN")) {
@@ -104,7 +104,7 @@ PROXY TYPES:
              }
              return realService.getUser(userId);
          }
-         
+
          @Override
          public void deleteUser(String userId) {
              if (!security.currentUserHasRole("ROLE_SUPER_ADMIN")) {
@@ -113,13 +113,13 @@ PROXY TYPES:
              realService.deleteUser(userId);
          }
      }
-     
+
   3. CACHING PROXY:
-  
+
      class CachingProductRepository implements ProductRepository {
          private final ProductRepository realRepo;
          private final Map<String, Product> cache = new ConcurrentHashMap<>();
-         
+
          @Override
          public Optional<Product> findById(String id) {
              if (cache.containsKey(id)) {
@@ -130,14 +130,14 @@ PROXY TYPES:
              return product;
          }
      }
-     
+
   4. REMOTE PROXY — hides network communication:
-  
+
      // RMI, REST client, gRPC stub — all are Remote Proxy patterns:
      // Client calls stub.getUser(id) (local call).
      // Stub serializes params, sends HTTP/RPC request, deserializes response.
      // Client doesn't know or care about network.
-     
+
      // Spring's @FeignClient creates a Remote Proxy:
      @FeignClient(name = "user-service", url = "http://user-service:8080")
      interface UserServiceClient {
@@ -145,7 +145,7 @@ PROXY TYPES:
          User getUser(@PathVariable String id);
      }
      // Spring generates a proxy: calling getUser() sends HTTP GET request.
-     
+
 SPRING AOP — JDK DYNAMIC PROXY vs CGLIB:
 
   JDK Dynamic Proxy:
@@ -153,18 +153,18 @@ SPRING AOP — JDK DYNAMIC PROXY vs CGLIB:
   - Generates a proxy class implementing the SAME INTERFACE at runtime.
   - Proxy class generated via java.lang.reflect.Proxy.newProxyInstance().
   - ONLY works for classes that implement an interface.
-  
+
   CGLIB Proxy:
   - Created when bean has no interface, OR @EnableAspectJAutoProxy(proxyTargetClass=true).
   - Generates a SUBCLASS of the target class at runtime.
   - Overrides methods to add interceptor logic.
   - Works for concrete classes without interfaces.
   - LIMITATION: cannot proxy final classes or final methods.
-  
+
   // Example: @Transactional on OrderService:
   // Spring creates CGLIB proxy: OrderService$$EnhancerBySpringCGLIB$$abc123
   // When you @Autowire OrderService, you get the CGLIB proxy — not the real service.
-  
+
   // COMMON BUG: self-invocation:
   @Service
   class OrderService {
@@ -174,13 +174,13 @@ SPRING AOP — JDK DYNAMIC PROXY vs CGLIB:
           saveOrder(o);
           sendConfirmation(o);     // ← calls this.sendConfirmation()
       }
-      
+
       @Transactional(propagation = REQUIRES_NEW)
       public void sendConfirmation(Order o) {  // <- won't start new transaction!
           emailService.send(o.getCustomerEmail(), "Confirmation");
       }
   }
-  
+
   // BUG: placeOrder() calls sendConfirmation() via `this` — bypasses proxy!
   // Proxy is only involved when call comes THROUGH the proxy object.
   // this.sendConfirmation() goes directly to the real method — no AOP intercept.
@@ -193,6 +193,7 @@ SPRING AOP — JDK DYNAMIC PROXY vs CGLIB:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Proxy:
+
 - Real subject handles access control, lazy init, caching — mixes concerns
 - Every caller must handle cross-cutting concerns (transaction management, logging)
 
@@ -270,9 +271,9 @@ class RealProductService implements ProductService {
 class LoggingProxy implements InvocationHandler {
     private final Object target;
     private final Logger log = LoggerFactory.getLogger(LoggingProxy.class);
-    
+
     LoggingProxy(Object target) { this.target = target; }
-    
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         log.info("Calling {}.{}({})", target.getClass().getSimpleName(),
@@ -306,11 +307,11 @@ proxy.findById("prod-123");  // logs: "Calling RealProductService.findById([prod
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Proxy and Decorator are the same pattern | Same structure (wraps object, same interface). Different INTENT. Decorator: ADD behavior — the new behavior IS the point. Proxy: CONTROL ACCESS — the access control/management IS the point. @Transactional adds transactional behavior (could be Decorator intent). But @Cacheable returns cached results instead of calling real method (bypasses target) — more clearly Proxy. The line blurs in practice. |
-| Spring @Transactional works on any method call | Spring @Transactional ONLY works when the call comes through the Spring proxy. Self-invocation (`this.method()`) bypasses the proxy and the transaction management. This is a very common production bug. FIX: inject self-reference or restructure to avoid self-invocation. |
-| CGLIB proxy can proxy any class | CGLIB proxies via subclassing. Cannot proxy: final classes (cannot be subclassed), final methods (cannot be overridden), private methods. @Transactional on private or final methods is silently ignored — no transaction is created. |
+| Misconception                                  | Reality                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Proxy and Decorator are the same pattern       | Same structure (wraps object, same interface). Different INTENT. Decorator: ADD behavior — the new behavior IS the point. Proxy: CONTROL ACCESS — the access control/management IS the point. @Transactional adds transactional behavior (could be Decorator intent). But @Cacheable returns cached results instead of calling real method (bypasses target) — more clearly Proxy. The line blurs in practice. |
+| Spring @Transactional works on any method call | Spring @Transactional ONLY works when the call comes through the Spring proxy. Self-invocation (`this.method()`) bypasses the proxy and the transaction management. This is a very common production bug. FIX: inject self-reference or restructure to avoid self-invocation.                                                                                                                                  |
+| CGLIB proxy can proxy any class                | CGLIB proxies via subclassing. Cannot proxy: final classes (cannot be subclassed), final methods (cannot be overridden), private methods. @Transactional on private or final methods is silently ignored — no transaction is created.                                                                                                                                                                          |
 
 ---
 
@@ -328,7 +329,7 @@ class PaymentService {
         updateBalance(payment);    // direct call → goes through proxy? YES
         notifyUser(payment);       // calls this.notifyUser() → BYPASSES proxy → no new tx!
     }
-    
+
     @Transactional(propagation = REQUIRES_NEW)  // intended: separate transaction
     public void notifyUser(Payment payment) {
         // This @Transactional is IGNORED because called via this.notifyUser()
@@ -341,7 +342,7 @@ class PaymentService {
 @Service
 class PaymentService {
     @Autowired PaymentService self;  // Spring injects the proxy!
-    
+
     @Transactional
     public void processPayment(Payment payment) {
         ...
@@ -352,7 +353,7 @@ class PaymentService {
 // FIX OPTION 2: Extract to separate Spring bean:
 @Service class PaymentService {
     @Autowired NotificationService notificationService;  // separate bean
-    
+
     @Transactional
     public void processPayment(Payment payment) {
         ...

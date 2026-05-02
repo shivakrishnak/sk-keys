@@ -18,10 +18,10 @@ tags: #intermediate, #architecture, #anti-pattern, #coupling, #testing
 
 ⚡ TL;DR — **Service Locator** provides a global registry where objects look up (pull) their dependencies — often considered an anti-pattern because it hides dependencies, makes classes hard to test in isolation, and couples code to the locator infrastructure rather than to explicit interfaces.
 
-| #764 | Category: Software Architecture Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Dependency Injection Pattern, SOLID Principles, Inversion of Control | |
-| **Used by:** | Anti-pattern identification, Code review, Legacy code analysis | |
+| #764            | Category: Software Architecture Patterns                             | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Dependency Injection Pattern, SOLID Principles, Inversion of Control |                 |
+| **Used by:**    | Anti-pattern identification, Code review, Legacy code analysis       |                 |
 
 ---
 
@@ -52,18 +52,18 @@ SERVICE LOCATOR STRUCTURE:
 
   class ServiceLocator {
       private static Map<Class<?>, Object> registry = new HashMap<>();
-      
+
       static <T> void register(Class<T> type, T impl) {
           registry.put(type, impl);
       }
-      
+
       static <T> T get(Class<T> type) {
           T service = (T) registry.get(type);
           if (service == null) throw new ServiceNotFoundException(type);
           return service;
       }
   }
-  
+
   // Usage — dependencies hidden INSIDE methods:
   class OrderService {
       void placeOrder(Order order) {
@@ -71,26 +71,26 @@ SERVICE LOCATOR STRUCTURE:
           EmailService email   = ServiceLocator.get(EmailService.class);
           PaymentGateway pay   = ServiceLocator.get(PaymentGateway.class);
           OrderRepository repo = ServiceLocator.get(OrderRepository.class);
-          
+
           // ... use them
       }
   }
-  
+
 PROBLEMS:
 
   1. HIDDEN DEPENDENCIES (biggest problem):
-  
+
      // From the outside, OrderService appears to have no dependencies:
      OrderService service = new OrderService();
      service.placeOrder(order);  // Works or FAILS AT RUNTIME if locator not set up
-     
+
      // You cannot know what OrderService needs without reading its implementation.
      // Constructor injection shows dependencies explicitly:
      OrderService service = new OrderService(emailService, payment, repo);
      // Immediately visible: needs 3 things.
-     
+
   2. DIFFICULT UNIT TESTING:
-  
+
      // Test setup: must configure the GLOBAL locator:
      @BeforeEach
      void setup() {
@@ -99,33 +99,33 @@ PROBLEMS:
          ServiceLocator.register(OrderRepository.class, new MockOrderRepository());
          // If any of these are missing: runtime exception, not compile error
      }
-     
+
      @AfterEach
      void teardown() {
          ServiceLocator.clear();  // Must clean up global state between tests!
      }
-     
+
      // Tests: ORDER-DEPENDENT if teardown fails. Global state contamination.
-     
+
   3. GLOBAL STATE:
-  
+
      ServiceLocator is a global singleton. All tests share it.
      Parallel test execution: race conditions on the shared locator.
      One test pollutes another's service registrations.
-     
+
   4. RUNTIME FAILURES:
-  
+
      // Missing registration discovered AT RUNTIME, not compile time:
      ServiceLocator.get(EmailService.class)  // ServiceNotFoundException at runtime
-     
+
      // DI: missing dependency = application won't START (compile or startup error).
      // Service Locator: missing registration = fails on FIRST USE (could be in production).
-     
+
   5. COUPLING TO LOCATOR:
-  
+
      Every class that uses Service Locator is now COUPLED TO THE LOCATOR ITSELF.
      Change the locator mechanism: all classes must change.
-     
+
      // Class is not reusable outside a Service Locator context.
      // Port to a different framework: must refactor every class.
 
@@ -135,17 +135,17 @@ WHEN SERVICE LOCATOR IS ACCEPTABLE (context matters):
      Spring's ApplicationContext.getBean() is used in main() to start the application.
      This is the "composition root" — the ONE place that orchestrates everything.
      Here, Service Locator is acceptable (it IS the composition root).
-     
+
   2. LEGACY CODE / FRAMEWORK CONSTRAINTS:
      Static factory methods in frameworks sometimes must use Service Locator
      (e.g., JPA EntityListeners, deserializers that can't receive injected dependencies).
      Document it. Minimize scope.
-     
+
   3. PLUGIN ARCHITECTURE (limited scope):
      A plugin registry where plugins look up core services by type.
      If the registry is explicitly typed and scoped to the plugin API, it's less problematic
      than a global God locator.
-     
+
   FOWLER'S VERDICT: "With a Service Locator the application class asks for it explicitly
   by a message to the locator. With injection there is no explicit request, the service
   appears in the application class... The key difference is that with a Service Locator
@@ -154,7 +154,7 @@ WHEN SERVICE LOCATOR IS ACCEPTABLE (context matters):
 THE COMPOSITION ROOT PATTERN (the right use of Service Locator):
 
   // ONLY use Service Locator at the composition root (main / application start):
-  
+
   class Application {
       public static void main(String[] args) {
           // Composition root: wire everything here:
@@ -174,6 +174,7 @@ THE COMPOSITION ROOT PATTERN (the right use of Service Locator):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Service Locator (pure DI):
+
 - DI requires wiring the entire object graph at startup — verbose without a container
 
 WITH Service Locator (the appeal):
@@ -201,18 +202,18 @@ The Problem: This convenience comes at the cost of invisible dependencies, untes
 ANTI-PATTERN DETECTION:
 
   Signs of Service Locator in code:
-  
+
   1. Classes with no-arg constructors that call ServiceLocator/Context.get() inside methods.
-  
+
   2. Test setup that calls ServiceLocator.register(MockX.class) before each test.
-  
+
   3. @Autowired ApplicationContext context in Spring — then context.getBean() inside methods.
      (Valid at composition root; anti-pattern everywhere else.)
-  
+
   4. Static global maps or singletons that provide service lookups.
-  
+
   REFACTORING TO DI:
-  
+
   1. Find all ServiceLocator.get(X.class) calls in a class.
   2. Add X as a constructor parameter.
   3. Remove the ServiceLocator.get() calls; use the injected field.
@@ -229,7 +230,7 @@ Object needs a dependency — options:
         ├── Create it with new (worst: no swapping, hard to test)
         ├── Service Locator (pulls from global registry — hidden deps)
         └── Dependency Injection (pushed in — explicit, testable)
-        
+
 Service Locator Anti-Pattern ◄──── (you are here)
 (global registry pattern — avoid in application code)
         │
@@ -251,7 +252,7 @@ class NotificationService {
         SMSService sms     = ServiceLocator.get(SMSService.class);      // hidden dep #2
         UserPrefs prefs    = ServiceLocator.get(UserPrefsService.class) // hidden dep #3
                                            .getPrefs(userId);
-        
+
         if (prefs.emailEnabled()) email.send(userId, message);
         if (prefs.smsEnabled())   sms.send(userId, message);
     }
@@ -271,14 +272,14 @@ class NotificationService {
     private final EmailService email;
     private final SMSService sms;
     private final UserPrefsService prefs;
-    
+
     // Dependencies declared EXPLICITLY — visible to all readers and tools:
     NotificationService(EmailService email, SMSService sms, UserPrefsService prefs) {
         this.email = email;
         this.sms   = sms;
         this.prefs = prefs;
     }
-    
+
     void notify(UserId userId, String message) {
         UserPrefs p = prefs.getPrefs(userId);
         if (p.emailEnabled()) email.send(userId, message);
@@ -295,11 +296,11 @@ var service = new NotificationService(mockEmail, mockSms, mockPrefs);
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Service Locator is not used in modern code | Service Locator appears in many modern codebases under different names: `ApplicationContext.getBean()` in Spring, `HttpContext.RequestServices.GetService()` in ASP.NET Core, static `Registry.get()` helpers. The anti-pattern is alive and common — recognizing it is important |
-| Using Spring's ApplicationContext.getBean() is always an anti-pattern | Using `getBean()` in the composition root (main method, application initializer) is acceptable — that IS the wiring layer. Using `getBean()` inside application services or domain classes IS the anti-pattern. The distinction is LOCATION: composition root (OK) vs. application code (anti-pattern) |
-| Service Locator is only a problem for unit tests | Invisible dependencies affect more than testing. They make code harder to understand (can't tell what a class needs without reading it). They make refactoring harder (can't safely change a service registration without knowing all its hidden consumers). They violate the principle of least surprise |
+| Misconception                                                         | Reality                                                                                                                                                                                                                                                                                                   |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Service Locator is not used in modern code                            | Service Locator appears in many modern codebases under different names: `ApplicationContext.getBean()` in Spring, `HttpContext.RequestServices.GetService()` in ASP.NET Core, static `Registry.get()` helpers. The anti-pattern is alive and common — recognizing it is important                         |
+| Using Spring's ApplicationContext.getBean() is always an anti-pattern | Using `getBean()` in the composition root (main method, application initializer) is acceptable — that IS the wiring layer. Using `getBean()` inside application services or domain classes IS the anti-pattern. The distinction is LOCATION: composition root (OK) vs. application code (anti-pattern)    |
+| Service Locator is only a problem for unit tests                      | Invisible dependencies affect more than testing. They make code harder to understand (can't tell what a class needs without reading it). They make refactoring harder (can't safely change a service registration without knowing all its hidden consumers). They violate the principle of least surprise |
 
 ---
 
@@ -313,12 +314,12 @@ var service = new NotificationService(mockEmail, mockSms, mockPrefs);
 class ReportOrchestrator {
     @Autowired
     private ApplicationContext ctx;  // Service Locator injected!
-    
+
     void generate(ReportType type, ReportId id) {
         // Hidden dependency lookup inside the method:
         ReportGenerator gen = ctx.getBean(type.getGeneratorBeanName(), ReportGenerator.class);
         EmailService email  = ctx.getBean("emailService", EmailService.class);
-        
+
         gen.generate(id);
         email.send(...);
     }
@@ -331,14 +332,14 @@ class ReportOrchestrator {
 class ReportOrchestrator {
     private final Map<ReportType, ReportGenerator> generators;
     private final EmailService email;
-    
+
     // Spring collects all ReportGenerator beans into the map (keyed by qualifier/enum):
     ReportOrchestrator(Map<String, ReportGenerator> gens, EmailService email) {
         this.generators = gens.entrySet().stream()
             .collect(toMap(e -> ReportType.from(e.getKey()), Map.Entry::getValue));
         this.email = email;
     }
-    
+
     void generate(ReportType type, ReportId id) {
         generators.get(type).generate(id);
         email.send(...);

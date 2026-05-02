@@ -18,10 +18,10 @@ tags: #intermediate, #architecture, #principles, #agile, #clean-code
 
 ⚡ TL;DR — **YAGNI (You Aren't Gonna Need It)** is the Extreme Programming principle that says never add functionality until it is actually needed — implementing speculative features creates unnecessary cost: design, code, test, document, maintain, and explain code that may never be used.
 
-| #753 | Category: Software Architecture Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | KISS Principle, DRY Principle, Agile | |
-| **Used by:** | Code quality, System Design, Clean Code, Technical Debt | |
+| #753            | Category: Software Architecture Patterns                | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------ | :-------------- |
+| **Depends on:** | KISS Principle, DRY Principle, Agile                    |                 |
+| **Used by:**    | Code quality, System Design, Clean Code, Technical Debt |                 |
 
 ---
 
@@ -51,7 +51,7 @@ A developer implementing an order API adds `placeOrder()`. Then thinks: "Maybe w
 YAGNI COST MODEL:
 
   "The cost of a speculative feature":
-  
+
     Cost of BUILDING NOW (when not needed):
     ┌───────────────────────────────────────────────┐
     │ 1. Design cost: thinking through architecture │
@@ -66,64 +66,64 @@ YAGNI COST MODEL:
     │ 8. Risk cost: speculative code has bugs too.  │
     │    Bugs in unused code: production issues.    │
     └───────────────────────────────────────────────┘
-    
+
     PLUS: Often built wrong — requirements are guessed.
     When it IS actually needed: must refactor anyway.
-    
+
   Cost of BUILDING LATER (when actually needed):
     1. Design: now you have real requirements (cheaper, more accurate)
     2. Implementation: build exactly what's needed (no waste)
     3. Testing: test actual use cases (no guess-tests)
     4. Review: reviewers understand the requirement context
-    
+
   YAGNI ROI: Most speculative features are never used.
   Studies suggest 45-65% of enterprise software features are rarely or never used.
   (Standish Group Chaos Report, 2002 data.)
-  
+
 WHAT YAGNI IS NOT:
 
   1. YAGNI ≠ "Don't design ahead":
      Good design anticipates CHANGE (interfaces, abstractions, boundaries).
      YAGNI: don't BUILD unused features. Do DESIGN for changeability.
-     
+
      YAGNI violation: implementing PayPalPaymentProcessor + StripePaymentProcessor +
      SquarePaymentProcessor when only Stripe is ever going to be used.
-     
+
      Not a YAGNI violation: defining PaymentProcessor interface that Stripe implements.
      If PayPal is needed: add a new class without changing existing code.
      The interface is there for CURRENT clean code, not for speculative future providers.
-     
+
   2. YAGNI ≠ "Write throwaway code":
      Build what you need, build it WELL. YAGNI removes SCOPE; it doesn't reduce QUALITY.
-     
+
   3. YAGNI ≠ "No infrastructure code":
      Logging, error handling, security, health checks: NEEDED NOW.
      These aren't speculative — they serve real, present requirements (operational requirements).
-     
+
   4. YAGNI ≠ Never refactor:
      You refactor to accommodate new requirements (which you DID need).
-     
+
 COMMON YAGNI VIOLATIONS:
 
   1. Plugin/extension points for unknown plugins:
      Adding registry, hooks, lifecycle callbacks "for future extensibility"
      when the feature will never be extended.
-     
+
   2. Generics where a concrete type suffices:
      List<AbstractOrderProcessor<? super BaseOrder, T>> when List<Order> works.
-     
+
   3. Feature flags for non-existent features:
      ENABLE_NEW_CHECKOUT_FLOW=false — never enabled, stays for 2 years.
-     
+
   4. Database columns for future data:
      spare1, spare2, spare3 columns "just in case."
-     
+
   5. API versioning from v1 when v2 has no requirements:
      /api/v1/orders — v2 never created.
-     
+
   6. Caching before proving there's a performance problem:
      Added Redis + cache layer. Service handles 50 req/day. Latency was fine.
-     
+
   7. Abstract factories before multiple implementations exist:
      AbstractAnimalFactory → CatFactory, DogFactory...
      when only Dog is needed and Cat never materializes.
@@ -134,6 +134,7 @@ COMMON YAGNI VIOLATIONS:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT YAGNI:
+
 - Developers build features "someone might ask for later" — codebase bloats with unused code
 - Unused code: still requires maintenance, causes confusion, may have bugs
 
@@ -159,7 +160,7 @@ WITH YAGNI:
 YAGNI DECISION FILTER:
 
   Feature/code idea arrives:
-  
+
          ┌─────────────────────────────────────┐
          │ Is this feature in current sprint   │
          │ requirements / acceptance criteria? │
@@ -233,11 +234,11 @@ class JpaOrderRepository implements OrderRepository {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| YAGNI means don't plan ahead architecturally | YAGNI applies to IMPLEMENTATION, not to DESIGN. Good architecture creates extensible designs (e.g., interfaces for dependencies). YAGNI says don't CREATE the second implementation of an interface until it's actually needed. The interface itself isn't a YAGNI violation — it serves the current code cleanly |
-| YAGNI violates DRY (you end up duplicating when you do need the feature) | YAGNI and DRY operate at different stages. DRY: eliminate existing duplication. YAGNI: don't pre-build future features. They don't conflict — apply YAGNI to decide scope, apply DRY when implementing what IS in scope |
-| If you practice YAGNI, you'll constantly refactor and rewrite | If requirements frequently invalidate current code, the problem is poor requirements definition, not YAGNI. Well-applied YAGNI + good design (clean interfaces, separation of concerns) means adding a new feature typically extends the existing design rather than rewrites it |
+| Misconception                                                            | Reality                                                                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| YAGNI means don't plan ahead architecturally                             | YAGNI applies to IMPLEMENTATION, not to DESIGN. Good architecture creates extensible designs (e.g., interfaces for dependencies). YAGNI says don't CREATE the second implementation of an interface until it's actually needed. The interface itself isn't a YAGNI violation — it serves the current code cleanly |
+| YAGNI violates DRY (you end up duplicating when you do need the feature) | YAGNI and DRY operate at different stages. DRY: eliminate existing duplication. YAGNI: don't pre-build future features. They don't conflict — apply YAGNI to decide scope, apply DRY when implementing what IS in scope                                                                                           |
+| If you practice YAGNI, you'll constantly refactor and rewrite            | If requirements frequently invalidate current code, the problem is poor requirements definition, not YAGNI. Well-applied YAGNI + good design (clean interfaces, separation of concerns) means adding a new feature typically extends the existing design rather than rewrites it                                  |
 
 ---
 

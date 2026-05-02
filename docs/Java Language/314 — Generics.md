@@ -18,10 +18,10 @@ tags: #java, #generics, #type-safety, #collections, #compile-time
 
 ⚡ TL;DR — **Generics** add compile-time type parameters to classes and methods, eliminating casts and enabling type-safe containers like `List<String>` — all type info is erased at runtime (Type Erasure).
 
-| #314 | Category: Java Language | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Type Erasure, Bounded Wildcards, Object class | |
-| **Used by:** | Collections, Stream API, Optional, Comparable, Spring generics | |
+| #314            | Category: Java Language                                        | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Type Erasure, Bounded Wildcards, Object class                  |                 |
+| **Used by:**    | Collections, Stream API, Optional, Comparable, Spring generics |                 |
 
 ---
 
@@ -56,13 +56,13 @@ GENERIC CLASS:
       public Box(T value) { this.value = value; }
       public T get() { return value; }
   }
-  
+
   Box<String> stringBox = new Box<>("hello");
   String s = stringBox.get();  // no cast; compiler knows type
-  
+
   Box<Integer> intBox = new Box<>(42);
   Integer i = intBox.get();
-  
+
   // Type safety:
   Box<String> b = new Box<>(42);  // COMPILE ERROR: incompatible types
 
@@ -73,7 +73,7 @@ BOUNDED TYPE PARAMETER:
       private T value;
       public double doubleValue() { return value.doubleValue(); }  // safe: Number has doubleValue()
   }
-  
+
   NumberBox<Integer> ok = new NumberBox<>(42);  // Integer extends Number ✓
   NumberBox<String> no = new NumberBox<>("x");  // COMPILE ERROR: String does not extend Number
 
@@ -83,17 +83,17 @@ GENERIC METHOD:
   public static <T extends Comparable<T>> T max(T a, T b) {
       return a.compareTo(b) >= 0 ? a : b;
   }
-  
+
   String larger = max("apple", "banana");  // T inferred as String
   Integer bigger = max(10, 20);            // T inferred as Integer
-  
+
 WILDCARD vs TYPE PARAMETER:
 
   // Wildcards: for use-site flexibility
   void printAll(List<?> list) {            // any type; read-only
       for (Object o : list) System.out.println(o);
   }
-  
+
   // Upper-bounded wildcard: read producer (PECS: Producer Extends)
   double sumList(List<? extends Number> list) {
       double sum = 0;
@@ -102,13 +102,13 @@ WILDCARD vs TYPE PARAMETER:
   }
   // sumList(List<Integer>) ✓, sumList(List<Double>) ✓
   // list.add(1.5) → COMPILE ERROR: can't add to ? extends Number (unknown exact type)
-  
+
   // Lower-bounded wildcard: write consumer (PECS: Consumer Super)
   void addNumbers(List<? super Integer> list) {
       list.add(1); list.add(2);  // safe: list accepts Integer or supertype
   }
   // addNumbers(List<Integer>) ✓, addNumbers(List<Number>) ✓, addNumbers(List<Object>) ✓
-  
+
   // PECS RULE: Producer Extends, Consumer Super
   // Reading from a collection (producer) → ? extends T
   // Writing to a collection (consumer) → ? super T
@@ -116,13 +116,13 @@ WILDCARD vs TYPE PARAMETER:
 TYPE ERASURE CONSEQUENCES:
 
   At runtime: List<String> == List<Integer> (same raw type List.class)
-  
+
   ILLEGAL at compile time:
   if (list instanceof List<String>) { ... }  // can't check generic type at runtime
   T obj = new T();                            // can't instantiate type parameter
   T[] arr = new T[10];                        // can't create generic array
   Class<T> clazz = T.class;                   // can't get .class of type parameter
-  
+
   WORKAROUND for T.class — pass Class<T> explicitly:
   public <T> T fromJson(String json, Class<T> type) {
       return objectMapper.readValue(json, type);
@@ -134,6 +134,7 @@ TYPE ERASURE CONSEQUENCES:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Generics (pre-Java 5):
+
 - `List list = new ArrayList(); list.add("hello"); list.add(42);` — no compile-time error
 - `String s = (String) list.get(1);` — `ClassCastException` at runtime: cast failed
 - All collection code littered with casts; type errors caught only at runtime
@@ -163,17 +164,17 @@ GENERIC TYPE ERASURE IN BYTECODE:
   Source:                         Bytecode (after erasure):
   List<String> list = ...;    →   List list = ...;
   String s = list.get(0);    →   String s = (String) list.get(0);  ← cast inserted by compiler
-  
+
   class Box<T> { T get(); }  →   class Box { Object get(); }  ← T replaced by Object
   class Box<T extends Number> { T get(); } → class Box { Number get(); }  ← T replaced by bound
-  
+
   BRIDGE METHODS (compiler-generated for overriding):
-  
+
   interface Comparable<T> { int compareTo(T o); }
   class MyString implements Comparable<MyString> {
       public int compareTo(MyString o) { ... }
   }
-  
+
   Compiler generates bridge method:
   public int compareTo(Object o) {   // bridge: erased signature
       return compareTo((MyString) o);  // delegates to typed version
@@ -207,7 +208,7 @@ Generics ◄──── (you are here)
 public class Pair<A, B> {
     private final A first;
     private final B second;
-    
+
     public Pair(A first, B second) {
         this.first = first;
         this.second = second;
@@ -249,11 +250,11 @@ Collections.copy(dest, src);  // works: Integer extends Number
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `List<Animal>` is a supertype of `List<Dog>` | Generic types are invariant. `List<Dog>` is NOT a `List<Animal>`, even though `Dog extends Animal`. This is by design: if it were allowed, you could add a `Cat` to a `List<Dog>` via the `List<Animal>` reference. Use wildcards: `List<? extends Animal>` for read-only access. |
-| You can create a generic array: `T[] arr = new T[10]` | Illegal due to type erasure. The JVM cannot create an array of an unknown type at runtime. Workaround: `@SuppressWarnings("unchecked") T[] arr = (T[]) new Object[10]` — unsafe cast. Or use `ArrayList<T>` which avoids the array creation problem. |
-| Raw types and generics can be freely mixed | Mixing generates "unchecked" warnings and breaks type safety. Assigning `List<String>` to `List` (raw) and then adding an `Integer` compiles with a warning but causes `ClassCastException` at runtime when the list is read as `List<String>`. Never use raw types in new code. |
+| Misconception                                         | Reality                                                                                                                                                                                                                                                                           |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `List<Animal>` is a supertype of `List<Dog>`          | Generic types are invariant. `List<Dog>` is NOT a `List<Animal>`, even though `Dog extends Animal`. This is by design: if it were allowed, you could add a `Cat` to a `List<Dog>` via the `List<Animal>` reference. Use wildcards: `List<? extends Animal>` for read-only access. |
+| You can create a generic array: `T[] arr = new T[10]` | Illegal due to type erasure. The JVM cannot create an array of an unknown type at runtime. Workaround: `@SuppressWarnings("unchecked") T[] arr = (T[]) new Object[10]` — unsafe cast. Or use `ArrayList<T>` which avoids the array creation problem.                              |
+| Raw types and generics can be freely mixed            | Mixing generates "unchecked" warnings and breaks type safety. Assigning `List<String>` to `List` (raw) and then adding an `Integer` compiles with a warning but causes `ClassCastException` at runtime when the list is read as `List<String>`. Never use raw types in new code.  |
 
 ---
 

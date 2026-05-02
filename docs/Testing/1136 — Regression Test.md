@@ -18,10 +18,10 @@ tags: #testing, #regression-test, #bug-fix, #test-coverage, #ci-cd
 
 ⚡ TL;DR — **Regression testing** verifies that previously working functionality hasn't broken after a code change. A "regression" is a bug reintroduced after being fixed — or a feature that was working and now isn't. Every bug fix should be followed by a regression test: write a test that would have caught the bug, then keep it running forever. A regression test suite grows continuously — it's the institutional memory of "things that have broken before."
 
-| #1136 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, Integration Test, E2E Test | |
-| **Used by:** | CI-CD pipelines, release validation, bug fix verification | |
+| #1136           | Category: Testing                                         | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------- | :-------------- |
+| **Depends on:** | Unit Test, Integration Test, E2E Test                     |                 |
+| **Used by:**    | CI-CD pipelines, release validation, bug fix verification |                 |
 
 ---
 
@@ -40,10 +40,12 @@ You fixed a bug where `user.getAge()` returned -1 for new accounts. You write a 
 ### 🔵 Simple Definition (Elaborated)
 
 Regression tests serve two purposes:
+
 1. **Catch bug recurrence**: a specific bug was fixed; the test ensures it doesn't come back
 2. **Catch unintended side effects**: a change in one area accidentally breaks something else
 
 **Regression test lifecycle**:
+
 1. Bug found in production (e.g., order total calculation rounds incorrectly)
 2. Developer reproduces the bug with a failing test
 3. Developer fixes the bug → test passes
@@ -51,6 +53,7 @@ Regression tests serve two purposes:
 5. If anyone ever breaks order total calculation again → test fails immediately
 
 **Full regression suite vs selective regression**:
+
 - **Full regression**: run ALL tests before each release — comprehensive but slow (could take hours)
 - **Selective/targeted regression**: test impact analysis — identify which tests are affected by changed code files and run only those — faster but risks missing indirect effects
 - Modern CI practice: full regression runs nightly or before production releases; selective regression runs on every PR
@@ -75,17 +78,17 @@ void bug4421_orderTotalIsZeroNotNullForFreeShippingItems() {
     Order order = new Order();
     order.addItem(new OrderItem("prod-1", 29.99, Shipping.FREE));
     order.addItem(new OrderItem("prod-2", 19.99, Shipping.FREE));
-    
+
     // ACT
     BigDecimal total = orderCalculator.calculateTotal(order);
-    
+
     // ASSERT: total should be sum of item prices (not null, not NPE)
     assertThat(total).isNotNull();
     assertThat(total).isEqualByComparingTo(new BigDecimal("49.98"));
     // Note: this test is deliberately named with the bug ticket for traceability
 }
 
-// Bug ticket #BUG-5902: "Concurrent requests cause duplicate order IDs"  
+// Bug ticket #BUG-5902: "Concurrent requests cause duplicate order IDs"
 // Fix: added unique constraint + retry logic
 // Regression test: verifies concurrent orders don't generate duplicate IDs
 
@@ -97,7 +100,7 @@ void bug5902_concurrentOrdersHaveUniqueIds() throws InterruptedException {
     ConcurrentHashMap<String, Boolean> orderIds = new ConcurrentHashMap<>();
     CountDownLatch latch = new CountDownLatch(threads);
     AtomicInteger failures = new AtomicInteger(0);
-    
+
     for (int i = 0; i < threads; i++) {
         executor.submit(() -> {
             try {
@@ -112,10 +115,10 @@ void bug5902_concurrentOrdersHaveUniqueIds() throws InterruptedException {
             }
         });
     }
-    
+
     latch.await(10, TimeUnit.SECONDS);
     executor.shutdown();
-    
+
     assertThat(failures.get())
         .as("No duplicate order IDs should be generated under concurrent load")
         .isZero();
@@ -129,12 +132,12 @@ void bug5902_concurrentOrdersHaveUniqueIds() throws InterruptedException {
 void bug6110_negativeQuantityThrowsValidationError() {
     // ARRANGE
     Cart cart = new Cart("user-1");
-    
+
     // ACT + ASSERT: negative quantity must be rejected, not cause NPE or DB error
     assertThatThrownBy(() -> cartService.addItem(cart, "prod-1", -5))
         .isInstanceOf(ValidationException.class)
         .hasMessageContaining("Quantity must be positive");
-    
+
     // Cart should be unchanged
     assertThat(cart.getItems()).isEmpty();
 }
@@ -158,7 +161,7 @@ void bug6110_negativeQuantityThrowsValidationError() {
 @Tag("regression-bug-fixes")   // run on every PR
 @Tag("regression-full")        // run before every release
 class OrderCalculatorRegressionTest {
-    
+
     @Test @Tag("regression-bug-fixes")
     @DisplayName("BUG-4421: ...")
     void bug4421() { ... }
@@ -237,14 +240,14 @@ void bug7203_checkoutButtonVisibleWithMoreThan10CartItems(Page page) {
     for (int i = 0; i < 11; i++) {
         addProductToCart(page, "prod-" + i);
     }
-    
+
     page.navigate(BASE_URL + "/cart");
-    
+
     // ASSERT: checkout button is visible AND clickable (not hidden by z-index issue)
     Locator checkoutButton = page.locator("[data-testid='checkout-button']");
     assertThat(checkoutButton).isVisible();
     assertThat(checkoutButton).isEnabled();
-    
+
     // Verify we can actually proceed to checkout
     checkoutButton.click();
     assertThat(page).hasURL(Pattern.compile(".*/checkout"));
@@ -255,11 +258,11 @@ void bug7203_checkoutButtonVisibleWithMoreThan10CartItems(Page page) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Regression tests are a separate test type | Regression tests are unit, integration, or E2E tests — differentiated by purpose, not implementation. A unit test written because a bug was found IS a regression test. Most tests serve as both behavioral tests AND regression guards. |
-| All tests are regression tests | While all tests guard against future regressions incidentally, the term "regression test" typically refers to tests specifically written in response to a bug. This distinction matters because it: (1) tracks which tests came from production bugs, (2) prioritizes these tests in selective regression, and (3) provides traceability to bug tickets. |
-| Once a regression test passes, the bug is gone for good | The test prevents that exact regression, but similar bugs can appear in related code paths not covered by the test. Regression tests are targeted guards, not comprehensive coverage. After finding a bug, consider: "what similar code could have the same problem?" and add tests there too. |
+| Misconception                                           | Reality                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Regression tests are a separate test type               | Regression tests are unit, integration, or E2E tests — differentiated by purpose, not implementation. A unit test written because a bug was found IS a regression test. Most tests serve as both behavioral tests AND regression guards.                                                                                                                 |
+| All tests are regression tests                          | While all tests guard against future regressions incidentally, the term "regression test" typically refers to tests specifically written in response to a bug. This distinction matters because it: (1) tracks which tests came from production bugs, (2) prioritizes these tests in selective regression, and (3) provides traceability to bug tickets. |
+| Once a regression test passes, the bug is gone for good | The test prevents that exact regression, but similar bugs can appear in related code paths not covered by the test. Regression tests are targeted guards, not comprehensive coverage. After finding a bug, consider: "what similar code could have the same problem?" and add tests there too.                                                           |
 
 ---
 

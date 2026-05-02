@@ -18,16 +18,16 @@ tags: #testing, #smoke-test, #sanity-check, #deployment, #health-check
 
 ⚡ TL;DR — **Smoke tests** are a minimal subset of tests run immediately after deployment to verify that the application's critical functionality is working. Named after hardware testing: power on the circuit board — if smoke appears, something is fundamentally broken, stop immediately. In software: deploy → run smoke tests → if they fail, roll back before the bad deployment causes damage. Fast (seconds to 2 minutes), not comprehensive.
 
-| #1135 | Category: Testing | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | E2E Test, CI-CD Pipeline | |
-| **Used by:** | Deployment pipelines, health checks, staging validation | |
+| #1135           | Category: Testing                                       | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------------ | :-------------- |
+| **Depends on:** | E2E Test, CI-CD Pipeline                                |                 |
+| **Used by:**    | Deployment pipelines, health checks, staging validation |                 |
 
 ---
 
 ### 📘 Textbook Definition
 
-**Smoke test** (also: *sanity test*, *build verification test (BVT)*): a shallow, rapid test suite that verifies the most fundamental operations of a system function after a new deployment. Origin: hardware engineering — power on a new circuit board; if it smokes (burns), testing stops immediately. Software equivalent: deploy → run a small set of critical tests → if ANY fail, roll back immediately; if ALL pass, proceed with full test suite or allow traffic. Characteristics: (1) **Fast** — 30 seconds to 2 minutes; (2) **Minimal** — tests only the most critical paths (login, health endpoint, homepage loads); (3) **Binary outcome** — all pass → deployment is "not obviously broken"; any fail → immediate rollback; (4) **Automated** — triggered automatically in the deployment pipeline; (5) **Run against deployed environment** — tests the actual deployed service, not mocked dependencies. Typical smoke tests: `GET /health` returns 200, user can log in, homepage renders, critical API endpoint responds. Smoke tests are NOT comprehensive — they're a first filter to catch catastrophic failures (app fails to start, database connection broken, misconfigured environment variables) before they affect users or before a full test suite wastes time.
+**Smoke test** (also: _sanity test_, _build verification test (BVT)_): a shallow, rapid test suite that verifies the most fundamental operations of a system function after a new deployment. Origin: hardware engineering — power on a new circuit board; if it smokes (burns), testing stops immediately. Software equivalent: deploy → run a small set of critical tests → if ANY fail, roll back immediately; if ALL pass, proceed with full test suite or allow traffic. Characteristics: (1) **Fast** — 30 seconds to 2 minutes; (2) **Minimal** — tests only the most critical paths (login, health endpoint, homepage loads); (3) **Binary outcome** — all pass → deployment is "not obviously broken"; any fail → immediate rollback; (4) **Automated** — triggered automatically in the deployment pipeline; (5) **Run against deployed environment** — tests the actual deployed service, not mocked dependencies. Typical smoke tests: `GET /health` returns 200, user can log in, homepage renders, critical API endpoint responds. Smoke tests are NOT comprehensive — they're a first filter to catch catastrophic failures (app fails to start, database connection broken, misconfigured environment variables) before they affect users or before a full test suite wastes time.
 
 ---
 
@@ -42,6 +42,7 @@ You deploy a new version of your app. Before letting any users in, run 5 quick t
 Smoke tests answer: **"Is the system basically alive?"** — not "is it 100% correct," but "is it minimally functional?"
 
 **Typical smoke test checklist**:
+
 - `GET /health` → 200 OK (app started successfully)
 - `GET /health/db` → 200 OK (database connected)
 - `POST /auth/login` with test credentials → 200 OK with token (auth working)
@@ -49,6 +50,7 @@ Smoke tests answer: **"Is the system basically alive?"** — not "is it 100% cor
 - Core business API → 200 OK (critical functionality responding)
 
 **Where smoke tests fit in the pipeline**:
+
 ```
 Code push → Build → Unit tests → Integration tests → Deploy to staging
         → SMOKE TESTS → (pass) → Full E2E tests → Deploy to production
@@ -58,6 +60,7 @@ Code push → Build → Unit tests → Integration tests → Deploy to staging
 **Why not just run the full test suite?**: Full E2E tests take 20-60 minutes. If the deployment is fundamentally broken (app won't start), you don't want to wait 30 minutes to find out — smoke tests tell you in 60 seconds.
 
 **Distinction from health checks**:
+
 - **Health check**: infrastructure-level, passive probe (Kubernetes liveness/readiness probes) — "is the process running?"
 - **Smoke test**: test-level, active verification — "does the critical functionality work?"
 
@@ -70,9 +73,9 @@ Code push → Build → Unit tests → Integration tests → Deploy to staging
 
 @Tag("smoke")  // Mark as smoke tests — can run subset: mvn test -Dgroups=smoke
 class SmokeTest {
-    
+
     private static final String BASE_URL = System.getenv("APP_URL"); // deployed app URL
-    
+
     @BeforeAll
     static void setup() {
         RestAssured.baseURI = BASE_URL;
@@ -81,7 +84,7 @@ class SmokeTest {
                 .setParam(CoreConnectionPNames.CONNECTION_TIMEOUT, 5000)
                 .setParam(CoreConnectionPNames.SO_TIMEOUT, 5000));  // fast timeout
     }
-    
+
     @Test
     @DisplayName("Health endpoint is UP")
     void healthCheck() {
@@ -90,7 +93,7 @@ class SmokeTest {
             .statusCode(200)
             .body("status", equalTo("UP"));
     }
-    
+
     @Test
     @DisplayName("Database is reachable")
     void databaseHealth() {
@@ -100,7 +103,7 @@ class SmokeTest {
             .body("status", equalTo("UP"))
             .body("database", equalTo("connected"));
     }
-    
+
     @Test
     @DisplayName("Authentication endpoint responds")
     void authEndpoint() {
@@ -113,7 +116,7 @@ class SmokeTest {
             .statusCode(200)
             .body("accessToken", notNullValue());
     }
-    
+
     @Test
     @DisplayName("Core product API responds")
     void coreProductApi() {
@@ -139,24 +142,24 @@ jobs:
     steps:
       - name: Deploy to staging
         run: ./deploy.sh staging ${{ github.sha }}
-        
+
       - name: Wait for deployment healthy
         run: |
           for i in {1..30}; do
             if curl -f "$STAGING_URL/health"; then echo "Ready!"; break; fi
             echo "Waiting... ($i/30)"; sleep 10
           done
-      
+
       - name: Run smoke tests
         run: mvn test -Dgroups=smoke -DAPP_URL=$STAGING_URL
-        timeout-minutes: 2   # smoke tests should be FAST
-        
+        timeout-minutes: 2 # smoke tests should be FAST
+
       - name: Rollback on smoke test failure
         if: failure()
-        run: ./rollback.sh staging  # revert to previous version immediately
-        
+        run: ./rollback.sh staging # revert to previous version immediately
+
   full-test:
-    needs: deploy    # only run if smoke tests pass
+    needs: deploy # only run if smoke tests pass
     runs-on: ubuntu-latest
     steps:
       - name: Run full E2E test suite
@@ -169,20 +172,20 @@ SMOKE TEST DESIGN PRINCIPLES:
 
   1. FAST: total runtime < 2 minutes
      (if it takes longer, it's not a smoke test anymore)
-  
+
   2. CRITICAL ONLY: test paths that, if broken, make the app unusable
      ✓ App starts and responds
      ✓ Authentication works
      ✓ Core business function responds
      ✗ Edge cases, error handling, all features
-  
+
   3. INDEPENDENT: don't depend on specific data in the database
      Use a dedicated smoke test user in all environments
      Use `GET` for read operations where possible (no data pollution)
-  
+
   4. ENVIRONMENT AGNOSTIC: same smoke tests run in staging AND production
      Tests use the deployed app's URL via env variable
-  
+
   5. IMMEDIATE ROLLBACK on any failure:
      One failed smoke test → entire deployment is suspect → rollback
      Don't cherry-pick which failures are "acceptable"
@@ -259,11 +262,11 @@ fi
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Smoke tests passing means the deployment is safe | Smoke tests only verify CRITICAL functionality. A passing smoke test means "it's not catastrophically broken." Bugs in non-critical paths, performance degradation, and edge-case failures won't be caught by smoke tests. The full regression suite still needs to pass. |
-| Smoke tests should be thorough | The more comprehensive smoke tests become, the more they slow down the deployment pipeline and the more they resemble a full test suite. Keep smoke tests to 5-15 tests maximum, running in under 2 minutes. If you want more coverage, add it to the integration or E2E suite (which runs after smoke tests pass). |
-| Smoke tests replace health checks | Health checks (Kubernetes liveness/readiness probes) are infrastructure-level: "is the process running and ready to serve traffic?" Smoke tests are test-level: "does the critical application logic work?" Both are needed. Health checks gate traffic routing; smoke tests gate deployment promotion. |
+| Misconception                                    | Reality                                                                                                                                                                                                                                                                                                             |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Smoke tests passing means the deployment is safe | Smoke tests only verify CRITICAL functionality. A passing smoke test means "it's not catastrophically broken." Bugs in non-critical paths, performance degradation, and edge-case failures won't be caught by smoke tests. The full regression suite still needs to pass.                                           |
+| Smoke tests should be thorough                   | The more comprehensive smoke tests become, the more they slow down the deployment pipeline and the more they resemble a full test suite. Keep smoke tests to 5-15 tests maximum, running in under 2 minutes. If you want more coverage, add it to the integration or E2E suite (which runs after smoke tests pass). |
+| Smoke tests replace health checks                | Health checks (Kubernetes liveness/readiness probes) are infrastructure-level: "is the process running and ready to serve traffic?" Smoke tests are test-level: "does the critical application logic work?" Both are needed. Health checks gate traffic routing; smoke tests gate deployment promotion.             |
 
 ---
 

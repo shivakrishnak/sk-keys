@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #ddd, #spring-data, #jpa, #domain-rules, #com
 
 ⚡ TL;DR — **Specification Pattern** encapsulates a business rule as a reusable, composable object with `isSatisfiedBy(T candidate)` — combine rules with `and()`, `or()`, `not()` to build complex queries without scattering logic across the codebase.
 
-| #820 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Interpreter Pattern, Composite Pattern, Spring Data JPA, Domain-Driven Design | |
-| **Used by:** | Complex domain queries, business rule encapsulation, Spring Data Specification, validation | |
+| #820            | Category: Design Patterns                                                                  | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Interpreter Pattern, Composite Pattern, Spring Data JPA, Domain-Driven Design              |                 |
+| **Used by:**    | Complex domain queries, business rule encapsulation, Spring Data Specification, validation |                 |
 
 ---
 
@@ -52,60 +52,60 @@ GENERIC SPECIFICATION INTERFACE:
 
   public interface Specification<T> {
       boolean isSatisfiedBy(T candidate);
-      
+
       default Specification<T> and(Specification<T> other) {
           return candidate -> this.isSatisfiedBy(candidate) && other.isSatisfiedBy(candidate);
       }
-      
+
       default Specification<T> or(Specification<T> other) {
           return candidate -> this.isSatisfiedBy(candidate) || other.isSatisfiedBy(candidate);
       }
-      
+
       default Specification<T> not() {
           return candidate -> !this.isSatisfiedBy(candidate);
       }
   }
-  
+
   // Terminal specifications (reusable business rules):
-  
+
   public class ActiveCustomerSpec implements Specification<Customer> {
       @Override
       public boolean isSatisfiedBy(Customer customer) {
           return customer.getStatus() == CustomerStatus.ACTIVE;
       }
   }
-  
+
   public class PremiumCustomerSpec implements Specification<Customer> {
       @Override
       public boolean isSatisfiedBy(Customer customer) {
           return customer.isPremium();
       }
   }
-  
+
   public class AgeAboveSpec implements Specification<Customer> {
       private final int minimumAge;
-      
+
       public AgeAboveSpec(int minimumAge) {
           this.minimumAge = minimumAge;
       }
-      
+
       @Override
       public boolean isSatisfiedBy(Customer customer) {
           return customer.getAge() > minimumAge;
       }
   }
-  
+
   // Composite usage:
   Specification<Customer> eligibleForPremiumOffer =
       new ActiveCustomerSpec()
           .and(new PremiumCustomerSpec())
           .and(new AgeAboveSpec(18));
-  
+
   // In-memory filtering:
   List<Customer> eligible = customers.stream()
       .filter(eligibleForPremiumOffer::isSatisfiedBy)
       .collect(toList());
-  
+
   // Domain validation:
   if (!eligibleForPremiumOffer.isSatisfiedBy(customer)) {
       throw new CustomerNotEligibleException("Customer does not meet premium offer criteria");
@@ -115,41 +115,41 @@ SPRING DATA JPA SPECIFICATION:
 
   // Spring's org.springframework.data.jpa.domain.Specification<T>
   // translates to JPA Criteria API (generates SQL WHERE clauses)
-  
+
   // Repository:
   public interface CustomerRepository
       extends JpaRepository<Customer, Long>,
               JpaSpecificationExecutor<Customer> {}   // enables findAll(Specification<Customer>)
-  
+
   // JPA Specifications (generates SQL predicates):
   public class CustomerSpecs {
-      
+
       public static Specification<Customer> isActive() {
           return (root, query, criteriaBuilder) ->
               criteriaBuilder.equal(root.get("status"), CustomerStatus.ACTIVE);
       }
-      
+
       public static Specification<Customer> isPremium() {
           return (root, query, criteriaBuilder) ->
               criteriaBuilder.isTrue(root.get("premium"));
       }
-      
+
       public static Specification<Customer> ageAbove(int minimumAge) {
           return (root, query, criteriaBuilder) ->
               criteriaBuilder.greaterThan(root.get("age"), minimumAge);
       }
-      
+
       public static Specification<Customer> registeredAfter(LocalDate date) {
           return (root, query, criteriaBuilder) ->
               criteriaBuilder.greaterThan(root.get("registrationDate"), date);
       }
   }
-  
+
   // Compose specifications (Spring's Specification supports and()/or()/not()):
   Specification<Customer> spec = CustomerSpecs.isActive()
       .and(CustomerSpecs.isPremium())
       .and(CustomerSpecs.ageAbove(18));
-  
+
   // Execute as single SQL query:
   List<Customer> results = customerRepository.findAll(spec);
   // Generated SQL (approximately):
@@ -157,17 +157,17 @@ SPRING DATA JPA SPECIFICATION:
   // WHERE status = 'ACTIVE'
   //   AND premium = true
   //   AND age > 18;
-  
+
   // Dynamic query composition (from filter request):
   public List<Customer> search(CustomerSearchRequest req) {
       Specification<Customer> spec = Specification.where(null);  // Always-true base
-      
+
       if (req.getActiveOnly()) spec = spec.and(CustomerSpecs.isActive());
       if (req.getPremiumOnly()) spec = spec.and(CustomerSpecs.isPremium());
       if (req.getMinAge() != null) spec = spec.and(CustomerSpecs.ageAbove(req.getMinAge()));
       if (req.getRegisteredAfter() != null)
           spec = spec.and(CustomerSpecs.registeredAfter(req.getRegisteredAfter()));
-      
+
       return customerRepository.findAll(spec);
   }
   // Result: composable dynamic query without if-else on query strings.
@@ -176,11 +176,11 @@ SPRING DATA JPA SPECIFICATION:
 DOMAIN VALIDATION REUSE:
 
   // Same spec used for validation AND querying:
-  
+
   @Service @RequiredArgsConstructor
   public class OfferService {
       private final CustomerRepository customerRepo;
-      
+
       // IN-MEMORY (validation):
       public void validateEligibility(Customer customer) {
           Specification<Customer> eligible = CustomerSpecs.isActive()
@@ -189,7 +189,7 @@ DOMAIN VALIDATION REUSE:
               throw new CustomerNotEligibleException(customer.getId());
           }
       }
-      
+
       // JPA QUERY (batch query):
       public List<Customer> findEligibleCustomers() {
           return customerRepo.findAll(
@@ -205,6 +205,7 @@ DOMAIN VALIDATION REUSE:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Specification:
+
 - Business rules scattered: service methods, query method names, WHERE clauses, stream filters — multiple places, can drift and become inconsistent
 - Adding a new filter: modify query method signature, modify JPQL, modify stream filter — in sync
 - Rules not named, not reusable, not testable in isolation
@@ -237,20 +238,20 @@ SPECIFICATION PATTERN STRUCTURE:
   ├── and(Specification<T>) → Specification<T>   (AndSpec wrapper)
   ├── or(Specification<T>)  → Specification<T>   (OrSpec wrapper)
   └── not()                 → Specification<T>   (NotSpec wrapper)
-  
+
   Concrete Implementations (Terminal):
   ActiveCustomerSpec, PremiumCustomerSpec, AgeAboveSpec, ...
-  
+
   Composition creates anonymous Composite specifications:
   active.and(premium) = AnonymousSpec: active.isSatisfiedBy(c) && premium.isSatisfiedBy(c)
-  
+
   SPRING DATA JPA INTEGRATION:
-  
+
   Specification<T>       (Spring interface: (Root, CriteriaQuery, CriteriaBuilder) → Predicate)
   Predicate              (JPA: SQL WHERE clause fragment)
   CriteriaBuilder        (JPA: builds predicates: equal, greaterThan, like, etc.)
   Root<T>                (JPA: from clause — access entity fields)
-  
+
   Spring's Specification.and(other):
   return (root, query, cb) → cb.and(this.toPredicate(root, query, cb),
                                     other.toPredicate(root, query, cb));
@@ -284,11 +285,11 @@ Specification Pattern ◄──── (you are here)
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                            | Reality                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Spring Data's Specification is the Specification Pattern | Spring's `org.springframework.data.jpa.domain.Specification<T>` implements the pattern specifically for JPA Criteria API (database queries). Evans/Fowler's original pattern is for in-memory `isSatisfiedBy(T)` checks. They serve related but different purposes: in-memory validation vs. SQL generation. You need both: one for domain validation (in-memory), one for JPA queries (Criteria API). They can coexist and ideally share the same named specification concept (even if implemented differently). |
-| Specification Pattern replaces Query by Example or JPQL | They solve the same problem differently. Specification Pattern: composable, named, reusable, testable. JPQL/Query by Example: simpler for static queries, hard to compose dynamically. Query methods (`findByStatusAndPremium`): compile-time safe but inflexible. Use Specification when you need: dynamic composition of multiple filters at runtime based on user input. Use JPQL for simple, static queries. |
-| All business rules should be Specifications | Specification Pattern shines when: (1) the same rule is used in multiple contexts (validate + query + filter), (2) rules are dynamically composed, (3) rules are complex enough to warrant naming. Simple, one-time rules: `if (order.getTotal() > 0)` — don't wrap in a Specification. Apply the pattern where it provides value: shared, named business rules used in multiple contexts. |
+| Specification Pattern replaces Query by Example or JPQL  | They solve the same problem differently. Specification Pattern: composable, named, reusable, testable. JPQL/Query by Example: simpler for static queries, hard to compose dynamically. Query methods (`findByStatusAndPremium`): compile-time safe but inflexible. Use Specification when you need: dynamic composition of multiple filters at runtime based on user input. Use JPQL for simple, static queries.                                                                                                  |
+| All business rules should be Specifications              | Specification Pattern shines when: (1) the same rule is used in multiple contexts (validate + query + filter), (2) rules are dynamically composed, (3) rules are complex enough to warrant naming. Simple, one-time rules: `if (order.getTotal() > 0)` — don't wrap in a Specification. Apply the pattern where it provides value: shared, named business rules used in multiple contexts.                                                                                                                        |
 
 ---
 
@@ -302,12 +303,12 @@ Specification Pattern ◄──── (you are here)
 @Service
 public class CustomerService {
     private final CustomerRepository repo;
-    
+
     public List<Customer> findEligibleForOffer() {
         Specification<Customer> spec = new ActiveCustomerSpec()
             .and(new PremiumCustomerSpec())
             .and(new AgeAboveSpec(18));
-        
+
         // WRONG: loading ALL customers to memory, then filtering:
         List<Customer> all = repo.findAll();  // SELECT * FROM customers → potentially 1M rows!
         return all.stream()
@@ -322,18 +323,18 @@ public class CustomerService {
 @Service
 public class CustomerService {
     private final CustomerRepository repo;  // extends JpaSpecificationExecutor
-    
+
     public List<Customer> findEligibleForOffer() {
         // JPA Specification: filters IN DATABASE — only 10,000 rows returned:
         Specification<Customer> spec = CustomerSpecs.isActive()
             .and(CustomerSpecs.isPremium())
             .and(CustomerSpecs.ageAbove(18));
-        
+
         return repo.findAll(spec);
         // Generated SQL: SELECT * FROM customers WHERE status='ACTIVE' AND premium=true AND age>18
         // Returns only matching rows. Zero OOM risk.
     }
-    
+
     // For large result sets: use pagination:
     public Page<Customer> findEligibleForOfferPaged(Pageable pageable) {
         Specification<Customer> spec = CustomerSpecs.isActive()
@@ -343,7 +344,7 @@ public class CustomerService {
     }
 }
 
-// RULE: 
+// RULE:
 // In-memory Specification (isSatisfiedBy): use for domain validation on single objects.
 // JPA Specification (toPredicate): use for querying collections from the database.
 // Never load a large collection to filter in memory when a JPA query would work.

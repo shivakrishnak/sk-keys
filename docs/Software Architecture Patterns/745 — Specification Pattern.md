@@ -18,10 +18,10 @@ tags: #advanced, #architecture, #ddd, #patterns, #query
 
 ⚡ TL;DR — The **Specification Pattern** encapsulates a business rule as a reusable, composable object that can be used for validation, filtering, and querying — decoupling business rules from the code that applies them.
 
-| #745 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Domain Model, Value Objects, Repository Pattern | |
-| **Used by:** | DDD, Spring Data Specifications, Query building, Validation | |
+| #745            | Category: Software Architecture Patterns                    | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------- | :-------------- |
+| **Depends on:** | Domain Model, Value Objects, Repository Pattern             |                 |
+| **Used by:**    | DDD, Spring Data Specifications, Query building, Validation |                 |
 
 ---
 
@@ -53,21 +53,21 @@ BASIC SPECIFICATION INTERFACE:
   // Generic specification interface:
   interface Specification<T> {
       boolean isSatisfiedBy(T candidate);
-      
+
       // Composition operators:
       default Specification<T> and(Specification<T> other) {
           return candidate -> this.isSatisfiedBy(candidate) && other.isSatisfiedBy(candidate);
       }
-      
+
       default Specification<T> or(Specification<T> other) {
           return candidate -> this.isSatisfiedBy(candidate) || other.isSatisfiedBy(candidate);
       }
-      
+
       default Specification<T> not() {
           return candidate -> !this.isSatisfiedBy(candidate);
       }
   }
-  
+
 CONCRETE SPECIFICATIONS:
 
   class PremiumCustomerSpec implements Specification<Customer> {
@@ -76,18 +76,18 @@ CONCRETE SPECIFICATIONS:
           return customer.membershipType() == MembershipType.PREMIUM;
       }
   }
-  
+
   class MinimumOrderCountSpec implements Specification<Customer> {
       private final int minimumOrders;
       private final Period period;
       private final OrderRepository orderRepo;
-      
+
       MinimumOrderCountSpec(int minimumOrders, Period period, OrderRepository orderRepo) {
           this.minimumOrders = minimumOrders;
           this.period = period;
           this.orderRepo = orderRepo;
       }
-      
+
       @Override
       public boolean isSatisfiedBy(Customer customer) {
           LocalDate since = LocalDate.now().minus(period);
@@ -95,14 +95,14 @@ CONCRETE SPECIFICATIONS:
           return orderCount >= minimumOrders;
       }
   }
-  
+
   class NotInArrearsSpec implements Specification<Customer> {
       @Override
       public boolean isSatisfiedBy(Customer customer) {
           return customer.balance().isGreaterThanOrEqual(Money.zero(USD));
       }
   }
-  
+
 COMPOSITION — BUILDING COMPLEX RULES FROM SIMPLE SPECS:
 
   // Each spec is simple. Composition creates the complex rule:
@@ -110,19 +110,19 @@ COMPOSITION — BUILDING COMPLEX RULES FROM SIMPLE SPECS:
       new PremiumCustomerSpec()
           .and(new MinimumOrderCountSpec(5, Period.ofYears(1), orderRepo))
           .and(new NotInArrearsSpec());
-          
+
   // Usage in service:
   customers.stream()
            .filter(premiumDiscountEligible::isSatisfiedBy)
            .forEach(discountService::applyPremiumDiscount);
-           
+
   // Usage in validation:
   if (!premiumDiscountEligible.isSatisfiedBy(customer)) {
       throw new NotEligibleForDiscountException(customer.id());
   }
-  
+
   // Same spec: validation, filtering, batch processing — one definition.
-  
+
 USE CASE 1: VALIDATION (is this object valid for this operation?):
 
   class OrderFulfillmentSpec implements Specification<Order> {
@@ -132,11 +132,11 @@ USE CASE 1: VALIDATION (is this object valid for this operation?):
               && order.shippingAddress() != null;
       }
   }
-  
+
   // Validation:
   OrderFulfillmentSpec spec = new OrderFulfillmentSpec();
   if (!spec.isSatisfiedBy(order)) throw new OrderNotFulfillableException(order.id());
-  
+
 USE CASE 2: IN-MEMORY FILTERING (filter a collection):
 
   List<Product> eligibleForPromotion = products.stream()
@@ -144,14 +144,14 @@ USE CASE 2: IN-MEMORY FILTERING (filter a collection):
               .and(new StockAboveThresholdSpec(10))
               .and(new NoActiveDiscountSpec())::isSatisfiedBy)
       .toList();
-      
+
 USE CASE 3: QUERY GENERATION (Spring Data JPA Specifications):
 
   // Spring Data Specification interface integrates with JPA Criteria API:
   interface Specification<T> {
       Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder);
   }
-  
+
   class PremiumCustomerSpecification implements Specification<CustomerJpaEntity> {
       @Override
       public Predicate toPredicate(Root<CustomerJpaEntity> root,
@@ -160,11 +160,11 @@ USE CASE 3: QUERY GENERATION (Spring Data JPA Specifications):
           return cb.equal(root.get("membershipType"), "PREMIUM");
       }
   }
-  
+
   class MinOrderCountSpecification implements Specification<CustomerJpaEntity> {
       private final int minOrders;
       MinOrderCountSpecification(int minOrders) { this.minOrders = minOrders; }
-      
+
       @Override
       public Predicate toPredicate(Root<CustomerJpaEntity> root,
                                    CriteriaQuery<?> query,
@@ -177,31 +177,31 @@ USE CASE 3: QUERY GENERATION (Spring Data JPA Specifications):
           return cb.greaterThanOrEqualTo(subquery, (long) minOrders);
       }
   }
-  
+
   // Spring Data: combine and query:
   Specification<CustomerJpaEntity> spec =
       new PremiumCustomerSpecification()
           .and(new MinOrderCountSpecification(5));
-          
+
   List<CustomerJpaEntity> results = customerJpaRepo.findAll(spec);
   // Spring Data generates: SELECT * FROM customers WHERE membership_type = 'PREMIUM'
   //   AND (SELECT COUNT(*) FROM orders WHERE customer_id = customers.id) >= 5
-  
+
   // Repository method signature:
   interface CustomerJpaRepo extends JpaRepository<CustomerJpaEntity, Long>,
                                      JpaSpecificationExecutor<CustomerJpaEntity> {}
-  
+
 SPECIFICATION AS A NAMED DOMAIN CONCEPT:
 
   Instead of scattered predicates:
     customers.stream().filter(c -> c.membership() == PREMIUM
         && c.orderCount() >= 5
         && !c.isInArrears())     // Anonymous predicate — no name.
-        
+
   Named specification:
     PremiumDiscountEligibilitySpecification eligibility = new PremiumDiscountEligibilitySpecification();
     customers.stream().filter(eligibility::isSatisfiedBy)  // Named! Self-documenting.
-    
+
   // Name captures INTENT: "eligible for premium discount" is meaningful.
   // The logic might change; the name stays the same.
   // Domain experts can review: "Show me PremiumDiscountEligibilitySpecification" — readable.
@@ -212,6 +212,7 @@ SPECIFICATION AS A NAMED DOMAIN CONCEPT:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Specification:
+
 - Business rule "eligible for premium discount" scattered: validation in service, filter in reporting, query in batch job — three copies of the same conditional logic
 - Rule changes: update 3+ places; easily miss one
 
@@ -276,7 +277,7 @@ Specification Pattern ◄──── (you are here)
 // Composable specifications for product eligibility:
 interface Specification<T> {
     boolean isSatisfiedBy(T candidate);
-    
+
     default Specification<T> and(Specification<T> other) {
         return candidate -> this.isSatisfiedBy(candidate) && other.isSatisfiedBy(candidate);
     }
@@ -324,11 +325,11 @@ List<Product> readyToShip = products.stream()
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Specification Pattern is just a fancy Predicate | Specification adds: (1) a domain-meaningful name that captures business intent (`EligibleForCreditSpec` vs. anonymous lambda), (2) composability with named `and()`, `or()`, `not()`, (3) ability to translate to queries (Spring Data), and (4) reusability across validation, filtering, and querying contexts. Java `Predicate<T>` does composition but without business meaning or query translation |
-| Specifications always need to query the database | No. Simple specifications are pure: `PremiumCustomerSpec` checks a field on the object — no DB query. Complex specifications might need data: `MinOrderCountSpec` queries the order count. Design them for the appropriate source: in-memory check vs. DB query. For DB-level filtering: Spring Data `JpaSpecificationExecutor` translates to SQL |
-| Specification Pattern replaces the Repository query methods | Complementary. Simple queries: named repository methods (`findByStatus(status)`) are cleaner. Dynamic queries with multiple optional criteria: Specification is better (`findAll(spec)`). Don't replace all repository methods with Specifications — only where the combination of criteria needs to be dynamic or the rule is complex enough to deserve a name |
+| Misconception                                               | Reality                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Specification Pattern is just a fancy Predicate             | Specification adds: (1) a domain-meaningful name that captures business intent (`EligibleForCreditSpec` vs. anonymous lambda), (2) composability with named `and()`, `or()`, `not()`, (3) ability to translate to queries (Spring Data), and (4) reusability across validation, filtering, and querying contexts. Java `Predicate<T>` does composition but without business meaning or query translation |
+| Specifications always need to query the database            | No. Simple specifications are pure: `PremiumCustomerSpec` checks a field on the object — no DB query. Complex specifications might need data: `MinOrderCountSpec` queries the order count. Design them for the appropriate source: in-memory check vs. DB query. For DB-level filtering: Spring Data `JpaSpecificationExecutor` translates to SQL                                                        |
+| Specification Pattern replaces the Repository query methods | Complementary. Simple queries: named repository methods (`findByStatus(status)`) are cleaner. Dynamic queries with multiple optional criteria: Specification is better (`findAll(spec)`). Don't replace all repository methods with Specifications — only where the combination of criteria needs to be dynamic or the rule is complex enough to deserve a name                                          |
 
 ---
 
@@ -351,7 +352,7 @@ class SufficientInventorySpec implements Specification<Product> {
 // FIX for critical checks: spec should reflect real-time data, or check at DB level:
 class SufficientInventorySpec implements Specification<Product> {
     private final InventoryRepository inventoryRepo;
-    
+
     boolean isSatisfiedBy(Product product) {
         // Query current state from DB (not from loaded object):
         return inventoryRepo.getAvailableStock(product.id()) > 0;

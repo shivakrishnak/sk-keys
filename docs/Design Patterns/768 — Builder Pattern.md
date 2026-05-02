@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #creational, #fluent-api, #oop
 
 ⚡ TL;DR — **Builder** separates the construction of a complex object from its representation — using a step-by-step building process with a fluent API, avoiding the "telescoping constructor" anti-pattern where a class has constructors with every possible combination of optional parameters.
 
-| #768 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Factory Method Pattern | |
-| **Used by:** | Complex object construction, Fluent APIs, Test fixtures, Immutable objects | |
+| #768            | Category: Design Patterns                                                  | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Factory Method Pattern                        |                 |
+| **Used by:**    | Complex object construction, Fluent APIs, Test fixtures, Immutable objects |                 |
 
 ---
 
@@ -57,11 +57,11 @@ TELESCOPING CONSTRUCTOR PROBLEM:
       Pizza(Size size, Crust crust, boolean extraCheese, List<Topping> toppings) { ... }
       Pizza(Size size, Crust crust, boolean extraCheese, List<Topping> toppings, boolean extraSauce) { ... }
   }
-  
+
   new Pizza(LARGE, THIN, true, List.of(PEPPERONI, MUSHROOM), false)
   //         ↑ size ↑ crust ↑ extra cheese ↑ toppings              ↑ extra sauce?
   // What does the last false mean? Hard to read. Easy to swap booleans.
-  
+
 JAVABEAN ALTERNATIVE (also bad — mutable, broken invariants):
 
   Pizza pizza = new Pizza();
@@ -71,7 +71,7 @@ JAVABEAN ALTERNATIVE (also bad — mutable, broken invariants):
   pizza.setToppings(List.of(PEPPERONI));
   pizza.bake();  // What if setSize was never called? Inconsistent object.
   // JavaBean: object can be in invalid state during construction.
-  
+
 BUILDER SOLUTION:
 
   // BUILD PROCESS:
@@ -81,45 +81,45 @@ BUILDER SOLUTION:
       .extraCheese(true)                    // optional
       .toppings(PEPPERONI, MUSHROOM)        // optional, varargs
       .build();                             // creates final, IMMUTABLE pizza
-      
+
   // BUILDER IMPLEMENTATION:
   public class Pizza {
       private final Size size;            // final — immutable after build
       private final Crust crust;
       private final boolean extraCheese;
       private final List<Topping> toppings;
-      
+
       private Pizza(Builder b) {          // private constructor — only Builder can create
           this.size        = b.size;
           this.crust       = b.crust != null ? b.crust : Crust.REGULAR;
           this.extraCheese = b.extraCheese;
           this.toppings    = List.copyOf(b.toppings);  // defensive copy
       }
-      
+
       public static Builder builder() { return new Builder(); }
-      
+
       public static class Builder {
           private Size size;                            // required
           private Crust crust;                          // optional
           private boolean extraCheese = false;          // optional, default
           private List<Topping> toppings = new ArrayList<>();
-          
+
           public Builder size(Size size) {
               this.size = Objects.requireNonNull(size);
               return this;  // fluent: returns this for chaining
           }
-          
+
           public Builder crust(Crust crust) { this.crust = crust; return this; }
           public Builder extraCheese(boolean extra) { this.extraCheese = extra; return this; }
           public Builder toppings(Topping... t) { this.toppings.addAll(Arrays.asList(t)); return this; }
-          
+
           public Pizza build() {
               if (size == null) throw new IllegalStateException("size is required");
               return new Pizza(this);
           }
       }
   }
-  
+
 LOMBOK @Builder (eliminates boilerplate):
 
   @Builder
@@ -132,14 +132,14 @@ LOMBOK @Builder (eliminates boilerplate):
       String cc;
       String bcc;
   }
-  
+
   // Usage:
   Email email = Email.builder()
       .to("user@example.com")
       .subject("Welcome")
       .body("Hello!")
       .build();
-  
+
 BUILDER IN TESTS (test data builder / object mother pattern):
 
   // Test data builders make tests readable:
@@ -149,10 +149,10 @@ BUILDER IN TESTS (test data builder / object mother pattern):
       .withTotal(Money.of(200, USD))
       .withStatus(PENDING)
       .build();
-      
+
   // Compare: new Order(new Customer("id1", "John", PREMIUM), items, Money.of(200, USD), PENDING)
   // Builder: reads like a specification, not a data dump.
-  
+
 DIRECTOR PATTERN (GoF original — less common in modern Java):
 
   // Director controls the sequence of builder calls:
@@ -173,6 +173,7 @@ DIRECTOR PATTERN (GoF original — less common in modern Java):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Builder (telescoping constructors):
+
 - `new Email("to@", "from@", "subject", "body", null, null, false, Priority.NORMAL)` — 8 positional params, unreadable, error-prone
 - Objects with optional parameters require N! constructor combinations
 
@@ -203,7 +204,7 @@ BUILDER CHAIN:
          .field1(val1)   → sets field, returns this
          .field2(val2)   → sets field, returns this
          .build()        → validates + constructs immutable product
-         
+
   INVARIANT CHECK IN build():
     if (required == null) throw IllegalStateException
     if (field1 > field2) throw IllegalArgumentException
@@ -239,7 +240,7 @@ public class HttpRequest {
     private final Map<String, String> headers;
     private final String body;
     private final Duration timeout;
-    
+
     private HttpRequest(Builder b) {
         this.url     = b.url;
         this.method  = b.method;
@@ -247,29 +248,29 @@ public class HttpRequest {
         this.body    = b.body;
         this.timeout = b.timeout != null ? b.timeout : Duration.ofSeconds(30);
     }
-    
+
     public static Builder builder(String url, HttpMethod method) {
         return new Builder(url, method);  // required params in factory method
     }
-    
+
     public static class Builder {
         private final String url;
         private final HttpMethod method;
         private final Map<String, String> headers = new LinkedHashMap<>();
         private String body;
         private Duration timeout;
-        
+
         private Builder(String url, HttpMethod method) {
             this.url = Objects.requireNonNull(url, "url required");
             this.method = Objects.requireNonNull(method, "method required");
         }
-        
+
         public Builder header(String key, String value) {
             this.headers.put(key, value); return this;
         }
         public Builder body(String body) { this.body = body; return this; }
         public Builder timeout(Duration t) { this.timeout = t; return this; }
-        
+
         public HttpRequest build() { return new HttpRequest(this); }
     }
 }
@@ -287,11 +288,11 @@ HttpRequest req = HttpRequest.builder("https://api.example.com/orders", POST)
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Builder Pattern is always needed for complex objects | Builder is best when: (1) many optional parameters, (2) immutability desired, (3) readability matters. For objects with 2-3 required parameters: a simple constructor is cleaner. YAGNI: don't add a Builder until the telescoping constructor problem actually appears |
-| Builder and Factory Method are the same | Different problems: Factory Method decides WHICH type to create (what class). Builder decides HOW to create it (what parameters, what configuration). They can be combined: Factory Method returns a Builder, and Builder constructs the product |
-| Builder breaks immutability because builder is mutable | The BUILDER is mutable during construction — that's the point. The PRODUCT (what build() returns) is immutable. The mutable builder is a temporary construction helper. The final product should have final fields and no setters |
+| Misconception                                          | Reality                                                                                                                                                                                                                                                                 |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Builder Pattern is always needed for complex objects   | Builder is best when: (1) many optional parameters, (2) immutability desired, (3) readability matters. For objects with 2-3 required parameters: a simple constructor is cleaner. YAGNI: don't add a Builder until the telescoping constructor problem actually appears |
+| Builder and Factory Method are the same                | Different problems: Factory Method decides WHICH type to create (what class). Builder decides HOW to create it (what parameters, what configuration). They can be combined: Factory Method returns a Builder, and Builder constructs the product                        |
+| Builder breaks immutability because builder is mutable | The BUILDER is mutable during construction — that's the point. The PRODUCT (what build() returns) is immutable. The mutable builder is a temporary construction helper. The final product should have final fields and no setters                                       |
 
 ---
 

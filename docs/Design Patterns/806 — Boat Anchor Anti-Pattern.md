@@ -18,10 +18,10 @@ tags: #intermediate, #anti-patterns, #design-patterns, #dead-code, #over-enginee
 
 ⚡ TL;DR — **Boat Anchor** is keeping a component, module, or subsystem in the codebase that was built for a planned feature that never launched — dead weight that slows the system without providing value, like an anchor dragging behind a boat.
 
-| #806 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Anti-Patterns Overview, Lava Flow Anti-Pattern, Technical Debt | |
-| **Used by:** | Code review, legacy system analysis, refactoring planning | |
+| #806            | Category: Design Patterns                                      | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Anti-Patterns Overview, Lava Flow Anti-Pattern, Technical Debt |                 |
+| **Used by:**    | Code review, legacy system analysis, refactoring planning      |                 |
 
 ---
 
@@ -51,34 +51,34 @@ A startup pivoted from B2C to B2B 18 months ago. Still in the codebase: the soci
 BOAT ANCHOR ACCUMULATION PATTERNS:
 
   1. SPECULATIVE FEATURE BUILDING (YAGNI violation):
-  
+
   // "We'll need multi-tenancy eventually — let's build it now."
   // 3 months of work: tenant isolation, tenant-scoped queries, tenant config
   // Product decision: single-tenant SaaS only for the foreseeable future
-  
+
   // Result:
   // - Every query: WHERE tenant_id = ? (performance overhead)
   // - Every domain object: has tenantId field (cognitive overhead)
   // - Every test: sets up tenant context (test setup overhead)
   // - No multi-tenant customers: benefit = 0
-  
+
   YAGNI: "You Ain't Gonna Need It" (XP principle, Ron Jeffries)
   Build what is needed NOW. Don't build for hypothetical future requirements.
-  
+
   2. CANCELLED INTEGRATION SCAFFOLDING:
-  
+
   // Engineering built full Salesforce CRM integration:
   // - SalesforceAuthService, SalesforceContactService, SalesforceOpportunityService
   // - 4 database tables for CRM sync state
   // - OAuth flow for Salesforce connection
   // - 15 Salesforce-specific DTOs
-  
+
   // Sales deal with Salesforce integration requirement: fell through.
   // Code: stays in the repo. Never activated. Regularly updated when
   // Salesforce SDK version changes break compilation.
-  
+
   3. ABANDONED MIGRATION ARTIFACTS:
-  
+
   // Team started migrating from Hibernate to JOOQ.
   // Got 30% through. Product priorities changed. Migration stalled.
   // Result: both Hibernate AND JOOQ in the codebase simultaneously.
@@ -86,19 +86,19 @@ BOAT ANCHOR ACCUMULATION PATTERNS:
   // Some queries: JOOQ DSL
   // Team: unclear which to use for new code
   // Both: maintained, both: tested, both: updated when DB schema changes
-  
+
   4. DEPRECATED PLUGIN/SDK RETENTION:
-  
+
   // Application used AWS SDK v1 → migrated to v2 → v1 still in pom.xml
   // Both: on the classpath. Classpath conflicts. Confusing to new developers.
   // "We kept v1 in case something doesn't work in v2"
   // It's been 2 years. Everything works with v2. AWS SDK v1 is EOL.
-  
+
 BOAT ANCHOR vs. LAVA FLOW:
 
   Lava Flow: was once ACTIVE in production, hardened, now feared
   Boat Anchor: was built speculatively, NEVER fully active, now inert
-  
+
   Similarity: both are dead weight, both feared, both should be removed
   Difference: Boat Anchor typically has clearer removal path (was never active)
 
@@ -108,17 +108,17 @@ BOAT ANCHOR REMOVAL PROCESS:
   - Find all entry points to the module
   - Confirm: none are reachable from active code paths
   - Check feature flags: is it behind a disabled flag?
-  
+
   Step 2: Notify (short review)
   - Confirm with product owner: "Multi-currency feature — still planned?"
   - "No" → schedule removal sprint
-  
+
   Step 3: Remove (one commit per module)
   - Remove source code
   - Remove database migrations (or add a drop migration)
   - Remove pom.xml/build.gradle dependencies
   - Remove configuration entries
-  
+
   Step 4: Document (in commit message)
   // "Remove multi-currency module — feature cancelled Q3 2023 per product decision.
   //  Code archived in git history. DB tables dropped in migration V42."
@@ -129,6 +129,7 @@ BOAT ANCHOR REMOVAL PROCESS:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Boat Anchor awareness:
+
 - Speculative features feel like "good engineering" — anticipating future needs
 - Removing code feels risky and unproductive
 
@@ -156,23 +157,23 @@ YAGNI PRINCIPLE (prevention of Boat Anchor):
 
   YAGNI: You Ain't Gonna Need It
   Source: Ron Jeffries, Kent Beck — Extreme Programming (XP), 1999
-  
-  Rule: implement a feature when it is ACTUALLY needed, not when you 
+
+  Rule: implement a feature when it is ACTUALLY needed, not when you
         ANTICIPATE it will be needed.
-  
+
   Why YAGNI works:
   - Requirements change: what you build today for "future needs" is often wrong
   - Cost of building now: developer time + maintenance forever
   - Cost of building when needed: developer time (no maintenance until needed)
   - Future requirements, when real, are better understood than speculative ones
-  
+
   FEATURE FLAGS as alternative to Boat Anchor:
   // Instead of leaving dead code, use feature flags:
   @Service
   class MultiCurrencyService {
       @Value("${feature.multi-currency.enabled:false}")
       private boolean enabled;
-      
+
       public Money convert(Money amount, Currency target) {
           if (!enabled) {
               throw new FeatureNotEnabledException("Multi-currency not enabled");
@@ -184,7 +185,7 @@ YAGNI PRINCIPLE (prevention of Boat Anchor):
   // Clear: code exists but is explicitly disabled
   // Easier removal: delete code, delete flag config
   // Avoids confusion: not silently dead — explicitly disabled
-  
+
   DETECTION TOOLS:
   - IntelliJ IDEA: "Unused declaration" inspection → unused at module entry points
   - Maven: dependency:analyze → declared but unused dependencies
@@ -251,7 +252,7 @@ class SamlRemovalVerificationTest {
         assertThatThrownBy(() -> Class.forName("org.springframework.security.saml.SAMLEntryPoint"))
             .isInstanceOf(ClassNotFoundException.class);
     }
-    
+
     @Test
     void samlTableDoesNotExist() {
         // Run against test DB — Flyway migration should have dropped the table
@@ -265,11 +266,11 @@ class SamlRemovalVerificationTest {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                   | Reality                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Keeping code is always "safer" than removing it | This reverses the risk: keeping unused code adds a maintenance surface (must update when dependencies change, confuses new developers, increases build time) with zero benefit. Version control makes removal safe — every deleted line can be recovered with `git show <hash>`. The risk of keeping Boat Anchor code is cumulative and compounding; the risk of removing it (with version control) is near-zero. |
-| Boat Anchor and Lava Flow are the same thing | Boat Anchor: built speculatively for a feature that never activated; often relatively clean code that was never integrated. Lava Flow: was once active in production; hardened and feared; tangled with active code. Boat Anchor is typically easier to remove (clear boundaries, never integrated). Lava Flow is harder (interwoven with live code paths). Both are dead weight; removal strategies differ. |
-| YAGNI means never designing for extensibility | YAGNI applies to features and requirements, not to code quality. Writing clean, well-structured, testable code with clear interfaces is NOT YAGNI violation — it's the foundation for future features. YAGNI violation: implementing multi-currency support before any customer has requested it. Not YAGNI: designing the Money value object cleanly so that currency can be added when needed. |
+| Boat Anchor and Lava Flow are the same thing    | Boat Anchor: built speculatively for a feature that never activated; often relatively clean code that was never integrated. Lava Flow: was once active in production; hardened and feared; tangled with active code. Boat Anchor is typically easier to remove (clear boundaries, never integrated). Lava Flow is harder (interwoven with live code paths). Both are dead weight; removal strategies differ.      |
+| YAGNI means never designing for extensibility   | YAGNI applies to features and requirements, not to code quality. Writing clean, well-structured, testable code with clear interfaces is NOT YAGNI violation — it's the foundation for future features. YAGNI violation: implementing multi-currency support before any customer has requested it. Not YAGNI: designing the Money value object cleanly so that currency can be added when needed.                  |
 
 ---
 

@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #reactive, #streaming, #flow-control, #resili
 
 ⚡ TL;DR — **Backpressure** is a flow control mechanism where a consumer signals to the producer how much data it can handle — preventing the consumer from being overwhelmed by a faster producer, ensuring stable throughput without memory exhaustion or data loss.
 
-| #814 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Throttling Pattern, Bulkhead Pattern, Reactive Programming, Event-Driven Pattern | |
-| **Used by:** | Reactive systems, streaming pipelines, message queues, flow control | |
+| #814            | Category: Design Patterns                                                        | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Throttling Pattern, Bulkhead Pattern, Reactive Programming, Event-Driven Pattern |                 |
+| **Used by:**    | Reactive systems, streaming pipelines, message queues, flow control              |                 |
 
 ---
 
@@ -51,7 +51,7 @@ A streaming ETL pipeline: data source produces 10,000 records/second; each recor
 REACTIVE STREAMS SPECIFICATION (Backpressure Contract):
 
   4 interfaces (Java 9 java.util.concurrent.Flow):
-  
+
   Publisher<T>:     void subscribe(Subscriber<? super T> s)
   Subscriber<T>:    void onSubscribe(Subscription s)
                     void onNext(T item)
@@ -60,36 +60,36 @@ REACTIVE STREAMS SPECIFICATION (Backpressure Contract):
   Subscription:     void request(long n)     ← BACKPRESSURE SIGNAL
                     void cancel()
   Processor<T,R>:   implements Publisher<R> + Subscriber<T>
-  
+
   PROTOCOL:
   1. Subscriber.onSubscribe(subscription) called by Publisher
   2. Subscriber calls subscription.request(N) — "send me N items"
   3. Publisher sends at most N items via onNext()
   4. Subscriber processes N items, calls request(N) again when ready
   5. cycle continues until onComplete() or onError()
-  
+
   KEY: Publisher MUST NOT send more items than requested.
-  
+
 PROJECT REACTOR BACKPRESSURE:
 
   Flux (0..N items): supports backpressure by default.
-  
+
   BACKPRESSURE STRATEGIES (when downstream can't keep up):
-  
+
   1. BUFFER (default): buffer all items — risk of OOM on sustained overload
      Flux.just(items).onBackpressureBuffer(1000)  // buffer up to 1000
-  
+
   2. DROP: drop new items when buffer full — data loss but no OOM
      Flux.just(items).onBackpressureBuffer(1000, item -> log.warn("Dropped: {}", item))
      // Or:
      source.onBackpressureDrop()
-  
+
   3. LATEST: keep only the most recent item in buffer — appropriate for UI updates
      source.onBackpressureLatest()   // old unprocessed items replaced by newer
-  
+
   4. ERROR: fail immediately when consumer can't keep up
      source.onBackpressureError()    // throws OverflowException
-  
+
   5. REQUEST CONTROL (pull-based): subscriber explicitly controls rate
      // Spring WebFlux example:
      source
@@ -104,14 +104,14 @@ QUEUE-BASED BACKPRESSURE (Kafka):
     - Polls Kafka for records
     - Returns records batch of up to max.poll.records (default: 500)
     - Consumer processes batch, then polls again
-  
+
   If consumer processes < 500 records in max.poll.interval.ms:
   → Consumer group rebalance (consumer too slow)
-  
+
   Backpressure tuning:
   max.poll.records=100     // reduce if processing is slow
   max.poll.interval.ms=300000  // 5 minutes: time to process a batch
-  
+
   The consumer PULLS messages (backpressure built-in to Kafka's pull model).
   Unlike HTTP push: consumer controls exactly how many records to fetch.
 
@@ -134,6 +134,7 @@ BACKPRESSURE IN SPRING WEBFLUX:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Backpressure:
+
 - Fast producer overwhelms slow consumer → queue/buffer fills → OOM → crash or data loss
 - System performance degrades unpredictably under load
 
@@ -166,7 +167,7 @@ BACKPRESSURE STRATEGIES COMPARISON:
   Latest       │ Bounded  │ Yes       │ UI updates (only latest state matters)
   Error        │ Bounded  │ Exception │ Strict: no tolerance for overload
   Request ctrl │ Bounded  │ None      │ Database writes, external API calls
-  
+
   RULE: use Request Control (pull-based) for data-critical pipelines.
   Use Drop/Latest for real-time non-critical streams (metrics, dashboard).
   Never use unbounded Buffer for sustained high-throughput pipelines.
@@ -198,9 +199,9 @@ Backpressure Pattern ◄──── (you are here)
 
 @Service @RequiredArgsConstructor
 public class OrderIngestionService {
-    
+
     private final OrderRepository repository;    // blocking R2DBC (reactive)
-    
+
     // Reactive pipeline with explicit backpressure control:
     public Flux<OrderResult> processOrderStream(Flux<OrderEvent> eventStream) {
         return eventStream
@@ -209,19 +210,19 @@ public class OrderIngestionService {
             .onBackpressureBuffer(10_000,
                 dropped -> log.warn("Backpressure: dropped order event {}", dropped.getOrderId()),
                 BufferOverflowStrategy.DROP_OLDEST)
-            
+
             // Process on bounded elastic thread pool (I/O operations):
             .publishOn(Schedulers.boundedElastic())
-            
+
             // flatMap concurrency = MAX 20 concurrent DB writes:
             // This IS the backpressure: only 20 events in-flight at any time
             .flatMap(event -> processEvent(event), 20)
-            
+
             // Handle processing errors without terminating the stream:
             .onErrorContinue((error, event) ->
                 log.error("Failed to process event {}: {}", event, error.getMessage()));
     }
-    
+
     private Mono<OrderResult> processEvent(OrderEvent event) {
         return Mono.fromSupplier(() -> validateEvent(event))
             .flatMap(valid -> repository.save(valid.toOrder()))
@@ -235,14 +236,14 @@ public class OrderIngestionService {
 void backpressurePullExample() {
     Flux<Integer> source = Flux.range(1, 100)
         .doOnRequest(n -> log.info("Downstream requested {} items", n));
-    
+
     // BaseSubscriber: explicitly control demand:
     source.subscribe(new BaseSubscriber<Integer>() {
         @Override
         protected void hookOnSubscribe(Subscription subscription) {
             request(10);    // Request first 10 items
         }
-        
+
         @Override
         protected void hookOnNext(Integer value) {
             log.info("Processing: {}", value);
@@ -263,10 +264,10 @@ void backpressurePullExample() {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Backpressure is only for reactive programming | Backpressure exists in many non-reactive forms: Kafka's pull-based consumption (consumer controls fetch rate), TCP's flow control window (receiver signals buffer space to sender), Unix pipe buffering (process blocks when pipe buffer full). The Reactive Streams specification formalized backpressure as an explicit API, but the concept predates reactive programming by decades. |
-| Backpressure prevents data loss | Backpressure prevents buffer overflow and OOM. Whether it prevents data loss depends on the chosen strategy. `onBackpressureDrop()`: data loss is explicit and intentional. `onBackpressureBuffer()` with bounded buffer: data loss when buffer is full. `request(N)` pull-based: no data loss (publisher waits), but increased end-to-end latency. Data loss vs. latency is a tradeoff: choose explicitly based on requirements. |
+| Misconception                                 | Reality                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Backpressure is only for reactive programming | Backpressure exists in many non-reactive forms: Kafka's pull-based consumption (consumer controls fetch rate), TCP's flow control window (receiver signals buffer space to sender), Unix pipe buffering (process blocks when pipe buffer full). The Reactive Streams specification formalized backpressure as an explicit API, but the concept predates reactive programming by decades.                                                                               |
+| Backpressure prevents data loss               | Backpressure prevents buffer overflow and OOM. Whether it prevents data loss depends on the chosen strategy. `onBackpressureDrop()`: data loss is explicit and intentional. `onBackpressureBuffer()` with bounded buffer: data loss when buffer is full. `request(N)` pull-based: no data loss (publisher waits), but increased end-to-end latency. Data loss vs. latency is a tradeoff: choose explicitly based on requirements.                                      |
 | flatMap concurrency parameter is backpressure | `flatMap(f, concurrency)` limits the maximum number of in-flight inner publishers — this IS a form of backpressure (bounded concurrency). But it's applied at the flatMap stage, not at the subscription level. The source Flux may still emit more items than `concurrency` allows processing; the items queue internally in flatMap's internal buffer. For complete backpressure: combine `flatMap(concurrency)` with `onBackpressureBuffer(bounded)` on the source. |
 
 ---
@@ -280,7 +281,7 @@ void backpressurePullExample() {
 
 @Service
 public class EventIngestionService {
-    
+
     public Flux<ProcessingResult> ingest(Flux<RawEvent> eventStream) {
         return eventStream
             // NO backpressure strategy — default behavior:
@@ -288,7 +289,7 @@ public class EventIngestionService {
             .flatMap(event -> slowDatabaseWrite(event))  // 50ms per write
             .map(ProcessingResult::success);
     }
-    
+
     private Mono<DbResult> slowDatabaseWrite(RawEvent event) {
         return reactiveRepository.save(event.toEntity());
     }
@@ -307,7 +308,7 @@ public Flux<ProcessingResult> ingest(Flux<RawEvent> eventStream) {
         .onBackpressureBuffer(1_000,
             dropped -> log.warn("Ingestion buffer full — dropping event: {}", dropped.getId()),
             BufferOverflowStrategy.DROP_OLDEST)
-        
+
         // Control concurrent DB writes (backpressure via concurrency):
         .flatMap(event -> slowDatabaseWrite(event), 20)   // max 20 concurrent writes
         .map(ProcessingResult::success);

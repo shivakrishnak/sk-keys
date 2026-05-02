@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #behavioral, #oop, #pipeline, #event-hand
 
 ⚡ TL;DR — **Chain of Responsibility** passes a request along a chain of handlers — each handler decides to handle the request, pass it to the next handler, or both — decoupling senders from receivers and allowing multiple handlers to participate in request processing.
 
-| #778 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Decorator Pattern, Linked Lists | |
-| **Used by:** | HTTP filter chains, Middleware, Event handling, Approval workflows | |
+| #778            | Category: Design Patterns                                          | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Decorator Pattern, Linked Lists       |                 |
+| **Used by:**    | HTTP filter chains, Middleware, Event handling, Approval workflows |                 |
 
 ---
 
@@ -53,21 +53,21 @@ CHAIN OF RESPONSIBILITY STRUCTURE:
   // HANDLER INTERFACE:
   abstract class RequestHandler {
       protected RequestHandler next;        // link to next handler
-      
+
       RequestHandler setNext(RequestHandler next) {
           this.next = next;
           return next;              // fluent: allows chaining setNext().setNext()...
       }
-      
+
       abstract void handle(Request request);
-      
+
       // Helper to pass to next:
       protected void passToNext(Request request) {
           if (next != null) next.handle(request);
           else System.out.println("End of chain: unhandled request");
       }
   }
-  
+
   // CONCRETE HANDLERS:
   class AuthHandler extends RequestHandler {
       @Override
@@ -79,7 +79,7 @@ CHAIN OF RESPONSIBILITY STRUCTURE:
           passToNext(request);  // PASS: auth passed, next handler runs
       }
   }
-  
+
   class RateLimitHandler extends RequestHandler {
       @Override
       void handle(Request request) {
@@ -90,17 +90,17 @@ CHAIN OF RESPONSIBILITY STRUCTURE:
           passToNext(request);  // PASS
       }
   }
-  
+
   class LoggingHandler extends RequestHandler {
       @Override
       void handle(Request request) {
-          log.info("Request: {} {} from {}", request.getMethod(), 
+          log.info("Request: {} {} from {}", request.getMethod(),
                    request.getPath(), request.getClientId());
           passToNext(request);  // ALWAYS pass (logging doesn't block)
           log.info("Response: {}", request.getResponse().getStatus());
       }
   }
-  
+
   class BusinessHandler extends RequestHandler {
       @Override
       void handle(Request request) {
@@ -109,23 +109,23 @@ CHAIN OF RESPONSIBILITY STRUCTURE:
           // No passToNext — last in chain
       }
   }
-  
+
   // BUILD THE CHAIN (fluent):
   RequestHandler chain = new LoggingHandler();
   chain.setNext(new AuthHandler())
        .setNext(new RateLimitHandler())
        .setNext(new BusinessHandler());
-  
+
   // INVOKE:
   chain.handle(incomingRequest);
-  
+
   // Flow:
   // LoggingHandler → passes → AuthHandler (check auth)
   //   If invalid: STOP, return 401
   //   If valid  → passes → RateLimitHandler (check rate)
   //     If exceeded: STOP, return 429
   //     If ok → passes → BusinessHandler (process)
-  
+
 PURE CHAIN (Java exception handling as analogy):
 
   try {
@@ -138,16 +138,16 @@ PURE CHAIN (Java exception handling as analogy):
       ...
   }
   // PURE CHAIN: only ONE catch block executes.
-  
+
 APPROVAL WORKFLOW — CLASSIC CHAIN:
 
   abstract class Approver {
       protected Approver next;
       protected final String name;
       protected final double maxApprovalAmount;
-      
+
       void setNext(Approver next) { this.next = next; }
-      
+
       void approve(PurchaseRequest request) {
           if (request.getAmount() <= maxApprovalAmount) {
               System.out.println(name + " approved $" + request.getAmount());
@@ -158,7 +158,7 @@ APPROVAL WORKFLOW — CLASSIC CHAIN:
           }
       }
   }
-  
+
   class Manager extends Approver {
       Manager() { super("Manager", 1_000); }   // can approve up to $1,000
   }
@@ -168,31 +168,31 @@ APPROVAL WORKFLOW — CLASSIC CHAIN:
   class CEO extends Approver {
       CEO() { super("CEO", 1_000_000); }
   }
-  
+
   // Chain: Manager → Director → CEO
   Approver manager = new Manager();
   Approver director = new Director();
   Approver ceo = new CEO();
   manager.setNext(director);
   director.setNext(ceo);
-  
+
   manager.approve(new PurchaseRequest(500));       // Manager approves
   manager.approve(new PurchaseRequest(5_000));     // Director approves
   manager.approve(new PurchaseRequest(500_000));   // CEO approves
   manager.approve(new PurchaseRequest(5_000_000)); // No one can approve
-  
+
 CHAIN vs DECORATOR vs COMMAND:
 
   Chain of Responsibility:
   - Request travels down chain; handlers may stop it.
   - Senders don't know which handler will respond.
   - Handler can STOP the chain (don't call next).
-  
+
   Decorator:
   - ALL layers execute (no stopping).
   - Same component interface.
   - Adds behavior — doesn't have "handle or pass" logic.
-  
+
   Command:
   - Encapsulates a request as an object.
   - One executor executes the command.
@@ -204,6 +204,7 @@ CHAIN vs DECORATOR vs COMMAND:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Chain of Responsibility:
+
 - One big handler with if/else/switch: "if auth fails... else if rate limit... else if logged in..."
 - Adding new step: modify the big handler (OCP violation)
 
@@ -231,7 +232,7 @@ WITH Chain of Responsibility:
 CHAIN:
 
   handler1 → handler2 → handler3 → ... → handlerN → (end of chain)
-  
+
   Each handler:
   - If can handle: handle (and optionally pass to next)
   - If cannot handle: pass to next
@@ -263,11 +264,11 @@ Chain of Responsibility ◄──── (you are here)
 // Validation chain for order processing:
 abstract class OrderValidator {
     protected OrderValidator next;
-    
+
     OrderValidator setNext(OrderValidator next) { this.next = next; return next; }
-    
+
     abstract ValidationResult validate(Order order);
-    
+
     protected ValidationResult passToNext(Order order) {
         return next != null ? next.validate(order) : ValidationResult.valid();
     }
@@ -316,11 +317,11 @@ else log.warn("Order rejected: {}", result.getError());
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                                                      | Reality                                                                                                                                                                                                                                                                                                         |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Chain of Responsibility always stops at the first handler that handles the request | This is the "pure chain" variant (GoF default). But many real implementations are "modified chains" where ALL handlers in the chain process the request (Servlet filter chains, Express.js middleware). In the modified chain, a handler only stops the chain by NOT calling next — otherwise all handlers run. |
-| Chain of Responsibility requires a linked list of handler objects | The handlers can be stored in a `List<Handler>` and iterated in order — this is common in modern implementations. Many frameworks (Express, Koa middleware) use array-based chains internally. The key is ordered, sequential processing where each handler decides to proceed or not. |
-| The client must know the chain structure | The client should only know the entry point of the chain. The chain building (which handler comes first, what order) should be configured externally. In Spring, filter chains are configured in `SecurityFilterChain`. In express.js, `app.use()` adds handlers. Client: just call `chain.handle(request)`. |
+| Chain of Responsibility requires a linked list of handler objects                  | The handlers can be stored in a `List<Handler>` and iterated in order — this is common in modern implementations. Many frameworks (Express, Koa middleware) use array-based chains internally. The key is ordered, sequential processing where each handler decides to proceed or not.                          |
+| The client must know the chain structure                                           | The client should only know the entry point of the chain. The chain building (which handler comes first, what order) should be configured externally. In Spring, filter chains are configured in `SecurityFilterChain`. In express.js, `app.use()` adds handlers. Client: just call `chain.handle(request)`.    |
 
 ---
 

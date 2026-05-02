@@ -18,10 +18,10 @@ tags: #intermediate, #architecture, #oop, #api-design, #cqrs
 
 ⚡ TL;DR — **Command-Query Separation (CQS)** states that every method should either be a **command** (changes state, returns nothing) OR a **query** (returns data, changes no state) — never both — making code predictable because a query call can never have unexpected side effects.
 
-| #760 | Category: Software Architecture Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Tell Don't Ask, SOLID Principles, Object-Oriented Programming | |
-| **Used by:** | API design, Domain Model, CQRS, Clean code | |
+| #760            | Category: Software Architecture Patterns                      | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Tell Don't Ask, SOLID Principles, Object-Oriented Programming |                 |
+| **Used by:**    | API design, Domain Model, CQRS, Clean code                    |                 |
 
 ---
 
@@ -56,104 +56,104 @@ THE PROBLEM WITH MIXED METHODS:
       repository.save(order);     // SIDE EFFECT: saves to database
       return true;                // RETURN VALUE: validation result
   }
-  
+
   // Caller checks return value:
   if (saveAndValidate(order)) { ... }
-  
+
   // Problem 1: Reader sees "if saveAndValidate(order)..." and thinks it's a pure check.
   // Actually: it SAVED to the database. Surprise side effect.
-  
+
   // Problem 2: Can you call saveAndValidate() twice to check validation?
   // First call: validates AND saves. Second call: saves AGAIN (duplicate).
-  
+
   // Problem 3: In tests, calling the "validation check" also saves — test contamination.
-  
+
   // Problem 4: If save fails (exception), did validation pass?
   // Control flow becomes unpredictable.
-  
+
 CQS-COMPLIANT SEPARATION:
 
   // QUERY (no side effects):
   boolean isValid(Order order) { return order.validate().isEmpty(); }
-  
+
   // COMMAND (no return value):
   void save(Order order) { repository.save(order); }
-  
+
   // Caller explicitly sequences:
   if (isValid(order)) {
       save(order);
   }
-  
+
   Benefits:
   1. isValid() called any number of times: no side effects.
   2. save() intent is clear: "I know this changes state."
   3. Tests: test validation with isValid(). Test saving with save(). Separately.
   4. Debug: side effects only happen at explicit Command calls.
-  
+
 COMMAND TYPES:
 
   Commands change state. They return void.
   They may throw exceptions on failure (exceptional condition).
   They should NOT return the new state (that's a CQS violation).
-  
+
   void placeOrder(OrderCommand cmd)    // creates order
   void confirmPayment(PaymentId id)    // changes payment state
   void cancelOrder(OrderId id, Reason r) // changes order state
   void addItem(OrderId id, Item item)  // mutates order
-  
+
 QUERY TYPES:
 
   Queries return data. They have NO side effects.
   Idempotent: calling a query N times = same as calling once.
   No mutation, no logging of domain events, no writes.
-  
+
   Order findOrder(OrderId id)             // returns order
   List<Order> findPendingOrders()         // returns list
   boolean isOrderEligibleForDiscount(id)  // returns boolean
   Money calculateShipping(Order order)    // computes, no mutation
-  
+
 CQS IN REST APIS:
 
   HTTP methods naturally align with CQS:
-  
+
   COMMANDS (state-changing):          QUERIES (read-only):
   POST /orders                        GET /orders
   PUT /orders/{id}                    GET /orders/{id}
   DELETE /orders/{id}                 GET /orders?status=pending
   PATCH /orders/{id}/cancel
-  
+
   CQS violation: GET /orders/next (returns the next order AND marks it as "in progress")
                  ← GET that has side effects is a CQS violation in REST too.
-                 
+
   CQS-compliant: GET /orders?status=available (pure query)
                  POST /orders/{id}/claim (explicit command)
-                 
+
 EXCEPTIONS — WHEN CQS IS PRAGMATICALLY VIOLATED:
 
   1. stack.pop(): hard to make CQS-pure without awkward API.
      CQS-pure alternative: peek() + pop() (two calls).
-     
+
   2. queue.poll(): removes and returns in one call.
      Concurrent context: between peek() and pop(), another thread could dequeue.
      Atomicity requires combining in some concurrency scenarios.
-     
+
   3. CAS (Compare-And-Swap): atomically checks+changes state. Returns boolean.
      By definition: mixed. Necessary for concurrency.
-     
+
   4. Builder: order.withItem(item) returns new order (immutable style).
      Each with() is functionally a command+query — but on IMMUTABLE objects:
      no state mutation, returns NEW object. Not a violation (object is immutable).
-     
+
   RULE: Violate CQS intentionally and explicitly, not accidentally.
-  
+
 CQS vs. CQRS:
 
   CQS: Method-level principle. One class, methods segregated into commands/queries.
        The same class handles both, but each method is one or the other.
-       
+
   CQRS: Architectural pattern. Separate MODELS (classes, databases, services) for
         write side and read side.
-        
+
   CQRS is CQS scaled up:
     CQS:  Order.getTotal()  and  Order.cancel()  (same class, separate methods)
     CQRS: OrderWriteModel (aggregates, commands) and OrderReadModel (DTOs, queries)
@@ -165,6 +165,7 @@ CQS vs. CQRS:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT CQS:
+
 - `getUser()` has a hidden side effect (logs access, increments view count) — callers get surprising behavior
 - Tests: calling "validation" triggers database writes — tests contaminate each other
 
@@ -191,21 +192,21 @@ WITH CQS:
 CQS IDENTIFICATION PATTERN:
 
   For each method, ask two questions:
-  
+
   1. Does it change observable state? (writes DB, modifies fields, triggers side effects)
      YES: it's a COMMAND. Should return void.
-     
+
   2. Does it return data?
      YES: it's a QUERY. Should have no side effects.
-     
+
   If BOTH answers are yes: CQS violation. Split it.
-  
+
   SPLITTING STRATEGY:
     Mixed method: ResultType doSomething(Params)
-    
+
     Split 1: void doCommand(Params)        // command: does the action, returns nothing
     Split 2: ResultType queryResult(Params) // query: returns what you need, no side effects
-    
+
     Caller: doCommand(params); ResultType r = queryResult(params);
 ```
 
@@ -253,7 +254,7 @@ class TokenService {
         String token = generateToken();
         tokenRepository.save(new Token(userId, token, Instant.now()));
     }
-    
+
     // QUERY: retrieves an existing token (no side effects):
     Optional<String> getToken(UserId userId) {
         return tokenRepository.findActiveToken(userId)
@@ -278,11 +279,11 @@ class AuthService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| CQS means commands can never return any value | Commands can return acknowledgment IDs or error information in some pragmatic designs (e.g., HTTP 201 Created with Location header). The strict interpretation (commands return void) is pure CQS. The pragmatic version allows commands to return only IDs or error status. The key: commands should never return the domain state (that's a query's job) |
-| CQS and CQRS are the same thing | CQS is a method-level design principle (Bertrand Meyer, 1988). CQRS is an architectural pattern (Greg Young, ~2010) that separates entire object models — write models and read models. CQRS is inspired by CQS but is dramatically more complex: different databases, eventual consistency, event sourcing. Many systems apply CQS at the method level without ever needing CQRS architecture |
-| A query that caches the result violates CQS | Caching is considered a benign side effect for CQS purposes. CQS's prohibition is on OBSERVABLE state changes — changes that affect the result of future queries or are visible to other components. An in-memory cache that doesn't change domain state is acceptable. Logging is similarly acceptable |
+| Misconception                                 | Reality                                                                                                                                                                                                                                                                                                                                                                                        |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CQS means commands can never return any value | Commands can return acknowledgment IDs or error information in some pragmatic designs (e.g., HTTP 201 Created with Location header). The strict interpretation (commands return void) is pure CQS. The pragmatic version allows commands to return only IDs or error status. The key: commands should never return the domain state (that's a query's job)                                     |
+| CQS and CQRS are the same thing               | CQS is a method-level design principle (Bertrand Meyer, 1988). CQRS is an architectural pattern (Greg Young, ~2010) that separates entire object models — write models and read models. CQRS is inspired by CQS but is dramatically more complex: different databases, eventual consistency, event sourcing. Many systems apply CQS at the method level without ever needing CQRS architecture |
+| A query that caches the result violates CQS   | Caching is considered a benign side effect for CQS purposes. CQS's prohibition is on OBSERVABLE state changes — changes that affect the result of future queries or are visible to other components. An in-memory cache that doesn't change domain state is acceptable. Logging is similarly acceptable                                                                                        |
 
 ---
 

@@ -18,10 +18,10 @@ tags: #intermediate, #architecture, #oop, #coupling, #clean-code
 
 ⚡ TL;DR — The **Law of Demeter (LoD)** — "Don't talk to strangers" — states that an object should only call methods on itself, its fields, its parameters, and objects it creates — never on objects returned from method calls — preventing deep navigation chains that create tight coupling to internal structure.
 
-| #758 | Category: Software Architecture Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Cohesion and Coupling, SOLID Principles, Object-Oriented Programming | |
-| **Used by:** | OOP design, Code review, Refactoring, Clean code | |
+| #758            | Category: Software Architecture Patterns                             | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Cohesion and Coupling, SOLID Principles, Object-Oriented Programming |                 |
+| **Used by:**    | OOP design, Code review, Refactoring, Clean code                     |                 |
 
 ---
 
@@ -51,17 +51,17 @@ Ordering at a restaurant. You tell the waiter: "I'd like the salmon." The waiter
 THE PROBLEM LoD SOLVES:
 
   Each dot in a.getB().getC().doX() is a coupling point:
-  
+
     a.getB()         — caller knows "a" contains something of type B
     .getC()          — caller knows B contains something of type C
     .doX()           — caller knows C has a method doX()
-    
+
   THREE structural dependencies, not one.
-  
+
   If B stops containing C (internal refactor): three callers break.
   If C moves its method: three callers break.
   If a decides to store B differently: three callers break.
-  
+
   FORMAL LoD RULES:
 
     Method M in class C may call methods on:
@@ -70,32 +70,32 @@ THE PROBLEM LoD SOLVES:
     3. Objects created inside M (new Thing().method())
     4. Direct fields of C (this.field.method())
     5. [Some versions include]: returned objects from direct fields ONLY
-    
+
     NOT ALLOWED:
     • Methods on objects RETURNED by any of the above (the "chain" problem):
       this.field.getSomething().doWork()  ← LoD violation
-      
+
 IDENTIFYING VIOLATIONS — "one dot" heuristic:
 
   EACH chained call BEYOND the first is a potential LoD violation.
-  
+
   this.order.getCustomer().getAddress().getCity()
        ─────  ────────────  ──────────  ─────────
        field  returns Cust  returns Addr returns City
-  
+
   Violations: .getAddress() (navigating into Customer's internals),
               .getCity() (navigating into Address's internals)
-              
+
 FIXING LoD VIOLATIONS:
 
   Strategy 1: DELEGATION — let the intermediate object navigate itself.
-  
+
     BEFORE:
     String city = order.getCustomer().getAddress().getCity();
-    
+
     AFTER:
     String city = order.getCustomerCity();  // Order delegates to Customer.getCity()
-    
+
     class Order {
         String getCustomerCity() {
             return customer.getCity(); // Customer delegates to Address.getCity()
@@ -106,24 +106,24 @@ FIXING LoD VIOLATIONS:
             return address.getCity(); // Address has the data
         }
     }
-    
+
     Now: each class navigates only its own immediate components.
-    
+
   Strategy 2: TELL DON'T ASK — instead of getting data to compute elsewhere, tell the object to compute itself.
-  
+
     BEFORE (ask + chain):
     double discount = customer.getAccount().getLoyaltyTier().getDiscountRate() * order.getTotal();
-    
+
     AFTER (tell):
     double discount = customer.calculateDiscount(order.getTotal());
     // Customer asks its own Account, which asks its own LoyaltyTier.
     // Caller knows none of this internal structure.
-    
+
   Strategy 3: INTRODUCE QUERY METHOD — when you need data from deep inside:
-  
+
     BEFORE:
     boolean isPremium = user.getProfile().getMembership().getTier().equals(Tier.PREMIUM);
-    
+
     AFTER:
     boolean isPremium = user.isPremiumMember();
     // Single, semantic query method. Internal structure irrelevant to caller.
@@ -131,26 +131,26 @@ FIXING LoD VIOLATIONS:
 LoD WITH BUILDERS AND FLUENT APIS:
 
   IMPORTANT EXCEPTION: Fluent builder APIs are NOT LoD violations.
-  
+
   order.withCustomer(c).withItems(items).withShipping(addr).build()
-  
+
   Each .with() returns the SAME builder object. No structural traversal.
   The builder is explicitly designed for chaining.
-  
+
   Similarly, stream/reactive operations:
   list.stream().filter(x -> x.isActive()).map(x -> x.name()).toList()
   These operate on a single pipeline — stream → stream → stream → list.
   Not traversing foreign internal structure.
-  
+
 LoD IN MICROSERVICES:
 
   LoD applies to service calls too.
-  
+
   VIOLATION: OrderService.getOrder(id).getCustomer().getAddress().getCity()
   (synchronous chain of service calls: Order → Customer → Address → Geo)
-  
+
   If any intermediate service changes its response shape: cascade failure.
-  
+
   FIX: OrderService returns a pre-composed DTO with all needed data,
        OR: query the necessary services independently and compose in the caller.
 ```
@@ -160,6 +160,7 @@ LoD IN MICROSERVICES:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Law of Demeter:
+
 - `a.getB().getC().doX()` — caller coupled to internal structure of 3 classes
 - Refactoring `B`'s internals breaks all callers that navigated through it
 
@@ -186,13 +187,13 @@ WITH LoD:
 LOD COMPLIANCE CHECKLIST:
 
   For each method call in code:
-  
+
   1. Am I calling a method on `this`? ✓ OK
   2. Am I calling a method on a parameter passed to this method? ✓ OK
   3. Am I calling a method on an object I created in this method? ✓ OK
   4. Am I calling a method on a direct field of this class? ✓ OK
   5. Am I calling a method on the RETURN VALUE of any of the above? ✗ VIOLATION
-  
+
   Fix: introduce a delegation method on the intermediate object.
 ```
 
@@ -226,7 +227,7 @@ class OrderPricingService {
                                   .getAddress()      // field of Customer (stranger!)
                                   .getCountry()      // field of Address (double stranger!)
                                   .getIso2Code();    // method on Country (triple!)
-        
+
         return shippingRateTable.getRate(countryCode);
     }
 }
@@ -271,11 +272,11 @@ class Address {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| LoD means "one dot per line" | LoD is about structural traversal, not syntactic dots. `list.stream().filter().map().collect()` has 4 dots but no LoD violation — each operator transforms the same stream pipeline. `order.getCustomer().getAddress()` has 2 dots but IS a violation — traversing into foreign internal structure. Count structural traversals, not dots |
-| LoD always improves design — always apply it | LoD can lead to "shotgun surgery" if over-applied: you add a delegation method to every intermediate class, bloating each class with pass-through methods. Use judgment: apply LoD when structural coupling is genuinely harmful. For simple data transfer objects (DTOs) in the outer layers of the application, dot-chaining may be acceptable |
-| LoD is the same as Tell Don't Ask | Related but distinct. LoD: don't chain method calls through strangers (structural coupling concern). Tell Don't Ask: don't extract data from an object to make decisions externally; instead, tell the object to make the decision itself (behavior responsibility concern). A method can violate TDA without violating LoD (calling one method on a direct field, extracting data, computing externally) |
+| Misconception                                | Reality                                                                                                                                                                                                                                                                                                                                                                                                   |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LoD means "one dot per line"                 | LoD is about structural traversal, not syntactic dots. `list.stream().filter().map().collect()` has 4 dots but no LoD violation — each operator transforms the same stream pipeline. `order.getCustomer().getAddress()` has 2 dots but IS a violation — traversing into foreign internal structure. Count structural traversals, not dots                                                                 |
+| LoD always improves design — always apply it | LoD can lead to "shotgun surgery" if over-applied: you add a delegation method to every intermediate class, bloating each class with pass-through methods. Use judgment: apply LoD when structural coupling is genuinely harmful. For simple data transfer objects (DTOs) in the outer layers of the application, dot-chaining may be acceptable                                                          |
+| LoD is the same as Tell Don't Ask            | Related but distinct. LoD: don't chain method calls through strangers (structural coupling concern). Tell Don't Ask: don't extract data from an object to make decisions externally; instead, tell the object to make the decision itself (behavior responsibility concern). A method can violate TDA without violating LoD (calling one method on a direct field, extracting data, computing externally) |
 
 ---
 
@@ -293,7 +294,7 @@ class OrderFulfillmentService {
             .getWarehouse(order.getWarehouseId())    // call 1
             .getPreferredPicker()                    // returns Picker?
             .getAssignedWarehouse();                 // Another service call buried!
-            
+
         // Problem: if InventoryService restructures Warehouse model:
         // OrderFulfillmentService breaks.
     }

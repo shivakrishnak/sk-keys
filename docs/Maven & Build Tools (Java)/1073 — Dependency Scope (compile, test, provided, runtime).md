@@ -18,10 +18,10 @@ tags: #maven, #dependency-scope, #classpath, #compile-scope, #test-scope, #provi
 
 ⚡ TL;DR — **Dependency scope** controls when a dependency is available on the classpath and whether it's included in the final artifact. The four main scopes: `compile` (everywhere; default), `test` (tests only; not in JAR), `provided` (compile time; not bundled; server provides), `runtime` (runtime/tests; not compile; e.g., JDBC drivers). Correct scoping prevents classpath pollution, reduces JAR size, and avoids runtime conflicts.
 
-| #1073 | Category: Maven & Build Tools (Java) | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Maven Dependencies, pom.xml | |
-| **Used by:** | Transitive Dependencies, Maven Lifecycle | |
+| #1073           | Category: Maven & Build Tools (Java)     | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------- | :-------------- |
+| **Depends on:** | Maven Dependencies, pom.xml              |                 |
+| **Used by:**    | Transitive Dependencies, Maven Lifecycle |                 |
 
 ---
 
@@ -33,7 +33,8 @@ tags: #maven, #dependency-scope, #classpath, #compile-scope, #test-scope, #provi
 
 ### 🟢 Simple Definition (Easy)
 
-Scope answers: "where is this library needed?" 
+Scope answers: "where is this library needed?"
+
 - `compile` (default): everywhere — compile, test, and when running
 - `test`: only when testing — JUnit, Mockito, Testcontainers
 - `provided`: compile only — Servlet API (Tomcat provides it; don't bundle it)
@@ -52,6 +53,7 @@ Understanding scope requires understanding the three separate classpaths Maven m
 3. **Test classpath**: runtime classpath + test-specific extras (JUnit, Mockito, Testcontainers).
 
 Scope matrix:
+
 - `compile`: all three classpaths ✓
 - `provided`: compile + test ✓, runtime ✗ (provided externally)
 - `runtime`: runtime + test ✓, compile ✗ (not needed for compilation)
@@ -73,7 +75,7 @@ SCOPE EFFECT ON CLASSPATHS:
   runtime     ✗        ✓        ✓     YES         YES
   test        ✗        ✗        ✓     NO          NO
   system      ✓        ✓        ✓     YES         NO (filesystem ref)
-  
+
   Notes:
   - "In Final JAR": means in Spring Boot fat JAR / WAR lib/
   - compile-scope deps of your deps → compile scope for you (transitive)
@@ -124,7 +126,7 @@ SCOPE EXAMPLES WITH RATIONALE:
   WHY: Lombok is an annotation processor — it generates code at compile time.
        No Lombok classes are referenced at runtime (the generated code is plain Java).
        → provided scope (used during compilation; not at runtime)
-  
+
   NOTE: Lombok annotations (@Data, @Builder) are available at compile time because
   Lombok is on the compile classpath. At runtime, only the GENERATED code runs.
 
@@ -162,7 +164,7 @@ SCOPE TRANSITIVITY DETAILS:
 
   When YOUR project (A) depends on library B with scope X,
   and B depends on library C with scope Y:
-  
+
   B's scope for C:   compile  test  provided  runtime
   Your A's scope X:
   ────────────────────────────────────────────────────
@@ -170,7 +172,7 @@ SCOPE TRANSITIVITY DETAILS:
   provided           provided -     -         provided
   runtime            runtime  -     -         runtime
   test               test     -     -         test
-  
+
   KEY RULE: provided and test dependencies are NEVER transitive.
   If B uses Lombok (provided), A does NOT get Lombok transitively.
   A must declare Lombok itself if it uses it.
@@ -245,7 +247,7 @@ Dependency Scope ◄── (you are here)
     <artifactId>postgresql</artifactId>
     <scope>runtime</scope>
   </dependency>
-  
+
   <!-- H2 in-memory DB for tests: test scope -->
   <dependency>
     <groupId>com.h2database</groupId>
@@ -259,11 +261,11 @@ Dependency Scope ◄── (you are here)
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `provided` scope prevents Maven from downloading the JAR | Maven downloads `provided` scope JARs into `~/.m2` and puts them on the compile classpath. `provided` means "don't bundle in the final artifact" — it does NOT mean "don't download." The compilation still needs the JAR to resolve types. |
+| Misconception                                              | Reality                                                                                                                                                                                                                                                                                                                                  |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `provided` scope prevents Maven from downloading the JAR   | Maven downloads `provided` scope JARs into `~/.m2` and puts them on the compile classpath. `provided` means "don't bundle in the final artifact" — it does NOT mean "don't download." The compilation still needs the JAR to resolve types.                                                                                              |
 | `runtime` scope dependencies can't be used at compile time | Correct — `runtime` scope specifically removes the dependency from the compile classpath. This is intentional: if your code compiles without it, it shouldn't need it on the compile classpath. Using `runtime` for a JDBC driver enforces that your code only uses the standard `java.sql` API, not vendor-specific PostgreSQL classes. |
-| Scope is only about the final JAR size | Scope affects three things: classpath availability (compile vs runtime), artifact inclusion (in JAR or not), and transitivity (whether consumers inherit this dependency). Getting the scope wrong can cause `ClassNotFoundException`, class conflicts, or expose test libraries to production code — not just JAR size issues. |
+| Scope is only about the final JAR size                     | Scope affects three things: classpath availability (compile vs runtime), artifact inclusion (in JAR or not), and transitivity (whether consumers inherit this dependency). Getting the scope wrong can cause `ClassNotFoundException`, class conflicts, or expose test libraries to production code — not just JAR size issues.          |
 
 ---
 

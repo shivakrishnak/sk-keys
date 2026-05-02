@@ -18,10 +18,10 @@ tags: #data, #avro, #binary, #serialization, #kafka, #schema-registry, #schema-e
 
 ⚡ TL;DR — **Apache Avro** is a row-based binary serialization format with embedded JSON schema. The killer feature: **schema evolution** — producers and consumers can have different schema versions and Avro resolves the differences automatically. The standard format for Kafka event streams, especially when paired with Confluent Schema Registry.
 
-| #502 | Category: Data Fundamentals | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Binary Formats (Avro, Parquet, ORC, Protobuf), Semi-Structured Data | |
-| **Used by:** | Kafka pipelines, Schema Registry, Hadoop, Spark streaming | |
+| #502            | Category: Data Fundamentals                                         | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Binary Formats (Avro, Parquet, ORC, Protobuf), Semi-Structured Data |                 |
+| **Used by:**    | Kafka pipelines, Schema Registry, Hadoop, Spark streaming           |                 |
 
 ---
 
@@ -77,7 +77,7 @@ AVRO SCHEMA (JSON):
 AVRO BINARY ENCODING:
 
   Record: {order_id:1001, customer_id:"C001", amount:149.99, status:"COMPLETED", ...}
-  
+
   Encoded (simplified):
   [varint: 2002]       ← order_id: 1001 encoded as zigzag varint
   [varint: 8][C001]    ← customer_id: length-prefixed string
@@ -86,7 +86,7 @@ AVRO BINARY ENCODING:
   [varint: 0]          ← created_at: zigzag timestamp
   [varint: 0]          ← currency: null union (index 0 = null)
   [varint: 0]          ← tags: empty array
-  
+
   Notice: NO field names in the binary payload (unlike JSON: "order_id", "amount", etc.)
   → Avro saves the field name bytes; schema provides the layout
 
@@ -95,7 +95,7 @@ IN KAFKA:
   [0x00]               ← magic byte (Confluent wire format)
   [0x00 0x00 0x00 0x2A]← schema ID: 42 (4-byte big-endian integer)
   [avro binary payload]← the binary-encoded record
-  
+
   Producer registers schema v1 in registry → gets ID=42
   Every message: [0x00][42][binary_payload]
   Consumer reads message: extracts ID=42, fetches schema from registry,
@@ -105,19 +105,19 @@ SCHEMA EVOLUTION RULES:
 
   Schema v1:
   fields: [order_id: long, amount: double, status: enum]
-  
+
   Schema v2 (BACKWARD COMPATIBLE — v2 reader can read v1 data):
   fields: [order_id: long, amount: double, status: enum,
            currency: ["null","string"] DEFAULT null]  ← new optional field
-  
+
   v2 reader reading v1 data:
   → v1 data has no "currency" field
   → Schema resolution: field has default null → use null
   ✅ No error; backward compatible
-  
+
   Schema v2 reader reading v2 data:
   → currency field present → decode normally
-  
+
   Schema v1 reader reading v2 data (FORWARD COMPATIBLE):
   → v2 data has "currency" field
   → Schema resolution: v1 schema doesn't know "currency" → SKIP
@@ -135,9 +135,9 @@ COMPATIBILITY MODES (Confluent Schema Registry):
   FORWARD: old schema can read new data
   FULL: both backward and forward
   NONE: no compatibility checking (dangerous in production)
-  
+
   Default: BACKWARD
-  
+
   Enforcement: registry REJECTS schema registration if it violates the configured mode
   → Detected at deploy time (schema registration), not at message processing time
 
@@ -148,7 +148,7 @@ AVRO vs PROTOBUF:
   - Dynamic typing (no code generation required)
   - Used in Hadoop/Kafka ecosystem
   - Schema evolution via resolution rules
-  
+
   Protobuf:
   - Schema in .proto file (compiled → typed code)
   - Static typing (generated classes: Order.newBuilder().setAmount(149.99))
@@ -275,11 +275,11 @@ if msg:
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Avro requires code generation (like Protobuf) | Avro supports both **generic** (no code gen) and **specific** (generated classes) modes. The generic mode is what Kafka frameworks use — schema fetched from registry at runtime, no pre-generated code needed. This makes Avro more flexible for dynamic frameworks. |
+| Misconception                                  | Reality                                                                                                                                                                                                                                                                                          |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Avro requires code generation (like Protobuf)  | Avro supports both **generic** (no code gen) and **specific** (generated classes) modes. The generic mode is what Kafka frameworks use — schema fetched from registry at runtime, no pre-generated code needed. This makes Avro more flexible for dynamic frameworks.                            |
 | Schema evolution means you can make any change | Breaking changes are still breaking. Avro evolution rules handle: adding optional fields (with defaults), removing fields that have defaults, type promotion (int→long), aliases for renames. They do NOT handle: removing required fields, changing types arbitrarily, reordering enum symbols. |
-| Schema Registry is part of Apache Kafka | Confluent Schema Registry is a separate open-source project (Confluent). Apache Kafka has no built-in schema registry. AWS Glue Schema Registry and Azure Schema Registry are cloud-managed alternatives. |
+| Schema Registry is part of Apache Kafka        | Confluent Schema Registry is a separate open-source project (Confluent). Apache Kafka has no built-in schema registry. AWS Glue Schema Registry and Azure Schema Registry are cloud-managed alternatives.                                                                                        |
 
 ---
 
@@ -296,12 +296,12 @@ PITFALL: adding a required field without a default → breaks all consumers
       {"name": "region",   "type": "string"}  // ← required, no default
     ]
   }
-  
+
   Registry compatibility check (BACKWARD mode):
   v2 can read v1 data?
   → v1 data has no "region" field → no default → FAIL
   Registry REJECTS schema v2 registration
-  
+
   // ✅ FIX: add optional field with default
   {"name": "region", "type": ["null", "string"], "default": null}
   // OR: add with default value
@@ -314,7 +314,7 @@ PITFALL: nullable union order matters in Avro
   {"name": "currency", "type": ["string", "null"]}
   // Default must match FIRST type in union
   // → if you want default null, null must be FIRST
-  
+
   // ✅ CORRECT: null first, string second (for nullable with null default)
   {"name": "currency", "type": ["null", "string"], "default": null}
   // Now default is valid (null matches first union type)

@@ -18,10 +18,10 @@ tags: #advanced, #architecture, #migration, #modernization, #risk-management
 
 ⚡ TL;DR — The **Strangler Fig Pattern** incrementally replaces a legacy system by routing specific functionality to a new system piece by piece — the new system "strangles" the old one gradually until the old is completely replaced, avoiding a risky big-bang rewrite.
 
-| #761 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Microservices, Anti-Corruption Layer, Bounded Context | |
-| **Used by:** | Legacy modernization, Incremental migration, Risk-managed refactoring | |
+| #761            | Category: Software Architecture Patterns                              | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Microservices, Anti-Corruption Layer, Bounded Context                 |                 |
+| **Used by:**    | Legacy modernization, Incremental migration, Risk-managed refactoring |                 |
 
 ---
 
@@ -51,36 +51,36 @@ A 10-year-old Rails monolith. Business can't stop while you rewrite it from scra
 THE BIG-BANG REWRITE PROBLEM:
 
   "Let's rewrite the legacy system from scratch."
-  
+
   Failure modes (Joel Spolsky: "Things You Should Never Do"):
-  
+
   1. REQUIREMENTS LOSS: The old system has 10 years of bug fixes and edge cases.
      Developers don't know why the code is the way it is. Edge cases re-introduced.
-     
+
   2. MOVING TARGET: Business keeps adding features to OLD system during rewrite.
      New system must catch up to a target that keeps moving. Never complete.
-     
+
   3. SCOPE CREEP: "Since we're rewriting, let's also modernize the data model,
      change the language, add microservices, and implement a new UI."
      2-year estimate → 5 years.
-     
+
   4. RISK CONCENTRATION: Entire team works on new system. Zero value delivered.
      Until cutover: zero new features in production. Business suffers.
-     
+
   5. CUTOVER PANIC: Big-bang cutover day. All-or-nothing. If it fails: revert.
      Revert to old system: months of bug fixes lost. Horror show.
-     
+
 THE STRANGLER FIG SOLUTION:
 
   Incremental steps. Each step:
   - Small, bounded, reversible.
   - Delivers real value immediately (new feature in new system).
   - Reduces legacy footprint.
-  
+
   STRANGLER FIG ANATOMY:
-  
+
     Phase 1: COEXIST
-    
+
       Client Request
            │
            ▼
@@ -89,31 +89,31 @@ THE STRANGLER FIG SOLUTION:
            ├─── New capability → [New System]
            │
            └─── Everything else → [Legacy System]
-           
+
     Phase 2: MIGRATE INCREMENTALLY
-    
+
       Move one bounded context at a time:
-      
+
       Step 1: Orders API → New Service. Monolith: still handles Payments, Catalog, etc.
       Step 2: Payments API → New Service. Monolith: still handles Catalog, Users.
       Step 3: Catalog API → New Service. Monolith: still handles Users.
       Step 4: Users API → New Service. Monolith: handles nothing.
       Step 5: Decommission monolith.
-      
+
     Phase 3: STRANGLE
-    
+
       Legacy handles 0% of traffic. Can be safely removed.
-      
+
 FACADE STRATEGIES:
 
   1. API GATEWAY: HTTP-level routing. Route by path prefix or header.
      No code change to clients; routing config change to shift traffic.
      Tool: nginx, AWS API Gateway, Kong, Traefik.
-     
+
   2. STRANGLER FIG FACADE (application-level):
      An application proxy that delegates to either legacy or new.
      Can do data transformation at the boundary.
-     
+
      class OrderFacade {
          Order getOrder(OrderId id) {
              if (featureFlags.isNewOrderServiceEnabled()) {
@@ -123,35 +123,35 @@ FACADE STRATEGIES:
              }
          }
      }
-     
+
   3. DATABASE STRANGLER:
      Harder case: both systems share a database.
-     
+
      Step 1: Keep shared database. New service reads/writes same tables.
      Step 2: Mirror writes (dual-write: write to both new service's DB AND legacy DB).
      Step 3: Migrate reads to new service's DB.
      Step 4: Stop writes to legacy DB.
      Step 5: Remove legacy DB dependency.
-     
+
      This is the most complex strangling scenario (often needs Event Sourcing or CDC).
-     
+
 MIGRATION STRATEGIES FOR SHARED DATABASE:
 
   EXPAND-CONTRACT (parallel change):
-  
+
     Expand: Add new columns/tables needed by new system (backwards compatible).
     Migrate: New system writes to new columns; legacy to old.
     Contract: Remove old columns when legacy is fully replaced.
-    
+
   ANTI-CORRUPTION LAYER at DB boundary:
     New service has its own database.
     Migration job synchronizes data from legacy DB to new DB.
     New service reads its own DB; writes go to both during transition.
-    
+
 FEATURE FLAG CONTROLLED STRANGLING:
 
   Gradual traffic migration with feature flags:
-  
+
   class PaymentRouter {
       PaymentResult process(PaymentRequest req) {
           double rolloutPercentage = featureFlags.get("NEW_PAYMENT_SERVICE_ROLLOUT");
@@ -162,7 +162,7 @@ FEATURE FLAG CONTROLLED STRANGLING:
           }
       }
   }
-  
+
   Start: rollout = 0% (all legacy)
   Week 1: rollout = 5% (5% on new service, monitor)
   Week 2: rollout = 25%
@@ -175,6 +175,7 @@ FEATURE FLAG CONTROLLED STRANGLING:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Strangler Fig (big-bang rewrite):
+
 - 18-month dark period: no new features, high risk, scope creep, all-or-nothing cutover
 - Legacy knowledge lost in the rewrite; edge cases re-introduced
 
@@ -240,7 +241,7 @@ public class PaymentFacade {
     private final LegacyPaymentProcessor legacy;
     private final NewPaymentService newService;
     private final FeatureFlags featureFlags;
-    
+
     public PaymentResult process(PaymentRequest request) {
         if (featureFlags.isEnabled("NEW_PAYMENT_SERVICE", request.customerId())) {
             log.info("Routing payment {} to NEW service", request.paymentId());
@@ -270,11 +271,11 @@ public class PaymentFacade {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Strangler Fig always uses microservices | Strangler Fig is an incremental migration strategy, not a target architecture. You can strangle a monolith into another monolith (smaller, cleaner), into a modular monolith, or into microservices. The pattern is about the migration technique, not the destination architecture |
-| The facade is temporary and should be removed quickly | The facade may become a permanent part of the architecture (as an API gateway, service mesh, or aggregation layer). For HTTP API facades: they often evolve into API gateways with routing, authentication, rate limiting — valuable in their own right. Don't rush to remove the facade just because migration is complete |
-| Strangler Fig only applies to monolith → microservices | Strangler Fig applies to any legacy replacement: legacy mainframe → modern system, old REST API → GraphQL, old synchronous architecture → event-driven, legacy database → modern database. Whenever you need to replace something that can't be replaced all at once |
+| Misconception                                          | Reality                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Strangler Fig always uses microservices                | Strangler Fig is an incremental migration strategy, not a target architecture. You can strangle a monolith into another monolith (smaller, cleaner), into a modular monolith, or into microservices. The pattern is about the migration technique, not the destination architecture                                         |
+| The facade is temporary and should be removed quickly  | The facade may become a permanent part of the architecture (as an API gateway, service mesh, or aggregation layer). For HTTP API facades: they often evolve into API gateways with routing, authentication, rate limiting — valuable in their own right. Don't rush to remove the facade just because migration is complete |
+| Strangler Fig only applies to monolith → microservices | Strangler Fig applies to any legacy replacement: legacy mainframe → modern system, old REST API → GraphQL, old synchronous architecture → event-driven, legacy database → modern database. Whenever you need to replace something that can't be replaced all at once                                                        |
 
 ---
 
@@ -297,14 +298,14 @@ FIX - EXPAND-CONTRACT + OWNERSHIP TRANSFER:
 
 Step 1 EXPAND: New service writes to orders table AND orders_v2 table (dual write).
                Legacy reads from orders. New service reads from orders_v2.
-               
+
 Step 2 SYNC: Sync job ensures orders and orders_v2 stay consistent.
 
 Step 3 MIGRATE READS: Gradually shift read traffic to new service (which reads orders_v2).
 
 Step 4 MIGRATE WRITES: New service is sole writer to orders_v2.
                        Legacy writes to orders (its own). New service ignores orders.
-                       
+
 Step 5 DECOMMISSION: Legacy removed. orders table removed.
                      New service owns orders_v2 exclusively (rename to orders).
 ```

@@ -18,10 +18,10 @@ tags: #intermediate, #architecture, #design, #principles, #refactoring
 
 ⚡ TL;DR — **Cohesion** measures how related a module's elements are to each other; **Coupling** measures how much modules depend on each other — good design maximizes cohesion (high cohesion) while minimizing coupling (low coupling) for maintainability and changeability.
 
-| #750 | Category: Software Architecture Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | SOLID Principles, Object-Oriented Programming, Modular Monolith | |
-| **Used by:** | Software design, Refactoring, Architecture review, Module design | |
+| #750            | Category: Software Architecture Patterns                         | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------- | :-------------- |
+| **Depends on:** | SOLID Principles, Object-Oriented Programming, Modular Monolith  |                 |
+| **Used by:**    | Software design, Refactoring, Architecture review, Module design |                 |
 
 ---
 
@@ -52,7 +52,7 @@ COHESION TYPES (Constantine & Yourdon hierarchy, worst → best):
 
   1. COINCIDENTAL COHESION (worst):
      Elements in module: unrelated. Just happened to be put together.
-     
+
      class UtilityHelper {
          void sendEmail(String to, String body) { ... }
          BigDecimal calculateTax(BigDecimal amount) { ... }
@@ -61,10 +61,10 @@ COHESION TYPES (Constantine & Yourdon hierarchy, worst → best):
      }
      // Why are these together? No reason. Coincidence.
      // Result: "utility" / "helper" / "manager" named classes → sign of coincidental cohesion.
-     
+
   2. LOGICAL COHESION:
      Elements perform similar operations. Type switches to determine which.
-     
+
      class InputHandler {
          void handle(String input, String type) {
              if ("keyboard".equals(type)) handleKeyboard(input);
@@ -73,10 +73,10 @@ COHESION TYPES (Constantine & Yourdon hierarchy, worst → best):
          }
      }
      // "Logically similar" but different in execution. Type flag needed.
-     
+
   3. PROCEDURAL COHESION:
      Elements follow a fixed sequence. Like a checklist.
-     
+
      class UserRegistrationProcedure {
          void validate(UserData data) { ... }
          void hash(String password) { ... }
@@ -84,20 +84,20 @@ COHESION TYPES (Constantine & Yourdon hierarchy, worst → best):
          void sendEmail(String email) { ... }
      }
      // Only makes sense executed in order. Each method: weak in isolation.
-     
+
   4. COMMUNICATIONAL COHESION:
      Elements operate on the same data.
-     
+
      class OrderPrinter {
          void printHeader(Order order) { ... }
          void printItems(Order order) { ... }
          void printTotal(Order order) { ... }
      }
      // All work on Order, but purpose is just "printing" not the concept itself.
-     
+
   5. SEQUENTIAL COHESION:
      Output of one element is input of another. Pipeline.
-     
+
      class OrderProcessor {
          Order validate(OrderRequest request) { ... }     // returns Order
          Order applyDiscounts(Order order) { ... }        // takes Order
@@ -105,17 +105,17 @@ COHESION TYPES (Constantine & Yourdon hierarchy, worst → best):
          OrderConfirmation save(Order order) { ... }      // takes Order
      }
      // Better: elements form a coherent pipeline.
-     
+
   6. FUNCTIONAL COHESION (best):
      Everything serves ONE well-defined purpose. Remove any element: module incomplete.
-     
+
      class EmailService {
          void send(Email email) { connect(); authenticate(); transmit(email); disconnect(); }
      }
      // All elements serve ONE purpose: sending email. Nothing extraneous.
-     
+
   In DDD terms: INFORMATIONAL COHESION (often considered superior for OO):
-     
+
      class Order {
          confirm(payment) { ... }
          cancel(reason)  { ... }
@@ -124,59 +124,59 @@ COHESION TYPES (Constantine & Yourdon hierarchy, worst → best):
      }
      // All elements work on the SAME domain concept (Order). One reason to change.
      // This is what SRP means in OOP: informational/functional cohesion.
-     
+
 COUPLING TYPES (worst → best):
 
   1. CONTENT COUPLING (worst): A modifies internals of B.
-  
+
      class OrderProcessor {
          void process(Order order) {
              order.status = "CONFIRMED";  // Directly accesses field! Not via method.
              order.items.clear();         // Directly mutates internal state!
          }
      }
-     
+
   2. COMMON COUPLING: Multiple modules share global state.
-  
+
      class GlobalConfig { static String DB_URL = "jdbc:mysql://..."; }
      class OrderRepo { GlobalConfig.DB_URL ... }  // Both modules share global state.
      class UserRepo { GlobalConfig.DB_URL ... }
-     
+
   3. CONTROL COUPLING: A passes a flag telling B what to do.
-  
+
      class Processor {
          void process(Order order, boolean isPremium) {
              if (isPremium) { ... } else { ... }
          }
      }
      // Caller controls processor's behavior via flag. Strategy pattern fixes this.
-     
+
   4. STAMP COUPLING: A passes more data to B than B needs.
-  
+
      void sendWelcomeEmail(Customer customer) { /* only needs customer.email */ }
      // Should be: sendWelcomeEmail(Email email)
-     
+
   5. DATA COUPLING (best for procedure-oriented):
      A passes only the data B needs (primitive types, simple DTOs).
-     
+
      void calculateTax(BigDecimal amount, TaxRate rate) { ... }
-     
+
   6. MESSAGE COUPLING (best for OO/event-driven):
      A sends a message/event; B reacts. A doesn't know B.
-     
+
      eventBus.publish(new OrderPlacedEvent(orderId, total));
      // A (OrderService) knows nothing about B (EmailService). Zero coupling.
-     
+
 HIGH COHESION + LOW COUPLING PRINCIPLE:
 
   "High cohesion within; low coupling between."
-  
+
   Package/Module design:
     GOOD: Each package owns one concept. Classes within call each other freely.
           Between packages: only through public API.
-          
+
     BAD: Classes scattered; util package with everything; cross-package imports everywhere.
-    
+
   Metrics to watch:
     - "Utility" / "Helper" / "Manager" class names → sign of low cohesion.
     - A class imported by 30 other classes → sign of high coupling.
@@ -189,6 +189,7 @@ HIGH COHESION + LOW COUPLING PRINCIPLE:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT understanding Cohesion/Coupling:
+
 - Feature change requires editing 15 files across 6 packages — high coupling
 - `UtilityService` with 50 methods: no one knows what's in it — low cohesion
 - Test setup requires 8 mocks: tightly coupled class impossible to test in isolation
@@ -218,14 +219,14 @@ MEASURING COUPLING (Afferent/Efferent):
 
   Afferent coupling (Ca): how many classes depend ON this class?
     High Ca: this class is hard to change (many dependents will break).
-    
+
   Efferent coupling (Ce): how many classes does this class depend on?
     High Ce: this class is fragile (depends on many things that can change).
-    
+
   Instability: I = Ce / (Ca + Ce)
     I = 0: fully stable (others depend on it; it depends on nothing).
     I = 1: fully unstable (depends on others; nothing depends on it).
-    
+
   Good design: stable classes have low instability (I near 0).
   Good design: volatile classes have high instability (I near 1; they depend on stable abstractions).
 ```
@@ -284,11 +285,11 @@ class OrderService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| High cohesion always means small classes | Cohesion is about relatedness, not size. A rich domain entity `Order` with 15 methods all serving "order lifecycle management" has HIGH cohesion despite being a large class. A small `UtilityHelper` with 5 unrelated methods has LOW cohesion |
-| Coupling is always bad | SOME coupling is necessary — modules must interact. The goal is LOW coupling (minimal, well-defined interfaces), not ZERO coupling (which means no interaction). Coupling is bad when it's tight: internal details exposed, implementation-level dependencies. Loose coupling (via interfaces, events) is acceptable and necessary |
-| Microservices always have lower coupling than monoliths | Microservices can have HIGHER coupling if designed poorly: synchronous REST calls between services create network coupling. A monolith with well-designed module boundaries and in-process event communication can have LOWER coupling than a distributed system where service A synchronously calls B which calls C |
+| Misconception                                           | Reality                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| High cohesion always means small classes                | Cohesion is about relatedness, not size. A rich domain entity `Order` with 15 methods all serving "order lifecycle management" has HIGH cohesion despite being a large class. A small `UtilityHelper` with 5 unrelated methods has LOW cohesion                                                                                    |
+| Coupling is always bad                                  | SOME coupling is necessary — modules must interact. The goal is LOW coupling (minimal, well-defined interfaces), not ZERO coupling (which means no interaction). Coupling is bad when it's tight: internal details exposed, implementation-level dependencies. Loose coupling (via interfaces, events) is acceptable and necessary |
+| Microservices always have lower coupling than monoliths | Microservices can have HIGHER coupling if designed poorly: synchronous REST calls between services create network coupling. A monolith with well-designed module boundaries and in-process event communication can have LOWER coupling than a distributed system where service A synchronously calls B which calls C               |
 
 ---
 

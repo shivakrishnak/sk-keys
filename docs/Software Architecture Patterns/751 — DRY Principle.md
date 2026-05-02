@@ -18,10 +18,10 @@ tags: #intermediate, #architecture, #principles, #clean-code, #refactoring
 
 ⚡ TL;DR — **DRY (Don't Repeat Yourself)** states that every piece of knowledge should have a single, authoritative representation in the system — preventing the "same logic in multiple places" problem where a rule change requires hunting and updating every copy.
 
-| #751 | Category: Software Architecture Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | SOLID Principles, Cohesion and Coupling, Refactoring | |
-| **Used by:** | Code quality, Refactoring, Design Patterns, Clean Code | |
+| #751            | Category: Software Architecture Patterns               | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------- | :-------------- |
+| **Depends on:** | SOLID Principles, Cohesion and Coupling, Refactoring   |                 |
+| **Used by:**    | Code quality, Refactoring, Design Patterns, Clean Code |                 |
 
 ---
 
@@ -51,76 +51,76 @@ A discount rule: "Premium customers get 10% off orders over $100." This rule wri
 DRY IS ABOUT KNOWLEDGE, NOT LINES OF CODE:
 
   WRONG application of DRY (structure similarity, not knowledge):
-  
+
     // Order validation:
     if (order.customerId() == null) throw new ValidationException("customerId required");
     if (order.items().isEmpty())    throw new ValidationException("items required");
-    
+
     // User validation:
     if (user.email() == null)       throw new ValidationException("email required");
     if (user.name().isBlank())      throw new ValidationException("name required");
-    
+
     // These LOOK similar. Should you extract a common validateNotNull(field, name) helper?
-    
+
     ONLY IF: the validation rule is the same knowledge (same business rule).
-    
+
     If order validation rules and user validation rules evolve independently:
       Extracting them couples them. Change user validation: might break order validation.
       The similar structure is COINCIDENTAL, not shared knowledge.
-      
+
   CORRECT application of DRY (knowledge duplication):
-  
+
     // Premium discount rule written THREE times:
-    
+
     // In OrderService:
     if (customer.isPremium() && order.total().isGreaterThan(Money.of(100, USD))) {
         BigDecimal discount = order.total().amount().multiply(new BigDecimal("0.10"));
         // apply discount...
     }
-    
+
     // In ReportingService:
-    boolean isDiscountEligible = customer.isPremium() 
+    boolean isDiscountEligible = customer.isPremium()
         && order.getTotal().compareTo(100.0) > 0;
     double discountAmount = isDiscountEligible ? order.getTotal() * 0.10 : 0;
-    
+
     // In BatchDiscountJob:
     if (customerTier.equals("PREMIUM") && orderTotal > 100.00) {
         discount = orderTotal * 0.1;
     }
-    
+
     // THREE representations of ONE rule. Each uses different types, different thresholds,
     // different variable names. Business change: THREE places to update.
     // One is a String comparison ("PREMIUM"), one is a boolean method, one compares a double.
-    
+
     DRY FIX — the KNOWLEDGE in one place:
-    
+
     class PremiumDiscountPolicy {
         private static final Money MINIMUM_ORDER = Money.of(100, USD);
         private static final Percentage DISCOUNT_RATE = Percentage.of(10);
-        
+
         boolean isEligible(Customer customer, Order order) {
             return customer.isPremium() && order.total().isGreaterThan(MINIMUM_ORDER);
         }
-        
+
         Money calculateDiscount(Order order) {
             return order.total().applyDiscount(DISCOUNT_RATE);
         }
     }
-    
+
     // Now: OrderService, ReportingService, BatchJob all use PremiumDiscountPolicy.
     // Business change to 15%: PremiumDiscountPolicy.DISCOUNT_RATE = Percentage.of(15).
     // ONE change. Done.
-    
+
 TYPES OF DRY VIOLATIONS:
 
   1. DUPLICATED CODE (most visible):
      Same or similar code blocks in multiple methods/classes.
      Fix: extract to a shared method or class.
-     
+
   2. DUPLICATED LOGIC:
      Same business rule re-implemented multiple times (sometimes in different styles).
      Fix: extract to a domain object, policy, or specification.
-     
+
   3. DUPLICATED KNOWLEDGE IN SCHEMA + CODE:
      Database: column CHECK constraint validates email format.
      Java: @Email annotation validates email format.
@@ -128,34 +128,34 @@ TYPES OF DRY VIOLATIONS:
      Three representations of ONE rule: "what is a valid email?"
      If the rule changes: three places to update.
      Fix: define email validation once (domain object Email) and rely on it.
-     
+
   4. DOCUMENTATION THAT REPEATS CODE:
      // This method adds two numbers:
      int add(int a, int b) { return a + b; }
      The comment repeats what the code says. Comment will get out of sync.
      Fix: write code that speaks for itself. Comment WHY, not WHAT.
-     
+
 WRY THE MISUNDERSTOOD TWIN:
 
   WRY = "Write it Right, then Yes, DRY" — informal reminder:
   First: make it work. Second: make it right. THEN: deduplicate.
-  
+
   Two pieces of similar code? Don't rush to extract:
   - Are they really the same KNOWLEDGE? Or just similar STRUCTURE?
   - Do they change for the same reason? (SRP question)
   - Would extracting couple them unnecessarily?
-  
+
   Rule of Three (Ron Jeffries):
     Write it once: just write it.
     Write it twice: note the similarity.
     Write it three times: NOW extract.
-    
+
   Premature deduplication: coupling things that should stay separate.
-  
+
 THE OPPOSITE OF DRY:
 
   WET = "Write Everything Twice" / "We Enjoy Typing"
-  
+
   WET system characteristics:
     - Bug found in 1 place: must search for copies in 5 other places.
     - Discount rate changed: grep for "0.10" and hope you found them all.
@@ -168,6 +168,7 @@ THE OPPOSITE OF DRY:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT DRY (WET codebase):
+
 - Business rule change: grep codebase, hope you found all copies, change each, miss one in production
 - Bug found: fixed in one place but exists in 4 copies — other 3 still in production
 
@@ -200,18 +201,18 @@ DRY EXTRACTION PATTERN:
     BatchAuditJob.java:     if (transaction.getAmount().compareTo(1000) > 0) addToAudit();
 
   IDENTIFY: Same business rule — "amounts over $1000 trigger fraud/audit."
-  
+
   EXTRACT:
     class FraudThreshold {
         private static final Money THRESHOLD = Money.of(1000, USD);
         static boolean exceeds(Money amount) { return amount.isGreaterThan(THRESHOLD); }
     }
-  
+
   AFTER (rule in 1 place):
     OrderService:   if (FraudThreshold.exceeds(order.total())) applyFraudCheck();
     PaymentService: if (FraudThreshold.exceeds(payment.amount())) flagForReview();
     BatchAuditJob:  if (FraudThreshold.exceeds(txn.amount())) addToAudit();
-    
+
   Rule change ($1000 → $2000): change FraudThreshold.THRESHOLD. Done.
 ```
 
@@ -285,11 +286,11 @@ class OrderController {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| DRY means "no duplicate code" | DRY means "no duplicate KNOWLEDGE." Duplicate code is a symptom; duplicate knowledge is the disease. Two similar-looking code blocks that represent different business rules should NOT be extracted just because they look similar — that would couple different knowledge. Test: "do these change for the same reason?" If yes: extract. If no: leave separate |
-| DRY means extract every common 3-line block | Over-DRY creates accidental coupling. The "Rule of Three" prevents premature extraction: write it once (fine), write it twice (note similarity), write it three times (extract). Extracting after only seeing two occurrences: might couple unrelated things based on accidental similarity |
-| DRY only applies to code | DRY applies to: database schema (constraints vs. code validation), documentation (comments vs. code), configuration (hardcoded values vs. centralized config), and even tests (test setup duplicated across 50 test methods). DRY is a principle about knowledge representation, not just code lines |
+| Misconception                               | Reality                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DRY means "no duplicate code"               | DRY means "no duplicate KNOWLEDGE." Duplicate code is a symptom; duplicate knowledge is the disease. Two similar-looking code blocks that represent different business rules should NOT be extracted just because they look similar — that would couple different knowledge. Test: "do these change for the same reason?" If yes: extract. If no: leave separate |
+| DRY means extract every common 3-line block | Over-DRY creates accidental coupling. The "Rule of Three" prevents premature extraction: write it once (fine), write it twice (note similarity), write it three times (extract). Extracting after only seeing two occurrences: might couple unrelated things based on accidental similarity                                                                      |
+| DRY only applies to code                    | DRY applies to: database schema (constraints vs. code validation), documentation (comments vs. code), configuration (hardcoded values vs. centralized config), and even tests (test setup duplicated across 50 test methods). DRY is a principle about knowledge representation, not just code lines                                                             |
 
 ---
 

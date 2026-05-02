@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #distributed-systems, #messaging, #reliabilit
 
 ⚡ TL;DR — **Outbox Pattern** solves the dual-write problem in distributed systems: atomically write to the database AND guarantee message delivery by storing the event in an outbox table within the same database transaction, then publishing asynchronously.
 
-| #807 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Event-Driven Pattern, Distributed Systems, Database Fundamentals, ACID | |
-| **Used by:** | Microservices, event sourcing, saga orchestration, reliable messaging | |
+| #807            | Category: Design Patterns                                              | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Event-Driven Pattern, Distributed Systems, Database Fundamentals, ACID |                 |
+| **Used by:**    | Microservices, event sourcing, saga orchestration, reliable messaging  |                 |
 
 ---
 
@@ -53,31 +53,31 @@ THE DUAL-WRITE PROBLEM:
   Service must do TWO things:
   1. Update DB state (order created)
   2. Publish event to message broker (OrderCreated)
-  
+
   These two operations are in different systems → not atomic.
-  
+
   FAILURE SCENARIOS:
-  
+
   Scenario A: DB succeeds, Kafka fails
   → Order persisted. OrderCreated never published.
   → Inventory never decremented. Notification never sent.
   → State: order exists, downstream knows nothing.
-  
+
   Scenario B: Kafka succeeds, DB fails (rollback)
   → OrderCreated published to Kafka.
   → Order does NOT exist in DB (transaction rolled back).
   → Downstream processes a phantom order.
   → State: event published for non-existent order.
-  
+
   Both scenarios: data inconsistency.
-  
+
 OUTBOX PATTERN SOLUTION:
 
   Core insight: use the DB itself as the message staging area.
   The DB is ACID: use a local transaction to guarantee both writes atomically.
-  
+
   Step 1: Create outbox table (same database as domain data):
-  
+
   CREATE TABLE outbox_events (
       id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       aggregate_type VARCHAR(255) NOT NULL,    -- "Order", "Customer"
@@ -88,9 +88,9 @@ OUTBOX PATTERN SOLUTION:
       published_at   TIMESTAMPTZ,             -- NULL = not yet published
       sequence_no    BIGSERIAL                -- ordering within aggregate
   );
-  
+
   Step 2: Domain service — one transaction, two writes:
-  
+
   @Service
   @Transactional                               // one local transaction
   class OrderService {
@@ -98,7 +98,7 @@ OUTBOX PATTERN SOLUTION:
           // Write 1: domain state
           Order order = new Order(cmd);
           orderRepository.save(order);
-          
+
           // Write 2: outbox event (same transaction)
           OutboxEvent event = OutboxEvent.of(
               "Order",
@@ -107,14 +107,14 @@ OUTBOX PATTERN SOLUTION:
               objectMapper.writeValueAsString(new OrderCreatedEvent(order))
           );
           outboxRepository.save(event);
-          
+
           // Either BOTH persist (transaction commits) or NEITHER (rollback).
           // No partial state possible.
       }
   }
-  
+
   Step 3: Message Relay — reads outbox and publishes:
-  
+
   OPTION A: Polling Relay (simpler, higher latency, more DB load):
   @Scheduled(fixedDelay = 1000)
   void relay() {
@@ -125,27 +125,27 @@ OUTBOX PATTERN SOLUTION:
           outboxRepo.save(event);
       }
   }
-  
+
   OPTION B: Change Data Capture (CDC) with Debezium (lower latency, no polling):
   // Debezium reads PostgreSQL WAL (Write-Ahead Log) in real-time.
   // Detects INSERT on outbox_events table → publishes to Kafka automatically.
   // No polling. No additional DB load. Sub-second latency.
   // Configuration: Debezium Kafka Connect connector on the outbox table.
-  
+
   Step 4: Consumer must be IDEMPOTENT (at-least-once delivery):
   // Relay may publish the same event twice (on failure/restart).
   // Consumers must handle duplicate events:
-  
+
   @KafkaListener(topics = "order-created")
   void handleOrderCreated(OrderCreatedEvent event) {
       // Idempotent check: has this event been processed?
       if (processedEventRepository.existsById(event.getEventId())) {
           return;    // already processed — skip (idempotent)
       }
-      
+
       // Process the event:
       inventoryService.reserve(event.getItems());
-      
+
       // Mark as processed (in same transaction as inventory update):
       processedEventRepository.save(new ProcessedEvent(event.getEventId()));
   }
@@ -156,6 +156,7 @@ OUTBOX PATTERN SOLUTION:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Outbox Pattern:
+
 - Dual writes: DB and broker can diverge on any failure → inconsistent distributed state
 - Either lost events or phantom events — both cause downstream failures
 
@@ -250,24 +251,24 @@ Outbox Pattern ◄──── (you are here)
 public class OutboxEvent {
     @Id @GeneratedValue
     private UUID id;
-    
+
     @Column(nullable = false)
     private String aggregateType;
-    
+
     @Column(nullable = false)
     private String aggregateId;
-    
+
     @Column(nullable = false)
     private String eventType;
-    
+
     @Column(columnDefinition = "jsonb", nullable = false)
     private String payload;
-    
+
     @Column(nullable = false)
     private Instant createdAt = Instant.now();
-    
+
     private Instant publishedAt;   // null = not yet published
-    
+
     public static OutboxEvent of(String aggregateType, String aggregateId,
                                   String eventType, String payload) {
         OutboxEvent e = new OutboxEvent();
@@ -277,7 +278,7 @@ public class OutboxEvent {
         e.payload = payload;
         return e;
     }
-    
+
     public void markPublished() { this.publishedAt = Instant.now(); }
 }
 
@@ -287,18 +288,18 @@ public class OrderService {
     private final OrderRepository orderRepo;
     private final OutboxEventRepository outboxRepo;
     private final ObjectMapper mapper;
-    
+
     @Transactional
     public Order createOrder(CreateOrderCommand cmd) {
         Order order = new Order(cmd.getCustomerId(), cmd.getItems(), cmd.getTotal());
         orderRepo.save(order);
-        
+
         // Publish to outbox — same transaction as order creation:
         String payload = mapper.writeValueAsString(
             new OrderCreatedEvent(order.getId(), order.getCustomerId(), order.getTotal()));
         outboxRepo.save(OutboxEvent.of("Order", order.getId().toString(),
                                         "OrderCreated", payload));
-        
+
         return order;   // transaction commits: BOTH order AND outbox row persisted
     }
 }
@@ -309,14 +310,14 @@ public class OrderService {
 public class OutboxMessageRelay {
     private final OutboxEventRepository outboxRepo;
     private final KafkaTemplate<String, String> kafka;
-    
+
     @Scheduled(fixedDelay = 500)   // poll every 500ms
     @Transactional
     public void relay() {
         outboxRepo.findTop100ByPublishedAtIsNullOrderByCreatedAtAsc()
             .forEach(this::publish);
     }
-    
+
     private void publish(OutboxEvent event) {
         try {
             String topic = event.getEventType().toLowerCase().replace(".", "-");
@@ -335,11 +336,11 @@ public class OutboxMessageRelay {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                       | Reality                                                                                                                                                                                                                                                                                                                                                                                        |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | The Outbox Pattern guarantees exactly-once delivery | The Outbox Pattern guarantees at-least-once delivery. If the relay publishes the event and then crashes before marking it as published, the event will be re-published on restart. Consumers must be idempotent to handle duplicates. Exactly-once delivery in distributed systems requires additional mechanisms (e.g., Kafka transactions + idempotent producers + transactional consumers). |
-| CDC (Debezium) is always better than polling relay | Both have tradeoffs. Polling relay: simpler, no additional infrastructure, higher latency (depends on polling interval), more DB load. CDC (Debezium + Kafka Connect): lower latency (WAL-based), less DB load, but requires additional infrastructure (Kafka Connect cluster), more operational complexity. For teams starting out: polling relay is simpler. At scale: CDC is preferable. |
-| The Outbox Pattern requires a separate microservice | The relay can be an `@Scheduled` component in the same service. Many implementations run the relay as a background thread in the producing service. A dedicated relay service (separate deployment) is only needed when the relay itself needs to scale independently or when multiple services share a relay infrastructure. |
+| CDC (Debezium) is always better than polling relay  | Both have tradeoffs. Polling relay: simpler, no additional infrastructure, higher latency (depends on polling interval), more DB load. CDC (Debezium + Kafka Connect): lower latency (WAL-based), less DB load, but requires additional infrastructure (Kafka Connect cluster), more operational complexity. For teams starting out: polling relay is simpler. At scale: CDC is preferable.    |
+| The Outbox Pattern requires a separate microservice | The relay can be an `@Scheduled` component in the same service. Many implementations run the relay as a background thread in the producing service. A dedicated relay service (separate deployment) is only needed when the relay itself needs to scale independently or when multiple services share a relay infrastructure.                                                                  |
 
 ---
 

@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #event-driven, #messaging, #decoupling, #
 
 ⚡ TL;DR — **Event Bus** provides a centralized channel where publishers post events and subscribers receive events — decoupling publishers from subscribers completely: neither knows about the other; the bus routes events to all registered handlers.
 
-| #795 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Observer Pattern, Producer-Consumer Pattern, Command Pattern | |
-| **Used by:** | Microservices integration, domain events, UI frameworks, plugin systems | |
+| #795            | Category: Design Patterns                                               | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Observer Pattern, Producer-Consumer Pattern, Command Pattern            |                 |
+| **Used by:**    | Microservices integration, domain events, UI frameworks, plugin systems |                 |
 
 ---
 
@@ -55,11 +55,11 @@ EVENT BUS STRUCTURE:
       <T extends Event> void subscribe(Class<T> eventType, EventHandler<T> handler);
       <T extends Event> void unsubscribe(Class<T> eventType, EventHandler<T> handler);
   }
-  
+
   class SimpleEventBus implements EventBus {
       // Map: event type → list of handlers registered for that type
       private final Map<Class<?>, List<EventHandler<?>>> handlers = new ConcurrentHashMap<>();
-      
+
       @Override
       public <T extends Event> void publish(T event) {
           List<EventHandler<?>> eventHandlers = handlers.getOrDefault(event.getClass(), List.of());
@@ -71,18 +71,18 @@ EVENT BUS STRUCTURE:
           // Also notify handlers registered for superclasses/interfaces:
           // (production buses handle type hierarchy)
       }
-      
+
       @Override
       public <T extends Event> void subscribe(Class<T> type, EventHandler<T> handler) {
           handlers.computeIfAbsent(type, k -> new CopyOnWriteArrayList<>()).add(handler);
       }
-      
+
       @Override
       public <T extends Event> void unsubscribe(Class<T> type, EventHandler<T> handler) {
           handlers.getOrDefault(type, List.of()).remove(handler);
       }
   }
-  
+
 EVENT BUS vs OBSERVER vs MEDIATOR:
 
   OBSERVER:
@@ -90,63 +90,63 @@ EVENT BUS vs OBSERVER vs MEDIATOR:
   Subject knows observers (implicit coupling).
   Observers receive subject's state change.
   In-process only.
-  
+
   EVENT BUS:
   Bus is a third-party intermediary.
   Publishers and subscribers know ONLY the bus (and event types).
   Multiple publishers can publish the same event type.
   Multiple subscribers can handle the same event type.
   Can be async, persistent, distributed (Kafka).
-  
+
   MEDIATOR:
   Mediator coordinates INTERACTIONS between components.
   Components know about mediator (not each other).
   Mediator can contain business logic to decide who to route to.
   Event Bus: typically routes all events to all registered handlers (no routing logic in bus).
-  
+
 GUAVA EventBus:
 
   // Guava EventBus — simple synchronous in-process event bus:
   EventBus eventBus = new EventBus("order-events");
-  
+
   // Subscriber — annotate with @Subscribe:
   class EmailNotificationListener {
       @Subscribe
       void onOrderPlaced(OrderPlacedEvent event) {
           emailService.sendConfirmation(event.getOrderId());
       }
-      
+
       @Subscribe
       void onOrderCancelled(OrderCancelledEvent event) {
           emailService.sendCancellation(event.getOrderId());
       }
   }
-  
+
   // Register subscriber:
   EmailNotificationListener listener = new EmailNotificationListener();
   eventBus.register(listener);
-  
+
   // Publisher:
   eventBus.post(new OrderPlacedEvent(order));    // synchronous: all @Subscribe methods called
-  
+
   // Async EventBus (handles on separate thread):
   AsyncEventBus asyncBus = new AsyncEventBus("async-orders", Executors.newFixedThreadPool(4));
   asyncBus.post(new OrderPlacedEvent(order));    // returns immediately; handlers run on pool
-  
+
 SPRING APPLICATION EVENT BUS:
 
   // Spring: ApplicationContext IS the Event Bus.
-  
+
   // EVENT:
   record OrderPlacedEvent(String orderId, BigDecimal total) implements ApplicationEvent {
       OrderPlacedEvent(String orderId, BigDecimal total) { super(orderId); ... }
   }
-  
+
   // PUBLISHER (injected ApplicationEventPublisher):
   @Service
   class OrderService {
       @Autowired ApplicationEventPublisher eventBus;
-      
+
       @Transactional
       void placeOrder(Order order) {
           orderRepo.save(order);
@@ -154,33 +154,33 @@ SPRING APPLICATION EVENT BUS:
           // No coupling to any listener
       }
   }
-  
+
   // SUBSCRIBERS:
   @Component
   class EmailHandler {
       @EventListener
       void handle(OrderPlacedEvent e) { emailService.sendConfirmation(e.orderId()); }
   }
-  
+
   @Component
   class InventoryHandler {
       @EventListener
       @Async  // handle on separate thread pool
       void handle(OrderPlacedEvent e) { inventoryService.reserve(e.orderId()); }
   }
-  
+
   // Conditional handling:
   @Component
   class LargeOrderHandler {
       @EventListener(condition = "#event.total > 1000")  // SpEL condition
       void handle(OrderPlacedEvent e) { vipTeam.notify(e.orderId()); }
   }
-  
+
 TRANSACTIONAL EVENT HANDLING:
 
   // Problem: event published inside transaction; handler runs before commit;
   // handler reads DB → sees uncommitted order → data not there yet!
-  
+
   @Transactional
   void placeOrder(Order order) {
       orderRepo.save(order);
@@ -188,7 +188,7 @@ TRANSACTIONAL EVENT HANDLING:
       // Event published HERE — inside transaction — order not yet committed!
       // If EmailHandler queries orderRepo → might not find the order
   }
-  
+
   // FIX: @TransactionalEventListener — handler runs AFTER transaction commits:
   @Component
   class EmailHandler {
@@ -198,17 +198,17 @@ TRANSACTIONAL EVENT HANDLING:
           emailService.sendConfirmation(e.orderId());
       }
   }
-  
+
 DISTRIBUTED EVENT BUS (KAFKA):
 
   // In-process EventBus: events shared within one JVM
   // Distributed EventBus: events shared across services/JVMs (Kafka, RabbitMQ)
-  
+
   // Kafka as distributed Event Bus:
   // Publisher = Kafka Producer
   // Bus = Kafka broker + topics (event types)
   // Subscribers = Kafka Consumer Groups
-  
+
   // Key difference from in-process EventBus:
   // ✓ Persistence: events stored, can replay
   // ✓ Multiple services (cross-JVM)
@@ -222,6 +222,7 @@ DISTRIBUTED EVENT BUS (KAFKA):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Event Bus:
+
 - `OrderService` directly calls `EmailService`, `InventoryService`, `AnalyticsService` — tightly coupled
 - Adding new reaction to order: modify OrderService
 
@@ -253,13 +254,13 @@ EVENT BUS DISPATCH:
   3. Dispatch to each handler:
      - Synchronous: call handler in publisher's thread, in registration order
      - Asynchronous: submit handler invocations to thread pool
-  
+
   subscribe(type, handler):
   Add handler to Map<EventType, List<Handler>>
-  
+
   unsubscribe:
   Remove handler from map
-  
+
   Dead events (no handler registered):
   Guava: posts DeadEvent; Spring: silently ignored
 ```
@@ -325,7 +326,7 @@ class EmailSubscriber {
 class InventorySubscriber {
     @EventListener @Async
     void on(OrderPlaced e) { inventoryService.reserve(e.orderId()); }
-    
+
     @EventListener @Async
     void on(OrderCancelled e) { inventoryService.release(e.orderId()); }
 }
@@ -341,11 +342,11 @@ class MetricsSubscriber {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Event Bus and Observer are the same | Observer: subject holds direct references to observers. Adding an observer requires the subject to expose a registration method. Subjects and observers are aware of each other. Event Bus: third-party broker. Publishers and subscribers know only the bus (and event types). Publisher has zero reference to subscribers. Event Bus scales to many publishers and subscribers; Observer is one-to-many per subject. |
-| Synchronous Event Bus is safer | Depends on semantics. Synchronous: handler exception propagates to publisher (potentially aborting the publishing transaction). Async: handler exception doesn't affect publisher (but must be handled separately). `@TransactionalEventListener` is synchronous but deferred — handler runs after commit. Each model has different failure semantics. Choose based on required coupling between publishing and handling outcome. |
-| Event Bus eliminates all coupling | Event Bus eliminates structural coupling (imports, method calls) but introduces behavioral coupling (shared event types). Publisher and subscribers must agree on: event schema (what fields, what types), event semantics (what does OrderPlaced mean), and ordering guarantees. Changing an event type's schema requires coordinating all subscribers. Schema registry (Avro, Protobuf) helps for distributed buses. |
+| Misconception                       | Reality                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Event Bus and Observer are the same | Observer: subject holds direct references to observers. Adding an observer requires the subject to expose a registration method. Subjects and observers are aware of each other. Event Bus: third-party broker. Publishers and subscribers know only the bus (and event types). Publisher has zero reference to subscribers. Event Bus scales to many publishers and subscribers; Observer is one-to-many per subject.            |
+| Synchronous Event Bus is safer      | Depends on semantics. Synchronous: handler exception propagates to publisher (potentially aborting the publishing transaction). Async: handler exception doesn't affect publisher (but must be handled separately). `@TransactionalEventListener` is synchronous but deferred — handler runs after commit. Each model has different failure semantics. Choose based on required coupling between publishing and handling outcome. |
+| Event Bus eliminates all coupling   | Event Bus eliminates structural coupling (imports, method calls) but introduces behavioral coupling (shared event types). Publisher and subscribers must agree on: event schema (what fields, what types), event semantics (what does OrderPlaced mean), and ordering guarantees. Changing an event type's schema requires coordinating all subscribers. Schema registry (Avro, Protobuf) helps for distributed buses.            |
 
 ---
 
@@ -369,7 +370,7 @@ class InventoryHandler {
 @Component
 class InventoryHandler {
     @Autowired ProcessedEventRepository processedEvents;
-    
+
     @KafkaListener(topics = "orders.placed")
     @Transactional
     void onOrderPlaced(OrderPlacedEvent event) {
@@ -378,7 +379,7 @@ class InventoryHandler {
             log.warn("Duplicate event {}, skipping", event.getEventId());
             return;  // idempotent: ignore duplicate
         }
-        
+
         inventoryService.decrementStock(event.getProductId(), event.getQuantity());
         processedEvents.save(new ProcessedEvent(event.getEventId(), Instant.now()));
     }

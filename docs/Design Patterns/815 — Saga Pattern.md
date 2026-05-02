@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #distributed-systems, #microservices, #transa
 
 ⚡ TL;DR — **Saga Pattern** manages distributed transactions across multiple microservices by breaking them into a sequence of local transactions, each publishing events or commands — with compensating transactions to undo completed steps if any step fails.
 
-| #815 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Microservices, Outbox Pattern, Event-Driven Pattern, Distributed Systems | |
-| **Used by:** | Distributed transactions, microservices orchestration, long-running business processes | |
+| #815            | Category: Design Patterns                                                              | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Microservices, Outbox Pattern, Event-Driven Pattern, Distributed Systems               |                 |
+| **Used by:**    | Distributed transactions, microservices orchestration, long-running business processes |                 |
 
 ---
 
@@ -51,12 +51,12 @@ A hotel booking platform: book flight (Airline Service), hotel (Hotel Service), 
 SAGA STYLES:
 
   1. CHOREOGRAPHY (event-driven, decentralized):
-  
+
   Services react to events from other services.
   No central coordinator.
-  
+
   Order Saga (Choreography):
-  
+
   OrderService: ORDER_CREATED event ──────────────────────────┐
                                                               ▼
   InventoryService: listens to ORDER_CREATED                  │
@@ -72,98 +72,98 @@ SAGA STYLES:
   ShippingService: listens to PAYMENT_COMPLETED               │
                    schedules shipment                         │
                    publishes ORDER_SHIPPED                    │
-  
+
   FAILURE — PAYMENT_FAILED:
   InventoryService: listens to PAYMENT_FAILED
                     releases stock reservation (compensation)
                     publishes STOCK_RELEASED
   OrderService: listens to STOCK_RELEASED
                 marks order as FAILED (compensation)
-  
+
   PROS: decentralized, simple, no single point of failure
   CONS: hard to see the big picture, difficult to implement complex flows,
         cyclic dependencies possible, hard to debug/monitor
-  
+
   2. ORCHESTRATION (centralized coordinator):
-  
+
   Saga Orchestrator manages the flow: sends commands, receives replies.
-  
+
   OrderOrchestrator → RESERVE_STOCK command → InventoryService
   OrderOrchestrator ← STOCK_RESERVED reply  ← InventoryService
-  
+
   OrderOrchestrator → CHARGE_PAYMENT command → PaymentService
   OrderOrchestrator ← PAYMENT_FAILED reply   ← PaymentService
-  
+
   OrderOrchestrator → RELEASE_STOCK command → InventoryService (compensation)
   OrderOrchestrator → CANCEL_ORDER command  → OrderService (compensation)
-  
+
   PROS: clear business flow in one place (orchestrator), easy to monitor,
         easy to add steps, clear compensation sequence
   CONS: orchestrator = additional component to build and maintain,
         single point of failure (mitigated by persistent orchestrator state)
-  
-  RECOMMENDATION: Use Orchestration for complex sagas (>3 steps). 
+
+  RECOMMENDATION: Use Orchestration for complex sagas (>3 steps).
                   Use Choreography for simple, 2-3 step flows.
 
 SAGA IMPLEMENTATION WITH AXON FRAMEWORK (Spring Boot):
 
   // Orchestration saga with Axon:
-  
+
   @Saga
   @ProcessingGroup("order-saga")
   public class OrderSaga {
-      
+
       @Autowired @Transient
       private CommandGateway commandGateway;
-      
+
       private String orderId;
       private String customerId;
-      
+
       @StartSaga
       @SagaEventHandler(associationProperty = "orderId")
       public void on(OrderCreatedEvent event) {
           this.orderId = event.getOrderId();
           this.customerId = event.getCustomerId();
-          
+
           // Step 1: Reserve inventory
           commandGateway.send(new ReserveStockCommand(
               event.getOrderId(), event.getProductId(), event.getQuantity()));
       }
-      
+
       @SagaEventHandler(associationProperty = "orderId")
       public void on(StockReservedEvent event) {
           // Step 2: Charge payment
           commandGateway.send(new ChargePaymentCommand(
               event.getOrderId(), customerId, event.getAmount()));
       }
-      
+
       @SagaEventHandler(associationProperty = "orderId")
       public void on(PaymentChargedEvent event) {
           // Step 3: Schedule shipping
           commandGateway.send(new ScheduleShipmentCommand(event.getOrderId()));
       }
-      
+
       @SagaEventHandler(associationProperty = "orderId")
       public void on(ShipmentScheduledEvent event) {
           // All steps successful — saga complete
           commandGateway.send(new ConfirmOrderCommand(event.getOrderId()));
           SagaLifecycle.end();   // Saga is complete — remove from tracking
       }
-      
+
       // COMPENSATION: payment failed
       @SagaEventHandler(associationProperty = "orderId")
       public void on(PaymentFailedEvent event) {
           // Compensate: release the stock that was reserved
           commandGateway.send(new ReleaseStockCommand(event.getOrderId()));
       }
-      
+
       @SagaEventHandler(associationProperty = "orderId")
       public void on(StockReleasedEvent event) {
           // Compensate: cancel the order
           commandGateway.send(new CancelOrderCommand(orderId, "Payment failed"));
           SagaLifecycle.end();   // Saga complete (with failure)
       }
-      
+
       // COMPENSATION: stock unavailable
       @SagaEventHandler(associationProperty = "orderId")
       public void on(StockUnavailableEvent event) {
@@ -177,12 +177,12 @@ SAGA + OUTBOX PATTERN:
 
   Each saga step must publish its event/command atomically with its DB write.
   Use Outbox Pattern at each step:
-  
+
   @Transactional
   void handleReserveStockCommand(ReserveStockCommand cmd) {
       // Local transaction:
       stockRepository.reserve(cmd.getProductId(), cmd.getQuantity());
-      
+
       // Outbox: publish either STOCK_RESERVED or STOCK_UNAVAILABLE atomically:
       outboxRepository.save(OutboxEvent.of(
           "Inventory", cmd.getOrderId(), "StockReserved", ...));
@@ -195,6 +195,7 @@ SAGA + OUTBOX PATTERN:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Saga:
+
 - Distributed transactions (2PC) require all services to be available simultaneously; lock resources; scale poorly; couple services tightly
 - Result: inconsistent data across services when any step fails
 
@@ -227,17 +228,17 @@ SAGA STATE MACHINE:
                                                     PAYMENT_FAILED
                                                          │
                                                     STOCK_RELEASING → ORDER_CANCELLED (FAILED)
-  
+
   Each state transition:
   - Triggered by event received
   - Results in command sent or compensation triggered
   - Saga state persisted (Axon: EventStore; others: saga state table)
-  
+
 IDEMPOTENCY REQUIREMENT:
-  
+
   Saga steps must be idempotent: if the orchestrator resends a command (network failure),
   the service must handle the duplicate without double-processing.
-  
+
   Pattern: check if command already processed:
   if (stockReservations.existsByOrderId(cmd.getOrderId())) {
       // Already processed — publish reply event again (idempotent)
@@ -276,11 +277,11 @@ Saga Pattern ◄──── (you are here)
 public class OrderService {
     public Order createOrder(CreateOrderCommand cmd) {
         Order order = orderRepo.save(new Order(cmd.getCustomerId(), cmd.getItems()));
-        
+
         // Outbox: event will be published to Kafka by relay:
         outboxRepo.save(OutboxEvent.of("Order", order.getId().toString(),
             "OrderCreated", serialize(new OrderCreatedEvent(order))));
-        
+
         return order;
     }
 }
@@ -322,11 +323,11 @@ public void onStockReleased(StockReleasedEvent event) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Saga is just a distributed transaction | Saga does NOT provide ACID isolation. Between saga steps, the intermediate state is visible to other operations (e.g., stock is "reserved" while payment is processing). This is Eventual Consistency, not strong consistency. If strong ACID isolation across services is required, saga is not sufficient — you need a different architecture or accept the coupling of shared-database transactions. |
+| Misconception                                     | Reality                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Saga is just a distributed transaction            | Saga does NOT provide ACID isolation. Between saga steps, the intermediate state is visible to other operations (e.g., stock is "reserved" while payment is processing). This is Eventual Consistency, not strong consistency. If strong ACID isolation across services is required, saga is not sufficient — you need a different architecture or accept the coupling of shared-database transactions.                                                   |
 | Compensating transactions fully undo the original | Compensating transactions achieve semantic cancellation, not perfect undo. If a payment was charged and then the downstream step failed: the compensation sends a refund (not a database rollback). The refund is a new transaction, not an undo. "Compensation" in Saga means: reaching a consistent end state, not necessarily the original pre-saga state. The user may see: charged → refunded (two transactions visible), not a single clean cancel. |
-| Choreography is always simpler than Orchestration | For 2-3 simple steps: Choreography is simpler (no orchestrator component needed). For complex flows (>5 steps, conditional branches, parallel steps, timeout handling): Choreography produces a complex, hard-to-understand web of event handlers. Orchestration provides a clear, readable flow in one component. The "simpler" label reverses at scale. Choose based on saga complexity, not dogma. |
+| Choreography is always simpler than Orchestration | For 2-3 simple steps: Choreography is simpler (no orchestrator component needed). For complex flows (>5 steps, conditional branches, parallel steps, timeout handling): Choreography produces a complex, hard-to-understand web of event handlers. Orchestration provides a clear, readable flow in one component. The "simpler" label reverses at scale. Choose based on saga complexity, not dogma.                                                     |
 
 ---
 

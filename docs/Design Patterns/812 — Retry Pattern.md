@@ -18,10 +18,10 @@ tags: #intermediate, #design-patterns, #resilience, #distributed-systems, #fault
 
 ⚡ TL;DR — **Retry Pattern** automatically retries failed transient operations — with configurable backoff, jitter, and max attempts — preventing the need for manual retry logic in every client while handling temporary network glitches and transient service failures.
 
-| #812 | Category: Design Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Circuit Breaker Pattern, Bulkhead Pattern, Resilience4j, Distributed Systems | |
-| **Used by:** | Microservices, HTTP clients, message consumers, distributed system clients | |
+| #812            | Category: Design Patterns                                                    | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Circuit Breaker Pattern, Bulkhead Pattern, Resilience4j, Distributed Systems |                 |
+| **Used by:**    | Microservices, HTTP clients, message consumers, distributed system clients   |                 |
 
 ---
 
@@ -56,14 +56,14 @@ RETRYABLE vs. NON-RETRYABLE ERRORS:
   ✓ 500 Internal Server Error (may be transient — retry with caution)
   ✓ Network timeout (transient connectivity issue)
   ✓ Connection reset (transient network issue)
-  
+
   NON-RETRYABLE (permanent — retry wastes time and amplifies problems):
   ✗ 400 Bad Request (your request is malformed — retrying sends the same bad request)
   ✗ 401 Unauthorized (wrong credentials — retrying fails the same way)
   ✗ 403 Forbidden (access denied — retrying doesn't grant access)
   ✗ 404 Not Found (resource doesn't exist — retrying finds nothing)
   ✗ 422 Unprocessable Entity (business validation failure)
-  
+
   CRITICAL: only retry on retryable errors.
   Retrying a 400: wastes time. Retrying a 401: wastes time + may trigger account lockout.
 
@@ -72,24 +72,24 @@ BACKOFF STRATEGIES:
   1. FIXED DELAY:
   Attempt 1 → FAIL → wait 1s → Attempt 2 → FAIL → wait 1s → Attempt 3
   Simple. Predictable. Problem: synchronized clients → thundering herd.
-  
+
   2. EXPONENTIAL BACKOFF:
   Attempt 1 → FAIL → wait 1s → Attempt 2 → FAIL → wait 2s → Attempt 3 → FAIL → wait 4s
   Wait = baseDelay × 2^attempt
   Progressively backs off → gives downstream more recovery time.
   Problem: all clients still retry at the same time if they start simultaneously.
-  
+
   3. EXPONENTIAL BACKOFF WITH JITTER (correct production approach):
   Wait = random(0, min(cap, baseDelay × 2^attempt))
   "Full Jitter" (AWS best practice): wait = random(0, min(cap, baseDelay × 2^attempt))
   "Equal Jitter": wait = (min(cap, baseDelay × 2^attempt) / 2) + random(0, same/2)
-  
+
   WHY JITTER IS CRITICAL:
   100 microservice instances all fail at t=0.
   Fixed backoff: all retry at t=1s, t=2s, t=4s simultaneously.
   Each retry wave: 100 requests simultaneously hitting the recovering service.
   Service re-fails on each wave: recovery never happens.
-  
+
   Jitter: each instance picks a random delay.
   Instead of 100 simultaneous retries: ~1 retry per 10ms → smooth recovery load.
   Service recovers gradually instead of being overwhelmed by retry storms.
@@ -121,15 +121,15 @@ RESILIENCE4J RETRY CONFIGURATION:
 RETRY + CIRCUIT BREAKER ORDERING:
 
   Correct order: CircuitBreaker(Retry(operation))
-  
+
   Why: Retry retries the operation.
        CircuitBreaker counts the final result (after all retries).
        If 3 retries all fail → CircuitBreaker records 1 failure (the final failure).
-  
+
   Incorrect order: Retry(CircuitBreaker(operation))
   Why wrong: CircuitBreaker counts each retry attempt as a separate failure.
              3 retries → 3 failures recorded → circuit opens prematurely.
-  
+
   Resilience4j decorator order (outermost to innermost):
   Bulkhead → CircuitBreaker → RateLimiter → TimeLimiter → Retry → operation
 ```
@@ -139,6 +139,7 @@ RETRY + CIRCUIT BREAKER ORDERING:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Retry:
+
 - Transient failures (network glitches, brief service unavailability) surface as errors to users
 - Manual retry logic in every client: repeated code, inconsistent behavior, no backoff strategy
 
@@ -167,13 +168,13 @@ RETRY EXECUTION FLOW:
   Attempt 1 → FAIL (503) → Is retryable? YES → wait 500ms + jitter
   Attempt 2 → FAIL (503) → Is retryable? YES → wait 1000ms + jitter
   Attempt 3 → SUCCESS    → return result
-  
+
   OR:
-  
+
   Attempt 1 → FAIL (400) → Is retryable? NO → throw immediately (no retry)
-  
+
   OR:
-  
+
   Attempt 1 → FAIL (503) → Is retryable? YES → wait 500ms + jitter
   Attempt 2 → FAIL (503) → Is retryable? YES → wait 1000ms + jitter
   Attempt 3 → FAIL (503) → maxAttempts reached → throw MaxRetriesExceededException
@@ -186,16 +187,16 @@ IDEMPOTENCY REQUIREMENT:
   ✓ GET /products/123           — same result every time
   ✓ PUT /orders/123/status      — setting status to CONFIRMED is idempotent
   ✓ DELETE /sessions/abc        — deleting already-deleted session: 404 (idempotent)
-  
+
   UNSAFE TO RETRY WITHOUT IDEMPOTENCY KEY:
   ✗ POST /orders                — may create duplicate orders
   ✗ POST /payments              — may double-charge
-  
+
   SOLUTION for non-idempotent operations:
   Include idempotency key in request:
   POST /payments
   Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000
-  
+
   Server: on retry with same key → return same response (not process again).
   Stripe, PayPal, Twilio all support Idempotency-Key header.
 ```
@@ -226,9 +227,9 @@ Retry Pattern ◄──── (you are here)
 
 @Service @RequiredArgsConstructor @Slf4j
 public class SmsNotificationService {
-    
+
     private final SmsGatewayClient gateway;
-    
+
     // Resilience4j: Circuit Breaker wraps Retry (correct order)
     @CircuitBreaker(name = "smsGateway", fallbackMethod = "smsFallback")
     @Retry(name = "smsGateway", fallbackMethod = "smsFallback")
@@ -236,7 +237,7 @@ public class SmsNotificationService {
         log.debug("Sending SMS to {}", phoneNumber);
         return gateway.send(new SmsRequest(phoneNumber, message));
     }
-    
+
     public NotificationResult smsFallback(String phoneNumber, String message, Exception ex) {
         if (ex instanceof MaxRetriesExceededException) {
             log.error("SMS delivery failed after all retries for {}: {}", phoneNumber, ex.getMessage());
@@ -281,11 +282,11 @@ resilience4j:
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| More retries = better resilience | Aggressive retries amplify load on already-struggling services. If 1,000 clients each retry 10 times: one failure event generates 10,000 requests against the recovering service. The recovering service is overwhelmed by retry traffic and can never recover. The right number of retries depends on the operation's typical transient failure duration and the system's tolerance for latency. For most cases: 3 attempts is sufficient. More retries: only with longer, properly jittered backoff. |
-| Retry applies to all failed operations | Retry is only appropriate for IDEMPOTENT or SAFE operations. POST /payments without an idempotency key: retrying on timeout may charge the user twice (the first request may have succeeded before timing out). For non-idempotent operations: use idempotency keys (Stripe model), or accept that retry is unsafe and only retry at the job/queue level with exactly-once semantics. |
-| Retry and Circuit Breaker solve the same problem | They're complementary and solve different problems. Retry: handles transient failures by trying again. Circuit Breaker: detects sustained failure patterns and stops trying. Without Circuit Breaker: a permanently-failing service triggers retries on every request indefinitely. Without Retry: transient failures surface as errors. Together: retry handles transient; circuit breaker handles sustained failure. |
+| Misconception                                    | Reality                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| More retries = better resilience                 | Aggressive retries amplify load on already-struggling services. If 1,000 clients each retry 10 times: one failure event generates 10,000 requests against the recovering service. The recovering service is overwhelmed by retry traffic and can never recover. The right number of retries depends on the operation's typical transient failure duration and the system's tolerance for latency. For most cases: 3 attempts is sufficient. More retries: only with longer, properly jittered backoff. |
+| Retry applies to all failed operations           | Retry is only appropriate for IDEMPOTENT or SAFE operations. POST /payments without an idempotency key: retrying on timeout may charge the user twice (the first request may have succeeded before timing out). For non-idempotent operations: use idempotency keys (Stripe model), or accept that retry is unsafe and only retry at the job/queue level with exactly-once semantics.                                                                                                                  |
+| Retry and Circuit Breaker solve the same problem | They're complementary and solve different problems. Retry: handles transient failures by trying again. Circuit Breaker: detects sustained failure patterns and stops trying. Without Circuit Breaker: a permanently-failing service triggers retries on every request indefinitely. Without Retry: transient failures surface as errors. Together: retry handles transient; circuit breaker handles sustained failure.                                                                                 |
 
 ---
 

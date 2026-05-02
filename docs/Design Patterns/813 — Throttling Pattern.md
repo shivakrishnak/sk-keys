@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #rate-limiting, #api-gateway, #resilience, #m
 
 ⚡ TL;DR — **Throttling Pattern** limits the rate or concurrency of requests a service accepts, protecting resources from overload and enforcing SLAs — returning 429 (Too Many Requests) when the limit is exceeded, enabling graceful degradation under load.
 
-| #813 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Retry Pattern, Bulkhead Pattern, API Gateway, Rate Limiting | |
-| **Used by:** | API gateway, rate limiting, resource protection, SLA enforcement | |
+| #813            | Category: Design Patterns                                        | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Retry Pattern, Bulkhead Pattern, API Gateway, Rate Limiting      |                 |
+| **Used by:**    | API gateway, rate limiting, resource protection, SLA enforcement |                 |
 
 ---
 
@@ -51,37 +51,37 @@ A financial data API with two customer tiers: Basic (100 req/min) and Premium (1
 THROTTLING ALGORITHMS:
 
   1. TOKEN BUCKET (most common for API rate limiting):
-  
+
   Concept: A bucket that fills with tokens at a fixed rate (e.g., 100 tokens/minute).
   Each request: consumes 1 token. If no token available: reject (429).
   Allows bursting: if bucket isn't fully consumed, unused tokens accumulate up to bucket size.
-  
+
   Example: 100 tokens/min, bucket size 200.
   Typical traffic: 80 req/min → tokens accumulate.
   Burst: 150 requests in 10 seconds → consumed from bucket (burst allowed).
   Sustained 150 req/min: tokens drain → 429 after bucket empty.
-  
+
   Implementation: Redis INCR + EXPIRE (simple); Resilience4j RateLimiter; Bucket4j (Java).
-  
+
   2. LEAKY BUCKET (strict rate, no bursting):
-  
+
   Concept: Requests enter a queue (bucket). The bucket "leaks" at a fixed rate.
   If bucket full: request dropped (429).
   Guarantees: steady outflow regardless of input rate (smoothing).
-  
+
   Use case: Payment processing — strict 100 payments/sec regardless of burst.
   Not suitable when bursting is acceptable or desirable.
-  
+
   3. SLIDING WINDOW LOG (precise but memory-intensive):
-  
+
   Concept: Log timestamp of each request. Count requests in last N seconds.
   If count > limit: reject.
-  
+
   Precision: exact rate limiting. No burst within window.
   Cost: stores every request timestamp (memory: O(requests-per-window)).
-  
+
   4. SLIDING WINDOW COUNTER (approximation, memory-efficient):
-  
+
   Concept: Two fixed windows (current + previous). Weight current and previous window.
   Approximation: smooth out the fixed window edge problem.
   Used by: Cloudflare, many API gateways.
@@ -110,30 +110,30 @@ SPRING BOOT WITH BUCKET4J + REDIS (per-user API rate limiting):
 
   @Component @RequiredArgsConstructor
   class RateLimitingFilter extends OncePerRequestFilter {
-  
+
       private final RateLimiterService rateLimiter;
-      
+
       @Override
       protected void doFilterInternal(HttpServletRequest req,
               HttpServletResponse resp, FilterChain chain)
               throws ServletException, IOException {
-              
+
           String apiKey = req.getHeader("X-API-Key");
           RateLimitResult result = rateLimiter.checkLimit(apiKey, "default");
-          
+
           resp.setHeader("X-RateLimit-Limit", String.valueOf(result.getLimit()));
           resp.setHeader("X-RateLimit-Remaining", String.valueOf(result.getRemaining()));
           resp.setHeader("X-RateLimit-Reset", String.valueOf(result.getResetAt().getEpochSecond()));
-          
+
           if (!result.isAllowed()) {
               resp.setStatus(429);
               resp.setHeader("Retry-After", String.valueOf(result.getRetryAfterSeconds()));
               resp.setContentType(MediaType.APPLICATION_JSON_VALUE);
-              resp.getWriter().write("{\"error\":\"Too Many Requests\",\"retryAfter\":" 
+              resp.getWriter().write("{\"error\":\"Too Many Requests\",\"retryAfter\":"
                                     + result.getRetryAfterSeconds() + "}");
               return;
           }
-          
+
           chain.doFilter(req, resp);
       }
   }
@@ -144,6 +144,7 @@ SPRING BOOT WITH BUCKET4J + REDIS (per-user API rate limiting):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Throttling:
+
 - No upper bound on request rate: malicious or buggy clients can exhaust all resources
 - Shared resource exhaustion: one heavy client degrades all others
 
@@ -174,22 +175,22 @@ TOKEN BUCKET IN REDIS (atomic implementation):
   ARGV[1] = max_tokens (e.g., 100)
   ARGV[2] = refill_rate (tokens per second, e.g., 1.67 = 100/min)
   ARGV[3] = current_time (Unix timestamp)
-  
+
   Lua script (atomic GET + conditional DECR):
-  
+
   local key = KEYS[1]
   local max_tokens = tonumber(ARGV[1])
   local refill_rate = tonumber(ARGV[2])
   local now = tonumber(ARGV[3])
-  
+
   local data = redis.call("HMGET", key, "tokens", "last_refill")
   local tokens = tonumber(data[1]) or max_tokens
   local last_refill = tonumber(data[2]) or now
-  
+
   -- Refill based on elapsed time:
   local elapsed = now - last_refill
   tokens = math.min(max_tokens, tokens + elapsed * refill_rate)
-  
+
   if tokens >= 1 then
       tokens = tokens - 1
       redis.call("HMSET", key, "tokens", tokens, "last_refill", now)
@@ -198,7 +199,7 @@ TOKEN BUCKET IN REDIS (atomic implementation):
   else
       return {0, 0}                     -- rejected
   end
-  
+
   Lua script is atomic in Redis: no race conditions between check and decrement.
 ```
 
@@ -228,21 +229,21 @@ Throttling Pattern ◄──── (you are here)
 
 @Service @RequiredArgsConstructor
 public class RateLimiterService {
-    
+
     private final RedisTemplate<String, String> redis;
     private final ObjectMapper mapper;
-    
+
     // Token bucket: 1000 tokens, refills 1000/hour
     private static final long   CAPACITY       = 1_000;
     private static final double REFILL_PER_SEC = 1_000.0 / 3600.0;  // ~0.278/sec
-    
+
     private static final DefaultRedisScript<List> TOKEN_BUCKET_SCRIPT =
         new DefaultRedisScript<>(REDIS_LUA_SCRIPT, List.class);
-    
+
     public RateLimitResult checkLimit(String apiKey, String endpoint) {
         String key = "rate:" + apiKey + ":" + endpoint;
         long now = Instant.now().getEpochSecond();
-        
+
         List<Long> result = (List<Long>) redis.execute(
             TOKEN_BUCKET_SCRIPT,
             List.of(key),
@@ -250,12 +251,12 @@ public class RateLimiterService {
             String.valueOf(REFILL_PER_SEC),
             String.valueOf(now)
         );
-        
+
         boolean allowed = result.get(0) == 1L;
         long remaining = result.get(1);
         long resetAt = now + (long)((CAPACITY - remaining) / REFILL_PER_SEC);
-        
-        return new RateLimitResult(allowed, CAPACITY, remaining, 
+
+        return new RateLimitResult(allowed, CAPACITY, remaining,
                                     Instant.ofEpochSecond(resetAt),
                                     allowed ? 0 : (long)(1.0 / REFILL_PER_SEC));
     }
@@ -272,11 +273,11 @@ public class RateLimiterService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                     | Reality                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Throttling at the application level is sufficient | Application-level throttling requires every request to reach the application (and be processed up to the throttle check). At high enough request rates, even the throttle check itself can overwhelm the application. Throttling should be implemented as close to the entry point as possible: API Gateway (AWS API GW, Kong, Nginx rate limiting) or load balancer. Application-level throttling (Resilience4j, Bucket4j) is for per-operation protection within the application, not for protecting against volumetric attacks. |
-| All throttling algorithms are equivalent | Token Bucket allows bursting (unused capacity accumulates). Leaky Bucket enforces strict rate (no burst). Sliding Window provides precise counting but uses more memory. Token Bucket is right for APIs where burst is acceptable (user queries). Leaky Bucket is right for payment processing where strict rate is required. Choose based on whether bursting is acceptable for the specific resource being protected. |
-| Throttling prevents DDoS | Throttling limits request rate per source (API key, IP). A distributed DDoS from millions of unique IPs: each IP under the per-IP limit → throttling ineffective. Throttling prevents abuse from individual sources and protects against accidental overload (buggy retry loops, traffic spikes). DDoS mitigation requires: upstream scrubbing services (Cloudflare, AWS Shield), BGP-level filtering, and capacity provisioning beyond what throttling can address. |
+| All throttling algorithms are equivalent          | Token Bucket allows bursting (unused capacity accumulates). Leaky Bucket enforces strict rate (no burst). Sliding Window provides precise counting but uses more memory. Token Bucket is right for APIs where burst is acceptable (user queries). Leaky Bucket is right for payment processing where strict rate is required. Choose based on whether bursting is acceptable for the specific resource being protected.                                                                                                            |
+| Throttling prevents DDoS                          | Throttling limits request rate per source (API key, IP). A distributed DDoS from millions of unique IPs: each IP under the per-IP limit → throttling ineffective. Throttling prevents abuse from individual sources and protects against accidental overload (buggy retry loops, traffic spikes). DDoS mitigation requires: upstream scrubbing services (Cloudflare, AWS Shield), BGP-level filtering, and capacity provisioning beyond what throttling can address.                                                               |
 
 ---
 
@@ -290,7 +291,7 @@ public class RateLimiterService {
 class InMemoryRateLimiter {
     // ONE counter PER APPLICATION INSTANCE:
     private final ConcurrentHashMap<String, AtomicInteger> counters = new ConcurrentHashMap<>();
-    
+
     public boolean isAllowed(String apiKey) {
         counters.putIfAbsent(apiKey, new AtomicInteger(0));
         // This is per-instance, not per-cluster!

@@ -18,10 +18,10 @@ tags: #data, #delta-lake, #acid, #data-lakehouse, #schema-evolution, #time-trave
 
 ⚡ TL;DR — **Delta Lake** is an open-source storage layer that brings ACID transactions, schema enforcement, schema evolution, and time-travel to data lakes (S3, ADLS, GCS). Built on Parquet files + a transaction log (`_delta_log/`). The foundation of the **Lakehouse architecture**: data lake economics + data warehouse reliability. Native to Databricks; supported by Apache Spark, Flink, Trino.
 
-| #505 | Category: Data Fundamentals | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Parquet, ORC, Columnar vs Row Storage, Binary Formats | |
-| **Used by:** | Data Lakehouse, Spark, Databricks, Apache Iceberg (comparison), ACID on S3 | |
+| #505            | Category: Data Fundamentals                                                | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Parquet, ORC, Columnar vs Row Storage, Binary Formats                      |                 |
+| **Used by:**    | Data Lakehouse, Spark, Databricks, Apache Iceberg (comparison), ACID on S3 |                 |
 
 ---
 
@@ -85,7 +85,7 @@ TRANSACTION LOG COMMIT STRUCTURE:
       "stats": "{\"numRecords\":131072,\"minValues\":{\"amount\":9.99,\"customer_id\":\"C001\"},\"maxValues\":{\"amount\":2499.99,\"customer_id\":\"C999\"},\"nullCount\":{\"amount\":0}}"
     }
   }
-  
+
   00000000000000000002.json (Commit 2 - UPDATE):
   {
     "commitInfo": {"operation": "UPDATE", "predicate": "id = 1001"}
@@ -104,7 +104,7 @@ TRANSACTION LOG COMMIT STRUCTURE:
       "stats": "..."
     }
   }
-  
+
   KEY INSIGHT: Parquet files are NEVER modified in-place.
   UPDATE = mark old file as "removed" + add new Parquet file with changes.
   The Parquet files themselves remain immutable. Only the log changes.
@@ -113,17 +113,17 @@ TIME TRAVEL:
 
   Current version (V5):
   Active files: [part-00001.parquet, part-00003.parquet, part-00005.parquet]
-  
+
   Version 2 (before last UPDATE):
   Replay log from V0 to V2:
   Active files: [part-00000.parquet, part-00001.parquet, part-00002.parquet]
-  
+
   Time travel query (Spark):
   df = spark.read.format("delta").option("versionAsOf", 2).load("s3://bucket/orders/")
-  
+
   Or timestamp:
   df = spark.read.format("delta").option("timestampAsOf", "2024-01-15 14:00:00").load(...)
-  
+
   SQL:
   SELECT * FROM orders VERSION AS OF 2;
   SELECT * FROM orders TIMESTAMP AS OF '2024-01-15 14:00:00';
@@ -131,22 +131,22 @@ TIME TRAVEL:
 ACID IMPLEMENTATION:
 
   OPTIMISTIC CONCURRENCY CONTROL:
-  
+
   Two Spark jobs writing concurrently:
-  
+
   Job A: reads log state at V5, computes new files
   Job B: reads log state at V5, computes new files
-  
+
   Job A completes first → writes commit V6
   Job B tries to write V6 → Delta checks: "has the log changed since Job B read V5?"
   → Yes: V6 already exists → CONFLICT
   → Delta retries: can Jobs A and B be reconciled?
     - If different partitions: ✅ RETRY → commit B as V7
     - If overlapping partitions/files: ❌ ABORT Job B with TransactionConflictException
-  
+
   This is optimistic concurrency: assume no conflict, check at commit time
   (vs pessimistic: lock before write)
-  
+
   No centralized coordinator needed → scales horizontally on S3
 
 SCHEMA ENFORCEMENT vs SCHEMA EVOLUTION:
@@ -157,7 +157,7 @@ SCHEMA ENFORCEMENT vs SCHEMA EVOLUTION:
   df_wrong.write.format("delta").mode("append").save("s3://bucket/orders/")
   → AnalysisException: A schema mismatch detected when writing to the Delta table.
   → Rejects write. Table schema unchanged. Data not written.
-  
+
   Schema evolution (explicit opt-in):
   df_new.write.format("delta") \
         .mode("append") \
@@ -166,7 +166,7 @@ SCHEMA ENFORCEMENT vs SCHEMA EVOLUTION:
   → Adds "new_unknown_col" to table schema
   → Old rows: new_unknown_col = null
   → New rows: new_unknown_col = provided value
-  
+
   Or DDL: ALTER TABLE orders ADD COLUMN new_col STRING
 
 OPTIMIZE + ZORDER (small files compaction + data clustering):
@@ -174,7 +174,7 @@ OPTIMIZE + ZORDER (small files compaction + data clustering):
   # After many micro-batch writes: thousands of small Parquet files
   DeltaTable.forPath(spark, "s3://bucket/orders/").optimize().executeCompaction()
   # Merges small files → fewer, larger Parquet files → faster queries
-  
+
   # ZORDER BY: cluster data so files contain nearby values for query columns
   DeltaTable.forPath(spark, "s3://bucket/orders/") \
             .optimize().zOrderBy("customer_id", "date")
@@ -219,7 +219,7 @@ MERGE INTO (upsert) - most common Delta Lake operation:
   WHEN NOT MATCHED
     THEN INSERT (customer_id, name, email, updated_at)
          VALUES (s.customer_id, s.name, s.email, s.updated_at);
-  
+
   Implementation:
   1. Spark reads target table (customers) — uses data skipping (min/max in log)
      to find files that COULD contain matching customer_ids
@@ -231,13 +231,13 @@ MERGE INTO (upsert) - most common Delta Lake operation:
 CHECKPOINT FILES:
 
   Problem: replaying thousands of JSON log files to find current state is slow
-  
+
   Solution: every 10 commits, Delta writes a checkpoint.parquet
   Checkpoint = complete snapshot of active files + stats at that version
-  
+
   Reader: find latest checkpoint → add JSON log commits AFTER checkpoint → current state
   Reading: checkpoint (1 Parquet read) + maybe 9 JSON files vs 1000+ JSON files
-  
+
   Makes metadata reads O(1) regardless of table age
 ```
 
@@ -321,11 +321,11 @@ dt.vacuum(retentionHours=168)
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Delta Lake requires Databricks | Delta Lake is open-source (Apache-licensed). It runs on open-source Apache Spark, AWS EMR, Google Dataproc, and any Spark environment. Databricks is a commercial platform that uses Delta Lake natively, but Delta Lake itself is free and open. |
-| Delta Lake stores data in a proprietary format | Delta Lake stores data as standard Parquet files. The `_delta_log/` is standard JSON + Parquet checkpoint files. You can read Parquet files directly (bypassing Delta) if needed. This is open-format — no vendor lock-in at the file level. |
-| Time travel keeps data forever | Time travel works only for data files that haven't been VACUUMed. After `VACUUM`, files older than the retention period are deleted. The transaction log itself is retained longer (default: 30 days). After VACUUM, time travel to deleted versions fails. |
+| Misconception                                  | Reality                                                                                                                                                                                                                                                     |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Delta Lake requires Databricks                 | Delta Lake is open-source (Apache-licensed). It runs on open-source Apache Spark, AWS EMR, Google Dataproc, and any Spark environment. Databricks is a commercial platform that uses Delta Lake natively, but Delta Lake itself is free and open.           |
+| Delta Lake stores data in a proprietary format | Delta Lake stores data as standard Parquet files. The `_delta_log/` is standard JSON + Parquet checkpoint files. You can read Parquet files directly (bypassing Delta) if needed. This is open-format — no vendor lock-in at the file level.                |
+| Time travel keeps data forever                 | Time travel works only for data files that haven't been VACUUMed. After `VACUUM`, files older than the retention period are deleted. The transaction log itself is retained longer (default: 30 days). After VACUUM, time travel to deleted versions fails. |
 
 ---
 
@@ -337,11 +337,11 @@ PITFALL: VACUUM with retentionHours < 168 (7 days) breaks open transactions
   # ❌ DANGEROUS: vacuum too aggressively
   spark.conf.set("spark.databricks.delta.retentionDurationCheck.enabled", "false")
   dt.vacuum(retentionHours=0)  # Delete ALL old files immediately
-  
+
   # Problem: long-running Spark job reads Delta table at V100
   # Meanwhile: VACUUM deletes files referenced by V100 (now "old" after 0 hours)
   # Job tries to read file → FileNotFoundException → job fails
-  
+
   # ✅ RULE: retention must be > longest running query
   # Default 7 days (168 hours) is safe for most workloads
   # For streaming jobs or long ETL: extend to 14 days
@@ -350,11 +350,11 @@ PITFALL: MERGE on large tables with no data skipping
 
   # MERGE reads the entire target table to find matching rows
   # Without data skipping: reads 10TB target for 10K updated rows
-  
+
   # ✅ OPTIMIZE with ZORDER before MERGE:
   dt.optimize().zOrderBy("customer_id").executeCompaction()
   # Now MERGE WHERE customer_id='C001' skips 90%+ of files
-  
+
   # ✅ Partition Delta table by date if MERGE is always date-scoped:
   df.write.format("delta").partitionBy("date").save(TABLE_PATH)
   # MERGE with WHERE date='2024-01-15' only touches that partition

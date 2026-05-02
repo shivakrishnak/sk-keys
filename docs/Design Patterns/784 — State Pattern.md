@@ -18,10 +18,10 @@ tags: #advanced, #design-patterns, #behavioral, #oop, #state-machine, #fsm
 
 ⚡ TL;DR — **State** allows an object to alter its behavior when its internal state changes — eliminating large `if/switch` blocks by representing each state as a class, so the object appears to change its class as its state changes.
 
-| #784 | Category: Design Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Programming, Strategy Pattern, Finite State Machine | |
-| **Used by:** | Order lifecycle, Traffic lights, TCP connections, Game AI, UI components | |
+| #784            | Category: Design Patterns                                                | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Strategy Pattern, Finite State Machine      |                 |
+| **Used by:**    | Order lifecycle, Traffic lights, TCP connections, Game AI, UI components |                 |
 
 ---
 
@@ -52,7 +52,7 @@ WITHOUT STATE PATTERN — SCATTERED IF/SWITCH:
 
   class Order {
       OrderStatus status;
-      
+
       void confirm() {
           if (status == PENDING) {
               status = CONFIRMED;
@@ -64,19 +64,19 @@ WITHOUT STATE PATTERN — SCATTERED IF/SWITCH:
               throw new IllegalStateException("Cannot confirm cancelled order");
           }
       }
-      
+
       void ship() {
           if (status == CONFIRMED) { status = SHIPPED; }
           else if (status == PENDING) { throw new ISE("Must confirm first"); }
           // ... same switch for every method
       }
-      
+
       void cancel() { ... same switch again ... }
   }
-  
+
   // 4 states × 3 operations = 12 cases to handle.
   // Add a new state (REFUNDED) → modify ALL methods.
-  
+
 WITH STATE PATTERN:
 
   // STATE INTERFACE:
@@ -86,7 +86,7 @@ WITH STATE PATTERN:
       void cancel(Order order);
       String getDescription();
   }
-  
+
   // CONCRETE STATES:
   class PendingState implements OrderState {
       @Override
@@ -94,68 +94,68 @@ WITH STATE PATTERN:
           // Validation:
           if (order.getTotal().compareTo(BigDecimal.ZERO) == 0)
               throw new IllegalStateException("Cannot confirm empty order");
-          
+
           order.setState(new ConfirmedState());    // transition!
           order.setConfirmedAt(Instant.now());
       }
-      
+
       @Override
       void ship(Order order) {
           throw new IllegalStateException("Must confirm before shipping");
       }
-      
+
       @Override
       void cancel(Order order) {
           order.setState(new CancelledState());    // cancel is valid from Pending
           order.setCancelledAt(Instant.now());
       }
-      
+
       @Override
       String getDescription() { return "PENDING: awaiting confirmation"; }
   }
-  
+
   class ConfirmedState implements OrderState {
       @Override
       void confirm(Order order) {
           throw new IllegalStateException("Already confirmed");
       }
-      
+
       @Override
       void ship(Order order) {
           order.setState(new ShippedState());    // transition
           order.setShippedAt(Instant.now());
       }
-      
+
       @Override
       void cancel(Order order) {
           order.setState(new CancelledState());    // cancel still valid from Confirmed
           // May need to refund payment
       }
-      
+
       @Override
       String getDescription() { return "CONFIRMED: processing"; }
   }
-  
+
   class ShippedState implements OrderState {
       @Override
       void confirm(Order order) {
           throw new IllegalStateException("Order already shipped");
       }
-      
+
       @Override
       void ship(Order order) {
           throw new IllegalStateException("Order already shipped");
       }
-      
+
       @Override
       void cancel(Order order) {
           throw new IllegalStateException("Cannot cancel shipped order — contact support");
       }
-      
+
       @Override
       String getDescription() { return "SHIPPED: in transit"; }
   }
-  
+
   class CancelledState implements OrderState {
       @Override
       void confirm(Order order) {
@@ -172,36 +172,36 @@ WITH STATE PATTERN:
       @Override
       String getDescription() { return "CANCELLED"; }
   }
-  
+
   // CONTEXT:
   class Order {
       private OrderState state;
       private BigDecimal total;
-      
+
       Order(BigDecimal total) {
           this.state = new PendingState();   // initial state
           this.total = total;
       }
-      
+
       void confirm() { state.confirm(this); }   // delegate to current state
       void ship()    { state.ship(this); }
       void cancel()  { state.cancel(this); }
-      
+
       void setState(OrderState state) { this.state = state; }
       String getDescription()         { return state.getDescription(); }
   }
-  
+
   // Client:
   Order order = new Order(new BigDecimal("99.00"));
   order.confirm();  // PendingState.confirm() → transitions to ConfirmedState
   order.ship();     // ConfirmedState.ship()  → transitions to ShippedState
   order.cancel();   // ShippedState.cancel()  → throws (invalid transition)
-  
+
   // Add new state (REFUNDED):
   // 1. Create RefundedState class
   // 2. Add transition in DeliveredState.refund() → sets to RefundedState
   // Order, other state classes: minimal or zero changes.
-  
+
 STATE vs STRATEGY:
 
   STRATEGY:
@@ -209,7 +209,7 @@ STATE vs STRATEGY:
   - Context doesn't change its own strategy.
   - Client or DI selects which strategy to use.
   - No notion of "transitioning between strategies."
-  
+
   STATE:
   - State transitions happen INSIDE (state objects or context trigger transitions).
   - States know about transitions to other states.
@@ -221,6 +221,7 @@ STATE vs STRATEGY:
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT State:
+
 - `if/switch (status)` scattered in every method — 4 states × 10 methods = 40 conditional blocks
 - Add new state: modify all methods (OCP violation)
 
@@ -250,7 +251,7 @@ STATE PATTERN FLOW:
   → currentState.operation(context)
      ├── If valid: perform work, then transition: context.setState(new NextState())
      └── If invalid: throw IllegalStateException or return error
-     
+
   Context stores current state as a field.
   State objects can set context.setState() to trigger transitions.
   Client calls Context methods — never interacts with State directly.
@@ -320,7 +321,7 @@ class EstablishedState implements TcpState {
 
 class TcpConnection {
     private TcpState state = new ClosedState();
-    
+
     void open()        { state.open(this); }
     void close()       { state.close(this); }
     void acknowledge() { state.acknowledge(this); }
@@ -333,11 +334,11 @@ class TcpConnection {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| State and Strategy patterns are the same | Structurally similar (both use a strategy/state reference in context). Key difference: WHO initiates change. Strategy: client/DI selects algorithm; context doesn't change it during execution. State: the state objects themselves (or context's operations) trigger transitions — state evolves internally. State has semantics of "I am currently in this mode and I'll change based on what happens." |
-| State pattern requires a separate class per state | That's the most common implementation and enables OCP. But simple state machines can be implemented with enum + switch (acceptable for simple, stable, few-state machines). The pattern adds value when state-specific behavior is complex, when new states are frequently added, or when transitions need validation. |
-| All invalid transitions should throw exceptions | The right behavior depends on the domain. Some invalid operations should throw (programming error — shouldn't happen). Others should be silently ignored (user pressed "confirm" on an already-confirmed order — idempotent). Others should return a validation result. State class decides the appropriate response for each invalid operation. |
+| Misconception                                     | Reality                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| State and Strategy patterns are the same          | Structurally similar (both use a strategy/state reference in context). Key difference: WHO initiates change. Strategy: client/DI selects algorithm; context doesn't change it during execution. State: the state objects themselves (or context's operations) trigger transitions — state evolves internally. State has semantics of "I am currently in this mode and I'll change based on what happens." |
+| State pattern requires a separate class per state | That's the most common implementation and enables OCP. But simple state machines can be implemented with enum + switch (acceptable for simple, stable, few-state machines). The pattern adds value when state-specific behavior is complex, when new states are frequently added, or when transitions need validation.                                                                                    |
+| All invalid transitions should throw exceptions   | The right behavior depends on the domain. Some invalid operations should throw (programming error — shouldn't happen). Others should be silently ignored (user pressed "confirm" on an already-confirmed order — idempotent). Others should return a validation result. State class decides the appropriate response for each invalid operation.                                                          |
 
 ---
 

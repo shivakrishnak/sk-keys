@@ -18,10 +18,10 @@ tags: #java, #jvm, #strings, #memory, #interning
 
 ⚡ TL;DR — The **String Pool** is a JVM-managed cache of String literals in the heap; String interning means storing only one copy of equal strings. `==` works on literals; use `.equals()` everywhere else.
 
-| #311 | Category: Java Language | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Heap Memory, Metaspace, Object Header | |
-| **Used by:** | String comparison, String deduplication, JVM memory optimization | |
+| #311            | Category: Java Language                                          | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Heap Memory, Metaspace, Object Header                            |                 |
+| **Used by:**    | String comparison, String deduplication, JVM memory optimization |                 |
 
 ---
 
@@ -55,18 +55,18 @@ STRING POOL MECHANICS:
   1. Look up "hello" in String pool (hashtable-based lookup)
   2a. Found → return existing reference (no new allocation)
   2b. Not found → create String object, add to pool, return reference
-  
+
   String.intern():
   String s = new String("hello");  // new heap object, NOT in pool
   String t = s.intern();           // adds "hello" to pool (if absent), returns pooled ref
   s == t  → false  (s is heap, t is pool)
   t == "hello" → true  (both are the same pooled object)
-  
+
   Pool location by JVM version:
   Java 6:  PermGen (size limited by -XX:MaxPermSize; OutOfMemoryError: PermGen space)
   Java 7+: Heap    (GC can collect unused pooled strings; -XX:StringTableSize=65536)
   Java 8+: Metaspace for class metadata, but pool is on heap
-  
+
   Pool size (hash table buckets):
   Default: 65,536 buckets (Java 11+)
   If millions of distinct strings interned: collisions → performance degrades
@@ -80,13 +80,13 @@ COMPILE-TIME vs RUNTIME:
   String c = "hel" + "lo";  // constant folding → "hello" at compile time
   a == b → true
   a == c → true
-  
+
   // Runtime concatenation → NOT pooled:
   String prefix = "hel";
   String d = prefix + "lo";  // computed at runtime → new String on heap
   a == d → false
   a.equals(d) → true
-  
+
   // Intern to pool:
   String e = d.intern();
   a == e → true
@@ -99,7 +99,7 @@ JAVA 8 STRING DEDUPLICATION (G1 GC):
   Replaces duplicate char[] with a single shared copy
   Reduces heap pressure WITHOUT changing reference identity
   String A == String B → still false (different objects, same backing array)
-  
+
   WHEN TO USE INTERN:
   - Known high-cardinality repeated strings: HTTP header names, XML element names, DB column names
   - Enables == comparison (fast) instead of .equals() (character-by-character)
@@ -111,6 +111,7 @@ JAVA 8 STRING DEDUPLICATION (G1 GC):
 ### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT String Pool:
+
 - Every occurrence of `"OK"` in HTTP responses creates a new heap object → thousands of identical String objects → GC pressure
 - No way to use identity comparison (`==`) safely
 
@@ -140,11 +141,11 @@ BYTECODE VIEW:
   Java source:          Bytecode:
   String a = "hello";  ldc "hello"  ← loads from constant pool; pool lookup
   String b = "hello";  ldc "hello"  ← same constant pool entry → same reference
-  
+
   new String("hello")  new java.lang.String
                        ldc "hello"   ← arg: pooled string passed to constructor
                        invokespecial  ← creates NEW heap object copying content
-  
+
   String.intern():
   Native method → looks up in StringTable (C++ hash table in JVM)
   Thread-safe: synchronized per bucket
@@ -156,7 +157,7 @@ MEMORY LAYOUT:
   "hello" ────────────────────────► │ String@0x7f3c    │
   "world" ────────────────────────► │ String@0x7f4a    │
                                     └──────────────────┘
-  
+
   new String("hello"):              ┌──────────────────┐
   Separate heap object ───────────► │ String@0x8a21    │ ← different address
                                     └──────────────────┘
@@ -212,10 +213,10 @@ if (status == "OK") { ... }          // WRONG — UB unless both interned
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| All String objects are in the pool | Only String literals and `.intern()` results are pooled. `new String("x")` creates a separate heap object. |
-| The String pool is in PermGen | Since Java 7, the String pool lives in the heap and can be GC'd. PermGen (or Metaspace) holds class metadata, not the String pool. |
+| Misconception                                     | Reality                                                                                                                                                                                       |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| All String objects are in the pool                | Only String literals and `.intern()` results are pooled. `new String("x")` creates a separate heap object.                                                                                    |
+| The String pool is in PermGen                     | Since Java 7, the String pool lives in the heap and can be GC'd. PermGen (or Metaspace) holds class metadata, not the String pool.                                                            |
 | `intern()` is always safe for memory optimization | Interning millions of distinct strings fills the pool; entries are held strongly (won't be GC'd while pool exists). Use with caution; prefer G1's `UseStringDeduplication` for passive dedup. |
 
 ---
