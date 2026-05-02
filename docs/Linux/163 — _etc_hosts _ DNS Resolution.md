@@ -52,6 +52,7 @@ A developer wants to test `api.myapp.local` pointing to their local machine. The
 Linux hostname resolution is: check `/etc/hosts` first, then ask DNS (configured in `/etc/resolv.conf`), in the order defined by `/etc/nsswitch.conf`.
 
 **One analogy:**
+
 > Hostname resolution is like looking up a phone number. `/etc/hosts` is your personal address book — fast, local, always available, your entries override everything. `/etc/resolv.conf` is the phone book service (DNS) to consult when your address book doesn't have the number. `/etc/nsswitch.conf` is your personal rule: "always check my address book first; if not found, call directory enquiries."
 
 **One insight:**
@@ -62,6 +63,7 @@ The `hosts:` line in `/etc/nsswitch.conf` is the single most important line for 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. All hostname resolution goes through `getaddrinfo()` (POSIX) or `gethostbyname()` (legacy).
 2. These library functions consult NSS (Name Service Switch) which reads `/etc/nsswitch.conf` to determine resolution order.
 3. `/etc/hosts` entries are exact matches (no wildcards, no regex). The first match wins.
@@ -71,6 +73,7 @@ The `hosts:` line in `/etc/nsswitch.conf` is the single most important line for 
 **DERIVED DESIGN:**
 
 **`/etc/hosts` format:**
+
 ```
 127.0.0.1   localhost
 127.0.1.1   myhostname
@@ -80,6 +83,7 @@ The `hosts:` line in `/etc/nsswitch.conf` is the single most important line for 
 ```
 
 **`/etc/nsswitch.conf` hosts line:**
+
 ```
 hosts: files dns          # files first (default)
 hosts: dns files          # DNS first
@@ -88,6 +92,7 @@ hosts: files mdns4_minimal [NOTFOUND=return] dns
 ```
 
 **`/etc/resolv.conf` format:**
+
 ```
 nameserver 8.8.8.8
 nameserver 8.8.4.4
@@ -112,6 +117,7 @@ A developer's application connects to `database.local` in development and `datab
 `database.prod.example.com` resolves to the production IP (dangerous) or NXDOMAIN if the developer is offline. They must either hardcode IPs (fragile) or maintain environment-specific code paths.
 
 **WITH `/etc/hosts` override:**
+
 ```
 # /etc/hosts on developer machine
 127.0.0.1  database.prod.example.com
@@ -149,6 +155,7 @@ NSS (Name Service Switch) was originally Sun's innovation in Solaris 2.x (1990s)
 ### ⚙️ How It Works (Mechanism)
 
 **Inspect resolution configuration:**
+
 ```bash
 # Check resolution order
 grep ^hosts /etc/nsswitch.conf
@@ -176,6 +183,7 @@ host google.com
 ```
 
 **Test the override mechanism:**
+
 ```bash
 # Add a test override
 echo "127.0.0.1 test.example.com" | sudo tee -a /etc/hosts
@@ -193,6 +201,7 @@ sudo sed -i '/test.example.com/d' /etc/hosts
 ```
 
 **Kubernetes pod DNS inspection:**
+
 ```bash
 # Kubernetes injects /etc/hosts per pod
 kubectl exec mypod -- cat /etc/hosts
@@ -217,6 +226,7 @@ kubectl exec mypod -- getent hosts \
 ```
 
 **systemd-resolved management:**
+
 ```bash
 # Check systemd-resolved status
 systemd-resolve --status
@@ -286,6 +296,7 @@ systemd-resolve --statistics
 ### 💻 Code Example
 
 **Example — Add hosts entries for local development:**
+
 ```bash
 #!/bin/bash
 # dev-hosts.sh — Manage local development host entries
@@ -334,13 +345,13 @@ esac
 
 ### ⚖️ Comparison Table
 
-| Tool | Scope | Caching | Override DNS | Use Case |
-|---|---|---|---|---|
-| `/etc/hosts` | Host-local | None (immediate) | Yes (before DNS) | Local dev, localhost, emergency override |
-| DNS | Network-wide | TTL-based | No | Production name resolution |
-| mDNS (Avahi) | LAN-local | Minimal | No | Zeroconf discovery on `.local` |
-| CoreDNS (K8s) | Cluster-wide | Yes | Partial | K8s service discovery |
-| `dnsmasq` | Host-local | Yes | Yes | Local DNS cache + custom entries |
+| Tool          | Scope        | Caching          | Override DNS     | Use Case                                 |
+| ------------- | ------------ | ---------------- | ---------------- | ---------------------------------------- |
+| `/etc/hosts`  | Host-local   | None (immediate) | Yes (before DNS) | Local dev, localhost, emergency override |
+| DNS           | Network-wide | TTL-based        | No               | Production name resolution               |
+| mDNS (Avahi)  | LAN-local    | Minimal          | No               | Zeroconf discovery on `.local`           |
+| CoreDNS (K8s) | Cluster-wide | Yes              | Partial          | K8s service discovery                    |
+| `dnsmasq`     | Host-local   | Yes              | Yes              | Local DNS cache + custom entries         |
 
 How to choose: use `/etc/hosts` for static local overrides and localhost; DNS for anything that must be visible network-wide; dnsmasq for teams that want DNS semantics with local overrides and caching.
 
@@ -348,12 +359,12 @@ How to choose: use `/etc/hosts` for static local overrides and localhost; DNS fo
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `nslookup` and `dig` reflect what applications see | `nslookup` and `dig` query DNS directly; they bypass `/etc/hosts` and NSS; use `getent hosts` to see what applications see |
-| Editing `/etc/hosts` requires flushing DNS cache | `/etc/hosts` has no cache — changes take effect immediately for all new resolution calls |
-| `/etc/resolv.conf` is always writeable | On systemd systems, `/etc/resolv.conf` is managed by systemd-resolved; direct edits may be overwritten; use `systemd-resolved` config or `resolvconf` instead |
-| `127.0.0.1 localhost` in `/etc/hosts` is optional | Many applications and system utilities assume `localhost` resolves to `127.0.0.1` via `/etc/hosts`; removing this entry breaks many tools |
+| Misconception                                             | Reality                                                                                                                                                                                      |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nslookup` and `dig` reflect what applications see        | `nslookup` and `dig` query DNS directly; they bypass `/etc/hosts` and NSS; use `getent hosts` to see what applications see                                                                   |
+| Editing `/etc/hosts` requires flushing DNS cache          | `/etc/hosts` has no cache — changes take effect immediately for all new resolution calls                                                                                                     |
+| `/etc/resolv.conf` is always writeable                    | On systemd systems, `/etc/resolv.conf` is managed by systemd-resolved; direct edits may be overwritten; use `systemd-resolved` config or `resolvconf` instead                                |
+| `127.0.0.1 localhost` in `/etc/hosts` is optional         | Many applications and system utilities assume `localhost` resolves to `127.0.0.1` via `/etc/hosts`; removing this entry breaks many tools                                                    |
 | The `search` domain in K8s resolv.conf only adds a suffix | The `ndots:5` setting causes up to 5 DNS queries per short hostname resolution — a significant performance impact at scale that motivated the use of FQDN (trailing dot) in K8s service URLs |
 
 ---
@@ -369,6 +380,7 @@ How to choose: use `/etc/hosts` for static local overrides and localhost; DNS fo
 `ndots:5` search domain resolution failing. The short name goes through search domains but CoreDNS can't resolve it, or the pod's `/etc/resolv.conf` is misconfigured.
 
 **Diagnostic Commands:**
+
 ```bash
 # Inside the failing pod
 kubectl exec -it mypod -- bash
@@ -402,15 +414,18 @@ Use FQDN (trailing dot): `curl myservice.default.svc.cluster.local.` — the tra
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Networking` — DNS resolution, IP addresses, and network namespaces are required context
 - `Linux File System Hierarchy` — `/etc/` directory structure and the role of system configuration files
 
 **Builds On This (learn these next):**
+
 - `DNS` — deep dive into DNS protocol, record types (A, AAAA, CNAME, SRV), TTL, and resolution flow
 - `Kubernetes` — pod DNS configuration, CoreDNS, and service discovery all build directly on the concepts here
 - `Networking` — network namespaces mean each container has its own `/etc/resolv.conf` view
 
 **Alternatives / Comparisons:**
+
 - `mDNS / Avahi` — LAN-level zero-configuration hostname resolution for `.local` domains
 - `dnsmasq` — local DNS caching proxy that can serve custom entries, with DNS semantics and caching
 - `CoreDNS` — Kubernetes's configurable DNS server; extends DNS with Kubernetes-specific plugins

@@ -54,6 +54,7 @@ A **terminal multiplexer** is a program that creates a virtual terminal session 
 tmux decouples your terminal session from your SSH connection — close your laptop, SSH back later, and find everything exactly as you left it.
 
 **One analogy:**
+
 > tmux is like a shared whiteboard in a meeting room. You walk in (SSH connect), start writing (run commands), and when you leave the room (close SSH), the whiteboard stays. Anyone with access can walk in later (re-attach) and see exactly what was written. Multiple people can write on the whiteboard at the same time (shared sessions), and you can divide the whiteboard into sections (panes). The whiteboard exists independently of any specific person being in the room.
 
 **One insight:**
@@ -64,6 +65,7 @@ The key mental shift: your terminal session is not owned by your SSH connection 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. tmux server is a background daemon — it persists regardless of client connections.
 2. All processes running inside tmux are children of the tmux server, not of the SSH session.
 3. Detaching from a session does not send SIGHUP to the processes inside.
@@ -73,6 +75,7 @@ The key mental shift: your terminal session is not owned by your SSH connection 
 **DERIVED DESIGN:**
 
 **Client-server architecture:**
+
 ```
 [SSH client] ─── [SSH daemon] ─── [tmux client]
                                         │
@@ -106,6 +109,7 @@ When SSH disconnects: `[tmux client]` exits, but `[tmux server]` and everything 
 You're deploying to a remote server over an unstable VPN. Task: run a 30-minute database migration.
 
 **WITHOUT tmux:**
+
 ```bash
 ssh server
 python migrate.py  # starts running
@@ -116,6 +120,7 @@ python migrate.py  # starts running
 ```
 
 **WITH tmux:**
+
 ```bash
 ssh server
 tmux new -s migration   # create named session
@@ -130,6 +135,7 @@ tmux attach -t migration   # re-attach
 ```
 
 **WITH tmux for monitoring:**
+
 ```bash
 # Split-pane monitoring during migration:
 tmux new -s deploy
@@ -173,6 +179,7 @@ tmux's client-server model is superior to screen's monolithic model because it c
 ### ⚙️ How It Works (Mechanism)
 
 **Session management:**
+
 ```bash
 # Create sessions
 tmux                          # unnamed session
@@ -199,6 +206,7 @@ tmux kill-server
 ```
 
 **Window and pane management (inside tmux):**
+
 ```
 Prefix = Ctrl+b (default)
 
@@ -229,6 +237,7 @@ COPY MODE (scroll + search):
 ```
 
 **Essential `~/.tmux.conf` customisation:**
+
 ```bash
 # ~/.tmux.conf
 
@@ -265,6 +274,7 @@ set -g status-right " %H:%M %d-%b-%y"
 ```
 
 **Scripting with tmux:**
+
 ```bash
 #!/bin/bash
 # Setup a development environment in tmux
@@ -357,6 +367,7 @@ tmux attach-session -t $SESSION
 ### 💻 Code Example
 
 **Example — Server maintenance script with tmux:**
+
 ```bash
 #!/bin/bash
 # Run maintenance task in tmux; provide monitoring
@@ -400,16 +411,16 @@ tmux attach -t "$TASK_SESSION"
 
 ### ⚖️ Comparison Table
 
-| Feature | tmux | GNU screen | nohup |
-|---|---|---|---|
-| Split panes | Yes (flexible) | Basic (2-pane) | No |
-| Named sessions | Yes | Yes | No |
-| Re-attach | Yes | Yes | No |
-| Scripting API | Excellent | Limited | No |
-| Active development | Yes | Minimal | N/A |
-| Config file | `~/.tmux.conf` | `~/.screenrc` | N/A |
-| Pair programming | Yes (shared sessions) | Yes | No |
-| Use today | Preferred | Legacy systems | Simple background jobs |
+| Feature            | tmux                  | GNU screen     | nohup                  |
+| ------------------ | --------------------- | -------------- | ---------------------- |
+| Split panes        | Yes (flexible)        | Basic (2-pane) | No                     |
+| Named sessions     | Yes                   | Yes            | No                     |
+| Re-attach          | Yes                   | Yes            | No                     |
+| Scripting API      | Excellent             | Limited        | No                     |
+| Active development | Yes                   | Minimal        | N/A                    |
+| Config file        | `~/.tmux.conf`        | `~/.screenrc`  | N/A                    |
+| Pair programming   | Yes (shared sessions) | Yes            | No                     |
+| Use today          | Preferred             | Legacy systems | Simple background jobs |
 
 How to choose: tmux for all new work and development; screen if tmux unavailable; `nohup command &` only for truly simple background jobs that don't need monitoring or output review.
 
@@ -417,13 +428,13 @@ How to choose: tmux for all new work and development; screen if tmux unavailable
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Closing the terminal kills processes in tmux | Closing the terminal window closes the tmux client; the tmux server and all processes continue running |
+| Misconception                                  | Reality                                                                                                                                                        |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Closing the terminal kills processes in tmux   | Closing the terminal window closes the tmux client; the tmux server and all processes continue running                                                         |
 | `tmux kill-session` stops background processes | `kill-session` terminates the shell in tmux panes, which causes child processes to receive SIGHUP; processes may continue if they ignore SIGHUP or use `nohup` |
-| tmux sessions survive server reboots | The tmux server is a process; on reboot, all sessions are lost. Use `tmux-resurrect` plugin to save/restore layout. |
-| `screen` and `tmux` are interchangeable | They have different keybindings, config formats, and feature sets; `screen` is largely unmaintained since 2015 |
-| Using tmux-in-tmux is fine | Nested tmux requires remapping the inner prefix key; accidental nesting causes confusing input routing |
+| tmux sessions survive server reboots           | The tmux server is a process; on reboot, all sessions are lost. Use `tmux-resurrect` plugin to save/restore layout.                                            |
+| `screen` and `tmux` are interchangeable        | They have different keybindings, config formats, and feature sets; `screen` is largely unmaintained since 2015                                                 |
+| Using tmux-in-tmux is fine                     | Nested tmux requires remapping the inner prefix key; accidental nesting causes confusing input routing                                                         |
 
 ---
 
@@ -441,6 +452,7 @@ Server process was killed (system reboot, OOM, explicit kill-server).
 Session was created as a different user (root vs your user); sockets are per-user.
 
 **Diagnostic Commands:**
+
 ```bash
 # List sessions for current user
 tmux ls
@@ -462,13 +474,16 @@ sudo tmux attach -t mysession
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Linux File System Hierarchy` — tmux uses `/tmp` for its socket (`/tmp/tmux-<uid>/`); config lives in `~/.tmux.conf`; understanding the role of these paths is helpful
 
 **Builds On This (learn these next):**
+
 - `SSH` — tmux solves the core SSH disconnect problem; understanding why SSH sessions send SIGHUP on disconnect is the motivation for tmux
 - `Shell Scripting` — tmux's `send-keys` scripting enables powerful automation of terminal workflows
 
 **Alternatives / Comparisons:**
+
 - `nohup` — simple SSH-disconnect immunity for a single command; no re-attach, no panes, no sessions; for simple background tasks
 - `GNU screen` — tmux predecessor; similar concept, less features; present on some legacy systems
 - `byobu` — wrapper around tmux/screen with enhanced status bar; used on Ubuntu by default

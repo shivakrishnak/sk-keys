@@ -49,6 +49,7 @@ Security hardening isn't a single tool — it's a discipline. CIS (Center for In
 Hardening turns a default Linux install from "open by default" to "deny by default" — every unnecessary door locked, every service running with minimum rights.
 
 **One analogy:**
+
 > A new house has all windows unlocked, a master key under the mat, and a welcome sign at every door. Security hardening is moving in: lock every window, install deadbolts, remove the key from under the mat, replace the welcome signs with no-entry signs, and set up a camera on every entry. The house still functions — you can still get in — but only through the front door, with the right key, after showing ID.
 
 **One insight:**
@@ -59,6 +60,7 @@ Hardening is multiplicative: no single measure is sufficient, but layers compoun
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. **Minimize attack surface**: every service, port, package, and account that exists is a potential vulnerability.
 2. **Principle of least privilege**: processes and users should have only the minimum rights needed to function.
 3. **Defense-in-depth**: assume each layer will be breached; design so no single breach causes total compromise.
@@ -66,7 +68,8 @@ Hardening is multiplicative: no single measure is sufficient, but layers compoun
 
 **DERIVED DESIGN:**
 
-*Authentication hardening:*
+_Authentication hardening:_
+
 ```
 root login via SSH disabled → force named account + sudo
 Password auth disabled → key-based auth only
@@ -74,7 +77,8 @@ MFA for privileged access
 /etc/sudoers: NOPASSWD sparingly, specific commands only
 ```
 
-*Network hardening:*
+_Network hardening:_
+
 ```
 iptables/nftables default DENY → explicit ACCEPT rules only
 Close all unused ports (ss -tlnp to audit)
@@ -82,7 +86,8 @@ Disable IPv6 if not used (reduces attack surface)
 Fail2ban blocks brute-force attempts automatically
 ```
 
-*Kernel hardening (sysctl):*
+_Kernel hardening (sysctl):_
+
 ```
 net.ipv4.ip_forward = 0  (unless router)
 net.ipv4.conf.all.rp_filter = 1  (anti-spoofing)
@@ -92,7 +97,8 @@ kernel.dmesg_restrict = 1  (restrict dmesg to root)
 fs.suid_dumpable = 0  (no core dumps from SUID programs)
 ```
 
-*File system hardening:*
+_File system hardening:_
+
 ```
 /tmp noexec,nosuid mount option
 /home noexec,nosuid mount option
@@ -113,6 +119,7 @@ umask 027 (default permissions: no world access)
 Two identical web servers. Server A: default Ubuntu install with the web app deployed. Server B: same app, with CIS Level 2 hardening applied.
 
 **SCENARIO: CVE published for the web framework:**
+
 - Server A: Has multiple SSH users with password auth. Port 3306 (MySQL) open to internet (dev forgot to close it). SSHd allows root login. No firewall. App runs as root.
 - Server B: SSH key auth only. Firewall allows only 80/443/22. MySQL bound to 127.0.0.1 only. No root SSH. App runs as `www-data`. SELinux enforcing. Fail2ban active.
 
@@ -149,6 +156,7 @@ The history of Linux hardening reflects the history of attacks. ASLR (address sp
 ### ⚙️ How It Works (Mechanism)
 
 **SSH hardening:**
+
 ```bash
 # /etc/ssh/sshd_config
 PermitRootLogin no
@@ -167,6 +175,7 @@ systemctl reload sshd
 ```
 
 **Firewall with nftables (modern default):**
+
 ```bash
 # /etc/nftables.conf
 table inet filter {
@@ -195,6 +204,7 @@ systemctl enable --now nftables
 ```
 
 **Kernel security parameters:**
+
 ```bash
 # /etc/sysctl.d/99-hardening.conf
 
@@ -220,6 +230,7 @@ sysctl --system
 ```
 
 **Audit logging with auditd:**
+
 ```bash
 # /etc/audit/rules.d/hardening.rules
 # Log all authentication failures
@@ -244,6 +255,7 @@ ausearch -k sudoers_changes -ts recent
 ```
 
 **Fail2ban for SSH brute-force protection:**
+
 ```bash
 # /etc/fail2ban/jail.local
 [sshd]
@@ -320,6 +332,7 @@ fail2ban-client status sshd
 ### 💻 Code Example
 
 **Example — Hardening script for a new server:**
+
 ```bash
 #!/bin/bash
 # Basic Linux hardening checklist runner
@@ -410,16 +423,16 @@ echo "Run 'lynis audit system' for full CIS benchmark audit"
 
 ### ⚖️ Comparison Table
 
-| Control | Prevents | Complexity | Impact |
-|---|---|---|---|
-| SSH key auth + no root login | Password brute force, root abuse | Low | Low |
-| Firewall (default deny) | Port scanning, exposed services | Medium | Medium |
-| Fail2ban | SSH brute force | Low | Very low |
-| ASLR + NX | Memory corruption exploits | None (kernel) | None |
-| SELinux/AppArmor | Privilege escalation, lateral movement | High | High (may break apps) |
-| auditd | Detection (post-compromise) | Medium | Low |
-| AIDE | File tampering detection | Medium | Low |
-| Unattended upgrades | Known CVE exploitation | Low | Medium (reboots) |
+| Control                      | Prevents                               | Complexity    | Impact                |
+| ---------------------------- | -------------------------------------- | ------------- | --------------------- |
+| SSH key auth + no root login | Password brute force, root abuse       | Low           | Low                   |
+| Firewall (default deny)      | Port scanning, exposed services        | Medium        | Medium                |
+| Fail2ban                     | SSH brute force                        | Low           | Very low              |
+| ASLR + NX                    | Memory corruption exploits             | None (kernel) | None                  |
+| SELinux/AppArmor             | Privilege escalation, lateral movement | High          | High (may break apps) |
+| auditd                       | Detection (post-compromise)            | Medium        | Low                   |
+| AIDE                         | File tampering detection               | Medium        | Low                   |
+| Unattended upgrades          | Known CVE exploitation                 | Low           | Medium (reboots)      |
 
 How to choose: implement from top (SSH/firewall) to bottom (AIDE); each layer adds protection but also operational complexity. Start with Level 1 CIS benchmark for baseline, move to Level 2 for high-security environments.
 
@@ -427,13 +440,13 @@ How to choose: implement from top (SSH/firewall) to bottom (AIDE); each layer ad
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| A firewall alone makes a system secure | The firewall protects network access; it does nothing about compromised application code, misconfigured services, or weak credentials |
-| Root account should just have a strong password | Root over SSH with password auth is vulnerable to brute force; disable root SSH and use key-based auth for named accounts |
-| Security and convenience are mutually exclusive | Modern key-based SSH with SSH agent is more convenient than remembering passwords; most hardening measures have minimal operational overhead once set up |
-| Once hardened, always secure | Hardening is not a one-time task; new CVEs, new services, and configuration drift require continuous monitoring and re-assessment |
-| disabling SELinux is acceptable to "fix" application issues | Every SELinux denial has a legitimate fix; disabling SELinux removes the entire MAC layer as a workaround |
+| Misconception                                               | Reality                                                                                                                                                  |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A firewall alone makes a system secure                      | The firewall protects network access; it does nothing about compromised application code, misconfigured services, or weak credentials                    |
+| Root account should just have a strong password             | Root over SSH with password auth is vulnerable to brute force; disable root SSH and use key-based auth for named accounts                                |
+| Security and convenience are mutually exclusive             | Modern key-based SSH with SSH agent is more convenient than remembering passwords; most hardening measures have minimal operational overhead once set up |
+| Once hardened, always secure                                | Hardening is not a one-time task; new CVEs, new services, and configuration drift require continuous monitoring and re-assessment                        |
+| disabling SELinux is acceptable to "fix" application issues | Every SELinux denial has a legitimate fix; disabling SELinux removes the entire MAC layer as a workaround                                                |
 
 ---
 
@@ -448,6 +461,7 @@ Unexpected outbound connections. High CPU. Unknown processes. `/tmp/` contains b
 One or more hardening controls missing. Common vectors: weak SSH password on a service account; outdated application with known CVE; world-writable directory used for file upload that allowed code execution.
 
 **Diagnostic Steps:**
+
 ```bash
 # 1. Check running processes
 ps auxf
@@ -481,15 +495,18 @@ lastb | head -20   # failed logins
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Users and Groups` — hardening is fundamentally about restricting who can do what; users, groups, `sudo`, and file permissions are the foundation
 - `SSH` — SSH hardening is the single most impactful hardening step for internet-facing servers
 
 **Builds On This (learn these next):**
+
 - `SELinux / AppArmor` — MAC layer is a key component of hardening; this entry is a prerequisite
 - `iptables / nftables` — deep dive into the firewall component of hardening
 - `Observability & SRE` — monitoring and alerting are the detection layer of hardening
 
 **Alternatives / Comparisons:**
+
 - `Cloud Security Groups / IAM` — cloud providers layer additional security controls above the OS; understanding OS-level hardening enables you to understand what the cloud layer does and does not cover
 - `Immutable Infrastructure` — replacing the concept of "hardening a running system" with "deploy fresh, never mutate in place"
 

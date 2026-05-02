@@ -48,6 +48,7 @@ A **signal** is an asynchronous software interrupt delivered to a process by the
 Signals are the kernel's way of poking a process: "please stop," "stop NOW," "reload your config," "you divided by zero."
 
 **One analogy:**
+
 > Signals are like messages slipped under a door. SIGTERM is a polite note: "Please finish up and leave." The occupant (process) can choose how to respond — finish the current task, save work, then exit. SIGKILL is a battering ram: the kernel breaks down the door and removes the occupant immediately, regardless of what they're doing. SIGHUP is a note saying "Management changed the rules — please update your procedures." The occupant (process) can choose what "updating procedures" means (often: re-read config, continue working).
 
 **One insight:**
@@ -58,6 +59,7 @@ The difference between `SIGTERM` and `SIGKILL` is the difference between asking 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. **Asynchronous delivery**: a signal can arrive at any point during a process's execution — between any two instructions.
 2. **Cannot be blocked**: `SIGKILL` and `SIGSTOP` are always delivered immediately by the kernel; no signal handler or `sigprocmask` can block them.
 3. **Per-process delivery**: signals are sent to a specific process (by PID) or a process group; `kill -TERM 0` sends to the entire process group.
@@ -65,18 +67,18 @@ The difference between `SIGTERM` and `SIGKILL` is the difference between asking 
 
 **SIGNAL TABLE (key signals):**
 
-| Signal | Number | Default Action | Can Catch? | Common Use |
-|---|---|---|---|---|
-| SIGHUP | 1 | Terminate | Yes | Reload config |
-| SIGINT | 2 | Terminate | Yes | Ctrl+C |
-| SIGQUIT | 3 | Core dump | Yes | Ctrl+\ |
-| SIGKILL | 9 | Terminate | **No** | Force kill |
-| SIGUSR1 | 10 | Terminate | Yes | App-defined |
-| SIGUSR2 | 12 | Terminate | Yes | App-defined |
-| SIGTERM | 15 | Terminate | Yes | Graceful stop |
-| SIGCHLD | 17 | Ignore | Yes | Child state change |
-| SIGSTOP | 19 | Stop | **No** | Pause process |
-| SIGCONT | 18 | Continue | Yes | Resume process |
+| Signal  | Number | Default Action | Can Catch? | Common Use         |
+| ------- | ------ | -------------- | ---------- | ------------------ |
+| SIGHUP  | 1      | Terminate      | Yes        | Reload config      |
+| SIGINT  | 2      | Terminate      | Yes        | Ctrl+C             |
+| SIGQUIT | 3      | Core dump      | Yes        | Ctrl+\             |
+| SIGKILL | 9      | Terminate      | **No**     | Force kill         |
+| SIGUSR1 | 10     | Terminate      | Yes        | App-defined        |
+| SIGUSR2 | 12     | Terminate      | Yes        | App-defined        |
+| SIGTERM | 15     | Terminate      | Yes        | Graceful stop      |
+| SIGCHLD | 17     | Ignore         | Yes        | Child state change |
+| SIGSTOP | 19     | Stop           | **No**     | Pause process      |
+| SIGCONT | 18     | Continue       | Yes        | Resume process     |
 
 **THE TRADE-OFFS:**
 **SIGTERM:** Graceful shutdown — data integrity, connection draining, cleanup. Risk: process might ignore or hang.
@@ -91,6 +93,7 @@ The difference between `SIGTERM` and `SIGKILL` is the difference between asking 
 A containerised Python Flask application receives a SIGTERM when Kubernetes decides to terminate the pod.
 
 **SCENARIO A — No signal handler:**
+
 ```
 Kubernetes sends SIGTERM
 Flask has no SIGTERM handler
@@ -103,6 +106,7 @@ But: clients saw errors
 ```
 
 **SCENARIO B — Graceful shutdown handler:**
+
 ```python
 import signal, sys, time
 
@@ -116,6 +120,7 @@ def handle_sigterm(sig, frame):
 
 signal.signal(signal.SIGTERM, handle_sigterm)
 ```
+
 ```
 Kubernetes sends SIGTERM
 Handler sets shutdown=True
@@ -155,6 +160,7 @@ The SIGKILL-cannot-be-caught design is a fundamental Unix safety mechanism: if a
 ### ⚙️ How It Works (Mechanism)
 
 **Sending signals:**
+
 ```bash
 # By PID
 kill -SIGTERM 1234    # graceful stop
@@ -179,6 +185,7 @@ kill -l
 ```
 
 **Signal handlers in shell scripts:**
+
 ```bash
 #!/bin/bash
 # Graceful shutdown in a shell script
@@ -205,6 +212,7 @@ done
 ```
 
 **Signal handlers in Python:**
+
 ```python
 import signal
 import sys
@@ -238,6 +246,7 @@ sys.exit(0)
 ```
 
 **Checking signal handling of a process:**
+
 ```bash
 # View signal disposition of a running process
 cat /proc/1234/status | grep -i sig
@@ -297,6 +306,7 @@ for sig in signal.Signals:
 ### 💻 Code Example
 
 **Example — Implement tini-like signal forwarding for Docker:**
+
 ```dockerfile
 # BAD: Shell as PID 1 doesn't forward signals
 FROM ubuntu
@@ -327,28 +337,28 @@ CMD ["python", "app.py"]
 
 ### ⚖️ Comparison Table
 
-| Signal | Number | Catchable | Purpose | Use When |
-|---|---|---|---|---|
-| SIGTERM | 15 | Yes | Request graceful stop | Always try first |
-| SIGKILL | 9 | **No** | Force immediate stop | SIGTERM ignored/hung |
-| SIGHUP | 1 | Yes | Reload config (by convention) | Config reload without restart |
-| SIGINT | 2 | Yes | Interrupt (Ctrl+C) | Interactive terminal stop |
-| SIGQUIT | 3 | Yes | Quit + core dump | Debugging (get stack trace) |
-| SIGUSR1/2 | 10/12 | Yes | Application-defined | App-specific triggers |
-| SIGCHLD | 17 | Yes | Child state changed | Parent waiting for children |
-| SIGSTOP | 19 | **No** | Pause execution | Debugging, job control |
+| Signal    | Number | Catchable | Purpose                       | Use When                      |
+| --------- | ------ | --------- | ----------------------------- | ----------------------------- |
+| SIGTERM   | 15     | Yes       | Request graceful stop         | Always try first              |
+| SIGKILL   | 9      | **No**    | Force immediate stop          | SIGTERM ignored/hung          |
+| SIGHUP    | 1      | Yes       | Reload config (by convention) | Config reload without restart |
+| SIGINT    | 2      | Yes       | Interrupt (Ctrl+C)            | Interactive terminal stop     |
+| SIGQUIT   | 3      | Yes       | Quit + core dump              | Debugging (get stack trace)   |
+| SIGUSR1/2 | 10/12  | Yes       | Application-defined           | App-specific triggers         |
+| SIGCHLD   | 17     | Yes       | Child state changed           | Parent waiting for children   |
+| SIGSTOP   | 19     | **No**    | Pause execution               | Debugging, job control        |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `kill` sends SIGKILL | `kill PID` with no signal sends SIGTERM (15); SIGKILL requires `kill -9` or `kill -SIGKILL` |
-| SIGTERM always terminates the process | SIGTERM can be caught and ignored; a process with a broken SIGTERM handler will not exit |
-| SIGHUP reloads config in all programs | SIGHUP only reloads config in programs that explicitly handle it; many programs have SIGHUP as default terminate |
-| Shell scripts automatically handle SIGTERM | A shell script without `trap` exits on SIGTERM, but any running command (e.g., `sleep 100`) is not interrupted — the SIGTERM to the shell doesn't reach the child command |
-| PID 1 in a container should be a shell script | Shell scripts as PID 1 don't forward signals to child processes; use exec form or tini |
+| Misconception                                 | Reality                                                                                                                                                                   |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `kill` sends SIGKILL                          | `kill PID` with no signal sends SIGTERM (15); SIGKILL requires `kill -9` or `kill -SIGKILL`                                                                               |
+| SIGTERM always terminates the process         | SIGTERM can be caught and ignored; a process with a broken SIGTERM handler will not exit                                                                                  |
+| SIGHUP reloads config in all programs         | SIGHUP only reloads config in programs that explicitly handle it; many programs have SIGHUP as default terminate                                                          |
+| Shell scripts automatically handle SIGTERM    | A shell script without `trap` exits on SIGTERM, but any running command (e.g., `sleep 100`) is not interrupted — the SIGTERM to the shell doesn't reach the child command |
+| PID 1 in a container should be a shell script | Shell scripts as PID 1 don't forward signals to child processes; use exec form or tini                                                                                    |
 
 ---
 
@@ -363,6 +373,7 @@ Every `docker stop` takes exactly 30 seconds. Container is then killed with SIGK
 Container's PID 1 is not receiving or handling SIGTERM. Usually: CMD uses shell form (`/bin/sh -c python app.py`), so SIGTERM goes to the shell, not the Python process. Shell exits but Python keeps running. Docker waits 30s (terminationGracePeriodSeconds) then sends SIGKILL.
 
 **Diagnostic Commands:**
+
 ```bash
 # Check PID 1 inside the container
 docker exec mycontainer cat /proc/1/cmdline | tr '\0' ' '
@@ -385,13 +396,16 @@ Use Docker exec form: `CMD ["python", "app.py"]` or add `ENTRYPOINT ["/usr/bin/t
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Process Management` — signals operate on processes; understanding PIDs, parent/child relationships, and `fork()`/`exec()` is foundational
 
 **Builds On This (learn these next):**
+
 - `Zombie Processes` — SIGCHLD and the relationship between signal handling and zombie process creation
 - `Containers` — signal handling in Docker/Kubernetes is a critical operational concern; PID 1 signal forwarding is a common source of ungraceful shutdowns
 
 **Alternatives / Comparisons:**
+
 - `/proc/PID/` — signals are one way to communicate with processes; `/proc` provides another (read-only) interface to process state
 - `Named pipes / sockets` — application-defined IPC mechanisms for more complex communication than signals support
 

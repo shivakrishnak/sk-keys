@@ -49,6 +49,7 @@ Responsible AI frameworks emerged as researchers, regulators, and civil society 
 Responsible AI is the discipline of asking "who does this affect, and how?" at every stage of building AI — and putting structures in place so that harm is prevented, not just apologised for after the fact.
 
 **One analogy:**
+
 > Building AI without responsible AI practices is like building a pharmaceutical drug without clinical trials, safety monitoring, informed consent, or adverse event reporting. The drug might work fine — or it might harm people in ways that only appear after millions of doses. Responsible AI is the equivalent of pharmaceutical regulation for AI: systematic safety testing, documented efficacy, ongoing monitoring, and clear accountability when something goes wrong.
 
 **One insight:**
@@ -248,6 +249,7 @@ Ongoing: fairness monitoring, incident response,
 ### 💻 Code Example
 
 **Example 1 — Fairness evaluation:**
+
 ```python
 import pandas as pd
 from sklearn.metrics import (
@@ -290,6 +292,7 @@ def evaluate_fairness(
 ```
 
 **Example 2 — Model card template:**
+
 ```python
 MODEL_CARD_TEMPLATE = """
 # Model Card: {model_name}
@@ -332,26 +335,26 @@ def generate_model_card(metadata: dict) -> str:
 
 ### ⚖️ Comparison Table
 
-| Dimension | Responsible AI | AI Safety | Bias in AI |
-|---|---|---|---|
-| **Focus** | Full sociotechnical framework | Technical alignment and harm prevention | Fairness and discrimination |
-| **Scope** | Design → operation lifecycle | Training and deployment safety | Data and model fairness |
-| **Key actors** | Teams, boards, regulators | ML researchers, safety teams | Fairness researchers, affected communities |
-| **Key tools** | Impact assessments, model cards, audits | RLHF, red-teaming, interpretability | Fairness metrics, disaggregated evaluation |
-| **Regulation** | EU AI Act, GDPR, sector-specific | Less regulated (yet) | Anti-discrimination law, Fair Credit Act |
-| **Completeness** | Most complete; includes AI safety + bias | Technical subset of RAI | Social subset of RAI |
+| Dimension        | Responsible AI                           | AI Safety                               | Bias in AI                                 |
+| ---------------- | ---------------------------------------- | --------------------------------------- | ------------------------------------------ |
+| **Focus**        | Full sociotechnical framework            | Technical alignment and harm prevention | Fairness and discrimination                |
+| **Scope**        | Design → operation lifecycle             | Training and deployment safety          | Data and model fairness                    |
+| **Key actors**   | Teams, boards, regulators                | ML researchers, safety teams            | Fairness researchers, affected communities |
+| **Key tools**    | Impact assessments, model cards, audits  | RLHF, red-teaming, interpretability     | Fairness metrics, disaggregated evaluation |
+| **Regulation**   | EU AI Act, GDPR, sector-specific         | Less regulated (yet)                    | Anti-discrimination law, Fair Credit Act   |
+| **Completeness** | Most complete; includes AI safety + bias | Technical subset of RAI                 | Social subset of RAI                       |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "RAI is a compliance checklist" | RAI is most effective when integrated into engineering culture and process — not as a final sign-off box |
-| "Fairness means treating everyone identically" | Fairness means equitable outcomes — which may require treating groups differently to account for historical disadvantage |
-| "Explainability = understanding the model" | SHAP and LIME are approximations — they explain feature importance, not the model's actual reasoning process |
-| "RAI slows AI development" | RAI-integrated teams have fewer post-deployment failures, fewer regulatory issues, and more trusted products — faster in the long run |
-| "The developer is solely responsible for RAI" | Responsibility is distributed: data providers, model developers, system integrators, deploying organisations, and regulators all share responsibility |
+| Misconception                                  | Reality                                                                                                                                               |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "RAI is a compliance checklist"                | RAI is most effective when integrated into engineering culture and process — not as a final sign-off box                                              |
+| "Fairness means treating everyone identically" | Fairness means equitable outcomes — which may require treating groups differently to account for historical disadvantage                              |
+| "Explainability = understanding the model"     | SHAP and LIME are approximations — they explain feature importance, not the model's actual reasoning process                                          |
+| "RAI slows AI development"                     | RAI-integrated teams have fewer post-deployment failures, fewer regulatory issues, and more trusted products — faster in the long run                 |
+| "The developer is solely responsible for RAI"  | Responsibility is distributed: data providers, model developers, system integrators, deploying organisations, and regulators all share responsibility |
 
 ---
 
@@ -364,6 +367,7 @@ def generate_model_card(metadata: dict) -> str:
 **Root Cause:** Fairness evaluation was treated as a box-checking exercise rather than a genuine investigation of potential harms. The team chose metrics they were confident they would pass rather than the metrics most relevant to affected communities.
 
 **Diagnostic:**
+
 ```python
 def audit_fairness_coverage(
     metrics_computed: list[str],
@@ -405,16 +409,19 @@ def audit_fairness_coverage(
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `AI Safety` — the technical safety component of the responsible AI framework
 - `Bias in AI` — fairness is a core pillar of responsible AI
 - `Foundation Models` — most RAI challenges arise in the deployment of large-scale foundation models
 
 **Builds On This (learn these next):**
+
 - `AI Safety` — responsible AI governance enables technical safety work
 - `Bias in AI` — RAI provides the process framework for addressing bias systematically
 - `Model Evaluation Metrics` — RAI requires broader evaluation than accuracy alone
 
 **Alternatives / Comparisons:**
+
 - `AI Safety` — technical component of RAI; RAI is the broader sociotechnical framework
 - `Bias in AI` — specific problem domain within RAI; RAI addresses bias plus safety, accountability, transparency, privacy
 - `Open Source vs Proprietary Models` — RAI considerations differ for open vs. proprietary models (different accountability structures)

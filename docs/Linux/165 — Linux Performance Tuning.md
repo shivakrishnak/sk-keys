@@ -49,6 +49,7 @@ Linux exposes virtually every kernel parameter through `/proc/sys/` and `/sys/` 
 Find the bottleneck with data, tune the specific kernel setting that controls it, measure again — never tune by assumption.
 
 **One analogy:**
+
 > Performance tuning is like diagnosing a car that won't reach highway speed. You don't just replace the engine (more hardware). You first check: is the handbrake on (lock contention)? Is the fuel line narrow (I/O bandwidth)? Are the tyres under-inflated (memory pressure)? Is the throttle cable stretched (CPU scheduler)? Each symptom points to a specific system. Fixing the wrong thing costs time and money and doesn't help. Measure, diagnose the binding constraint, fix specifically.
 
 **One insight:**
@@ -59,6 +60,7 @@ The USE method (Utilisation, Saturation, Errors) is the most systematic approach
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. **Every system has one binding constraint** (Theory of Constraints): fixing non-bottlenecks wastes effort and may move the constraint elsewhere.
 2. **Measure before and after**: without baseline and post-change measurements, you don't know if a change helped or harmed.
 3. **Regressions happen**: a change that improves throughput may worsen latency, or vice versa; test all relevant dimensions.
@@ -66,25 +68,29 @@ The USE method (Utilisation, Saturation, Errors) is the most systematic approach
 
 **TUNING DOMAINS:**
 
-*CPU tuning:*
+_CPU tuning:_
+
 - CPU frequency governor: `performance` (max frequency, low latency) vs `ondemand` (power saving)
 - `taskset`/`numactl`: pin processes to specific CPUs/NUMA nodes
 - IRQ affinity: spread NIC interrupt handling across CPUs
 - `CONFIG_HZ`: kernel tick rate (100/250/1000 Hz) — 1000Hz better for latency
 
-*Memory tuning:*
+_Memory tuning:_
+
 - `vm.swappiness`: 0–100, how aggressively to swap (60 default; set to 1–10 for servers)
 - `vm.dirty_ratio` / `vm.dirty_background_ratio`: how much dirty data before writeback
 - Transparent Huge Pages (THP): enabled by default; causes latency spikes for some workloads (databases often disable)
 - NUMA: `numactl --membind=0` pins memory to local NUMA node; reduces cross-NUMA memory latency
 
-*I/O tuning:*
+_I/O tuning:_
+
 - I/O schedulers: `none`/`mq-deadline` (SSDs), `bfq` (rotational + latency-sensitive), `kyber` (NVMe)
 - Read-ahead: `blockdev --setra 128 /dev/sda` (tune for streaming vs random I/O)
 - `noatime` mount option: eliminate access time updates (reduce write I/O)
 - `deadline` tuning for databases: max latency guarantees
 
-*Network tuning:*
+_Network tuning:_
+
 - TCP buffers: `net.core.rmem_max`, `net.core.wmem_max`, `net.ipv4.tcp_rmem`, `net.ipv4.tcp_wmem`
 - `net.core.somaxconn`: listen backlog (increase for high-connection-rate servers)
 - `net.ipv4.tcp_max_syn_backlog`: SYN queue depth
@@ -105,18 +111,21 @@ A PostgreSQL server on a 32-core, 128GB, NVMe SSD server processes 10,000 querie
 **DIAGNOSIS STEPS:**
 
 **Step 1: CPU utilisation (`top`, `mpstat`):**
+
 ```
 CPU usage: 25% user, 5% sys, 70% idle
 → Not CPU-bound. CPU is not the bottleneck.
 ```
 
 **Step 2: I/O wait (`iostat -x 1`):**
+
 ```
 Device: util 95%, await 80ms, %iowait 65%
 → I/O saturated! Disk is the bottleneck.
 ```
 
 **Step 3: What kind of I/O (`iotop`, `blktrace`):**
+
 ```
 PostgreSQL doing 90% random reads
 I/O scheduler: mq-deadline (set for HDD, not NVMe)
@@ -124,6 +133,7 @@ Read-ahead: 256 sectors (counterproductive for random I/O)
 ```
 
 **CHANGES:**
+
 1. I/O scheduler → `none` (NVMe handles its own scheduling)
 2. Read-ahead → 8 sectors (random I/O: reduce read-ahead)
 3. `vm.dirty_background_ratio` → 5% (flush dirty pages sooner)
@@ -161,6 +171,7 @@ Linux's performance tuning philosophy reflects the kernel's design goal: general
 ### ⚙️ How It Works (Mechanism)
 
 **USE Method — systematic diagnosis:**
+
 ```bash
 # UTILISATION: how busy is each resource?
 # CPU
@@ -194,6 +205,7 @@ cat /proc/net/dev | awk '{print $1, $4, $13}'  # drops/errors
 ```
 
 **Virtual memory tuning:**
+
 ```bash
 # Check current swappiness
 sysctl vm.swappiness
@@ -224,6 +236,7 @@ echo "vm.dirty_ratio = 10" | sudo tee -a \
 ```
 
 **Network stack tuning:**
+
 ```bash
 # /etc/sysctl.d/99-network-performance.conf
 
@@ -248,6 +261,7 @@ sysctl --system
 ```
 
 **I/O scheduler tuning:**
+
 ```bash
 # Check current scheduler per device
 cat /sys/block/sda/queue/scheduler
@@ -277,6 +291,7 @@ udevadm control --reload-rules
 ```
 
 **CPU frequency and NUMA:**
+
 ```bash
 # Check available governors
 cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors
@@ -345,6 +360,7 @@ numastat -p <pid>
 ### 💻 Code Example
 
 **Example — Performance baseline script:**
+
 ```bash
 #!/bin/bash
 # performance-baseline.sh
@@ -397,15 +413,15 @@ echo "Files in: $OUT_DIR"
 
 ### ⚖️ Comparison Table
 
-| Parameter | Default | High-Throughput DB | High-Concurrency Web | Latency-Sensitive |
-|---|---|---|---|---|
-| `vm.swappiness` | 60 | 1 | 10 | 1 |
-| `vm.dirty_ratio` | 20% | 10% | 15% | 5% |
-| THP | always | disabled | madvise | disabled |
-| I/O scheduler (NVMe) | mq-deadline | none | none | none |
-| `net.core.somaxconn` | 128 | 4096 | 65535 | 4096 |
-| CPU governor | ondemand | performance | performance | performance |
-| NUMA policy | default | bind | interleave | bind |
+| Parameter            | Default     | High-Throughput DB | High-Concurrency Web | Latency-Sensitive |
+| -------------------- | ----------- | ------------------ | -------------------- | ----------------- |
+| `vm.swappiness`      | 60          | 1                  | 10                   | 1                 |
+| `vm.dirty_ratio`     | 20%         | 10%                | 15%                  | 5%                |
+| THP                  | always      | disabled           | madvise              | disabled          |
+| I/O scheduler (NVMe) | mq-deadline | none               | none                 | none              |
+| `net.core.somaxconn` | 128         | 4096               | 65535                | 4096              |
+| CPU governor         | ondemand    | performance        | performance          | performance       |
+| NUMA policy          | default     | bind               | interleave           | bind              |
 
 How to choose: always start from measurements; apply workload-appropriate settings from the relevant application documentation (PostgreSQL tuning guide, Redis config guide, nginx performance guide); never copy-paste "performance settings" without understanding the trade-offs.
 
@@ -413,13 +429,13 @@ How to choose: always start from measurements; apply workload-appropriate settin
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| More RAM always solves performance problems | If the bottleneck is I/O scheduler, CPU affinity, or lock contention, adding RAM does nothing |
-| Default kernel settings are "safe" | Defaults are safe for general workloads; for specific workloads (databases, high-concurrency servers), defaults cause significant performance degradation |
-| `vm.swappiness=0` disables swap | `vm.swappiness=0` tells the kernel to avoid swapping unless absolutely necessary — it does not disable swap entirely; use `swapoff -a` to disable swap |
-| Transparent Huge Pages always improves performance | THP causes latency spikes during page compaction; databases (PostgreSQL, MongoDB, Redis) explicitly recommend disabling THP |
-| Tuning is a one-time activity | Application behaviour, traffic patterns, and hardware change; performance baseline and tuning review should be part of regular operations |
+| Misconception                                      | Reality                                                                                                                                                   |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| More RAM always solves performance problems        | If the bottleneck is I/O scheduler, CPU affinity, or lock contention, adding RAM does nothing                                                             |
+| Default kernel settings are "safe"                 | Defaults are safe for general workloads; for specific workloads (databases, high-concurrency servers), defaults cause significant performance degradation |
+| `vm.swappiness=0` disables swap                    | `vm.swappiness=0` tells the kernel to avoid swapping unless absolutely necessary — it does not disable swap entirely; use `swapoff -a` to disable swap    |
+| Transparent Huge Pages always improves performance | THP causes latency spikes during page compaction; databases (PostgreSQL, MongoDB, Redis) explicitly recommend disabling THP                               |
+| Tuning is a one-time activity                      | Application behaviour, traffic patterns, and hardware change; performance baseline and tuning review should be part of regular operations                 |
 
 ---
 
@@ -434,6 +450,7 @@ P50 latency is fine (5ms). P99 latency spikes to 2 seconds every few minutes. CP
 THP compaction: the kernel is compacting memory to create 2MB huge pages, stalling processes for 100-500ms during compaction. Or: dirty page writeback burst — when `vm.dirty_ratio` (20%) is hit, the kernel stalls writers while it flushes dirty pages synchronously.
 
 **Diagnostic Commands:**
+
 ```bash
 # Check for THP compaction stalls
 grep -i "compaction\|thp\|defrag" /proc/vmstat
@@ -459,15 +476,18 @@ Disable THP: `echo never > /sys/kernel/mm/transparent_hugepage/enabled`. Tune di
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `/proc File System` — most performance metrics come from `/proc/stat`, `/proc/meminfo`, `/proc/net/dev`; understanding this filesystem is foundational
 - `/sys File System` — I/O schedulers, CPU governors, and device settings are configured via `/sys`; performance tuning is largely writing to sysfs
 - `Linux File System Hierarchy` — understanding where configuration files live (`/etc/sysctl.d/`, `/sys/`, `/proc/`) is required
 
 **Builds On This (learn these next):**
+
 - `Cgroups` — resource limits via cgroups complement performance tuning; cgroups provide per-workload guarantees
 - `Observability & SRE` — performance tuning is part of the SRE toolbox; metrics, tracing, and profiling enable the measurement-first approach
 
 **Alternatives / Comparisons:**
+
 - `Application-level tuning` — JVM flags, connection pool sizes, query optimisation — often higher ROI than OS tuning
 - `Hardware upgrades` — faster NVMe, more RAM — justified only after demonstrating the hardware is the bottleneck
 - `eBPF profiling tools (BCC/bpftrace)` — modern approach to performance analysis; lower overhead than traditional profiling

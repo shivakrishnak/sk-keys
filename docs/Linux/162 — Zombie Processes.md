@@ -48,6 +48,7 @@ A **zombie process** (or "defunct process") is a process that has completed exec
 A zombie is a process that's finished but can't fully disappear because its parent hasn't picked up its exit code yet.
 
 **One analogy:**
+
 > A zombie is like a checked-out hotel guest who has physically left the room but whose checkout paperwork is still on the front desk — they no longer occupy a room, but their record still exists until staff processes it. Hundreds of unprocessed checkouts (zombies) eventually fill the hotel's ledger (process table). The solution: a manager (parent process) that regularly processes checkouts, or a supervisor (PID 1 / init) that handles uncollected checkouts when the original manager leaves.
 
 **One insight:**
@@ -58,6 +59,7 @@ Zombies are not a bug — they are a necessary and brief transitional state. One
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Every process that exits becomes a zombie until its exit status is collected.
 2. `wait()` / `waitpid()` by the parent reaps the zombie and frees the process table entry.
 3. If a parent exits before reaping, orphaned children (including zombies) are adopted by PID 1.
@@ -67,6 +69,7 @@ Zombies are not a bug — they are a necessary and brief transitional state. One
 **DERIVED DESIGN:**
 
 **The life cycle of a child process:**
+
 ```
 fork() → child running → child exits → SIGCHLD sent to parent
                                             │
@@ -98,6 +101,7 @@ wait  # waits for both
 ```
 
 **SCENARIO A — Monitoring agent crashes repeatedly:**
+
 ```
 /app/monitor exits (crash)
 SIGCHLD sent to PID 1 (the shell)
@@ -109,6 +113,7 @@ BUT: any processes that /app/server spawned and
 ```
 
 **SCENARIO B — Using `tini` as PID 1:**
+
 ```
 PID 1: tini
 PID 2: /app/server (spawned by tini)
@@ -150,6 +155,7 @@ The zombie state is a direct consequence of the Unix process model's guarantee: 
 ### ⚙️ How It Works (Mechanism)
 
 **Detecting zombies:**
+
 ```bash
 # Show all processes, look for Z in STAT column
 ps aux
@@ -167,6 +173,7 @@ ps -p $PARENT_PID -o pid,ppid,cmd
 ```
 
 **Creating and reaping children in C (correct pattern):**
+
 ```c
 #include <sys/wait.h>
 #include <signal.h>
@@ -197,7 +204,7 @@ int main() {
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART | SA_NOCLDSTOP;
     sigaction(SIGCHLD, &sa, NULL);
-    
+
     // Now fork children freely; handler will reap them
     while (1) {
         pid_t child = fork();
@@ -212,6 +219,7 @@ int main() {
 ```
 
 **Docker — adding tini:**
+
 ```bash
 # Option 1: --init flag (uses host tini)
 docker run --init myimage python app.py
@@ -270,10 +278,10 @@ CMD ["python", "app.py"]
  ════════════════════════════════════════════
 
  GOOD PATH: tini as PID 1
- 
+
  PID 1: tini (zombie reaper + signal forwarder)
  PID 2: ./server
- 
+
  Worker (PID 7) exits
        │
        ▼
@@ -295,6 +303,7 @@ CMD ["python", "app.py"]
 ### 💻 Code Example
 
 **Example — Python subprocess with proper wait():**
+
 ```python
 import subprocess
 import signal
@@ -313,7 +322,7 @@ def good_pattern():
     for _ in range(10):
         proc = subprocess.Popen(["sleep", "0.1"])
         procs.append(proc)
-    
+
     # Reap all
     for proc in procs:
         proc.wait()
@@ -356,13 +365,13 @@ def check_my_zombies():
 
 ### ⚖️ Comparison Table
 
-| State | Description | Resources Used | Fix |
-|---|---|---|---|
-| **Zombie (Z)** | Exited, waiting for parent wait() | PID slot only | Parent calls wait(); or parent exits |
-| **Orphan** | Parent exited; re-parented to PID 1 | Full resources | PID 1 will reap |
-| **Sleeping (S)** | Interruptible wait (I/O, timer) | Full resources | Normal operation |
-| **Uninterruptible (D)** | Waiting for I/O, cannot be signalled | Full resources | Disk/NFS hang — hard to fix |
-| **Stopped (T)** | Paused by SIGSTOP | Full resources | SIGCONT to resume |
+| State                   | Description                          | Resources Used | Fix                                  |
+| ----------------------- | ------------------------------------ | -------------- | ------------------------------------ |
+| **Zombie (Z)**          | Exited, waiting for parent wait()    | PID slot only  | Parent calls wait(); or parent exits |
+| **Orphan**              | Parent exited; re-parented to PID 1  | Full resources | PID 1 will reap                      |
+| **Sleeping (S)**        | Interruptible wait (I/O, timer)      | Full resources | Normal operation                     |
+| **Uninterruptible (D)** | Waiting for I/O, cannot be signalled | Full resources | Disk/NFS hang — hard to fix          |
+| **Stopped (T)**         | Paused by SIGSTOP                    | Full resources | SIGCONT to resume                    |
 
 How to choose: zombies are harmless in small numbers; act when `ps aux | awk '$8~/Z/'` returns more than a handful; an uninterruptible (D) state process is more serious than a zombie — it means blocked I/O.
 
@@ -370,13 +379,13 @@ How to choose: zombies are harmless in small numbers; act when `ps aux | awk '$8
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Zombie processes consume CPU and memory | Zombies hold only a process table entry (a few hundred bytes); they use no CPU or memory (the process has fully exited) |
-| `kill -9` can kill a zombie | SIGKILL cannot kill a zombie — the process is already dead; the entry persists until the parent calls wait(); killing the parent is the fix |
-| Zombies cause immediate problems | A few zombies are harmless; problems only arise when thousands accumulate and fill the process table (PID_MAX exhaustion) |
+| Misconception                              | Reality                                                                                                                                                    |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Zombie processes consume CPU and memory    | Zombies hold only a process table entry (a few hundred bytes); they use no CPU or memory (the process has fully exited)                                    |
+| `kill -9` can kill a zombie                | SIGKILL cannot kill a zombie — the process is already dead; the entry persists until the parent calls wait(); killing the parent is the fix                |
+| Zombies cause immediate problems           | A few zombies are harmless; problems only arise when thousands accumulate and fill the process table (PID_MAX exhaustion)                                  |
 | init (PID 1) always reaps orphaned zombies | Only if PID 1 is a proper init that calls waitpid(-1, ...); if PID 1 is a custom application (common in containers), it must implement reaping or use tini |
-| The shell always reaps child processes | Interactive shells reap children; but scripts using `&` background processes may not reap them before the script exits |
+| The shell always reaps child processes     | Interactive shells reap children; but scripts using `&` background processes may not reap them before the script exits                                     |
 
 ---
 
@@ -391,6 +400,7 @@ Application fails to fork with `EAGAIN` or "Cannot allocate memory" despite free
 Process table full due to zombie accumulation. PID_MAX exhausted. Usually: parent process that spawns many short-lived children without calling `wait()`.
 
 **Diagnostic Commands:**
+
 ```bash
 # Count zombies
 ps aux | awk '$8~/^Z/{count++} END{print count+0}'
@@ -415,13 +425,16 @@ kill -SIGTERM <PARENT_PID>
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Process Management` — zombies arise from the parent-child process relationship; understanding fork(), wait(), and PPID is foundational
 
 **Builds On This (learn these next):**
+
 - `Signals` — SIGCHLD is the signal that notifies parents their child has changed state; zombie reaping is done in response to SIGCHLD
 - `Containers` — zombie accumulation in containers is a practical problem caused by PID 1 not being a proper init; tini/dumb-init solve this
 
 **Alternatives / Comparisons:**
+
 - `tini` — minimal init process (PID 1) that does signal forwarding and zombie reaping; standard solution for containers
 - `dumb-init` — similar to tini; Python-based, slightly heavier
 - `systemd` — full init system that handles zombie reaping as one of many responsibilities; used on host systems, not in containers
