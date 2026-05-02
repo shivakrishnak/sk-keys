@@ -420,6 +420,7 @@ System.out.println("pattern hash: " + ph);
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ O(N+M) pattern search using preprocessed  │
 │              │ failure function (KMP) or rolling hash     │
@@ -443,6 +444,7 @@ System.out.println("pattern hash: " + ph);
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Aho-Corasick → Suffix Array → Boyer-Moore │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

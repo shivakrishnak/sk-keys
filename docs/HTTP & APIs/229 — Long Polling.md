@@ -459,6 +459,7 @@ window. Assert no events are missed over 1000 cycles.
 ### 📌 Quick Reference Card
 
 ```
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ HTTP held open until data or timeout:    │
 │              │ simulates push with plain HTTP            │
@@ -478,6 +479,7 @@ window. Assert no events are missed over 1000 cycles.
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ SSE → WebSocket → DeferredResult          │
 └──────────────────────────────────────────────────────────┘
+```
 ```
 
 ---

@@ -408,6 +408,7 @@ java -verbose:gc -Xmx512m RadixSort
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Non-comparative integer sort: process     │
 │              │ digit-by-digit with stable counting sort  │
@@ -432,6 +433,7 @@ java -verbose:gc -Xmx512m RadixSort
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Counting Sort → Suffix Array → GPU Sort   │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

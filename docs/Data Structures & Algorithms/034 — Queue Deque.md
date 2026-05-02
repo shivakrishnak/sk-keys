@@ -342,6 +342,7 @@ jstack <pid> | grep "RUNNABLE"
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ FIFO collection: first enqueued is first  │
 │              │ dequeued; Deque extends to both ends      │
@@ -364,6 +365,7 @@ jstack <pid> | grep "RUNNABLE"
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Stack → BFS → Priority Queue              │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

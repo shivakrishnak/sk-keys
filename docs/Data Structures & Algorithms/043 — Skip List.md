@@ -340,6 +340,7 @@ System.out.println("Avg height: " + avgHeight);
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Multi-level sorted linked list; O(log N)  │
 │              │ expected search/insert/delete             │
@@ -364,6 +365,7 @@ System.out.println("Avg height: " + avgHeight);
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ ConcurrentSkipListMap → B-Tree → Bloom    │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

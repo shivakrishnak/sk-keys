@@ -386,6 +386,7 @@ while (it.hasNext()) {
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Key-value store using hash function for   │
 │              │ O(1) average get/put/remove               │
@@ -409,6 +410,7 @@ while (it.hasNext()) {
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ TreeMap → LRU Cache → Memoization         │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

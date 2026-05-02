@@ -429,6 +429,7 @@ for (int i = 1; i < arr.length; i++)
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Halve-and-eliminate search on sorted data │
 ├──────────────┼───────────────────────────────────────────┤
@@ -451,6 +452,7 @@ for (int i = 1; i < arr.length; i++)
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Lower Bound → Answer Space → B-Tree Index │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

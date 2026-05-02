@@ -352,6 +352,7 @@ map.forEach((k, v) -> System.out.println(k + "=" + v));
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Sorted key-value map backed by red-black  │
 │              │ tree; O(log N) access + range queries     │
@@ -375,6 +376,7 @@ map.forEach((k, v) -> System.out.println(k + "=" + v));
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ HashMap → Consistent Hash Ring → Skip List│
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

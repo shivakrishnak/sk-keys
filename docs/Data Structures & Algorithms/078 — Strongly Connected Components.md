@@ -401,6 +401,7 @@ for edge (u,v) in condensation:
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Maximal groups of mutually reachable       │
 │              │ vertices in a directed graph               │
@@ -424,6 +425,7 @@ for edge (u,v) in condensation:
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ 2-SAT → Biconnected Components → Bridges  │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -338,6 +338,7 @@ Known poly time: Primality (AKS)
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Open question: can finding solutions be   │
 │              │ as fast as checking them?                  │
@@ -362,6 +363,7 @@ Known poly time: Primality (AKS)
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Approximation → Crypto Hardness → GCT     │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

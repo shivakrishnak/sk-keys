@@ -382,6 +382,7 @@ jstack <pid> | grep "quickSort" | wc -l
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ In-place: O(1/log N) extra space transforms│
 │              │ input directly; out-of-place: O(N) buffer  │
@@ -406,6 +407,7 @@ jstack <pid> | grep "quickSort" | wc -l
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Sorting Stability → External Sort → Cache  │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

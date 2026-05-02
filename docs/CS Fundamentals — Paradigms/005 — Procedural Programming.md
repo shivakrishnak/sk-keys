@@ -526,6 +526,7 @@ named as actions.
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ Organising code into named, reusable │
 │ │ procedures that can be called anywhere │
@@ -550,6 +551,7 @@ named as actions.
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ OOP → Recursion → Abstraction │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

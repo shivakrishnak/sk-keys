@@ -389,6 +389,7 @@ System.out.println("Components: " + components);
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ V-1 edges connecting all V vertices with  │
 │              │ minimum total weight and no cycles         │
@@ -412,6 +413,7 @@ System.out.println("Components: " + components);
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Kruskal/Prim → Borůvka → TSP Approx       │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

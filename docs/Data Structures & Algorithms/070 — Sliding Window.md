@@ -446,6 +446,7 @@ assert dq.peekFirst() >= i - k + 1 :
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Moving subarray with O(1) add/remove      │
 │              │ updates on aggregated state               │
@@ -469,6 +470,7 @@ assert dq.peekFirst() >= i - k + 1 :
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Two Pointer → Prefix Sum → Monotone Deque │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

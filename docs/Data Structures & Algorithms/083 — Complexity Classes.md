@@ -366,6 +366,7 @@ Ask: Does the algorithm sometimes return WRONG answers (Monte Carlo)?
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Formal bins grouping all problems by      │
 │              │ computational resource requirements       │
@@ -389,6 +390,7 @@ Ask: Does the algorithm sometimes return WRONG answers (Monte Carlo)?
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ FPT Complexity → BQP/Quantum → GCT        │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

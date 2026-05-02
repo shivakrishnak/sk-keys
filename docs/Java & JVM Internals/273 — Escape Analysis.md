@@ -417,6 +417,7 @@ class Resource implements AutoCloseable {
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ JIT analysis proving object refs don't    │
 │              │ escape a method, enabling allocation      │
@@ -447,6 +448,7 @@ class Resource implements AutoCloseable {
 │ NEXT EXPLORE │ JIT Compiler → Deoptimisation →           │
 │              │ Project Valhalla (Value Types)            │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

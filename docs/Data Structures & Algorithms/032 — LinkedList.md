@@ -362,6 +362,7 @@ while (it.hasNext())
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Chain of pointer-linked nodes; O(1)       │
 │              │ insert/delete at known position           │
@@ -385,6 +386,7 @@ while (it.hasNext())
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Stack → Queue / Deque → LRU Cache         │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

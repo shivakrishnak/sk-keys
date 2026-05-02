@@ -445,6 +445,7 @@ java -Xss10m Sort # Increase stack temporarily
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Divide-and-conquer in-place sort using    │
 │              │ pivot-based partitioning                  │
@@ -469,6 +470,7 @@ java -Xss10m Sort # Increase stack temporarily
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Mergesort → Timsort → Dual-Pivot Quicksort│
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

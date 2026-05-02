@@ -484,6 +484,7 @@ with no side effects.
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ Telling the computer HOW, step by step │
 ├──────────────┼───────────────────────────────────────────┤
@@ -507,6 +508,7 @@ with no side effects.
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Declarative → Functional → Side Effects │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

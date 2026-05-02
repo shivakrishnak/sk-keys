@@ -454,6 +454,7 @@ debug ip rip
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ SSSP via repeated edge relaxation; handles│
 │              │ negative weights and detects neg cycles   │
@@ -478,6 +479,7 @@ debug ip rip
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Floyd-Warshall → Johnson's → Diff Constr. │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

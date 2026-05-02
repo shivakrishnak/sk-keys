@@ -374,6 +374,7 @@ assert activitySelection(acts).size() == 2;
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Algorithm making locally-optimal choices  │
 │              │ at each step; globally optimal when GCP   │
@@ -399,6 +400,7 @@ assert activitySelection(acts).size() == 2;
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Dynamic Programming → Dijkstra → Huffman  │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

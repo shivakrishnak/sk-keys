@@ -372,6 +372,7 @@ pq.offer(newElement);
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Queue that always serves the highest-     │
 │              │ priority element next (O(1) peek,         │
@@ -397,6 +398,7 @@ pq.offer(newElement);
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Heap → Dijkstra → A* Search               │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

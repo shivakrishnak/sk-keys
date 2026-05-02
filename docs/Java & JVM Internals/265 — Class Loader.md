@@ -396,6 +396,7 @@ jmap -dump:format=b,file=/tmp/heap.hprof <pid>
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ JVM subsystem that loads .class bytecode  │
 │              │ into memory on first reference            │
@@ -423,6 +424,7 @@ jmap -dump:format=b,file=/tmp/heap.hprof <pid>
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Metaspace → Reflection → Spring Core      │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

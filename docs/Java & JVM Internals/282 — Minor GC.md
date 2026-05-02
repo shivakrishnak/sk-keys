@@ -391,6 +391,7 @@ grep "Promotion failed\|Evacuation Failure" /tmp/gc.log
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Short, frequent GC collecting only Young  │
 │              │ Generation — triggered by Eden filling    │
@@ -416,6 +417,7 @@ grep "Promotion failed\|Evacuation Failure" /tmp/gc.log
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Major GC → Stop-The-World → G1GC          │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

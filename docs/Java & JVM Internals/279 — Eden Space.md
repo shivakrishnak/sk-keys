@@ -379,6 +379,7 @@ java -Xlog:gc+tlab=debug -jar myapp.jar 2>&1 | \
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Primary allocation area in Young Gen;     │
 │              │ where all new Java objects are created    │
@@ -405,6 +406,7 @@ java -Xlog:gc+tlab=debug -jar myapp.jar 2>&1 | \
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Survivor Space → Minor GC → TLAB          │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

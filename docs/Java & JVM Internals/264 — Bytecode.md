@@ -442,6 +442,7 @@ java -XX:+PrintCompilation -jar myapp.jar \
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Platform-neutral intermediate instruction  │
 │              │ set produced by javac, executed by JVM    │
@@ -467,6 +468,7 @@ java -XX:+PrintCompilation -jar myapp.jar \
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Class Loader → JIT Compiler → invokedynamic│
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

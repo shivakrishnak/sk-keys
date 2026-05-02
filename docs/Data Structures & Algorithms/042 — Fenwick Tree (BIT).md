@@ -359,6 +359,7 @@ if (maxPossibleSum > Integer.MAX_VALUE)
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Array where each index stores partial sum │
 │              │ of (i & -i) elements; O(log N) ops       │
@@ -383,6 +384,7 @@ if (maxPossibleSum > Integer.MAX_VALUE)
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Segment Tree → Inversion Count → 2D BIT   │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

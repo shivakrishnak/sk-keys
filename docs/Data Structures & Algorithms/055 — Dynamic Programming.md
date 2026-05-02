@@ -475,6 +475,7 @@ java -agentpath:/async-profiler/libasyncProfiler.so
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Cache-driven optimisation: solve each     │
 │              │ subproblem once, reuse the result         │
@@ -498,6 +499,7 @@ java -agentpath:/async-profiler/libasyncProfiler.so
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Knapsack Problem → LCS → Bellman-Ford     │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

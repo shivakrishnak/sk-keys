@@ -423,6 +423,7 @@ assert data[0][1]=="B" && data[1][1]=="C"
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Divide-and-conquer sort: split, sort,     │
 │              │ merge; O(N log N) guaranteed, stable      │
@@ -447,6 +448,7 @@ assert data[0][1]=="B" && data[1][1]=="C"
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Timsort → External Sort → Parallel Sort   │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

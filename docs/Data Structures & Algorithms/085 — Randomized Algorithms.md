@@ -382,6 +382,7 @@ System.out.println("Test seed: " + seed); // log for reproduction
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Algorithms using random choices for       │
 │              │ expected performance or error resistance   │
@@ -405,6 +406,7 @@ System.out.println("Test seed: " + seed); // log for reproduction
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Universal Hashing → Bloom Filter → CSPRNG │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

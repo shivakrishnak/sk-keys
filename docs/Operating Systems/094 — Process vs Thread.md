@@ -414,6 +414,7 @@ benchmark IPC throughput early in architecture phase.
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ A comparison of isolation vs sharing models│
 ├──────────────┼───────────────────────────────────────────┤
@@ -436,6 +437,7 @@ benchmark IPC throughput early in architecture phase.
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Context Switch → IPC → Thread Pool │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

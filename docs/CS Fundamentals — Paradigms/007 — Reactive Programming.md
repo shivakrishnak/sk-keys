@@ -568,6 +568,7 @@ Reactor's MDC support hooks.
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ Composable async data streams with │
 │ │ functional operators and backpressure │
@@ -593,6 +594,7 @@ Reactor's MDC support hooks.
 │ NEXT EXPLORE │ Spring WebFlux → Reactor Core │
 │ │ → Reactive Streams spec │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

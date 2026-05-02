@@ -587,6 +587,7 @@ placing business rules in service classes.
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ Bundling data + behaviour into objects │
 │ │ that model real-world entities │
@@ -611,6 +612,7 @@ placing business rules in service classes.
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Encapsulation → Polymorphism → SOLID │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

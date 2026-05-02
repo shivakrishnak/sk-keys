@@ -446,6 +446,7 @@ if (edgesAdded < n-1) {
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Two greedy algorithms finding the minimum │
 │              │ cost spanning tree of a weighted graph    │
@@ -473,6 +474,7 @@ if (edgesAdded < n-1) {
 │ NEXT EXPLORE │ Minimum Spanning Tree → Approximate TSP → │
 │              │ Borůvka's Algorithm                       │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

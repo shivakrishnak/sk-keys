@@ -390,6 +390,7 @@ jcmd <pid> VM.native_memory summary
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Per-thread LIFO memory for method frames  │
 │              │ and local variables                       │
@@ -414,6 +415,7 @@ jcmd <pid> VM.native_memory summary
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Stack Frame → Heap Memory → Escape Analysis│
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

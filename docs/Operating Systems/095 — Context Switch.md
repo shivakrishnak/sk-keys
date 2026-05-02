@@ -480,6 +480,7 @@ hierarchies to prevent priority inversion scenarios.
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ OS saving one task's CPU state, loading │
 │ │ another's to enable time-sharing │
@@ -503,6 +504,7 @@ hierarchies to prevent priority inversion scenarios.
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Scheduler → TLB → Cache Line │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

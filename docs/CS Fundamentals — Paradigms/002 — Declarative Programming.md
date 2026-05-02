@@ -504,6 +504,7 @@ write unit tests for each stage of a declarative pipeline.
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ Describing WHAT you want, not HOW to get │
 │ │ it — the engine figures out the steps │
@@ -528,6 +529,7 @@ write unit tests for each stage of a declarative pipeline.
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Functional → SQL → Reactive Programming │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

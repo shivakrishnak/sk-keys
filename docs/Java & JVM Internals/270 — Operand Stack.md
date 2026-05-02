@@ -422,6 +422,7 @@ javap -c -verbose ProblematicClass.class
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ LIFO computation scratch pad inside each  │
 │              │ Stack Frame — all JVM arithmetic flows    │
@@ -451,6 +452,7 @@ javap -c -verbose ProblematicClass.class
 │ NEXT EXPLORE │ Local Variable Table → JIT Compiler →     │
 │              │ invokedynamic                             │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

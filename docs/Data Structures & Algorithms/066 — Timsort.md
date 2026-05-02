@@ -389,6 +389,7 @@ Arrays.sort(arr, (a,b) -> {
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Hybrid mergesort exploiting natural runs  │
 │              │ for adaptive performance                  │
@@ -413,6 +414,7 @@ Arrays.sort(arr, (a,b) -> {
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ External Sort → Parallel Sort → Introsort │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -424,6 +424,7 @@ while (!pq.isEmpty()) {
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Dijkstra + admissible heuristic = guided  │
 │              │ shortest-path search toward a goal        │
@@ -448,6 +449,7 @@ while (!pq.isEmpty()) {
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ JPS → IDA* → Bidirectional A*             │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

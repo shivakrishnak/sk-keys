@@ -619,6 +619,7 @@ or throw; returning null on error creates silent failures.
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ Injecting cross-cutting behaviour into │
 │ │ methods without modifying them │
@@ -644,6 +645,7 @@ or throw; returning null on error creates silent failures.
 │ NEXT EXPLORE │ Spring Core → @Transactional │
 │ │ → Proxy Pattern → Metaprogramming │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

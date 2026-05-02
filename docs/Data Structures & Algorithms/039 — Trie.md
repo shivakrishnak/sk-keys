@@ -382,6 +382,7 @@ private void dfs(TrieNode node, StringBuilder prefix,
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Prefix tree: each node = one character;   │
 │              │ shared prefixes share tree paths          │
@@ -405,6 +406,7 @@ private void dfs(TrieNode node, StringBuilder prefix,
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ HashMap → String Matching → Bloom Filter  │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -422,6 +422,7 @@ PriorityQueue<Integer> minH = new PriorityQueue<>();
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Array-backed complete binary tree where   │
 │              │ parent ≤ children; min at index 0         │
@@ -445,6 +446,7 @@ PriorityQueue<Integer> minH = new PriorityQueue<>();
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Priority Queue → Heapsort → Dijkstra      │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

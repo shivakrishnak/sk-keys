@@ -395,6 +395,7 @@ time java GraphColoring 200 10
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Assign labels to vertices: no two         │
 │              │ adjacent vertices share a label           │
@@ -418,6 +419,7 @@ time java GraphColoring 200 10
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Register Allocation → DSATUR → SAT Solvers│
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

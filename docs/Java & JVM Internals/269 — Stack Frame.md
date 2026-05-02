@@ -466,6 +466,7 @@ log.error("Operation failed", exception); // always log
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Per-method-call activation record on the  │
 │              │ thread stack: locals + operand scratch pad │
@@ -493,6 +494,7 @@ log.error("Operation failed", exception); // always log
 │ NEXT EXPLORE │ Operand Stack → Local Variable Table →    │
 │              │ JIT Compiler                              │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

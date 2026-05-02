@@ -393,6 +393,7 @@ jcmd <pid> VM.native_memory summary | grep JNI
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Starting anchors for GC's reachability    │
 │              │ traversal: stack locals, statics, JNI refs│
@@ -420,6 +421,7 @@ jcmd <pid> VM.native_memory summary | grep JNI
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Reference Types → Minor GC → G1GC         │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

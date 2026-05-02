@@ -352,6 +352,7 @@ grep "concurrent mode failure" /tmp/gc.log
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Heap region for long-lived objects:       │
 │              │ promoted from Young Gen, collected rarely │
@@ -377,6 +378,7 @@ grep "concurrent mode failure" /tmp/gc.log
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Major GC → Full GC → G1GC → ZGC           │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

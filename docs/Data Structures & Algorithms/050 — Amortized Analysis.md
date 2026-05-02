@@ -385,6 +385,7 @@ java -Xlog:gc* MyApp | grep "Pause Full"
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Worst-case guarantee on per-operation     │
 │              │ average over N operations                 │
@@ -409,6 +410,7 @@ java -Xlog:gc* MyApp | grep "Pause Full"
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Space-Time Trade-off → Memoization        │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

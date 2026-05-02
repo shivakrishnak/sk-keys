@@ -350,6 +350,7 @@ How to choose: Start with memoization (easiest to code). If N is large (risk of 
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Cache for recursive calls: compute each   │
 │              │ unique argument combination exactly once  │
@@ -373,6 +374,7 @@ How to choose: Start with memoization (easiest to code). If N is large (risk of 
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Tabulation → Dynamic Programming          │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

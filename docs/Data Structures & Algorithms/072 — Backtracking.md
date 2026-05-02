@@ -425,6 +425,7 @@ if (i > start && candidates[i] == candidates[i-1])
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ DFS + pruning + undo on implicit          │
 │              │ decision tree of partial solutions        │
@@ -449,6 +450,7 @@ if (i > start && candidates[i] == candidates[i-1])
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ N-Queens → Sudoku Solver → SAT/CDCL       │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

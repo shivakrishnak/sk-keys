@@ -429,6 +429,7 @@ environments. Use cgroups `pids` subsystem for hard process limits.
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ An isolated running instance of a program │
 ├──────────────┼───────────────────────────────────────────┤
@@ -450,6 +451,7 @@ environments. Use cgroups `pids` subsystem for hard process limits.
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Thread → Context Switch → Scheduler │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

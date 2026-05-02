@@ -378,6 +378,7 @@ jmap -histo:live <pid> | grep "Node\|Cache"
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Fixed-capacity cache evicting the item    │
 │              │ unused longest; O(1) get/put              │
@@ -402,6 +403,7 @@ jmap -histo:live <pid> | grep "Node\|Cache"
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ LFU Cache → OS Page Cache → Caffeine      │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

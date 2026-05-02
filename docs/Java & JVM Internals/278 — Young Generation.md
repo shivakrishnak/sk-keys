@@ -384,6 +384,7 @@ java -Xlog:gc+age=trace -jar myapp.jar
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Heap region for all new object allocations│
 │              │ — collected frequently via fast Minor GC  │
@@ -411,6 +412,7 @@ java -Xlog:gc+age=trace -jar myapp.jar
 │ NEXT EXPLORE │ Eden Space → Survivor Space →             │
 │              │ Minor GC → Old Generation                │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

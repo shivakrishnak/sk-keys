@@ -587,6 +587,7 @@ to a concrete Spring bean class in application code.
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ Code that inspects, generates, or │
 │ │ modifies other code — programs as data │
@@ -614,6 +615,7 @@ to a concrete Spring bean class in application code.
 │ NEXT EXPLORE │ Reflection → Annotations │
 │ │ → AOP → Lombok (compile-time AOP) │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

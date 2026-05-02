@@ -434,6 +434,7 @@ java -Xss1m MyApp  # increase stack size — band-aid
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ V vertices + E edges: universal model for │
 │              │ pairwise relationships between entities   │
@@ -458,6 +459,7 @@ java -Xss1m MyApp  # increase stack size — band-aid
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ BFS → DFS → Dijkstra                      │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

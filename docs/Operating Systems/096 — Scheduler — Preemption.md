@@ -460,6 +460,7 @@ async IO for IO-bound tasks.
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ OS component deciding which task runs next │
 ├──────────────┼───────────────────────────────────────────┤
@@ -483,6 +484,7 @@ async IO for IO-bound tasks.
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Context Switch → Starvation → Deadlock │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

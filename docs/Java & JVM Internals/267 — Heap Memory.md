@@ -405,6 +405,7 @@ jcmd <pid> GC.class_histogram | grep -E \
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Shared JVM memory region for all objects, │
 │              │ managed by the garbage collector          │
@@ -431,6 +432,7 @@ jcmd <pid> GC.class_histogram | grep -E \
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Young Generation → GC Roots → G1GC        │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

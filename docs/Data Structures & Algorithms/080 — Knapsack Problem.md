@@ -387,6 +387,7 @@ System.out.println("Estimated: " + estimatedBytes/1e6 + " MB");
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Select items for max value under weight   │
 │              │ constraint; each item 0/1 (include/skip)  │
@@ -410,6 +411,7 @@ System.out.println("Estimated: " + estimatedBytes/1e6 + " MB");
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ FPTAS → Branch & Bound → ILP Solvers      │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

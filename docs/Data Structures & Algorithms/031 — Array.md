@@ -357,6 +357,7 @@ for (int r = 0; r < M; r++)
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Contiguous fixed-size block of            │
 │              │ same-type elements, O(1) access by index  │
@@ -380,6 +381,7 @@ for (int r = 0; r < M; r++)
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ LinkedList → HashMap → Sliding Window     │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

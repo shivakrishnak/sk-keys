@@ -392,6 +392,7 @@ java -XX:+PrintTenuringDistribution \
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Two alternating Young Gen spaces for      │
 │              │ ageing objects between Eden and Old Gen   │
@@ -419,6 +420,7 @@ java -XX:+PrintTenuringDistribution \
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Old Generation → Minor GC → G1GC          │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

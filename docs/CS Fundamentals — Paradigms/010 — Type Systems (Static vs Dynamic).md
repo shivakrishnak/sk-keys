@@ -554,6 +554,7 @@ a code smell requiring justification; use `unknown` instead of
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ Rules associating types with values and │
 │ │ when type errors are caught │
@@ -581,6 +582,7 @@ a code smell requiring justification; use `unknown` instead of
 │ NEXT EXPLORE │ Strong vs Weak Typing → TypeScript │
 │ │ → Type Inference → Generics │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

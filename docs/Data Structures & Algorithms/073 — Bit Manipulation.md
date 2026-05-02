@@ -398,6 +398,7 @@ System.out.println(n >>> 1);  // 2147483646 (logical)
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Direct O(1) operations on integer binary  │
 │              │ representations using CPU bitwise ops     │
@@ -421,6 +422,7 @@ System.out.println(n >>> 1);  // 2147483646 (logical)
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Bitmask DP → Bloom Filter → SIMD/AVX      │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -403,6 +403,7 @@ n.isProbablePrime(100); // certainty=100: error ≤ 10^-30
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Two flavours of randomized algorithm:     │
 │              │ MC bounds time; LV bounds correctness     │
@@ -426,6 +427,7 @@ n.isProbablePrime(100); // certainty=100: error ≤ 10^-30
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Miller-Rabin → Bloom Filter → BPP/ZPP     │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

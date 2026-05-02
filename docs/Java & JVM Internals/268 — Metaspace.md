@@ -386,6 +386,7 @@ grep "Metaspace" /var/log/gc.log
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Native memory region for class metadata;  │
 │              │ replaced PermGen in Java 8                │
@@ -411,6 +412,7 @@ grep "Metaspace" /var/log/gc.log
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Class Loader → GC Roots → Full GC         │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -355,6 +355,7 @@ assert tree.rangeQuery(2, 5) == expectedAfterUpdate;
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Binary tree where each node stores a range│
 │              │ aggregate; O(log N) query and update      │
@@ -380,6 +381,7 @@ assert tree.rangeQuery(2, 5) == expectedAfterUpdate;
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Fenwick Tree → Sparse Table → Lazy Prop   │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

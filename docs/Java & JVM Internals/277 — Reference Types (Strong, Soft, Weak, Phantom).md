@@ -465,6 +465,7 @@ jcmd <pid> GC.class_histogram | grep "Finalizable\|finalize"
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Four reference strengths: strong, soft,   │
 │              │ weak, phantom — controlling GC interaction│
@@ -494,6 +495,7 @@ jcmd <pid> GC.class_histogram | grep "Finalizable\|finalize"
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ WeakHashMap → Caching → Finalization      │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

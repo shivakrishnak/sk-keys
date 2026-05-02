@@ -422,6 +422,7 @@ mvn com.github.spotbugs:spotbugs-maven-plugin:check
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ JMM guarantee: if A happens-before B,     │
 │              │ B is guaranteed to see all of A's effects │
@@ -450,6 +451,7 @@ mvn com.github.spotbugs:spotbugs-maven-plugin:check
 │ NEXT EXPLORE │ Race Condition → volatile →               │
 │              │ Java Memory Model                         │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

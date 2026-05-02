@@ -437,6 +437,7 @@ jcmd <pid> VM.flags | grep CompressedOops
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Hidden 8–16 byte metadata prefix on every │
 │              │ heap object: Mark Word + Klass Pointer    │
@@ -466,6 +467,7 @@ jcmd <pid> VM.flags | grep CompressedOops
 │ NEXT EXPLORE │ Escape Analysis → synchronized →          │
 │              │ GC Roots                                  │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

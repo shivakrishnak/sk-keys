@@ -367,6 +367,7 @@ for (int i = 0; i <= m; i++)
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Iterative DP: fill table from base cases  │
 │              │ upward; no recursion, no stack risk       │
@@ -391,6 +392,7 @@ for (int i = 0; i <= m; i++)
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Dynamic Programming → Memoization → LCS   │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

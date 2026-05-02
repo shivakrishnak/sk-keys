@@ -393,6 +393,7 @@ java -agentpath:libasyncProfiler.so=start,event=cpu,file=out.html MyApp
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Key → integer index mapping for O(1)      │
 │              │ average insert/lookup/delete in arrays    │
@@ -417,6 +418,7 @@ java -agentpath:libasyncProfiler.so=start,event=cpu,file=out.html MyApp
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Bloom Filter → Consistent Hashing → LRU   │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

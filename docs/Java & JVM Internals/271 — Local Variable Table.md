@@ -408,6 +408,7 @@ javap -l Calculator.class
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Indexed slot array inside a Stack Frame   │
 │              │ holding parameters and local variables    │
@@ -434,6 +435,7 @@ javap -l Calculator.class
 │ NEXT EXPLORE │ Operand Stack → JIT Compiler → Escape     │
 │              │ Analysis                                  │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

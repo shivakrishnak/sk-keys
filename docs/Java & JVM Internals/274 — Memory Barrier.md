@@ -431,6 +431,7 @@ counter = localCounter;  // one volatile write at end
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ CPU instruction preventing memory         │
 │              │ operation reordering across it           │
@@ -459,6 +460,7 @@ counter = localCounter;  // one volatile write at end
 │ NEXT EXPLORE │ volatile → Happens-Before →               │
 │              │ Java Memory Model                         │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

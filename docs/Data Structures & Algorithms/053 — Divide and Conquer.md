@@ -345,6 +345,7 @@ How to choose: D&C when subproblems are independent. DP when subproblems overlap
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Recursive: split → solve independently →  │
 │              │ combine; turns O(N²) to O(N log N)        │
@@ -369,6 +370,7 @@ How to choose: D&C when subproblems are independent. DP when subproblems overlap
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Mergesort → Quicksort → Dynamic Programming│
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

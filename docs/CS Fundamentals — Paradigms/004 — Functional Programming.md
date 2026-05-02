@@ -538,6 +538,7 @@ List<String> result = list.stream()
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ Computation as pure mathematical │
 │ │ functions — no shared mutable state │
@@ -563,6 +564,7 @@ List<String> result = list.stream()
 │ NEXT EXPLORE │ Higher-Order Functions → Side Effects │
 │ │ → Referential Transparency │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

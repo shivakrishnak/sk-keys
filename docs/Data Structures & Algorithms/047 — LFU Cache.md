@@ -387,6 +387,7 @@ System.out.println("Freq buckets: " + freqToKeys.size());
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Fixed cache evicting least-accessed item; │
 │              │ O(1) via 3 HashMaps + minFreq tracker     │
@@ -411,6 +412,7 @@ System.out.println("Freq buckets: " + freqToKeys.size());
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ LRU Cache → Caffeine TinyLFU → Count-Min  │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -526,6 +526,7 @@ migrating to virtual threads.
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ User-space cooperative execution unit │
 ├──────────────┼───────────────────────────────────────────┤
@@ -548,6 +549,7 @@ migrating to virtual threads.
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Async I/O → Virtual Thread → Event Loop │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

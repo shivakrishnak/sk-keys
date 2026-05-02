@@ -389,6 +389,7 @@ jstack <pid> | grep -A 5 "sort\|contains"
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Notation describing runtime growth rate   │
 │              │ as a function of input size N             │
@@ -413,6 +414,7 @@ jstack <pid> | grep -A 5 "sort\|contains"
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Space Complexity → Amortized Analysis     │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -360,6 +360,7 @@ Ask: What structure does my input have?
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Hardest problems in NP: solving any one   │
 │              │ would solve all NP problems               │
@@ -383,6 +384,7 @@ Ask: What structure does my input have?
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ P vs NP → Approximation → SAT Solvers     │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

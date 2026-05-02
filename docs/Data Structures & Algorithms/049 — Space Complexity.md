@@ -394,6 +394,7 @@ java -Xlog:gc* MyApp 2>&1 | grep "Pause"
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Big-O applied to auxiliary memory usage   │
 │              │ as input size N grows                     │
@@ -418,6 +419,7 @@ java -Xlog:gc* MyApp 2>&1 | grep "Pause"
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Amortized Analysis → Space-Time Trade-off │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -363,6 +363,7 @@ keys.stream().mapToLong(k -> hash(k)).sorted()
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Circular hash space mapping keys to nodes;│
 │              │ node changes only affect 1/N of keys      │
@@ -387,6 +388,7 @@ keys.stream().mapToLong(k -> hash(k)).sorted()
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Virtual Nodes → Gossip Protocol → Dynamo  │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -352,6 +352,7 @@ jstack <pid> | grep "BLOCKED\|WAITING"
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ LIFO collection: last pushed is first     │
 │              │ popped; O(1) push/pop/peek                │
@@ -374,6 +375,7 @@ jstack <pid> | grep "BLOCKED\|WAITING"
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Queue → DFS → Backtracking                │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

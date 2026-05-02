@@ -428,6 +428,7 @@ mvn dependency:analyze
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Linear ordering of a DAG where every edge │
 │              │ points "forward" in the order             │
@@ -453,6 +454,7 @@ mvn dependency:analyze
 │ NEXT EXPLORE │ Strongly Connected Components → Critical  │
 │              │ Path → Build Systems                      │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

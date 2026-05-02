@@ -410,6 +410,7 @@ System.out.println("Estimated memory: " +
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Longest sequence appearing as a           │
 │              │ subsequence in both input strings          │
@@ -434,6 +435,7 @@ System.out.println("Estimated memory: " +
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Edit Distance → Myers Diff → Smith-Waterman│
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

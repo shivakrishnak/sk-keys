@@ -406,6 +406,7 @@ for (int i = 0; i < arr.length-1; i++) {
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ In-place sort using max-heap: build heap, │
 │              │ repeatedly extract maximum                │
@@ -430,6 +431,7 @@ for (int i = 0; i < arr.length-1; i++) {
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Priority Queue → Introsort → Smooth Sort  │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -378,6 +378,7 @@ SELECT * FROM users ORDER BY department, id;
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Property: equal elements keep their       │
 │              │ original relative order after sorting     │
@@ -401,6 +402,7 @@ SELECT * FROM users ORDER BY department, id;
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ TimSort → Radix Sort → DB ORDER BY        │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

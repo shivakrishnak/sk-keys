@@ -375,6 +375,7 @@ if (filter.mightContain(key)) {
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Bit array + k hash functions; O(k)=O(1)   │
 │              │ membership test with zero false negatives  │
@@ -398,6 +399,7 @@ if (filter.mightContain(key)) {
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Consistent Hash Ring → Count-Min Sketch   │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

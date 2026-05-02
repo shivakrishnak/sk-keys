@@ -377,6 +377,7 @@ System.out.println("Estimated ops: " + estimatedOps);
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Polynomial-time algorithms with proven    │
 │              │ worst-case ratio to optimal for NP-hard  │
@@ -400,6 +401,7 @@ System.out.println("Estimated ops: " + estimatedOps);
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Christofides → LP Rounding → PCP Theorem  │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

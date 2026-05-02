@@ -402,6 +402,7 @@ java -XX:ConcGCThreads=4 -jar myapp.jar  # default = CPU/4
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Old Generation collection using           │
 │              │ mark-sweep-compact (or concurrent variant)│
@@ -429,6 +430,7 @@ java -XX:ConcGCThreads=4 -jar myapp.jar  # default = CPU/4
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Full GC → G1GC → ZGC → GC Tuning          │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

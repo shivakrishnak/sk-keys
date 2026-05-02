@@ -380,6 +380,7 @@ assert threeSum(new int[]{0,0,0,0}).size() == 1
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Two indices moving coordinately through   │
 │              │ sorted data to find pairs/partitions      │
@@ -404,6 +405,7 @@ assert threeSum(new int[]{0,0,0,0}).size() == 1
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Sliding Window → Three Sum → K-Sum        │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

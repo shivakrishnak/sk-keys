@@ -485,6 +485,7 @@ for all shared mutable state access.
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ Lightweight execution unit inside a process│
 ├──────────────┼───────────────────────────────────────────┤
@@ -507,6 +508,7 @@ for all shared mutable state access.
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Mutex → Deadlock → Thread Pool │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

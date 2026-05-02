@@ -434,6 +434,7 @@ System.out.println("Total pops: " + processCount);
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Greedy single-source shortest path for    │
 │              │ non-negative weighted graphs              │
@@ -458,6 +459,7 @@ System.out.println("Total pops: " + processCount);
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Bellman-Ford → A* Search → Kruskal/Prim   │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

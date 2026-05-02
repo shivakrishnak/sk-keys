@@ -617,6 +617,7 @@ set up a global unhandledRejection listener as a safety net.
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS │ Structuring code to REACT to events │
 │ │ rather than executing sequentially │
@@ -643,6 +644,7 @@ set up a global unhandledRejection listener as a safety net.
 │ NEXT EXPLORE │ Reactive Programming → Observer Pattern │
 │ │ → Node.js Event Loop │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

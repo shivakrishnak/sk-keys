@@ -392,6 +392,7 @@ redis-cli GET "product:42"  # compare with DB value
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Exchange memory for faster execution:     │
 │              │ precompute once, retrieve in O(1)         │
@@ -415,6 +416,7 @@ redis-cli GET "product:42"  # compare with DB value
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ Caching → DP → Bloom Filter               │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 

@@ -436,6 +436,7 @@ System.out.println("Max tree depth: " + maxDepth);
 
 ### 📌 Quick Reference Card
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │ WHAT IT IS   │ Disjoint set data structure tracking      │
 │              │ which elements are in the same group      │
@@ -461,6 +462,7 @@ System.out.println("Max tree depth: " + maxDepth);
 │ NEXT EXPLORE │ Kruskal/Prim → Minimum Spanning Tree →    │
 │              │ Network Connectivity                      │
 └──────────────────────────────────────────────────────────┘
+```
 
 ---
 
