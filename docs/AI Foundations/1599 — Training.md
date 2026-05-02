@@ -49,6 +49,7 @@ This is exactly why neural network Training was developed — as the mechanism b
 Training is the model learning from examples by repeatedly making predictions, measuring errors, and adjusting internal numbers to reduce those errors.
 
 **One analogy:**
+
 > Imagine learning to throw darts. You throw (forward pass), see where the dart lands (loss), feel how far off you were (gradient), and adjust your grip and release slightly (weight update). You repeat thousands of times. Eventually your throws cluster around the bullseye — not because someone told you exactly how to throw, but because you adjusted based on feedback. Training works identically.
 
 **One insight:**
@@ -59,6 +60,7 @@ Training never tells the model what to know — it only shows it what "correct" 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. A differentiable loss function measures how wrong the current parameters are.
 2. Gradients tell us the direction to adjust each parameter to reduce the loss.
 3. Gradient descent iteratively nudges parameters toward lower loss.
@@ -71,16 +73,16 @@ The core training loop:
 for each minibatch in training_data:
     # Forward pass: compute predictions
     predictions = model(inputs)
-    
+
     # Compute loss: how wrong?
     loss = loss_fn(predictions, targets)
-    
+
     # Backward pass: compute gradients
     loss.backward()
-    
+
     # Update: nudge params in right direction
     optimizer.step()
-    
+
     # Reset gradients for next batch
     optimizer.zero_grad()
 ```
@@ -124,6 +126,7 @@ Training is a feedback loop. No one told the model that "Nigerian prince" is sus
 > Think of training as water finding its way down a mountain. The loss landscape is the mountain — a high-dimensional surface where lower altitude = lower loss. Gradient descent is the water: it always flows downhill (in the direction of steepest descent). Starting from a random location (random parameters), the water flows toward a valley (local minimum). The learning rate is how fast the water flows — too fast and it overshoots valleys; too slow and it takes forever to reach them.
 
 Mapping:
+
 - "Mountain surface" → loss landscape (function of all parameters)
 - "Current position on mountain" → current parameter values
 - "Altitude" → current loss value
@@ -184,6 +187,7 @@ The choice of stochastic minibatch gradient descent over full-batch gradient des
 ```
 
 **Training compute scale (rough):**
+
 ```
 C ≈ 6 × N × D
 Where:
@@ -198,6 +202,7 @@ At 312 TFLOPS/GPU (A100) = ~300K GPU-hours
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 Random parameter initialisation
     ↓
@@ -222,6 +227,7 @@ Evaluation: measure test loss/accuracy
 ```
 
 **FAILURE PATH:**
+
 ```
 Loss spikes or becomes NaN
     ↓
@@ -240,6 +246,7 @@ At frontier model scale (GPT-4, Llama-3), training runs for weeks across thousan
 ### 💻 Code Example
 
 **Example 1 — Core training loop:**
+
 ```python
 import torch
 import torch.nn as nn
@@ -275,6 +282,7 @@ for epoch in range(num_epochs):
 ```
 
 **Example 2 — Mixed-precision training (faster, less memory):**
+
 ```python
 from torch.cuda.amp import autocast, GradScaler
 
@@ -298,6 +306,7 @@ for batch in dataloader:
 ```
 
 **Example 3 — Monitoring training health:**
+
 ```python
 import wandb
 
@@ -325,13 +334,13 @@ for step, batch in enumerate(dataloader):
 
 ### ⚖️ Comparison Table
 
-| Training Phase | Objective | Data Size | Compute | Best For |
-|---|---|---|---|---|
-| **Pre-training** | Next-token prediction | Trillions of tokens | $M–$B | Foundation model creation |
-| Fine-tuning (SFT) | Supervised on demos | 1K–1M examples | $K–$M | Task specialisation |
-| RLHF | Human preference ranking | 10K–100K pairs | $M | Alignment, safety |
-| LoRA fine-tuning | SFT with frozen base | 1K–100K | $10–$100 | Efficient domain adaptation |
-| Continual pre-training | Next-token prediction | Billions of tokens | $K–$M | Domain knowledge injection |
+| Training Phase         | Objective                | Data Size           | Compute  | Best For                    |
+| ---------------------- | ------------------------ | ------------------- | -------- | --------------------------- |
+| **Pre-training**       | Next-token prediction    | Trillions of tokens | $M–$B    | Foundation model creation   |
+| Fine-tuning (SFT)      | Supervised on demos      | 1K–1M examples      | $K–$M    | Task specialisation         |
+| RLHF                   | Human preference ranking | 10K–100K pairs      | $M       | Alignment, safety           |
+| LoRA fine-tuning       | SFT with frozen base     | 1K–100K             | $10–$100 | Efficient domain adaptation |
+| Continual pre-training | Next-token prediction    | Billions of tokens  | $K–$M    | Domain knowledge injection  |
 
 **How to choose:** For most teams, LoRA fine-tuning on a pretrained base model is the practical default — it achieves strong results with minimal compute. Only frontier labs have the resources for full pre-training from scratch.
 
@@ -339,13 +348,13 @@ for step, batch in enumerate(dataloader):
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Training on more data always helps" | More data helps until diminishing returns; low-quality data actively hurts — data quality > data quantity |
-| "Training teaches the model to understand" | Training minimises cross-entropy loss — it teaches statistical prediction, not comprehension |
-| "Once trained, a model's behaviour is fixed" | Fine-tuning can substantially change model behaviour with relatively little data |
-| "Training is reproducible" | Floating-point non-determinism on GPUs means exact reproduction is extremely difficult; same seed + config → similar but not identical results |
-| "The loss must reach zero for good models" | Very low training loss often means overfitting; the goal is low validation loss, not training loss |
+| Misconception                                | Reality                                                                                                                                        |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Training on more data always helps"         | More data helps until diminishing returns; low-quality data actively hurts — data quality > data quantity                                      |
+| "Training teaches the model to understand"   | Training minimises cross-entropy loss — it teaches statistical prediction, not comprehension                                                   |
+| "Once trained, a model's behaviour is fixed" | Fine-tuning can substantially change model behaviour with relatively little data                                                               |
+| "Training is reproducible"                   | Floating-point non-determinism on GPUs means exact reproduction is extremely difficult; same seed + config → similar but not identical results |
+| "The loss must reach zero for good models"   | Very low training loss often means overfitting; the goal is low validation loss, not training loss                                             |
 
 ---
 
@@ -358,6 +367,7 @@ for step, batch in enumerate(dataloader):
 **Root Cause:** Gradient explosion (unclamped gradients cause weights to overflow to ±infinity → NaN). Often triggered by a bad batch with extreme token distributions.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Check for NaN in gradients after backward()
 for name, param in model.named_parameters():
@@ -379,6 +389,7 @@ for name, param in model.named_parameters():
 **Root Cause:** Model has too much capacity relative to dataset size; it memorises training examples instead of learning generalisable patterns.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Plot training vs validation loss
 import matplotlib.pyplot as plt
@@ -398,16 +409,19 @@ plt.show()  # Divergence = overfitting
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Neural Network` — training adjusts the parameters of a neural network
 - `Model Parameters` — training is the process that gives parameters their values
 - `Deep Learning` — training deep networks requires backpropagation, not available in shallow networks
 
 **Builds On This (learn these next):**
+
 - `Pre-training` — large-scale training on unlabelled data to create a foundation model
 - `Fine-Tuning` — continuing training on task-specific data from a pretrained checkpoint
 - `RLHF` — training with human feedback as the reward signal to improve alignment
 
 **Alternatives / Comparisons:**
+
 - `Inference` — the production phase after training; weights are frozen
 - `Overfitting / Underfitting` — the primary failure mode of training to diagnose and prevent
 - `Transfer Learning` — avoids training from scratch by starting from pretrained weights

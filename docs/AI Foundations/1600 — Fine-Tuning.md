@@ -49,6 +49,7 @@ This is exactly why Fine-Tuning was developed — as the mechanism to adapt a pr
 Fine-tuning is teaching an expert a new specialty — they keep all their knowledge but specialise their behaviour for your use case.
 
 **One analogy:**
+
 > Think of a medical school graduate (pretrained model). They have broad knowledge of medicine (general capabilities). Fine-tuning is their residency: they spend 3 years focusing specifically on cardiology (your domain). They don't unlearn general medicine — they build specialised expertise on top of it. Fine-tuning a language model works identically: deep general knowledge stays; specific behaviour is added.
 
 **One insight:**
@@ -59,6 +60,7 @@ Fine-tuning is most powerful for changing HOW the model responds (format, style,
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Pretrained weights encode broad language patterns — they are expensive to reproduce.
 2. Task-specific patterns can be added on top with much less data and compute.
 3. Gradient descent on a small dataset from a pretrained starting point converges faster and generalises better than training from scratch.
@@ -69,6 +71,7 @@ Fine-tuning initialises gradient descent from pretrained weights rather than ran
 Two strategies:
 
 **Full fine-tuning:** All N parameters are updated.
+
 - Cost: same memory and compute as training a model of the same size.
 - Risk: catastrophic forgetting — fine-tuning data may overwrite general capabilities.
 
@@ -113,6 +116,7 @@ Prompt instructions sit in the context window — they can be overridden by late
 > Think of a pretrained model as a versatile actor who can play any role. Fine-tuning is a role they have practised intensively — they don't need the script anymore. Without fine-tuning, you hand the actor a script (system prompt) every time they go on stage. With fine-tuning, they've rehearsed the role so thoroughly that the character is now second nature — they'll stay in character even under pressure.
 
 Mapping:
+
 - "Versatile actor" → pretrained general model
 - "Practised role" → fine-tuned specialisation
 - "Script" → system prompt (prompt engineering)
@@ -178,6 +182,7 @@ LoRA's low-rank hypothesis is empirically supported: the intrinsic dimensionalit
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 Pretrained base model + weights
     ↓
@@ -203,6 +208,7 @@ Evaluate on held-out benchmark
 ```
 
 **FAILURE PATH:**
+
 ```
 Overfitting (small dataset + too many epochs)
     ↓
@@ -221,6 +227,7 @@ At enterprise scale with many domain-specific use cases, fine-tuning becomes an 
 ### 💻 Code Example
 
 **Example 1 — LoRA fine-tuning with TRL:**
+
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import LoraConfig, get_peft_model
@@ -271,6 +278,7 @@ trainer.train()
 ```
 
 **Example 2 — Merging adapter and saving:**
+
 ```python
 from peft import PeftModel
 
@@ -290,6 +298,7 @@ merged_model.save_pretrained("./merged-model")
 ```
 
 **Example 3 — Evaluating format compliance:**
+
 ```python
 import json
 
@@ -318,14 +327,14 @@ print(f"Compliance: {before:.1%} → {after:.1%}")
 
 ### ⚖️ Comparison Table
 
-| Approach | Data Needed | Compute | Robustness | Best For |
-|---|---|---|---|---|
-| Prompting only | 0 | 0 | Low | Quick iteration, prototyping |
-| RAG | 0 | Low (retrieval) | Medium | Factual knowledge injection |
-| **Full fine-tuning** | 10K–1M | High | Highest | Full behaviour overhaul |
-| **LoRA fine-tuning** | 1K–100K | Low–medium | High | Task/format specialisation |
-| RLHF/DPO | 1K–100K ratings | Medium | High | Preference alignment |
-| Adapter (prefix) | 1K–100K | Low | Medium | Multi-task serving |
+| Approach             | Data Needed     | Compute         | Robustness | Best For                     |
+| -------------------- | --------------- | --------------- | ---------- | ---------------------------- |
+| Prompting only       | 0               | 0               | Low        | Quick iteration, prototyping |
+| RAG                  | 0               | Low (retrieval) | Medium     | Factual knowledge injection  |
+| **Full fine-tuning** | 10K–1M          | High            | Highest    | Full behaviour overhaul      |
+| **LoRA fine-tuning** | 1K–100K         | Low–medium      | High       | Task/format specialisation   |
+| RLHF/DPO             | 1K–100K ratings | Medium          | High       | Preference alignment         |
+| Adapter (prefix)     | 1K–100K         | Low             | Medium     | Multi-task serving           |
 
 **How to choose:** For most production cases, LoRA fine-tuning is the best starting point — cheap, fast, reversible, and near-equivalent to full fine-tuning. Use full fine-tuning only when LoRA quality is insufficient. Use RAG alongside fine-tuning for knowledge-intensive tasks — they complement each other.
 
@@ -333,13 +342,13 @@ print(f"Compliance: {before:.1%} → {after:.1%}")
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Fine-tuning teaches the model new facts" | Fine-tuning is more reliable for behaviour/format changes than factual knowledge injection; RAG is better for facts |
-| "More fine-tuning data always helps" | More data helps until overfitting; data quality > quantity; 1,000 perfect examples outperforms 100,000 noisy ones |
-| "LoRA is always worse than full fine-tuning" | For most tasks, LoRA with good rank achieves near-identical results to full fine-tuning at 1% of the cost |
-| "Fine-tuning is permanent and irreversible" | Fine-tuning can be undone by reloading base weights; LoRA adapters are separate files that can be swapped |
-| "Fine-tuning solves alignment" | SFT alone improves instruction following but does not reliably improve honesty, harmlessness, or alignment — RLHF is needed |
+| Misconception                                | Reality                                                                                                                     |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| "Fine-tuning teaches the model new facts"    | Fine-tuning is more reliable for behaviour/format changes than factual knowledge injection; RAG is better for facts         |
+| "More fine-tuning data always helps"         | More data helps until overfitting; data quality > quantity; 1,000 perfect examples outperforms 100,000 noisy ones           |
+| "LoRA is always worse than full fine-tuning" | For most tasks, LoRA with good rank achieves near-identical results to full fine-tuning at 1% of the cost                   |
+| "Fine-tuning is permanent and irreversible"  | Fine-tuning can be undone by reloading base weights; LoRA adapters are separate files that can be swapped                   |
+| "Fine-tuning solves alignment"               | SFT alone improves instruction following but does not reliably improve honesty, harmlessness, or alignment — RLHF is needed |
 
 ---
 
@@ -352,6 +361,7 @@ print(f"Compliance: {before:.1%} → {after:.1%}")
 **Root Cause:** Full fine-tuning on a narrow dataset overrides gradients that were critical for general capabilities. The training data distribution is too narrow relative to the base model's training distribution.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Test on general benchmarks after fine-tuning
 from lm_eval import simple_evaluate
@@ -379,6 +389,7 @@ print(f"MMLU: {before_score} → {after_score}")
 **Root Cause:** Model has capacity far exceeding the information content of the fine-tuning dataset; it memorises examples rather than generalising.
 
 **Diagnostic Command / Tool:**
+
 ```bash
 # Use perplexity on held-out validation set
 python -m lm_eval --model hf \
@@ -397,16 +408,19 @@ python -m lm_eval --model hf \
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Training` — fine-tuning is continued training; understanding the base mechanism is essential
 - `Model Weights` — fine-tuning updates (LoRA) or modifies weights; understanding what weights are is prerequisite
 - `Transfer Learning` — fine-tuning is the applied practice of transfer learning for LLMs
 
 **Builds On This (learn these next):**
+
 - `RLHF` — the alignment-focused fine-tuning technique that follows SFT to train from human preferences
 - `Model Evaluation Metrics` — evaluating fine-tuning quality requires task-specific metrics
 - `Responsible AI` — fine-tuning can reinforce or mitigate biases; alignment must be monitored
 
 **Alternatives / Comparisons:**
+
 - `Pre-training` — creating the base model that fine-tuning starts from; orders of magnitude more expensive
 - `Grounding (RAG)` — alternative to fine-tuning for knowledge injection; complementary for behaviour
 - `In-Context Learning` — zero/few-shot prompting as a cheaper alternative to fine-tuning for some tasks

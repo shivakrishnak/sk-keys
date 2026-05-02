@@ -50,6 +50,7 @@ Swap is the safety valve. With swap, the kernel moves rarely-accessed memory pag
 Swap is a disk-based RAM overflow valve — it prevents OOM kills but trades performance for availability.
 
 **One analogy:**
+
 > Swap is like a self-storage unit for RAM. When your home (RAM) is full, you move boxes (memory pages) you haven't opened recently to a storage unit (swap/disk). You can still access those boxes — but you have to drive to the storage unit first (10-1000× slower than home). The goal is to keep the home functional by moving cold stuff out, not to use storage as primary living space.
 
 **One insight:**
@@ -60,6 +61,7 @@ On an NVMe SSD, a swap read takes ~100μs. A RAM access takes ~100ns. That's 100
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Swap moves pages that haven't been accessed recently, not randomly.
 2. Anonymous pages (heap, stack) compete with page cache for RAM.
 3. `swappiness` controls this balance, not whether swapping occurs at all.
@@ -129,6 +131,7 @@ Linux's virtual memory system makes a fundamental distinction between file-backe
 ### ⚙️ How It Works (Mechanism)
 
 **Check swap status:**
+
 ```bash
 # Show all swap areas with usage
 swapon -s
@@ -156,6 +159,7 @@ done | sort -rn | head -10
 ```
 
 **Create and manage swap:**
+
 ```bash
 # Create a 4GB swap file
 fallocate -l 4G /swapfile   # instant allocation
@@ -180,6 +184,7 @@ swapon -p 5  /dev/sdb1     # lower priority
 ```
 
 **Tuning swappiness:**
+
 ```bash
 # Check current value (default 60)
 cat /proc/sys/vm/swappiness
@@ -206,6 +211,7 @@ sysctl -w vm.vfs_cache_pressure=50
 ```
 
 **zswap (compressed swap cache):**
+
 ```bash
 # Enable zswap (compress pages before writing to swap)
 echo 1 > /sys/module/zswap/parameters/enabled
@@ -269,6 +275,7 @@ If `swapoff` is called while swap is heavily used but free RAM < swap usage, `sw
 ### 💻 Code Example
 
 **Example 1 — Swap monitoring script:**
+
 ```bash
 #!/bin/bash
 # Alert on high swap usage
@@ -301,6 +308,7 @@ fi
 ```
 
 **Example 2 — Optimal swap configuration for a database server:**
+
 ```bash
 #!/bin/bash
 # Apply production database server memory settings
@@ -327,6 +335,7 @@ echo "Database memory settings applied"
 ```
 
 **Example 3 — Kubernetes node swap handling:**
+
 ```bash
 # Kubernetes historically required swap DISABLED
 # Check:
@@ -351,14 +360,14 @@ sed -i 's/^\([^#].*swap.*\)$/#\1/' /etc/fstab
 
 ### ⚖️ Comparison Table
 
-| Approach | OOM Prevention | Performance | Complexity | Best For |
-|---|---|---|---|---|
-| No swap | No | Best | None | Kubernetes nodes (controlled env) |
-| Swap file | Yes | Poor (HDD) / Fair (SSD) | Low | General servers |
-| Swap partition | Yes | Same as file | Moderate | Traditional setup |
-| **zswap** | Yes (better) | Better (compressed) | Moderate | Modern servers |
-| zram | Yes | Best (in-RAM compress) | Moderate | Memory-constrained desktops |
-| Oversized RAM | N/A | Best | High cost | Production databases |
+| Approach       | OOM Prevention | Performance             | Complexity | Best For                          |
+| -------------- | -------------- | ----------------------- | ---------- | --------------------------------- |
+| No swap        | No             | Best                    | None       | Kubernetes nodes (controlled env) |
+| Swap file      | Yes            | Poor (HDD) / Fair (SSD) | Low        | General servers                   |
+| Swap partition | Yes            | Same as file            | Moderate   | Traditional setup                 |
+| **zswap**      | Yes (better)   | Better (compressed)     | Moderate   | Modern servers                    |
+| zram           | Yes            | Best (in-RAM compress)  | Moderate   | Memory-constrained desktops       |
+| Oversized RAM  | N/A            | Best                    | High cost  | Production databases              |
 
 How to choose: Kubernetes nodes → disable swap; production databases → swap with swappiness=1; general servers → 1-2× RAM swap file on SSD with swappiness=10; memory-constrained systems → zswap or zram.
 
@@ -366,13 +375,13 @@ How to choose: Kubernetes nodes → disable swap; production databases → swap 
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| vm.swappiness=0 disables swap | swappiness=0 means "avoid swapping anonymous memory unless unavoidable" — the kernel can still swap; to actually prevent swapping, use `swapoff -a` |
-| More swap = more memory | Swap is not free memory — actively using swap severely degrades performance; it's a safety valve, not a memory upgrade |
-| Disabling swap improves performance | Only if the workload never exceeds RAM; if OOM killer fires instead, killing a critical process is far worse than some swap latency |
-| Swap on SSD is the same as RAM | SSD swap access (~100μs) is still 1000× slower than RAM (~100ns); intensive swap on SSD will degrade performance and wear the SSD |
-| Setting swappiness for one container affects others | swappiness is a system-wide kernel parameter; per-cgroup swappiness is available in cgroups v1 via `memory.swappiness` |
+| Misconception                                       | Reality                                                                                                                                             |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| vm.swappiness=0 disables swap                       | swappiness=0 means "avoid swapping anonymous memory unless unavoidable" — the kernel can still swap; to actually prevent swapping, use `swapoff -a` |
+| More swap = more memory                             | Swap is not free memory — actively using swap severely degrades performance; it's a safety valve, not a memory upgrade                              |
+| Disabling swap improves performance                 | Only if the workload never exceeds RAM; if OOM killer fires instead, killing a critical process is far worse than some swap latency                 |
+| Swap on SSD is the same as RAM                      | SSD swap access (~100μs) is still 1000× slower than RAM (~100ns); intensive swap on SSD will degrade performance and wear the SSD                   |
+| Setting swappiness for one container affects others | swappiness is a system-wide kernel parameter; per-cgroup swappiness is available in cgroups v1 via `memory.swappiness`                              |
 
 ---
 
@@ -387,6 +396,7 @@ Application periodically stalls for hundreds of milliseconds. `vmstat 1` shows n
 Pages swapped out during low-traffic periods are being accessed during high-traffic periods, causing page faults that stall application threads.
 
 **Diagnostic Command:**
+
 ```bash
 # Watch swap I/O in real time
 vmstat 1 | awk 'NR>2 {
@@ -403,6 +413,7 @@ done | sort -rn | head -10
 ```
 
 **Fix:**
+
 1. Reduce `vm.swappiness` to 1-10 to prevent future swapping.
 2. Add RAM to bring the working set into physical memory.
 3. Investigate which processes are unexpectedly large and optimise them.
@@ -413,15 +424,18 @@ done | sort -rn | head -10
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Linux File System Hierarchy` — swap files live in the filesystem hierarchy; understanding mount points and disk layout is foundational
 - `Operating Systems` — virtual memory, paging, and the MMU are the foundational OS concepts that swap implements at the hardware level
 
 **Builds On This (learn these next):**
+
 - `Memory (free, vmstat)` — the monitoring tools for memory and swap pressure
 - `Cgroups` — cgroups v1 allows per-cgroup swappiness control; cgroups v2 integrates swap limits with memory limits
 - `Linux Performance Tuning` — swap tuning (swappiness, zswap, huge pages) is a major component of Linux memory performance tuning
 
 **Alternatives / Comparisons:**
+
 - `zram` — creates a compressed block device in RAM as swap; no disk I/O, but uses CPU for compression; good for memory-constrained systems
 - `zswap` — kernel feature that compresses pages in RAM before writing to disk; hybrid approach reducing disk swap writes
 - `OOM Killer` — the alternative to swap; when no swap exists and memory is exhausted, the OOM killer selects and terminates processes

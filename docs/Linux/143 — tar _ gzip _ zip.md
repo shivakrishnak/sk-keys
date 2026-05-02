@@ -48,6 +48,7 @@ This is exactly why `tar` (Tape ARchive) was created. It serialises an entire di
 tar packs a directory into one file; gzip shrinks it; together they create portable, compressed archives.
 
 **One analogy:**
+
 > `tar` is like a moving company that packs every item from a house into labelled boxes, records the room each box came from and who owns it. `gzip` is the vacuum packer that shrinks each box. Together, you ship one compressed, labelled container instead of hundreds of loose items.
 
 **One insight:**
@@ -58,6 +59,7 @@ tar packs a directory into one file; gzip shrinks it; together they create porta
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. An archive must preserve all filesystem metadata, not just file contents.
 2. Compression works best on a single stream (compressing many small files individually misses cross-file redundancy).
 3. Cross-platform compatibility requires a standard format with broad tool support.
@@ -123,6 +125,7 @@ tar's 512-byte block format was chosen for compatibility with tape drives (block
 ### ⚙️ How It Works (Mechanism)
 
 **tar archive structure:**
+
 ```
 ┌─────────────────────────────────────────────┐
 │  TAR ARCHIVE FORMAT (simplified)           │
@@ -138,6 +141,7 @@ tar's 512-byte block format was chosen for compatibility with tape drives (block
 ```
 
 **Common tar commands:**
+
 ```bash
 # Create compressed archive (gzip)
 tar czf archive.tar.gz dirname/
@@ -175,6 +179,7 @@ tar czf - /data | ssh server2 "tar xzf - -C /data"
 ```
 
 **gzip commands:**
+
 ```bash
 gzip file.txt         # compress: file.txt → file.txt.gz
 gzip -d file.txt.gz   # decompress
@@ -187,6 +192,7 @@ zcat file.txt.gz      # view compressed file without extract
 ```
 
 **zip commands:**
+
 ```bash
 # Create zip archive
 zip -r archive.zip dirname/
@@ -211,6 +217,7 @@ unzip archive.zip path/to/file.txt
 ```
 
 **Compression comparison:**
+
 ```
 File: Linux kernel source (800 MB of C code)
 
@@ -264,6 +271,7 @@ At scale (multi-GB ML model archives, container layer tarballs) parallel compres
 ### 💻 Code Example
 
 **Example 1 — BAD: missing compression, wrong extract:**
+
 ```bash
 # BAD — no compression (big archive)
 tar cf archive.tar dirname/
@@ -273,6 +281,7 @@ tar xzf archive.tar.gz
 ```
 
 **Example 1 — GOOD: compressed, extract to known location:**
+
 ```bash
 # GOOD — compressed, verbose, known target
 tar czf app-$(date +%Y%m%d).tar.gz src/
@@ -285,6 +294,7 @@ tar xzf app-20240115.tar.gz --strip-components=1 \
 ```
 
 **Example 2 — Streaming backup without temp file:**
+
 ```bash
 # Stream tar directly to remote server
 # No temporary file created on either side
@@ -298,6 +308,7 @@ tar czf - /secrets | \
 ```
 
 **Example 3 — Exclude patterns and verify:**
+
 ```bash
 # Create archive excluding development artifacts
 tar czf release.tar.gz src/ \
@@ -319,14 +330,14 @@ cat release.tar.gz.sha256
 
 ### ⚖️ Comparison Table
 
-| Format | Compression | Cross-platform | Random Access | Best For |
-|---|---|---|---|---|
-| **.tar.gz** | Good, fast | Linux/Mac native | No | Linux deployment, backups |
-| .tar.bz2 | Better | Linux/Mac native | No | Space-constrained archives |
-| .tar.xz | Best | Linux/Mac native | No | Distribution packages |
-| **.zip** | Good | Universal | Yes (per-file) | Windows sharing, web downloads |
-| .tar.zst | Good+fast | Requires zstd | No | Modern CI/CD, Docker layers |
-| .7z | Excellent | Requires 7zip | Yes | Maximum compression |
+| Format      | Compression | Cross-platform   | Random Access  | Best For                       |
+| ----------- | ----------- | ---------------- | -------------- | ------------------------------ |
+| **.tar.gz** | Good, fast  | Linux/Mac native | No             | Linux deployment, backups      |
+| .tar.bz2    | Better      | Linux/Mac native | No             | Space-constrained archives     |
+| .tar.xz     | Best        | Linux/Mac native | No             | Distribution packages          |
+| **.zip**    | Good        | Universal        | Yes (per-file) | Windows sharing, web downloads |
+| .tar.zst    | Good+fast   | Requires zstd    | No             | Modern CI/CD, Docker layers    |
+| .7z         | Excellent   | Requires 7zip    | Yes            | Maximum compression            |
 
 How to choose: use `.tar.gz` for Linux server deployments and scripts; use `.zip` when the recipient may use Windows or macOS without terminal tools; use `.tar.zst` in modern CI pipelines where speed matters.
 
@@ -334,13 +345,13 @@ How to choose: use `.tar.gz` for Linux server deployments and scripts; use `.zip
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| tar compresses files | tar only archives; compression is done by a separate filter (-z for gzip, -j for bzip2, -J for xz) |
+| Misconception                                   | Reality                                                                                                                                     |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| tar compresses files                            | tar only archives; compression is done by a separate filter (-z for gzip, -j for bzip2, -J for xz)                                          |
 | `tar xzf archive.tar.gz` always extracts safely | Without `-C target/`, files extract relative to the current directory; a maliciously crafted archive can include `../` path traversal paths |
-| zip and tar.gz are equivalent | zip compresses each file independently (no cross-file compression); tar.gz compresses the entire stream (better ratio for similar files) |
-| gzip and gunzip are different programs | They are the same binary; gunzip is a symlink to gzip |
-| Extracting a tar archive is always safe | Archive files can contain absolute paths or `../` traversal — always inspect with `tar tz` before extracting untrusted archives |
+| zip and tar.gz are equivalent                   | zip compresses each file independently (no cross-file compression); tar.gz compresses the entire stream (better ratio for similar files)    |
+| gzip and gunzip are different programs          | They are the same binary; gunzip is a symlink to gzip                                                                                       |
+| Extracting a tar archive is always safe         | Archive files can contain absolute paths or `../` traversal — always inspect with `tar tz` before extracting untrusted archives             |
 
 ---
 
@@ -355,6 +366,7 @@ Extracting an archive overwrites unexpected files outside the target directory.
 A maliciously crafted archive contains entries with paths like `../../etc/cron.d/evil`. Tools like `unzip` and some versions of tar follow these paths during extraction.
 
 **Diagnostic Command:**
+
 ```bash
 # ALWAYS inspect archive contents before extracting
 tar tzf untrusted.tar.gz | grep '\.\.'
@@ -362,6 +374,7 @@ unzip -l untrusted.zip | grep '\.\.'
 ```
 
 **Fix:**
+
 ```bash
 # Extract to an isolated directory and inspect
 mkdir /tmp/safe-extract
@@ -383,6 +396,7 @@ Never extract untrusted archives with root privileges; always inspect contents f
 The download was interrupted or the file was partially written, resulting in a truncated gzip stream.
 
 **Diagnostic Command:**
+
 ```bash
 # Test archive integrity without extracting
 gzip -t archive.tar.gz && echo "OK" || echo "CORRUPTED"
@@ -406,6 +420,7 @@ Always verify checksum after download: `sha256sum --check archive.sha256`.
 The compressed archive is small but expands to a very large uncompressed size (compression ratio of 50:1 is common for text).
 
 **Diagnostic Command:**
+
 ```bash
 # Check uncompressed size before extracting
 gzip -l archive.tar.gz   # shows uncompressed size
@@ -425,16 +440,19 @@ Always check uncompressed size before extracting archives from unknown sources; 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Linux File System Hierarchy` — tar preserves directory structure; knowing the FHS helps with extraction paths
 - `Shell (bash, zsh)` — tar/gzip/zip are shell commands; understanding shell pipelines is needed for streaming usage
 - `File Permissions (chmod, chown)` — tar preserves permissions; understanding them is needed to know what gets preserved
 
 **Builds On This (learn these next):**
+
 - `CI/CD` — build artifacts are typically packaged as tar.gz archives for deployment
 - `SCP / rsync` — archives are often transferred using scp or rsync after creation
 - `Docker` — Docker image layers are tar archives stored in a registry as compressed blobs
 
 **Alternatives / Comparisons:**
+
 - `zip` — cross-platform alternative with per-file compression and random access
 - `zstd` — modern compression algorithm (used in `.tar.zst`) faster and better than gzip
 - `rsync` — for synchronising live directories without creating an archive first

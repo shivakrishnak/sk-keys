@@ -51,6 +51,7 @@ This is the problem `iostat` and `iotop` solve. They make disk I/O visible at bo
 `iostat` shows what each disk is doing; `iotop` shows which process is causing it.
 
 **One analogy:**
+
 > `iostat` is a highway traffic monitor showing vehicles per minute and congestion percentage for each lane (disk). `iotop` is a camera that zooms in to identify the specific trucks (processes) occupying those lanes. The highway monitor tells you there's a jam; the camera tells you who caused it.
 
 **One insight:**
@@ -61,6 +62,7 @@ This is the problem `iostat` and `iotop` solve. They make disk I/O visible at bo
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Block device I/O is tracked in the kernel's request queue — each request has a submit time and a completion time.
 2. `await` = average time from request submission to completion (includes queue wait + device service time).
 3. For HDDs, `%util ≈ 100%` means saturation; for SSDs (especially NVMe), use queue depth and await instead.
@@ -83,6 +85,7 @@ The kernel's block layer counts reads and writes for each block device in `/proc
 NVMe SSD server. Your monitoring shows average disk latency has jumped from 50μs to 8ms. Application query times have jumped proportionally. What's happening?
 
 **WITH iostat -x 1:**
+
 ```
 Device     r/s    w/s  rMB/s  wMB/s  await  aqu-sz  %util
 nvme0n1  12000   3000   450    200     8.2     96.3  100.0
@@ -94,6 +97,7 @@ Queue depth (`aqu-sz`) is 96.3 — meaning on average 96 requests are waiting. F
 The device is receiving 15,000 IOPS but its sustainable random IOPS (with this workload) is being exceeded. Something has dramatically increased I/O demand.
 
 **WITH iotop -o:**
+
 ```
 PID   IO     DISK READ   DISK WRITE   COMMAND
 1234  99.9%  450.0 M/s     0.0 B/s   elasticsearch [flush]
@@ -139,6 +143,7 @@ Where this analogy breaks down: a single NVMe "counter" can serve many "customer
 ### ⚙️ How It Works (Mechanism)
 
 **`iostat` commands:**
+
 ```bash
 # Install (if missing)
 apt install sysstat    # Debian/Ubuntu
@@ -164,6 +169,7 @@ iostat -xh 1
 ```
 
 **Extended stats columns (-x):**
+
 ```
 Device  r/s  w/s  rMB/s  wMB/s  rrqm/s  wrqm/s  r_await  w_await
         │    │    │      │      │        │        │        │
@@ -190,6 +196,7 @@ Normal baselines:
 ```
 
 **`iotop` commands:**
+
 ```bash
 # Basic (requires root)
 iotop
@@ -211,6 +218,7 @@ iotop -p 1234
 ```
 
 **Alternative: pidstat for I/O per process:**
+
 ```bash
 # Part of sysstat package — lower overhead than iotop
 pidstat -d 1   # I/O stats per process, 1s interval
@@ -223,6 +231,7 @@ pidstat -d -p $(pidof postgres) 1  # specific process
 ```
 
 **Disk latency monitoring:**
+
 ```bash
 # Check current disk queue and latency
 cat /proc/diskstats | awk '{
@@ -288,6 +297,7 @@ If `iostat` shows `%util=0%` but applications report slow file access, the bottl
 ### 💻 Code Example
 
 **Example 1 — Disk performance baseline and alert:**
+
 ```bash
 #!/bin/bash
 # Check disk health against performance baselines
@@ -311,6 +321,7 @@ iostat -x 1 2 | awk 'NR>6 {
 ```
 
 **Example 2 — I/O throttling with cgroups:**
+
 ```bash
 # Limit a backup job's I/O to avoid saturation
 # Method 1: ionice (change I/O priority class)
@@ -336,6 +347,7 @@ systemctl daemon-reload
 ```
 
 **Example 3 — Find large sequential readers:**
+
 ```bash
 #!/bin/bash
 # Identify which processes are doing sequential
@@ -356,14 +368,14 @@ iotop -b -n 5 -d 1 2>/dev/null | \
 
 ### ⚖️ Comparison Table
 
-| Tool | Device View | Process View | Latency | Historical |
-|---|---|---|---|---|
-| **iostat -x** | Yes (per-device) | No | Yes (await) | No |
-| **iotop** | No | Yes (per-process) | No | No |
-| pidstat -d | No | Yes | No | No |
-| dstat | Yes | No | Partial | No |
-| sar -d | Yes | No | Partial | Yes (historical) |
-| blktrace | Yes (per-request) | Partial | Yes (exact) | File |
+| Tool          | Device View       | Process View      | Latency     | Historical       |
+| ------------- | ----------------- | ----------------- | ----------- | ---------------- |
+| **iostat -x** | Yes (per-device)  | No                | Yes (await) | No               |
+| **iotop**     | No                | Yes (per-process) | No          | No               |
+| pidstat -d    | No                | Yes               | No          | No               |
+| dstat         | Yes               | No                | Partial     | No               |
+| sar -d        | Yes               | No                | Partial     | Yes (historical) |
+| blktrace      | Yes (per-request) | Partial           | Yes (exact) | File             |
 
 How to choose: use `iostat -x 1` first to identify if a device is saturated; use `iotop -o` to identify which process is responsible; use `blktrace` for detailed per-request latency analysis of a specific device.
 
@@ -371,13 +383,13 @@ How to choose: use `iostat -x 1` first to identify if a device is saturated; use
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| %util=100% means the SSD is at capacity | For SSDs (especially NVMe), %util measures time with any I/O pending, not queue saturation; use aqu-sz and await to judge real saturation |
-| iostat's first output line shows current activity | The first block shows averages since boot — always wait for the second iteration for meaningful real-time data |
-| iotop shows all I/O a process generates | iotop shows I/O that reaches the block device; reads/writes served by page cache don't appear in iotop's block I/O counts |
+| Misconception                                       | Reality                                                                                                                                                                                |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| %util=100% means the SSD is at capacity             | For SSDs (especially NVMe), %util measures time with any I/O pending, not queue saturation; use aqu-sz and await to judge real saturation                                              |
+| iostat's first output line shows current activity   | The first block shows averages since boot — always wait for the second iteration for meaningful real-time data                                                                         |
+| iotop shows all I/O a process generates             | iotop shows I/O that reaches the block device; reads/writes served by page cache don't appear in iotop's block I/O counts                                                              |
 | High write I/O means a process is writing that much | A process's writes go to page cache first (writeback); the kernel batches them to disk later — the writing process in iotop may differ from the process that originally wrote the data |
-| ionice can guarantee I/O isolation | ionice (CFQ scheduler) is advisory; modern kernels default to mq-deadline or bfq; for guaranteed I/O isolation use cgroup I/O limits |
+| ionice can guarantee I/O isolation                  | ionice (CFQ scheduler) is advisory; modern kernels default to mq-deadline or bfq; for guaranteed I/O isolation use cgroup I/O limits                                                   |
 
 ---
 
@@ -395,6 +407,7 @@ The I/O is on a network filesystem (NFS, CIFS, FUSE) — these don't appear in b
 The wait is due to memory pressure causing page faults that the OS waits on — visible in vmstat `si` (swap-in) but not in block device stats.
 
 **Diagnostic Command:**
+
 ```bash
 # Check for NFS mounts
 mount | grep -E 'nfs|cifs|fuse'
@@ -419,6 +432,7 @@ perf stat -e block:block_rq_issue,block:block_rq_complete \
 The writes are kernel writeback flushes from page cache — dirty pages accumulated by many processes are being flushed by `kworker` kernel threads. The original writing processes have already finished; the I/O is now attributed to the kernel.
 
 **Diagnostic Command:**
+
 ```bash
 # Show kernel writeback threads' I/O
 iotop -o  # look for [kworker] or [flush] processes
@@ -436,15 +450,18 @@ cat /proc/vmstat | grep -E 'nr_dirty|nr_writeback|
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Linux File System Hierarchy` — understanding mount points, block devices, and the VFS layer is foundational to interpreting iostat device names and I/O paths
 - `/proc File System` — iostat reads `/proc/diskstats`; iotop reads `/proc/PID/io`; understanding procfs explains these tools' capabilities
 
 **Builds On This (learn these next):**
+
 - `Memory (free, vmstat)` — vmstat's `wa` (I/O wait) column is the first indicator of I/O problems; iostat is the next step
 - `Swap Management` — swap I/O appears in vmstat's `si`/`so` and in iostat if swap is on a block device
 - `Linux Performance Tuning` — I/O scheduler tuning (`/sys/block/*/queue/scheduler`), readahead tuning, and cgroup I/O limits are the follow-on tools after diagnosis
 
 **Alternatives / Comparisons:**
+
 - `dstat` — combines vmstat, iostat, and network stats in one tool; useful for quick multi-resource overviews
 - `blktrace` — per-request block layer tracing for detailed latency analysis
 - `sar -d` — historical disk stats from the `sysstat` suite; useful for trend analysis

@@ -48,6 +48,7 @@ The `/proc` filesystem (procfs) is a virtual filesystem — a pseudo-filesystem 
 `/proc` is a window into the running kernel — every file in it is live kernel data rendered as readable text.
 
 **One analogy:**
+
 > `/proc` is like a car's OBD-II diagnostic port. The port doesn't store data — it's a live readout of every sensor in the engine as you read it. You plug in a tool (cat /proc/...) and instantly see RPM, temperature, and fault codes — all without stopping the engine. The "files" don't exist on disk; they're generated on demand from running systems.
 
 **One insight:**
@@ -58,6 +59,7 @@ Reading a file in `/proc` doesn't do I/O — it triggers a kernel function. `cat
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. `/proc` files have no backing storage — reading them generates data on-demand via kernel callbacks.
 2. Data is always current (generated at read time) — there is no caching or staleness.
 3. The filesystem interface unifies process inspection under the same API as normal files.
@@ -83,9 +85,11 @@ You want to find out which files a process with PID 1234 has open, without insta
 You need `lsof` — but it's not installed in the minimal container. You need `strace` — not installed. You need a custom ioctl — requires kernel module. The only fallback is to restart the process with debugging enabled — which defeats the purpose.
 
 **WHAT HAPPENS WITH /proc:**
+
 ```bash
 ls -la /proc/1234/fd/
 ```
+
 This lists every open file descriptor as a symlink to its target path. No extra tools needed. Output appears instantly because `/proc/1234/fd/` directory listing is generated live from the kernel's file descriptor table for that process.
 
 ```bash
@@ -135,6 +139,7 @@ procfs was invented in Bell Labs UNIX for AT&T's early process debugging needs. 
 **Key `/proc` files and their uses:**
 
 **System-level files:**
+
 ```bash
 # CPU information
 cat /proc/cpuinfo | grep "model name" | head -1
@@ -160,6 +165,7 @@ cat /proc/sys/kernel/hostname     # system hostname
 ```
 
 **Modifying kernel parameters at runtime:**
+
 ```bash
 # Increase socket listen backlog
 echo 65535 > /proc/sys/net/core/somaxconn
@@ -173,6 +179,7 @@ sysctl -p  # reload from file
 ```
 
 **Per-process files (`/proc/PID/`):**
+
 ```
 /proc/PID/
 ├── cmdline       # command + arguments (NUL-separated)
@@ -203,6 +210,7 @@ sysctl -p  # reload from file
 ```
 
 **Useful diagnostic commands using /proc:**
+
 ```bash
 # Show process command line cleanly
 tr '\0' ' ' < /proc/1234/cmdline; echo
@@ -280,6 +288,7 @@ On a server with thousands of processes, iterating `/proc/*/status` (as tools li
 ### 💻 Code Example
 
 **Example 1 — Process introspection script:**
+
 ```bash
 #!/bin/bash
 # Summarise a process's resource usage without lsof/top
@@ -307,6 +316,7 @@ grep -E 'State|Threads' /proc/$PID/status
 ```
 
 **Example 2 — Kernel tuning for high-traffic web server:**
+
 ```bash
 #!/bin/bash
 # Apply performance tuning for a web server
@@ -331,6 +341,7 @@ cat /proc/sys/net/core/somaxconn  # should be 65535
 ```
 
 **Example 3 — Detect deleted-but-running binaries (security):**
+
 ```bash
 #!/bin/bash
 # Find processes running deleted binaries
@@ -346,6 +357,7 @@ done
 ```
 
 **Example 4 — Monitor process file descriptor leaks:**
+
 ```bash
 #!/bin/bash
 # Watch FD count of a process over time
@@ -364,13 +376,13 @@ echo "Process $PID exited"
 
 ### ⚖️ Comparison Table
 
-| Interface | Purpose | Data Type | Atomic | Best For |
-|---|---|---|---|---|
-| **/proc** | Process + system info | Text | Partial | General introspection, tuning |
-| /sys | Hardware/device info | Text (1 val/file) | Yes (single-value) | Device parameters, power |
-| ioctl | Device control | Binary | Yes | Network config, terminal |
-| netlink | Kernel↔user events | Binary structured | Yes | Routing, network monitoring |
-| perf_events | Performance counters | Binary | Yes | CPU performance profiling |
+| Interface   | Purpose               | Data Type         | Atomic             | Best For                      |
+| ----------- | --------------------- | ----------------- | ------------------ | ----------------------------- |
+| **/proc**   | Process + system info | Text              | Partial            | General introspection, tuning |
+| /sys        | Hardware/device info  | Text (1 val/file) | Yes (single-value) | Device parameters, power      |
+| ioctl       | Device control        | Binary            | Yes                | Network config, terminal      |
+| netlink     | Kernel↔user events    | Binary structured | Yes                | Routing, network monitoring   |
+| perf_events | Performance counters  | Binary            | Yes                | CPU performance profiling     |
 
 How to choose: use `/proc` for ad-hoc debugging and process introspection; use `/sys` for device parameter tuning; use netlink/perf for performance monitoring in production tooling.
 
@@ -378,13 +390,13 @@ How to choose: use `/proc` for ad-hoc debugging and process introspection; use `
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `/proc` files are stored on disk | procfs has no backing storage — all content is generated in-memory on demand by kernel functions |
-| `/proc` file sizes shown by `ls -l` are accurate | procfs reports size 0 for most files; you must read them to see content size |
-| Reading `/proc` is always atomic and consistent | Multi-line `/proc` files may show inconsistent data if the kernel state changes between read() calls |
-| Only root can read `/proc` | Most `/proc` system files are world-readable; per-process files (`/proc/PID/`) are readable by the process owner |
-| `/proc` and `/sys` serve the same purpose | `/proc` is for process-related data and global tuning; `/sys` is specifically for hardware/device hierarchy |
+| Misconception                                    | Reality                                                                                                          |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `/proc` files are stored on disk                 | procfs has no backing storage — all content is generated in-memory on demand by kernel functions                 |
+| `/proc` file sizes shown by `ls -l` are accurate | procfs reports size 0 for most files; you must read them to see content size                                     |
+| Reading `/proc` is always atomic and consistent  | Multi-line `/proc` files may show inconsistent data if the kernel state changes between read() calls             |
+| Only root can read `/proc`                       | Most `/proc` system files are world-readable; per-process files (`/proc/PID/`) are readable by the process owner |
+| `/proc` and `/sys` serve the same purpose        | `/proc` is for process-related data and global tuning; `/sys` is specifically for hardware/device hierarchy      |
 
 ---
 
@@ -399,6 +411,7 @@ Script iterates `/proc/*/status` and reads from a PID, but reads data for a diff
 Linux PID reuse is rapid under load. Between checking that `/proc/1234` exists and reading `/proc/1234/status`, PID 1234 may have exited and a new process acquired it.
 
 **Diagnostic Command:**
+
 ```bash
 # Read comm (process name) first and verify
 # before trusting other files
@@ -423,6 +436,7 @@ Use atomic process monitoring via `pidfd` (Linux 5.3+) which holds a reference t
 Writes to `/proc/sys/` take immediate runtime effect but are not persisted — `/proc/sys/` state is initialised from the kernel's built-in defaults at boot.
 
 **Diagnostic Command:**
+
 ```bash
 # Check current value
 cat /proc/sys/net/core/somaxconn
@@ -432,6 +446,7 @@ grep somaxconn /etc/sysctl.conf /etc/sysctl.d/*.conf 2>/dev/null
 ```
 
 **Fix:**
+
 ```bash
 # Persist via sysctl.conf
 echo "net.core.somaxconn = 65535" >> /etc/sysctl.d/99-tuning.conf
@@ -452,6 +467,7 @@ Always add kernel parameter changes to `/etc/sysctl.d/` for persistence; use con
 `/proc/net/tcp` stores IP addresses in hex little-endian format and ports in hex. This is the raw kernel representation — tools like `ss` and `netstat` parse and convert it.
 
 **Diagnostic Command:**
+
 ```bash
 # Use ss instead for human-readable output
 ss -tnp   # TCP connections with process names
@@ -473,16 +489,19 @@ Prefer `ss` (from iproute2) over direct procfs parsing for network state; it pro
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Linux File System Hierarchy` — `/proc` lives in the standard filesystem tree; understanding VFS is foundational
 - `Process Management` — `/proc/PID/` directories expose per-process data; understanding processes is required
 - `Kernel Modules` — some `/proc` entries are created by loadable kernel modules
 
 **Builds On This (learn these next):**
+
 - `/sys File System` — the newer companion to `/proc` focused on hardware and device hierarchy
 - `strace / ltrace` — uses `/proc/PID/` data and ptrace for system call tracing
 - `lsof` — reads `/proc/PID/fd/` and `/proc/net/` to list open files
 
 **Alternatives / Comparisons:**
+
 - `/sys File System` — preferred for hardware/device data; stricter one-value-per-file discipline
 - `netlink sockets` — binary, structured, atomic kernel↔user communication for networking and routing
 - `eBPF` — modern, programmable kernel introspection with near-zero overhead

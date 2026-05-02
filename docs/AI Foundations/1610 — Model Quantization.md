@@ -49,6 +49,7 @@ Quantization borrows from signal processing and hardware engineering: instead of
 Quantization shrinks model weights from 16-bit floats to 4-bit integers — making models 4× smaller and faster, with minimal quality loss.
 
 **One analogy:**
+
 > Imagine storing a detailed photograph. The original TIFF file (uncompressed, full precision) is 50MB. Saving it as a high-quality JPEG is 5MB — 10× smaller, visually nearly identical. Saving as low-quality JPEG is 500KB — some artefacts visible. Quantization is the JPEG compression of neural networks: the weights are stored at lower precision, the model "looks" nearly the same at 4-bit but starts to show artefacts at 1-bit.
 
 **One insight:**
@@ -59,6 +60,7 @@ Quantization works because neural networks are remarkably tolerant of small nume
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. fp32 stores each weight in 32 bits (4 bytes); int4 stores each weight in 4 bits (0.5 bytes) — 8× memory reduction.
 2. The quantization error for a single weight = rounding error; the aggregate effect across billions of weights is stochastic and partially cancels.
 3. Lower bit depth = higher rounding error per weight; at some threshold (typically 2-3 bits), error accumulation degrades model quality significantly.
@@ -121,6 +123,7 @@ The quality degradation is NOT linear with bit depth reduction. int8 is nearly i
 > Quantization is like converting your bookshelf from hardcover books to pocket paperbacks. The words are identical — the story doesn't change. The shelf is 3× less full. Individual page quality is slightly lower (smaller font, thinner paper). For most reading purposes (skimming, referencing key passages), the pocket edition is fine. For extremely detailed technical diagrams or fine print, you might occasionally wish for the hardcover. But for 95% of uses, the pocket edition works perfectly and you can carry 3× as many books.
 
 Mapping:
+
 - "Hardcover books" → fp16/fp32 weights
 - "Pocket paperbacks" → int4/int8 weights
 - "Words are identical" → model predictions nearly identical
@@ -180,6 +183,7 @@ QUANTIZATION ERROR:
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 Start with fp16 pretrained model
     ↓
@@ -211,6 +215,7 @@ Serve quantized model
 ### 💻 Code Example
 
 **Example 1 — 4-bit loading with BitsAndBytes:**
+
 ```python
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig
 import torch
@@ -231,6 +236,7 @@ model = AutoModelForCausalLM.from_pretrained(
 ```
 
 **Example 2 — GPTQ quantization:**
+
 ```python
 from auto_gptq import AutoGPTQForCausalLM, BaseQuantizeConfig
 from transformers import AutoTokenizer
@@ -259,6 +265,7 @@ model.save_quantized("llama-2-7b-gptq-4bit")
 ```
 
 **Example 3 — Measure quantization quality degradation:**
+
 ```python
 def compare_quantization_quality(
     fp16_model,
@@ -296,27 +303,27 @@ def compare_quantization_quality(
 
 ### ⚖️ Comparison Table
 
-| Method | Bit Depth | Memory | Quality | Requires Training | Best For |
-|---|---|---|---|---|---|
-| fp16 baseline | 16-bit | 2 bytes/w | Best | No | Quality-critical inference |
-| **GPTQ int4** | 4-bit | 0.5 bytes/w | Excellent | No (PTQ) | Production default |
-| **BitsAndBytes NF4** | 4-bit | 0.5 bytes/w | Excellent | No (PTQ) | Fast dev, fine-tuning |
-| **GGUF Q4_K_M** | ~4.5-bit | ~0.6 bytes/w | Very good | No (PTQ) | CPU inference, ollama |
-| int8 (SmoothQuant) | 8-bit | 1 byte/w | Near-lossless | No (PTQ) | Quality-first serving |
-| QAT (4-bit) | 4-bit | 0.5 bytes/w | Better than PTQ | Yes | High-value small models |
-| int2 (GPTQ) | 2-bit | 0.25 bytes/w | Noticeable loss | No | Extreme edge deployment |
+| Method               | Bit Depth | Memory       | Quality         | Requires Training | Best For                   |
+| -------------------- | --------- | ------------ | --------------- | ----------------- | -------------------------- |
+| fp16 baseline        | 16-bit    | 2 bytes/w    | Best            | No                | Quality-critical inference |
+| **GPTQ int4**        | 4-bit     | 0.5 bytes/w  | Excellent       | No (PTQ)          | Production default         |
+| **BitsAndBytes NF4** | 4-bit     | 0.5 bytes/w  | Excellent       | No (PTQ)          | Fast dev, fine-tuning      |
+| **GGUF Q4_K_M**      | ~4.5-bit  | ~0.6 bytes/w | Very good       | No (PTQ)          | CPU inference, ollama      |
+| int8 (SmoothQuant)   | 8-bit     | 1 byte/w     | Near-lossless   | No (PTQ)          | Quality-first serving      |
+| QAT (4-bit)          | 4-bit     | 0.5 bytes/w  | Better than PTQ | Yes               | High-value small models    |
+| int2 (GPTQ)          | 2-bit     | 0.25 bytes/w | Noticeable loss | No                | Extreme edge deployment    |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Quantization always degrades quality significantly" | int4 typically causes < 1% quality degradation on standard benchmarks; int8 is nearly lossless |
-| "Quantization speeds up compute" | Quantization mainly reduces MEMORY bandwidth (faster decode); compute speedup depends on hardware support for int operations (H100 has better int8 support) |
-| "All quantization methods are equivalent" | GPTQ significantly outperforms round-to-nearest at the same bit depth by using calibration data; method choice matters |
-| "You should quantize to the lowest bit depth available" | Use the highest bit depth your VRAM budget allows; int4 is the practical minimum for production quality; don't use int2 unless there's no alternative |
-| "Quantization replaces fine-tuning" | Quantization and fine-tuning are orthogonal: you can fine-tune a quantized model (QLoRA) or quantize after fine-tuning |
+| Misconception                                           | Reality                                                                                                                                                     |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Quantization always degrades quality significantly"    | int4 typically causes < 1% quality degradation on standard benchmarks; int8 is nearly lossless                                                              |
+| "Quantization speeds up compute"                        | Quantization mainly reduces MEMORY bandwidth (faster decode); compute speedup depends on hardware support for int operations (H100 has better int8 support) |
+| "All quantization methods are equivalent"               | GPTQ significantly outperforms round-to-nearest at the same bit depth by using calibration data; method choice matters                                      |
+| "You should quantize to the lowest bit depth available" | Use the highest bit depth your VRAM budget allows; int4 is the practical minimum for production quality; don't use int2 unless there's no alternative       |
+| "Quantization replaces fine-tuning"                     | Quantization and fine-tuning are orthogonal: you can fine-tune a quantized model (QLoRA) or quantize after fine-tuning                                      |
 
 ---
 
@@ -329,6 +336,7 @@ def compare_quantization_quality(
 **Root Cause:** PTQ calibration data was general (Wikipedia, C4) and doesn't represent your domain. Quantization minimises error on the calibration distribution — domain-specific knowledge encoded in weights that don't activate during general calibration is poorly quantized.
 
 **Diagnostic Command / Tool:**
+
 ```python
 def diagnose_quantization_gap(
     fp16_model,
@@ -363,16 +371,19 @@ def diagnose_quantization_gap(
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Model Weights` — quantization directly modifies how model weights are stored and computed
 - `Model Parameters` — parameter count determines how much benefit quantization provides
 - `Inference` — quantization is an inference optimisation technique; applied at serving time
 
 **Builds On This (learn these next):**
+
 - `Latency vs Throughput (AI)` — quantization directly improves both by reducing memory bandwidth requirements
 - `Model Pruning` — complementary compression technique: removes weights entirely rather than reducing precision
 - `Distillation` — alternative compression: trains a smaller model to mimic a larger one
 
 **Alternatives / Comparisons:**
+
 - `Model Pruning` — reduces parameter count; quantization reduces precision; can be combined
 - `Distillation` — trains a smaller model; typically better quality than quantization at same size, but requires training
 - `Model Weights` — the underlying data that quantization compresses

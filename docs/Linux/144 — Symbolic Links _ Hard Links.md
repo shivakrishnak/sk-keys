@@ -48,6 +48,7 @@ In Linux, every file is stored on disk as an **inode** — a data structure cont
 Hard links are two names for the same file; symlinks are shortcuts that point to another path.
 
 **One analogy:**
+
 > A hard link is like a person with two names on the same ID card — both names are equally valid, and the person exists as long as at least one name is in use. A symbolic link is like a forwarding address label on an empty envelope — it says "find me at this other address", but if that address no longer exists, the label leads nowhere.
 
 **One insight:**
@@ -58,6 +59,7 @@ When you delete a file, you're not deleting the data — you're removing one dir
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Each file has exactly one inode with a link count starting at 1.
 2. Adding a hard link increments the link count; removing decrements it; data is freed when count reaches 0.
 3. Symlinks are just files containing a path string; the kernel resolves them during path lookup.
@@ -129,6 +131,7 @@ Hard links are a direct consequence of the inode data model — inodes don't sto
 ### ⚙️ How It Works (Mechanism)
 
 **Inode and link count model:**
+
 ```
 ┌─────────────────────────────────────────────┐
 │  FILESYSTEM INODE MODEL                     │
@@ -149,6 +152,7 @@ Directory entries:        Inode table:
 ```
 
 **Creating and inspecting links:**
+
 ```bash
 # Create hard link
 ln /data/file.txt /backup/file.txt
@@ -182,6 +186,7 @@ find /usr/lib -type l
 ```
 
 **Deletion behaviour:**
+
 ```bash
 # Hard links: file survives until last link is removed
 ln file.txt hardlink.txt       # nlink = 2
@@ -196,6 +201,7 @@ ls -la /var/www/               # symlink still shows (dangling)
 ```
 
 **Library versioning pattern:**
+
 ```bash
 # Package manager creates this structure:
 ls -la /usr/lib/ | grep ssl
@@ -249,6 +255,7 @@ NFS and distributed filesystems complicate symlinks: a symlink containing an abs
 ### 💻 Code Example
 
 **Example 1 — Library versioning (package manager pattern):**
+
 ```bash
 # Install a new library version
 ls /usr/local/lib/
@@ -264,6 +271,7 @@ readlink -f libmylib.so
 ```
 
 **Example 2 — Deployment directory switching (zero-downtime):**
+
 ```bash
 # Deploy new version atomically using symlinks
 # /var/www/current → /var/www/releases/v2.1
@@ -283,6 +291,7 @@ ln -snf /var/www/releases/v2.1 /var/www/current
 ```
 
 **Example 3 — rsync incremental backup with hard links:**
+
 ```bash
 # Space-efficient backup: unchanged files = hard links
 PREV=/backup/2024-01-14
@@ -300,6 +309,7 @@ rsync -avz \
 ```
 
 **Example 4 — Find and fix dangling symlinks:**
+
 ```bash
 # Find all dangling symlinks under /var/www
 find /var/www -xtype l -print
@@ -315,16 +325,16 @@ find /var/www -xtype l -delete
 
 ### ⚖️ Comparison Table
 
-| Feature | Hard Link | Symbolic Link |
-|---|---|---|
-| Cross-filesystem | No | Yes |
-| Point to directory | No | Yes |
-| Can be dangling | No | Yes |
-| Survives target deletion | Yes (is the target) | No |
-| `stat()` returns | Original file info | Symlink's own info |
-| `readlink` | Fails (not a symlink) | Returns target path |
-| Extra disk space | Minimal (one dentry) | ~100 bytes (path string) |
-| **Best For** | Backups, reference counting | Library versions, deployment |
+| Feature                  | Hard Link                   | Symbolic Link                |
+| ------------------------ | --------------------------- | ---------------------------- |
+| Cross-filesystem         | No                          | Yes                          |
+| Point to directory       | No                          | Yes                          |
+| Can be dangling          | No                          | Yes                          |
+| Survives target deletion | Yes (is the target)         | No                           |
+| `stat()` returns         | Original file info          | Symlink's own info           |
+| `readlink`               | Fails (not a symlink)       | Returns target path          |
+| Extra disk space         | Minimal (one dentry)        | ~100 bytes (path string)     |
+| **Best For**             | Backups, reference counting | Library versions, deployment |
 
 How to choose: use hard links for space-efficient backups and when you need the data to survive regardless of path; use symlinks for library versioning, deployment current/stable pointers, and cross-filesystem references.
 
@@ -332,13 +342,13 @@ How to choose: use hard links for space-efficient backups and when you need the 
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Deleting a hard link deletes the file | Deleting a hard link decrements the link count; the data is freed only when ALL hard links are removed |
-| symlinks and hard links waste disk space | Hard links use only ~50 bytes for a directory entry; symlinks use ~100 bytes for the path string — both are negligible |
+| Misconception                                    | Reality                                                                                                                                  |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Deleting a hard link deletes the file            | Deleting a hard link decrements the link count; the data is freed only when ALL hard links are removed                                   |
+| symlinks and hard links waste disk space         | Hard links use only ~50 bytes for a directory entry; symlinks use ~100 bytes for the path string — both are negligible                   |
 | A symlink has the same permissions as its target | A symlink has its own permissions (lrwxrwxrwx always shows 777) but these are generally ignored — the target's permissions govern access |
-| Hard links are slow because of extra lookup | Hard links are NOT slower — they ARE the same inode; following a symlink adds one extra kernel dereference, hard links add none |
-| Removing the original file breaks hard links | There is no "original" with hard links — all are equal references; removal of one doesn't affect others |
+| Hard links are slow because of extra lookup      | Hard links are NOT slower — they ARE the same inode; following a symlink adds one extra kernel dereference, hard links add none          |
+| Removing the original file breaks hard links     | There is no "original" with hard links — all are equal references; removal of one doesn't affect others                                  |
 
 ---
 
@@ -353,6 +363,7 @@ nginx returns 404 for all requests after a deployment; `ls -la /var/www/current`
 The deployment script deleted the old release directory before updating the symlink, or pointed the symlink to a path that doesn't exist yet.
 
 **Diagnostic Command:**
+
 ```bash
 # Check if symlink is dangling
 readlink /var/www/current
@@ -363,6 +374,7 @@ find /var/www -xtype l
 ```
 
 **Fix:**
+
 ```bash
 # Point symlink to the correct existing path
 ln -snf /var/www/releases/v2.1 /var/www/current
@@ -382,12 +394,14 @@ Always create and verify the new release directory BEFORE updating the symlink; 
 Two symlinks point to each other: `a → b` and `b → a`. The kernel detects this after 40 hops and returns `ELOOP`.
 
 **Diagnostic Command:**
+
 ```bash
 readlink -f /path/to/suspected/loop  # shows ELOOP error
 namei -l /path/to/link               # traces each link step
 ```
 
 **Fix:**
+
 ```bash
 # Remove one of the loop members
 rm /path/to/link-b
@@ -409,6 +423,7 @@ Use `readlink -f` to verify the final resolved path before creating symlinks in 
 Inodes are local to a filesystem; a hard link is a second directory entry pointing to the same inode, which is impossible across different filesystem namespaces.
 
 **Diagnostic Command:**
+
 ```bash
 df /mnt/data/file.txt /home/user/  # verify they're different devices
 stat /mnt/data/file.txt | grep Device
@@ -425,16 +440,19 @@ Use hard links only within the same filesystem; use symlinks for cross-filesyste
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Linux File System Hierarchy` — understanding the FHS directory structure is needed to understand where symlinks are used (e.g., `/usr/lib/`, `/etc/alternatives/`)
 - `File Permissions (chmod, chown)` — symlinks have their own permission bits; inodes have permission bits; both matter for access control
 - `Users and Groups` — ownership (UID/GID) is stored in the inode, shared by all hard links
 
 **Builds On This (learn these next):**
+
 - `Package Managers (apt, yum, dnf)` — package managers extensively use symlinks for library versioning and alternatives
 - `Shell Scripting` — scripts create and manage symlinks for deployment, configuration, and versioning
 - `Systemd` — systemd unit files use symlinks in `/etc/systemd/system/` to enable/disable services
 
 **Alternatives / Comparisons:**
+
 - `Bind mounts` — mounts a directory at another path; heavier than symlinks but bypass symlink resolution and work differently with containers
 - `Copies` — duplicates data; uses 2× disk space; completely independent files after creation
 - `tar hard links` — tar preserves hard links using link references in the archive format

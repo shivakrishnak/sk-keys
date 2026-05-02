@@ -49,6 +49,7 @@ The latency vs. throughput framework from distributed systems applies directly t
 Latency = how fast one request is answered; throughput = how many requests are answered per second. More batching = better throughput, worse latency.
 
 **One analogy:**
+
 > **Latency:** A restaurant that serves one table at a time cooks each dish immediately upon order — maximum freshness, minimum wait for that one diner.
 >
 > **Throughput:** A cafeteria batches orders — waits until 20 people are in line before cooking. Each individual waits longer, but the kitchen serves far more people per hour.
@@ -63,6 +64,7 @@ GPU utilisation is the core tension. Modern GPUs are compute-bound at batch size
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. LLM inference has two phases: **prefill** (process all input tokens in parallel — compute-bound) and **decode** (generate output tokens one at a time — memory-bandwidth-bound).
 2. GPU batch matmul is the fundamental operation. At batch size 1, most GPU compute units are idle (memory bandwidth saturated before compute). At larger batch sizes, compute utilisation improves dramatically.
 3. Batching multiplies GPU efficiency — at the cost of making each request wait for the batch to be assembled.
@@ -103,6 +105,7 @@ Continuous batching: dynamically adds/removes requests; targets the best of both
 
 **SETUP:**
 You have a 70B-parameter LLM, an A100 GPU (80GB), and two workloads:
+
 - Workload A: 1,000 interactive chat users (must respond in < 2 seconds for a 200-token response)
 - Workload B: Batch processing 10,000 documents overnight (throughput matters, latency doesn't)
 
@@ -128,6 +131,7 @@ Batch processing: batch_size=32, no latency target. Achieves 10,000 docs in 3.5 
 > Think of GPU inference like a freight vs. passenger train trade-off. A passenger train departs immediately, carrying few passengers, getting each person to the destination quickly. A freight train waits to fill all cars before departing — much slower per unit, but dramatically more goods moved per journey. The GPU is the locomotive — it carries far more weight if you fill it before departure. The question is whether your users are passengers (care about their personal arrival time) or cargo (care about total delivery volume).
 
 Mapping:
+
 - "Locomotive" → GPU compute
 - "Passenger train" → batch size 1 (low latency serving)
 - "Freight train" → large batch serving (high throughput)
@@ -183,6 +187,7 @@ With streaming: user sees first token in 200ms,
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW (setting up a serving system):**
+
 ```
 Define workload:
   Interactive? → P50 latency target
@@ -213,6 +218,7 @@ Tune based on observed trade-offs
 ### 💻 Code Example
 
 **Example 1 — Streaming for perceived latency:**
+
 ```python
 import openai
 
@@ -233,6 +239,7 @@ def stream_response(prompt: str, client) -> str:
 ```
 
 **Example 2 — vLLM offline batch inference:**
+
 ```python
 from vllm import LLM, SamplingParams
 
@@ -255,6 +262,7 @@ outputs = llm.generate(prompts, sampling_params)
 ```
 
 **Example 3 — Latency profiling:**
+
 ```python
 import time
 import statistics
@@ -284,26 +292,26 @@ def profile_batch_latency(
 
 ### ⚖️ Comparison Table
 
-| Serving Mode | Latency | Throughput | GPU Util | Best For |
-|---|---|---|---|---|
-| Batch_size=1, no streaming | Lowest | Lowest | ~20% | Single-user dev testing |
-| Batch_size=1, streaming | Same (perceived lower) | Lowest | ~20% | Interactive single-user |
-| Static batching (bs=32) | High | High | ~90% | Batch processing |
-| **Continuous batching** | Low-medium | High | ~70–85% | Mixed workloads |
-| Speculative decoding | Lower (same GPU) | Same | ~90% | Latency-critical |
-| Multi-GPU tensor parallel | Lower (multi-GPU) | Same per GPU | ~90% | Large models |
+| Serving Mode               | Latency                | Throughput   | GPU Util | Best For                |
+| -------------------------- | ---------------------- | ------------ | -------- | ----------------------- |
+| Batch_size=1, no streaming | Lowest                 | Lowest       | ~20%     | Single-user dev testing |
+| Batch_size=1, streaming    | Same (perceived lower) | Lowest       | ~20%     | Interactive single-user |
+| Static batching (bs=32)    | High                   | High         | ~90%     | Batch processing        |
+| **Continuous batching**    | Low-medium             | High         | ~70–85%  | Mixed workloads         |
+| Speculative decoding       | Lower (same GPU)       | Same         | ~90%     | Latency-critical        |
+| Multi-GPU tensor parallel  | Lower (multi-GPU)      | Same per GPU | ~90%     | Large models            |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "A faster GPU always means lower latency" | A faster GPU mainly helps throughput; memory-bandwidth-bound decode latency improves only with higher-bandwidth HBM, not raw compute |
-| "Larger batch size always helps" | Above the memory-bandwidth saturation point (~bs=32 for 70B model on A100), adding requests improves latency for newly added requests but hurts existing requests |
-| "Streaming reduces latency" | Streaming reduces PERCEIVED latency (time to first token); total generation time is identical |
-| "High GPU utilisation means low latency" | GPU utilisation measures efficiency, not latency; a heavily batched system has high GPU utilisation AND high per-request latency |
-| "Throughput and latency are both in the SLA" | Interactive SLAs care about P95 latency; batch SLAs care about total completion time; these require different serving optimisations |
+| Misconception                                | Reality                                                                                                                                                           |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "A faster GPU always means lower latency"    | A faster GPU mainly helps throughput; memory-bandwidth-bound decode latency improves only with higher-bandwidth HBM, not raw compute                              |
+| "Larger batch size always helps"             | Above the memory-bandwidth saturation point (~bs=32 for 70B model on A100), adding requests improves latency for newly added requests but hurts existing requests |
+| "Streaming reduces latency"                  | Streaming reduces PERCEIVED latency (time to first token); total generation time is identical                                                                     |
+| "High GPU utilisation means low latency"     | GPU utilisation measures efficiency, not latency; a heavily batched system has high GPU utilisation AND high per-request latency                                  |
+| "Throughput and latency are both in the SLA" | Interactive SLAs care about P95 latency; batch SLAs care about total completion time; these require different serving optimisations                               |
 
 ---
 
@@ -316,6 +324,7 @@ def profile_batch_latency(
 **Root Cause:** KV-cache for all in-flight requests exceeds GPU memory. At large batch sizes, each request's KV-cache uses substantial memory. At batch_size=32 with 2,048 context tokens per request, KV-cache can consume 10–30GB on a 70B model.
 
 **Diagnostic Command / Tool:**
+
 ```python
 # Monitor GPU memory during serving
 import subprocess
@@ -346,16 +355,19 @@ def monitor_gpu_memory() -> dict:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Inference` — latency and throughput are properties of the inference serving system
 - `Model Parameters` — model size is the primary determinant of memory bandwidth requirements
 - `Model Quantization` — reduces model size, directly improving throughput and latency
 
 **Builds On This (learn these next):**
+
 - `Model Quantization` — the primary technique for improving the latency-throughput trade-off
 - `Inference` — understanding the full inference pipeline is needed to optimise it
 - `Foundation Models` — large foundation models face the most acute latency-throughput challenges
 
 **Alternatives / Comparisons:**
+
 - `Context Window` — longer context increases prefill time and KV-cache size, affecting both latency and throughput
 - `Model Quantization` — trading accuracy for improved latency/throughput
 - `Inference` — the parent concept; this entry focuses on its serving-level trade-offs

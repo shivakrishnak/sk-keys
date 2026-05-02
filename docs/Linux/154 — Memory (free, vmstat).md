@@ -51,6 +51,7 @@ Application response times jump from 50ms to 2 seconds. CPU usage is normal (30%
 `free` shows current memory state; `vmstat` shows memory (and system) dynamics over time.
 
 **One analogy:**
+
 > `free` is a fuel gauge — it shows how much RAM is in the tank right now. `vmstat` is the dashboard telemetry — it shows not just the gauge but also fuel consumption rate, engine load, brake activity, and whether you're burning fuel efficiently or thrashing the engine.
 
 **One insight:**
@@ -61,6 +62,7 @@ The **`available`** column in `free` is the number that matters, not `free`. "Fr
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Linux uses all idle RAM as page cache — "free" memory is wasted capacity.
 2. "Available" = free + reclaimable cache; this is the true measure of free capacity.
 3. vmstat's first line shows boot averages; all subsequent lines show per-interval deltas.
@@ -83,18 +85,21 @@ Linux's memory allocator (buddy allocator + slab allocator) eagerly uses free RA
 Two scenarios, both with `free` showing only 200MB "free". Which is healthy?
 
 **Scenario A:**
+
 ```
          total   used    free   buff/cache  available
 Mem:      16Gi   12Gi   200Mi       3.8Gi       3.7Gi
 ```
 
 **Scenario B:**
+
 ```
          total   used    free   buff/cache  available
 Mem:      16Gi   15.8Gi  200Mi      10Mi       150Mi
 ```
 
 **THE ANALYSIS:**
+
 - Scenario A: 200MB free but 3.7GB **available** — the 3.8GB in buff/cache is reclaimable page cache. The system can easily accommodate 3.7GB more allocation. Healthy.
 - Scenario B: 200MB free and only 150MB **available** — virtually no reclaimable cache. The system is memory-pressured. Any significant new allocation will either OOM-kill something or force swap. Crisis.
 
@@ -135,6 +140,7 @@ The confusion between "free" and "available" memory was so widespread that the L
 ### ⚙️ How It Works (Mechanism)
 
 **`free` output explained:**
+
 ```bash
 free -h
 #              total   used    free  shared buff/cache  available
@@ -159,6 +165,7 @@ free -s 2 # update every 2 seconds
 ```
 
 **`vmstat` output explained:**
+
 ```bash
 vmstat 1  # update every 1 second
 
@@ -194,6 +201,7 @@ vmstat 1  # update every 1 second
 ```
 
 **Additional useful commands:**
+
 ```bash
 # Memory breakdown from /proc/meminfo
 cat /proc/meminfo
@@ -270,6 +278,7 @@ cat /sys/fs/cgroup/memory/docker/*/memory.usage_in_bytes
 ### 💻 Code Example
 
 **Example 1 — Memory health check script:**
+
 ```bash
 #!/bin/bash
 # Snapshot memory health for monitoring
@@ -309,6 +318,7 @@ exit $STATUS
 ```
 
 **Example 2 — Continuous memory monitoring with vmstat:**
+
 ```bash
 #!/bin/bash
 # Log vmstat to file, alert on swap I/O
@@ -316,11 +326,11 @@ LOG="/var/log/vmstat_$(date +%Y%m%d).log"
 
 vmstat 5 | while read line; do
   echo "$(date '+%H:%M:%S') $line" | tee -a "$LOG"
-  
+
   # Check si/so columns (columns 7 and 8, 0-indexed)
   SI=$(echo "$line" | awk 'NR>1{print $7}')
   SO=$(echo "$line" | awk 'NR>1{print $8}')
-  
+
   if [[ "$SI" =~ ^[0-9]+$ ]] && [ "$SI" -gt 0 ]; then
     echo "SWAP-IN ALERT: ${SI} KB/s" | \
       logger -p daemon.warning
@@ -332,14 +342,14 @@ done
 
 ### ⚖️ Comparison Table
 
-| Tool | Scope | Real-time | Memory Detail | I/O Stats |
-|---|---|---|---|---|
-| **free** | System-wide | Snapshot | High | No |
-| **vmstat** | System-wide | Streaming | Medium | Yes |
-| top / htop | Per-process | Streaming | Medium | Partial |
-| /proc/meminfo | System-wide | Raw data | Highest | No |
-| smem | Per-process | Snapshot | PSS/RSS/VSS | No |
-| sar | System-wide | Historical | Medium | Yes |
+| Tool          | Scope       | Real-time  | Memory Detail | I/O Stats |
+| ------------- | ----------- | ---------- | ------------- | --------- |
+| **free**      | System-wide | Snapshot   | High          | No        |
+| **vmstat**    | System-wide | Streaming  | Medium        | Yes       |
+| top / htop    | Per-process | Streaming  | Medium        | Partial   |
+| /proc/meminfo | System-wide | Raw data   | Highest       | No        |
+| smem          | Per-process | Snapshot   | PSS/RSS/VSS   | No        |
+| sar           | System-wide | Historical | Medium        | Yes       |
 
 How to choose: use `free -h` for quick memory state; `vmstat 1` for real-time pressure monitoring; `top`/`htop` for per-process breakdown; `/proc/meminfo` for scripting with complete detail.
 
@@ -347,13 +357,13 @@ How to choose: use `free -h` for quick memory state; `vmstat 1` for real-time pr
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Low "free" means memory pressure | `free` shows literally unused pages — on a healthy server, free is often near 0 because Linux uses all idle RAM as page cache; **available** is the correct indicator |
-| vmstat's first line shows current state | The first line shows averages since boot — always skip it; only lines 2+ show meaningful per-interval activity |
-| High buff/cache means memory is wasted | buff/cache is page cache — it actively improves performance and is reclaimed instantly when processes need it |
-| vmstat -s shows real-time stats | vmstat -s shows cumulative counters since boot; it's historical, not instantaneous |
-| si=0 means no swap is being used | si=0 means no swap-in is happening RIGHT NOW; `free` may still show swap is used (previously swapped pages not yet reclaimed) |
+| Misconception                           | Reality                                                                                                                                                               |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Low "free" means memory pressure        | `free` shows literally unused pages — on a healthy server, free is often near 0 because Linux uses all idle RAM as page cache; **available** is the correct indicator |
+| vmstat's first line shows current state | The first line shows averages since boot — always skip it; only lines 2+ show meaningful per-interval activity                                                        |
+| High buff/cache means memory is wasted  | buff/cache is page cache — it actively improves performance and is reclaimed instantly when processes need it                                                         |
+| vmstat -s shows real-time stats         | vmstat -s shows cumulative counters since boot; it's historical, not instantaneous                                                                                    |
+| si=0 means no swap is being used        | si=0 means no swap-in is happening RIGHT NOW; `free` may still show swap is used (previously swapped pages not yet reclaimed)                                         |
 
 ---
 
@@ -368,6 +378,7 @@ How to choose: use `free -h` for quick memory state; `vmstat 1` for real-time pr
 The system is under heavy memory pressure but has swap. The kernel is aggressively swapping anonymous pages to keep the system alive. Performance is severely degraded.
 
 **Diagnostic Command:**
+
 ```bash
 # Confirm active swapping
 vmstat 1 | awk '{print $7,$8,$16}' | head -10
@@ -392,15 +403,18 @@ Kill or restart the largest memory consumer; add RAM; reduce service memory foot
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Operating Systems` — virtual memory, paging, and the distinction between physical and virtual address spaces are foundational
 - `Linux File System Hierarchy` — `/proc/meminfo` and `/proc/vmstat` are the data sources; understanding procfs explains what these tools read
 
 **Builds On This (learn these next):**
+
 - `Swap Management` — deep dive into the swap mechanism that vmstat's si/so columns expose
 - `Disk I/O (iostat, iotop)` — complements vmstat's I/O view with per-device detail
 - `Linux Performance Tuning` — vm.swappiness, overcommit ratio, and huge pages are the tuning levers for what free/vmstat expose
 
 **Alternatives / Comparisons:**
+
 - `top` / `htop` — per-process memory breakdown; less convenient for system-level monitoring
 - `sar` — historical memory statistics; complements vmstat for trend analysis
 - `smem` — per-process PSS (proportional set size) accounting, more accurate than RSS
