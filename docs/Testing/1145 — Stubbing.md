@@ -245,12 +245,12 @@ class WeatherAlertServiceTest {
 **1. Stub Returns Wrong Value Type → NullPointerException**
 
 Cause: `when(repo.findAll()).thenReturn(null)` — null where a list is expected.
-Fix: Always return sensible defaults from stubs: empty collections, empty Optionals. Use `thenReturn(Collections.emptyList())`.
+**Fix:** Always return sensible defaults from stubs: empty collections, empty Optionals. Use `thenReturn(Collections.emptyList())`.
 
 **2. Stub Never Activates (Argument Mismatch)**
 
 Cause: Stub set up with `eq("Alice")` but production code calls with `"alice"` (case mismatch).
-Fix: Use `any()` for flexible matching, or debug argument values with `ArgumentCaptor`.
+**Fix:** Use `any()` for flexible matching, or debug argument values with `ArgumentCaptor`.
 
 ---
 

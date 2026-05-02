@@ -392,19 +392,19 @@ public class SafeUrlFetcher {
 
 **SSRF via Image URL in User Profile**
 
-Symptom:
+**Symptom:**
 Users can upload a profile photo by URL. One day: unusual access patterns in AWS
 CloudTrail — the EC2 instance's IAM role queried S3 ListBuckets for buckets not
 related to the application. Investigation reveals the requests came from the
 web application servers.
 
-Root Cause:
+**Root Cause:**
 Profile photo URL feature fetches user-provided URL without SSRF validation.
 Attacker submitted `http://169.254.169.254/latest/meta-data/iam/security-credentials/ServiceRole`
 → App fetched URL → response (JSON with IAM credentials) stored as "profile photo"
 → Attacker retrieved it at their profile URL → used extracted credentials.
 
-Diagnostic:
+**Diagnostic:**
 
 ```
 # Check CloudTrail for unusual IAM activity from EC2 instance role:

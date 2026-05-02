@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Find all pairs in a sorted array `[1, 2, 3, 4, 6]` that sum to target 6. The naive approach checks every pair: (1,2), (1,3), (1,4), (1,6), (2,3), (2,4), (2,6), (3,4), (3,6), (4,6) — 10 pairs for 5 elements, O(N²). For N=10,000 elements, that's 50 million pair checks.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 O(N²) brute-force pair enumeration is too slow for large arrays. Each new element adds N more checks. At N=10⁶, it's one trillion comparisons — seconds become hours.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 If the array is sorted, two observations unlock O(N): (1) if `arr[left] + arr[right] > target`, the sum is too large — move `right` left to reduce it. (2) if sum < target, move `left` right to increase it. These two moves cover all useful pairs in a single left-to-right + right-to-left sweep. Each element is visited at most once by each pointer: O(N) total. This is exactly why **Two Pointer** was created.
 
 ---
@@ -64,12 +64,12 @@ Two Pointer only works reliably when there is a clear **monotonicity property**:
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Pointers `left` and `right` define the current candidate pair/window.
 2. A **decision rule** determines which pointer to move: move the pointer that can improve the current value toward the target.
 3. Each pointer moves at most N times total → O(N) time.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The key insight is that sorted arrays provide a total order: `arr[i] ≤ arr[i+1]`. This means:
 - Moving `left` right **increases** the minimum element of any pair containing `left`.
 - Moving `right` left **decreases** the maximum element of any pair containing `right`.
@@ -81,15 +81,15 @@ These two operations cover all "interesting" pairs. No pair is missed because: i
 - **Same direction (fast/slow):** Both start at 0, one advances faster. Used for Floyd's cycle detection, removing duplicates, finding middle of linked list.
 - **Partition (Lomuto/Hoare):** Used in Quicksort partitioning.
 
-THE TRADE-OFFS:
-Gain: O(N) instead of O(N²) for problems with monotonicity.
-Cost: Requires sorted array for converging variant — O(N log N) sort overhead; doesn't directly find ALL pairs (needs modification for that).
+**THE TRADE-OFFS:**
+**Gain:** O(N) instead of O(N²) for problems with monotonicity.
+**Cost:** Requires sorted array for converging variant — O(N log N) sort overhead; doesn't directly find ALL pairs (needs modification for that).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Sorted array `[1, 2, 3, 4, 6]`, target = 6. Find pair summing to 6.
 
 WITHOUT TWO POINTER:
@@ -98,7 +98,7 @@ Check (1+2=3<6), (1+3=4<6), (1+4=5<6), (1+6=7>6), (2+3=5<6), (2+4=6✓). Found b
 WITH TWO POINTER:
 left=0 (val=1), right=4 (val=6). Sum=7 > 6 → move right left. right=3 (val=4). Sum=5 < 6 → move left right. left=1 (val=2). Sum=6 = target ✓ Found! Only 3 steps.
 
-THE INSIGHT:
+**THE INSIGHT:**
 When sum > target, the current `right` value is too large for any remaining `left` position — it can be discarded. This prunes entire columns of the pair matrix. When sum < target, current `left` is too small for any remaining `right` — prune entire rows. This transforms an O(N²) grid search into an O(N) diagonal walk.
 
 ---
@@ -107,12 +107,12 @@ When sum > target, the current `right` value is too large for any remaining `lef
 
 > Two Pointer is like finding the right temperature for a shower. Start with cold on the left tap (minimum), hot on the right (maximum). Water too cold? Turn up heat (move left→). Too hot? Turn down heat (move right←). You converge to the perfect temperature without testing every hot/cold combination.
 
-"Cold tap position" → left pointer
-"Hot tap position" → right pointer
-"Water temperature" → current pair sum / value
-"Too cold → turn up heat" → sum < target → left++
-"Too hot → turn down" → sum > target → right--
-"Perfect temperature" → found target pair
+- "Cold tap position" → left pointer
+- "Hot tap position" → right pointer
+- "Water temperature" → current pair sum / value
+- "Too cold → turn up heat" → sum < target → left++
+- "Too hot → turn down" → sum > target → right--
+- "Perfect temperature" → found target pair
 
 Where this analogy breaks down: Tap positions are continuous; array indices are discrete. Also, a tap analogy implies one pair of values; Two Pointer can find multiple pairs by continuing after a match (with appropriate increments).
 
@@ -169,7 +169,7 @@ left++; right--;
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Unsorted input array
 → Sort array O(N log N)
@@ -181,7 +181,7 @@ Unsorted input array
 → Return all valid pairs/result
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Applied to unsorted array
 → Decision rule (left++ or right--) based on
@@ -190,7 +190,7 @@ Applied to unsorted array
 → Debug: sort first, verify for small N
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For N=10⁸, Two Pointer's O(N) is 10⁸ operations — feasible in ~0.1 seconds. The sort step (O(N log N)) dominates if input is unsorted: ~2.7 billion comparisons. If input arrives pre-sorted (e.g., streaming ordered data), Two Pointer runs in pure O(N) — optimal.
 
 ---
@@ -313,11 +313,11 @@ How to choose: Use Two Pointer for sorted arrays when you need O(N) with O(1) sp
 
 **1. Applied to unsorted array — wrong results**
 
-Symptom: Some valid pairs are missed or invalid pairs are reported.
+**Symptom:** Some valid pairs are missed or invalid pairs are reported.
 
-Root Cause: The decision rule `sum < target → left++` assumes moving `left` right increases the sum. This only holds for sorted arrays.
+**Root Cause:** The decision rule `sum < target → left++` assumes moving `left` right increases the sum. This only holds for sorted arrays.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Compare with brute force on small test:
 // arr = [4, 1, 3, 2], target = 5
@@ -326,39 +326,39 @@ Diagnostic:
 assert twoPointer(arr,5).equals(bruteForce(arr,5));
 ```
 
-Fix: Sort the array first: `Arrays.sort(arr)`. Or use HashMap-based approach for unsorted arrays.
+**Fix:** Sort the array first: `Arrays.sort(arr)`. Or use HashMap-based approach for unsorted arrays.
 
-Prevention: Document at the function entry: "// PRECONDITION: array must be sorted."
+**Prevention:** Document at the function entry: "// PRECONDITION: array must be sorted."
 
 ---
 
 **2. Duplicate pairs reported for arrays with repeated values**
 
-Symptom: `threeSum([0,0,0,0])` returns `[[0,0,0],[0,0,0],[0,0,0]]` instead of `[[0,0,0]]`.
+**Symptom:** `threeSum([0,0,0,0])` returns `[[0,0,0],[0,0,0],[0,0,0]]` instead of `[[0,0,0]]`.
 
-Root Cause: After finding a valid pair, the outer/inner loops don't skip duplicate values, so the same pair is reported multiple times.
+**Root Cause:** After finding a valid pair, the outer/inner loops don't skip duplicate values, so the same pair is reported multiple times.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 assert threeSum(new int[]{0,0,0,0}).size() == 1
     : "Duplicate triplets returned";
 ```
 
-Fix: After recording a match, skip duplicate left and right values before moving pointers.
+**Fix:** After recording a match, skip duplicate left and right values before moving pointers.
 
-Prevention: Always add duplicate-skip logic when dealing with arrays that may contain repeated values.
+**Prevention:** Always add duplicate-skip logic when dealing with arrays that may contain repeated values.
 
 ---
 
 **3. Off-by-one: using `left <= right` instead of `left < right`**
 
-Symptom: Same element used twice (e.g., pair `(3, 3)` using `arr[2]` twice when `arr = [3, ...]`).
+**Symptom:** Same element used twice (e.g., pair `(3, 3)` using `arr[2]` twice when `arr = [3, ...]`).
 
-Root Cause: With `left <= right`, when left == right both pointers point to the same element — effectively using it twice.
+**Root Cause:** With `left <= right`, when left == right both pointers point to the same element — effectively using it twice.
 
-Fix: Use `while (left < right)` (strict).
+**Fix:** Use `while (left < right)` (strict).
 
-Prevention: The loop invariant for converging Two Pointer requires two **distinct** elements: left < right strictly.
+**Prevention:** The loop invariant for converging Two Pointer requires two **distinct** elements: left < right strictly.
 
 ---
 

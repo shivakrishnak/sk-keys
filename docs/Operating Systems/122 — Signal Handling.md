@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You deploy a web server. The OS needs to stop it for a software update. Without signals: the OS must kill the process immediately (losing in-flight requests), or you need a polling mechanism (server constantly checks a "should I stop?" flag). Polling burns CPU and adds latency to the shutdown check. Immediate kill loses state. You need a way to say: "stop cleanly, when ready."
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Asynchronous events — hardware faults (SIGSEGV, bus error), user interrupts (Ctrl+C → SIGINT), process management (SIGTERM, SIGKILL), and inter-process notifications — need to be delivered to a process without that process needing to poll. The process shouldn't need to know when these events might arrive. They're inherently asynchronous: a segfault happens at an instruction; Ctrl+C happens when the user presses it.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Unix V1 (1969) had signals as a simple "kill the process" mechanism. Unix V7 (1979) introduced `signal()` — allow processes to install handler functions. POSIX.1 (1988) added `sigaction()` with reliable semantics: masks, restart flags, and the siginfo_t structure. The evolution: from "kill" → "intercept and handle" → "inspect cause and recover".
 
 ---
@@ -89,9 +89,9 @@ ASYNC-SIGNAL-SAFETY:
 A signal handler can interrupt ANY instruction in the program, including inside malloc (holding internal lock), inside printf (mid-format), or inside your own mutex lock. Calling these from a signal handler → deadlock or corruption.
 Safe pattern: signal handler sets a `volatile sig_atomic_t flag = 1;`, main loop checks the flag.
 
-THE TRADE-OFFS:
-Gain: Asynchronous process-level notification without polling; hardware fault interception (SIGSEGV for GC, SIGBUS for mmap errors).
-Cost: Signal handlers are extremely hard to write correctly (async-signal-safety); POSIX signal model has subtleties around fork/threads; real-time signals (queueing) add complexity.
+**THE TRADE-OFFS:**
+**Gain:** Asynchronous process-level notification without polling; hardware fault interception (SIGSEGV for GC, SIGBUS for mmap errors).
+**Cost:** Signal handlers are extremely hard to write correctly (async-signal-safety); POSIX signal model has subtleties around fork/threads; real-time signals (queueing) add complexity.
 
 ---
 
@@ -120,7 +120,7 @@ If process has no SIGTERM handler: default disposition = terminate immediately �
 
 If process ignores SIGTERM (SIG_IGN): Kubernetes waits full grace period, then sends SIGKILL. Processes that ignore SIGTERM cause unnecessary delay in rolling deployments.
 
-THE INSIGHT:
+**THE INSIGHT:**
 A `SIGTERM` handler is the contract between the process and its process supervisor (systemd, Kubernetes, Docker). All production processes must handle SIGTERM gracefully. This is the #1 rule of writing containers.
 
 ---
@@ -351,18 +351,18 @@ sys.exit(0)
 
 **1. Graceful Shutdown Not Occurring in Container**
 
-Symptom: `docker stop` waits 10s then forcefully kills; "graceful shutdown" log messages never appear; in-flight requests are dropped.
+**Symptom:** `docker stop` waits 10s then forcefully kills; "graceful shutdown" log messages never appear; in-flight requests are dropped.
 
-Root Cause: PID 1 in container is a shell script, not the application. Shell does not forward SIGTERM to the application. Application never receives SIGTERM.
+**Root Cause:** PID 1 in container is a shell script, not the application. Shell does not forward SIGTERM to the application. Application never receives SIGTERM.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 docker exec <container> ps aux   # Is PID 1 the app or a shell?
 # If PID 1 = /bin/sh -c "java -jar app.jar" → shell is PID 1
 ```
 
-Fix:
+**Fix:**
 
 ```dockerfile
 # WRONG: shell form (PID 1 = sh)
@@ -380,11 +380,11 @@ CMD ["java", "-jar", "app.jar"]
 
 **2. Signal Handler Deadlock**
 
-Symptom: Process receives SIGTERM, hangs indefinitely, never exits; SIGKILL required.
+**Symptom:** Process receives SIGTERM, hangs indefinitely, never exits; SIGKILL required.
 
-Root Cause: Signal handler calls a non-async-signal-safe function that takes a lock; the signal interrupted the main thread while that same lock was held.
+**Root Cause:** Signal handler calls a non-async-signal-safe function that takes a lock; the signal interrupted the main thread while that same lock was held.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 gdb -p <pid>
@@ -393,7 +393,7 @@ gdb -p <pid>
 #           signal handler also trying to acquire same lock
 ```
 
-Fix: Signal handler only sets `volatile sig_atomic_t shutdown = 1;`. Main loop checks and calls cleanup functions (not the signal handler).
+**Fix:** Signal handler only sets `volatile sig_atomic_t shutdown = 1;`. Main loop checks and calls cleanup functions (not the signal handler).
 
 ---
 

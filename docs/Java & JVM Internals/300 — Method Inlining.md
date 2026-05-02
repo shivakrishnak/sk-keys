@@ -43,13 +43,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Every Java method call — `add(a, b)`, `getSize()`, `isNull(x)` — requires: pushing arguments onto the caller stack, saving caller context, jumping to the method's bytecode address, executing the method, preparing a return value, restoring the caller's frame, and jumping back. For a tiny method like `return a + b`, this framework overhead can be 10× the actual work.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A well-designed codebase follows SRP: small, focused methods. A `parseRequest()` method calls 12 smaller methods: `readHeader()`, `validateToken()`, `decodeBase64()`, `checkLength()`, and so on. Each of these calls 3–5 more. A single request touches 80 method calls, each with ~20ns call overhead. At 50,000 requests/second, this is 80ms/second of pure call overhead — wasted. The CPU is spending more time setting up calls than doing work.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Method Inlining** was created — to eliminate call overhead for small, hot methods by physically merging the method body into the caller at compile time, as if the programmer had written the code inline from the start.
 
 ---
@@ -75,12 +75,12 @@ Inlining's value is not just eliminating the call itself. The real power is that
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A method call has a non-trivial overhead: stack frame setup, context save/restore, possible virtual dispatch, JIT boundary effects.
 2. Small methods (getters, utility calculations) where the body is shorter than the call overhead are net-negative without inlining.
 3. The optimizer can never reason across call boundaries without inlining — optimizations are bounded by compilation unit scope.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The JIT must decide: for each call site, is inlining profitable? Factors:
 
 **Bytecode size:** If the callee is `> FreqInlineSize` bytes (default 325 bytes for C2), it is generally not inlined due to code bloat risk (enlarged methods increase code cache pressure and can hurt instruction cache locality).
@@ -107,15 +107,15 @@ The JIT must decide: for each call site, is inlining profitable? Factors:
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Eliminates call overhead; enables cascading optimizations (escape analysis, constant folding, dead-code removal).
-Cost: Code bloat (inlined code duplicated at each call site); larger compiled methods → more code cache usage → potential I-cache pressure; invalid type guards → deoptimization.
+**THE TRADE-OFFS:**
+**Gain:** Eliminates call overhead; enables cascading optimizations (escape analysis, constant folding, dead-code removal).
+**Cost:** Code bloat (inlined code duplicated at each call site); larger compiled methods → more code cache usage → potential I-cache pressure; invalid type guards → deoptimization.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 ```java
 int total = 0;
 for (int i = 0; i < 1_000_000; i++) {
@@ -140,7 +140,7 @@ The JIT now sees a polynomial sum loop and can:
 
 Total speedup: 20–50x vs the non-inlined version — not because inlining saved 10ns per call, but because it *exposed the loop structure* to SIMD vectorization.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The call overhead elimination is the visible benefit. The *hidden* benefit is that inlining merges context, enabling optimizations that produce 10x–50x improvements that are structurally impossible without it.
 
 ---
@@ -149,9 +149,9 @@ The call overhead elimination is the visible benefit. The *hidden* benefit is th
 
 > Think about traffic routing. Without inlining: a city has many small stores, each in a cul-de-sac. Every delivery truck must turn off the main highway, drive into the cul-de-sac, deliver, back out, rejoin the highway. Inlining is like moving all the stores directly onto the highway — deliveries happen in-lane without leaving the main flow, and the city planner can now see that three deliveries on the same block can be batched into one truck.
 
-"Turning into a cul-de-sac" → method call overhead (stack frame setup, context switch).
-"Deliveries happen in-lane" → inlined code executes without call boundary.
-"Three deliveries batched" → cascading optimizations (null check elimination, vectorization) enabled by merged context.
+- "Turning into a cul-de-sac" → method call overhead (stack frame setup, context switch).
+- "Deliveries happen in-lane" → inlined code executes without call boundary.
+- "Three deliveries batched" → cascading optimizations (null check elimination, vectorization) enabled by merged context.
 
 Where this analogy breaks down: In reality, inlining creates "larger store" on the highway — the compiled method gets bigger. If too many stores are on the highway, it gets congested (code cache pressure, instruction cache misses).
 
@@ -215,7 +215,7 @@ The merged IR enables:
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Tier 3: C1 execution with profiling]
     → [Type feedback recorded per call site]
@@ -227,7 +227,7 @@ NORMAL FLOW:
     → [Native code: no call boundary on hot path]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Inlined type guard fails at runtime]
     → [Deoptimization triggered]
@@ -237,7 +237,7 @@ FAILURE PATH:
     → [Bimorphic inline: both types inlined with if/else check]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In a microservice with high polymorphism (framework code, abstract classes with many implementations), inlining frequently fails on critical paths because callsites become megamorphic. Spring AOP proxies, Hibernate entity proxies, and dynamically-generated lambdas are major sources of megamorphic callsites. At scale, this failure means the JIT falls back to virtual dispatch everywhere — erasing the optimization potential. Performance-critical services often explicitly avoid interfaces on hot paths for this reason.
 
 ---
@@ -367,13 +367,13 @@ How to choose: Make methods `private` or `final` when they are on hot paths and 
 
 **Megamorphic Callsite Blocking Inlining**
 
-Symptom:
+**Symptom:**
 CPU profiling shows high time in `vtable stub` or `icache stub` entries — these are virtual dispatch stubs that represent non-inlined virtual calls. Method appears hot but never gets JIT-accelerated.
 
-Root Cause:
+**Root Cause:**
 A call site in the hot loop dispatches to 3+ concrete types. The JIT cannot inline megamorphic sites.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # See inlining decisions:
 java -XX:+UnlockDiagnosticVMOptions \
@@ -384,55 +384,55 @@ java -XX:+UnlockDiagnosticVMOptions \
 ./profiler.sh -e itimer -d 30 -f output.html <pid>
 ```
 
-Fix:
+**Fix:**
 At the hot callsite, narrow the type: use `if (obj instanceof ArrayList a) { use a; }` to create a monomorphic path that can be inlined. Or refactor the design to use a single concrete type on the hot path.
 
-Prevention:
+**Prevention:**
 Code review hot paths for interface-heavy designs. Profiles early in development.
 
 ---
 
 **Bytecode Bloat Preventing Inlining**
 
-Symptom:
+**Symptom:**
 `PrintInlining` shows `too big` next to a method you expected to be inlined. Despite being a "simple" method, it doesn't inline.
 
-Root Cause:
+**Root Cause:**
 The method contains checked exceptions, assertions, verbose logging, or accumulated cruft that inflates its bytecode count above `FreqInlineSize` (325 bytes).
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Check bytecode size of a specific method:
 javap -c -p MyClass | grep -A30 "methodName"
 # Count the bytecode instructions
 ```
 
-Fix:
+**Fix:**
 Refactor: extract the heavy parts (logging, assertion, error handling) into a separate method that can live outside the hot path. Keep the hot path core small.
 
-Prevention:
+**Prevention:**
 Add a check with ArchUnit or custom Checkstyle rule that flags methods with >300 bytecodes in performance-critical packages.
 
 ---
 
 **Deoptimization Loop from Invalid Inline Guard**
 
-Symptom:
+**Symptom:**
 Method shows in `PrintCompilation` cycling: tier 3 → tier 4 → back to tier 0 → tier 3 → tier 4. Performance oscillates. CPU shows high `deopt` stubs in profiler.
 
-Root Cause:
+**Root Cause:**
 An inlined method's type guard is occasionally violated. Each violation triggers deoptimization. The JVM re-profiles and re-compiles, but the violation happens again.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -XX:+TraceDeoptimization MyApp 2>&1 | grep "reason"
 # Shows deoptimization reason — look for "type_checked_inlining"
 ```
 
-Fix:
+**Fix:**
 Identify the callsite with occasional type violations. Extract the rare type path to a separate method so the hot path remains monomorphic.
 
-Prevention:
+**Prevention:**
 Test with production-representative data during load testing. A rare type that never appears in dev can appear frequently in production.
 
 ---

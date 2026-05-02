@@ -432,17 +432,17 @@ rate is very high (use SSE or raw WebSocket for firehoses).
 
 **Subscriptions Not Scaling Across Multiple Server Instances**
 
-Symptom:
+**Symptom:**
 After deploying 3 server instances behind a load balancer, only ~33% of
 subscription clients receive events. Some clients receive all events,
 most receive none.
 
-Root Cause:
+**Root Cause:**
 Event publishing and subscription resolvers are in-memory (using local
 `Sinks.Many` / `ApplicationEventPublisher`). Events published on instance A
 don't reach clients connected to instance B or C.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check if clients are consistently routed to one server:
@@ -454,12 +454,12 @@ Diagnostic Command / Tool:
 logging.level.org.springframework.web.socket=DEBUG
 ```
 
-Fix:
+**Fix:**
 Replace in-memory `Sinks.Many` with Redis Pub/Sub or Kafka as the event bus.
 All server instances subscribe to the same Redis channel and deliver events
 to locally connected clients.
 
-Prevention:
+**Prevention:**
 Always test subscription delivery with multiple server instances in staging.
 Never use in-memory event buses for subscriptions in horizontally-scaled services.
 
@@ -467,16 +467,16 @@ Never use in-memory event buses for subscriptions in horizontally-scaled service
 
 **Memory Leak from Abandoned Subscriptions**
 
-Symptom:
+**Symptom:**
 Server memory grows steadily over hours. Heap dumps show thousands of Flux
 objects and associated state that never get garbage collected.
 
-Root Cause:
+**Root Cause:**
 Clients disconnect without sending a proper unsubscribe message (e.g., mobile
 app backgrounded, browser tab closed abruptly). The server-side Flux is never
 disposed — it holds onto resources (DB connections, Redis subscriptions) forever.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```java
 // Log subscription disposals to check if cancel is being called:
@@ -487,12 +487,12 @@ return eventFlux
 // If "Sub started" appears without corresponding cancel/terminate → leak
 ```
 
-Fix:
+**Fix:**
 Add `.timeout(Duration.ofMinutes(30))` to all subscription streams.
 Use `graphql-ws` protocol which has proper connection management.
 Ensure WebSocket close events trigger Flux disposal.
 
-Prevention:
+**Prevention:**
 Always set a maximum subscription duration. Monitor active subscription count
 as a Prometheus gauge — spikes indicate abandoned subscriptions.
 

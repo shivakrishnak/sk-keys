@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 If there were only one memory region (like Young Generation), long-lived objects (application caches, singleton services, HTTP session pools) would be collected during every Minor GC along with short-lived objects. Scanning these long-lived objects on every collection cycle — even though they are almost never garbage — is pure wasted work. The GC would spend 90% of its time confirming that the same cache objects are still alive.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Long-lived objects that survive all Minor GC cycles must live somewhere. They cannot be removed, but they dramatically slow down Young Gen collections if they stay there. They need their own region, collected on a separate, infrequent schedule.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Separating long-lived objects into their own generation — collected far less frequently than Young Generation — matches collection frequency to the actual death rate of objects in each generation. This is why the Old Generation exists.
 
 ---
@@ -64,23 +64,23 @@ The Old Generation's performance story is about Major GC pauses, not allocation.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Long-lived objects need stable, seldom-disturbed storage — Minor GC should not scan them.
 2. Old Generation grows as objects are promoted, shrinks only on Major GC.
 3. Old Gen collection must tolerate in-place allocation (no copying collector without two full regions available).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 motivates a separate region collected on a different schedule. Invariant 2 means Old Gen size must be monitored for growth trend (indicates memory leak). Invariant 3 means Old Gen algorithms typically use mark-sweep-compact rather than simple copying (copying requires 2× space). G1GC partially overcomes this with region-based incremental compaction.
 
-THE TRADE-OFFS:
-Gain: Minor GC is fast because it ignores Old Gen objects (except via card table for cross-gen refs).
-Cost: Old Gen Major GC is slow; Old Gen filling too quickly causes frequent Major GC; memory leaks manifest as unbounded Old Gen growth.
+**THE TRADE-OFFS:**
+**Gain:** Minor GC is fast because it ignores Old Gen objects (except via card table for cross-gen refs).
+**Cost:** Old Gen Major GC is slow; Old Gen filling too quickly causes frequent Major GC; memory leaks manifest as unbounded Old Gen growth.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 An application has 2,000 long-lived HTTP session objects (1 MB each — 2 GB total) and processes 10,000 short-lived request objects per second.
 
 Without Old Generation:
@@ -89,7 +89,7 @@ All 2,000 sessions and 10,000 request objects live together in one region. Every
 With Old Generation:
 Sessions promoted to Old Gen. Young Gen Minor GC runs every 500ms: scans 10,000 request objects (plus card table for refs from Old Gen). 9,990 are dead → collected. 10 promoted to Old Gen. Minor GC touches zero session objects directly. Old Gen Major GC runs once every 10 minutes: collects any expired sessions. The right thing is collected at the right frequency.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Object death rate determines optimal collection frequency. Young objects die at 99%/cycle — collect every cycle. Old objects die at 0.01%/cycle — collect every 1,000 cycles. Matching collection frequency to death rate is the fundamental insight.
 
 ---
@@ -98,11 +98,11 @@ Object death rate determines optimal collection frequency. Young objects die at 
 
 > Old Generation is like a city's permanent archive building. Records (long-lived objects) are moved here after passing through the temporary files area (Young Gen) and proving they're worth keeping. The archive is cleaned only during scheduled maintenance (quarterly audits / Major GC). Cleaning is thorough but disruptive — the building is closed during the audit (Stop-The-World).
 
-"Archive building" → Old Generation heap region
-"Records moved here from temp files" → promoted objects from Survivor Space
-"Quarterly audit" → Major GC
-"Building closed during audit" → Stop-The-World GC pause
-"Permanent archive staff (long-lived services)" → application-level caches, singletons
+- "Archive building" → Old Generation heap region
+- "Records moved here from temp files" → promoted objects from Survivor Space
+- "Quarterly audit" → Major GC
+- "Building closed during audit" → Stop-The-World GC pause
+- "Permanent archive staff (long-lived services)" → application-level caches, singletons
 
 Where this analogy breaks down: unlike a physical archive where records can be sorted in advance, the JVM's Old Gen compaction rearranges objects in memory to eliminate fragmentation — a process that requires moving all live objects.
 
@@ -161,7 +161,7 @@ When a Young Gen object is referenced from Old Gen (e.g., a cache in Old Gen hol
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Object survives 15 Minor GC cycles in Survivor Space
   → Promoted to Old Generation ← YOU ARE HERE
@@ -175,7 +175,7 @@ Object survives 15 Minor GC cycles in Survivor Space
   → Application resumes
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Memory leak via static collection:
   → Large growing Map/Cache in Old Gen reachable from static field
@@ -185,7 +185,7 @@ Memory leak via static collection:
   → Diagnosis: heap dump → Eclipse MAT → Dominator Tree
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At very large heaps (32+ GB), Old Gen Major GC becomes the primary concern. Low-pause collectors (ZGC, Shenandoah) perform Old Gen collection concurrently with the application. At terabyte scale, even G1GC's incremental mixed GC is insufficient — ZGC's scalable concurrent collection is required to avoid minutes-long pauses.
 
 ---
@@ -283,11 +283,11 @@ How to choose: G1GC for most production services. ZGC for strict latency SLAs (<
 
 **1. Old Generation Memory Leak**
 
-Symptom: Old Gen (`OU`) grows monotonically over hours/days; heap dumps grow sequentially; OOM eventually.
+**Symptom:** Old Gen (`OU`) grows monotonically over hours/days; heap dumps grow sequentially; OOM eventually.
 
-Root Cause: Objects accumulating in Old Gen via unintended GC Root connections (static collection, ThreadLocal not cleaned, event listeners not removed).
+**Root Cause:** Objects accumulating in Old Gen via unintended GC Root connections (static collection, ThreadLocal not cleaned, event listeners not removed).
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Two-snapshot approach:
 jcmd <pid> GC.heap_dump /tmp/heap1.hprof
@@ -297,15 +297,15 @@ jcmd <pid> GC.heap_dump /tmp/heap2.hprof
 # Objects that grew between snapshots = the leak
 ```
 
-Prevention: See GC Roots chapter. Bound all caches; always remove ThreadLocals; use weak/soft references for caches.
+**Prevention:** See GC Roots chapter. Bound all caches; always remove ThreadLocals; use weak/soft references for caches.
 
 **2. Frequent Major GC (Premature Promotion)**
 
-Symptom: `jstat` shows FGC/FGCT growing rapidly; Old Gen fills faster than expected; application latency spikes every few minutes.
+**Symptom:** `jstat` shows FGC/FGCT growing rapidly; Old Gen fills faster than expected; application latency spikes every few minutes.
 
-Root Cause: Medium-life objects or Survivor overflow cause many objects to be promoted to Old Gen prematurely. Old Gen fills with objects that should have died in Young Gen.
+**Root Cause:** Medium-life objects or Survivor overflow cause many objects to be promoted to Old Gen prematurely. Old Gen fills with objects that should have died in Young Gen.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstat -gcutil <pid> 2000
 # OGC (Old Gen collection count) growing fast
@@ -313,22 +313,22 @@ java -XX:+PrintTenuringDistribution -jar myapp.jar
 # Age 1 objects very large → Survivor overflow → premature promo
 ```
 
-Prevention: Increase Young Gen or Survivor size to reduce overflow. Profile allocation hotspots with async-profiler.
+**Prevention:** Increase Young Gen or Survivor size to reduce overflow. Profile allocation hotspots with async-profiler.
 
 **3. Old Gen Fragmentation Causing Allocation Failure**
 
-Symptom: `java.lang.OutOfMemoryError: Java heap space` even though total heap isn't exhausted (many small free chunks scattered in Old Gen but no contiguous block large enough for a new promotion).
+**Symptom:** `java.lang.OutOfMemoryError: Java heap space` even though total heap isn't exhausted (many small free chunks scattered in Old Gen but no contiguous block large enough for a new promotion).
 
-Root Cause: Fragmentation in Old Gen after many mark-sweep cycles without compaction. Only relevant for CMS (which doesn't always compact).
+**Root Cause:** Fragmentation in Old Gen after many mark-sweep cycles without compaction. Only relevant for CMS (which doesn't always compact).
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check for CMS concurrent mode failure in logs
 grep "concurrent mode failure" /tmp/gc.log
 # This triggers a fallback STW Full GC
 ```
 
-Prevention: Migrate from CMS to G1GC or ZGC (both compact). If stuck on CMS, use `-XX:+UseCMSCompactAtFullCollection`.
+**Prevention:** Migrate from CMS to G1GC or ZGC (both compact). If stuck on CMS, use `-XX:+UseCMSCompactAtFullCollection`.
 
 ---
 

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Two threads modify a shared counter simultaneously. Thread T1: reads `count=5`, adds 1, writes `count=6`. Thread T2: simultaneously reads `count=5`, adds 1, writes `count=6`. Both incremented, but count went from 5 to 6, not 7. This is a race condition — the check-then-act sequence is not atomic. Without mutual exclusion, any read-modify-write operation on shared state is a potential race condition.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A banking service processes concurrent withdrawals. Two threads both pass the "sufficient funds" check simultaneously, then both deduct. Result: account balance goes negative. Funds are lost or duplicated. This is not a corner case — all concurrent systems face this problem with ANY shared mutable state.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **`synchronized`** was created — to enforce that only one thread at a time executes a critical section, and to guarantee that all changes made inside the critical section are visible to the next thread entering the same section.
 
 ---
@@ -64,13 +64,13 @@ This is exactly why **`synchronized`** was created — to enforce that only one 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A monitor lock is associated with every Java object — `synchronized(obj)` uses `obj`'s lock.
 2. Only one thread holds the lock at a time — all others attempting to acquire the SAME lock are BLOCKED.
 3. `synchronized` is reentrant — a thread holding a lock can enter another `synchronized` block on the SAME lock without deadlocking.
 4. Acquiring and releasing a lock inserts a memory barrier — all writes visible before release are visible after the next acquisition.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 3 (reentrancy): a `synchronized` method can call another `synchronized` method on the same `this` without deadlock. The JVM counts reentrant acquisitions.
 
 Given invariant 4: without the memory barrier, a CPU could cache values in registers and the "next thread" might see stale data even after acquiring the lock. `synchronized` forces a full flush/sync of the CPU cache at release and a reload at acquisition.
@@ -93,15 +93,15 @@ Given invariant 4: without the memory barrier, a CPU could cache values in regis
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Mutual exclusion + memory visibility in one construct; simple model; JVM-native (no library needed); reentrancy.
-Cost: Coarse granularity (whole method or block); no timeout (can block indefinitely); no ability to interrupt a waiting thread; no distinguish between read and write (readers block each other unnecessarily); can cause deadlock with improper lock ordering.
+**THE TRADE-OFFS:**
+**Gain:** Mutual exclusion + memory visibility in one construct; simple model; JVM-native (no library needed); reentrancy.
+**Cost:** Coarse granularity (whole method or block); no timeout (can block indefinitely); no ability to interrupt a waiting thread; no distinguish between read and write (readers block each other unnecessarily); can cause deadlock with improper lock ordering.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A shared counter incremented by 1,000 threads, 1,000 times each. Expected: 1,000,000.
 
 WITHOUT synchronized:
@@ -128,7 +128,7 @@ void increment() { count.incrementAndGet(); }
 // Uses CAS (hardware atomic) — faster than synchronized for single ops
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 `synchronized` guarantees correctness at the cost of contention overhead. `AtomicInteger` achieves the same correctness with better performance for simple operations. For complex multi-step operations, `synchronized` is still required.
 
 ---
@@ -141,10 +141,10 @@ THE INSIGHT:
 3. First person finishes, replaces the key (releases lock, write barrier).
 4. Second person takes the key (acquires lock, read barrier) and enters — sees the bathroom as left.
 
-"Taking the key" → acquiring the monitor lock.
-"Waiting outside" → BLOCKED state.
-"Replacing the key" → releasing with write barrier.
-"Seeing bathroom state" → happens-before: reads see previous writes.
+- "Taking the key" → acquiring the monitor lock.
+- "Waiting outside" → BLOCKED state.
+- "Replacing the key" → releasing with write barrier.
+- "Seeing bathroom state" → happens-before: reads see previous writes.
 
 Where this analogy breaks down: The bathroom key analogy doesn't convey reentranacy. A synchronized block allows the same thread to re-enter — as if the person already inside can open another door within the same bathroom (reentrant).
 
@@ -231,7 +231,7 @@ public List<Order> getOrders() {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Thread T1: enters synchronized(sharedObj)]
     → [JVM: monitorenter — acquires monitor]  ← YOU ARE HERE
@@ -253,7 +253,7 @@ FAILURE PATH (deadlock):
     → [Fix: consistent lock ordering, or use tryLock]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At high concurrency, `synchronized` on a single object becomes a bottleneck — all threads serialize through the critical section. Solutions: reduce lock scope (fine-grained locking), use `ReadWriteLock` for read-heavy workloads, use lock striping (ConcurrentHashMap approach), or use lock-free algorithms (`AtomicReference`, CAS).
 
 ---
@@ -335,20 +335,20 @@ How to choose: Use `synchronized` for simple critical sections. Use `ReentrantLo
 
 **Deadlock**
 
-Symptom: Some threads BLOCKED indefinitely. Application hangs.
+**Symptom:** Some threads BLOCKED indefinitely. Application hangs.
 
 ```bash
 jstack <pid> | grep "DEADLOCK" -A20
 # JVM auto-detects intrinsic lock deadlocks
 ```
 
-Fix: Enforce consistent lock acquisition order. Use `ReentrantLock.tryLock(timeout)`.
+**Fix:** Enforce consistent lock acquisition order. Use `ReentrantLock.tryLock(timeout)`.
 
 ---
 
 **Lock Contention / Performance Degradation**
 
-Symptom: CPU spikes but throughput low. Profiler shows threads queuing at synchronized.
+**Symptom:** CPU spikes but throughput low. Profiler shows threads queuing at synchronized.
 
 ```bash
 # Async profiler lock profiling:
@@ -356,17 +356,17 @@ Symptom: CPU spikes but throughput low. Profiler shows threads queuing at synchr
 # Shows which locks are hottest, which threads wait
 ```
 
-Fix: Reduce critical section scope. Use `ConcurrentHashMap`. Consider lock striping.
+**Fix:** Reduce critical section scope. Use `ConcurrentHashMap`. Consider lock striping.
 
 ---
 
 **Missed Visibility (using synchronized only for mutual exclusion)**
 
-Symptom: Thread T2 reads stale value of a variable written by T1.
+**Symptom:** Thread T2 reads stale value of a variable written by T1.
 
-Root Cause: Developer assumed mutual exclusion was sufficient but the variable is read outside synchronized.
+**Root Cause:** Developer assumed mutual exclusion was sufficient but the variable is read outside synchronized.
 
-Fix: All reads AND writes of shared mutable state must be synchronized on the same lock (or use volatile for single variables with no compound operations).
+**Fix:** All reads AND writes of shared mutable state must be synchronized on the same lock (or use volatile for single variables with no compound operations).
 
 ---
 

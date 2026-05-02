@@ -31,15 +31,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 You build a notification system. It sends emails. Later you add SMS. Now you have `if (type == EMAIL) { sendEmail() } else if (type == SMS) { sendSMS() }`. Add push notifications: another branch. Add Slack: another branch. Every time a new notification type is added, every `if/else` block in the codebase must be found and updated. Miss one: partial notification. The business rule about "notify all channels" is scattered across the entire codebase.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 This pattern — branching on type to decide behaviour — is called the "type code" smell. As the number of types grows, every feature that operates on those types contains the full switch statement. A new type requires 50 edits across 50 files. The code is a maintenance disaster. Adding a type should be a one-file change, not a surgical search-and-replace across the codebase.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 This is exactly why polymorphism was created — to let you define a single shared interface (`Notifier.send()`) and have each implementation (`EmailNotifier`, `SmsNotifier`, `SlackNotifier`) define its own version. The caller writes `notifier.send(message)` once. Adding a new type is one new class, zero changes to existing code.
 
@@ -67,13 +67,13 @@ Polymorphism is what makes the Open/Closed Principle possible: "Open for extensi
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. The caller only needs to know what an object _does_ (its interface), not what it _is_ (its concrete type).
 2. The same operation can have different correct implementations for different types.
 3. The decision of _which_ implementation to call should be based on the object's actual type, not the caller's assumption.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 Define a common interface that captures what all types must do. Each concrete type provides its own implementation. The caller holds a reference to the interface type — it never knows or cares which concrete class it's working with.
 
@@ -88,19 +88,19 @@ notifier.send(msg) → Notifier.send() → EmailNotifier.send()
 The caller writes this once. Each implementation is independent.
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
-Gain: Open/Closed — add new types without touching existing code; the caller is permanently stable; enables dependency injection and testability (swap in mocks via interface).
-Cost: virtual dispatch is slightly slower than direct calls (~1–5ns overhead); too many levels of polymorphism can make tracing execution difficult; requires careful interface design upfront.
+**Gain:** Open/Closed — add new types without touching existing code; the caller is permanently stable; enables dependency injection and testability (swap in mocks via interface).
+**Cost:** virtual dispatch is slightly slower than direct calls (~1–5ns overhead); too many levels of polymorphism can make tracing execution difficult; requires careful interface design upfront.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A rendering engine must draw `Circle`, `Rectangle`, and `Triangle` shapes. Each has a different drawing algorithm.
 
-WHAT HAPPENS WITHOUT POLYMORPHISM:
+**WHAT HAPPENS WITHOUT POLYMORPHISM:**
 
 ```java
 void render(List<Object> shapes) {
@@ -120,7 +120,7 @@ void render(List<Object> shapes) {
 
 Adding `Star` shape: find every `instanceof` chain in the codebase and add a new branch.
 
-WHAT HAPPENS WITH POLYMORPHISM:
+**WHAT HAPPENS WITH POLYMORPHISM:**
 
 ```java
 interface Shape { void draw(); }
@@ -141,7 +141,7 @@ void render(List<Shape> shapes) {
 
 Adding `Star` shape: write `class Star implements Shape { public void draw() { ... } }`. The `render()` method never changes.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Polymorphism moves the branching from "scattered if/else at every call site" to "isolated inside each class." Adding a type is additive (new class), not modifying (changing existing code). This is the difference between a system that scales and one that degrades with every new requirement.
 
 ---
@@ -236,7 +236,7 @@ public void process(User u)    { /* user handling */  }
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 New notification type "Push" needs to be added
@@ -255,7 +255,7 @@ All existing NotificationService code unchanged
 Unit test: MockNotifier captures calls without side effects
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Interface design is too narrow or wrong
@@ -270,7 +270,7 @@ Observable: git blame shows interface file changed repeatedly
             as new types are added — sign of unstable abstraction
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 At 100 microservices, polymorphism operates at the network level: services implement the same API contract (OpenAPI specification) and can be swapped behind a gateway. A payment service can route to Stripe or PayPal based on region — the client calls the same endpoint, gets the same response schema, without knowing which provider handled it. This is polymorphism at architecture scale.
 
@@ -407,13 +407,13 @@ void alertSendsToAllNotifiers() {
 
 **Fragile Base Class Problem**
 
-Symptom:
+**Symptom:**
 Changing a method in a superclass breaks subclasses in unexpected ways. Subclass overrides behave incorrectly because the superclass's template method calls the overridden method in a specific order the subclass doesn't know about.
 
-Root Cause:
+**Root Cause:**
 Polymorphism via inheritance creates tight coupling between base and derived classes. The superclass's internal method call structure becomes a hidden contract that derived classes must not violate.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Find all subclasses of a base class:
@@ -425,23 +425,23 @@ grep -rn "extends BaseClass" src/ --include="*.java"
 # javac -Xlint:all *.java  # warns on missing @Override
 ```
 
-Fix:
+**Fix:**
 Prefer interface-based polymorphism over inheritance-based. Make the base class `final` for methods that shouldn't be overridden. Use composition (Strategy pattern) instead of inheritance for behaviour variation.
 
-Prevention:
+**Prevention:**
 Favour interfaces over abstract classes. "Favour composition over inheritance." Use `final` on methods that form the template's backbone.
 
 ---
 
 **Interface Bloat**
 
-Symptom:
+**Symptom:**
 An interface has 20 methods. Most implementations only meaningfully implement 5 of them. The other 15 are implemented with empty bodies or `throw UnsupportedOperationException`.
 
-Root Cause:
+**Root Cause:**
 The interface was designed too broadly. It violates the Interface Segregation Principle (ISP): one fat interface forces all implementors to implement all methods, even those irrelevant to them.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Find empty or stub implementations:
@@ -450,10 +450,10 @@ grep -A3 "@Override" src/ --include="*.java" | \
 # Each hit: the method belongs in a separate, smaller interface
 ```
 
-Fix:
+**Fix:**
 Split the large interface into smaller, focused interfaces. Classes implement only the interfaces relevant to them. Callers depend on the smallest interface they need.
 
-Prevention:
+**Prevention:**
 Apply ISP: each interface should have a single cohesive responsibility. Start with small, focused interfaces — merging is easier than splitting.
 
 ---

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A cache reads data on every request and refreshes data occasionally. Using `synchronized` for all access means 1,000 concurrent reads block each other — only one read proceeds at a time. 999 threads wait even though reads don't interfere with each other. The cache becomes a bottleneck instead of a performance improvement.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A product catalog service has 10,000 reads/second and 1 write/minute. With `synchronized`, those 10,000 reads serialize through one lock — throughput is limited to one read per lock acquisition/release cycle. The single write per minute provides no benefit — reads still queue up 10,000 deep.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **`ReadWriteLock`** was created — reads are safe to run simultaneously (they don't modify state), so they should not block each other. Only writes need exclusive access.
 
 ---
@@ -64,12 +64,12 @@ Many readers can read at once; writers get exclusive access — maximising throu
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Read lock is shared: `N` threads can hold it simultaneously (N > 0) — provided no write lock is held.
 2. Write lock is exclusive: only 1 thread can hold it — requires ALL read locks to be released first.
 3. Write lock holder can acquire the read lock (lock downgrade), but read lock holder CANNOT upgrade to write lock (would deadlock: waiting for other readers to release, while they also wait).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Lock state is encoded as one 32-bit `int` in AQS: upper 16 bits = read hold count, lower 16 bits = write hold count. This allows atomic check of both counts.
 
 ```
@@ -86,15 +86,15 @@ ReadWriteLock State Logic:
   Write lock release: state = 0
 ```
 
-THE TRADE-OFFS:
-Gain: Parallel reads — dramatically improves throughput for read-heavy workloads; reads don't block each other.
-Cost: Write lock must wait for ALL readers to release — write starvation possible if readers continuously hold; overhead of read count tracking; no lock upgrade (read→write); more complex than synchronized.
+**THE TRADE-OFFS:**
+**Gain:** Parallel reads — dramatically improves throughput for read-heavy workloads; reads don't block each other.
+**Cost:** Write lock must wait for ALL readers to release — write starvation possible if readers continuously hold; overhead of read count tracking; no lock upgrade (read→write); more complex than synchronized.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 10,000 threads reading, 1 thread writing, same data.
 
 WITH `synchronized`:
@@ -107,7 +107,7 @@ WITH `ReadWriteLock`:
 - Throughput: 10,000 reads in parallel — bounded by CPU/memory, not lock
 - Writer waits for readers, then gets exclusive access
 
-THE INSIGHT:
+**THE INSIGHT:**
 `synchronized` turns reads into a sequential operation unnecessarily. `ReadWriteLock` preserves the natural concurrency of reads. The tradeoff appears when writers compete: writes can be starved if readers continuously hold, depending on the fairness policy.
 
 ---
@@ -116,9 +116,9 @@ THE INSIGHT:
 
 > A highway with "shared lanes" (reads) and one "exclusive lane" for construction (writes). Shared lane vehicles (readers) travel simultaneously — no mutual blocking. Construction crew (writer) needs to close all shared lanes — they wait until all vehicles exit, do their work, then reopen all lanes.
 
-"Shared lane travel" → concurrent read lock holders.
-"Closing all lanes" → write lock acquisition in exclusive mode.
-"Construction crew waiting" → write lock blocked until reads release.
+- "Shared lane travel" → concurrent read lock holders.
+- "Closing all lanes" → write lock acquisition in exclusive mode.
+- "Construction crew waiting" → write lock blocked until reads release.
 
 Where this analogy breaks down: On a real highway, construction can start with "one lane closed" — partial closures. `ReadWriteLock` is all-or-nothing: write requires ALL readers to be gone.
 
@@ -219,7 +219,7 @@ FAILURE PATH (write starvation):
     → [Fix: use fair=true, or StampedLock with write priority]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, `CopyOnWriteArrayList` and `CopyOnWriteArraySet` provide an alternative: both use a similar "readers don't block" principle but via copy-on-write rather than locks — reads are completely non-blocking (no lock at all), writes create a new copy and do an atomic reference swap. For read-dominant data with infrequent writes, this is simpler and faster than `ReadWriteLock`.
 
 ---
@@ -289,21 +289,21 @@ How to choose: Use `ReadWriteLock` when the access pattern is >90% reads and <10
 
 **Write Starvation**
 
-Symptom: Writers never execute; cache data grows stale indefinitely.
+**Symptom:** Writers never execute; cache data grows stale indefinitely.
 
-Root Cause: Non-fair `ReadWriteLock`; new readers continuously arrive, keeping `readCount > 0`.
+**Root Cause:** Non-fair `ReadWriteLock`; new readers continuously arrive, keeping `readCount > 0`.
 
-Fix: Use `new ReentrantReadWriteLock(true)` (fair). Or redesign with `StampedLock`. Or rate-limit read acquisitions to allow writes.
+**Fix:** Use `new ReentrantReadWriteLock(true)` (fair). Or redesign with `StampedLock`. Or rate-limit read acquisitions to allow writes.
 
 ---
 
 **Deadlock from Lock Upgrade Attempt**
 
-Symptom: Two threads deadlocked — both holding read lock, both waiting for write lock.
+**Symptom:** Two threads deadlocked — both holding read lock, both waiting for write lock.
 
-Root Cause: Thread attempts to acquire write lock while holding read lock.
+**Root Cause:** Thread attempts to acquire write lock while holding read lock.
 
-Fix:
+**Fix:**
 ```java
 // WRONG: upgrade attempt → deadlock
 readLock.lock();

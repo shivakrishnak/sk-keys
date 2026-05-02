@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Store 1 million user records and look up any user by ID in under 1 millisecond. A sorted array + binary search gives O(log N) = 20 comparisons — 20 microseconds at 1µs/comparison: fast. But INSERT requires O(N) shifts for a sorted array. A linked list: O(N) lookup. A BST: O(log N) average but O(N) worst case. At 1 million lookups/second from a hot database, even O(log N) latency adds up.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 O(log N) is not O(1). For a 64-key table vs 64 million keys, binary search takes 6 vs 26 comparisons — a 4× slowdown. For a 10 billion-key table driven by global traffic, latency grows with every doubling of users. A cache lookup 50 million times per second cannot afford even 30 comparisons per call.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 What if you could compute the exact storage location of a key in O(1), regardless of how many other keys exist? A **hash function** converts any key to an integer index. Given a fixed-size array, `index = hash(key) % arraySize` directly locates the bucket with no comparisons. O(1) insert, O(1) lookup, O(1) delete — independent of N. This is why **Hashing Techniques** were created.
 
 ---
@@ -64,12 +64,12 @@ A hash function's quality is measured by two properties: **uniformity** (evenly 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The hash function must be **deterministic**: the same key always produces the same hash code.
 2. The hash function must be **O(1)** (or at most O(key length)) per computation.
 3. The table must define a **collision resolution** strategy: no hash function is perfect, so collisions must be handled gracefully.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The ideal hash function is a **uniform random oracle**: each key maps uniformly and independently to a random bucket. In practice, good approximations use polynomial rolling hashes for strings, multiply-shift for integers, and cryptographic hash functions (SHA, MD5) when security or content-addressing is required.
 
 **Chaining vs open addressing:**
@@ -81,24 +81,24 @@ The ideal hash function is a **uniform random oracle**: each key maps uniformly 
 - Expected probes in open addressing ≈ 1/(1-α) (goes to ∞ as α→1).
 - Java HashMap resizes at α=0.75 (default); load factor > 0.7 causes excessive collisions.
 
-THE TRADE-OFFS:
-Gain: O(1) average operations; no dependency on data size N.
-Cost: O(N) worst case (all keys collide); non-deterministic ordering (unsorted); requires a good hash function; memory overhead (unused buckets; load factor < 1 wastes space).
+**THE TRADE-OFFS:**
+**Gain:** O(1) average operations; no dependency on data size N.
+**Cost:** O(N) worst case (all keys collide); non-deterministic ordering (unsorted); requires a good hash function; memory overhead (unused buckets; load factor < 1 wastes space).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Hash table with capacity 5. Keys: 10, 15, 20, 25, 30. Hash function: `key % 5`.
 
-WHAT HAPPENS WITH BAD HASH FUNCTION:
+**WHAT HAPPENS WITH BAD HASH FUNCTION:**
 All keys are multiples of 5: 10%5=0, 15%5=0, 20%5=0, 25%5=0, 30%5=0. Every key maps to bucket 0! The hash table degrades to a linked list of length 5 in bucket 0. Lookup time: O(N). This is a hash collision catastrophe.
 
-WHAT HAPPENS WITH GOOD HASH FUNCTION (keys: 11, 13, 17, 19, 23):
+**WHAT HAPPENS WITH GOOD HASH FUNCTION (keys: 11, 13, 17, 19, 23):**
 11%5=1, 13%5=3, 17%5=2, 19%5=4, 23%5=3. One collision at bucket 3. All others in separate buckets. Lookup: O(1) for 4 keys, O(2) for bucket 3. Average: O(1).
 
-THE INSIGHT:
+**THE INSIGHT:**
 The choice of table capacity matters: use a prime number as table size to reduce patterns in key distributions. Using a power-of-2 capacity with `key & (cap-1)` is fast but exposes clustering for keys that are multiples of the capacity. Java HashMap uses power-of-2 capacity with additional hash mixing (upper bits folded in) to compensate.
 
 ---
@@ -107,11 +107,11 @@ The choice of table capacity matters: use a prime number as table size to reduce
 
 > Hashing is like a filing system where the folder label is derived from the document's content. You scan the first paragraph of a document, run a formula, and that formula tells you: "This document belongs in drawer 42." To find it later, run the same formula on the title — immediately go to drawer 42. No need to scan all drawers. If two documents hash to drawer 42 (collision), the drawer holds both — you scan only that drawer's contents.
 
-"Document content" → key
-"Formula (hash function)" → hash computation
-"Drawer number" → hash code mod capacity
-"Drawer with multiple items" → collision: chaining or probing
-"Filing once, finding instantly" → O(1) average
+- "Document content" → key
+- "Formula (hash function)" → hash computation
+- "Drawer number" → hash code mod capacity
+- "Drawer with multiple items" → collision: chaining or probing
+- "Filing once, finding instantly" → O(1) average
 
 Where this analogy breaks down: Unlike a filing cabinet, hash tables can resize (rehash all entries when capacity is exceeded) — no physical filing cabinet doubles in size. Also, the analogy doesn't capture why uniformity of the formula matters for performance.
 
@@ -189,7 +189,7 @@ Used in Java `String.hashCode()` with base=31. Prime base 31 provides good distr
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Key (string, integer, object)
 → Hash function: key → 32/64-bit integer
@@ -201,7 +201,7 @@ Key (string, integer, object)
 → Return value or null
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 All keys hash to same bucket
 → O(N) lookup after N insertions
@@ -212,7 +212,7 @@ All keys hash to same bucket
   supplement hash (Java HashMap does this)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 1 billion keys distributed across 1,000 servers, consistent hashing assigns each key to a server in O(1) + O(K) (K virtual nodes per server) without remapping all keys when servers join/leave. This is a distributed extension of the same hash-to-bucket concept, but the "bucket" is now a server node on a ring, and resizing (adding a server) only remaps N/S keys (N total, S servers) instead of all N. CockroachDB, Cassandra, and Redis Cluster use consistent hashing or virtual-node variants of it.
 
 ---
@@ -317,11 +317,11 @@ How to choose: Use HashMap for O(1) operations on unordered data. Use TreeMap wh
 
 **1. Missing or broken `hashCode()`/`equals()` override**
 
-Symptom: `map.get(key)` returns null even though `key` was inserted; `map.containsKey(key)` returns false.
+**Symptom:** `map.get(key)` returns null even though `key` was inserted; `map.containsKey(key)` returns false.
 
-Root Cause: Default `Object.hashCode()` uses memory address; two logically equal objects (same field values) have different hash codes → mapped to different buckets → key not found.
+**Root Cause:** Default `Object.hashCode()` uses memory address; two logically equal objects (same field values) have different hash codes → mapped to different buckets → key not found.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 Point p1 = new Point(1, 2);
 Point p2 = new Point(1, 2);
@@ -329,46 +329,46 @@ System.out.println(p1.hashCode() == p2.hashCode()); // false if broken
 System.out.println(p1.equals(p2)); // false if broken
 ```
 
-Fix: Override both `hashCode()` and `equals()`. Use `Objects.hash(field1, field2, ...)`.
+**Fix:** Override both `hashCode()` and `equals()`. Use `Objects.hash(field1, field2, ...)`.
 
-Prevention: Use IDE-generated `hashCode`/`equals` or Lombok `@EqualsAndHashCode`.
+**Prevention:** Use IDE-generated `hashCode`/`equals` or Lombok `@EqualsAndHashCode`.
 
 ---
 
 **2. ConcurrentModificationException during iteration**
 
-Symptom: `ConcurrentModificationException` when modifying HashMap while iterating.
+**Symptom:** `ConcurrentModificationException` when modifying HashMap while iterating.
 
-Root Cause: HashMap maintains a `modCount` counter; the iterator captures this value and throws if the count changed.
+**Root Cause:** HashMap maintains a `modCount` counter; the iterator captures this value and throws if the count changed.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Stack trace: java.util.ConcurrentModificationException
 #   at java.util.HashMap$HashIterator.nextNode(HashMap.java:1445)
 ```
 
-Fix: Collect keys to remove first, then remove after iteration. Or use `ConcurrentHashMap` for concurrent access.
+**Fix:** Collect keys to remove first, then remove after iteration. Or use `ConcurrentHashMap` for concurrent access.
 
-Prevention: Never add/remove from a HashMap while iterating it without using the Iterator's `remove()` method.
+**Prevention:** Never add/remove from a HashMap while iterating it without using the Iterator's `remove()` method.
 
 ---
 
 **3. Hash function clustering (poor distribution)**
 
-Symptom: HashMap operations suddenly slow to milliseconds instead of microseconds for certain inputs.
+**Symptom:** HashMap operations suddenly slow to milliseconds instead of microseconds for certain inputs.
 
-Root Cause: Input keys have patterns that cause many collisions (e.g., all keys divisible by table capacity). Attack vectors: HashDoS attack uses crafted strings that all hash to the same bucket.
+**Root Cause:** Input keys have patterns that cause many collisions (e.g., all keys divisible by table capacity). Attack vectors: HashDoS attack uses crafted strings that all hash to the same bucket.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Profile with async-profiler:
 java -agentpath:libasyncProfiler.so=start,event=cpu,file=out.html MyApp
 # Look for hot path in ConcurrentHashMap$Node.find or HashMap.getNode
 ```
 
-Fix: Java HashMap uses randomised hash key per JVM start (JEPS 180, Java 8) to prevent HashDoS. For custom hash tables, use universal hashing or randomised seeds.
+**Fix:** Java HashMap uses randomised hash key per JVM start (JEPS 180, Java 8) to prevent HashDoS. For custom hash tables, use universal hashing or randomised seeds.
 
-Prevention: Set `-Djdk.map.althashing.threshold=0` in older JVMs; use `ConcurrentHashMap` for concurrent access.
+**Prevention:** Set `-Djdk.map.althashing.threshold=0` in older JVMs; use `ConcurrentHashMap` for concurrent access.
 
 ---
 

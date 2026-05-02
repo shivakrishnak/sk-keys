@@ -289,7 +289,7 @@ Without CRDT (classic master-slave):
 
 **Tombstone Explosion (OR-Set in Production)**
 
-Symptom: Riak cluster's disk usage growing unboundedly. Read performance degrading.
+**Symptom:** Riak cluster's disk usage growing unboundedly. Read performance degrading.
 Keys that are modified frequently have 10MB+ of metadata even though the value is small.
 CRDT merge operations are noticeably slow.
 
@@ -297,7 +297,7 @@ Cause: OR-Set tombstone sets grow without bound. Each remove() adds a UUID to th
 tombstone set. GC is not running. After millions of add/remove cycles (e.g., a
 shopping cart key that changes often), the tombstone set has millions of entries.
 
-Fix: (1) Enable CRDT tombstone GC ("replica GC" or "active anti-entropy repair").
+**Fix:** (1) Enable CRDT tombstone GC ("replica GC" or "active anti-entropy repair").
 (2) Model volatile data differently: for frequently-cycled data, use timestamps
 (LWW-Register) instead of OR-Set. (3) Bound the number of adds possible: assign
 CRDT types carefully based on operation frequency. (4) Riak-specific: set

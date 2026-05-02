@@ -32,7 +32,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Processing a list required explicit loops with mutable state. To filter active users, compute their average age, and collect to a list:
 ```java
 List<User> activeUsers = new ArrayList<>();
@@ -48,10 +48,10 @@ double avgAge = activeUsers.isEmpty() ? 0.0
 ```
 This is 8 lines expressing a simple data transformation. The loop structure obscures the intent. Adding parallelism requires rearchitecting to `ExecutorService`, partitioning, and merging.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A data processing service applies 15 sequential transformations (filter → group → sort → aggregate → join) to 10M records. Each step is a separate loop that traverses the full dataset. Intermediate collections are allocated and discarded. The code is 300 lines of nested loops. Adding multi-core parallelism for the expensive steps requires a complete rewrite.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why the **Stream API** was created — to describe data transforms as a lazy pipeline that processes elements one-by-one through all steps before moving to the next, eliminating intermediate collections and enabling trivial parallelism with `.parallel()`.
 
 ---
@@ -77,12 +77,12 @@ Streams are lazy — intermediate operations (`filter`, `map`, `sorted`) do noth
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Intermediate operations are lazy — they return a new Stream description, not results.
 2. Terminal operations trigger evaluation — elements flow through the entire pipeline, one at a time.
 3. Streams are single-use: once a terminal operation is invoked, the stream cannot be reused.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1, `list.stream().filter(isActive).map(getName)` creates a pipeline description without touching any elements. No allocation of intermediate lists occurs. Given invariant 2, calling `.collect(toList())` causes each element to flow through `filter`, then `map`, then accumulate — not filter-all-first, then map-all.
 
 ```
@@ -106,15 +106,15 @@ Given invariant 1, `list.stream().filter(isActive).map(getName)` creates a pipel
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Declarative style; lazy evaluation; no intermediate collections; easy parallelism via `.parallel()`; functional composition.
-Cost: Stack traces are hard to read with lambda chains; debugging mid-pipeline is awkward; parallel streams have coordination overhead — they're not always faster; stream misuse (stateful lambdas, side effects) causes subtle bugs.
+**THE TRADE-OFFS:**
+**Gain:** Declarative style; lazy evaluation; no intermediate collections; easy parallelism via `.parallel()`; functional composition.
+**Cost:** Stack traces are hard to read with lambda chains; debugging mid-pipeline is awkward; parallel streams have coordination overhead — they're not always faster; stream misuse (stateful lambdas, side effects) causes subtle bugs.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 10 million log lines, find the first ERROR after timestamp X.
 
 WITHOUT STREAMS (loop):
@@ -144,7 +144,7 @@ Optional<LogLine> first = logLines.stream()
 ```
 Stops after finding the match — may process only 100K lines.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Lazy evaluation + short-circuit terminal operations means Stream pipelines can be dramatically more efficient than equivalent loop code that eagerly builds intermediate collections. The Stream JIT-optimises the fused pipeline.
 
 ---
@@ -153,10 +153,10 @@ Lazy evaluation + short-circuit terminal operations means Stream pipelines can b
 
 > A stream pipeline is a conveyor belt with inspection stations. Items move one-by-one from left to right. At each station, an item is either passed forward or removed. Only one item is ever being inspected at any station — no stacking up of items between stations. Contrast with loops that complete Station 1 for all items before moving to Station 2.
 
-"Inspection station" → intermediate operation (`filter`, `map`).
-"Single item on belt" → one element processed through all stages.
-"Removed at station" → filtered out by predicate.
-"End of belt" → terminal operation (`collect`, `forEach`).
+- "Inspection station" → intermediate operation (`filter`, `map`).
+- "Single item on belt" → one element processed through all stages.
+- "Removed at station" → filtered out by predicate.
+- "End of belt" → terminal operation (`collect`, `forEach`).
 
 Where this analogy breaks down: `sorted()` IS a station that must see all items before it can pass any forward (you can't sort a stream without seeing all elements). `sorted()` breaks the one-item-at-a-time model — it buffers all elements internally.
 
@@ -248,7 +248,7 @@ pool.shutdown();
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Source: list.stream()]
     → [Stream pipeline constructed (lazy)]  ← YOU ARE HERE
@@ -259,7 +259,7 @@ NORMAL FLOW:
     → [Stream exhausted — cannot reuse]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Stateful intermediate operation: .sorted() on huge Stream]
     → [sorted() buffers ALL elements before passing forward]
@@ -268,7 +268,7 @@ FAILURE PATH:
     → [Or: use sorted by a natural key in the DB query]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale (100M+ elements), the "no intermediate collections" property becomes critical — the difference between 1GB of intermediate allocations and near-zero. Parallel streams help for CPU-bound stateless operations but can harm throughput for I/O-bound operations (exhausting the common pool). For truly large datasets, prefer database-side grouping/filtering before streaming results.
 
 ---
@@ -363,18 +363,18 @@ How to choose: Use streams for 2+ chained operations on in-memory collections. U
 
 **IllegalStateException: Stream Reuse**
 
-Symptom: `java.lang.IllegalStateException: stream has already been operated upon or closed`
+**Symptom:** `java.lang.IllegalStateException: stream has already been operated upon or closed`
 
-Root Cause: Terminal operation called twice on the same stream, or stream stored and reused.
+**Root Cause:** Terminal operation called twice on the same stream, or stream stored and reused.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Look for stored stream variables used twice:
 grep -rn "Stream\|\.stream()" --include="*.java" . \
   | grep "= .*stream()" | head -20
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: stream stored and reused
 Stream<User> userStream = users.stream().filter(u -> u.isActive());
@@ -386,23 +386,23 @@ long count = users.stream().filter(User::isActive).count();
 users.stream().filter(User::isActive).forEach(System.out::println);
 ```
 
-Prevention: Never store streams in variables unless you use them exactly once. Create a new stream for each terminal operation.
+**Prevention:** Never store streams in variables unless you use them exactly once. Create a new stream for each terminal operation.
 
 ---
 
 **Parallel Stream Blocking Common ForkJoinPool**
 
-Symptom: Application-wide slowdown. Thread dump shows ForkJoinPool threads blocked in I/O or database operations triggered from parallel streams.
+**Symptom:** Application-wide slowdown. Thread dump shows ForkJoinPool threads blocked in I/O or database operations triggered from parallel streams.
 
-Root Cause: `parallelStream()` uses `ForkJoinPool.commonPool()` shared by the entire JVM. Blocking operations (DB calls, HTTP calls) in the pipeline starve the pool.
+**Root Cause:** `parallelStream()` uses `ForkJoinPool.commonPool()` shared by the entire JVM. Blocking operations (DB calls, HTTP calls) in the pipeline starve the pool.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Thread dump: look for ForkJoinPool-1-worker threads in WAITING
 jstack <pid> | grep -A15 "ForkJoinPool-1-worker"
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: blocks common pool
 results = items.parallelStream()
@@ -419,23 +419,23 @@ results = ioPool.submit(
 ioPool.shutdown();
 ```
 
-Prevention: Never use `.parallelStream()` for pipelines containing I/O or blocking operations. Limit parallelism to CPU-bound, stateless operations on large datasets.
+**Prevention:** Never use `.parallelStream()` for pipelines containing I/O or blocking operations. Limit parallelism to CPU-bound, stateless operations on large datasets.
 
 ---
 
 **ConcurrentModificationException from Stateful forEach**
 
-Symptom: `ConcurrentModificationException` or data corruption in a collection iterated by a stream while being modified.
+**Symptom:** `ConcurrentModificationException` or data corruption in a collection iterated by a stream while being modified.
 
-Root Cause: Stream's iteration and collection modification conflict.
+**Root Cause:** Stream's iteration and collection modification conflict.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Stack trace includes: ConcurrentModificationException
 # at ArrayList.forEach() or ArrayList$Itr.next()
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: modifying collection during stream iteration
 List<User> users = new ArrayList<>(allUsers);
@@ -453,7 +453,7 @@ users.removeAll(toRemove);
 users.removeIf(User::isInactive);
 ```
 
-Prevention: Never modify the source collection inside a stream pipeline. Collect results then apply modifications.
+**Prevention:** Never modify the source collection inside a stream pipeline. Collect results then apply modifications.
 
 ---
 

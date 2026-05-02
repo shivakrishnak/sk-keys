@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You implement a deadlock avoidance strategy: if Thread A can't acquire Lock B, it releases Lock A and retries. Thread B does the same — releases Lock B if it can't get Lock A. This prevents deadlock (Coffman condition 2 broken). But under certain timing conditions, both threads continuously acquire their first lock, detect the other is held, release, then retry — in perfect synchronisation. They're both active but neither ever holds both locks simultaneously.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 The retry logic that prevents deadlock can introduce livelock if both threads react to each other's presence symmetrically and at the same rate. CPU spikes to 100% for both threads. No exception, no blocked state, no progress. From the OS perspective, both threads are RUNNABLE and consuming CPU — making it harder to diagnose than deadlock.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 The solution (randomised exponential backoff) was formalised for network protocols in Ethernet's CSMA/CD (1976): when two stations detect a collision, each waits a random period before retrying. The randomisation breaks symmetry — both stations are unlikely to retry at exactly the same time. The same principle applies to lock retry loops.
 
 ---
@@ -64,14 +64,14 @@ Livelock is harder to diagnose than deadlock: threads are RUNNABLE in the OS sch
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Threads are executing (not sleeping/blocked).
 2. Each thread's actions cause the other to undo theirs.
 3. The combined state cycles — no terminal condition is ever reached.
 4. Typically requires symmetric response with identical timing.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Minimal livelock example:**
 
 ```
@@ -103,15 +103,15 @@ t=22: A retries → acquires lockA, lockB → proceeds
 
 Randomisation breaks symmetry → threads proceed at different times.
 
-THE TRADE-OFFS:
-Gain: Avoids deadlock without risk of livelock (with proper backoff).
-Cost: Randomised backoff adds latency; must tune range (too short: livelock persists; too long: unnecessary delay).
+**THE TRADE-OFFS:**
+**Gain:** Avoids deadlock without risk of livelock (with proper backoff).
+**Cost:** Randomised backoff adds latency; must tune range (too short: livelock persists; too long: unnecessary delay).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Two database clients both implementing "optimistic retry on deadlock". Both update rows in different order. The database detects deadlock and rolls back one. The rolled-back client immediately retries. They immediately deadlock again. The database rolls back the other. It immediately retries. They deadlock again.
 
 SYMPTOMS:
@@ -141,7 +141,7 @@ def retry_with_backoff(operation, max_retries=5):
             time.sleep(sleep_time)  # 100ms + jitter, 200ms + jitter, ...
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The randomisation ("jitter") is the critical ingredient. Without jitter, both clients apply the same backoff (e.g., sleep 100ms) and collide again at t=100ms.
 
 ---
@@ -335,11 +335,11 @@ public class OrderService {
 
 **1. Livelock in Microservice Retry Storm**
 
-Symptom: All services show high CPU; zero successful transactions; each service's metrics show high retry rate; downstream service (auth, database) sees request flood at regular intervals.
+**Symptom:** All services show high CPU; zero successful transactions; each service's metrics show high retry rate; downstream service (auth, database) sees request flood at regular intervals.
 
-Root Cause: All services retry with fixed intervals aligned to same period; each retry wave saturates the downstream service which rejects, causing another retry wave.
+**Root Cause:** All services retry with fixed intervals aligned to same period; each retry wave saturates the downstream service which rejects, causing another retry wave.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check retry pattern timing
@@ -351,19 +351,19 @@ curl http://service/metrics | grep http_request_rate
 # Spike every N seconds = uniform retry pattern
 ```
 
-Fix: Add full jitter: `sleep = random(0, base * 2^attempt)` (AWS recommendation).
+**Fix:** Add full jitter: `sleep = random(0, base * 2^attempt)` (AWS recommendation).
 
-Prevention: Use circuit breaker with randomised reset time; separate retry timing per instance.
+**Prevention:** Use circuit breaker with randomised reset time; separate retry timing per instance.
 
 ---
 
 **2. CAS Livelock in Lock-Free Structure**
 
-Symptom: Lock-free queue shows 100% CPU on multiple threads, near-zero throughput under high contention.
+**Symptom:** Lock-free queue shows 100% CPU on multiple threads, near-zero throughput under high contention.
 
-Root Cause: All threads CAS-fail simultaneously, all immediately retry, all fail again.
+**Root Cause:** All threads CAS-fail simultaneously, all immediately retry, all fail again.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 perf stat -e instructions,cpu-cycles,cache-misses ./benchmark
@@ -371,7 +371,7 @@ perf stat -e instructions,cpu-cycles,cache-misses ./benchmark
 # Low cache-misses but high cycles = CAS contention not cache misses
 ```
 
-Fix: Add `Thread.onSpinWait()` after CAS failure; or add small random sleep; or switch to a lock-based implementation under extreme contention.
+**Fix:** Add `Thread.onSpinWait()` after CAS failure; or add small random sleep; or switch to a lock-based implementation under extreme contention.
 
 ---
 

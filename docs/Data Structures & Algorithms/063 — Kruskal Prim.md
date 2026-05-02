@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A telecommunications company needs to lay cable to connect 100 cities. Any pair of cities can be connected, but the cost varies by distance and terrain. They need all cities connected using the minimum total cable length — wasting cable on redundant connections (cycles) costs money. Trying all possible spanning trees is 100^98 possibilities (Cayley's formula). Exhaustive search is impossible.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Finding the minimum-cost set of edges that connects all N nodes without cycles — a Minimum Spanning Tree — seems to require evaluating exponentially many candidate edge sets. No polynomial brute-force approach exists.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Two independent greedy strategies both produce the optimal MST:
 
 **Kruskal (1956):** Sort all edges by weight. Add each edge if it doesn't create a cycle. Greedy justification: the cheapest edge that doesn't create a cycle must be in some MST — if not, swapping it with the more expensive edge in that MST gives a cheaper spanning tree.
@@ -70,12 +70,12 @@ The correctness of both algorithms rests on a single graph theory property: for 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. An MST has exactly **V-1 edges** (connects V nodes without cycles).
 2. **Cut Property:** For any cut (S, V\S) of the vertex set, the minimum-weight edge crossing the cut belongs to some MST.
 3. **Cycle Property:** For any cycle, the maximum-weight edge in the cycle does NOT belong to any MST (there is always a cheaper way to connect those nodes).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Kruskal** exploits the cycle property: when edges are sorted by weight, each edge in order is either the minimum-weight edge crossing some cut (include it) or it closes a cycle (skip it). Union-Find efficiently determines whether adding an edge creates a cycle — if both endpoints are in the same component, the edge would form a cycle.
 
 **Prim** exploits the cut property directly: at every step, (tree, V\tree) is a cut, and adding the minimum cross-edge is justified by the cut property. A min-heap priority queue tracks the minimum cross-edge for each unvisited node.
@@ -85,7 +85,7 @@ Both maintain the invariant that selected edges are a subset of some MST at ever
 - Kruskal: each non-cycle edge is the minimum in some cut (by the cycle-skip argument)
 - Prim: each added edge is the minimum cross-edge for the current tree-cut
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
 | | Kruskal | Prim |
 |---|---|---|
@@ -98,7 +98,7 @@ THE TRADE-OFFS:
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Graph with 4 nodes (A,B,C,D) and edges: A-B(1), B-C(4), C-D(2), A-D(3), A-C(5).
 
 KRUSKAL:
@@ -115,7 +115,7 @@ Add A-D(3). Tree={A,B,D}. Cross-edges: D-C(2), A-C(5), B-C(4).
 Add D-C(2). Tree={A,B,D,C}. All nodes in tree. Done.
 MST edges: A-B(1), A-D(3), D-C(2). Total: 1+3+2=6. Same MST.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Both algorithms produce the same MST (cost 6: A-B, A-D, C-D). They make different traversal choices but both are guided by the same underlying cut/cycle property. For this graph, A-D(3) was cheaper to connect {C,D} to the tree than B-C(4) — both algorithms discovered this independently through their different strategies.
 
 ---
@@ -124,10 +124,10 @@ Both algorithms produce the same MST (cost 6: A-B, A-D, C-D). They make differen
 
 > MST algorithms are like building the cheapest water supply network to serve all houses in a city. Kruskal is the accountant approach: list all possible pipes, sort by cost, and lay the cheapest ones that connect new areas. Prim is the surveyor approach: start from the water tower and always extend to the nearest unserved house. Both strategies lay the same minimum-cost network — they just think about it differently.
 
-"Cheapest pipe not creating redundancy" → minimum-weight non-cycle edge (Kruskal)
-"Extend to nearest unserved house" → minimum cross-edge (Prim)
-"All houses served, no redundant pipes" → V-1 edges, spanning tree
-"Total pipe cost" → MST weight
+- "Cheapest pipe not creating redundancy" → minimum-weight non-cycle edge (Kruskal)
+- "Extend to nearest unserved house" → minimum cross-edge (Prim)
+- "All houses served, no redundant pipes" → V-1 edges, spanning tree
+- "Total pipe cost" → MST weight
 
 Where this analogy breaks down: Real pipe networks may require multiple water towers (multiple sources). MST assumes a single connected graph — for disconnected graphs, both algorithms produce a Minimum Spanning Forest.
 
@@ -209,7 +209,7 @@ Weighted undirected graph G
 → Use for: cable layout, cluster analysis
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Graph is disconnected
 → Kruskal terminates with fewer than V-1 edges
@@ -219,7 +219,7 @@ Graph is disconnected
 → Caller must detect and handle disconnected case
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For VLSI chip routing (V=10⁷ nodes), Kruskal's sort of 10⁸ edges takes ~3 seconds. Borůvka's algorithm (O(E log V)) with parallel component processing suits distributed computing. For dynamic MST (edges added/removed), dynamic tree structures maintain MST in O(log²N) per update — essential for live network topology changes.
 
 ---
@@ -356,11 +356,11 @@ How to choose: Use Kruskal for sparse graphs or when edges arrive sorted. Use Pr
 
 **1. Prim using cumulative distance (Dijkstra-style) instead of edge weight**
 
-Symptom: Prim returns a spanning tree that is not minimal; its total weight differs from Kruskal's result.
+**Symptom:** Prim returns a spanning tree that is not minimal; its total weight differs from Kruskal's result.
 
-Root Cause: Using `dist[v] = dist[u] + edge_weight` (Dijkstra-style) instead of `dist[v] = edge_weight` (Prim-style). Prim selects by edge weight, not cumulative path weight.
+**Root Cause:** Using `dist[v] = dist[u] + edge_weight` (Dijkstra-style) instead of `dist[v] = edge_weight` (Prim-style). Prim selects by edge weight, not cumulative path weight.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Verify: Kruskal and Prim must agree on
 // total MST weight for the same graph:
@@ -371,19 +371,19 @@ assert kruskalWeight == primWeight
     + " P=" + primWeight;
 ```
 
-Fix: In Prim, update `key[v] = edge_weight` (NOT `key[u] + edge_weight`). This is the single most common Prim implementation bug.
+**Fix:** In Prim, update `key[v] = edge_weight` (NOT `key[u] + edge_weight`). This is the single most common Prim implementation bug.
 
-Prevention: Clearly distinguish: Dijkstra = minimise total path distance from source. Prim = minimise weight of connection edge to MST.
+**Prevention:** Clearly distinguish: Dijkstra = minimise total path distance from source. Prim = minimise weight of connection edge to MST.
 
 ---
 
 **2. Kruskal applied to directed graph**
 
-Symptom: Kruskal produces a tree that is not a valid spanning arborescence (root to all nodes directed).
+**Symptom:** Kruskal produces a tree that is not a valid spanning arborescence (root to all nodes directed).
 
-Root Cause: Kruskal treats each edge as undirected (merges both endpoints). On directed graphs, this is semantically wrong — reachability in directed graphs is asymmetric.
+**Root Cause:** Kruskal treats each edge as undirected (merges both endpoints). On directed graphs, this is semantically wrong — reachability in directed graphs is asymmetric.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check: can source reach all other nodes
 # in the produced tree?
@@ -391,19 +391,19 @@ Diagnostic:
 # to directed graph incorrectly
 ```
 
-Fix: For directed MST, use Edmonds' algorithm (Chu-Liu/Edmonds'). For undirected subgraph of directed graph, explicitly add both directions.
+**Fix:** For directed MST, use Edmonds' algorithm (Chu-Liu/Edmonds'). For undirected subgraph of directed graph, explicitly add both directions.
 
-Prevention: Document whether graph is directed/undirected at algorithm entry point.
+**Prevention:** Document whether graph is directed/undirected at algorithm entry point.
 
 ---
 
 **3. Disconnected graph — MST not spanning all nodes**
 
-Symptom: MST contains fewer than V-1 edges; some nodes are not connected.
+**Symptom:** MST contains fewer than V-1 edges; some nodes are not connected.
 
-Root Cause: The graph is disconnected — no spanning tree exists. Kruskal processes all edges but adds fewer than V-1 (can't bridge disconnected components).
+**Root Cause:** The graph is disconnected — no spanning tree exists. Kruskal processes all edges but adds fewer than V-1 (can't bridge disconnected components).
 
-Diagnostic:
+**Diagnostic:**
 ```java
 int edgesAdded = 0;
 for (int[] edge : sortedEdges) {
@@ -418,9 +418,9 @@ if (edgesAdded < n-1) {
 }
 ```
 
-Fix: Return a Minimum Spanning Forest (one tree per component). Report disconnected components to caller.
+**Fix:** Return a Minimum Spanning Forest (one tree per component). Report disconnected components to caller.
 
-Prevention: Check graph connectivity before claiming MST; assert `edgesAdded == V-1` after Kruskal completes.
+**Prevention:** Check graph connectivity before claiming MST; assert `edgesAdded == V-1` after Kruskal completes.
 
 ---
 

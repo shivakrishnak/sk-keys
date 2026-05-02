@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You add parallelism to your code — two threads each increment their own counter. No shared state, no locks. You expect 2× throughput on 2 CPUs. You benchmark: you get 20% throughput improvement, not 200%. The code is logically correct and lock-free. Where is the slowdown?
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 The counters are adjacent in memory. Both fit in the same 64-byte cache line. When Thread 0 writes counter0, the cache line is marked "Modified" on CPU 0 — CPU 1's copy of that line is invalidated. Thread 1 then writes counter1 (in the same line) — must acquire the line from CPU 0 first. This repeats every increment. Two "independent" operations are serialised by the cache coherence protocol. The code looks lock-free, but the hardware inserted an invisible lock.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This problem was formally described in the early 1990s as multi-core systems became common. The term "false sharing" distinguishes it from "true sharing" (where threads actually share data). The fix — cache-line padding — was adopted in the JDK itself: `java.util.concurrent.atomic.LongAdder` (JDK 8), `ForkJoinPool`, and `ConcurrentHashMap` all use `@Contended` padding.
 
 ---
@@ -65,14 +65,14 @@ False sharing is uniquely dangerous because it is invisible. No lock appears in 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Cache coherence is enforced per cache line (64 bytes), not per byte.
 2. Only one CPU can hold a cache line in Modified state at a time.
 3. A write requires Modified state; acquiring Modified state invalidates all other CPU copies.
 4. False sharing occurs when the cache line contains both Thread A's write target and Thread B's write target simultaneously.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The MESI protocol state transitions for false sharing:
 
 ```
@@ -85,7 +85,7 @@ CPU 0 writes var0: I → M (sends BusRd, CPU 1 flushes to L3)
 
 Each write cycle: ~100–200ns of cache coherence traffic (L3 or memory round trip), vs 4ns for an L1 cache hit. At 1 billion iterations per second, the coherence overhead consumes the entire CPU budget.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 Cost of false sharing: 10–40× slowdown on contended cache lines.
 Cost of fix (padding): memory per padded object increases by 60 bytes (per 64-byte line).
 Trade-off decision: always pad in hot-path concurrent data structures; evaluate memory cost for large arrays.
@@ -94,7 +94,7 @@ Trade-off decision: always pad in hot-path concurrent data structures; evaluate 
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 
 ```
 long[] counters = {0, 0};  // indices 0 and 1
@@ -113,7 +113,7 @@ With false sharing: 90,000,000 increments/sec (each thread)
 → CPU utilization: 100% (spinning on cache coherence, not doing work)
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The CPU is not "idle" — it's 100% busy transferring cache line ownership. From the OS and profiler perspective, both CPUs are saturated. No lock is visible. The degradation looks like an algorithmic issue, not a hardware one.
 
 ---
@@ -353,11 +353,11 @@ public class NUMAFriendlyCounter {
 
 **1. Lock-Free Counter Array Performing Like a Lock**
 
-Symptom: Adding thread-local counters to reduce contention makes performance worse as thread count increases.
+**Symptom:** Adding thread-local counters to reduce contention makes performance worse as thread count increases.
 
-Root Cause: Counter array elements are adjacent in memory; incrementing counters[i] invalidates the cache line for counters[i±1..7].
+**Root Cause:** Counter array elements are adjacent in memory; incrementing counters[i] invalidates the cache line for counters[i±1..7].
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # JVM: JOL (Java Object Layout) shows field positions
@@ -371,36 +371,36 @@ perf c2c record -g -- java -cp . FalseSharingBenchmark
 perf c2c report | grep -A 5 "HITM"
 ```
 
-Fix: Use `@Contended` on each Counter object's value field, or space array elements by 8 (longs) instead of 1.
+**Fix:** Use `@Contended` on each Counter object's value field, or space array elements by 8 (longs) instead of 1.
 
 ---
 
 **2. ConcurrentHashMap Throughput Lower Than Expected**
 
-Symptom: ConcurrentHashMap write throughput doesn't scale with thread count; profiling shows no apparent lock contention.
+**Symptom:** ConcurrentHashMap write throughput doesn't scale with thread count; profiling shows no apparent lock contention.
 
-Root Cause: The `size` and `modCount` counters in older ConcurrentHashMap implementations shared cache lines with frequently-written segment locks.
+**Root Cause:** The `size` and `modCount` counters in older ConcurrentHashMap implementations shared cache lines with frequently-written segment locks.
 
-Diagnostic: (Rarely seen in JDK 8+, but illustrative)
+**Diagnostic:** (Rarely seen in JDK 8+, but illustrative)
 
 ```bash
 perf c2c report
 # Shows HITM hits on ConcurrentHashMap internal fields
 ```
 
-Fix: JDK 8 rewrote ConcurrentHashMap to use LongAdder-based size counting with @Contended padding. Use JDK 8+.
+**Fix:** JDK 8 rewrote ConcurrentHashMap to use LongAdder-based size counting with @Contended padding. Use JDK 8+.
 
-Prevention: Prefer JDK 8+ collections; validate upgrade resolves issue with `perf c2c`.
+**Prevention:** Prefer JDK 8+ collections; validate upgrade resolves issue with `perf c2c`.
 
 ---
 
 **3. False Sharing in Off-Heap Byte Buffer (Netty ByteBuf)**
 
-Symptom: Netty application with high write throughput shows unexpected CPU saturation; cache misses dominate profiler output.
+**Symptom:** Netty application with high write throughput shows unexpected CPU saturation; cache misses dominate profiler output.
 
-Root Cause: Multiple threads writing to adjacent regions of a large `ByteBuf` (Netty's off-heap buffer); adjacent write positions within 64 bytes cause false sharing at cache level.
+**Root Cause:** Multiple threads writing to adjacent regions of a large `ByteBuf` (Netty's off-heap buffer); adjacent write positions within 64 bytes cause false sharing at cache level.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Linux perf c2c for Netty
@@ -409,9 +409,9 @@ perf c2c report | head -50
 # Look for HITM hits on ByteBuf backing memory
 ```
 
-Fix: Align each thread's write region to 64-byte boundaries; use `ByteBuf.slice()` with 64-byte-aligned offsets.
+**Fix:** Align each thread's write region to 64-byte boundaries; use `ByteBuf.slice()` with 64-byte-aligned offsets.
 
-Prevention: When allocating per-thread regions in shared buffers, always round start offset up to next 64-byte boundary.
+**Prevention:** When allocating per-thread regions in shared buffers, always round start offset up to next 64-byte boundary.
 
 ---
 

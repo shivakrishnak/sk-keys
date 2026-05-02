@@ -326,15 +326,15 @@ public class SunsetController {
 
 **Silent Consumer After Sunset**
 
-Symptom:
+**Symptom:**
 Day after sunset: enterprise customer reports their integration broke. They never
 received the deprecation notice. Support crisis; executive escalation.
 
-Root Cause:
+**Root Cause:**
 API key belongs to an integration built 3 years ago; the developer who built it left
 the company; emails went to their old inbox; no developer actively monitored the API.
 
-Prevention:
+**Prevention:**
 
 ```
 1. HTTP Deprecation/Sunset headers: visible in every response, not dependent on email

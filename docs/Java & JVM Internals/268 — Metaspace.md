@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 In Java 7 and earlier, class metadata (the compiled description of every class — its methods, fields, constant pool) was stored in the Permanent Generation (PermGen), which was part of the Java heap. PermGen had a fixed maximum size (default: 64 MB, tunable with `-XX:MaxPermSize`). In application servers and frameworks that heavily used dynamic class generation (CGLIB, Groovy, JSP compilation, Hibernate), PermGen would fill up with class metadata and throw `java.lang.OutOfMemoryError: PermGen space` — one of the most infamous JVM errors.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 PermGen being heap-managed created an absurd situation: you had to tune two heap parameters (`-Xmx` for objects, `-XX:MaxPermSize` for classes) independently, and getting both right required guessing how many classes your application would load. In microservices and app servers with hot-deploy, every redeployment loaded new classes without fully unloading old ones — filling PermGen inevitably.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Moving class metadata out of the Java heap into native memory (OS-managed) with auto-sizing removed the fixed cap entirely. This is exactly why Metaspace replaced PermGen in Java 8.
 
 ---
@@ -64,32 +64,32 @@ Metaspace growing indefinitely is almost always a ClassLoader leak, not a class 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Every class loaded into the JVM requires metadata storage (its structure, bytecode, constant pool).
 2. Class metadata lifetimes are tied to ClassLoader lifetimes — when a ClassLoader is GC'd, its classes are unloaded.
 3. The number of live classes in a long-running application server can grow unboundedly with ClassLoader leaks.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 requires a dedicated storage region. Invariant 2 means metadata cannot be stored in the main object heap (which is GC'd based on object reachability, not ClassLoader lifecycle). Invariant 3 means a fixed-cap region (PermGen) will eventually run out. Moving to native memory (Metaspace) removes the cap, turning PermGen OOM into a visible native memory growth problem instead.
 
-THE TRADE-OFFS:
-Gain: No more `PermGen OOM` from a fixed cap; auto-sizing; simpler tuning.
-Cost: Metaspace can grow and consume all native memory if ClassLoader leaks exist — an uncapped leak is worse than a capped one for some production scenarios; must set `-XX:MaxMetaspaceSize` explicitly for safety.
+**THE TRADE-OFFS:**
+**Gain:** No more `PermGen OOM` from a fixed cap; auto-sizing; simpler tuning.
+**Cost:** Metaspace can grow and consume all native memory if ClassLoader leaks exist — an uncapped leak is worse than a capped one for some production scenarios; must set `-XX:MaxMetaspaceSize` explicitly for safety.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A Tomcat server hot-deploys 10 iterations of a web application. Each deploy loads 500 classes. Each undeploy should unload those 500 classes (their ClassLoader becomes garbage).
 
-WHAT HAPPENS WITH PERMGEN (Java 7):
+**WHAT HAPPENS WITH PERMGEN (Java 7):**
 Deploy 1: 500 classes loaded, 32 MB of PermGen. Deploy 2: another 500 new proxy classes (because the ClassLoader isn't fully GC'd — a static JDBC driver registration holds a reference). PermGen now has 64 MB of metadata. By Deploy 4, PermGen hits 128 MB limit: `OutOfMemoryError: PermGen space`. Tomcat crashes. The deployment that was supposed to fix a bug in production is now the cause of an outage.
 
-WHAT HAPPENS WITH METASPACE (Java 8+):
+**WHAT HAPPENS WITH METASPACE (Java 8+):**
 Same scenario, but Metaspace grows dynamically. The leak still exists — old classes aren't unloaded. But instead of a hard crash, Metaspace slowly grows toward native memory limits. The administrator notices via monitoring (`jcmd VM.native_memory`) and investigates the ClassLoader leak before it becomes critical. With `-XX:MaxMetaspaceSize=256m`, a hard cap provides safety.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Moving from a hard-cap fixed region to auto-sizing native memory doesn't fix ClassLoader leaks — it trades a hard crash for a gradual leak. Explicit monitoring and a safety cap are still required.
 
 ---
@@ -98,10 +98,10 @@ Moving from a hard-cap fixed region to auto-sizing native memory doesn't fix Cla
 
 > Metaspace is like a city's building permit archive. Every time a new building (class) is constructed, a permit (class metadata) is filed in the archive. When a building is demolished (class unloaded with its ClassLoader), the permit is removed. But if the demolition company (ClassLoader) never completes demolition (is never GC'd), the permits accumulate forever, and the archive grows until it fills the filing building (native memory).
 
-"Filing building" → native memory
-"Permit" → class metadata entry in Metaspace
-"Building demolished" → ClassLoader GC'd → class unloaded
-"Demolition company that never completes" → ClassLoader leak
+- "Filing building" → native memory
+- "Permit" → class metadata entry in Metaspace
+- "Building demolished" → ClassLoader GC'd → class unloaded
+- "Demolition company that never completes" → ClassLoader leak
 
 Where this analogy breaks down: unlike physical filing space, Metaspace doesn't have a physical limit — it grows until the OS says "no more memory". With `-XX:MaxMetaspaceSize`, you impose an artificial limit.
 
@@ -172,7 +172,7 @@ When a ClassLoader becomes unreachable (no strong references from GC roots), dur
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Application starts
   → Bootstrap ClassLoader loads JDK classes
@@ -187,7 +187,7 @@ Application starts
     → Metaspace reallocated
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 ClassLoader leak (old loader not GC'd)
   → Metaspace grows each deployment
@@ -197,7 +197,7 @@ ClassLoader leak (old loader not GC'd)
   → Diagnosis: heap dump → find stuck ClassLoader
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale with microservices and rolling deployments, class loading patterns stabilise — the same classes are loaded once and remain for the JVM lifetime. Metaspace is not a scaling concern in this model. The risk scenario is application servers with hot-reload under heavy deployment frequency — Metaspace then grows with each deployment, making monitoring essential.
 
 ---
@@ -313,11 +313,11 @@ How to choose: You don't choose Metaspace — it's automatic. You tune it: set `
 
 **1. OutOfMemoryError: Metaspace from ClassLoader Leak**
 
-Symptom: `java.lang.OutOfMemoryError: Metaspace` after multiple hot deployment cycles in an application server.
+**Symptom:** `java.lang.OutOfMemoryError: Metaspace` after multiple hot deployment cycles in an application server.
 
-Root Cause: Old ClassLoader instances not garbage collected because static references (JDBC drivers, logging frameworks, ThreadLocals) hold references to classes from the old ClassLoader.
+**Root Cause:** Old ClassLoader instances not garbage collected because static references (JDBC drivers, logging frameworks, ThreadLocals) hold references to classes from the old ClassLoader.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Monitor Metaspace growth across redeploys
 jcmd <pid> VM.native_memory summary | grep Class
@@ -329,15 +329,15 @@ jmap -dump:format=b,file=/tmp/heap.hprof <pid>
 # Check retained heap for old ClassLoader objects
 ```
 
-Prevention: Deregister JDBC drivers, thread locals, and logging on webapp undeploy. Use static analysis tools to detect common leak patterns.
+**Prevention:** Deregister JDBC drivers, thread locals, and logging on webapp undeploy. Use static analysis tools to detect common leak patterns.
 
 **2. Metaspace Consuming Unexpected Native Memory**
 
-Symptom: JVM process uses significantly more native memory than `-Xmx` + stack + Metaspace estimate suggests.
+**Symptom:** JVM process uses significantly more native memory than `-Xmx` + stack + Metaspace estimate suggests.
 
-Root Cause: Metaspace fragmentation — native allocations leave gaps that are not reusable. Or: high class loading caused by reflection-heavy frameworks (Hibernate, Spring).
+**Root Cause:** Metaspace fragmentation — native allocations leave gaps that are not reusable. Or: high class loading caused by reflection-heavy frameworks (Hibernate, Spring).
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Detailed native memory breakdown
 java -XX:NativeMemoryTracking=detail \
@@ -346,15 +346,15 @@ jcmd <pid> VM.native_memory detail > /tmp/nmt.txt
 grep -A 5 "Class" /tmp/nmt.txt
 ```
 
-Prevention: Set `-XX:MaxMetaspaceSize`; profile class loading with `-verbose:class` to find unexpected class loading.
+**Prevention:** Set `-XX:MaxMetaspaceSize`; profile class loading with `-verbose:class` to find unexpected class loading.
 
 **3. Unexpected Metaspace GC Causes Latency Spike**
 
-Symptom: Periodic latency spikes not correlated with heap GC logs; Metaspace GC not visible in standard GC logs.
+**Symptom:** Periodic latency spikes not correlated with heap GC logs; Metaspace GC not visible in standard GC logs.
 
-Root Cause: When Metaspace reaches the `-XX:MetaspaceSize` threshold, the JVM triggers a Full GC (which includes class unloading), causing a stop-the-world pause unrelated to heap pressure.
+**Root Cause:** When Metaspace reaches the `-XX:MetaspaceSize` threshold, the JVM triggers a Full GC (which includes class unloading), causing a stop-the-world pause unrelated to heap pressure.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Enable GC logging including Metaspace events
 java -Xlog:gc*:file=/var/log/gc.log:time \
@@ -362,7 +362,7 @@ java -Xlog:gc*:file=/var/log/gc.log:time \
 grep "Metaspace" /var/log/gc.log
 ```
 
-Prevention: Set `-XX:MetaspaceSize` large enough that the threshold is never reached in normal operation (set it above the expected steady-state class metadata size).
+**Prevention:** Set `-XX:MetaspaceSize` large enough that the threshold is never reached in normal operation (set it above the expected steady-state class metadata size).
 
 ---
 

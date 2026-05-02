@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Copy-Paste Programming"
 parent: "Design Patterns"
@@ -175,7 +175,7 @@ WITH DRY (abstracted approach):
 "Different salt, no pickle, wrong thickness" = diverged copies: different exception types, different rounding, different null handling
 "Contaminated lettuce recall: call 500 locations" = fixing one bug in 500 copies
 "Standardized recipe from HQ" = shared abstraction (shared library, TaxService, Email value object)
-"One recipe change → 500 locations updated" = fix in one place → all callers updated
+- "One recipe change → 500 locations updated" = fix in one place → all callers updated
 
 ---
 

@@ -32,15 +32,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 Functional programming uses recursion as its primary looping mechanism — there are no `for` or `while` loops in pure Haskell, Erlang, or Scheme. Processing a list of one million elements means one million recursive calls. With standard recursion, that's one million stack frames — guaranteed stack overflow on any machine with finite stack memory. Functional languages would be practically useless for non-trivial workloads.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 A Scheme program that iterates over a million-element list via recursion crashes with a stack overflow on any hardware. The fundamental premise of functional programming — everything is a function, loops are recursive calls — becomes physically impossible for real-world data sizes without a solution.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 This is exactly why tail call optimisation (TCO) was invented — a compiler transformation that recognises when a recursive call is in "tail position" (the very last thing a function does before returning) and replaces the call with a jump that reuses the current stack frame. With TCO, tail recursion uses O(1) stack space — equivalent to a loop — making recursion-as-looping practical for arbitrarily large inputs.
 
@@ -68,13 +68,13 @@ The key constraint is "nothing pending after the recursive call." If you compute
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. A stack frame exists only to hold state needed after the callee returns. If nothing is needed after the recursive call, the frame can be discarded before the call.
 2. Tail position means: the return value of the recursive call IS the return value of the current call — no transformation applied after the call returns.
 3. Accumulating results via parameter (the "accumulator pattern") transforms most non-tail recursive functions into tail recursive ones.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 Non-tail recursive factorial:
 
@@ -104,19 +104,19 @@ loop:
   goto loop   ← jump, not call; no new frame
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
-Gain: O(1) stack space, no stack overflow for arbitrarily deep recursion, functional-style loops practical for large data.
-Cost: accumulator pattern changes function signature; intermediate computations must be passed explicitly; debugging — stack trace shows only the final call (no history of how we got there); some algorithms are hard to convert to tail-recursive form (mutual recursion, tree traversal with accumulation on both subtrees).
+**Gain:** O(1) stack space, no stack overflow for arbitrarily deep recursion, functional-style loops practical for large data.
+**Cost:** accumulator pattern changes function signature; intermediate computations must be passed explicitly; debugging — stack trace shows only the final call (no history of how we got there); some algorithms are hard to convert to tail-recursive form (mutual recursion, tree traversal with accumulation on both subtrees).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Count down from 1,000,000 to 0 using recursion. One version is non-tail recursive; the other is tail recursive.
 
-WHAT HAPPENS WITH NON-TAIL RECURSION:
+**WHAT HAPPENS WITH NON-TAIL RECURSION:**
 
 ```python
 def countdown(n):
@@ -127,7 +127,7 @@ def countdown(n):
 # Stack has 1,000,000 frames at peak
 ```
 
-WHAT HAPPENS WITH TAIL RECURSION + TCO (Scheme/Haskell):
+**WHAT HAPPENS WITH TAIL RECURSION + TCO (Scheme/Haskell):**
 
 ```scheme
 (define (countdown n)
@@ -138,10 +138,10 @@ WHAT HAPPENS WITH TAIL RECURSION + TCO (Scheme/Haskell):
 ; Equivalent to: while n > 0: n -= 1; return "done"
 ```
 
-WHAT HAPPENS WITHOUT TCO (Java, Python):
+**WHAT HAPPENS WITHOUT TCO (Java, Python):**
 Even if the call is in tail position, without TCO the stack grows. Java deliberately omits TCO — every call creates a new frame regardless of tail position. Python limits recursion depth to ~1000 by default.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Tail position is a _semantic_ property (nothing pending after the call). TCO is a _compiler_ transformation that exploits this property. The two are independent: a call can be in tail position without TCO being applied (Java), and TCO can only be applied to calls in tail position. Language choice determines whether your tail recursion is actually safe.
 
 ---
@@ -240,7 +240,7 @@ tailrec fun factorialTail(n: Int, acc: Long = 1L): Long {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 factorialTail(1000000, 1) called
@@ -274,7 +274,7 @@ Observable: java.lang.StackOverflowError
 Fix: convert to explicit while loop
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 In Erlang and Haskell, TCO is not just a nice-to-have — it's required for production servers that handle millions of messages via recursive actor loops. An Erlang gen_server process loops forever by tail-calling itself: `loop(State) → receive Msg → loop(handle(Msg, State))`. Without TCO, every message sent to a long-lived Erlang process would grow its stack by one frame — the server would crash after enough messages.
 
@@ -384,13 +384,13 @@ long result = Trampoline.run(sumTrampoline(1_000_000, 0));
 
 **False Tail Position (Thinking It's Tail Recursive When It Isn't)**
 
-Symptom:
+**Symptom:**
 `StackOverflowError` despite believing the function is tail recursive. Kotlin `tailrec` annotation causes compile error.
 
-Root Cause:
+**Root Cause:**
 The recursive call is not actually in tail position. A common mistake: `return value + recursiveCall(...)` — the addition is pending after the call returns, making it non-tail. Also: `if (condition) recursiveCall() else otherMethod()` — if `otherMethod()` is not the recursive call, only the `recursiveCall()` branch is tail position.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```kotlin
 // Kotlin compiler catches this with @tailrec:
@@ -402,23 +402,23 @@ tailrec fun badFactorial(n: Int): Long {
 }
 ```
 
-Fix:
+**Fix:**
 Add an accumulator parameter. Move all computation _before_ the recursive call into the accumulator update. Ensure the recursive call's return value is directly returned without transformation.
 
-Prevention:
+**Prevention:**
 Use `@tailrec` (Kotlin), `tailrec` keyword (Haskell), or trampoline verification to get compile-time confirmation that tail position is achieved.
 
 ---
 
 **Java StackOverflow Despite Tail-Position Code**
 
-Symptom:
+**Symptom:**
 Tail-recursive function in Java causes `StackOverflowError` even though the recursive call appears to be in tail position.
 
-Root Cause:
+**Root Cause:**
 Java deliberately does not implement TCO. Every method call creates a new JVM stack frame, regardless of tail position. This is a design decision, not a limitation.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Verify JVM frame creation per call:
@@ -430,10 +430,10 @@ jstack <PID> | grep "method_name"
 # In method: if (++depth % 1000 == 0) System.out.println("Depth: " + depth);
 ```
 
-Fix:
+**Fix:**
 Convert to an iterative loop — Java's while/for loop is what Kotlin's `tailrec` generates anyway. Or use Kotlin's `tailrec`, which does compile to a loop on the JVM.
 
-Prevention:
+**Prevention:**
 For any recursive function that could recurse deeply in production Java code, always convert to iteration. Never rely on tail-position analysis in Java — it provides no optimisation.
 
 ---

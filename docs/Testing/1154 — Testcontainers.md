@@ -300,12 +300,12 @@ class OrderRepositoryTest {
 **1. Container Starts Too Slowly in CI → Test Timeout**
 
 Cause: Docker image not cached in CI; slow CI network.
-Fix: Pre-pull image in CI warm-up step. Use `withStartupTimeout(Duration.ofMinutes(2))`.
+**Fix:** Pre-pull image in CI warm-up step. Use `withStartupTimeout(Duration.ofMinutes(2))`.
 
 **2. Tests Pass Locally, Fail in CI**
 
 Cause: Local Docker Desktop vs. CI Linux Docker have different behavior (usually file permissions or networking).
-Fix: Test with `docker run` in CI to replicate locally. Check if CI uses Docker-in-Docker (privilege issues).
+**Fix:** Test with `docker run` in CI to replicate locally. Check if CI uses Docker-in-Docker (privilege issues).
 
 ---
 

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 `git diff` shows exactly which lines changed between two file versions. Given file version A (1,000 lines) and version B (1,000 lines), how do you determine which lines were unchanged (common) and which were added or deleted? The naive approach compares every line of A against every line of B: 1,000 × 1,000 = 1 million comparisons, producing an unmanageable list of "differences."
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Without the LCS backbone, diff output has no structure — it can't distinguish whether two similar lines come from the same original, making diffs noisy and unintuitive. DNA sequence alignment for a 3 billion base-pair genome against a 3 billion base-pair reference genome needs to find the most similar regions — O(N²) brute force is 9 × 10^18 operations, infeasible.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 The longest common subsequence defines the "unchanging core" of two sequences — every element in the LCS represents a stable alignment point. The remaining elements are additions or deletions. Computing LCS with dynamic programming reduces O(2^N) recursive enumeration to O(N×M) tabulation by identifying overlapping subproblems: `LCS(i,j)` depends only on `LCS(i-1,j)`, `LCS(i,j-1)`, and `LCS(i-1,j-1)`. This is exactly why **Longest Common Subsequence** was created.
 
 ---
@@ -64,32 +64,32 @@ LCS is NOT the longest common substring (which must be contiguous). "ABCBDAB" an
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The LCS of an empty string with any string is empty: `LCS("", X) = ""` (base case).
 2. If `X[i] == Y[j]`, the last character of both matches; the LCS must include it: `LCS(X[1..i], Y[1..j]) = LCS(X[1..i-1], Y[1..j-1]) + X[i]`.
 3. If `X[i] ≠ Y[j]`, one (or both) of the last characters is NOT in the LCS; try both options: `max(LCS(X[1..i-1], Y[1..j]), LCS(X[1..i], Y[1..j-1]))`.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 These three cases define a complete recurrence. The subproblem structure is: `dp[i][j]` depends only on `dp[i-1][j-1]`, `dp[i-1][j]`, `dp[i][j-1]`. Filling the table row by row (bottom-up DP) gives O(M×N) with no redundant computation. Backtracking through the table recovers the actual LCS string.
 
 **Space optimisation:**
 Since `dp[i][j]` depends only on row i-1 and row i, only two rows (or one row + one saved value) need to be stored: O(min(M,N)) space for length. Recovering the actual LCS requires either storing the full M×N table or rerunning with divide and conquer (Hirschberg's algorithm: O(M×N) time, O(min(M,N)) space).
 
-THE TRADE-OFFS:
-Gain: O(M×N) — polynomial for exact LCS. Direct application to diff tools, DNA alignment, plagiarism detection.
-Cost: O(M×N) space for full table — for 10,000-line files: 10,000 × 10,000 = 100M entries, ~500 MB. Recovering the actual LCS sequence (not just length) requires backtracking through the whole table. For very long sequences, approximate algorithms (space-efficient Hirschberg, heuristic alignment) are preferred.
+**THE TRADE-OFFS:**
+**Gain:** O(M×N) — polynomial for exact LCS. Direct application to diff tools, DNA alignment, plagiarism detection.
+**Cost:** O(M×N) space for full table — for 10,000-line files: 10,000 × 10,000 = 100M entries, ~500 MB. Recovering the actual LCS sequence (not just length) requires backtracking through the whole table. For very long sequences, approximate algorithms (space-efficient Hirschberg, heuristic alignment) are preferred.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 X = "ABCBDAB", Y = "BDCAB". Find LCS length.
 
-WHAT HAPPENS WITH BRUTE FORCE:
+**WHAT HAPPENS WITH BRUTE FORCE:**
 Generate all 2^7 = 128 subsequences of X; for each, check if it's a subsequence of Y. Most subsequences of X are not in Y. Total: 128 subsequences × O(N) check = O(2^M × N) — exponential.
 
-WHAT HAPPENS WITH DP:
+**WHAT HAPPENS WITH DP:**
 Build the 7×5 table. Key entries (i,j) where X[i]==Y[j]:
 - X[2]='B'=Y[1]='B': dp[2][1] = dp[1][0]+1 = 1.
 - X[3]='C'=Y[3]='C': dp[3][3] = dp[2][2]+1 = 2.
@@ -99,7 +99,7 @@ Build the 7×5 table. Key entries (i,j) where X[i]==Y[j]:
 
 Final answer: dp[7][5] = 4. One LCS: "BCAB". Total operations: 35 table entries = O(M×N). Exponential → polynomial.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The key structural insight: If we've already solved `LCS(X[1..i], Y[1..j])` for all smaller i,j, then solving for the next (i,j) takes O(1) — lookup and compare. The overlapping subproblem structure (same (i,j) would be recomputed exponentially many times in naive recursion) is eliminated by the table.
 
 ---
@@ -108,11 +108,11 @@ The key structural insight: If we've already solved `LCS(X[1..i], Y[1..j])` for 
 
 > LCS is like finding the common "backbone" between two movie scripts. Alice's script has scenes [A, B, C, D, E]; Bob's has [B, D, C, E]. Both scripts have scenes B, D, E in common order — that's the LCS. Scenes can be "skipped" between common points — scenes A and C appear in Alice's but not Bob's or in the wrong relative order.
 
-"Alice's and Bob's scripts" → strings X and Y
-"Common scenes in relative order" → common subsequence
-"Longest such list of common scenes" → LCS
-"Scene reorder" → violates subsequence property (order must be preserved)
-"Scene not in one script" → character only in one string
+- "Alice's and Bob's scripts" → strings X and Y
+- "Common scenes in relative order" → common subsequence
+- "Longest such list of common scenes" → LCS
+- "Scene reorder" → violates subsequence property (order must be preserved)
+- "Scene not in one script" → character only in one string
 
 Where this analogy breaks down: The LCS is not necessarily unique — "BCDB" and "BCAB" are both valid LCS of length 4 for the example above. The analogy suggests the common scenes are "the same", but multiple valid LCSs may exist.
 
@@ -182,7 +182,7 @@ int lcsLength(String X, String Y) {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Two sequences (strings, file lines, DNA base pairs)
 → Fill M×N DP table bottom-up in O(M×N)
@@ -195,7 +195,7 @@ Two sequences (strings, file lines, DNA base pairs)
   Plagiarism: LCS of sentences → similarity percentage
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 M × N too large for full table (1M lines × 1M lines = 10^12 entries)
 → OutOfMemoryError or infeasible runtime
@@ -204,7 +204,7 @@ M × N too large for full table (1M lines × 1M lines = 10^12 entries)
 → Diagnostic: estimate M×N × 4 bytes; if > available RAM → switch algorithm
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For a 3 billion base-pair genome alignment (M=N=3×10⁹), O(M×N) DP is 9×10^18 operations — impossible. Production genomics tools (BWA, HISAT2) use:
 1. Hash-indexed k-mer seeding: find exact 20-mer matches O(N).
 2. Smith-Waterman local alignment only near seeds.
@@ -332,30 +332,30 @@ How to choose: Use LCS DP directly for correctness and moderate input sizes. Use
 
 **1. Off-by-one in DP table indexing**
 
-Symptom: LCS length is 0 or 1 fewer than expected; backtracking goes out of bounds.
+**Symptom:** LCS length is 0 or 1 fewer than expected; backtracking goes out of bounds.
 
-Root Cause: Confusion between 0-indexed strings and 1-indexed DP table. `dp[i][j]` represents `X[0..i-1]` and `Y[0..j-1]`, so string access is `X.charAt(i-1)`.
+**Root Cause:** Confusion between 0-indexed strings and 1-indexed DP table. `dp[i][j]` represents `X[0..i-1]` and `Y[0..j-1]`, so string access is `X.charAt(i-1)`.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Test with known LCS: lcs("ABC", "AC") should be 2
 assert lcs("ABC", "AC") == 2 : "Off-by-one in LCS";
 // Print dp table for small inputs to verify
 ```
 
-Fix: Use the convention `dp[i][j]` = LCS of `X[0..i-1]` and `Y[0..j-1]`; base case `dp[0][j] = dp[i][0] = 0`.
+**Fix:** Use the convention `dp[i][j]` = LCS of `X[0..i-1]` and `Y[0..j-1]`; base case `dp[0][j] = dp[i][0] = 0`.
 
-Prevention: Explicitly comment the index convention; add unit tests for known inputs.
+**Prevention:** Explicitly comment the index convention; add unit tests for known inputs.
 
 ---
 
 **2. Memory overflow for large inputs**
 
-Symptom: `OutOfMemoryError` for files with 100,000+ lines.
+**Symptom:** `OutOfMemoryError` for files with 100,000+ lines.
 
-Root Cause: Full M×N table: 100,000 × 100,000 × 4 bytes = 40 GB.
+**Root Cause:** Full M×N table: 100,000 × 100,000 × 4 bytes = 40 GB.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 long estimatedBytes = (long) M * N * 4;
 System.out.println("Estimated memory: " +
@@ -363,19 +363,19 @@ System.out.println("Estimated memory: " +
 // If > available heap: switch algorithm
 ```
 
-Fix: Use 1D rolling array for length only; or Hirschberg's for actual LCS with O(min(M,N)) space.
+**Fix:** Use 1D rolling array for length only; or Hirschberg's for actual LCS with O(min(M,N)) space.
 
-Prevention: Estimate M×N before choosing algorithm; set a threshold (e.g., M×N > 10^8 → switch to Myers or Hirschberg).
+**Prevention:** Estimate M×N before choosing algorithm; set a threshold (e.g., M×N > 10^8 → switch to Myers or Hirschberg).
 
 ---
 
 **3. Wrong answer from greedy LCS attempt**
 
-Symptom: Greedy "scan for first match" approach returns shorter LCS than optimal.
+**Symptom:** Greedy "scan for first match" approach returns shorter LCS than optimal.
 
-Root Cause: Greedy: for each character in X, find its first occurrence in Y after the last matched position. This is locally optimal but globally suboptimal for LCS — unlike sorting-based algorithms where greedy works.
+**Root Cause:** Greedy: for each character in X, find its first occurrence in Y after the last matched position. This is locally optimal but globally suboptimal for LCS — unlike sorting-based algorithms where greedy works.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Greedy fails here: X="AB", Y="BA"
 // Greedy: match 'A' at Y[1], then 'B' at Y[1] → can't → LCS="A" (length 1)
@@ -383,9 +383,9 @@ Diagnostic:
 // Greedy works for LCS of sorted sequences, NOT general case
 ```
 
-Fix: Always use full DP for general LCS; greedy only works for specific cases (longest increasing subsequence with patience sorting).
+**Fix:** Always use full DP for general LCS; greedy only works for specific cases (longest increasing subsequence with patience sorting).
 
-Prevention: Never use greedy for LCS — the problem has optimal substructure but not the greedy-choice property.
+**Prevention:** Never use greedy for LCS — the problem has optimal substructure but not the greedy-choice property.
 
 ---
 

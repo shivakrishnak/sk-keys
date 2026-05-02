@@ -32,10 +32,10 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 `Executor.execute(Runnable)` has no lifecycle management — you can't shut it down gracefully, wait for in-flight tasks to finish, or retrieve results. Production services need to stop their thread pools on shutdown, wait for pending work to complete, and retrieve typed results from background tasks.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 **`ExecutorService`** adds lifecycle control and result-returning task support to the base `Executor` abstraction — the production-grade thread pool interface.
 
 ---
@@ -61,12 +61,12 @@ Proper shutdown is critical. An `ExecutorService` without shutdown prevents JVM 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. After `shutdown()`, no new tasks are accepted; pending tasks complete.
 2. `shutdownNow()` tries to interrupt running tasks; returns pending (not-started) task list.
 3. `awaitTermination()` blocks until all tasks complete or timeout expires.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 ```java
 // Lifecycle management pattern:
 ExecutorService service = Executors.newFixedThreadPool(4);
@@ -95,15 +95,15 @@ Executors.newScheduledThreadPool(n)  // delayed/periodic tasks
 Executors.newVirtualThreadPerTaskExecutor() // Java 21 virtual threads
 ```
 
-THE TRADE-OFFS:
-Gain: Lifecycle management; Future results; batch submit.
-Cost: Must call shutdown; `FixedThreadPool` with unbounded queue can OOM; `CachedThreadPool` can create unlimited threads.
+**THE TRADE-OFFS:**
+**Gain:** Lifecycle management; Future results; batch submit.
+**Cost:** Must call shutdown; `FixedThreadPool` with unbounded queue can OOM; `CachedThreadPool` can create unlimited threads.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP: Parallel report generation with results.
+**SETUP:** Parallel report generation with results.
 
 ```java
 ExecutorService pool = Executors.newFixedThreadPool(4);
@@ -124,7 +124,7 @@ pool.shutdown();
 pool.awaitTermination(60, SECONDS);
 ```
 
-THE INSIGHT: All submissions happen before any `.get()` call — this ensures concurrent execution. Then results are collected sequentially without reducing throughput.
+**THE INSIGHT:** All submissions happen before any `.get()` call — this ensures concurrent execution. Then results are collected sequentially without reducing throughput.
 
 ---
 
@@ -285,14 +285,14 @@ How to choose: Fixed thread pool for CPU tasks (n = core count). Virtual thread 
 jstack <pid> | grep "pool-" | head -20
 # Shows non-daemon threads keeping JVM alive
 ```
-Fix: `@Bean(destroyMethod = "shutdown")` or try-with-resources.
+**Fix:** `@Bean(destroyMethod = "shutdown")` or try-with-resources.
 
 **Unbounded queue growth (FixedThreadPool):**
 ```bash
 # JMX: check JVM thread pool queue depth
 jcmd <pid> GC.heap_info
 ```
-Fix: Use `ThreadPoolExecutor` with bounded `ArrayBlockingQueue` + rejection handler.
+**Fix:** Use `ThreadPoolExecutor` with bounded `ArrayBlockingQueue` + rejection handler.
 
 ---
 

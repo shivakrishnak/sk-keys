@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "News Feed Design"
 parent: "System Design"
@@ -195,7 +195,7 @@ WITH News Feed architecture:
 "Fresh assembly at pickup" = fan-out on read (merge posts at request time)
 "Famous columnist" = celebrity user (avoid write amplification to millions of feeds)
 "Story filing triggers printing" = post creation triggers fan-out to follower feeds
-"Subscriber picks up paper" = user opens app → reads pre-computed feed from Redis
+- "Subscriber picks up paper" = user opens app → reads pre-computed feed from Redis
 
 ---
 

@@ -368,12 +368,12 @@ public class CreatePaymentRequest {
 
 **Documentation Drift (Stale Docs)**
 
-Symptom:
+**Symptom:**
 Swagger UI shows `amount` as a string. Real API returns `amount` as an integer (numeric).
 Consumer writes `Long.parseLong(response.getAmount())` → works in test, breaks with
 actual integer response.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Use Dredd to validate spec examples match live API:

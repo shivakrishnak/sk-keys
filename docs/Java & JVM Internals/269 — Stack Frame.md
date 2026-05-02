@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine calling functions in a world with no call activation records. Every function would need to use global variables to store its local state. `methodA()` stores its `int count = 5` in global memory, then calls `methodB()`, which also needs a `count` variable and overwrites the global — corrupting `methodA()`'s state. Recursion becomes completely impossible because each recursive call would clobber the previous call's variables.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Function calls with local state and recursion require that each function invocation has its own isolated workspace. Without an activation record per call, functions cannot have local variables, cannot call each other safely, and cannot be recursive. The entire structure of modern programming breaks down.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 The Stack Frame is the activation record — a structured block of memory created per method invocation that holds all the per-call state. This is exactly why Stack Frames exist: to give each method call a complete, isolated workspace that evaporates cleanly when the method returns.
 
 ---
@@ -64,23 +64,23 @@ Understanding stack frames reveals why stack traces are so informative: a `NullP
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Every method invocation requires isolated storage for its local variables and working data.
 2. Method call/return is LIFO — the most recently called method returns first.
 3. A frame's storage must be completely isolated from other frames (no inter-frame variable sharing).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 requires per-call storage. Invariant 2 mandates a stack structure. Invariant 3 requires each frame to be self-contained. The design follows directly: a stack of frames, each containing its own local variable array and operand stack. The frame knows its static size at compilation time (max locals + max stack are encoded in the class file's `Code` attribute), enabling the JVM to allocate exactly the right amount of space per frame.
 
-THE TRADE-OFFS:
-Gain: O(1) allocation/deallocation, thread safety by isolation, recursive call support, clean call semantics.
-Cost: Fixed maximum frame size per method (determined at compile time); deep call chains can overflow the stack; large local arrays in deeply nested calls consume significant stack memory.
+**THE TRADE-OFFS:**
+**Gain:** O(1) allocation/deallocation, thread safety by isolation, recursive call support, clean call semantics.
+**Cost:** Fixed maximum frame size per method (determined at compile time); deep call chains can overflow the stack; large local arrays in deeply nested calls consume significant stack memory.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Consider this recursive factorial without stack frames (sharing one global memory region):
 
 ```
@@ -89,13 +89,13 @@ fact(3) → "in factGlobal[n=3]"
     calls fact(1) → "in factGlobal[n=1]" ← OVERWRITES again
 ```
 
-WHAT HAPPENS WITHOUT STACK FRAMES (shared memory):
+**WHAT HAPPENS WITHOUT STACK FRAMES (shared memory):**
 `fact(3)` stores `n=3` in shared memory slot 0. It calls `fact(2)`, which stores `n=2` in slot 0 — THE SAME SLOT. The return value multiplier expression `n * fact(n-1)` needs `n=3` but the slot now contains `2`. The computation `3 * fact(2)` cannot be computed because `3` is already overwritten. Result: garbage.
 
-WHAT HAPPENS WITH STACK FRAMES:
+**WHAT HAPPENS WITH STACK FRAMES:**
 `fact(3)` creates Frame 1 with local slot 0 = 3. It calls `fact(2)`, creating Frame 2 with its own local slot 0 = 2 — INDEPENDENT OF Frame 1. Frame 2 calls `fact(1)` → Frame 3 with slot 0 = 1. Frame 3 returns 1 (base case). Frame 2 reads its own slot 0 (2) → returns 2 * 1 = 2. Frame 1 reads its own slot 0 (3) → returns 3 * 2 = 6. Each frame's variables are fully isolated.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Recursion is only possible because each call gets its own isolated variable storage. Stack Frames are not just an implementation detail — they are the enabling mechanism for function abstraction itself.
 
 ---
@@ -104,11 +104,11 @@ Recursion is only possible because each call gets its own isolated variable stor
 
 > Stack Frames are like a stack of spreadsheets. Each method call creates a new spreadsheet and places it on top of the pile. The spreadsheet has two sections: a "data cells" section (local variable array) and a "calculation scratch pad" (operand stack). When the method finishes, the top spreadsheet is torn off and discarded. The spreadsheet below is now on top and contains the calling method's state exactly as it was.
 
-"Pile of spreadsheets" → the JVM stack
-"Top spreadsheet" → current executing frame
-"Data cells section" → local variable array (named slots)
-"Scratch pad" → operand stack (working area for bytecode ops)
-"Tearing off the top sheet" → method return, frame popped
+- "Pile of spreadsheets" → the JVM stack
+- "Top spreadsheet" → current executing frame
+- "Data cells section" → local variable array (named slots)
+- "Scratch pad" → operand stack (working area for bytecode ops)
+- "Tearing off the top sheet" → method return, frame popped
 
 Where this analogy breaks down: unlike spreadsheets where you can look at any sheet in the pile, in a JVM stack the interpreter can only access the top frame. Frames below are frozen until the frame above them returns.
 
@@ -197,7 +197,7 @@ Each `at` line = one active frame, with the current executing line in each.
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Thread calls methodA()
   → Frame for methodA pushed onto thread stack
@@ -212,7 +212,7 @@ Thread calls methodA()
     → methodA frame popped; stack as before call
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Unbounded recursion
   → methodA calls methodA calls methodA ...
@@ -223,7 +223,7 @@ Unbounded recursion
   → If uncaught: thread terminates
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 1000 concurrent threads, 1000 thread stacks exist in memory. Each thread's stack depth (number of active frames) depends on the call chain depth. A reactive framework (Spring WebFlux, Netty) typically has very shallow call stacks (few frames per thread), while a traditional servlet stack can have 30–50 nested frames (filters, interceptors, ORM layers). Deep stacks consume more memory per thread. Virtual Threads (Java 21) use resizable, heap-stored stacks that can grow/shrink per frame depth.
 
 ---
@@ -371,11 +371,11 @@ How to choose: You don't choose — the JVM uses a stack machine for bytecode ex
 
 **1. StackOverflowError from Infinite Recursion**
 
-Symptom: `java.lang.StackOverflowError`; stack trace shows the same method repeated hundreds of times.
+**Symptom:** `java.lang.StackOverflowError`; stack trace shows the same method repeated hundreds of times.
 
-Root Cause: A method calls itself recursively without a base case, or two methods call each other cyclically.
+**Root Cause:** A method calls itself recursively without a base case, or two methods call each other cyclically.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Thread dump shows the offending call chain
 jcmd <pid> Thread.print | head -100
@@ -384,7 +384,7 @@ grep -A 100 "StackOverflow" thread_dump.txt | \
   awk '{print $1}' | sort | uniq -c | sort -rn
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: Missing base case
 int sum(int n) { return n + sum(n - 1); }
@@ -402,15 +402,15 @@ int sumIter(int n) {
 }
 ```
 
-Prevention: Always verify recursive algorithms have a valid base case; test with boundary values (n=0, n=1).
+**Prevention:** Always verify recursive algorithms have a valid base case; test with boundary values (n=0, n=1).
 
 **2. Misleading Stack Trace After JIT Inlining**
 
-Symptom: Stack trace shows fewer frames than expected; a NullPointerException in a helper method appears attributed to the calling method's line number.
+**Symptom:** Stack trace shows fewer frames than expected; a NullPointerException in a helper method appears attributed to the calling method's line number.
 
-Root Cause: JIT inlined the helper method into the caller's native code. The JVM recreates a "virtual" stack trace for reporting, but line numbers may be imprecise.
+**Root Cause:** JIT inlined the helper method into the caller's native code. The JVM recreates a "virtual" stack trace for reporting, but line numbers may be imprecise.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Disable inlining to get accurate stack traces
 # (not for production — major performance impact)
@@ -422,15 +422,15 @@ java -XX:+PrintCompilation \
      -jar myapp.jar 2>&1 | grep "inlining"
 ```
 
-Prevention: This is informational - add defensive null checks; use structured logging that includes request IDs for correlated trace analysis.
+**Prevention:** This is informational - add defensive null checks; use structured logging that includes request IDs for correlated trace analysis.
 
 **3. Exception Stack Trace Truncation**
 
-Symptom: Stack trace in logs shows `... 35 more` — not the full chain; root cause is hidden.
+**Symptom:** Stack trace in logs shows `... 35 more` — not the full chain; root cause is hidden.
 
-Root Cause: Java truncates chained exception stack traces to avoid duplicate prefix printing. The `... 35 more` means those frames were already printed in a parent exception's trace.
+**Root Cause:** Java truncates chained exception stack traces to avoid duplicate prefix printing. The `... 35 more` means those frames were already printed in a parent exception's trace.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // BAD: swallow the cause
 throw new ServiceException("Failed");
@@ -442,7 +442,7 @@ throw new ServiceException("Failed", cause);
 log.error("Operation failed", exception); // always log
 ```
 
-Prevention: Always chain exceptions with the cause parameter; always log the full exception object (not just `getMessage()`).
+**Prevention:** Always chain exceptions with the cause parameter; always log the full exception object (not just `getMessage()`).
 
 ---
 

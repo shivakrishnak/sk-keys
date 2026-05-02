@@ -46,13 +46,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Generational and concurrent GCs need to track which parts of the heap change between GC cycles (for the card table) and which objects are modified during concurrent marking (for snapshot integrity). Without code that intercepts reference stores at the point they happen, the only alternative is a safepoint-based approach: stop all threads, scan the entire heap at once. But "stop everything to check the heap" is exactly what concurrent GCs exist to avoid.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 G1GC concurrently marks live objects (no STW) across 1ms–100ms. During concurrent marking, application Thread A modifies a reference: `node.child = null` — pointing a previously-marked-live node's child to null. If G1GC doesn't see this change, it may promote a now-dead object (memory leak) or, worse, miss a live one. Without write barriers intercepting the store, G1GC cannot maintain snapshot consistency for its concurrent marking phase.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Write Barriers** were created — to give the GC a hook at every reference store, allowing it to record metadata (dirty cards, pre/post values) needed for concurrent and incremental operation without requiring full STW pauses.
 
 ---
@@ -78,12 +78,12 @@ The write barrier is a tax on every reference store, paid up-front to avoid a mu
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. GC algorithms make assumptions about heap state that can be violated by running applications.
 2. Every reference store is a potential violation point — the exact moment a GC invariant might be broken.
 3. Write barriers intercept violations at their source rather than discovering them retroactively.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Different GC invariants require different barrier types:
 
 **Type 1 — Post-write barrier (card table):**
@@ -124,15 +124,15 @@ Action: check/update color bits embedded in reference pointers.
 └─────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Concurrent/incremental GC possible; shorter STW pauses; O(modified objects) work per GC vs O(heap size).
-Cost: 2–5ns overhead per reference store; JIT code size increases for each store (barrier instructions); complex interaction with JIT optimization (stores must not be reordered past barriers).
+**THE TRADE-OFFS:**
+**Gain:** Concurrent/incremental GC possible; shorter STW pauses; O(modified objects) work per GC vs O(heap size).
+**Cost:** 2–5ns overhead per reference store; JIT code size increases for each store (barrier instructions); complex interaction with JIT optimization (stores must not be reordered past barriers).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 G1GC is concurrently marking the heap. It has already analyzed and determined: object `A` is live, and `A.child = B`. Therefore `B` is also live (reachable from A). Marking completed for this sub-graph.
 
 WITHOUT PRE-WRITE BARRIER (SATB):
@@ -144,7 +144,7 @@ Object `C` is live (reachable from another root). Thread does: `D.ref = C; A.chi
 WITH SATB PRE-WRITE BARRIER:
 Before `A.child = null` executes: barrier fires, enqueues the old value (C) into the SATB buffer. G1GC processes the SATB buffer, re-marks C as live regardless of what A.child now says. C is never freed incorrectly.
 
-THE INSIGHT:
+**THE INSIGHT:**
 SATB's pre-write barrier records the "facts of the old world" before the application destroys them. This is the GC equivalent of a database transaction log — record before you overwrite, so you can reconstruct state if needed.
 
 ---
@@ -153,11 +153,11 @@ SATB's pre-write barrier records the "facts of the old world" before the applica
 
 > A write barrier is like a building's change management system. Every time someone moves furniture (modifies a reference), they fill out a short form: "room 42, moved sofa from position A to position B." The facilities manager (GC) can review this log to understand exactly what has changed without walking every room. Different facilities teams keep different logs: "where did new furniture come from?" (SATB) vs "which rooms were recently modified?" (card table) — each serving different maintenance needs.
 
-"Moving furniture" → reference field store.
-"Filling out a form" → write barrier code execution.
-"Facilities manager reviewing log" → GC processing barrier records.
-"Which rooms modified?" → card table tracking for Minor GC.
-"Where did furniture come from?" → SATB pre-barrier for concurrent marking.
+- "Moving furniture" → reference field store.
+- "Filling out a form" → write barrier code execution.
+- "Facilities manager reviewing log" → GC processing barrier records.
+- "Which rooms modified?" → card table tracking for Minor GC.
+- "Where did furniture come from?" → SATB pre-barrier for concurrent marking.
 
 Where this analogy breaks down: Unlike a paper form system, write barriers are inserted in compiled machine code and execute in 2–5ns — much faster than any paper form could be processed.
 
@@ -261,7 +261,7 @@ FAILURE PATH (design error — missing barrier):
 (This is why JNI must use JNI reference APIs, not direct writes)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 500 million reference stores per second (write-heavy caching service), write barrier overhead at 3ns/store = 1.5 seconds/second of write barrier CPU — 100% CPU. This drives the design of write-barrier-free algorithms in HPC Java (using primitive arrays, off-heap buffers, or Unsafe). For most services, reference store rates are 10–50 million/second, where 30–150ms/second overhead is 3–15% of CPU — acceptable for the GC benefits provided.
 
 ---
@@ -359,19 +359,19 @@ How to choose: GC algorithm determines write barrier type. If write-heavy worklo
 
 **GC Pause Spike from SATB Buffer Overflow**
 
-Symptom:
+**Symptom:**
 G1GC concurrent marking phase occasionally causes long pauses that don't match expected GC patterns. GC logs show "SATB queue overflow" warnings.
 
-Root Cause:
+**Root Cause:**
 Application writes references at a rate exceeding the SATB buffer's capacity. Buffers overflow → GC must process them during STW rather than concurrently.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -Xlog:gc+marking=debug MyApp 2>&1 | grep "SATB"
 # Look for "SATB buffer overflow" or high SATB queue counts
 ```
 
-Fix:
+**Fix:**
 ```bash
 # Increase SATB buffer size:
 java -XX:G1SATBBufferEnqueueingThresholdPercent=90 \
@@ -379,43 +379,43 @@ java -XX:G1SATBBufferEnqueueingThresholdPercent=90 \
 # Or reduce write frequency in hot paths
 ```
 
-Prevention:
+**Prevention:**
 Load test with write-heavy scenarios. Monitor SATB buffer utilization via JFR.
 
 ---
 
 **Write Barrier Missing in JNI Code (Correctness Bug)**
 
-Symptom:
+**Symptom:**
 Intermittent NullPointerExceptions, object corruption, or SIGSEGV in JNI-heavy applications. Problem disappears on Serial GC but appears with G1 or concurrent GC.
 
-Root Cause:
+**Root Cause:**
 JNI native code modifies Java object reference fields directly via `env->SetObjectField()` using pointer arithmetic instead of proper JNI APIs. No write barrier is executed. Card table not marked, SATB not updated.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Enable strict JNI checking:
 java -Xcheck:jni MyApp
 # Flags improper JNI field access patterns
 ```
 
-Fix:
+**Fix:**
 All JNI reference field writes MUST use `env->SetObjectField()`, `env->SetObjectArrayElement()`, etc. — never raw pointer writes to Java heap memory.
 
-Prevention:
+**Prevention:**
 Code review all JNI code for direct heap pointer manipulation. Run all JNI code with `-Xcheck:jni` in CI.
 
 ---
 
 **High Write Barrier CPU Overhead in Write-Intensive Service**
 
-Symptom:
+**Symptom:**
 CPU profiling shows 15–20% of CPU time in GC write barrier stubs. Service processes reference-store-heavy workloads (e.g., building object graphs at high rate).
 
-Root Cause:
+**Root Cause:**
 Very high reference store rate (>500M/sec) → write barrier overhead becomes significant CPU fraction.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Async-profiler CPU profile:
 ./profiler.sh -e cpu -d 30 -f output.html <pid>
@@ -423,14 +423,14 @@ Diagnostic Command / Tool:
 # in the flame graph hot section
 ```
 
-Fix:
+**Fix:**
 Options by priority:
 1. Replace object arrays with primitive arrays where possible.
 2. Use off-heap memory (ByteBuffer, Arena allocator) for hot-path data structures.
 3. Switch to ZGC (no write barriers on stores).
 4. Use Unsafe for read-only graphs that never update references after construction.
 
-Prevention:
+**Prevention:**
 Performance test write-intensive code paths with realistic allocation patterns. Profile barrier overhead explicitly.
 
 ---

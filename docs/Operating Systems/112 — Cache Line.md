@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 If CPUs fetched memory one byte at a time, the memory bus would need to handle billions of individual byte-request/response round trips per second. Each round trip has latency overhead (address decoding, bus arbitration, row/column activation in DRAM). The CPU would stall on almost every instruction waiting for a byte.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Modern CPUs can execute 4+ instructions per nanosecond. DRAM latency is 60–80ns — that's 240–320 CPU cycles of stall per memory access. If you fetched individual bytes, your 4 GHz CPU would spend 99% of its time waiting for RAM.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 The cache line is the solution: instead of fetching 1 byte, always fetch 64 bytes (the cache line). This exploits **spatial locality** — if you accessed address X, you'll likely access X+1, X+2, ..., X+63 soon. Pay one 60ns round trip to DRAM, fill the cache line, then serve the next 63 accesses from L1 cache at 4 cycles (~1ns).
 
 ---
@@ -65,28 +65,28 @@ The cache line is the reason that iterating an array is 10× faster than iterati
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Cache line size: 64 bytes on all modern x86-64 CPUs (since Pentium 4).
 2. Memory access granularity: even reading/writing 1 byte causes an entire cache line to be loaded.
 3. Cache line ownership: only one CPU can hold a cache line in "Modified" state (MESI protocol).
 4. Cache line invalidation: when CPU A modifies a cache line, CPU B's copy is invalidated.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Cache lines create two important phenomena:
 
 - **Spatial locality exploitation**: pack related data into 64-byte aligned blocks to maximise cache line utilisation. A 64-byte struct that fits in one cache line requires 1 DRAM access; the same data scattered across 64 different addresses requires 64 DRAM accesses.
 - **False sharing**: two CPUs accessing different fields within the same cache line cause cache coherence invalidations even though they're not logically sharing data. CPU A modifies field X, CPU B modifies field Y — but X and Y are in the same 64-byte cache line, so every modification by A invalidates B's cache and vice versa.
 
-THE TRADE-OFFS:
-Gain: Exploits spatial locality dramatically; single DRAM access serves 8 longs / 16 ints / 64 bytes; prefetching can hide DRAM latency entirely for sequential access.
-Cost: Wasted bandwidth if accessed data has no spatial locality (e.g., pointer-chasing); false sharing in concurrent code causes cache coherence traffic that serialises "independent" operations.
+**THE TRADE-OFFS:**
+**Gain:** Exploits spatial locality dramatically; single DRAM access serves 8 longs / 16 ints / 64 bytes; prefetching can hide DRAM latency entirely for sequential access.
+**Cost:** Wasted bandwidth if accessed data has no spatial locality (e.g., pointer-chasing); false sharing in concurrent code causes cache coherence traffic that serialises "independent" operations.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Two threads, each incrementing their own counter 1 billion times.
 
 WITHOUT false sharing:
@@ -112,7 +112,7 @@ long counter1 = 0;  // at offset 8 — same 64-byte cache line!
 // The threads appear to not interfere but suffer as if they share a lock
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 False sharing makes two independent variables behave as if they were sharing a lock, with no lock visible in the code. The "lock" is the cache line itself.
 
 ---
@@ -319,11 +319,11 @@ perf c2c report
 
 **1. False Sharing in Thread-Per-Core Counter Array**
 
-Symptom: Parallel benchmark with N threads runs slower than N/4 threads; `perf c2c report` shows hot cache line with multiple writers.
+**Symptom:** Parallel benchmark with N threads runs slower than N/4 threads; `perf c2c report` shows hot cache line with multiple writers.
 
-Root Cause: Thread-local counters allocated adjacent in memory; different CPUs write to the same cache line.
+**Root Cause:** Thread-local counters allocated adjacent in memory; different CPUs write to the same cache line.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Java: JVM Object layout (with JOL)
@@ -336,19 +336,19 @@ perf c2c record -g ./benchmark
 perf c2c report -NN -g --stdio | head -60
 ```
 
-Fix: Java: `@Contended` on each counter field. C: `alignas(64)` + 56-byte pad.
+**Fix:** Java: `@Contended` on each counter field. C: `alignas(64)` + 56-byte pad.
 
-Prevention: Design concurrent data structures with explicit cache-line-aligned per-thread state.
+**Prevention:** Design concurrent data structures with explicit cache-line-aligned per-thread state.
 
 ---
 
 **2. Struct Layout Causing L3 Pressure**
 
-Symptom: Code accessing a specific struct field in a tight loop has unexpectedly high L3 miss rate; other fields in the same struct are "garbage".
+**Symptom:** Code accessing a specific struct field in a tight loop has unexpectedly high L3 miss rate; other fields in the same struct are "garbage".
 
-Root Cause: Cold fields (large buffers, rarely accessed metadata) placed before hot fields in struct; hot field access loads the cold fields' cache lines.
+**Root Cause:** Cold fields (large buffers, rarely accessed metadata) placed before hot fields in struct; hot field access loads the cold fields' cache lines.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 perf stat -e L1-dcache-load-misses,LLC-load-misses ./program
@@ -358,17 +358,17 @@ perf stat -e L1-dcache-load-misses,LLC-load-misses ./program
 offsetof(struct MyStruct, hot_field)  // should be < 64
 ```
 
-Fix: Move hot fields to the beginning of the struct (offset 0–63); group cold fields at the end or in a separate pointer-referenced struct.
+**Fix:** Move hot fields to the beginning of the struct (offset 0–63); group cold fields at the end or in a separate pointer-referenced struct.
 
 ---
 
 **3. JVM GC Pointer Tracking Cache Pressure**
 
-Symptom: G1 GC pause times increase linearly with heap size even when actual live data is constant; profiling shows time in GC root scanning.
+**Symptom:** G1 GC pause times increase linearly with heap size even when actual live data is constant; profiling shows time in GC root scanning.
 
-Root Cause: GC card table (one byte per 512B heap region) is scanned for dirty cards; if spread across many cache lines, scanning is cache-miss-bound.
+**Root Cause:** GC card table (one byte per 512B heap region) is scanned for dirty cards; if spread across many cache lines, scanning is cache-miss-bound.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # GC logging
@@ -379,9 +379,9 @@ Diagnostic:
 perf stat -e cache-misses -t <GC_thread_tid>
 ```
 
-Fix: G1 with region-based GC naturally groups related objects; use `AlwaysPreTouch` to pre-fault pages; tune region size.
+**Fix:** G1 with region-based GC naturally groups related objects; use `AlwaysPreTouch` to pre-fault pages; tune region size.
 
-Prevention: Structure objects to follow field reference chains for GC traversal in same cache lines (memory-efficient object graphs).
+**Prevention:** Structure objects to follow field reference chains for GC traversal in same cache lines (memory-efficient object graphs).
 
 ---
 

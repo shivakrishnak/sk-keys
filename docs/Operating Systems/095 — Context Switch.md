@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine a single-core CPU in the 1960s: Program A runs to completion,
 then Program B starts. If Program A takes 10 minutes, the user waits
 10 minutes before Program B begins. There is no "multitasking."
@@ -42,12 +42,12 @@ became unworkable. Program A might be waiting for user input for seconds.
 During that wait, the CPU is idle. Meanwhile, Program B, Program C, and
 Program D are ready to run but sitting in a queue.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A CPU doing nothing while a program waits for I/O wastes the most
 valuable resource in the system. Without a way to switch between programs
 mid-execution, a slow or blocking program monopolizes the CPU.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Context Switch** was invented — the OS can save
 every detail of Program A's execution state, give the CPU to Program B,
 and later restore Program A exactly where it left off, creating the
@@ -92,7 +92,7 @@ throughput. This is the hidden cost of "just add more threads."
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. **Complete state capture**: when a process is suspended, _every_ aspect
    of its CPU state must be saved so resumption is indistinguishable from
@@ -103,16 +103,16 @@ CORE INVARIANTS:
 3. **Triggered by privileged code**: only the kernel can perform context
    switches — user-space code cannot modify another process's registers.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The save/restore must happen at the exact moment the CPU transitions to
 kernel mode (via interrupt or syscall). The kernel then decides which
 process/thread to schedule next (scheduler), loads its saved state, and
 returns to user mode in the new process's context.
 
-THE TRADE-OFFS:
-Gain: CPU time-sharing; I/O latency hidden by switching to ready tasks;
+**THE TRADE-OFFS:**
+**Gain:** CPU time-sharing; I/O latency hidden by switching to ready tasks;
 responsive interactive systems.
-Cost: each switch costs ~1–10 µs of pure overhead; CPU caches and TLB
+**Cost:** each switch costs ~1–10 µs of pure overhead; CPU caches and TLB
 contain the previous process's data and become "cold" after switching;
 high switch rate reduces throughput measurably.
 
@@ -120,24 +120,24 @@ high switch rate reduces throughput measurably.
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Thread A is computing a matrix multiplication (CPU-bound, no IO).
 Thread B is waiting for a database response (IO-bound).
 
-WHAT HAPPENS WITHOUT CONTEXT SWITCH:
+**WHAT HAPPENS WITHOUT CONTEXT SWITCH:**
 Thread A runs for 100 ms. Thread B's DB response arrived at t=5ms
 but cannot be processed. By the time Thread A finishes, the DB
 connection has timed out (30s timeout). Thread B fails its request.
 The CPU was "busy" but Thread B's work was lost.
 
-WHAT HAPPENS WITH CONTEXT SWITCH:
+**WHAT HAPPENS WITH CONTEXT SWITCH:**
 Thread A runs for 5ms (its time slice). Timer interrupt fires →
 context switch to Thread B. Thread B's context is restored. Thread B
 reads the DB response, processes it in 2ms, completes. Context switch
 back to Thread A. Thread A resumes exactly where it was (program
 counter and all registers restored). Both threads make progress.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Context switching converts "wasted wait time" into productive CPU time
 for other threads. The CPU never idles while there's runnable work.
 
@@ -256,7 +256,7 @@ only saves/restores those registers if needed.
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 Thread A running (user mode)
@@ -270,7 +270,7 @@ Thread A running (user mode)
   → Thread B runs from exactly where it last stopped
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Context switch during signal delivery
@@ -281,7 +281,7 @@ Context switch during signal delivery
   → Kernel crash (oops) or panic
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 100,000 context switches/second per core, the overhead is
 100,000 × 5µs = 500ms per second — half the CPU time is wasted on
 bookkeeping. Profiling shows high `%sy` (system time) in `top`.
@@ -377,16 +377,16 @@ use fibers/coroutines to eliminate OS context switches for IO-heavy code.
 
 **1. Thrashing from excessive context switches**
 
-Symptom:
+**Symptom:**
 `top` shows high `sy` (system) CPU%. `vmstat 1` shows cs > 50,000/sec.
 Throughput lower than expected despite low CPU `us` usage. Latency high.
 
-Root Cause:
+**Root Cause:**
 Too many threads relative to CPU cores. Scheduler runs constantly
 switching between runnable threads, spending more time on bookkeeping
 than actual computation.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Context switches per second
@@ -396,22 +396,22 @@ cat /proc/<pid>/status | grep ctxt
 # voluntary_ctxt_switches + nonvoluntary_ctxt_switches
 ```
 
-Fix: reduce thread pool size to `2 × CPU_count` for CPU-bound work;
+**Fix:** reduce thread pool size to `2 × CPU_count` for CPU-bound work;
 use async IO for IO-bound work to eliminate blocked-thread overhead.
 
-Prevention: set thread pool size based on workload type, not request count.
+**Prevention:** set thread pool size based on workload type, not request count.
 
 **2. Cache thrashing from CPU migration**
 
-Symptom:
+**Symptom:**
 Benchmark shows inconsistent latency. `perf stat` shows high cache-miss
 rate. Performance varies run-to-run despite identical workload.
 
-Root Cause:
+**Root Cause:**
 Threads migrate between CPU cores. Each migration invalidates L1/L2 cache
 for that thread's working set. Rebuilding cache takes hundreds of µs.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 perf stat -e cache-misses,cache-references,\
@@ -419,27 +419,27 @@ context-switches,cpu-migrations -p <pid> sleep 5
 # High cpu-migrations with high cache-misses = thread migration issue
 ```
 
-Fix: pin latency-sensitive threads to specific cores:
+**Fix:** pin latency-sensitive threads to specific cores:
 
 ```bash
 taskset -cp 0,1 <pid>  # restrict process to cores 0 and 1
 ```
 
-Prevention: use CPU affinity for latency-sensitive services; use NUMA-
+**Prevention:** use CPU affinity for latency-sensitive services; use NUMA-
 aware memory allocation to keep threads near their memory.
 
 **3. Priority Inversion via Context Switch**
 
-Symptom:
+**Symptom:**
 High-priority thread runs slower than low-priority thread. System appears
 responsive to low-priority work but unresponsive to high-priority tasks.
 
-Root Cause:
+**Root Cause:**
 Low-priority thread holds a lock; high-priority thread waits for lock but
 cannot preempt the low-priority holder. Medium-priority threads preempt
 the low-priority holder, delaying lock release indefinitely.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Linux: check priority and scheduling class
@@ -449,10 +449,10 @@ ps -eo pid,pri,cmd | sort -k2 -n | head
 jstack <java_pid> | grep -A5 "waiting to lock"
 ```
 
-Fix: use priority inheritance mutexes (`PTHREAD_PRIO_INHERIT`); in Java,
+**Fix:** use priority inheritance mutexes (`PTHREAD_PRIO_INHERIT`); in Java,
 use `PriorityBlockingQueue` with correct priority assignment.
 
-Prevention: avoid holding mutexes across preemption points; design lock
+**Prevention:** avoid holding mutexes across preemption points; design lock
 hierarchies to prevent priority inversion scenarios.
 
 ---

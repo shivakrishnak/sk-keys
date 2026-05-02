@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You have 10 Java modules: module A depends on B, B on C, C on D. When Maven builds these modules, it must compile D before C, C before B, B before A. Without an ordering algorithm, Maven would either compile modules in random order (failing when A tries to import B before B is compiled) or require the user to manually specify the correct build order.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Real dependency graphs have hundreds of modules with complex interdependencies. Human-specified build orders are error-prone and break whenever dependencies change. The system needs to automatically determine a valid execution order from the dependency graph.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 A dependency graph has a crucial property: it must be a DAG (Directed Acyclic Graph) — a cycle would mean "A depends on B depends on A," which is unsatisfiable. Given a DAG, there always exists at least one ordering where every dependency comes before the thing depending on it. The algorithm to find this ordering is called **Topological Sort**, and it is exactly why build systems, task schedulers, and package managers work correctly.
 
 ---
@@ -64,12 +64,12 @@ A topological sort exists if and only if the graph has no cycles. This means top
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The input must be a **DAG** — cycles make topological ordering impossible.
 2. For every edge `u → v`, `u` must appear **before** `v` in the output ordering.
 3. A DAG always has at least one **source** node (in-degree 0); removing a source reveals new source nodes — this produces Kahn's algorithm.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 There are two standard derivations:
 
 **DFS-based:** When DFS finishes a node (all its descendants processed), preprend it to the output. Nodes that finish last in DFS are the ones with no outgoing edges — they should appear last in the topological order. Prepending reverses this: the last-finishing node appears first in the reversed order. If any back edge is found during DFS, the graph has a cycle and topological sort is impossible.
@@ -79,21 +79,21 @@ There are two standard derivations:
 **Why two algorithms?**
 DFS-based is elegant and implicitly detects cycles. Kahn's is iterative (no stack overflow risk), explicitly detects cycles (output size < V), and produces the ordering level-by-level which naturally reveals parallelizable stages (all nodes in queue simultaneously can be processed in parallel in a build system).
 
-THE TRADE-OFFS:
-Gain: O(V+E) ordering of dependencies; simultaneous cycle detection.
-Cost: Only applicable to DAGs; requires understanding the graph structure upfront.
+**THE TRADE-OFFS:**
+**Gain:** O(V+E) ordering of dependencies; simultaneous cycle detection.
+**Cost:** Only applicable to DAGs; requires understanding the graph structure upfront.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Build system with 4 modules: A→B, A→C, B→D, C→D. A depends on B and C; both depend on D.
 
-WHAT HAPPENS WITHOUT TOPOLOGICAL SORT:
+**WHAT HAPPENS WITHOUT TOPOLOGICAL SORT:**
 Build order is arbitrary: maybe D, B, A, C. Building A before C fails because A requires C. The build error reports "C not found" with no hint about the correct order.
 
-WHAT HAPPENS WITH TOPOLOGICAL SORT (Kahn's):
+**WHAT HAPPENS WITH TOPOLOGICAL SORT (Kahn's):**
 In-degrees: A=0, B=1 (from A), C=1 (from A), D=2 (from B and C).
 Queue starts: [A] (only in-degree 0 node).
 Process A → output [A] → decrement B (now 0), C (now 0). Queue: [B, C].
@@ -102,7 +102,7 @@ Process C → output [A, B, C] → decrement D (now 0). Queue: [D].
 Process D → output [A, B, C, D].
 Build in this order: succeeds because D is built last (after B and C).
 
-THE INSIGHT:
+**THE INSIGHT:**
 The ordering A, B, C, D is not the only valid one — A, C, B, D is equally valid. Topological sort does not produce a unique ordering; it produces *a* valid ordering (or reports impossibility if a cycle exists). The non-uniqueness reveals which steps can be parallelized: B and C in the queue simultaneously means they can be built in parallel.
 
 ---
@@ -111,10 +111,10 @@ The ordering A, B, C, D is not the only valid one — A, C, B, D is equally vali
 
 > Topological sort is like ordering domino pieces before setting them up. You must place a domino before any domino it will knock over. Given the "will knock over" relationships, find an order to place them all so the chain will work exactly as designed. If two dominoes knock over each other, the setup is invalid — that's a cycle, and no valid placement order exists.
 
-"Place domino X before Y" → edge X→Y means X must precede Y
-"Finding placement order" → producing the topological ordering
-"Two dominoes knock over each other" → cycle in the graph, topological sort impossible
-"Pieces with no incoming arrows" → in-degree-0 nodes, start of Kahn's queue
+- "Place domino X before Y" → edge X→Y means X must precede Y
+- "Finding placement order" → producing the topological ordering
+- "Two dominoes knock over each other" → cycle in the graph, topological sort impossible
+- "Pieces with no incoming arrows" → in-degree-0 nodes, start of Kahn's queue
 
 Where this analogy breaks down: Real dominoes are physical — you always find some valid placement. In dependency graphs, cyclic dependencies are genuinely unsatisfiable, not just inconvenient — no placement order can satisfy the constraint.
 
@@ -185,7 +185,7 @@ Topological sort on DAGs is the algorithmic foundation for dependency resolution
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Dependency specification (pom.xml, package.json)
 → Parse into directed graph (module → dependency)
@@ -197,7 +197,7 @@ Dependency specification (pom.xml, package.json)
 → All dependencies satisfied at each step
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Circular dependency: A depends on B, B on A
 → Kahn's: queue empties with output.size() < V
@@ -207,7 +207,7 @@ Circular dependency: A depends on B, B on A
 → Build fails with actionable error
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In monorepos with 10,000+ modules (Google's monorepo, Facebook's), topological sort is combined with dependency caching: the build system only rebuilds modules whose transitive dependencies changed. The topological order also determines the critical path — the longest dependency chain — which is the minimum build time with infinite parallelism.
 
 ---
@@ -350,11 +350,11 @@ How to choose: Use Kahn's algorithm for production build systems (explicit cycle
 
 **1. Cycle in dependency graph — infinite build or silent failure**
 
-Symptom: Build system hangs, or reports confusing errors like "module not found" instead of "circular dependency."
+**Symptom:** Build system hangs, or reports confusing errors like "module not found" instead of "circular dependency."
 
-Root Cause: Cyclic dependencies mean no valid ordering exists. A naive build system might cycle indefinitely or attempt to build in an arbitrary order that always violates some dependency.
+**Root Cause:** Cyclic dependencies mean no valid ordering exists. A naive build system might cycle indefinitely or attempt to build in an arbitrary order that always violates some dependency.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Maven cycle detection:
 mvn dependency:tree | grep -i "cycle"
@@ -363,19 +363,19 @@ npm ls --depth=0 2>&1 | grep "cycle"
 # Manual: run Kahn's and report remaining nodes
 ```
 
-Fix: Break the cycle by extracting the shared code into a new module that both cyclic modules depend on, not each other.
+**Fix:** Break the cycle by extracting the shared code into a new module that both cyclic modules depend on, not each other.
 
-Prevention: Run topological sort as part of the build validation step before any compilation begins.
+**Prevention:** Run topological sort as part of the build validation step before any compilation begins.
 
 ---
 
 **2. Multiple valid orderings causing non-deterministic builds**
 
-Symptom: Build order changes between runs; cache invalidation becomes unreliable; different engineers get different orderings.
+**Symptom:** Build order changes between runs; cache invalidation becomes unreliable; different engineers get different orderings.
 
-Root Cause: Topological sort is not unique — many valid orderings exist. Different queue insertion orders (e.g., HashMap iteration order) produce different valid orderings.
+**Root Cause:** Topological sort is not unique — many valid orderings exist. Different queue insertion orders (e.g., HashMap iteration order) produce different valid orderings.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Compare two build orderings:
 mvn --batch-mode clean install -T 1 > order1.txt
@@ -383,28 +383,28 @@ mvn --batch-mode clean install -T 1 > order2.txt
 diff order1.txt order2.txt
 ```
 
-Fix: Use a deterministic tie-breaking rule in the priority queue (e.g., alphabetical or numeric ordering of node IDs). Replace `Queue` with `PriorityQueue` sorted by node ID.
+**Fix:** Use a deterministic tie-breaking rule in the priority queue (e.g., alphabetical or numeric ordering of node IDs). Replace `Queue` with `PriorityQueue` sorted by node ID.
 
-Prevention: Always use a sorted queue (lexicographic or numeric) in build system topological sorts for reproducible builds.
+**Prevention:** Always use a sorted queue (lexicographic or numeric) in build system topological sorts for reproducible builds.
 
 ---
 
 **3. Missing edges producing incorrect ordering**
 
-Symptom: Build fails because module A compiled before its dependency B.
+**Symptom:** Build fails because module A compiled before its dependency B.
 
-Root Cause: A dependency edge "A depends on B" was missing from the graph (e.g., an implicit transitive dependency not declared explicitly, or a code-level dependency not captured in the build manifest).
+**Root Cause:** A dependency edge "A depends on B" was missing from the graph (e.g., an implicit transitive dependency not declared explicitly, or a code-level dependency not captured in the build manifest).
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Maven: find undeclared dependencies
 mvn dependency:analyze
 # Output: [WARNING] Used undeclared dependencies
 ```
 
-Fix: Declare all dependencies explicitly. Use dependency analyzers to detect undeclared usages.
+**Fix:** Declare all dependencies explicitly. Use dependency analyzers to detect undeclared usages.
 
-Prevention: Enforce that all imports must have corresponding explicit dependency declarations.
+**Prevention:** Enforce that all imports must have corresponding explicit dependency declarations.
 
 ---
 

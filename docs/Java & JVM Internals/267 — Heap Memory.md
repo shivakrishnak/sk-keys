@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 In C, you call `malloc()` to allocate memory and `free()` to release it. Forget to call `free()` and you have a memory leak that slowly grows until the process dies. Call `free()` twice and you corrupt memory, causing crashes that only manifest hours later in an unrelated part of the code. In large C++ codebases, memory bugs are the leading source of security vulnerabilities and production outages — requiring years of expertise to track down.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 In 1995, Sun had to make Java accessible to millions of developers who were not memory management experts. Requiring `malloc`/`free` semantics from Java developers would have made Java as error-prone as C. The language needed automatic memory management as a first-class feature.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 By centralising all object allocation in one managed region — the heap — and appointing the GC as the sole arbiter of memory reclamation, Java eliminated an entire class of memory Safety bugs. This is exactly why the JVM heap was designed: automatic, safe, managed memory for all Java objects.
 
 ---
@@ -64,32 +64,32 @@ The heap's performance secret is generational collection: most objects die young
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Every Java object instance and array lives on the heap — no exceptions.
 2. Memory is reclaimed when an object has no live references — not when the last reference goes out of scope.
 3. The GC is the sole agent of reclamation — the programmer cannot explicitly free heap memory.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 requires a single shared memory pool. Invariant 2 means reclamation requires tracing reachability from roots — a GC, not reference counting. Invariant 3 means the GC's pause behaviour and tuning parameters directly affect application latency. The generational hypothesis (most objects die young) motivates splitting the heap into regions with different collection frequencies and algorithms.
 
-THE TRADE-OFFS:
-Gain: No manual memory management, no use-after-free, no double-free bugs, thread-safe allocation via TLAB.
-Cost: GC pauses that increase with heap size; memory overhead for object headers; peak live-set must fit in `-Xmx`.
+**THE TRADE-OFFS:**
+**Gain:** No manual memory management, no use-after-free, no double-free bugs, thread-safe allocation via TLAB.
+**Cost:** GC pauses that increase with heap size; memory overhead for object headers; peak live-set must fit in `-Xmx`.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A Java web service handles 1000 requests per second. Each request creates ~100 short-lived objects (request/response DTOs, intermediate computation objects). The service also maintains a cache of 1000 permanent objects.
 
-WHAT HAPPENS WITHOUT GENERATIONAL HEAP:
+**WHAT HAPPENS WITHOUT GENERATIONAL HEAP:**
 A single flat heap collects everything together. The GC scans all 1000 cache objects and all 100,000 short-lived request objects on every collection cycle. The cache objects are alive; the request objects are dead. 99% of scan time is spent confirming live objects are live. For 1000 dead request objects and 1000 live cache objects = 50% wasted work.
 
-WHAT HAPPENS WITH GENERATIONAL HEAP:
+**WHAT HAPPENS WITH GENERATIONAL HEAP:**
 Short-lived request objects are created in Eden (Young Generation). Minor GC runs every few hundred milliseconds, scanning only Eden (tiny region). It finds 99% of request objects are already dead — reclaims them in <10ms. The 1000 cache objects were promoted to Old Generation long ago and are only scanned during Major GC (rare — perhaps every 10 minutes). The work matches the object lifetime distribution.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Matching the memory management strategy to the observed lifetime distribution of objects — most die young, few live long — makes garbage collection practical for real applications.
 
 ---
@@ -98,11 +98,11 @@ Matching the memory management strategy to the observed lifetime distribution of
 
 > The heap is like a city's recycling system. New objects are created in a small "intake depot" (Eden). Most objects are discarded quickly (short-lived garbage). The recycling truck (minor GC) clears the depot frequently and cheaply. Objects that survive many clearings get moved to long-term storage (Old Generation). A full city cleanout (major GC) happens rarely and is more disruptive.
 
-"Intake depot" → Eden (Young Generation)
-"Objects discarded quickly" → short-lived objects collected in minor GC
-"Recycling truck" → garbage collector (minor GC)
-"Long-term storage" → Old Generation
-"Full city cleanout" → major/full GC cycle
+- "Intake depot" → Eden (Young Generation)
+- "Objects discarded quickly" → short-lived objects collected in minor GC
+- "Recycling truck" → garbage collector (minor GC)
+- "Long-term storage" → Old Generation
+- "Full city cleanout" → major/full GC cycle
 
 Where this analogy breaks down: the GC doesn't "know" an object is garbage — it discovers it by proving no live reference reaches it. The object isn't flagged for disposal; it simply becomes unreachable.
 
@@ -164,7 +164,7 @@ Every JVM object has a header (8–16 bytes before the fields):
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Application calls new MyObject()
   → TLAB allocation (fast path) ← YOU ARE HERE
@@ -176,7 +176,7 @@ Application calls new MyObject()
   → No explicit free — GC handled it
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Eden full → Minor GC runs
   → Old Gen full → Major GC runs
@@ -187,7 +187,7 @@ Eden full → Minor GC runs
     → find largest retained objects
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10x load, object allocation rate increases 10x, filling Eden faster and triggering more frequent Minor GCs. At 100x, if the Old Generation holds a large cache, major GC pauses become a latency problem. At 1000x (terabyte heaps), only low-pause collectors like ZGC remain viable; traditional stop-the-world GC would pause the application for minutes.
 
 ---
@@ -317,11 +317,11 @@ How to choose: G1GC is the right default for most production services. Use ZGC w
 
 **1. OutOfMemoryError: Java heap space**
 
-Symptom: `java.lang.OutOfMemoryError: Java heap space`; GC logs show repeated back-to-back GC cycles with no memory freed (>95% of time spent GC'ing means `java.lang.OutOfMemoryError: GC overhead limit exceeded`).
+**Symptom:** `java.lang.OutOfMemoryError: Java heap space`; GC logs show repeated back-to-back GC cycles with no memory freed (>95% of time spent GC'ing means `java.lang.OutOfMemoryError: GC overhead limit exceeded`).
 
-Root Cause: Live object set exceeds `-Xmx`, either from object leak (references held too long) or genuinely insufficient heap for the workload.
+**Root Cause:** Live object set exceeds `-Xmx`, either from object leak (references held too long) or genuinely insufficient heap for the workload.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check GC activity
 jstat -gcutil <pid> 1000
@@ -332,15 +332,15 @@ jcmd <pid> GC.heap_dump /tmp/heap.hprof
 # Open with Eclipse MAT → Leak Suspects Report
 ```
 
-Prevention: Enable `-XX:+HeapDumpOnOutOfMemoryError` in all production deployments. Review large `Map` and `List` objects held as static or long-lived fields.
+**Prevention:** Enable `-XX:+HeapDumpOnOutOfMemoryError` in all production deployments. Review large `Map` and `List` objects held as static or long-lived fields.
 
 **2. Long GC Pause Causing Latency Spikes**
 
-Symptom: Request latencies spike periodically (e.g., 99th percentile spikes to 5+ seconds); GC logs show stop-the-world pauses correlating with latency spikes.
+**Symptom:** Request latencies spike periodically (e.g., 99th percentile spikes to 5+ seconds); GC logs show stop-the-world pauses correlating with latency spikes.
 
-Root Cause: Full GC triggered by Old Generation filling up, pausing all application threads.
+**Root Cause:** Full GC triggered by Old Generation filling up, pausing all application threads.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Enable GC logging (Java 17+)
 java -Xlog:gc*:file=/var/log/gc.log:time,level,tags \
@@ -351,7 +351,7 @@ grep "Pause Full" /var/log/gc.log
 grep "Pause Young" /var/log/gc.log
 ```
 
-Fix:
+**Fix:**
 ```bash
 # Switch from Parallel GC to G1GC/ZGC
 java -XX:+UseG1GC \
@@ -361,15 +361,15 @@ java -XX:+UseG1GC \
 java -XX:+UseZGC -jar myapp.jar
 ```
 
-Prevention: Profile object allocation rates with async-profiler; size the heap appropriately to avoid frequent Old Gen collections.
+**Prevention:** Profile object allocation rates with async-profiler; size the heap appropriately to avoid frequent Old Gen collections.
 
 **3. Heap Memory Leak (Retention via Collections)**
 
-Symptom: Memory usage grows unbounded over hours/days; heap dump shows one large `HashMap` or `ArrayList` holding millions of entries.
+**Symptom:** Memory usage grows unbounded over hours/days; heap dump shows one large `HashMap` or `ArrayList` holding millions of entries.
 
-Root Cause: Objects added to a collection but never removed; common patterns: unbounded caches, event listeners not deregistered, session maps without expiry.
+**Root Cause:** Objects added to a collection but never removed; common patterns: unbounded caches, event listeners not deregistered, session maps without expiry.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Heap histogram - find the large collection
 jcmd <pid> GC.class_histogram | grep -E \
@@ -379,7 +379,7 @@ jcmd <pid> GC.class_histogram | grep -E \
 # shows which objects retain the most memory
 ```
 
-Prevention: Use bounded caches (Caffeine, Guava Cache with `maximumSize`); use `WeakReference` for event listeners; monitor heap growth trend with Prometheus/Micrometer.
+**Prevention:** Use bounded caches (Caffeine, Guava Cache with `maximumSize`); use `WeakReference` for event listeners; monitor heap growth trend with Prometheus/Micrometer.
 
 ---
 

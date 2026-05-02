@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Backpressure Pattern"
 parent: "Design Patterns"
@@ -148,7 +148,7 @@ WITH Backpressure:
 > A factory assembly line: machines at each stage pass parts to the next. If the painting station (stage 3) is slower than the welding station (stage 2): parts accumulate between stages. Without backpressure: parts pile up on the floor → fire hazard → factory shuts down (OutOfMemoryError). With backpressure: painting station signals "I can only accept 10 parts per minute." Welding station slows to 10 parts/minute. Buffer between stages: bounded. Factory: stable. Output: 10 parts/minute (limited by the actual bottleneck — painting).
 
 "Welding station (fast) sending parts to painting station (slow)" = fast producer, slow consumer
-"Parts piling up on the floor" = unbounded buffer overflow → OOM
+- "Parts piling up on the floor" = unbounded buffer overflow → OOM
 "Painting station signals 10 parts/minute" = `subscription.request(10)` in Reactive Streams
 "Welding station slows to match" = publisher sends no more than requested
 "Factory: stable, output: 10 parts/min" = stable memory, throughput = bottleneck capacity

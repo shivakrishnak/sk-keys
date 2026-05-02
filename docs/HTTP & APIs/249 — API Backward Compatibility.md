@@ -396,12 +396,12 @@ public class PaymentDto {
 
 **Undetected Breaking Change in Production**
 
-Symptom:
+**Symptom:**
 After a "non-breaking" deploy, consumer services report 500 errors. The provider team
 insists they only "added" fields. Investigation: one consumer has strict Jackson config
 `FAIL_ON_UNKNOWN_PROPERTIES = true` — a new optional response field causes 500s.
 
-Diagnostic:
+**Diagnostic:**
 
 ```java
 // Check consumer's Jackson configuration:

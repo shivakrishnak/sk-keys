@@ -32,7 +32,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 In Java before 8, passing behaviour required anonymous inner classes. To sort by name:
 ```java
 Collections.sort(users, new Comparator<User>() {
@@ -43,10 +43,10 @@ Collections.sort(users, new Comparator<User>() {
 ```
 This is 5 lines for a one-line idea. In a codebase with hundreds of sorting, filtering, and callback operations, this verbosity is a maintenance burden and obscures intent.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A UI event handling system registers 200 button click handlers. Each is a unique anonymous class implementing `ActionListener` — 200 `ActionListener` class files, 200 anonymous class definitions, 200 inner class instances. The class count slows down class loading at startup. The code is impossible to read.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Functional Interfaces** were formalised in Java 8 — to provide a type system for lambdas. A lambda `x -> x.getName()` is a `Function<User, String>`. The compiler can infer the functional interface type from context. The `java.util.function` package provides a complete standard library of common function types.
 
 ---
@@ -72,12 +72,12 @@ The magic of functional interfaces is that they make Java functions first-class 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Exactly one abstract method — this is what a lambda "fills in."
 2. Any number of `default` and `static` methods is allowed (they're not abstract).
 3. Methods from `Object` (`equals`, `toString`, `hashCode`) don't count toward the SAM count.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The standard `java.util.function` package follows a systematic pattern:
 - ONE input, ONE output: `Function<T,R>`
 - ONE input, boolean output: `Predicate<T>`
@@ -107,15 +107,15 @@ Primitive specialisations avoid autoboxing: `IntFunction<R>`, `ToIntFunction<T>`
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Functions as values; composability; clean lambdas and method references; eliminates anonymous class boilerplate.
-Cost: Abstract standard library requires learning the interface names; `@FunctionalInterface` doesn't prevent accidental SAM breakage if annotation omitted; generic functional interfaces don't work with primitives without boxing.
+**THE TRADE-OFFS:**
+**Gain:** Functions as values; composability; clean lambdas and method references; eliminates anonymous class boilerplate.
+**Cost:** Abstract standard library requires learning the interface names; `@FunctionalInterface` doesn't prevent accidental SAM breakage if annotation omitted; generic functional interfaces don't work with primitives without boxing.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A validation library needs to validate any value with an arbitrary rule, return the result, and compose rules.
 
 WITHOUT FUNCTIONAL INTERFACES:
@@ -141,7 +141,7 @@ valid.test("");         // false
 valid.test("a".repeat(200)); // false
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 `Predicate<T>` already has the composition methods built in. There's no need to invent a `Validator` interface or a `CompositeValidator` — the standard library provides the contract and the composition tools.
 
 ---
@@ -150,10 +150,10 @@ THE INSIGHT:
 
 > Functional interfaces are electrical socket standards. A `Function<T,R>` socket accepts any plug (lambda, method reference, anonymous class) that takes T and gives R. The socket doesn't care if the plug is a new Apple charger or an old Nokia charger — just that it fits the standard shape. All the devices that need "a T-to-R function" accept any plug that fits.
 
-"Socket standard" → functional interface type (`Function<T,R>`).
-"Plug" → lambda expression or method reference.
-"Device that needs a charger" → method accepting `Function<T,R>` parameter.
-"USB-C standard" → specific interface like `Predicate<T>`.
+- "Socket standard" → functional interface type (`Function<T,R>`).
+- "Plug" → lambda expression or method reference.
+- "Device that needs a charger" → method accepting `Function<T,R>` parameter.
+- "USB-C standard" → specific interface like `Predicate<T>`.
 
 Where this analogy breaks down: Electrical sockets are typed by physical shape; functional interfaces are typed by their method signature. Two interfaces with identical method signatures are still different types — `Runnable` and `Callable<Void>` both have one method, but they're not interchangeable.
 
@@ -233,7 +233,7 @@ int[] result2 = intArray.stream()
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Developer writes: users.stream().filter(u -> u.isActive())]
     → [Lambda: u -> u.isActive()]
@@ -244,7 +244,7 @@ NORMAL FLOW:
     → [Element passes if test returns true]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Developer uses Function<String,String> where Consumer needed]
     → [Compiler: incompatible types — return value not void]
@@ -252,7 +252,7 @@ FAILURE PATH:
     → [Fix: remove return type from lambda, use Consumer]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In large functional codebases, function composition enables building complex pipelines from reusable atomic functions. The `andThen`/`compose`/`and`/`or` composition methods allow building transformation pipelines declaratively. At scale, prefer method references over lambdas for frequently invoked functions (method references may result in slightly more efficient invokedynamic dispatch in some JVMs).
 
 ---
@@ -351,18 +351,18 @@ How to choose: Match to the number of inputs and the type of output. Use primiti
 
 **Wrong Functional Interface Causing Compile Error**
 
-Symptom: "bad return type in lambda expression: int cannot be converted to void" or similar type mismatch.
+**Symptom:** "bad return type in lambda expression: int cannot be converted to void" or similar type mismatch.
 
-Root Cause: Lambda assigned to wrong functional interface type.
+**Root Cause:** Lambda assigned to wrong functional interface type.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 javac MyClass.java
 # error: incompatible types: bad return type in lambda
 # expression: int cannot be converted to void
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: returns int but assigned to Consumer (void)
 Consumer<String> c = s -> s.length(); // error: returns int
@@ -373,24 +373,24 @@ Function<String, Integer> f = s -> s.length(); // OK
 Consumer<String> c2 = s -> { s.length(); }; // OK, discarded
 ```
 
-Prevention: Match the functional interface to the lambda signature: check inputs and return type carefully before selecting the interface.
+**Prevention:** Match the functional interface to the lambda signature: check inputs and return type carefully before selecting the interface.
 
 ---
 
 **Boxing Overhead from Generic Functional Interfaces on Primitives**
 
-Symptom: Profiler shows `Integer.valueOf()` or `Integer.intValue()` in a hot stream pipeline.
+**Symptom:** Profiler shows `Integer.valueOf()` or `Integer.intValue()` in a hot stream pipeline.
 
-Root Cause: Using `Function<Integer, Integer>` instead of `IntUnaryOperator` causes autoboxing per element.
+**Root Cause:** Using `Function<Integer, Integer>` instead of `IntUnaryOperator` causes autoboxing per element.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Async profiler allocation flamegraph looking for Integer.valueOf
 ./asprof -e alloc -d 30 <pid>
 # Or JMH benchmark comparing generic vs primitive versions
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: boxing per element in tight loop
 Stream<Integer> stream = IntStream.range(0, 1_000_000)
@@ -404,7 +404,7 @@ IntStream.range(0, 1_000_000)
     .count();
 ```
 
-Prevention: Prefer `IntStream`, `LongStream`, `DoubleStream` and their primitive functional interfaces for numeric stream pipelines.
+**Prevention:** Prefer `IntStream`, `LongStream`, `DoubleStream` and their primitive functional interfaces for numeric stream pipelines.
 
 ---
 

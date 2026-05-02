@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Without a scheduler, programs must voluntarily give up the CPU. One
 cooperative program that runs an infinite loop (or a tight computation)
 holds the CPU forever. All other programs — including the user interface
@@ -44,12 +44,12 @@ server workloads), relying on programs to be polite is catastrophically
 fragile. One buggy — or malicious — program can render the entire system
 unresponsive.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Cooperative multitasking means one hung program blocks every other
 program. For multi-user systems, this is a security and reliability
 catastrophe.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why the **Preemptive Scheduler** was invented — a hardware
 timer fires at regular intervals, the OS takes control regardless of what
 the current program is doing, and fairly distributes CPU time.
@@ -94,7 +94,7 @@ enforceable rather than just requested.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. **Fairness**: every runnable process must eventually get CPU time — no
    process runs forever while others starve.
@@ -104,16 +104,16 @@ CORE INVARIANTS:
    faster response time but more context switches; longer slices mean
    better throughput but slower responsiveness.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 A hardware timer (programmable interrupt timer, PIT) fires every N
 milliseconds. When it fires, the CPU jumps to the kernel timer interrupt
 handler. The scheduler runs, examines all runnable tasks, picks the best
 one, and does a context switch. The "best" depends on the scheduling
 algorithm.
 
-THE TRADE-OFFS:
-Gain: fairness, responsiveness, protection against runaway processes.
-Cost: timer interrupt overhead (1,000 interrupts/second at HZ=1000),
+**THE TRADE-OFFS:**
+**Gain:** fairness, responsiveness, protection against runaway processes.
+**Cost:** timer interrupt overhead (1,000 interrupts/second at HZ=1000),
 context switch cost on each preemption, reduced throughput for
 CPU-bound tasks (time sliced away unnecessarily).
 
@@ -121,23 +121,23 @@ CPU-bound tasks (time sliced away unnecessarily).
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Three threads: T1 (video rendering, CPU-intensive), T2 (UI event handler,
 needs fast response), T3 (background backup, low priority).
 
-WHAT HAPPENS WITH COOPERATIVE SCHEDULING:
+**WHAT HAPPENS WITH COOPERATIVE SCHEDULING:**
 T1 runs its rendering loop — never yields. T2 waits to handle a mouse
 click. The click feels laggy — 500ms delay. T3 never runs. The backup
 fails to complete.
 
-WHAT HAPPENS WITH PREEMPTIVE PRIORITY SCHEDULING:
+**WHAT HAPPENS WITH PREEMPTIVE PRIORITY SCHEDULING:**
 T1 gets a time slice and runs 4ms. Timer fires → T2 is runnable (high
 priority, mouse event pending) → immediate context switch to T2. T2
 processes the mouse event in 1ms → marks complete. Next timer: T1
 resumes. T3 gets CPU during T1's blocked periods (disk IO). All three
 make progress. Mouse click response: <5ms.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Priority-based preemption turns CPU scheduling from "who holds the
 token" into "who needs it most right now." Interactive tasks get the
 CPU when they need it; background tasks get leftovers.
@@ -251,7 +251,7 @@ nice +19  → weight     1
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 Thread A running (user mode)
@@ -264,7 +264,7 @@ Thread A running (user mode)
   → Thread A eventually selected again (fair turn)
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Thread with real-time priority (SCHED_FIFO) runs infinite loop
@@ -275,7 +275,7 @@ Thread with real-time priority (SCHED_FIFO) runs infinite loop
     or a kernel interrupt can interrupt it
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 With 1,000 runnable threads on 4 cores, each thread gets
 `time_slice / 1000 × 4` = ~16µs per second on a 4ms total time slice.
 The context switch rate hits 1000/4ms × 4 cores = 250,000 switches/sec.
@@ -355,16 +355,16 @@ SCHED_DEADLINE only for hardware control, audio/video with strict deadlines.
 
 **1. Starvation of low-priority threads**
 
-Symptom:
+**Symptom:**
 Background task (backup, reporting) never makes progress. `ps` shows
 it's in RUNNABLE state but vruntime keeps growing without execution.
 
-Root Cause:
+**Root Cause:**
 High-priority threads always have lower vruntime than the low-priority
 thread, so CFS always picks them first. The low-priority thread is
 technically runnable but never selected.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check if a process is being scheduled
@@ -374,23 +374,23 @@ pidstat -u -p <pid> 1 10
 ps -o pid,nice,cmd -p <pid>
 ```
 
-Fix: increase low-priority thread's nice value to 0 (default) or use
+**Fix:** increase low-priority thread's nice value to 0 (default) or use
 cgroups CPU shares to guarantee minimum CPU allocation.
 
-Prevention: use cgroups `cpu.shares` to give every process group a
+**Prevention:** use cgroups `cpu.shares` to give every process group a
 minimum guaranteed CPU fraction.
 
 **2. Real-time thread starves system**
 
-Symptom:
+**Symptom:**
 System becomes unresponsive. SSH impossible. `top` shows one process
 at 100% CPU with RT scheduling policy.
 
-Root Cause:
+**Root Cause:**
 SCHED_FIFO thread with high priority runs indefinitely without blocking.
 All non-RT threads are starved because SCHED_FIFO bypasses normal CFS.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 chrt -p <pid>    # check scheduling policy
@@ -398,7 +398,7 @@ chrt -p <pid>    # check scheduling policy
 ps -eo pid,stat,policy,pri,cmd | grep -v -e 'S ' -e 'I '
 ```
 
-Fix: Linux has a safety valve — `kernel.sched_rt_runtime_us` (default
+**Fix:** Linux has a safety valve — `kernel.sched_rt_runtime_us` (default
 950ms/s) limits RT task CPU to 95%, leaving 5% for non-RT.
 
 ```bash
@@ -406,21 +406,21 @@ sysctl kernel.sched_rt_runtime_us    # check current value
 sysctl -w kernel.sched_rt_runtime_us=950000  # 95% for RT max
 ```
 
-Prevention: never deploy SCHED_FIFO threads without testing the worst-case
+**Prevention:** never deploy SCHED_FIFO threads without testing the worst-case
 runtime; always set `sched_rt_runtime_us` as a safety limit.
 
 **3. Scheduler overhead from too many threads**
 
-Symptom:
+**Symptom:**
 `top` shows high `sy` (system) CPU%. `perf record -e sched:sched_switch`
 shows thousands of scheduler events per second consuming CPU cycles.
 
-Root Cause:
+**Root Cause:**
 More runnable threads than CPU cores. Scheduler spends all its time
 evaluating the red-black tree and performing context switches rather than
 running useful work.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Measure scheduler overhead with perf
@@ -429,10 +429,10 @@ perf stat -e sched:sched_switch,sched:sched_wakeup \
 # High sched_switch count relative to useful work = overhead issue
 ```
 
-Fix: reduce thread pool size; move IO-bound threads to async/virtual
+**Fix:** reduce thread pool size; move IO-bound threads to async/virtual
 threads; increase time slice via `kernel.sched_min_granularity_ns`.
 
-Prevention: set thread pool size = 2 × CPU cores for CPU-bound; use
+**Prevention:** set thread pool size = 2 × CPU cores for CPU-bound; use
 async IO for IO-bound tasks.
 
 ---

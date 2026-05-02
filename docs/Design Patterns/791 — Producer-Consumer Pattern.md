@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Producer-Consumer Pattern"
 parent: "Design Patterns"
@@ -204,7 +204,7 @@ WITH Producer-Consumer:
 "Staging area" = BlockingQueue (the shared buffer)
 "Factory fills staging area" = producer.put()
 "Assembly picks from staging area" = consumer.take()
-"Staging area full → factory waits" = back-pressure (bounded queue blocks put)
+- "Staging area full → factory waits" = back-pressure (bounded queue blocks put)
 
 ---
 

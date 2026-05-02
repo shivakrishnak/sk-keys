@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Microservice A (consumer) calls Microservice B (provider). Team B updates B's response schema — removes the `email` field because they don't need it anymore. Team B's unit and integration tests all pass. Team A's unit tests mock B's response — they still pass. The bug is only discovered when both services are deployed together in staging and A's JSON deserialisation fails. Now both teams are blocked, debugging cross-service compatibility in a shared environment.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 At 10 microservices, the interaction matrix is 45 pairs. A shared staging environment can't test all 45 interactions reliably. E2E tests are too slow and fragile. The solution: each consumer defines its expectations (contract) in a portable format; the provider verifies it meets all consumers' contracts before deploying. Neither team needs the other deployed.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Consumer-Driven Contract Testing (Beth Skurrie, 2011 at REA Group) and the Pact framework (2014) formalised the pattern: consumer generates a pact file (expectations), provider verifies against the pact file. Teams can deploy independently with confidence that contracts are honoured.
 
 ---
@@ -107,9 +107,9 @@ Contract test with flexible matching (not exact values):
 
 This prevents brittle tests that fail when the provider returns different but valid values.
 
-THE TRADE-OFFS:
-Gain: Teams deploy independently; catches interface breaking changes before staging; documents API expectations explicitly.
-Cost: Requires Pact Broker infrastructure; test setup complexity; contracts are limited to request/response matching (not business logic); teams must share and update contracts.
+**THE TRADE-OFFS:**
+**Gain:** Teams deploy independently; catches interface breaking changes before staging; documents API expectations explicitly.
+**Cost:** Requires Pact Broker infrastructure; test setup complexity; contracts are limited to request/response matching (not business logic); teams must share and update contracts.
 
 ---
 
@@ -329,7 +329,7 @@ class UserServiceProviderTest {
 
 **1. Pact Verification Fails After Provider Refactor**
 
-Symptom: Provider CI fails with "body mismatch: field X not found".
+**Symptom:** Provider CI fails with "body mismatch: field X not found".
 
 Diagnosis: Provider removed/renamed a field that a consumer's contract expects. Check Pact Broker for which consumers depend on the field.
 
@@ -337,11 +337,11 @@ Resolution: Either keep the field (backward compatibility), add to provider resp
 
 **2. Provider States Not Set Up Correctly**
 
-Symptom: Pact verification returns 404 for resources that should exist.
+**Symptom:** Pact verification returns 404 for resources that should exist.
 
-Root Cause: `@State` handler doesn't create the test data correctly, or test is using wrong database.
+**Root Cause:** `@State` handler doesn't create the test data correctly, or test is using wrong database.
 
-Fix: Add logging in state handler, verify state setup creates expected data before request replay.
+**Fix:** Add logging in state handler, verify state setup creates expected data before request replay.
 
 ---
 

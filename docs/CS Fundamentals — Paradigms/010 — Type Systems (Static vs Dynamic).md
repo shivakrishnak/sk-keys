@@ -33,7 +33,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 In early machine code, a word in memory was just bits. You could
 add two bits representing "a number" and "a text character"
 — the CPU wouldn't object. The result would be meaningless garbage.
@@ -41,14 +41,14 @@ As programs grew, a function expecting a number might receive
 a customer name. The program would continue silently, computing
 nonsense until a crash or, worse, outputting wrong financial data.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Without types, every operation on every piece of data is
 potentially wrong — and the programmer must manually track what
 kind of data every variable holds. At scale, this is impossible.
 A 100,000-line codebase where anyone can pass any data to any
 function makes correctness analysis infeasible.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why type systems were created. By attaching a
 type to every value, the language can verify that operations
 are meaningful: you can add two integers, but not an integer
@@ -99,7 +99,7 @@ harder to trace.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Every value has a type — a category that determines which
    operations are valid on it. Even dynamically typed languages
@@ -111,7 +111,7 @@ CORE INVARIANTS:
    safety: a more restrictive type system catches more bugs but
    rejects more valid programs.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Static typing:**
 The compiler assigns types to every expression. Before generating
 machine code, it checks every operation: "you're adding `int + String`
@@ -128,7 +128,7 @@ evaluated, Python checks at that moment: "can int + str?"
 (no declarations), but type errors only appear when the code path
 is executed.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 Static: Catches bugs early; IDE tooling (autocomplete, refactoring);
 performance (types known to JIT); requires declarations
 or inference; can be too restrictive.
@@ -139,12 +139,12 @@ type errors only at runtime; harder to maintain at scale.
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A function `calculateTax(income)` is called in a codebase by
 50 different callers. In one place, a developer passes a string
 `"50000"` (from a form input) instead of the integer `50000`.
 
-WHAT HAPPENS IN DYNAMICALLY TYPED PYTHON:
+**WHAT HAPPENS IN DYNAMICALLY TYPED PYTHON:**
 The code runs. `calculateTax("50000")` might succeed if the
 function uses string multiplication internally (e.g., `"50000" * 0.20`
 raises `TypeError`) — but only when that code path executes.
@@ -153,7 +153,7 @@ lives undetected for months. When it fires, the stack trace
 points to the middle of `calculateTax`, not the 50 callers.
 Finding the wrong caller requires investigation.
 
-WHAT HAPPENS IN STATICALLY TYPED JAVA:
+**WHAT HAPPENS IN STATICALLY TYPED JAVA:**
 
 ```java
 double calculateTax(double income) { ... }
@@ -165,7 +165,7 @@ The error is caught before the code compiles, at the exact
 location of the mistake, in the file of the developer who made
 the error.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Static typing shifts the debugging cost from "runtime investigation"
 to "compile-time red squiggle." For large codebases with many
 callers, the static version's benefit compounds with scale.
@@ -181,11 +181,11 @@ callers, the static version's benefit compounds with scale.
 > wrong ingredient (type error) is only discovered when the
 > cake tastes wrong (runtime crash).
 
-"The kitchen scale checking before baking" → compile-time type check
-"Tasting as you go" → runtime type check
-"A handful vs. grams" → string vs. number type mismatch
-"The recipe" → function signature / type annotation
-"The cake tasting wrong" → runtime TypeError
+- "The kitchen scale checking before baking" → compile-time type check
+- "Tasting as you go" → runtime type check
+- "A handful vs. grams" → string vs. number type mismatch
+- "The recipe" → function signature / type annotation
+- "The cake tasting wrong" → runtime TypeError
 
 Where this analogy breaks down: in real cooking, a scale
 can't check all incompatibilities (wrong flavour combination);
@@ -301,7 +301,7 @@ FAILURE PATH (Dynamic — Python at runtime):
 → [Stack trace points to processAge internals]
 → [Developer must trace back to callsite]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10x codebase size, static typing's benefit compounds — refactoring
 a function's signature shows every affected caller immediately.
 At 100x, TypeScript over JavaScript prevents entire classes of
@@ -405,17 +405,17 @@ dynamic codebases.
 
 **1. Runtime Type Error in Dynamically Typed Code**
 
-Symptom:
+**Symptom:**
 `TypeError: unsupported operand type(s)` or `AttributeError:
 'NoneType' object has no attribute 'x'` in production; error
 only appears for specific user inputs.
 
-Root Cause:
+**Root Cause:**
 A code path receives an unexpected type — a string where a
 number was expected, or None where an object was expected.
 Dynamic typing deferred this check to execution.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Python: add type hints and use mypy for static analysis
@@ -429,7 +429,7 @@ class OrderInput(BaseModel):
     amount: float  # validates and converts on input
 ```
 
-Fix:
+**Fix:**
 
 ```python
 # BAD: assumes input is the right type
@@ -443,20 +443,20 @@ def process_order(amount: float) -> float:
     return float(amount) * TAX_RATE
 ```
 
-Prevention: Validate all external inputs at system boundaries;
+**Prevention:** Validate all external inputs at system boundaries;
 use Pydantic/dataclasses in Python, Zod in TypeScript.
 
 **2. Type Erasure Causes ClassCastException (Java)**
 
-Symptom:
+**Symptom:**
 `ClassCastException: class java.lang.String cannot be cast to
 class java.lang.Integer` at runtime, inside generic code.
 
-Root Cause:
+**Root Cause:**
 An unchecked cast in generic code wasn't caught at compile time
 because type erasure removed the generic type information.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Compile with -Xlint:unchecked to expose unsafe casts
@@ -464,7 +464,7 @@ javac -Xlint:unchecked MyClass.java
 # Shows warnings at lines where unchecked casts occur
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: heap pollution — mixing raw and generic types
@@ -479,21 +479,21 @@ strings.add("hello");
 // List<Integer> ints = strings; // COMPILE ERROR — caught early
 ```
 
-Prevention: Never use raw generic types; enable all compiler
+**Prevention:** Never use raw generic types; enable all compiler
 warnings; use `@SuppressWarnings("unchecked")` sparingly and
 document why.
 
 **3. TypeScript `any` Defeats Type Safety**
 
-Symptom:
+**Symptom:**
 TypeScript code compiles cleanly but throws runtime errors
 that TypeScript should have caught; `any` type is widespread.
 
-Root Cause:
+**Root Cause:**
 `any` disables type checking — it's the "escape hatch" that
 removes all guarantees.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # tsconfig.json: enable strict mode
@@ -506,7 +506,7 @@ Diagnostic:
 npx tsc --noEmit  # type-check without emitting JS
 ```
 
-Fix:
+**Fix:**
 
 ```typescript
 // BAD: any defeats type checking
@@ -524,7 +524,7 @@ function processData(data: UserData) {
 }
 ```
 
-Prevention: Enable `strict: true` in tsconfig; treat `any` as
+**Prevention:** Enable `strict: true` in tsconfig; treat `any` as
 a code smell requiring justification; use `unknown` instead of
 `any` when type is genuinely unknown.
 

@@ -41,13 +41,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Every Java application requires a JVM to run. The JVM startup sequence: load JVM native libraries, initialize GC, load core classes (200–500 classes before `main()` runs), start daemon threads, and then begin executing user code. This costs 500ms–5 seconds depending on the framework. For CLIs, batch tools, and serverless functions, this startup cost is paid on every invocation — making Java an impractical choice.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A developer writes a Java CLI tool that converts file formats. Running it takes 1.8 seconds, of which 1.6 seconds is JVM startup, and 0.2 seconds is actual work. Users notice the delay. The same tool in Go: 5ms. The Java version gets replaced. Java lost a market — CLIs — not because of the language but because of the runtime cost.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Native Image** was created — to produce a self-contained compiled binary from Java code, with no JVM startup overhead, sub-100ms startup, and a compact memory footprint, making Java competitive with Go and Rust in deployment environments where a JVM is unacceptable.
 
 ---
@@ -73,12 +73,12 @@ The "image heap" is Native Image's secret weapon for framework startup performan
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A native binary needs no interpreter layer — the CPU executes instructions directly at full speed from byte zero.
 2. Pre-initializing application state at build time avoids re-computing it on every invocation.
 3. Static reachability analysis can eliminate dead code, shrinking the binary and improving startup.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Native Image's build process follows five phases:
 
 **Phase 1 — Analysis:**
@@ -115,15 +115,15 @@ Compiled code + SubstrateVM GC/threading + image heap → platform binary (ELF o
 └────────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: <100ms startup; 50–80% lower memory; no JVM installation required; smaller attack surface; deterministic performance.
-Cost: Build time 2–15 minutes; dynamic Java features restricted (reflection, dynamic proxies, classpath scanning must be declared); peak throughput may be 10–20% below JIT without PGO; debugging harder (no bytecode-level tooling unless DWARF debug info included).
+**THE TRADE-OFFS:**
+**Gain:** <100ms startup; 50–80% lower memory; no JVM installation required; smaller attack surface; deterministic performance.
+**Cost:** Build time 2–15 minutes; dynamic Java features restricted (reflection, dynamic proxies, classpath scanning must be declared); peak throughput may be 10–20% below JIT without PGO; debugging harder (no bytecode-level tooling unless DWARF debug info included).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Deploy a REST API endpoint that receives a POST request, validates JSON, queries a database, and returns a response. Compare cold start and steady-state behavior.
 
 JVM (Spring Boot, standard):
@@ -143,7 +143,7 @@ JVM cold start: 3,500ms (charged/penalized).
 Native Image cold start: 70ms (100ms Lambda response).
 Result: Native Image is the only viable Java option for this deployment pattern.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Native Image's value is deployment-pattern-specific. For always-on services with stationary traffic, JIT wins at peak. For any environment with cold starts, scale-to-zero, or strict startup SLAs, Native Image is the only viable Java approach.
 
 ---
@@ -152,10 +152,10 @@ Native Image's value is deployment-pattern-specific. For always-on services with
 
 > Think of a native image as a pre-packaged meal-kit vs a restaurant kitchen. The JVM is a fully-equipped restaurant kitchen: capable of cooking anything, but needs setup time. Native Image is a vacuum-sealed meal-kit: everything is pre-assembled for the specific meal, requires only 2 minutes to heat (startup), uses minimal counter space (memory), but cannot make dishes not in the kit (no dynamic class loading). For home delivery (serverless/edge), the meal-kit wins. For a busy restaurant (high-volume always-on service), the full kitchen wins.
 
-"Vacuum-sealed kit" → native binary with pre-compiled code and image heap.
-"2 minutes to heat" → 70ms startup time.
-"Minimal counter space" → 100MB memory footprint vs 512MB JVM.
-"Only dishes in the kit" → closed-world: only classes reachable at build time.
+- "Vacuum-sealed kit" → native binary with pre-compiled code and image heap.
+- "2 minutes to heat" → 70ms startup time.
+- "Minimal counter space" → 100MB memory footprint vs 512MB JVM.
+- "Only dishes in the kit" → closed-world: only classes reachable at build time.
 
 Where this analogy breaks down: Unlike a meal-kit that cannot be modified, GraalVM Native Image supports some runtime dynamism through explicit configuration — it is not entirely static, just explicitly bounded.
 
@@ -287,7 +287,7 @@ RUNTIME:
     → [First HTTP request: 5ms (no warmup)]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [native-image build fails: unsupported feature]
     → [Error: "Unsupported feature: CGLIB proxy"]
@@ -300,7 +300,7 @@ FAILURE PATH:
     → [Or: re-run agent to auto-capture]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, native image binary deployment in Kubernetes dramatically reduces pod startup time (70ms vs 3500ms) — enabling aggressive autoscaling without "pre-warming" buffers. Container images are smaller (80MB vs 500MB), reducing registry bandwidth and pull time. However, the build pipeline becomes more complex: each service needs a native image build step that takes 5–15 minutes. Teams with 50+ services adopt dedicated native image CI build caches and GraalVM reachability metadata management workflows.
 
 ---
@@ -427,13 +427,13 @@ How to choose: Native image for Kubernetes-native microservices, serverless, CLI
 
 **Slow Native Image Build (CI bottleneck)**
 
-Symptom:
+**Symptom:**
 CI pipeline takes 20 minutes per service. Team has 30 services, each with optional native image builds. Pipeline capacity exhausted.
 
-Root Cause:
+**Root Cause:**
 Native image build involves a full JVM-heap points-to analysis (needs 8–16GB RAM) and multi-threaded AOT compilation. Build time scales roughly with application code size + dependency count.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Profile the native image build:
 native-image --verbose -jar myapp.jar 2>&1 | \
@@ -443,26 +443,26 @@ native-image --verbose -jar myapp.jar 2>&1 | \
 # macOS/Linux: watch -n1 "ps aux | grep native-image"
 ```
 
-Fix:
+**Fix:**
 - Use GraalVM's build image cache: `-H:+UseClassInitializationBasedHeapSharing`
 - Parallelize across multiple CI runners
 - Cache GraalVM's analysis data: `-H:AnalysisResultsDump=analysis.json`
 - Use `--quick-build` for non-release builds (faster, less optimized)
 
-Prevention:
+**Prevention:**
 Only run native image builds for main branch and release tags, not every PR.
 
 ---
 
 **GC Pressure in Native Image (Serial GC)**
 
-Symptom:
+**Symptom:**
 Native image production service shows GC pause spikes under load. Latency P99 exceeds SLA.
 
-Root Cause:
+**Root Cause:**
 Default SubstrateVM GC is Serial GC — single-threaded, stop-the-world. Not suitable for latency-sensitive services with allocation rates > 100MB/s.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Enable GC logging in native image:
 ./myapp -XX:+PrintGC
@@ -474,27 +474,27 @@ Diagnostic Command / Tool:
 ./myapp -XX:+PrintFlagsFinal 2>&1 | grep GC
 ```
 
-Fix:
+**Fix:**
 GraalVM Enterprise: use G1GC for native image:
 ```bash
 native-image --gc=G1 -jar myapp.jar
 ```
 GraalVM CE: reduce allocation rate; consider JVM mode instead.
 
-Prevention:
+**Prevention:**
 Load test native image builds before production deployment. Measure GC pause time under peak load.
 
 ---
 
 **Dynamic Proxy Not Available in Native Image**
 
-Symptom:
+**Symptom:**
 Application uses Spring AOP or Mockito in production code. Native image build fails or produces runtime errors around proxied beans.
 
-Root Cause:
+**Root Cause:**
 CGLIB dynamic proxies generate bytecode at runtime — impossible in native image (no JVM class loader, no bytecode generation). Spring Boot 3+ uses AOT ahead-of-time proxy generation to work around this.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # In native image build output:
 # "Error: CGLIB proxy generation is not supported"
@@ -504,10 +504,10 @@ ls target/spring-aot/main/sources/
 # Should contain proxy class source files generated at build time
 ```
 
-Fix:
+**Fix:**
 Upgrade to Spring Boot 3+. Ensure `@EnableAspectJAutoProxy(proxyTargetClass=false)` — use JDK proxies where possible. For custom CGLIB use: replace with interface-based approach.
 
-Prevention:
+**Prevention:**
 Spring Boot 3.x compatibility guide lists all supported and unsupported features for native image. Validate at project inception.
 
 ---

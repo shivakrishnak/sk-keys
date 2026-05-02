@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Notification System Design"
 parent: "System Design"
@@ -213,10 +213,10 @@ WITH notification system:
 > A postal sorting office. Packages (notifications) arrive from various senders (application services). The sorting office (Notification Service): checks the recipient's delivery preferences (does Mrs. Johnson accept SMS?), routes each package to the correct carrier (UPS for parcels = FCM, Royal Mail for letters = email, DHL for urgent = SMS). Each carrier has a tracking system. If a package is undeliverable (APNs token expired = "address not found"), the sorting office is notified and updates its records. Rate limiting = "no more than 10 packages per day to the same recipient or they refuse delivery."
 
 "Packages arriving from senders" = trigger events from application services
-"Sorting office routing to carriers" = Notification Service → Kafka → channel workers
+- "Sorting office routing to carriers" = Notification Service → Kafka → channel workers
 "Recipient delivery preferences" = user notification preference table
-"Carrier tracking" = delivery status in DynamoDB (SENT → DELIVERED → OPENED)
-"Address not found → update records" = APNs 410 → deactivate device token
+- "Carrier tracking" = delivery status in DynamoDB (SENT → DELIVERED → OPENED)
+- "Address not found → update records" = APNs 410 → deactivate device token
 
 ---
 

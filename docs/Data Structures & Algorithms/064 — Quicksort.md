@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You have 1 million integers to sort. Bubble sort and insertion sort are O(N²) — 10¹² comparisons — taking hours. You need an algorithm that sorts in O(N log N), like mergesort. But mergesort requires O(N) extra memory for the merge step — for large arrays, this means allocating hundreds of megabytes of auxiliary space that may not be available, or fragmenting memory badly.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 O(N²) algorithms are too slow for large datasets. O(N log N) mergesort solves the speed problem but introduces a memory problem: O(N) auxiliary space and poor cache behavior (accessing two separate in/out buffers). For cache-heavy workloads, memory access patterns dominate runtime.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Instead of merging two sorted halves (which requires auxiliary space), partition the array in-place around a "pivot" value: move all elements smaller than the pivot to its left, all larger to its right. This partition step is O(N) and in-place. Then recursively sort each half. Average case: O(N log N). In practice, in-place partition means all operations touch a single array — maximising cache reuse. This is exactly why **Quicksort** was created.
 
 ---
@@ -64,12 +64,12 @@ Quicksort's average O(N log N) performance with O(log N) space relies on a fortu
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. After partitioning, the pivot is in its **final sorted position** — it never moves again.
 2. All elements in the left partition are ≤ pivot; all in the right partition are ≥ pivot.
 3. The two partitions are sorted **independently** — no merging step is needed.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariants 1 and 3 together mean Quicksort never needs auxiliary memory for combining results (unlike mergesort's merge step). The partition step achieves invariants 1 and 2 in O(N) in-place via Lomuto or Hoare partition:
 
 **Lomuto partition** (simpler):
@@ -87,30 +87,30 @@ Use two pointers starting at opposite ends. Walk them inward until they cross. S
 **Why Quicksort is faster than Mergesort in practice despite same big-O:**
 Quicksort's partition step accesses the array sequentially, maximising CPU cache line usage. Mergesort accesses two separate arrays alternately with pointer chasing (cache unfriendly). For modern CPUs with large L1/L2 caches, the constant factor difference is 2-4x. This is why Java's `Arrays.sort` uses Dual-Pivot Quicksort for primitive arrays (cache friendly) but Timsort for object arrays (stable + cache friendly).
 
-THE TRADE-OFFS:
-Gain: O(N log N) average, O(log N) space, best cache performance of all comparison sorts.
-Cost: O(N²) worst case on adversarial input (mitigated by randomisation); not stable (equal elements can swap order).
+**THE TRADE-OFFS:**
+**Gain:** O(N log N) average, O(log N) space, best cache performance of all comparison sorts.
+**Cost:** O(N²) worst case on adversarial input (mitigated by randomisation); not stable (equal elements can swap order).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Already-sorted array [1, 2, 3, 4, 5]. Quicksort with last-element pivot.
 
-WHAT HAPPENS WITH LAST-ELEMENT PIVOT ON SORTED INPUT:
+**WHAT HAPPENS WITH LAST-ELEMENT PIVOT ON SORTED INPUT:**
 Pivot = 5 (last). Partition: all elements [1,2,3,4] are left of 5. Pivot goes to position 4 (last). Left partition = [1,2,3,4], right partition = [].
 Recurse: pivot = 4. All [1,2,3] go left. Pivot at position 3.
 Recurse: pivot = 3. All [1,2] go left. Pivot at position 2.
 ...
 Total partitions: N. Each partition is O(N), O(N-1), O(N-2), ... Total work = O(N²). For N=10,000: 50 million operations. Slow!
 
-WHAT HAPPENS WITH RANDOM PIVOT:
+**WHAT HAPPENS WITH RANDOM PIVOT:**
 Pick random pivot from [1,2,3,4,5]. Say pivot = 3.
 Left = [1,2], right = [4,5]. Two ~equal sub-problems of size 2 each.
 Recursion depth ≈ log₂(5) ≈ 3. Total work ≈ N log N = 12. Fast!
 
-THE INSIGHT:
+**THE INSIGHT:**
 Sorted input is the adversarial case for fixed-position pivots. A pivot that always picks the median would guarantee O(N log N), but finding the median is itself O(N). Random pivot selection achieves expected O(N log N) because on average, a random pivot splits the array roughly in half.
 
 ---
@@ -119,10 +119,10 @@ Sorted input is the adversarial case for fixed-position pivots. A pivot that alw
 
 > Quicksort is like playing the "higher/lower" number guessing game as a group activity. Everyone picks a random number. One person (pivot) stands up. Everyone with a lower number stands to the left, everyone with a higher number to the right. Repeat within each group. The groups get smaller and smaller until everyone is standing in order — no merging needed.
 
-"Pivot person" → pivot element
-"Stand left/right" → in-place partition step
-"Repeat within each group" → recursive calls on sub-arrays
-"Groups get smaller" → O(log N) recursion depth (on average)
+- "Pivot person" → pivot element
+- "Stand left/right" → in-place partition step
+- "Repeat within each group" → recursive calls on sub-arrays
+- "Groups get smaller" → O(log N) recursion depth (on average)
 
 Where this analogy breaks down: If the pivot person is always the tallest (worst case), one group has everyone and the other is empty — O(N) groups of decreasing size each = O(N²). The game only works efficiently when the pivot is roughly in the middle.
 
@@ -190,7 +190,7 @@ Quicksort (Tony Hoare, 1959, ALGOL) was designed primarily for in-place performa
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Unsorted array of N elements
 → randomise pivot selection
@@ -203,7 +203,7 @@ Unsorted array of N elements
 → O(N log N) average, O(log N) stack space
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Sorted input + last-element pivot
 → Every partition: left=[N-1 elements], right=[]
@@ -213,7 +213,7 @@ Sorted input + last-element pivot
 → Fix: randomise pivot or switch to Introsort
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For N=10⁸ elements (1 billion), random Quicksort's cache efficiency is crucial: mergesort accesses ~120 cache misses per element (L3 cache overflow); Quicksort accesses ~30 (better sequential access). At this scale, the factor-of-4 cache advantage translates to ~2 minutes vs ~8 minutes on real hardware. Parallel Quicksort partitions independently recursive sub-problems across cores — good parallel speedup until partition size < L1 cache, at which point sequential is faster.
 
 ---
@@ -360,11 +360,11 @@ How to choose: Use Quicksort (or native sort) for primitives. Use Mergesort/Tims
 
 **1. O(N²) performance on sorted/reverse-sorted input**
 
-Symptom: Sort of 100,000 elements that should complete in <100ms takes 10+ seconds; profiler shows `quicksort` is the hotspot with O(N²) call count.
+**Symptom:** Sort of 100,000 elements that should complete in <100ms takes 10+ seconds; profiler shows `quicksort` is the hotspot with O(N²) call count.
 
-Root Cause: Pivot is always first or last element. Sorted input causes maximally unbalanced partitions.
+**Root Cause:** Pivot is always first or last element. Sorted input causes maximally unbalanced partitions.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Time sort on sorted vs random input:
 time java Sort sorted  # should be similar
@@ -372,7 +372,7 @@ time java Sort random  # to this
 # If sorted >> random: pivot selection bug
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: always picks last element
 int pivot = arr[hi]; // O(N²) on sorted
@@ -382,35 +382,35 @@ int pivotIdx = lo + rand.nextInt(hi-lo+1);
 swap(arr, pivotIdx, hi);
 ```
 
-Prevention: Always randomise pivot selection or use median-of-three.
+**Prevention:** Always randomise pivot selection or use median-of-three.
 
 ---
 
 **2. StackOverflowError on large sorted input**
 
-Symptom: `java.lang.StackOverflowError` for arrays larger than ~10,000 with non-randomised pivot.
+**Symptom:** `java.lang.StackOverflowError` for arrays larger than ~10,000 with non-randomised pivot.
 
-Root Cause: O(N²) case also causes O(N) recursion depth. JVM default stack holds ~1000 frames for typical Quicksort frames — overflows at N=1000.
+**Root Cause:** O(N²) case also causes O(N) recursion depth. JVM default stack holds ~1000 frames for typical Quicksort frames — overflows at N=1000.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 java -Xss10m Sort # Increase stack temporarily
 # Still slow? Root cause is pivot selection.
 ```
 
-Fix: Switch to iterative Quicksort using an explicit stack, or add recursion depth check (Introsort pattern).
+**Fix:** Switch to iterative Quicksort using an explicit stack, or add recursion depth check (Introsort pattern).
 
-Prevention: Introsort prevents both O(N²) time AND O(N) stack depth — use it for production sorts.
+**Prevention:** Introsort prevents both O(N²) time AND O(N) stack depth — use it for production sorts.
 
 ---
 
 **3. Quicksort used when stable sort needed**
 
-Symptom: Records sorted by secondary key, then sorted by primary key — secondary order is not preserved within same primary key groups.
+**Symptom:** Records sorted by secondary key, then sorted by primary key — secondary order is not preserved within same primary key groups.
 
-Root Cause: Quicksort is not stable — equal elements can swap positions during partition. Stability requires a stable algorithm (Mergesort, Timsort).
+**Root Cause:** Quicksort is not stable — equal elements can swap positions during partition. Stability requires a stable algorithm (Mergesort, Timsort).
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Check stability violation:
 // Sort [{3,A},{1,B},{1,C}] by first field
@@ -418,9 +418,9 @@ Diagnostic:
 // Unstable result: {1,C},{1,B},{3,A} possible
 ```
 
-Fix: Use `Arrays.sort(objectArray)` in Java (Timsort, stable) instead of custom Quicksort. For primitives, stability does not apply (no identity separate from value).
+**Fix:** Use `Arrays.sort(objectArray)` in Java (Timsort, stable) instead of custom Quicksort. For primitives, stability does not apply (no identity separate from value).
 
-Prevention: Document stability requirements upfront. Default to stable sort unless performance profiling proves unstable sort is needed.
+**Prevention:** Document stability requirements upfront. Default to stable sort unless performance profiling proves unstable sort is needed.
 
 ---
 

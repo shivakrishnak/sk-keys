@@ -231,7 +231,7 @@ cqlsh> SELECT * FROM users WHERE id='abc'; -- reads from 2/3 replicas
 
 **Quorum Loss (Cluster Unavailable)**
 
-Symptom: All writes and consensus operations fail; etcd/Consul reports "no leader";
+**Symptom:** All writes and consensus operations fail; etcd/Consul reports "no leader";
 Raft election cannot complete.
 
 Cause: More than N/2 nodes are unreachable (failures + network partition exceeds quorum threshold).

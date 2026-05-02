@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 `synchronized` blocks the calling thread until the lock is available — no timeout, no "try and fail quickly," no way to interrupt a thread waiting for a lock. In a banking system, a transaction waiting for 10 seconds to acquire a lock is a poor user experience. Without tryLock, the thread waits forever (or until deadlock detection, which is too late).
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A timeout-sensitive trading system tries to acquire a lock to update a position. The lock is held by a GC thread doing cleanup. The trading thread blocks for 500ms — way past the SLA. With `synchronized`, there's no way to abort the lock attempt after a timeout. The thread can't be interrupted while waiting for a `synchronized` lock.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **`ReentrantLock`** was created — to give developers full control over lock acquisition: try without blocking, try with timeout, interrupt while waiting, and support multiple independent conditions per lock.
 
 ---
@@ -64,12 +64,12 @@ The MUST-USE pattern for `ReentrantLock` is `try/finally` — unlike `synchroniz
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. `ReentrantLock` provides mutual exclusion and memory visibility identical to `synchronized`.
 2. Lock must be manually released in a `finally` block — the JVM NEVER auto-releases a `ReentrantLock`.
 3. A thread holding the lock can re-acquire it (reentrancy) — must release exactly as many times as acquired.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 `ReentrantLock` is built on `AbstractQueuedSynchronizer` (AQS) — Doug Lea's framework that manages a queue of waiting threads using CAS operations and `LockSupport.park/unpark`. AQS provides both fair and non-fair modes. Non-fair (default) allows "barge-in" — a thread trying to acquire may succeed immediately even if others are waiting (lower latency). Fair mode processes threads strictly in FIFO order (avoids starvation, but slower).
 
 ```
@@ -83,15 +83,15 @@ AQS Internal Structure:
   unlock():  decrement state, unpark head of queue
 ```
 
-THE TRADE-OFFS:
-Gain: tryLock, timeout, interruption, multiple conditions, fairness option; same mutual exclusion and visibility as synchronized.
-Cost: MUST use try/finally; more verbose; slightly higher overhead than uncontended `synchronized`; forgetting unlock = permanent deadlock.
+**THE TRADE-OFFS:**
+**Gain:** tryLock, timeout, interruption, multiple conditions, fairness option; same mutual exclusion and visibility as synchronized.
+**Cost:** MUST use try/finally; more verbose; slightly higher overhead than uncontended `synchronized`; forgetting unlock = permanent deadlock.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A distributed lock manager needs to acquire a lock or fail fast (SLA: max 50ms wait).
 
 WITHOUT ReentrantLock:
@@ -119,7 +119,7 @@ if (lock.tryLock(50, TimeUnit.MILLISECONDS)) {
 }
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 `tryLock(timeout)` enables SLA-enforced locking — the system fails gracefully rather than blocking indefinitely. This pattern is essential for latency-sensitive systems.
 
 ---
@@ -128,9 +128,9 @@ THE INSIGHT:
 
 > `ReentrantLock` is a turnstile with a VIP card reader and a timer. `lock()` — go through the regular turnstile (wait indefinitely). `tryLock()` — tap the VIP reader; if busy, come back later. `tryLock(5, SECONDS)` — tap and wait 5 seconds; leave if not through. `lockInterruptibly()` — go through unless security cancels your ticket. The turnstile still only lets one person through at a time.
 
-"Regular turnstile" → `lock()` — indefinite wait.
-"5-second VIP reader timeout" → `tryLock(5, SECONDS)`.
-"Security cancels ticket" → `lockInterruptibly()` + `Thread.interrupt()`.
+- "Regular turnstile" → `lock()` — indefinite wait.
+- "5-second VIP reader timeout" → `tryLock(5, SECONDS)`.
+- "Security cancels ticket" → `lockInterruptibly()` + `Thread.interrupt()`.
 
 Where this analogy breaks down: A real turnstile releases automatically when you walk away. `ReentrantLock` does NOT release automatically — you must call `unlock()` explicitly in `finally`.
 
@@ -227,7 +227,7 @@ ReentrantLock fairLock = new ReentrantLock(true); // fair=true
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Thread T1: lock.lock()]
     → [AQS CAS state 0→1: success]    ← YOU ARE HERE
@@ -251,7 +251,7 @@ FAILURE PATH (forgetting unlock):
     → [Deadlock: invisible in thread dump (state=WAITING)]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, fair `ReentrantLock` prevents starvation but reduces throughput by preventing barge-in. Non-fair (default) has higher throughput but can starve low-priority threads. `StampedLock` (Java 8) adds optimistic reads for read-heavy workloads — faster than `ReadWriteLock` when contention is low. Choose the right lock type for the contention pattern.
 
 ---
@@ -350,11 +350,11 @@ How to choose: Use `synchronized` when its simplicity is sufficient. Use `Reentr
 
 **Lock Not Released (Missing Finally)**
 
-Symptom: All threads WAITING on lock.lock(). Application deadlocked.
+**Symptom:** All threads WAITING on lock.lock(). Application deadlocked.
 
-Root Cause: `lock.unlock()` not in `finally` block. Exception prevented unlock.
+**Root Cause:** `lock.unlock()` not in `finally` block. Exception prevented unlock.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstack <pid> | grep "WAITING" | head -20
 # Shows all threads waiting on LockSupport.park
@@ -362,7 +362,7 @@ jstack <pid> | grep "WAITING" | head -20
 # Look for lock owner: jstack shows which thread "owns" the lock
 ```
 
-Fix:
+**Fix:**
 ```java
 lock.lock();
 try {
@@ -376,11 +376,11 @@ try {
 
 **Deadlock with tryLock (Livelock variant)**
 
-Symptom: System makes no progress but no thread is permanently blocked. CPU high.
+**Symptom:** System makes no progress but no thread is permanently blocked. CPU high.
 
-Root Cause: Two threads each call `tryLock()` on two locks, always fail simultaneously, release, and retry — indefinitely.
+**Root Cause:** Two threads each call `tryLock()` on two locks, always fail simultaneously, release, and retry — indefinitely.
 
-Fix: Add random or exponential backoff between retries. Or use a lock ordering protocol.
+**Fix:** Add random or exponential backoff between retries. Or use a lock ordering protocol.
 
 ---
 

@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Every file needs to store: who owns it, when it was modified, how large it is, and where the data blocks are physically on disk. If this metadata were stored in the directory entry (next to the filename), renaming a file would require rewriting metadata. Hard links (multiple names for the same file) would require copying metadata and keeping it in sync. Moving a file between directories on the same disk would require copying all data blocks.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 The insight: separate the data blocks + metadata (inode) from the name (directory entry). The directory maps name → inode number. The inode stores everything else. Renaming = update directory entry. Hard link = add another directory entry pointing to the same inode number. Moving within a filesystem = update two directory entries, zero data movement.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Unix file system (1974, Dennis Ritchie). The inode structure has been fundamentally unchanged: 12 direct block pointers + indirect pointers + owner/permissions/timestamps. Modern filesystems (ext4, XFS, btrfs) extend this with extent-based allocation and checksums, but the conceptual model persists.
 
 ---
@@ -103,9 +103,9 @@ Inode 7823:
 Actual file content (bytes)
 ```
 
-THE TRADE-OFFS:
-Gain: Rename O(1), hard links O(1), move-within-filesystem O(1).
-Cost: Two lookups for any file access (directory → inode, then inode → data blocks); inode table is fixed-size at mkfs time on ext4 (running out of inodes with many small files is a real issue despite having free space).
+**THE TRADE-OFFS:**
+**Gain:** Rename O(1), hard links O(1), move-within-filesystem O(1).
+**Cost:** Two lookups for any file access (directory → inode, then inode → data blocks); inode table is fixed-size at mkfs time on ext4 (running out of inodes with many small files is a real issue despite having free space).
 
 ---
 
@@ -129,7 +129,7 @@ mkfs.ext4 -T small /dev/sdb1  # Higher inode density (1 per 1KB)
 
 Workaround (can't reformat): use a database or tar-ball small files into fewer large files.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The inode table is a fixed-size structure decided at filesystem creation. This is a design limitation of ext4. XFS uses dynamic inode allocation (no fixed inode table) — inodes are allocated on demand from data space. This is one reason XFS is preferred for workloads with millions of small files.
 
 ---
@@ -304,7 +304,7 @@ Files.move(temp, target,
 
 **1. "No space left on device" With Free Space**
 
-Symptom: `touch newfile` or `write()` fails with ENOSPC despite `df -h` showing free space.
+**Symptom:** `touch newfile` or `write()` fails with ENOSPC despite `df -h` showing free space.
 
 Diagnosis:
 
@@ -315,17 +315,17 @@ find /var/log -maxdepth 1 -type d | while read d; do
 done              # Identify directory with millions of small files
 ```
 
-Fix: Cannot increase inodes on ext4 without reformat. Workarounds: consolidate small files, move to XFS (dynamic inodes), or clean up accumulated small files.
+**Fix:** Cannot increase inodes on ext4 without reformat. Workarounds: consolidate small files, move to XFS (dynamic inodes), or clean up accumulated small files.
 
 ---
 
 **2. Stale File Handle (NFS)**
 
-Symptom: NFS clients get `ESTALE` on open; files that "existed" can no longer be opened; happens after server-side operations.
+**Symptom:** NFS clients get `ESTALE` on open; files that "existed" can no longer be opened; happens after server-side operations.
 
-Root Cause: NFS uses inode numbers as file handles. If the server remounts or reformats (new inode numbers), client's cached inode numbers become stale.
+**Root Cause:** NFS uses inode numbers as file handles. If the server remounts or reformats (new inode numbers), client's cached inode numbers become stale.
 
-Fix: Clients must handle ESTALE by re-walking the path; NFS v4 uses persistent fileids instead of inode numbers to reduce this.
+**Fix:** Clients must handle ESTALE by re-walking the path; NFS v4 uses persistent fileids instead of inode numbers to reduce this.
 
 ---
 

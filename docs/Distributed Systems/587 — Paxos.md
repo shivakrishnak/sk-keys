@@ -265,19 +265,19 @@ class Acceptor:
 
 **Proposal Livelock (Duelling Proposers)**
 
-Symptom: Cluster oscillates between proposers with incrementing proposal numbers;
+**Symptom:** Cluster oscillates between proposers with incrementing proposal numbers;
 no progress is made for seconds; logs show rapid Prepare/Reject cycles.
 
-Root Cause: Multiple simultaneous proposers competing; no stable leader.
+**Root Cause:** Multiple simultaneous proposers competing; no stable leader.
 
-Fix: Implement leader election on top of Paxos (Multi-Paxos). Only the elected
+**Fix:** Implement leader election on top of Paxos (Multi-Paxos). Only the elected
 leader sends Accept messages. Randomised backoff for proposers in election phase.
 
 ---
 
 **Value Loss After Leader Change**
 
-Symptom: A value V was "accepted" by some acceptors but not chosen (no quorum);
+**Symptom:** A value V was "accepted" by some acceptors but not chosen (no quorum);
 new leader takes over; V is not present in the new leader's proposals.
 
 Cause: Phase 1 must include the "no-op" commit protocol — the new leader runs
@@ -285,7 +285,7 @@ Phase 1 for each uncommitted slot, discovers any accepted values, and must
 re-propose them to commit or replace them. Without this, "almost-chosen" values
 may be silently dropped.
 
-Fix: On leader change, run Phase 1 for all slots with no confirmed commit and
+**Fix:** On leader change, run Phase 1 for all slots with no confirmed commit and
 re-propose whatever was accepted (or a noop if nothing was accepted).
 
 ---

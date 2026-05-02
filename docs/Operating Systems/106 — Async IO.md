@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Non-blocking I/O requires the programmer to repeatedly ask "are you done yet?" via epoll events and re-issue read/write calls. The application code becomes a state machine: "started reading… got partial data… got EAGAIN… waiting for epoll… got event… reading more…" The programmer manages every transition manually. For complex protocols with multiple steps (TLS handshake → HTTP request → database call → response), the state machine becomes enormous and error-prone.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 High-performance databases and storage engines that issue hundreds of I/O operations simultaneously faced this complexity. The Linux `aio` API (POSIX AIO) existed but had severe limitations: it only worked on files, required direct I/O (`O_DIRECT`), and used a thread pool under the hood rather than true async kernel I/O.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why true Async I/O was created — you submit an I/O request, continue doing other work, and are notified via a completion event when the kernel finishes the operation. No polling, no state machines for readiness, no `EAGAIN` handling.
 
 ---
@@ -65,13 +65,13 @@ The critical difference between async I/O and non-blocking I/O: non-blocking ret
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. An async I/O call returns immediately after submission — before the I/O completes.
 2. The kernel performs the actual I/O operation, writing results directly to the user-supplied buffer.
 3. Completion is communicated to the application asynchronously — no polling needed.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 True async I/O requires the kernel to retain a reference to the user buffer and perform the I/O while the application runs. The kernel maintains a completion queue; when I/O finishes, it places a completion event in the queue. The application either:
 
 - Polls the completion queue periodically (zero-copy, no syscall if events are queued)
@@ -80,30 +80,30 @@ True async I/O requires the kernel to retain a reference to the user buffer and 
 
 `io_uring` (Linux 5.1+) uses two ring buffers shared between user and kernel: submission ring (user writes requests) and completion ring (kernel writes completions). For many operations, zero syscalls are needed after setup.
 
-THE TRADE-OFFS:
-Gain: Maximum I/O throughput; zero blocking; kernel does the copies; simpler application logic (no EAGAIN, no partial reads) than non-blocking I/O.
-Cost: More complex initial setup; buffer lifetime management is tricky (buffer must live until completion); cancellation is harder; debugging completion-based code is harder than blocking code.
+**THE TRADE-OFFS:**
+**Gain:** Maximum I/O throughput; zero blocking; kernel does the copies; simpler application logic (no EAGAIN, no partial reads) than non-blocking I/O.
+**Cost:** More complex initial setup; buffer lifetime management is tricky (buffer must live until completion); cancellation is harder; debugging completion-based code is harder than blocking code.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A database must read 1,000 separate 4 KB records from an NVMe SSD simultaneously.
 
-WHAT HAPPENS WITH blocking I/O (thread per read):
+**WHAT HAPPENS WITH blocking I/O (thread per read):**
 
 1. 1,000 threads, each calling `read()` on a different file offset.
 2. All 1,000 threads block, OS services them via scheduler.
 3. NVMe can service ~200 concurrent requests natively; 800 extra threads add zero throughput.
 
-WHAT HAPPENS WITH non-blocking + epoll:
+**WHAT HAPPENS WITH non-blocking + epoll:**
 
 1. 1,000 `read()` calls issued; all return `EAGAIN` (no readiness signal for file I/O).
 2. `epoll` doesn't work for regular files — they're always "ready" in `select()`.
 3. This model fundamentally doesn't help with disk I/O.
 
-WHAT HAPPENS WITH async I/O (io_uring):
+**WHAT HAPPENS WITH async I/O (io_uring):**
 
 1. Submit 1,000 read operations to io_uring submission queue — one `io_uring_enter()` syscall.
 2. Kernel dispatches to NVMe block device, which natively parallelises up to 1,000 requests.
@@ -111,7 +111,7 @@ WHAT HAPPENS WITH async I/O (io_uring):
 4. Application harvests completed reads, processes data.
 5. Result: near-hardware-maximum throughput, one thread, near-zero syscall overhead.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Async I/O is the only model that matches the parallelism of modern hardware. NVMe SSDs handle 1M IOPS natively; a single-threaded async application can exploit all of it. Blocking I/O can too, but only if you create as many threads as outstanding I/O operations — which has memory and scheduling overhead.
 
 ---
@@ -120,10 +120,10 @@ Async I/O is the only model that matches the parallelism of modern hardware. NVM
 
 > Async I/O is like handing your dry cleaning to a valet service. You give them the clothes (submit I/O with buffer), go about your day (application runs), and they text you when everything is pressed and ready (completion event). You didn't stand at the dry cleaner (blocking), you didn't keep calling them (non-blocking polling) — you simply left a number and continued.
 
-"Dropping off clothes" → submitting I/O operation with buffer
-"Going about your day" → application continues running other work
-"Text notification" → completion event in io_uring CQ ring
-"Picking up clothes" → reading the completion event and using the data
+- "Dropping off clothes" → submitting I/O operation with buffer
+- "Going about your day" → application continues running other work
+- "Text notification" → completion event in io_uring CQ ring
+- "Picking up clothes" → reading the completion event and using the data
 
 Where this analogy breaks down: With async I/O, you can submit thousands of operations simultaneously — the valet analogy breaks down at scale, but it captures the fundamental completion-notification model.
 
@@ -180,7 +180,7 @@ POSIX AIO was the first async I/O standard but was broken: it used a thread pool
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [App: io_uring_prep_read(sqe, fd, buf, 4096, 0)]
@@ -193,10 +193,10 @@ NORMAL FLOW:
    → [buf contains data — no copy needed]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [Disk I/O error] → [CQE.res = -EIO (negative errno)] → [App checks CQE result, handles error]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 With 1M IOPS from NVMe, a single io_uring loop can saturate the device. `IORING_SETUP_SQPOLL` eliminates ALL syscall overhead — kernel thread polls the SQ ring continuously (at the cost of one dedicated CPU core). Fixed buffers (`io_uring_register_buffers`) allow the kernel to pin user buffers and DMA directly into them, eliminating all copies. Used by storage engines like RocksDB, Ceph, and SPDK.
 
 ---
@@ -304,11 +304,11 @@ How to choose: Use io_uring for new Linux storage-heavy applications needing max
 
 **1. Buffer Lifetime Violation (Use-After-Free)**
 
-Symptom: Data corruption; intermittent wrong values in read buffer; crashes with SIGSEGV in completion handler.
+**Symptom:** Data corruption; intermittent wrong values in read buffer; crashes with SIGSEGV in completion handler.
 
-Root Cause: The buffer passed to an async read was freed/reused before the I/O completed; the kernel wrote data to deallocated memory.
+**Root Cause:** The buffer passed to an async read was freed/reused before the I/O completed; the kernel wrote data to deallocated memory.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Use AddressSanitizer to catch use-after-free
@@ -316,38 +316,38 @@ gcc -fsanitize=address ./myapp.c -o myapp
 ./myapp  # ASAN will report the violation
 ```
 
-Fix: Keep buffer alive until CQE is received. Use reference counting or scoped lifetimes for async I/O buffers.
+**Fix:** Keep buffer alive until CQE is received. Use reference counting or scoped lifetimes for async I/O buffers.
 
-Prevention: In C++, use `std::shared_ptr` to manage buffer lifetime; tie buffer to the async handle that references it.
+**Prevention:** In C++, use `std::shared_ptr` to manage buffer lifetime; tie buffer to the async handle that references it.
 
 ---
 
 **2. CQ Ring Overflow (Completion Events Dropped)**
 
-Symptom: Missing completions; operations submitted but results never received; application hangs waiting for events that already completed.
+**Symptom:** Missing completions; operations submitted but results never received; application hangs waiting for events that already completed.
 
-Root Cause: Application not draining the CQ ring fast enough; CQ ring fills up and kernel drops CQEs (io_uring signals this via `IORING_FEAT_CQE_SKIP`).
+**Root Cause:** Application not draining the CQ ring fast enough; CQ ring fills up and kernel drops CQEs (io_uring signals this via `IORING_FEAT_CQE_SKIP`).
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check for CQ ring overflow events
 cat /proc/<PID>/fdinfo/<io_uring_fd> | grep overflow
 ```
 
-Fix: Drain the CQ ring in a tight loop; increase CQ ring size at `io_uring_setup` time (default: 2× SQ ring size).
+**Fix:** Drain the CQ ring in a tight loop; increase CQ ring size at `io_uring_setup` time (default: 2× SQ ring size).
 
-Prevention: Ensure CQ processing keeps pace with SQ submission; don't submit more operations than the CQ ring can hold.
+**Prevention:** Ensure CQ processing keeps pace with SQ submission; don't submit more operations than the CQ ring can hold.
 
 ---
 
 **3. io_uring Security Vulnerability (Privilege Escalation)**
 
-Symptom: Container escape or privilege escalation exploiting io_uring kernel bugs; CVE-2022-2602 and similar.
+**Symptom:** Container escape or privilege escalation exploiting io_uring kernel bugs; CVE-2022-2602 and similar.
 
-Root Cause: io_uring's complex kernel code path has historically had security vulnerabilities; kernel bugs in io_uring's file reference counting allowed privilege escalation.
+**Root Cause:** io_uring's complex kernel code path has historically had security vulnerabilities; kernel bugs in io_uring's file reference counting allowed privilege escalation.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check if io_uring is disabled in container
@@ -355,9 +355,9 @@ cat /proc/sys/kernel/io_uring_disabled
 # 0 = enabled, 1 = disabled for unprivileged, 2 = disabled
 ```
 
-Fix: On container hosts, restrict io_uring: `sysctl -w kernel.io_uring_disabled=2`. In seccomp profiles, block `io_uring_setup` syscall for untrusted workloads.
+**Fix:** On container hosts, restrict io_uring: `sysctl -w kernel.io_uring_disabled=2`. In seccomp profiles, block `io_uring_setup` syscall for untrusted workloads.
 
-Prevention: Keep kernel updated (io_uring bugs are actively fixed). For containers, apply seccomp profile blocking io_uring until explicitly needed.
+**Prevention:** Keep kernel updated (io_uring bugs are actively fixed). For containers, apply seccomp profile blocking io_uring until explicitly needed.
 
 ---
 

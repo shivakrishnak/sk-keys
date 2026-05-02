@@ -31,15 +31,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 In the 1930s, the formalization of computation was incomplete. Mathematicians needed a precise, minimal model for defining "function," reasoning about what functions can compute, and studying their properties. Existing logic systems were complex and intertwined syntax with semantics in ways that made analysis difficult. There was no minimal, self-contained system for studying functions as first-class mathematical objects.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 Hilbert's formalism programme asked: can every mathematical truth be proved mechanically? Church needed a precise language to express and reason about mathematical functions — one that was powerful enough to represent all effective procedures, yet simple enough for rigorous analysis. Existing systems conflated function definition, application, and computation in ways hard to reason about formally.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 Alonzo Church (1936) defined lambda calculus: a formal system with three constructs — variables, function abstraction (λx.M), and function application (M N). He proved this minimal system is equivalent in computational power to Turing machines, and used it to prove that the Entscheidungsproblem has no solution (a year before Turing). Lambda calculus became the mathematical foundation for understanding functions, and later the theoretical basis for functional programming languages like Lisp, Haskell, ML, and Scheme.
 
@@ -67,14 +67,14 @@ Everything — numbers, booleans, conditionals, loops, data structures — can b
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. **Three forms only:** variable (x), abstraction (λx.M), application (M N)
 2. **Computation = substitution (β-reduction):** (λx.M) N → M[x:=N]
 3. **Functions are first-class values:** λx.x is itself a value; it can be passed as an argument and returned as a result
 4. **Lambda calculus is untyped** in its simplest form — any term can be applied to any other term. Typed lambda calculi add restrictions that correspond to type systems.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 ```
 Syntax (complete definition):
@@ -93,16 +93,16 @@ Example: (λx. x + x) 3
   → 6
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
-Gain: a minimal foundation for reasoning about functions, computation, and types; the theoretical basis for type theory and formal verification; explains closures, currying, and higher-order functions from first principles.
-Cost: untyped lambda calculus is Turing complete, which means it's undecidable and can express non-terminating computations; direct programming in lambda calculus is impractical (Church encodings are verbose); understanding it requires comfort with formal systems and substitution.
+**Gain:** a minimal foundation for reasoning about functions, computation, and types; the theoretical basis for type theory and formal verification; explains closures, currying, and higher-order functions from first principles.
+**Cost:** untyped lambda calculus is Turing complete, which means it's undecidable and can express non-terminating computations; direct programming in lambda calculus is impractical (Church encodings are verbose); understanding it requires comfort with formal systems and substitution.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Can you represent the number 3 and basic arithmetic using only functions — no built-in integers?
 
 CHURCH NUMERALS — encoding numbers as functions:
@@ -124,7 +124,7 @@ Addition:
 = 5 ✓
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The number 3 is not a primitive — it's a function that applies another function 3 times. Addition adds functions together. Multiplication nests them. Everything reducible to function application and substitution. This isn't just academic: Java lambdas, JavaScript arrow functions, Haskell functions, Python lambdas — all descend from this formalism and inherit its properties (closures, currying, higher-order functions).
 
 ---
@@ -216,7 +216,7 @@ IF FALSE THEN A ELSE B
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 Lambda term written
@@ -234,7 +234,7 @@ Normal form = result of computation
 Church-Rosser theorem: result is unique regardless of reduction order
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Non-terminating lambda term:
@@ -251,7 +251,7 @@ Typed lambda calculus (STLC): all terms terminate.
 Trade-off: expressiveness vs termination guarantee.
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 At scale, lambda calculus matters because modern type systems derive from it. TypeScript's type inference uses the Hindley-Milner type inference algorithm — an algorithm on a typed lambda calculus. Rust's ownership and lifetime system is modelled on linear type theory (linear logic, where resources are used exactly once). Scala's type system uses System F with subtyping. Understanding lambda calculus tells you _why_ type inference works, why closures capture variables, why currying is natural in Haskell, and why Haskell can have `forall a. a -> a` as a type signature for the identity function.
 
@@ -366,13 +366,13 @@ System.out.println(factorial.apply(5L));  // 120
 
 **Variable Capture (Alpha Confusion) in Substitution**
 
-Symptom:
+**Symptom:**
 After applying a lambda (substituting an argument), free variables in the argument accidentally become bound by enclosing lambdas, changing the meaning of the expression.
 
-Root Cause:
+**Root Cause:**
 Substitution must avoid _variable capture_: when substituting N for x in M, if N contains a free variable y, and M binds y with λy, the substitution would accidentally capture y, changing the semantics.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```
 Example of capture problem:
@@ -389,10 +389,10 @@ In manual lambda calculus work: always apply α-conversion before β-reduction
 if the argument contains variables that are bound in the body.
 ```
 
-Fix:
+**Fix:**
 Apply α-conversion (rename bound variables) before β-reduction whenever the argument's free variables conflict with bound variables in the function body. Use De Bruijn indices (numeric representation of variable binding depth) to eliminate naming issues entirely — used in many compiler implementations.
 
-Prevention:
+**Prevention:**
 When implementing an interpreter or type checker, use De Bruijn indices instead of names for bound variables. This eliminates the renaming problem entirely.
 
 ---

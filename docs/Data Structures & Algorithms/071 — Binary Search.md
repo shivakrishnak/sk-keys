@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You have a dictionary with 500,000 words sorted alphabetically and need to find "pragmatic." A linear scan starts at "aardvark," checks every word one by one — on average 250,000 comparisons. At 1 million lookups per second, that's 0.25 seconds per query. In a production autocomplete system with 10,000 simultaneous users, the server is saturated.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 O(N) linear search is unusable for large sorted datasets. The sorted order is completely ignored — every comparison provides only one bit of information ("found" or "not found"). The sorted arrangement hints at a far more powerful approach that's being wasted.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Sorting not only organises data — it creates a map. At any midpoint, you instantly know: target is in the left half or the right half. Each comparison eliminates half the remaining candidates. 500,000 elements → 19 comparisons. This is exactly why **Binary Search** was created.
 
 ---
@@ -64,12 +64,12 @@ Binary Search's power comes from eliminating possibilities, not from finding the
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The target, if it exists, is always within `[low..high]` — the invariant is never violated.
 2. Each iteration strictly reduces the search space: `high - low` decreases by at least 1 per step.
 3. The array is sorted — moving left or right provides deterministic information about where the target must be.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 3, at any midpoint `m`, exactly one of three things is true:
 - `arr[m] == target`: found.
 - `arr[m] < target`: target must be in `[m+1..high]` (sorted order guarantees nothing in `[low..m]` can equal target).
@@ -80,29 +80,29 @@ Each case either finds the answer or reduces the space by roughly half. Because 
 **Boundary subtlety — `mid = low + (high - low) / 2`:**
 Using `(low + high) / 2` overflows for large indices when `low + high > Integer.MAX_VALUE`. The form `low + (high - low) / 2` is overflow-safe and identically correct.
 
-THE TRADE-OFFS:
-Gain: O(log N) search — 30 comparisons finds any element in a billion-element sorted array.
-Cost: Requires sorted input (O(N log N) sort if unsorted). Cannot handle insertions/deletions without re-sorting (use a BST for dynamic sorted data).
+**THE TRADE-OFFS:**
+**Gain:** O(log N) search — 30 comparisons finds any element in a billion-element sorted array.
+**Cost:** Requires sorted input (O(N log N) sort if unsorted). Cannot handle insertions/deletions without re-sorting (use a BST for dynamic sorted data).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Sorted array `[1, 3, 5, 7, 9, 11, 13, 15]`. Find target = 7.
 
-WHAT HAPPENS WITHOUT BINARY SEARCH (linear):
+**WHAT HAPPENS WITHOUT BINARY SEARCH (linear):**
 - Check 1, 3, 5, 7 — found at index 3. 4 comparisons.
 - For target = 15: check all 8 elements. In worst case: N comparisons.
 
-WHAT HAPPENS WITH BINARY SEARCH:
+**WHAT HAPPENS WITH BINARY SEARCH:**
 - low=0, high=7. mid=3. arr[3]=7 == target. Found in 1 comparison!
 - For target = 15: low=0, high=7, mid=3, arr[3]=7 < 15 → low=4.
   low=4, high=7, mid=5, arr[5]=11 < 15 → low=6.
   low=6, high=7, mid=6, arr[6]=13 < 15 → low=7.
   low=7, high=7, mid=7, arr[7]=15 == 15. Found in 4 comparisons (vs 8 linear).
 
-THE INSIGHT:
+**THE INSIGHT:**
 Even in the worst case, Binary Search never needs more than ⌈log₂(N)⌉ steps. For N=10⁹, that's 30 comparisons regardless of where the target is. The sorted array is not just organised data — it's an implicit decision tree of depth log₂(N).
 
 ---
@@ -111,12 +111,12 @@ Even in the worst case, Binary Search never needs more than ⌈log₂(N)⌉ step
 
 > Binary Search is like the "higher or lower" guessing game for numbers 1–100. Each time the other person says "higher" or "lower," you jump to the exact middle of the remaining range — never wasting a guess. You always guess 50, then 75 or 25, then the midpoint of the survivor — found in at most 7 guesses.
 
-"Remaining range" → `[low..high]`
-"Midpoint guess" → `arr[mid]`
-"Higher" → `low = mid + 1`
-"Lower" → `high = mid - 1`
-"Exact match" → return `mid`
-"Number not in range" → `low > high`, return -1
+- "Remaining range" → `[low..high]`
+- "Midpoint guess" → `arr[mid]`
+- "Higher" → `low = mid + 1`
+- "Lower" → `high = mid - 1`
+- "Exact match" → return `mid`
+- "Number not in range" → `low > high`, return -1
 
 Where this analogy breaks down: In the guessing game, the answer is a single integer; in Binary Search the target is compared to array values at positions. Also, the analogy doesn't capture the off-by-one subtlety of `≤ vs <` when searching for a range boundary (lower_bound / upper_bound variations).
 
@@ -183,7 +183,7 @@ Used when the search space is a range of integer values rather than an array. Ex
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Unsorted data arrives
 → Sort data O(N log N)    [or use pre-sorted source]
@@ -196,7 +196,7 @@ Unsorted data arrives
 → Use index to access value or report not found
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Array not sorted (or mutated after sort)
 → Binary Search returns wrong index or -1
@@ -205,7 +205,7 @@ Array not sorted (or mutated after sort)
 → Fix: sort before search; don't modify array between sort and search
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 Binary Search on a 1-billion-element sorted array takes 30 comparisons, but each comparison may cause a cache miss if the array spans multiple cache lines. Modern CPUs pre-fetch sequential memory; random access patterns at log N positions across a huge array bypass prefetch. Database B-trees group ~100 keys per node, limiting to log₁₀₀(N) ≈ 5 page reads for 10⁹ records — far fewer I/O operations than 30 random cache misses.
 
 ---
@@ -319,11 +319,11 @@ How to choose: Use Binary Search for sorted in-memory arrays with repeated queri
 
 **1. Integer overflow in mid calculation**
 
-Symptom: `mid` becomes negative for large arrays; wrong elements accessed.
+**Symptom:** `mid` becomes negative for large arrays; wrong elements accessed.
 
-Root Cause: `(low + high)` overflows `int` when both are close to `Integer.MAX_VALUE`.
+**Root Cause:** `(low + high)` overflows `int` when both are close to `Integer.MAX_VALUE`.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Add assertion:
 assert low >= 0 && high < arr.length
@@ -332,19 +332,19 @@ assert low >= 0 && high < arr.length
 System.out.println("mid=" + ((low + high) / 2));
 ```
 
-Fix: Replace `(low + high) / 2` with `low + (high - low) / 2`.
+**Fix:** Replace `(low + high) / 2` with `low + (high - low) / 2`.
 
-Prevention: Always use the overflow-safe form from the start.
+**Prevention:** Always use the overflow-safe form from the start.
 
 ---
 
 **2. Infinite loop with `while (low < high)` and wrong pointer update**
 
-Symptom: Loop runs forever; `low == high` never reached.
+**Symptom:** Loop runs forever; `low == high` never reached.
 
-Root Cause: When `low == high - 1` and `arr[mid] >= target`, setting `high = mid - 1` is wrong for lower_bound semantics. The invariant "answer is in [low..high]" is violated.
+**Root Cause:** When `low == high - 1` and `arr[mid] >= target`, setting `high = mid - 1` is wrong for lower_bound semantics. The invariant "answer is in [low..high]" is violated.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Add iteration counter with assertion:
 int iter = 0;
@@ -354,19 +354,19 @@ while (low < high) {
 }
 ```
 
-Fix: For lower_bound, use `high = mid` (not `mid - 1`). Ensure loop makes progress: `low` must increase or `high` must decrease each iteration.
+**Fix:** For lower_bound, use `high = mid` (not `mid - 1`). Ensure loop makes progress: `low` must increase or `high` must decrease each iteration.
 
-Prevention: Dry-run the boundary case: `low = 4, high = 5`, `mid = 4`, then trace the pointer update.
+**Prevention:** Dry-run the boundary case: `low = 4, high = 5`, `mid = 4`, then trace the pointer update.
 
 ---
 
 **3. Off-by-one in insertion index**
 
-Symptom: `Arrays.binarySearch` returns a negative value; code crashes treating it as an index.
+**Symptom:** `Arrays.binarySearch` returns a negative value; code crashes treating it as an index.
 
-Root Cause: `Arrays.binarySearch` returns `-(insertionPoint + 1)` when not found. Many developers forget to check for negative return values.
+**Root Cause:** `Arrays.binarySearch` returns `-(insertionPoint + 1)` when not found. Many developers forget to check for negative return values.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 int idx = Arrays.binarySearch(arr, target);
 System.out.println("result=" + idx +
@@ -374,7 +374,7 @@ System.out.println("result=" + idx +
      (-idx - 1) + ")" : " (found)"));
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: assumes element is always found
 arr[Arrays.binarySearch(arr, 5)] = 99;
@@ -384,17 +384,17 @@ int idx = Arrays.binarySearch(arr, 5);
 if (idx >= 0) arr[idx] = 99;
 ```
 
-Prevention: Always check the sign of the return value from `Arrays.binarySearch`.
+**Prevention:** Always check the sign of the return value from `Arrays.binarySearch`.
 
 ---
 
 **4. Searching unsorted or partially sorted array**
 
-Symptom: Correct elements exist but Binary Search returns -1 or the wrong index.
+**Symptom:** Correct elements exist but Binary Search returns -1 or the wrong index.
 
-Root Cause: The decision rule `arr[mid] < target → low = mid + 1` is only valid if arr is sorted. On unsorted data, the target may be in the discarded half.
+**Root Cause:** The decision rule `arr[mid] < target → low = mid + 1` is only valid if arr is sorted. On unsorted data, the target may be in the discarded half.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Validate sorted precondition
 for (int i = 1; i < arr.length; i++)
@@ -402,9 +402,9 @@ for (int i = 1; i < arr.length; i++)
         "Not sorted at index " + i;
 ```
 
-Fix: Sort the array before searching, or use linear search for unsorted data.
+**Fix:** Sort the array before searching, or use linear search for unsorted data.
 
-Prevention: Document the sorted precondition: `// PRECONDITION: arr must be sorted ascending`.
+**Prevention:** Document the sorted precondition: `// PRECONDITION: arr must be sorted ascending`.
 
 ---
 

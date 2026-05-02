@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 In the earliest operating systems, a program issued an I/O operation and had to busy-wait — spinning in a tight loop checking whether the hardware had finished. While the disk head moved and the network card waited for packets, the CPU was burning 100% doing nothing useful — just repeatedly asking "are you done yet?" This wasted CPU cycles that could serve other tasks and made the system feel unresponsive.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Busy-waiting was catastrophically wasteful. A web server spinning on I/O couldn't run other requests. The CPU was fully occupied achieving nothing while hardware was working.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why Blocking I/O was created — instead of busy-waiting, the OS puts the thread to sleep and reschedules it only when the I/O operation is complete, freeing the CPU to run other threads.
 
 ---
@@ -65,27 +65,27 @@ Blocking I/O is not "slow" — it's the OS working correctly (no busy-waiting). 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. A blocking I/O call does not return until data is available or an error occurs.
 2. The calling thread is parked in the kernel's wait queue — not running, not consuming CPU.
 3. The OS resumes the thread upon hardware interrupt or timer.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 When a thread calls `read(fd, buf, n)` and no data is available, the kernel calls `schedule()` — the scheduler removes the thread from the run queue and parks it. The kernel registers a callback: when data arrives on `fd` (network packet, disk read complete), the interrupt handler adds the thread back to the run queue. The scheduler eventually gives the thread CPU time, `read()` copies data, and returns. The thread never ran between the `read()` call and the return.
 
-THE TRADE-OFFS:
-Gain: Extremely simple programming model — sequential code, easy error handling, no callbacks or state machines needed.
-Cost: One thread per concurrent I/O operation. At 10,000 connections, 10,000 threads × ~1 MB stack = 10 GB RAM just for stacks. Context switching between 10,000 threads adds scheduler overhead.
+**THE TRADE-OFFS:**
+**Gain:** Extremely simple programming model — sequential code, easy error handling, no callbacks or state machines needed.
+**Cost:** One thread per concurrent I/O operation. At 10,000 connections, 10,000 threads × ~1 MB stack = 10 GB RAM just for stacks. Context switching between 10,000 threads adds scheduler overhead.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A chat server must handle 10,000 simultaneous users, each sending one message per second. Each network read takes up to 100 ms if the user is slow.
 
-WHAT HAPPENS WITH blocking I/O:
+**WHAT HAPPENS WITH blocking I/O:**
 
 1. Server spawns one thread per connection: 10,000 threads.
 2. Each thread calls `read(socket_fd, buf, 1024)` and blocks.
@@ -93,14 +93,14 @@ WHAT HAPPENS WITH blocking I/O:
 4. Scheduler must context-switch between 10,000 threads, each waking every second.
 5. At 1,000 connections: manageable. At 100,000 connections: system cannot fork that many threads.
 
-WHAT HAPPENS WITH non-blocking I/O + event loop:
+**WHAT HAPPENS WITH non-blocking I/O + event loop:**
 
 1. One thread manages all 10,000 connections via `epoll`.
 2. Only connections with data ready trigger callbacks.
 3. No idle threads — same thread handles all ready connections.
 4. Memory: 1 thread stack (1 MB) + event state per connection (~200 bytes × 10,000 = 2 MB).
 
-THE INSIGHT:
+**THE INSIGHT:**
 Blocking I/O's simplicity comes at the cost of one thread per concurrent I/O. This is fine for 100 connections — painful for 100,000. The "C10K problem" (handling 10,000 connections efficiently) is fundamentally a choice between blocking I/O (threads) and non-blocking I/O (events).
 
 ---
@@ -109,10 +109,10 @@ Blocking I/O's simplicity comes at the cost of one thread per concurrent I/O. Th
 
 > Blocking I/O is like a telephone receptionist who personally takes every call, puts one caller on hold, helps them fully, then takes the next. Every caller gets undivided attention, but the queue grows unbounded with scale. Compare to a call centre with a switchboard (non-blocking I/O): one operator routes dozens of calls simultaneously, connecting callers when an agent becomes available.
 
-"Receptionist taking one call" → one thread per blocking connection
-"Caller on hold" → blocked thread in kernel wait queue
-"Receptionist free after call ends" → thread resumes after I/O completes
-"Queue growing at peak hours" → thread pool exhaustion
+- "Receptionist taking one call" → one thread per blocking connection
+- "Caller on hold" → blocked thread in kernel wait queue
+- "Receptionist free after call ends" → thread resumes after I/O completes
+- "Queue growing at peak hours" → thread pool exhaustion
 
 Where this analogy breaks down: Unlike a human receptionist, OS context switching between threads is fast (~1–10 µs); the problem is memory and kernel overhead, not the switching time itself.
 
@@ -168,7 +168,7 @@ Blocking I/O was the natural choice in single-CPU single-process systems: one ta
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [Server: Thread calls read(client_fd, buf, 1024)]
@@ -180,10 +180,10 @@ NORMAL FLOW:
    → [Server: processes request data]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [Client disconnects] → [read() returns 0] → [Thread must handle EOF] → [close(fd), free resources]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10,000 blocked threads, the scheduler must track 10,000 runnable/waiting threads. Linux kernel scales to ~100K threads but at memory cost (each thread needs kernel stack = 8–16 KB + user stack = 1 MB). Thread context switch time (~1–10 µs) × 10,000 wakeups/second = 10–100 ms of pure scheduling overhead. Java NIO and Netty solve this; Java 21 virtual threads make blocking I/O viable again at scale.
 
 ---
@@ -279,11 +279,11 @@ How to choose: Use blocking I/O for internal services with < 500 concurrent conn
 
 **1. Thread Pool Exhaustion (Connection Queue Backup)**
 
-Symptom: New connections time out; server appears unresponsive; `jstack` shows all threads `WAITING` on socket read; thread pool queue depth growing.
+**Symptom:** New connections time out; server appears unresponsive; `jstack` shows all threads `WAITING` on socket read; thread pool queue depth growing.
 
-Root Cause: All threads blocked on slow clients; new connections can't get a thread from the pool.
+**Root Cause:** All threads blocked on slow clients; new connections can't get a thread from the pool.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Java: check thread pool queue depth
@@ -293,19 +293,19 @@ curl http://localhost:8080/actuator/metrics/
     executor.queued
 ```
 
-Fix: Increase thread pool size (short-term), switch to non-blocking I/O or virtual threads (long-term). Add `setSoTimeout()` to detect slow clients and disconnect them.
+**Fix:** Increase thread pool size (short-term), switch to non-blocking I/O or virtual threads (long-term). Add `setSoTimeout()` to detect slow clients and disconnect them.
 
-Prevention: Use virtual threads (`Executors.newVirtualThreadPerTaskExecutor()`) in Java 21+; or use Netty/Reactor for NIO.
+**Prevention:** Use virtual threads (`Executors.newVirtualThreadPerTaskExecutor()`) in Java 21+; or use Netty/Reactor for NIO.
 
 ---
 
 **2. Indefinite Block (Missing Timeout)**
 
-Symptom: A thread is stuck in `read()` or `connect()` for hours; server has a "thread leak" growing over days.
+**Symptom:** A thread is stuck in `read()` or `connect()` for hours; server has a "thread leak" growing over days.
 
-Root Cause: Remote peer stalled (network partition, process hang) with no timeout set on the socket. `read()` waits forever.
+**Root Cause:** Remote peer stalled (network partition, process hang) with no timeout set on the socket. `read()` waits forever.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Find threads stuck in blocking syscall
@@ -314,7 +314,7 @@ cat /proc/<PID>/task/*/syscall | grep "^0 "  # read syscall #
 strace -p <TID> -e read 2>&1  # show if stuck
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: no timeout — can block indefinitely
@@ -326,26 +326,26 @@ socket.connect(addr, 3000);    // 3s connect timeout
 socket.setSoTimeout(5000);     // 5s read timeout
 ```
 
-Prevention: Make timeouts a required parameter in all connection/read wrappers; lint rule to forbid bare `read()` without timeout.
+**Prevention:** Make timeouts a required parameter in all connection/read wrappers; lint rule to forbid bare `read()` without timeout.
 
 ---
 
 **3. Deadlock via Blocking I/O on Same Thread**
 
-Symptom: Application completely freezes; all threads show as blocked; no CPU usage; no error messages.
+**Symptom:** Application completely freezes; all threads show as blocked; no CPU usage; no error messages.
 
-Root Cause: Thread A holds a lock and calls blocking I/O; Thread B needs the lock but is blocked by Thread A's I/O wait; Thread A's I/O waits for data that Thread B must send.
+**Root Cause:** Thread A holds a lock and calls blocking I/O; Thread B needs the lock but is blocked by Thread A's I/O wait; Thread A's I/O waits for data that Thread B must send.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 jstack <PID> 2>&1 | grep -A10 "deadlock\|BLOCKED"
 # Shows circular dependency
 ```
 
-Fix: Never hold a lock while performing blocking I/O. Release lock before I/O, re-acquire after.
+**Fix:** Never hold a lock while performing blocking I/O. Release lock before I/O, re-acquire after.
 
-Prevention: Use `tryLock(timeout)` instead of `lock()` to detect lock starvation; architect I/O-heavy code paths to be lock-free.
+**Prevention:** Use `tryLock(timeout)` instead of `lock()` to detect lock starvation; architect I/O-heavy code paths to be lock-free.
 
 ---
 

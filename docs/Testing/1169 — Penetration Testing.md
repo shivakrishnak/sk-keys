@@ -267,11 +267,11 @@ Response: Immediately report via emergency contact. Don't exploit. Document and 
 **2. Findings Not Remediated After Test**
 Cause: Report delivered, findings tracked in backlog, deprioritized over features.
 Result: Next year's pen test finds same vulnerabilities.
-Fix: Critical/High findings must have mandatory remediation SLAs. Re-test to verify fixes.
+**Fix:** Critical/High findings must have mandatory remediation SLAs. Re-test to verify fixes.
 
 **3. Testing in Production Without Safeguards**
 Risk: Pen test against production can cause outages (buffer overflow exploits, DoS as side effect).
-Fix: Test against staging (production clone). If production testing required, out-of-hours window with rollback plan.
+**Fix:** Test against staging (production clone). If production testing required, out-of-hours window with rollback plan.
 
 ---
 

@@ -400,11 +400,11 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
 
 **Token Claims Not Verified — Broken Auth**
 
-Symptom:
+**Symptom:**
 Security audit finds that any valid JWT (not expired) from any issuer is accepted.
 User from a test environment can access production APIs.
 
-Root Cause:
+**Root Cause:**
 JWT decoder configured with `jwsAlgorithm` only, not checking `iss` (issuer) or
 `aud` (audience) claims. Any RS256-signed JWT is accepted.
 

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Java 5 added Generics in 2004 to a language that had been in production since 1995. Millions of lines of code already used raw `List`, `Map`, and `Set` without type parameters. If generics had been implemented as distinct runtime types (`List<String>` being a completely different JVM class from `List`), all existing libraries would be incompatible. Every pre-Java-5 library would need to be recompiled and every API explicitly changed — an impossible migration.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Consider a widely used library method: `public List getData()`. In a reified-generics world, it returns `List` (a different type from `List<String>`). Every callsite would break. The entire Java ecosystem — including the JDK itself — would need simultaneous updates. This was not feasible in 2004.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Type Erasure** was designed — to implement generics as a purely compile-time feature, erasing type parameters to their bounds in bytecode, so that generic and non-generic code can interoperate seamlessly and the JVM needs no changes.
 
 ---
@@ -64,12 +64,12 @@ Type Erasure means the JVM has no idea that `List<String>` ever existed. You can
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. After erasure, all instantiations of a generic class map to exactly one class file.
 2. Erased type parameters become their upper bound (`T` → `Object`, `T extends Runnable` → `Runnable`).
 3. The compiler inserts explicit casts wherever a generic value is used with a concrete type.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1, `List.class == List<String>.class` — this is literally true at runtime. Given invariant 2, the JVM's internal representation of `List<T>` stores elements as `Object` references. Given invariant 3, `String s = list.get(0)` compiles to a `checkcast String` bytecode instruction inserted by the compiler.
 
 **Bridge methods** are a subtle consequence. Suppose:
@@ -96,21 +96,21 @@ After erasure, `Box<String>` becomes `Box`, and `Box.get()` has signature `Objec
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Full backward compatibility with pre-Java-5 code; no JVM changes needed; zero runtime overhead for generic operations.
-Cost: No runtime generic type information; cannot create generic arrays (`new T[n]`); cannot use `instanceof` with parameterised types; overloading on generic parameters alone is impossible; heap pollution is possible via raw types; complex patterns (like type-safe heterogeneous containers) require workarounds.
+**THE TRADE-OFFS:**
+**Gain:** Full backward compatibility with pre-Java-5 code; no JVM changes needed; zero runtime overhead for generic operations.
+**Cost:** No runtime generic type information; cannot create generic arrays (`new T[n]`); cannot use `instanceof` with parameterised types; overloading on generic parameters alone is impossible; heap pollution is possible via raw types; complex patterns (like type-safe heterogeneous containers) require workarounds.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You write `List<String> names = new ArrayList<>()` and later try to check the type at runtime.
 
-WHAT HAPPENS WITHOUT TYPE ERASURE (hypothetical reified generics):
+**WHAT HAPPENS WITHOUT TYPE ERASURE (hypothetical reified generics):**
 `names instanceof List<String>` → `true`. `names.getClass().getTypeArgument(0)` → `String`. You could write a method `<T> T deserialize(String json, Class<T> type)` that creates generic collections directly from their runtime type.
 
-WHAT HAPPENS WITH TYPE ERASURE (actual Java):
+**WHAT HAPPENS WITH TYPE ERASURE (actual Java):**
 ```java
 List<String> names = new ArrayList<>();
 System.out.println(names instanceof List);         // true
@@ -121,7 +121,7 @@ System.out.println(names.getClass());
 ```
 Nothing in the runtime type of `names` reveals that it was declared as `List<String>`.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The type parameter `<String>` exists only in the source file and in the compiler's symbol table. Once the `.class` file is written, that information is gone (except for a small subset captured in signature attributes used by reflection and IDE tools — which is separate from runtime behaviour).
 
 ---
@@ -130,10 +130,10 @@ The type parameter `<String>` exists only in the source file and in the compiler
 
 > Type Erasure is like writing a special note on a shipping label that only the post office's sorting system reads at intake — "fragile, glass only." At delivery, the recipient gets the package with no label. The sorting system enforced the right handling during processing, but the recipient can't verify what the note said.
 
-"Shipping label note" → generic type parameter (`<String>`)
-"Post office sorting system" → javac compiler type-checker
-"Package delivery with no label" → compiled bytecode (raw type)
-"Recipient can't verify label" → runtime cannot determine generic type argument
+- "Shipping label note" → generic type parameter (`<String>`)
+- "Post office sorting system" → javac compiler type-checker
+- "Package delivery with no label" → compiled bytecode (raw type)
+- "Recipient can't verify label" → runtime cannot determine generic type argument
 
 Where this analogy breaks down: Unlike a physical label that is simply removed, Java's erasure also inserts casts at delivery sites — so the recipient does get type enforcement through synthesised code, just not through inspectable metadata.
 
@@ -228,7 +228,7 @@ The `Signature` attribute in the class file preserves the generic signature for 
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Source: List<String> list = new ArrayList<>()]
     → [javac type-checks all operations]
@@ -240,7 +240,7 @@ NORMAL FLOW:
     → [Runtime: no type param info available]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Raw type used: List list = getList()]
     → [Warning issued: unchecked assignment]
@@ -250,7 +250,7 @@ FAILURE PATH:
     → [Stack trace: misleading — points to get() site]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, erasure's main impact is on reflection-heavy frameworks (Jackson, Guice, Spring) that need generic type information to deserialize into `List<MyDto>`. These frameworks use the `Signature` attribute via `java.lang.reflect.ParameterizedType` to recover the erased type. The pattern `new TypeToken<List<MyDto>>(){}` (anonymous subclass) exploits the fact that superclass generic signatures are preserved in bytecode, allowing runtime recovery of the type argument.
 
 ---
@@ -362,13 +362,13 @@ How to choose: You cannot choose the approach for Java — erasure is the implem
 
 **ClassCastException from Invisible checkcast**
 
-Symptom:
+**Symptom:**
 `ClassCastException: class Foo cannot be cast to class Bar` thrown inside a method that appears to have no explicit casts. Line number points to a normal usage like `String s = list.get(i)`.
 
-Root Cause:
+**Root Cause:**
 The `checkcast` instruction inserted by the compiler during erasure is failing. A raw type or unchecked cast somewhere in the call chain allowed the wrong type to enter the collection. The exception fires at the consumption site, not the insertion site.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Use javap to see inserted checkcast:
 javap -c MyClass.class | grep -A3 "checkcast"
@@ -377,7 +377,7 @@ javap -c MyClass.class | grep -A3 "checkcast"
 javac -Xlint:unchecked MyClass.java 2>&1
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: raw type enables wrong types to enter
 @SuppressWarnings("unchecked")
@@ -392,26 +392,26 @@ List<String> names = raw.stream()
     .collect(toList());
 ```
 
-Prevention: Treat all unchecked warnings as errors at the build boundary with legacy code.
+**Prevention:** Treat all unchecked warnings as errors at the build boundary with legacy code.
 
 ---
 
 **Overloading Clash After Erasure**
 
-Symptom:
+**Symptom:**
 Compiler error "have the same erasure" when declaring two generic methods.
 
-Root Cause:
+**Root Cause:**
 After erasure, two distinct generic signatures become identical. The JVM distinguishes methods by name + erased parameter types only — so `void process(List<String>)` and `void process(List<Integer>)` both become `void process(List)`, which is a duplicate.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 javac MyClass.java
 # error: name clash: process(List<String>) and
 # process(List<Integer>) have the same erasure
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: clash after erasure
 void process(List<String> items) { ... }
@@ -425,19 +425,19 @@ void processIntegers(List<Integer> items) { ... }
 <T> void process(List<T> items, Consumer<T> handler) {...}
 ```
 
-Prevention: Avoid overloading methods that differ only in generic type parameters.
+**Prevention:** Avoid overloading methods that differ only in generic type parameters.
 
 ---
 
 **TypeToken Failing for Nested Generic Types**
 
-Symptom:
+**Symptom:**
 JSON deserialization returns `LinkedHashMap` instead of `MyDto` when using `List<List<MyDto>>`.
 
-Root Cause:
+**Root Cause:**
 The TypeReference captures only the outermost parameterised type. Nested generics may not be resolved correctly by some frameworks when the anonymous class capturing is incorrect.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Add debug logging to deserialization:
 objectMapper.configure(
@@ -447,7 +447,7 @@ objectMapper.configure(
 #   .constructType(new TypeReference<List<List<MyDto>>>(){})
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: runtime type mismatch for nested generics
 List<List<MyDto>> result = objectMapper.readValue(
@@ -464,7 +464,7 @@ List<List<MyDto>> result = objectMapper.readValue(
 );
 ```
 
-Prevention: For complex nested generic types, always verify the deserialized result type with assertions in integration tests.
+**Prevention:** For complex nested generic types, always verify the deserialized result type with assertions in integration tests.
 
 ---
 

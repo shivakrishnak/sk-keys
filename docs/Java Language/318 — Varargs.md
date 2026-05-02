@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Before Java 5, to write a method that accepted a variable number of arguments you had to overload it for each count — `log(String msg)`, `log(String msg, Object arg1)`, `log(String msg, Object arg1, Object arg2)`, etc. — or accept an explicit array: `log(String msg, Object[] args)`. The overload approach explodes combinatorially. The array approach pollutes every callsite with `new Object[] { ... }` construction noise. `String.format()` would require the caller to write `format("%s %s", new Object[]{"hello", "world"})` — clumsy and error-prone.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 The Java logging and formatting APIs needed to accept an arbitrary number of arguments. Every formatting call wrote noise: `logger.log(Level.INFO, "Order {0} placed by {1}", new Object[]{orderId, userId})`. On a codebase with 10,000 log statements, that is 10,000 `new Object[]` allocations in syntax with zero semantic value.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Varargs** were created — to let the compiler handle the array packaging automatically, so callers write `log("Order {} placed by {}", orderId, userId)` naturally.
 
 ---
@@ -64,12 +64,12 @@ Varargs is 100% syntactic sugar — `log("msg", a, b, c)` compiles to exactly th
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Varargs parameter must be the last parameter in a method signature.
 2. At the call site, the compiler implicitly creates `new T[]{ args... }` unless the caller passes an explicit array of type `T[]`.
 3. Inside the method, the varargs parameter behaves exactly as a `T[]` array — null-safe iteration, length access, etc.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 2, there is no performance magic in varargs — every call that does not pass an explicit array allocates a new array object on the heap. This means varargs on hot paths generates garbage. For `String.format("...", a, b)`, an `Object[]` of length 2 is heap-allocated per call. High-frequency APIs like loggers mitigate this with the isEnabled check pattern before varargs expansion.
 
 **Overload resolution order:** The compiler resolves overloads as:
@@ -94,18 +94,18 @@ This means `log(String s)` is preferred over `log(String... args)` when called w
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Clean call-site syntax for variable-argument methods; eliminates overload explosion; integrates naturally with arrays (no double-wrapping).
-Cost: Heap allocation per call unless an explicit array is passed; heap pollution warning with generic varargs; last-parameter restriction limits flexibility; overload resolution surprises when mixing varargs and non-varargs signatures.
+**THE TRADE-OFFS:**
+**Gain:** Clean call-site syntax for variable-argument methods; eliminates overload explosion; integrates naturally with arrays (no double-wrapping).
+**Cost:** Heap allocation per call unless an explicit array is passed; heap pollution warning with generic varargs; last-parameter restriction limits flexibility; overload resolution surprises when mixing varargs and non-varargs signatures.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A method called 10,000 times per second that logs structured events with varying numbers of context fields.
 
-WHAT HAPPENS WITHOUT VARARGS (explicit array):
+**WHAT HAPPENS WITHOUT VARARGS (explicit array):**
 ```java
 // Caller (10,000 times/second):
 logger.log("Order created",
@@ -114,7 +114,7 @@ logger.log("Order created",
 // GC processes ~10,000 Object[] per second
 ```
 
-WHAT HAPPENS WITH VARARGS:
+**WHAT HAPPENS WITH VARARGS:**
 ```java
 // Caller (same 10,000 times/second):
 logger.log("Order created", orderId, userId, amount);
@@ -122,7 +122,7 @@ logger.log("Order created", orderId, userId, amount);
 // Runtime: IDENTICAL allocation — same GC pressure
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 Varargs does not change the performance characteristics — it changes only the call-site syntax. The array allocation is identical. The real gains are readability and maintainability (no `new Object[]{}` noise), not throughput. Developers who believe varargs APIs are faster than array APIs are mistaken.
 
 ---
@@ -131,9 +131,9 @@ Varargs does not change the performance characteristics — it changes only the 
 
 > Varargs is like a phone contact that accepts "any number of email addresses." You type `add(alice@a.com, bob@b.com, carol@c.com)` in the UI. Behind the scenes, the system builds a list `[alice, bob, carol]` and stores it. You never see the list construction — you just separate addresses with commas like you naturally would.
 
-"Typing multiple emails with commas" → calling with multiple args.
-"System building a list behind the scenes" → compiler inserting `new T[]{}` at call site.
-"Contact stored as list internally" → method body receives a `T[]` array.
+- "Typing multiple emails with commas" → calling with multiple args.
+- "System building a list behind the scenes" → compiler inserting `new T[]{}` at call site.
+- "Contact stored as list internally" → method body receives a `T[]` array.
 
 Where this analogy breaks down: You can pass an existing contact list directly (explicit array), and the system won't re-list it. Varargs also accepts an explicit array directly without re-wrapping — an important optimization path.
 
@@ -215,7 +215,7 @@ static <T> List<T> listOf(T... args) {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Caller: format("Hello %s %s", first, last)]
     → [Compiler: packs to new Object[]{first, last}]
@@ -224,7 +224,7 @@ NORMAL FLOW:
     → [Returns formatted string]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Caller passes null: format("msg", null)]
     → [Compiler: null passed as the array itself]
@@ -233,7 +233,7 @@ FAILURE PATH:
     → [Fix: use explicit new Object[]{null} or check null]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At high-frequency call sites (logging frameworks, tracing), every varargs call allocates a new array. SLF4J's two-argument overloads `logger.debug(String, Object, Object)` exist specifically to avoid the varargs array allocation for the common 1–2 argument case. Log4j 2 also uses this pattern. At 1M log calls/second with 3+ args, varargs-caused GC pressure is measurable.
 
 ---
@@ -338,13 +338,13 @@ How to choose: Use varargs for readability when call frequency is moderate. Use 
 
 **Heap Pollution via Generic Varargs Exposure**
 
-Symptom:
+**Symptom:**
 `ClassCastException` thrown at a site far removed from the call that injected the wrong type. Difficult to trace.
 
-Root Cause:
+**Root Cause:**
 A generic varargs method stored or returned the varargs array. Because generics erase to `Object[]` at runtime, the array can hold any type. Accessing it as `T[]` later produces a `ClassCastException`.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Compiler warning: "unchecked or unsafe operations"
 javac -Xlint:unchecked *.java | grep "varargs"
@@ -352,7 +352,7 @@ javac -Xlint:unchecked *.java | grep "varargs"
 # @SafeVarargs is a potential heap pollution site
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: exposes the varargs array
 @SafeVarargs  // WRONG: shouldn't suppress — it IS unsafe
@@ -369,19 +369,19 @@ static <T> List<T> toList(T... elements) {
 }
 ```
 
-Prevention: Never return or store the varargs array directly from a generic method. Copy into a typed structure first.
+**Prevention:** Never return or store the varargs array directly from a generic method. Copy into a typed structure first.
 
 ---
 
 **NullPointerException from Unguarded null Array**
 
-Symptom:
+**Symptom:**
 `NullPointerException` on the first line that accesses the varargs parameter inside the method body.
 
-Root Cause:
+**Root Cause:**
 Caller explicitly passed `null` as the array argument (not as an element). `args == null` rather than `args.length == 0`.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Add null guard at method start:
 Objects.requireNonNull(args, "args must not be null");
@@ -389,7 +389,7 @@ Objects.requireNonNull(args, "args must not be null");
 if (args == null) args = new T[0];
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: no null check
 void log(Object... args) {
@@ -404,25 +404,25 @@ void log(Object... args) {
 }
 ```
 
-Prevention: Always add a null guard at the start of varargs methods that will be called from external code.
+**Prevention:** Always add a null guard at the start of varargs methods that will be called from external code.
 
 ---
 
 **Overloading Ambiguity with Varargs**
 
-Symptom:
+**Symptom:**
 Compiler error "ambiguous method call" or unexpected overload selected when calling a varargs method.
 
-Root Cause:
+**Root Cause:**
 Multiple applicable methods when the varargs version should be a last resort but another candidate also matches.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 javac -verbose MyClass.java 2>&1 | grep "ambiguous"
 # Shows which two methods conflict
 ```
 
-Fix:
+**Fix:**
 ```java
 // Ambiguous: which overload for single String arg?
 void process(String s) { System.out.println("S"); }
@@ -437,7 +437,7 @@ void process(String... ss) { }
 process("x");  // uses Object overload, not varargs
 ```
 
-Prevention: Avoid overloading varargs methods with methods accepting a single argument of the component type or its supertype — the resolution order is surprising.
+**Prevention:** Avoid overloading varargs methods with methods accepting a single argument of the component type or its supertype — the resolution order is surprising.
 
 ---
 

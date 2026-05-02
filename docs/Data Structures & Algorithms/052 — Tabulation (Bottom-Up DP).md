@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Memoized Fibonacci works for N up to ~5,000. Beyond that, the recursion depth causes `StackOverflowError`. You cannot increase stack size indefinitely (each thread stack consumes RAM). For large N=1,000,000, you simply cannot use top-down recursion.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Memoization is limited by call stack depth. Even with caching, N recursive frames are opened on the call stack for the first full traversal. For large N, this is fatal. You need the efficiency of memoization without the stack depth risk.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Instead of computing from the top (large N) down to the base cases, compute from the bottom (base cases) up to the target. No recursion. No call stack. Just a loop filling an array in dependency order: compute `dp[i]` only after all values it depends on are already filled. This is exactly why Tabulation was created.
 
 ---
@@ -63,12 +63,12 @@ Tabulation and memoization compute the exact same set of subproblems. The differ
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Compute subproblems in topological order (no subproblem is computed before its dependencies).
 2. Each subproblem is computed exactly once (fill the cell once; never recompute).
 3. The result is the value of the final cell (the target subproblem).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 For 1D DP (fib, coin change):
 - `dp[0]` = base case; `dp[1]` = base case; compute `dp[i]` from `dp[i-1]`, `dp[i-2]`.
 - Sequential left-to-right loop ensures all dependencies are available.
@@ -79,15 +79,15 @@ For 2D DP (LCS, edit distance):
 
 Space optimisation: if `dp[i]` only depends on `dp[i-1]` (not earlier), keep only one row. Many 2D DP problems drop from O(N²) to O(N) space.
 
-THE TRADE-OFFS:
-Gain: O(1) call stack, better cache locality (sequential array access), space optimisation possible.
-Cost: Computes ALL subproblems even if only a few are needed (vs memoization's lazy evaluation), harder to reason about for non-linear dependency orders.
+**THE TRADE-OFFS:**
+**Gain:** O(1) call stack, better cache locality (sequential array access), space optimisation possible.
+**Cost:** Computes ALL subproblems even if only a few are needed (vs memoization's lazy evaluation), harder to reason about for non-linear dependency orders.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Coin change: given denominations [1, 5, 10] and amount 12, find minimum coins.
 
 MEMOIZATION approach: recurse from 12, branching to 11, 7, 2. Each subproblem recurses further.
@@ -101,7 +101,7 @@ dp[12]=3(10+1+1)
 ```
 No recursion, no stack. Each cell filled exactly once. Answer at dp[12]=3.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The order matters: compute dp[5] before dp[10] before dp[12]. Tabulation enforces this order explicitly by looping from 0 to 12. Memoization enforces it implicitly through the call stack. Both produce the same dp[12]=3.
 
 ---
@@ -110,10 +110,10 @@ The order matters: compute dp[5] before dp[10] before dp[12]. Tabulation enforce
 
 > Tabulation is filling a tax form from the top line down: line 1 is given (income), line 2 depends on line 1, line 3 depends on lines 1 and 2, and so on until the final total. You fill each line once, in order. No backtracking, no uncertainty — every required value is available before you need it.
 
-"Tax form lines" → DP table cells
-"Fill in order" → compute base cases to target
-"Each line depends on earlier lines" → DP dependency structure
-"Final total" → target subproblem answer
+- "Tax form lines" → DP table cells
+- "Fill in order" → compute base cases to target
+- "Each line depends on earlier lines" → DP dependency structure
+- "Final total" → target subproblem answer
 
 Where this analogy breaks down: Tax forms are filled once; DP tables for different inputs require refilling from scratch. Also, tax forms are 1D; many DP tables are 2D or more.
 
@@ -204,7 +204,7 @@ return dp[m][n];
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Problem decomposed into subproblems
 → dp[] table allocated
@@ -215,7 +215,7 @@ Problem decomposed into subproblems
 → Optional: space-optimise with rolling variables
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Wrong loop order (dp[i] reads dp[i+1] which isn't filled)
 → dp[i] computed from zero/invalid value
@@ -223,7 +223,7 @@ Wrong loop order (dp[i] reads dp[i+1] which isn't filled)
 → Fix: trace the recurrence, verify loop direction
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For N=1,000,000, a 1D tabulation uses 8 MB (long[]) — comfortable. For 2D with N=1,000,000: N² = 1 trillion cells — impossible. In bioinformatics, sequence alignment with 100M-character strings uses banded DP (only the diagonal ±B cells), Hirschberg's algorithm (O(N) space with traceback), or divide-and-conquer DP.
 
 ---
@@ -306,11 +306,11 @@ How to choose: Start with memoization for clarity. Convert to tabulation when N 
 
 **1. Wrong loop direction causes incorrect results**
 
-Symptom: Answer is wrong; some DP states are 0 or the default value when they shouldn't be.
+**Symptom:** Answer is wrong; some DP states are 0 or the default value when they shouldn't be.
 
-Root Cause: Loop processes `dp[i]` before `dp[i-1]` is filled; reads a 0-initialised cell.
+**Root Cause:** Loop processes `dp[i]` before `dp[i-1]` is filled; reads a 0-initialised cell.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Print dp table after filling:
 for (int i = 0; i <= m; i++)
@@ -318,33 +318,33 @@ for (int i = 0; i <= m; i++)
 // Look for unexpected 0s at positions that should be non-zero
 ```
 
-Fix: Trace the recurrence `dp[i] = f(dp[i-1])` → loop must go `i = base → target`.
+**Fix:** Trace the recurrence `dp[i] = f(dp[i-1])` → loop must go `i = base → target`.
 
-Prevention: Always trace the recurrence for ONE example by hand before coding the loop.
+**Prevention:** Always trace the recurrence for ONE example by hand before coding the loop.
 
 ---
 
 **2. Wrong answer from wrong sentinel value**
 
-Symptom: Algorithm returns "impossible" for a case that IS possible, or returns an incorrect minimum.
+**Symptom:** Algorithm returns "impossible" for a case that IS possible, or returns an incorrect minimum.
 
-Root Cause: Initial fill value conflicts with valid DP values. E.g., `Arrays.fill(dp, 0)` for a minimum-count problem where 0 is a valid intermediate result.
+**Root Cause:** Initial fill value conflicts with valid DP values. E.g., `Arrays.fill(dp, 0)` for a minimum-count problem where 0 is a valid intermediate result.
 
-Fix: Use a sentinel clearly outside the valid range: `Integer.MAX_VALUE/2` or `amount+1` for "infinity" in minimisation problems. Avoid `Integer.MAX_VALUE` directly: `Integer.MAX_VALUE + 1` overflows.
+**Fix:** Use a sentinel clearly outside the valid range: `Integer.MAX_VALUE/2` or `amount+1` for "infinity" in minimisation problems. Avoid `Integer.MAX_VALUE` directly: `Integer.MAX_VALUE + 1` overflows.
 
-Prevention: Document the invariant: "dp[i] = minimum coins, or INFTY = amount+1 if impossible."
+**Prevention:** Document the invariant: "dp[i] = minimum coins, or INFTY = amount+1 if impossible."
 
 ---
 
 **3. ArrayIndexOutOfBoundsException from wrong table size**
 
-Symptom: AIOOBE on `dp[amount]` or `dp[m][n]`.
+**Symptom:** AIOOBE on `dp[amount]` or `dp[m][n]`.
 
-Root Cause: Table allocated as `new int[N]` but accessed at index `N`: needs `new int[N+1]`.
+**Root Cause:** Table allocated as `new int[N]` but accessed at index `N`: needs `new int[N+1]`.
 
-Diagnostic: Always check: what is the maximum index accessed? If `dp[amount]` is the answer, need `new int[amount+1]`.
+**Diagnostic:** Always check: what is the maximum index accessed? If `dp[amount]` is the answer, need `new int[amount+1]`.
 
-Prevention: Table size = (max index) + 1. Write this as `new int[amount + 1]`, not `new int[amount]`.
+**Prevention:** Table size = (max index) + 1. Write this as `new int[amount + 1]`, not `new int[amount]`.
 
 ---
 

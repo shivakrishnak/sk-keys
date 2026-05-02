@@ -31,15 +31,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 The first web servers assigned one OS thread per connection. When that thread issued a database query — waiting 50ms for the response — the entire thread sat idle, doing nothing, while holding ~1 MB of stack memory. Scale that to 10,000 concurrent users: 10,000 idle threads, 10 GB of RAM consumed by threads doing nothing but waiting. The C10K problem (handling 10,000 concurrent connections on a single server) seemed computationally impossible.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 At 10,000 threads, Linux's context-switching overhead becomes significant. At 100,000 threads, the OS runs out of virtual address space and stack memory. Modern web-scale services need to handle millions of simultaneous connections. The thread-per-connection model hits a hard wall — not from compute, but from threads waiting on IO.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 This is exactly why asynchronous programming was created — to separate the initiation of an operation from the receipt of its result, allowing a single thread to manage thousands of in-flight IO operations simultaneously. Instead of "wait here until done," async means "notify me when done, meanwhile I'll do other work."
 
@@ -67,13 +67,13 @@ The critical difference is _what happens to the calling thread during a wait_. S
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. IO operations (network, disk, database) are orders of magnitude slower than CPU instructions. A CPU instruction takes ~1ns; a network round-trip takes ~1ms — 1,000,000× slower.
 2. A thread that is blocked waiting for IO is consuming memory and OS scheduling overhead while producing zero throughput.
 3. Separating "initiate IO" from "receive result" allows the thread to be reused for other tasks during the wait.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 Synchronous design is simple: `result = database.query(sql)` — the function blocks until the DB responds. One thread per concurrent operation required. Simple to read, simple to debug, simple to reason about — but wasteful when IO-heavy.
 
@@ -86,7 +86,7 @@ Asynchronous design separates initiation from completion:
 
 The key mechanism is the _event loop_ + _non-blocking IO syscalls_. The OS can manage thousands of in-flight IO operations simultaneously at the kernel level; the program just registers callbacks.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
 Sync gain: sequential reasoning, simple call stack, easy debugging, natural error propagation.
 Sync cost: thread-per-request model doesn't scale beyond thousands of concurrent connections.
@@ -98,10 +98,10 @@ Async cost: "callback hell," inversion of control, harder stack traces, error ha
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A service fetches 5 user profiles from a database. Each fetch takes 100ms. The service runs on a single thread.
 
-WHAT HAPPENS SYNCHRONOUSLY:
+**WHAT HAPPENS SYNCHRONOUSLY:**
 
 ```
 t=0ms:   fetch user 1 (thread blocks waiting)
@@ -114,7 +114,7 @@ t=500ms: all done
 
 Total: 500ms. Thread occupied the entire time.
 
-WHAT HAPPENS ASYNCHRONOUSLY:
+**WHAT HAPPENS ASYNCHRONOUSLY:**
 
 ```
 t=0ms:   issue fetch for user 1 (non-blocking, returns immediately)
@@ -129,7 +129,7 @@ t≈100ms: all 5 results arrive (nearly simultaneously)
 
 Total: ~100ms. Thread was free for other work during the wait.
 
-THE INSIGHT:
+**THE INSIGHT:**
 5 concurrent async operations complete in the time of 1 synchronous operation. The total IO wait time is the same (500ms), but it's overlapped. This "latency overlap" is the fundamental value of async programming — you don't reduce IO latency, you eliminate the sequential waiting.
 
 ---
@@ -227,7 +227,7 @@ function getUser(id) {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 HTTP request arrives
@@ -251,7 +251,7 @@ Callback/await resume executes with result
 Response sent to client
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Async handler performs synchronous blocking operation
@@ -266,7 +266,7 @@ sync levels despite async framework
 Observable: thread blocked, event loop queue depth growing
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 At 100,000 concurrent connections, synchronous thread-per-request requires 100,000 OS threads (100+ GB RAM just for stacks). Async event loops manage 100,000 connections with 1 thread (plus worker threads for CPU work) — the same requests handled with a fraction of the memory. At truly global scale (millions of connections), async is the only viable model; synchronous can't even approach that ceiling.
 
@@ -388,13 +388,13 @@ async def fetch_all_users(user_ids):
 
 **Async Code Calling Blocking Library**
 
-Symptom:
+**Symptom:**
 Service using async framework (Netty, Node.js, asyncio) has unexpectedly low throughput. Concurrency doesn't improve with more async tasks. Latency is proportional to concurrent request count.
 
-Root Cause:
+**Root Cause:**
 An async handler calls a blocking library (JDBC, `requests` in Python, `fs.readFileSync`). The blocking call holds the event loop thread while waiting — defeating the purpose of async. The framework is async; the underlying call is not.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Java/Netty: check if Netty I/O threads are blocked
@@ -406,23 +406,23 @@ node --prof server.js  # profile with V8
 node --prof-process isolate-*.log | grep -A5 "Heavy"
 ```
 
-Fix:
+**Fix:**
 Replace blocking library with async equivalent: JDBC → R2DBC, `requests` → `aiohttp`, `fs.readFileSync` → `fs.promises.readFile`. Or offload to a dedicated thread pool and return a Future.
 
-Prevention:
+**Prevention:**
 Audit all IO calls in async handlers. Use only async-native libraries. Document which libraries are blocking vs non-blocking.
 
 ---
 
 **Unhandled Promise Rejection**
 
-Symptom:
+**Symptom:**
 Node.js prints `UnhandledPromiseRejectionWarning`. Operations silently fail without propagating errors. Users see incomplete or missing data without any error response.
 
-Root Cause:
+**Root Cause:**
 A Promise chain or async function throws an error but no `.catch()` handler or try/catch wraps the await. The error is swallowed and execution continues from the caller's perspective.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```javascript
 // Enable crash on unhandled rejection (Node.js 15+):
@@ -435,7 +435,7 @@ process.on("unhandledRejection", (reason, promise) => {
 });
 ```
 
-Fix:
+**Fix:**
 
 ```javascript
 // BAD: unhandled rejection
@@ -455,20 +455,20 @@ async function handler(req, res) {
 }
 ```
 
-Prevention:
+**Prevention:**
 Always wrap async handlers in try/catch. Use `express-async-errors` or similar middleware to automatically catch async errors. Enable `--unhandled-rejections=throw` in production.
 
 ---
 
 **Async Waterfall (Sequential Awaits When Parallel Is Possible)**
 
-Symptom:
+**Symptom:**
 Service is "async" but response time equals the sum of all IO operations rather than the maximum. Profile shows all DB calls executing sequentially.
 
-Root Cause:
+**Root Cause:**
 Developer wrote sequential awaits when the operations have no data dependency — each `await` waits for completion before the next starts.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```javascript
 // Detect by timing individual awaits:
@@ -479,7 +479,7 @@ const stats = await getStats(id); // 100ms
 console.log(Date.now() - t0); // 300ms — should be ~100ms!
 ```
 
-Fix:
+**Fix:**
 
 ```javascript
 // BAD: sequential awaits — 300ms total
@@ -495,7 +495,7 @@ const [user, posts, stats] = await Promise.all([
 ]);
 ```
 
-Prevention:
+**Prevention:**
 Review all sequential awaits during code review — ask "do these operations have data dependencies?" If not, use `Promise.all`. Add timing assertions in integration tests.
 
 ---

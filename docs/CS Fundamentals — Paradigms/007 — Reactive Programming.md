@@ -33,7 +33,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A microservice must: fetch user data from a database (50ms),
 simultaneously call three external APIs (100-200ms each), combine
 the results, filter, and stream 10,000 items to the client.
@@ -44,7 +44,7 @@ one result is 50 lines of error-prone Promise coordination code.
 Adding backpressure (not overwhelming a slow consumer) means
 inventing your own flow control.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Modern systems require: concurrency (multiple I/O sources),
 composition (combining streams), transformation (functional
 operators), and flow control (backpressure). Callback-based
@@ -52,7 +52,7 @@ event-driven code handles one source at a time; combining
 multiple async sources with error handling and backpressure
 produces unmaintainable code.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why Reactive Programming was created. Instead
 of wiring callbacks manually, you declare: "this stream is
 userEvents merged with apiResults, filtered by X, batched by Y,
@@ -100,7 +100,7 @@ to "response sent" is already declared. The library wires it.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Everything is a stream — a sequence of events over time.
    A database result set, an HTTP response body, user clicks,
@@ -112,7 +112,7 @@ CORE INVARIANTS:
    the publisher to pause, preventing out-of-memory crashes
    from fast producers overwhelming slow consumers.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1, I/O operations return streams (Mono<T> for
 0 or 1 result, Flux<T> for N results in Reactor) rather than
 blocking values or callbacks. Given invariant 2, complex async
@@ -120,11 +120,11 @@ workflows are declarative pipelines — no shared mutable state
 between operators. Given invariant 3, `Flux.buffer(100)` or
 `onBackpressureDrop()` are built-in, not hand-coded.
 
-THE TRADE-OFFS:
-Gain: High throughput on I/O-bound workloads (non-blocking,
+**THE TRADE-OFFS:**
+**Gain:** High throughput on I/O-bound workloads (non-blocking,
 no thread-per-request); composable async pipelines;
 built-in backpressure; automatic error propagation.
-Cost: Steep learning curve; debugging requires understanding
+**Cost:** Steep learning curve; debugging requires understanding
 the subscription model; stack traces are unreadable
 (operators, not your code, appear at the top); not
 appropriate for CPU-bound work.
@@ -133,12 +133,12 @@ appropriate for CPU-bound work.
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Fetch 3 user profiles concurrently, filter those with premium
 accounts, enrich each with purchase history, then stream results
 to the client as they arrive.
 
-WHAT HAPPENS WITH CALLBACKS:
+**WHAT HAPPENS WITH CALLBACKS:**
 
 ```javascript
 fetchProfile(1, (p1) => {
@@ -158,7 +158,7 @@ fetchProfile(1, (p1) => {
 }); // 4 levels deep, no backpressure, no error handling
 ```
 
-WHAT HAPPENS WITH REACTIVE:
+**WHAT HAPPENS WITH REACTIVE:**
 
 ```java
 Flux.just(1, 2, 3)
@@ -171,7 +171,7 @@ Flux.just(1, 2, 3)
 
 3 lines of declarative pipeline vs. 15 lines of nested callbacks.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Reactive programming makes concurrent async workflows look as
 simple as synchronous ones — the complexity is absorbed by the
 library's operator implementations.
@@ -187,11 +187,11 @@ library's operator implementations.
 > station — backpressure ensures items don't pile up and overflow
 > the floor. You design the line layout; the factory runs it.
 
-"Raw materials entering" → events emitted by the source
-"Each assembly station" → an operator (map, filter, flatMap)
-"Merging two conveyor lines" → merge() or zip() operators
-"Line speed matching the slowest station" → backpressure
-"Factory running automatically" → reactive library execution
+- "Raw materials entering" → events emitted by the source
+- "Each assembly station" → an operator (map, filter, flatMap)
+- "Merging two conveyor lines" → merge() or zip() operators
+- "Line speed matching the slowest station" → backpressure
+- "Factory running automatically" → reactive library execution
 
 Where this analogy breaks down: unlike a physical assembly line,
 reactive streams can fork (one source to multiple subscribers)
@@ -289,7 +289,7 @@ drops items if the subscriber can't keep up.
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [HTTP request arrives on Netty thread]
@@ -302,13 +302,13 @@ NORMAL FLOW:
   → [onComplete: HTTP response finished]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [DB connection fails → onError(ex)]
 → [Propagates down the operator chain]
 → [Spring maps to HTTP 500 response]
 → [Observable: error in HTTP response, logs with stack trace]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10x load, a Netty+WebFlux server handles it with the same
 thread count — non-blocking I/O scales with concurrency, not
 threads. At 100x, the bottleneck shifts to DB connection pool
@@ -420,15 +420,15 @@ computation or when the reactive learning curve isn't justified.
 
 **1. Blocking Call Inside Reactive Pipeline**
 
-Symptom:
+**Symptom:**
 Request latency spikes under load; all requests slow down
 simultaneously; thread dump shows Netty threads blocked.
 
-Root Cause:
+**Root Cause:**
 A blocking JDBC call, `Thread.sleep()`, or `.block()` inside
 a reactive operator monopolises the event loop thread.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Reactor: enable BlockHound to detect blocking calls
@@ -439,7 +439,7 @@ BlockHound.install();
 jstack <pid> | grep -A 10 "reactor-http-nio"
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: blocking JDBC inside reactive pipeline
@@ -455,20 +455,20 @@ Mono<List<User>> users = Mono.fromCallable(
 ).subscribeOn(Schedulers.boundedElastic()); // off-loop thread
 ```
 
-Prevention: Never call blocking APIs on reactor-http threads;
+**Prevention:** Never call blocking APIs on reactor-http threads;
 use R2DBC for databases, reactive HTTP clients for downstream.
 
 **2. Missing Backpressure → OOM**
 
-Symptom:
+**Symptom:**
 Heap exhaustion under load; `OutOfMemoryError` when producer
 is faster than consumer; growing buffer in heap dumps.
 
-Root Cause:
+**Root Cause:**
 A fast producer emits items faster than the subscriber can
 process. Without backpressure, items buffer in memory unboundedly.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Monitor heap growth under load
@@ -480,7 +480,7 @@ jmap -dump:live,format=b,file=heap.hprof <pid>
 # Look for large internal Reactor queue arrays
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: no backpressure strategy
@@ -495,22 +495,22 @@ Flux<Event> stream = kafkaConsumer.receive()
     .map(this::processEvent);
 ```
 
-Prevention: Always define a backpressure strategy; set buffer
+**Prevention:** Always define a backpressure strategy; set buffer
 bounds explicitly; monitor queue depth as a key metric.
 
 **3. Context Loss Across Async Boundaries**
 
-Symptom:
+**Symptom:**
 MDC (logging context), security context, or tracing IDs missing
 in logs; `NullPointerException` from context values that were
 set before the reactive pipeline.
 
-Root Cause:
+**Root Cause:**
 `ThreadLocal` values don't cross async boundaries — the reactive
 pipeline runs on different threads, and the original ThreadLocal
 values are absent.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check logs — tracing IDs or user IDs missing in async ops
@@ -518,7 +518,7 @@ Diagnostic:
 grep "traceId" application.log | grep "null"
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: ThreadLocal context lost across flatMap
@@ -538,7 +538,7 @@ return Mono.deferContextual(ctx -> {
     .contextWrite(Context.of("userId", userId));
 ```
 
-Prevention: Use Reactor Context (not ThreadLocal) for values
+**Prevention:** Use Reactor Context (not ThreadLocal) for values
 that must survive across async boundaries; configure MDC with
 Reactor's MDC support hooks.
 

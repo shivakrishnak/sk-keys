@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A database query cache has limited memory for 1,000 entries but serves 10,000 different queries. You must decide which cached results to evict when new ones arrive. Random eviction keeps cold data as often as hot data. FIFO eviction may evict a query you just answered 10 seconds ago if it was the first to be inserted. Neither strategy reflects *how recently or frequently* the data was needed.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Cache eviction without recency knowledge wastes the cache by keeping cold, stale results and evicting warm, active ones. The result: cache hit rates of 20–30% instead of the 60–80% achievable with a recency-aware strategy.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Track which entry was accessed most recently. When the cache is full, evict the entry accessed least recently (the one you haven't needed for the longest time). This exploits temporal locality — the empirical observation that recently used data is likely to be used again soon. This is exactly why the LRU Cache was created.
 
 ---
@@ -64,12 +64,12 @@ The trick of combining a HashMap with a doubly linked list lets you do *both* O(
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Every `get` and `put` marks the accessed entry as "most recently used" — it moves to the head.
 2. When capacity is exceeded, the tail entry (least recently used) is evicted.
 3. Every operation is O(1) — not O(N) search or O(N) reorder.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Why a doubly linked list?
 - Move-to-front: unlink a node from its position (need `prev` pointer → doubly linked), relink at head. With only a singly linked list, unlinking requires knowing the predecessor — O(N) to find.
 - Evict from tail: remove last node. With doubly linked: `tail = tail.prev; tail.next = null`. O(1).
@@ -79,26 +79,26 @@ Why a HashMap?
 
 The HashMap stores `{key → Node}` where `Node` holds `(key, value, prev, next)`. The key is stored in the node so that when the tail is evicted, we can also remove it from the HashMap.
 
-THE TRADE-OFFS:
-Gain: O(1) get and put with optimal eviction for temporal-locality workloads.
-Cost: 2× memory per entry (HashMap + list node), poor fit for frequency-based access patterns (use LFU), no built-in TTL.
+**THE TRADE-OFFS:**
+**Gain:** O(1) get and put with optimal eviction for temporal-locality workloads.
+**Cost:** 2× memory per entry (HashMap + list node), poor fit for frequency-based access patterns (use LFU), no built-in TTL.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 LRU cache with capacity 3. Sequence: put(1), put(2), put(3), get(1), put(4).
 
-WHAT HAPPENS WITHOUT LRU AWARENESS (FIFO queue):
+**WHAT HAPPENS WITHOUT LRU AWARENESS (FIFO queue):**
 put(1): cache = [1]. put(2): [1,2]. put(3): [1,2,3]. get(1): hit. put(4): FIFO evicts 1 (inserted first). Cache = [2,3,4]. get(1): miss — 1 was just accessed but evicted!
 
-WHAT HAPPENS WITH LRU:
+**WHAT HAPPENS WITH LRU:**
 put(1): [1]. put(2): [2,1]. put(3): [3,2,1] (LRU=1).
 get(1): mark 1 as MRU: [1,3,2] (LRU=2).
 put(4): evict LRU=2. Cache = [4,1,3]. get(1): hit!
 
-THE INSIGHT:
+**THE INSIGHT:**
 LRU preserved the entry that was just accessed (1) over the one that hadn't been touched (2). FIFO preserved insertion order, which has nothing to do with what's currently useful. Recency is a proxy for future utility — and empirically it's a very good proxy.
 
 ---
@@ -107,11 +107,11 @@ LRU preserved the entry that was just accessed (1) over the one that hadn't been
 
 > An LRU cache is like a browser's tab order by last use. The tab you switched to most recently is at the front. When your browser needs to suspend a tab to save memory, it suspends the one at the back — the one you haven't visited in hours.
 
-"Tabs in recency order" → doubly linked list (head=MRU, tail=LRU)
-"Tab title lookup" → HashMap (key → node)
-"Switch to tab" → get() → move node to head
-"Open new tab" → put() → new node at head; evict tail if full
-"Suspend least-used tab" → evict tail node
+- "Tabs in recency order" → doubly linked list (head=MRU, tail=LRU)
+- "Tab title lookup" → HashMap (key → node)
+- "Switch to tab" → get() → move node to head
+- "Open new tab" → put() → new node at head; evict tail if full
+- "Suspend least-used tab" → evict tail node
 
 Where this analogy breaks down: Browser tab suspension uses recency, but LFU would be better for tabs you visit regularly but infrequently (like a monthly report). LRU doesn't account for frequency — only recency.
 
@@ -210,7 +210,7 @@ class LRUCache<K, V> {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Request arrives with key K
 → get(K) checks HashMap: O(1)
@@ -220,7 +220,7 @@ Request arrives with key K
 → put(K, value): add to front, evict tail if full
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Cache scan: sequential access of N unique keys
 → Each access evicts MRU, fills with new
@@ -229,7 +229,7 @@ Cache scan: sequential access of N unique keys
 → Fix: use LIRS or TinyLFU for scan-resistant policy
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 A single-threaded LRU is O(1) but needs external synchronization for concurrent access. `Collections.synchronizedMap` on a `LinkedHashMap` creates a global lock — a bottleneck at high concurrency. Caffeine's W-TinyLFU uses a write buffer + frequency sketch + LRU window for concurrent writes without global locking. At distributed scale (cross-machine caching), LRU is approximated through TTL + access-time tracking; true distributed LRU is impractical due to the coordination overhead.
 
 ---
@@ -306,56 +306,56 @@ How to choose: Use LRU (LinkedHashMap or custom) for simple caches. Use Caffeine
 
 **1. Cache pollution from linear scans**
 
-Symptom: After a bulk data export or report query, cache hit rate drops from 80% to 20%; hot user-specific data is evicted.
+**Symptom:** After a bulk data export or report query, cache hit rate drops from 80% to 20%; hot user-specific data is evicted.
 
-Root Cause: A scan of N unique keys cycles through the entire LRU cache, evicting all hot user data. Scan data is never reused but temporarily dominant.
+**Root Cause:** A scan of N unique keys cycles through the entire LRU cache, evicting all hot user data. Scan data is never reused but temporarily dominant.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Monitor cache stats over time:
 cache.stats().hitRate() # Caffeine
 # Sudden drop in hit rate after bulk operation
 ```
 
-Fix: Use Caffeine (W-TinyLFU) which has a "window" LRU + admission filter. Or implement "scan-resistant" LRU by putting scan keys into a secondary cache or using a single read-through pass without caching.
+**Fix:** Use Caffeine (W-TinyLFU) which has a "window" LRU + admission filter. Or implement "scan-resistant" LRU by putting scan keys into a secondary cache or using a single read-through pass without caching.
 
-Prevention: Separate bulk scan queries from the main cache; use a different cache instance for batch workloads.
+**Prevention:** Separate bulk scan queries from the main cache; use a different cache instance for batch workloads.
 
 ---
 
 **2. Thread safety violation with plain LRU**
 
-Symptom: Wrong values returned or NullPointerException in concurrent access.
+**Symptom:** Wrong values returned or NullPointerException in concurrent access.
 
-Root Cause: Custom `HashMap + LinkedList` LRU is not thread-safe; concurrent `get()` and `put()` corrupt the doubly linked list pointers.
+**Root Cause:** Custom `HashMap + LinkedList` LRU is not thread-safe; concurrent `get()` and `put()` corrupt the doubly linked list pointers.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstack <pid> | grep "RUNNABLE" -A 30
 # Multiple threads in LRU methods simultaneously
 ```
 
-Fix: Use `Caffeine` or wrap `LinkedHashMap` with `Collections.synchronizedMap()` (for low concurrency) or use `ConcurrentLinkedHashMap` (Caffeine's core) for high concurrency.
+**Fix:** Use `Caffeine` or wrap `LinkedHashMap` with `Collections.synchronizedMap()` (for low concurrency) or use `ConcurrentLinkedHashMap` (Caffeine's core) for high concurrency.
 
-Prevention: Never share a plain LRU cache across threads without synchronization.
+**Prevention:** Never share a plain LRU cache across threads without synchronization.
 
 ---
 
 **3. Memory leak from unbounded growth (capacity set too high)**
 
-Symptom: Heap grows continuously; heap dump shows LRU cache holding millions of entries.
+**Symptom:** Heap grows continuously; heap dump shows LRU cache holding millions of entries.
 
-Root Cause: Capacity was set to an unrealistic value; in practice, far more unique keys exist than anticipated.
+**Root Cause:** Capacity was set to an unrealistic value; in practice, far more unique keys exist than anticipated.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jmap -histo:live <pid> | grep "Node\|Cache"
 # Count LRU nodes vs expected capacity
 ```
 
-Fix: Set capacity based on available heap × acceptable cache fraction. Monitor `cache.estimatedSize()` vs capacity.
+**Fix:** Set capacity based on available heap × acceptable cache fraction. Monitor `cache.estimatedSize()` vs capacity.
 
-Prevention: Set cache size as a fraction of available heap (e.g., 10%); use `Caffeine.maximumWeight()` for memory-bounded caches.
+**Prevention:** Set cache size as a fraction of available heap (e.g., 10%); use `Caffeine.maximumWeight()` for memory-bounded caches.
 
 ---
 

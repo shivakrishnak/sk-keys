@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Frameworks like Spring DI, JUnit, Jackson, Hibernate, and Java serialization all need to do the same thing: take an arbitrary class they've never seen at compile time and inspect it — read its fields, invoke its methods, call its constructors. Without reflection, a dependency injection container would require every developer to manually register each bean. Jackson would require a custom serializer per class. JUnit would need every test method explicitly listed.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A developer writes a new `@Service` class. Without reflection, to have Spring auto-wire it: add a factory method, register it in a configuration file, write a constructor adapter. This is what IoC looked like in Spring XML configuration 1.0 — hundreds of lines of boilerplate per class. At enterprise scale, a team managing 2,000 Spring beans would spend more time wiring than coding.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Reflection** was built into the JVM — to let frameworks discover class structure at runtime and automate the boilerplate of object wiring, serialization, and test discovery that would otherwise require enormous amounts of manual registration code.
 
 ---
@@ -64,12 +64,12 @@ Reflection operates outside the normal type-safety guarantees of Java. Calling `
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Every loaded Java class has exactly one `Class<?>` object in the JVM representing it.
 2. The `Class<?>` object contains metadata about all fields, methods, and constructors — including private ones.
 3. Reflection bypasses compile-time type checking but NOT bytecode execution safety (the JVM still verifies operand types at runtime).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1, `MyClass.class`, `myObj.getClass()`, and `Class.forName("com.example.MyClass")` all return the same `Class<?>` object. All metadata access flows through this singleton.
 
 Given invariant 2, frameworks can discover `@Autowired` fields by iterating `clazz.getDeclaredFields()` and checking annotations — without knowing the class at compile time. Spring's `AutowiredAnnotationBeanPostProcessor` does exactly this.
@@ -94,18 +94,18 @@ Given invariant 3, `method.invoke(obj, args)` ultimately dispatches to the regul
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Runtime class introspection; dynamic object creation and method invocation; enables entire categories of frameworks (DI, ORM, serialization, testing).
-Cost: 10–100× slower than direct method calls (before JVM optimisation); bypasses compile-time type safety; breaks encapsulation (private members accessible); impedes JIT inlining; fails silently when code is obfuscated or modules deny reflective access.
+**THE TRADE-OFFS:**
+**Gain:** Runtime class introspection; dynamic object creation and method invocation; enables entire categories of frameworks (DI, ORM, serialization, testing).
+**Cost:** 10–100× slower than direct method calls (before JVM optimisation); bypasses compile-time type safety; breaks encapsulation (private members accessible); impedes JIT inlining; fails silently when code is obfuscated or modules deny reflective access.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A simple JSON serializer that must serialise any Java object to `{"field": "value", ...}` without knowing the class at compile time.
 
-WHAT HAPPENS WITHOUT REFLECTION:
+**WHAT HAPPENS WITHOUT REFLECTION:**
 ```java
 // Must write one serializer per class:
 String toJson(User u) {
@@ -115,7 +115,7 @@ String toJson(User u) {
 // requires updating its serializer.
 ```
 
-WHAT HAPPENS WITH REFLECTION:
+**WHAT HAPPENS WITH REFLECTION:**
 ```java
 String toJson(Object obj) throws Exception {
     Class<?> cls = obj.getClass();
@@ -130,7 +130,7 @@ String toJson(Object obj) throws Exception {
 // Works for ANY class. Zero per-class code needed.
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The difference is the shift from compile-time knowledge to runtime discovery. Reflection enables "write once, work for any class" tools — the foundation of every Java framework. The cost is runtime overhead and loss of compile-time type safety at the framework layer.
 
 ---
@@ -139,10 +139,10 @@ The difference is the shift from compile-time knowledge to runtime discovery. Re
 
 > Reflection is like the security system access log at a company. Normally, employees use keycards — fast, pre-authorised, no manual check. But a security auditor with a master key can open any door, inspect any room, and even change access levels on the fly. Frameworks are the auditors; regular method calls are the keycards.
 
-"Regular method call" → compiled dispatch — fast, type-checked at compile time.
-"Master key (setAccessible)" → bypasses private/protected — slower, runtime-checked.
-"Security auditor inspecting rooms" → framework reading fields and annotations.
-"Changing access levels" → modifying field values or wiring dependencies at startup.
+- "Regular method call" → compiled dispatch — fast, type-checked at compile time.
+- "Master key (setAccessible)" → bypasses private/protected — slower, runtime-checked.
+- "Security auditor inspecting rooms" → framework reading fields and annotations.
+- "Changing access levels" → modifying field values or wiring dependencies at startup.
 
 Where this analogy breaks down: In Java 9+, the module system (`--add-opens`) is the physical lock that can't be bypassed even with `setAccessible` — the module system restores encapsulation that the master key previously bypassed.
 
@@ -250,7 +250,7 @@ NORMAL FLOW (Spring DI example):
     → [Application serves requests]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Module system denies reflective access]
     → [setAccessible(true) throws InaccessibleObjectException]
@@ -259,7 +259,7 @@ FAILURE PATH:
     → [Or: migrate to constructor injection (no reflection needed)]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 Reflection at startup (framework wiring, annotation scanning) is a one-time cost and acceptable. Reflection inside hot request-handling loops is catastrophic — method invocation via reflection is 10–100× slower than direct calls and blocks JIT inlining. Large frameworks (Spring, Quarkus) moved reflection to startup-time with AOT compilation to eliminate runtime reflection overhead in production. Quarkus' `@RegisterForReflection` annotation explicitly marks classes for GraalVM native image compilation, which cannot discover reflection usage dynamically.
 
 ---
@@ -383,13 +383,13 @@ How to choose: Use direct calls always. Use reflection only for framework code r
 
 **InaccessibleObjectException (Java 9+ Modules)**
 
-Symptom:
+**Symptom:**
 `java.lang.reflect.InaccessibleObjectException: Unable to make field private ... accessible: module java.base does not 'opens java.lang' to unnamed module`
 
-Root Cause:
+**Root Cause:**
 Java module system blocks unrestricted reflective access. Class is in a module that doesn't declare `opens` for the package.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Run with --add-opens to diagnose:
 java --add-opens java.base/java.lang=ALL-UNNAMED \
@@ -397,7 +397,7 @@ java --add-opens java.base/java.lang=ALL-UNNAMED \
 # If it works → module access was the problem
 ```
 
-Fix:
+**Fix:**
 ```bash
 # Short-term: JVM flags
 --add-opens java.base/java.lang=ALL-UNNAMED
@@ -406,19 +406,19 @@ Fix:
 # or use constructor injection (avoids field reflection)
 ```
 
-Prevention: Migrate frameworks to constructor injection. Use `MethodHandles.lookup()` APIs for performant, module-safe reflection.
+**Prevention:** Migrate frameworks to constructor injection. Use `MethodHandles.lookup()` APIs for performant, module-safe reflection.
 
 ---
 
 **Performance Degradation from Reflection in Hot Paths**
 
-Symptom:
+**Symptom:**
 Profiler shows `Method.invoke()` or `Field.get()` in the top 5 hot methods during request handling. p99 latency spikes. GC pressure from reflection argument boxing.
 
-Root Cause:
+**Root Cause:**
 Reflection inside request-handling code path — e.g., a custom serializer calling `field.get(obj)` per field per request.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Async profiler to identify hot reflection sites:
 ./asprof -d 30 -f flamegraph.html <pid>
@@ -433,7 +433,7 @@ public Object reflective() throws Exception {
 }
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: reflection in hot path (per-request)
 Object value = field.get(incomingObject);
@@ -445,19 +445,19 @@ MethodHandle getter = generateGetter(field);
 // At request time: getter.invoke(incomingObject) — fast
 ```
 
-Prevention: Confine reflection to framework initialisation (startup). Generate direct accessor code using `MethodHandle`, `ByteBuddy`, or code generation at startup.
+**Prevention:** Confine reflection to framework initialisation (startup). Generate direct accessor code using `MethodHandle`, `ByteBuddy`, or code generation at startup.
 
 ---
 
 **ClassNotFoundException from Dynamic Class Loading**
 
-Symptom:
+**Symptom:**
 `ClassNotFoundException: com.example.MyService` thrown at runtime inside `Class.forName()`.
 
-Root Cause:
+**Root Cause:**
 Class not on the classpath at runtime, or loaded by a different class loader than the one used in `Class.forName()`.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check classpath:
 java -verbose:class -cp . MyApp 2>&1 | grep MyService
@@ -469,7 +469,7 @@ System.out.println(
 );
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: uses bootstrap classloader (may miss app classes)
 Class<?> cls = Class.forName("com.example.MyService");
@@ -482,7 +482,7 @@ Class<?> cls = Class.forName(
 );
 ```
 
-Prevention: Always specify the class loader explicitly in framework code. Test with all deployment class loader configurations (flat, OSGi, Spring Boot fat jar).
+**Prevention:** Always specify the class loader explicitly in framework code. Test with all deployment class loader configurations (flat, OSGi, Spring Boot fat jar).
 
 ---
 

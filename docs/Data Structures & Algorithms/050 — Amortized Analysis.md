@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You are told that `ArrayList.add()` can take O(N) time (when the internal array resizes). Without amortized analysis, you might conclude that adding N elements takes O(N²) total time. You avoid `ArrayList` in performance-critical code and implement a complex linked structure instead — sacrificing cache performance for an imaginary guarantee.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Worst-case analysis applied naively to every operation overstates total cost for data structures with occasional expensive operations. A data structure where 99.9% of operations are O(1) and 0.1% are O(N) is NOT O(N) per operation on average — it's O(1) amortized. Without the right analysis tool, you cannot prove this.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Analyse a *sequence* of N operations, not each operation in isolation. If the total cost of N operations is O(N×f(N)), then the amortized cost per operation is O(f(N)) — regardless of how individual costs fluctuate. "Rare expensive operations pay for themselves by enabling many cheap ones." This is exactly why Amortized Analysis was created.
 
 ---
@@ -63,12 +63,12 @@ Amortized analysis is NOT average-case analysis. It does not assume random or ty
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Total cost of N operations = sum of individual operation costs; amortized cost = total / N.
 2. Amortized cost is a guaranteed bound on the per-operation average — not a hope or a typical case.
 3. The "credit" argument: if cheap ops pay k extra units into a "bank," and expensive ops cost at most k times the typical cheap op, the bank always covers the expensive ops.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Aggregate analysis** — the simplest method:
 Total cost of all N operations. Divide by N. Example: dynamic array with doubling.
 
@@ -85,15 +85,15 @@ Each `add` is charged 3 units: 1 for the write, 1 credit "saved" for future copy
 On non-resize adds: actual cost 1, Φ increases by 2, amortized cost = 1 + 2 = 3 = O(1).
 On resize (size = capacity): actual cost N+1, Φ decreases by N+2 (capacity doubles, Φ drops from N to -(N+2) → delta = -(N+2)), amortized = (N+1) - (N+2) = -1 ≤ 3 = O(1).
 
-THE TRADE-OFFS:
-Gain: True per-operation cost guarantees, enables O(1) amortized structures.
-Cost: Analysis is more complex; worst-case single operation may still be O(N) — latency sensitive code must account for this.
+**THE TRADE-OFFS:**
+**Gain:** True per-operation cost guarantees, enables O(1) amortized structures.
+**Cost:** Analysis is more complex; worst-case single operation may still be O(N) — latency sensitive code must account for this.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Push N=8 elements onto a dynamic array starting with capacity 1.
 
 Sequence of push operations (capacity, cost):
@@ -112,7 +112,7 @@ Total cost: 1+2+3+1+5+1+1+1 = 15.
 Average per push: 15/8 ≈ 1.875 = O(1).
 Worst single push: 5 = O(N). But amortized: O(1).
 
-THE INSIGHT:
+**THE INSIGHT:**
 The O(N) resize is affordable because it doubles capacity, enabling N/2 O(1) subsequent pushes that "repay" the resize cost. You never resize twice in a row — after each O(N) event, the next N/2 operations are free (relative to resize cost), making the average constant.
 
 ---
@@ -121,10 +121,10 @@ The O(N) resize is affordable because it doubles capacity, enabling N/2 O(1) sub
 
 > Amortized analysis is like a gym with an annual membership. Most months you pay $0 per visit because the monthly fee averages your visits. The one month you sign up (O(N) "cost" of setup) is balanced by 11 months of cheap workouts. Average cost per visit is low even though the first month was expensive.
 
-"Monthly fee spread over visits" → amortized cost per operation
-"Annual membership sign-up" → expensive resize operation
-"Cheap monthly workouts" → O(1) pushes between resizes
-"Average cost per visit" → amortized O(1) per add
+- "Monthly fee spread over visits" → amortized cost per operation
+- "Annual membership sign-up" → expensive resize operation
+- "Cheap monthly workouts" → O(1) pushes between resizes
+- "Average cost per visit" → amortized O(1) per add
 
 Where this analogy breaks down: Gym membership has fixed cost; dynamic array resize cost is proportional to N. The key is that resize happens less often as N grows (only at powers of 2), not at a fixed schedule.
 
@@ -207,7 +207,7 @@ In both cases: amortized cost ≤ 3 = O(1)
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Sequence of N operations issued
 → Each op: actual cost varies (O(1) or rare O(N))
@@ -217,7 +217,7 @@ Sequence of N operations issued
 → Structure declared "O(1) amortized" in documentation
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Real-time system requires guaranteed O(1) per operation
 → Amortized O(1) ≠ worst-case O(1)
@@ -226,7 +226,7 @@ Real-time system requires guaranteed O(1) per operation
         1 element per op copied during "background" phase)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For most server applications, O(1) amortized is sufficient — occasional O(N) operations are invisible in average throughput metrics. For latency-sensitive systems (realtime trading, games, HFT), worst-case latency matters; use structures where worst-case per-operation is guaranteed (not amortized). For distributed systems, amortized analysis applies to batched operations — a distributed hash table doesn't rehash every insertion but periodically, and the cost is amortized across all prior insertions.
 
 ---
@@ -315,56 +315,56 @@ How to choose: For throughput-oriented systems, amortized analysis gives the rig
 
 **1. Latency spike from ArrayList resize in real-time path**
 
-Symptom: P99 latency spikes periodically (milliseconds instead of microseconds); GC profiler shows no unusual activity.
+**Symptom:** P99 latency spikes periodically (milliseconds instead of microseconds); GC profiler shows no unusual activity.
 
-Root Cause: `ArrayList` resize triggered at an inopportune moment, copying O(N) elements synchronously on the calling thread.
+**Root Cause:** `ArrayList` resize triggered at an inopportune moment, copying O(N) elements synchronously on the calling thread.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Use Java flight recorder to find allocation in hot path
 jcmd <pid> JFR.start duration=60s filename=app.jfr
 # Look for ArrayList.grow() in the recording
 ```
 
-Fix: Pre-size the `ArrayList` to expected capacity: `new ArrayList<>(expectedSize)`.
+**Fix:** Pre-size the `ArrayList` to expected capacity: `new ArrayList<>(expectedSize)`.
 
-Prevention: For real-time paths, profile with JFR or async-profiler; ensure no data structure resize occurs in the critical path.
+**Prevention:** For real-time paths, profile with JFR or async-profiler; ensure no data structure resize occurs in the critical path.
 
 ---
 
 **2. Using amortized analysis as justification for ignoring GC**
 
-Symptom: Service has good average throughput but occasional "pause storms" causing client timeouts.
+**Symptom:** Service has good average throughput but occasional "pause storms" causing client timeouts.
 
-Root Cause: High allocation rate (from amortized-O(1) structures creating many short-lived objects) triggers GC, which pauses all threads for O(N) time where N is heap size.
+**Root Cause:** High allocation rate (from amortized-O(1) structures creating many short-lived objects) triggers GC, which pauses all threads for O(N) time where N is heap size.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 java -Xlog:gc* MyApp | grep "Pause Full"
 # Full GC pauses should be < 0.5% of runtime
 ```
 
-Fix: Use off-heap structures, primitive collections, or reduce allocation rate. Consider ZGC or Shenandoah for sub-ms pauses.
+**Fix:** Use off-heap structures, primitive collections, or reduce allocation rate. Consider ZGC or Shenandoah for sub-ms pauses.
 
-Prevention: Amortized O(1) analysis applies to the algorithm; JVM GC operates at the memory management layer above. Both layers must be analysed.
+**Prevention:** Amortized O(1) analysis applies to the algorithm; JVM GC operates at the memory management layer above. Both layers must be analysed.
 
 ---
 
 **3. Stack capacity initialisation causing resize in batch processing**
 
-Symptom: Batch job processes 10M records but is 3× slower than expected.
+**Symptom:** Batch job processes 10M records but is 3× slower than expected.
 
-Root Cause: Default-capacity `ArrayDeque` (capacity 16) resizes dozens of times as 10M elements are pushed.
+**Root Cause:** Default-capacity `ArrayDeque` (capacity 16) resizes dozens of times as 10M elements are pushed.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Add resize counter temporarily:
 # Or use -verbose:gc to see allocation pressure
 ```
 
-Fix: `new ArrayDeque<>(10_000_000)` pre-sized to expected usage.
+**Fix:** `new ArrayDeque<>(10_000_000)` pre-sized to expected usage.
 
-Prevention: Whenever you know the maximum size of a collection upfront, always pass it at construction time.
+**Prevention:** Whenever you know the maximum size of a collection upfront, always pass it at construction time.
 
 ---
 

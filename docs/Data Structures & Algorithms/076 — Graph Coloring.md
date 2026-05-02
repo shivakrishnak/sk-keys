@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A compiler assigns variables to CPU registers. Each variable has a "live range" — the span where it holds a value. Two variables with overlapping live ranges cannot share a register (one would overwrite the other). How do you assign the minimum number of registers?
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 With 100 variables and overlapping live ranges, naïve assignment might use 100 registers (one per variable) even though only 6 registers are simultaneously needed. Modern CPUs have 16-32 general-purpose registers; exceeding this requires "spilling" to RAM — 100× slower. Getting this wrong causes catastrophic performance degradation in compiled code.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Model variables as graph vertices; draw an edge between any two variables whose live ranges overlap. Now "assign registers" becomes "colour the graph such that no two adjacent vertices share a colour." Minimum registers needed = chromatic number χ(G). This is exactly why **Graph Coloring** is the fundamental model for conflict-avoidance problems.
 
 ---
@@ -64,31 +64,31 @@ Graph Coloring is NP-complete for k ≥ 3, but several special graph classes are
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A valid coloring requires: ∀ edge (u,v) ∈ E: color(u) ≠ color(v).
 2. The chromatic number χ(G) ≥ ω(G) (clique number — the size of the largest complete subgraph; all vertices need different colors).
 3. χ(G) ≤ Δ(G) + 1 always (greedy achieves this bound; Brooks' theorem tightens it for most graphs).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Greedy coloring:** Iterate vertices in some order. For each vertex, assign the smallest color not used by its already-colored neighbours. Runs in O(V + E). Result depends on vertex ordering — different orderings give different chromatic numbers. The **smallest-last ordering** (iteratively remove the minimum-degree vertex) achieves at most degeneracy + 1 colors, which is optimal for chordal and planar graphs.
 
 **Backtracking exact coloring:** Try assigning color 1..k to each vertex recursively. Prune if any two adjacent vertices have the same color. Lower bound: use clique detection; upper bound: greedy solution. With pruning this handles graphs up to ~50 vertices practically.
 
-THE TRADE-OFFS:
-Gain: Models a wide class of conflict-avoidance problems exactly; provides optimal register allocation, exam scheduling, frequency assignment.
-Cost: NP-complete for k ≥ 3 on general graphs; exact algorithms only practical for small graphs (<100 vertices). Production systems use approximation algorithms (greedy, tabu search, DSATUR heuristic) or polynomial-time algorithms on structured (interval/chordal) graphs.
+**THE TRADE-OFFS:**
+**Gain:** Models a wide class of conflict-avoidance problems exactly; provides optimal register allocation, exam scheduling, frequency assignment.
+**Cost:** NP-complete for k ≥ 3 on general graphs; exact algorithms only practical for small graphs (<100 vertices). Production systems use approximation algorithms (greedy, tabu search, DSATUR heuristic) or polynomial-time algorithms on structured (interval/chordal) graphs.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Three university courses: Math, Physics, Chemistry. Students overlap: Math-Physics share 5 students, Math-Chemistry share 8 students, Physics-Chemistry share no students. How many exam time slots are needed?
 
-WHAT HAPPENS WITHOUT GRAPH COLORING:
+**WHAT HAPPENS WITHOUT GRAPH COLORING:**
 Assign 3 separate slots (one per course) — safe, but wasteful if fewer slots suffice.
 
-WHAT HAPPENS WITH GRAPH COLORING:
+**WHAT HAPPENS WITH GRAPH COLORING:**
 Build conflict graph: vertices={Math, Physics, Chemistry}, edges={(Math,Physics), (Math,Chemistry)}.
 Greedy coloring (vertex order: Math, Physics, Chemistry):
 - Math → color 1.
@@ -96,7 +96,7 @@ Greedy coloring (vertex order: Math, Physics, Chemistry):
 - Chemistry → adjacent to Math(1), not Physics → assign color 2 (reuse Physics's slot!).
 Result: 2 slots: {Math in slot 1}, {Physics, Chemistry in slot 2}. Physics and Chemistry can be simultaneous since no student takes both.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Graph coloring reduces "can these two things simultaneously occur?" to an edge existence check. The chromatic number directly translates to the minimum resource count (slots, registers, frequencies). Every conflict-avoidance problem that can be expressed as a graph is immediately solved by graph coloring.
 
 ---
@@ -105,11 +105,11 @@ Graph coloring reduces "can these two things simultaneously occur?" to an edge e
 
 > Graph Coloring is a map-maker's problem. On a map, countries sharing a border must get different colors so they're visually distinct. The Four Color Theorem says 4 colors always suffice for any flat map. A country's color is assigned by looking at its neighbours and picking any unused color — that's greedy coloring.
 
-"Countries" → graph vertices
-"Shared border" → graph edge
-"Map colors" → assigned label/color
-"Minimum colors needed" → chromatic number χ(G)
-"No two bordering countries same color" → no two adjacent vertices same color
+- "Countries" → graph vertices
+- "Shared border" → graph edge
+- "Map colors" → assigned label/color
+- "Minimum colors needed" → chromatic number χ(G)
+- "No two bordering countries same color" → no two adjacent vertices same color
 
 Where this analogy breaks down: Real maps are planar graphs (always 4-colorable); general graphs like register interference graphs are non-planar and may require more colors. The map analogy doesn't communicate the NP-completeness of the general case.
 
@@ -189,7 +189,7 @@ Graph is 2-colorable iff it is bipartite (no odd cycles). BFS from each unvisite
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Conflict problem (register overlap, exam conflict, etc.)
 → Model as graph: items=vertices, conflicts=edges
@@ -202,7 +202,7 @@ Conflict problem (register overlap, exam conflict, etc.)
 → Validate: no conflicts in schedule/allocation
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Graph is k-colorable but greedy uses k+2 colors
 → Scheduler assigns too many time slots (wasted resources)
@@ -211,7 +211,7 @@ Graph is k-colorable but greedy uses k+2 colors
 → Or: prove graph is chordal → perfect graph → exact
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For VLSI chip design with 10,000 nets needing frequency assignment, exact coloring is infeasible. Production tools use simulated annealing or tabu search to find near-optimal k-colorings. For distributed graph coloring (graph partitioned across 1,000 servers), distributed DSATUR-style algorithms require multi-round message passing — O(Δ) rounds for Δ-colorings, where each round broadcasts and receives neighbour colors.
 
 ---
@@ -320,57 +320,57 @@ How to choose: Use BFS 2-coloring to first check bipartiteness. Use greedy for l
 
 **1. Greedy coloring uses too many colors due to poor vertex ordering**
 
-Symptom: Compiler allocates more registers than physically available; unnecessary spilling to memory.
+**Symptom:** Compiler allocates more registers than physically available; unnecessary spilling to memory.
 
-Root Cause: Random or sequential vertex ordering can cause greedy to produce a coloring far from optimal.
+**Root Cause:** Random or sequential vertex ordering can cause greedy to produce a coloring far from optimal.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # LLVM has a register allocation dump flag:
 clang -mllvm -debug-only=regalloc -O2 foo.c 2>&1 |
   grep "spilled"
 ```
 
-Fix: Use DSATUR ordering (always color the most-constrained vertex next). For compilers, use reverse post-order of dominator tree.
+**Fix:** Use DSATUR ordering (always color the most-constrained vertex next). For compilers, use reverse post-order of dominator tree.
 
-Prevention: Test coloring quality with the chromatic upper bound: χ ≤ greedy uses ≤ Δ+1.
+**Prevention:** Test coloring quality with the chromatic upper bound: χ ≤ greedy uses ≤ Δ+1.
 
 ---
 
 **2. Confusing graph coloring with edge coloring**
 
-Symptom: Algorithm assigns colors to edges instead of vertices; conflict constraints not satisfied.
+**Symptom:** Algorithm assigns colors to edges instead of vertices; conflict constraints not satisfied.
 
-Root Cause: Edge coloring (no two edges sharing a vertex get the same color) is a different problem (models railway scheduling, not register allocation).
+**Root Cause:** Edge coloring (no two edges sharing a vertex get the same color) is a different problem (models railway scheduling, not register allocation).
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Vertex coloring invariant: for each edge (u,v)
 for each edge (u, v):
     assert color[u] != color[v] : "vertex coloring violation";
 ```
 
-Fix: Clarify the problem: vertex coloring vs edge coloring. They have different algorithms and chromatic numbers.
+**Fix:** Clarify the problem: vertex coloring vs edge coloring. They have different algorithms and chromatic numbers.
 
-Prevention: Map the concrete problem (variables → vertices; live-range overlap → edges) explicitly before choosing algorithm.
+**Prevention:** Map the concrete problem (variables → vertices; live-range overlap → edges) explicitly before choosing algorithm.
 
 ---
 
 **3. Treating NP-complete coloring as tractable for large instances**
 
-Symptom: Backtracking solver runs for hours on a 200-vertex graph.
+**Symptom:** Backtracking solver runs for hours on a 200-vertex graph.
 
-Root Cause: Exact k-coloring for k ≥ 3 has exponential worst-case time. For 200 vertices with k=10, the search space is 10^200.
+**Root Cause:** Exact k-coloring for k ≥ 3 has exponential worst-case time. For 200 vertices with k=10, the search space is 10^200.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Monitor CPU time — if > 10 seconds for V=50, algorithm won't scale:
 time java GraphColoring 200 10
 ```
 
-Fix: Switch to approximation algorithms (DSATUR, tabu search) or exploit graph structure (is it chordal? interval?).
+**Fix:** Switch to approximation algorithms (DSATUR, tabu search) or exploit graph structure (is it chordal? interval?).
 
-Prevention: Profile graph structure before choosing algorithm. Reserve exact coloring for V < 50.
+**Prevention:** Profile graph structure before choosing algorithm. Reserve exact coloring for V < 50.
 
 ---
 

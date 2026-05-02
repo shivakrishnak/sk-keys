@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 `Runnable.run()` returns void and declares no checked exceptions. To get a result from a background task using `Runnable`, developers invented awkward workarounds: wrapping results in mutable shared state, using `AtomicReference<T>` to hold the result, or catching checked exceptions inside `run()` and storing them in a field. These patterns are error-prone and break the clean separation between task execution and result retrieval.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 An async image-processing service submits 100 resize operations as `Runnable` tasks, storing results in a `List<AtomicReference<BufferedImage>>`. Each task catches all exceptions and stores them in `AtomicReference<Exception>`. The caller must check every reference. One ATomicReference is null (task not yet complete). The caller can't distinguish "not finished" from "finished with null" from "threw exception". The result-retrieval code is more complex than the resize logic itself.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **`Callable<V>`** was created — to define a task contract that returns a typed result and can throw checked exceptions, paired with `Future<V>` to retrieve the result and observe failures from the submitting thread.
 
 ---
@@ -64,12 +64,12 @@ This is exactly why **`Callable<V>`** was created — to define a task contract 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. `call()` returns a typed result `V` — no mutable workarounds needed.
 2. `call()` declares `throws Exception` — checked exceptions propagate naturally.
 3. Exceptions from `call()` are wrapped in `ExecutionException` at `Future.get()`.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 3, the caller retrieves the exception via `e.getCause()` from `ExecutionException`. This allows the submitter (on the calling thread) to observe failures from tasks that ran on different threads. Without `Callable` + `Future`, there's no standard mechanism to propagate thread exceptions to the submitter.
 
 ```
@@ -86,15 +86,15 @@ Given invariant 3, the caller retrieves the exception via `e.getCause()` from `E
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Typed return value; checked exception propagation; cancellation support; clear "result available" semantics via `Future`.
-Cost: `Future.get()` is blocking — calling it immediately after `submit()` eliminates concurrency benefit; checked exception wrapping adds unwrapping ceremony; `Cancel` doesn't always interrupt running tasks.
+**THE TRADE-OFFS:**
+**Gain:** Typed return value; checked exception propagation; cancellation support; clear "result available" semantics via `Future`.
+**Cost:** `Future.get()` is blocking — calling it immediately after `submit()` eliminates concurrency benefit; checked exception wrapping adds unwrapping ceremony; `Cancel` doesn't always interrupt running tasks.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Parse 1,000 CSV files asynchronously. Each parse can fail with `ParseException`.
 
 WITHOUT CALLABLE (using Runnable):
@@ -126,7 +126,7 @@ for (Future<Data> future : futures) {
 }
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 `Callable` + `Future` is the standard "execute and retrieve" pattern for heterogeneous async results. Each result is independently retrievable with independent error handling, timeout, and cancellation.
 
 ---
@@ -135,10 +135,10 @@ THE INSIGHT:
 
 > `Callable` is a vending machine ticket for a custom order. You put in your request (submit), get a ticket (`Future`), and walk away. Later, you redeem the ticket (`get()`) — either the order is ready or the machine tells you what went wrong (exception). You can check if it's ready without waiting (`isDone()`), set a deadline (`get(timeout)`), or cancel (`cancel()`).
 
-"`Callable<V>` task" → the custom order specification.
-"`Future<V>` ticket" → the receipt number for your order.
-"`future.get()`" → redeeming the ticket (blocking if not ready).
-"`ExecutionException`" → "your order failed: [reason]".
+- "`Callable<V>` task" → the custom order specification.
+- "`Future<V>` ticket" → the receipt number for your order.
+- "`future.get()`" → redeeming the ticket (blocking if not ready).
+- "`ExecutionException`" → "your order failed: [reason]".
 
 Where this analogy breaks down: A physical ticket can only be redeemed once. `Future.get()` can be called multiple times — subsequent calls return the cached result immediately (or the cached exception).
 
@@ -237,7 +237,7 @@ try {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [submit(callable)] → [FutureTask wraps callable]  ← YOU ARE HERE
     → [Executor queues FutureTask]
@@ -247,7 +247,7 @@ NORMAL FLOW:
     → [future.get() → returns V]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [callable.call() throws RuntimeException]
     → [FutureTask stores exception]
@@ -256,7 +256,7 @@ FAILURE PATH:
     → [Caller handles or rethrows]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, calling `future.get()` immediately after `submit()` in a loop eliminates concurrency — tasks run sequentially. Instead: submit all tasks first to fill the pool, THEN collect results. Use `CompletableFuture` for non-blocking callbacks when results can be processed as they arrive. `invokeAll()` submits all and returns when all complete (or timeout), which is cleaner in batch scenarios.
 
 ---
@@ -330,11 +330,11 @@ How to choose: Use `Callable<V>` when you need the result and the task may throw
 
 **ExecutionException Without Proper Unwrapping**
 
-Symptom: Stack traces show `java.util.concurrent.ExecutionException` with unhelpful cause chains.
+**Symptom:** Stack traces show `java.util.concurrent.ExecutionException` with unhelpful cause chains.
 
-Root Cause: `ExecutionException.getCause()` not called to retrieve the actual exception.
+**Root Cause:** `ExecutionException.getCause()` not called to retrieve the actual exception.
 
-Fix:
+**Fix:**
 ```java
 // BAD: catches only ExecutionException without unwrapping
 try {
@@ -356,23 +356,23 @@ try {
 }
 ```
 
-Prevention: Always call `e.getCause()` inside `ExecutionException` catch blocks. Log or rethrow the cause, not the wrapper.
+**Prevention:** Always call `e.getCause()` inside `ExecutionException` catch blocks. Log or rethrow the cause, not the wrapper.
 
 ---
 
 **Deadlock from get() in Same Pool Thread**
 
-Symptom: All executor threads blocked waiting on `future.get()`. No progress.
+**Symptom:** All executor threads blocked waiting on `future.get()`. No progress.
 
-Root Cause: Task submits subtask to same bounded pool and calls `get()`. Pool is at capacity — subtask waits in queue, main task waits for subtask.
+**Root Cause:** Task submits subtask to same bounded pool and calls `get()`. Pool is at capacity — subtask waits in queue, main task waits for subtask.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstack <pid> | grep -A10 "pool-1-thread"
 # Shows all threads waiting on LockSupport.park (Future.get)
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: submits to same pool, then blocks
 Future<Integer> innerFuture = executor.submit(() -> subTask());
@@ -384,7 +384,7 @@ CompletableFuture.supplyAsync(() -> outerTask(), executor)
     .thenAccept(this::handleFinal);
 ```
 
-Prevention: Never call `future.get()` inside a task running in the same bounded executor. Use separate executor for inner tasks or use `CompletableFuture` chains.
+**Prevention:** Never call `future.get()` inside a task running in the same bounded executor. Use separate executor for inner tasks or use `CompletableFuture` chains.
 
 ---
 

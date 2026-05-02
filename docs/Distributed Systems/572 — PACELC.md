@@ -295,10 +295,10 @@ public class ProductInventoryService {
 
 **Read-Your-Own-Writes Violation (EL System)**
 
-Symptom:
+**Symptom:**
 User updates profile picture. Refreshes page. Old picture still showing on first refresh.
 
-Root Cause:
+**Root Cause:**
 Write went to leader, read routed to stale replica (EL system, within the consistency window).
 
 Diagnosis + Fix:

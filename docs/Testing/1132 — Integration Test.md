@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Unit tests verify each function in isolation — mocking the database. But in production, the SQL query has a syntax error that only PostgreSQL 14 (not H2 in-memory) detects. The ORM mapping fails on a specific column type. A transaction boundary is in the wrong place — the rollback doesn't happen as expected. All unit tests pass. The bug only manifests when the code touches a real database. Without integration tests, you discover this in production.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Mocks lie. They return what you told them to return — not what the real system does. An integration test with a real PostgreSQL container (via Testcontainers) catches: SQL errors, type mapping issues, constraint violations, transaction semantics, N+1 queries, index usage. These bugs are invisible to unit tests but critical in production.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Spring's `@SpringBootTest` (2014) and Testcontainers (2016) made integration testing practical: spin up a real Spring context with a real Docker-containerised database in the test lifecycle. Previously, integration tests required a maintained shared database — slow, fragile, environment-dependent. Testcontainers isolated each test suite with a fresh, real database in a Docker container.
 
 ---
@@ -100,9 +100,9 @@ SPRING BOOT SLICE TESTING:
   - Fast (< 500ms), no database
 ```
 
-THE TRADE-OFFS:
-Gain: Catches integration bugs that unit tests miss; builds confidence for production; documents how layers interact.
-Cost: Slow (1–30s per test); requires Docker for Testcontainers; test setup complexity; parallel execution requires isolated databases.
+**THE TRADE-OFFS:**
+**Gain:** Catches integration bugs that unit tests miss; builds confidence for production; documents how layers interact.
+**Cost:** Slow (1–30s per test); requires Docker for Testcontainers; test setup complexity; parallel execution requires isolated databases.
 
 ---
 
@@ -288,12 +288,12 @@ class OrderIntegrationTest {
 **1. Tests Pass in IDE, Fail in CI (Port Conflict)**
 
 Cause: Testcontainers assigns random ports; but if `application.properties` has hardcoded port → wrong container.
-Fix: Always use `@DynamicPropertySource` to inject dynamic container ports.
+**Fix:** Always use `@DynamicPropertySource` to inject dynamic container ports.
 
 **2. Slow Test Suite (30s+ per test class)**
 
 Cause: `@DirtiesContext` on multiple test classes forces Spring context rebuild.
-Fix: Share context by using identical configuration across tests. Remove unnecessary `@DirtiesContext`. Use `@MockBean` consistently (adding/removing `@MockBean` invalidates context cache).
+**Fix:** Share context by using identical configuration across tests. Remove unnecessary `@DirtiesContext`. Use `@MockBean` consistently (adding/removing `@MockBean` invalidates context cache).
 
 ---
 

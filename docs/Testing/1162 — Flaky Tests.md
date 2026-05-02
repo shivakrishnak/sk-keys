@@ -257,15 +257,15 @@ void orderHasCorrectTimestamp() {
 **1. Flakiness Caused by Test Parallelization**
 Cause: Two tests write to the same shared resource (file, database row, port).
 Diagnosis: Run tests in random order; if failure correlates with test order, it's shared state.
-Fix: Unique resource per test (unique port, unique DB record, temp directory per test).
+**Fix:** Unique resource per test (unique port, unique DB record, temp directory per test).
 
 **2. "Heisenbug" — Fails Only Under Load**
 Cause: Test passes when run alone, fails when run with 50 other tests (resource contention, GC pauses, thread starvation).
-Fix: Increase timeouts when running in parallel; reduce shared resource contention; use separate thread pools.
+**Fix:** Increase timeouts when running in parallel; reduce shared resource contention; use separate thread pools.
 
 **3. Date/Time Flakiness at Midnight**
 Cause: Test constructs expected date before midnight, assertion runs after midnight.
-Fix: Inject `Clock` and fix it for all date/time operations in the system under test.
+**Fix:** Inject `Clock` and fix it for all date/time operations in the system under test.
 
 ---
 

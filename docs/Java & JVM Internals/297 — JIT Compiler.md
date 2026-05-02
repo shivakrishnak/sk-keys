@@ -45,13 +45,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Early Java (pre-1.3) executed bytecode through a pure interpreter: the JVM read each bytecode instruction, looked up what it meant, and dispatched to a corresponding C routine. This was safe and portable, but devastatingly slow — 10–50x slower than equivalent C code. Java earned a reputation as a "slow language" not because the language design was flawed, but because execution was interpretation overhead multiplied over every instruction.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A financial trading engine written in Java in 1998 processes market data. A critical inner loop executes `checkPrice()` 50 million times per second. Each call: interpreter decodes the bytecode, dispatches to C handlers, crosses the interpreter boundary again on return. Total overhead: ~200ns per call where 5ns is the actual work. The loop is 40x slower than it needs to be. Traders complain. They switch to C++.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why the **JIT (Just-In-Time) Compiler** was created — to bridge the speed gap between portable bytecode and native machine code by compiling hot code paths at runtime, using profiling data that a static compiler could never have.
 
 ---
@@ -77,12 +77,12 @@ The JIT's superpower is that it can make stronger assumptions than a static comp
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Bytecode is architecture-neutral — it cannot run at native speed without translation.
 2. Most programs spend 80%+ of their time in less than 20% of their code (the "hot path").
 3. Runtime profiling data (types, branch directions, call counts) reveals opportunities that static analysis cannot.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 2 and 3, the optimal strategy is:
 - Start interpreting everything cheaply (no compilation cost for cold code).
 - Count invocations of each method. When count exceeds a threshold (e.g., 10,000), trigger JIT compilation.
@@ -109,24 +109,24 @@ Given invariant 2 and 3, the optimal strategy is:
 └───────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Native-speed execution for hot code paths; adaptive to actual workload.
-Cost: Warmup time (application runs slow initially); JIT background threads consume CPU; code cache has finite size; compiled code may be discarded (deoptimization or cache eviction).
+**THE TRADE-OFFS:**
+**Gain:** Native-speed execution for hot code paths; adaptive to actual workload.
+**Cost:** Warmup time (application runs slow initially); JIT background threads consume CPU; code cache has finite size; compiled code may be discarded (deoptimization or cache eviction).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A web server starts and immediately receives 10,000 requests/second. The request handler calls `parseHeaders()`, which calls `validateToken()`, which calls `decodeBase64()`. Each is 50 lines of bytecode.
 
-WHAT HAPPENS WITHOUT JIT:
+**WHAT HAPPENS WITHOUT JIT:**
 Every single call is interpreted. At 10,000 req/s, `parseHeaders()` is called 10,000 times/s. Each interpreted call: ~500ns overhead. Total interpretation overhead: 5ms/s just for this method. The server runs at 40% of potential throughput. After five minutes, still slow — no improvement.
 
-WHAT HAPPENS WITH JIT:
+**WHAT HAPPENS WITH JIT:**
 First 1,000 calls: interpreted (profiling gathers type feedback, call counts accumulate). At invocation 10,000: JIT triggers compilation in background. Next 9,000 calls: still interpreted (JIT compiling concurrently). At invocation ~10,100: compiled native code is installed. All subsequent calls: ~50ns each including function call overhead. Throughput improves to 95% of theoretical peak. Server "warms up" in ~2 seconds, then runs fast forever.
 
-THE INSIGHT:
+**THE INSIGHT:**
 JIT delivers native performance with zero programmer effort, but it requires warmup time. This makes JIT-based runtimes temporarily slower at startup and makes performance benchmarks notoriously unreliable if warmup is not accounted for.
 
 ---
@@ -135,11 +135,11 @@ JIT delivers native performance with zero programmer effort, but it requires war
 
 > Picture a chef who has never made a dish. The first time, they read the recipe step by step (interpreter). After making the dish 20 times, they have the steps memorized and can run through them without consulting the recipe — faster, and with personalized shortcuts based on their kitchen layout (JIT-compiled code). But if the restaurant gets a new oven (hardware change), they might need to unlearn some shortcuts.
 
-"Reading the recipe" → bytecode interpretation.
-"Memorized procedure" → JIT-compiled native code.
-"20 times" → invocation count threshold.
-"Personalized shortcuts" → profile-guided optimizations (inlining based on observed types).
-"New oven deoptimizes" → deoptimization when assumptions become invalid.
+- "Reading the recipe" → bytecode interpretation.
+- "Memorized procedure" → JIT-compiled native code.
+- "20 times" → invocation count threshold.
+- "Personalized shortcuts" → profile-guided optimizations (inlining based on observed types).
+- "New oven deoptimizes" → deoptimization when assumptions become invalid.
 
 Where this analogy breaks down: Unlike the chef, JIT compilation happens fully in parallel — the "reading" never stops until the "memorized procedure" is ready, so there is no interruption to service.
 
@@ -204,7 +204,7 @@ If a speculative optimization (e.g., "always Dog, never Cat") becomes invalid (a
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [JVM starts] → [Method interpreted]
     → [Invocation counter incremented] 
@@ -216,7 +216,7 @@ NORMAL FLOW:
     → [~10-50x faster execution]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Code Cache full]
     → [JIT stops compiling new methods]
@@ -230,7 +230,7 @@ FAILURE PATH:
     → [Method re-profiled and re-compiled]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 With many short-lived JVM instances (serverless functions, Kubernetes pods), warmup time means each instance performs poorly for its entire short lifetime. This drove development of AOT (GraalVM Native Image) and Class Data Sharing (CDS). At 100x scale, JIT compilation threads can themselves become CPU bottlenecks on startup — tune with `-XX:CICompilerCount` to control how many JIT threads run.
 
 ---
@@ -330,13 +330,13 @@ How to choose: Use default tiered JIT for most applications. Switch to Native Im
 
 **Code Cache Full — JIT Stops Compiling**
 
-Symptom:
+**Symptom:**
 Log warning: `CodeCache is full. Compiler has been disabled.` After this, throughput drops to interpreted speed and never recovers for the JVM's lifetime.
 
-Root Cause:
+**Root Cause:**
 All 240MB (default) of Code Cache is exhausted. Can happen with large applications, many lambda expressions compiling many invokedynamic forms, or JIT loops in microservice code where hundreds of service classes each have many hot methods.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 jcmd <pid> Compiler.codecache
 # Look for: "used" close to "max"
@@ -346,59 +346,59 @@ jstat -compiler <pid> 1000
 # Columns: Compiled Failed Invalid Time FailedType FailedMethod
 ```
 
-Fix:
+**Fix:**
 ```bash
 java -XX:ReservedCodeCacheSize=512m \
      -XX:+UseCodeCacheFlushing MyApp
 ```
 
-Prevention:
+**Prevention:**
 Monitor Code Cache usage in Grafana (`jvm_codecache_bytes`). Alert at 80% utilization.
 
 ---
 
 **JIT Warmup Causing P99 Latency Spikes**
 
-Symptom:
+**Symptom:**
 Immediately after deployment, P99 latency is 10x higher for 60-120 seconds, then normalizes. Customer-facing latency SLO is violated during rollout.
 
-Root Cause:
+**Root Cause:**
 During warmup, hot code runs interpreted. Interpreted `parseRequest()` takes 500µs instead of 50µs. First 10,000 requests per method hit interpreted performance.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -XX:+PrintCompilation 2>&1 | \
   awk '{print $4}' | sort | uniq -c | sort -rn | head
 # Shows which methods are being compiled in the first minutes
 ```
 
-Fix:
+**Fix:**
 Use CDS (Class Data Sharing) or AOT compilation for frequently-used classes. For critical deployments, do warm-up requests before routing live traffic (e.g., Kubernetes readiness probe hits warm-up endpoint).
 
-Prevention:
+**Prevention:**
 Implement a warm-up procedure in your service: issue synthetic requests covering all hot paths before marking the pod Ready.
 
 ---
 
 **Excessive Deoptimization Causing Performance Cliff**
 
-Symptom:
+**Symptom:**
 System performs well for hours, then suddenly throughput drops and CPU spikes. JIT has compiled a method with type assumptions that are now wrong.
 
-Root Cause:
+**Root Cause:**
 A new code path introduces a previously-unobserved type into a polymorphic call site. The JIT's optimistic inlining assumption is violated. The compiled code is invalidated, deoptimized to interpreter, and must re-profile and re-compile. During re-compilation, performance is interpretation-speed.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -XX:+TraceDeoptimization \
      -XX:+PrintDeoptimizationDetails MyApp
 # Look for frequent deoptimizations of the same method
 ```
 
-Fix:
+**Fix:**
 Reduce polymorphism in hot paths. If your hot loop always processes `ArrayList`, avoid passing `LinkedList` to the same method.
 
-Prevention:
+**Prevention:**
 Use `-XX:+PrintInlining` in load testing to identify megamorphic callsites and refactor them before production.
 
 ---

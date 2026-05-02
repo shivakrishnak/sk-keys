@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine you want a computer to sort a list of numbers. Without a
 way to express ordered, step-by-step instructions, you'd have no
 mechanism to say "first compare these two, then swap if needed,
@@ -40,13 +40,13 @@ punch cards and direct circuit manipulation. Programmers had no
 abstraction layer for expressing sequences of operations that
 operated on mutable state.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 As software grew beyond single calculations, the absence of a way
 to encode conditional branching, loops, and state mutation made
 programs impossible to scale. You couldn't express "do X 10 times"
 without wiring the circuit 10 times.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why Imperative Programming was created. It gave
 programmers a vocabulary: assign values, loop, branch, call
 routines — a direct mapping from human intent to machine execution.
@@ -87,7 +87,7 @@ other paradigms.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. State exists and can be mutated — variables hold values
    that change over time during program execution.
@@ -97,7 +97,7 @@ CORE INVARIANTS:
 3. The programmer controls flow — loops, conditionals, and
    jumps are explicit; the computer does exactly what it's told.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given that a CPU executes one instruction at a time and maintains
 registers (mutable state), any language that maps closely to
 this model must be imperative. The design follows directly:
@@ -106,10 +106,10 @@ this model must be imperative. The design follows directly:
 - Loops map to BRANCH and JUMP instructions
 - Function calls map to CALL/RETURN with a stack frame
 
-THE TRADE-OFFS:
-Gain: Full control over every operation; performance predictability;
+**THE TRADE-OFFS:**
+**Gain:** Full control over every operation; performance predictability;
 direct correspondence to how hardware actually works.
-Cost: Programs describe the "how" not the "what" — as complexity
+**Cost:** Programs describe the "how" not the "what" — as complexity
 grows, managing mutable state across many functions becomes
 the primary source of bugs.
 
@@ -117,11 +117,11 @@ the primary source of bugs.
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You have a list of 5 temperatures in Celsius and want the average.
 List: [20, 25, 30, 15, 10]
 
-WHAT HAPPENS WITHOUT IMPERATIVE STYLE:
+**WHAT HAPPENS WITHOUT IMPERATIVE STYLE:**
 There's no concept of "accumulate" — you can't say "start at 0,
 add each number, then divide." Without mutable state, you have no
 running total. Without a loop, you can't iterate. You'd need to
@@ -130,7 +130,7 @@ step1 = 20 + 25
 step2 = step1 + 30
 ... and the code would only work for exactly 5 items.
 
-WHAT HAPPENS WITH IMPERATIVE STYLE:
+**WHAT HAPPENS WITH IMPERATIVE STYLE:**
 
 ```
 total = 0                     # mutable state
@@ -142,7 +142,7 @@ average = total / 5           # final computation
 The loop runs 5 times, mutating `total` each time. Works for any
 list size once you replace the hardcoded length.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Mutable state + explicit iteration = the ability to describe
 algorithms for arbitrary inputs. This is the foundation of all
 computation expressed in code.
@@ -157,11 +157,11 @@ computation expressed in code.
 > of the dish with each action. The recipe doesn't describe what a
 > finished dish looks like — it describes every action to get there.
 
-"Each recipe step" → a statement in the program
-"The pot/pan state" → program variables
-"Stir for 3 minutes" → a loop
-"If golden, add garlic" → an if-statement
-"The finished dish" → program output
+- "Each recipe step" → a statement in the program
+- "The pot/pan state" → program variables
+- "Stir for 3 minutes" → a loop
+- "If golden, add garlic" → an if-statement
+- "The finished dish" → program output
 
 Where this analogy breaks down: unlike a recipe, programs can have
 millions of steps and side-effects that interact in non-obvious
@@ -247,7 +247,7 @@ the program terminates with an unhandled exception.
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [Source Code] → [Compiler/Interpreter]
@@ -259,12 +259,12 @@ NORMAL FLOW:
   → [Program Output]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [Null pointer access] → [CPU signals fault]
 → [OS delivers signal] → [Runtime raises exception]
 → [Stack unwind] → [Error output / crash]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10x scale, mutable shared state becomes the bottleneck —
 multiple threads mutating the same variable require locks, creating
 contention. At 100x, bugs in state management (race conditions,
@@ -349,16 +349,16 @@ declarative when shared mutable state becomes a source of bugs.
 
 **1. Shared Mutable State Bug**
 
-Symptom:
+**Symptom:**
 Variable value is unexpectedly wrong; behaviour differs between
 single-threaded and multi-threaded runs; intermittent failures.
 
-Root Cause:
+**Root Cause:**
 Two functions read and write the same variable without
 synchronisation. Thread A reads `x=5`, Thread B writes `x=10`,
 Thread A writes `x+1=6` — losing Thread B's update.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Java: detect race conditions with ThreadSanitizer (via JVM flags)
@@ -368,7 +368,7 @@ java -ea -Xss512k -javaagent:tsan.jar MyApp
 python -W all my_script.py
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: unsynchronised shared counter
@@ -380,21 +380,21 @@ AtomicInteger counter = new AtomicInteger(0);
 void increment() { counter.incrementAndGet(); }
 ```
 
-Prevention: Prefer immutable data and local variables; only share
+**Prevention:** Prefer immutable data and local variables; only share
 state when truly necessary, and protect all shared state with
 appropriate synchronisation.
 
 **2. Off-by-One Error in Loop**
 
-Symptom:
+**Symptom:**
 Array index out of bounds exception; last element skipped;
 first element processed twice.
 
-Root Cause:
+**Root Cause:**
 Loop boundary uses `<= length` instead of `< length`, or starts
 at 1 instead of 0 in a zero-indexed language.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Add boundary print at loop edges during debugging
@@ -404,7 +404,7 @@ for (int i = 0; i < arr.length; i++) {
 }
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: off-by-one — reads past last element
@@ -418,20 +418,20 @@ for (int i = 0; i < arr.length; i++) {
 }
 ```
 
-Prevention: Use enhanced for-each loops or iterators when index
+**Prevention:** Use enhanced for-each loops or iterators when index
 arithmetic is not needed.
 
 **3. Unintended Side Effects**
 
-Symptom:
+**Symptom:**
 A function modifies a variable that another part of the code
 depends on; tests pass in isolation but fail when combined.
 
-Root Cause:
+**Root Cause:**
 A function mutates global or outer-scope state as a side effect
 of its main operation — the caller doesn't expect this.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Add logging at entry/exit of suspect functions
@@ -441,7 +441,7 @@ doSomething();
 System.out.println("After: " + sharedVar);
 ```
 
-Fix:
+**Fix:**
 
 ```python
 # BAD: modifies the input list in place unexpectedly
@@ -454,7 +454,7 @@ def add_default(items):
     return items + ["default"]
 ```
 
-Prevention: Functions should either return a value OR modify state —
+**Prevention:** Functions should either return a value OR modify state —
 not both. Prefer pure functions that take input and return output
 with no side effects.
 

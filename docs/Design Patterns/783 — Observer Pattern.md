@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Observer Pattern"
 parent: "Design Patterns"
@@ -241,7 +241,7 @@ WITH Observer:
 
 "Weather station" = Subject (maintains observer list, broadcasts changes)
 "Each app" = Observer (implements update())
-"New measurement → broadcast" = notifyObservers()
+- "New measurement → broadcast" = notifyObservers()
 "Apps register with station" = subject.addObserver()
 "Station doesn't know what apps do" = decoupled; observers act independently
 

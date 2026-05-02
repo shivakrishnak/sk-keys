@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You change a single calculation method in a 50,000-line codebase. To verify it works, you deploy to staging, run the full application, manually navigate to the feature, and check the result. This takes 20 minutes. You find a bug, fix it, repeat. Each change requires 20 minutes of feedback. Developers avoid changing code because the feedback loop is too slow. The codebase calculates.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 To refactor with confidence, you need feedback in seconds — before deployment, before integration, before the browser. Unit tests make each function independently verifiable: you call it directly with controlled inputs, assert the output, and get a result in 10ms. Change a function → run its tests → pass/fail in 50ms. Refactor freely, verify instantly.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Kent Beck's SUnit (Smalltalk, 1994) and its Java port JUnit (1997) formalised the unit test pattern: Arrange (set up), Act (execute), Assert (verify). The framework pattern — test runner discovers test classes, isolates each test, reports pass/fail — became the model for every modern testing framework.
 
 ---
@@ -89,9 +89,9 @@ WHAT MAKES A GOOD UNIT:
 - Boundary cases: null input, empty list, zero, max value, negative
 - One reason to fail: if test breaks, exactly one thing is wrong
 
-THE TRADE-OFFS:
-Gain: Millisecond feedback; safe refactoring; tests as documentation.
-Cost: Mocking can hide integration bugs; over-mocking leads to tests that pass but production breaks; maintaining tests as code evolves has cost.
+**THE TRADE-OFFS:**
+**Gain:** Millisecond feedback; safe refactoring; tests as documentation.
+**Cost:** Mocking can hide integration bugs; over-mocking leads to tests that pass but production breaks; maintaining tests as code evolves has cost.
 
 ---
 
@@ -284,12 +284,12 @@ class OrderPricingServiceTest {
 **1. Test Passes Locally, Fails in CI**
 
 Cause: Test depends on system state (time, locale, file system, random seed, test order).
-Fix: Use `@MockBean Clock`, fixed seeds, `@TempDir`, `@TestMethodOrder(OrderAnnotation.class)` with independent tests.
+**Fix:** Use `@MockBean Clock`, fixed seeds, `@TempDir`, `@TestMethodOrder(OrderAnnotation.class)` with independent tests.
 
 **2. Tests Break on Every Refactor**
 
 Cause: Tests verify internal implementation details (private method calls, field values via reflection).
-Fix: Only test public API. Use `verify()` sparingly — only for critical side effects (email sent, payment charged).
+**Fix:** Only test public API. Use `verify()` sparingly — only for critical side effects (email sent, payment charged).
 
 ---
 

@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 `PaymentService.charge()` makes an HTTP call to Stripe. To test your service, you need: Stripe API keys, internet access, test card numbers, Stripe's sandbox environment to be up. In CI, these calls are slow (500ms+), may be rate-limited, can fail due to network issues, and require secrets management. With Mockito, you can mock the HTTP client interface — but you're not testing your HTTP serialization, your request headers, your error handling code for HTTP 429 rate limits, or your retry logic.
 
 WireMock fills the gap: it's a real HTTP server that runs in your test, returns exactly what you tell it to, and records all requests — so you can verify your service sends the correct HTTP requests.
@@ -265,12 +265,12 @@ class WeatherServiceTest {
 **1. Service Uses Wrong URL in Tests → WireMock Not Called**
 
 Cause: `@DynamicPropertySource` doesn't override the URL; service still calls real API.
-Fix: Verify `spring.datasource.url` / `api.url` property is set to WireMock URL. Log the URL on application startup.
+**Fix:** Verify `spring.datasource.url` / `api.url` property is set to WireMock URL. Log the URL on application startup.
 
 **2. WireMock Stubs Drift From Real API → False Confidence**
 
 Cause: Stripe updated their API response format; WireMock stubs still return old format.
-Fix: Use Pact consumer-driven contract testing to generate stubs, or run a periodic "stub freshness check" against the real API in a separate job.
+**Fix:** Use Pact consumer-driven contract testing to generate stubs, or run a periodic "stub freshness check" against the real API in a separate job.
 
 ---
 

@@ -33,13 +33,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Java creates thousands of short-lived objects per request: temporary `StringBuilder` instances, iterator wrappers, `Optional` results, DOM nodes, lambda closures. Each requires heap allocation, incrementing the GC tracking counters, and surviving at least the next Minor GC before being reclaimed. In a hot path handling 100,000 requests per second, this creates enormous GC pressure — Minor GC runs constantly to clean up objects that lived for microseconds.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 When a profiler reveals that 90% of GC work is collecting objects that were immediately discarded after one method call, the question becomes: why allocate them on the heap at all? The requirement for heap allocation is not inherent to the object semantics — it's only necessary when the object's reference outlives the creating method. If it doesn't, heap allocation and GC are purely overhead.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Escape Analysis is the compile-time proof that determines whether an object's reference "escapes" the creating method or thread. If it provably does not, the JIT can eliminate the heap allocation entirely. This is exactly why Escape Analysis exists: to eliminate heap allocation overhead for objects that don't need to outlive their creating method.
 
 ---
@@ -65,34 +65,34 @@ The most powerful form of Escape Analysis is Scalar Replacement — the object i
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. An object must be heap-allocated only if its reference may outlive the creating method call.
 2. An object accessible only from one thread needs no synchronisation.
 3. The JVM's observable external behaviour must not change regardless of where the object is actually stored.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 enables stack allocation or scalar replacement for non-escaping objects. Invariant 2 enables lock elision for per-method objects used with `synchronized`. Invariant 3 constrains all EA optimisations: they are transparent — they must preserve the program's semantics exactly, including all field access patterns, exception paths, and `finalizer` behaviour (finalizers prevent scalar replacement since the JVM must be able to call them).
 
-THE TRADE-OFFS:
-Gain: Reduced GC pressure, reduced heap allocation rate, elimination of lock contention for local monitors, potentially improved CPU cache locality.
-Cost: EA requires complex whole-method analysis; JIT time increases slightly; EA may fail conservatively if a method is too complex or inlining budget is exceeded; EA is opaque — no standard tool shows per-allocation EA decisions.
+**THE TRADE-OFFS:**
+**Gain:** Reduced GC pressure, reduced heap allocation rate, elimination of lock contention for local monitors, potentially improved CPU cache locality.
+**Cost:** EA requires complex whole-method analysis; JIT time increases slightly; EA may fail conservatively if a method is too complex or inlining budget is exceeded; EA is opaque — no standard tool shows per-allocation EA decisions.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A hot method creates a `Point` object 10 million times per second: `Point p = new Point(x, y); return p.distance(0, 0);`
 
 `distance()` computes `Math.sqrt(p.x*p.x + p.y*p.y)` and the point is discarded.
 
-WHAT HAPPENS WITHOUT ESCAPE ANALYSIS:
+**WHAT HAPPENS WITHOUT ESCAPE ANALYSIS:**
 10 million `new Point(...)` allocations per second → Eden fills rapidly → Minor GC runs every 50ms → 20 Minor GC cycles per second, each pausing all threads for 1–5ms. Total GC pause time: 20–100ms per second = 2–10% of execution time wasted on GC for objects that lived for nanoseconds.
 
-WHAT HAPPENS WITH ESCAPE ANALYSIS:
+**WHAT HAPPENS WITH ESCAPE ANALYSIS:**
 JIT analyses: does `p`'s reference escape `processPoint()`? No — it's only used locally. JIT applies scalar replacement: `p.x` and `p.y` become local variables (CPU registers). No `Point` object ever allocated on the heap. 0 GC pressure from `Point` allocations. Minor GC cycle interval extends from 50ms to seconds. Throughput improves significantly.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The best GC is no GC. Escape Analysis enables the JIT to prove that certain allocations are unnecessary, eliminating them at the source. The impact on allocation-heavy hot paths is dramatic.
 
 ---
@@ -101,10 +101,10 @@ The best GC is no GC. Escape Analysis enables the JIT to prove that certain allo
 
 > Escape Analysis is like a hotel's key card policy. If a guest only uses their key card in their own room (local use), the security desk doesn't need to log it in the master system — it's just a temporary room key. But if the guest might use it to access shared areas (other methods/threads), it must be formally registered. EA determines which key cards need formal registration (heap allocation) vs. can remain informal (stack/register).
 
-"Formal registration in master system" → heap allocation + GC tracking
-"Temporary room key" → stack-allocated or scalar-replaced object
-"Guest using key in shared areas" → object reference escaping to other methods/threads
-"Security desk" → JIT compiler performing Escape Analysis
+- "Formal registration in master system" → heap allocation + GC tracking
+- "Temporary room key" → stack-allocated or scalar-replaced object
+- "Guest using key in shared areas" → object reference escaping to other methods/threads
+- "Security desk" → JIT compiler performing Escape Analysis
 
 Where this analogy breaks down: unlike key cards, the JVM never asks the programmer to explicitly mark objects as "local." The analysis is entirely automatic and transparent.
 
@@ -189,7 +189,7 @@ void process(int x, int y) {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Hot method reaches JIT compilation threshold
   → C2 JIT begins optimisation
@@ -203,7 +203,7 @@ Hot method reaches JIT compilation threshold
     for non-escaping objects
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 EA unable to optimise (common causes):
   → Method too large for inlining budget
@@ -214,7 +214,7 @@ EA unable to optimise (common causes):
     (transparent - program correct, just not optimised)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At high scale, EA's elimination of short-lived object allocation dramatically reduces Minor GC frequency, extending the GC-free run intervals from seconds to minutes in some allocation-heavy workloads. The effect is most visible in tight loops processing large datasets: each loop iteration may create several temporary objects that are all scalar-replaced, turning what would be millions of heap allocations into CPU register operations.
 
 ---
@@ -317,11 +317,11 @@ How to choose: You don't choose — EA applies automatically based on analysis r
 
 **1. EA Not Applied — Object Escapes Unexpectedly**
 
-Symptom: Profiler shows high allocation rate for objects expected to be scalar-replaced; GC runs frequently despite objects appearing local.
+**Symptom:** Profiler shows high allocation rate for objects expected to be scalar-replaced; GC runs frequently despite objects appearing local.
 
-Root Cause: Object reference escapes to a field, a lambda closure captured by another scope, or a non-inlined method call.
+**Root Cause:** Object reference escapes to a field, a lambda closure captured by another scope, or a non-inlined method call.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Enable allocation profiling
 java -XX:+PrintEscapeAnalysis \
@@ -334,7 +334,7 @@ java -agentpath:.../libasyncProfiler.so \
      =start,event=alloc,file=alloc.html -jar myapp.jar
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: Lambda captures 'result' (reference escapes)
 Result result = new Result();
@@ -344,22 +344,22 @@ someStream.forEach(e -> result.add(e)); // escape!
 int sum = someStream.mapToInt(Integer::intValue).sum();
 ```
 
-Prevention: Keep hot computation methods short; avoid storing intermediate results in fields; inlining helps EA work across method boundaries.
+**Prevention:** Keep hot computation methods short; avoid storing intermediate results in fields; inlining helps EA work across method boundaries.
 
 **2. EA Disabled or Limited by Method Size**
 
-Symptom: EA not applied to methods known to create local objects; `-XX:+PrintEscapeAnalysis` shows "MethodTooLarge" or similar.
+**Symptom:** EA not applied to methods known to create local objects; `-XX:+PrintEscapeAnalysis` shows "MethodTooLarge" or similar.
 
-Root Cause: JIT inlining budget exceeded. Methods larger than the inline threshold (`-XX:MaxInlineSize=35, -XX:FreqInlineSize=325` bytecodes by default) won't be inlined — and EA is most effective post-inlining.
+**Root Cause:** JIT inlining budget exceeded. Methods larger than the inline threshold (`-XX:MaxInlineSize=35, -XX:FreqInlineSize=325` bytecodes by default) won't be inlined — and EA is most effective post-inlining.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 java -XX:+PrintInlining -jar myapp.jar 2>&1 | \
   grep "hot method name"
 # Look for "too big to inline" or "callee is too large"
 ```
 
-Fix:
+**Fix:**
 ```bash
 # Increase inlining budget (with caution - affects code cache)
 java -XX:MaxInlineSize=100 -XX:FreqInlineSize=500 \
@@ -367,15 +367,15 @@ java -XX:MaxInlineSize=100 -XX:FreqInlineSize=500 \
 # OR: refactor the method to be smaller
 ```
 
-Prevention: Profile using `-XX:+PrintInlining` to find critical hot paths that exceed inline budget; refactor large hot methods into smaller pieces.
+**Prevention:** Profile using `-XX:+PrintInlining` to find critical hot paths that exceed inline budget; refactor large hot methods into smaller pieces.
 
 **3. Objects with Finalizers Cannot Be Scalar-Replaced**
 
-Symptom: Application creates objects with `finalize()` methods on hot paths; EA doesn't apply; persistent GC pressure.
+**Symptom:** Application creates objects with `finalize()` methods on hot paths; EA doesn't apply; persistent GC pressure.
 
-Root Cause: If an object has a `finalize()` method, it must be allocated on the heap — the JVM must be able to call `finalize()` before the object is collected, which requires heap allocation and GC awareness.
+**Root Cause:** If an object has a `finalize()` method, it must be allocated on the heap — the JVM must be able to call `finalize()` before the object is collected, which requires heap allocation and GC awareness.
 
-Fix:
+**Fix:**
 ```java
 // BAD: finalize() prevents EA scalar replacement
 class Resource {
@@ -392,7 +392,7 @@ class Resource implements AutoCloseable {
 }
 ```
 
-Prevention: Never use `finalize()` in new code; migrate legacy code to `AutoCloseable` / `Cleaner` API.
+**Prevention:** Never use `finalize()` in new code; migrate legacy code to `AutoCloseable` / `Cleaner` API.
 
 ---
 

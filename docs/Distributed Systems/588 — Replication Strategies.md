@@ -259,7 +259,7 @@ session.execute(
 
 **Replication Lag Spike on Primary Overload**
 
-Symptom: Read replica queries return stale data; lag grows from 0ms to 30s;
+**Symptom:** Read replica queries return stale data; lag grows from 0ms to 30s;
 reads after writes return old values.
 
 Cause: Primary I/O bound or CPU saturated; replica cannot keep pace with binlog

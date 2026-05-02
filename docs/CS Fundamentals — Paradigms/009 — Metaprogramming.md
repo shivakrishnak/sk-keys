@@ -32,7 +32,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A Java ORM (like Hibernate) needs to map 200 database tables
 to 200 Java classes. Without metaprogramming, each class would
 need a hand-coded `toRow()` method, a hand-coded `fromRow()`
@@ -41,7 +41,7 @@ That's ~2,000 lines of identical boilerplate, one per class.
 When a field is added to a class, the developer must update the
 SQL, the mapping code, and the tests — in multiple files.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Any system that needs to apply uniform, structural operations
 across many types faces explosive boilerplate. The pattern
 "inspect this type's fields at runtime, generate SQL based on
@@ -49,7 +49,7 @@ them" repeats identically across 200 classes. Writing it 200
 times is error-prone and unmaintainable. A single missed field
 causes silent data loss.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why Metaprogramming was created. By writing code
 that inspects types and generates behaviour at runtime (or compile
 time), you define the mapping rule ONCE — "for each field, generate
@@ -97,7 +97,7 @@ about the structure of code itself.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. In metaprogramming, code is data — a class, method, or
    field is a first-class value you can inspect and manipulate,
@@ -109,7 +109,7 @@ CORE INVARIANTS:
    power and type safety — the more dynamically you inspect
    and generate code, the less the compiler can verify.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1, languages need runtime type information
 (Java's Class objects, Python's `__dict__`, Lisp's S-expressions).
 Given invariant 2, metaprograms must have a stable meta-model
@@ -124,11 +124,11 @@ Metaprogramming styles:
 - Compile-time generation: generate source or bytecode at build
 - Macro/DSL: code transformations at parse time (Lisp, Scala)
 
-THE TRADE-OFFS:
-Gain: Elimination of structural boilerplate; uniform enforcement
+**THE TRADE-OFFS:**
+**Gain:** Elimination of structural boilerplate; uniform enforcement
 of cross-cutting patterns; frameworks that "just work"
 with any annotated class.
-Cost: Loss of compile-time type safety; difficult to debug
+**Cost:** Loss of compile-time type safety; difficult to debug
 (errors appear at runtime, not compile time); performance
 overhead (reflection bypasses JIT optimisation); code
 that's hard to navigate and understand.
@@ -137,11 +137,11 @@ that's hard to navigate and understand.
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You need to print all field names and values of any Java object —
 without knowing the class at compile time.
 
-WHAT HAPPENS WITHOUT METAPROGRAMMING:
+**WHAT HAPPENS WITHOUT METAPROGRAMMING:**
 You must write a specific `printFields()` method for every class:
 
 ```java
@@ -156,7 +156,7 @@ void printUser(User u) {
 200 classes = 200 `printX()` methods. When a new field is added
 to User, the method silently misses it until someone notices.
 
-WHAT HAPPENS WITH METAPROGRAMMING (reflection):
+**WHAT HAPPENS WITH METAPROGRAMMING (reflection):**
 
 ```java
 void printAllFields(Object obj) throws Exception {
@@ -173,7 +173,7 @@ void printAllFields(Object obj) throws Exception {
 One method handles all 200 classes. New fields are automatically
 included. The downside: the compiler can't verify this is safe.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Metaprogramming trades compile-time safety for code generality —
 you write code that works for unknown types, enabling frameworks
 that "adapt" to any class you write.
@@ -188,11 +188,11 @@ that "adapt" to any class you write.
 > its shape, and configures itself accordingly — that's
 > metaprogramming. One device, infinite compatibility.
 
-"Specific adapter" → a hardcoded method per type
-"Universal adapter" → reflective/generative code
-"Inspecting the plug shape" → `cls.getDeclaredFields()`
-"Configuring itself" → generating behaviour based on inspection
-"The plug types it handles" → any class, at runtime
+- "Specific adapter" → a hardcoded method per type
+- "Universal adapter" → reflective/generative code
+- "Inspecting the plug shape" → `cls.getDeclaredFields()`
+- "Configuring itself" → generating behaviour based on inspection
+- "The plug types it handles" → any class, at runtime
 
 Where this analogy breaks down: unlike a physical adapter,
 metaprogramming generates NEW code, not just configures existing
@@ -314,12 +314,12 @@ NORMAL FLOW (Hibernate entity mapping):
   → [Result rows mapped back to User objects via reflection]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [Field added to User without @Column → not mapped]
 → [INSERT missing column → DB constraint violation]
 → [Observable: SQLException at runtime, not compile time]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10x call rate, reflective `Field.get()` on hot paths shows
 in profiler (10–100x slower than direct field access). At 100x,
 switching from reflection to `MethodHandles.Lookup` or
@@ -450,15 +450,15 @@ measured bottleneck.
 
 **1. Reflection Performance Regression**
 
-Symptom:
+**Symptom:**
 Serialisation/deserialisation, ORM mappings, or JSON conversion
 is unexpectedly slow; profiler shows `java.lang.reflect.*` at top.
 
-Root Cause:
+**Root Cause:**
 Reflection calls (`Field.get`, `Method.invoke`) are not inlined
 by the JIT and require security checks on every invocation.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Profile with async-profiler
@@ -470,7 +470,7 @@ java -XX:StartFlightRecording=filename=flight.jfr,duration=30s App
 jfr print --events jdk.ExecutionSample flight.jfr
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: reflective access on every call (hot path)
@@ -488,20 +488,20 @@ static {
 String name = (String) GET_NAME.invoke(obj); // JIT-friendly
 ```
 
-Prevention: Cache all `Method`, `Field`, and `MethodHandle`
+**Prevention:** Cache all `Method`, `Field`, and `MethodHandle`
 instances; never create them per-call.
 
 **2. Java 9+ Module System: InaccessibleObjectException**
 
-Symptom:
+**Symptom:**
 `java.lang.reflect.InaccessibleObjectException: Unable to make
 field private java.lang.String accessible` at runtime.
 
-Root Cause:
+**Root Cause:**
 Java 9 modules deny reflective access to non-exported packages
 unless explicitly opened.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # See which module owns the class
@@ -510,7 +510,7 @@ java --list-modules | grep "java.base"
 java --describe-module java.base | grep "opens"
 ```
 
-Fix:
+**Fix:**
 
 ```bash
 # JVM flag to open required package (startup flag):
@@ -520,22 +520,22 @@ Fix:
 opens com.example.model to com.example.framework;
 ```
 
-Prevention: Use `opens` directives in `module-info.java` for
+**Prevention:** Use `opens` directives in `module-info.java` for
 packages that frameworks need to access reflectively.
 
 **3. ClassCastException from Dynamic Proxy**
 
-Symptom:
+**Symptom:**
 `ClassCastException: com.sun.proxy.$Proxy42 cannot be cast to
 UserServiceImpl` — code that casts a Spring bean to its
 concrete class fails.
 
-Root Cause:
+**Root Cause:**
 Spring created a JDK dynamic proxy for the bean (because it
 implements an interface). JDK proxies implement the INTERFACE
 but are not instances of the concrete class.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check whether Spring uses JDK proxy or CGLIB
@@ -546,7 +546,7 @@ System.out.println(bean.getClass().getName());
 // com.example.UserService$$EnhancerBySpringCGLIB$$ = CGLIB
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: cast to concrete class
@@ -558,7 +558,7 @@ UserService svc = (UserService) ctx.getBean("userService");
 @Autowired UserService userService; // always works
 ```
 
-Prevention: Always program to interfaces; never inject or cast
+**Prevention:** Always program to interfaces; never inject or cast
 to a concrete Spring bean class in application code.
 
 ---

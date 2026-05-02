@@ -31,20 +31,20 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine querying a database imperatively: you'd have to open the
 file, iterate every row, compare each field manually, collect
 matches, sort them yourself, and handle pagination by hand. For a
 query involving 3 tables and 5 conditions, that's hundreds of
 lines of code — all of which you'd rewrite for every new query.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 When the "how" of fetching data is identical every time (scan,
 filter, sort, project), writing it out manually wastes effort and
 introduces inconsistency. The "what" — give me all users over 30
 in London sorted by name — is always the interesting part.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why Declarative Programming was created. SQL in
 1974 let programmers say `SELECT name FROM users WHERE age > 30`
 — describing the desired result. The database engine figures out
@@ -87,7 +87,7 @@ over performance.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. The program describes a relationship or desired state — not
    the procedure to achieve it.
@@ -96,7 +96,7 @@ CORE INVARIANTS:
 3. Declarative code is often closer to the problem domain —
    SQL looks like English because the "how" is abstracted away.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 If the execution strategy can be standardised (for databases:
 always scan-filter-project; for UI: always diff-then-patch), then
 it makes sense to build an engine that handles the "how" once,
@@ -107,21 +107,21 @@ when:
 - The "how" is mechanical (HTML rendering algorithm)
 - The domain maps cleanly to a declarative vocabulary
 
-THE TRADE-OFFS:
-Gain: Conciseness, readability, engine-level optimisation, less
+**THE TRADE-OFFS:**
+**Gain:** Conciseness, readability, engine-level optimisation, less
 code to maintain, queries that survive schema changes.
-Cost: Less control over execution; harder to express irregular
+**Cost:** Less control over execution; harder to express irregular
 procedural logic; debugging requires understanding the engine.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You want all product names with price under £50, sorted alphabetically,
 from a table of 10 million products.
 
-WHAT HAPPENS WITHOUT DECLARATIVE (imperative SQL-equivalent):
+**WHAT HAPPENS WITHOUT DECLARATIVE (imperative SQL-equivalent):**
 
 1. Open table file
 2. Allocate result list
@@ -133,7 +133,7 @@ WHAT HAPPENS WITHOUT DECLARATIVE (imperative SQL-equivalent):
 10 million iterations. No index usage. Sort is O(n log n).
 Code: ~50 lines. Duplicated for every new query variation.
 
-WHAT HAPPENS WITH DECLARATIVE (SQL):
+**WHAT HAPPENS WITH DECLARATIVE (SQL):**
 
 ```sql
 SELECT name FROM products
@@ -145,7 +145,7 @@ The query planner sees an index on `price`, uses it to skip 95%
 of rows, and uses a merge sort on the already-indexed key.
 Code: 3 lines. Result is the same.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Declarative abstraction lets the engine exploit knowledge you
 don't have — index structures, statistics, parallelism — to
 execute far better than hand-written imperative code would.
@@ -160,10 +160,10 @@ execute far better than hand-written imperative code would.
 > never see. You described WHAT is true about your situation — the
 > HOW is the government's problem.
 
-"Filling in the boxes" → writing declarative statements
-"The tax form fields" → the declarative API/schema
-"The tax calculation engine" → the runtime/query planner
-"Your tax bill" → the computed result
+- "Filling in the boxes" → writing declarative statements
+- "The tax form fields" → the declarative API/schema
+- "The tax calculation engine" → the runtime/query planner
+- "Your tax bill" → the computed result
 
 Where this analogy breaks down: unlike tax forms, declarative
 programs can compose and nest — you can build complex pipelines
@@ -258,7 +258,7 @@ degrades invisibly because the programmer has no control.
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [Developer writes SELECT/HTML/JSX]
@@ -271,12 +271,12 @@ NORMAL FLOW:
   → [Result returned to application]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [Stale statistics → bad plan → full scan instead of index]
 → [Query runs 100x slower]
 → [Observable: slow query log, high I/O metrics]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10x data volume, the optimiser's choice of join order matters
 exponentially — a wrong join order on 10M rows vs 1M rows
 increases cost by 100x. At 100x, declarative frameworks like Spark
@@ -381,16 +381,16 @@ Switch to imperative when you need precise control over every step.
 
 **1. Query Plan Regression**
 
-Symptom:
+**Symptom:**
 A query that ran in 50ms now takes 30 seconds after a data load.
 No code change was made.
 
-Root Cause:
+**Root Cause:**
 The query optimiser's statistics are stale. After loading 50M new
 rows, the optimiser still thinks the table has 100K rows and
 chooses a full scan instead of an index seek.
 
-Diagnostic:
+**Diagnostic:**
 
 ```sql
 -- PostgreSQL: show actual plan
@@ -402,7 +402,7 @@ SELECT ...;
 SELECT * FROM information_schema.OPTIMIZER_TRACE;
 ```
 
-Fix:
+**Fix:**
 
 ```sql
 -- Update statistics so optimiser has accurate data
@@ -411,20 +411,20 @@ ANALYZE orders;                -- PostgreSQL
 UPDATE STATISTICS orders;      -- SQL Server
 ```
 
-Prevention: Schedule regular statistics updates after bulk loads;
+**Prevention:** Schedule regular statistics updates after bulk loads;
 monitor slow query logs for plan regressions.
 
 **2. N+1 Query Problem**
 
-Symptom:
+**Symptom:**
 Loading 100 users takes 101 database queries. Page loads slowly;
 database connection pool exhausted.
 
-Root Cause:
+**Root Cause:**
 Declarative ORM code that looks like "get users, then for each
 user get their orders" issues one query per user instead of a join.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Enable query logging in Spring Boot application.properties
@@ -433,7 +433,7 @@ logging.level.org.hibernate.type.descriptor.sql=TRACE
 # Count queries in output — 100 users = 100+ SELECT statements
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: N+1 — one query per user
@@ -447,21 +447,21 @@ for (User u : users) {
 List<User> findAllWithOrders();
 ```
 
-Prevention: Always check generated SQL when using ORM; use
+**Prevention:** Always check generated SQL when using ORM; use
 `JOIN FETCH` or `@BatchSize` annotations proactively.
 
 **3. Over-Abstraction Hiding Bugs**
 
-Symptom:
+**Symptom:**
 Declarative pipeline produces wrong results; difficult to trace
 which step in the pipeline introduced the error.
 
-Root Cause:
+**Root Cause:**
 Long chains of declarative transformations make it hard to
 inspect intermediate state; a filter condition has a logic error
 that's invisible until the final result.
 
-Diagnostic:
+**Diagnostic:**
 
 ```python
 # Break the pipeline to inspect intermediate state
@@ -476,7 +476,7 @@ filtered = df.filter(df.price < 50)
 filtered.show(10)  # inspect before aggregation
 ```
 
-Prevention: Add intermediate checkpoints during development;
+**Prevention:** Add intermediate checkpoints during development;
 write unit tests for each stage of a declarative pipeline.
 
 ---

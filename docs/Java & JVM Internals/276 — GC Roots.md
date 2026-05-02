@@ -33,13 +33,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 To reclaim unreachable objects, the GC must distinguish live objects from dead ones. The naive approach — reference counting — tracks how many pointers point to each object. When the count drops to 0, the object is dead. But reference counting fails with circular references: Object A holds a reference to Object B, Object B holds a reference to Object A, both have a reference count of 1, but neither is reachable from your program. Circular references cause permanent memory leaks in pure reference-counting systems (Python 2's GC spent enormous effort on cycle detection for this reason).
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Java programs frequently create circular structures: doubly linked lists, bidirectional object graphs, parent-child relationships. A reference counting GC would require explicit cycle detection for all of these, adding complexity and overhead to every allocation and pointer update.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Tracing GC from a set of known live starting points — GC Roots — eliminates the circular reference problem entirely. If an object cannot be reached by following any chain of references starting from a GC Root, it is dead — regardless of how many other objects point to it. This is exactly why GC Roots exist: they define the set of definitively-alive objects that everything else must be connected to.
 
 ---
@@ -65,32 +65,32 @@ The real-world impact of GC Roots is memory leaks. The most common Java memory l
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Reachability from a known live root defines liveness — transitively.
 2. GC Roots are objects definitively live because the JVM needs them: thread stacks, static state, native references.
 3. Any object not transitively reachable from at least one GC Root is definitively dead.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 enables tracing GC algorithms (mark-sweep, mark-compact, copy). Invariant 2 defines the root set: stack frames (active methods need their locals), class metadata with statics (always needed while the class is loaded), active threads (thread objects are live while running), and JNI references (native code holds live references). Invariant 3 is the correctness guarantee — no reachable object is ever collected.
 
-THE TRADE-OFFS:
-Gain: Handles circular references correctly; no per-object reference count overhead on pointer updates; simple correctness argument.
-Cost: Requires global heap tracing (touching all live objects) — pause time proportional to live object set; requires "stop the world" at some phase (or sophisticated concurrent tracing with write barriers).
+**THE TRADE-OFFS:**
+**Gain:** Handles circular references correctly; no per-object reference count overhead on pointer updates; simple correctness argument.
+**Cost:** Requires global heap tracing (touching all live objects) — pause time proportional to live object set; requires "stop the world" at some phase (or sophisticated concurrent tracing with write barriers).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Three objects: Node A (held in a local variable), Node B (referenced by A), Node C (referenced by B and also by A). All form a triangle. Then the local variable is set to null.
 
-WHAT HAPPENS WITH REFERENCE COUNTING:
+**WHAT HAPPENS WITH REFERENCE COUNTING:**
 Before null: A=1 ref (local), B=1 ref (from A), C=2 refs (from A and B). Set local = null. A→0 refs. A is collected. A's reference to B removed: B→0 refs. B collected. B's reference to C removed: C→1 ref (from A, but A was already collected). But wait — C still has 1 ref from the already-freed A? In practice, when A was collected, A's ref to C was decremented: C→0 refs → collected. Works! But: CIRCULAR: if A also had `A.self = A`, A's ref count would be 1 even after the local = null — never collected. Memory leak.
 
-WHAT HAPPENS WITH GC ROOTS TRACING:
+**WHAT HAPPENS WITH GC ROOTS TRACING:**
 Before null: GC Root → local variable → A → {B, C} → C. All reachable. Set local = null. No GC Roots → A. GC traces from all roots, cannot reach A. Cannot reach B (only via A). C: check if reachable from any root — if only via A and B (both unreachable), C is also unreachable. All three collected, even if A had `A.self = A` — circular reference irrelevant, none reachable.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Root-based tracing means circular references are never a memory leak problem in tracing GC systems. Liveness is defined absolutely by root connectivity, not by relative reference counts.
 
 ---
@@ -99,11 +99,11 @@ Root-based tracing means circular references are never a memory leak problem in 
 
 > GC Roots are like anchor points on a cave wall. Climbers (heap objects) are roped together (references). Any climber attached by an unbroken rope chain to an anchor point is safe (alive). Climbers with no rope path to any anchor, no matter how many other climbers they're tied to, are dangling in free fall (unreachable = collectable).
 
-"Anchor points in cave wall" → GC Roots (stack locals, static fields, JNI refs)
-"Climbers roped together" → heap objects with references between them
-"Unbroken rope to anchor" → reference chain from object to a GC Root
-"Dangling in free fall" → unreachable objects, eligible for GC
-"Rescue team" → GC collector reclaiming dangling climbers
+- "Anchor points in cave wall" → GC Roots (stack locals, static fields, JNI refs)
+- "Climbers roped together" → heap objects with references between them
+- "Unbroken rope to anchor" → reference chain from object to a GC Root
+- "Dangling in free fall" → unreachable objects, eligible for GC
+- "Rescue team" → GC collector reclaiming dangling climbers
 
 Where this analogy breaks down: Unlike climbers, Java objects don't know they're unreachable — the GC determines this through the full traversal. Also, unlike climbers, "dangling" objects may have active reference counts > 0 (circular refs) but still be unreachable.
 
@@ -188,7 +188,7 @@ The GC Root enumeration is the most disruptive phase of GC because it requires k
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Minor GC (Young Gen) triggered
   → All threads reach safepoint
@@ -201,7 +201,7 @@ Minor GC (Young Gen) triggered
   → Threads resume
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 StaticMap.cache grows indefinitely
   → Every new object added to static Map
@@ -213,7 +213,7 @@ StaticMap.cache grows indefinitely
     → largest LiveSet is the static Map entries
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At terabyte heap scales, the live object set is enormous. Even though GC Roots are typically small (stack vars, statics), the live object graph can contain billions of objects. The mark phase must visit every live object — making it O(live set size). This is why terabyte-heap collectors (ZGC, Shenandoah) perform concurrent marking (mark while application runs), intersecting with write barriers to handle concurrent modification of the reference graph.
 
 ---
@@ -324,11 +324,11 @@ How to choose: Java uses tracing from GC Roots — elegant for correctness, requ
 
 **1. Memory Leak via Static Collection (Most Common)**
 
-Symptom: Heap grows monotonically over hours/days; restart fixes temporarily; OOM eventually.
+**Symptom:** Heap grows monotonically over hours/days; restart fixes temporarily; OOM eventually.
 
-Root Cause: A static field (GC Root) holds a growing collection of objects. The objects are "live" from the GC's perspective but logically dead from the application's perspective.
+**Root Cause:** A static field (GC Root) holds a growing collection of objects. The objects are "live" from the GC's perspective but logically dead from the application's perspective.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jcmd <pid> GC.heap_dump /tmp/heap.hprof
 # Eclipse MAT → "Leak Suspects Report"
@@ -337,15 +337,15 @@ jcmd <pid> GC.heap_dump /tmp/heap.hprof
 # "Path to GC Roots" → reveals the static field anchor
 ```
 
-Prevention: Use bounded caches (Caffeine, Guava) instead of raw `HashMap` for application caches; review all `static final Map/List/Set` fields for proper eviction/bounds.
+**Prevention:** Use bounded caches (Caffeine, Guava) instead of raw `HashMap` for application caches; review all `static final Map/List/Set` fields for proper eviction/bounds.
 
 **2. ThreadLocal Memory Leak (Thread Pool)**
 
-Symptom: Heap grows with each processed request; heap dump shows many `ThreadLocalMap.Entry` objects referencing request objects from old requests.
+**Symptom:** Heap grows with each processed request; heap dump shows many `ThreadLocalMap.Entry` objects referencing request objects from old requests.
 
-Root Cause: Thread pool threads are long-lived GC Roots. `ThreadLocal` values set on those threads without `remove()` stay alive forever.
+**Root Cause:** Thread pool threads are long-lived GC Roots. `ThreadLocal` values set on those threads without `remove()` stay alive forever.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jcmd <pid> GC.heap_dump /tmp/heap.hprof
 # Eclipse MAT → find "Thread" objects in OQL:
@@ -353,21 +353,21 @@ jcmd <pid> GC.heap_dump /tmp/heap.hprof
 # For each Thread → threadLocals → check Entry values
 ```
 
-Prevention: Always call `ThreadLocal.remove()` in a `finally` block; use request-scoped frameworks (Spring @RequestScope) that handle cleanup automatically.
+**Prevention:** Always call `ThreadLocal.remove()` in a `finally` block; use request-scoped frameworks (Spring @RequestScope) that handle cleanup automatically.
 
 **3. JNI Global Reference Leak**
 
-Symptom: Native memory grows; `jcmd VM.native_memory` shows growing JNI reference count; native code that calls back into Java retains old Java object references indefinitely.
+**Symptom:** Native memory grows; `jcmd VM.native_memory` shows growing JNI reference count; native code that calls back into Java retains old Java object references indefinitely.
 
-Root Cause: JNI code creates `NewGlobalRef` to a Java object but never calls `DeleteGlobalRef`. JNI Global References are GC Roots — they keep Java objects alive until explicitly deleted.
+**Root Cause:** JNI code creates `NewGlobalRef` to a Java object but never calls `DeleteGlobalRef`. JNI Global References are GC Roots — they keep Java objects alive until explicitly deleted.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jcmd <pid> VM.native_memory summary | grep JNI
 # Growing "JNI" section indicates ref leak
 ```
 
-Prevention: Always pair `NewGlobalRef` with `DeleteGlobalRef` in native code; document ownership of all JNI global references.
+**Prevention:** Always pair `NewGlobalRef` with `DeleteGlobalRef` in native code; document ownership of all JNI global references.
 
 ---
 

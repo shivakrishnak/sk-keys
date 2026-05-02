@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A distributed system has 20 microservices, each with 99.9% uptime. The probability of at least one service failing in any hour: 1 - (0.999)^20 = 2%. At 2% hourly failure rate, the system experiences a service failure approximately every 2 days. The team has circuit breakers and retry logic — but they've never been tested with real failures. Do the circuit breakers actually prevent cascade failures? Do retries have jitter? Does the system recover automatically? Without chaos testing, you only know when a real failure hits production.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Distributed systems fail in ways that are impossible to reason about statically. A network partition between two services in the same datacenter might trigger a behavior that was never considered in the circuit breaker configuration. The only way to know how the system responds to a failure is to inject that failure and observe. "Hope for resilience" is not a strategy; "verify resilience" is.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Netflix's Chaos Monkey (2010) by Yury Izrailevsky and Ariel Tseitlin was the first automated chaos tool: it randomly terminates production instances during business hours. The thesis: if you know that instances can die randomly, you engineer for it. Systems that can survive random instance death are fundamentally more resilient than systems that assume instances never die.
 
 ---
@@ -118,9 +118,9 @@ Application level:
   - Failsafe: Java library for resilience with testable failure modes
 ```
 
-THE TRADE-OFFS:
-Gain: Discover unknown failure modes before production; verify resilience mechanisms work; build organisational confidence in system reliability.
-Cost: Risk of unintended impact (blast radius must be controlled); requires mature observability to know if steady state is maintained; organisational maturity (must be ready to not panic when failures are injected).
+**THE TRADE-OFFS:**
+**Gain:** Discover unknown failure modes before production; verify resilience mechanisms work; build organisational confidence in system reliability.
+**Cost:** Risk of unintended impact (blast radius must be controlled); requires mature observability to know if steady state is maintained; organisational maturity (must be ready to not panic when failures are injected).
 
 ---
 
@@ -338,13 +338,13 @@ toxiproxy-cli toxic remove order-service -n packet_loss
 
 **1. Chaos Experiment Causes Unrecoverable State**
 
-Symptom: After chaos removed, system doesn't recover; requires manual restart.
-Prevention: Define and test recovery procedures before chaos experiments. Have rollback plan (re-inject chaos? restore from snapshot?). Run in staging, not production, until recovery procedures are proven.
+**Symptom:** After chaos removed, system doesn't recover; requires manual restart.
+**Prevention:** Define and test recovery procedures before chaos experiments. Have rollback plan (re-inject chaos? restore from snapshot?). Run in staging, not production, until recovery procedures are proven.
 
 **2. Chaos Experiment Too Destructive (No Blast Radius Control)**
 
-Symptom: Intended to test payment service; accidentally took down entire cluster.
-Prevention: Use Kubernetes namespace selectors. Start with `mode: one` (one pod), not `mode: all`. Test chaos configuration on a single non-critical pod before scheduling.
+**Symptom:** Intended to test payment service; accidentally took down entire cluster.
+**Prevention:** Use Kubernetes namespace selectors. Start with `mode: one` (one pod), not `mode: all`. Test chaos configuration on a single non-critical pod before scheduling.
 
 ---
 

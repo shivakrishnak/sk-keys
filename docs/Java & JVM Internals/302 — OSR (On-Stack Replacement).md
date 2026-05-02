@@ -43,13 +43,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Normal JIT compilation triggers when a method is *invoked* enough times. But what about a method called only once that runs a loop for 60 seconds? The method is only invoked once — it never crosses the invocation count threshold. Without OSR, this loop runs interpreted for its entire lifetime. Real-world examples: a startup-time data loading loop, a background batch processing loop, a long-lived event processing loop.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A data migration job loads 50 million records in a single loop: `for (int i = 0; i < 50_000_000; i++) { process(records[i]); }`. This loop runs for 3 minutes. Without OSR, the loop executes in the interpreter for all 3 minutes — 10x slower than it could be. The job takes 30 minutes instead of 3.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **On-Stack Replacement (OSR)** was created — to allow the JVM to JIT-compile a method *while it is currently executing* on the stack and switch execution to the compiled version mid-loop, without waiting for the method to return and be called again.
 
 ---
@@ -75,12 +75,12 @@ OSR closes the gap between "invoked many times" JIT optimization and "long singl
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. JIT compilation is triggered by invocation counts — but a method only called once never crosses that threshold.
 2. Loops are the primary performance hotspot in long-running single-method executions.
 3. The optimizer can only work on code it has already compiled — it cannot optimize interpreter frames in flight.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 OSR uses a separate counter: the **backedge counter**, incremented at every loop back-edge (the backward jump at the end of each loop iteration). When this counter crosses `Tier4BackEdgeThreshold`, the JVM triggers OSR compilation.
 
 OSR compilation has a non-obvious challenge: the *entry point* of the compiled method cannot be the method's normal entry. It must be the *middle of the loop* — at the exact back-edge position where OSR is triggered. This means the compiled code must expect the interpreter's live state as input: local variable values, partial computation results.
@@ -104,15 +104,15 @@ OSR compilation has a non-obvious challenge: the *entry point* of the compiled m
 └──────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Long-running loops benefit from JIT compilation even when the method is only called once; startup tasks and batch jobs run at near-native speed.
-Cost: OSR-compiled code is typically slightly less optimized than normally-compiled code (special entry point constraints limit some optimizations, particularly around variables live across the back-edge); OSR transitions have a one-time overhead for state transfer; method must be re-profiled on next normal invocation.
+**THE TRADE-OFFS:**
+**Gain:** Long-running loops benefit from JIT compilation even when the method is only called once; startup tasks and batch jobs run at near-native speed.
+**Cost:** OSR-compiled code is typically slightly less optimized than normally-compiled code (special entry point constraints limit some optimizations, particularly around variables live across the back-edge); OSR transitions have a one-time overhead for state transfer; method must be re-profiled on next normal invocation.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A Java main method loads a 100GB dataset: the entire computation is in a single `for` loop iterating 1 billion times. The method is called exactly once in the program's lifetime.
 
 WITHOUT OSR:
@@ -121,7 +121,7 @@ Backedge counter hits 40,000 iterations — OSR threshold reached. But there is 
 WITH OSR:
 At iteration 40,000 (backedge count threshold), the JVM submits the loop for OSR compilation on a background thread. Compilation takes 200ms. Meanwhile, iterations 40,000–80,000 run interpreted. At iteration ~80,000: compiled OSR code is ready. JVM pauses at the next back-edge to perform state transfer (20µs). Loop continues in compiled code. Each compiled iteration: ~10ns. Remaining 999,920,000 iterations: ~10 seconds. Total including warmup: ~11 seconds vs ~200 seconds.
 
-THE INSIGHT:
+**THE INSIGHT:**
 OSR's 200ms compilation and 20µs transfer overhead is invisible against the 189 seconds of savings. Even with marginal overhead at the OSR entry point vs. normally-compiled code, the benefit is enormous for long-running loops.
 
 ---
@@ -130,11 +130,11 @@ OSR's 200ms compilation and 20µs transfer overhead is invisible against the 189
 
 > imagine a factory assembly line running in manual mode (workers doing each step by hand). A factory manager observes that a certain section of the line is used intensely. While the line keeps running, the manager installs automated machines alongside the manual workers. At the right moment, the manager taps the next worker on the shoulder, tells them to stand aside, and the automated machine seamlessly takes over their station — the product never stops moving on the conveyor belt.
 
-"Manual workers" → interpreter executing bytecode.
-"Factory manager observing" → JVM backedge counter monitoring.
-"Installing automated machines" → JIT compiling the loop in background.
-"Tapping on the shoulder" → OSR state transfer at a back-edge.
-"Automated machine takes over" → compiled code resumes the loop.
+- "Manual workers" → interpreter executing bytecode.
+- "Factory manager observing" → JVM backedge counter monitoring.
+- "Installing automated machines" → JIT compiling the loop in background.
+- "Tapping on the shoulder" → OSR state transfer at a back-edge.
+- "Automated machine takes over" → compiled code resumes the loop.
 
 Where this analogy breaks down: Unlike the factory where the product is physical, the JVM must precisely reconstruct the exact processor state from the interpreter frame into the compiled frame's expected format — a precision requirement the factory analogy doesn't capture.
 
@@ -192,7 +192,7 @@ The `%` marker in `-XX:+PrintCompilation` output identifies OSR compilations.
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Method called once] → [Interpreter starts]
     → [Loop begins looping]
@@ -205,7 +205,7 @@ NORMAL FLOW:
     → [Remaining 999,960,000 iterations: fast]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Compiled OSR code has uncommon trap inside loop]
     → [Trap fires mid-loop-execution]
@@ -216,7 +216,7 @@ FAILURE PATH:
     → [Re-profiling and re-compilation if frequent]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In containerized batch jobs, OSR transitions can race with JVM process startup — if the container has a CPU limit of 0.5 cores, the JIT compilation (running in background) may stall, delaying OSR transition well beyond the 40,000-iteration mark. Monitor: OSR compilation delay (method stays flagged for compilation for many thousands of iterations) as a containerized performance issue distinct from bare-metal behavior.
 
 ---
@@ -341,13 +341,13 @@ How to choose: OSR is automatic and typically correct. For maximum JIT optimizat
 
 **OSR Compilation Not Triggered Despite Long Loop**
 
-Symptom:
+**Symptom:**
 A batch job runs 10x slower than expected. Profiling shows time in interpreter. The single long loop has millions of iterations but no OSR compilation.
 
-Root Cause:
+**Root Cause:**
 CPU quota in container prevents JIT background threads from running. The OSR compile request is submitted but the JIT thread is starved, delaying compilation by minutes.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -XX:+PrintCompilation 2>&1 | grep "%"
 # If no % lines for the expected method, OSR didn't fire
@@ -358,23 +358,23 @@ top -H -p <pid>
 # If CPU throttled, the thread may not run
 ```
 
-Fix:
+**Fix:**
 Increase container CPU quota during initialization, or use multiple methods with invocation-based JIT.
 
-Prevention:
+**Prevention:**
 Set appropriate CPU requests (not just limits) in Kubernetes Pod spec to ensure JIT threads can run.
 
 ---
 
 **OSR Entry Prevents Escape Analysis Optimization**
 
-Symptom:
+**Symptom:**
 A long-running loop creates objects inside it. Profiling shows heavy minor GC activity even though objects appear to be short-lived.
 
-Root Cause:
+**Root Cause:**
 Objects created by the interpreter before the OSR transition already exist on the heap. After OSR takes over, the compiled code cannot prove these pre-existing objects are local — they have already "escaped" to the heap, preventing stack allocation.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # See if escape analysis is working post-OSR:
 java -XX:+PrintEscapeAnalysis \
@@ -382,32 +382,32 @@ java -XX:+PrintEscapeAnalysis \
   grep "escape\|osr"
 ```
 
-Fix:
+**Fix:**
 Refactor the loop to create fresh objects only within the compiled portion. Or structure as multiple small methods to use normal JIT (not OSR) compilation.
 
-Prevention:
+**Prevention:**
 Benchmark-compare OSR vs batched-invocation approaches for GC-sensitive long-loop code.
 
 ---
 
 **Reverse OSR Loop (Deoptimization Inside OSR Loop)**
 
-Symptom:
+**Symptom:**
 Long batch loop starts fast (OSR compiled), then suddenly spikes to slow midway through.
 
-Root Cause:
+**Root Cause:**
 An uncommon trap fires inside the OSR-compiled loop. The JVM performs reverse OSR (deoptimization back to interpreter) for the remainder of the loop. In rare cases, the loop never re-optimizes if the trap condition is triggered repeatedly.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -XX:+TraceDeoptimization 2>&1 | grep "osr"
 # Shows OSR-specific deoptimization events
 ```
 
-Fix:
+**Fix:**
 Find the rarely-hit type/condition within the batch loop and either handle it before the loop or extract it into a separate non-OSR path.
 
-Prevention:
+**Prevention:**
 Test batch jobs with data that includes edge-case records to expose OSR-invalidating types before production.
 
 ---

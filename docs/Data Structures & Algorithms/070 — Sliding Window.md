@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Find the maximum sum of any subarray of length 3 in `[2, 1, 5, 1, 3, 2]`. The naive approach recalculates the sum for every starting position: (2+1+5), (1+5+1), (5+1+3), (1+3+2) — recomputing overlapping elements each time. For N=10,000 with window size K=1,000 that's 10,000 × 1,000 = 10 million additions per query.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 O(N×K) brute-force recalculation is wasteful because 99% of each new window overlaps with the previous one. Every shift discards one element and adds one element — yet the naive approach throws away all previous work and restarts from scratch. At N=10⁶, K=1,000, that's one billion operations per pass.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 The key observation: when the window slides right by one, the new sum = old sum - left element + new right element. This single O(1) update replaces K additions. One pass, O(N) total. This is exactly why **Sliding Window** was created.
 
 ---
@@ -64,42 +64,42 @@ Sliding Window only works for **contiguous** subarrays or substrings. If the pro
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The window is always a contiguous range `[left..right]` of the input.
 2. Every element enters the window exactly once (via `right++`) and leaves exactly once (via `left++`): O(N) total moves.
 3. An **aggregation state** (sum, character count, hashmap) is maintained incrementally: updated in O(1) per pointer move.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Because the window is contiguous, the "add right element / remove left element" rule always applies. This forces two variants:
 - **Fixed window (K):** `right` and `left` both advance; window size is constant. Use when the problem specifies a fixed length (`K consecutive elements`).
 - **Variable window:** `right` always advances; `left` advances only when the window violates a constraint (e.g., sum exceeds target, duplicate character appears). Use when the problem asks for the longest/shortest window satisfying a condition.
 
-THE TRADE-OFFS:
-Gain: O(N) time, O(1) extra space for numeric aggregation, O(K) for character/element tracking.
-Cost: Restricted to **contiguous** subarrays. Requires defining a clear "validity constraint" for variable windows. If the aggregation cannot be updated in O(1) (e.g., median of window), the classic technique requires augmentation with a sorted data structure → O(N log K).
+**THE TRADE-OFFS:**
+**Gain:** O(N) time, O(1) extra space for numeric aggregation, O(K) for character/element tracking.
+**Cost:** Restricted to **contiguous** subarrays. Requires defining a clear "validity constraint" for variable windows. If the aggregation cannot be updated in O(1) (e.g., median of window), the classic technique requires augmentation with a sorted data structure → O(N log K).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Find the maximum sum of any contiguous subarray of exactly length 3 in `[2, 1, 5, 1, 3, 2]`.
 
-WHAT HAPPENS WITHOUT SLIDING WINDOW:
+**WHAT HAPPENS WITHOUT SLIDING WINDOW:**
 - Window starting at index 0: 2+1+5 = 8. 3 additions.
 - Window starting at index 1: 1+5+1 = 7. 3 more additions (re-adds 1 and 5).
 - Window starting at index 2: 5+1+3 = 9. 3 more additions (re-adds 5 and 1).
 - Window starting at index 3: 1+3+2 = 6. 3 additions.
 - Total: 12 additions for 4 windows. Wasteful — elements 1 and 5 were added three times each.
 
-WHAT HAPPENS WITH SLIDING WINDOW:
+**WHAT HAPPENS WITH SLIDING WINDOW:**
 - Init: windowSum = 2+1+5 = 8. maxSum = 8.
 - Slide: windowSum = 8 - 2 + 1 = 7. maxSum = 8.
 - Slide: windowSum = 7 - 1 + 3 = 9. maxSum = 9.
 - Slide: windowSum = 9 - 5 + 2 = 6. maxSum = 9.
 - Total: 5 additions + 3 subtractions = 8 operations (vs 12). Result: 9 — correct.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Each slide is O(1) regardless of window size K. This transforms O(N×K) into O(N+K) ≈ O(N). The larger K is, the greater the savings — Sliding Window pays off most when windows are large.
 
 ---
@@ -108,12 +108,12 @@ Each slide is O(1) regardless of window size K. This transforms O(N×K) into O(N
 
 > Sliding Window is like a train moving along a track where each car is one element. As the train moves forward by one car length, you drop the last car from the rear and add a new car at the front. You always know the total "weight" of the train by adjusting — you never re-weigh all cars from scratch.
 
-"Train cars" → elements in the window
-"Train weight" → aggregated value (sum, count, etc.)
-"Drop rear car" → remove `arr[left]`, `left++`
-"Add front car" → `right++`, add `arr[right]`
-"Track constraint" → validity rule (max sum, no duplicates, etc.)
-"Train length" → window size (fixed or variable)
+- "Train cars" → elements in the window
+- "Train weight" → aggregated value (sum, count, etc.)
+- "Drop rear car" → remove `arr[left]`, `left++`
+- "Add front car" → `right++`, add `arr[right]`
+- "Track constraint" → validity rule (max sum, no duplicates, etc.)
+- "Train length" → window size (fixed or variable)
 
 Where this analogy breaks down: A real train has a fixed length; the variable-window variant dynamically changes window size. Also, some aggregations (like median) cannot be updated in O(1) even with the analogy intact.
 
@@ -196,7 +196,7 @@ For finding the maximum within each window of size K, maintain a deque of indice
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Input array (contiguous data)
 → Identify window type (fixed K or variable constraint)
@@ -210,7 +210,7 @@ Input array (contiguous data)
 → Return best answer across all windows
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Non-contiguous problem mistakenly uses Sliding Window
 → Shrink logic skips valid configurations
@@ -219,7 +219,7 @@ Non-contiguous problem mistakenly uses Sliding Window
 → Fix: use DP or backtracking for non-contiguous
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For streaming data (Kafka Streams, Flink), the sliding window maps directly to a time-based window operator where `arr[right]` is the incoming event and `arr[left]` is the event aged out of the window. At 1M events/second with a 1-minute tumbling window, state stores hold ~60M entries — LSM-tree–backed state stores (RocksDB in Flink) make eviction O(1) amortized. The algorithm is identical; the storage layer changes.
 
 ---
@@ -344,55 +344,55 @@ How to choose: Use Sliding Window when the problem involves contiguous subarrays
 
 **1. Applying sliding window to non-contiguous problems**
 
-Symptom: Wrong answer on test cases where optimal solution skips elements.
+**Symptom:** Wrong answer on test cases where optimal solution skips elements.
 
-Root Cause: Sliding Window only considers contiguous ranges. Problems like "longest increasing subsequence" require DP because the optimal subsequence may skip elements.
+**Root Cause:** Sliding Window only considers contiguous ranges. Problems like "longest increasing subsequence" require DP because the optimal subsequence may skip elements.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Verify on small test: does brute force pick non-adjacent elements?
 # arr=[3,1,4,1,5,9], does "longest increasing" skip index 1 (value 1)?
 # Yes → DP needed, not Sliding Window
 ```
 
-Fix: Switch to DP (`dp[i]` = best result ending at index i).
+**Fix:** Switch to DP (`dp[i]` = best result ending at index i).
 
-Prevention: Check problem statement — "subarray" means contiguous; "subsequence" means non-contiguous.
+**Prevention:** Check problem statement — "subarray" means contiguous; "subsequence" means non-contiguous.
 
 ---
 
 **2. Off-by-one in fixed window initialization**
 
-Symptom: `ArrayIndexOutOfBoundsException` or first window excludes last element.
+**Symptom:** `ArrayIndexOutOfBoundsException` or first window excludes last element.
 
-Root Cause: Loop `for (int i = 0; i < k; i++)` initializes [0..k-1]; slide starts at `i=k`. Using `i ≤ k` accidentally includes index k in init and misses a window.
+**Root Cause:** Loop `for (int i = 0; i < k; i++)` initializes [0..k-1]; slide starts at `i=k`. Using `i ≤ k` accidentally includes index k in init and misses a window.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Print window boundaries per iteration
 System.out.println("Init window: [0.." + (k-1) + "]");
 System.out.println("Slide start: i=" + k);
 ```
 
-Fix: Ensure init loop is `i < k` and slide loop starts at `i = k`.
+**Fix:** Ensure init loop is `i < k` and slide loop starts at `i = k`.
 
-Prevention: Dry-run on a 3-element array with k=2 before submitting.
+**Prevention:** Dry-run on a 3-element array with k=2 before submitting.
 
 ---
 
 **3. HashMap not cleaned up in variable window**
 
-Symptom: Produces wrong (too-long) window for strings with many duplicate characters.
+**Symptom:** Produces wrong (too-long) window for strings with many duplicate characters.
 
-Root Cause: After removing `arr[left]` from the window, the count goes to 0 but the key remains in the HashMap. Subsequent `containsKey` returns `true` for absent characters.
+**Root Cause:** After removing `arr[left]` from the window, the count goes to 0 but the key remains in the HashMap. Subsequent `containsKey` returns `true` for absent characters.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // After left++, check: is charCount.get(lc) == 0?
 // If yes, remove the key: charCount.remove(lc)
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: leaves zero-count entries
 count.put(lc, count.get(lc) - 1);
@@ -402,26 +402,26 @@ count.merge(lc, -1, Integer::sum);
 if (count.get(lc) == 0) count.remove(lc);
 ```
 
-Prevention: Use `count.getOrDefault(c, 0)` for lookups and remove zero-count entries.
+**Prevention:** Use `count.getOrDefault(c, 0)` for lookups and remove zero-count entries.
 
 ---
 
 **4. Monotone deque not evicting stale indices**
 
-Symptom: Sliding window maximum returns incorrect results for later windows.
+**Symptom:** Sliding window maximum returns incorrect results for later windows.
 
-Root Cause: The deque contains an index from outside the current window `[i-k+1..i]`. The front of the deque holds a maximum from a previous window that has already slid past.
+**Root Cause:** The deque contains an index from outside the current window `[i-k+1..i]`. The front of the deque holds a maximum from a previous window that has already slid past.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Add assertion: index at front must be >= i - k + 1
 assert dq.peekFirst() >= i - k + 1 :
     "Stale index in deque: " + dq.peekFirst();
 ```
 
-Fix: Add `while (!dq.isEmpty() && dq.peekFirst() < i - k + 1) dq.pollFirst();` before using the front.
+**Fix:** Add `while (!dq.isEmpty() && dq.peekFirst() < i - k + 1) dq.pollFirst();` before using the front.
 
-Prevention: Always evict stale front-of-deque indices before reading the window maximum.
+**Prevention:** Always evict stale front-of-deque indices before reading the window maximum.
 
 ---
 

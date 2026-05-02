@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You manage a stock exchange. For any time window [L, R], traders ask the minimum price during that period. With 1 million price points, a naive scan of the window is O(R-L+1) per query — up to O(N). With 10,000 queries per second each spanning 500,000 points, that is 5 billion operations per second. Meanwhile prices update in real time. No array-based approach handles both dynamic updates and fast range queries.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Brute-force range queries are O(N). Precomputing all answers is O(N²) space. Neither scales. The fundamental tension: queries demand pre-aggregated summaries, but updates invalidate those summaries.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Divide the array recursively in half. Each tree node stores the answer for its range. A query combines at most 2 log N nodes. An update recomputes at most log N nodes. This divide-and-conquer decomposition reduces both query and update to O(log N). This is exactly why the Segment Tree was created.
 
 ---
@@ -63,12 +63,12 @@ The key insight is that every range [L, R] can be decomposed into at most 2 log 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Each node stores the aggregate of exactly the elements in its range — this must always be correct.
 2. A leaf node covers range [i, i] with the raw element value.
 3. An internal node covering [l, r] stores `f(left_child_value, right_child_value)` where `f` is the query function (sum, min, max).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Array storage** (similar to heaps): store in a 1-indexed array of size 4N.
 - Node 1: root covering [0, N-1].
 - Node i: left child = 2i, right child = 2i+1.
@@ -80,28 +80,28 @@ DERIVED DESIGN:
 
 **Lazy propagation**: defers range updates. Instead of updating all N leaves, place a "pending update" marker on high-level nodes. When a node is visited by a future query or update, push the lazy value down to children first.
 
-THE TRADE-OFFS:
-Gain: O(log N) both query and update; handles sum, min, max, GCD — any associative operation.
-Cost: O(4N) memory, complex implementation, constant factor larger than Fenwick tree for the sum-only case.
+**THE TRADE-OFFS:**
+**Gain:** O(log N) both query and update; handles sum, min, max, GCD — any associative operation.
+**Cost:** O(4N) memory, complex implementation, constant factor larger than Fenwick tree for the sum-only case.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Range sum query on array `[2, 1, 5, 3, 4]`. Query sum of [1, 3] (indices 1 to 3). Update index 2 to value 7.
 
-WHAT HAPPENS WITHOUT SEGMENT TREE:
+**WHAT HAPPENS WITHOUT SEGMENT TREE:**
 Query [1,3]: scan indices 1,2,3 → sum = 1+5+3 = 9. O(N) scan.
 Update: just assign `arr[2] = 7`. O(1).
 For 10,000 queries × 10,000 queries on N=1M: 10 billion ops.
 
-WHAT HAPPENS WITH SEGMENT TREE:
+**WHAT HAPPENS WITH SEGMENT TREE:**
 Query [1,3]: tree decomposes into at most 3 nodes at depth 2-3. Returns 9 in O(log 5) = O(3) ops.
 Update index 2: update leaf, recompute 3 ancestors. O(log 5) = O(3) ops.
 10,000 queries × 20 ops each = 200,000 ops — 50,000× faster.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The "decompose query into O(log N) precomputed nodes" trick is the central idea of segment trees, Fenwick trees, and sparse tables. All three trade storage for query speed using the divide-and-conquer principle applied to ranges.
 
 ---
@@ -110,10 +110,10 @@ The "decompose query into O(log N) precomputed nodes" trick is the central idea 
 
 > A Segment Tree is like a company org chart where every manager summarises their entire team's performance. Asking "best performer in division A to B" means consulting a few managers, not every employee.
 
-"Employee" → leaf node (single array element)
-"Manager summary" → internal node aggregate
-"Division query" → combine a few manager summaries
-"Employee performance change" → update leaf + all managers above
+- "Employee" → leaf node (single array element)
+- "Manager summary" → internal node aggregate
+- "Division query" → combine a few manager summaries
+- "Employee performance change" → update leaf + all managers above
 
 Where this analogy breaks down: In a real org chart, managers are domain-specific; in a segment tree, every internal node is generic — it stores only the computed aggregate, not the actual subordinate data.
 
@@ -196,7 +196,7 @@ void update(int node, int l, int r, int idx, int val) {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Input array arrives
 → build() constructs tree in O(N)
@@ -206,7 +206,7 @@ Input array arrives
 → Answers returned in real time
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Incorrect aggregate function (non-associative)
 → query() combines partial results incorrectly
@@ -214,7 +214,7 @@ Incorrect aggregate function (non-associative)
 → Fix: verify f(f(a,b),c) == f(a,f(b,c)) before use
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At N=10^8, a segment tree uses 4×10^8 integers ≈ 1.6 GB. Memory becomes the bottleneck. Use a dynamic segment tree (allocate nodes on-demand, only for visited ranges) reducing memory to O(Q log N) where Q is the number of queries/updates. For truly large-scale (distributed), segment trees are not used directly; range aggregation is computed via columnar databases or pre-aggregated summaries.
 
 ---
@@ -282,48 +282,48 @@ How to choose: Use Segment Tree when you need both efficient queries AND updates
 
 **1. Wrong answers from incorrect identity element**
 
-Symptom: Range queries return wrong results, especially on edge ranges including index 0 or the last element.
+**Symptom:** Range queries return wrong results, especially on edge ranges including index 0 or the last element.
 
-Root Cause: The "outside range" case returns the wrong identity value. For sum: 0. For min: Integer.MAX_VALUE. For max: Integer.MIN_VALUE. Using 0 as identity for min queries returns 0 for non-overlapping ranges, contaminating the min.
+**Root Cause:** The "outside range" case returns the wrong identity value. For sum: 0. For min: Integer.MAX_VALUE. For max: Integer.MIN_VALUE. Using 0 as identity for min queries returns 0 for non-overlapping ranges, contaminating the min.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Test with known arrays:
 // [5, 3, 7] : rangeMin(0, 2) should be 3, not 0
 assert tree.rangeMin(0, 2) == 3;
 ```
 
-Fix: Use the correct identity for your operation. Always document which operation and identity your tree uses.
+**Fix:** Use the correct identity for your operation. Always document which operation and identity your tree uses.
 
-Prevention: Unit test range queries including boundary cases: [0,0], [N-1,N-1], [0,N-1].
+**Prevention:** Unit test range queries including boundary cases: [0,0], [N-1,N-1], [0,N-1].
 
 ---
 
 **2. ArrayIndexOutOfBoundsException from undersized tree array**
 
-Symptom: AIOOBE when building or querying large trees.
+**Symptom:** AIOOBE when building or querying large trees.
 
-Root Cause: Allocated `tree = new int[2*N]` instead of `4*N`. The segment tree's node indices can exceed 2N for non-power-of-2 array sizes.
+**Root Cause:** Allocated `tree = new int[2*N]` instead of `4*N`. The segment tree's node indices can exceed 2N for non-power-of-2 array sizes.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Stack trace will point to line where tree[node] is accessed
 # Verify: System.out.println(tree.length); should be >= 4*N
 ```
 
-Fix: Always use `4*N` as the segment tree array size.
+**Fix:** Always use `4*N` as the segment tree array size.
 
-Prevention: Comment the allocation line: `// 4*N is safe upper bound for any N`.
+**Prevention:** Comment the allocation line: `// 4*N is safe upper bound for any N`.
 
 ---
 
 **3. TLE from forgetting to push lazy values down before querying**
 
-Symptom: Range queries return stale values after range updates; results appear to be pre-update values.
+**Symptom:** Range queries return stale values after range updates; results appear to be pre-update values.
 
-Root Cause: Lazy propagation stores pending updates in `lazy[node]`. If a query hits a node without pushing lazy values to children first, children have stale data.
+**Root Cause:** Lazy propagation stores pending updates in `lazy[node]`. If a query hits a node without pushing lazy values to children first, children have stale data.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Apply range update, then query same range:
 // If answers don't match, lazy push is missing
@@ -331,9 +331,9 @@ tree.rangeUpdate(2, 5, +1);
 assert tree.rangeQuery(2, 5) == expectedAfterUpdate;
 ```
 
-Fix: At the start of every query and update function: if `lazy[node] != 0`, push lazy to children before recursing.
+**Fix:** At the start of every query and update function: if `lazy[node] != 0`, push lazy to children before recursing.
 
-Prevention: Add `pushDown(node)` as the first operation in both `query()` and `update()` methods.
+**Prevention:** Add `pushDown(node)` as the first operation in both `query()` and `update()` methods.
 
 ---
 

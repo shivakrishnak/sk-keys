@@ -32,7 +32,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A multi-threaded report generator shares mutable lists and
 counters across 8 threads. Thread A filters data, Thread B
 formats it, Thread C aggregates totals. They all read and write
@@ -41,7 +41,7 @@ the same shared objects. The report occasionally has wrong totals
 debugger. It has existed for 18 months because it is impossible
 to reproduce reliably.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Mutable shared state is the root cause of the hardest bugs in
 concurrent and distributed systems. When any function can modify
 any variable at any time, reasoning about program correctness
@@ -49,7 +49,7 @@ requires understanding every possible thread interleaving. At
 8 threads, there are factorial(8) possible orderings — impossible
 to test exhaustively.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why Functional Programming was created. When
 functions never modify state and always return the same output
 for the same input, threads can run the same function
@@ -95,7 +95,7 @@ to synchronise. Correctness becomes provable, not just testable.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. A pure function's output depends ONLY on its inputs —
    no global state, no I/O, no randomness. Same inputs → same
@@ -105,7 +105,7 @@ CORE INVARIANTS:
 3. Functions are values — they can be passed as arguments,
    returned from other functions, and stored in variables.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1, you can cache function results indefinitely
 (memoisation). Given invariant 2, you can share data between
 threads without locks — immutable data is inherently thread-safe.
@@ -118,10 +118,10 @@ The derived design forces:
 - No shared global variables → pass data through function arguments
 - No side effects in core logic → push I/O to the boundary
 
-THE TRADE-OFFS:
-Gain: Referential transparency (testability, reasoning); thread
+**THE TRADE-OFFS:**
+**Gain:** Referential transparency (testability, reasoning); thread
 safety by construction; composability; no shared state bugs.
-Cost: Higher memory use (new objects instead of mutations);
+**Cost:** Higher memory use (new objects instead of mutations);
 performance overhead from immutable data structures;
 steeper learning curve; I/O must be explicitly managed
 (monads in Haskell, futures in Scala).
@@ -130,11 +130,11 @@ steeper learning curve; I/O must be explicitly managed
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You need to process a list of 1,000 transactions, filtering
 those over £100, then doubling them, then summing the result.
 
-WHAT HAPPENS WITHOUT FP (mutable imperative):
+**WHAT HAPPENS WITHOUT FP (mutable imperative):**
 
 ```java
 double total = 0;
@@ -151,7 +151,7 @@ If you run this function twice, you get different results because
 the state changed after the first run. Unit tests require careful
 setup to avoid contamination between test cases.
 
-WHAT HAPPENS WITH FP (pure functions):
+**WHAT HAPPENS WITH FP (pure functions):**
 
 ```java
 double total = transactions.stream()
@@ -165,7 +165,7 @@ double total = transactions.stream()
 The original data is untouched. Tests require no setup or
 teardown. This can safely run in parallel with `.parallelStream()`.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Immutability turns "might be correct" into "is correct" — a
 pure function's output is a mathematical fact, not a runtime
 coincidence.
@@ -180,11 +180,11 @@ coincidence.
 > without knowing about the others. The dirty input water is
 > never modified — a clean copy flows forward at each stage.
 
-"Water entering each stage" → input data (immutable)
-"Each treatment stage" → a pure function
-"The pipeline" → function composition with `.map().filter()`
-"Clean output" → the transformed result
-"Multiple parallel pipelines" → safe concurrent execution
+- "Water entering each stage" → input data (immutable)
+- "Each treatment stage" → a pure function
+- "The pipeline" → function composition with `.map().filter()`
+- "Clean output" → the transformed result
+- "Multiple parallel pipelines" → safe concurrent execution
 
 Where this analogy breaks down: unlike physical pipelines,
 functional pipelines create multiple copies of data at each
@@ -274,7 +274,7 @@ operates on its own data with no shared state — no locks needed.
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [Input data (immutable)]
@@ -285,13 +285,13 @@ NORMAL FLOW:
   (original input unchanged throughout)
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [Lambda throws unchecked exception]
 → [Stream terminates with exception]
 → [Partial results discarded]
 → [Observable: exception in caller's stack trace]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10x data volume, `parallelStream()` distributes work across
 cores linearly — FP's safety pays off with near-linear speedup.
 At 100x, distributed FP frameworks (Apache Spark RDDs) shard
@@ -398,15 +398,15 @@ when modelling complex entities with rich lifecycles.
 
 **1. Accidental Mutation Inside Lambda**
 
-Symptom:
+**Symptom:**
 Results of parallel stream processing are non-deterministic;
 data corruption in shared collections.
 
-Root Cause:
+**Root Cause:**
 A lambda captures a mutable object from outer scope and modifies
 it — violating the FP principle.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Java: run with -ea to enable assertions
@@ -415,7 +415,7 @@ java -ea MyApp
 # Results should be identical every run
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: mutates captured list inside stream
@@ -429,21 +429,21 @@ List<String> results = names.parallelStream()
     .collect(Collectors.toList()); // thread-safe collection
 ```
 
-Prevention: Never capture and mutate objects from outer scope
+**Prevention:** Never capture and mutate objects from outer scope
 inside lambdas; use `collect()` not `forEach()+add()`.
 
 **2. Stack Overflow from Deep Recursion**
 
-Symptom:
+**Symptom:**
 `StackOverflowError` when processing large lists with recursive
 functions; only fails on inputs above a certain size.
 
-Root Cause:
+**Root Cause:**
 FP uses recursion where imperative code uses loops. Deep recursion
 fills the call stack. Java doesn't optimise tail calls (unlike
 Scala, Haskell, or Clojure).
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Increase stack size and observe where it overflows
@@ -452,7 +452,7 @@ java -Xss8m MyApp
 jstack <pid> | grep "StackOverflowError" -A 20
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: deep recursion on large input → StackOverflow
@@ -465,22 +465,22 @@ int sum(List<Integer> list, int index) {
 int sum = list.stream().mapToInt(Integer::intValue).sum();
 ```
 
-Prevention: In Java, prefer streams and iterative FP style over
+**Prevention:** In Java, prefer streams and iterative FP style over
 deep recursion. Use Scala's `@tailrec` annotation for recursive
 algorithms.
 
 **3. Memory Pressure from Intermediate Collections**
 
-Symptom:
+**Symptom:**
 High GC activity; Old Gen fills under load; latency spikes
 correlating with GC pause times.
 
-Root Cause:
+**Root Cause:**
 A long chain of `.map()` operations with intermediate
 `collect()` calls creates many short-lived collections, stressing
 the garbage collector.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Monitor GC activity
@@ -491,7 +491,7 @@ java -verbose:gc -XX:+PrintGCDetails MyApp
 jstat -gcutil <pid> 1000
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: intermediate collection at each step
@@ -509,7 +509,7 @@ List<String> result = list.stream()
     .collect(Collectors.toList()); // one terminal collect
 ```
 
-Prevention: Chain stream operations in one pipeline; avoid
+**Prevention:** Chain stream operations in one pipeline; avoid
 `collect()` except as the terminal operation.
 
 ---

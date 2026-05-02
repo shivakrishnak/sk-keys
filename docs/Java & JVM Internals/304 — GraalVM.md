@@ -42,13 +42,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 HotSpot JVM's C2 compiler is written in C++ and is extremely difficult to extend, debug, or analyze. Adding new JIT optimizations requires deep C++ expertise, full knowledge of HotSpot internals, and months of work per optimization. The research community and cloud providers wanted better JIT performance (especially for long-running cloud services), polyglot language support, and the ability to compile Java to native executables — but C2's architecture made all of this prohibitively hard.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Oracle's JVM team wanted to add escape analysis improvements, vector API support, and memory access intrinsics to C2. Each change required weeks of work from rare C++ JVM experts. Meanwhile, GraalVM research (started by Thomas Würthinger at Oracle Labs, Zurich) demonstrated that a JIT compiler written in Java could be optimized by itself — using speculative optimizations that a JIT uniquely enables for its own compilation. This "JIT compiling the JIT" concept was uniquely powerful.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **GraalVM** was created — to build a new generation JIT compiler in Java (using the JVMCI interface), enabling faster iteration on compiler optimizations, native image compilation, polyglot language support, and ultimately better performance than C2 for many workloads.
 
 ---
@@ -74,12 +74,12 @@ The deepest insight about GraalVM is that writing the JIT in Java enables *parti
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A JIT compiler written in a high-level language (Java) is easier to extend than one written in C++.
 2. A JIT that is itself JIT-compiled has an unusual advantage: the compiler can optimize itself using the same runtime profiling it provides to other code.
 3. A universal intermediate representation (IR) can bridge multiple source languages to a single optimizer/code generator.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 GraalVM's architecture has three layers:
 
 **Layer 1 — Graal JIT (JVMCI-based):**
@@ -113,15 +113,15 @@ An AST-interpreting framework where each language (Python, Ruby, JS) writes thei
 └──────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Better JIT performance in certain scenarios; native image support; polyglot languages with near-native performance; extensible in Java.
-Cost: Graal JIT compilation itself takes more CPU/memory than C2 for equivalent methods; startup time for Graal JIT mode is slightly higher than HotSpot default; Native Image has dynamic Java feature restrictions; Truffle language startup is slower than their native counterparts.
+**THE TRADE-OFFS:**
+**Gain:** Better JIT performance in certain scenarios; native image support; polyglot languages with near-native performance; extensible in Java.
+**Cost:** Graal JIT compilation itself takes more CPU/memory than C2 for equivalent methods; startup time for Graal JIT mode is slightly higher than HotSpot default; Native Image has dynamic Java feature restrictions; Truffle language startup is slower than their native counterparts.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Two JVMs process a machine learning workload: 10 million matrix multiplications, each using a 100x100 double array.
 
 HOTSPOT C2:
@@ -134,7 +134,7 @@ SAME WORKLOAD IN TRUFFLE PYTHON:
 Without GraalVM: CPython interprets Python code at ~1000 ns/matrix multiplication.
 With GraalVM's Truffle: GraalVM partially evaluates the numpy-like Python operations, generating similar SIMD code to the Java version. Result: ~20 ns/matrix multiplication — 50x faster than CPython for this hot loop.
 
-THE INSIGHT:
+**THE INSIGHT:**
 GraalVM's value is not uniform — it shines in specific scenarios (numeric computation, polyglot workloads) and may not improve (or may slightly regress) simpler CRUD-style Java workloads where C2 is already near-optimal.
 
 ---
@@ -143,10 +143,10 @@ GraalVM's value is not uniform — it shines in specific scenarios (numeric comp
 
 > GraalVM is like a universal translator that speaks all programming languages and is itself written in a language it can translate — allowing it to improve its own translation speed. The three parts: a better English-to-machine-code translator (Graal JIT replacing C2), the ability to pre-translate books before publishing (Native Image), and universal language support that translates any language to the same high-quality machine translation engine (Truffle).
 
-"Better English-to-machine-code" → Graal JIT compiler.
-"Pre-translate books" → AOT Native Image.
-"Universal language support" → Truffle framework.
-"Written in a language it can translate" → Graal JIT compiles itself.
+- "Better English-to-machine-code" → Graal JIT compiler.
+- "Pre-translate books" → AOT Native Image.
+- "Universal language support" → Truffle framework.
+- "Written in a language it can translate" → Graal JIT compiles itself.
 
 Where this analogy breaks down: Unlike a universal translator, GraalVM's polyglot support is not seamless — there is interop overhead when crossing language boundaries (Java↔Python objects), and not all Java libraries are accessible from Truffle languages without interop layer work.
 
@@ -250,7 +250,7 @@ NATIVE IMAGE MODE:
     → [Native binary: ./myapp]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Graal JIT runs out of time/memory for complex method]
     → [Falls back to C1 compiled code]
@@ -260,7 +260,7 @@ FAILURE PATH:
     → [Fix: native-image-agent]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 GraalVM JIT mode uses more memory per compilation than C2 (more optimization phases, Java heap for compiler state). At scale on memory-constrained containers, this can cause GraalVM compilation threads to pressure the heap. On large instances (16+ cores), Graal's compilation thread count scales better than C2, giving higher aggregate JIT throughput.
 
 ---
@@ -364,13 +364,13 @@ How to choose: Start with GraalVM JDK as a drop-in JDK replacement — it is bac
 
 **Graal JIT Uses Too Much CPU During Compilation**
 
-Symptom:
+**Symptom:**
 Application under load shows spikes in CPU. Profiling identifies `JVMCI compiler thread` as the consumer. Memory pressure increases.
 
-Root Cause:
+**Root Cause:**
 Graal compiler itself runs on the Java heap. Compilation of complex methods can consume significant heap and CPU, sometimes more than C2 for equivalent methods.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Check JIT compilation overhead with JFR:
 jcmd <pid> JFR.start name=graal_jit duration=60s \
@@ -383,23 +383,23 @@ jcmd <pid> JFR.start name=graal_jit duration=60s \
 java -XX:-UseJVMCICompiler ...
 ```
 
-Fix:
+**Fix:**
 For CPU-constrained containers, C2 may be preferable to Graal JIT. For throughput-focused large instances, Graal's CPU spend pays off with better native code.
 
-Prevention:
+**Prevention:**
 Benchmark both Graal and C2 under production-realistic load before committing to Graal JIT for a service.
 
 ---
 
 **Native Image: Missing Class in Closed-World Analysis**
 
-Symptom:
+**Symptom:**
 `native-image` build success. Runtime: `com.example.PluginLoader: class not found`.
 
-Root Cause:
+**Root Cause:**
 `PluginLoader` uses reflection to load classes by name at runtime. The class names are strings — the static analysis cannot determine which classes will be loaded.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Run with agent to capture missing reflection:
 java -agentlib:native-image-agent=\
@@ -408,29 +408,29 @@ java -agentlib:native-image-agent=\
 # Run all tests + integration tests under agent
 ```
 
-Fix:
+**Fix:**
 Add generated config files to the build. For dynamic plugin loading: use GraalVM's resource configuration or embed a list of allowed plugin class names in the config.
 
-Prevention:
+**Prevention:**
 Include `native-image-agent` execution in CI as part of the build pipeline.
 
 ---
 
 **Truffle Language Context Memory Leak**
 
-Symptom:
+**Symptom:**
 Polyglot application's heap grows without bound. JVM metrics show Context objects accumulating.
 
-Root Cause:
+**Root Cause:**
 `Context` objects must be explicitly closed. If Java code creates a new `Context` per request without `try-with-resources`, each Context leaks Truffle language state.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 jmap -histo:live <pid> | grep Context
 # Shows com.oracle.truffle.api.*Context count growing
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: Context never closed
 Value result = Context.create().eval("python", code);
@@ -442,7 +442,7 @@ try (Context ctx = Context.create()) {
 }  // context closed, resources freed
 ```
 
-Prevention:
+**Prevention:**
 Code review: all `Context.create()` calls must be in `try-with-resources`. Add Checkstyle rule.
 
 ---

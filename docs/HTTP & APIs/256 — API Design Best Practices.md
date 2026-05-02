@@ -338,12 +338,12 @@ public ResponseEntity<ProblemDetail> handleValidation(MethodArgumentNotValidExce
 
 **200 OK for Errors — Monitoring Blind Spot**
 
-Symptom:
+**Symptom:**
 Payment failure rate: 0% (monitoring looks clean). Support tickets: "payments keep failing."
 Root cause: API returns `200 OK {"success": false, "error": "Card declined"}`.
 Monitoring alerts on 4xx/5xx only — failures are invisible.
 
-Fix:
+**Fix:**
 ```java
 // ❌ Before:
 return ResponseEntity.ok(Map.of("success", false, "error", "Card declined"));

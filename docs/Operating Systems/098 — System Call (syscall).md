@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine user programs could directly call any OS function by jumping to an arbitrary memory address. A malicious program could jump to the kernel's file-write routine, pass it a path like `/etc/shadow`, and overwrite your password database. Or jump to the memory-allocation routine and grab every byte of RAM, starving other processes. Without a controlled entry point, the kernel would be an open library — no authentication, no parameter validation, no access control.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Early real-mode DOS programs called BIOS routines directly via software interrupts with no validation. Any program could call `INT 13h` (disk I/O) with any parameters, writing to any sector of the disk. This worked for single-user, single-tasking systems but became catastrophically unsafe as systems moved to multi-user, multi-process designs.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why the system call was created — to provide a single, validated, permission-checked entry point that every user program must use to request kernel services.
 
 ---
@@ -65,34 +65,34 @@ The syscall number is the key: your program doesn't call kernel functions by nam
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. User code cannot execute privileged instructions without going through the syscall gate.
 2. The kernel controls the syscall entry point — user code specifies WHICH syscall, not WHERE to jump.
 3. Parameters from user space must be validated and safely copied — they cannot be trusted directly.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The CPU provides a `syscall`/`sysret` instruction pair (or `int 0x80` on older x86). When `syscall` fires, the CPU atomically loads a new instruction pointer from the MSR_LSTAR register (a fixed kernel address), switches the stack pointer to a kernel stack, and elevates privilege. The kernel's syscall dispatcher reads the syscall number from `rax`, validates it is within range, and dispatches to the handler. Handler parameters in `rdi`, `rsi`, `rdx` etc. are user-supplied addresses — the kernel calls `copy_from_user()` to safely read them, which checks that the source address is in valid user memory.
 
-THE TRADE-OFFS:
-Gain: Safe, validated, auditable interface — every kernel service request is logged, permission-checked, and bounded.
-Cost: ~100–300 ns per syscall; pipeline flush; TLB effects (especially with KPTI). High-frequency code must batch syscalls.
+**THE TRADE-OFFS:**
+**Gain:** Safe, validated, auditable interface — every kernel service request is logged, permission-checked, and bounded.
+**Cost:** ~100–300 ns per syscall; pipeline flush; TLB effects (especially with KPTI). High-frequency code must batch syscalls.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A web server processes 50,000 HTTP requests per second. Each request reads a small file (~4 KB).
 
-WHAT HAPPENS WITHOUT a controlled syscall interface:
+**WHAT HAPPENS WITHOUT a controlled syscall interface:**
 
 1. The server directly calls the kernel's `inode_read()` function.
 2. The OS cannot validate that the path passed is legitimate.
 3. A path traversal bug (`../../etc/passwd`) reads any file on disk.
 4. No resource limits can be enforced — the server reads all 50,000 files simultaneously, exhausting file handles for all other processes.
 
-WHAT HAPPENS WITH syscall:
+**WHAT HAPPENS WITH syscall:**
 
 1. Server calls `open()` → triggers `syscall` with number 2 (openat).
 2. Kernel validates: does the process have read permission? Does the file exist?
@@ -100,7 +100,7 @@ WHAT HAPPENS WITH syscall:
 4. Returns a file descriptor (integer handle) — the server never touches raw inode data.
 5. Path traversal is caught at the kernel's path resolution layer.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The syscall boundary is not just performance overhead — it is a mandatory security checkpoint. Every resource the application uses is granted by the kernel, not seized.
 
 ---
@@ -109,11 +109,11 @@ The syscall boundary is not just performance overhead — it is a mandatory secu
 
 > A syscall is like an ATM transaction. You (user process) want cash (kernel service). You can't walk into the bank vault (kernel memory). You use the ATM (syscall interface), which validates your PIN (permission check), reads your account (kernel data), and dispenses only what you're authorised for. Every transaction is logged.
 
-"ATM interface" → syscall instruction + syscall number
-"PIN validation" → permission/capability check in kernel handler
-"Bank vault" → kernel data structures (file tables, process table)
-"Account balance" → resource limits enforced by kernel
-"Transaction log" → audit log (auditd, seccomp)
+- "ATM interface" → syscall instruction + syscall number
+- "PIN validation" → permission/capability check in kernel handler
+- "Bank vault" → kernel data structures (file tables, process table)
+- "Account balance" → resource limits enforced by kernel
+- "Transaction log" → audit log (auditd, seccomp)
 
 Where this analogy breaks down: ATM transactions are sequential; syscalls are concurrent — millions per second across all processes, handled by kernel code that must be re-entrant and lock-safe.
 
@@ -171,7 +171,7 @@ The stable syscall ABI is one of Linux's most consequential design choices: sysc
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [App: read(fd, buf, n)]
@@ -182,10 +182,10 @@ NORMAL FLOW:
    → [App receives byte count]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [Invalid buffer address passed] → [access_ok() fails in kernel] → [returns -EFAULT] → [libc sets errno] → [app handles error]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 1M syscalls/sec, mode-switch cost (~200 ns each) consumes ~20% of a single CPU core. Applications like Redis use `io_uring` to batch hundreds of I/O operations per ring submission, cutting per-op syscall cost to near zero. At Google/Facebook scale, seccomp-BPF filters are applied to restrict which syscalls are allowed per service, reducing attack surface and adding ~20–50 ns overhead per syscall for filter evaluation.
 
 ---
@@ -272,17 +272,17 @@ How to choose: Default to standard syscalls. Adopt `io_uring` when profiling sho
 
 **1. EINTR — Syscall Interrupted by Signal**
 
-Symptom: `read()` or `write()` returns -1 with `errno = EINTR` unexpectedly; intermittent failures in long-running operations.
+**Symptom:** `read()` or `write()` returns -1 with `errno = EINTR` unexpectedly; intermittent failures in long-running operations.
 
-Root Cause: A signal (e.g., SIGCHLD, SIGALRM) was delivered to the process while it was blocked in a syscall; the kernel returns early with EINTR rather than completing the operation.
+**Root Cause:** A signal (e.g., SIGCHLD, SIGALRM) was delivered to the process while it was blocked in a syscall; the kernel returns early with EINTR rather than completing the operation.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 strace -e trace=read,write -p <PID> 2>&1 | grep EINTR
 ```
 
-Fix:
+**Fix:**
 
 ```c
 // BAD: assume read always succeeds fully
@@ -295,17 +295,17 @@ do {
 } while (n == -1 && errno == EINTR);
 ```
 
-Prevention: Use `SA_RESTART` flag in `sigaction()` to auto-restart syscalls after signal delivery.
+**Prevention:** Use `SA_RESTART` flag in `sigaction()` to auto-restart syscalls after signal delivery.
 
 ---
 
 **2. EFAULT — Invalid User-Space Pointer**
 
-Symptom: syscall returns -1, `errno = EFAULT`; often a crash in the calling code shortly after.
+**Symptom:** syscall returns -1, `errno = EFAULT`; often a crash in the calling code shortly after.
 
-Root Cause: A null, freed, or otherwise invalid pointer was passed to a syscall; kernel's `access_ok()` or `copy_from_user()` rejected it.
+**Root Cause:** A null, freed, or otherwise invalid pointer was passed to a syscall; kernel's `access_ok()` or `copy_from_user()` rejected it.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 valgrind --track-origins=yes ./myapp
@@ -313,19 +313,19 @@ valgrind --track-origins=yes ./myapp
 gcc -fsanitize=address ./myapp.c -o myapp && ./myapp
 ```
 
-Fix: Validate all pointers before syscall. Never pass stack-allocated buffers to async operations that may outlive the stack frame.
+**Fix:** Validate all pointers before syscall. Never pass stack-allocated buffers to async operations that may outlive the stack frame.
 
-Prevention: Use `-fsanitize=address` in CI builds to catch memory errors before production.
+**Prevention:** Use `-fsanitize=address` in CI builds to catch memory errors before production.
 
 ---
 
 **3. Seccomp Policy Violation (SIGSYS)**
 
-Symptom: Process killed with signal 31 (SIGSYS); observed in container environments.
+**Symptom:** Process killed with signal 31 (SIGSYS); observed in container environments.
 
-Root Cause: A container security profile (Docker default seccomp, or custom policy) blocks the syscall attempted by the process.
+**Root Cause:** A container security profile (Docker default seccomp, or custom policy) blocks the syscall attempted by the process.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check syscall blocked by seccomp
@@ -334,9 +334,9 @@ dmesg | grep "audit: type=1326"
 ausearch -m SECCOMP
 ```
 
-Fix: Whitelist the required syscall in the container's seccomp profile or use `--security-opt seccomp=unconfined` (only in dev).
+**Fix:** Whitelist the required syscall in the container's seccomp profile or use `--security-opt seccomp=unconfined` (only in dev).
 
-Prevention: Test applications against their production seccomp profile in staging; use `strace -c` to enumerate all syscalls the app uses.
+**Prevention:** Test applications against their production seccomp profile in staging; use `strace -c` to enumerate all syscalls the app uses.
 
 ---
 

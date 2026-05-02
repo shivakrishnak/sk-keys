@@ -441,17 +441,17 @@ User fromJson = builder.build();
 
 **Field Number Reuse — Silent Data Corruption**
 
-Symptom:
+**Symptom:**
 After a schema change, consumers start receiving garbled data or crashing
 on deserialization. The problem is intermittent — only affects messages
 sent after the schema update.
 
-Root Cause:
+**Root Cause:**
 A developer deleted field number `5` (a `string`) and added a new field
 using number `5` again (as an `int32`). Messages with cached schema treat the
 new `int32` bytes as a `string` → garbage.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check proto history with field number reuse:
@@ -463,11 +463,11 @@ buf breaking --against '.git#branch=main' path/to/schema.proto
 # Output: "Field "5" changed type from string to int32"
 ```
 
-Fix:
+**Fix:**
 Revert the schema change. Add proper `reserved 5; reserved "old_field_name";`
 Use a new field number (e.g., `= 15`) for the replacement field.
 
-Prevention:
+**Prevention:**
 Use `buf breaking` in CI. Never reuse field numbers. Document field numbers
 in code comments. Use semantic versioning for proto files.
 
@@ -475,16 +475,16 @@ in code comments. Use semantic versioning for proto files.
 
 **Proto3 Default Value Ambiguity**
 
-Symptom:
+**Symptom:**
 A service needs to distinguish between "user has 0 points" and "user's points
 not loaded yet." Both cases return `points = 0` from protobuf. Business logic
 breaks because it can't tell them apart.
 
-Root Cause:
+**Root Cause:**
 Proto3 doesn't differentiate between "field not present" and "field set to
 default value (0)." No null concept for basic types.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```protobuf
 // Problem: can't tell 0 from "not set"
@@ -504,11 +504,11 @@ message UserStats {
 }
 ```
 
-Fix:
+**Fix:**
 Use `optional` keyword (proto3 3.15+) or `google.protobuf.XxxValue` wrapper
 types for fields where default-value-vs-absent distinction matters.
 
-Prevention:
+**Prevention:**
 Identify business requirements for "null vs zero" before schema design.
 Default proto3 primitives are best for fields where default is always meaningful.
 

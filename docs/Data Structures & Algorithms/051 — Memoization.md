@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Computing Fibonacci(40) with naïve recursion calls `fib(39)` and `fib(38)`. Each of those calls the same function again, and `fib(38)` is computed twice independently — each call spawning its own entire subtree. `fib(2)` is computed 1,134,903,170 times for fib(45). The total calls grow as O(2^N) — exponential.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Recursive algorithms naturally express problems in terms of subproblems. But when the same subproblem is solved repeatedly from scratch each time it's needed, the work explodes exponentially. The algorithm is correct but catastrophically inefficient.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Before returning a recursive result, store it in a cache (typically a HashMap). On the next call with the same arguments, return the cached result immediately. Each unique subproblem is now solved exactly once. The exponential O(2^N) becomes polynomial O(N) because the number of *unique* subproblems is O(N). This is exactly why Memoization was created.
 
 ---
@@ -63,12 +63,12 @@ Memoization requires two conditions: **overlapping subproblems** (the same subpr
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A function's result is uniquely determined by its arguments (it must be *pure* — no side effects, no global state).
 2. The same unique (argument combination) can appear multiple times in the recursion tree.
 3. Once a result is cached, all future calls with the same arguments can reuse it in O(1).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The cache maps `args → result`. For single-integer argument (like fib), this is a `HashMap<Integer, Long>` or a simple array. For compound arguments (like DP on (i, j) indices), use a `HashMap<String, Long>` with a key like `"i,j"`, or a 2D array `dp[i][j]`.
 
 **Time complexity with memoization:**
@@ -80,15 +80,15 @@ O(N) for the cache + O(N) for the call stack depth (N recursive calls still open
 
 Can we remove the call stack? Yes — convert to iterative bottom-up (tabulation). But memoization is often easier to write first.
 
-THE TRADE-OFFS:
-Gain: Converts exponential to polynomial automatically, easy to implement on any correct recursive solution.
-Cost: O(N) call stack depth (risk of StackOverflowError), O(N) cache memory, HashMap overhead per call.
+**THE TRADE-OFFS:**
+**Gain:** Converts exponential to polynomial automatically, easy to implement on any correct recursive solution.
+**Cost:** O(N) call stack depth (risk of StackOverflowError), O(N) cache memory, HashMap overhead per call.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 `fib(5)` without memoization:
 
 ```
@@ -105,7 +105,7 @@ fib(5)
 
 Total calls: 15 for fib(5). For fib(45): ~1.1 billion calls.
 
-WHAT HAPPENS WITH MEMOIZATION:
+**WHAT HAPPENS WITH MEMOIZATION:**
 ```
 fib(5):
   fib(4):  fib(3): fib(2): fib(1)+fib(0)=1 (cache fib(2)=1)
@@ -118,7 +118,7 @@ fib(5):
 ```
 Total unique calls: 6 (fib(0)–fib(5)). Each computed once.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Memoization prunes the recursion tree by collapsing all duplicate subproblems into single nodes. The tree becomes a DAG (Directed Acyclic Graph) where each node is computed exactly once.
 
 ---
@@ -127,10 +127,10 @@ Memoization prunes the recursion tree by collapsing all duplicate subproblems in
 
 > Memoization is like a lookup table at the entrance to a maze. Before entering a room, check if you've solved it before and what the answer was. If yes, leave immediately with the cached answer. If no, solve it and post the answer at the room's entrance for next time.
 
-"Room" → unique subproblem (unique argument combination)
-"Answer posted at entrance" → cache entry
-"Entering and solving" → recursive computation
-"Leaving with cached answer" → returning cached result in O(1)
+- "Room" → unique subproblem (unique argument combination)
+- "Answer posted at entrance" → cache entry
+- "Entering and solving" → recursive computation
+- "Leaving with cached answer" → returning cached result in O(1)
 
 Where this analogy breaks down: A maze has a specific topology; memoization works on any pure function with any argument structure — not just tree/graph traversals.
 
@@ -211,7 +211,7 @@ fib(40):
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Recursive call arrives with arguments A
 → Check memo[A]
@@ -221,7 +221,7 @@ Recursive call arrives with arguments A
 → All subsequent calls to A return instantly
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Deep recursion before any cache hit (first call to fib(N))
 → N recursive frames on call stack simultaneously
@@ -229,7 +229,7 @@ Deep recursion before any cache hit (first call to fib(N))
 → Fix: use iterative tabulation for large N
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For N > 10,000, the O(N) call stack depth overflows the JVM. Use tabulation (iterative DP) instead. For multi-dimensional memo tables (e.g., `dp[i][j][k]` for 3D DP), memory grows as N³ — quickly unmanageable. Use tabulation with rolling dimensions to reduce space.
 
 ---
@@ -298,37 +298,37 @@ How to choose: Start with memoization (easiest to code). If N is large (risk of 
 
 **1. StackOverflowError on large N**
 
-Symptom: `java.lang.StackOverflowError` for large inputs (N > 5,000).
+**Symptom:** `java.lang.StackOverflowError` for large inputs (N > 5,000).
 
-Root Cause: Memoized recursion still maintains the call stack; the first call to fib(N) opens N stack frames before any cache hits.
+**Root Cause:** Memoized recursion still maintains the call stack; the first call to fib(N) opens N stack frames before any cache hits.
 
-Fix: Convert to bottom-up tabulation (iterative DP) or use `trampoline` pattern for tail-recursive languages.
+**Fix:** Convert to bottom-up tabulation (iterative DP) or use `trampoline` pattern for tail-recursive languages.
 
-Prevention: For N > 1,000, prefer tabulation over memoization.
+**Prevention:** For N > 1,000, prefer tabulation over memoization.
 
 ---
 
 **2. Wrong results from impure function memoization**
 
-Symptom: Memoized function returns stale results; behavior depends on external state.
+**Symptom:** Memoized function returns stale results; behavior depends on external state.
 
-Root Cause: Memoized function reads global/mutable state — the same arguments can produce different results at different times.
+**Root Cause:** Memoized function reads global/mutable state — the same arguments can produce different results at different times.
 
-Fix: Ensure the memoized function is pure: output depends only on inputs, no side effects, no global reads.
+**Fix:** Ensure the memoized function is pure: output depends only on inputs, no side effects, no global reads.
 
-Prevention: Never memoize functions that read mutable external state (`System.currentTimeMillis()`, DB calls, etc.).
+**Prevention:** Never memoize functions that read mutable external state (`System.currentTimeMillis()`, DB calls, etc.).
 
 ---
 
 **3. Memory leak from memo Map never cleared**
 
-Symptom: Service memory grows unboundedly; heap dump shows large `HashMap` in the memoization cache.
+**Symptom:** Service memory grows unboundedly; heap dump shows large `HashMap` in the memoization cache.
 
-Root Cause: Class-level static memo HashMap accumulates entries from all calls, never evicted.
+**Root Cause:** Class-level static memo HashMap accumulates entries from all calls, never evicted.
 
-Fix: Use a bounded cache (LRU) or clear the cache after each top-level computation completes.
+**Fix:** Use a bounded cache (LRU) or clear the cache after each top-level computation completes.
 
-Prevention: Never make a memoization cache a long-lived class field; either pass it as a parameter or clear it after use.
+**Prevention:** Never make a memoization cache a long-lived class field; either pass it as a parameter or clear it after use.
 
 ---
 

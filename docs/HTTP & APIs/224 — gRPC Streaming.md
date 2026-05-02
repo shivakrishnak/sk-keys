@@ -502,17 +502,17 @@ asyncStub.tailLogs(
 
 **Zombie Streaming — Server Holds Resources After Client Disconnects**
 
-Symptom:
+**Symptom:**
 Memory grows over 48 hours. Heap dump shows thousands of `StreamObserver` objects,
 associated subscriptions, and database connections that should have been released.
 The objects correspond to clients that disconnected hours ago.
 
-Root Cause:
+**Root Cause:**
 Server-side streaming code doesn't check `isCancelled()` or register a cancel handler.
 When clients disconnect, the gRPC framework marks the stream as cancelled but the
 application code continues calling `onNext()` (silently dropped) and holding resources.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```java
 // Enable gRPC server metrics — monitor active streams:
@@ -528,12 +528,12 @@ Diagnostic Command / Tool:
 // Look for: ServerCallImpl, io.grpc.stub.ServerCallStreamObserver
 ```
 
-Fix:
+**Fix:**
 Register `setOnCancelHandler()` in every server streaming method.
 Release subscriptions, database connections, and other resources in the handler.
 Periodically check `isCancelled()` in streaming loops.
 
-Prevention:
+**Prevention:**
 Every server streaming implementation must have explicit cancel handling.
 Code review checklist: does every streaming RPC have an `onCancelHandler`?
 
@@ -541,17 +541,17 @@ Code review checklist: does every streaming RPC have an `onCancelHandler`?
 
 **TCP Head-of-Line Blocking on Busy Server**
 
-Symptom:
+**Symptom:**
 Under load, a fast server streaming call (small messages) has high P99 latency
 even though server processing is fast. Affects all streaming calls — not just the
 one sending large payloads.
 
-Root Cause:
+**Root Cause:**
 Multiple gRPC connections (or many streams on one connection) share one TCP
 connection. A large client-streaming upload using most of the TCP window causes
 ALL other streams on the connection to pause — TCP head-of-line blocking.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check for TCP retransmits and stalls during gRPC calls:
@@ -564,11 +564,11 @@ ss -tin dst <grpc-server-ip>
 # Or: enable HTTP/3 (QUIC) which eliminates TCP HoL blocking
 ```
 
-Fix:
+**Fix:**
 Use separate `ManagedChannel` instances for high-volume streaming vs
 latency-sensitive unary calls. Each channel creates its own TCP connection.
 
-Prevention:
+**Prevention:**
 Profile gRPC channel usage patterns. Don't mix large-payload streaming
 with latency-sensitive unary calls on the same channel.
 

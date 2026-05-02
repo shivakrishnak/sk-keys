@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Idempotency Key"
 parent: "System Design"
@@ -189,10 +189,10 @@ WITH Idempotency Keys:
 > A bank teller receives a check with a serial number. She stamps it "PROCESSED" in her log. If the same check is presented again (customer re-submitted by mistake), she looks up the serial number: "already processed on Monday — here's the receipt from Monday." The serial number on the check = the idempotency key. The stamped log = the server's idempotency key store. The teller never processes the same check twice, regardless of how many times it's presented.
 
 "Check serial number" = idempotency key (unique identifier per intended operation)
-"Teller's stamp log" = server-side key-value store (Redis) mapping key → cached response
+- "Teller's stamp log" = server-side key-value store (Redis) mapping key → cached response
 "Same check presented again" = retried HTTP request (with same Idempotency-Key header)
 "Returns Monday's receipt" = returns cached response without reprocessing
-"Processes new check (different serial)" = new idempotency key → fresh processing
+- "Processes new check (different serial)" = new idempotency key → fresh processing
 
 ---
 

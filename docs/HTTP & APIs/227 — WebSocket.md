@@ -428,16 +428,16 @@ ws.send(
 
 **Silent Dead Connection — Messages Sent to Lost Clients**
 
-Symptom:
+**Symptom:**
 Server logs show messages sent but clients don't receive them. Session count
 grows indefinitely but active users stay flat. Memory slowly grows.
 
-Root Cause:
+**Root Cause:**
 Connections drop due to network interruptions without proper TCP FIN/RST.
 Server still has `WebSocketSession` objects marked as open, but sending fails
 silently or with delayed IOException.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```java
 // Add ping-based heartbeat to detect dead connections:
@@ -458,11 +458,11 @@ public void pingAll() {
 }
 ```
 
-Fix:
+**Fix:**
 Implement Ping/Pong heartbeats. Remove sessions that don't respond to pings
 within a timeout. Use `session.isOpen()` before sending.
 
-Prevention:
+**Prevention:**
 Set `SO_KEEPALIVE` on server TCP sockets. Add application-level heartbeat
 with 30-second interval and 90-second timeout. Monitor session count vs
 active user count — divergence indicates session leaks.

@@ -33,13 +33,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You need to compute the 40th Fibonacci number. A naive recursive function calls `fib(38)` and `fib(39)`, which each call `fib(37)` and `fib(38)` again. The total calls grow as `2^N` — computing `fib(40)` requires over a billion recursive calls, all repeating work already done. Scale this to the coin change problem (how many ways to make $1.00 from coins?) and the space of recursive calls becomes astronomically large.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 The fundamental issue is **overlapping subproblems**: the same sub-computation `fib(30)` is triggered from hundreds of distinct call paths. A computer with a wall-clock timer refuses to give an answer before a deadline — the algorithm is technically correct but computationally useless.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 What if instead of recomputing `fib(30)` 800 times, you compute it once and **store** the result? Every future call simply looks up the table. Suddenly `fib(40)` takes exactly 40 additions. This is the core insight of Dynamic Programming: identify subproblems that recur, solve each exactly once, and cache the result. Bellman coined the term in the 1950s to describe this pattern formally. This is exactly why Dynamic Programming was created.
 
 ---
@@ -65,12 +65,12 @@ The hardest part of DP is not coding the cache — it is *recognising* the recur
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The problem contains **overlapping subproblems**: the same sub-instance appears in multiple independent recursion branches.
 2. The problem exhibits **optimal substructure**: the optimal answer for any prefix/suffix/subrange is derived from optimal answers to its parts — no "regret" about past choices can improve a globally optimal solution.
 3. The state space is **finite and enumerable**: every distinct subproblem maps to a unique key in a table; the table has polynomial size.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given these invariants, any correct implementation must: (1) define a **state** — a tuple of parameters that uniquely identifies a subproblem; (2) define a **transition** — a recurrence showing how `dp[state]` is computed from `dp[smaller states]`; (3) define a **base case** — the smallest subproblems whose answers are known directly; (4) **fill or recurse** the table in an order where dependencies are resolved before they are needed.
 
 **Top-down (Memoisation):** Use recursion exactly as you would naively, but intercept each call — if the answer is cached, return it; otherwise compute and cache before returning.
@@ -80,24 +80,24 @@ Given these invariants, any correct implementation must: (1) define a **state** 
 **Why DP beats brute-force when valid:**
 Naive recursion explores `O(2^N)` nodes in the decision tree. DP collapses all nodes with identical state into one, reducing the tree to a DAG with `O(states)` nodes and `O(states × branching)` edges. For the 0/1 knapsack with N items and capacity W, this reduces `O(2^N)` to `O(N × W)`.
 
-THE TRADE-OFFS:
-Gain: Polynomial time (often `O(N²)` or `O(N×W)`) from exponential brute force.
-Cost: Memory proportional to the state space — `O(N²)` or `O(N×W)` space, which is prohibitive for very large inputs. Also, recognising the correct state definition requires significant problem-solving skill.
+**THE TRADE-OFFS:**
+**Gain:** Polynomial time (often `O(N²)` or `O(N×W)`) from exponential brute force.
+**Cost:** Memory proportional to the state space — `O(N²)` or `O(N×W)` space, which is prohibitive for very large inputs. Also, recognising the correct state definition requires significant problem-solving skill.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Count the number of ways to climb `N = 5` stairs, taking 1 or 2 steps at a time. This is a classic DP counting problem.
 
-WHAT HAPPENS WITHOUT DYNAMIC PROGRAMMING:
+**WHAT HAPPENS WITHOUT DYNAMIC PROGRAMMING:**
 Call `ways(5)`. It calls `ways(4)` and `ways(3)`. `ways(4)` calls `ways(3)` and `ways(2)`. `ways(3)` is now computed **twice** — once from `ways(5)→ways(3)` and once from `ways(5)→ways(4)→ways(3)`. At `N=30`, `ways(3)` is recomputed millions of times. Total calls grow as Fibonacci(N) ≈ 1.618^N.
 
-WHAT HAPPENS WITH DYNAMIC PROGRAMMING:
+**WHAT HAPPENS WITH DYNAMIC PROGRAMMING:**
 Allocate `dp[0..5]`. Set `dp[0]=1, dp[1]=1`. Iterate: `dp[i] = dp[i-1] + dp[i-2]`. Each subproblem is computed exactly once in left-to-right order. `dp[5] = 8` — computed in exactly 5 additions, never repeating.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The exponential blowup in naive recursion comes entirely from recomputing identical subproblems. DP's cache converts the recursion tree into a DAG — instead of `O(2^N)` nodes, it has `O(N)` nodes. The algorithm is not fundamentally smarter; it simply refuses to repeat work.
 
 ---
@@ -106,10 +106,10 @@ The exponential blowup in naive recursion comes entirely from recomputing identi
 
 > Dynamic Programming is like filling out a tax form. You don't know your final tax until you compute boxes A, B, and C first. Each box is a subproblem — you fill it once, write the number, and every later box that needs it just reads from the form. You never recompute a box.
 
-"Fill each box once" → solve each subproblem once
-"Write the number on the form" → store result in the DP table
-"Later boxes read from the form" → transition reads from `dp[smaller state]`
-"The final tax amount" → `dp[N]` — the answer to the full problem
+- "Fill each box once" → solve each subproblem once
+- "Write the number on the form" → store result in the DP table
+- "Later boxes read from the form" → transition reads from `dp[smaller state]`
+- "The final tax amount" → `dp[N]` — the answer to the full problem
 
 Where this analogy breaks down: Tax forms have a fixed structure dictated externally. In DP, *you* must discover the subproblem decomposition from the problem structure. The hardest work in DP is designing the form, not filling it in.
 
@@ -185,7 +185,7 @@ If transition only reads from the previous row/column, replace the full 2D table
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Problem with exponential search space
 → Identify optimal substructure
@@ -196,7 +196,7 @@ Problem with exponential search space
 → Read dp[final state] = answer
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Wrong state definition (missing a parameter)
 → Two distinct subproblems share same key
@@ -206,7 +206,7 @@ Wrong state definition (missing a parameter)
   compare against brute-force on small inputs
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For large state spaces (e.g., N=10⁶ items, W=10⁶ capacity), the `O(N×W)` table requires 10¹² entries — physically impossible. This forces problem reformulation: use greedy if applicable, heuristics, or segment-tree-optimised DP (for convex hull trick, divide-and-conquer DP optimisation), which reduces `O(N²)` transitions to `O(N log N)` for problems with the quadrangle inequality property.
 
 ---
@@ -343,11 +343,11 @@ How to choose: Use DP when subproblems overlap and you need the global optimum. 
 
 **1. Wrong state definition — missing a parameter**
 
-Symptom: DP produces wrong answers on certain inputs but correct answers on others; results differ from brute-force reference.
+**Symptom:** DP produces wrong answers on certain inputs but correct answers on others; results differ from brute-force reference.
 
-Root Cause: The state tuple does not uniquely identify a subproblem. Two distinct situations (different "histories") map to the same key, so the cached result from one is incorrectly reused for the other.
+**Root Cause:** The state tuple does not uniquely identify a subproblem. Two distinct situations (different "histories") map to the same key, so the cached result from one is incorrectly reused for the other.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Compare DP vs brute force on all small inputs:
 for (int n = 0; n <= 15; n++) {
@@ -356,19 +356,19 @@ for (int n = 0; n <= 15; n++) {
 }
 ```
 
-Fix: Add the missing dimension to the state. If item already-selected matters, track which items are used. If direction matters in grid problems, track direction.
+**Fix:** Add the missing dimension to the state. If item already-selected matters, track which items are used. If direction matters in grid problems, track direction.
 
-Prevention: Before coding, enumerate all parameters that affect the answer. Each must be a state dimension.
+**Prevention:** Before coding, enumerate all parameters that affect the answer. Each must be a state dimension.
 
 ---
 
 **2. Off-by-one in base cases or table indexing**
 
-Symptom: Final answer is off by 1, or `ArrayIndexOutOfBoundsException` at runtime.
+**Symptom:** Final answer is off by 1, or `ArrayIndexOutOfBoundsException` at runtime.
 
-Root Cause: `dp` indexed at `0..N` but array allocated as `new int[N]` (size N, indices 0..N-1). Or base case set to `dp[1]=0` when it should be `dp[1]=1`.
+**Root Cause:** `dp` indexed at `0..N` but array allocated as `new int[N]` (size N, indices 0..N-1). Or base case set to `dp[1]=0` when it should be `dp[1]=1`.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Print first 5 dp values vs hand-computed values:
 for (int i = 0; i <= 5; i++)
@@ -376,19 +376,19 @@ for (int i = 0; i <= 5; i++)
 // Compare with pen-and-paper calculation
 ```
 
-Fix: Always allocate `new int[N+1]` for 0-indexed DP over [0..N]. Write base cases explicitly on paper before coding.
+**Fix:** Always allocate `new int[N+1]` for 0-indexed DP over [0..N]. Write base cases explicitly on paper before coding.
 
-Prevention: Test on N=0, N=1, N=2 before testing N=100. Base case bugs appear immediately.
+**Prevention:** Test on N=0, N=1, N=2 before testing N=100. Base case bugs appear immediately.
 
 ---
 
 **3. Using item twice in 0/1 knapsack**
 
-Symptom: Knapsack returns a value higher than achievable by selecting each item at most once.
+**Symptom:** Knapsack returns a value higher than achievable by selecting each item at most once.
 
-Root Cause: 1D bottom-up knapsack iterates `w` from left-to-right (small W to large W). When computing `dp[w]`, `dp[w - weight[i]]` has already been updated in this same iteration, meaning item `i` can be added multiple times.
+**Root Cause:** 1D bottom-up knapsack iterates `w` from left-to-right (small W to large W). When computing `dp[w]`, `dp[w - weight[i]]` has already been updated in this same iteration, meaning item `i` can be added multiple times.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Test: single item of weight 1, value 10,
 // capacity 5. Answer should be 10, not 50.
@@ -396,7 +396,7 @@ assert knapsack(new int[]{1}, new int[]{10},
                 1, 5) == 10;
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: left-to-right allows reusing items
 for (int w = weights[i]; w <= W; w++)
@@ -409,36 +409,36 @@ for (int w = W; w >= weights[i]; w--)
               dp[w-weights[i]] + values[i]);
 ```
 
-Prevention: Comment every 1D knapsack loop direction with its rationale.
+**Prevention:** Comment every 1D knapsack loop direction with its rationale.
 
 ---
 
 **4. Stack overflow in top-down DP on large N**
 
-Symptom: `StackOverflowError` on inputs with N > ~10,000.
+**Symptom:** `StackOverflowError` on inputs with N > ~10,000.
 
-Root Cause: Top-down DP uses call stack proportional to recursion depth. For `fib(100000)`, the recursion depth is 100,000 frames — exceeding default JVM stack size (~512 calls/frame).
+**Root Cause:** Top-down DP uses call stack proportional to recursion depth. For `fib(100000)`, the recursion depth is 100,000 frames — exceeding default JVM stack size (~512 calls/frame).
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check stack depth at failure:
 java -Xss8m -jar app.jar  # Increase stack size
 # Or switch to bottom-up to eliminate recursion
 ```
 
-Fix: Convert to bottom-up tabulation for large N, or use iterative memoisation with an explicit stack.
+**Fix:** Convert to bottom-up tabulation for large N, or use iterative memoisation with an explicit stack.
 
-Prevention: Use bottom-up DP when N > 10,000.
+**Prevention:** Use bottom-up DP when N > 10,000.
 
 ---
 
 **5. Negative space usage on interval DP problems**
 
-Symptom: Out-of-memory or TLE (time limit exceeded) on interval DP problems where N=5000 produces an O(N³) algorithm.
+**Symptom:** Out-of-memory or TLE (time limit exceeded) on interval DP problems where N=5000 produces an O(N³) algorithm.
 
-Root Cause: Interval DP on `dp[i][j]` for all pairs `(i,j)` has O(N²) states and O(N) transitions — cubic total. For N=5000, this is 125 billion operations.
+**Root Cause:** Interval DP on `dp[i][j]` for all pairs `(i,j)` has O(N²) states and O(N) transitions — cubic total. For N=5000, this is 125 billion operations.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Profile with async-profiler on JVM:
 java -agentpath:/async-profiler/libasyncProfiler.so
@@ -446,9 +446,9 @@ java -agentpath:/async-profiler/libasyncProfiler.so
 # Look for hot DP transition loop
 ```
 
-Fix: Apply divide-and-conquer DP optimisation or the convex hull trick if the problem satisfies the quadrangle inequality (`dp[i][j] + dp[i'][j'] ≤ dp[i][j'] + dp[i'][j]`). Reduces O(N³) to O(N² log N) or O(N²).
+**Fix:** Apply divide-and-conquer DP optimisation or the convex hull trick if the problem satisfies the quadrangle inequality (`dp[i][j] + dp[i'][j'] ≤ dp[i][j'] + dp[i'][j]`). Reduces O(N³) to O(N² log N) or O(N²).
 
-Prevention: Analyse DP complexity with state count × transition count before coding. n=1000 is fine for O(N²); n=5000 requires O(N² log N) or better.
+**Prevention:** Analyse DP complexity with state count × transition count before coding. n=1000 is fine for O(N²); n=5000 requires O(N² log N) or better.
 
 ---
 

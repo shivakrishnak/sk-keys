@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 After months of running a Java application, Old Generation fills with long-lived objects. Some of these objects eventually become unreachable (sessions expire, caches evict, large graphs are released). Without Major GC, Old Gen grows until it reaches `-Xmx`, then the JVM cannot allocate more objects and throws `OutOfMemoryError`. Even applications with zero memory leaks would eventually need Old Gen cleaned.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Old Gen objects need collection, but applying Minor GC's "copy the survivors" strategy to a multi-gigabyte Old Gen would require an equivalently-sized empty region as copy destination — doubling memory requirements to 2× `Xmx`. For large heaps, this is impractical.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Major GC uses mark-sweep-compact (or concurrent variants) — an algorithm that identifies dead objects in place and compacts live objects without requiring an equally-sized empty region. This is why Major GC exists as a distinct algorithm from Minor GC.
 
 ---
@@ -64,26 +64,26 @@ Major GC is the primary target for latency optimisation in JVM applications. Min
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Major GC must collect the Old Generation without requiring a copy-destination of equal size.
 2. Major GC must be able to compact the remaining live objects to prevent fragmentation.
 3. Major GC cost is proportional to live object set size (unlike Minor GC which is proportional to surviving count).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 mandates mark-sweep (in-place identification of garbage) rather than copying. Invariant 2 requires compaction — moving live objects to eliminate fragmentation gaps. Invariant 3 means increasing live set (larger application state) directly increases Major GC pause. This drives the need for concurrent collectors: if marking can proceed while the application runs, the stop-the-world pause shrinks to only the compaction phase.
 
-THE TRADE-OFFS:
-Gain: Reclaims Old Gen; prevents OOM; compaction eliminates fragmentation.
-Cost: Long stop-the-world pause (STW collectors); CPU overhead from concurrent marking (concurrent collectors); application threads occasionally stalled waiting for STW phases.
+**THE TRADE-OFFS:**
+**Gain:** Reclaims Old Gen; prevents OOM; compaction eliminates fragmentation.
+**Cost:** Long stop-the-world pause (STW collectors); CPU overhead from concurrent marking (concurrent collectors); application threads occasionally stalled waiting for STW phases.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 5 GB Old Gen, 4.5 GB live objects, 500 MB garbage. STW Major GC (Parallel GC).
 
-WHAT HAPPENS WITHOUT CONCURRENCY:
+**WHAT HAPPENS WITHOUT CONCURRENCY:**
 1. All application threads freeze.
 2. GC marks all 4.5 GB of live objects — must visit every pointer of every live object.
 3. GC identifies 500 MB of garbage.
@@ -92,14 +92,14 @@ WHAT HAPPENS WITHOUT CONCURRENCY:
 6. Total pause: ~10 seconds (rough estimate: ~2ms per MB of live data).
 7. Application appears frozen for 10 seconds → request timeouts, SLA violations.
 
-WHAT HAPPENS WITH CONCURRENT MARKING (G1GC):
+**WHAT HAPPENS WITH CONCURRENT MARKING (G1GC):**
 1. GC starts CONCURRENT MARKING while application runs: marks most of 4.5 GB while threads run.
 2. Short STW pause to handle objects modified during marking (remark phase): ~100ms.
 3. After marking: G1 knows which Old regions are garbage-dense.
 4. G1 mixed GC: collects those regions in several short STW cycles of 200ms each.
 5. Total visible pause: 4 × 200ms = 800ms spread over 30 seconds = less than 30ms average pause.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The key insight of modern GC design: move as much work as possible to concurrent phases (no application pause), then minimise the STW phases to just what requires a consistent heap snapshot.
 
 ---
@@ -108,10 +108,10 @@ The key insight of modern GC design: move as much work as possible to concurrent
 
 > Major GC is like a library conducting an inventory audit. The library stays open during the first phase (concurrent marking — staff check shelves while patrons use the library). Then the library closes briefly (STW remark) to catch any changes made while auditing. Then a few aisles are closed at a time for reorganisation (G1 mixed GC — collect the worst aisles first). Patrons (application threads) experience brief interruptions, not an all-day closure.
 
-"Library open during audit" → concurrent marking (no app pause)
-"Library closes briefly" → stop-the-world remark phase
-"Aisles closed for reorganisation" → mixed GC collecting Old Gen regions
-"All-day closure (STW Major GC)" → traditional Parallel GC approach
+- "Library open during audit" → concurrent marking (no app pause)
+- "Library closes briefly" → stop-the-world remark phase
+- "Aisles closed for reorganisation" → mixed GC collecting Old Gen regions
+- "All-day closure (STW Major GC)" → traditional Parallel GC approach
 
 Where this analogy breaks down: unlike a physical library, the JVM must ensure that every reference to a moved object is updated — this "forwarding pointer" maintenance has no physical analogy.
 
@@ -194,7 +194,7 @@ The evolution of Major GC algorithms reflects the growing importance of tail lat
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Old Gen fills via promotions from Minor GC
   → GC detects heap occupancy > threshold
@@ -208,7 +208,7 @@ Old Gen fills via promotions from Minor GC
   → Cycle complete; normal Minor GC resumes
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Concurrent marking too slow / Old Gen fills before cleanup:
   → "Concurrent Mode Failure" (CMS)
@@ -219,7 +219,7 @@ Concurrent marking too slow / Old Gen fills before cleanup:
   → Diagnosis: "to-space exhausted" in GC logs
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At terabyte heaps, even concurrent marking takes tens of seconds. The concurrent marking threads must keep up with the application's object modification rate. If the application creates and modifies references faster than the GC can mark (known as "floating garbage" and "concurrent marking failure"), the GC falls back to STW. ZGC with coloured pointers solves this by intersecting GC state into the reference itself, enabling sub-millisecond phases even at terabyte scale.
 
 ---
@@ -311,18 +311,18 @@ How to choose: G1GC for most production services (Java 9+ default). ZGC for stri
 
 **1. "Concurrent Mode Failure" (G1GC: "to-space exhausted")**
 
-Symptom: GC log shows "Concurrent mode failure" (CMS) or "to-space exhausted" (G1); followed by full STW GC; long application pause.
+**Symptom:** GC log shows "Concurrent mode failure" (CMS) or "to-space exhausted" (G1); followed by full STW GC; long application pause.
 
-Root Cause: Old Gen fills up before concurrent marking completes. The GC cannot find space for promotions from Minor GC and falls back to a full STW collection.
+**Root Cause:** Old Gen fills up before concurrent marking completes. The GC cannot find space for promotions from Minor GC and falls back to a full STW collection.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 grep "concurrent mode failure\|to-space exhausted\|Evacuation Failure" \
   /tmp/gc.log
 # These messages indicate concurrent GC was too slow
 ```
 
-Fix:
+**Fix:**
 ```bash
 # Option 1: Start concurrent marking earlier
 java -XX:InitiatingHeapOccupancyPercent=30 -jar myapp.jar
@@ -331,15 +331,15 @@ java -Xmx8g -jar myapp.jar
 # Option 3: Reduce promotion rate (tune Young Gen)
 ```
 
-Prevention: Monitor heap occupancy trend; ensure concurrent marking starts with sufficient headroom for the expected promotion volume.
+**Prevention:** Monitor heap occupancy trend; ensure concurrent marking starts with sufficient headroom for the expected promotion volume.
 
 **2. Multiple Back-to-Back Major GC Cycles**
 
-Symptom: GC log shows 3+ Major GC cycles within 30 seconds; application latency spikes repeatedly; heap never recovers to pre-GC utilisation.
+**Symptom:** GC log shows 3+ Major GC cycles within 30 seconds; application latency spikes repeatedly; heap never recovers to pre-GC utilisation.
 
-Root Cause: Live set is too large relative to heap size — Major GC reclaims little because most Old Gen is live. Likely memory leak or undersized heap.
+**Root Cause:** Live set is too large relative to heap size — Major GC reclaims little because most Old Gen is live. Likely memory leak or undersized heap.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Compare Old Gen usage before and after Major GC
 grep "Before GC\|After GC\|Pause Full" /tmp/gc.log | head -20
@@ -347,29 +347,29 @@ grep "Before GC\|After GC\|Pause Full" /tmp/gc.log | head -20
 # → memory leak or heap too small
 ```
 
-Fix:
+**Fix:**
 ```bash
 # Take heap dump to find what's live in Old Gen
 jcmd <pid> GC.heap_dump /tmp/heap.hprof
 # Analyse in Eclipse MAT → Dominator Tree
 ```
 
-Prevention: Right-size heaps; detect and fix memory leaks proactively in staging.
+**Prevention:** Right-size heaps; detect and fix memory leaks proactively in staging.
 
 **3. Long Remark Phase in G1**
 
-Symptom: G1GC's final `Remark` STW phase takes >200ms and dominates total Major GC pause time.
+**Symptom:** G1GC's final `Remark` STW phase takes >200ms and dominates total Major GC pause time.
 
-Root Cause: During concurrent marking, the application modified many references. The remark phase must reprocess all "dirty" (modified) references. High object modification rate = long remark.
+**Root Cause:** During concurrent marking, the application modified many references. The remark phase must reprocess all "dirty" (modified) references. High object modification rate = long remark.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 java -Xlog:gc+phases=debug:file=/tmp/gc.log -jar myapp.jar
 grep "Remark" /tmp/gc.log | awk '{print $NF}'
 # Long Remark durations = high reference modification rate
 ```
 
-Fix:
+**Fix:**
 ```java
 // Reduce object churn during concurrent marking:
 // - Use immutable objects where possible

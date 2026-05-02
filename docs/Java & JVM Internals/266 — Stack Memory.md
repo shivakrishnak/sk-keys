@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 If there were only one memory region (the heap), every method call would require allocating a block on the heap to store local variables, storing a pointer to the previous frame, and freeing the block when the method returns. Every function call would require a heap allocation. Allocating on the heap requires synchronisation and GC tracking — making even simple function calls orders of magnitude slower.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Method call/return is the most frequent operation in any program. Making it require heap allocation and GC tracking would make Java orders of magnitude slower than C. The design needs a memory region specifically optimised for the allocation/deallocation pattern of method call frames.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 The LIFO (last-in, first-out) nature of function call frames maps perfectly to a stack structure. The most recently called function is always the first to return — so memory can be claimed by simply moving a pointer, with zero GC involvement. This is exactly why stack memory was designed as a separate region.
 
 ---
@@ -64,32 +64,32 @@ Stack memory is not garbage collected — that is the key performance secret. Wh
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Method call/return is strictly LIFO — the most recent call must return first.
 2. Local variables belong to a single function scope — they cannot outlive the function call.
 3. Stack memory is private to a thread — no sharing, no synchronisation needed.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 mandates a stack structure — only a stack supports O(1) LIFO push/pop. Invariant 2 means local variable lifetimes are bounded by scope, so they can be stored in the stack frame (no GC needed). Invariant 3 means no locking — each thread's stack is exclusively its own, enabling zero-overhead allocation.
 
-THE TRADE-OFFS:
-Gain: Extremely fast allocation/deallocation (pointer move only), no GC overhead, thread-safe by design.
-Cost: Fixed maximum size (default 256KB–1MB per thread); exceeding it causes `StackOverflowError`; objects must go on the heap (only primitives and references fit natively on the stack).
+**THE TRADE-OFFS:**
+**Gain:** Extremely fast allocation/deallocation (pointer move only), no GC overhead, thread-safe by design.
+**Cost:** Fixed maximum size (default 256KB–1MB per thread); exceeding it causes `StackOverflowError`; objects must go on the heap (only primitives and references fit natively on the stack).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Consider a program that calls `methodA()`, which calls `methodB()`, which calls `methodC()`. Each method has 3 local integer variables.
 
-WHAT HAPPENS WITHOUT STACK (heap-only):
+**WHAT HAPPENS WITHOUT STACK (heap-only):**
 `methodA()` allocates a frame object on the heap: 3 ints + a "next frame" pointer. `methodB()` allocates another heap object. `methodC()` allocates another. When `methodC()` returns, its frame object becomes garbage. The GC must later find and reclaim it. When `methodB()` returns, same. The GC is doing work that could be avoided entirely.
 
-WHAT HAPPENS WITH STACK:
+**WHAT HAPPENS WITH STACK:**
 `methodA()` pushes a frame: stack pointer moves up 12 bytes (3 ints). `methodB()` pushes another 12 bytes. `methodC()` pushes another. When `methodC()` returns: stack pointer moves back 12 bytes — instant reclaim, no GC. When `methodB()` returns: same. Total memory work: 6 pointer moves. GC never involved.
 
-THE INSIGHT:
+**THE INSIGHT:**
 LIFO lifecycle enables O(1) memory management without garbage collection. Matching the memory management strategy to the data's lifetime pattern is the foundation of efficient memory design.
 
 ---
@@ -98,11 +98,11 @@ LIFO lifecycle enables O(1) memory management without garbage collection. Matchi
 
 > The stack is like a spring-loaded plate dispenser at a cafeteria. New plates (frames) push down the spring (grow the stack). Removing a plate (method return) pops the spring back up. There is always an upper limit to how many plates fit in the dispenser before it overflows. Each cafeteria (thread) has its own independent dispenser.
 
-"Plate dispenser" → the thread's stack
-"Each plate" → a stack frame for one method call
-"Plate capacity limit" → the JVM stack size (`-Xss`)
-"Removing a plate" → method return (frame pop)
-"Separate dispensers per cafeteria" → each thread has its own stack
+- "Plate dispenser" → the thread's stack
+- "Each plate" → a stack frame for one method call
+- "Plate capacity limit" → the JVM stack size (`-Xss`)
+- "Removing a plate" → method return (frame pop)
+- "Separate dispensers per cafeteria" → each thread has its own stack
 
 Where this analogy breaks down: unlike physical plates, stack frames can reference objects on the heap — stack memory holds references (pointers), not the objects themselves.
 
@@ -175,7 +175,7 @@ Set with: java -Xss1m MyApp   (1 MB per thread)
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Thread created → stack allocated (-Xss size)
   → main() called → frame pushed ← YOU ARE HERE
@@ -190,7 +190,7 @@ Thread created → stack allocated (-Xss size)
   → thread exits → stack memory freed to OS
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Infinite recursion / unbounded call chain
   → Frames accumulate
@@ -201,7 +201,7 @@ Infinite recursion / unbounded call chain
     may become eligible for GC
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 1000 concurrent threads, stack memory becomes significant: 1000 threads × 256 KB = 256 MB of stack memory. In high-concurrency systems, reducing thread stack size (`-Xss128k`) or switching to Virtual Threads (Project Loom, Java 21) — which use small, resizable stacks — dramatically reduces memory footprint.
 
 ---
@@ -295,11 +295,11 @@ How to choose: Stack for local variables (automatic). Heap for objects that outl
 
 **1. StackOverflowError**
 
-Symptom: `java.lang.StackOverflowError` in logs; usually deep in a recursive call chain.
+**Symptom:** `java.lang.StackOverflowError` in logs; usually deep in a recursive call chain.
 
-Root Cause: Stack exhausted — too many active frames. Either infinite recursion, legitimate deep recursion, or stack too small for the call depth.
+**Root Cause:** Stack exhausted — too many active frames. Either infinite recursion, legitimate deep recursion, or stack too small for the call depth.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Print thread dump — find the repeating pattern
 jcmd <pid> Thread.print > /tmp/td.txt
@@ -308,7 +308,7 @@ cat /tmp/td.txt | grep "at " | sort | uniq -c \
 # High-count repeated lines = the recursive pattern
 ```
 
-Fix:
+**Fix:**
 ```bash
 # Option 1: Increase stack size
 java -Xss2m MyApp
@@ -317,15 +317,15 @@ java -Xss2m MyApp
 # (preferred — stack size is just a workaround)
 ```
 
-Prevention: Always define a base case in recursion; set recursion depth limits; use iterative algorithms for known unbounded depths.
+**Prevention:** Always define a base case in recursion; set recursion depth limits; use iterative algorithms for known unbounded depths.
 
 **2. High Memory Usage from Many Threads**
 
-Symptom: Host memory exhausted; `java.lang.OutOfMemoryError: unable to create new native thread`; each thread consuming 512KB–MB of stack.
+**Symptom:** Host memory exhausted; `java.lang.OutOfMemoryError: unable to create new native thread`; each thread consuming 512KB–MB of stack.
 
-Root Cause: Thread count × stack size exceeds available native memory. Common in thread-per-request servers handling thousands of concurrent connections.
+**Root Cause:** Thread count × stack size exceeds available native memory. Common in thread-per-request servers handling thousands of concurrent connections.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Count threads in JVM
 jcmd <pid> Thread.print | grep -c "^\"" 
@@ -335,7 +335,7 @@ jcmd <pid> VM.native_memory summary
 # Look for "Thread" section showing total stack memory
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: unbounded thread creation
 new Thread(handler).start(); // one thread per request
@@ -349,15 +349,15 @@ Executors.newVirtualThreadPerTaskExecutor()
     .submit(handler); // millions, tiny stack
 ```
 
-Prevention: Use thread pools with bounded sizes; migrate to virtual threads for I/O-bound workloads in Java 21+.
+**Prevention:** Use thread pools with bounded sizes; migrate to virtual threads for I/O-bound workloads in Java 21+.
 
 **3. Stack Memory Not Visible in Heap Dumps**
 
-Symptom: Heap dump shows low heap usage, but JVM process uses far more native memory than expected.
+**Symptom:** Heap dump shows low heap usage, but JVM process uses far more native memory than expected.
 
-Root Cause: Stack memory is native memory — not tracked in heap dumps or GC logs.
+**Root Cause:** Stack memory is native memory — not tracked in heap dumps or GC logs.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check real JVM native memory breakdown
 java -XX:NativeMemoryTracking=summary \
@@ -366,7 +366,7 @@ jcmd <pid> VM.native_memory summary
 # Shows: Java Heap, Class, Thread (stack), Code, etc.
 ```
 
-Prevention: Always monitor native memory, not just heap, in production. Use NativeMemoryTracking or OS-level tools like `/proc/<pid>/smaps`.
+**Prevention:** Always monitor native memory, not just heap, in production. Use NativeMemoryTracking or OS-level tools like `/proc/<pid>/smaps`.
 
 ---
 

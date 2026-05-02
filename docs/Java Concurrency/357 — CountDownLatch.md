@@ -32,10 +32,10 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A service starts five parallel initialisation tasks (database, cache, config, auth, messaging). The server should not accept requests until ALL five are ready. With `Object.wait()/notify()`, the coordinator must track which tasks finished — boilerplate involving counts, flags, and synchronised checks. Any scheduling mistake breaks the startup.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 **`CountDownLatch`** provides a standard, simple "wait for N tasks" coordination primitive without manual counter management.
 
 ---
@@ -61,7 +61,7 @@ Two usage patterns: (1) **One waits for N** — service awaits N workers; (2) **
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Count starts at N, decrements-only — never increases after construction.
 2. `await()` returns immediately if count already 0.
 3. ONE-SHOT: once count reaches 0, it stays 0 forever — cannot reuse the latch.
@@ -82,15 +82,15 @@ Usage pattern 2: many wait for one
   controller: latch.countDown() → ALL THREE UNBLOCKED
 ```
 
-THE TRADE-OFFS:
-Gain: Simple, clear, thread-safe counter-down coordination; reusable across many waiters (all blocked on same latch); no manual synchronisation.
-Cost: One-shot — cannot reset; if `countDown()` never reaches 0 (due to exception), `await()` blocks forever without a timeout.
+**THE TRADE-OFFS:**
+**Gain:** Simple, clear, thread-safe counter-down coordination; reusable across many waiters (all blocked on same latch); no manual synchronisation.
+**Cost:** One-shot — cannot reset; if `countDown()` never reaches 0 (due to exception), `await()` blocks forever without a timeout.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP: Integration test that starts 5 services and waits for all to be "ready".
+**SETUP:** Integration test that starts 5 services and waits for all to be "ready".
 
 ```java
 CountDownLatch ready = new CountDownLatch(5);
@@ -107,7 +107,7 @@ if (!ready.await(0, SECONDS)) {
 startAcceptingRequests();
 ```
 
-THE INSIGHT: Any service throwing during `start()` without calling `countDown()` will cause `await()` to block for the full timeout. Always call `countDown()` in `finally` if the count must decrement even on failure.
+**THE INSIGHT:** Any service throwing during `start()` without calling `countDown()` will cause `await()` to block for the full timeout. Always call `countDown()` in `finally` if the count must decrement even on failure.
 
 ---
 
@@ -243,7 +243,7 @@ How to choose: `CountDownLatch` for one-time "wait for N" or "signal N simultane
 
 **Await blocked forever (exception swallowed, countDown skipped):**
 
-Fix: Always `countDown()` in `finally`:
+**Fix:** Always `countDown()` in `finally`:
 ```java
 try {
     doWork();
@@ -256,7 +256,7 @@ try {
 
 **Awaiting too long without a timeout:**
 
-Fix: Always use `latch.await(timeout, unit)` and handle the `false` return.
+**Fix:** Always use `latch.await(timeout, unit)` and handle the `false` return.
 
 ---
 
@@ -285,6 +285,7 @@ Fix: Always use `latch.await(timeout, unit)` and handle the `false` return.
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** `CountDownLatch` and `CompletableFuture.allOf(cf1, cf2, cf3).join()` both wait for N tasks to complete. Describe two scenarios where `CountDownLatch` is the better choice and two where `CompletableFuture.allOf()` is better — specifically considering: exception propagation, result retrieval, cancellation, and whether the "N tasks" are independent or require result composition.

@@ -250,7 +250,7 @@ echo "Node A confirmed stopped. Safe to proceed as new primary."
 
 Detection is the primary challenge — split brain often goes undetected.
 
-Symptom: Two nodes serving writes simultaneously; data divergence silently accumulates;
+**Symptom:** Two nodes serving writes simultaneously; data divergence silently accumulates;
 only detected at partition heal or during a CHECKSUM comparison.
 
 Detection:

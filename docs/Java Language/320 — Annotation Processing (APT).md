@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 DI frameworks like Spring, ORM mappers like Hibernate, and serialization libraries like Jackson rely on reflection to discover annotations at runtime. Every startup, the JVM scans thousands of class files reading annotation metadata, calling `getDeclaredFields()`, `isAnnotationPresent()`, and `setAccessible()` thousands of times. This costs startup time (a Spring Boot app can take 5–30 seconds), memory (metadata held in heap), and prohibits GraalVM native image compilation (which cannot perform dynamic reflection discovery).
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A microservice needs to start in under 1 second (Kubernetes readiness probe timeout). Spring's annotation scanning takes 8 seconds. The team cannot use the framework. Alternative: write boilerplate wiring code for every bean by hand — hundreds of classes × 10 minutes each = weeks of work that Spring was supposed to eliminate.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Annotation Processing** was created — to move annotation discovery and code generation from runtime reflection to compile time, so that generated wiring code exists as regular `.java` files before the application ever runs.
 
 ---
@@ -64,12 +64,12 @@ The key distinction is WHEN code runs: reflection reads annotations at JVM start
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Processors run inside `javac` — before the application is compiled, not after.
 2. Processors can read source elements (classes, methods, fields) but cannot modify existing source code — they can only generate new files.
 3. Processing runs in rounds: if a processor generates new files, the new files are re-processed until no new files are generated.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 2, annotation processors are additive — they generate companion classes, not patches. Lombok appears to modify source (adding getters/setters) but actually patches the AST directly using `javac` internals (`com.sun.tools.javac.tree`), which is not the official APT API and breaks with certain compilers. Standard APT (JSR-269) is strictly additive.
 
 Given invariant 3, a processor that generates a class containing annotations is automatically re-processed. Cycles must be tracked to avoid infinite loops.
@@ -90,15 +90,15 @@ Given invariant 3, a processor that generates a class containing annotations is 
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Zero runtime overhead for generated code; compile-time validation of annotation constraints; GraalVM native image compatible; fast startup.
-Cost: Build time increases (processor execution per module); generated code debugging requires understanding generated files; processor errors manifest as confusing `javac` errors; IDE support varies (IntelliJ handles most processors well; edge cases exist).
+**THE TRADE-OFFS:**
+**Gain:** Zero runtime overhead for generated code; compile-time validation of annotation constraints; GraalVM native image compatible; fast startup.
+**Cost:** Build time increases (processor execution per module); generated code debugging requires understanding generated files; processor errors manifest as confusing `javac` errors; IDE support varies (IntelliJ handles most processors well; edge cases exist).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A mapper framework needs to convert `UserEntity` to `UserDto`. Two approaches: runtime reflection (Jackson, Dozer) or compile-time generation (MapStruct with APT).
 
 WITH RUNTIME REFLECTION (no APT):
@@ -118,7 +118,7 @@ public class UserMapperImpl implements UserMapper {
 ```
 Runtime: direct Java method calls — JIT-inlineable. Zero reflection. ~10ns per mapping.
 
-THE INSIGHT:
+**THE INSIGHT:**
 APT shifts the work of introspection from every program run to a single compile. The generated code is as fast as hand-written code. The developer still writes only annotations — the framework generates the implementation automatically at compile time.
 
 ---
@@ -127,11 +127,11 @@ APT shifts the work of introspection from every program run to a single compile.
 
 > An annotation processor is a printing press for boilerplate code. A developer stamps `@GenerateBuilder` on a class. The printing press (processor) reads the stamp during compilation, checks the class layout, and prints a `Builder` class file. The application ships with the pre-printed Builder — no printing at runtime.
 
-"Stamp (@Annotation)" → annotation on a class.
-"Printing press" → annotation processor.
-"Checking class layout" → reading the `Element` model in the processor.
-"Printing a file" → calling `filer.createSourceFile("BuilderClass").openWriter()`.
-"Pre-printed file in the app" → generated class compiled with the rest of the application.
+- "Stamp (@Annotation)" → annotation on a class.
+- "Printing press" → annotation processor.
+- "Checking class layout" → reading the `Element` model in the processor.
+- "Printing a file" → calling `filer.createSourceFile("BuilderClass").openWriter()`.
+- "Pre-printed file in the app" → generated class compiled with the rest of the application.
 
 Where this analogy breaks down: A printing press produces a fixed design. Annotation processors can produce arbitrarily complex, dynamic code based on the annotated class's structure — closer to a typewriter that writes custom text per stamp.
 
@@ -221,7 +221,7 @@ Processors are registered in
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Developer annotates class with @Mapper]
     → [mvn compile / javac invoked]
@@ -235,7 +235,7 @@ NORMAL FLOW:
     → [Application starts: uses generated impl, no reflection]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Processor finds invalid annotation usage]
     → [processingEnv.getMessager().printMessage(ERROR, ...)]
@@ -244,7 +244,7 @@ FAILURE PATH:
     → [Developer fixes annotation usage → recompile]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In large mono-repo builds, annotation processing adds per-module compile time. A Maven project with 200 modules each running MapStruct, Lombok, and Dagger processors can add minutes to incremental builds. Solutions: incremental annotation processing (Gradle supports this; Maven does not natively); parallel module builds; splitting generated code into separate modules so processors run once.
 
 ---
@@ -365,13 +365,13 @@ How to choose: Prefer APT for any framework feature where the class structure is
 
 **Processor Not Running — Missing Configuration**
 
-Symptom:
+**Symptom:**
 `@Mapper` annotation has no effect; `*Impl` class not generated. Compiler produces no errors. Build succeeds but generated class is missing.
 
-Root Cause:
+**Root Cause:**
 Processor jar not in annotation processor path. Maven uses regular `<dependency>` scope but annotation processor scope is separate.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Maven: check if processor is in annotation processor path
 mvn dependency:tree | grep mapstruct
@@ -381,7 +381,7 @@ mvn dependency:tree | grep mapstruct
 mvn compile -X 2>&1 | grep "annotation processor"
 ```
 
-Fix:
+**Fix:**
 ```xml
 <!-- Maven: add to annotationProcessorPaths -->
 <plugin>
@@ -398,19 +398,19 @@ Fix:
 </plugin>
 ```
 
-Prevention: Verify processor configuration when adding a new APT-based library. Test with a minimal annotated class after setup.
+**Prevention:** Verify processor configuration when adding a new APT-based library. Test with a minimal annotated class after setup.
 
 ---
 
 **Infinite Processing Loop**
 
-Symptom:
+**Symptom:**
 Compilation hangs or produces "too many rounds" error. CPU spikes during compilation.
 
-Root Cause:
+**Root Cause:**
 Processor generates a file containing the annotation it processes, causing the next round to reprocess the file endlessly.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Limit rounds in javac (not standard, but some tools support):
 javac -proc:only -processorpath processor.jar \
@@ -418,7 +418,7 @@ javac -proc:only -processorpath processor.jar \
 # Watch for repeated round messages
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: generates a file annotated with @BuilderSpec
 // → causes infinite rounds
@@ -433,19 +433,19 @@ void generateBuilder(TypeElement el) {
 }
 ```
 
-Prevention: Generated files must not contain the annotations your processor responds to, unless you track generated types and skip them in subsequent rounds using a `Set<String> processed`.
+**Prevention:** Generated files must not contain the annotations your processor responds to, unless you track generated types and skip them in subsequent rounds using a `Set<String> processed`.
 
 ---
 
 **IDE Not Recognising Generated Code**
 
-Symptom:
+**Symptom:**
 IDE shows "Cannot resolve symbol" errors on generated classes. Compilation succeeds in terminal but IDE reports errors.
 
-Root Cause:
+**Root Cause:**
 IDE annotation processor settings not configured to match build tool configuration.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # IntelliJ: File → Settings → Build → Compiler
 #           → Annotation Processors
@@ -453,10 +453,10 @@ Diagnostic:
 # Check: processor path matches Maven config
 ```
 
-Fix:
+**Fix:**
 IntelliJ: Enable annotation processing in settings. Use "Delegate to Maven" so IntelliJ uses Maven's processor configuration directly.
 
-Prevention: Add `target/generated-sources/annotations` to IDE source roots. For Gradle, use `idea { module { generatedSourceDirs += ... } }`.
+**Prevention:** Add `target/generated-sources/annotations` to IDE source roots. For Gradle, use `idea { module { generatedSourceDirs += ... } }`.
 
 ---
 

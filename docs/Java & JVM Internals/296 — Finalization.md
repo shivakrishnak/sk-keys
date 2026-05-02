@@ -43,13 +43,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine your Java object holds a native resource — an open file handle, a socket, a database connection, or off-heap memory allocated via JNI. When the object becomes unreachable and GC reclaims it, that native resource silently leaks. GC manages Java heap memory, but it knows nothing about OS resources outside the heap.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A server runs for three hours. Every request creates a `FileInputStream`. Callers forget to call `close()`. GC eventually collects the objects, but the OS file descriptors are never released. After 60,000 open requests, the OS reports "Too many open files" and the server crashes.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Finalization** was created — to give objects a last-chance callback before their memory is reclaimed, so they can release non-heap resources even if the developer forgot to call a cleanup method. The intention was good. The execution was fatally flawed.
 
 ---
@@ -75,12 +75,12 @@ The deep problem with finalization is that it turns a one-cycle reclamation into
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. GC manages heap memory. It has no knowledge of OS resources (file handles, sockets, native memory).
 2. An object's `finalize()` must run before its memory is reclaimed — so the object must stay alive until finalization completes.
 3. The JVM cannot guarantee *when* `finalize()` runs, only that it runs *at some point before* the object is definitively reclaimed (or never, if the JVM exits first).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 2, the JVM introduces a **Finalizer Queue** (a `ReferenceQueue` internally). When a finalizable object becomes otherwise unreachable:
 1. GC detects it is unreachable but sees it has a non-trivial `finalize()` — it cannot collect it yet.
 2. GC adds it to the Finalizer Queue (a `java.lang.ref.FinalReference`).
@@ -89,9 +89,9 @@ Given invariant 2, the JVM introduces a **Finalizer Queue** (a `ReferenceQueue` 
 
 This creates a mandatory two-generation survival, often promoting objects to old-gen just because they have `finalize()`.
 
-THE TRADE-OFFS:
-Gain: Non-heap resources leak less often if callers forget to call `close()`.
-Cost:
+**THE TRADE-OFFS:**
+**Gain:** Non-heap resources leak less often if callers forget to call `close()`.
+**Cost:**
 - Two GC cycles per finalizable object.
 - Single-threaded Finalizer thread is a bottleneck.
 - If `finalize()` throws, the exception is silently swallowed.
@@ -102,16 +102,16 @@ Cost:
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You have a `NativeBuffer` object wrapping a C `malloc` allocation. The class overrides `finalize()` to call a JNI `free()` method. A tight loop creates 10,000 `NativeBuffer` objects per second. GC runs minor collections every 500ms.
 
-WHAT HAPPENS WITHOUT FINALIZATION:
+**WHAT HAPPENS WITHOUT FINALIZATION:**
 Every `NativeBuffer` that becomes unreachable leaks its native allocation. After 5 seconds, 50,000 native allocations are stranded. The OS process runs out of virtual memory and crashes with `OutOfMemoryError: native memory`.
 
-WHAT HAPPENS WITH FINALIZATION:
+**WHAT HAPPENS WITH FINALIZATION:**
 Each unreachable `NativeBuffer` is enqueued. The Finalizer thread processes them sequentially, calling `free()`. But the Finalizer thread can only process ~5,000/second. The queue grows. Native memory still leaks — just more slowly. Eventually the Finalizer thread falls so far behind that the OOM still occurs, just 20 seconds later instead of 5.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Finalization does not solve resource leaks — it only delays them unless the production rate of finalizable objects is slower than the Finalizer thread can process. The correct solution is always explicit cleanup via `AutoCloseable` and `try-with-resources`.
 
 ---
@@ -120,11 +120,11 @@ Finalization does not solve resource leaks — it only delays them unless the pr
 
 > Think of finalization as a **dead-letter office**. When a letter has no valid address (the object is unreachable), instead of burning it immediately, the post office holds it in a special bin and sends one more notification to the sender. The sender (the `finalize()` method) can do some last-minute cleanup when notified. But the dead-letter office has a single employee, the bin can overflow, and the notification may never come if the office closes (JVM shuts down) before the employee processes it.
 
-"Dead letter" → unreachable object with a `finalize()` override.
-"Special bin" → Finalizer Queue (internal `ReferenceQueue`).
-"Single employee" → the JVM Finalizer daemon thread.
-"Notification" → invocation of `finalize()`.
-"Office closing" → JVM shutdown without running finalizers.
+- "Dead letter" → unreachable object with a `finalize()` override.
+- "Special bin" → Finalizer Queue (internal `ReferenceQueue`).
+- "Single employee" → the JVM Finalizer daemon thread.
+- "Notification" → invocation of `finalize()`.
+- "Office closing" → JVM shutdown without running finalizers.
 
 Where this analogy breaks down: Unlike a dead-letter office, the sender (object) can in theory refuse to die by re-inserting itself into live references inside `finalize()` — a "resurrection" the postal analogy does not capture.
 
@@ -196,7 +196,7 @@ The Finalizer thread runs at `Thread.MAX_PRIORITY - 2` (priority 8). On a heavil
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Object created in Eden]
     → [Object becomes unreachable]
@@ -208,7 +208,7 @@ NORMAL FLOW:
     → [Next GC: memory reclaimed]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [finalize() throws exception]
     → [Exception silently swallowed]
@@ -221,7 +221,7 @@ FAILURE PATH:
     → [OutOfMemoryError]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At high object creation rates (>10,000 finalizable objects/sec), the single-threaded Finalizer becomes a bottleneck. Objects pile up in old-gen waiting for finalization, triggering premature Full GCs. At 100x scale, the Finalizer queue can grow to millions of entries, consuming gigabytes of heap and causing multi-second STW pauses. This is why frameworks like Netty explicitly avoid finalizers on hot-path objects.
 
 ---
@@ -395,13 +395,13 @@ How to choose: Always prefer `AutoCloseable` + `try-with-resources` for explicit
 
 **Finalizer Queue Backlog (OOM)**
 
-Symptom:
+**Symptom:**
 `OutOfMemoryError: Java heap space` on a server with high object creation rate. `jmap -histo` shows thousands of instances of your class or `java.lang.ref.Finalizer`.
 
-Root Cause:
+**Root Cause:**
 The single Finalizer thread cannot process enqueued objects faster than the application creates new ones. The pending finalization queue is backed by strong references, so GC cannot reclaim objects until the Finalizer thread processes them.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 jcmd <pid> VM.native_memory
 jmap -histo:live <pid> | head -30
@@ -410,68 +410,68 @@ jmap -histo:live <pid> | head -30
 jstack <pid> | grep -A20 "Finalizer"
 ```
 
-Fix:
+**Fix:**
 Remove `finalize()` overrides. Replace with `AutoCloseable`. For legacy code, wrap the object in a class that uses `Cleaner`.
 
-Prevention:
+**Prevention:**
 Never add `finalize()` to objects created at high frequency. Enforce via ArchUnit rule: `noClasses().should().haveMethod("finalize")`.
 
 ---
 
 **Silent Resource Leak**
 
-Symptom:
+**Symptom:**
 Native memory or file descriptors leak. `lsof -p <pid>` shows growing file descriptor count. Eventually "Too many open files" error or native OOM.
 
-Root Cause:
+**Root Cause:**
 `finalize()` was relied upon for cleanup. GC never runs (abundant heap), or queue backs up, leaving resources unreleased.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 lsof -p <pid> | wc -l   # File descriptor count
 cat /proc/<pid>/status | grep VmRSS  # Native memory footprint
 ```
 
-Fix:
+**Fix:**
 Implement `AutoCloseable`, add `close()` call, wrap in `try-with-resources`.
 
-Prevention:
+**Prevention:**
 Design all resource-holding objects with explicit `close()` from day one.
 
 ---
 
 **Object Resurrection Bug**
 
-Symptom:
+**Symptom:**
 Object reappears after it was believed to be garbage-collected. Data corruption occurs because finalized (partially cleaned) state is re-used.
 
-Root Cause:
+**Root Cause:**
 `finalize()` stores `this` in a static/global reference. The object is resurrected but with partially-cleaned state (the `finalize()` method may have already released some resources). Subsequent use of the resurrected object hits null pointers or already-freed native memory.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Enable verbose GC logging to observe unexpected survivals:
 java -Xlog:gc+ref=debug MyApp 2>&1 | grep resurrection
 # Review all finalize() implementations for assignments of 'this'
 ```
 
-Fix:
+**Fix:**
 Remove resurrection logic. If a re-pooling pattern is needed, use a proper object pool class instead.
 
-Prevention:
+**Prevention:**
 Code review rule: `finalize()` must never assign `this` to any variable.
 
 ---
 
 **JVM Exit Without Finalization**
 
-Symptom:
+**Symptom:**
 On JVM shutdown, native resources (temp files, sockets) are not cleaned up. Temp files accumulate on disk.
 
-Root Cause:
+**Root Cause:**
 JVM exit does not guarantee running finalizers. By default, `Runtime.halt()` and SIGKILL skip all finalizers.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Check what shutdown hooks are registered:
 jcmd <pid> VM.flags | grep ShutdownHook
@@ -479,10 +479,10 @@ jcmd <pid> VM.flags | grep ShutdownHook
 ls /tmp | grep myapp
 ```
 
-Fix:
+**Fix:**
 Register a `Runtime.addShutdownHook(Thread)` that explicitly closes resources. Do not rely on `finalize()` for shutdown cleanup.
 
-Prevention:
+**Prevention:**
 Add a JVM shutdown hook that iterates a `ConcurrentHashMap` of open resources and closes each one.
 
 ---

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A database needs an ordered index supporting concurrent reads and writes without locking the entire structure. Balanced BSTs (AVL, red-black) achieve O(log N) operations but require rotations on insert/delete — rotations must lock multiple nodes simultaneously, creating contention in concurrent workloads. A single global lock serialises all access.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Balanced tree rebalancing is inherently non-local: a single insert can trigger rotations propagating up to the root, requiring locks on an entire path. In a concurrent system, this creates a sequential bottleneck. The more threads, the worse the contention.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Replace deterministic rebalancing with probabilistic layer promotion. A node is promoted to the next level with probability ½. On average, this creates a structure equivalent to a balanced tree — but with no rotations, and with lock-free insertion achievable through CAS operations on individual node pointers. This is exactly why the Skip List was created.
 
 ---
@@ -64,12 +64,12 @@ The skip list's O(log N) performance is probabilistic — not guaranteed. But th
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Level 0 is a fully sorted singly linked list of all elements.
 2. Level k contains each level k-1 element independently with probability p.
 3. A node at level k has pointers to the next node at levels 0 through k.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Expected elements at level k: N × p^k. Expected height: log_{1/p}(N) = O(log N) for p=0.5.
 
 **Search(x)**: Start at top-left node (header at highest level). Advance right if next node ≤ x. Drop one level if next node > x. Repeat until level 0. O(log N) expected.
@@ -80,25 +80,25 @@ Expected elements at level k: N × p^k. Expected height: log_{1/p}(N) = O(log N)
 
 The randomness is the key: because promotions are independent coin flips, the structure self-organises around a balanced tree shape in expectation, without any deterministic balancing logic.
 
-THE TRADE-OFFS:
-Gain: Simple implementation, lock-friendly concurrent access, no rebalancing.
-Cost: O(N log N) expected space (pointer overhead per node), non-deterministic worst case (O(N) with exponentially small probability), less cache-friendly than arrays.
+**THE TRADE-OFFS:**
+**Gain:** Simple implementation, lock-friendly concurrent access, no rebalancing.
+**Cost:** O(N log N) expected space (pointer overhead per node), non-deterministic worst case (O(N) with exponentially small probability), less cache-friendly than arrays.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Sorted set of 16 elements. Search for element 13.
 
-WHAT HAPPENS WITHOUT SKIP LIST (sorted linked list):
+**WHAT HAPPENS WITHOUT SKIP LIST (sorted linked list):**
 Must traverse all elements from 1 to 13 — 13 pointer dereferences.
 
-WHAT HAPPENS WITH SKIP LIST (4 levels):
+**WHAT HAPPENS WITH SKIP LIST (4 levels):**
 - Level 3: header → 1 → 9 → null. 9 < 13 → advance. 13 > null → drop to level 2.
 - Level 2: from 9 → 13. Found. Total: 4 pointer dereferences.
 
-THE INSIGHT:
+**THE INSIGHT:**
 At each level, you skip over roughly half the remaining elements (the ones not promoted). This binary-search-like elimination is why O(log N) expected time emerges from simple coin flips.
 
 ---
@@ -107,10 +107,10 @@ At each level, you skip over roughly half the remaining elements (the ones not p
 
 > A skip list is like a city with expressways at multiple scales. The expressway at the top level jumps 100 km at a time. The next level jumps 10 km. The street level visits every address. To reach any destination, start on the highest expressway and switch to slower roads as you approach the target.
 
-"Highest expressway" → top level (few nodes)
-"Street level" → level 0 (all elements)
-"Switching to slower road" → dropping a level
-"Coin flip for expressway on-ramp" → random level promotion
+- "Highest expressway" → top level (few nodes)
+- "Street level" → level 0 (all elements)
+- "Switching to slower road" → dropping a level
+- "Coin flip for expressway on-ramp" → random level promotion
 
 Where this analogy breaks down: Real expressways have fixed distances between exits; skip list "skips" are determined by random coin flips — variable-size jumps that average out to logarithmic.
 
@@ -175,7 +175,7 @@ int randomLevel() {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Search(key):
 → Start at header, highest level
@@ -186,7 +186,7 @@ Search(key):
 → Insert: coin-flip height, link at each level
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Pathological random seed → all elements promoted to max level
 → O(N log N) space consumed
@@ -194,7 +194,7 @@ Pathological random seed → all elements promoted to max level
 → Probability: (1/2)^maxLevel per element — negligible
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10M+ elements, the pointer overhead of skip lists (~8 bytes per pointer × avg 2 pointers/node) becomes significant compared to B-trees (which pack many keys per cache line). Database systems (Redis, RocksDB MemTable) accept this overhead for the lock-free concurrency benefit. At extreme scale, trees are preferred because spatial locality (cache lines) matters more than lock-free code.
 
 ---
@@ -266,11 +266,11 @@ How to choose: Use `ConcurrentSkipListMap` when you need a thread-safe sorted ma
 
 **1. Non-deterministic performance under adversarial seeds**
 
-Symptom: Skip list operations take O(N) in rare pathological cases.
+**Symptom:** Skip list operations take O(N) in rare pathological cases.
 
-Root Cause: If the random number generator is seeded with a value that promotes too many elements to the top level, chains become unbalanced.
+**Root Cause:** If the random number generator is seeded with a value that promotes too many elements to the top level, chains become unbalanced.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Add operation counter and assert:
 int ops = skipList.search(key);
@@ -278,37 +278,37 @@ assert ops < 3 * (int)(Math.log(N) / Math.log(2)) :
     "Unexpected O(N) operation: " + ops;
 ```
 
-Fix: Use a good PRNG (e.g., `java.util.Random` or `ThreadLocalRandom`). Avoid seeding from system time in production systems with predictable patterns.
+**Fix:** Use a good PRNG (e.g., `java.util.Random` or `ThreadLocalRandom`). Avoid seeding from system time in production systems with predictable patterns.
 
-Prevention: For security-sensitive code, use cryptographically secure random promotion.
+**Prevention:** For security-sensitive code, use cryptographically secure random promotion.
 
 ---
 
 **2. Race condition in non-concurrent implementation**
 
-Symptom: Concurrent inserts and searches return incorrect results or cause NullPointerException.
+**Symptom:** Concurrent inserts and searches return incorrect results or cause NullPointerException.
 
-Root Cause: Plain skip list (without CAS/locks) is not thread-safe. Concurrent insert modifies the same predecessor's `next` pointer simultaneously.
+**Root Cause:** Plain skip list (without CAS/locks) is not thread-safe. Concurrent insert modifies the same predecessor's `next` pointer simultaneously.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstack <pid> | grep "RUNNABLE"
 # Multiple threads in SkipList.insert() simultaneously
 ```
 
-Fix: Use `ConcurrentSkipListMap` from Java's concurrent package, or implement with CAS.
+**Fix:** Use `ConcurrentSkipListMap` from Java's concurrent package, or implement with CAS.
 
-Prevention: Never share a plain skip list implementation between threads.
+**Prevention:** Never share a plain skip list implementation between threads.
 
 ---
 
 **3. Excessive height from MAX_LEVEL too high**
 
-Symptom: Skip list uses far more memory than expected; many empty levels per node.
+**Symptom:** Skip list uses far more memory than expected; many empty levels per node.
 
-Root Cause: MAX_LEVEL set too high for actual N. For N=1000, MAX_LEVEL=32 is wasteful (expected max needed height ~10).
+**Root Cause:** MAX_LEVEL set too high for actual N. For N=1000, MAX_LEVEL=32 is wasteful (expected max needed height ~10).
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Print average node height:
 double avgHeight = nodes.stream()
@@ -317,9 +317,9 @@ System.out.println("Avg height: " + avgHeight);
 // Should be ≈ 2 for p=0.5
 ```
 
-Fix: Set `MAX_LEVEL = ceil(log₂(expectedMaxN))`. For N up to 10^6, MAX_LEVEL=20 is sufficient.
+**Fix:** Set `MAX_LEVEL = ceil(log₂(expectedMaxN))`. For N up to 10^6, MAX_LEVEL=20 is sufficient.
 
-Prevention: Size MAX_LEVEL to your expected dataset; document the reasoning.
+**Prevention:** Size MAX_LEVEL to your expected dataset; document the reasoning.
 
 ---
 

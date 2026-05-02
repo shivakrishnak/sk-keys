@@ -463,14 +463,14 @@ public RuntimeWiringConfigurer runtimeWiringConfigurer() {
 
 **Schema/Resolver Mismatch — Non-null Returns Null**
 
-Symptom:
+**Symptom:**
 Response returns `{"data": null, "errors": [{"message": "Cannot return null for non-nullable field User.name"}]}`
 
-Root Cause:
+**Root Cause:**
 Resolver for `User.name` returned null, but field is declared `String!`.
 Null propagates upward, nulling out `User`, then potentially the entire `data`.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```
 # Schema check:
@@ -483,11 +483,11 @@ spring.graphql.schema.printer.enabled=true
 logging.level.graphql=DEBUG
 ```
 
-Fix:
+**Fix:**
 Either make schema nullable (`name: String`), or ensure resolver always
 returns a value (add null-check + default or proper error handling).
 
-Prevention:
+**Prevention:**
 Schema linting tools (eslint-plugin-graphql) check for non-null fields
 without default values. Run in CI pipeline.
 
@@ -495,15 +495,15 @@ without default values. Run in CI pipeline.
 
 **Schema Introspection Exposing Sensitive Types**
 
-Symptom:
+**Symptom:**
 Security audit finds that internal types (e.g., `InternalAuditLog`,
 `AdminConfig`) are discoverable via `{ __schema { types { name } } }`.
 
-Root Cause:
+**Root Cause:**
 Introspection is enabled in production (default GraphQL behavior).
 Internal types used for admin mutations are visible to all clients.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 curl -X POST https://api.example.com/graphql \
@@ -512,12 +512,12 @@ curl -X POST https://api.example.com/graphql \
 # If it returns full type list: introspection is enabled
 ```
 
-Fix:
+**Fix:**
 Disable introspection for unauthenticated requests in production.
 Spring for GraphQL: `spring.graphql.schema.introspection.enabled=false`
 or restrict to admin role via custom `InstrumentationContext`.
 
-Prevention:
+**Prevention:**
 Production GraphQL APIs should never expose introspection to anonymous users.
 Use Apollo Studio or similar tools to share schema with team without public introspection.
 

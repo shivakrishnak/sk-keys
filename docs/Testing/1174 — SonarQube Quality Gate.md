@@ -297,15 +297,15 @@ sonar.exclusions=**/generated/**,**/config/**  # exclude generated code from ana
 
 **1. Quality Gate Always Fails for Legacy Projects**
 Cause: Overall coverage < 80% on legacy project.
-Fix: Set new code period to "since first analysis of this branch"; only new code is evaluated. Legacy issues tracked but don't block.
+**Fix:** Set new code period to "since first analysis of this branch"; only new code is evaluated. Legacy issues tracked but don't block.
 
 **2. "False Positive" Vulnerabilities Block PR**
 Cause: SonarQube flags legitimate security-safe pattern as vulnerability.
-Fix: Mark as "False Positive" in SonarQube UI with explanation. False positives are tracked and don't re-appear.
+**Fix:** Mark as "False Positive" in SonarQube UI with explanation. False positives are tracked and don't re-appear.
 
 **3. SonarQube Analysis Slows Build by 5+ Minutes**
 Cause: Full reanalysis on every push.
-Fix: Use branch analysis (analyze only changed files on feature branches); full analysis only on main branch. Or: use SonarCloud (hosted, faster, scales automatically).
+**Fix:** Use branch analysis (analyze only changed files on feature branches); full analysis only on main branch. Or: use SonarCloud (hosted, faster, scales automatically).
 
 ---
 

@@ -319,16 +319,16 @@ k6 run \
 
 **1. Load Test Doesn't Represent Real Traffic**
 Cause: All virtual users request the same endpoint with same data → cache artificially inflates performance.
-Fix: Use parameterized data sources (CSV with random user IDs, product IDs). Test realistic URL distributions.
+**Fix:** Use parameterized data sources (CSV with random user IDs, product IDs). Test realistic URL distributions.
 
 **2. Thundering Herd on Ramp-Up**
 Cause: All VUs start simultaneously (`atOnceUsers(1000)`) → 1000 cold-start connections at once.
 Result: Database connection pool exhaustion at start, not under steady load.
-Fix: Gradual ramp-up (`rampUsers(1000).during(60)`) — allows connection pool to fill gradually.
+**Fix:** Gradual ramp-up (`rampUsers(1000).during(60)`) — allows connection pool to fill gradually.
 
 **3. Load Test Starves Real Monitoring**
 Cause: Load test generates so many requests that monitoring data (Prometheus/CloudWatch) is overwhelmed; dashboards become unreadable.
-Fix: Dedicate a separate monitoring stack for load test runs; or use a different Grafana data source.
+**Fix:** Dedicate a separate monitoring stack for load test runs; or use a different Grafana data source.
 
 ---
 

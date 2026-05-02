@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 In traditional compiled languages (C, C++), the compiler targets a specific CPU architecture — x86-64, ARM64, RISC-V. The resulting binary works only on that architecture. When Sun built Java for consumer electronics in the early 1990s, devices used dozens of different processors. Shipping a separate binary for every CPU was unsustainable. But pure interpretation (like early Python or JavaScript) was too slow for the numeric-intensive applications Java needed to run.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Neither native compilation nor pure interpretation worked for cross-platform deployment at acceptable performance. Native compilation locks you to one architecture. Pure interpretation interprets text or ASTs — slow, with no room for optimisation.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 An intermediate representation — compact, typed, and architecture-neutral — could be interpreted faster than source code and could be JIT-compiled to native code on each platform separately. This is exactly why bytecode was created: it is the sweet spot between portability and performance.
 
 ---
@@ -64,32 +64,32 @@ Bytecode is not binary machine code and not source code — it is a typed, stack
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Bytecode is architecture-neutral — it cannot reference CPU registers or memory addresses.
 2. Bytecode is typed — every value on the operand stack has a declared type; the verifier enforces this.
 3. Bytecode uses a stack machine model — operations pop operands, compute, and push results.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 mandates an abstract instruction set unrelated to real CPUs. This design uses a virtual stack machine (not register machine like x86) — easier to verify and target from multiple source languages. Invariant 2 enables the Bytecode Verifier to statically prove type safety before execution, eliminating a whole class of runtime safety checks. Invariant 3 simplifies the interpreter: every instruction takes from and pushes to the operand stack — no register allocation needed at the bytecode level (the JIT handles that for native code).
 
-THE TRADE-OFFS:
-Gain: Platform portability, static type verification, enables JIT optimisation with profiling data.
-Cost: Requires JIT warmup time before reaching peak performance; bytecode is larger than equivalent native code; requires a JVM to run.
+**THE TRADE-OFFS:**
+**Gain:** Platform portability, static type verification, enables JIT optimisation with profiling data.
+**Cost:** Requires JIT warmup time before reaching peak performance; bytecode is larger than equivalent native code; requires a JVM to run.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Consider this Java method: `int add(int a, int b) { return a + b; }`. Compile it with `javac`.
 
-WHAT HAPPENS WITHOUT BYTECODE (native compilation):
+**WHAT HAPPENS WITHOUT BYTECODE (native compilation):**
 `javac` compiles to x86-64 assembly: `mov eax, [rbp-4]; add eax, [rbp-8]; ret`. This runs instantly on x86-64. On an ARM Mac, the binary is invalid — different instruction encoding. Users with Apple Silicon cannot run your program without recompilation.
 
-WHAT HAPPENS WITH BYTECODE:
+**WHAT HAPPENS WITH BYTECODE:**
 `javac` compiles to bytecode: `iload_1; iload_2; iadd; ireturn`. The JVM's interpreter reads these opcodes on any CPU. On x86-64, the JIT eventually compiles this to `lea eax, [rsi+rdi]`. On ARM64, the JIT compiles it to `add w0, w0, w1`. Same bytecode, optimal native code for each CPU.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Bytecode separates the "what" (typed logic) from the "how" (machine instructions). This indirection enables every JVM to produce the most efficient native code for its specific CPU — something impossible if source code was compiled to native directly.
 
 ---
@@ -98,10 +98,10 @@ Bytecode separates the "what" (typed logic) from the "how" (machine instructions
 
 > Bytecode is like Braille instructions for a machine. Braille is a universal tactile encoding. A Braille reader in Japan and one in Germany both read the same dots and get the same text. The JVM is the reader; bytecode is the Braille dots; native machine code is the understood meaning.
 
-"Braille dots" → bytecode opcodes (e.g., `iadd`, `iload`, `invokevirtual`)
-"Braille standard" → the JVM specification
-"Braille reader" → JVM interpreter or JIT compiler
-"Understood meaning" → native CPU instructions actually executed
+- "Braille dots" → bytecode opcodes (e.g., `iadd`, `iload`, `invokevirtual`)
+- "Braille standard" → the JVM specification
+- "Braille reader" → JVM interpreter or JIT compiler
+- "Understood meaning" → native CPU instructions actually executed
 
 Where this analogy breaks down: unlike Braille (which is a 1:1 encoding of text), the JIT compiler may translate one bytecode instruction into dozens of optimised native instructions — highly context-dependent.
 
@@ -186,7 +186,7 @@ This static verification means the JVM can skip runtime type checks for verified
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 .java source
   → javac compiles to .class (bytecode) ← YOU ARE HERE
@@ -198,7 +198,7 @@ NORMAL FLOW:
   → Native code runs on CPU
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Bytecode Verifier rejects class
   → java.lang.VerifyError thrown
@@ -208,7 +208,7 @@ Bytecode Verifier rejects class
     or incompatible ASM bytecode manipulation
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, JIT compilation dominates performance. Methods called millions of times per second get compiled to highly optimised native code with inlining across call boundaries. The bytecode itself is essentially irrelevant after warmup — performance depends on the quality of JIT optimisation, not bytecode efficiency. At 1000x load, JIT compilation threads can become CPU bottlenecks; profiling with `-XX:+PrintCompilation` reveals which methods take longest to compile.
 
 ---
@@ -356,11 +356,11 @@ How to choose: Java bytecode is the right choice when you need the JVM ecosystem
 
 **1. VerifyError at Class Loading**
 
-Symptom: `java.lang.VerifyError: Bad type on operand stack` when a class is loaded; application crashes on startup.
+**Symptom:** `java.lang.VerifyError: Bad type on operand stack` when a class is loaded; application crashes on startup.
 
-Root Cause: Usually caused by a bytecode instrumentation library (ASM, Javassist, CGLIB) generating invalid bytecode — wrong stack types, wrong frame types, or jump to invalid offset.
+**Root Cause:** Usually caused by a bytecode instrumentation library (ASM, Javassist, CGLIB) generating invalid bytecode — wrong stack types, wrong frame types, or jump to invalid offset.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Enable verbose class loading and bytecode verification
 java -XX:+TraceClassLoading \
@@ -371,28 +371,28 @@ java -XX:+TraceClassLoading \
 javap -c -verbose OffendingClass.class
 ```
 
-Prevention: After bytecode manipulation, run `ClassWriter.COMPUTE_FRAMES` in ASM to let ASM recompute stack frames automatically.
+**Prevention:** After bytecode manipulation, run `ClassWriter.COMPUTE_FRAMES` in ASM to let ASM recompute stack frames automatically.
 
 **2. UnsupportedClassVersionError**
 
-Symptom: Application fails to start: `java.lang.UnsupportedClassVersionError: major version 65 (Java 21) > 61 (Java 17)`.
+**Symptom:** Application fails to start: `java.lang.UnsupportedClassVersionError: major version 65 (Java 21) > 61 (Java 17)`.
 
-Root Cause: `.class` file compiled with a higher Java version than the running JVM.
+**Root Cause:** `.class` file compiled with a higher Java version than the running JVM.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Show class file version
 javap -verbose MyClass.class | grep "major version"
 # 65 = Java 21, 61 = Java 17, 55 = Java 11
 ```
 
-Fix:
+**Fix:**
 ```bash
 # Recompile targeting an older version
 javac --release 17 -d out src/MyClass.java
 ```
 
-Prevention: Set `--release` in your build tool to match deployment JRE:
+**Prevention:** Set `--release` in your build tool to match deployment JRE:
 ```xml
 <!-- Maven: enforce target bytecode version -->
 <plugin>
@@ -405,11 +405,11 @@ Prevention: Set `--release` in your build tool to match deployment JRE:
 
 **3. Slow Application Startup (JIT warmup)**
 
-Symptom: First 30–60 seconds of application handling requests is slow (high latency, low throughput). Performance improves dramatically after warmup.
+**Symptom:** First 30–60 seconds of application handling requests is slow (high latency, low throughput). Performance improves dramatically after warmup.
 
-Root Cause: During warmup, the JVM interprets bytecode rather than executing JIT-compiled native code. High invocation counts are needed before JIT kicks in for each method.
+**Root Cause:** During warmup, the JVM interprets bytecode rather than executing JIT-compiled native code. High invocation counts are needed before JIT kicks in for each method.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Watch JIT compilation progress
 java -XX:+PrintCompilation -jar myapp.jar \
@@ -418,7 +418,7 @@ java -XX:+PrintCompilation -jar myapp.jar \
 # Lines = methods being compiled; high count = warmup in progress
 ```
 
-Prevention: Use JVM-level profiling during load tests to collect compilation data; with GraalVM Enterprise, use Profile-Guided Optimisation (PGO) to compile all hot paths ahead of time.
+**Prevention:** Use JVM-level profiling during load tests to collect compilation data; with GraalVM Enterprise, use Profile-Guided Optimisation (PGO) to compile all hot paths ahead of time.
 
 ---
 

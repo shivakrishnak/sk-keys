@@ -252,12 +252,12 @@ jobs:
 **1. Golden Path Scope Creep**
 Cause: Team keeps adding "critical" tests; golden path suite grows to 50 tests, 30 minutes.
 Result: Golden path loses its fast-feedback purpose.
-Fix: Hard limit: golden path = max 10 tests, max 5 minutes. New tests bump existing ones out or go to full E2E.
+**Fix:** Hard limit: golden path = max 10 tests, max 5 minutes. New tests bump existing ones out or go to full E2E.
 
 **2. Flaky Golden Path Tests Block Deployment**
 Cause: A golden path test has timing issues; fails 10% of the time.
 Impact: Blocks valid deployments; team loses trust; starts re-running to bypass.
-Fix: Zero flakiness tolerance for golden paths — fix flakiness immediately (higher priority than features).
+**Fix:** Zero flakiness tolerance for golden paths — fix flakiness immediately (higher priority than features).
 
 ---
 

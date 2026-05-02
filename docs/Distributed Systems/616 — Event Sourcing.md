@@ -269,13 +269,13 @@ public OrderAggregate loadAggregate(String aggregateId) {
 
 **Event Schema Breaking Change — Projector Crash on Old Events**
 
-Symptom: Developer renames a field in OrderPlacedEvent (orderId → order_id during a
+**Symptom:** Developer renames a field in OrderPlacedEvent (orderId → order_id during a
 naming cleanup). On deployment, the projector tries to deserialize old events with the
 new schema → NullPointerException → projector crashes → dead letter queue fills.
 
 Cause: Event schema is not backward compatible. Old events don't have the new field name.
 
-Fix: (1) Never rename event fields — add new fields, deprecate old ones.
+**Fix:** (1) Never rename event fields — add new fields, deprecate old ones.
 (2) Implement upcasters: a function that transforms old event JSON to new event
 format before deserialization.
 (3) Use flexible deserialization (@JsonProperty alternatives, Jackson's

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Before JSR-133 (2004) formalised the Java Memory Model, Java's concurrency specification was ambiguous about what multi-threaded programs could actually guarantee. Compilers and JVMs were free to reorder any operations that appeared safe from a single-thread perspective. This meant well-intentioned concurrent code could be "broken" by any good-faith JVM implementation. developers had no formal model to reason about correctness, and JVM vendors had no specification to implement against.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 The lack of formal semantics meant two things: (1) a concurrent program that worked on JVM A could be silently wrong on JVM B; (2) JVM vendors couldn't optimise aggressively without risking breaking programs, because there was no clear specification of what transformations were legal. Both program correctness and platform optimisation suffered.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 JSR-133 introduced happens-before as the core semantic abstraction. Instead of specifying exactly when writes become visible (which depends on hardware), JSR-133 defines conditions under which a write is guaranteed to be visible — the happens-before relationship. Programs with all required happens-before edges are data-race-free and execute correctly. Programs without them have undefined behaviour per the JMM. This is exactly why happens-before was formalised: it provides a precise, hardware-independent contract for concurrent Java code.
 
 ---
@@ -64,23 +64,23 @@ The crucial insight is that happens-before is not about physical time — it's a
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Within a single thread, all actions are ordered by happens-before (program order).
 2. happens-before is transitive: if A →_hb B and B →_hb C, then A →_hb C.
 3. happens-before is NOT a statement about execution order — it is a statement about visibility.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 means single-threaded code behaves as written — predictable. Invariant 2 enables composability: you establish A →_hb B using a `volatile` write, and separately B →_hb C using a `synchronized` exit. By transitivity, A →_hb C, meaning A's writes are visible when C executes. Invariant 3 is the common misunderstanding: two actions ordered by happens-before must have A's writes visible to C, but A may actually execute after C in physical wall-clock time — happens-before is about observable effects, not timestamps.
 
-THE TRADE-OFFS:
-Gain: A precise, hardware-independent language for reasoning about concurrent visibility; clear contract for what "correctly synchronised" means in Java.
-Cost: Abstract — does not tell programmers the exact mechanism (memory barriers, synchronisation protocols) behind the guarantee; easy to build incorrect intuitions about "time" from happens-before ordering.
+**THE TRADE-OFFS:**
+**Gain:** A precise, hardware-independent language for reasoning about concurrent visibility; clear contract for what "correctly synchronised" means in Java.
+**Cost:** Abstract — does not tell programmers the exact mechanism (memory barriers, synchronisation protocols) behind the guarantee; easy to build incorrect intuitions about "time" from happens-before ordering.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Thread A runs: `data = 42; flag.set(true);` (using `AtomicBoolean`).
 Thread B runs: `while (!flag.get()) {}; assert data == 42;`.
 
@@ -98,7 +98,7 @@ Step 5: Transitivity: `data = 42` →_hb `flag.set(true)` →_hb `flag.get()=tru
 
 CONCLUSION: The assert is guaranteed to see `data = 42`. The chain of happens-before edges flows from the write through the volatile publication point to the read. This is the "publication idiom" — volatile flag used to safely publish a non-volatile value.
 
-THE INSIGHT:
+**THE INSIGHT:**
 A single volatile access can "carry" the happens-before guarantee for all preceding writes in Thread A to all subsequent reads in Thread B. You don't need every shared variable to be volatile — only the publication point.
 
 ---
@@ -107,10 +107,10 @@ A single volatile access can "carry" the happens-before guarantee for all preced
 
 > Think of happens-before edges as signed certificates in a legal chain of custody. A write to `data` is a document. Thread A signs it (`volatile write`). Thread B receives and verifies the signature (`volatile read`). Once verified, Thread B is legally bound to acknowledge all documents signed before Thread A's signature. The chain of custody (happens-before chain) guarantees legal standing, regardless of the actual route the documents took.
 
-"Signing a document" → volatile write, synchronized exit, thread start
-"Verifying signature" → volatile read, synchronized entry, thread join
-"Legal acknowledgement of prior documents" → visibility of all writes before the synchronisation action
-"Chain of custody" → transitive happens-before chain
+- "Signing a document" → volatile write, synchronized exit, thread start
+- "Verifying signature" → volatile read, synchronized entry, thread join
+- "Legal acknowledgement of prior documents" → visibility of all writes before the synchronisation action
+- "Chain of custody" → transitive happens-before chain
 
 Where this analogy breaks down: unlike legal documents where time is recorded, happens-before has no timeline. A document "signed" at midnight and received at noon still counts — happens-before is enforced regardless of wall-clock timing.
 
@@ -191,7 +191,7 @@ Thread A:                    Thread B:
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Thread A writes data       Thread B
   data = 42                  (waiting for publication)
@@ -204,7 +204,7 @@ Thread A writes data       Thread B
                            use(data)  // guaranteed 42
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Missing happens-before edge:
   Thread A writes data=42 (no volatile, no sync)
@@ -217,7 +217,7 @@ Missing happens-before edge:
   None guaranteed by specification
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale across distributed JVMs, happens-before doesn't extend across JVM boundaries — it's a single-JVM concept. Distributed systems must use message passing, database locking, or distributed consensus to establish cross-JVM ordering. This is why distributed systems theory (Lamport clocks, vector clocks) uses the same happens-before concept but with explicit "message sent / message received" edges instead of Java's synchronisation actions.
 
 ---
@@ -339,11 +339,11 @@ How to choose: Use `volatile` when visibility is needed without atomicity. Use `
 
 **1. Data Race from Missing Happens-Before**
 
-Symptom: Intermittent wrong values; race condition that only manifests under specific timing; passes all unit tests (tests run sequentially) but fails under load.
+**Symptom:** Intermittent wrong values; race condition that only manifests under specific timing; passes all unit tests (tests run sequentially) but fails under load.
 
-Root Cause: Two threads access the same variable with at least one write, without any synchronisation establishing happens-before.
+**Root Cause:** Two threads access the same variable with at least one write, without any synchronisation establishing happens-before.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Java race condition detection tools:
 # 1. ThreadSanitizer with JNI agent:
@@ -356,15 +356,15 @@ mvn com.github.spotbugs:spotbugs-maven-plugin:check
 # 4. Run with helgrind under Linux perf tools
 ```
 
-Prevention: Follow the rule: if multiple threads access a variable and at least one writes, it must be protected by volatile, synchronized, or java.util.concurrent.
+**Prevention:** Follow the rule: if multiple threads access a variable and at least one writes, it must be protected by volatile, synchronized, or java.util.concurrent.
 
 **2. Stale Read Despite "Previous" Write**
 
-Symptom: Thread B reads a field and sees an old value even though Thread A wrote the new value "before" (in physical time).
+**Symptom:** Thread B reads a field and sees an old value even though Thread A wrote the new value "before" (in physical time).
 
-Root Cause: "Before in time" is not happens-before. Without a synchronisation action connecting A's write to B's read, there is no happens-before edge, and B may see any cached value.
+**Root Cause:** "Before in time" is not happens-before. Without a synchronisation action connecting A's write to B's read, there is no happens-before edge, and B may see any cached value.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Add this check: trace happens-before chain from write to read
 // Does a synchronized exit / volatile write occur after the
@@ -374,15 +374,15 @@ Diagnostic:
 // If no: no happens-before → expected stale read.
 ```
 
-Prevention: Draw the happens-before chain. If there's no continuous chain from the write to the read, add synchronisation at the publication point.
+**Prevention:** Draw the happens-before chain. If there's no continuous chain from the write to the read, add synchronisation at the publication point.
 
 **3. Assuming transitivity with time-based ordering**
 
-Symptom: Complex multi-stage pipeline where Thread A sets data, Thread B processes it, Thread C reads the result. Thread C sees correct data from B but stale data from A.
+**Symptom:** Complex multi-stage pipeline where Thread A sets data, Thread B processes it, Thread C reads the result. Thread C sees correct data from B but stale data from A.
 
-Root Cause: A→B happens-before chain was established, and B→C chain was established, but the chains were established using different synchronisation objects, breaking transitive chaining.
+**Root Cause:** A→B happens-before chain was established, and B→C chain was established, but the chains were established using different synchronisation objects, breaking transitive chaining.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Check: is the happens-before chain continuous?
 // A writes data
@@ -397,7 +397,7 @@ Diagnostic:
 // as long as the chain is continuous
 ```
 
-Prevention: Document the happens-before chain explicitly in concurrent code comments; use tools like JCStress to test the ordering assumptions.
+**Prevention:** Document the happens-before chain explicitly in concurrent code comments; use tools like JCStress to test the ordering assumptions.
 
 ---
 

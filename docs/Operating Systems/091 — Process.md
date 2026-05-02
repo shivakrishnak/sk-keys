@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine the earliest computers — they ran one program at a time, directly
 on the hardware. Program A ran until it finished, then Program B started.
 If Program A crashed, it took down the entire machine. If Program A wrote
@@ -45,13 +45,13 @@ buggy application could corrupt another's memory. A runaway loop could
 steal the CPU from everything else. There was no way to say "this program
 gets 512 MB of RAM and no more."
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Without isolation, a single buggy program can corrupt all other running
 programs' memory. There is no way to limit resource consumption, enforce
 security boundaries, or cleanly terminate one program without affecting
 others.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why the **Process** was created — a protected, isolated
 execution environment giving each program the illusion of owning the CPU
 and memory, while the OS enforces boundaries between programs.
@@ -93,7 +93,7 @@ secretly time-sharing resources between hundreds of processes.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. **Isolation**: a process cannot read or write another process's memory
    without explicit OS permission (shared memory / pipes).
@@ -102,17 +102,17 @@ CORE INVARIANTS:
 3. **Lifecycle state**: a process is always in exactly one of: new,
    ready, running, waiting, or terminated.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given these invariants, the OS must maintain a per-process data structure
 (PCB) capturing all context needed to pause and resume execution. Memory
 isolation requires the hardware MMU to translate virtual addresses to
 physical addresses differently for each process. The OS kernel — not the
 process — controls transitions between states.
 
-THE TRADE-OFFS:
-Gain: complete isolation, fault containment, independent resource limits,
+**THE TRADE-OFFS:**
+**Gain:** complete isolation, fault containment, independent resource limits,
 security boundaries between programs.
-Cost: process creation is expensive (fork() copies address space);
+**Cost:** process creation is expensive (fork() copies address space);
 inter-process communication (IPC) requires explicit mechanisms
 (pipes, sockets, shared memory) and has higher overhead than
 intra-process communication.
@@ -121,25 +121,25 @@ intra-process communication.
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You have two programs: a web server and a database. Both run on the same
 machine and both use a global variable called `connectionCount`.
 
-WHAT HAPPENS WITHOUT PROCESS:
+**WHAT HAPPENS WITHOUT PROCESS:**
 Both programs share one address space. When the web server writes
 `connectionCount = 42`, it overwrites the database's `connectionCount`
 variable at the same address. The database now reports 42 active
 connections when it has 7. The database crashes with an assertion
 error. The crash silently terminates the web server too.
 
-WHAT HAPPENS WITH PROCESS:
+**WHAT HAPPENS WITH PROCESS:**
 Each program gets its own virtual address space. Both have
 `connectionCount` at virtual address `0x601040`, but the MMU maps
 these to _different_ physical memory locations. The web server writes
 42 to its own copy. The database sees 7 in its own copy. A crash
 in the web server is caught by the OS — the database keeps running.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Virtual address spaces make isolation both simple and complete. Each
 process believes it owns all of memory, yet programs never interfere.
 
@@ -254,7 +254,7 @@ The **Process Control Block** stores:
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 Shell types "java App"
@@ -267,7 +267,7 @@ Shell types "java App"
   → Process calls exit() → OS reclaims resources
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Process dereferences null pointer
@@ -278,7 +278,7 @@ Process dereferences null pointer
   → Parent notified via SIGCHLD
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10,000 processes, scheduler O(1) or CFS algorithms matter because
 O(n) scheduling becomes measurable latency. PCB memory overhead scales
 linearly — each PCB consumes ~7 KB in the kernel; 10,000 processes = 70 MB
@@ -317,16 +317,16 @@ matter most; use threads when shared state and low overhead matter more.
 
 **1. Zombie Process**
 
-Symptom:
+**Symptom:**
 `ps aux` shows a process in state `Z` (zombie). System process table
 slowly fills up. `fork()` calls start failing with EAGAIN.
 
-Root Cause:
+**Root Cause:**
 Child process exited but parent never called `wait()` to reap it. The
 PCB entry remains in the process table until the parent collects the
 exit status.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 ps aux | grep 'Z'
@@ -334,7 +334,7 @@ ps aux | grep 'Z'
 ps -o ppid= -p <zombie_pid>
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: spawning child processes without reaping
@@ -346,19 +346,19 @@ Process p = Runtime.getRuntime().exec("cmd");
 int exit = p.waitFor(); // blocks until child exits
 ```
 
-Prevention: Always handle SIGCHLD or call waitpid() in parent processes.
+**Prevention:** Always handle SIGCHLD or call waitpid() in parent processes.
 
 **2. Process Memory Leak**
 
-Symptom:
+**Symptom:**
 Process RSS (resident set size) grows indefinitely over hours. OOM
 killer eventually terminates the process with "Out of memory" in dmesg.
 
-Root Cause:
+**Root Cause:**
 Application allocates heap memory (malloc/new) without freeing it.
 Virtual address space exhaustion precedes physical memory exhaustion.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Monitor process memory over time
@@ -367,24 +367,24 @@ watch -n 1 'ps -o pid,rss,vsz,comm -p <PID>'
 cat /proc/<PID>/smaps | grep -A5 'heap'
 ```
 
-Fix: Use memory profilers (valgrind, Java Flight Recorder) to identify
+**Fix:** Use memory profilers (valgrind, Java Flight Recorder) to identify
 allocation sites. Ensure all allocations have corresponding deallocation
 paths.
 
-Prevention: Instrument heap metrics in production; alert on monotonic RSS
+**Prevention:** Instrument heap metrics in production; alert on monotonic RSS
 growth over a rolling window.
 
 **3. Too Many Processes (fork bomb)**
 
-Symptom:
+**Symptom:**
 System becomes unresponsive. `fork()` returns EAGAIN. Load average
 spikes to hundreds. SSH becomes impossible.
 
-Root Cause:
+**Root Cause:**
 Runaway process creation — each child spawns children exponentially.
 Process table fills; scheduler overhead dominates CPU time.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Count processes by user
@@ -393,14 +393,14 @@ ps aux | awk '{print $1}' | sort | uniq -c | sort -rn
 cat /proc/sys/kernel/pid_max
 ```
 
-Fix: Set per-user process limits in `/etc/security/limits.conf`:
+**Fix:** Set per-user process limits in `/etc/security/limits.conf`:
 
 ```
 # Limit each user to 1000 processes
 username hard nproc 1000
 ```
 
-Prevention: Apply `ulimit -u` limits in containerized or untrusted
+**Prevention:** Apply `ulimit -u` limits in containerized or untrusted
 environments. Use cgroups `pids` subsystem for hard process limits.
 
 ---

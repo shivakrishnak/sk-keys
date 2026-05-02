@@ -244,7 +244,7 @@ for i in range(5):
 
 **Half-Open TCP Connections (Direct Manifestation)**
 
-Symptom: Service A has 100 "established" TCP connections to service B. Service B
+**Symptom:** Service A has 100 "established" TCP connections to service B. Service B
 was restarted and has 0 connections to service A. Service A's connections appear
 established but are dead — writes silently fail until TCP keepalive timeout fires.
 
@@ -253,7 +253,7 @@ thinks the connection is ESTABLISHED (never received FIN). This is the Two Gener
 problem in practice: A established the connection (sent SYN-ACK-ACK), but B's ACK
 (the state confirmation) was implicitly lost in the crash.
 
-Fix: Enable TCP keepalive (KEEPIDLE=60s, KEEPINTVL=10s, KEEPCNT=6). Application-level
+**Fix:** Enable TCP keepalive (KEEPIDLE=60s, KEEPINTVL=10s, KEEPCNT=6). Application-level
 heartbeats. Connection pool validation on borrow (test query before returning connection).
 
 ---

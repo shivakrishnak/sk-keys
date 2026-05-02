@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Leader-Follower Pattern"
 parent: "System Design"
@@ -173,7 +173,7 @@ WITH Leader-Follower:
 "Musicians following conductor" = follower nodes (replicate leader's state)
 "Only conductor decides tempo" = only leader accepts writes (prevents conflicts)
 "First violinist takes over" = leader election (most up-to-date follower promoted)
-"Two conductors = cacophony" = split brain (two leaders → divergent state → data corruption)
+- "Two conductors = cacophony" = split brain (two leaders → divergent state → data corruption)
 
 ---
 

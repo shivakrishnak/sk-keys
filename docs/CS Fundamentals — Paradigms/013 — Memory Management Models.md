@@ -32,15 +32,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 A running program needs memory to store variables, objects, and data. That memory comes from a finite physical resource — RAM. When your program allocates memory, something must track which blocks are in use and which are free. Without a systematic model, every allocation is a guess and every function return is a leak waiting to happen.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 In C, the developer calls `malloc` to allocate and `free` to release. Forget to `free` — memory leak; the process consumes ever-growing RAM until the OS kills it. Free too early — use-after-free; undefined behavior, data corruption, security vulnerability. Free twice — double free; heap corruption, program crash. For decades, memory errors were the #1 source of software bugs and security vulnerabilities (CVEs), including buffer overflows and use-after-free exploits.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 This is exactly why multiple memory management models were invented — each trading programmer burden for runtime cost and safety guarantees differently: manual management (C), garbage collection (Java, Go), reference counting (Python, Swift, Objective-C), and ownership systems (Rust).
 
@@ -68,13 +68,13 @@ The key trade-off is _determinism vs automation_. Manual management gives maximu
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Memory is finite — allocating without freeing eventually exhausts it.
 2. Memory must not be used after it has been freed — the physical location may be reallocated to another object.
 3. Memory must be freed exactly once — freeing twice corrupts the allocator's internal structures.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 Given these three invariants, a language designer must decide: _who_ enforces them? Three answers exist:
 
@@ -84,7 +84,7 @@ Given these three invariants, a language designer must decide: _who_ enforces th
 
 **Enforce ownership at compile time** (Rust): The compiler tracks which variable "owns" each heap allocation. When the owner goes out of scope, the compiler inserts `drop` calls. Borrowing rules prevent dangling references. No runtime required. Safety guaranteed with zero GC overhead; cost is the borrow checker's learning curve.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
 Manual: maximum speed, zero overhead, maximum risk.
 GC: developer safety, pause latency, memory overhead (live objects + garbage in flight).
@@ -95,19 +95,19 @@ Ownership: zero overhead, zero runtime, zero safety gaps — but steep learning 
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Three developers implement the same web server: one in C, one in Java, one in Rust. Each request creates a `Request` object in memory. After the request is handled, the memory should be freed.
 
-WHAT HAPPENS IN C (manual):
+**WHAT HAPPENS IN C (manual):**
 The developer writes `Request* req = malloc(sizeof(Request))` and `free(req)` at the end of the handler. Works perfectly — until a code path with early return forgets the `free`. After a few weeks in production handling millions of requests, the process's RSS grows unbounded. The OOM killer restarts the server at 3 AM. Root cause: one missing `free` call in one edge-case handler, introduced in a PR three weeks ago.
 
-WHAT HAPPENS IN JAVA (GC):
+**WHAT HAPPENS IN JAVA (GC):**
 `new Request()` allocates on the heap. When the handler returns, the local `req` reference goes out of scope. The GC eventually finds it unreachable and reclaims the memory. No memory leak possible. But under high load, the GC runs more frequently — every 100ms, a 10ms stop-the-world pause freezes all threads. At p99, requests spike to 50ms instead of 5ms during GC events.
 
-WHAT HAPPENS IN RUST (ownership):
+**WHAT HAPPENS IN RUST (ownership):**
 `let req = Request::new()` creates an owned value. When the function returns, the compiler inserts `req.drop()` automatically. The memory is freed _immediately_ — no GC pause, no leak, enforced by the compiler. The `free` is guaranteed to happen exactly once, at exactly the right time, without a runtime.
 
-THE INSIGHT:
+**THE INSIGHT:**
 There is no free lunch. C has performance but requires perfection. Java prevents bugs but introduces latency variance. Rust prevents both bugs and pauses but requires understanding ownership — a new kind of complexity that the compiler enforces instead of the runtime.
 
 ---
@@ -220,7 +220,7 @@ Cycle: A.refcount=1 (B points to A)
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 Program needs to store an object
@@ -239,7 +239,7 @@ Object becomes unreachable / owner goes out of scope
 Memory reclaimed and returned to free pool
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 C: programmer forgets free → memory leak
@@ -252,7 +252,7 @@ Rust: borrow checker rejects unsafe code → compile error
       → bug caught at compile time, never reaches production
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 At 10,000 requests/second with Java, GC pressure becomes a latency multiplier — tuning `Xmx`, `Xms`, GC algorithm (G1, ZGC, Shenandoah) becomes critical to maintain p99 SLAs. At the same scale, a Go service has simpler GC (designed for low latency) but may have higher memory usage. A Rust service has the lowest memory footprint and most predictable latency — no GC pauses — but the highest initial development cost.
 
@@ -379,13 +379,13 @@ for stat in top_stats[:3]:
 
 **Java Heap Memory Leak**
 
-Symptom:
+**Symptom:**
 Old Generation heap grows steadily over hours/days. Full GC events become more frequent. Eventually `java.lang.OutOfMemoryError: Java heap space` terminates the process.
 
-Root Cause:
+**Root Cause:**
 Live references are retained in long-lived data structures (static Maps, event listener lists, thread-local variables) preventing GC from reclaiming objects that are logically "done." Classic case: `HashMap` used as a cache with no eviction policy.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Watch heap growth over time:
@@ -400,23 +400,23 @@ java -XX:+HeapDumpOnOutOfMemoryError \
 # Look for "Leak Suspects" report — shows retained heap per class
 ```
 
-Fix:
+**Fix:**
 Replace unbounded `HashMap` with `WeakHashMap`, `Caffeine` cache with TTL/size limits, or explicitly remove entries. Remove static references to request-scoped objects.
 
-Prevention:
+**Prevention:**
 Set a maximum heap size (`-Xmx`) appropriate for your service. Add heap monitoring alerts (alert at 80% heap utilisation). Use weak references for caches.
 
 ---
 
 **C Use-After-Free Vulnerability**
 
-Symptom:
+**Symptom:**
 Program crashes with segmentation fault. Unpredictable data corruption. Security exploit (attacker controls freed memory content before reuse).
 
-Root Cause:
+**Root Cause:**
 A pointer is used after `free()` was called on it. The memory allocator may have reassigned that memory to another allocation, so writing through the freed pointer corrupts another object or creates a security vulnerability.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Detect use-after-free with AddressSanitizer:
@@ -428,23 +428,23 @@ gcc -fsanitize=address -g -o app app.c
 valgrind --tool=memcheck --leak-check=full ./app
 ```
 
-Fix:
+**Fix:**
 Set pointer to `NULL` immediately after `free`: `free(ptr); ptr = NULL;`. Use smart pointers in C++ (`std::unique_ptr`, `std::shared_ptr`). Migrate to Rust for new code.
 
-Prevention:
+**Prevention:**
 Enable AddressSanitizer in CI. Use static analysis (Clang's analyzer, Coverity). Prefer RAII patterns in C++.
 
 ---
 
 **Python Reference Cycle Memory Leak**
 
-Symptom:
+**Symptom:**
 Python process memory grows slowly despite `del` statements on objects. `gc.collect()` shows uncollectable objects. Long-running services accumulate memory over days.
 
-Root Cause:
+**Root Cause:**
 Object A holds a reference to Object B, and B holds a reference back to A. Neither's reference count ever reaches zero. CPython's cyclic GC handles most cycles, but objects with `__del__` methods in cycles become uncollectable (fixed in Python 3.4+ but still a footgun).
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```python
 import gc
@@ -458,10 +458,10 @@ objgraph.show_most_common_types(limit=10)
 objgraph.show_backrefs(suspect_object, max_depth=3)
 ```
 
-Fix:
+**Fix:**
 Use `weakref.ref` for back-references in parent-child relationships. Remove `__del__` methods where possible. Use `contextlib.weakref` or explicit lifecycle management.
 
-Prevention:
+**Prevention:**
 Design object graphs as trees, not graphs. Use weak references for observer/listener patterns where back-references are needed.
 
 ---

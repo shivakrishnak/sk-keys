@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Rate Limiting (System)"
 parent: "System Design"
@@ -190,7 +190,7 @@ WITH Rate Limiting:
 "3 seconds per car" = rate limit (X requests per second)
 "100 cars arriving simultaneously" = burst traffic / DDoS
 "Queue 99 cars" = request queuing / backpressure
-"Queue fills up → turn away cars" = 429 Too Many Requests response
+- "Queue fills up → turn away cars" = 429 Too Many Requests response
 
 ---
 

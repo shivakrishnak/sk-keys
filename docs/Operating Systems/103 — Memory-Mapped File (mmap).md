@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 To process a 10 GB log file, a program must: `open()` the file, call `read(fd, buf, 4096)` in a loop, copy bytes from kernel buffer to user buffer, process, repeat 2.5 million times. Each `read()` syscall is ~200 ns overhead, totalling ~500 ms just in syscall cost. Each kernel→user copy doubles the memory traffic. To random-access byte at offset 7,342,108,432, the program must either `lseek()` + `read()` (two syscalls) or load the whole file.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Database engines, JVM class loaders, and compilers all need fast, random access to large files. The syscall-per-chunk model is too slow and too complex. Loading the whole file into a heap buffer wastes RAM for parts never accessed.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why `mmap` was created — to map a file directly into the process's virtual address space, letting the OS page-fault mechanism lazily load only the needed pages, with zero explicit I/O syscalls for reads.
 
 ---
@@ -65,34 +65,34 @@ The most important insight about mmap is that there is no "copy" — the file da
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. An mmap region is backed by physical pages in the page cache — the same pages used by `read()`.
 2. File data is loaded lazily on first access via page fault — no eager loading.
 3. Writable, non-private mappings share physical pages with the file; `MAP_PRIVATE` uses copy-on-write.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 `mmap(NULL, size, PROT, flags, fd, offset)` creates a VMA in the process's address space linked to the file's inode. No physical pages are allocated. On first access, the page fault handler calls the VMA's `fault()` method, which calls the filesystem's `readpage()`, loading the file page into the page cache. The PTE is set to point to this page cache page. Subsequent accesses: TLB hit (if recently accessed) or PTE hit — no syscall, no copy.
 
-THE TRADE-OFFS:
-Gain: Zero-copy access to files; lazy loading (only accessed pages use RAM); sharing between processes (multiple processes can mmap the same file, sharing physical pages); pointer arithmetic instead of offset management.
-Cost: Address space consumption; TLB pressure from many pages; page fault latency for cold pages; complex error handling (`SIGBUS` on I/O error instead of return value); no read-ahead control (though `madvise` helps).
+**THE TRADE-OFFS:**
+**Gain:** Zero-copy access to files; lazy loading (only accessed pages use RAM); sharing between processes (multiple processes can mmap the same file, sharing physical pages); pointer arithmetic instead of offset management.
+**Cost:** Address space consumption; TLB pressure from many pages; page fault latency for cold pages; complex error handling (`SIGBUS` on I/O error instead of return value); no read-ahead control (though `madvise` helps).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A program reads 100 random records from a 1 GB database file. Each record is 1 KB, spread across different 4 KB pages.
 
-WHAT HAPPENS WITH read():
+**WHAT HAPPENS WITH read():**
 
 1. 100 × `lseek()` calls = 100 syscalls (~200 ns each = 20 µs)
 2. 100 × `read()` calls = 100 syscalls (~200 ns each = 20 µs)
 3. Each `read()` copies 1 KB from kernel page cache to user heap = 100 copies
 4. Total syscall overhead: 40 µs. Plus 100 × disk reads if not cached.
 
-WHAT HAPPENS WITH mmap():
+**WHAT HAPPENS WITH mmap():**
 
 1. One `mmap()` call maps the entire 1 GB.
 2. 100 pointer dereferences trigger 100 page faults (first access per page).
@@ -100,7 +100,7 @@ WHAT HAPPENS WITH mmap():
 4. No copies: user sees the page cache pages directly through virtual address.
 5. Second run: all 100 pages may be warm in page cache → 100 TLB/cache hits → no I/O.
 
-THE INSIGHT:
+**THE INSIGHT:**
 mmap eliminates the kernel→user copy entirely. Both `read()` and `mmap` load pages through the page cache; `mmap` just removes the extra copy step and replaces it with a virtual address mapping.
 
 ---
@@ -109,11 +109,11 @@ mmap eliminates the kernel→user copy entirely. Both `read()` and `mmap` load p
 
 > mmap is like mounting a filesystem inside your apartment. The entire filing cabinet (file) appears as a folder on your desk (virtual address range). Grabbing a document (reading a byte) retrieves it from the cabinet on demand — the building manager (OS) fetches it from storage (disk) if not already in the lobby (page cache). Any documents you annotate (write) are automatically filed back.
 
-"Folder on your desk" → mapped virtual address range
-"Building manager fetching document" → page fault + page cache read
-"Lobby" → page cache (shared between all processes)
-"Annotating a document" → writing to MAP_SHARED region
-"Your own notebook copy" → MAP_PRIVATE (copy-on-write)
+- "Folder on your desk" → mapped virtual address range
+- "Building manager fetching document" → page fault + page cache read
+- "Lobby" → page cache (shared between all processes)
+- "Annotating a document" → writing to MAP_SHARED region
+- "Your own notebook copy" → MAP_PRIVATE (copy-on-write)
 
 Where this analogy breaks down: Unlike a physical folder, multiple processes can share the same mmap'd pages in RAM — changes in one process's MAP_SHARED region are immediately visible to all others mapping the same file.
 
@@ -175,7 +175,7 @@ mmap():  disk → page cache → (mapped) → user VA  [no copy]
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [fd = open("data.bin", O_RDONLY)]
@@ -186,10 +186,10 @@ NORMAL FLOW:
    → [munmap(ptr, size): PTE torn down, pages stay in cache]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [Disk I/O error during page fault] → [SIGBUS delivered to process] → [Process crashes unless SIGBUS handler installed]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 A database process mapping 1 TB of data files has 256 million PTE entries. Page table memory itself can be gigabytes. At 1000 concurrent processes all mapping the same shared files, Linux deduplicates the page cache pages — all share the same physical pages — but each process has its own PTE chain, multiplying page table overhead by 1000. Production DBs use `madvise(MADV_SEQUENTIAL)` or `MADV_RANDOM` to tune read-ahead behaviour.
 
 ---
@@ -320,30 +320,30 @@ How to choose: Use mmap for large files with random access patterns (databases, 
 
 **1. SIGBUS on Disk I/O Error**
 
-Symptom: Process crashes with SIGBUS; stack trace points into mmap'd region access; disk logs show I/O error.
+**Symptom:** Process crashes with SIGBUS; stack trace points into mmap'd region access; disk logs show I/O error.
 
-Root Cause: During a page fault on an mmap'd file, the underlying disk I/O failed; the kernel delivers SIGBUS instead of returning an error code.
+**Root Cause:** During a page fault on an mmap'd file, the underlying disk I/O failed; the kernel delivers SIGBUS instead of returning an error code.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 dmesg | grep -i "I/O error\|blk_update_request"
 journalctl -k | grep "ata\|scsi\|nvme" | grep -i error
 ```
 
-Fix: Install a `SIGBUS` handler with `sigsetjmp`/`siglongjmp` (see code example 3). Use checksums/CRC to detect data corruption on read.
+**Fix:** Install a `SIGBUS` handler with `sigsetjmp`/`siglongjmp` (see code example 3). Use checksums/CRC to detect data corruption on read.
 
-Prevention: Use RAID or replicated storage; monitor disk health with SMART; use `O_DIRECT` + `read()` for data that must have proper error handling.
+**Prevention:** Use RAID or replicated storage; monitor disk health with SMART; use `O_DIRECT` + `read()` for data that must have proper error handling.
 
 ---
 
 **2. Memory Leak via Stale mmap Mappings**
 
-Symptom: Process virtual address space grows without bound (`/proc/PID/maps` accumulates entries); OOM kill eventually.
+**Symptom:** Process virtual address space grows without bound (`/proc/PID/maps` accumulates entries); OOM kill eventually.
 
-Root Cause: `mmap()` called in a loop without corresponding `munmap()`; typically in code that remaps files on each access.
+**Root Cause:** `mmap()` called in a loop without corresponding `munmap()`; typically in code that remaps files on each access.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 cat /proc/<PID>/maps | wc -l   # count VMAs
@@ -351,19 +351,19 @@ pmap -x <PID> | tail -5        # total mapped
 # If total > 2× actual data size: leak likely
 ```
 
-Fix: Ensure every `mmap()` has a matching `munmap()` in all code paths, including error paths.
+**Fix:** Ensure every `mmap()` has a matching `munmap()` in all code paths, including error paths.
 
-Prevention: Use RAII wrappers in C++ (`std::unique_ptr` with custom deleter); audit with `valgrind --tool=massif`.
+**Prevention:** Use RAII wrappers in C++ (`std::unique_ptr` with custom deleter); audit with `valgrind --tool=massif`.
 
 ---
 
 **3. Dirty Page Writeback Latency (msync Blocking)**
 
-Symptom: `msync(MS_SYNC)` takes 100ms+ unexpectedly; application appears to hang during checkpoint.
+**Symptom:** `msync(MS_SYNC)` takes 100ms+ unexpectedly; application appears to hang during checkpoint.
 
-Root Cause: Large number of dirty pages accumulated (MAP_SHARED + many writes); `MS_SYNC` must flush all of them synchronously to disk.
+**Root Cause:** Large number of dirty pages accumulated (MAP_SHARED + many writes); `MS_SYNC` must flush all of them synchronously to disk.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check dirty page count
@@ -372,7 +372,7 @@ cat /proc/meminfo | grep Dirty
 iostat -x 1 | grep -v "^$"
 ```
 
-Fix:
+**Fix:**
 
 ```c
 // BAD: one big msync at end
@@ -387,7 +387,7 @@ for (size_t off = 0; off < total; off += CHUNK) {
 msync(ptr, total, MS_SYNC);
 ```
 
-Prevention: Tune `vm.dirty_ratio` and `vm.dirty_background_ratio` to control when writeback threads run; call `msync(MS_ASYNC)` periodically to amortise flush cost.
+**Prevention:** Tune `vm.dirty_ratio` and `vm.dirty_background_ratio` to control when writeback threads run; call `msync(MS_ASYNC)` periodically to amortise flush cost.
 
 ---
 

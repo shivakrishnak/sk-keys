@@ -32,7 +32,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Without understanding carrier threads, developers cannot diagnose why virtual thread performance degrades when `synchronized` blocks contain I/O (carrier pinning), why the `-Djdk.tracePinnedThreads` flag matters, or how to tune the carrier pool size. Carrier threads are the execution resource that virtual threads share — understanding the mount/unmount lifecycle is key to virtual thread performance.
 
 ---
@@ -58,7 +58,7 @@ The number of carrier threads = number of simultaneously executing virtual threa
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. One virtual thread runs on exactly one carrier at any moment.
 2. One carrier runs exactly one virtual thread at a time.
 3. A virtual thread is **pinned** to its carrier when inside `synchronized` blocks or calling native code — the carrier cannot be freed until the pin is released.
@@ -87,14 +87,14 @@ synchronized (sharedLock) {         // pin begins
 // FIX: use ReentrantLock — VT can unmount inside lock
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 Carrier threads provide efficient I/O multiplexing at the cost of **pinning** risk — any `synchronized` block or native call that contains I/O blocks the carrier fully.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 8 carrier threads, 1,000 virtual threads, each making a 100ms network call.
 
 WITHOUT PINNING:
@@ -112,7 +112,7 @@ WITH PINNING (synchronized + I/O):
 - Total: 1,000/8 = 125 rounds × 100ms = 12.5 seconds
 - Pinning converts virtual thread parallelism back to platform thread limits!
 
-THE INSIGHT:
+**THE INSIGHT:**
 Pinning is the primary performance risk with virtual threads. Even one pinned carrier per request can eliminate virtual thread benefits.
 
 ---

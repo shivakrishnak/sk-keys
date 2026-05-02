@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Even with `ReadWriteLock`, acquiring a read lock requires a CAS operation and memory barriers, tracking hold counts, and unblocking writers later. For a hot-path method called 10M times/second that reads two fields atomically, even the cheapest read lock adds ~50ns overhead per call = 500ms/second of pure lock overhead.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A geometry service reads `Point.x` and `Point.y` 50M times/second for distance calculations. With `ReentrantReadWriteLock`, even in uncontended mode (no writes in flight), the read lock acquire + release adds ~20ns × 50M = 1 second/second overhead. The service spends 100% CPU on lock management for reads that almost never conflict with writes.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **`StampedLock`** was created — its optimistic read mode reads without any lock, then validates that no write occurred. For low-write-frequency workloads, validation almost always succeeds, giving reads at ~1ns overhead vs. ~20ns for a full read lock.
 
 ---
@@ -64,12 +64,12 @@ Optimistic reads are not locks — they can be used concurrently with writers. T
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Optimistic read stamp is obtained without blocking; a write may be in progress during the optimistic read.
 2. `validate(stamp)` returns `true` only if no write-lock was acquired since the stamp was issued.
 3. If `validate` fails, the data may be partially updated — must retry (typically with a full read lock).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The stamp encodes the write version counter. Each write increments the counter. `validate(stamp)` checks if the counter changed. If unchanged, no write occurred — optimistic read is valid.
 
 ```
@@ -90,15 +90,15 @@ StampedLock State:
     restore state using stamp's version info
 ```
 
-THE TRADE-OFFS:
-Gain: Optimistic reads add ~1-2ns vs ~20ns for read lock; no writer starvation; better throughput for read-dominant workloads.
-Cost: Non-reentrant (re-acquiring deadlocks); more complex code (must handle validation failure); partial reads require loop; cannot use with `try/finally` safety pattern (must pass stamp to unlock); not a `Lock` interface implementor.
+**THE TRADE-OFFS:**
+**Gain:** Optimistic reads add ~1-2ns vs ~20ns for read lock; no writer starvation; better throughput for read-dominant workloads.
+**Cost:** Non-reentrant (re-acquiring deadlocks); more complex code (must handle validation failure); partial reads require loop; cannot use with `try/finally` safety pattern (must pass stamp to unlock); not a `Lock` interface implementor.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Geometric Point with x and y, read millions of times/second.
 
 WITH ReentrantReadWriteLock:
@@ -124,7 +124,7 @@ return Math.sqrt(localX*localX + localY*localY);
 // Fallback to read lock only when writer active (0.1% case)
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 For a workload with 50M reads/second and 1 write/minute, the optimistic read succeeds 99.9999% of the time. Lock overhead drops from 1s/second to 0.1ms/second — a 10,000× improvement.
 
 ---
@@ -133,10 +133,10 @@ For a workload with 50M reads/second and 1 write/minute, the optimistic read suc
 
 > Taking a photo of a scoreboard vs. getting an official stat printout. You snap a photo (optimistic read), note the game clock (stamp). After looking at your photo, you check if the game clock changed since you snapped (validate). If yes, the scoreboard may have changed — you wait for the official printout (read lock). If no, your photo is accurate facts for that moment.
 
-"Snapping a photo" → `tryOptimisticRead()` + read variables.
-"Checking game clock" → `validate(stamp)`.
-"Game clock changed" → validate fails → data inconsistent.
-"Official printout" → fallback to read lock.
+- "Snapping a photo" → `tryOptimisticRead()` + read variables.
+- "Checking game clock" → `validate(stamp)`.
+- "Game clock changed" → validate fails → data inconsistent.
+- "Official printout" → fallback to read lock.
 
 Where this analogy breaks down: A photo captures a moment atomically. Optimistic read captures variables sequentially — if a write interleaves between two field reads, `x` is from before the write and `y` is from after. `validate(stamp)` detects this and triggers retry.
 
@@ -236,7 +236,7 @@ FAILURE PATH (concurrent write):
     → [unlockRead(newStamp)]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, StampedLock's advantage compounds: for a 10M read/second workload with rare writes, optimistic reads save the equivalent of a full CPU core vs. `ReentrantReadWriteLock`. For Geospatial services, financial tick data, and sensor data reading — patterns with millions of reads and seconds between writes — StampedLock is the correct choice. However, its non-reentrancy and stamp-based API are error-prone at scale; extensive testing of the retry logic is critical.
 
 ---
@@ -322,11 +322,11 @@ How to choose: Use `StampedLock` when: reads >> writes, read performance is crit
 
 **Deadlock from Reentrant Acquisition**
 
-Symptom: Thread permanently WAITING after calling a method that re-acquires StampedLock.
+**Symptom:** Thread permanently WAITING after calling a method that re-acquires StampedLock.
 
-Root Cause: StampedLock is NOT reentrant. Acquiring write lock while already holding write lock deadlocks.
+**Root Cause:** StampedLock is NOT reentrant. Acquiring write lock while already holding write lock deadlocks.
 
-Fix:
+**Fix:**
 ```java
 // BAD: reentrant StampedLock acquisition
 long stamp = sl.writeLock();
@@ -341,25 +341,25 @@ try { doUpdateA(); doUpdateB(); } // both inline, one lock
 finally { sl.unlockWrite(stamp); }
 ```
 
-Prevention: Audit ALL call chains for StampedLock usages. Prefer `ReentrantReadWriteLock` when reentrancy cannot be guaranteed.
+**Prevention:** Audit ALL call chains for StampedLock usages. Prefer `ReentrantReadWriteLock` when reentrancy cannot be guaranteed.
 
 ---
 
 **Inconsistent Read from Missing Validation**
 
-Symptom: Intermittent wrong calculations; hard to reproduce; only occurs under write load.
+**Symptom:** Intermittent wrong calculations; hard to reproduce; only occurs under write load.
 
-Root Cause: Optimistic read without `validate()` — using potentially inconsistent data.
+**Root Cause:** Optimistic read without `validate()` — using potentially inconsistent data.
 
-Fix: Always call `validate(stamp)` after reading in optimistic mode and retry with a full read lock on failure.
+**Fix:** Always call `validate(stamp)` after reading in optimistic mode and retry with a full read lock on failure.
 
 **Stamp Invalidation from Non-local Storage**
 
-Symptom: `IllegalArgumentException` or corrupted lock state on `unlockWrite(stamp)`.
+**Symptom:** `IllegalArgumentException` or corrupted lock state on `unlockWrite(stamp)`.
 
-Root Cause: Stamp was obtained in a different context (e.g., different thread, stored stale stamp).
+**Root Cause:** Stamp was obtained in a different context (e.g., different thread, stored stale stamp).
 
-Fix: Never cache, share, or store stamps across threads or across lock acquisition cycles. Stamps are single-use.
+**Fix:** Never cache, share, or store stamps across threads or across lock acquisition cycles. Stamps are single-use.
 
 ---
 

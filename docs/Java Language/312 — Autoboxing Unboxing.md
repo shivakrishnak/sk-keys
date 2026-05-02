@@ -42,13 +42,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Java's generic collections (`List`, `Map`, `Set`) store objects, not primitives. Without autoboxing, adding an `int` to a `List<Integer>` requires explicit conversion: `list.add(Integer.valueOf(42))`. This verbosity compounds multiplied across every arithmetic-heavy business logic method that touches collections. Java would feel like a constant ceremony of manual boxing.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Before autoboxing (Java 5), every numeric calculation involving collections was double-verbose: `int sum = ((Integer) list.get(i)).intValue() + 1; list.set(i, Integer.valueOf(sum));`. Real codebases had thousands of these patterns. Code readability suffered enormously. Java earned a reputation for verbose boilerplate — part of why developers sought Groovy, Scala, and Kotlin alternatives.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Autoboxing** was created — to let the compiler automatically insert the `Integer.valueOf()` and `.intValue()` calls, making Java code read naturally like pseudocode while maintaining the type distinction between primitives (`int`) and wrapper objects (`Integer`).
 
 ---
@@ -74,12 +74,12 @@ The hidden danger of autoboxing is that where you see `int x = myMap.get("key")`
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Java collections and generics are object-based — they cannot directly store primitives.
 2. Primitive types and their wrapper objects are distinct types with different heap/stack semantics.
 3. Autoboxing is purely a compiler transformation — the JVM sees only the `Integer.valueOf()` / `.intValue()` calls.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The compiler's autoboxing rules:
 - Boxing: when a primitive is used where Object/wrapper is expected → insert `WrapperType.valueOf(primitiveValue)`.
 - Unboxing: when a wrapper object is used where a primitive is expected → insert `.primitiveValue()` method call.
@@ -109,15 +109,15 @@ Integer.valueOf() uses the **Integer Cache** for values -128 to 127 — returnin
 └──────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Readable code; seamless integration of primitives with collections/generics/streams.
-Cost: Hidden object allocation (boxing each primitive allocates a heap Integer); NPE risk on null unboxing; performance implications in tight loops; `==` comparison confusion (cached vs non-cached ranges).
+**THE TRADE-OFFS:**
+**Gain:** Readable code; seamless integration of primitives with collections/generics/streams.
+**Cost:** Hidden object allocation (boxing each primitive allocates a heap Integer); NPE risk on null unboxing; performance implications in tight loops; `==` comparison confusion (cached vs non-cached ranges).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Method that computes the sum of integers from a `List<Integer>`:
 ```java
 List<Integer> numbers = List.of(1, 2, 3, 4, 5);
@@ -148,7 +148,7 @@ for (Integer n : numbers) {
 }
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 `n` looks like a number. `sum + n` looks like addition. But it's actually `sum + n.intValue()` — a method call on an object that might be null. The NPE points to a line that has no obvious method call, confusing developers unfamiliar with autoboxing internals.
 
 ---
@@ -157,11 +157,11 @@ THE INSIGHT:
 
 > Autoboxing is like automatic currency exchange at an airport kiosk. You hand it euros (primitives), the kiosk packages them in a sealed envelope labeled "euros" (wrapper object) for the destination country. At arrival, the customs agent opens the envelope (unboxing) to give you the raw euros again. The traveler (you, the developer) never explicitly handles the envelope — it's automatic. But if the envelope is missing (null), opening it causes a crash.
 
-"Handing euros" → using primitive int.
-"Sealed envelope" → Integer wrapper object.
-"Automatic exchange kiosk" → compiler autoboxing transformation.
-"Customs agent opening envelope" → `.intValue()` unboxing call.
-"Missing envelope" → null reference → NPE on unboxing.
+- "Handing euros" → using primitive int.
+- "Sealed envelope" → Integer wrapper object.
+- "Automatic exchange kiosk" → compiler autoboxing transformation.
+- "Customs agent opening envelope" → `.intValue()` unboxing call.
+- "Missing envelope" → null reference → NPE on unboxing.
 
 Where this analogy breaks down: Unlike a currency exchange with a fixed rate, autoboxing's Integer Cache means values -128 to 127 reuse the same "envelope" (cached Integer object), while values 300+ get new envelopes — causing `envelope300 == envelope300` (two different 300-envelopes) to be false.
 
@@ -242,7 +242,7 @@ public static Integer valueOf(int i) {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Source: list.add(userCount)]
     → [Compiler: list.add(Integer.valueOf(userCount))]
@@ -258,7 +258,7 @@ NORMAL FLOW:
     → [Stack: int count = extracted primitive]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Source: Integer result = map.get("missing_key")]
     → [Runtime: map.get returns null]
@@ -269,7 +269,7 @@ FAILURE PATH:
     → [Better: use getOrDefault() or Optional<Integer>]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In a service processing 100,000 transactions/second, each transaction boxing 10 values = 1 million boxing operations/second. If 80% are outside cache range (common for IDs, amounts): 800,000 new Integer allocations/second = ~25MB/second of Integer garbage. Minor GC runs every 200ms on a 512MB Eden → 5MB per GC cycle of pure boxing waste. At scale, using `int[]` or `LongStream` instead of `List<Integer>` / `List<Long>` eliminates this entirely.
 
 ---
@@ -387,13 +387,13 @@ How to choose: Use primitive types (`int`, `long`, `double`) for local variables
 
 **Null Unboxing NPE in Business Logic**
 
-Symptom:
+**Symptom:**
 `NullPointerException` at a line that appears to be simple arithmetic or assignment. Stack trace shows bytecodes `intValue()`, `longValue()`, etc.
 
-Root Cause:
+**Root Cause:**
 A `Map.get()`, `optional.orElse(null)`, or collection access returns `null`. Implicit unboxing on null throws NPE. The source line shows `int result = someMap.get(key)` with no obvious method call.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Java 14+ NullPointerException message (improved):
 # "Cannot unbox the return value of Map.get(String), 
@@ -402,7 +402,7 @@ Diagnostic Command / Tool:
 java -XX:+ShowCodeDetailsInExceptionMessages MyApp
 ```
 
-Fix:
+**Fix:**
 ```java
 // Before unboxing from Map:
 Integer value = map.get(key);
@@ -411,20 +411,20 @@ int result = value != null ? value : defaultValue;
 int result = map.getOrDefault(key, defaultValue);
 ```
 
-Prevention:
+**Prevention:**
 Static analysis (NullAway, Checker Framework) with `@NonNull` annotations on method return values. SpotBugs flags unboxing of possibly-null values.
 
 ---
 
 **Excessive Integer Allocations Causing GC Pressure**
 
-Symptom:
+**Symptom:**
 Profiling shows millions of `java.lang.Integer` objects allocated per second. GC frequency is high despite moderate business logic.
 
-Root Cause:
+**Root Cause:**
 Numeric values outside -128 to 127 are boxed in a tight loop (counters, IDs, amounts). Each box creates a new heap Integer.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Find autoboxing hot spots:
 java -agentlib:hprof=heap=sites,depth=8 MyApp
@@ -433,23 +433,23 @@ java -agentlib:hprof=heap=sites,depth=8 MyApp
 # Look for java.lang.Integer in allocation call stacks
 ```
 
-Fix:
+**Fix:**
 Replace `List<Integer>` with `int[]` or `IntStream`. Replace `Map<Long, SomeObject>` with specialized long-key maps (e.g., Eclipse Collections `LongObjectHashMap`).
 
-Prevention:
+**Prevention:**
 Enforce in code review: no `List<Integer/Long/Double>` in performance-critical paths. Use domain-specific primitive collections.
 
 ---
 
 **Integer == Comparison Bug With Values > 127**
 
-Symptom:
+**Symptom:**
 Unit tests pass (using small IDs in test fixtures). Production fails: a conditional based on `Integer id1 == id2` evaluates to false even when values are logically equal.
 
-Root Cause:
+**Root Cause:**
 Test IDs are < 128 (cached integers → == works by accident). Production IDs are > 127 (non-cached → two different Integer objects → == is false).
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```java
 // Quick diagnostic:
 System.out.println(
@@ -458,10 +458,10 @@ System.out.println(
 // Different identity hashes confirm different objects
 ```
 
-Fix:
+**Fix:**
 Replace all `id1 == id2` with `id1.equals(id2)` throughout codebase.
 
-Prevention:
+**Prevention:**
 Configure test fixtures to use IDs > 127 to catch these bugs in tests. Add SpotBugs/SonarQube rule flagging Integer == comparison.
 
 ---

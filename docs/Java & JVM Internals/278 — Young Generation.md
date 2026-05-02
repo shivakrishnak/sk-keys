@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine a single flat heap for all objects, regardless of age. Short-lived request objects (living microseconds) and long-lived cache objects (living hours) are all mixed together in the same region. GC must scan ALL objects on every collection cycle. For an application with 500 MB of long-lived cache and 50 MB/s of short-lived object allocation, every collection must traverse all 500 MB of live cache objects just to reclaim 1 MB of dead request objects. Enormous wasted work.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 The fundamental inefficiency: GC work is proportional to live set size, but most of that live set (long-lived objects) doesn't need to be touched on short-cycle collections. The GC needs a way to separate long-lived objects from short-lived objects and concentrate frequent collection effort on the short-lived area.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 The Generational Hypothesis — "most objects die young" — is empirically true for most object-oriented programs. A separate heap region for young objects, collected frequently and cheaply, matches collection effort to object death rates. This is exactly why the Young Generation exists.
 
 ---
@@ -64,23 +64,23 @@ The Young Generation's performance secret is the copying collector design: inste
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Most objects in a typical Java application die within milliseconds of creation (the generational hypothesis).
 2. Short collections are only efficient if the collected region is small and mostly dead.
 3. Live objects that survive multiple collections are unlikely to die soon and should be promoted out of the frequent-collection region.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 justifies separating new objects into their own region. Invariant 2 requires Eden to be collected when full (small region = fast scan). Invariant 3 justifies the aging mechanism: objects that survive N Minor GC cycles are promoted to Old Generation. The dual Survivor space design (copy between them) enables compact, efficient collection: a copying collector can collect a region in O(live objects) time, not O(total region size).
 
-THE TRADE-OFFS:
-Gain: Fast Minor GC (<10ms typically); collection effort proportional to actual object death rate; high allocation throughput via TLAB pointer-bump.
-Cost: Young Generation size must be tuned (too small → frequent GCs; too large → GC slower); objects that "should" be young but survive many cycles add pressure to Old Generation; copying live objects has memory bandwidth cost.
+**THE TRADE-OFFS:**
+**Gain:** Fast Minor GC (<10ms typically); collection effort proportional to actual object death rate; high allocation throughput via TLAB pointer-bump.
+**Cost:** Young Generation size must be tuned (too small → frequent GCs; too large → GC slower); objects that "should" be young but survive many cycles add pressure to Old Generation; copying live objects has memory bandwidth cost.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 10,000 requests per second, each creating 100 short-lived objects (10ms lifetime) and 1 long-lived session object (10 minute lifetime).
 
 WITHOUT YOUNG GENERATION (flat heap):
@@ -89,7 +89,7 @@ After 10 minutes: 10,000 × 600 seconds × 100 short-lived = 600,000,000 objects
 WITH YOUNG GENERATION:
 Eden fills every few hundred milliseconds with ~100K dead request objects and ~100 live session objects. Minor GC: scan only the ~100K objects in Eden and small Survivor. Copy the ~100 live sessions to Survivor/promote to Old Gen. Reclaim all of Eden — 99.9% was garbage. Done in <5ms. Old Generation (holding all 6M growing session objects) only GC'd every 30 minutes. Both GC styles match the lifetime distributions of their workloads.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Separating by age matches collection frequency and cost to object death rates. Young objects die fast; collect them fast and often. Old objects die rarely; collect them rarely and completely.
 
 ---
@@ -98,11 +98,11 @@ Separating by age matches collection frequency and cost to object death rates. Y
 
 > The Young Generation is like a trash sorting belt in a recycling facility. New items (just created objects) land on the belt. Most are identified as recyclable immediately (die young). A few items turn out to be keepers and move to permanent storage (Old Generation) after passing quality checks (surviving several GC cycles). The belt moves fast because most items are sorted and removed quickly.
 
-"New items landing on belt" → objects allocated in Eden
-"Identified as recyclable" → objects not reachable from GC Roots → dead
-"Quality checks" → surviving multiple Minor GC cycles (age increments)
-"Permanent storage" → Old Generation (Tenured space)
-"Belt cycle" → Minor GC (frequent, fast)
+- "New items landing on belt" → objects allocated in Eden
+- "Identified as recyclable" → objects not reachable from GC Roots → dead
+- "Quality checks" → surviving multiple Minor GC cycles (age increments)
+- "Permanent storage" → Old Generation (Tenured space)
+- "Belt cycle" → Minor GC (frequent, fast)
 
 Where this analogy breaks down: unlike a physical belt that processes items in order, Eden collects all items simultaneously during a Minor GC — not on a per-item schedule.
 
@@ -188,7 +188,7 @@ Object created → Eden (age = 0)
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Application allocates objects via 'new'
   → TLAB in Eden: pointer bump allocation (O(1))
@@ -203,7 +203,7 @@ Application allocates objects via 'new'
   → Old Gen fills → Major/Full GC
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 "Premature Promotion" scenario:
   → Young Gen too small (e.g., -XX:NewSize=32m)
@@ -214,7 +214,7 @@ FAILURE PATH:
   → Observable: high OGC count in jstat output
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 100,000 requests per second with 1 KB of object allocation per request, allocation rate = 100 MB/s. A 256 MB Eden fills in ~2.5 seconds — Minor GC every 2.5 seconds. Each Minor GC is fast (<10ms), so overhead ~0.4%. If allocation rate doubles to 200 MB/s, Minor GC frequency doubles to every 1.25 seconds — still manageable. The Young Generation scales well with allocation rate; Old Generation pressure scales with how many objects survive.
 
 ---
@@ -310,11 +310,11 @@ How to choose: Use G1GC (default) for most services — its adaptive Young Gener
 
 **1. Premature Promotion to Old Generation**
 
-Symptom: `jstat` shows Old Generation (`OU`) growing rapidly; Minor GC count high but Old Gen fills; Major GC triggered too frequently.
+**Symptom:** `jstat` shows Old Generation (`OU`) growing rapidly; Minor GC count high but Old Gen fills; Major GC triggered too frequently.
 
-Root Cause: Survivor space too small → live objects promoted to Old Gen instead of aging through Survivor. Young Gen too small → not enough room for objects to age properly.
+**Root Cause:** Survivor space too small → live objects promoted to Old Gen instead of aging through Survivor. Young Gen too small → not enough room for objects to age properly.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstat -gcutil <pid> 1000
 # If S0/S1 consistently at 100% → Survivor too small
@@ -324,7 +324,7 @@ jstat -gccause <pid> 2000
 # Shows cause of last GC events
 ```
 
-Prevention:
+**Prevention:**
 ```bash
 # Increase Survivor ratio (less Eden, more Survivor)
 java -XX:SurvivorRatio=4 -jar myapp.jar  # 4:1:1
@@ -334,32 +334,32 @@ java -XX:NewSize=512m -XX:MaxNewSize=512m -jar myapp.jar
 
 **2. Minor GC Too Frequent (Eden Too Small)**
 
-Symptom: `jstat` shows `YGC` count rapidly increasing; latency spikes periodically; each Minor GC is fast but they occur every 100ms.
+**Symptom:** `jstat` shows `YGC` count rapidly increasing; latency spikes periodically; each Minor GC is fast but they occur every 100ms.
 
-Root Cause: Eden too small for the application's allocation rate. Filling in <1 second causes excessive GC frequency adding up to significant total pause time.
+**Root Cause:** Eden too small for the application's allocation rate. Filling in <1 second causes excessive GC frequency adding up to significant total pause time.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstat -gc <pid> 500  # sample every 0.5s
 # If EU (Eden Used) fills to EC rapidly → Eden too small
 ```
 
-Prevention: Increase Young Gen size (`-XX:NewSize`); for G1GC, rely on adaptive sizing by setting only `MaxGCPauseMillis`.
+**Prevention:** Increase Young Gen size (`-XX:NewSize`); for G1GC, rely on adaptive sizing by setting only `MaxGCPauseMillis`.
 
 **3. Long Minor GC Pause from Many Survivors**
 
-Symptom: Minor GC takes 50–200ms instead of expected <10ms; full heap dump shows many objects in Survivor spaces.
+**Symptom:** Minor GC takes 50–200ms instead of expected <10ms; full heap dump shows many objects in Survivor spaces.
 
-Root Cause: Too many live objects surviving Minor GC — either the survival rate is genuinely high, or cross-generation references (Old→Young) are excessive, requiring large card table scan.
+**Root Cause:** Too many live objects surviving Minor GC — either the survival rate is genuinely high, or cross-generation references (Old→Young) are excessive, requiring large card table scan.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 java -Xlog:gc+age=trace -jar myapp.jar
 # Shows object age distribution after each Minor GC
 # High counts at all ages = many survivors = long copy
 ```
 
-Prevention: For high survival rates, consider adjusting `MaxTenuringThreshold` lower to promote sooner; for slow card table scan, reduce Old→Young references (architectural fix).
+**Prevention:** For high survival rates, consider adjusting `MaxTenuringThreshold` lower to promote sooner; for slow card table scan, reduce Old→Young references (architectural fix).
 
 ---
 

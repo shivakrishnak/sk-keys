@@ -45,13 +45,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Minor GC collects the Young Generation (typically 50–250MB). But objects in Old Gen (typically 1–4GB) may hold references to Young Gen objects. The GC must not incorrectly identify Young Gen objects as unreachable just because the live reference is in Old Gen. Without tracking Old→Young references, Minor GC must either: (A) treat all Old Gen roots as live (scan entire 4GB Old Gen every 100ms) — defeating the purpose of generational GC, or (B) only use thread stack roots — incorrectly collecting Young objects still referenced from Old Gen.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A caching layer holds references to freshly-created cache entries (Young Gen objects). If Minor GC doesn't scan Old Gen for these references, it incorrectly collects the cache entries while they are still referenced from Old Gen. The cache returns stale or null results. This is a correctness failure — incorrect GC causes data corruption.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why the **Card Table** was created — to track which Old Gen regions contain modified references without requiring a full Old Gen scan on every Minor GC. The card table is a 512-byte-granularity bitmap: each bit covers a 512-byte region of Old Gen. Only "dirty" (modified) cards need scanning.
 
 ---
@@ -77,12 +77,12 @@ The card table converts a global "where are all the Old→Young references?" que
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Minor GC needs to find all live references to Young Gen objects — including those from Old Gen.
 2. Scanning all of Old Gen on every Minor GC defeats the purpose of generational GC (most objects die young → Minor GC should be cheap).
 3. Only modified Old Gen references can create new Old→Young reference paths between Minor GCs.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 If we track *modified* Old Gen references (not all Old Gen references), we only need to scan modified regions:
 - Before an object in Old Gen's reference field is written, mark that region dirty.
 - During Minor GC: iterate only dirty cards, scan all objects within those cards for references to Young Gen.
@@ -114,15 +114,15 @@ Card size trade-off: smaller cards → more precise, less false scanning, but la
 └─────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Minor GC scans only dirty cards (1–5% of Old Gen typically) → fast Minor GC.
-Cost: Write barrier overhead on every reference store (1-2 extra instructions); card table memory (Old Gen / 512 bytes); false positives (dirty card scanned but no Young Gen reference found).
+**THE TRADE-OFFS:**
+**Gain:** Minor GC scans only dirty cards (1–5% of Old Gen typically) → fast Minor GC.
+**Cost:** Write barrier overhead on every reference store (1-2 extra instructions); card table memory (Old Gen / 512 bytes); false positives (dirty card scanned but no Young Gen reference found).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Old Gen = 2GB, containing 10 million objects. Between two Minor GCs, 50,000 Old Gen objects had their reference fields updated.
 
 WITHOUT CARD TABLE:
@@ -131,7 +131,7 @@ Minor GC scans all 2GB of Old Gen = 10 million objects to find all Old→Young r
 WITH CARD TABLE:
 50,000 updated objects → ~50,000 objects × 512B/object (rough) → ~12,500 distinct cards dirty. GC scans 12,500 × 512B = 6.4MB of Old Gen in each Minor GC instead of 2GB. Speedup: 2GB / 6.4MB = 312x. Minor GC now takes 160µs for Old Gen scanning instead of 50ms.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The card table converts Old Gen scanning from proportional to Old Gen size to proportional to modification rate. In a typical workload where only 0.5% of Old Gen is modified between GCs, the speedup is 200x. This is why generational GC is effective: Minor GC is cheap, and the card table is what makes it cheap.
 
 ---
@@ -140,11 +140,11 @@ The card table converts Old Gen scanning from proportional to Old Gen size to pr
 
 > The card table is like a hotel's "do not disturb / please clean" door sign system applied to memory. Each room (512-byte card) has a sign. When something changes in a room (object reference modified), the housekeeping management system flips the sign to "needs attention." Daily cleanup (Minor GC) walks only the hallway checking signs — goes into only "needs attention" rooms. After cleaning, resets to "do not disturb." The next day, only rooms actually changed since yesterday need new cleaning.
 
-"Room" → 512-byte card.
-"Sign flip" → write barrier marking card dirty.
-"Hallway walking" → scanning card table array (8MB, fits in cache).
-"Entering the room" → scanning the 512-byte card for Young Gen refs.
-"Resetting sign" → clearing card table entry after GC scan.
+- "Room" → 512-byte card.
+- "Sign flip" → write barrier marking card dirty.
+- "Hallway walking" → scanning card table array (8MB, fits in cache).
+- "Entering the room" → scanning the 512-byte card for Young Gen refs.
+- "Resetting sign" → clearing card table entry after GC scan.
 
 Where this analogy breaks down: Unlike hotel rooms, card table false positives exist — a card may appear dirty because an unrelated write touched the same 512-byte region, causing the GC to scan that card even though the actual reference in it hasn't changed.
 
@@ -218,7 +218,7 @@ G1GC extends the card table concept into per-region **Remembered Sets** (RSet): 
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Object in Old Gen: obj.cacheRef = newYoungObject]
     → [Write Barrier fires]  ← YOU ARE HERE
@@ -234,7 +234,7 @@ NORMAL FLOW:
     → [Dirty cards cleared after scan]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Write barrier missed (JNI native code writes ref)]
     → [Card NOT marked dirty]
@@ -246,7 +246,7 @@ FAILURE PATH:
 not raw memory writes for reference fields)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 With a 64GB heap and frequent writes (write-heavy cache workload), 128MB of card table must be scanned on each Minor GC. At 10 Minor GCs/second, this is 1.28GB/sec of card table reading — realistic on server hardware, but at scale with hundreds of dirty cards per GC, the card scanning phase can become a bottleneck. G1GC's refined card scanning (processes dirty cards concurrently in the background) addresses this.
 
 ---
@@ -373,13 +373,13 @@ How to choose: These are GC-internal structures; you don't choose between them. 
 
 **High Minor GC Pause from Excessive Dirty Cards**
 
-Symptom:
+**Symptom:**
 Minor GC `Scan RS` or `Update RS` phase takes 10–30ms. Application modifies large mutable Old Gen data structures frequently.
 
-Root Cause:
+**Root Cause:**
 High write rate to Old Gen objects → many dirty cards per GC interval → Minor GC must scan large portions of Old Gen despite it being "Minor" GC.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -XX:+UseG1GC \
      -Xlog:gc+phases=debug MyApp 2>&1 | \
@@ -389,39 +389,39 @@ java -XX:+UseG1GC \
 # High "Scan RS" time = many dirty cards at GC time
 ```
 
-Fix:
+**Fix:**
 Reduce mutation rate of Old Gen objects:
 - Use immutable data structures for long-lived caches.
 - Batch mutation operations to reduce write barrier frequency.
 - Consider CopyOnWrite patterns for frequently-read-rarely-written structures.
 
-Prevention:
+**Prevention:**
 Profile write barrier frequency in load testing using JFR's `jdk.ObjectWrite` events.
 
 ---
 
 **G1GC Concurrent Card Table Refinement Causing CPU Spikes**
 
-Symptom:
+**Symptom:**
 Background CPU spikes during high-write-rate periods. G1GC concurrent refinement threads consuming unexpected CPU.
 
-Root Cause:
+**Root Cause:**
 G1GC's concurrent refinement threads process dirty cards in the background to prevent Minor GC pause spikes. Very high write rates overwhelm the refinement threads.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -Xlog:gc+refine=debug MyApp 2>&1 | grep "Refine"
 # Shows refinement thread activity and dirty card counts
 ```
 
-Fix:
+**Fix:**
 Increase refinement thread count:
 ```bash
 java -XX:G1ConcRefinementThreads=8 MyApp
 # (Default is based on ParallelGCThreads)
 ```
 
-Prevention:
+**Prevention:**
 Monitor G1 refinement thread CPU and dirty card queue depth in Prometheus.
 
 ---

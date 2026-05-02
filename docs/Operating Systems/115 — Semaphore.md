@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You have a connection pool with 10 database connections. 100 threads all need a connection simultaneously. Without a controlling mechanism, all 100 threads might try to acquire connections, exhausting the pool and causing failures or unbounded resource consumption.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A mutex solves 1-at-a-time access, but many resources can handle N concurrent users. A connection pool, a rate limiter (5 requests/second), a thread-bounded download queue — all need to allow exactly N concurrent accesses, not 1. A mutex is too restrictive (N=1 only).
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Dijkstra introduced the semaphore in 1965 alongside the critical section problem. The "wait" (P, from Dutch "proberen" = to test) and "signal" (V, from "verhogen" = to increment) operations on an integer counter were the original and remain the definitive solution to N-resource bounded access.
 
 ---
@@ -69,14 +69,14 @@ A mutex is a special semaphore (N=1) with an ownership rule. A semaphore is more
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Counter ≥ 0 always.
 2. `acquire()` is atomic: check + decrement + (possibly block) is one indivisible operation.
 3. `release()` is atomic: increment + (possibly wake a waiter) is one indivisible operation.
 4. The value at any time = initial_value + total_releases - total_acquires (but never < 0).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 A semaphore implementation needs:
 
 1. An integer counter (protected by an internal lock).
@@ -86,15 +86,15 @@ A semaphore implementation needs:
 
 The OS-level implementation uses a futex (like mutex) for the wait/wake step, so uncontended paths require no syscall.
 
-THE TRADE-OFFS:
-Gain: Limits concurrent access to exactly N; enables producer-consumer patterns; supports cross-thread signalling.
-Cost: No ownership → any thread can release, making bugs hard to diagnose; easy to misconfigure initial count; susceptible to deadlock if acquire/release pairs are unbalanced; fairness depends on implementation.
+**THE TRADE-OFFS:**
+**Gain:** Limits concurrent access to exactly N; enables producer-consumer patterns; supports cross-thread signalling.
+**Cost:** No ownership → any thread can release, making bugs hard to diagnose; easy to misconfigure initial count; susceptible to deadlock if acquire/release pairs are unbalanced; fairness depends on implementation.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Connection pool: 3 connections, 5 threads each needing a connection.
 
 ```
@@ -113,7 +113,7 @@ Thread 2: sem.release() → counter: 0→1 → wake Thread 5
 Thread 5: counter: 1→0 → proceeds
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 At no point were more than 3 threads in the critical section. The semaphore acted as a bounded gate. Thread 4 and 5 waited efficiently (blocked, not spinning) and were woken exactly when a permit became available.
 
 ---
@@ -334,11 +334,11 @@ public class RateLimiter {
 
 **1. Semaphore Leak (acquire without release)**
 
-Symptom: System gradually slows down; threads increasingly blocked on `acquire()`; `sem.availablePermits()` returns 0.
+**Symptom:** System gradually slows down; threads increasingly blocked on `acquire()`; `sem.availablePermits()` returns 0.
 
-Root Cause: Release not called in exception path; missing `finally` block.
+**Root Cause:** Release not called in exception path; missing `finally` block.
 
-Diagnostic:
+**Diagnostic:**
 
 ```java
 // Java: JStack shows all blocked threads
@@ -350,7 +350,7 @@ System.out.println("Permits: " + semaphore.availablePermits());
 System.out.println("Queued: " + semaphore.getQueueLength());
 ```
 
-Fix: Always use try-finally:
+**Fix:** Always use try-finally:
 
 ```java
 semaphore.acquire();
@@ -365,11 +365,11 @@ try {
 
 **2. Over-Release (release without acquire)**
 
-Symptom: More concurrent users than the semaphore's intended limit; resource pool sees more concurrent holders than capacity.
+**Symptom:** More concurrent users than the semaphore's intended limit; resource pool sees more concurrent holders than capacity.
 
-Root Cause: Release called unconditionally (e.g., in an error handler that runs even when acquire wasn't called); or release called multiple times for one acquire.
+**Root Cause:** Release called unconditionally (e.g., in an error handler that runs even when acquire wasn't called); or release called multiple times for one acquire.
 
-Diagnostic:
+**Diagnostic:**
 
 ```java
 // Check if permits > initial value
@@ -378,17 +378,17 @@ if (semaphore.availablePermits() > INITIAL_PERMITS) {
 }
 ```
 
-Fix: Track whether acquire was called before release (use a boolean flag per operation).
+**Fix:** Track whether acquire was called before release (use a boolean flag per operation).
 
 ---
 
 **3. Starvation with Unfair Semaphore Under High Load**
 
-Symptom: Some threads wait indefinitely for permits while others continuously acquire and release; occasional timeout exceptions even when throughput seems fine.
+**Symptom:** Some threads wait indefinitely for permits while others continuously acquire and release; occasional timeout exceptions even when throughput seems fine.
 
-Root Cause: Unfair (non-FIFO) semaphore; high-throughput threads keep being selected for wakeup over low-priority waiters.
+**Root Cause:** Unfair (non-FIFO) semaphore; high-throughput threads keep being selected for wakeup over low-priority waiters.
 
-Diagnostic:
+**Diagnostic:**
 
 ```java
 // Log wait time per thread
@@ -401,9 +401,9 @@ if (wait > TimeUnit.MILLISECONDS.toNanos(100)) {
 }
 ```
 
-Fix: Use `new Semaphore(N, true)` (fair mode) to guarantee FIFO ordering.
+**Fix:** Use `new Semaphore(N, true)` (fair mode) to guarantee FIFO ordering.
 
-Prevention: Profile wait time distribution under load; alert on p99 > expected threshold.
+**Prevention:** Profile wait time distribution under load; alert on p99 > expected threshold.
 
 ---
 

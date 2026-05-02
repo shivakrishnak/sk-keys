@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Feature A works. Developer fixes Bug B (in a different area). Feature A now breaks. Without regression tests: Feature A's breakage is discovered by a user 3 days later. The developer has since worked on 5 other things. Debugging: "which commit broke A?" requires `git bisect` through 20 commits.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Software has non-linear dependencies. Changing function X can break function Y through shared state, changed interface contracts, modified global configuration, or subtle ordering assumptions. These interactions are impossible to mentally track. Regression tests codify "this worked before" into executable checks that run on every change.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Regression testing emerged as a discipline in the 1970s–80s alongside the growth of large software projects where individual developers couldn't hold the entire system in their heads. The practice of codifying bugs as tests before fixing them (so the same bug never reappears) became standard by the 1990s.
 
 ---
@@ -91,9 +91,9 @@ When CI takes 30 minutes with 5000 tests, you can't run all tests on every commi
 - **Risk-based selection**: always run smoke tests; run integration tests on changes to integration layers; run full suite before release
 - **Parallel execution**: split tests across workers (Maven Surefire `forkCount`, Gradle parallel)
 
-THE TRADE-OFFS:
-Gain: Automatic detection of regression bugs; confidence to refactor; documented production bug history.
-Cost: Growing test suite = slower CI; maintaining tests as code evolves; flaky regression tests erode trust in the suite.
+**THE TRADE-OFFS:**
+**Gain:** Automatic detection of regression bugs; confidence to refactor; documented production bug history.
+**Cost:** Growing test suite = slower CI; maintaining tests as code evolves; flaky regression tests erode trust in the suite.
 
 ---
 
@@ -257,13 +257,13 @@ void checkout_internationalNames_succeed(String lastName) {
 
 **1. Growing Regression Suite Slows CI to 45 Minutes**
 
-Root Cause: 5000 tests run sequentially; no parallelism; integration tests mix with unit tests.
-Fix: Parallel execution (`forkCount=1C` in Maven Surefire = 1× CPU count); separate unit/integration test phases; test impact analysis (only run tests touching changed code on PRs).
+**Root Cause:** 5000 tests run sequentially; no parallelism; integration tests mix with unit tests.
+**Fix:** Parallel execution (`forkCount=1C` in Maven Surefire = 1× CPU count); separate unit/integration test phases; test impact analysis (only run tests touching changed code on PRs).
 
 **2. Regression Test Suite Has 20% Flaky Rate**
 
-Root Cause: Tests share state (static fields, shared DB, non-reset mocks); timing-dependent tests; environment-specific behavior.
-Fix: Quarantine flaky tests (`@Disabled` + ticket); investigate root cause systematically; require `@BeforeEach` cleanup; use test-specific DB schemas.
+**Root Cause:** Tests share state (static fields, shared DB, non-reset mocks); timing-dependent tests; environment-specific behavior.
+**Fix:** Quarantine flaky tests (`@Disabled` + ticket); investigate root cause systematically; require `@BeforeEach` cleanup; use test-specific DB schemas.
 
 ---
 

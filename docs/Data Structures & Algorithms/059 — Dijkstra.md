@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You are building a GPS navigation app. The road network is a weighted graph where edge weights are travel times in minutes. You need the fastest route from location A to location B. BFS would find the fewest road segments, but road segments vary widely in length and speed — a 1-hop highway route might be faster than a 5-hop city-street route. Naive exhaustive search of all paths is exponential.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Weighted graphs require a fundamentally different strategy than unweighted BFS. A path via 10 fast edges might beat a direct but slow edge. You need an algorithm that accounts for cumulative weights, not just hop counts.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Edsger Dijkstra observed in 1956 that you can greedily expand the shortest-path frontier: always process the node with the currently smallest known distance from the source. Once a node is processed, its shortest distance is finalised — no later path can improve it (because all edge weights are non-negative, any extension of the current path can only increase or maintain the total distance). This greedy invariant makes the algorithm correct. This is exactly why **Dijkstra's algorithm** was created.
 
 ---
@@ -64,12 +64,12 @@ The key correctness property is: **once a node is popped from the priority queue
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. `dist[v]` stores the best known distance from source to `v`. Initially `dist[source] = 0`, all others `= ∞`.
 2. Processed nodes have their **exact shortest distance finalised** — they are never revisited.
 3. All edge weights must be **non-negative** for the greedy invariant to hold.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 2, the algorithm needs a data structure that efficiently yields the minimum-distance unprocessed node. A min-heap priority queue achieves this in `O(log V)` per operation. The outer loop runs V times (once per node processed) and the inner edge relaxation runs E times total. Combined: `O((V + E) log V)`.
 
 **Edge relaxation:**
@@ -86,21 +86,21 @@ Dijkstra is a greedy algorithm — it commits to the locally optimal choice (exp
 **Comparison with BFS:**
 BFS is Dijkstra with all weights = 1. Replacing BFS's FIFO queue with a min-heap priority queue yields Dijkstra. This is not a coincidence: both algorithms maintain a "frontier" and expand in order of distance from source — BFS just happens to work when "distance = hop count."
 
-THE TRADE-OFFS:
-Gain: Optimal single-source shortest paths in `O((V+E) log V)`.
-Cost: Requires non-negative edge weights; does not detect negative cycles; `O(V)` memory for dist[] and priority queue.
+**THE TRADE-OFFS:**
+**Gain:** Optimal single-source shortest paths in `O((V+E) log V)`.
+**Cost:** Requires non-negative edge weights; does not detect negative cycles; `O(V)` memory for dist[] and priority queue.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Graph: S→A (weight 4), S→B (weight 1), B→A (weight 2), A→D (weight 3), B→D (weight 8). Find shortest distance from S to D.
 
-WHAT HAPPENS WITHOUT DIJKSTRA (greedy by hop count like BFS):
+**WHAT HAPPENS WITHOUT DIJKSTRA (greedy by hop count like BFS):**
 S→A→D = 2 hops. S→B→D = 2 hops. BFS picks S→A→D = weight 4+3=7 or S→B→D = weight 1+8=9. Might pick 7.
 
-WHAT HAPPENS WITH DIJKSTRA:
+**WHAT HAPPENS WITH DIJKSTRA:**
 dist = {S:0, A:∞, B:∞, D:∞}. Queue: [(0,S)].
 Pop (0,S). Relax S→A: dist[A]=4. Relax S→B: dist[B]=1. Queue: [(1,B),(4,A)].
 Pop (1,B). Relax B→A: 1+2=3 < 4 → dist[A]=3. Relax B→D: 1+8=9. Queue: [(3,A),(4,A),(9,D)].
@@ -108,7 +108,7 @@ Pop (3,A) — duplicate (4,A) in queue, skip when popped. Relax A→D: 3+3=6 < 9
 Pop (4,A) — already processed (dist[A]=3 < 4 in queue), skip.
 Pop (6,D). Optimal: S→B→A→D = 1+2+3 = 6.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The path S→B→A→D (3 hops) beats S→A→D (2 hops) because going through B first to reach A via the cheaper edge outweighs the extra hop. BFS (hop count) would have missed this. Dijkstra found it by always expanding the smallest-cost frontier.
 
 ---
@@ -117,10 +117,10 @@ The path S→B→A→D (3 hops) beats S→A→D (2 hops) because going through B
 
 > Dijkstra is like a relay race where you always send the fastest available runner next. You track the minimum arrival time at every checkpoint. When a runner arrives at a checkpoint, they immediately dispatch the fastest available runner to each connected checkpoint. The first time a checkpoint is "confirmed reached," that arrival time is the globally minimum time.
 
-"Runner arrives at checkpoint" → node popped from priority queue
-"Minimum arrival time" → dist[node]
-"Dispatch to connected checkpoints" → edge relaxation to neighbours
-"Checkpoint confirmed" → node permanently processed
+- "Runner arrives at checkpoint" → node popped from priority queue
+- "Minimum arrival time" → dist[node]
+- "Dispatch to connected checkpoints" → edge relaxation to neighbours
+- "Checkpoint confirmed" → node permanently processed
 
 Where this analogy breaks down: Real relay races don't allow revisiting checkpoints with faster times. Dijkstra does allow updating `dist[v]` if a faster route is found before `v` is processed — this is the relaxation step that moves `v` "earlier" in the priority queue.
 
@@ -180,7 +180,7 @@ Dijkstra's algorithm is the direct application of the greedy algorithm paradigm 
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Weighted graph + source node
 → Initialize dist[] = ∞, dist[src] = 0
@@ -194,7 +194,7 @@ Weighted graph + source node
 → Return dist[target], reconstruct path
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Negative edge weight in graph
 → Dijkstra finalises a node u too early
@@ -205,7 +205,7 @@ Negative edge weight in graph
 → Use Bellman-Ford for negative edges
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For road networks (V=10⁷ nodes, E=10⁸ edges), vanilla Dijkstra takes several seconds. Production GPS systems use bidirectional Dijkstra (expand from source AND target simultaneously, meet in the middle — reduces search radius from r to r/2, so explored nodes ~O(r²/4) vs O(r²)), plus preprocessing shortcuts (Contraction Hierarchies) to reduce queries to milliseconds.
 
 ---
@@ -342,11 +342,11 @@ How to choose: Use Dijkstra for non-negative weights (the common case). Use Bell
 
 **1. Negative edge weight causes incorrect shortest path**
 
-Symptom: Dijkstra returns a distance that is larger than expected; verified incorrect by manual calculation.
+**Symptom:** Dijkstra returns a distance that is larger than expected; verified incorrect by manual calculation.
 
-Root Cause: A node `u` is finalised too early (before the path through a negative edge reaches it). The negative edge would reduce `dist[u]` further, but `u` is already marked processed.
+**Root Cause:** A node `u` is finalised too early (before the path through a negative edge reaches it). The negative edge would reduce `dist[u]` further, but `u` is already marked processed.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Validate all edge weights before running:
 for (int[] edge : edges)
@@ -356,25 +356,25 @@ for (int[] edge : edges)
             Arrays.toString(edge));
 ```
 
-Fix: Use Bellman-Ford for graphs with negative edges.
+**Fix:** Use Bellman-Ford for graphs with negative edges.
 
-Prevention: Document that the graph must have non-negative weights. Validate at input boundary.
+**Prevention:** Document that the graph must have non-negative weights. Validate at input boundary.
 
 ---
 
 **2. Integer overflow in distance addition**
 
-Symptom: Dijkstra returns a negative distance or crashes with unexpected results.
+**Symptom:** Dijkstra returns a negative distance or crashes with unexpected results.
 
-Root Cause: `dist[u] = Integer.MAX_VALUE` (initial "infinity"). Adding any positive weight overflows to a negative number. `Integer.MAX_VALUE + 1 = Integer.MIN_VALUE`.
+**Root Cause:** `dist[u] = Integer.MAX_VALUE` (initial "infinity"). Adding any positive weight overflows to a negative number. `Integer.MAX_VALUE + 1 = Integer.MIN_VALUE`.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Symptom: dist[target] = -2147483647
 // or similar negative value
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: overflows when dist[u] = MAX_VALUE
 if (dist[u] + w < dist[v]) ...
@@ -384,17 +384,17 @@ if (dist[u] != Integer.MAX_VALUE
     && dist[u] + w < dist[v]) ...
 ```
 
-Prevention: Use `Long.MAX_VALUE / 2` as infinity, or explicit overflow check before addition.
+**Prevention:** Use `Long.MAX_VALUE / 2` as infinity, or explicit overflow check before addition.
 
 ---
 
 **3. Missing lazy deletion check causes processing node twice**
 
-Symptom: Correct results but slower than expected; profiling shows the inner loop executes more than E times total.
+**Symptom:** Correct results but slower than expected; profiling shows the inner loop executes more than E times total.
 
-Root Cause: Without the `if (d > dist[u]) continue` check, outdated queue entries cause a node to be processed multiple times. Each re-processing re-relaxes all edges from that node unnecessarily.
+**Root Cause:** Without the `if (d > dist[u]) continue` check, outdated queue entries cause a node to be processed multiple times. Each re-processing re-relaxes all edges from that node unnecessarily.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 int processCount = 0;
 while (!pq.isEmpty()) {
@@ -406,9 +406,9 @@ System.out.println("Total pops: " + processCount);
 // not >> E
 ```
 
-Fix: Add `if (d > dist[u]) continue;` immediately after `pq.poll()`.
+**Fix:** Add `if (d > dist[u]) continue;` immediately after `pq.poll()`.
 
-Prevention: This check is non-optional in the lazy-deletion implementation. Make it a template habit.
+**Prevention:** This check is non-optional in the lazy-deletion implementation. Make it a template habit.
 
 ---
 

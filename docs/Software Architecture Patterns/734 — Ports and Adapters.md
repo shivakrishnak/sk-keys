@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Ports and Adapters"
 parent: "Software Architecture Patterns"
@@ -203,7 +203,7 @@ WITH Ports and Adapters:
 "3.5mm port interface" = Output Port (interface defined by application core)
 "Bluetooth adapter" = Concrete Driven Adapter
 "Car stereo adapter" = Alternative Driven Adapter (implements same port)
-"USB-C → 3.5mm dongle" = Adapter that makes an incompatible system work with the port
+- "USB-C → 3.5mm dongle" = Adapter that makes an incompatible system work with the port
 "Phone's audio system" = Application core (knows only the port, not the adapters)
 
 ---

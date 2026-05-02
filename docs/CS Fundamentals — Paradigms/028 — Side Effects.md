@@ -31,15 +31,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 In pure mathematical functions — f(x) = x² — calling the function never changes anything outside the function. The same input always produces the same output. But programs need to interact with the world: read from databases, write to files, display UI, send HTTP requests. These operations change state outside the function boundary. Without a clear concept of "side effect," you can't reason about whether a function is safe to call multiple times, in parallel, or to cache its result.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 A function called `getUser(id)` that unexpectedly increments an audit counter, logs to a file, and updates a "last-accessed" timestamp is a function with three hidden side effects. Testing it requires setting up all three side-effect targets. Running it twice has different observable effects than running it once. Running it in parallel produces race conditions. Caching its result skips the side effects — incorrect behaviour. Without naming and controlling side effects, functions become unpredictable.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 Functional programming formalised the distinction: **pure functions** have no side effects — they only transform inputs into outputs; **impure functions** have side effects. This distinction enables reasoning: pure functions can be cached (memoized), parallelised, tested without mocks, reordered, and inlined without changing program behaviour. Haskell went furthest: side effects are encoded in the type system (`IO a` = a computation that produces `a` while potentially performing I/O). You cannot accidentally perform a side effect without the type reflecting it.
 
@@ -67,14 +67,14 @@ Side effects are not inherently bad — they're how programs interact with the w
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. A function with no side effects: same inputs → same outputs, always. No external state read or modified.
 2. Side effects include: writing state (mutation), reading mutable state (I/O, global variables), I/O operations (file, network, console), exceptions, and non-determinism (current time, random numbers).
 3. A pure function can be treated as a mathematical function: its execution can be replaced by its return value without changing program behaviour (referential transparency).
 4. Side effects make testing harder, parallelism unsafe, and caching incorrect.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 ```
 PURE (no side effects):
@@ -96,21 +96,21 @@ IMPURE (side effects):
   // test requires mock logger + reset callCount
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
 Pure functions:
-Gain: testable, cacheable, parallelisable, composable, predictable.
-Cost: cannot interact with the world; all real programs eventually need side effects.
+**Gain:** testable, cacheable, parallelisable, composable, predictable.
+**Cost:** cannot interact with the world; all real programs eventually need side effects.
 
 Impure functions:
-Gain: can interact with the world (I/O, state, randomness).
-Cost: hard to test (require mocks), cannot be safely cached, harder to parallelise, unpredictable if effects are hidden.
+**Gain:** can interact with the world (I/O, state, randomness).
+**Cost:** hard to test (require mocks), cannot be safely cached, harder to parallelise, unpredictable if effects are hidden.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Three engineers review this function: `double processSale(double amount)`. One says "it should be pure — just return the net amount." Another says "it needs to update inventory." The third says "it must write to the audit log." Who is right?
 
 ANALYSIS:
@@ -144,7 +144,7 @@ void completeSale(SaleRecord sale) {
 // Side effects are explicit, isolated, and clearly named
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The right approach is to isolate the pure computation from the side effects. This is the "functional core, imperative shell" pattern: the business logic (calculation) is a pure function; the integration with the world (persistence, logging) is an explicit, separate, impure operation.
 
 ---
@@ -247,7 +247,7 @@ Haskell's type system makes side effects explicit: `IO a` is the type of a compu
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 Request enters system (impure: reading input)
@@ -267,7 +267,7 @@ Execute side effects based on decision (impure):
 Return response (pure: construct response object)
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Side effect fails mid-sequence:
@@ -285,7 +285,7 @@ Prevention: side effects that must succeed together go in same
   transaction; side effects to external systems use retry + idempotency
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 At scale, uncontrolled side effects become distributed systems problems. If multiple services read mutable shared state simultaneously, you need synchronisation (locks, transactions) — performance bottlenecks. If side effects (HTTP calls) happen inside business logic, tests require integration test environments for every unit test. At petabyte scale (Spark, Flink), computations are distributed across hundreds of nodes — only pure functions can be safely distributed; side-effect-bearing functions require coordination. Spark enforces this: map/filter lambdas must be pure (serialisable, no side effects); persistence happens at the output step only.
 
@@ -412,13 +412,13 @@ User user = fetchUser(42, dataSource).call();
 
 **Hidden Side Effects Breaking Caching (Spring @Cacheable)**
 
-Symptom:
+**Symptom:**
 `@Cacheable` annotated service method produces stale data; audit logs missing entries; database not updated on subsequent calls.
 
-Root Cause:
+**Root Cause:**
 The `@Cacheable` method has side effects (logging, audit, state update) that only execute on the first call. Subsequent calls return the cached result, skipping the side effects — incorrect behaviour.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```java
 // BUG: @Cacheable on a method with side effects
@@ -449,10 +449,10 @@ public User getUser(String id) {
 }
 ```
 
-Fix:
+**Fix:**
 Extract the pure data-fetching into a `@Cacheable` method. Keep side effects in the non-cached caller method. Side effects and caching are incompatible — separate them by design.
 
-Prevention:
+**Prevention:**
 Code review rule: any `@Cacheable` method must be pure (no side effects, only return a value from a deterministic query).
 
 ---

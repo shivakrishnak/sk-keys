@@ -260,13 +260,13 @@ spec:
 
 **Certificate Rotation Failure — mTLS Cascading Failure**
 
-Symptom: All service calls suddenly fail with mTLS handshake errors: "certificate
+**Symptom:** All service calls suddenly fail with mTLS handshake errors: "certificate
 expired." Alerts fire across the entire cluster simultaneously.
 
 Cause: Istiod failed to rotate certificates before expiry. Istiod itself may have been
 down for maintenance; certs expired in the 24-hour window.
 
-Fix: (1) Monitor cert expiry: Prometheus alert on `istio_agent_num_outgoing_requests`
+**Fix:** (1) Monitor cert expiry: Prometheus alert on `istio_agent_num_outgoing_requests`
 drops below baseline (proxy can't connect) AND cert expiry < 48 hours ahead.
 (2) HA Istiod: run 3 replicas with PodDisruptionBudget minAvailable=2.
 (3) Increase cert TTL from 24h to 48h to provide more recovery window.

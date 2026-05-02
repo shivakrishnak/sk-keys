@@ -277,14 +277,14 @@ spec:
 
 **Stale Leader Writes After GC Pause**
 
-Symptom: Intermittent data corruption; write audit log shows two different nodes
+**Symptom:** Intermittent data corruption; write audit log shows two different nodes
 writing the same record within a short time window; post-mortem shows one node had
 a GC pause at the exact time of the write collision.
 
-Root Cause: Lock TTL expired during GC pause; new holder acquired lock; old holder
+**Root Cause:** Lock TTL expired during GC pause; new holder acquired lock; old holder
 resumed and wrote without fencing check at storage layer.
 
-Fix: Implement fencing token enforcement at the storage write path. Add metrics:
+**Fix:** Implement fencing token enforcement at the storage write path. Add metrics:
 `lock_fencing_rejections_total` counter — non-zero value means fencing is working
 correctly (expected during failovers); sudden spike means frequent stale writes.
 

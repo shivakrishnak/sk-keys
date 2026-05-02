@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A web server receives 10 million requests per day for the same 1,000 database records. Each request queries the database (5 ms latency). Total: 10M × 5ms = 50,000 seconds of database latency — 14 hours of query time per day. The server spends most of its time recomputing answers it already computed.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Recomputing the same result repeatedly when it could be stored the first time and served instantly is pure waste. At scale, this recomputation burns CPU, burns database connections, and creates bottlenecks that limit throughput.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Store the result the first time it's computed. Subsequent requests for the same result return the stored value in O(1) time instead of recomputing. This is the Space-Time Trade-off: pay memory once, save computation forever (until invalidation). This is exactly why **Space-Time Trade-off** is a fundamental design principle.
 
 ---
@@ -64,35 +64,35 @@ The trade-off is not always clear-cut. Memory has a cost: precomputed tables tha
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. If a value is computed multiple times from the same inputs, storing it after the first computation saves time for all future computations.
 2. The break-even point: storing pays off when `number_of_reuses × compute_cost > storage_cost + lookup_cost`.
 3. Not all computations benefit: if a value is used only once, storing it costs space with no benefit.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Three canonical patterns:
 - **Lookup table:** Precompute all values for a small domain (e.g., sin/cos tables, CRC tables). O(N) precompute, O(1) lookup, O(N) space.
 - **Memoization:** Cache results of function calls keyed on arguments. O(1) amortized per unique call, O(distinct inputs) space.
 - **DP table:** Store all subproblem solutions in a 2D array. Eliminates exponential recomputation; O(M×N) time and space for O(2^N) naive recursion.
 
-THE TRADE-OFFS:
-Gain: O(1) repeated lookups; eliminates redundant CPU work; enables horizontal scaling.
-Cost: Memory consumption (RAM, disk, network bandwidth for caches); cache invalidation complexity; stale data risk; higher GC pressure; cold-start cost (populating the cache).
+**THE TRADE-OFFS:**
+**Gain:** O(1) repeated lookups; eliminates redundant CPU work; enables horizontal scaling.
+**Cost:** Memory consumption (RAM, disk, network bandwidth for caches); cache invalidation complexity; stale data risk; higher GC pressure; cold-start cost (populating the cache).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Compute Fibonacci(40) using two approaches: pure recursion vs memoisation.
 
-WHAT HAPPENS WITHOUT SPACE-TIME TRADE-OFF (pure recursion):
+**WHAT HAPPENS WITHOUT SPACE-TIME TRADE-OFF (pure recursion):**
 `fib(40)` calls `fib(39)` and `fib(38)`. `fib(39)` calls `fib(38)` and `fib(37)`. `fib(38)` is computed twice. The tree has 2^40 ≈ 10^12 nodes. Even at 10^9 ops/second, this takes 1,000 seconds.
 
-WHAT HAPPENS WITH MEMOIZATION:
+**WHAT HAPPENS WITH MEMOIZATION:**
 `fib(40)` → `fib(39)` → ... → `fib(0)=0`, `fib(1)=1`. Each `fib(i)` computed once, stored, looked up in O(1). Total: 40 computations. At 10^9 ops/second: 40 nanoseconds.
 
-THE INSIGHT:
+**THE INSIGHT:**
 `fib(38)` was recomputed (2^38 times) in the first approach. With memoisation, it's computed once. The space cost: 40 integers (~320 bytes). The time savings: 2^40 → 40 operations — 25-billion-fold speedup. This is the starkest possible Space-Time Trade-off: trivial space investment, astronomical time savings.
 
 ---
@@ -101,11 +101,11 @@ THE INSIGHT:
 
 > A chef in a restaurant: a slow chef recomputes every recipe from the ingredient manual each order (time expensive, no pantry needed). A fast chef pre-mixes common sauces at the start of the day (space: pantry space for sauces). When an order arrives, "need garlic butter" → grab from pantry in 5 seconds, not mix from scratch in 5 minutes.
 
-"Pre-mixing sauce at day start" → precomputing and caching
-"Pantry space" → memory/storage used
-"Grabbing from pantry" → O(1) cache lookup
-"Sauce expires" → cache invalidation (stale data)
-"Rarely ordered sauce (occupies pantry for months)" → cache for rarely-accessed data wastes space
+- "Pre-mixing sauce at day start" → precomputing and caching
+- "Pantry space" → memory/storage used
+- "Grabbing from pantry" → O(1) cache lookup
+- "Sauce expires" → cache invalidation (stale data)
+- "Rarely ordered sauce (occupies pantry for months)" → cache for rarely-accessed data wastes space
 
 Where this analogy breaks down: Pantry space is constant; caches grow dynamically. Sauces expire by time (TTL); cached computations may be invalidated by data changes, not time.
 
@@ -178,7 +178,7 @@ The Space-Time Trade-off is formalised in Pebbling games (graph pebbling models 
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Request for computed value V(key)
 → Check cache: is V(key) stored?
@@ -190,7 +190,7 @@ Request for computed value V(key)
 → On data change: invalidate cached V(key)
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Cache not invalidated after data change
 → Stale value returned: old price, old user profile
@@ -200,7 +200,7 @@ Cache not invalidated after data change
   log eviction/invalidation events in Redis
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10 million users, a per-user cache (10M entries × 1KB) = 10GB of cache needed. Redis/Memcached distribute this across nodes. Cache hit rate becomes critical: 90% hit rate means 90% of traffic served from cache; 10% hits the database. Adding cache nodes improves hit rate but adds network hop. The optimal cache size: store the "hot" 10% of data that handles 90% of reads (Pareto principle).
 
 ---
@@ -317,58 +317,58 @@ How to choose: Use memoization for recursive pure functions. Use lookup tables f
 
 **1. Cache stampede (thundering herd)**
 
-Symptom: Cached value expires; 10,000 simultaneous requests all compute from scratch simultaneously, overwhelming the database.
+**Symptom:** Cached value expires; 10,000 simultaneous requests all compute from scratch simultaneously, overwhelming the database.
 
-Root Cause: No "single flight" protection — all concurrent misses compute and store independently.
+**Root Cause:** No "single flight" protection — all concurrent misses compute and store independently.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Redis: monitor MISS rate spike
 redis-cli MONITOR | grep MISS
 # Or: measure DB connection pool saturation during expiry
 ```
 
-Fix: Use mutex/single-flight pattern: first miss starts computation; others wait for result.
+**Fix:** Use mutex/single-flight pattern: first miss starts computation; others wait for result.
 
-Prevention: Use probabilistic early expiry (refresh slightly before expiry to avoid simultaneous expiry).
+**Prevention:** Use probabilistic early expiry (refresh slightly before expiry to avoid simultaneous expiry).
 
 ---
 
 **2. Memory leak in unbounded memo cache**
 
-Symptom: Java heap grows continuously; application OOM crashes after days of uptime.
+**Symptom:** Java heap grows continuously; application OOM crashes after days of uptime.
 
-Root Cause: HashMap used as memo cache grows without eviction policy. Every unique key argument populates the map permanently.
+**Root Cause:** HashMap used as memo cache grows without eviction policy. Every unique key argument populates the map permanently.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # JVM heap dump analysis:
 jmap -dump:format=b,file=heap.hprof <pid>
 # Analyze in MAT: look for growing collections
 ```
 
-Fix: Use Caffeine/Guava `CacheBuilder.newBuilder().maximumSize(1000).build()` with eviction.
+**Fix:** Use Caffeine/Guava `CacheBuilder.newBuilder().maximumSize(1000).build()` with eviction.
 
-Prevention: Never use an unbounded `HashMap` as a production memo cache; always specify maximum size and TTL.
+**Prevention:** Never use an unbounded `HashMap` as a production memo cache; always specify maximum size and TTL.
 
 ---
 
 **3. Stale cache after data update**
 
-Symptom: Users see outdated prices/profiles after updates; data appears "stuck."
+**Symptom:** Users see outdated prices/profiles after updates; data appears "stuck."
 
-Root Cause: Cache not invalidated when underlying data changes.
+**Root Cause:** Cache not invalidated when underlying data changes.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check cache TTL vs update frequency:
 redis-cli TTL "product:42"  # returns remaining TTL
 redis-cli GET "product:42"  # compare with DB value
 ```
 
-Fix: Implement event-driven cache invalidation: on DB update → publish event → cache subscriber evicts.
+**Fix:** Implement event-driven cache invalidation: on DB update → publish event → cache subscriber evicts.
 
-Prevention: Design cache invalidation before deploying; test update → eviction → fresh read cycle explicitly.
+**Prevention:** Design cache invalidation before deploying; test update → eviction → fresh read cycle explicitly.
 
 ---
 

@@ -463,7 +463,7 @@ app.post('/process', (req, res) => {
 });
 ```
 
-Diagnostic: use `clinic.js` or `--prof` flag. Event loop lag > 100ms indicates blocking code. `perf_hooks.monitorEventLoopDelay()` measures lag directly.
+**Diagnostic:** use `clinic.js` or `--prof` flag. Event loop lag > 100ms indicates blocking code. `perf_hooks.monitorEventLoopDelay()` measures lag directly.
 
 **2. Microtask queue starvation via recursive Promises**
 

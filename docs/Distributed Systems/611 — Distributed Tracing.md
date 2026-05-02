@@ -175,7 +175,7 @@ Result: 3 disconnected traces. The tracing dashboard shows 3 orphaned 1-span tra
 
 Service A handles request on thread T1. Creates a span. Queues work on a thread pool — work runs on thread T2. Thread T2 has no OTel context — no span parent.
 
-Fix: use OTel's `Context.current().wrap(runnable)` when submitting to thread pools. This carriers the OTel context from T1 to T2, maintaining the parent-child span relationship across thread boundaries.
+**Fix:** use OTel's `Context.current().wrap(runnable)` when submitting to thread pools. This carriers the OTel context from T1 to T2, maintaining the parent-child span relationship across thread boundaries.
 
 ---
 
@@ -245,13 +245,13 @@ management:
 
 **Orphaned Spans (No Context Propagation)**
 
-Symptom: Jaeger shows hundreds of single-span "micro-traces" — each a lone span with no
+**Symptom:** Jaeger shows hundreds of single-span "micro-traces" — each a lone span with no
 parent. User's checkout trace doesn't appear as one unified tree.
 
 Cause: RestTemplate/HttpClient calls missing OTel context propagation. Async executor
 (ThreadPoolExecutor) loses OTel context when switching threads.
 
-Fix: (1) Use OTel Java agent (auto-injects context into RestTemplate, WebClient).
+**Fix:** (1) Use OTel Java agent (auto-injects context into RestTemplate, WebClient).
 (2) For custom async: wrap runnable with `Context.current().wrap(() -> ...)`.
 (3) For Kafka: include trace headers in ProducerRecord; extract in consumer.
 (4) Verify: in test, assert that child service spans have parent_span_id matching

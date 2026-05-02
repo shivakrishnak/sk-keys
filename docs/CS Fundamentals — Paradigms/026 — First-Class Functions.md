@@ -31,15 +31,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 Early languages (COBOL, FORTRAN) treated functions as second-class constructs — special named procedures separate from data. You could call them by name, but you couldn't store a function in a variable, pass one to another function, or return one as a result. This meant every time you needed to parameterise behaviour — sort a list by different criteria, execute different business rules in different contexts — you had to duplicate code, use special language features (function pointers in C), or restructure the entire program.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 In C, sorting an array by different criteria requires `qsort()` with a function pointer. But function pointers are syntactically awkward, cannot capture local variables (no closures), and require manual memory management of any context data. Writing callbacks in pre-Java-8 Java required anonymous inner classes — five lines of boilerplate to pass one line of behaviour. The inability to cleanly treat functions as values made composable, reusable abstractions unnecessarily difficult.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 Lisp (1958) and later Scheme, ML, and Haskell established first-class functions as a core feature. Java 8 (2014) added lambdas and `java.util.function.*`. JavaScript treated functions as first-class from the beginning (1995). When functions are values, behaviour becomes composable — you can build libraries of higher-order functions (map, filter, reduce) that work with any behaviour passed to them, without the library knowing anything specific about that behaviour.
 
@@ -67,14 +67,14 @@ When functions are values, you gain _behaviour parameterisation_ without subclas
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. **Assignable:** `Function<Integer, Integer> f = x -> x * 2;` — f holds a function value
 2. **Passable:** `applyTwice(x -> x + 1, 5)` — the function is the argument
 3. **Returnable:** `return x -> x * n;` — a function is the return value
 4. **Creatable at runtime:** closures capture variables from the enclosing scope at creation time; the function can be created dynamically based on runtime state
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 When a function captures variables from its enclosing scope (a _closure_), it carries its environment with it. This is first-class functions + closures working together:
 
@@ -86,16 +86,16 @@ Function<Integer, Integer> triple = x -> x * multiplier;
 // Even after the enclosing method returns, the closure holds multiplier
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
-Gain: composable abstractions; reduce boilerplate; enable functional patterns (map, filter, reduce); callbacks and event handlers without classes; strategy/policy patterns with one-liners.
-Cost: can reduce readability if overused (lambda chains vs. explicit named methods); Java's functional interfaces are nominally typed (different types even if same signature); heap allocation for closures (each lambda is an object); debugging closures requires understanding captured state.
+**Gain:** composable abstractions; reduce boilerplate; enable functional patterns (map, filter, reduce); callbacks and event handlers without classes; strategy/policy patterns with one-liners.
+**Cost:** can reduce readability if overused (lambda chains vs. explicit named methods); Java's functional interfaces are nominally typed (different types even if same signature); heap allocation for closures (each lambda is an object); debugging closures requires understanding captured state.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Sort a list of people by last name, then by age, then by salary. Without first-class functions, how do you parameterise the three different sorting behaviours?
 
 WITHOUT FIRST-CLASS FUNCTIONS (Java pre-8):
@@ -131,7 +131,7 @@ people.sort(Comparator.comparingInt(Person::getAge));
 // Three one-liners replace three classes
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 Without first-class functions, parameterising behaviour requires creating types (classes/interfaces). With first-class functions, the behaviour itself is the argument. The difference is not just syntax — it's about what is composable at the language level.
 
 ---
@@ -217,7 +217,7 @@ Predicate<Integer> isAboveThreshold = n -> n > threshold;
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 Lambda expression written: n -> n > 0
@@ -239,7 +239,7 @@ Higher-order function calls: functionalInterface.apply(arg)
 Lambda body executes with captured environment accessible
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Lambda captures mutable variable (Java):
@@ -255,7 +255,7 @@ Fix: capture a final copy before the lambda:
   Runnable r = () -> use(captured);
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 At scale, first-class functions enable functional pipelines that process millions of records with minimal code: `dataStream.filter(isValid).map(transform).collect(toList())`. Java Streams internally use first-class functions (Predicate, Function, Collector) to build lazy evaluation pipelines that avoid materialising intermediate collections. Kotlin's function types (`(Int) -> Int`) are more expressive than Java's functional interfaces — they have a unified type, support extension functions, and enable DSLs like coroutine builders (`launch { }`, `async { }`) that take function-valued arguments.
 
@@ -378,13 +378,13 @@ System.out.println(cleanAndCount.apply("  Hello World  "));  // 11
 
 **Accidentally Mutating Captured State (JavaScript/Kotlin)**
 
-Symptom:
+**Symptom:**
 Callbacks or event handlers produce incorrect results because they share and mutate captured variables in unexpected order.
 
-Root Cause:
+**Root Cause:**
 JavaScript closures capture variables by reference in `var` declarations (not value). In a loop: `for (var i=0; i<5; i++) { arr.push(() => i); }` — all closures capture the same `i` variable, which ends at 5. All callbacks return 5 instead of 0, 1, 2, 3, 4.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```javascript
 // BUG: var captures reference — all functions return 5
@@ -402,10 +402,10 @@ for (let i = 0; i < 5; i++) {
 console.log(funcs2.map((f) => f())); // [0, 1, 2, 3, 4]
 ```
 
-Fix:
+**Fix:**
 Use `let`/`const` in JavaScript (block-scoped). In Java: effectively-final rule prevents this class of bug entirely. In other languages: be explicit about when a closure captures a value vs. a reference.
 
-Prevention:
+**Prevention:**
 Prefer immutable closures — closures that capture only effectively-final values. Treat captured mutable state as a red flag requiring careful review of sharing and ordering.
 
 ---

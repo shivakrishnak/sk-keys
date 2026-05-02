@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Is Algorithm A fundamentally different from Algorithm B? Is factoring fundamentally harder than sorting? Is verifying a chess position ("can White force a win?") fundamentally harder than verifying a sudoku solution? Without a formal classification system, "hard" and "easy" are vague — there's no shared vocabulary for the computer science community.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Without complexity classes, every algorithm is judged in isolation. The accumulated knowledge about problem difficulty cannot be transferred. "This new problem looks hard" has no formal meaning. Researchers cannot say "this problem is equivalent to Hamiltonicity" and immediately know it requires approximation.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Complexity classes formalise: "all problems solvable with polynomial time" is P; "all problems verifiable in polynomial time" is NP; "all problems solvable in polynomial space" is PSPACE; and so on. Problems within each class are equivalent up to polynomial transformations. The class hierarchy (P ⊆ NP ⊆ PSPACE ⊆ EXP) organises all known problems by their computational resource requirements. This is exactly why **Complexity Classes** were created.
 
 ---
@@ -64,12 +64,12 @@ The distinction between PSPACE and NP is subtle but profound: PSPACE problems mi
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Complexity classes are defined by resource bounds on the Turing machine model: deterministic DTM, non-deterministic NTM, or alternating ATM.
 2. Polynomial-time reductions preserve class membership: if A reduces to B and B ∈ P, then A ∈ P.
 3. The Time Hierarchy Theorem and Space Hierarchy Theorem prove that more time/space allows more problems to be solved: EXP ⊋ P; PSPACE ⊋ LOGSPACE.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 | Class | Resource | Model | Example |
 |---|---|---|---|
@@ -81,26 +81,26 @@ DERIVED DESIGN:
 | EXP | Exp time | DTM | Chess (general), Go |
 | NEXPTIME | Exp time | NTM | Succinct circuit SAT |
 
-THE TRADE-OFFS:
-Gain: Formal vocabulary for classifying all problems; enables universal statements ("harder than all NP problems").
-Cost: Highly abstract; focuses on worst-case asymptotic complexity, which may not match practical performance; doesn't capture constants or real-world I/O performance.
+**THE TRADE-OFFS:**
+**Gain:** Formal vocabulary for classifying all problems; enables universal statements ("harder than all NP problems").
+**Cost:** Highly abstract; focuses on worst-case asymptotic complexity, which may not match practical performance; doesn't capture constants or real-world I/O performance.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Consider three problems: (A) "Does this sudoku have a solution?" (B) "Does White have a forced win in chess from this position?" (C) "Is 12345678901234567890 composite?"
 
-WHAT HAPPENS WITH INFORMAL CLASSIFICATION:
+**WHAT HAPPENS WITH INFORMAL CLASSIFICATION:**
 All three seem "hard." No obvious difference. Without complexity classes, all three receive the same treatment.
 
-WHAT HAPPENS WITH COMPLEXITY CLASSES:
+**WHAT HAPPENS WITH COMPLEXITY CLASSES:**
 (A) Sudoku solving: NP-complete (solution verifiable fast, no fast general solver known).
 (B) Chess (polynomial board): PSPACE-complete (adversarial: requires evaluating all sequences of moves; can reuse space).
 (C) Compositeness: in co-NP ∩ NP; primality testing in P (AKS 2002 — polynomial algorithm exists).
 
-THE INSIGHT:
+**THE INSIGHT:**
 Problems (A) and (B) are both "hard," but they're in different complexity classes. Chess is PSPACE-complete, which is at least as hard as NP-complete (PSPACE ⊇ NP) and likely strictly harder. The formal classification system reveals relationships invisible to informal analysis.
 
 ---
@@ -109,11 +109,11 @@ Problems (A) and (B) are both "hard," but they're in different complexity classe
 
 > Complexity classes are like geological strata. P is bedrock (solid, fundamental, polynomial time). NP is the overlying sediment (you can dig through it quickly to verify a path, but finding a new path may require drilling through). PSPACE is deeper sediment — harder but still finite space used. EXP is magma — exponential time required. Time Hierarchy: deeper strata always exist, and nothing dissolves down.
 
-"Bedrock (P)" → fastest tractable problems
-"Sediment (NP)" → verifiable problems, solution-finding harder
-"Deep sediment (PSPACE)" → solvable in poly space but possibly exp time
-"Magma (EXP)" → exponential time required
-"Drilling down" → more resources required to solve
+- "Bedrock (P)" → fastest tractable problems
+- "Sediment (NP)" → verifiable problems, solution-finding harder
+- "Deep sediment (PSPACE)" → solvable in poly space but possibly exp time
+- "Magma (EXP)" → exponential time required
+- "Drilling down" → more resources required to solve
 
 Where this analogy breaks down: Geological strata don't reduce into each other; complexity classes have polynomial-time reductions connecting them. Also, the hierarchy has known inclusions but many separation conjectures remain unproven.
 
@@ -174,7 +174,7 @@ Any NP problem has a polynomial-length certificate verifiable in polynomial time
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 New problem definition
 → Is it a decision problem (YES/NO answer)?
@@ -188,7 +188,7 @@ New problem definition
 → Algorithm design: exact / approx / heuristic
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Problem misclassified (put in wrong class)
 → Algorithm strategy inappropriate
@@ -198,7 +198,7 @@ Problem misclassified (put in wrong class)
 → Fix: verify class membership via complete-problem reduction
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For practical engineering: P problems scale to any input size. NP-complete scale to ~N=50 (exact), ~N=10,000 (heuristics). PSPACE-complete scale to tiny game boards. EXP-complete: intractable beyond N=20. These limits are engineering constraints in games, AI planning, formal verification.
 
 ---
@@ -309,11 +309,11 @@ int hopcroftKarp(List<Integer>[] adj, int L, int R) {
 
 **1. Treating PSPACE problem as NP-complete → wrong strategy**
 
-Symptom: Building an approximation algorithm for a game AI (generalised chess / Go); no meaningful approximation ratio achievable.
+**Symptom:** Building an approximation algorithm for a game AI (generalised chess / Go); no meaningful approximation ratio achievable.
 
-Root Cause: NP-complete optimisation problems often have PTAS or constant-factor approximations. PSPACE-complete game-playing has no meaningful approximation (the adversary invalidates any static evaluation).
+**Root Cause:** NP-complete optimisation problems often have PTAS or constant-factor approximations. PSPACE-complete game-playing has no meaningful approximation (the adversary invalidates any static evaluation).
 
-Diagnostic:
+**Diagnostic:**
 ```
 Ask: Does my problem involve an adversary (min-max)?
      Does it require evaluating unbounded sequences of moves?
@@ -321,28 +321,28 @@ If yes → likely PSPACE, not NP → use alpha-beta pruning,
          MCTS, or bounded-depth minimax, not approximation
 ```
 
-Fix: Use game-tree search (MCTS, alpha-beta) for PSPACE problems; approximation for NP optimisation.
+**Fix:** Use game-tree search (MCTS, alpha-beta) for PSPACE problems; approximation for NP optimisation.
 
-Prevention: Classify problem structure before choosing algorithm paradigm.
+**Prevention:** Classify problem structure before choosing algorithm paradigm.
 
 ---
 
 **2. Confusing BPP/randomised with NP/non-deterministic**
 
-Symptom: Claims "randomised algorithm solves NP-complete problem in poly time."
+**Symptom:** Claims "randomised algorithm solves NP-complete problem in poly time."
 
-Root Cause: BPP (randomised poly time) ≠ NP. BPP uses random coins, NP uses non-deterministic choices. A Monte Carlo algorithm with small error probability does not solve NP-complete problems unless NP ⊆ BPP (widely considered false).
+**Root Cause:** BPP (randomised poly time) ≠ NP. BPP uses random coins, NP uses non-deterministic choices. A Monte Carlo algorithm with small error probability does not solve NP-complete problems unless NP ⊆ BPP (widely considered false).
 
-Diagnostic:
+**Diagnostic:**
 ```
 Ask: Does the algorithm sometimes return WRONG answers (Monte Carlo)?
 → That's BPP, not a poly algorithm for NP-complete.
   It might solve some instances fast but not worst-case.
 ```
 
-Fix: Validate that randomised correctness claim has a formal error probability < 1/poly, not just "usually works."
+**Fix:** Validate that randomised correctness claim has a formal error probability < 1/poly, not just "usually works."
 
-Prevention: Distinguish "Monte Carlo correctness" from "deterministic correctness" in algorithm descriptions.
+**Prevention:** Distinguish "Monte Carlo correctness" from "deterministic correctness" in algorithm descriptions.
 
 ---
 

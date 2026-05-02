@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 To pass work to a `Thread`, the pre-Java 1.0 design would require extending `Thread` and overriding `run()`. But extending `Thread` mixes the "what to run" with "how to run" — coupling the task logic to the threading mechanism. A task cannot be reused across different execution contexts (thread pool, scheduled executor, UI event queue) if it must extend `Thread`.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A data processing task extends `Thread` and overrides `run()`. Now the task can only be used with threads. It can't be submitted to an `ExecutorService`. It can't be scheduled. It can't be tested without creating an OS thread. Every change in execution strategy requires rewriting the task class.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **`Runnable`** was created — to separate "what to do" (the task, implementing `Runnable`) from "how to execute it" (the thread or executor). The same `Runnable` can be passed to any execution mechanism.
 
 ---
@@ -64,12 +64,12 @@ As a functional interface, `Runnable` works seamlessly with lambdas: `() -> doSo
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. `run()` returns `void` — no result is produced by the task itself.
 2. `run()` declares no checked exceptions — any checked exception must be caught inside `run()`.
 3. `Runnable` is a functional interface — a lambda with no parameters and void return satisfies it.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 2, a `Runnable` wrapping checked-exception-throwing code must handle or wrap:
 ```java
 Runnable task = () -> {
@@ -92,15 +92,15 @@ executor.execute(new Runnable() {
 executor.execute(() -> doWork()); // lambda IS a Runnable
 ```
 
-THE TRADE-OFFS:
-Gain: Simplest task contract; works with all Java concurrency APIs; functional interface-compatible; fire-and-forget pattern.
-Cost: No return value — cannot retrieve a result from the task; no checked exceptions — error handling must be done inside `run()`; no way to cancel the task in flight (use `Future` from `Callable` for that).
+**THE TRADE-OFFS:**
+**Gain:** Simplest task contract; works with all Java concurrency APIs; functional interface-compatible; fire-and-forget pattern.
+**Cost:** No return value — cannot retrieve a result from the task; no checked exceptions — error handling must be done inside `run()`; no way to cancel the task in flight (use `Future` from `Callable` for that).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A log archival task needs to run in a background thread.
 
 WITHOUT RUNNABLE SEPARATION (extending Thread):
@@ -126,7 +126,7 @@ scheduler.scheduleAtFixedRate(archiveTask, 0, 1, DAYS);
 archiveTask.run(); // call directly in tests
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 `Runnable` decouples the task from its executor. The same task definition runs in any execution context without modification. This is the Strategy pattern at the task level.
 
 ---
@@ -135,9 +135,9 @@ THE INSIGHT:
 
 > `Runnable` is a task card in a work queue. The card says what to do but doesn't care who does it — a fast worker, a slow intern, or a team of five. The `Thread` or executor is the worker; `Runnable` is the card. You can hand the same card to any worker.
 
-"Task card" → `Runnable` implementation.
-"Worker" → `Thread` / `ExecutorService`.
-"Any worker can execute it" → executor agnosticism.
+- "Task card" → `Runnable` implementation.
+- "Worker" → `Thread` / `ExecutorService`.
+- "Any worker can execute it" → executor agnosticism.
 
 Where this analogy breaks down: Unlike a card that describes work, a `Runnable` lambda captures variables from its context. The "task card" carries contextual state (closures) that binds it to its creation site.
 
@@ -218,7 +218,7 @@ pool.execute(safe);
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Developer: executor.execute(() -> processOrder(id))]
     → [Lambda satisfies Runnable interface]    ← YOU ARE HERE
@@ -229,7 +229,7 @@ NORMAL FLOW:
     → [run() returns — thread picks up next task]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [run() throws RuntimeException]
     → [Exception propagates to thread's run()]
@@ -239,7 +239,7 @@ FAILURE PATH:
     → [FIX: use executor.submit() → Future to catch exception]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, `Runnable` tasks in executor pools must be short-lived or clearly bounded in execution time. Long-running tasks starve the pool. The absence of a return value means errors are silent unless logging or uncaught exception handlers are configured. For long-duration tasks, `Callable<T>` with `Future.get(timeout)` is more appropriate — it provides both result retrieval and error propagation.
 
 ---
@@ -319,11 +319,11 @@ How to choose: Use `Runnable` for fire-and-forget background tasks. Use `Callabl
 
 **Silent Task Failure (execute vs submit)**
 
-Symptom: Background tasks appear to run but produce no output. Errors are undetected.
+**Symptom:** Background tasks appear to run but produce no output. Errors are undetected.
 
-Root Cause: `executor.execute(runnable)` — unchecked exception thrown inside run() goes to UncaughtExceptionHandler (or ignored). No Future to observe.
+**Root Cause:** `executor.execute(runnable)` — unchecked exception thrown inside run() goes to UncaughtExceptionHandler (or ignored). No Future to observe.
 
-Fix:
+**Fix:**
 ```java
 // BAD: exception silently swallowed
 executor.execute(() -> {
@@ -341,24 +341,24 @@ try {
 }
 ```
 
-Prevention: Use `submit()` instead of `execute()` for tasks where failure must be observed.
+**Prevention:** Use `submit()` instead of `execute()` for tasks where failure must be observed.
 
 ---
 
 **Deadlock via Nested Task Submission**
 
-Symptom: All pool threads blocked waiting on each other. JVM appears frozen.
+**Symptom:** All pool threads blocked waiting on each other. JVM appears frozen.
 
-Root Cause: Task submits a new task to the SAME bounded pool and waits for it — pool is full, inner task can't start.
+**Root Cause:** Task submits a new task to the SAME bounded pool and waits for it — pool is full, inner task can't start.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstack <pid> | grep "BLOCKED\|WAITING" | head -40
 # All pool threads blocked waiting for Future.get()
 # Inner tasks in queue, no threads to run them
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: deadlock when pool-size = 1
 Future<?> inner = executor.submit(() -> helper());
@@ -369,7 +369,7 @@ inner.get(); // waits forever if pool is full
 // Or restructure to not wait
 ```
 
-Prevention: Never call `future.get()` inside an executor task on the same bounded executor. Use `CompletableFuture.thenCompose()` for chained async work without blocking threads.
+**Prevention:** Never call `future.get()` inside an executor task on the same bounded executor. Use `CompletableFuture.thenCompose()` for chained async work without blocking threads.
 
 ---
 

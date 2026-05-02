@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You are building a navigation app. Cities are locations; roads connect cities. Users ask: "What is the shortest route from London to Paris?" If you store cities in a list and roads as strings "LondonParis", there is no way to *traverse* the connections algorithmically. You cannot determine reachability, shortest path, or cycles using lists and strings alone.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Real-world problems — routing, social networks, dependency resolution, scheduling — model *relationships* between entities, not just the entities themselves. Arrays and lists store individual items but have no first-class representation for "A is connected to B with a given weight." Without a structure for relationships, every algorithm must reinvent connection tracking ad hoc.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Define entities as *vertices* and relationships as *edges* connecting vertices. Edges can be directed or undirected, weighted or unweighted. This representation is general enough to model any pairwise relationship — and decades of algorithms (BFS, DFS, Dijkstra, Bellman-Ford, topological sort) work on it unchanged. This is exactly why the Graph was created.
 
 ---
@@ -63,12 +63,12 @@ A Graph is not a data structure — it is a *model*. Its power comes from the do
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A graph consists of vertices (things) and edges (relationships between things).
 2. An edge exists independently of the vertices it connects — two vertices can exist without an edge.
 3. The representation (adjacency matrix vs list) determines the complexity of operations — the logical graph is the same.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The two classic representations have complementary trade-offs:
 
 **Adjacency Matrix** (2D boolean/weight array):
@@ -83,24 +83,24 @@ The two classic representations have complementary trade-offs:
 
 Rule: Use adjacency matrix when graph is dense (E ≈ V²) and O(1) edge queries matter. Use adjacency list when graph is sparse (E << V²) — most real-world graphs.
 
-THE TRADE-OFFS:
-Gain: Universal model for relationships; all graph algorithms available.
-Cost: Memory and algorithm complexity depend on graph density; representation mismatch causes performance problems.
+**THE TRADE-OFFS:**
+**Gain:** Universal model for relationships; all graph algorithms available.
+**Cost:** Memory and algorithm complexity depend on graph density; representation mismatch causes performance problems.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A social network with 100M users. You need to find if user A can reach user B through friend connections (are they in the same connected component?).
 
-WHAT HAPPENS WITH A LIST OF USER OBJECTS:
+**WHAT HAPPENS WITH A LIST OF USER OBJECTS:**
 Each user has a `List<User> friends`. To check A-B reachability, you must explore all reachable friends starting from A — this is BFS/DFS. But how many users do you visit? In the worst case, the entire connected component: up to 100M users. Without a visited set, you revisit nodes exponentially.
 
-WHAT HAPPENS WITH A PROPER GRAPH REPRESENTATION:
+**WHAT HAPPENS WITH A PROPER GRAPH REPRESENTATION:**
 Adjacency list: `Map<Integer, List<Integer>> graph`. BFS with a `Set<Integer> visited`. Each user visited once: O(V + E) total. For a sparse social graph, E ≈ 10 × V (each person has ~10 friends), so total work is O(11V) = O(V). For 100M users: ~1 billion operations — feasible in seconds.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Without explicit visited tracking, graph traversal re-enters nodes infinitely in cyclic graphs. The graph model provides the structure; BFS/DFS with a visited set provides the protocol. Both are required — neither works alone.
 
 ---
@@ -109,11 +109,11 @@ Without explicit visited tracking, graph traversal re-enters nodes infinitely in
 
 > A graph is a roadmap. Cities are vertices; roads are edges; distances are weights. Navigation algorithms (BFS = bidi search, Dijkstra = GPS routing) drive on this map to find paths. The map does nothing by itself — it enables navigation algorithms.
 
-"City" → vertex
-"Road between cities" → edge
-"One-way road" → directed edge
-"Road length" → edge weight
-"GPS routing" → Dijkstra's algorithm on the graph
+- "City" → vertex
+- "Road between cities" → edge
+- "One-way road" → directed edge
+- "Road length" → edge weight
+- "GPS routing" → Dijkstra's algorithm on the graph
 
 Where this analogy breaks down: Real roads are embedded in 2D space; graph edges have no spatial layout — a "vertex" might connect to 10,000 others (as in a web page linking to many URLs), which no real road can do.
 
@@ -202,7 +202,7 @@ matrix[0][2] = 2;
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Problem identified as graph problem (relationships exist)
 → Choose representation: adjacency list (sparse, typical)
@@ -212,7 +212,7 @@ Problem identified as graph problem (relationships exist)
 → Extract result: path, distance, ordering, components
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Graph contains cycles but algorithm assumes DAG (e.g., topological sort)
 → Topological sort enters infinite loop or produces wrong results
@@ -220,7 +220,7 @@ Graph contains cycles but algorithm assumes DAG (e.g., topological sort)
 → Use DFS with "in-stack" flag; if back-edge found, report cycle
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At V=100M vertices (Twitter user graph), a single-machine adjacency list requires O(V+E) in memory (~50GB for 100M users × 200 friends each). Real social graph algorithms use distributed processing: split vertices across machines; edges crossing partition boundaries become inter-machine messages. Pregel, PowerGraph, GraphX all use this message-passing model. For road networks with V=10M junctions, Dijkstra is too slow — use A* with geographic heuristics or pre-computed landmarks.
 
 ---
@@ -338,17 +338,17 @@ Return result and free memory
 
 **1. Infinite loop from missing visited set in cyclic graph**
 
-Symptom: BFS or DFS never terminates; CPU at 100%, thread appears hung.
+**Symptom:** BFS or DFS never terminates; CPU at 100%, thread appears hung.
 
-Root Cause: Graph has a cycle; traversal revisits nodes indefinitely without a visited set.
+**Root Cause:** Graph has a cycle; traversal revisits nodes indefinitely without a visited set.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstack <pid> | grep "RUNNABLE" -A 20
 # Will show thread stuck in BFS/DFS loop forever
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: no visited tracking
 queue.offer(start);
@@ -368,47 +368,47 @@ while (!queue.isEmpty()) {
 }
 ```
 
-Prevention: Always initialise a `visited` set before any graph traversal.
+**Prevention:** Always initialise a `visited` set before any graph traversal.
 
 ---
 
 **2. Wrong answer from missing nodes in adjacency list**
 
-Symptom: BFS doesn't visit all nodes; some nodes with no outgoing edges are silently skipped.
+**Symptom:** BFS doesn't visit all nodes; some nodes with no outgoing edges are silently skipped.
 
-Root Cause: Nodes with only incoming edges never appear as keys in the adjacency list and are never seeded into BFS.
+**Root Cause:** Nodes with only incoming edges never appear as keys in the adjacency list and are never seeded into BFS.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check if node count matches expected:
 System.out.println("graph size: " + graph.size());
 System.out.println("n = " + n);
 ```
 
-Fix: Initialise all nodes explicitly in the adjacency list, even if they have no outgoing edges:
+**Fix:** Initialise all nodes explicitly in the adjacency list, even if they have no outgoing edges:
 ```java
 for (int i = 0; i < n; i++)
     graph.putIfAbsent(i, new ArrayList<>());
 ```
 
-Prevention: Separate vertex creation from edge creation; always initialise all V vertices.
+**Prevention:** Separate vertex creation from edge creation; always initialise all V vertices.
 
 ---
 
 **3. StackOverflowError from recursive DFS on large graphs**
 
-Symptom: `StackOverflowError` during DFS on graphs with long chains (e.g., linked-list-shaped graphs or dense dependency trees).
+**Symptom:** `StackOverflowError` during DFS on graphs with long chains (e.g., linked-list-shaped graphs or dense dependency trees).
 
-Root Cause: Recursive DFS uses JVM call stack; depth limited to ~5,000–10,000 frames.
+**Root Cause:** Recursive DFS uses JVM call stack; depth limited to ~5,000–10,000 frames.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 java -Xss1m MyApp  # increase stack size — band-aid
 ```
 
-Fix: Convert recursive DFS to iterative using an explicit `ArrayDeque` stack.
+**Fix:** Convert recursive DFS to iterative using an explicit `ArrayDeque` stack.
 
-Prevention: Always use iterative DFS for production graph traversal where input size is unbounded.
+**Prevention:** Always use iterative DFS for production graph traversal where input size is unbounded.
 
 ---
 

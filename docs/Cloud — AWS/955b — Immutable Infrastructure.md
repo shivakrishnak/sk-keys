@@ -190,15 +190,15 @@ spec:
 
 **Pitfall 1: App State Written to Instance Disk**
 Log files, uploads, or database files stored on the instance disk are lost on replacement.
-Fix: externalize all state — logs to centralized logging (ELK/Loki), uploads to object storage (S3), data to managed databases.
+**Fix:** externalize all state — logs to centralized logging (ELK/Loki), uploads to object storage (S3), data to managed databases.
 
 **Pitfall 2: Configuration Hardcoded in Image**
 Environment-specific config baked into the image breaks the "build once, run anywhere" principle.
-Fix: inject configuration at runtime via environment variables, ConfigMaps, or Vault.
+**Fix:** inject configuration at runtime via environment variables, ConfigMaps, or Vault.
 
 **Pitfall 3: No Audit Trail for Emergency SSH**
 Teams still SSH in for emergencies but don't track what was changed.
-Fix: enforce read-only SSH or bastion host with session recording; any fix must be followed by a proper image rebuild.
+**Fix:** enforce read-only SSH or bastion host with session recording; any fix must be followed by a proper image rebuild.
 
 ---
 

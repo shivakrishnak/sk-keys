@@ -306,15 +306,15 @@ public class UserRepository {
 
 **Treating AP as CP (Data Loss)**
 
-Symptom:
+**Symptom:**
 Double-entry in financial system: two withdrawals process simultaneously in separate
 data centers during a brief network partition. Account balance goes negative.
 
-Root Cause:
+**Root Cause:**
 AP Cassandra used for transactional financial data without application-level conflict
 detection.
 
-Fix:
+**Fix:**
 ```
 For financial data: use CP system (SQL with SERIALIZABLE isolation, or Spanner)
 OR: use AP with application-level optimistic locking:

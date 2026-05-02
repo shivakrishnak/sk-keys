@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Count the number of 1-bits in a 32-bit integer. The naive loop tests each bit: `for i in 0..31: count += (n >> i) & 1`. That's 32 iterations per call. A graphics engine invoking this 10 million times per frame burns 320 million iterations per frame at 60 FPS — 19 billion loop iterations per second just for this one operation.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Many algorithms with loop-based solutions can be replaced by constant-time bitwise idioms because CPUs execute AND, OR, XOR, SHIFT natively in a single clock cycle — often faster than a branch. Operations on 64-bit integers process 64 elements simultaneously. When the data fits in bits, the "loop over bits" is the wrong level of abstraction.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 CPUs operate on integers natively at the bit level. By treating an integer as a set of 64 Boolean flags, you perform 64 logical operations in one CPU instruction. Finding the lowest set bit (`n & -n`), clearing the lowest bit (`n & (n-1)`), checking power-of-two (`n & (n-1) == 0`) — all become single expressions. This is exactly why **Bit Manipulation** is a fundamental technique.
 
 ---
@@ -64,12 +64,12 @@ The most non-obvious bit trick is `n & (n-1)` — it clears the lowest set bit o
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Integers are stored as binary patterns; the CPU can AND, OR, XOR, SHIFT any two 64-bit integers in a single clock cycle.
 2. `n & (n-1)` always clears the lowest set bit of `n` — proof: the lowest set bit of `n` is at position `k`; `n-1` flips all bits from 0 to k, and ANDing clears bit k and everything below.
 3. `n & (-n)` isolates the lowest set bit of `n` — proof: `-n` in two's complement equals `~n + 1`, so the lowest set bit of `n` survives and all others are cleared.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 From these three invariants, most bit tricks follow:
 - **Check power of 2:** `n > 0 && (n & (n-1)) == 0` — a power of 2 has exactly one set bit.
 - **Count bits (Kernighan):** loop `while (n != 0) { count++; n &= (n-1); }` — O(#setBits).
@@ -82,24 +82,24 @@ From these three invariants, most bit tricks follow:
 **Bitmask as set:**
 An integer can represent a subset of {0,1,...,63}: bit k is set iff element k is in the subset. Union = OR, intersection = AND, difference = `A & ~B`. This enables O(1) set operations and O(2^N) DP over all subsets (bitmask DP).
 
-THE TRADE-OFFS:
-Gain: O(1) per operation vs O(N) loops; no extra memory; exploits CPU native instruction set.
-Cost: Code readability suffers severely — `n & -n` is opaque without comment. Restricted to fixed-size integers (32 or 64 bits). Bitmask DP explodes at N > 20 (2^20 = 1M states; 2^30 = 1B — impractical).
+**THE TRADE-OFFS:**
+**Gain:** O(1) per operation vs O(N) loops; no extra memory; exploits CPU native instruction set.
+**Cost:** Code readability suffers severely — `n & -n` is opaque without comment. Restricted to fixed-size integers (32 or 64 bits). Bitmask DP explodes at N > 20 (2^20 = 1M states; 2^30 = 1B — impractical).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Given N=20 items, find the minimum cost to visit all items exactly once (Travelling Salesman Problem variant). You need to track "which items have been visited" as state.
 
-WHAT HAPPENS WITHOUT BIT MANIPULATION:
+**WHAT HAPPENS WITHOUT BIT MANIPULATION:**
 Represent visited set as `boolean[] visited`. Copying the array for each DP state costs O(N) per state. With 2^20 × 20 states, each copying O(N) array: 2^20 × 20 × 20 = ~400 million copies.
 
-WHAT HAPPENS WITH BIT MANIPULATION:
+**WHAT HAPPENS WITH BIT MANIPULATION:**
 Represent visited set as a single integer `mask` where bit k = 1 means item k is visited. `dp[mask][last]` = min cost to visit exactly the items in `mask`, ending at `last`. Transitions: `dp[mask | (1<<next)][next]`. Each transition is one OR operation. No array copy. State space: 2^20 × 20 = ~20 million integers. 20× speedup.
 
-THE INSIGHT:
+**THE INSIGHT:**
 An integer is a compressed Boolean array. When N ≤ 20, fitting the entire visited-set into one 32-bit integer reduces memory by 32× and eliminates all per-state allocation. This "bitmask DP" approach makes TSP on 20 cities tractable in milliseconds.
 
 ---
@@ -108,12 +108,12 @@ An integer is a compressed Boolean array. When N ≤ 20, fitting the entire visi
 
 > Think of a 32-bit integer as a row of 32 light bulbs, each either ON (1) or OFF (0). Bitwise AND with a mask turns off all bulbs not in the mask simultaneously. Bitwise XOR with a mask toggles exactly the masked bulbs. All 32 bulbs update in one CPU clock cycle — not one by one.
 
-"Light bulb ON" → bit is 1
-"Light bulb OFF" → bit is 0
-"Mask with AND" → turn off specified bulbs (clear bits)
-"Mask with OR" → turn on specified bulbs (set bits)
-"Mask with XOR" → toggle specified bulbs
-"Check bulb k" → `(n >> k) & 1`
+- "Light bulb ON" → bit is 1
+- "Light bulb OFF" → bit is 0
+- "Mask with AND" → turn off specified bulbs (clear bits)
+- "Mask with OR" → turn on specified bulbs (set bits)
+- "Mask with XOR" → toggle specified bulbs
+- "Check bulb k" → `(n >> k) & 1`
 
 Where this analogy breaks down: Physical bulbs are independent; integer bits interact in two's complement arithmetic (e.g., `-n` in two's complement flips all bits and adds 1 — not a simple toggle). This is why `n & -n` (isolate lowest bit) is non-obvious from the light bulb model.
 
@@ -189,7 +189,7 @@ XOR all elements. Duplicates cancel (`x ^ x = 0`). Single element remains (`x ^ 
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Problem with Boolean set / flag tracking
 → Identify N ≤ 64 binary flags
@@ -202,7 +202,7 @@ Problem with Boolean set / flag tracking
 → 64× parallelism on 64-bit integers
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 N > 64 → single integer insufficient
 → Overflow / wrong results silently
@@ -210,7 +210,7 @@ N > 64 → single integer insufficient
 → Diagnostic: assert n <= 64 before using long bitmask
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, hardware population count (`POPCNT`) and bit-scan instructions (`BSF`, `BSR`) execute in 1 clock cycle with perfect pipelining. Language runtimes expose these: Java `Integer.bitCount` → `POPCNT`, Java `Integer.numberOfTrailingZeros` → `BSF`. In columnar databases, Roaring Bitmaps store billions of integer sets using packed bit arrays with run-length encoding, enabling set intersection/union at billions of integers per second — all built on bit manipulation primitives.
 
 ---
@@ -321,30 +321,30 @@ How to choose: Use bit manipulation for N ≤ 64 performance paths. Use `BitSet`
 
 **1. Integer overflow in shift operations**
 
-Symptom: `1 << 31` gives `-2147483648`; `1 << 32` is `1` (wraps) — both silently wrong.
+**Symptom:** `1 << 31` gives `-2147483648`; `1 << 32` is `1` (wraps) — both silently wrong.
 
-Root Cause: Java `int` is 32 bits. Shifting by ≥ 32 is undefined / wraps in Java. `1 << 31` sets the sign bit → negative.
+**Root Cause:** Java `int` is 32 bits. Shifting by ≥ 32 is undefined / wraps in Java. `1 << 31` sets the sign bit → negative.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 System.out.println(1 << 31);  // prints -2147483648
 System.out.println(1 << 32);  // prints 1 (wrapped)
 System.out.println(1L << 31); // prints 2147483648 ✓
 ```
 
-Fix: Use `1L << k` for shifts ≥ 31 to promote to `long`.
+**Fix:** Use `1L << k` for shifts ≥ 31 to promote to `long`.
 
-Prevention: Always use `long` bitmasks for bit positions ≥ 31.
+**Prevention:** Always use `long` bitmasks for bit positions ≥ 31.
 
 ---
 
 **2. XOR swap on aliased variables**
 
-Symptom: Variable becomes zero after supposed swap.
+**Symptom:** Variable becomes zero after supposed swap.
 
-Root Cause: `a ^= b; b ^= a; a ^= b` when `a` and `b` are the same variable: `a ^= a` → `a = 0`; all subsequent steps see 0.
+**Root Cause:** `a ^= b; b ^= a; a ^= b` when `a` and `b` are the same variable: `a ^= a` → `a = 0`; all subsequent steps see 0.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 int[] arr = {1, 2, 3};
 int i = 1, j = 1; // same index!
@@ -353,28 +353,28 @@ arr[j] ^= arr[i];
 arr[i] ^= arr[j]; // arr[1] = 0 — wrong!
 ```
 
-Fix: Guard with `if (i != j)` before XOR swap, or always use a temporary variable.
+**Fix:** Guard with `if (i != j)` before XOR swap, or always use a temporary variable.
 
-Prevention: Never use XOR swap in sorting algorithms where `i == j` is possible.
+**Prevention:** Never use XOR swap in sorting algorithms where `i == j` is possible.
 
 ---
 
 **3. Signed vs unsigned right shift confusion**
 
-Symptom: Bit operations on negative numbers produce unexpected large positive values.
+**Symptom:** Bit operations on negative numbers produce unexpected large positive values.
 
-Root Cause: `>>` fills with the sign bit (1 for negatives), `>>>` fills with 0. Using `>>>` on a negative int sign-extends incorrectly.
+**Root Cause:** `>>` fills with the sign bit (1 for negatives), `>>>` fills with 0. Using `>>>` on a negative int sign-extends incorrectly.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 int n = -4;
 System.out.println(n >> 1);   // -2 (arithmetic)
 System.out.println(n >>> 1);  // 2147483646 (logical)
 ```
 
-Fix: Use `>>` for signed arithmetic; `>>>` only when treating the value as unsigned bits (e.g., HashMap hash distribution).
+**Fix:** Use `>>` for signed arithmetic; `>>>` only when treating the value as unsigned bits (e.g., HashMap hash distribution).
 
-Prevention: Default to `>>` unless you explicitly need unsigned shift.
+**Prevention:** Default to `>>` unless you explicitly need unsigned shift.
 
 ---
 

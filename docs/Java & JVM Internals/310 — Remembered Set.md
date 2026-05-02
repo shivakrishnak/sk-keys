@@ -44,13 +44,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 G1GC divides the heap into many equal-sized regions (1–32MB each). Its key feature is collecting individual regions incrementally — choosing the "garbage-richest" regions to collect first (the "Garbage First" in G1). But to safely collect a region `R`, the GC must know ALL external references pointing into `R` from other regions. Without tracking these cross-region references, the only option is to scan the ENTIRE heap to find references into `R` — defeating the purpose of incremental collection.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 G1GC wants to collect 10 "garbage-rich" regions out of 200 total regions. To safely do so, it needs to find all references from the 190 uncollected regions into the 10 target regions. Without RSet: scan all 190 regions = scan 150GB of heap data. With RSet: look up only the remembered set for each of the 10 target regions — which contains only the relevant cards. Entire root set: scan seconds vs milliseconds.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why the **Remembered Set** was created — to be the per-region index that lets G1GC collect any subset of regions without scanning the rest.
 
 ---
@@ -76,12 +76,12 @@ The RSet converts a "scan the world" problem into a "look up the index" problem.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. To collect a region `R`, the GC must find ALL live objects in `R` via all incoming references.
 2. Live references can exist in ANY other region.
 3. Scanning all other regions per collected region = O(heap_size × collected_regions) = unacceptably slow.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invert the tracking: instead of "what does region A reference?" (card table), track "who references region B?" (RSet).
 
 Structure of RSet:
@@ -109,15 +109,15 @@ Structure of RSet:
 └──────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Incremental per-region collection; no whole-heap scan per GC cycle; enables G1GC's core "Garbage First" feature.
-Cost: RSet memory overhead (5–20% of heap in some workloads); concurrent refinement thread CPU; coarse-grained RSets reduce collection precision; high cross-region reference rates → large RSets → reduced collection efficiency.
+**THE TRADE-OFFS:**
+**Gain:** Incremental per-region collection; no whole-heap scan per GC cycle; enables G1GC's core "Garbage First" feature.
+**Cost:** RSet memory overhead (5–20% of heap in some workloads); concurrent refinement thread CPU; coarse-grained RSets reduce collection precision; high cross-region reference rates → large RSets → reduced collection efficiency.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 G1GC heap: 4GB, 200 regions of 20MB each. Application: a web service building object graphs where each request creates objects that frequently reference objects from other requests' graphs (cross-region references).
 
 HIGH CROSS-REGION REFERENCE RATE:
@@ -126,7 +126,7 @@ Each request creates 1,000 new objects and establishes 500 cross-region referenc
 LOW CROSS-REGION REFERENCE RATE:
 Each request's objects are self-contained (reference only within the same request's region). Cross-region references: only from the "request cache" (5 regions). Each collected region's RSet covers 5 source cards. Collection of any region: 5 × 512B scan = 2.5KB. 1,000x faster collection per region than the high-reference case.
 
-THE INSIGHT:
+**THE INSIGHT:**
 RSets work best when the reference graph respects region boundaries — when logically-related objects are co-located in the same region. G1GC's region assignment is proximity-based (new allocations fill the same region until it's full), so this often happens naturally. But certain patterns (large shared global objects referenced from many short-lived request objects) create high-cardinality RSets that degrade G1GC's effectiveness.
 
 ---
@@ -135,11 +135,11 @@ RSets work best when the reference graph respects region boundaries — when log
 
 > The Remembered Set is like a building guest management system. Each floor (heap region) maintains a visitor log: which visitors (references) came from which other floors. When the building's fire marshal (GC) needs to know who is on Floor 12 (the region being collected), they check Floor 12's visitor log — not every other floor's room-by-room directory.
 
-"Floor" → G1GC heap region.
-"Visitor log" → Remembered Set.
-"Log entry: 'visitor from Floor 7, Room 3'" → reference from region 7, card 3.
-"Checking the log" → GC root scanning via RSet.
-"Room-by-room directory scan" → what GC would need without RSet.
+- "Floor" → G1GC heap region.
+- "Visitor log" → Remembered Set.
+- "Log entry: 'visitor from Floor 7, Room 3'" → reference from region 7, card 3.
+- "Checking the log" → GC root scanning via RSet.
+- "Room-by-room directory scan" → what GC would need without RSet.
 
 Where this analogy breaks down: A real visitor log is append-only. RSet entries are deduplicated and can be "coarsened" — when a floor has too many visitors from one floor, the system simplifies to "scan all rooms on that floor." This coarsening trades precision for memory efficiency.
 
@@ -226,7 +226,7 @@ G1GC Pause breakdown:
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Mutator: Region A writes reference to Region B object]
     → [Write barrier fires]
@@ -245,7 +245,7 @@ NORMAL FLOW:
     → [Data correct, no false collection]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [RSet grows coarse-grained due to high cross-region refs]
     → [Collection of Region B requires scanning ALL A's]
@@ -255,7 +255,7 @@ FAILURE PATH:
     → [Or: increase region size (-XX:G1HeapRegionSize=32m)]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 256GB heap with 8MB regions (32,768 regions), RSet overhead per region can be significant. G1GC's coarse-grained mode activates more readily. At scale, teams typically increase `G1HeapRegionSize` to reduce the number of regions, or switch to ZGC (which doesn't use per-region RSets in the same way) to eliminate the RSet overhead for very large heaps.
 
 ---
@@ -349,13 +349,13 @@ How to choose: RSets are G1GC-specific. If RSet overhead dominates (large heap, 
 
 **Bloated RSets Causing Long G1 Pauses**
 
-Symptom:
+**Symptom:**
 G1GC "Scan RS" phase takes > 10ms. GC log shows large number of R/Set card scans. Heap usage is moderate but pauses are long.
 
-Root Cause:
+**Root Cause:**
 Many cross-region references (e.g., one globally-shared region referenced from thousands of short-lived request regions). The shared region's RSet has entries from every other region → coarse-grained → require scanning entire source regions.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -Xlog:gc+remset*=debug MyApp 2>&1 | \
   grep "RS.*coarse\|coarse_grain"
@@ -365,61 +365,61 @@ jcmd <pid> GC.heap_info
 # Look for regions with high incoming reference counts
 ```
 
-Fix:
+**Fix:**
 Reduce the number of cross-region references to the hot region:
 - Increase region size to co-locate related objects.
 - Avoid global mutable singletons with per-request references.
 - Consider switching to ZGC for large heaps with high reference cardinality.
 
-Prevention:
+**Prevention:**
 Model object reference patterns in design review. High-fan-in objects (many-to-one references) are G1GC enemies.
 
 ---
 
 **Refinement Thread Lag Causing GC Pause Spike**
 
-Symptom:
+**Symptom:**
 Periodic large G1GC pauses where "Update RS" takes 5–15ms. Refinement threads lag behind the write barrier queue.
 
-Root Cause:
+**Root Cause:**
 Write barrier dirty card queue grows faster than refinement threads can process. At GC time, the remaining unrefined cards must be processed synchronously in the GC pause.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -Xlog:gc+refine=debug MyApp 2>&1 | grep "Refinement"
 # Look for: "Adjusted thread count from N to M"
 # This shows adaptive refinement struggling to keep up
 ```
 
-Fix:
+**Fix:**
 ```bash
 java -XX:G1ConcRefinementThreads=12 \
      -XX:G1RSetUpdatingPauseTimePercent=5 MyApp
 # More refinement threads + tighter pause budget
 ```
 
-Prevention:
+**Prevention:**
 Monitor dirty card queue depth as a metric. Alert if queue depth consistently > 10,000 cards between GC cycles.
 
 ---
 
 **G1 Full GC Triggered by RSet Overflow**
 
-Symptom:
+**Symptom:**
 G1GC suddenly performs a Full GC (very long pause, > 1 second). GC log shows "Humongous allocation" or "RSet is overflowed" or "evacuation failure" related to RSet.
 
-Root Cause:
+**Root Cause:**
 RSet maintenance falls critically behind or corruption occurs (rare but possible under extreme load). G1GC falls back to Full GC as a safety mechanism.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -Xlog:gc*=debug MyApp 2>&1 | grep "Full GC\|RSSet"
 ```
 
-Fix:
+**Fix:**
 Increase heap (more region capacity). Reduce object promotion rate (reduce allocation). Switch GC algorithms if recurring.
 
-Prevention:
+**Prevention:**
 Never run G1GC >85% heap occupancy. Set `-XX:InitiatingHeapOccupancyPercent=35` to start concurrent marking early.
 
 ---

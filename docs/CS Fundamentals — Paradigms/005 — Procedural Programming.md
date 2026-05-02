@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Early assembly language programs were a single flat sequence of
 instructions with GOTO jumps. A program to process payroll would
 be thousands of lines of code with jumps scattered everywhere.
@@ -40,14 +40,14 @@ in the program, you'd copy and paste those 50 lines three times.
 When the tax rate changed, you'd update three separate places —
 and miss one, causing incorrect tax calculations.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Code duplication is the root cause of inconsistency bugs. Without
 a mechanism to name and reuse a block of logic, every change
 requires tracking down every copy manually. Programs of even
 moderate size became unmaintainable. The GOTO-heavy "spaghetti
 code" of the 1960s was a direct consequence.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why Procedural Programming was created. By
 organising code into named procedures (functions/subroutines)
 that can be called from anywhere, you write the tax calculation
@@ -92,7 +92,7 @@ mechanism is what makes modular, non-linear code possible.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. A procedure is a named, reusable block of statements.
    Giving a block a name means you can invoke it from anywhere
@@ -104,7 +104,7 @@ CORE INVARIANTS:
    not by directly accessing each other's variables (in
    well-designed procedural code).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1, duplication is eliminated — the source of
 truth for any logic is one procedure. Given invariant 2, programs
 can be arbitrarily deep call chains without losing their state.
@@ -116,11 +116,11 @@ This forces the design of:
 - Naming conventions (functions named for what they do)
 - Parameter passing conventions (by value or by reference)
 
-THE TRADE-OFFS:
-Gain: Elimination of code duplication; testability of individual
+**THE TRADE-OFFS:**
+**Gain:** Elimination of code duplication; testability of individual
 procedures; readability through naming ("computeTax()" tells
 you more than 20 lines of arithmetic).
-Cost: Data is still shared through global variables in naive
+**Cost:** Data is still shared through global variables in naive
 procedural code; there's no encapsulation of state —
 any function can modify any global. OOP addressed this.
 
@@ -128,11 +128,11 @@ any function can modify any global. OOP addressed this.
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A payroll system calculates: gross pay, tax, national insurance,
 and net pay for 500 employees.
 
-WHAT HAPPENS WITHOUT PROCEDURES (flat imperative):
+**WHAT HAPPENS WITHOUT PROCEDURES (flat imperative):**
 All 500 × 4 calculations are written inline:
 
 - Lines 1–200: employee 1's gross, tax, NI, net
@@ -143,7 +143,7 @@ When the NI rate changes from 12% to 13%, you must find and
 update every NI calculation — potentially 500 separate places.
 One missed update produces wrong pay for that employee.
 
-WHAT HAPPENS WITH PROCEDURES:
+**WHAT HAPPENS WITH PROCEDURES:**
 
 ```
 procedure computeGross(hours, rate): return hours * rate
@@ -160,7 +160,7 @@ for each employee:
 When NI changes, update `computeNI()` once. Every employee's
 calculation is automatically correct.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Naming a block of code is an act of abstraction — you're saying
 "this logic has a single identity." One identity means one place
 to change and one place to test.
@@ -175,11 +175,11 @@ to change and one place to test.
 > named procedure. When training new staff, you say "follow
 > Chapter 3" — you don't rewrite the instructions for each person.
 
-"Each chapter" → a procedure/function
-"Reading a chapter" → calling a function
-"Input forms at the chapter start" → function parameters
-"Conclusion/result at the end" → return value
-"Cross-references between chapters" → function calls
+- "Each chapter" → a procedure/function
+- "Reading a chapter" → calling a function
+- "Input forms at the chapter start" → function parameters
+- "Conclusion/result at the end" → return value
+- "Cross-references between chapters" → function calls
 
 Where this analogy breaks down: unlike manual chapters, functions
 can call themselves (recursion) and the order of execution can
@@ -270,7 +270,7 @@ grows until it hits the OS-imposed limit (typically 512KB–8MB).
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [main() called]
@@ -284,13 +284,13 @@ NORMAL FLOW:
   → [prints result]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [computeTax receives null / division by zero]
 → [ArithmeticException / NullPointerException]
 → [Stack unwind to nearest catch in call chain]
 → [Observable: exception with full stack trace in logs]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10x scale (5000 employees), the procedural loop runs 10x
 longer — no inherent parallelism. At 100x, procedures that
 access global data become bottlenecks. Procedural code at scale
@@ -387,16 +387,16 @@ to manage state across many related operations.
 
 **1. Global Variable Contamination**
 
-Symptom:
+**Symptom:**
 Function returns different results depending on what other
 functions ran before it; tests pass individually but fail
 together.
 
-Root Cause:
+**Root Cause:**
 Function reads from or writes to a global variable that other
 functions also modify. Call order determines the result.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Search for global variable usage in Python
@@ -405,7 +405,7 @@ grep -n "^[a-z_]* = " module.py  # module-level assignments
 grep -n "global_var\s*=" *.py
 ```
 
-Fix:
+**Fix:**
 
 ```python
 # BAD: global state makes function order-dependent
@@ -419,20 +419,20 @@ def compute_tax(gross, tax_rate=0.20):
     return gross * tax_rate  # self-contained
 ```
 
-Prevention: Pass data through parameters; return results via
+**Prevention:** Pass data through parameters; return results via
 return values; avoid global variables in procedure bodies.
 
 **2. Stack Overflow from Deep Recursion**
 
-Symptom:
+**Symptom:**
 `RecursionError: maximum recursion depth exceeded` (Python) or
 `StackOverflowError` (Java) on large inputs.
 
-Root Cause:
+**Root Cause:**
 A recursive procedure calls itself without a reachable base case,
 or the input depth exceeds the stack frame limit.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Python: check current recursion limit
@@ -442,7 +442,7 @@ python3 -c "import sys; print(sys.getrecursionlimit())"
 import traceback; traceback.print_stack()
 ```
 
-Fix:
+**Fix:**
 
 ```python
 # BAD: recursive fibonacci — O(2^n), stack overflow for n>1000
@@ -458,21 +458,21 @@ def fib(n):
     return a
 ```
 
-Prevention: Convert deep recursion to iteration with an explicit
+**Prevention:** Convert deep recursion to iteration with an explicit
 stack data structure; use `sys.setrecursionlimit` only as a
 last resort.
 
 **3. Procedure Side Effect Surprises**
 
-Symptom:
+**Symptom:**
 Calling a "getter" function has unexpected consequences — data
 is modified, a file is written, or a global counter changes.
 
-Root Cause:
+**Root Cause:**
 The procedure was given a name suggesting a read operation but
 also performs writes — violating the principle of least surprise.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Audit all procedures for unexpected writes/side effects
@@ -480,7 +480,7 @@ Diagnostic:
 grep -n "global " *.py | grep -v "^#"
 ```
 
-Fix:
+**Fix:**
 
 ```python
 # BAD: getName() has a hidden side effect
@@ -496,7 +496,7 @@ def record_access(user):
     user["access_count"] += 1
 ```
 
-Prevention: Name procedures accurately; procedures that query
+**Prevention:** Name procedures accurately; procedures that query
 should not modify; procedures that modify should be explicitly
 named as actions.
 

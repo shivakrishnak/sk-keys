@@ -423,15 +423,15 @@ public String dashboard(@AuthenticationPrincipal OidcUser oidcUser, Model model)
 
 **User Records Duplicated After Email Change**
 
-Symptom:
+**Symptom:**
 User changes their Google email. On next login: a new account is created for them.
 Their old account (with all data) is orphaned. User contacts support "I lost all my data."
 
-Root Cause:
+**Root Cause:**
 Users stored by email (`WHERE email = ?`) instead of by sub (`WHERE sub = ?`).
 Google's sub is permanent; email changes when user renames their Google account.
 
-Diagnostic:
+**Diagnostic:**
 
 ```sql
 -- Find users registered multiple times (different emails, same provider)

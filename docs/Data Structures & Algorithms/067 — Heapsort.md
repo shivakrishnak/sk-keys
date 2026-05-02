@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You need a sorting algorithm with a hard O(N log N) worst-case guarantee AND O(1) extra space. Quicksort can degrade to O(N²) on adversarial inputs. Mergesort requires O(N) auxiliary space. For embedded systems or real-time software where both time budget and memory are constrained, neither is acceptable.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 The combination of O(N log N) worst-case time with O(1) space appears impossible — the information-theoretic gap between simple O(N) space algorithms (mergesort) and fast O(1) space algorithms (quicksort, O(N²) worst) seems unbridgeable.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 A heap is a partially-sorted array that supports extracting the maximum in O(log N). Build a max-heap in O(N) (Floyd's algorithm). Then repeatedly extract the maximum: swap it to the end (O(1)) and heapify down (O(log N)). After N extractions, the array is sorted — entirely in-place. Build O(N) + N × heapify O(log N) = O(N log N), O(1) extra space. This is exactly why **Heapsort** was created.
 
 ---
@@ -64,12 +64,12 @@ Heapsort's uniqueness is proven: it is the only classic comparison sort to achie
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A **max-heap** satisfies: `arr[parent] >= arr[child]` for all parent-child pairs. The largest element is always at index 0.
 2. **Heapify (sift-down)**: given a node that may violate the heap property, swap it with its largest child and recurse. O(log N) per call.
 3. **Build-heap** (Floyd's algorithm): call heapify on all internal nodes from bottom-up. Counter-intuitively, this is O(N) — not O(N log N).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Why build-heap is O(N) not O(N log N):**
 Internal nodes at height h have O(N/2^h) count and O(h) heapify cost each. Total cost = Σ (N/2^h × h) for h=1 to log N = O(N) × Σ (h/2^h) = O(N) × 2 = O(N). The sum converges because deep nodes (high cost) are few and shallow nodes (many) have low cost.
 
@@ -82,15 +82,15 @@ For i from N-1 to 1:
 2. Reduce heap size by 1 (the swapped element is now sorted).
 3. Call `heapify(arr, 0, i)` to restore heap property on the remaining i elements.
 
-THE TRADE-OFFS:
-Gain: O(N log N) worst case guaranteed; O(1) extra space.
-Cost: Not stable; worse cache performance than Quicksort (non-sequential memory access pattern during sift-down); rarely used as stand-alone sort in practice.
+**THE TRADE-OFFS:**
+**Gain:** O(N log N) worst case guaranteed; O(1) extra space.
+**Cost:** Not stable; worse cache performance than Quicksort (non-sequential memory access pattern during sift-down); rarely used as stand-alone sort in practice.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Array [4, 10, 3, 5, 1]. Sort using heapsort.
 
 PHASE 1 — BUILD MAX-HEAP:
@@ -110,7 +110,7 @@ Heapify(0,2): 3 vs 1 → no swap.
 i=1: swap arr[0]=3, arr[1]=1. Heap: [1], sorted: [1,3,4,5,10].
 Done. Array = [1,3,4,5,10]. ✓
 
-THE INSIGHT:
+**THE INSIGHT:**
 Each extraction of the maximum places it in its final position (from right to left). The heap structure ensures the next maximum is always at index 0. This is a perfect marriage of the heap's "fast maximum extraction" property with in-place sorting.
 
 ---
@@ -119,10 +119,10 @@ Each extraction of the maximum places it in its final position (from right to le
 
 > Heapsort is like a single-elimination tournament where you find the winner and permanently retire them. Build a bracket ensuring each player beats their children. Find the champion (top of heap). Retire them to the "hall of fame" (sorted end). Find the next champion from the remaining players by running a targeted mini-tournament (heapify). Repeat until everyone is in the hall of fame — all in the same trophy room (in-place).
 
-"Tournament bracket ensuring parent beats children" → max-heap property
-"Champion at top" → max element at arr[0]
-"Retire champion to hall of fame" → swap to sorted end
-"Mini-tournament to find next champion" → sift-down heapify (O(log N))
+- "Tournament bracket ensuring parent beats children" → max-heap property
+- "Champion at top" → max element at arr[0]
+- "Retire champion to hall of fame" → swap to sorted end
+- "Mini-tournament to find next champion" → sift-down heapify (O(log N))
 
 Where this analogy breaks down: Real tournaments have fixed brackets; changing participants after each round is unusual. Heapify's "sift-down" restructures the heap after each extraction — more like recalculating the bracket from the top for each new tournament.
 
@@ -180,7 +180,7 @@ Heapsort (J. W. J. Williams, 1964) was the first sorting algorithm achieving bot
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Unsorted array of N elements
 → Build max-heap O(N) [Floyd's algorithm]
@@ -191,7 +191,7 @@ Unsorted array of N elements
 → Sorted array, in-place, O(N log N) guaranteed
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Heapsort used for stable sort
 → Equal elements may swap during sift-down
@@ -200,7 +200,7 @@ Heapsort used for stable sort
 → Use Timsort/Mergesort for stable sort
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For N=10⁷ elements, Heapsort's O(N log N) ≈ 230 million operations, but each sift-down on a heap larger than L2 cache (512KB, ~130K integers) causes cache misses. Each L3 miss costs ~100 cycles. At N=10⁷, each of the ~23 sift-down levels accesses a "random" position — 23 × cache misses × cycles/miss creates significant overhead. Quicksort's sequential scan hits cache much better. This is why Heapsort, despite theoretical equivalence, is measurably slower.
 
 ---
@@ -325,11 +325,11 @@ How to choose: Use Heapsort only when O(1) space is required AND O(N log N) wors
 
 **1. Off-by-one in build-heap starting index**
 
-Symptom: Build-heap completes but array is not a valid max-heap; sort phase produces wrong results.
+**Symptom:** Build-heap completes but array is not a valid max-heap; sort phase produces wrong results.
 
-Root Cause: Starting heapify from the wrong index. Common errors: `n/2` (should be `n/2 - 1`), or `n-1` (starts too deep, includes leaf nodes).
+**Root Cause:** Starting heapify from the wrong index. Common errors: `n/2` (should be `n/2 - 1`), or `n-1` (starts too deep, includes leaf nodes).
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Verify heap property after build:
 boolean isMaxHeap(int[] arr, int n) {
@@ -346,33 +346,33 @@ assert isMaxHeap(arr, arr.length)
     : "Build-heap failed!";
 ```
 
-Fix: Start build-heap from `n/2 - 1` (last non-leaf node in a 0-indexed array). Leaf nodes (indices n/2 to n-1) are already trivially valid heaps.
+**Fix:** Start build-heap from `n/2 - 1` (last non-leaf node in a 0-indexed array). Leaf nodes (indices n/2 to n-1) are already trivially valid heaps.
 
-Prevention: Unit test build-heap with `isMaxHeap()` verification.
+**Prevention:** Unit test build-heap with `isMaxHeap()` verification.
 
 ---
 
 **2. Using heapsort when stable sort is required**
 
-Symptom: Multi-key sort produces incorrect ordering for equal-valued elements.
+**Symptom:** Multi-key sort produces incorrect ordering for equal-valued elements.
 
-Root Cause: Heapsort's sift-down may swap equal elements, violating stability.
+**Root Cause:** Heapsort's sift-down may swap equal elements, violating stability.
 
-Diagnostic: Same as Quicksort stability test — check that elements with equal keys maintain original relative order.
+**Diagnostic:** Same as Quicksort stability test — check that elements with equal keys maintain original relative order.
 
-Fix: Use Timsort (`Arrays.sort(T[], comparator)`) for stable sorting.
+**Fix:** Use Timsort (`Arrays.sort(T[], comparator)`) for stable sorting.
 
-Prevention: Explicitly choose algorithm based on stability requirements.
+**Prevention:** Explicitly choose algorithm based on stability requirements.
 
 ---
 
 **3. Heapify called without reducing heap size correctly**
 
-Symptom: Already-sorted elements at the end of the array are included in subsequent heapify operations, corrupting the sort.
+**Symptom:** Already-sorted elements at the end of the array are included in subsequent heapify operations, corrupting the sort.
 
-Root Cause: In the sort phase, `heapify(arr, n, 0)` is called with `n` still equal to original array size, instead of reduced size `i`.
+**Root Cause:** In the sort phase, `heapify(arr, n, 0)` is called with `n` still equal to original array size, instead of reduced size `i`.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Check: after sort phase, is array sorted?
 for (int i = 0; i < arr.length-1; i++) {
@@ -381,9 +381,9 @@ for (int i = 0; i < arr.length-1; i++) {
 }
 ```
 
-Fix: Ensure heapify is called with the **current heap size** (`heapify(arr, i, 0)` in the loop where i decrements from n-1 to 1), not the original array length.
+**Fix:** Ensure heapify is called with the **current heap size** (`heapify(arr, i, 0)` in the loop where i decrements from n-1 to 1), not the original array length.
 
-Prevention: The heap size must be the second argument to heapify, and it must decrease with each extraction.
+**Prevention:** The heap size must be the second argument to heapify, and it must decrease with each extraction.
 
 ---
 

@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Tests pass when run all together, fail when run individually. Test 42 passes only because Test 41 created a user in the database. Delete Test 41, and Test 42 fails. Reorder the tests, and five tests fail. A developer runs `./gradlew test --tests UserServiceTest#canLogin` — fails. Runs the full suite — passes. The test suite is useless as a diagnostic tool because failures depend on execution context.
 
 THE CONTAMINATION PATTERN:
@@ -286,12 +286,12 @@ class IsolatedServiceTest {
 **1. Tests Pass Individually, Fail in Suite**
 
 Diagnosis: Run the full suite twice with `--rerun-tests` or randomized order. Find the specific ordering that fails. Identify what state Test A leaves that Test B depends on.
-Fix: `@BeforeEach` cleanup, or `@Transactional` on test class.
+**Fix:** `@BeforeEach` cleanup, or `@Transactional` on test class.
 
 **2. Tests Fail in Parallel but Pass Serially**
 
 Diagnosis: Parallel execution (CI uses multiple threads). Tests share a database user/schema, or tests create data with the same fixed IDs.
-Fix: Use unique data per test (UUID-based), or use database transaction isolation per test.
+**Fix:** Use unique data per test (UUID-based), or use database transaction isolation per test.
 
 ---
 

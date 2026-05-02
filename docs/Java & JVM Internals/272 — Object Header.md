@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 The JVM needs to know several things about any object at any time, without the programmer explicitly tracking them: Is this object currently locked (for `synchronized`)? How many GC cycles has it survived (for promotion decisions)? What is its identity hash code (for `System.identityHashCode()`)? Which class is it an instance of (for `instanceof` checks and `getClass()`)? Without dedicated per-object storage for this metadata, the JVM would need external lookup tables — one map from object pointer to lock state, another for GC age, another for class type. Every operation involving an object would require a hash table lookup.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 External lookup tables add synchronisation overhead and memory fragmentation. Object identity operations (`synchronized`, `instanceof`, hash code) are called billions of times per second. They must be O(1) with zero synchronisation cost.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Prefixing every object with a compact header that encodes all this metadata inline makes every per-object operation an O(1) pointer dereference. This is why every Java object has a header: it is the index card prepended to every object, enabling constant-time metadata access.
 
 ---
@@ -64,33 +64,33 @@ The Object Header's Mark Word is the most reused piece of memory in the JVM — 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Every object needs type information (what class is it an instance of?).
 2. Every object needs synchronisation support (can be used as a monitor).
 3. Every object needs GC tracking (how old is it? has it been moved?).
 4. All three must be accessible in O(1) without external tables.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariants 1–4 together mandate per-object storage that is: fixed size (to enable pointer arithmetic to the user fields), present on every object (not optional), and densely packed (to minimise the memory tax on every object). The header must precede the user fields so that object references point to a constant offset from the header start.
 
-THE TRADE-OFFS:
-Gain: O(1) class type check, lock acquisition, hash code retrieval, GC age access — all without external lookup.
-Cost: 8–16 bytes of memory overhead per object. For applications creating billions of small objects (Integer cache entries, small DTOs), this overhead is significant. The minimum object size on a 64-bit JVM is 16 bytes (8-byte header + 8-byte padding alignment), even for an entirely empty class.
+**THE TRADE-OFFS:**
+**Gain:** O(1) class type check, lock acquisition, hash code retrieval, GC age access — all without external lookup.
+**Cost:** 8–16 bytes of memory overhead per object. For applications creating billions of small objects (Integer cache entries, small DTOs), this overhead is significant. The minimum object size on a 64-bit JVM is 16 bytes (8-byte header + 8-byte padding alignment), even for an entirely empty class.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You have a Java application creating 1 billion small objects (e.g., a trading system with 1 billion trade records, each a POJO with two int fields = 8 bytes of user data).
 
-WHAT HAPPENS WITHOUT OBJECT HEADER:
+**WHAT HAPPENS WITHOUT OBJECT HEADER:**
 The object occupies only 8 bytes (two ints). An external `HashMap<Object, Integer>` maps each object pointer to its GC age. When `synchronized(trade)` is called, the JVM looks up the lock state in another external hash table. For 1 billion objects: the external tables themselves consume gigabytes of memory. Cache miss rates for each object operation are high — the lock table and GC table are cold in CPU cache.
 
-WHAT HAPPENS WITH OBJECT HEADER:
+**WHAT HAPPENS WITH OBJECT HEADER:**
 Each object occupies 16 bytes (8-byte header + 8 bytes user data). GC age, lock state, and hash code are in the header — a single pointer dereference away. For 1 billion objects: memory overhead is an extra 8 GB for headers. But every object operation is a single cache line access. The trade-off: predictable, local, fast access at the cost of fixed per-object overhead.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Per-object overhead is justified when operations on those objects are frequent. The object header trades memory for constant-time metadata access — a fundamental engineering trade-off between space and time.
 
 ---
@@ -99,11 +99,11 @@ Per-object overhead is justified when operations on those objects are frequent. 
 
 > The Object Header is like a UPC barcode on every product on a grocery store shelf. The barcode contains the product's category (class pointer), the item's shelf expiry counter (GC age), and a security tag status (lock state). The store's self-checkout (JVM) scans the barcode for everything it needs to know. The shopper (programmer) never handles the barcode directly.
 
-"UPC barcode" → the Object Header (Mark Word + Klass Pointer)
-"Product category (aisle code)" → Klass Pointer → class metadata in Metaspace
-"Shelf expiry counter" → GC age bits (tenuring threshold)
-"Security tag" → lock bits in Mark Word
-"Self-checkout scanner" → JVM runtime operations
+- "UPC barcode" → the Object Header (Mark Word + Klass Pointer)
+- "Product category (aisle code)" → Klass Pointer → class metadata in Metaspace
+- "Shelf expiry counter" → GC age bits (tenuring threshold)
+- "Security tag" → lock bits in Mark Word
+- "Self-checkout scanner" → JVM runtime operations
 
 Where this analogy breaks down: unlike a barcode, the header bits change during object lifetime — lock bits flip when synchronized; GC bits flip during collection; hash code is generated lazily on first request and then permanently stored.
 
@@ -196,7 +196,7 @@ Example: class Point { int x; int y; }
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 new MyObject() called
   → Heap allocates: header(8+4=12 bytes) + fields + padding
@@ -214,7 +214,7 @@ new MyObject() called
     → After move: new Mark Word at new address
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Mark Word corruption (rare, often JNI bug)
   → Incorrect lock state → incorrect synchronisation
@@ -222,7 +222,7 @@ Mark Word corruption (rare, often JNI bug)
   → Native code bypassing JVM safety checks
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At very large JVM heaps (>32 GB), compressed oops (`-XX:+UseCompressedOops`) cannot be used — the Klass Pointer expands to 8 bytes, increasing every object's header to 16 bytes. For applications with billions of small objects, this doubles header memory overhead. ZGC and Shenandoah handle large heaps without requiring this trade-off by using coloured pointers in the reference bits themselves.
 
 ---
@@ -345,11 +345,11 @@ How to choose: Always use `-XX:+UseCompressedOops` (default for heaps < 32 GB) t
 
 **1. Excessive Heap from Many Small Objects**
 
-Symptom: Heap dump shows millions/billions of small objects consuming far more memory than a multiply-by-field count suggests.
+**Symptom:** Heap dump shows millions/billions of small objects consuming far more memory than a multiply-by-field count suggests.
 
-Root Cause: Object header overhead (12–16 bytes) plus alignment padding inflate small objects significantly. `new Integer(1)` is 16 bytes, not 4.
+**Root Cause:** Object header overhead (12–16 bytes) plus alignment padding inflate small objects significantly. `new Integer(1)` is 16 bytes, not 4.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Heap histogram
 jcmd <pid> GC.class_histogram | head -30
@@ -359,7 +359,7 @@ jcmd <pid> GC.class_histogram | head -30
 java -jar jol-cli.jar internals com.example.MyClass
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: many boxed Integer objects
 List<Integer> ids = new ArrayList<>();
@@ -370,22 +370,22 @@ int[] ids = new int[1_000_000];
 // Or: use IntStream, int[], Eclipse Collections Primitive
 ```
 
-Prevention: Prefer primitives over boxed types for large collections; profile heap with class histogram before scaling.
+**Prevention:** Prefer primitives over boxed types for large collections; profile heap with class histogram before scaling.
 
 **2. Lock Inflation Causing Unexpected Contention**
 
-Symptom: Thread dumps show many threads blocked on `synchronized`; lock inflation to heavyweight Monitor not expected by the developer.
+**Symptom:** Thread dumps show many threads blocked on `synchronized`; lock inflation to heavyweight Monitor not expected by the developer.
 
-Root Cause: Multiple threads contesting the same object's lock causes Mark Word transition from biased/lightweight to heavyweight (inflated Monitor), which involves kernel synchronisation.
+**Root Cause:** Multiple threads contesting the same object's lock causes Mark Word transition from biased/lightweight to heavyweight (inflated Monitor), which involves kernel synchronisation.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Thread dump shows contention
 jcmd <pid> Thread.print | grep "BLOCKED"
 # Find the object address and which threads compete for it
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: coarse-grained lock causing contention
 synchronized(this) { /* all operations */ }
@@ -398,22 +398,22 @@ try { /* read operations */ }
 finally { lock.readLock().unlock(); }
 ```
 
-Prevention: Design for minimal lock contention; use `ReentrantLock` or `java.util.concurrent` classes that are better tuned for contention than `synchronized`.
+**Prevention:** Design for minimal lock contention; use `ReentrantLock` or `java.util.concurrent` classes that are better tuned for contention than `synchronized`.
 
 **3. Compressed OOPs Disabled for Unexpectedly Large Heap**
 
-Symptom: Every object consumes 4 bytes more than expected after heap size increases past 32 GB.
+**Symptom:** Every object consumes 4 bytes more than expected after heap size increases past 32 GB.
 
-Root Cause: `-XX:+UseCompressedOops` is disabled when `-Xmx` exceeds ~32 GB, expanding the Klass Pointer from 4 to 8 bytes per object.
+**Root Cause:** `-XX:+UseCompressedOops` is disabled when `-Xmx` exceeds ~32 GB, expanding the Klass Pointer from 4 to 8 bytes per object.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jcmd <pid> VM.flags | grep CompressedOops
 # -XX:+UseCompressedOops → enabled (heap ≤ 32GB)
 # -XX:-UseCompressedOops → disabled (heap > 32GB)
 ```
 
-Prevention: Keep heap <= 32 GB per JVM instance to enable compressed oops; or use multiple JVM instances horizontally rather than one very large heap.
+**Prevention:** Keep heap <= 32 GB per JVM instance to enable compressed oops; or use multiple JVM instances horizontally rather than one very large heap.
 
 ---
 

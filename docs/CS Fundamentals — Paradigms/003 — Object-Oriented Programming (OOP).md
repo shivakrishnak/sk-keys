@@ -32,7 +32,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 In the era of procedural code, a banking application would have
 global arrays for account balances, transaction histories, and
 customer names — all linked by numeric indices. A `transfer()`
@@ -41,14 +41,14 @@ system grew, any function could modify any global data. Adding a
 savings account type meant hunting through every function that
 touched account data and adding special-case conditionals.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 At 100,000 lines of procedural code, the coupling between data
 structures and the functions that manipulated them became
 unmanageable. Changing the representation of an account balance
 required updating dozens of functions. There was no systematic
 way to model "an account does these things" as a single unit.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why Object-Oriented Programming was created. By
 bundling data (fields) and the operations on that data (methods)
 into an object, OOP enforced a contract: only an `Account` object
@@ -93,7 +93,7 @@ the system is insulated from that change through the interface.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. An object is the indivisible unit of state + behaviour.
    You cannot separate an object's data from the methods
@@ -105,7 +105,7 @@ CORE INVARIANTS:
    value — two Account objects with the same balance are
    still two different accounts.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1, a class is the natural blueprint: it defines
 the fields (state template) and methods (behaviour template) that
 all objects of that type share. Given invariant 2, fields should
@@ -119,11 +119,11 @@ Class (blueprint) → instantiate → Object (instance)
 Object.method() sends message → executes on object's state
 ```
 
-THE TRADE-OFFS:
-Gain: Natural modelling of real-world entities; change isolation
+**THE TRADE-OFFS:**
+**Gain:** Natural modelling of real-world entities; change isolation
 (modify internals without breaking callers); reuse via
 inheritance and polymorphism.
-Cost: Can lead to deep inheritance hierarchies that are brittle;
+**Cost:** Can lead to deep inheritance hierarchies that are brittle;
 mutable shared objects cause concurrency bugs; not all
 problems map naturally to "things with behaviour."
 
@@ -131,12 +131,12 @@ problems map naturally to "things with behaviour."
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A system needs to process payments. There are three types: credit
 card, bank transfer, PayPal. Each has different validation and
 processing logic.
 
-WHAT HAPPENS WITHOUT OOP (procedural):
+**WHAT HAPPENS WITHOUT OOP (procedural):**
 
 ```
 processPayment(type, amount, details) {
@@ -149,7 +149,7 @@ processPayment(type, amount, details) {
 Adding a 4th payment type means modifying `processPayment`.
 Every switch statement in the codebase grows. Tests break.
 
-WHAT HAPPENS WITH OOP:
+**WHAT HAPPENS WITH OOP:**
 
 ```
 interface Payment { validate(); process(); }
@@ -165,7 +165,7 @@ payment.process();
 Adding a new payment type creates a new class. Existing code is
 untouched. This is the Open/Closed Principle in practice.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Polymorphism means "add new types without changing existing code."
 OOP's biggest design win is enabling extension without modification.
 
@@ -179,11 +179,11 @@ OOP's biggest design win is enabling extension without modification.
 > reach into Payroll's spreadsheets — it sends a request: "process
 > payroll for employee 42." Payroll handles it internally.
 
-"Department" → class / object
-"Department's private files" → private fields
-"Sending a request to another department" → calling a method
-"The request interface" → the public API / method signature
-"Department structure" → class definition
+- "Department" → class / object
+- "Department's private files" → private fields
+- "Sending a request to another department" → calling a method
+- "The request interface" → the public API / method signature
+- "Department structure" → class definition
 
 Where this analogy breaks down: unlike real departments, objects
 can be cloned instantly, and object identity (reference vs. value)
@@ -281,7 +281,7 @@ to the wrong method (fragile base class problem).
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [Client Code: payment.process(100)]
@@ -293,12 +293,12 @@ NORMAL FLOW:
   → [Return result to caller]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [NullPointerException: payment is null]
 → [JVM throws NPE] → [Stack unwind]
 → [Observable: NullPointerException in logs]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10x load, mutable objects shared between threads require
 synchronisation — every `synchronized` method becomes a
 contention bottleneck. At 100x, immutable value objects (a
@@ -440,15 +440,15 @@ transformations dominate and concurrency correctness is critical.
 
 **1. Mutable Shared Object (Thread Safety Bug)**
 
-Symptom:
+**Symptom:**
 Counter increments are lost under concurrent load; values are
 inconsistent across requests.
 
-Root Cause:
+**Root Cause:**
 Two threads read the same field simultaneously, both see value 5,
 both write 6, net result is +1 instead of +2.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Java: detect with ThreadSanitizer or helgrind
@@ -458,7 +458,7 @@ java -ea MyApp 2>&1 | grep "race condition"
 jstack <pid> | grep -A 5 "BLOCKED"
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: unsynchronised
@@ -471,21 +471,21 @@ class Counter {
 }
 ```
 
-Prevention: Make objects immutable wherever possible; use
+**Prevention:** Make objects immutable wherever possible; use
 `AtomicInteger`, `ConcurrentHashMap` for shared mutable state.
 
 **2. Fragile Base Class**
 
-Symptom:
+**Symptom:**
 Changing a method in a parent class breaks subclass behaviour
 in unexpected ways; tests for subclasses fail after a "safe"
 parent change.
 
-Root Cause:
+**Root Cause:**
 Subclass overrides a method and calls `super()`, relying on the
 parent's internal sequence. Parent changes the sequence.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Review all subclasses of the changed parent
@@ -494,7 +494,7 @@ grep -r "extends ParentClass" src/
 grep -r "super\." src/
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: subclass depends on super's internal order
@@ -515,21 +515,21 @@ class Better {
 }
 ```
 
-Prevention: Follow the Liskov Substitution Principle; prefer
+**Prevention:** Follow the Liskov Substitution Principle; prefer
 composition over inheritance for code reuse.
 
 **3. Anemic Domain Model**
 
-Symptom:
+**Symptom:**
 Classes contain only getters/setters; all business logic lives
 in "service" classes that manipulate data objects. OOP provides
 no value over procedural code.
 
-Root Cause:
+**Root Cause:**
 Developers treat domain objects as data containers rather than
 putting domain logic inside them.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Count methods vs fields in model classes
@@ -539,7 +539,7 @@ grep -c "get\|set" src/model/Order.java
 grep -c "void\|return" src/service/OrderService.java
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: anemic Order — logic lives in OrderService
@@ -558,7 +558,7 @@ class Order {
 }
 ```
 
-Prevention: Ask "should this logic belong to the object?" before
+**Prevention:** Ask "should this logic belong to the object?" before
 placing business rules in service classes.
 
 ---

@@ -43,13 +43,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Java services deployed as serverless functions (AWS Lambda, Azure Functions) pay the JVM startup cost on every cold invocation. A Spring Boot application takes 3–8 seconds to start. A serverless function is expected to respond in <100ms. With JIT warmup on top of startup, the first 30–60 seconds of a new pod's life are performance-degraded. For auto-scaling, containerized, or edge environments, this startup penalty makes Java fundamentally hostile.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A financial company tries to deploy microservices as serverless functions. The JVM startup time alone (without any warmup) is 2 seconds. AWS Lambda's timeout on cold start is 10 seconds, but their SLA requires P999 < 500ms. Java is disqualified. Python and Go get the contract instead.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **AOT (Ahead-of-Time Compilation)** was created — to compile Java code to native machine code offline, before the program is invoked, producing a self-contained executable that starts in milliseconds and requires no JVM warmup.
 
 ---
@@ -75,12 +75,12 @@ AOT's fundamental trade-off is *certainty at compile time* vs *adaptability at r
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Native machine code always runs faster than interpreted bytecode for the same computation.
 2. Runtime profiling data enables better optimizations than static analysis alone — but requires execution time to collect.
 3. Dynamic Java features (reflection, class loading, dynamic proxies) are incompatible with closed-world static analysis.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 AOT must solve the "closed world" problem: to statically compile everything, it must know *all possible code paths at compile time*. This is an undecidable problem in general (you cannot statically know all reflective accesses). GraalVM's solution:
 
 1. **Reachability analysis**: Static analysis starting from the main method, tracing all reachable classes, methods, and fields. Unreachable code is excluded from the binary.
@@ -106,15 +106,15 @@ AOT must solve the "closed world" problem: to statically compile everything, it 
 └──────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Sub-100ms startup; low memory footprint; predictable latency; no warmup; self-contained binary (no JVM installation needed).
-Cost: Longer build times (minutes vs seconds); no runtime JIT adaptation; dynamic Java features require manual configuration; peak throughput may be lower (no profile-guided JIT specialization); debugging is harder (no bytecode-level tools).
+**THE TRADE-OFFS:**
+**Gain:** Sub-100ms startup; low memory footprint; predictable latency; no warmup; self-contained binary (no JVM installation needed).
+**Cost:** Longer build times (minutes vs seconds); no runtime JIT adaptation; dynamic Java features require manual configuration; peak throughput may be lower (no profile-guided JIT specialization); debugging is harder (no bytecode-level tools).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Two identical payment processing services are deployed: one as a JIT JVM app (Spring Boot), one as an AOT native image (GraalVM Native Image).
 
 JIT JVM (Spring Boot):
@@ -131,7 +131,7 @@ AOT Native Image:
 - Stable throughput: 12,000 req/s (no JIT adaptation).
 - Memory: 80MB (no JVM overhead, compact native heap).
 
-THE INSIGHT:
+**THE INSIGHT:**
 For a long-running service with stable traffic, JIT pulls ahead at peak throughput (15,000 vs 12,000 req/s) thanks to adaptive inlining. For serverless functions invoked intermittently, AOT is 40x better on startup and uses 6x less memory. The right choice depends entirely on the deployment pattern and workload.
 
 ---
@@ -140,10 +140,10 @@ For a long-running service with stable traffic, JIT pulls ahead at peak throughp
 
 > Think of building IKEA furniture. JIT is like reading the instructions as you assemble — slow initially, fast once you know the steps. AOT is like hiring a factory to pre-assemble the furniture completely before delivery — it arrives ready to use, but any customization must be specified before manufacturing.
 
-"Reading instructions as you assemble" → JIT compiling methods when first called.
-"Factory pre-assembled" → AOT native binary built offline.
-"Arrives ready to use" → zero-warmup startup.
-"Customization before manufacturing" → reflection-config.json and explicit feature declarations.
+- "Reading instructions as you assemble" → JIT compiling methods when first called.
+- "Factory pre-assembled" → AOT native binary built offline.
+- "Arrives ready to use" → zero-warmup startup.
+- "Customization before manufacturing" → reflection-config.json and explicit feature declarations.
 
 Where this analogy breaks down: Unlike factory furniture, AOT-compiled code can still handle some runtime variation — just not unlimited dynamic class loading. And unlike IKEA furniture, you can still ship the "instructions" (bytecode) alongside the pre-built version for fallback.
 
@@ -230,7 +230,7 @@ RUNTIME:
     → [Stable throughput: no JIT overhead, no warmup]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Application uses unregistered reflection at runtime]
     → [ClassNotFoundException or NPE]
@@ -242,7 +242,7 @@ FAILURE PATH:
     → [Need: substitute class or alternative library]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 1000+ function invocations per second on serverless infrastructure, native image's sub-100ms cold start eliminates the need for "keep-warm" hacks. At scale, the build-time cost (5–15 minutes for large apps) becomes a CI/CD bottleneck. Teams using native image adopt incremental builds and layer caching extensively. Framework-level support (Quarkus, Micronaut, Spring Boot 3) abstracts much of the reflection configuration.
 
 ---
@@ -349,13 +349,13 @@ How to choose: Use native image for serverless, CLIs, or any workload where cold
 
 **Missing Reflection Registration**
 
-Symptom:
+**Symptom:**
 Native image binary runs, hits a reflective call, throws `ClassNotFoundException` or `InstantiationException` at runtime on a class that exists in the JAR.
 
-Root Cause:
+**Root Cause:**
 The class is accessed via reflection but not registered in `reflect-config.json`. The points-to analysis did not trace into it and it was excluded from the binary.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Run with reflection tracing (JVM mode) to capture missing entries:
 java -agentlib:native-image-agent=\
@@ -365,46 +365,46 @@ java -agentlib:native-image-agent=\
 # Agent updates reflect-config.json automatically
 ```
 
-Fix:
+**Fix:**
 Add the missing class to `reflect-config.json` or use `@RegisterForReflection` (Quarkus) / `@ReflectiveAccess` (Micronaut) annotations.
 
-Prevention:
+**Prevention:**
 Run the native-image-agent in CI against full integration test suite before releasing.
 
 ---
 
 **Unsupported Feature at Build Time**
 
-Symptom:
+**Symptom:**
 `native-image` build fails: `Error: Unsupported features in 3 methods: Feature usage: User-defined class initializer in ... which performs `.
 
-Root Cause:
+**Root Cause:**
 The application or a dependency uses a JVM feature not supported by SubstrateVM: arbitrary byte manipulation, JVM TI agents, or complex class initializers with side effects.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 native-image ... --report-unsupported-elements-at-runtime
 # Lists features that will fail at runtime instead of at build time
 # Use this only for debugging — don't ship with this flag
 ```
 
-Fix:
+**Fix:**
 Replace the unsupported library with a native-image-compatible alternative. For serialization: use Jackson instead of Java Serialization. For proxies: use interface-based proxies instead of CGLIB.
 
-Prevention:
+**Prevention:**
 Check GraalVM's reachability metadata repository: `https://github.com/oracle/graalvm-reachability-metadata` — community-maintained metadata for popular libraries.
 
 ---
 
 **Native Image OOM (Heap Exhaustion)**
 
-Symptom:
+**Symptom:**
 Native image binary crashes with `java.lang.OutOfMemoryError` despite the JVM version handling the same load fine.
 
-Root Cause:
+**Root Cause:**
 Default SubstrateVM Serial GC heap setting is `-Xmx256m` — much lower than typical JVM deployments. Under load, heap exhausts.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Check heap usage at runtime:
 ./myapp -Xmx512m -XX:MaxRAMPercentage=75
@@ -414,7 +414,7 @@ Diagnostic Command / Tool:
 # work in native image just like JVM mode
 ```
 
-Fix:
+**Fix:**
 ```bash
 # Set heap at runtime:
 ./myapp -Xmx512m
@@ -423,7 +423,7 @@ Fix:
 native-image -Xmx512m ... -jar myapp.jar
 ```
 
-Prevention:
+**Prevention:**
 Load test native images with production-representative traffic and measure actual heap requirements before setting production limits.
 
 ---

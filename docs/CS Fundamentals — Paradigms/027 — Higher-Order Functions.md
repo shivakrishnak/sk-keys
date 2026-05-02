@@ -31,15 +31,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 Without higher-order functions, you have to write the same loop skeleton over and over, varying only the inner logic. To extract all even numbers: loop over list, check if even, add to result. To double all numbers: loop over list, multiply by 2, add to result. To sum all numbers: loop over list, accumulate sum. The outer structure is identical; only the inner operation changes. Without HOFs, every variant is its own distinct function — no abstraction over the structure itself.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 A production codebase has `getActiveUsers()`, `getPremiumUsers()`, `getUsersWithBalance()`, `getUsersOlderThan(n)` — dozens of functions with identical "loop over list, check condition, collect matches" structure. Adding a new filter requires adding a new function. The logic for filtering is buried in the implementation, not expressed as a first-class concept. Code review reveals the same loop written 20 different times.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 Higher-order functions abstract over the _structure_ of computation, not just the _values_. `filter(list, predicate)` captures the "loop + check + collect" structure once. `map(list, transform)` captures "loop + transform + collect" once. `reduce(list, accumulator, initialValue)` captures "loop + fold" once. You write the structure once; you pass the behaviour each time. The twenty duplicate loops become twenty calls to `filter()` with different predicates.
 
@@ -67,14 +67,14 @@ Higher-order functions abstract over _what you do_ by accepting _how to do it_ a
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. HOFs separate _algorithm structure_ from _step-by-step behaviour_
 2. The function argument defines "what to do at each step"; the HOF defines "how to iterate/combine"
 3. HOFs are compositional: `map(filter(list, pred), transform)` is readable and does not require intermediate variables
 4. HOFs work over any element type — they are generic/polymorphic over both the collection type and the function argument type
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 ```
 map(list, f):      [a, b, c, d] → [f(a), f(b), f(c), f(d)]
@@ -87,16 +87,16 @@ filter([1,2,3,4], x -> x%2==0)  → [2, 4]
 reduce([1,2,3,4], (acc,x)->acc+x, 0) → 10
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
-Gain: abstraction over loops eliminates duplication; pipelines express intent at a higher level; composability; lazy evaluation (Java Streams are lazy — no work done until terminal operation).
-Cost: debugging HOF chains harder than imperative loops (no "step through" of intermediate state); over-chaining reduces readability; performance: lambda objects are heap-allocated; functional pipelines may be slower than hand-optimised loops for tight performance-critical inner loops (though JIT can often close the gap).
+**Gain:** abstraction over loops eliminates duplication; pipelines express intent at a higher level; composability; lazy evaluation (Java Streams are lazy — no work done until terminal operation).
+**Cost:** debugging HOF chains harder than imperative loops (no "step through" of intermediate state); over-chaining reduces readability; performance: lambda objects are heap-allocated; functional pipelines may be slower than hand-optimised loops for tight performance-critical inner loops (though JIT can often close the gap).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Given a list of 1 million employee records, compute the total salary of all senior engineers in the London office.
 
 IMPERATIVE APPROACH (no HOFs):
@@ -138,7 +138,7 @@ double totalSalary = employees.parallelStream()  // one word change
 // The imperative loop would need manual partitioning and merging
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 HOFs separate the "what" from the "how" at the algorithmic level. The stream pipeline says what to compute; the framework decides how (sequential or parallel, lazy or eager, in what order). This separation enables the framework to optimise execution without changing the calling code.
 
 ---
@@ -225,7 +225,7 @@ Function<Integer, Integer> addThenDouble = doubleIt.compose(addThree);
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 Data source (collection, stream, observable)
@@ -244,7 +244,7 @@ Lazy pipeline begins execution:
 Result materialised
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Stateful lambda in parallel stream:
@@ -262,7 +262,7 @@ Fix: use thread-safe collector
       .collect(Collectors.toList());           // SAFE: collector is concurrent
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 At scale, reactive frameworks (Project Reactor, RxJava) extend HOFs from synchronous collections to asynchronous event streams. `Flux<T>` in Project Reactor is a stream HOF pipeline over async events: `flux.filter(isValid).map(transform).flatMap(asyncProcess).subscribe(result -> save(result))`. This is the same map/filter/flatMap pattern, now operating asynchronously with backpressure. Understanding HOFs on collections directly transfers to understanding reactive streams — same operators, asynchronous semantics.
 
@@ -389,13 +389,13 @@ List<String> allItems = orders.stream()
 
 **Stateful Lambda in Parallel Stream (Data Race)**
 
-Symptom:
+**Symptom:**
 Parallel stream produces incorrect or non-deterministic results. `ArrayList` occasionally throws `ArrayIndexOutOfBoundsException`. Results vary between runs.
 
-Root Cause:
+**Root Cause:**
 The lambda passed to `forEach` or other HOFs mutates shared mutable state. Multiple threads execute the lambda simultaneously, causing data races on the shared state.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```java
 // BUG: mutable shared state in parallel stream
@@ -415,10 +415,10 @@ List<Integer> result = numbers.parallelStream()
     .collect(Collectors.toList());  // collector manages thread safety
 ```
 
-Fix:
+**Fix:**
 Use `collect()` with a `Collector` instead of `forEach` + mutable state. Collectors manage thread-safe accumulation internally. Or use `toConcurrentMap()`, `groupingBy()`, or `counting()` — all thread-safe.
 
-Prevention:
+**Prevention:**
 Rule: lambdas passed to `parallelStream()` operations must be stateless and non-interfering. Any access to external mutable state from a parallel stream lambda is a potential data race. Code review should flag any lambda that references a field or variable outside the pipeline.
 
 ---

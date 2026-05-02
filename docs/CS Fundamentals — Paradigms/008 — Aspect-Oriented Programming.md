@@ -32,7 +32,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine adding logging to every method in a 500-class banking
 application. You add `log.info("Entering: " + method.getName())`
 at the start of every method and `log.info("Exiting")` at the
@@ -42,7 +42,7 @@ performance timing. Each class mixes its actual business logic
 with infrastructure concerns — a `TransferService` has 60%
 logging/security code and 40% transfer logic.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Cross-cutting concerns — logic that applies across many unrelated
 classes — cannot be encapsulated in a single class or method
 using OOP alone. Inheritance only works vertically (parent →
@@ -50,7 +50,7 @@ child). If logging must be added to classes across 5 different
 inheritance hierarchies, there's no OOP mechanism to do it
 in one place.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why Aspect-Oriented Programming was created.
 By separating cross-cutting concerns into "aspects" that are
 woven into target methods at defined "join points," AOP keeps
@@ -100,7 +100,7 @@ globally via aspects. The two authors never need to coordinate.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. A join point is any identifiable point in program execution —
    a method call, field access, exception throw. AOP intercepts
@@ -112,7 +112,7 @@ CORE INVARIANTS:
    before (pre-check), after (cleanup), around (wrap the
    original call), afterReturning, afterThrowing.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariants 1–3, the framework must intercept method calls
 before reaching the target object. Spring AOP does this with
 JDK dynamic proxies (for interfaces) or CGLIB (for classes) —
@@ -127,11 +127,11 @@ The proxy pattern is the runtime mechanism. AspectJ weaves
 directly into bytecode — no proxy needed, more join points
 available (field access, constructor calls).
 
-THE TRADE-OFFS:
-Gain: Complete separation of cross-cutting concerns; zero
+**THE TRADE-OFFS:**
+**Gain:** Complete separation of cross-cutting concerns; zero
 duplication of infrastructure code; business logic stays
 clean; aspects can be enabled/disabled globally.
-Cost: Invisible behaviour (a method looks clean but secretly
+**Cost:** Invisible behaviour (a method looks clean but secretly
 has 3 aspects running); debugging is harder (proxy
 stack frames); circular dependency issues with proxy
 creation; not all method calls are interceptable (same-class
@@ -141,11 +141,11 @@ calls bypass the proxy in Spring AOP).
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A service has 50 methods. Security checks must run before every
 public method. Performance timing must log before and after.
 
-WHAT HAPPENS WITHOUT AOP:
+**WHAT HAPPENS WITHOUT AOP:**
 
 ```java
 public String getUser(long id) {
@@ -159,7 +159,7 @@ public String getUser(long id) {
 // × 50 methods = 200 lines of duplicated infrastructure code
 ```
 
-WHAT HAPPENS WITH AOP:
+**WHAT HAPPENS WITH AOP:**
 
 ```java
 // Business method: zero infrastructure code
@@ -185,7 +185,7 @@ public Object logTiming(ProceedingJoinPoint pjp) throws Throwable {
 }
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The business method has zero knowledge of security or timing —
 the separation is total. Adding timing to 50 methods is done
 by writing ONE aspect, not editing 50 files.
@@ -201,11 +201,11 @@ by writing ONE aspect, not editing 50 files.
 > (the method executes), passengers are screened (advice: before).
 > The airline's boarding process is completely unchanged.
 
-"Airline's boarding process" → your business method
-"Airport checkpoint" → the AOP advice
-"Gate (departure point)" → the join point
-"All departure gates" → the pointcut expression
-"Airport authority placing checkpoints" → AOP weaving
+- "Airline's boarding process" → your business method
+- "Airport checkpoint" → the AOP advice
+- "Gate (departure point)" → the join point
+- "All departure gates" → the pointcut expression
+- "Airport authority placing checkpoints" → AOP weaving
 
 Where this analogy breaks down: unlike airport security which
 is visible, AOP advice is invisible — a developer reading the
@@ -302,7 +302,7 @@ the return value before returning.
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [REST controller calls service.save(order)]
@@ -315,13 +315,13 @@ NORMAL FLOW:
   → [Result returned to controller]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [service.save() throws RuntimeException]
 → [@Transactional: catches exception, rolls back transaction]
 → [Exception re-thrown to controller]
 → [Observable: exception in controller logs, DB row not saved]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10x load, proxy overhead (1–5μs per call) is negligible
 for 100ms database operations. At 100x, complex pointcut
 expressions evaluated on every method call add up — pre-compiled
@@ -455,15 +455,15 @@ handle self-invocation.
 
 **1. Self-Invocation Bypasses Proxy**
 
-Symptom:
+**Symptom:**
 `@Transactional(REQUIRES_NEW)` on an inner method doesn't create
 a new transaction; data is not committed independently.
 
-Root Cause:
+**Root Cause:**
 When a Spring bean calls its own method (`this.method()`),
 it bypasses the AOP proxy — no aspects fire.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Enable Spring transaction debug logging
@@ -473,7 +473,7 @@ logging.level.org.springframework.transaction=DEBUG
 # instead of "Creating new transaction" — confirms bypass
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: self-invocation bypasses @Transactional proxy
@@ -499,19 +499,19 @@ public class OrderService {
 }
 ```
 
-Prevention: Never call `@Transactional` or `@Cacheable` methods
+**Prevention:** Never call `@Transactional` or `@Cacheable` methods
 on `this` inside a Spring bean; inject self or refactor.
 
 **2. Aspect Order Conflict**
 
-Symptom:
+**Symptom:**
 Transaction is opened AFTER the security check throws an
 exception — the transaction doesn't clean up correctly.
 
-Root Cause:
+**Root Cause:**
 Two aspects on the same method run in wrong order.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Enable AOP auto-proxy debugging
@@ -519,7 +519,7 @@ logging.level.org.springframework.aop=DEBUG
 # Check log output for aspect order applied to method
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: undefined order
@@ -537,20 +537,20 @@ public class SecurityAspect { ... }  // runs first
 public class TransactionAspect { ... } // runs second (inside)
 ```
 
-Prevention: Always define `@Order` for aspects that interact
+**Prevention:** Always define `@Order` for aspects that interact
 with each other; document the required ordering in team guides.
 
 **3. Aspect Catches and Swallows Exception**
 
-Symptom:
+**Symptom:**
 Exception is thrown in a service method, but the caller receives
 null or a default value; no error is logged.
 
-Root Cause:
+**Root Cause:**
 An around-advice catches a broad exception type and returns
 a default value instead of rethrowing.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Add detailed exception logging to suspect aspects
@@ -565,7 +565,7 @@ public Object logErrors(ProceedingJoinPoint pjp) throws Throwable {
 }
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: swallows exception silently
@@ -590,7 +590,7 @@ public Object safeCall(ProceedingJoinPoint pjp) throws Throwable {
 }
 ```
 
-Prevention: Around advice must either return `pjp.proceed()`
+**Prevention:** Around advice must either return `pjp.proceed()`
 or throw; returning null on error creates silent failures.
 
 ---

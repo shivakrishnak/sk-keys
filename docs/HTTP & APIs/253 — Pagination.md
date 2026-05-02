@@ -351,12 +351,12 @@ public class CursorCodec {
 
 **Duplicate/Missing Items in Offset Pagination**
 
-Symptom: User on page 3 of a feed; a new post is added. Page 4 now shows an item
+**Symptom:** User on page 3 of a feed; a new post is added. Page 4 now shows an item
 the user already saw on page 3 (or an item is skipped entirely).
 
-Root Cause: Offset-based pagination over a mutable result set. New inserts shift OFFSET positions.
+**Root Cause:** Offset-based pagination over a mutable result set. New inserts shift OFFSET positions.
 
-Fix:
+**Fix:**
 ```sql
 -- If you must use offset: freeze the sort order with a created_at timestamp anchor
 -- returned with page 1, used for all subsequent pages:

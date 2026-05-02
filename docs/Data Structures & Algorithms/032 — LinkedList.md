@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You are building a music playlist app. Users add and remove songs constantly at any position. You use an array. Every time someone inserts a song in the middle, you shift all subsequent elements one position right. With 10,000 songs, every mid-list insertion copies up to 10,000 references. Add 100 songs in random positions and you've done 1,000,000 element copies for what felt like trivial edits.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Arrays excel at random access but pay O(N) for insertion and deletion in the middle because they must maintain contiguity. For workloads dominated by mid-sequence mutation, this cost compounds into serious latency.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 If we allow elements to live at non-contiguous addresses, and each element simply remembers where the next one lives, insertion becomes "update two pointers" — O(1) given a reference to the insertion point. This is exactly why the LinkedList was created.
 
 ---
@@ -63,36 +63,36 @@ A LinkedList trades random access for O(1) mutation. The "pointer chase" that ma
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Each node stores exactly one value and a pointer to the next node (null for the last).
 2. No contiguity requirement — nodes can be anywhere in memory.
 3. The list is traversed only in pointer order; no index formula exists.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Because nodes are independent, insertion between node A and node B is: create new node C, set `C.next = B`, set `A.next = C`. Zero copies. For deletion of node B: set `A.next = B.next`. One pointer update.
 
 The cost is access: to reach `node[500]`, you must follow 500 `next` pointers. Each pointer dereference is likely a cache miss (nodes are scattered), making traversal 5–20× slower than an equivalent array scan.
 
 Doubly linked lists add a `prev` pointer, enabling O(1) backward traversal and O(1) remove-by-node-reference without needing the predecessor. They cost one extra pointer per node (8 bytes on 64-bit JVM).
 
-THE TRADE-OFFS:
-Gain: O(1) insert/delete at known position, dynamic size without copying.
-Cost: O(N) access by index, high memory overhead (pointer storage + GC pressure), poor cache locality.
+**THE TRADE-OFFS:**
+**Gain:** O(1) insert/delete at known position, dynamic size without copying.
+**Cost:** O(N) access by index, high memory overhead (pointer storage + GC pressure), poor cache locality.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A to-do app stores 1,000 tasks in a list. A user selects task #500 and inserts a new task immediately before it.
 
-WHAT HAPPENS WITHOUT LINKEDLIST (using array):
+**WHAT HAPPENS WITHOUT LINKEDLIST (using array):**
 Find task #500 in O(1). Then shift tasks #500–#999 one position to the right: 500 copy operations. Insert the new task. Total: 501 operations.
 
-WHAT HAPPENS WITH LINKEDLIST:
+**WHAT HAPPENS WITH LINKEDLIST:**
 Traverse to node #499 in O(499). Set `newNode.next = node499.next`. Set `node499.next = newNode`. Total: 499 traversal steps + 2 pointer updates. Insertion itself is O(1) — the traversal is the cost.
 
-THE INSIGHT:
+**THE INSIGHT:**
 LinkedList makes insertion free but charges you the traversal. If you already hold a reference to the insertion point (e.g., from a previous iteration), the cost truly is O(1). This is why iterators in Java's `LinkedList` can remove while iterating cheaply — they track the current node.
 
 ---
@@ -101,10 +101,10 @@ LinkedList makes insertion free but charges you the traversal. If you already ho
 
 > A LinkedList is a chain of train carriages. Each carriage knows which carriage is directly behind it. To detach carriage 5 and insert a new one, you just re-hook two connections. But to check what's in carriage 500, you must walk from carriage 1.
 
-"Carriage" → node
-"Cargo in carriage" → node's data field
-"Coupling hook" → `next` pointer
-"Walk from carriage 1" → O(N) traversal
+- "Carriage" → node
+- "Cargo in carriage" → node's data field
+- "Coupling hook" → `next` pointer
+- "Walk from carriage 1" → O(N) traversal
 
 Where this analogy breaks down: Real carriages are physically adjacent; linked nodes are scattered in memory, so the cache penalty is far higher than just "walking" suggests.
 
@@ -169,7 +169,7 @@ Node<E> node(int index) {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Create list → add elements via addFirst/addLast (O(1))
 → Traverse via iterator [LINKEDLIST ← YOU ARE HERE]
@@ -177,7 +177,7 @@ Create list → add elements via addFirst/addLast (O(1))
 → Result: mutated list without shifting
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Call get(index) in a tight loop
 → O(N) per call → O(N²) total
@@ -185,7 +185,7 @@ Call get(index) in a tight loop
 → Thread dump shows time in LinkedList.node()
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 With millions of nodes, GC pause time dominates because each node is a separate heap object to mark and sweep. At scale, chunk-based structures like `ArrayDeque` or skip lists outperform `LinkedList` dramatically. Avoid `LinkedList` in latency-sensitive code with more than ~10,000 elements.
 
 ---
@@ -273,17 +273,17 @@ Remove → update neighbour pointers, GC reclaims node
 
 **1. O(N²) performance from random access in loop**
 
-Symptom: Loop over a `LinkedList` using `get(i)` grinds to a halt; 100k elements take seconds.
+**Symptom:** Loop over a `LinkedList` using `get(i)` grinds to a halt; 100k elements take seconds.
 
-Root Cause: `LinkedList.get(i)` traverses from head (or tail) every call — O(N). A loop of N calls becomes O(N²).
+**Root Cause:** `LinkedList.get(i)` traverses from head (or tail) every call — O(N). A loop of N calls becomes O(N²).
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Thread dump will show long time in LinkedList.node():
 jstack <pid> | grep -A 5 "LinkedList"
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD
 for (int i = 0; i < list.size(); i++) process(list.get(i));
@@ -293,41 +293,41 @@ for (Integer val : list) process(val);
 // or convert to ArrayList first for mixed access
 ```
 
-Prevention: Never call `get(int)` on `LinkedList` in a performance path; switch to `ArrayList`.
+**Prevention:** Never call `get(int)` on `LinkedList` in a performance path; switch to `ArrayList`.
 
 ---
 
 **2. Memory explosion with large LinkedList**
 
-Symptom: OutOfMemoryError with far fewer elements than expected; heap dumps show millions of small Node objects.
+**Symptom:** OutOfMemoryError with far fewer elements than expected; heap dumps show millions of small Node objects.
 
-Root Cause: Each `LinkedList` node is a separate heap object (~40 bytes). 10M nodes = ~400 MB vs ~40 MB for an equivalent `int[]`.
+**Root Cause:** Each `LinkedList` node is a separate heap object (~40 bytes). 10M nodes = ~400 MB vs ~40 MB for an equivalent `int[]`.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jmap -histo:live <pid> | grep LinkedList
 # Look for Node count × size
 ```
 
-Fix: Replace `LinkedList` with `ArrayList` or a primitive collection library (Eclipse Collections, Trove) for large integer/long collections.
+**Fix:** Replace `LinkedList` with `ArrayList` or a primitive collection library (Eclipse Collections, Trove) for large integer/long collections.
 
-Prevention: Choose data structure based on memory profile; avoid `LinkedList` for large sets of primitives.
+**Prevention:** Choose data structure based on memory profile; avoid `LinkedList` for large sets of primitives.
 
 ---
 
 **3. ConcurrentModificationException during iteration**
 
-Symptom: `java.util.ConcurrentModificationException` when modifying list while iterating.
+**Symptom:** `java.util.ConcurrentModificationException` when modifying list while iterating.
 
-Root Cause: Java's `LinkedList` maintains a `modCount`. The iterator snapshots `modCount` at creation; any structural modification outside the iterator increments it, causing the exception on next `iterator.next()`.
+**Root Cause:** Java's `LinkedList` maintains a `modCount`. The iterator snapshots `modCount` at creation; any structural modification outside the iterator increments it, causing the exception on next `iterator.next()`.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 grep "ConcurrentModificationException" app.log
 # Identify the modification site from the stack trace
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: modify list directly in loop
 for (Integer val : list)
@@ -339,7 +339,7 @@ while (it.hasNext())
     if (it.next() < 0) it.remove(); // safe
 ```
 
-Prevention: Never modify a collection during an enhanced for loop; use `ListIterator.remove()`.
+**Prevention:** Never modify a collection during an enhanced for loop; use `ListIterator.remove()`.
 
 ---
 

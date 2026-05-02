@@ -98,7 +98,7 @@ function outer() {
 
 **Why this distinction from "scope" matters:**
 
-"Scope" is the static description of where a variable is accessible. "Lexical Environment" is the runtime object that implements scope. One scope definition → potentially many Lexical Environment instances (one per function call). This is why each recursive call has its own isolated variables — each call creates a new Lexical Environment instance.
+- "Scope" is the static description of where a variable is accessible. "Lexical Environment" is the runtime object that implements scope. One scope definition → potentially many Lexical Environment instances (one per function call). This is why each recursive call has its own isolated variables — each call creates a new Lexical Environment instance.
 
 ---
 

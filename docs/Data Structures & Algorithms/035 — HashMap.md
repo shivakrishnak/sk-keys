@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You are building a word-frequency counter for a 10GB log file. Each time you see a word, you need to increment its count. Using an array, you must search through all existing words to find the matching entry — O(N) per word. With 1 million unique words and 10 billion total occurrences, that is 10 trillion operations. The program would run for days.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Sequential search is O(N). Every key lookup in an unsorted list walks all entries until a match. As the collection grows, every operation slows proportionally. This is unusable for any real-world dictionary, cache, or index.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 If we could convert a key directly into an index — without searching at all — lookup becomes O(1). A hash function converts any key to an integer; `integer % array_size` becomes the bucket index. This is exactly why the HashMap was created.
 
 ---
@@ -63,12 +63,12 @@ A HashMap's O(1) average access is not magic — it is O(1) array access in disg
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A hash function must be deterministic: the same key always produces the same hash.
 2. The array (buckets) is the backing store; all speed derives from O(1) array access.
 3. Collision handling is required: two distinct keys can produce the same bucket index.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The full pipeline: `key → hashCode() → spread/compress → bucket index → chain/probe`.
 
 Java's `HashMap` computes `(key.hashCode() ^ (key.hashCode() >>> 16))` first — this "spreads" high bits into low bits to prevent clustering when the capacity is a power of 2. Bucket index = `hash & (capacity - 1)`.
@@ -77,24 +77,24 @@ Each bucket is a linked list. After Java 8, once a bucket chain exceeds 8 entrie
 
 **Load factor** determines when the map resizes. Default is 0.75: when 75% of buckets are occupied, capacity doubles and all entries are rehashed. Keeping load factor low reduces collisions; raising it saves memory but increases collision rate.
 
-THE TRADE-OFFS:
-Gain: O(1) average get/put/remove, flexible key types.
-Cost: No ordering, O(N) worst-case on hash collisions, rehashing pauses, extra memory per entry.
+**THE TRADE-OFFS:**
+**Gain:** O(1) average get/put/remove, flexible key types.
+**Cost:** No ordering, O(N) worst-case on hash collisions, rehashing pauses, extra memory per entry.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Count word frequencies in a document with 100,000 words.
 
-WHAT HAPPENS WITHOUT HASHMAP (using a sorted array):
+**WHAT HAPPENS WITHOUT HASHMAP (using a sorted array):**
 Each word lookup binary-searches the sorted array: O(log N). Each insertion into the sorted position: O(N) shift. For 100,000 words: ~100,000 × O(N) insertions = ~5 billion operations.
 
-WHAT HAPPENS WITH HASHMAP:
+**WHAT HAPPENS WITH HASHMAP:**
 Each word is hashed directly to a bucket. `put("hello", count+1)` is two array accesses (hash → bucket index → entry). 100,000 operations: each O(1) → total O(N).
 
-THE INSIGHT:
+**THE INSIGHT:**
 HashMap transforms an O(N) search problem into an O(1) address problem. The hash function is not about finding the needle in the haystack — it converts the needle into a GPS coordinate that takes you directly to the exact position.
 
 ---
@@ -103,10 +103,10 @@ HashMap transforms an O(N) search problem into an O(1) address problem. The hash
 
 > A HashMap is like a filing cabinet where each drawer is labelled by the first letter of the surname. To file Alice's record, you go straight to drawer 'A'. To retrieve it, you go straight to 'A' and look only in that drawer. The filing rule (first letter) is the hash function.
 
-"Filing rule (first letter)" → hash function
-"Drawer" → bucket (array slot)
-"Files in one drawer" → entries in one bucket chain
-"Two people with same first letter" → hash collision
+- "Filing rule (first letter)" → hash function
+- "Drawer" → bucket (array slot)
+- "Files in one drawer" → entries in one bucket chain
+- "Two people with same first letter" → hash collision
 
 Where this analogy breaks down: Real filing cabinets use alphabetical order within a drawer (still O(N) scan). A HashMap's bucket chain is unordered; only Java 8's tree-ification gives O(log N) within an over-full bucket.
 
@@ -178,7 +178,7 @@ All entries redistributed — O(N) operation
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Key provided
 → hashCode() computed
@@ -188,7 +188,7 @@ Key provided
 → Value returned or stored
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 All keys hash to same bucket (collision attack)
 → Chain grows to N entries
@@ -196,7 +196,7 @@ All keys hash to same bucket (collision attack)
 → Pre-Java8: service DoS; Java8+: degrades to O(log N)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At millions of entries, rehash events (capacity doublings) cause GC pressure and latency spikes. Pre-size the map: `new HashMap<>(expectedSize * 2)`. At 10M+ entries in a single HashMap, consider `ConcurrentHashMap` for read-heavy concurrent access, or segment the map across multiple partitions to reduce lock contention.
 
 ---
@@ -300,36 +300,36 @@ GC reclaims Node objects after removal
 
 **1. Silent data loss from missing hashCode override**
 
-Symptom: `map.get(key)` returns null even though you just `put` an equal key object.
+**Symptom:** `map.get(key)` returns null even though you just `put` an equal key object.
 
-Root Cause: Custom class overrides `equals()` but not `hashCode()`. Two equal objects get different bucket indices → `get` never finds the entry.
+**Root Cause:** Custom class overrides `equals()` but not `hashCode()`. Two equal objects get different bucket indices → `get` never finds the entry.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Add temporary logging:
 System.out.println(key.hashCode()); // before put and get
 # If different for equal keys: hashCode not overridden
 ```
 
-Fix: Always override `hashCode()` when overriding `equals()`. Use `Objects.hash(fields...)`.
+**Fix:** Always override `hashCode()` when overriding `equals()`. Use `Objects.hash(fields...)`.
 
-Prevention: Use IDE "generate equals and hashCode" together; use static analysis (SpotBugs, SonarQube `HE_EQUALS_NO_HASHCODE` rule).
+**Prevention:** Use IDE "generate equals and hashCode" together; use static analysis (SpotBugs, SonarQube `HE_EQUALS_NO_HASHCODE` rule).
 
 ---
 
 **2. ConcurrentModificationException during iteration**
 
-Symptom: `java.util.ConcurrentModificationException` during `for (Map.Entry e : map.entrySet())`.
+**Symptom:** `java.util.ConcurrentModificationException` during `for (Map.Entry e : map.entrySet())`.
 
-Root Cause: Map modified (put/remove) during iteration increments `modCount`; iterator detects mismatch.
+**Root Cause:** Map modified (put/remove) during iteration increments `modCount`; iterator detects mismatch.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 grep -n "put\|remove" MyClass.java
 # Find modification inside the loop
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD
 for (Map.Entry<K,V> e : map.entrySet())
@@ -344,25 +344,25 @@ while (it.hasNext()) {
 }
 ```
 
-Prevention: Never modify a `HashMap` while iterating it with an enhanced for loop.
+**Prevention:** Never modify a `HashMap` while iterating it with an enhanced for loop.
 
 ---
 
 **3. HashMap performance degradation under hash flooding**
 
-Symptom: HashMap operations slow from O(1) to O(N); service response times spike under adversarial input.
+**Symptom:** HashMap operations slow from O(1) to O(N); service response times spike under adversarial input.
 
-Root Cause: Attacker sends keys that all hash to the same bucket. Pre-Java 8: O(N) chain scan. Java 8+: O(log N) tree but still degraded.
+**Root Cause:** Attacker sends keys that all hash to the same bucket. Pre-Java 8: O(N) chain scan. Java 8+: O(log N) tree but still degraded.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Profile with async-profiler; look for time in HashMap.get:
 ./profiler.sh -e cpu -d 30 -f out.html <pid>
 ```
 
-Fix: Use `String.hashCode()` (Java randomises it from Java 9 via Compact Strings, mitigating flooding); or switch keys to types with well-distributed hashes.
+**Fix:** Use `String.hashCode()` (Java randomises it from Java 9 via Compact Strings, mitigating flooding); or switch keys to types with well-distributed hashes.
 
-Prevention: Never use attacker-controlled strings as HashMap keys without input validation; consider using `--enable-preview` randomised hash seeds.
+**Prevention:** Never use attacker-controlled strings as HashMap keys without input validation; consider using `--enable-preview` randomised hash seeds.
 
 ---
 

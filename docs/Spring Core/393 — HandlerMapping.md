@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "HandlerMapping"
 parent: "Spring Core"
@@ -149,7 +149,7 @@ WITH HandlerMapping:
 > Think of `RequestMappingHandlerMapping` as a well-organised switchboard operator with a complete directory. When a call arrives (HTTP request), the operator consults the directory (RequestMappingInfo registry) to find the right extension (controller method). The directory is compiled at startup from all the business cards distributed by staff members (all `@RequestMapping` annotations). Multiple scoring criteria ensure the most specific match is selected — if both a specific number and a "press 0 for general enquiries" option exist, the specific number wins. If two entries in the directory claim the same number (ambiguous mapping), the error is caught when compiling the directory (startup), not when the call arrives.
 
 "Directory compiled at startup" = `MappingRegistry` built from `@RequestMapping` annotations
-"Caller finding the right extension" = RMHM.getHandler(request) → HandlerMethod
+- "Caller finding the right extension" = RMHM.getHandler(request) → HandlerMethod
 "Most specific number wins" = specificity-based scoring (exact path > path variable > wildcard)
 "Duplicate number catches at directory time" = `AmbiguousHandlerMethodsException` at startup
 

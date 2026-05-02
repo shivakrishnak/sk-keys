@@ -250,7 +250,7 @@ Participant recovery (if participant crashed after voting YES):
 
 **In-Doubt Transactions (Blocked Locks)**
 
-Symptom: Long-running transactions with "in-doubt" status; lock wait timeouts;
+**Symptom:** Long-running transactions with "in-doubt" status; lock wait timeouts;
 queries blocked waiting for locks held by stuck prepared transactions.
 
 Diagnosis:

@@ -45,13 +45,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 The GC must traverse all live objects (reachability analysis). While it scans, application threads keep running — allocating new objects, modifying references, nulling out object fields. A reference the GC just marked as reachable may be nulled a microsecond later. An object the GC hasn't scanned yet may suddenly become unreachable. Without a consistent state, the GC would either miss live objects (corruption) or retain dead objects (leak).
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Thread A holds a reference to object X. GC marks X as live. Thread B nulls out the last reference to X. GC continues scanning, never re-scans X. X is treated as live but is actually unreachable. Result: X is never collected. This is a memory leak. Worse: if the order is reversed (GC doesn't mark X yet, then Thread B nulls the reference) — X is treated as garbage and freed. Thread A still has a stale reference. The GC frees the memory. Thread A's reference now points to freed memory. Next access: memory corruption or SIGSEGV.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Safepoints** were created — to provide controlled, predictable moments where all application threads are paused or at a known safe state, allowing the JVM to perform operations requiring a globally consistent heap view.
 
 ---
@@ -77,12 +77,12 @@ The "Time To Safepoint" (TTS) is often overlooked but can dominate apparent GC p
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. GC requires a globally consistent heap view — no thread can modify object references while GC scans.
 2. Stopping threads abruptly at arbitrary points is unsafe — the thread might be mid-update of a pointer pair (two-pointer update that must be atomic).
 3. All threads must pause quickly (milliseconds) when a safepoint is requested, or the GC pause extends indefinitely.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The JVM inserts "safepoint polls" at strategic locations:
 - **Every loop back-edge** (so a tight loop cannot block safepoint indefinitely).
 - **Every method call/return** (entry and exit are safe states).
@@ -114,15 +114,15 @@ A safepoint poll is typically a memory load from a JVM-controlled page (`Safepoi
 └──────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Globally consistent heap view; safe JVM operations (GC, deoptimization, stack traces, thread dumps).
-Cost: Safepoint polls add tiny overhead to tight loops and method calls; TTS delays mean one slow thread can hold all others blocked; safepoints cannot occur in JNI code (external code bypasses the poll mechanism).
+**THE TRADE-OFFS:**
+**Gain:** Globally consistent heap view; safe JVM operations (GC, deoptimization, stack traces, thread dumps).
+**Cost:** Safepoint polls add tiny overhead to tight loops and method calls; TTS delays mean one slow thread can hold all others blocked; safepoints cannot occur in JNI code (external code bypasses the poll mechanism).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 An application has 16 threads. 15 threads are executing normal request handling code with safepoint polls at each method call. One thread is executing an optimized tight loop (FFT computation): 10 million iterations with no method calls, no allocation.
 
 JVM REQUESTS SAFEPOINT (GC needed):
@@ -132,7 +132,7 @@ JVM REQUESTS SAFEPOINT (GC needed):
 OBSERVABLE BEHAVIOR:
 GC log reports: "Pause Young (Allocation Failure) 52ms". The actual GC work: 2ms. Time To Safepoint: 50ms waiting for Thread 16. 15 threads are idle for 50ms waiting. The 52ms pause is 96% TTS, 4% actual GC. Users see 52ms GC pause, blame GC, spend weeks tuning GC, never find the root cause.
 
-THE INSIGHT:
+**THE INSIGHT:**
 TTS is a hidden but impactful source of pause time. Reducing TTS requires ensuring compiled code has safepoint polls at sufficient frequency — which is why `-XX:+UseCountedLoopSafepoints` (JEP 295, Java 9+) was introduced to insert safepoint polls inside counted integer loops that the JIT previously optimized away.
 
 ---
@@ -141,10 +141,10 @@ TTS is a hidden but impactful source of pause time. Reducing TTS requires ensuri
 
 > A safepoint is like the automatic pause in a DVR recording system. The system only inserts chapter markers at "natural breaks" — between scenes, at scene transitions. If you want to jump to exactly 01:23:45, you can only jump to the nearest chapter marker. Similarly, the JVM can only stop a thread at its nearest safepoint — not at an arbitrary instruction.
 
-"Chapter marker" → safepoint poll location.
-"Natural break" → method call, loop back-edge, safe bytecode.
-"Cannot jump to arbitrary time" → JVM cannot stop a thread mid-pointer-update.
-"DVR waiting for next chapter marker" → Time To Safepoint.
+- "Chapter marker" → safepoint poll location.
+- "Natural break" → method call, loop back-edge, safe bytecode.
+- "Cannot jump to arbitrary time" → JVM cannot stop a thread mid-pointer-update.
+- "DVR waiting for next chapter marker" → Time To Safepoint.
 
 Where this analogy breaks down: DVR markers are fixed in the recording. JIT safepoint polls are inserted dynamically in compiled code and can be configured — a programmer can influence safepoint density via coding patterns (adding method calls in tight loops).
 
@@ -215,7 +215,7 @@ java -XX:+UseCountedLoopSafepoints MyApp
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [GC detects Eden full / explicit request]
     → [JVM: request safepoint]
@@ -228,7 +228,7 @@ NORMAL FLOW:
     → [GC pause observed = TTS + GC work time]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [One thread has tight counted loop (no safepoint poll)]
     → [TTS = entire loop execution time]
@@ -238,7 +238,7 @@ FAILURE PATH:
     → [Fix: -XX:+UseCountedLoopSafepoints or add method call]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In virtual thread workloads (Java 21+), a virtual thread that is parked (waiting on I/O) does not need to reach a safepoint — it is not executing. This dramatically reduces TTS for I/O-heavy workloads. However, the carrier threads (platform threads running virtual threads) do need to reach safepoints. With 16 carrier threads, TTS depends only on those 16 threads, regardless of 100,000 virtual threads — a significant improvement over platform thread models.
 
 ---
@@ -340,13 +340,13 @@ How to choose: ZGC minimizes the safepoint footprint. But regardless of GC algor
 
 **High Time To Safepoint Causing Long GC Pauses**
 
-Symptom:
+**Symptom:**
 GC logs report 50–200ms pauses on G1GC, but heap is not heavily loaded. Adding more heap doesn't help. GC work itself (Pause phase) is < 5ms.
 
-Root Cause:
+**Root Cause:**
 One or more threads are executing tight numeric loops (FFT, compression, image processing) without safepoint polls. These loops block the JVM's safepoint stop mechanism.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -Xlog:safepoint=debug MyApp 2>&1 | \
   grep "TTS\|time-to-safepoint\|Application stopped"
@@ -357,7 +357,7 @@ java -XX:+DiagnoseSyncOnValueBasedClasses \
      -Xlog:safepoint*=debug MyApp
 ```
 
-Fix:
+**Fix:**
 ```bash
 # Enable safepoint polls in counted loops (Java 9+):
 java -XX:+UseCountedLoopSafepoints MyApp
@@ -365,42 +365,42 @@ java -XX:+UseCountedLoopSafepoints MyApp
 # Eliminates 50–200ms TTS from counted loops
 ```
 
-Prevention:
+**Prevention:**
 Always enable `-XX:+UseCountedLoopSafepoints` on services with numeric processing alongside request-handling code.
 
 ---
 
 **JNI Code Preventing Safepoint**
 
-Symptom:
+**Symptom:**
 Very long safepoints with a JNI-heavy service. Thread dump shows "in native" for multiple threads during GC.
 
-Root Cause:
+**Root Cause:**
 Threads executing JNI (native C code) do not execute JVM safepoint polls. They will not contribute to TTS until they return from native code. If a native method takes 1 second, it blocks safepoint for 1 second.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 jstack <pid> | grep -A5 "native"
 # Look for threads stuck "in native" with long duration
 ```
 
-Fix:
+**Fix:**
 JNI methods that will execute for > 1ms should call `JNI_EnterCritical/ExitCritical` to mark themselves as "at safepoint" (GC can proceed by pinning the native buffer). Better: minimize JNI call duration.
 
-Prevention:
+**Prevention:**
 Profile JNI call duration. Any JNI method taking > 5ms should use Java-native cooperative safepoint patterns.
 
 ---
 
 **Thread Dump Causing Application Pause**
 
-Symptom:
+**Symptom:**
 `jstack <pid>` takes 1–3 seconds. During that time, the application does not respond to requests.
 
-Root Cause:
+**Root Cause:**
 `jstack` triggers a JVM safepoint to capture all thread stacks. TTS (waiting for all threads to reach safepoints) adds to the capture time. The application is effectively paused during the entire thread dump.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Measure how long jstack takes:
 time jstack <pid> > /dev/null
@@ -412,10 +412,10 @@ time jcmd <pid> Thread.print > /dev/null
 jcmd <pid> JFR.dump filename=threads.jfr
 ```
 
-Fix:
+**Fix:**
 Take thread dumps during low-traffic periods. Use async-profiler's thread dump feature which may avoid full safepoints.
 
-Prevention:
+**Prevention:**
 Add thread dump capability to JFR continuous recording instead of on-demand `jstack` in production.
 
 ---

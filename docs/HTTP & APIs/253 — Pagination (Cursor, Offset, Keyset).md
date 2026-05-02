@@ -345,13 +345,13 @@ GET /v1/charges?limit=3&starting_after=ch_1N5Kj2ABC...
 
 **Duplicate Records on Page Flip (Offset Instability)**
 
-Symptom: Users report seeing the same items on consecutive pages; analytics
+**Symptom:** Users report seeing the same items on consecutive pages; analytics
 show the same record IDs processing twice in ingestion pipelines.
 
-Root Cause: Offset pagination used on a frequently-updated dataset. Inserts
+**Root Cause:** Offset pagination used on a frequently-updated dataset. Inserts
 near the sort order cause previously-seen rows to shift into subsequent pages.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check if API uses offset-style params on a live dataset:
@@ -359,24 +359,24 @@ curl "https://api.example.com/events?page=2&size=10"
 # Also check: does response include a stable cursor or next_link?
 ```
 
-Fix: Migrate to cursor/keyset pagination. Short-term: add a `created_after`
+**Fix:** Migrate to cursor/keyset pagination. Short-term: add a `created_after`
 filter equal to the first page's earliest timestamp to approximate stability.
 
 ---
 
 **Deep Page Timeout (Offset at Scale)**
 
-Symptom: `GET /admin/audit-logs?page=10000` times out; slow query log shows
+**Symptom:** `GET /admin/audit-logs?page=10000` times out; slow query log shows
 `filesort` with millions of rows; page 1 returns in 10ms, page 10000 in 45s.
 
-Diagnostic:
+**Diagnostic:**
 
 ```sql
 EXPLAIN SELECT * FROM audit_logs ORDER BY id LIMIT 20 OFFSET 200000;
 -- Look for "rows" in the millions despite a LIMIT of 20
 ```
 
-Fix: Keyset pagination: `WHERE id > :last_id ORDER BY id LIMIT 20`. For admin
+**Fix:** Keyset pagination: `WHERE id > :last_id ORDER BY id LIMIT 20`. For admin
 UI requiring random access to arbitrary pages, add a server-side materialized
 view with pre-computed page boundaries updated periodically.
 

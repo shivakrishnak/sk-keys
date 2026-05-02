@@ -431,15 +431,15 @@ public class UserDto {
 
 **Spec-Implementation Drift**
 
-Symptom:
+**Symptom:**
 Swagger UI shows `email` as required. API actually accepts requests without `email`
 and returns a server error. Client SDK generated from spec sends `email` always but
 breaks when API changes field name without updating spec.
 
-Root Cause:
+**Root Cause:**
 Code evolved post-spec. Annotations not updated. No contract test validation.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Use Dredd to run contract tests against live API:

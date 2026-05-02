@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Generate all valid sudoku solutions. The naive approach tries all 9^81 ≈ 10^77 complete board configurations, checking validity only at the end. The universe will end before even a single solution is verified.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Pure brute-force enumeration of exponential search spaces is computationally impossible. The key observation being ignored: if placing "7" in row 3, column 4 already violates row/column/box constraints, no completion of that partial board can ever be valid. Those 9^77 completions are wasted work.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Check validity as you build. The moment a partial candidate violates a constraint, immediately abandon it and backtrack to the previous decision point. This "pruning" can reduce 10^77 states to thousands of actual checks. This is exactly why **Backtracking** was created.
 
 ---
@@ -64,12 +64,12 @@ Backtracking is DFS with a pruning condition. The effectiveness of Backtracking 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The search explores a **decision tree**: at each node you make one choice from a set of options.
 2. Every recursive call represents one decision; each return ("backtrack") undoes exactly that decision.
 3. **Pruning** is the key: a constraint check at every node. If a partial state already violates a constraint, terminate this branch immediately.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The template structure follows naturally:
 
 ```
@@ -88,28 +88,28 @@ The `undo` step is critical: the state must be perfectly restored after each rec
 - **Bound check:** can the current partial state ever lead to a better solution than the best found so far? (Branch and Bound).
 - **Forward checking:** does any remaining variable have zero valid values? (Sudoku: a cell becomes impossible to fill).
 
-THE TRADE-OFFS:
-Gain: Finds all valid solutions (or the first/best), explores the search space systematically, is dramatically faster than brute force with good pruning.
-Cost: Worst-case exponential time O(bᵈ). Stack depth equals solution depth d — stack overflow possible for deep recursion. Pruning quality determines practical performance; bad pruning is barely better than brute force.
+**THE TRADE-OFFS:**
+**Gain:** Finds all valid solutions (or the first/best), explores the search space systematically, is dramatically faster than brute force with good pruning.
+**Cost:** Worst-case exponential time O(bᵈ). Stack depth equals solution depth d — stack overflow possible for deep recursion. Pruning quality determines practical performance; bad pruning is barely better than brute force.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Generate all valid combinations of 3 numbers chosen from {1, 2, 3, 4} with no repeats.
 
-WHAT HAPPENS WITHOUT BACKTRACKING:
+**WHAT HAPPENS WITHOUT BACKTRACKING:**
 Generate all permutations of {1,2,3,4} of length 3: 4×3×2 = 24. Check each for uniqueness. All 24 are valid. But the generation itself visits every leaf — can't stop early.
 
-WHAT HAPPENS WITH BACKTRACKING (find combinations where sum ≤ 6):
+**WHAT HAPPENS WITH BACKTRACKING (find combinations where sum ≤ 6):**
 - Choose 1 → [1]. Choose 2 → [1,2]. Choose 3 → [1,2,3]. Sum=6  ✓ record.
 - Backtrack to [1,2]. Choose 4 → [1,2,4]. Sum=7 > 6 → PRUNE. Backtrack to [1,2].
 - Backtrack to [1]. Choose 3 → [1,3]. Choose 4 → [1,3,4]. Sum=8 > 6 → PRUNE.
 - Backtrack to []. Choose 2 → [2]. Choose 3 → [2,3]. Choose 4 → [2,3,4]. Sum=9 → PRUNE.
 - Result: only {1,2,3} found. 8 nodes visited instead of all 24 permutations.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The pruning at [1,2,4] eliminated not just that node but all sub-trees rooted there. In exponential search spaces, early elimination of even a small fraction of branches can reduce total work by orders of magnitude.
 
 ---
@@ -118,12 +118,12 @@ The pruning at [1,2,4] eliminated not just that node but all sub-trees rooted th
 
 > Backtracking is like packing a suitcase for a maximum weight limit. You place items one by one. The moment the total weight exceeds the limit, you remove the last item and try the next alternative — you don't wait until the suitcase is full and overflowing to decide it won't work.
 
-"Items yet to pack" → remaining choices
-"Current suitcase contents" → current partial state
-"Check weight after each addition" → constraint check per node
-"Remove the last item" → undo last choice (backtrack)
-"Suitcase full within limit" → complete valid solution
-"Weight already exceeds limit" → prune this branch
+- "Items yet to pack" → remaining choices
+- "Current suitcase contents" → current partial state
+- "Check weight after each addition" → constraint check per node
+- "Remove the last item" → undo last choice (backtrack)
+- "Suitcase full within limit" → complete valid solution
+- "Weight already exceeds limit" → prune this branch
 
 Where this analogy breaks down: Real suitcase packing is a knapsack problem (which item to include for maximum value); backtracking generates all valid combinations with pruning. Also, backtracking maintains exact undo state, whereas physically repacking a suitcase is not O(1).
 
@@ -195,7 +195,7 @@ The `used[i] = false` line is the "backtrack" — it restores state so the paren
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Problem with exponential candidate space
 → Define decision tree: choices at each node
@@ -208,7 +208,7 @@ Problem with exponential candidate space
 → Return all (or first, or best) valid solutions
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Missing undo step → shared mutable state corrupted
 → Wrong solutions generated
@@ -221,7 +221,7 @@ Stack overflow → recursion depth exceeds JVM limit
   with explicit stack
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For large-scale combinatorial problems (NP-hard), backtracking alone is insufficient — professional use requires constraint propagation, good variable ordering (MRV), and value ordering (LCV). SAT problems with 10⁶ variables are solved daily by industrial SAT solvers using CDCL — a backtracking variant that learns clauses from conflicts, enabling backjumping (skipping irrelevant decision levels). Pure backtracking on such scales would never terminate.
 
 ---
@@ -346,11 +346,11 @@ How to choose: Use Backtracking when you need all valid configurations AND the c
 
 **1. Missing undo step — state corruption**
 
-Symptom: Solutions contain elements from other branches; solutions repeat or are incomplete.
+**Symptom:** Solutions contain elements from other branches; solutions repeat or are incomplete.
 
-Root Cause: After the recursive call, the shared state (list, array, boolean flags) still contains the choice made in this call. The sibling and parent calls see corrupted state.
+**Root Cause:** After the recursive call, the shared state (list, array, boolean flags) still contains the choice made in this call. The sibling and parent calls see corrupted state.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Add assertion before and after recursive call:
 int sizeBefore = current.size();
@@ -360,47 +360,47 @@ assert current.size() == sizeBefore :
     " to " + current.size();
 ```
 
-Fix: Every `add/set/mark` before the recursive call must have a corresponding `remove/reset/unmark` after it.
+**Fix:** Every `add/set/mark` before the recursive call must have a corresponding `remove/reset/unmark` after it.
 
-Prevention: Write choose → recurse → unchoose in a single block; never separate them.
+**Prevention:** Write choose → recurse → unchoose in a single block; never separate them.
 
 ---
 
 **2. Stack overflow for deep recursion**
 
-Symptom: `java.lang.StackOverflowError` for large inputs (e.g., word search on a 20×20 grid).
+**Symptom:** `java.lang.StackOverflowError` for large inputs (e.g., word search on a 20×20 grid).
 
-Root Cause: Default JVM stack depth is ~10,000 frames. Backtracking depth equals solution depth × branching factor of path.
+**Root Cause:** Default JVM stack depth is ~10,000 frames. Backtracking depth equals solution depth × branching factor of path.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 java -Xss10m -jar myapp.jar   # increase stack size
 # Or check recursion depth:
 jstack <pid> | grep "backtrack"
 ```
 
-Fix: Increase stack size with `-Xss`, or convert to iterative backtracking with an explicit stack.
+**Fix:** Increase stack size with `-Xss`, or convert to iterative backtracking with an explicit stack.
 
-Prevention: Estimate maximum recursion depth before deployment: `max_depth × avg_frame_size_bytes < Xss`.
+**Prevention:** Estimate maximum recursion depth before deployment: `max_depth × avg_frame_size_bytes < Xss`.
 
 ---
 
 **3. Duplicate solutions when input has duplicates**
 
-Symptom: `[1,1,2]` produces `[[1,1,2],[1,1,2]]` instead of `[[1,1,2]]`.
+**Symptom:** `[1,1,2]` produces `[[1,1,2],[1,1,2]]` instead of `[[1,1,2]]`.
 
-Root Cause: Without deduplication, both occurrences of "1" at index 0 and 1 are each used as a separate start — producing identical combinations.
+**Root Cause:** Without deduplication, both occurrences of "1" at index 0 and 1 are each used as a separate start — producing identical combinations.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Sort input first, then skip duplicate choices:
 if (i > start && candidates[i] == candidates[i-1])
     continue; // skip duplicate at same level
 ```
 
-Fix: Sort the input array; skip candidates equal to the previous candidate at the same recursion level.
+**Fix:** Sort the input array; skip candidates equal to the previous candidate at the same recursion level.
 
-Prevention: Always sort input and add duplicate-skip logic when input may contain repeats.
+**Prevention:** Always sort input and add duplicate-skip logic when input may contain repeats.
 
 ---
 

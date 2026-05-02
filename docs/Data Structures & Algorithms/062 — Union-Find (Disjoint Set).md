@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You are building a network monitoring system. As links come online one-by-one, you need to know: "Are server A and server B now in the same connected cluster?" Using BFS each time would cost O(V+E) per query. With 1 million servers and 10 million link additions, that's 10 trillion operations.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Maintaining and querying connected components dynamically — as edges are added one by one — is prohibitively expensive with standard graph traversal. Re-running BFS or DFS after every edge addition does not scale.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Represent each connected component as a tree with a designated root (representative). Store only `parent[i]` — the parent of element `i` in its tree. "Find" the representative by walking to the root. "Union" two elements by merging their trees (link one root to the other). With two optimisations — **path compression** (flatten the tree on every find) and **union by rank** (always attach smaller tree under larger) — the amortised cost per operation becomes nearly O(1): formally O(α(N)) where α is the inverse Ackermann function, effectively constant for all practical N. This is exactly why **Union-Find** was created.
 
 ---
@@ -64,12 +64,12 @@ The magic of Union-Find is that path compression and union by rank together redu
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Every element `x` has a `parent[x]`. If `parent[x] == x`, then `x` is the root (representative) of its set.
 2. `find(x)` returns the root of x's tree by following `parent` pointers until `parent[x] == x`.
 3. `union(x, y)` merges the sets by setting the root of one tree as the child of the root of the other.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Without optimisations, trees can degenerate to chains (O(N) find). Two complementary optimisations prevent this:
 
 **Path Compression:**
@@ -90,15 +90,15 @@ Example: path compression on find(5)
   Next find(5): goes directly to root
 ```
 
-THE TRADE-OFFS:
-Gain: O(α(N)) ≈ O(1) amortised per operation; O(N) space.
-Cost: Does not support split (un-union) operations; only works for offline connectivity queries (edges are added, not removed). For edge removal, more complex structures (Link-Cut Trees) are needed.
+**THE TRADE-OFFS:**
+**Gain:** O(α(N)) ≈ O(1) amortised per operation; O(N) space.
+**Cost:** Does not support split (un-union) operations; only works for offline connectivity queries (edges are added, not removed). For edge removal, more complex structures (Link-Cut Trees) are needed.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 5 nodes: {0,1,2,3,4}, initially all in separate sets. Perform: union(0,1), union(2,3), union(0,2), then ask: find(4) and find(1).
 
 WITHOUT UNION-FIND (list-based tracking):
@@ -112,7 +112,7 @@ union(0,2): root(0)=0, root(2)=2. Both rank 1. Attach 2 under 0, rank[0]++. pare
 find(1): 1→0 (root). O(1).
 find(4): 4→4 (root of its own component). O(1).
 
-THE INSIGHT:
+**THE INSIGHT:**
 Union-Find tracks connectivity with O(1) per operation after optimisations, whereas general list/set merging takes O(N). The tree with a path-compressed root structure is the minimal representation that achieves this — no simpler solution exists.
 
 ---
@@ -121,10 +121,10 @@ Union-Find tracks connectivity with O(1) per operation after optimisations, wher
 
 > Union-Find is like a corporate hierarchy where each department has a CEO. To check if two people work for the same company, ask each: "who's your CEO?" If they have the same CEO, they're in the same company. When two companies merge, one CEO becomes the boss of the other. Over time, everyone learns to call the top CEO directly (path compression) instead of going through a chain of managers.
 
-"Find: who's your CEO?" → find(x) = traverse parent[] to root
-"Same CEO = same company" → find(x)==find(y) = same component
-"Merger: one CEO reports to other" → union: link one root under the other
-"Everyone calls CEO directly" → path compression flattens the tree
+- "Find: who's your CEO?" → find(x) = traverse parent[] to root
+- "Same CEO = same company" → find(x)==find(y) = same component
+- "Merger: one CEO reports to other" → union: link one root under the other
+- "Everyone calls CEO directly" → path compression flattens the tree
 
 Where this analogy breaks down: Real companies don't instantly update everyone's "CEO" pointer when merging. Path compression is purely algorithmic — it happens automatically during each find operation, with no explicit restructuring step needed.
 
@@ -207,7 +207,7 @@ boolean union(int x, int y) {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 N elements, M union/find queries
 → Initialise parent[i]=i, rank[i]=0
@@ -219,7 +219,7 @@ N elements, M union/find queries
 → Final component count available at any time
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Detect cycle in undirected graph (Kruskal):
 edge (u,v) arrives → find(u)==find(v)
@@ -228,7 +228,7 @@ edge (u,v) arrives → find(u)==find(v)
 → Skip the edge (Kruskal: don't add to MST)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For N=10⁹ elements, the `parent[]` and `rank[]` arrays use 8 GB of memory — infeasible. Solutions: use a HashMap for sparse union-find (only store elements that have been referenced); use union-find on a compressed ID space (map original IDs to sequential integers). For distributed systems, union-find cannot be run naively in parallel — concurrent updates to `parent[]` require locks. Parallel union-find algorithms use CAS (Compare-And-Swap) operations to merge components in parallel with O(log N × α(N)) amortised time.
 
 ---
@@ -355,11 +355,11 @@ How to choose: Use Union-Find when edges are only added (not removed) and you ne
 
 **1. Using union-find without path compression (O(N) degeneration)**
 
-Symptom: Union-find operations slow to O(N) as N grows; profiler shows `find()` visiting many nodes.
+**Symptom:** Union-find operations slow to O(N) as N grows; profiler shows `find()` visiting many nodes.
 
-Root Cause: Without path compression, repeatedly unioning elements in a chain (0→1→2→3→...→N) creates a tree of depth N. Every `find(0)` traverses N nodes.
+**Root Cause:** Without path compression, repeatedly unioning elements in a chain (0→1→2→3→...→N) creates a tree of depth N. Every `find(0)` traverses N nodes.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Measure tree depth:
 int depth(int x) {
@@ -374,19 +374,19 @@ System.out.println("Max tree depth: " + maxDepth);
 // ~O(1) amortised with path compression
 ```
 
-Fix: Add path compression to `find()`. Add union-by-rank to `union()`. Both are one-line additions.
+**Fix:** Add path compression to `find()`. Add union-by-rank to `union()`. Both are one-line additions.
 
-Prevention: Never implement Union-Find without both optimisations. They are always required.
+**Prevention:** Never implement Union-Find without both optimisations. They are always required.
 
 ---
 
 **2. Applying Union-Find to directed graphs for cycle detection**
 
-Symptom: Union-Find reports "no cycle" for a directed graph with a cycle (e.g., A→B→C→A declared as undirected). Or reports a false cycle.
+**Symptom:** Union-Find reports "no cycle" for a directed graph with a cycle (e.g., A→B→C→A declared as undirected). Or reports a false cycle.
 
-Root Cause: Union-Find models undirected connectivity. In directed graphs, A→B means A can reach B but not vice versa. Union-Find treats edges as bidirectional, merging A and B regardless of direction — this is semantically incorrect for directed cycle detection.
+**Root Cause:** Union-Find models undirected connectivity. In directed graphs, A→B means A can reach B but not vice versa. Union-Find treats edges as bidirectional, merging A and B regardless of direction — this is semantically incorrect for directed cycle detection.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Test: directed chain 0→1→2, no cycle
 // Undirected UF would see no cycle here too
@@ -396,23 +396,23 @@ Diagnostic:
 // directed vs undirected cycles
 ```
 
-Fix: Use DFS with three-color marking (WHITE/GRAY/BLACK) for directed graph cycle detection.
+**Fix:** Use DFS with three-color marking (WHITE/GRAY/BLACK) for directed graph cycle detection.
 
-Prevention: Document clearly: "Union-Find cycle detection is for undirected graphs only."
+**Prevention:** Document clearly: "Union-Find cycle detection is for undirected graphs only."
 
 ---
 
 **3. Integer overflow in rank-based union (rare edge case)**
 
-Symptom: After many operations on large N, rank[] values overflow `int` bounds (requires N ~= 2^31, virtually impossible in practice).
+**Symptom:** After many operations on large N, rank[] values overflow `int` bounds (requires N ~= 2^31, virtually impossible in practice).
 
-Root Cause: Rank doubles at most O(log N) times; for int, this is limited to rank ≤ 31 for N ≤ 2^32. Practically never overflows within real problem sizes.
+**Root Cause:** Rank doubles at most O(log N) times; for int, this is limited to rank ≤ 31 for N ≤ 2^32. Practically never overflows within real problem sizes.
 
-Diagnostic: This is a theoretical failure mode only. If building a library for extremely large N, use rank capped at log₂(MAX_INT) = 31.
+**Diagnostic:** This is a theoretical failure mode only. If building a library for extremely large N, use rank capped at log₂(MAX_INT) = 31.
 
-Fix: Cap rank at 31 (`if (rank[rx] < 31) rank[rx]++`). Correctness is unaffected — rank only needs to distinguish "which tree is taller."
+**Fix:** Cap rank at 31 (`if (rank[rx] < 31) rank[rx]++`). Correctness is unaffected — rank only needs to distinguish "which tree is taller."
 
-Prevention: Not a practical concern for N ≤ 10⁹; document theoretically.
+**Prevention:** Not a practical concern for N ≤ 10⁹; document theoretically.
 
 ---
 

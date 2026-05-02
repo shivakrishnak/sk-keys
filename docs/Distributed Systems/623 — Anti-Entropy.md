@@ -249,7 +249,7 @@ Warning signs:
 
 **Zombie Rows After Delete (gc_grace_seconds Violation)**
 
-Symptom: Customers report "deleted" items reappearing in their accounts.
+**Symptom:** Customers report "deleted" items reappearing in their accounts.
 Data confirms: a row was deleted, confirmed deleted by read quorum, then reappeared days later.
 Full repair was last run 12 days ago. gc_grace_seconds = 864000 (10 days).
 
@@ -259,7 +259,7 @@ Anti-entropy repair ran 12 days after last repair (> gc_grace_seconds).
 When Nodes 1 and 2 no longer have the tombstone: Node 3's old row is "uncontested" and
 becomes the latest version of that row. The deleted row resurrects.
 
-Fix: NEVER allow repair interval > gc_grace_seconds. This is a hard operational invariant.
+**Fix:** NEVER allow repair interval > gc_grace_seconds. This is a hard operational invariant.
 Remediate: (1) Extend gc_grace_seconds temporarily (if you can pause GC). (2) Re-run delete
 with a fresh tombstone. (3) Run immediate repair. Prevention: Prometheus alert on
 `time_since_last_repair > gc_grace_seconds * 0.7` for each node.

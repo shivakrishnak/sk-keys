@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 The original Unix `select()` call accepts a set of file descriptors and tells you which are ready for I/O. But it has a hard limit (FD_SETSIZE = 1024 on most systems), iterates through every descriptor on every call (O(n) in the number of descriptors), and the descriptor set must be rebuilt from scratch on each call. At 10,000 connections, every `select()` call scans all 10,000 descriptors even if only 1 is ready.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 In 1999, the "C10K problem" paper showed that web servers needed to handle 10,000 concurrent connections. With `select()`, the O(n) scan meant the server spent most of its time checking connections that had nothing to do, not serving requests. `poll()` fixed the FD_SETSIZE limit but kept the O(n) scan.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why epoll (Linux), kqueue (BSD/macOS), and io_uring (Linux 5.1+) were created — O(1) notification of ready descriptors, no per-call scan, no descriptor set rebuilding.
 
 ---
@@ -65,27 +65,27 @@ The key innovation is that registration and waiting are separated. You register 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Registration is O(1): adding an fd to the watch set is done once, not per-wait.
 2. Wait is O(ready events), not O(monitored fds): you pay only for what happened.
 3. The kernel maintains state: it knows which descriptors have data without polling them.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 epoll uses a red-black tree to store registered fds (O(log n) insertion/deletion) and a doubly-linked list for ready fds. When data arrives on a socket (network interrupt → TCP stack), the kernel adds the socket's epoll entry to the ready list. `epoll_wait` copies events from the ready list to user space and returns — O(ready events). The entire architecture shifts work from user space (scan all fds) to kernel space (add to ready list on event).
 
-THE TRADE-OFFS:
-Gain: O(events) wait time; handles hundreds of thousands of connections with minimal CPU; kernel maintains registration state.
-Cost: epoll is Linux-specific (kqueue for BSD/macOS); io_uring has a large attack surface with a history of CVEs; the event-loop programming model is harder to reason about than blocking I/O; edge-triggered epoll bugs are subtle.
+**THE TRADE-OFFS:**
+**Gain:** O(events) wait time; handles hundreds of thousands of connections with minimal CPU; kernel maintains registration state.
+**Cost:** epoll is Linux-specific (kqueue for BSD/macOS); io_uring has a large attack surface with a history of CVEs; the event-loop programming model is harder to reason about than blocking I/O; edge-triggered epoll bugs are subtle.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A server monitors 100,000 connections. At any moment, 100 connections have incoming data.
 
-WHAT HAPPENS WITH select():
+**WHAT HAPPENS WITH select():**
 
 1. Build a bitmap of 100,000 fds (12.5 KB).
 2. `select()` copies bitmap to kernel, scans all 100,000 fds.
@@ -93,7 +93,7 @@ WHAT HAPPENS WITH select():
 4. User code scans all 100,000 bits to find the 100 ready ones.
 5. 200,000 operations per event batch — 99.9% wasted work.
 
-WHAT HAPPENS WITH epoll:
+**WHAT HAPPENS WITH epoll:**
 
 1. 100,000 fds pre-registered with `epoll_ctl(EPOLL_CTL_ADD)`.
 2. `epoll_wait()` returns with exactly 100 events.
@@ -101,7 +101,7 @@ WHAT HAPPENS WITH epoll:
 4. 100 operations per event batch — zero wasted work.
 5. As connections increase from 100K to 1M, wait time stays proportional to ready events (100), not total connections.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The performance difference between `select` and `epoll` is not about speed — it's about algorithmic complexity. select is O(max_fd); epoll is O(ready_events). At scale, these are incomparably different.
 
 ---
@@ -110,10 +110,10 @@ The performance difference between `select` and `epoll` is not about speed — i
 
 > epoll is like a hotel front desk with call lights (one per room). Instead of the concierge calling every 1,000 rooms to ask "do you need anything?", each room presses a button when they need service. The concierge waits at the desk — when a light appears, they go to that room. Registration = install the call button. epoll_wait = wait at the desk. Ready event = a light turns on.
 
-"Call button installed" → `epoll_ctl(EPOLL_CTL_ADD, fd, EPOLLIN)`
-"Concierge waiting at desk" → `epoll_wait()`
-"Light turns on" → data arrives on socket, kernel adds to ready list
-"Concierge services room" → `read()` on the ready fd
+- "Call button installed" → `epoll_ctl(EPOLL_CTL_ADD, fd, EPOLLIN)`
+- "Concierge waiting at desk" → `epoll_wait()`
+- "Light turns on" → data arrives on socket, kernel adds to ready list
+- "Concierge services room" → `read()` on the ready fd
 
 Where this analogy breaks down: io_uring goes further — the concierge doesn't need to wait at the desk at all; they submit a list of tasks and get notified when each is done, even while doing other work.
 
@@ -174,7 +174,7 @@ The separation of `epoll_ctl` (register) from `epoll_wait` (wait) was a delibera
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [10,000 connections registered with epoll_ctl]
@@ -187,10 +187,10 @@ NORMAL FLOW:
    → [Loop back to epoll_wait()]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [fd closed while in epoll interest set] → [EPOLLHUP/EPOLLERR events on next epoll_wait] → [must remove fd with EPOLL_CTL_DEL]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 1M connections (C1M), epoll ready list processing itself becomes a bottleneck. nginx uses a multi-worker model (one process per CPU core, each with its own epoll) to parallelise. io_uring's ring buffer approach avoids any per-event syscall overhead, enabling single-thread throughput beyond 1M I/O ops/sec on NVMe.
 
 ---
@@ -316,37 +316,37 @@ How to choose: Use epoll for any Linux server with > 1,000 concurrent connection
 
 **1. Missed Edge-Triggered Events (Stalled Connection)**
 
-Symptom: Connection stops receiving data after a burst; no error; client appears hung.
+**Symptom:** Connection stops receiving data after a burst; no error; client appears hung.
 
-Root Cause: `EPOLLET` used but socket not fully drained (read until `EAGAIN` not implemented); edge fires only on state change — if data remains but no new data arrives, no further events fire.
+**Root Cause:** `EPOLLET` used but socket not fully drained (read until `EAGAIN` not implemented); edge fires only on state change — if data remains but no new data arrives, no further events fire.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 ss -tn | grep <port>
 # Non-zero Recv-Q on a connection that appears idle = missed drain
 ```
 
-Fix: Always read until `EAGAIN` in edge-triggered mode; re-register with `EPOLL_CTL_MOD` if needed.
+**Fix:** Always read until `EAGAIN` in edge-triggered mode; re-register with `EPOLL_CTL_MOD` if needed.
 
-Prevention: Default to level-triggered; only use `EPOLLET` with rigorous drain loops verified by testing.
+**Prevention:** Default to level-triggered; only use `EPOLLET` with rigorous drain loops verified by testing.
 
 ---
 
 **2. EPOLLHUP Not Handled (FD Leak)**
 
-Symptom: epoll_wait returns events with `EPOLLHUP` or `EPOLLERR` that aren't handled; fd stays in interest set forever; eventually exhausts fd limit.
+**Symptom:** epoll_wait returns events with `EPOLLHUP` or `EPOLLERR` that aren't handled; fd stays in interest set forever; eventually exhausts fd limit.
 
-Root Cause: Connection closed by peer triggers `EPOLLHUP`; code only handles `EPOLLIN` and ignores error events.
+**Root Cause:** Connection closed by peer triggers `EPOLLHUP`; code only handles `EPOLLIN` and ignores error events.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 ls /proc/<PID>/fd | wc -l  # growing fd count
 cat /proc/<PID>/fdinfo/<fd>  # check epoll registered fds
 ```
 
-Fix:
+**Fix:**
 
 ```c
 if (events[i].events & (EPOLLHUP | EPOLLERR)) {
@@ -356,17 +356,17 @@ if (events[i].events & (EPOLLHUP | EPOLLERR)) {
 }
 ```
 
-Prevention: Always check for EPOLLHUP/EPOLLERR in the event loop alongside EPOLLIN.
+**Prevention:** Always check for EPOLLHUP/EPOLLERR in the event loop alongside EPOLLIN.
 
 ---
 
 **3. io_uring CVE / Security Restriction**
 
-Symptom: Application using io_uring works locally but fails in Kubernetes/Docker with `EPERM` or `ENOSYS`.
+**Symptom:** Application using io_uring works locally but fails in Kubernetes/Docker with `EPERM` or `ENOSYS`.
 
-Root Cause: Container security profile restricts `io_uring_setup` syscall (default in many container runtimes since io_uring CVEs in 2022–2023).
+**Root Cause:** Container security profile restricts `io_uring_setup` syscall (default in many container runtimes since io_uring CVEs in 2022–2023).
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check if io_uring is available
@@ -376,9 +376,9 @@ python3 -c "import socket; \
 # -1 with errno=EPERM = restricted
 ```
 
-Fix: In seccomp profile, explicitly allow `io_uring_setup`, `io_uring_enter`, `io_uring_register`. Or fall back to epoll when io_uring is unavailable.
+**Fix:** In seccomp profile, explicitly allow `io_uring_setup`, `io_uring_enter`, `io_uring_register`. Or fall back to epoll when io_uring is unavailable.
 
-Prevention: Design I/O layer to detect capability and fall back: try io_uring, fall back to epoll if EPERM.
+**Prevention:** Design I/O layer to detect capability and fall back: try io_uring, fall back to epoll if EPERM.
 
 ---
 

@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 In the early Unix process model, every unit of concurrent work required
 a separate process. A web server serving 100 simultaneous clients needed
 100 full processes — each with its own address space, PCB, and copy of
@@ -45,12 +45,12 @@ fork() and then use IPC to communicate results. This was slow, complex,
 and memory-intensive. For a database server handling thousands of
 simultaneous queries, one process per query was simply untenable.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Programs that need parallelism within a single address space — sharing
 data structures, caches, and file handles — pay an enormous overhead
 penalty if forced to use separate processes with IPC.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why the **Thread** was created — a second execution
 pointer running inside the same process, sharing its memory, so parallel
 work can happen cheaply without IPC.
@@ -93,7 +93,7 @@ most concurrency bugs.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. **Shared address space**: all threads in a process see the same virtual
    memory. A write by Thread A is immediately visible to Thread B.
@@ -102,17 +102,17 @@ CORE INVARIANTS:
 3. **Independent scheduling**: the OS can schedule Thread A on Core 1 and
    Thread B on Core 2 simultaneously, or preempt either independently.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Since threads share memory, thread creation only requires allocating a
 new stack and thread control block — not copying the entire address space.
 The OS thread scheduler treats each thread as a schedulable entity,
 placing them in ready/blocked queues independently of other threads in
 the same process.
 
-THE TRADE-OFFS:
-Gain: cheap creation (~1 µs vs ~100 µs for fork), zero-copy data sharing,
+**THE TRADE-OFFS:**
+**Gain:** cheap creation (~1 µs vs ~100 µs for fork), zero-copy data sharing,
 exploits multiple CPU cores within one program.
-Cost: shared memory means any thread can corrupt shared state; requires
+**Cost:** shared memory means any thread can corrupt shared state; requires
 explicit synchronization (mutexes, locks) to be correct; one crashed
 thread (unhandled exception, stack overflow) can kill the entire
 process.
@@ -121,24 +121,24 @@ process.
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A web server receives two simultaneous HTTP requests. Both need to
 increment a shared `requestCount` variable.
 
-WHAT HAPPENS WITHOUT THREAD (one process per request):
+**WHAT HAPPENS WITHOUT THREAD (one process per request):**
 Both processes have their own `requestCount`. After both handle one
 request, Process A has requestCount=1, Process B has requestCount=1.
 Neither reflects the true total. To share state, they must use IPC —
 a pipe or socket — adding ~10 µs per update and complex code.
 
-WHAT HAPPENS WITH THREAD:
+**WHAT HAPPENS WITH THREAD:**
 Thread A reads requestCount=0, Thread B reads requestCount=0 simultaneously.
 Thread A writes 1. Thread B writes 1. Final value: 1 — not 2.
 This is a race condition. The data is shared, but without a mutex,
 the increment is not atomic. With a mutex: Thread A locks, increments
 to 1, unlocks. Thread B locks, increments to 2, unlocks. Correct.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Threads make sharing trivially easy and safety non-trivially hard.
 The mutex is the price of sharing without IPC overhead.
 
@@ -256,7 +256,7 @@ unlock(mutex)             lock(mutex) acquired
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 main() starts
@@ -269,7 +269,7 @@ main() starts
   → main thread calls join() → collects result
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Thread throws uncaught exception
@@ -280,7 +280,7 @@ Thread throws uncaught exception
   → If it was the last non-daemon thread: JVM exits
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10,000 threads, each consuming 1–8 MB of stack, you exhaust virtual
 address space before physical RAM. The OS scheduler overhead for 10,000
 ready threads becomes measurable. This is why thread pools cap at
@@ -384,15 +384,15 @@ async/await when concurrency is IO-bound with thousands of concurrent tasks.
 
 **1. Deadlock**
 
-Symptom:
+**Symptom:**
 Application hangs. Thread dump shows two threads each waiting for the
 other's lock: "waiting to lock <0x...> (held by Thread-B)".
 
-Root Cause:
+**Root Cause:**
 Thread A holds Lock 1 and waits for Lock 2. Thread B holds Lock 2 and
 waits for Lock 1. Circular dependency — neither can proceed.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Java: get thread dump
@@ -401,21 +401,21 @@ jstack <java_pid>       # dedicated tool
 # Look for "deadlock" or "waiting to lock"
 ```
 
-Fix: always acquire locks in the same global order across all threads.
-Prevention: use `tryLock(timeout)` instead of blocking `lock()`; use
+**Fix:** always acquire locks in the same global order across all threads.
+**Prevention:** use `tryLock(timeout)` instead of blocking `lock()`; use
 higher-level concurrent collections instead of manual locking.
 
 **2. Thread Leak**
 
-Symptom:
+**Symptom:**
 Thread count in JVM grows without bound over hours. Eventually: OOM
 or "unable to create new native thread".
 
-Root Cause:
+**Root Cause:**
 Threads created but never terminated — blocked waiting for input that
 never comes, or blocked forever on a broken connection.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # JVM thread count
@@ -424,26 +424,26 @@ jstack <pid> | grep -c "java.lang.Thread.State"
 # ManagementFactory.getThreadMXBean().getThreadCount()
 ```
 
-Fix: always use thread pools with bounded queues; set socket timeouts
+**Fix:** always use thread pools with bounded queues; set socket timeouts
 so threads don't block forever on IO.
 
-Prevention: monitor thread count as a production metric; alert on
+**Prevention:** monitor thread count as a production metric; alert on
 sustained thread count growth.
 
 **3. Race Condition / Data Corruption**
 
-Symptom:
+**Symptom:**
 Intermittent wrong results, NullPointerExceptions in code that looks
 correct, or data structure corruption (e.g., HashMap infinite loop in
 Java 7 under concurrent access).
 
-Root Cause:
+**Root Cause:**
 Multiple threads read-modify-write shared mutable state without
 synchronization. The JVM memory model allows threads to cache values in
 CPU registers — a write on Core 0 may not be visible on Core 1 without
 a memory barrier.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Java: use thread sanitizer or data race detectors
@@ -452,10 +452,10 @@ Diagnostic:
 # Tool: Google ThreadSanitizer (C/C++), Helgrind (Valgrind)
 ```
 
-Fix: use `synchronized`, `volatile`, or `java.util.concurrent` classes
+**Fix:** use `synchronized`, `volatile`, or `java.util.concurrent` classes
 for all shared mutable state access.
 
-Prevention: prefer immutable objects; use `ConcurrentHashMap`,
+**Prevention:** prefer immutable objects; use `ConcurrentHashMap`,
 `AtomicInteger`, `CopyOnWriteArrayList`; minimize shared mutable state.
 
 ---

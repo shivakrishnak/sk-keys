@@ -243,9 +243,9 @@ class UserServiceTest {
 
 **1. Fake Diverges From Real — "Works on My Machine"**
 
-Symptom: All tests pass with fake repository, but integration tests fail against real PostgreSQL.
+**Symptom:** All tests pass with fake repository, but integration tests fail against real PostgreSQL.
 Cause: Fake doesn't enforce unique constraints, NULL constraints, or transaction rollback behavior.
-Fix: Contract test the fake against the real implementation. Use Testcontainers for tests that need real database behavior.
+**Fix:** Contract test the fake against the real implementation. Use Testcontainers for tests that need real database behavior.
 
 ---
 

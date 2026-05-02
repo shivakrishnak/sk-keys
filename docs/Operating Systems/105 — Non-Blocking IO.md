@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 With blocking I/O, a server handling 10,000 simultaneous clients needs 10,000 threads — each blocked waiting for their client to send data. Thread stacks consume ~10 GB RAM and the scheduler thrashes between 10,000 runnable/sleeping threads. The server maxes out at around 10,000 connections regardless of actual network throughput.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 In 1999, the "C10K problem" paper formally documented that web servers couldn't scale to 10,000 simultaneous connections using the thread-per-client model. With the rise of long-lived connections (push notifications, streaming, WebSockets), 100,000+ concurrent idle connections became common requirements.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why Non-Blocking I/O was created — by setting `O_NONBLOCK` on a file descriptor, I/O operations return instantly with `EAGAIN` if no data is ready, freeing one thread to service all connections by checking which ones are ready.
 
 ---
@@ -65,37 +65,37 @@ Non-blocking I/O alone is insufficient — you need a multiplexer (epoll/kqueue)
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. A non-blocking syscall never sleeps — it returns immediately whether data is available or not.
 2. `EAGAIN` means "try again later" — not an error, a signal to defer and retry.
 3. Non-blocking I/O is inherently callback/event-driven — you need notification of when to retry.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Setting `O_NONBLOCK` via `fcntl(fd, F_SETFL, O_NONBLOCK)` changes the kernel's behaviour in the socket/file state machine. When `read()` is called on a non-blocking socket and the receive buffer is empty, instead of adding the thread to the wait queue, the kernel immediately returns `EAGAIN`. The application must then use `select()`/`poll()`/`epoll()` to block efficiently on a SET of descriptors, waking only when at least one is ready. This inverts the blocking model: the application blocks on "which descriptor is ready?" not "wait for this specific operation to complete."
 
-THE TRADE-OFFS:
-Gain: One thread can multiplex thousands of connections; no wasted thread stacks; deterministic throughput.
-Cost: Code complexity increases dramatically — sequential code becomes a state machine; every operation must handle `EAGAIN`; partial reads/writes must be handled explicitly.
+**THE TRADE-OFFS:**
+**Gain:** One thread can multiplex thousands of connections; no wasted thread stacks; deterministic throughput.
+**Cost:** Code complexity increases dramatically — sequential code becomes a state machine; every operation must handle `EAGAIN`; partial reads/writes must be handled explicitly.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A WebSocket server monitors 1,000 connections. Any of them might send a message at any moment.
 
-WHAT HAPPENS WITH blocking I/O (1 thread per connection):
+**WHAT HAPPENS WITH blocking I/O (1 thread per connection):**
 
 1. 1,000 threads, each blocking on their connection's `read()`.
 2. All 1,000 threads sleeping — zero CPU, but 1 GB of stack memory.
 3. When connection #247 sends data, thread #247 wakes up, handles it.
 4. Simple to reason about, but 1 GB wasted for idle connections.
 
-WHAT HAPPENS WITH non-blocking I/O (1 thread, O_NONBLOCK):
+**WHAT HAPPENS WITH non-blocking I/O (1 thread, O_NONBLOCK):**
 Without multiplexer: thread spins through all 1,000 connections calling `read()`, getting `EAGAIN` 999 times, 60,000 times per second — CPU at 100% doing nothing useful.
 
-WHAT HAPPENS WITH non-blocking I/O + epoll:
+**WHAT HAPPENS WITH non-blocking I/O + epoll:**
 
 1. Thread calls `epoll_wait()` — blocks until any connection has data.
 2. Connection #247 sends data → kernel notifies via epoll event.
@@ -103,7 +103,7 @@ WHAT HAPPENS WITH non-blocking I/O + epoll:
 4. Back to `epoll_wait()`. CPU idle until events arrive.
 5. Memory: 1 thread stack + ~200 bytes state per connection = ~200 KB vs 1 GB.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Non-blocking I/O + a multiplexer converts the "wait for one" model to a "which of many is ready?" model. This is the foundation of every high-performance server: Nginx, Node.js, Redis, Netty.
 
 ---
@@ -112,10 +112,10 @@ Non-blocking I/O + a multiplexer converts the "wait for one" model to a "which o
 
 > A restaurant with one experienced waiter who handles 20 tables. Each table's order (I/O) is placed with the kitchen. The waiter doesn't stand at any table waiting — they check each table quickly ("ready?"), skip tables still being cooked (EAGAIN), and attend to tables where food has arrived. `epoll` is the waiter's peripheral vision — telling them exactly which tables need attention without checking all 20.
 
-"Checking each table" → non-blocking `read()` returning `EAGAIN`
-"Peripheral vision for ready tables" → `epoll_wait()` event notification
-"Table with food ready" → socket with data in receive buffer
-"Waiter stands at one table waiting" → blocking I/O model
+- "Checking each table" → non-blocking `read()` returning `EAGAIN`
+- "Peripheral vision for ready tables" → `epoll_wait()` event notification
+- "Table with food ready" → socket with data in receive buffer
+- "Waiter stands at one table waiting" → blocking I/O model
 
 Where this analogy breaks down: In real event loops, the "waiter" processes one table at a time (single-threaded event loop); with CPU-bound tasks (heavy computation per event), this model stalls. Node.js worker threads address this.
 
@@ -170,7 +170,7 @@ The `O_NONBLOCK` flag design predates Linux — it's part of POSIX. The decision
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [1000 clients connected]
@@ -182,10 +182,10 @@ NORMAL FLOW:
    → [Back to epoll_wait]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [read() returns -1, errno=EAGAIN] → [no data in buffer, must wait for epoll event] → [register EPOLLOUT if write buffer also full] → [retry on next event]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 1M concurrent connections (C1M problem), even epoll has overhead: 1M file descriptors × ~64 bytes kernel state = 64 MB. The main bottleneck shifts from thread memory to the OS scheduler and interrupt coalescing. Kernel bypass (DPDK, io_uring with registered buffers) eliminates the kernel event loop overhead entirely.
 
 ---
@@ -275,30 +275,30 @@ How to choose: Use epoll for high-connection Linux servers (Nginx/Node.js style)
 
 **1. Busy-Poll Loop (Spinning on EAGAIN)**
 
-Symptom: CPU stuck at 100% despite no meaningful work; `strace` shows rapid succession of `read()` → `EAGAIN` cycles.
+**Symptom:** CPU stuck at 100% despite no meaningful work; `strace` shows rapid succession of `read()` → `EAGAIN` cycles.
 
-Root Cause: Non-blocking I/O used without a multiplexer; code retries immediately on `EAGAIN` instead of waiting for readiness notification.
+**Root Cause:** Non-blocking I/O used without a multiplexer; code retries immediately on `EAGAIN` instead of waiting for readiness notification.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 strace -c -p <PID> 2>&1 | sort -k4 -n | tail -10
 # If read/EAGAIN dominates: busy-poll loop
 ```
 
-Fix: Always pair non-blocking fds with `epoll`/`select`; never retry immediately on `EAGAIN`.
+**Fix:** Always pair non-blocking fds with `epoll`/`select`; never retry immediately on `EAGAIN`.
 
-Prevention: Code review: every `EAGAIN` path must lead to event registration, not a retry loop.
+**Prevention:** Code review: every `EAGAIN` path must lead to event registration, not a retry loop.
 
 ---
 
 **2. Edge-Triggered Event Miss (Lost Data)**
 
-Symptom: Connection appears to hang; server received partial request; no further events from `epoll_wait`.
+**Symptom:** Connection appears to hang; server received partial request; no further events from `epoll_wait`.
 
-Root Cause: Using `EPOLLET` (edge-triggered) but not draining the socket buffer completely; `epoll_wait` only fires once per state transition — if you didn't read all available data, no new event fires.
+**Root Cause:** Using `EPOLLET` (edge-triggered) but not draining the socket buffer completely; `epoll_wait` only fires once per state transition — if you didn't read all available data, no new event fires.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check socket receive buffer fill
@@ -306,7 +306,7 @@ ss -tnp | grep <port>
 # Recv-Q > 0 while no read happening = missed edge trigger
 ```
 
-Fix: In edge-triggered mode, loop on `read()` until `EAGAIN`:
+**Fix:** In edge-triggered mode, loop on `read()` until `EAGAIN`:
 
 ```c
 while ((n = read(fd, buf, sizeof(buf))) > 0) {
@@ -315,24 +315,24 @@ while ((n = read(fd, buf, sizeof(buf))) > 0) {
 // Only exit loop on EAGAIN (not error)
 ```
 
-Prevention: Default to level-triggered (`EPOLLIN`) unless profiling proves edge-triggered is necessary.
+**Prevention:** Default to level-triggered (`EPOLLIN`) unless profiling proves edge-triggered is necessary.
 
 ---
 
 **3. Partial Write Not Handled**
 
-Symptom: Response truncated; client receives incomplete data; no error on the server side.
+**Symptom:** Response truncated; client receives incomplete data; no error on the server side.
 
-Root Cause: `write()` on a non-blocking socket may write fewer bytes than requested if the send buffer is full; code doesn't loop on partial writes.
+**Root Cause:** `write()` on a non-blocking socket may write fewer bytes than requested if the send buffer is full; code doesn't loop on partial writes.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Monitor send buffer fullness
 ss -tn | grep <port>  # Send-Q > 0 = partial writes possible
 ```
 
-Fix:
+**Fix:**
 
 ```c
 // BAD: assumes all bytes written
@@ -351,7 +351,7 @@ while (sent < len) {
 }
 ```
 
-Prevention: Use a write-buffer abstraction that handles partial writes automatically; test with artificially small socket send buffers.
+**Prevention:** Use a write-buffer abstraction that handles partial writes automatically; test with artificially small socket send buffers.
 
 ---
 

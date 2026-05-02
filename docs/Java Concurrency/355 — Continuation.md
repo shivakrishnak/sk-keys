@@ -32,10 +32,10 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A blocking call (e.g., `socket.read()`) blocks the OS thread it runs on — the entire thread context (stack, registers, local variables) is held on the OS thread's stack. To "pause" a thread without blocking the OS thread, the thread's state must be saved somewhere else so the OS thread is free to run other code.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 **Continuations** solve this by capturing the live execution state (call stack frames + local variables) on the heap, decoupled from any OS thread. When the blocking operation completes, the continuation is restored onto an OS thread to resume execution — as if the blocking call returned normally.
 
 ---
@@ -61,7 +61,7 @@ Continuations make Java virtual threads fundamentally different from async/await
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A continuation captures the ENTIRE call stack — not just a callback, but all nested method frames.
 2. Continuations are heap objects — they can be GC'd like any other object when no longer needed.
 3. Continuation yielding is controlled by the `Continuation.scope` — only the virtual thread scheduler yields continuations (not arbitrary user code).
@@ -91,15 +91,15 @@ On unmount: JVM copies platform stack frames from `virtual_thread_run` to `socke
 
 On remount: JVM copies continuation back onto carrier's platform stack. Instruction pointer restores to `socket.read()` return site. All local variables in all frames are restored.
 
-THE TRADE-OFFS:
-Gain: Transparent blocking code; no callback/async rewriting; natural sequential code style; efficient heap storage for inactive VTs.
-Cost: Shallow vs deep stack matters — very deep call stacks mean larger continuation objects; StackChunk copying has overhead; native frames cannot be captured (causes pinning); debugging continuation stack traces requires tools support.
+**THE TRADE-OFFS:**
+**Gain:** Transparent blocking code; no callback/async rewriting; natural sequential code style; efficient heap storage for inactive VTs.
+**Cost:** Shallow vs deep stack matters — very deep call stacks mean larger continuation objects; StackChunk copying has overhead; native frames cannot be captured (causes pinning); debugging continuation stack traces requires tools support.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP: What does a 5-frame continuation look like?
+**SETUP:** What does a 5-frame continuation look like?
 
 ```java
 // Call stack when socket.read() blocks:
@@ -117,7 +117,7 @@ The OS thread's stack (6 frames) is frozen. The OS thread cannot run other code.
 WITH CONTINUATIONS:
 The 6 stack frames are copied to heap-allocated StackChunks (each ~a few KB). The OS carrier thread's stack is freed — it can now run VT "order-2"'s stack. When socket.read() completes: 6 frames are copied back from heap to carrier stack. Execution resumes at `execute()` return, unwinds normally through all frames.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The continuation copy cost is ~1-2μs (typically much less). The benefit is freeing an OS thread worth of stack (~1MB) and context-switching cost. For 10,000 concurrent I/O-bound operations, the tradeoff is enormously positive.
 
 ---
@@ -126,9 +126,9 @@ The continuation copy cost is ~1-2μs (typically much less). The benefit is free
 
 > A continuation is like a detailed pause state in a video game's quick-save slot. Not just level + health, but exact position, all inventory, every NPC's state at this exact second, cursor position. When you resume (load), everything is exactly as you left it — no information lost. The game can run other saves (other VTs) while yours is paused.
 
-"Pause state in quick-save slot" → continuation on heap.
-"Running other saves" → carrier mounting other VTs.
-"Loading and resuming" → remounting continuation.
+- "Pause state in quick-save slot" → continuation on heap.
+- "Running other saves" → carrier mounting other VTs.
+- "Loading and resuming" → remounting continuation.
 
 Where this analogy breaks down: Video game saves capture everything statically. Continuations capture stack frames which can contain object references into shared heap state — those objects may change while the continuation is suspended (correct concurrency semantics still apply when resumed).
 
@@ -268,19 +268,19 @@ How to choose: Virtual threads (continuations) give Java the simplicity of synch
 #  at com.example.NativeWrapper.callNative (NativeWrapper.java:20)
 #  <== pinned (native frame)
 ```
-Fix: Move native calls outside of VT I/O paths where possible.
+**Fix:** Move native calls outside of VT I/O paths where possible.
 
 **Large continuation memory pressure:**
-Symptom: Heap grows despite JVM GC activity. Millions of VTs with deep call stacks.
+**Symptom:** Heap grows despite JVM GC activity. Millions of VTs with deep call stacks.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jmap -dump:live,format=b,file=heap.hprof <pid>
 # Eclipse MAT: search for StackChunk objects
 # StackChunk[] with large aggregate size = deep VT stacks in use
 ```
 
-Fix: Reduce call stack depth for VT-heavy paths. Avoid deeply nested framework calls in high-VT-concurrency code.
+**Fix:** Reduce call stack depth for VT-heavy paths. Avoid deeply nested framework calls in high-VT-concurrency code.
 
 ---
 

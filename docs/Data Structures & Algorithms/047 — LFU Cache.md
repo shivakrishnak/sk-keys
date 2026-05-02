@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A media streaming CDN caches popular videos. A few blockbuster titles (100 videos) account for 95% of traffic; millions of niche titles each serve a handful of viewers. An LRU cache fills with the most recently watched niche titles after any browsing session, evicting the blockbusters. The next viewer who wants a blockbuster gets a cache miss — even though blockbusters are clearly more valuable to cache.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 LRU evicts based on *recency*, not *importance*. One scan through mostly-unique niche content "poisons" the LRU cache, displacing frequently watched content. Recency alone is a poor proxy for future utility in frequency-skewed workloads.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Track how many times each entry has been accessed. When eviction is needed, evict the entry with the lowest access count. Items accessed frequently stay in cache regardless of when they were last accessed. For ties in frequency, use LRU among the least-frequent group. This is exactly why the LFU Cache was created.
 
 ---
@@ -64,12 +64,12 @@ LFU's critical implementation challenge is: when you access an entry, its freque
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Every access to a key increments its frequency count.
 2. The eviction candidate is always the key in the minimum-frequency bucket.
 3. Among keys with the same minimum frequency, the LRU (oldest access) is evicted.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Naive O(log N) approach: use a min-heap keyed by (frequency, access_time). `get`: update heap entry — O(log N). `put`: heap insert — O(log N). Too slow for L1/L2 cache-level latency requirements.
 
 O(1) approach (Ding & Lin, 2010):
@@ -94,15 +94,15 @@ minFreq   = integer (current minimum frequency)
 
 All steps are O(1) HashMap operations plus O(1) LinkedHashSet operations.
 
-THE TRADE-OFFS:
-Gain: Better hit rates than LRU for frequency-skewed workloads (Zipf distribution).
-Cost: Higher implementation complexity, 3 HashMaps, "frequency recency bias" — a newly inserted item may never overcome an old item's head start in access counts.
+**THE TRADE-OFFS:**
+**Gain:** Better hit rates than LRU for frequency-skewed workloads (Zipf distribution).
+**Cost:** Higher implementation complexity, 3 HashMaps, "frequency recency bias" — a newly inserted item may never overcome an old item's head start in access counts.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 LFU cache capacity 3. Sequence: put(A), put(B), put(C), get(A)×5, get(B)×3, get(C)×1, put(D).
 
 LFU state before put(D):
@@ -120,7 +120,7 @@ But now: put(A), put(B), put(C), get(B)×5, get(A)×3, get(C)×2, get(A) again..
 
 LFU: D, E, F each get freq 1. Each displaces the min-freq entry — but A (freq 4) and B (freq 5) survive the scan. LRU: D, E, F are most recent; C (freq 3) and maybe A get evicted.
 
-THE INSIGHT:
+**THE INSIGHT:**
 LFU resists scan pollution because frequently accessed items accumulate high counts that cannot be evicted just because a scan of unique items happened. LRU has no such defence — recency is vulnerable to bulkscans.
 
 ---
@@ -129,10 +129,10 @@ LFU resists scan pollution because frequently accessed items accumulate high cou
 
 > An LFU cache is like a music chart based on total streams. Songs are ranked by total listens. A new viral hit climbs the chart over weeks by accumulating streams. Legacy hits with massive total streams stay at the top even if they weren't played today. When the chart needs to cut entries, the least-streamed track goes first.
 
-"Total streams" → frequency count
-"Least-streamed track" → minimum frequency entry for eviction
-"New viral hit" → newly inserted entry (starts with freq=1)
-"Legacy hit" → old entry with high accumulated frequency
+- "Total streams" → frequency count
+- "Least-streamed track" → minimum frequency entry for eviction
+- "New viral hit" → newly inserted entry (starts with freq=1)
+- "Legacy hit" → old entry with high accumulated frequency
 
 Where this analogy breaks down: Real charts don't have a fixed capacity that forces eviction; they can add entries. Also, real charts often weight recent streams more heavily — that's TinyLFU's approach, not pure LFU.
 
@@ -197,7 +197,7 @@ minFreq: 1
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Request for key K arrives
 → get(K): found → increment freq, return value
@@ -207,7 +207,7 @@ Request for key K arrives
 → Reset minFreq=1
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Workload: millions of unique items, each accessed once
 → All items have freq=1; minFreq=1 forever
@@ -215,7 +215,7 @@ Workload: millions of unique items, each accessed once
 → For purely uniform random access: LRU is simpler and equally effective
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At millions of entries, the three-HashMap approach uses O(N) memory per entry — more than LRU's two structures. The `freqToLRU` map can have millions of frequency buckets for long-running caches where items accumulate high counts. Caffeine avoids this by periodically halving all frequency counts ("aging") or using a probabilistic Count-Min Sketch that naturally forgets old accesses.
 
 ---
@@ -309,11 +309,11 @@ How to choose: In practice, use Caffeine (W-TinyLFU) for all new Java caches —
 
 **1. Frequency aging stale items block new hot entries**
 
-Symptom: After long uptime, same old items always in cache regardless of recent access patterns; new hot content evicted immediately.
+**Symptom:** After long uptime, same old items always in cache regardless of recent access patterns; new hot content evicted immediately.
 
-Root Cause: Old items accumulated frequency counts so high (e.g., 10,000) that new items (freq=1) are immediately evicted. "Hot at startup" ≠ "hot now."
+**Root Cause:** Old items accumulated frequency counts so high (e.g., 10,000) that new items (freq=1) are immediately evicted. "Hot at startup" ≠ "hot now."
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Print max frequency in cache:
 keyToFreq.values().stream()
@@ -322,19 +322,19 @@ keyToFreq.values().stream()
 // If max >> minFreq, aging problem exists
 ```
 
-Fix: Use TinyLFU (Caffeine) which uses Count-Min Sketch with frequency halving (aging) to forget old access patterns. Or implement periodic frequency halving.
+**Fix:** Use TinyLFU (Caffeine) which uses Count-Min Sketch with frequency halving (aging) to forget old access patterns. Or implement periodic frequency halving.
 
-Prevention: Never use pure LFU for long-running caches; use Caffeine with its built-in aging.
+**Prevention:** Never use pure LFU for long-running caches; use Caffeine with its built-in aging.
 
 ---
 
 **2. minFreq not reset on new insertion**
 
-Symptom: After inserting new item (freq=1), evictions remove a higher-frequency item instead of the new one.
+**Symptom:** After inserting new item (freq=1), evictions remove a higher-frequency item instead of the new one.
 
-Root Cause: Forgot to set `minFreq = 1` after each new `put()`. The cached `minFreq` points to an old minimum.
+**Root Cause:** Forgot to set `minFreq = 1` after each new `put()`. The cached `minFreq` points to an old minimum.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Test: put 4 items in capacity-3 cache; 5th should evict most recent
 // new item (freq=1), not an older high-freq item
@@ -344,28 +344,28 @@ lfuCache.put(4, 4); // should evict item 2 or 3 (freq=1)
 assert lfuCache.get(2) == -1 || lfuCache.get(3) == -1;
 ```
 
-Fix: Always `minFreq = 1` at end of every new `put()`.
+**Fix:** Always `minFreq = 1` at end of every new `put()`.
 
-Prevention: Add unit tests for post-insertion eviction order.
+**Prevention:** Add unit tests for post-insertion eviction order.
 
 ---
 
 **3. Memory leak from non-empty frequency buckets accumulating**
 
-Symptom: `freqToKeys` map grows without bound; memory increases over time.
+**Symptom:** `freqToKeys` map grows without bound; memory increases over time.
 
-Root Cause: Frequency buckets are created but not removed when empty (missed `if (isEmpty()) remove(freq)` check).
+**Root Cause:** Frequency buckets are created but not removed when empty (missed `if (isEmpty()) remove(freq)` check).
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Monitor freqToKeys.size() over time
 System.out.println("Freq buckets: " + freqToKeys.size());
 # Should not grow monotonically
 ```
 
-Fix: Remove the frequency bucket from `freqToKeys` immediately when it becomes empty.
+**Fix:** Remove the frequency bucket from `freqToKeys` immediately when it becomes empty.
 
-Prevention: Every time you remove a key from a bucket, always check and remove the bucket if empty.
+**Prevention:** Every time you remove a key from a bucket, always check and remove the bucket if empty.
 
 ---
 

@@ -460,14 +460,14 @@ handles more load than a bigger HTTP/1.1 pool.
 
 **Connection Pool Exhaustion (Latency Spike)**
 
-Symptom: p99 latency suddenly 10× higher than p50; logs show
+**Symptom:** p99 latency suddenly 10× higher than p50; logs show
 `ConnectionPoolTimeoutException` or `Unable to acquire connection`; thread dumps
 show many threads waiting on `leaseConnection()`.
 
-Root Cause: All pool connections in use; slow downstream creating long hold times;
+**Root Cause:** All pool connections in use; slow downstream creating long hold times;
 pool sized too small for peak concurrency.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check OkHttp pool stats (expose via Micrometer):
@@ -483,10 +483,10 @@ cm.getTotalStats().toString()
 # "pending: 5" = 5 threads waiting for a connection
 ```
 
-Fix: Increase `maxTotal`/`maxPerRoute`. Add circuit breaker around slow downstream.
+**Fix:** Increase `maxTotal`/`maxPerRoute`. Add circuit breaker around slow downstream.
 Enable connection timeout to fail fast instead of blocking indefinitely.
 
-Prevention: Size pool based on Little's Law: `L = λ × W` (connections needed =
+**Prevention:** Size pool based on Little's Law: `L = λ × W` (connections needed =
 request rate × average time holding a connection). Monitor pool utilisation as
 a first-class metric.
 
@@ -494,15 +494,15 @@ a first-class metric.
 
 **Stale Connection — EOF / Connection Reset**
 
-Symptom: Sporadic `java.net.SocketException: Connection reset` or
+**Symptom:** Sporadic `java.net.SocketException: Connection reset` or
 `java.io.EOFException in HttpClient`; failures are rare but unpredictable;
 restart clears the problem temporarily.
 
-Root Cause: Server-side idle timeout (e.g., AWS ALB 60s) closed the connection
+**Root Cause:** Server-side idle timeout (e.g., AWS ALB 60s) closed the connection
 while it was idle in the client's pool. Next request attempts to write to the
 closed socket, receives TCP RST, and fails.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check server-side keepalive timeout:
@@ -514,7 +514,7 @@ grep keepalive_timeout /etc/nginx/nginx.conf
 watch -n 1 "ss -n state time-wait | wc -l"
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // Set pool idle timeout BELOW server's keepalive timeout:
@@ -523,7 +523,7 @@ Fix:
 .evictInBackground(Duration.ofSeconds(10))
 ```
 
-Prevention: Always configure client pool idle timeout as `(server_keepalive - 10s)`.
+**Prevention:** Always configure client pool idle timeout as `(server_keepalive - 10s)`.
 Never use the default, which may exceed server timeouts.
 
 ---

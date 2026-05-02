@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Bridge Pattern"
 parent: "Design Patterns"
@@ -196,7 +196,7 @@ WITH Bridge:
 "Remote control" = abstraction (Shape, high-level operations)
 "TV (Sony/Samsung)" = implementor (DrawingAPI, low-level platform)
 "Remote holds reference to TV" = abstraction's `api` field (the bridge)
-"Power button → TV.power()" = abstraction delegates to implementor
+- "Power button → TV.power()" = abstraction delegates to implementor
 "New TV: just implement TV interface" = new implementor, no abstraction changes
 
 ---

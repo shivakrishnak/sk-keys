@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Without threads, a Java program runs as a single execution flow — one statement, then the next, then the next. An HTTP server handling a request must finish responding before accepting the next request. A long database query blocks the entire application. Waiting for I/O freezes the user interface. A CPU with 8 cores sits idle at 12.5% utilisation because only one core ever runs application code.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 An e-commerce site processes checkout: validate cart, charge card, send receipt, update inventory, notify warehouse. Sequentially: 3 seconds total. Only 200 concurrent checkouts possible. Peak load: 2,000/second. The site crashes every Black Friday.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Threads** were created — to run multiple independent execution paths concurrently, using multiple CPU cores, and overlapping I/O wait time with computation — turning a sequential bottleneck into a parallel pipeline.
 
 ---
@@ -64,12 +64,12 @@ Threads share heap memory — and that's both their power and their danger. Two 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Each thread has its own stack — method call frames, local primitives, and references are thread-private.
 2. All threads share the JVM heap — objects, static fields, and instance fields are shared unless explicitly isolated.
 3. Platform threads are 1:1 with OS threads — each Java thread is an OS thread with ~1MB of stack overhead.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1 + 2: a `String s = "hello"` in a method is stack-allocated (the reference) — each thread's `s` is independent. But `sharedList.add("hello")` modifies an object on the heap — both threads see the modification. This is why thread-safety requires synchronisation for heap-shared state.
 
 Given invariant 3: creating 10,000 platform threads = 10GB of stack allocation and massive OS context-switching overhead. This motivated virtual threads (Java 21): user-space threads that don't map 1:1 to OS threads, enabling millions of concurrent threads with far less overhead.
@@ -93,15 +93,15 @@ Given invariant 3: creating 10,000 platform threads = 10GB of stack allocation a
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Concurrency and parallelism; overlapping I/O with computation; multi-core utilisation.
-Cost: Complexity — shared state requires synchronisation; race conditions, deadlocks, and livelocks are hard bugs; 1MB+ stack per thread limits scalability; context switching overhead.
+**THE TRADE-OFFS:**
+**Gain:** Concurrency and parallelism; overlapping I/O with computation; multi-core utilisation.
+**Cost:** Complexity — shared state requires synchronisation; race conditions, deadlocks, and livelocks are hard bugs; 1MB+ stack per thread limits scalability; context switching overhead.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A web server needs to handle multiple requests simultaneously.
 
 WITHOUT THREADS (single-threaded):
@@ -116,7 +116,7 @@ WITH THREADS (multi-threaded):
 3. Both threads wait for DB concurrently. Both responses sent ~160ms after each arrived.
 4. Maximum throughput limited by DB/CPU, not by waiting for A to finish before B starts.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Threads allow I/O wait time (where the CPU is idle) to be overlapped with work from other threads. The server isn't working harder — it's filling idle time with other requests' work. This is threads' primary win for I/O-bound workloads.
 
 ---
@@ -125,11 +125,11 @@ Threads allow I/O wait time (where the CPU is idle) to be overlapped with work f
 
 > Think of a Java program as a factory with multiple assembly lines (threads) sharing a common warehouse (heap). Each assembly line has its own workers and their own task list (stack). Workers from different lines can grab materials from the warehouse at the same time — but if two workers grab the last bolt simultaneously and both try to use it, chaos ensues (race condition). A sign-out system (synchronized) prevents this: only one worker checks out the bolt at a time.
 
-"Assembly line" → thread.
-"Warehouse" → heap.
-"Worker's task list" → thread stack.
-"Two grabbing same bolt" → race condition on shared heap object.
-"Sign-out system" → synchronization primitives.
+- "Assembly line" → thread.
+- "Warehouse" → heap.
+- "Worker's task list" → thread stack.
+- "Two grabbing same bolt" → race condition on shared heap object.
+- "Sign-out system" → synchronization primitives.
 
 Where this analogy breaks down: Real assembly lines are physically separate; Java threads share the SAME heapspace — they're less "separate assembly lines" and more "overlapping work zones in the same space."
 
@@ -216,7 +216,7 @@ jfr print --events jdk.JavaThreadStart threads.jfr
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Application: new Thread(task).start()]
     → [JVM: new JavaThread object created]  ← YOU ARE HERE
@@ -228,7 +228,7 @@ NORMAL FLOW:
     → [OS thread resources released]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Thread.run() throws uncaught exception]
     → [UncaughtExceptionHandler.uncaughtException() called]
@@ -238,7 +238,7 @@ FAILURE PATH:
     → [Fix: set UncaughtExceptionHandler on ThreadPool]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, raw `new Thread()` is never used in production — thread pools (`ExecutorService`) are used to manage thread lifecycle, cap concurrency, and reuse threads. At 10K+ concurrent I/O operations, virtual threads (Java 21) replace platform threads: no stack allocation per blocking operation, no OS thread limits. For CPU-bound parallelism, `ForkJoinPool` (used by parallel streams) dynamically adjusts worker count to match available cores.
 
 ---
@@ -341,11 +341,11 @@ How to choose: Use virtual threads (`Executors.newVirtualThreadPerTaskExecutor()
 
 **Race Condition (Unsynchronized Shared State)**
 
-Symptom: Intermittent wrong results, counters off, list corruptions. Bug is non-deterministic — appears under load, disappears in tests.
+**Symptom:** Intermittent wrong results, counters off, list corruptions. Bug is non-deterministic — appears under load, disappears in tests.
 
-Root Cause: Two threads read-modify-write the same heap object without synchronization.
+**Root Cause:** Two threads read-modify-write the same heap object without synchronization.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Thread sanitizer equivalent for Java:
 # Run with -XX:+PrintSafepointStatistics or thread dump:
@@ -355,7 +355,7 @@ jstack <pid> | grep RUNNABLE -A5
 # ThreadSanitizer-like: jconsole or async-profiler for contention
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: unsynchronized counter
 int count = 0;
@@ -367,17 +367,17 @@ AtomicInteger count = new AtomicInteger(0);
 void increment() { count.incrementAndGet(); }
 ```
 
-Prevention: Any shared mutable field accessed from multiple threads needs synchronization (`synchronized`, `volatile`, `AtomicX`, or `java.util.concurrent` classes).
+**Prevention:** Any shared mutable field accessed from multiple threads needs synchronization (`synchronized`, `volatile`, `AtomicX`, or `java.util.concurrent` classes).
 
 ---
 
 **Thread Leak (Unbounded Thread Creation)**
 
-Symptom: JVM memory grows. Thread dump shows thousands of threads. Eventually: `OutOfMemoryError: unable to create new native thread`.
+**Symptom:** JVM memory grows. Thread dump shows thousands of threads. Eventually: `OutOfMemoryError: unable to create new native thread`.
 
-Root Cause: Threads created faster than they complete. Often: `new Thread().start()` inside a request handler.
+**Root Cause:** Threads created faster than they complete. Often: `new Thread().start()` inside a request handler.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Count threads:
 jstack <pid> | grep "^\"" | wc -l
@@ -386,7 +386,7 @@ jstack <pid> | grep "^\"" | wc -l
 # Or: jcmd <pid> VM.info | grep "Threads"
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: one thread per request
 @GetMapping("/process")
@@ -402,17 +402,17 @@ void handleRequest() {
 }
 ```
 
-Prevention: Never create threads directly in request handlers. Use thread pools from startup. Set `maximumPoolSize` to cap thread creation.
+**Prevention:** Never create threads directly in request handlers. Use thread pools from startup. Set `maximumPoolSize` to cap thread creation.
 
 ---
 
 **Thread.run() instead of Thread.start()**
 
-Symptom: "Concurrent" code runs sequentially — main thread blocks until "thread" completes.
+**Symptom:** "Concurrent" code runs sequentially — main thread blocks until "thread" completes.
 
-Root Cause: `thread.run()` called instead of `thread.start()`.
+**Root Cause:** `thread.run()` called instead of `thread.start()`.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Thread dump during execution shows only main thread running
 jstack <pid> | grep "RUNNABLE"
@@ -420,7 +420,7 @@ jstack <pid> | grep "RUNNABLE"
 # check for .run() vs .start()
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: runs in current thread
 Thread t = new Thread(() -> longTask());
@@ -431,7 +431,7 @@ Thread t = new Thread(() -> longTask());
 t.start(); // Starts concurrently
 ```
 
-Prevention: Code review checklist: all `new Thread(...)` uses should call `.start()`. Static analysis tools (SpotBugs, Checkstyle) flag `.run()` on Thread objects.
+**Prevention:** Code review checklist: all `new Thread(...)` uses should call `.start()`. Static analysis tools (SpotBugs, Checkstyle) flag `.run()` on Thread objects.
 
 ---
 

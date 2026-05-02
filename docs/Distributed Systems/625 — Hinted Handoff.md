@@ -274,7 +274,7 @@ Delivery throttle:
 
 **"Hint Bomb" — Recovering Node Overwhelmed by Hints**
 
-Symptom: Node C was down for 2.5 hours (within hint window). On recovery,
+**Symptom:** Node C was down for 2.5 hours (within hint window). On recovery,
 nodetool tpstats shows HintedHandoffStage: 2,000,000 pending.
 Node C's CPU at 100%, I/O at saturation. Read latency on Node C spikes to 5s.
 After 10 minutes of hint delivery, Node C throws OOM errors and crashes again.
@@ -285,7 +285,7 @@ Cause: During the 2.5-hour outage, the cluster was writing at 300K writes/sec.
 (~1000 mutations/sec), estimated delivery time = 2.7 million seconds. Meanwhile,
 Node C is also serving live traffic and running compaction. Total overload.
 
-Fix:
+**Fix:**
 
 1. Pause hint delivery: `nodetool pausehandoff`
 2. Allow Node C to stabilize (compaction catches up, live traffic normalizes).
@@ -294,7 +294,7 @@ Fix:
 4. Resume handoff: `nodetool resumehandoff`
 5. Monitor: set alert on HintedHandoffStage pending > 100K.
 
-Prevention:
+**Prevention:**
 
 - If hint backlog is expected to be very large: decommission the node,
   bootstrap a replacement, which streams data from other replicas

@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A read-heavy system uses a ReadWriteLock. Readers are frequent; a writer arrives. The lock implementation allows new readers to acquire the read lock even while a writer is waiting. Readers arrive in a continuous stream — there's always a reader holding the read lock. The writer waits forever, even though it's not blocked in a deadlock cycle. This is writer starvation.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Any unfair scheduling policy can cause starvation in the presence of high-priority or high-frequency work. The starved thread is WAITING (not running), but the reason isn't a cycle (deadlock) or mutual interference (livelock) — it's simply never being selected. In production: a low-priority housekeeping task never runs because high-priority request threads always preempt it; cache eviction never runs; logs never flush; indexes never rebuild.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 OS scheduling research in the 1960s–70s introduced **aging**: gradually increase a waiting thread's priority the longer it waits, until it eventually overtakes the high-priority threads. This prevents indefinite postponement without changing the basic priority-based scheduling model.
 
 ---
@@ -64,7 +64,7 @@ Starvation is the expected result of priority-based scheduling without aging or 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. A starved thread is runnable but never scheduled (or waiting for a resource that's never granted).
 2. No cycle exists (distinguishes from deadlock).
@@ -86,9 +86,9 @@ SOLUTIONS:
 - **Time slicing**: Even low-priority threads get scheduled occasionally.
 - **Rate limiting**: Prevent high-priority threads from monopolising resources indefinitely.
 
-THE TRADE-OFFS:
-Gain: Fairness guarantees — every runnable thread eventually runs.
-Cost: Throughput: a fair FIFO lock has higher overhead than unfair; aging complicates scheduler implementation; writer preference increases write latency for reads-dominated workloads.
+**THE TRADE-OFFS:**
+**Gain:** Fairness guarantees — every runnable thread eventually runs.
+**Cost:** Throughput: a fair FIFO lock has higher overhead than unfair; aging complicates scheduler implementation; writer preference increases write latency for reads-dominated workloads.
 
 ---
 
@@ -115,7 +115,7 @@ ReadWriteLock (writer preference, blocks new readers if writer waiting):
   t=16:  Writer 1 releases → Readers 11–20 proceed
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 A subtle policy change (block new readers when a writer waits) converts writer starvation to bounded wait. The write latency increases slightly (must drain in-flight readers) but unbounded starvation is eliminated.
 
 ---
@@ -292,11 +292,11 @@ public class MonitoredLock {
 
 **1. Background Task Never Runs**
 
-Symptom: Housekeeping tasks (cache eviction, log rotation, index rebuild) never execute despite appearing in scheduled executor logs; system resources accumulate indefinitely.
+**Symptom:** Housekeeping tasks (cache eviction, log rotation, index rebuild) never execute despite appearing in scheduled executor logs; system resources accumulate indefinitely.
 
-Root Cause: High-priority request threads monopolise executor thread pool or CPU; low-priority housekeeping tasks scheduled but never selected.
+**Root Cause:** High-priority request threads monopolise executor thread pool or CPU; low-priority housekeeping tasks scheduled but never selected.
 
-Diagnostic:
+**Diagnostic:**
 
 ```java
 // Check scheduled task execution lag
@@ -312,17 +312,17 @@ log.info("Queue size: {}", tpe.getQueue().size());
 // Growing queue with tasks never completing = starvation
 ```
 
-Fix: Dedicate a separate thread pool for background tasks; use `Executors.newSingleThreadScheduledExecutor()` for housekeeping.
+**Fix:** Dedicate a separate thread pool for background tasks; use `Executors.newSingleThreadScheduledExecutor()` for housekeeping.
 
 ---
 
 **2. ReadWriteLock Writer Starvation in Cache**
 
-Symptom: Cache hit rate is high but cache updates lag minutes behind the source; invalidation rarely occurs; stale data returned.
+**Symptom:** Cache hit rate is high but cache updates lag minutes behind the source; invalidation rarely occurs; stale data returned.
 
-Root Cause: High reader throughput holds readLock continuously; cache writer (invalidation) acquires writeLock but waits indefinitely.
+**Root Cause:** High reader throughput holds readLock continuously; cache writer (invalidation) acquires writeLock but waits indefinitely.
 
-Diagnostic:
+**Diagnostic:**
 
 ```java
 ReentrantReadWriteLock rwl = (ReentrantReadWriteLock) cacheLock;
@@ -331,7 +331,7 @@ log.info("Read hold count: {}", rwl.getReadHoldCount());
 // High write queue with always-nonzero read hold = writer starved
 ```
 
-Fix: Use `new ReentrantReadWriteLock(true)` (fair) or `StampedLock` for optimistic reads.
+**Fix:** Use `new ReentrantReadWriteLock(true)` (fair) or `StampedLock` for optimistic reads.
 
 ---
 

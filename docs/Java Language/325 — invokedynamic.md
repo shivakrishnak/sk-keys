@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Java's original four method invocation instructions (`invokevirtual`, `invokeinterface`, `invokespecial`, `invokestatic`) are all statically typed — the target method signature is fixed in bytecode at compile time. Dynamic languages on the JVM (Groovy, JRuby, Clojure) needed dynamic dispatch — calling a method not known until runtime — but had no efficient way to do it. They used reflection, which is slow (10–100× overhead) and defeats JIT optimization. Even Java's own lambda implementation (Java 8) faced this: if each lambda were compiled to an anonymous inner class, the classloader would be flooded with thousands of tiny classes at JVM startup.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Groovy 1.x used reflection for every method call in dynamic mode. A Groovy web service handling 50K requests/second spent 40% of CPU in `Method.invoke()` infrastructure — not in actual business logic. The JVM was the bottleneck, not the algorithm.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **`invokedynamic`** was created (JSR 292, Java 7) — to give the JVM a first-class hook for dynamic dispatch where the *language runtime* (not the JVM) decides how to link each call at first invocation, producing a `MethodHandle` that the JIT can then inline and optimise like a static call.
 
 ---
@@ -64,12 +64,12 @@ This is exactly why **`invokedynamic`** was created (JSR 292, Java 7) — to giv
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Each `invokedynamic` instruction owns one call site — the bootstrap is called once per call site, not once per call.
 2. The bootstrap returns a `CallSite` containing a `MethodHandle`; subsequent calls invoke the handle directly.
 3. `MethodHandle`s are JIT-transparent — the JIT can inline through a handle into the target method, unlike reflection.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1, all lambdas at the same call site share one bootstrapped `CallSite`. `LambdaMetafactory.metafactory()` is the bootstrap for Java lambdas. It generates a small class at first call using ASM or Unsafe byte array injection, returning a `ConstantCallSite` pointing to the lambda's functional interface implementation.
 
 ```
@@ -88,15 +88,15 @@ Given invariant 1, all lambdas at the same call site share one bootstrapped `Cal
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Language-controlled dynamic dispatch; JIT-optimisable; no reflection overhead after warmup; enables lambdas, dynamic languages, string concat without fixed bytecode patterns.
-Cost: First-call overhead (bootstrap execution, possible class generation); complexity — understanding the bootstrap/CallSite/MethodHandle triad requires JVM internals knowledge; debugging is harder (generated call sites don't appear in source).
+**THE TRADE-OFFS:**
+**Gain:** Language-controlled dynamic dispatch; JIT-optimisable; no reflection overhead after warmup; enables lambdas, dynamic languages, string concat without fixed bytecode patterns.
+**Cost:** First-call overhead (bootstrap execution, possible class generation); complexity — understanding the bootstrap/CallSite/MethodHandle triad requires JVM internals knowledge; debugging is harder (generated call sites don't appear in source).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Lambda expression `x -> x * 2` used in a stream pipeline.
 
 WITHOUT invokedynamic (pre-Java 8 anonymous class approach):
@@ -119,7 +119,7 @@ Function<Integer, Integer> f = x -> x * 2;
 // Memory: stateless lambdas are singletons (no allocation)
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 Stateless lambdas (capturing no local variables) are singletons after the first call — the bootstrap returns a constant `MethodHandle` pointing to a single reused instance. This means `list.stream().map(x -> x * 2)` allocates zero lambda objects on the heap for the stateless closure. `invokedynamic` makes lambdas both flexible and fast.
 
 ---
@@ -128,10 +128,10 @@ Stateless lambdas (capturing no local variables) are singletons after the first 
 
 > `invokedynamic` is like a cached phone directory lookup. First time you need "Carol's number," you look it up (bootstrap). You write it on a sticky note (CallSite). Every time after, you dial directly from the sticky note — no directory lookup. If Carol moves desks, you update the sticky note (MutableCallSite). The JIT is smart enough to see you always call the same number and hardwires it directly (inline).
 
-"First directory lookup" → bootstrap method execution.
-"Sticky note with number" → `CallSite.target` (MethodHandle).
-"Dial directly" → direct MethodHandle invocation (JIT-able).
-"Carol moves" → mutable call site target update.
+- "First directory lookup" → bootstrap method execution.
+- "Sticky note with number" → `CallSite.target` (MethodHandle).
+- "Dial directly" → direct MethodHandle invocation (JIT-able).
+- "Carol moves" → mutable call site target update.
 
 Where this analogy breaks down: In reality, the sticky note is usually never updated (`ConstantCallSite`) — lambda targets are permanent. Only dynamic languages use `MutableCallSite` to change dispatch behaviour.
 
@@ -209,7 +209,7 @@ String result = (String) toUpper.invoke("hello");
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Source: list.stream().map(x -> x * 2)]
     → [javac: lambda body to private static method]
@@ -222,7 +222,7 @@ NORMAL FLOW:
     → [Runtime: near-zero overhead lambda dispatch]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Bootstrap method throws LambdaConversionException]
     → [BootstrapMethodError at runtime]
@@ -231,7 +231,7 @@ FAILURE PATH:
     → [Or: use explicit anonymous class]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, lambda-heavy code (Streams, CompletableFuture chains) benefits from `invokedynamic`'s warmup characteristics: after JIT compilation (typically after ~10K invocations), the overhead drops to near zero. But during initial warmup (application startup, first requests), bootstrap method execution + class generation adds latency. GraalVM native image pre-generates all lambda class implementations at build time to eliminate runtime bootstrap cost.
 
 ---
@@ -329,13 +329,13 @@ How to choose: For application code, use lambdas and method references — let t
 
 **BootstrapMethodError at Lambda Call Site**
 
-Symptom:
+**Symptom:**
 `java.lang.BootstrapMethodError: java.lang.invoke.LambdaConversionException: ...`
 
-Root Cause:
+**Root Cause:**
 Lambda references a method that's not accessible, or a serializable lambda's method is not serializable.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # BootstrapMethodError wraps the real cause:
 # Caused by: java.lang.invoke.LambdaConversionException:
@@ -343,7 +343,7 @@ Diagnostic:
 # Or: Serializable lambda's implementation is not accessible
 ```
 
-Fix:
+**Fix:**
 ```java
 // Serializable lambda fails if method not accessible:
 // BAD:
@@ -354,26 +354,26 @@ Supplier<String> s = (Serializable & Supplier<String>)
 Supplier<String> s = () -> publicMethod();
 ```
 
-Prevention: Avoid serializable lambdas unless necessary. If needed, ensure all referenced methods are accessible.
+**Prevention:** Avoid serializable lambdas unless necessary. If needed, ensure all referenced methods are accessible.
 
 ---
 
 **Performance Regression from Capturing Lambdas**
 
-Symptom:
+**Symptom:**
 High GC pressure in a lambda-heavy hot path. Profiler shows `LambdaMetafactory` in allocation trace.
 
-Root Cause:
+**Root Cause:**
 Capturing lambdas (referencing local variables) allocate a new instance per call. Unlike stateless lambdas, they cannot be singletons.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Use async-profiler to find allocations:
 ./asprof -e alloc -d 30 <pid>
 # Look for lambda$ entries in allocation profile
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: capturing lambda allocates per call
 for (Order order : orders) {
@@ -394,7 +394,7 @@ double sumAboveThreshold(
 }
 ```
 
-Prevention: In tight loops, avoid lambdas that capture variables that change per iteration. Extract to named methods or pass the captured value as a parameter.
+**Prevention:** In tight loops, avoid lambdas that capture variables that change per iteration. Extract to named methods or pass the captured value as a parameter.
 
 ---
 

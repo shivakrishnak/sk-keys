@@ -248,13 +248,13 @@ journalctl -u etcd -f | grep -E "became leader|started election|term"
 
 **Slow Commit Latency (Replication Bottleneck)**
 
-Symptom: Write latency is consistently at 2× single-machine latency;
+**Symptom:** Write latency is consistently at 2× single-machine latency;
 leader CPU is low but throughput is capped.
 
-Root Cause: Each write waits for follower ACK before next write dispatched
+**Root Cause:** Each write waits for follower ACK before next write dispatched
 (not pipelining). Or: network latency between leader and followers is high.
 
-Fix: Enable AppendEntries pipelining. For geo-distributed Raft, use MultiRaft
+**Fix:** Enable AppendEntries pipelining. For geo-distributed Raft, use MultiRaft
 (multiple independent Raft groups with different leaders) to avoid single-region
 leader bottleneck. CockroachDB uses MultiRaft with one Raft group per range.
 
@@ -262,11 +262,11 @@ leader bottleneck. CockroachDB uses MultiRaft with one Raft group per range.
 
 **Leader Flapping During Network Instability**
 
-Symptom: Rapid leader changes; high term numbers; etcd alarms.
+**Symptom:** Rapid leader changes; high term numbers; etcd alarms.
 
-Root Cause: Follower election timeouts misconfigured too short for network jitter.
+**Root Cause:** Follower election timeouts misconfigured too short for network jitter.
 
-Fix: `--election-timeout` should be ≥ 10× `--heartbeat-interval` and ≥ 5× the
+**Fix:** `--election-timeout` should be ≥ 10× `--heartbeat-interval` and ≥ 5× the
 99th-percentile network RTT between nodes.
 
 ```bash

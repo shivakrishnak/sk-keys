@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You need to build a web server. You know concurrency is needed — handling
 multiple requests simultaneously. But which model should you use? You've
 heard "processes are safer" and "threads are faster" but you don't know
@@ -45,12 +45,12 @@ threads. These are not arbitrary choices — they reflect deliberate
 tradeoffs based on isolation requirements, performance needs, and failure
 semantics.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Without understanding the precise technical differences, engineers make
 architecture decisions by cargo-culting — copying patterns without
 understanding the constraints driving them.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This concept exists as a comparison precisely because both abstractions
 solve concurrency but with fundamentally different isolation models.
 Understanding _exactly_ where they differ tells you _exactly_ when to
@@ -95,7 +95,7 @@ outcome is one process crashes, not all of them.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Processes share _nothing_ by default; threads share _everything_ by default.
 2. Process creation duplicates the address space (expensive); thread
@@ -103,13 +103,13 @@ CORE INVARIANTS:
 3. Process communication requires the OS (pipes, sockets); thread
    communication uses shared memory directly (cheap, but requires locking).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given the isolation invariant, processes need the MMU to enforce separate
 address spaces — a hardware-level guarantee. Given the sharing invariant,
 threads need software-level synchronization (mutexes, atomics) to prevent
 data corruption. The OS can schedule either independently on CPU cores.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 Process gains: fault isolation, security boundaries, independent crash recovery.
 Process cost: expensive creation (~100µs), expensive IPC, no shared state.
 Thread gains: cheap creation (~1µs), zero-copy shared data, lower latency.
@@ -120,23 +120,23 @@ harder to reason about correctness.
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A web browser renders multiple tabs simultaneously. Consider two designs:
 Design A: each tab is a thread in one browser process.
 Design B: each tab is a separate process.
 
-WHAT HAPPENS WITH DESIGN A (threads):
+**WHAT HAPPENS WITH DESIGN A (threads):**
 Tab 1 runs JavaScript that has a memory bug — writes past array bounds
 into adjacent memory. Tab 2's DOM data is silently corrupted. Tab 2 starts
 showing garbled content. The entire browser crashes when the corruption
 reaches the rendering engine. All 20 tabs die.
 
-WHAT HAPPENS WITH DESIGN B (processes — Chrome's actual design):
+**WHAT HAPPENS WITH DESIGN B (processes — Chrome's actual design):**
 Tab 1's process has the memory bug. The crash is isolated — the OS
 terminates only Tab 1's process. The browser shows "Aw, Snap! This tab
 has crashed." The other 19 tabs continue working perfectly.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Fault isolation determines the _blast radius_ of a bug. Chrome pays
 higher memory cost (each process has its own V8 heap) for a smaller
 blast radius. The right choice depends on how much you trust the code
@@ -269,7 +269,7 @@ Server process receives request
   → If thread crashes → JVM may exit entirely
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10,000 concurrent connections: multi-process hits memory limits (each
 process needs its own heap/stack); multi-thread hits synchronization
 contention on shared data structures. At this scale, neither naive model
@@ -312,16 +312,16 @@ connection pool, in-memory cache).
 
 **1. Process becomes orphaned after parent crash**
 
-Symptom:
+**Symptom:**
 `ps aux` shows processes owned by init/systemd (PPID=1) that should have
 been cleaned up. Process accumulates silently consuming resources.
 
-Root Cause:
+**Root Cause:**
 Parent process crashed without waiting for children. Children become
 orphaned — re-parented to init(1). If not designed to self-terminate,
 they run indefinitely.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Find orphaned processes (owned by init)
@@ -330,25 +330,25 @@ ps -eo pid,ppid,cmd | awk '$2 == 1'
 ps aux | grep pts | grep -v grep
 ```
 
-Fix: use `prctl(PR_SET_PDEATHSIG, SIGTERM)` on Linux so child receives
+**Fix:** use `prctl(PR_SET_PDEATHSIG, SIGTERM)` on Linux so child receives
 SIGTERM when parent dies. In Java: use `ProcessBuilder.inheritIO()` and
 `.destroyForcibly()` in shutdown hooks.
 
-Prevention: supervise child processes with a process manager (systemd,
+**Prevention:** supervise child processes with a process manager (systemd,
 supervisor, PM2) that handles restart on crash.
 
 **2. Thread stack overflow**
 
-Symptom:
+**Symptom:**
 `java.lang.StackOverflowError` or `Segmentation Fault (core dumped)`.
 Occurs in deep recursion or when thread stack is set too small.
 
-Root Cause:
+**Root Cause:**
 Thread stack exhausted. Each method call pushes a frame onto the stack.
 Deep recursion (or no base case) overflows the stack guard page, causing
 a signal.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check thread stack sizes in Java
@@ -357,24 +357,24 @@ java -Xss512k -XX:+PrintFlagsFinal ... | grep ThreadStackSize
 gdb <binary> core | bt
 ```
 
-Fix: increase stack size (`-Xss2m`) for deep recursion, or convert
+**Fix:** increase stack size (`-Xss2m`) for deep recursion, or convert
 recursion to iteration with an explicit stack data structure.
 
-Prevention: set stack sizes explicitly; implement recursion depth limits.
+**Prevention:** set stack sizes explicitly; implement recursion depth limits.
 
 **3. IPC bottleneck between processes**
 
-Symptom:
+**Symptom:**
 Multi-process application has high latency. `strace` shows excessive
 `read()`/`write()` on pipe file descriptors. CPU time mostly in kernel
 context (sys time high in `top`).
 
-Root Cause:
+**Root Cause:**
 Processes communicate via pipes or Unix sockets for every operation.
 Each message requires two syscalls (write + read) and a kernel copy.
 At high throughput, IPC overhead dominates.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 strace -p <pid> -e trace=read,write -c
@@ -383,11 +383,11 @@ perf stat -e syscalls:sys_enter_read,syscalls:sys_enter_write \
   -p <pid> sleep 5
 ```
 
-Fix: batch messages before sending; use shared memory (`mmap`) for high-
+**Fix:** batch messages before sending; use shared memory (`mmap`) for high-
 throughput communication; consider switching to threads if isolation is
 not critical.
 
-Prevention: design IPC message sizes to amortize syscall overhead;
+**Prevention:** design IPC message sizes to amortize syscall overhead;
 benchmark IPC throughput early in architecture phase.
 
 ---

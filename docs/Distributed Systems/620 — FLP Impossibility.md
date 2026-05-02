@@ -264,7 +264,7 @@ def simulate_flp_scenario():
 
 **Raft Election Storm (Near-FLP Behavior)**
 
-Symptom: etcd cluster shows constant leader re-elections. Leader changes every 150ms.
+**Symptom:** etcd cluster shows constant leader re-elections. Leader changes every 150ms.
 Writes fail with "lost leadership" errors. Cluster is fully connected (all nodes alive)
 but no stable leader exists. Metrics show electionTimeout firing repeatedly.
 
@@ -272,7 +272,7 @@ Cause: All nodes have nearly identical election timeouts (loaded from same confi
 minimal jitter). They all timeout at almost the same time → all become candidates →
 split vote → no majority → retry → repeat. Near-FLP behavior.
 
-Fix: (1) Increase jitter on election timeouts: min=150ms, max=750ms (5× range).
+**Fix:** (1) Increase jitter on election timeouts: min=150ms, max=750ms (5× range).
 (2) Check heartbeat interval: must be < electionTimeout/10 to prevent spurious elections.
 (3) Check clock sync: NTP drift > heartbeatInterval causes false timeouts.
 (4) Check CPU load: if leader is CPU-starved, heartbeats are delayed, triggering elections.

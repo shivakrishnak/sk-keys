@@ -256,11 +256,11 @@ func TestS3BucketSecurity(t *testing.T) {
 
 **1. Terratest Doesn't Destroy on Failure**
 Cause: Test fails before `defer terraform.Destroy()` runs — or panic occurs.
-Fix: Always use `defer` for destroy. Use Terratest's `defer terraform.Destroy` immediately after `InitAndApply`. Implement cloud resource janitor (delete all test-tagged resources older than 2 hours).
+**Fix:** Always use `defer` for destroy. Use Terratest's `defer terraform.Destroy` immediately after `InitAndApply`. Implement cloud resource janitor (delete all test-tagged resources older than 2 hours).
 
 **2. Integration Tests Too Slow for PR Pipeline**
 Cause: Full Terratest suite deploys real infrastructure (VPC, RDS, EKS) → 30+ minutes.
-Fix: Fast path in PR: unit-only (tfsec + validate); Terratest runs on merge to main only. Cache Terraform providers between runs.
+**Fix:** Fast path in PR: unit-only (tfsec + validate); Terratest runs on merge to main only. Cache Terraform providers between runs.
 
 ---
 

@@ -278,14 +278,14 @@ const logger = {
 
 **Correlation ID Not Propagated to Async Workers**
 
-Symptom: Service has correlation IDs in all synchronous log lines, but async Kafka
+**Symptom:** Service has correlation IDs in all synchronous log lines, but async Kafka
 consumer log lines never have a correlationId. When debugging cross-service issues
 that touch async processing, the trail goes cold the moment work is enqueued.
 
 Cause: Kafka consumer is a separate thread; MDC is thread-local and not propagated.
 Consumer log lines show `correlationId=null`.
 
-Fix: Extract correlation ID from Kafka message header in consumer. Set MDC before
+**Fix:** Extract correlation ID from Kafka message header in consumer. Set MDC before
 processing. Clear after. Add a lint check: any `@KafkaListener` method that doesn't
 extract the correlation ID header fails the CI/CD pipeline (architectural fitness function).
 

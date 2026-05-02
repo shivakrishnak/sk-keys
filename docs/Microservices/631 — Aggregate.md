@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Aggregate"
 parent: "Microservices"
@@ -162,7 +162,7 @@ WITH Aggregates:
 "Files in the cabinet" = Entities and Value Objects within the aggregate
 "Checking rules" = invariant enforcement
 "Never lock two cabinets at once" = one transaction per aggregate
-"Leave a note for the other cabinet" = Domain Event → async update of other aggregate
+- "Leave a note for the other cabinet" = Domain Event → async update of other aggregate
 
 ---
 

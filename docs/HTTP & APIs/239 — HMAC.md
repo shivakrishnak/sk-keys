@@ -424,15 +424,15 @@ public ResponseEntity<Void> handleStripe(
 
 **Timing Attack on HMAC Comparison**
 
-Symptom:
+**Symptom:**
 Security audit finds the webhook verification uses string equality (`signature.equals(expected)`).
 
-Root Cause:
+**Root Cause:**
 Java's `String.equals()` short-circuits on the first differing character — if the
 first character matches, comparison takes longer; if not, it returns fast. Over many
 requests, an attacker can statistically infer the correct HMAC one character at a time.
 
-Fix:
+**Fix:**
 
 ```java
 // WRONG:

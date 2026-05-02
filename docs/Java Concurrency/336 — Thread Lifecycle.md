@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Without understanding thread lifecycle, a developer sees a JVM "frozen" but doesn't know if threads are deadlocked (waiting for locks), genuinely busy (RUNNABLE), or blocked on I/O (WAITING). Thread dump analysis is impossible without knowing what each state means. Debugging production hangs requires understanding exactly what state each thread is in and WHY it transitioned there.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A production outage: all web threads show "WAITING" in a thread dump. Without lifecycle knowledge, the developer sees `Thread.State.WAITING` and doesn't know if this is normal (waiting for incoming requests) or a bug (deadlocked on a database connection). Applying the wrong fix (restarting pods instead of releasing the lock) doesn't resolve the root cause.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Understanding the **Thread Lifecycle** provides the mental model to: read thread dumps, diagnose deadlocks, understand why `sleep` differs from `wait`, understand when `synchronized` blocks vs when it doesn't, and design correct thread coordination.
 
 ---
@@ -64,12 +64,12 @@ BLOCKED and WAITING look similar in code but mean very different things: BLOCKED
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A thread can be in exactly one state at any time.
 2. The JVM's `Thread.State` includes OS-level "waiting for I/O" inside RUNNABLE — from the JVM's perspective, a thread doing a socket read is RUNNABLE (the JVM can't distinguish computation from I/O wait without OS hooks).
 3. BLOCKED state can only be entered when waiting for a `synchronized` intrinsic lock — `ReentrantLock.lock()` puts threads in WAITING, not BLOCKED.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 3: this is a critical distinction for thread dump analysis. `ReentrantLock` blocked threads appear as WAITING on `LockSupport.park()`, not BLOCKED. A thread dump showing all threads WAITING on `park()` may indicate lock contention on `ReentrantLock` or `Semaphore` — not just `Object.wait()`.
 
 ```
@@ -96,14 +96,14 @@ Thread Lifecycle State Machine:
                                   run() returns ────────► Terminated
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 The lifecycle design makes debugging possible through thread dumps. The RUNNABLE state conflation is a known compromise — OS-level I/O wait is invisible to the JVM thread state model (fixed with virtual threads where carrier thread visibility is separate from virtual thread state).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Thread dump of a deadlocked application. Three threads in unexpected states.
 
 Thread T1: BLOCKED on `java.lang.Object@0x1234abc` — trying to enter `synchronized(sharedList)` but `t2` holds the lock.
@@ -113,7 +113,7 @@ Thread T3: WAITING at `Object.wait()` — waiting for notify on some condition. 
 WITHOUT LIFECYCLE KNOWLEDGE: "All threads seem stuck — restart the server."
 WITH LIFECYCLE KNOWLEDGE: "T1 and T2 are in a classic circular lock deadlock — T1 holds lock A waiting for B, T2 holds B waiting for A. T3 is fine — it's legitimately waiting. Fix: enforce lock acquisition order."
 
-THE INSIGHT:
+**THE INSIGHT:**
 Thread lifecycle state in a dump is precise diagnostic data. BLOCKED = fight for lock (identify which lock). WAITING = legitimate pause (identify what signal). Reading states correctly pinpoints the root cause without guessing.
 
 ---
@@ -122,9 +122,9 @@ Thread lifecycle state in a dump is precise diagnostic data. BLOCKED = fight for
 
 > Thread states are like the status tags on hospital patients. RUNNABLE: "in treatment." BLOCKED: "waiting for an operating room." WAITING: "waiting for test results before doing anything." TIMED_WAITING: "sleeping off anesthesia — wake in 30 min." TERMINATED: "discharged." A hospital administrator (debugger) reads these tags to understand why a ward (thread pool) is congested.
 
-"Waiting for operating room" → BLOCKED on synchronized lock.
-"Waiting for test results" → WAITING on `Object.wait()`.
-"Sleeping off anesthesia" → TIMED_WAITING in `Thread.sleep()`.
+- "Waiting for operating room" → BLOCKED on synchronized lock.
+- "Waiting for test results" → WAITING on `Object.wait()`.
+- "Sleeping off anesthesia" → TIMED_WAITING in `Thread.sleep()`.
 
 Where this analogy breaks down: Hospital patients can be in multiple stages simultaneously in different bodies; threads are in exactly one state at any moment.
 
@@ -219,7 +219,7 @@ FAILURE PATH (deadlock):
     → [Diagnose: jstack → BLOCKED threads → lock chain]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, a thread pool's health is visible through state distributions: all workers RUNNABLE = CPU saturation; all WAITING = idle pool (good or maybe under-allocated); BLOCKED threads > 0 = lock contention; growing BLOCKED count over time = progressive deadlock or starvation. Monitoring thread state distributions (via JMX, JFR, or APM tools) is a key production health metric.
 
 ---
@@ -280,26 +280,26 @@ How to choose (for debugging): BLOCKED = lock problem. WAITING = check if waitin
 
 **Deadlock — All Threads BLOCKED**
 
-Symptom: Application frozen. Thread dump shows circular BLOCKED chains.
+**Symptom:** Application frozen. Thread dump shows circular BLOCKED chains.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstack <pid> | grep -A20 "BLOCKED"
 # Find "waiting to lock" and cross-reference "locked by"
 # JVM may auto-detect: "Found one Java-level deadlock:"
 ```
 
-Fix: Enforce consistent lock acquisition order. Use `tryLock(timeout)` with fallback. Use `java.util.concurrent` lock utilities instead of intrinsic locks.
+**Fix:** Enforce consistent lock acquisition order. Use `tryLock(timeout)` with fallback. Use `java.util.concurrent` lock utilities instead of intrinsic locks.
 
 ---
 
 **Thread Starvation — All WAITING, None Progressing**
 
-Symptom: Thread pool threads in WAITING; no tasks executing; work queue not empty.
+**Symptom:** Thread pool threads in WAITING; no tasks executing; work queue not empty.
 
-Root Cause: UncaughtExceptionHandler missing; thread threw exception and terminated; pool thread count fell to zero.
+**Root Cause:** UncaughtExceptionHandler missing; thread threw exception and terminated; pool thread count fell to zero.
 
-Fix: Configure `UncaughtExceptionHandler` on pool threads to log and optionally replace terminated threads.
+**Fix:** Configure `UncaughtExceptionHandler` on pool threads to log and optionally replace terminated threads.
 
 ---
 

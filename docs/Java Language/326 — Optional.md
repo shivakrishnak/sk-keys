@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Java's `null` is invisible in the type system. A method returning `User findById(Long id)` might return `null` if not found. The caller has no compile-time indication that null is possible. Result: `NullPointerException` is the most common Java exception in production. Every method call on a returned value is a potential NPE if the developer forgets to check for null first.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 In a large codebase, `null` propagates silently through layers. `user.getAddress().getCity().toLowerCase()` — any of the three getters might return null. The NPE stack trace points to the line but not which call failed. Tony Hoare (who invented null) called it his "billion-dollar mistake" in 2009. NPEs cost enterprise Java teams thousands of developer-hours annually in debugging.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **`Optional`** was created — to represent "a value that may or may not be present" explicitly in the return type, making the absence case visible to the compiler and forcing callers to handle it intentionally.
 
 ---
@@ -64,12 +64,12 @@ The key benefit of `Optional` is not runtime safety — you can still call `.get
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. `Optional<T>` is either present (contains a non-null value) or empty (contains nothing). It is never itself null (that would defeat the purpose).
 2. `Optional.get()` throws if empty — it is unsafe; prefer `orElse`, `orElseGet`, or `ifPresent`.
 3. `Optional` is a value type semantically — two Optional objects with the same value are semantically equal.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The API is designed around two programming styles: imperative (`isPresent()` + `get()`) and functional (`map()`, `flatMap()`, `filter()`). The functional API chains transformations without null checks:
 ```java
 // Without Optional (null checks everywhere):
@@ -91,15 +91,15 @@ return findUser(id)
     .orElse("unknown");
 ```
 
-THE TRADE-OFFS:
-Gain: Makes optionality explicit in the type system; functional API eliminates null-check nesting; documents intent.
-Cost: Heap allocation per `Optional` wrapping (though micro-HotSpot optimization with escape analysis can eliminate it); misuse as field type or parameter type adds serialization complexity; `Optional.get()` is still a footgun; not a full replacement for null — Java still has null, stack is still possible.
+**THE TRADE-OFFS:**
+**Gain:** Makes optionality explicit in the type system; functional API eliminates null-check nesting; documents intent.
+**Cost:** Heap allocation per `Optional` wrapping (though micro-HotSpot optimization with escape analysis can eliminate it); misuse as field type or parameter type adds serialization complexity; `Optional.get()` is still a footgun; not a full replacement for null — Java still has null, stack is still possible.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 An account lookup service. `findAccount(id)` might find nothing.
 
 WITHOUT OPTIONAL:
@@ -122,7 +122,7 @@ String currency = optAccount
 // No NPE possible. Missing account handled.
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The shift from `Account` to `Optional<Account>` as a return type changes the caller's code from "hope the developer remembers to null-check" to "the compiler ensures handling of the absent case." The contract moves from comment to type.
 
 ---
@@ -131,10 +131,10 @@ The shift from `Account` to `Optional<Account>` as a return type changes the cal
 
 > `Optional` is like a gift box with a transparent lid. Either you see a gift inside, or the box is empty. Either way, you look before opening — you can't accidentally try to unwrap air. A null return is a gift box with an opaque lid: you reach in hoping for a gift, and sometimes get nothing — and your hand gets hurt.
 
-"Transparent box with gift" → `Optional.of(value)`.
-"Transparent empty box" → `Optional.empty()`.
-"Reaching in and getting hurt" → `NullPointerException`.
-"`orElse()`" → "if the box is empty, give me this default present instead."
+- "Transparent box with gift" → `Optional.of(value)`.
+- "Transparent empty box" → `Optional.empty()`.
+- "Reaching in and getting hurt" → `NullPointerException`.
+- "`orElse()`" → "if the box is empty, give me this default present instead."
 
 Where this analogy breaks down: The real risk is calling `Optional.get()` — this is reaching into an opaque box. The box is transparent (it has an API) but you can still ignore what you see. Optional doesn't prevent NPE-equivalent — it prevents accidental NPE by making the "box is empty" case a distinct method call.
 
@@ -212,7 +212,7 @@ Optional<User> firstAdmin = users.stream()
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Caller: service.findUser("alice")]
     → [Repository: SELECT ... WHERE name='alice']
@@ -224,7 +224,7 @@ NORMAL FLOW:
     → [Email address available — no NPE]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Caller: optional.get() on empty Optional]
     → [NoSuchElementException thrown]
@@ -233,7 +233,7 @@ FAILURE PATH:
     → [Better: use .orElse(), .orElseThrow(), or functional API]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At high scale (millions of calls/second), the heap allocation of `Optional` wrapping becomes measurable. HotSpot's escape analysis can eliminate the allocation when the `Optional` does not escape the method scope — but this optimisation is fragile. Libraries like Vavr (functional Java) provide a lazily-evaluated, monad-style `Option<T>` that may eliminate some allocation overhead. For performance-critical paths, prefer returning `null` with `@Nullable` annotation + null checks over `Optional` wrapping.
 
 ---
@@ -337,18 +337,18 @@ How to choose: Use `Optional<T>` as a return type when absence is a valid busine
 
 **NoSuchElementException from .get() on Empty Optional**
 
-Symptom: `java.util.NoSuchElementException: No value present` at `Optional.get()`.
+**Symptom:** `java.util.NoSuchElementException: No value present` at `Optional.get()`.
 
-Root Cause: `.get()` called without verifying the Optional is present.
+**Root Cause:** `.get()` called without verifying the Optional is present.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Find all Optional.get() calls in codebase:
 grep -rn "\.get()" --include="*.java" . | grep "Optional"
 # Every .get() without a preceding .isPresent() is a risk
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: .get() without guard
 String name = userOpt.get().getName(); // risky
@@ -361,23 +361,23 @@ String name = userOpt.orElseThrow(
 ).getName();
 ```
 
-Prevention: Enable IDE inspection "Optional get() without isPresent()" or SpotBugs RCN rules.
+**Prevention:** Enable IDE inspection "Optional get() without isPresent()" or SpotBugs RCN rules.
 
 ---
 
 **Optional Field Serialization Failure**
 
-Symptom: Jackson serialization error: `type definition error: Optional not serialisable as a property type`.
+**Symptom:** Jackson serialization error: `type definition error: Optional not serialisable as a property type`.
 
-Root Cause: `Optional` field in a serialization target class. Jackson default config doesn't support Optional in field position.
+**Root Cause:** `Optional` field in a serialization target class. Jackson default config doesn't support Optional in field position.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Jackson error: InvalidDefinitionException for Optional field
 # Or: serialized JSON has "present":false nested structure
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: Optional field
 public class User {
@@ -396,24 +396,24 @@ public class User {
 }
 ```
 
-Prevention: Add `jackson-datatype-jdk8` module for Optional field support if Optional fields are truly needed. Better: redesign to use null fields.
+**Prevention:** Add `jackson-datatype-jdk8` module for Optional field support if Optional fields are truly needed. Better: redesign to use null fields.
 
 ---
 
 **Nested Optional (Optional<Optional<T>>)**
 
-Symptom: `flatMap` accidentally omitted, resulting in `Optional<Optional<T>>` that's always present even when the inner Optional is empty.
+**Symptom:** `flatMap` accidentally omitted, resulting in `Optional<Optional<T>>` that's always present even when the inner Optional is empty.
 
-Root Cause: Using `map` when the mapped function returns `Optional` — creates a nested Optional.
+**Root Cause:** Using `map` when the mapped function returns `Optional` — creates a nested Optional.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 Optional<Optional<String>> nested = opt.map(u -> u.getName());
 // Returns Optional<Optional<String>>, not Optional<String>
 // nested.isPresent() == true even if inner is empty!
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: map + Optional-returning function = nested Optional
 Optional<Optional<String>> nested =
@@ -424,7 +424,7 @@ Optional<String> name =
     userOpt.flatMap(User::getOptionalName); // CORRECT
 ```
 
-Prevention: When the function passed to `map` returns `Optional`, always use `flatMap` instead.
+**Prevention:** When the function passed to `map` returns `Optional`, always use `flatMap` instead.
 
 ---
 

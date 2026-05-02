@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 To run a new program, you need to: set up a new address space, load the executable, configure file descriptors (stdin/stdout/stderr), set environment variables, configure signals — then hand control to main(). How should an OS provide a single syscall for all of this? It would need dozens of parameters. Alternatively, the OS could provide many specialized syscalls — but then the calling program has to orchestrate them, dealing with races and partial failures.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 The 1970s Unix designers solved this with a two-stage approach: (1) `fork()` copies everything from the parent — you get all the file descriptors, environment, memory — for free, by inheritance. (2) `exec()` replaces the program image — swaps in the new executable while keeping inherited context (file descriptors, pid-based identity). Between fork and exec (the "fork-exec gap"), you can close the right file descriptors, set up pipes, redirect stdin/stdout. This is extraordinarily composable.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Dennis Ritchie's 1974 UNIX description: "A new process is created by the fork system call. A new process is an exact copy of the calling process... a process may cause the execution of another program via exec." The elegance is that exec() consumes no new resources — it reuses the process slot, address space, and file descriptors (selectively).
 
 ---
@@ -99,9 +99,9 @@ exit(1);
 COW OPTIMISATION:
 Without COW: fork() copies entire address space (could be GBs for a JVM process). With COW: fork() only duplicates page tables (O(number of pages) metadata, not data). A shell forking to run `ls` copies ~100KB of page table entries, not 100MB of JVM heap. When child calls exec(), the COW pages are discarded immediately (exec replaces the entire address space), so the physical copy was never needed.
 
-THE TRADE-OFFS:
-Gain: Composable process creation; pipes and redirections work without OS-level special cases.
-Cost: Fork in large processes is still slow (page table duplication, TLB flush); COW can cause unexpected latency spikes when copy-on-write pages are written to before exec.
+**THE TRADE-OFFS:**
+**Gain:** Composable process creation; pipes and redirections work without OS-level special cases.
+**Cost:** Fork in large processes is still slow (page table duplication, TLB flush); COW can cause unexpected latency spikes when copy-on-write pages are written to before exec.
 
 ---
 
@@ -126,7 +126,7 @@ Shell:
 5. waitpid(Child1); waitpid(Child2)
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The fork-exec gap (between fork and exec) is when all I/O plumbing happens. The kernel doesn't need to know about pipes or redirection. The shell manipulates file descriptors using standard syscalls, then calls exec. Exec preserves the file descriptor setup. The result: `ls` outputs to a pipe, `grep` reads from the pipe, with no kernel-level pipe-awareness required.
 
 ---
@@ -325,11 +325,11 @@ System.out.println("Exit: " + exitCode);
 
 **1. Fork Bomb**
 
-Symptom: System becomes unresponsive; `fork failed: Resource temporarily unavailable` (EAGAIN); process count at ulimit max.
+**Symptom:** System becomes unresponsive; `fork failed: Resource temporarily unavailable` (EAGAIN); process count at ulimit max.
 
-Root Cause: Process calling fork() in a loop without exec/exit; each child also forks: `:(){ :|:& };:` in bash.
+**Root Cause:** Process calling fork() in a loop without exec/exit; each child also forks: `:(){ :|:& };:` in bash.
 
-Prevention:
+**Prevention:**
 
 ```bash
 # Set per-user process limit
@@ -343,11 +343,11 @@ echo 100 > /sys/fs/cgroup/pids/user.slice/pids.max
 
 **2. File Descriptor Leak Across exec**
 
-Symptom: Child process (different program) unexpectedly holds parent's socket/file open; `lsof | grep <port>` shows unexpected process holding socket.
+**Symptom:** Child process (different program) unexpectedly holds parent's socket/file open; `lsof | grep <port>` shows unexpected process holding socket.
 
-Root Cause: Parent opened fd without O_CLOEXEC; fork+exec child inherits fd.
+**Root Cause:** Parent opened fd without O_CLOEXEC; fork+exec child inherits fd.
 
-Fix:
+**Fix:**
 
 ```c
 // Set O_CLOEXEC at open time

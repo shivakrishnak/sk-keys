@@ -394,16 +394,16 @@ public class CsvHttpMessageConverter extends AbstractHttpMessageConverter<UserLi
 
 **CDN Serving Wrong Format**
 
-Symptom:
+**Symptom:**
 Some clients receive XML responses even when sending `Accept: application/json`.
 Reproducible on first request to a URL after cache expiry.
 
-Root Cause:
+**Root Cause:**
 `Vary` header missing from responses. CDN caches the first response (XML from a
 legacy client) and serves it to all subsequent requests for that URL, regardless
 of Accept header.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check if Vary: Accept is in responses:

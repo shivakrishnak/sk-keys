@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Before Java 1.5, all collections stored `Object`. To use a `List` of `String`, you wrote `List list = new ArrayList()`, added strings freely, but had to cast on every retrieval: `String s = (String) list.get(0)`. Nothing stopped you from accidentally adding an `Integer` to a list intended for `String`. The `ClassCastException` only appeared at runtime — often in production, deep in code paths that weren't thoroughly tested.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A payment service stores `List<PaymentEvent>` as a raw `List`. A junior engineer accidentally calls `list.add(new AuditEvent())`. The code compiles. The service runs fine all day — until the payment processor iterates the list and casts each element to `PaymentEvent`. Then `ClassCastException` crashes the nightly batch. The bug was introduced 3 weeks earlier in a different class. The stack trace points nowhere useful.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Generics** were created — to parameterise classes and methods by type, so the compiler can verify type correctness at compile time, eliminating an entire class of runtime `ClassCastException` bugs while also removing the need for explicit casts.
 
 ---
@@ -64,12 +64,12 @@ Generics move type errors from runtime (a `ClassCastException` in production) to
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A generic type is a template — `List<T>` is not a type itself, but a blueprint that becomes a concrete type when `T` is bound (e.g., `List<String>`).
 2. Type safety is enforced by the compiler only — at runtime, type parameters are erased (see Type Erasure entry).
 3. A parameterised type is invariant by default: `List<String>` is NOT a `List<Object>`, even though `String extends Object`.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1, we need a syntax for declaring type parameters: `<T>` on class declarations, and `<T>` on method declarations. Given invariant 2, there's no runtime overhead — generics are purely a compile-time feature. Given invariant 3, if you need flexibility, you use wildcards (`? extends T`, `? super T`) rather than widening the type parameter.
 
 ```java
@@ -104,18 +104,18 @@ public static <T> List<T> repeat(T item, int times) {
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Compile-time type safety, elimination of explicit casts, better IDE support and refactoring.
-Cost: Type Erasure means no runtime type information for the generic parameter; invariance of parameterised types surprises developers familiar with covariant arrays.
+**THE TRADE-OFFS:**
+**Gain:** Compile-time type safety, elimination of explicit casts, better IDE support and refactoring.
+**Cost:** Type Erasure means no runtime type information for the generic parameter; invariance of parameterised types surprises developers familiar with covariant arrays.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Two versions of a `Pair` class — one raw, one generic. Both store two values.
 
-WHAT HAPPENS WITHOUT GENERICS:
+**WHAT HAPPENS WITHOUT GENERICS:**
 ```java
 Pair pair = new Pair();
 pair.setFirst("Alice");
@@ -124,7 +124,7 @@ String name = (String) pair.getSecond(); // ClassCastException at runtime!
 ```
 The compiler is silent. The error surfaces only when `getSecond()` is cast.
 
-WHAT HAPPENS WITH GENERICS:
+**WHAT HAPPENS WITH GENERICS:**
 ```java
 Pair<String, String> pair = new Pair<>();
 pair.setFirst("Alice");
@@ -132,7 +132,7 @@ pair.setSecond(42); // COMPILE ERROR: incompatible types
 ```
 The compiler rejects `42` immediately. The bug never reaches runtime.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Type parameters shift the burden of proof from the developer (manually ensuring every cast is correct) to the compiler (mechanically verifying all assignments). The correctness guarantee is now built into the type system, not maintained by human vigilance.
 
 ---
@@ -141,10 +141,10 @@ Type parameters shift the burden of proof from the developer (manually ensuring 
 
 > A generic class is like a shipping container template that says "this container holds ONE item type." When you order a "String container," the dock workers know to refuse anything that isn't a string. When you order an "Integer container," integers only. The same container design works for both — only the label changes.
 
-"Container template" → generic class (`Box<T>`)
-"Item type label" → type parameter (`T` bound to `String` or `Integer`)
-"Dock workers refusing wrong items" → compiler rejecting type mismatches
-"Same container design" → single compiled class file (Type Erasure)
+- "Container template" → generic class (`Box<T>`)
+- "Item type label" → type parameter (`T` bound to `String` or `Integer`)
+- "Dock workers refusing wrong items" → compiler rejecting type mismatches
+- "Same container design" → single compiled class file (Type Erasure)
 
 Where this analogy breaks down: Real containers can be relabelled at runtime. Generic type parameters cannot — they are erased at runtime, so a `Box<String>` and `Box<Integer>` are indistinguishable in the JVM heap.
 
@@ -208,7 +208,7 @@ String s = (String) identity("hello"); // cast inserted by compiler
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Source: List<String> names = new ArrayList<>()] ← YOU ARE HERE
     → [Compiler type-checks all add/get operations]
@@ -219,7 +219,7 @@ NORMAL FLOW:
        generic operations]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Raw type used: List list = new ArrayList()]
     → [Compiler: unchecked warning issued]
@@ -229,7 +229,7 @@ FAILURE PATH:
     → [Stack trace: unhelpful — points to get() call]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, generics have zero runtime cost — erasure means the same bytecode handles all parameterisations. The compile-time savings are amplified: a bug caught in a generic utility class prevents errors across every callsite in a large codebase. The main scaling concern is API design — overly complex generic signatures (multiple bounded wildcards, recursive type parameters) slow compilation and hurt readability.
 
 ---
@@ -340,20 +340,20 @@ How to choose: Use generics in all new Java code without exception. Use raw type
 
 **Heap Pollution via Raw Types**
 
-Symptom:
+**Symptom:**
 `ClassCastException` thrown inside JDK library code (e.g., `ArrayList.get()`) with no obvious cast in user code. Stack trace is confusing.
 
-Root Cause:
+**Root Cause:**
 A raw-type `List` was used somewhere in the call chain, allowing elements of the wrong type to be inserted. The cast the compiler inserted (via erasure) fires later when the element is retrieved and the erased cast fails.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Compile with -Xlint:unchecked to catch raw type usage:
 javac -Xlint:unchecked MyService.java
 # All "unchecked" warnings indicate potential heap pollution sites
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: raw type enables heap pollution
 List list = repository.findAll(); // unchecked warning
@@ -364,25 +364,25 @@ List<PaymentEvent> events = repository.findAll();
 // events.add(new WrongType()); // COMPILE ERROR
 ```
 
-Prevention: Enable `-Xlint:unchecked` in your build and treat all unchecked warnings as errors.
+**Prevention:** Enable `-Xlint:unchecked` in your build and treat all unchecked warnings as errors.
 
 ---
 
 **Unchecked Cast Suppression Hiding Real Bugs**
 
-Symptom:
+**Symptom:**
 `@SuppressWarnings("unchecked")` scattered throughout the codebase. Occasional `ClassCastException` at runtime that's hard to trace.
 
-Root Cause:
+**Root Cause:**
 Developers suppress the unchecked cast warning without understanding why the cast is safe, masking genuine type errors.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 grep -rn "@SuppressWarnings.*unchecked" --include="*.java" .
 # Review each site: is the cast provably safe?
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: blind suppression
 @SuppressWarnings("unchecked")
@@ -399,25 +399,25 @@ if (cached instanceof List<?> list) {
 }
 ```
 
-Prevention: Use a generic cache interface (`Cache<K,V>`) rather than `Cache<String, Object>`.
+**Prevention:** Use a generic cache interface (`Cache<K,V>`) rather than `Cache<String, Object>`.
 
 ---
 
 **Invariance Surprise — Cannot Pass `List<Subtype>` as `List<Supertype>`**
 
-Symptom:
+**Symptom:**
 Compile error "incompatible types: `List<Dog>` cannot be converted to `List<Animal>`" despite `Dog extends Animal`.
 
-Root Cause:
+**Root Cause:**
 Parameterised types are invariant. If `List<Dog>` were a `List<Animal>`, you could add a `Cat` via the `Animal` reference, corrupting the `Dog` list.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # javac error: incompatible types
 javac -verbose MyApp.java 2>&1 | grep "incompatible"
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: fails to compile
 void processAnimals(List<Animal> animals) { ... }
@@ -428,7 +428,7 @@ void processAnimals(List<? extends Animal> animals) { ... }
 processAnimals(new ArrayList<Dog>());  // OK
 ```
 
-Prevention: Use `? extends T` for read-only collection parameters, `? super T` for write-only collection parameters (Producer Extends, Consumer Super — PECS rule).
+**Prevention:** Use `? extends T` for read-only collection parameters, `? super T` for write-only collection parameters (Producer Extends, Consumer Super — PECS rule).
 
 ---
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Data Partitioning Strategies"
 parent: "System Design"
@@ -223,7 +223,7 @@ WITH Data Partitioning:
 "Dewey Decimal ranges" = range partitioning (fast range queries, hot spot risk)
 "ISBN last-3-digit hash" = hash partitioning (even distribution, poor range queries)
 "Go straight to correct wing" = partition pruning (routing to exactly one shard)
-"All new science books → Wing C is crowded" = time-series write hot spot
+- "All new science books → Wing C is crowded" = time-series write hot spot
 
 ---
 

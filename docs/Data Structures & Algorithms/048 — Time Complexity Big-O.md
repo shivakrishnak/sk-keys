@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You write a sorting algorithm. Your colleague writes another. You both run them on your laptops. Yours takes 2 seconds; theirs takes 0.5 seconds for the same 1,000 elements. Yours is "worse" — but then you run both on 1,000,000 elements. Yours takes 2,000 seconds; theirs takes 500,000 seconds. Hardware speed and input size made your benchmark measurement useless for predicting real-world performance.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Measuring wall-clock time to compare algorithms is hardware-dependent, input-dependent, and tells you nothing about long-term scaling. You need a machine-independent, input-size-relative measure of how runtime grows.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Express runtime as a function of input size N and keep only the dominant term (the one that grows fastest). Drop constants and lower-order terms — they're swamped at large N. "My algorithm does at most 3N²+2N+5 operations" becomes simply O(N²). This notation captures the *scaling behaviour* without machinery. This is exactly why Big-O was created.
 
 ---
@@ -63,12 +63,12 @@ Big-O is not about speed — it is about *scaling*. O(N log N) may be slower tha
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Only the fastest-growing term matters: `3N² + 100N + 5000 = O(N²)`.
 2. Constants are dropped: `50N = O(N)`, `N/2 = O(N)`.
 3. Big-O gives worst-case behaviour by default in informal usage.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Common complexity classes in order of growth:
 
 | Notation | Name | Example |
@@ -88,26 +88,26 @@ Common complexity classes in order of growth:
 - Loop + halving recursion: O(N log N) (merge sort)
 - Recursion expanding by factor k: O(k^depth)
 
-THE TRADE-OFFS:
-Gain: Machine-independent comparison, identifies bottlenecks, predicts scalability.
-Cost: Ignores constant factors (O(100N) is technically O(N)), ignores lower-order terms that dominate at small N, worst-case can be misleading if typical case is much better (see amortized analysis).
+**THE TRADE-OFFS:**
+**Gain:** Machine-independent comparison, identifies bottlenecks, predicts scalability.
+**Cost:** Ignores constant factors (O(100N) is technically O(N)), ignores lower-order terms that dominate at small N, worst-case can be misleading if typical case is much better (see amortized analysis).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Algorithm A: T(N) = 5N² ms. Algorithm B: T(N) = 1000N ms. At N=100: A=50,000ms, B=100,000ms. A is faster!
 
 BUT at N=10,000: A=5,000,000,000ms (5 billion). B=10,000,000ms (10 million). B is now 500× faster.
 
-WHAT HAPPENS WITH ONLY BENCHMARKS:
+**WHAT HAPPENS WITH ONLY BENCHMARKS:**
 You benchmark at N=100, deploy A in production. As data grows, A's runtime grows 10,000× while B's grows 100×. At N=10,000 real production data, A causes timeouts.
 
-WHAT HAPPENS WITH BIG-O ANALYSIS:
+**WHAT HAPPENS WITH BIG-O ANALYSIS:**
 You identify A = O(N²) and B = O(N). You know: for large N, B always wins. The crossover point is 5N² = 1000N → N = 200. For N>200, always use B.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Big-O analysis predicts the crossover point. Any O(N) algorithm eventually outperforms any O(N²) algorithm — the constant factor only affects *when*, not *whether*.
 
 ---
@@ -116,10 +116,10 @@ Big-O analysis predicts the crossover point. Any O(N) algorithm eventually outpe
 
 > Big-O is like a fuel efficiency rating on a car. "30 MPG" tells you how range scales with fuel — it doesn't tell you the actual speed, acceleration, or the driver's skill. Two cars with the same MPG rating may have vastly different speed profiles, but for a long-distance trip, MPG dominates.
 
-"MPG rating" → O-class
-"Long-distance trip" → large N
-"Actual speed" → constant factor
-"Two cars, same MPG" → two O(N log N) sorts with different constants
+- "MPG rating" → O-class
+- "Long-distance trip" → large N
+- "Actual speed" → constant factor
+- "Two cars, same MPG" → two O(N log N) sorts with different constants
 
 Where this analogy breaks down: Fuel efficiency is constant; Big-O is a growth rate. An O(N log N) "car" gets progressively "more efficient" relative to an O(N²) "car" as N grows — unlike fuel efficiency, which is constant.
 
@@ -213,7 +213,7 @@ Rule 4: Nested blocks → MULTIPLY
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 New algorithm designed
 → Identify dominant loops/recursion
@@ -225,7 +225,7 @@ New algorithm designed
 → Select algorithm for production
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Rely only on Big-O — ignore constant factors
 → O(N log N) with 1000× constant beats O(N²) at small N
@@ -233,7 +233,7 @@ Rely only on Big-O — ignore constant factors
 → Fix: benchmark at realistic N before final decision
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 Big-O becomes decisive at production scale. An O(N²) algorithm processing 10,000 records takes 1 second; at 100,000 records: 100 seconds; at 1,000,000 records: 10,000 seconds. An O(N log N) algorithm: 1.3 seconds at 100,000, 20 seconds at 1,000,000. The crossover point depends on constants, but the outcome at large N is determined by complexity class alone.
 
 ---
@@ -318,57 +318,57 @@ How to choose: Use O in conversation and code — it's the industry standard. Us
 
 **1. Nested loop not recognised as O(N²)**
 
-Symptom: API endpoint times out at scale; works fine in tests with small N.
+**Symptom:** API endpoint times out at scale; works fine in tests with small N.
 
-Root Cause: Inner loop iterates over a service call result O(M) items inside an outer loop of O(N) records; developer assumed M was small (a constant), but M grows with N in production.
+**Root Cause:** Inner loop iterates over a service call result O(M) items inside an outer loop of O(N) records; developer assumed M was small (a constant), but M grows with N in production.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Profile with async-profiler to find the hot loop:
 ./profiler.sh -e cpu -d 30 -f flamegraph.html <pid>
 # Look for nested method calls with O(N) depth
 ```
 
-Fix: Break nested iterations by pre-building a lookup Map of the inner collection.
+**Fix:** Break nested iterations by pre-building a lookup Map of the inner collection.
 
-Prevention: For any loop calling an external service or iterating a collection, verify whether the inner loop size is bounded or grows with N.
+**Prevention:** For any loop calling an external service or iterating a collection, verify whether the inner loop size is bounded or grows with N.
 
 ---
 
 **2. Hidden O(N²) from repeated sorting or searching**
 
-Symptom: Service processing N events is increasingly slow as N grows above 1,000.
+**Symptom:** Service processing N events is increasingly slow as N grows above 1,000.
 
-Root Cause: Inside a loop over N events, a `Collections.sort()` or `.contains()` on an unsorted list adds O(N log N) or O(N) per iteration — making the total O(N² log N) or O(N²).
+**Root Cause:** Inside a loop over N events, a `Collections.sort()` or `.contains()` on an unsorted list adds O(N log N) or O(N) per iteration — making the total O(N² log N) or O(N²).
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstack <pid> | grep -A 5 "sort\|contains"
 # Or profiler: look for Collections.sort in hot paths
 ```
 
-Fix: Pre-sort once before the loop; replace list `.contains()` with a HashSet.
+**Fix:** Pre-sort once before the loop; replace list `.contains()` with a HashSet.
 
-Prevention: Treat `list.contains(x)` as a red flag — it's O(N). Replace with `Set.contains(x)` for O(1).
+**Prevention:** Treat `list.contains(x)` as a red flag — it's O(N). Replace with `Set.contains(x)` for O(1).
 
 ---
 
 **3. Assuming HashSet is always O(1)**
 
-Symptom: HashSet operations slower than expected; performance degrades with specific input patterns.
+**Symptom:** HashSet operations slower than expected; performance degrades with specific input patterns.
 
-Root Cause: If all keys collide into the same HashMap bucket (hash flooding attack or poor hash function), `contains` is O(N) not O(1). Java 8 tree-ifies at 8 collisions (O(log N)) but worst-case remains a concern.
+**Root Cause:** If all keys collide into the same HashMap bucket (hash flooding attack or poor hash function), `contains` is O(N) not O(1). Java 8 tree-ifies at 8 collisions (O(log N)) but worst-case remains a concern.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Add profiling; check HashMap tree usage:
 # Java 17: jcmd <pid> VM.native_memory  
 # Look for unusually long HashMap.get() times
 ```
 
-Fix: Use a better hash function; sanitise untrusted keys before use as HashMap keys.
+**Fix:** Use a better hash function; sanitise untrusted keys before use as HashMap keys.
 
-Prevention: Never use HashMaps with user-controlled keys without input validation in security-critical code.
+**Prevention:** Never use HashMaps with user-controlled keys without input validation in security-critical code.
 
 ---
 

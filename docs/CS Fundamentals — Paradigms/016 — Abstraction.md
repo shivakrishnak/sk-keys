@@ -31,15 +31,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 Imagine writing a program where every time you wanted to store a file, you had to write the disk controller code yourself — managing sector allocation, seek operations, error correction, FAT table updates. Every time you wanted to display a pixel, you had to talk directly to the GPU registers. Every time you wanted to sort a list, you had to re-implement quicksort from scratch.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 Without abstraction, every programmer must know everything about every system they use. Complexity compounds: adding a feature requires understanding not just the feature, but every layer below it. A team of 5 engineers could manage this. A team of 5,000 cannot — the cognitive load becomes unbearable, and changing any detail anywhere breaks everything that depends on it.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 This is exactly why abstraction was invented — to let you use a system's capabilities through a simplified interface while the complexity hides beneath. You call `file.write(data)` without knowing whether the file is on SSD, HDD, network storage, or in-memory. The what is exposed; the how is hidden.
 
@@ -67,22 +67,22 @@ The power of abstraction is not just hiding complexity — it's enabling indepen
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Every abstraction has an interface (what it exposes) and an implementation (what it hides).
 2. The consumer depends only on the interface, not the implementation.
 3. As long as the interface contract is preserved, the implementation can change freely.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 Good abstraction finds the right level: expose enough to be useful, hide enough to be safe to change. Too thin an abstraction leaks implementation details (consumers start to depend on internals). Too thick an abstraction loses necessary control (cannot tune or extend).
 
 The interface is a contract: "call me with these inputs, I return this output, with these guarantees." The implementation is a promise kept privately. This separation — interface from implementation — is what makes large-scale software engineering possible. 1,000 engineers can each own a module's implementation as long as they honour the module's interface.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
-Gain: manage complexity, enable parallel development, allow replacement, reduce coupling.
-Cost: abstractions can be wrong — a wrong abstraction is worse than no abstraction, because it misleads. Performance can be lost to abstraction layers. "Leaky abstractions" force consumers to understand internals anyway.
+**Gain:** manage complexity, enable parallel development, allow replacement, reduce coupling.
+**Cost:** abstractions can be wrong — a wrong abstraction is worse than no abstraction, because it misleads. Performance can be lost to abstraction layers. "Leaky abstractions" force consumers to understand internals anyway.
 
 Joel Spolsky's Law of Leaky Abstractions: all non-trivial abstractions leak — the underlying complexity eventually shows through. TCP provides reliable delivery, but network failures make it unreliable. The abstraction leaks when the network fails.
 
@@ -90,16 +90,16 @@ Joel Spolsky's Law of Leaky Abstractions: all non-trivial abstractions leak — 
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You build a system that saves user data. Initially, data is saved to a local file. Later, you need to switch to a database. A month later, to cloud storage.
 
-WHAT HAPPENS WITHOUT ABSTRACTION:
+**WHAT HAPPENS WITHOUT ABSTRACTION:**
 Every place in your code that saves data does it with direct file API calls: `open(path, 'w')`, `write(data)`, `close()`. When you switch to database, you search 500 occurrences of file IO across 50 files, change each one individually, hoping you don't miss any. When you switch to cloud storage, you do it again. Each change requires understanding of the entire codebase.
 
-WHAT HAPPENS WITH ABSTRACTION:
+**WHAT HAPPENS WITH ABSTRACTION:**
 You create a `StorageService` with one method: `save(userId, data)`. All 500 call sites use this. When you switch from file to database, you change exactly one class — `FileStorageService` → `DatabaseStorageService` — implementing the same interface. Every call site stays unchanged. Switching to cloud storage: write `CloudStorageService`, change one line in the dependency configuration. Zero call sites touched.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Abstraction is the mechanism that localises change. Without it, every change ripples everywhere. With it, a change is contained within a single implementation boundary. The bigger the system, the more valuable this containment.
 
 ---
@@ -193,7 +193,7 @@ Abstraction is the fundamental mechanism for managing software complexity at sca
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 New storage provider needs to be integrated
@@ -210,7 +210,7 @@ Integration tested against interface contract
 Deployed — zero consumer code modified
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Abstraction leaks implementation detail
@@ -224,7 +224,7 @@ Abstraction has failed — tight coupling re-introduced
 Observable: grep shows direct class references, not interface
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 At large scale, abstractions become the communication protocol between teams. Service A's API is an abstraction consumed by 50 other services. A change to its interface must be versioned — breaking changes require deprecation cycles. The abstraction boundary becomes a contractual obligation, not just a technical convenience. API versioning, backward compatibility, and semantic versioning are all direct consequences of abstraction at scale.
 
@@ -337,13 +337,13 @@ names.stream()
 
 **Leaky Abstraction**
 
-Symptom:
+**Symptom:**
 Consumers of an interface start calling implementation-specific methods, casting to concrete classes, or depending on implementation-specific behaviour (e.g., ordering guarantees that are implementation-specific).
 
-Root Cause:
+**Root Cause:**
 The interface doesn't expose enough to do the job. Consumers reach through the abstraction to get what they need. The abstraction boundary is breached.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Find direct references to implementations (should be near zero):
@@ -352,23 +352,23 @@ grep -rn "FileUserStore\|DatabaseUserStore" src/ \
 # Any hit outside config/DI = leaked abstraction
 ```
 
-Fix:
+**Fix:**
 Expand the interface to include the missing capability. Or accept that this use case requires a different, richer abstraction. Refactor consumers to depend only on the interface.
 
-Prevention:
+**Prevention:**
 Design interfaces by asking "what does the consumer need?" not "what does the implementation do?" Test interfaces against multiple implementations in CI (test doubles, mock implementations).
 
 ---
 
 **Wrong Abstraction Level**
 
-Symptom:
+**Symptom:**
 Simple tasks require many lines of boilerplate. Common patterns can't be composed. Developers consistently bypass the abstraction or add "helper" classes alongside it.
 
-Root Cause:
+**Root Cause:**
 The abstraction was designed at the wrong level — too low (exposes too much detail, forcing consumers to manage it) or too high (hides controls needed for specific use cases).
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Count lines needed to accomplish common tasks via this interface
@@ -380,10 +380,10 @@ Diagnostic Command / Tool:
 # in the abstraction layer
 ```
 
-Fix:
+**Fix:**
 Rethink the interface from the consumer's perspective. What are the 3 most common operations? Make those operations trivially easy. Make everything else possible but requiring more code.
 
-Prevention:
+**Prevention:**
 Test-drive the interface design by writing consumer code first (TDD). If the consumer code is awkward, the abstraction is wrong. Iterate the design before implementing.
 
 ---

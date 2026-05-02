@@ -30,13 +30,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine evaluating a mathematical expression like `3 + (4 * (2 + 1))`. You are reading it left to right. When you hit the inner parenthesis, you must remember you were in the middle of the outer multiplication and, before that, the outer addition. Without a disciplined structure, you either need a complex recursive parser or you lose track of "where you were" when stepping back out of nested constructs.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Nested processing — function calls, expression parsing, undo history, browser back navigation — all share a pattern: "go in, do something, come back out and resume exactly where you left off." An unordered collection cannot enforce this resume-in-reverse-order guarantee.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 If you restrict a collection to add-to-top and remove-from-top only, the structure automatically guarantees that whatever you added most recently is what you get back first. This mirrors how function call frames work in hardware. This is exactly why the Stack was created.
 
 ---
@@ -62,34 +62,34 @@ A Stack's value is not what it stores — it's the *order guarantee* it enforces
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Elements are always added to and removed from the same end (the "top").
 2. No element below the top is accessible without first removing all elements above it.
 3. All operations (push, pop, peek) are O(1).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The LIFO invariant means the implementation only needs to track the top. An array with a `top` pointer or a linked list with a `head` pointer both suffice. The array implementation has better cache locality and lower overhead; the linked list handles unbounded growth without a resize copy.
 
 Why not use a general deque or list? You could, but exposing only `push`/`pop`/`peek` provides an explicitly enforced contract — callers cannot accidentally access the middle of the stack. This is the interface-as-constraint principle.
 
-THE TRADE-OFFS:
-Gain: O(1) push/pop/peek, enforced LIFO semantics simplify nested-processing code.
-Cost: Only the top is accessible; retrieving arbitrary elements requires popping and saving everything above.
+**THE TRADE-OFFS:**
+**Gain:** O(1) push/pop/peek, enforced LIFO semantics simplify nested-processing code.
+**Cost:** Only the top is accessible; retrieving arbitrary elements requires popping and saving everything above.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You are implementing browser back-navigation. Each page visit should allow the user to press "back" and return to the previous page.
 
-WHAT HAPPENS WITHOUT STACK:
+**WHAT HAPPENS WITHOUT STACK:**
 You store URLs in an array with an integer `currentIndex`. Going back means `currentIndex--`. But when you visit a new page after going back, you must handle the "forward" history too. You write complex array-management code tracking forward/backward state, and it's easy to get wrong.
 
-WHAT HAPPENS WITH STACK:
+**WHAT HAPPENS WITH STACK:**
 Push each new URL visited. "Back" is a `pop`. Navigate forward invalidates the forward stack. The back-navigation history is the stack itself; no index arithmetic, no manual cursor.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The Stack's LIFO guarantee is not just about storage — it's about making "reverse-order processing" a zero-logic operation. The discipline of the data structure replaces the discipline of manual bookkeeping.
 
 ---
@@ -98,10 +98,10 @@ The Stack's LIFO guarantee is not just about storage — it's about making "reve
 
 > A Stack is like the "Undo" list in a text editor. Every action is pushed on the undo stack. Pressing Ctrl+Z pops the top action and reverses it. You can only undo in reverse order of how you typed — the structure enforces the contract automatically.
 
-"Undo action pushed" → `push(action)`
-"Ctrl+Z reverses last action" → `pop()` then apply reverse
-"See what would be undone" → `peek()`
-"Can't undo actions from the middle" → no random access
+- "Undo action pushed" → `push(action)`
+- "Ctrl+Z reverses last action" → `pop()` then apply reverse
+- "See what would be undone" → `peek()`
+- "Can't undo actions from the middle" → no random access
 
 Where this analogy breaks down: Some editors support selective undo (undo a specific action, not necessarily the last). That feature requires a more complex structure than a plain stack.
 
@@ -171,7 +171,7 @@ This replaces recursion, avoids `StackOverflowError` for deep trees.
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Nested call or action begins
 → State pushed to Stack [STACK ← YOU ARE HERE]
@@ -181,7 +181,7 @@ Nested call or action begins
 → Outer context resumes
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Recursive algorithm on deep input without explicit Stack
 → Each call pushes a JVM stack frame
@@ -190,7 +190,7 @@ Recursive algorithm on deep input without explicit Stack
 → Fix: use explicit Stack on heap instead
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale (millions of events per second), the overhead of `ArrayDeque` is negligible — all operations touch one cache line. The risk at scale is stack depth: a DFS on a graph with 1M nodes will overflow the JVM call stack if implemented recursively. Always use an explicit stack for graph traversal at production scale.
 
 ---
@@ -271,11 +271,11 @@ How to choose: Use `ArrayDeque` as a Stack for all new code. Use `Deque` when yo
 
 **1. StackOverflowError from deep recursion**
 
-Symptom: `java.lang.StackOverflowError` in production on large inputs that work fine in tests.
+**Symptom:** `java.lang.StackOverflowError` in production on large inputs that work fine in tests.
 
-Root Cause: Each recursive call consumes a JVM stack frame. Default thread stack size is 512 KB (server JVM); depth limit is typically 5,000–10,000 frames for small methods.
+**Root Cause:** Each recursive call consumes a JVM stack frame. Default thread stack size is 512 KB (server JVM); depth limit is typically 5,000–10,000 frames for small methods.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check stack depth limit:
 java -XX:+PrintFlagsFinal -version | grep ThreadStackSize
@@ -283,24 +283,24 @@ java -XX:+PrintFlagsFinal -version | grep ThreadStackSize
 java -Xss4m MyApp
 ```
 
-Fix: Convert recursive algorithm to iterative using an explicit `ArrayDeque` stack.
+**Fix:** Convert recursive algorithm to iterative using an explicit `ArrayDeque` stack.
 
-Prevention: Always implement DFS/tree traversal iteratively for production code.
+**Prevention:** Always implement DFS/tree traversal iteratively for production code.
 
 ---
 
 **2. Pop from empty stack**
 
-Symptom: `java.util.EmptyStackException` or `NoSuchElementException` at runtime.
+**Symptom:** `java.util.EmptyStackException` or `NoSuchElementException` at runtime.
 
-Root Cause: `pop()` called when stack is empty — common off-by-one in loop termination.
+**Root Cause:** `pop()` called when stack is empty — common off-by-one in loop termination.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check stack trace; add isEmpty() guard
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD
 String val = stack.pop(); // throws if empty
@@ -311,25 +311,25 @@ if (!stack.isEmpty()) {
 }
 ```
 
-Prevention: Always check `isEmpty()` before `pop()`; treat empty stack as a recoverable state, not a crash condition.
+**Prevention:** Always check `isEmpty()` before `pop()`; treat empty stack as a recoverable state, not a crash condition.
 
 ---
 
 **3. Unintended shared state via static Stack**
 
-Symptom: DFS returns wrong results in multi-threaded code; results appear to bleed between requests.
+**Symptom:** DFS returns wrong results in multi-threaded code; results appear to bleed between requests.
 
-Root Cause: A `static` Stack is shared across all threads; concurrent pushes/pops corrupt the state.
+**Root Cause:** A `static` Stack is shared across all threads; concurrent pushes/pops corrupt the state.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstack <pid> | grep "BLOCKED\|WAITING"
 # Multiple threads blocked on same Stack object
 ```
 
-Fix: Always allocate stacks locally within method scope, not as shared fields.
+**Fix:** Always allocate stacks locally within method scope, not as shared fields.
 
-Prevention: Never make a mutable Stack a class-level or static field in concurrent code.
+**Prevention:** Never make a mutable Stack a class-level or static field in concurrent code.
 
 ---
 

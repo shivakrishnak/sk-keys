@@ -33,13 +33,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You are building a game with a 1,000 × 1,000 grid map. A player asks for the path from their position to a destination 800 cells away. Dijkstra's algorithm explores outward in all directions from the source — expanding a circle of radius 800, touching up to 2 million cells — many of them in the wrong direction, far from the actual destination.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Dijkstra is optimal in its exploration — it finds the shortest path — but it is direction-blind. It expands equally in all directions regardless of where the goal is. For large maps with a specific destination, most of Dijkstra's exploration is wasted effort in the wrong direction.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Dijkstra prioritises `g(n)` — the actual known distance from source to node `n`. What if we also added a guess `h(n)` — the estimated remaining distance from `n` to the goal? Prioritise by `f(n) = g(n) + h(n)`. Nodes that are both close to the source AND estimated close to the goal get priority. With a good estimate (e.g., Euclidean distance), A* explores a narrow corridor toward the goal instead of expanding in all directions. This is exactly why **A* Search** was created.
 
 ---
@@ -65,12 +65,12 @@ A* is only as good as its heuristic. With `h(n) = 0`, A* reduces exactly to Dijk
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. `f(n) = g(n) + h(n)` where `g(n)` is exact cost from source to `n`, and `h(n)` is an admissible estimate of cost to goal.
 2. **Admissibility**: `h(n) ≤ actual_distance(n, goal)` for all `n`. This ensures no node on the optimal path is incorrectly deprioritised.
 3. **Consistency (monotonicity)**: `h(n) ≤ cost(n → n') + h(n')` for any edge (n→n'). This is equivalent to "f values never decrease along a path" — guaranteeing the first-pop finalisation invariant (same as Dijkstra).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 When the goal is popped from the priority queue, `g(goal)` is the shortest path. Proof by contradiction: suppose a shorter path to goal exists. Every node on that shorter path would have f-value ≤ shorter path's total cost (because h is admissible). That node would have been popped before goal. A shorter path to goal would have been found first. Contradiction.
 
 **Common admissible heuristics:**
@@ -81,15 +81,15 @@ When the goal is popped from the priority queue, `g(goal)` is the shortest path.
 **Why h=0 is always admissible (degenerates to Dijkstra):**
 0 ≤ actual distance for all nodes. So Dijkstra is a special case of A* — a fully uninformed A*.
 
-THE TRADE-OFFS:
-Gain: Explores fewer nodes than Dijkstra when heuristic is tight; same correctness guarantees.
-Cost: Requires a domain-specific admissible heuristic to design and validate; memory unchanged at O(V) worst case; inadmissible heuristic sacrifices optimality silently.
+**THE TRADE-OFFS:**
+**Gain:** Explores fewer nodes than Dijkstra when heuristic is tight; same correctness guarantees.
+**Cost:** Requires a domain-specific admissible heuristic to design and validate; memory unchanged at O(V) worst case; inadmissible heuristic sacrifices optimality silently.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 4×4 grid, all moves cost 1. Source = top-left (0,0). Goal = bottom-right (3,3). Manhattan distance heuristic: `h(r,c) = (3-r) + (3-c)`.
 
 DIJKSTRA (no heuristic):
@@ -98,7 +98,7 @@ Expands distance rings outward: distance 0 (1 cell), distance 1 (2 cells), dista
 A* (Manhattan heuristic):
 f(0,0) = 0+6 = 6. Explores only nodes along the diagonal where f=6. Reaches (3,3) after exploring approximately 7 cells — only the corridor along the optimal path diagonal.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The Manhattan heuristic confines A* to the "corridor" of nodes on or near the optimal path. Cells far from the diagonal (top-right corner, bottom-left corner) have f > 6 and are never explored. The heuristic acts as a focus beam, eliminating irrelevant exploration — which is exactly what makes A* faster than Dijkstra in practice.
 
 ---
@@ -107,10 +107,10 @@ The Manhattan heuristic confines A* to the "corridor" of nodes on or near the op
 
 > A* is like a GPS that combines two signals: how far you have already driven (g), and the straight-line remaining distance to your destination (h). It always sends you down the road that minimises total estimated trip time. A GPS with only the driven distance (Dijkstra) zigzags uniformly in all directions. A GPS with only the remaining estimate (greedy best-first) drives in a straight line and gets stuck in cul-de-sacs. A* uses both to navigate intelligently.
 
-"Distance already driven" → g(n) = exact cost from source to n
-"Straight-line remaining estimate" → h(n) = heuristic estimate to goal
-"Total estimated trip length" → f(n) = g(n) + h(n)
-"Always pick next road minimising total" → priority queue ordered by f
+- "Distance already driven" → g(n) = exact cost from source to n
+- "Straight-line remaining estimate" → h(n) = heuristic estimate to goal
+- "Total estimated trip length" → f(n) = g(n) + h(n)
+- "Always pick next road minimising total" → priority queue ordered by f
 
 Where this analogy breaks down: GPS estimates can be wrong (traffic). An inadmissible heuristic (overestimates) causes A* to skip the optimal path — the GPS would send you on a suboptimal route without warning.
 
@@ -164,7 +164,7 @@ The only change from Dijkstra: priority key is `g[v] + h(v)` instead of `g[v]`. 
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Graph + source + goal + heuristic function h
 → Initialize g[src]=0
@@ -177,7 +177,7 @@ Graph + source + goal + heuristic function h
 → Return optimal distance to goal
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Inadmissible heuristic: h(n) > true distance
 → Optimal-path nodes get higher f than
@@ -188,7 +188,7 @@ Inadmissible heuristic: h(n) > true distance
 → Debug: compare A* vs Dijkstra on same input
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For city-scale road networks (V=10 million), A* with Euclidean heuristic still explores millions of nodes. Production GPS uses bidirectional A* plus Contraction Hierarchies: preprocessing builds a hierarchy allowing A* to skip low-importance roads entirely. This reduces query time from seconds (Dijkstra) to milliseconds (CH+A*).
 
 ---
@@ -334,11 +334,11 @@ How to choose: Use A* when you have a good admissible heuristic and need optimal
 
 **1. Inadmissible heuristic returns suboptimal path**
 
-Symptom: A* returns a longer path than Dijkstra (h=0) on the same graph.
+**Symptom:** A* returns a longer path than Dijkstra (h=0) on the same graph.
 
-Root Cause: `h(n) > true_remaining_distance(n, goal)` for some node n. That node gets a higher f-value than it deserves, causing it to be deprioritised. The optimal path through n is never found first.
+**Root Cause:** `h(n) > true_remaining_distance(n, goal)` for some node n. That node gets a higher f-value than it deserves, causing it to be deprioritised. The optimal path through n is never found first.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Sample random nodes and compare h vs true dist:
 int[] trueDist = dijkstra(graph, goal);
@@ -348,19 +348,19 @@ for (int n = 0; n < V; n++) {
 }
 ```
 
-Fix: Reduce heuristic values to ensure they never exceed true remaining distances. Euclidean distance is always admissible for unit-cost edges in Euclidean space.
+**Fix:** Reduce heuristic values to ensure they never exceed true remaining distances. Euclidean distance is always admissible for unit-cost edges in Euclidean space.
 
-Prevention: Unit-test heuristic admissibility against BFS/Dijkstra ground truth on representative test cases.
+**Prevention:** Unit-test heuristic admissibility against BFS/Dijkstra ground truth on representative test cases.
 
 ---
 
 **2. A* slower than expected on maze-like graphs**
 
-Symptom: A* explores more nodes than Dijkstra for certain graphs despite having a "good" heuristic.
+**Symptom:** A* explores more nodes than Dijkstra for certain graphs despite having a "good" heuristic.
 
-Root Cause: Maze-like graphs have many walls and dead ends. The heuristic estimates a short remaining distance, but the actual path navigates around walls — the heuristic is very loose relative to the true remaining distance. Each dead end forces backtracking, and A* re-explores heavily.
+**Root Cause:** Maze-like graphs have many walls and dead ends. The heuristic estimates a short remaining distance, but the actual path navigates around walls — the heuristic is very loose relative to the true remaining distance. Each dead end forces backtracking, and A* re-explores heavily.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Count nodes expanded in both:
 # Dijkstra expanded: N1 nodes
@@ -368,19 +368,19 @@ Diagnostic:
 # If N2 > 0.8 * N1, heuristic provides little value
 ```
 
-Fix: Accept that A* provides less benefit on maze-like graphs. Use or accept Dijkstra, or design a better heuristic that accounts for obstacles (e.g., True Distance Heuristic precomputed via backward BFS from goal).
+**Fix:** Accept that A* provides less benefit on maze-like graphs. Use or accept Dijkstra, or design a better heuristic that accounts for obstacles (e.g., True Distance Heuristic precomputed via backward BFS from goal).
 
-Prevention: Benchmark A* on representative graphs. Report "ratio of A* nodes to Dijkstra nodes" as a heuristic quality metric.
+**Prevention:** Benchmark A* on representative graphs. Report "ratio of A* nodes to Dijkstra nodes" as a heuristic quality metric.
 
 ---
 
 **3. Goal check missing — explores entire graph**
 
-Symptom: A* always runs to completion even when goal is very close to source.
+**Symptom:** A* always runs to completion even when goal is very close to source.
 
-Root Cause: The early exit check `if (u == goal) return g[goal]` is missing. A* explores all reachable nodes before returning.
+**Root Cause:** The early exit check `if (u == goal) return g[goal]` is missing. A* explores all reachable nodes before returning.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Add explicit termination log:
 int popped = 0;
@@ -397,9 +397,9 @@ while (!pq.isEmpty()) {
 // If "Goal reached" never prints → goal check missing
 ```
 
-Fix: Add `if (u == goal) return g[goal];` immediately after popping from the priority queue.
+**Fix:** Add `if (u == goal) return g[goal];` immediately after popping from the priority queue.
 
-Prevention: The goal-check is always required in A* — it is the primary optimisation over running to completion.
+**Prevention:** The goal-check is always required in A* — it is the primary optimisation over running to completion.
 
 ---
 

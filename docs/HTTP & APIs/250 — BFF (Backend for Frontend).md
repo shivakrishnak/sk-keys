@@ -407,13 +407,13 @@ public RouteLocator bffRoutes(RouteLocatorBuilder builder) {
 
 **BFF becomes a Monolith**
 
-Symptom:
+**Symptom:**
 The "web BFF" contains business logic: pricing calculations, eligibility checks,
 discount application. Other services start querying the web BFF because "it has the
 aggregated data." The web BFF is now a backend monolith with everything inside it.
 Deployments are risky; the mobile BFF team wants to reuse the same business logic.
 
-Root Cause:
+**Root Cause:**
 Ownership boundary erosion. BFF accumulated value-adding business logic that should
 have stayed in domain services.
 

@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A `PaymentService` calls `StripePaymentGateway.charge(card, amount)`. To unit test `PaymentService`, you need: (1) a real Stripe API key, (2) internet access, (3) a real test card number, (4) Stripe's test server to be up. Every unit test makes a real network call. Tests are: slow (500ms+ per test), flaky (network failures), expensive (API call limits), and non-deterministic (real service behavior can change). Without mocking, unit tests are actually integration tests, and the line between them disappears.
 
 THE ISOLATION PRINCIPLE:
@@ -293,12 +293,12 @@ class PaymentServiceTest {
 **1. Tests Pass But Feature Is Broken in Production**
 
 Cause: Mock was set up incorrectly (wrong return type, wrong behavior) so tests verify against a fantasy version of the dependency.
-Fix: Supplement unit tests with integration tests against real (or WireMock) dependencies. Use contract tests (Pact) to verify mock matches real API behavior.
+**Fix:** Supplement unit tests with integration tests against real (or WireMock) dependencies. Use contract tests (Pact) to verify mock matches real API behavior.
 
 **2. Every Refactoring Breaks 20 Tests**
 
 Cause: Tests over-verify every internal interaction; mock `verify()` on private collaborators.
-Fix: Verify observable behavior (outputs, returned values) not internal interactions. Remove `verify()` calls that aren't testing meaningful contract obligations.
+**Fix:** Verify observable behavior (outputs, returned values) not internal interactions. Remove `verify()` calls that aren't testing meaningful contract obligations.
 
 ---
 

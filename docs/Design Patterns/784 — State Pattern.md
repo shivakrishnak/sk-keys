@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "State Pattern"
 parent: "Design Patterns"
@@ -237,8 +237,8 @@ WITH State:
 
 "Vending machine" = Context (delegates to current state)
 "Idle / HasCoin / Dispensing" = concrete State classes
-"Insert coin in Idle → transitions to HasCoin" = state object changes context's state
-"Select product in Idle → error" = state class throws/returns error for invalid transition
+- "Insert coin in Idle → transitions to HasCoin" = state object changes context's state
+- "Select product in Idle → error" = state class throws/returns error for invalid transition
 
 ---
 

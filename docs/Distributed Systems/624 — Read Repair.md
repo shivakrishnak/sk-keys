@@ -242,7 +242,7 @@ Monitoring in Cassandra:
 
 **ReadRepairStage Queue Backup**
 
-Symptom: Cassandra cluster read latency increasing over time. nodetool tpstats shows
+**Symptom:** Cassandra cluster read latency increasing over time. nodetool tpstats shows
 ReadRepairStage: 5,000 pending, 0 completed/sec. Write errors on internal repair writes.
 Reads are returning correct data but slowly.
 
@@ -251,7 +251,7 @@ Cause: read_repair_chance = 1.0 (100% of reads trigger repair). After a node out
 reads/sec, 50K repair writes/sec are being submitted to the recovered node. The recovered
 node is overwhelmed: it's processing catch-up compaction AND 50K repair writes.
 
-Fix: (1) Immediately: `ALTER TABLE ... WITH read_repair_chance = 0.0` to stop triggering
+**Fix:** (1) Immediately: `ALTER TABLE ... WITH read_repair_chance = 0.0` to stop triggering
 more repair. (2) Let the recovered node catch up via anti-entropy (nodetool repair) at
 a controlled rate (-seq flag for sequential, lower I/O). (3) Reduce read_repair_chance to
 0.1 (10%) after cluster stabilizes. (4) Add ReadRepairStage queue depth to Prometheus

@@ -357,14 +357,14 @@ public ResponseEntity<ErrorResponse> handleRateLimit(RateLimitExceededException 
 
 **Thundering Herd After Rate Limit Window Reset**
 
-Symptom:
+**Symptom:**
 Thousands of 429 clients all retry at exactly the same second when the rate limit
 window resets → creates another spike → another round of 429s → oscillating overload.
 
-Root Cause:
+**Root Cause:**
 All clients received the same `X-RateLimit-Reset` timestamp → all retry simultaneously.
 
-Fix:
+**Fix:**
 ```java
 // Add jitter to Retry-After header:
 int baseDelay = 30;  // seconds

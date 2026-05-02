@@ -419,15 +419,15 @@ void user_resolver_returns_user_for_valid_id() {
 
 **N+1 Resolver Cascade**
 
-Symptom:
+**Symptom:**
 Query `{ users { posts { title } } }` causes 51 DB queries for a list of 50 users.
 Dashboard load time is 3–8 seconds.
 
-Root Cause:
+**Root Cause:**
 `User.posts` field resolver is called once per user, each making a separate
 SQL query instead of a batched IN query.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```
 # Enable SQL query logging and count queries per GraphQL request:
@@ -440,11 +440,11 @@ logging.level.org.hibernate.SQL=DEBUG
 # ... (N queries = N+1 problem confirmed)
 ```
 
-Fix:
+**Fix:**
 Implement DataLoader for `User.posts` — batch all user IDs from a single
 request tick into one `IN` query.
 
-Prevention:
+**Prevention:**
 Every list resolver that fetches related data by parent ID must use DataLoader.
 Add integration tests that assert query count per operation.
 
@@ -452,15 +452,15 @@ Add integration tests that assert query count per operation.
 
 **Context State Leaking Between Requests**
 
-Symptom:
+**Symptom:**
 User A sees User B's data in certain responses. Only reproducible under load.
 Cache invalidation doesn't help.
 
-Root Cause:
+**Root Cause:**
 DataLoader instances created as application-scoped singletons (beans) instead
 of request-scoped. DataLoader cache from request 1 leaks into request 2.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```java
 // WRONG: DataLoader as singleton bean
@@ -477,11 +477,11 @@ public DataLoader<String, User> userLoader() {
 }
 ```
 
-Fix:
+**Fix:**
 Ensure DataLoader instances are request-scoped. In Spring for GraphQL,
 register DataLoaders in `DataLoaderRegistrar` which is called per request.
 
-Prevention:
+**Prevention:**
 All per-request state (DataLoaders, auth claims) must be request-scoped.
 Test with concurrent requests using different users to detect cross-request leaks.
 

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A delivery company needs to plan routes for 1,000 trucks visiting 50,000 locations. TSP (Travelling Salesman Problem) on 50,000 cities is NP-hard — no polynomial algorithm is known. Exact solution: decades of computation. Alternative: use heuristics (nearest-neighbour greedy) that produce routes, but nobody knows how far from optimal: maybe 2× too long, maybe 10× — no guarantee.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Heuristics without provable guarantees are engineering guesswork. A company running 20% suboptimal routes wastes millions of dollars monthly — but without a guarantee, they don't even know how much is being wasted. The lack of a performance guarantee prevents rational resource planning.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 For metric TSP (triangle inequality holds), the Christofides algorithm (1976) always produces a tour within 1.5× the optimal length, in polynomial time — a **3/2-approximation ratio**. For Vertex Cover, a simple greedy gives a 2-approximation. These algorithms are polynomial AND come with a mathematical proof of their worst-case quality. This is exactly why **Approximation Algorithms** were created.
 
 ---
@@ -64,12 +64,12 @@ The approximation ratio separates approximation algorithms from heuristics: a he
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The algorithm is polynomial time — O(N^k) for some constant k.
 2. The approximation ratio α is **proven** for all inputs, not just typical ones.
 3. Lower bounds (inapproximability): for some NP-hard problems, achieving better than a specific ratio would imply P=NP. This defines the "approximability frontier."
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Greedy 2-approximation for Vertex Cover:**
 1. While there are uncovered edges: pick any edge (u,v), add BOTH u and v to the cover.
 2. This covers every selected edge. Total cover ≤ 2 × optimal.
@@ -83,27 +83,27 @@ Proof: Each pair (u,v) selected is in the optimal cover (at least one of u,v). E
 4. Shortcut repeated vertices (valid by triangle inequality).
 5. Tour cost ≤ Cost(T) + Cost(M) ≤ OPT + OPT/2 = 3/2 × OPT.
 
-THE TRADE-OFFS:
-Gain: Provable quality bound; polynomial time; plannable resource allocation.
-Cost: Not optimal — α× OPT with α > 1. For some problems, improving the ratio below a threshold requires P=NP (inapproximability hardness). FPTAS adds space/time overhead proportional to 1/ε.
+**THE TRADE-OFFS:**
+**Gain:** Provable quality bound; polynomial time; plannable resource allocation.
+**Cost:** Not optimal — α× OPT with α > 1. For some problems, improving the ratio below a threshold requires P=NP (inapproximability hardness). FPTAS adds space/time overhead proportional to 1/ε.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Vertex Cover: Graph with edges (1,2), (2,3), (3,4), (4,5). Minimum cover requires vertices {2,4} (covers all edges). Find a 2-approximation.
 
-WHAT HAPPENS WITH BRUTE FORCE:
+**WHAT HAPPENS WITH BRUTE FORCE:**
 2^5 = 32 subsets. Check each for cover. Find {2,4}. Minimum = 2. O(2^N) for general N.
 
-WHAT HAPPENS WITH GREEDY 2-APPROXIMATION:
+**WHAT HAPPENS WITH GREEDY 2-APPROXIMATION:**
 - Pick edge (1,2): add vertices 1 AND 2 to cover. Mark edges (1,2) covered.
 - Remaining: (2,3)(3,4)(4,5). Pick edge (3,4): add 3 AND 4. Mark (3,4),(2,3),(4,5) covered.
 - All edges covered. Cover = {1, 2, 3, 4}. Size = 4.
 - Optimal = 2. Our result = 4 = 2 × optimal. Exactly 2×.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The greedy 2-approximation produced a cover of size 4 (2× the optimal 2). This is the worst case — the ratio is tight. But the algorithm ran in O(E) — milliseconds for 10M edges. The optimal algorithm might take 10^6 years. Paying 2× is a rational trade for polynomial time.
 
 ---
@@ -112,11 +112,11 @@ The greedy 2-approximation produced a cover of size 4 (2× the optimal 2). This 
 
 > Approximation algorithms are "good enough" engineers: when asked for the best design, they don't spend 10 years doing exhaustive search. Instead, they apply a principled heuristic and can guarantee: "This design costs at most 1.5× the minimum possible. That's the proof." The client might want perfection, but they get a mathematically bounded near-perfection in budget time.
 
-"Best design" → optimal solution OPT
-"Good enough design" → approximation algorithm output SOL
-"Costs at most 1.5×" → approximation ratio α=1.5
-"Principled heuristic" → polynomial algorithm with proven bound
-"Budget time" → polynomial runtime
+- "Best design" → optimal solution OPT
+- "Good enough design" → approximation algorithm output SOL
+- "Costs at most 1.5×" → approximation ratio α=1.5
+- "Principled heuristic" → polynomial algorithm with proven bound
+- "Budget time" → polynomial runtime
 
 Where this analogy breaks down: Some approximation ratios are tight (cannot be improved without P=NP). In the analogy, clients might want better designs — in inapproximability theory, "better" is simply unavailable in polynomial time.
 
@@ -186,7 +186,7 @@ Inapproximability results define the "approximation frontier." For metric TSP, b
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 NP-hard optimisation problem (TSP, VC, Set Cover)
 → Determine approximability: is there a PTAS/FPTAS?
@@ -197,7 +197,7 @@ NP-hard optimisation problem (TSP, VC, Set Cover)
 → Decision: is 1.5× or 2× acceptable for the use case?
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Approximation ratio too large for problem requirements
 → α=2 Vertex Cover gives cover twice too large for
@@ -209,7 +209,7 @@ Approximation ratio too large for problem requirements
   compare to approximation quality
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For large-scale logistics (Amazon routing 1M packages/day), Christofides 3/2-approx TSP is too slow (O(N³) for matching step). Production systems use LKH (Lin-Kernighan-Helsgott): no proven ratio but empirically finds near-optimal (~1.002× OPT) solutions in sub-quadratic time via local search. For deadline-constrained scheduling: simple greedy (earliest deadline first or shortest processing time) gives provable 2× for pre-emption-free scheduling with machine constraints.
 
 ---
@@ -321,39 +321,39 @@ How to choose: FPTAS when problem has pseudo-polynomial DP (Knapsack). PTAS when
 
 **1. Applying constant-ratio algorithm to problem without triangle inequality**
 
-Symptom: Christofides applied to general non-metric TSP produces tours far worse than 3/2× optimal — no ratio guarantee holds.
+**Symptom:** Christofides applied to general non-metric TSP produces tours far worse than 3/2× optimal — no ratio guarantee holds.
 
-Root Cause: Christofides relies on triangle inequality: shortcutting vertices only decreases or maintains tour cost. In general TSP, shortcuts may increase cost arbitrarily.
+**Root Cause:** Christofides relies on triangle inequality: shortcutting vertices only decreases or maintains tour cost. In general TSP, shortcuts may increase cost arbitrarily.
 
-Diagnostic:
+**Diagnostic:**
 ```
 Verify metric space: for all cities a,b,c:
   dist(a,c) ≤ dist(a,b) + dist(b,c)
 If any violation: cannot use Christofides
 ```
 
-Fix: For non-metric TSP, use LKH-3 local search heuristic (no ratio guarantee, empirically very good).
+**Fix:** For non-metric TSP, use LKH-3 local search heuristic (no ratio guarantee, empirically very good).
 
-Prevention: Check triangle inequality before applying metric-TSP algorithms.
+**Prevention:** Check triangle inequality before applying metric-TSP algorithms.
 
 ---
 
 **2. FPTAS too slow for large ε^-1**
 
-Symptom: FPTAS with ε=0.001 (0.1% error) on Knapsack with N=1000 items runs for hours.
+**Symptom:** FPTAS with ε=0.001 (0.1% error) on Knapsack with N=1000 items runs for hours.
 
-Root Cause: FPTAS time O(N²/ε). For N=1000, ε=0.001: 10^6 / 0.001 = 10^9 operations.
+**Root Cause:** FPTAS time O(N²/ε). For N=1000, ε=0.001: 10^6 / 0.001 = 10^9 operations.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 long estimatedOps = (long)(n * n) / eps;
 // n=1000, eps=0.001 → 10^9 ops → ~1 second or minutes
 System.out.println("Estimated ops: " + estimatedOps);
 ```
 
-Fix: Use ε=0.01 (1% error, 100× faster) or branch-and-bound for near-optimal with pruning.
+**Fix:** Use ε=0.01 (1% error, 100× faster) or branch-and-bound for near-optimal with pruning.
 
-Prevention: Profile FPTAS time for target ε and N before committing to the approach.
+**Prevention:** Profile FPTAS time for target ε and N before committing to the approach.
 
 ---
 

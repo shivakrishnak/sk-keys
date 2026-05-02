@@ -31,15 +31,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 Imagine every arithmetic operation in your program accepted any value and silently converted it to make the expression "work." You add a number and a string — the language converts the string to a number and returns a result. You compare a boolean to an integer — the language says `true == 1`. You pass a user ID where a price was expected — no error, just silent garbage in production.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 Silent coercion made programs extremely unpredictable. Bugs appeared only in edge cases when a value of one type unexpectedly flowed into an operation designed for another type. The crash would happen not where the wrong value was created, but somewhere downstream — hours of debugging to trace back the root cause. Entire classes of production bugs traced to "the language silently converted and it produced nonsense."
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 This is exactly why strong typing was created — to make the type system an active guardian that refuses to silently transform values, forcing developers to be explicit about conversions and eliminating a whole class of subtle data corruption bugs.
 
@@ -67,17 +67,17 @@ The key distinction is not whether type errors are caught — it's whether the l
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Every value in memory has a type — a description of what that bit pattern means.
 2. Operations are defined for specific type combinations — addition is defined for numbers, not for arbitrary bit patterns.
 3. When types don't match, one of three things happens: compile error, runtime error, or silent coercion.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 A language designer must choose: what happens when the programmer writes `"5" + 3`? Strong languages say: this is a type mismatch — I don't know if you want `8` (numeric add) or `"53"` (string concatenation). You must tell me explicitly. Weak languages pick one interpretation and apply it silently. Python (strong) raises `TypeError`. JavaScript (weak) converts `3` to `"3"` and returns `"53"`. The difference is not capability — both can do either operation — it's whether the language requires your explicit instruction.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
 Gain (strong): explicit code is predictable, reviewable, and self-documenting. You can trust that `x + y` where `x` is an integer will not silently produce a string.
 Cost (strong): more verbose conversions; `int("42")` instead of just using `"42"` directly. Faster to write weak-typed code; slower to debug it.
@@ -91,16 +91,16 @@ Could we do this differently? Yes — gradual typing (TypeScript over JavaScript
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You have a function `calculateTax(price, rate)` where `price` should be a number and `rate` should be a percentage expressed as a decimal (e.g., 0.2). A developer accidentally passes `"19.99"` as a string for `price` from a JSON field they forgot to parse.
 
-WHAT HAPPENS WITHOUT STRONG TYPING (JavaScript):
+**WHAT HAPPENS WITHOUT STRONG TYPING (JavaScript):**
 `"19.99" * 0.2` — JavaScript coerces `"19.99"` to `19.99` and returns `3.998`. The function produces a result. No error is thrown. The tax is calculated "correctly." But if the function later tries `price.toFixed(2)`, it works on the coerced value — until a price string contains formatting like `"$19.99"`, which coerces to `NaN`, silently returning `NaN * 0.2 = NaN`, which gets stored in the database as `NaN`. The invoice shows "NaN" two weeks later after hitting that edge case in production.
 
-WHAT HAPPENS WITH STRONG TYPING (Python):
+**WHAT HAPPENS WITH STRONG TYPING (Python):**
 `"19.99" * 0.2` raises `TypeError: can't multiply sequence by non-int of type 'float'` immediately at the call site. The developer sees the error in development, fixes the JSON parsing, and the bug never reaches production.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Weak typing defers the error — it happens later, further from the cause, often with a confusing symptom. Strong typing surfaces the error immediately at the source. "Fail fast and loudly" is always better than "fail slowly and silently."
 
 ---
@@ -181,7 +181,7 @@ This table is evaluated at _runtime_, not compile time, which is why weak typing
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 Source code: calculateTax("19.99", 0.2)
@@ -199,7 +199,7 @@ Arithmetic performed with resolved types
 Result returned to caller
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Weak language silently coerces "$19.99" → NaN
@@ -213,7 +213,7 @@ Invoice shows "NaN" — discovered weeks later in production
 Root cause: missing explicit type conversion at API boundary
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 At scale, millions of API payloads flow through functions per day. In a weakly typed system, even a 0.01% coercion-to-garbage rate means thousands of silent data corruption events per day. Strong typing pushes the failure to a single point — the conversion function — where it can be monitored and caught with a single type check rather than hunting through downstream effects.
 
@@ -311,13 +311,13 @@ calculateTax("19.99", 0.2);
 
 **Silent NaN Propagation**
 
-Symptom:
+**Symptom:**
 Numeric fields in database contain `NaN` or `null` where numbers are expected. Calculations return `NaN` silently. User-facing values show "NaN" or blank.
 
-Root Cause:
+**Root Cause:**
 A weakly typed language coerced an unparseable string to `NaN`, which propagated through all downstream arithmetic without raising an error.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```javascript
 // Add to the boundary where external data enters:
@@ -330,7 +330,7 @@ console.assert(
 // grep -r "NaN" application.log | tail -50
 ```
 
-Fix:
+**Fix:**
 
 ```javascript
 // Bad: trust the input type
@@ -342,20 +342,20 @@ if (isNaN(numericPrice)) throw new Error(`Invalid price: ${price}`);
 const tax = numericPrice * 0.2;
 ```
 
-Prevention:
+**Prevention:**
 Parse and validate all external inputs at the system boundary (API handler, CSV parser) before they enter business logic.
 
 ---
 
 **Equality Bugs from Implicit Coercion**
 
-Symptom:
+**Symptom:**
 Conditional branches execute unexpectedly; user IDs or status codes compare equal when they should not.
 
-Root Cause:
+**Root Cause:**
 `==` in JavaScript applies coercion: `0 == false` is `true`, `"" == false` is `true`, `null == undefined` is `true`. An equality check silently crosses type boundaries.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```javascript
 // ESLint catches this:
@@ -365,7 +365,7 @@ Diagnostic Command / Tool:
 // grep -rn '[^=!]==[^=]' src/ | grep -v '==='
 ```
 
-Fix:
+**Fix:**
 
 ```javascript
 // Bad: uses == with implicit coercion
@@ -379,20 +379,20 @@ if (userId === 0) {
 }
 ```
 
-Prevention:
+**Prevention:**
 Enable `eslint` rule `eqeqeq: error` and use TypeScript strict mode — both eliminate `==` usage in new code.
 
 ---
 
 **Type Coercion in Serialization Boundaries**
 
-Symptom:
+**Symptom:**
 Values change type unexpectedly when crossing JSON, database, or API boundaries. An integer `0` becomes a string `"0"` or a boolean `false` in different contexts.
 
-Root Cause:
+**Root Cause:**
 JSON has its own type rules. `JSON.parse('{"active": "true"}')` returns a string `"true"`, not a boolean `true`. Weak languages then use this string in boolean contexts silently.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Print the exact type of a JSON-parsed value in Node.js:
@@ -401,10 +401,10 @@ node -e "const d = JSON.parse('{\"active\":\"true\"}'); \
 # Output: string true  (a string, not a boolean!)
 ```
 
-Fix:
+**Fix:**
 Use schema validation libraries (Zod, Joi, JSON Schema) at deserialization boundaries to enforce expected types before the data enters business logic.
 
-Prevention:
+**Prevention:**
 Every external data source (API, database, file) needs a typed schema validation layer at ingestion. Never assume external data types.
 
 ---

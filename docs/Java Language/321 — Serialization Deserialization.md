@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 An object lives in memory as a graph of references — `Customer` holds an `Address` holds `String` field values. When a process ends, everything in memory is lost. When you want to send an object over the network to another JVM, you cannot send memory addresses — the other JVM has a completely different memory layout. You need to convert the object to a portable representation (bytes or text) that can be recreated identically elsewhere.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A distributed cache wants to store `UserSession` objects. Without serialization, you must manually write: extract each field, format as bytes, handle nested objects, handle null, handle collections. Then write the reverse. For a class with 20 fields, including nested objects and collections: hundreds of lines of error-prone conversion code per class.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Serialization** was created — to let the JVM automatically convert any `Serializable` object to bytes and back, handling the entire object graph without per-class conversion code.
 
 ---
@@ -64,12 +64,12 @@ Java's built-in serialization is powerful but dangerous — `ObjectInputStream.r
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Serialized form must encode both data and enough type information to reconstruct the object.
 2. The object graph may contain references — serialization must handle cycles and shared references.
 3. Deserialization must be deterministic: the same bytes always produce the same object state.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1, Java's `ObjectOutputStream` writes class name, `serialVersionUID`, and field values for each object. Given invariant 2, `ObjectOutputStream` maintains a reference table: on seeing an already-serialized object, it writes a reference handle rather than serializing again. This handles cycles without infinite recursion.
 
 Given invariant 3, changes to a class (adding fields, renaming) can break deserialization if `serialVersionUID` doesn't match. This is why `serialVersionUID` should be explicitly declared — the default (auto-generated) changes when the class changes, causing `InvalidClassException` on reading old data.
@@ -87,15 +87,15 @@ Given invariant 3, changes to a class (adding fields, renaming) can break deseri
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Automatic, zero-code-per-class serialization of any `Serializable` object graph including cycles.
-Cost: Security vulnerabilities (RCE via gadget chains); tight coupling to binary format; brittle across class version changes; ~10× slower than Kryo or Protobuf; not human-readable; not language-interoperable.
+**THE TRADE-OFFS:**
+**Gain:** Automatic, zero-code-per-class serialization of any `Serializable` object graph including cycles.
+**Cost:** Security vulnerabilities (RCE via gadget chains); tight coupling to binary format; brittle across class version changes; ~10× slower than Kryo or Protobuf; not human-readable; not language-interoperable.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A distributed system caches user sessions. `UserSession` implements `Serializable` and is stored in Redis.
 
 WHAT GOES WRONG WITH JAVA SERIALIZATION:
@@ -108,7 +108,7 @@ Read with new code: `InvalidClassException` if `serialVersionUID` mismatch, or `
 WHAT WORKS WITH JSON SERIALIZATION:
 Sprint 2: Jackson reads `{"userId":..., "token":...}` — `permissions` simply absent → defaults to empty list. No exception. Backward compatible automatically. Readable in Redis CLI. Debuggable.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Java's built-in serialization couples the wire format to internal Java class structure. JSON decouples them. The more valuable property is not "zero code" but "human-readable, language-neutral, and tolerant of schema evolution."
 
 ---
@@ -117,9 +117,9 @@ Java's built-in serialization couples the wire format to internal Java class str
 
 > Java serialization is like photocopying a document at a specific copier. The copy includes internal printer settings and formatting codes from that specific copier. If you try to read the photocopy on a different copier that uses different settings, it might not print correctly — and the photocopy itself reveals details about the copier's internal settings. JSON serialization is like transcribing the document's text — any copier can print it, and the transcription reveals only the content, not the machine internals.
 
-"Photocopy with printer codes" → Java binary serialization (format tied to JVM internals).
-"Transcribed text" → JSON representation (format independent of JVM).
-"Different copier misreading" → `InvalidClassException` across class versions.
+- "Photocopy with printer codes" → Java binary serialization (format tied to JVM internals).
+- "Transcribed text" → JSON representation (format independent of JVM).
+- "Different copier misreading" → `InvalidClassException` across class versions.
 
 Where this analogy breaks down: Unlike a photocopy, Java serialization CAN handle cycles and complex graphs; JSON cannot handle object cycles natively without extensions.
 
@@ -229,7 +229,7 @@ NORMAL FLOW (Jackson JSON):
     → [Restored: UserDto{id=1, name="Alice"}]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [New field added to UserDto: private List<Role> roles]
     → [Old JSON in cache: {"id":1,"name":"Alice"} — no roles]
@@ -239,7 +239,7 @@ FAILURE PATH:
     → [OR use @JsonProperty with defaultValue]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 100K requests/second with JSON deserialization, Jackson's reflection-based deserialization becomes measurable. Each `readValue()` call traverses the type model. Solutions: `ObjectMapper` reuse (it's thread-safe and expensive to create), `ReaderFor`/`WriterFor` caching, and Jackson modules like `afterburner` or `blackbird` that replace reflection with generated bytecode — giving near-direct field access speed.
 
 ---
@@ -366,13 +366,13 @@ How to choose: Use Jackson JSON for all HTTP APIs and external communication. Us
 
 **InvalidClassException on Deserializing Old Data**
 
-Symptom:
+**Symptom:**
 `java.io.InvalidClassException: com.example.Order; local class incompatible: stream classdesc serialVersionUID = -123, local class serialVersionUID = 456`
 
-Root Cause:
+**Root Cause:**
 Class changed since data was serialized: field added/removed/type changed. Default `serialVersionUID` auto-generated from class structure and changed.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Find serialVersionUID in serialized bytes:
 hexdump -C order.ser | head -20
@@ -382,7 +382,7 @@ hexdump -C order.ser | head -20
 serialver -classpath target/classes com.example.Order
 ```
 
-Fix:
+**Fix:**
 ```java
 // Declare explicit serialVersionUID = never auto-changes
 public class Order implements Serializable {
@@ -398,19 +398,19 @@ public class Order implements Serializable {
 }
 ```
 
-Prevention: Always declare `serialVersionUID = 1L` explicitly. Use Jackson or Protobuf for any externally stored or transmitted data.
+**Prevention:** Always declare `serialVersionUID = 1L` explicitly. Use Jackson or Protobuf for any externally stored or transmitted data.
 
 ---
 
 **Remote Code Execution via Gadget Chain (CVE-class)**
 
-Symptom:
+**Symptom:**
 Server executes unexpected OS commands or connects to attacker-controlled hosts. Occurs when accepting serialized Java objects from network input.
 
-Root Cause:
+**Root Cause:**
 `ObjectInputStream.readObject()` processes untrusted bytes containing a serialised gadget chain (e.g., Apache Commons Collections `InvokerTransformer`). Deserialization invokes arbitrary `readObject` callbacks including ones that execute system commands.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check if any endpoint accepts application/x-java-serialized-object:
 grep -rn "ObjectInputStream\|readObject" --include="*.java" .
@@ -420,7 +420,7 @@ grep -rn "ObjectInputStream\|readObject" --include="*.java" .
 # java -jar ysoserial.jar CommonsCollections1 "id" > payload.ser
 ```
 
-Fix:
+**Fix:**
 ```java
 // NEVER: accept serialized Java from untrusted sources
 // BAD: raw ObjectInputStream on network input
@@ -438,19 +438,19 @@ ois.setObjectInputFilter(filterInfo -> {
 });
 ```
 
-Prevention: Never expose `ObjectInputStream` to untrusted data. Use JSON or Protobuf for all external communication. Apply JEP 290 deserialization filters on any legacy ObjectInputStream usage.
+**Prevention:** Never expose `ObjectInputStream` to untrusted data. Use JSON or Protobuf for all external communication. Apply JEP 290 deserialization filters on any legacy ObjectInputStream usage.
 
 ---
 
 **Jackson NullPointerException from Missing Required Fields**
 
-Symptom:
+**Symptom:**
 `NullPointerException` or application logic failure when deserializing JSON missing expected fields.
 
-Root Cause:
+**Root Cause:**
 JSON field absent, type mismatch, or `null` in JSON. Fields in the target class are not null-safe.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Add Jackson strict validation:
 mapper.enable(
@@ -463,7 +463,7 @@ mapper.enable(
 # During dev: log at DEBUG level with full JSON
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: no null handling
 public class OrderDto {
@@ -486,7 +486,7 @@ public class OrderDto {
 }
 ```
 
-Prevention: Design DTOs defensively with non-null defaults. Use `@JsonProperty(required = true)` for mandatory fields. Validate with Bean Validation (`@NotNull`) after deserialization.
+**Prevention:** Design DTOs defensively with non-null defaults. Use `@JsonProperty(required = true)` for mandatory fields. Validate with Bean Validation (`@NotNull`) after deserialization.
 
 ---
 

@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A consumer thread needs to wait for an item to appear in an empty queue. Without condition variables, the consumer either: (1) polls the queue in a spin loop — burns 100% CPU checking an empty queue, (2) sleeps for a fixed interval — wastes time or misses items.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Neither approach is correct: polling wastes CPU, sleep-and-check misses events or adds latency. You need an efficient "sleep until the queue is non-empty" primitive. But sleeping can't be done while holding the mutex (that would block the producer from adding items). You need to atomically release the mutex and sleep.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Condition variables were introduced in the CAR Hoare monitor abstraction (1974). The key insight: `wait(cv, mutex)` atomically releases the mutex and puts the thread to sleep — in one indivisible operation. The producer acquires the mutex, adds an item, calls `signal(cv)` to wake the consumer, and releases the mutex. The consumer is woken, re-acquires the mutex, and finds the item.
 
 ---
@@ -70,14 +70,14 @@ The atomicity of "release mutex + sleep" is crucial. Without it, there's a race:
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. `wait()` atomically releases the mutex and blocks. No window for signal loss.
 2. Upon waking, `wait()` re-acquires the mutex before returning to caller.
 3. Spurious wakeups are possible (POSIX explicitly allows them) — always re-check the condition in a loop.
 4. Signals are not queued — `signal()` with no waiting threads loses the signal.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The condition variable maintains a wait queue. `wait(cv, mutex)`:
 
 1. Add self to cv's wait queue.
@@ -92,9 +92,9 @@ The condition variable maintains a wait queue. `wait(cv, mutex)`:
 THE SPURIOUS WAKEUP:
 POSIX allows implementations to wake `wait()` for reasons other than a `signal()` call (e.g., signal delivery to the process). Any correct implementation must loop: `while (!condition) wait(cv, mutex);`. The `while` absorbs spurious wakeups.
 
-THE TRADE-OFFS:
-Gain: Efficient blocking without polling; zero CPU usage while waiting; correct signal-wait ordering.
-Cost: Always used with a mutex (adds locking overhead); spurious wakeups require while-loop; signal is "fire and forget" — if no one is waiting, the signal is lost (use semaphore if you need to remember signals).
+**THE TRADE-OFFS:**
+**Gain:** Efficient blocking without polling; zero CPU usage while waiting; correct signal-wait ordering.
+**Cost:** Always used with a mutex (adds locking overhead); spurious wakeups require while-loop; signal is "fire and forget" — if no one is waiting, the signal is lost (use semaphore if you need to remember signals).
 
 ---
 
@@ -127,7 +127,7 @@ SCENARIO: Buffer empty, Consumer runs first:
 2. Producer: lock, push item, `not_empty.signal()`: wakes Consumer, unlock.
 3. Consumer: wakes, re-acquires lock, re-checks (while): not empty → exits loop, pops item.
 
-THE INSIGHT: No busy-wait, no lost signal, no data race. The `while` loop handles spurious wakeups and the case where multiple consumers race to dequeue the same item.
+**THE INSIGHT:** No busy-wait, no lost signal, no data race. The `while` loop handles spurious wakeups and the case where multiple consumers race to dequeue the same item.
 
 ---
 
@@ -329,33 +329,33 @@ public class SimpleBlockingQueue<T> {
 
 **1. Lost Signal (notify before wait)**
 
-Symptom: Consumer thread blocks indefinitely even though items were produced; no deadlock detected.
+**Symptom:** Consumer thread blocks indefinitely even though items were produced; no deadlock detected.
 
-Root Cause: Signal fired before consumer entered wait; signal lost; consumer never woken.
+**Root Cause:** Signal fired before consumer entered wait; signal lost; consumer never woken.
 
-Diagnostic: Can occur if `notify()` is called outside the mutex, or if the condition is pre-satisfied before the first consumer starts. Thread dump will show consumer in WAITING state on the condition.
+**Diagnostic:** Can occur if `notify()` is called outside the mutex, or if the condition is pre-satisfied before the first consumer starts. Thread dump will show consumer in WAITING state on the condition.
 
-Fix: Check condition in a while loop before waiting (if condition already met, skip wait). Always hold the mutex before calling `signal()`/`wait()`.
+**Fix:** Check condition in a while loop before waiting (if condition already met, skip wait). Always hold the mutex before calling `signal()`/`wait()`.
 
 ---
 
 **2. If Instead of While (Spurious/Wrong-Thread Wakeup)**
 
-Symptom: Consumer dequeues from empty queue; ArrayIndexOutOfBoundsException or NullPointerException.
+**Symptom:** Consumer dequeues from empty queue; ArrayIndexOutOfBoundsException or NullPointerException.
 
-Root Cause: Used `if (!condition) wait()` instead of `while (!condition) wait()`; woken by a spurious wakeup or notifyAll(); condition was re-taken by another thread.
+**Root Cause:** Used `if (!condition) wait()` instead of `while (!condition) wait()`; woken by a spurious wakeup or notifyAll(); condition was re-taken by another thread.
 
-Fix: ALWAYS `while (condition not met) wait()`.
+**Fix:** ALWAYS `while (condition not met) wait()`.
 
 ---
 
 **3. notify() Instead of notifyAll() with Multiple Conditions**
 
-Symptom: Application deadlock; some threads stuck in WAITING state though data is available.
+**Symptom:** Application deadlock; some threads stuck in WAITING state though data is available.
 
-Root Cause: Two different conditions (notFull and notEmpty) using the same `wait()`/`notify()`. A producer calls `notify()` when adding an item — it wakes a producer (waiting on notFull) instead of a consumer (waiting on notEmpty).
+**Root Cause:** Two different conditions (notFull and notEmpty) using the same `wait()`/`notify()`. A producer calls `notify()` when adding an item — it wakes a producer (waiting on notFull) instead of a consumer (waiting on notEmpty).
 
-Fix: Use `notifyAll()` to wake all waiters; or use two separate Condition objects (`notFull` and `notEmpty`) with `ReentrantLock` and call the correct `signal()`.
+**Fix:** Use `notifyAll()` to wake all waiters; or use two separate Condition objects (`notFull` and `notEmpty`) with `ReentrantLock` and call the correct `signal()`.
 
 ---
 

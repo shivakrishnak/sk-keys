@@ -369,14 +369,14 @@ public class PaymentController {
 
 **Alert Fatigue — Too Many Metrics Alerts**
 
-Symptom:
+**Symptom:**
 Team has 50 metric alerts. On-call engineers acknowledge them without investigating
 ("alert fatigue"). Real incidents missed because alerts are background noise.
 
-Root Cause:
+**Root Cause:**
 Static threshold alerts on too many signals. Alerts not tied to SLO impact.
 
-Fix:
+**Fix:**
 ```yaml
 # Instead of: alert on p99 > 500ms
 # Use SLO burn rate alert (Google SRE approach):

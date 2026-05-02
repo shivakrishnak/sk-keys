@@ -240,7 +240,7 @@ func (s *ServiceA) HandleRequest(ctx context.Context, req *Request) (*Response, 
 
 **Timeout Cascade During Downstream Recovery**
 
-Symptom: Downstream service recovers from outage. Upstream caller's thread pool is full
+**Symptom:** Downstream service recovers from outage. Upstream caller's thread pool is full
 (all threads blocked at timeout duration). Downstream is healthy but upstream can't process
 new requests until old timeout threads expire. Service appears stuck for timeout_duration
 after downstream has already recovered.
@@ -248,7 +248,7 @@ after downstream has already recovered.
 Cause: Timeout is too long (e.g., 30 seconds). Thread pool fills during outage. Recovery
 takes 30 seconds of "stuck" time while old threads drain.
 
-Fix: Use bulkhead to cap number of threads that can be consumed by each downstream
+**Fix:** Use bulkhead to cap number of threads that can be consumed by each downstream
 service. Reduce timeout. Add circuit breaker: opens during outage, probits new calls
 while breaker is open, allowing thread pool to drain; HALF-OPEN probes test recovery
 without filling the pool.

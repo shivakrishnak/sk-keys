@@ -532,14 +532,14 @@ and Uniform Interface (client compatibility). Fix these first.
 
 **Stateless Violation — Session Coupling**
 
-Symptom: Adding new server instances doesn't help; load balancer sticky sessions
+**Symptom:** Adding new server instances doesn't help; load balancer sticky sessions
 required; server crashes cause immediate user logouts.
 
-Root Cause: Server-side HTTP sessions violate the stateless constraint. New
+**Root Cause:** Server-side HTTP sessions violate the stateless constraint. New
 servers have no session state and cannot serve users whose sessions are on
 other servers.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check if sticky sessions are configured (Nginx):
@@ -550,23 +550,23 @@ grep -i "ip_hash\|sticky" /etc/nginx/nginx.conf
 grep -r "HttpSession\|session.getAttribute" src/ | wc -l
 ```
 
-Fix: Replace server-side sessions with JWT tokens. Configure Spring Security
+**Fix:** Replace server-side sessions with JWT tokens. Configure Spring Security
 `SessionCreationPolicy.STATELESS`.
 
-Prevention: Enforce stateless sessions in CI: fail build if `HttpSession`
+**Prevention:** Enforce stateless sessions in CI: fail build if `HttpSession`
 usage is added without architectural review (`ArchUnit` test).
 
 ---
 
 **Cacheable Violation — Missing Cache-Control Headers**
 
-Symptom: CDN hit rate 0%; all traffic passing through to origin even after CDN
+**Symptom:** CDN hit rate 0%; all traffic passing through to origin even after CDN
 deployment; read-heavy APIs not scaling without proportional server increases.
 
-Root Cause: GET responses lack `Cache-Control` headers. CDN defaults to
+**Root Cause:** GET responses lack `Cache-Control` headers. CDN defaults to
 pass-through (no caching) when headers are absent.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check if CDN is caching:
@@ -578,10 +578,10 @@ curl -I https://api.example.com/products/123 | grep -i "cache"
 curl https://cdn-provider.example.com/analytics/hitrate
 ```
 
-Fix: Add `Cache-Control: public, max-age=N` to all public GET responses.
+**Fix:** Add `Cache-Control: public, max-age=N` to all public GET responses.
 Add `Cache-Control: private, no-store` to user-specific responses.
 
-Prevention: Integration test asserting `Cache-Control` header presence on all
+**Prevention:** Integration test asserting `Cache-Control` header presence on all
 GET endpoints. Deny merge if public GET endpoints return no-cache by default.
 
 ---

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine running a web server alongside your music player, and both have unrestricted access to every byte of RAM — including the memory that holds the OS kernel's own data structures, interrupt tables, and device driver code. A bug in your web server could corrupt the kernel's process table, crashing every program on the machine. A malicious app could read the kernel's memory and extract passwords. Worse, any program could write directly to hardware registers, wiping your disk or hanging the CPU.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 In early computing (MS-DOS era), programs ran in a single flat address space with no protection. One bad program brought down the entire system. As machines became multi-user and multi-tasking, this was catastrophic.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why User Space vs Kernel Space was created — to enforce a hardware-backed boundary that keeps user programs isolated from the OS core, preventing crashes and security breaches.
 
 ---
@@ -65,41 +65,41 @@ The separation is not just software — it is enforced by the CPU's privilege ri
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. CPU hardware defines privilege levels (rings); ring 0 has full access, ring 3 is restricted.
 2. Every process has its own virtual address space; the kernel portion is mapped but inaccessible from ring 3.
 3. Crossing from user → kernel space requires a controlled gate (syscall/interrupt); crossing back is also controlled.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given that the CPU enforces rings, the OS simply places its code and data in the high-address range of every process's virtual address space and marks those pages as ring-0-only. When user code tries to read a kernel address, the CPU raises a General Protection Fault. When user code wants an OS service, it executes the `syscall` instruction which atomically switches the CPU to ring 0 and jumps to a known kernel entry point — the user process cannot choose where the CPU jumps.
 
-THE TRADE-OFFS:
-Gain: Complete isolation — a buggy or malicious user program cannot corrupt the OS or other processes.
-Cost: Every interaction with the kernel requires a mode switch, which flushes CPU pipeline state and is ~100–1000 ns — non-trivial for high-frequency operations.
+**THE TRADE-OFFS:**
+**Gain:** Complete isolation — a buggy or malicious user program cannot corrupt the OS or other processes.
+**Cost:** Every interaction with the kernel requires a mode switch, which flushes CPU pipeline state and is ~100–1000 ns — non-trivial for high-frequency operations.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Two programs share a machine. Program A is a database caching 1 million rows in memory. Program B has a buffer overflow bug.
 
-WHAT HAPPENS WITHOUT User Space vs Kernel Space:
+**WHAT HAPPENS WITHOUT User Space vs Kernel Space:**
 
 1. Program B overflows its buffer and writes past its intended memory.
 2. With a flat address space, it overwrites Program A's cache data.
 3. Program A returns corrupted rows to clients.
 4. If B overwrites a kernel data structure (like the process table), the system panics.
 
-WHAT HAPPENS WITH User Space vs Kernel Space:
+**WHAT HAPPENS WITH User Space vs Kernel Space:**
 
 1. Program B overflows its buffer and writes past its intended stack.
 2. The CPU detects the write into a protected page (OS-managed boundary).
 3. A segmentation fault is raised — Program B is killed immediately.
 4. Program A's memory is untouched. The kernel continues running.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Protection is only as strong as the hardware enforcing it. User/kernel space works because the CPU itself — not software — enforces the boundary. Software-only protection would be trivially bypassed.
 
 ---
@@ -108,11 +108,11 @@ Protection is only as strong as the hardware enforcing it. User/kernel space wor
 
 > Think of an OS as a bank. The bank tellers (kernel) sit behind bulletproof glass (hardware protection). Customers (user programs) queue at the counter and make requests through a small window (system call). Customers never touch the tellers' computers, cash drawers, or vault. Everything the customer needs must be requested — the teller decides whether to grant it.
 
-"Customers" → user-space processes
-"Bulletproof glass" → CPU privilege ring enforcement
-"Tellers" → kernel code
-"Small window / request form" → system call interface
-"Vault" → kernel data structures (process table, page tables, file system)
+- "Customers" → user-space processes
+- "Bulletproof glass" → CPU privilege ring enforcement
+- "Tellers" → kernel code
+- "Small window / request form" → system call interface
+- "Vault" → kernel data structures (process table, page tables, file system)
 
 Where this analogy breaks down: Unlike a bank, there can be millions of simultaneous "transactions" (syscalls) per second — the overhead is measured in nanoseconds, not minutes.
 
@@ -175,7 +175,7 @@ The two-level design (user/kernel) is a simplification of the full x86 four-ring
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [User App calls read(fd,buf,n)]
@@ -193,10 +193,10 @@ NORMAL FLOW:
 [User app processes data]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [User app accesses kernel address] → [CPU: #GP fault] → [SIGSEGV sent to process] → [Process terminated, core dump written]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At high syscall rates (>1M/sec), mode-switch overhead becomes visible — a single `write()` loop can spend 30–50% of CPU time in ring transitions. Production databases use `io_uring` (Linux 5.1+) to batch syscalls, reducing transitions by 10–100×. At extreme scale (kernel bypass networking), drivers like DPDK eliminate syscalls entirely by mapping device memory into user space.
 
 ---
@@ -230,11 +230,11 @@ How to choose: Use the standard user/kernel split for any general application. C
 
 **1. Excessive Mode Switch Overhead (syscall storm)**
 
-Symptom: CPU `%sys` time > 30% in `top`/`htop` with relatively low `%user` time; application throughput plateaus despite adding CPU cores.
+**Symptom:** CPU `%sys` time > 30% in `top`/`htop` with relatively low `%user` time; application throughput plateaus despite adding CPU cores.
 
-Root Cause: Application makes too many individual syscalls (one `write()` per byte, tight `poll()` loops) so CPL transitions dominate wall-clock time.
+**Root Cause:** Application makes too many individual syscalls (one `write()` per byte, tight `poll()` loops) so CPL transitions dominate wall-clock time.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Profile syscall frequency
@@ -243,7 +243,7 @@ strace -c -p <PID>
 perf stat -e syscalls:sys_enter_read -p <PID>
 ```
 
-Fix:
+**Fix:**
 
 ```c
 // BAD: syscall per byte
@@ -253,17 +253,17 @@ for (char c : data) write(fd, &c, 1);
 write(fd, data.data(), data.size());
 ```
 
-Prevention: Design I/O paths to batch operations; use `io_uring` for async batched I/O in Linux 5.1+.
+**Prevention:** Design I/O paths to batch operations; use `io_uring` for async batched I/O in Linux 5.1+.
 
 ---
 
 **2. Segmentation Fault from Kernel Address Access**
 
-Symptom: Application crashes with `SIGSEGV` or `SIGBUS`; `dmesg` shows `general protection fault`.
+**Symptom:** Application crashes with `SIGSEGV` or `SIGBUS`; `dmesg` shows `general protection fault`.
 
-Root Cause: Bug in code causes a pointer to point into the kernel address range (e.g., integer overflow producing a very large address, use-after-free).
+**Root Cause:** Bug in code causes a pointer to point into the kernel address range (e.g., integer overflow producing a very large address, use-after-free).
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check core dump with gdb
@@ -273,19 +273,19 @@ bt  # backtrace
 gcc -fsanitize=address -g myapp.c -o myapp
 ```
 
-Fix: Validate all pointer arithmetic and array indices. Use `AddressSanitizer` in CI.
+**Fix:** Validate all pointer arithmetic and array indices. Use `AddressSanitizer` in CI.
 
-Prevention: Enable ASLR (`echo 2 > /proc/sys/kernel/randomize_va_space`) and stack canaries (`-fstack-protector-all`).
+**Prevention:** Enable ASLR (`echo 2 > /proc/sys/kernel/randomize_va_space`) and stack canaries (`-fstack-protector-all`).
 
 ---
 
 **3. Kernel Panic from Faulty Module**
 
-Symptom: System reboots unexpectedly; `/var/log/kern.log` shows kernel BUG or null pointer dereference in driver code.
+**Symptom:** System reboots unexpectedly; `/var/log/kern.log` shows kernel BUG or null pointer dereference in driver code.
 
-Root Cause: A kernel module (device driver, filesystem module) running at ring 0 dereferences a null or invalid pointer; there is no safety net above ring 0.
+**Root Cause:** A kernel module (device driver, filesystem module) running at ring 0 dereferences a null or invalid pointer; there is no safety net above ring 0.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Read kernel panic messages preserved by kdump
@@ -294,9 +294,9 @@ journalctl -k -b -1 | grep -i "BUG\|panic\|oops"
 lsmod | grep <suspect_module>
 ```
 
-Fix: Remove or update the faulty module. Pin to a known-good kernel version. Use `modprobe -r <module>` to unload dynamically.
+**Fix:** Remove or update the faulty module. Pin to a known-good kernel version. Use `modprobe -r <module>` to unload dynamically.
 
-Prevention: Prefer mainline kernel drivers over out-of-tree modules; run `CONFIG_KASAN` (Kernel Address Sanitizer) in staging environments.
+**Prevention:** Prefer mainline kernel drivers over out-of-tree modules; run `CONFIG_KASAN` (Kernel Address Sanitizer) in staging environments.
 
 ---
 

@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You load-tested at 2,000 RPS (expected peak) — the system passes. Black Friday arrives, actual peak is 2,400 RPS (demand exceeded forecast). You have no idea: Does the system fail at 2,001 RPS? At 5,000 RPS? Does it fail gracefully (return 503 and recover) or catastrophically (cascade failure, data corruption, 30-minute recovery)? Without a stress test, you discover your failure mode in front of real users.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Load tests verify "can we handle expected maximum?" Stress tests answer "what ACTUALLY breaks, HOW does it break, and CAN WE RECOVER?" Systems under extreme stress exhibit failure modes invisible under normal load: thread pool exhaustion leads to queued requests building memory pressure; database deadlocks appear at high concurrency; the circuit breaker doesn't trip, causing cascade; autoscaling doesn't trigger fast enough.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Destructive testing (stress testing physical materials to failure) has been engineering practice for centuries. Applied to software: Amazon's GameDays (2004+), Netflix's Chaos Monkey (2010), and the SRE discipline formalised the concept of deliberately inducing failures to understand system limits before users discover them.
 
 ---
@@ -110,9 +110,9 @@ Backpressure: producer slows when consumer is full (reactive streams)
   → Flow control prevents unbounded queues
 ```
 
-THE TRADE-OFFS:
-Gain: Discovers real failure modes before production; enables capacity planning with safety margin; validates autoscaling; tests graceful degradation.
-Cost: Requires dedicated environment (stress can damage or leave residual state); stress tests can cascade to dependent systems; time-consuming to design well.
+**THE TRADE-OFFS:**
+**Gain:** Discovers real failure modes before production; enables capacity planning with safety margin; validates autoscaling; tests graceful degradation.
+**Cost:** Requires dedicated environment (stress can damage or leave residual state); stress tests can cascade to dependent systems; time-consuming to design well.
 
 ---
 
@@ -321,15 +321,15 @@ public class SearchController {
 
 **1. System Doesn't Recover After Stress Removed**
 
-Symptom: Load reduced to normal, but error rate remains high; latency stays elevated.
+**Symptom:** Load reduced to normal, but error rate remains high; latency stays elevated.
 Cause: Thread pool not draining (tasks still running); memory not GC'd (heap full); DB connections in bad state; circuit breaker not closing.
 Diagnosis: Check thread pool queue depth, JVM heap, DB connection active count, circuit breaker state.
-Fix: Implement health check that verifies recovery; circuit breaker `halfOpen` timeout; thread pool bounded queue (not unbounded).
+**Fix:** Implement health check that verifies recovery; circuit breaker `halfOpen` timeout; thread pool bounded queue (not unbounded).
 
 **2. Cascading Failure to Dependent Services**
 
 Cause: Stress test on Service A overflows its retry/timeout behavior → Service B (calls A) also overwhelmed.
-Prevention: Use WireMock or mocks for downstream dependencies during stress tests (isolate the system under test). OR: deliberately include downstream services and verify circuit breakers contain the cascade.
+**Prevention:** Use WireMock or mocks for downstream dependencies during stress tests (isolate the system under test). OR: deliberately include downstream services and verify circuit breakers contain the cascade.
 
 ---
 

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 The OS kernel needs to protect a per-CPU run queue with a lock. A context switch into the kernel, through a mutex acquisition, involves: user→kernel transition, thread descheduling, scheduler run, thread rescheduling. Total overhead: ~1–5µs. The protected operation (update a run queue pointer) takes < 10ns. A mutex costs 100–500× more than the operation itself.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 For extremely short critical sections (< 1–2µs), the overhead of a mutex — placing the thread in a wait queue, context-switching away, being woken by the OS, returning to user space — exceeds the wait time. A thread that would wait 50ns for a lock spends 5µs in kernel overhead for that mutex.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 The spinlock trades CPU time for latency: instead of sleeping, the waiting thread loops (spins) on a CAS or test-and-set instruction until the lock is free. No context switch. No syscall. The CPU burns cycles, but the lock is acquired the instant it's released — microsecond-latency acquisition vs millisecond for mutex.
 
 ---
@@ -64,13 +64,13 @@ A spinlock is only correct on a multi-core machine where the lock holder is runn
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Spinlock state: 1 integer (0 = unlocked, 1 = locked).
 2. Acquire: atomic test-and-set or CAS in a loop until successful.
 3. Release: atomic store 0 (with appropriate memory barrier).
 4. No thread is ever put to sleep; CPU is consumed while waiting.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Simple spinlock (naive TAS — test and set):
 ```
 lock:    while CAS(lock, 0, 1) fails: spin
@@ -89,15 +89,15 @@ lock:    loop:
 
 TTAS separates reading (Shared state, no coherence traffic) from writing (CAS, Modified state). Spinning threads observe the Shared-state cache line without generating coherence traffic. Only when the lock is released do they attempt CAS, and only one succeeds.
 
-THE TRADE-OFFS:
-Gain: Zero latency on acquisition (no context switch, no syscall); ideal for < 100ns critical sections; deterministic latency (no scheduler jitter).
-Cost: Wastes CPU cycles while spinning; one spinning thread on a 2-core machine burns 50% CPU; not appropriate for user-space application code (preemptable threads); starvation possible under unfair implementations.
+**THE TRADE-OFFS:**
+**Gain:** Zero latency on acquisition (no context switch, no syscall); ideal for < 100ns critical sections; deterministic latency (no scheduler jitter).
+**Cost:** Wastes CPU cycles while spinning; one spinning thread on a 2-core machine burns 50% CPU; not appropriate for user-space application code (preemptable threads); starvation possible under unfair implementations.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Critical section duration: 50ns. Mutex overhead (contended): 5µs. Spinlock overhead per spin: 4ns (CAS + L1 cache hit).
 
 MUTEX (contended):
@@ -112,7 +112,7 @@ SPINLOCK (contended):
 3. Thread B: CAS succeeds → proceed
 4. Total wait: 50–100ns (1 spin interval)
 
-THE INSIGHT:
+**THE INSIGHT:**
 When the critical section is shorter than the mutex overhead, a spinlock is 50–100× faster. When the critical section is longer than the mutex overhead (> ~5µs), a mutex is better because a spinlock wastes CPU that could be given to the holder to finish faster.
 
 ---
@@ -336,11 +336,11 @@ void kernel_function(void) {
 
 **1. Spinlock in User Space Causing CPU Saturation**
 
-Symptom: High CPU utilisation (100% on specific cores) with no apparent work being done; application throughput near zero.
+**Symptom:** High CPU utilisation (100% on specific cores) with no apparent work being done; application throughput near zero.
 
-Root Cause: User-space spinlock held by a preempted thread; other threads spin for the full scheduling quantum (10ms default) consuming entire CPU core.
+**Root Cause:** User-space spinlock held by a preempted thread; other threads spin for the full scheduling quantum (10ms default) consuming entire CPU core.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Linux: perf to find spinning CPU
 perf top -e cpu-cycles -p <PID>
@@ -352,19 +352,19 @@ jstack <PID>
 # (spinning threads appear RUNNABLE, not BLOCKED, in thread dumps)
 ```
 
-Fix: Replace user-space spinlock with `ReentrantLock` or `synchronized`. Use `Thread.onSpinWait()` if you must spin (allows JIT to emit PAUSE).
+**Fix:** Replace user-space spinlock with `ReentrantLock` or `synchronized`. Use `Thread.onSpinWait()` if you must spin (allows JIT to emit PAUSE).
 
-Prevention: Audit for any manual spinlock implementations in application code; replace with standard library primitives.
+**Prevention:** Audit for any manual spinlock implementations in application code; replace with standard library primitives.
 
 ---
 
 **2. Kernel Spinlock Held Across Preemptive Code**
 
-Symptom: Linux kernel panic: "BUG: sleeping function called from invalid context" or watchdog timeout.
+**Symptom:** Linux kernel panic: "BUG: sleeping function called from invalid context" or watchdog timeout.
 
-Root Cause: Code holding a kernel spinlock calls a function that can sleep (e.g., `kmalloc(GFP_KERNEL)`, `copy_from_user`); kernel spinlocks disable preemption and interrupts — sleeping is illegal.
+**Root Cause:** Code holding a kernel spinlock calls a function that can sleep (e.g., `kmalloc(GFP_KERNEL)`, `copy_from_user`); kernel spinlocks disable preemption and interrupts — sleeping is illegal.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Kernel lock debugging
 echo 1 > /proc/sys/kernel/lockdep_print_more
@@ -372,25 +372,25 @@ echo 1 > /proc/sys/kernel/lockdep_print_more
 dmesg | grep "bad spinlock\|sleeping"
 ```
 
-Fix: Replace `kmalloc(GFP_KERNEL)` with `kmalloc(GFP_ATOMIC)` (can't sleep, may fail); or release spinlock before sleeping and re-acquire after.
+**Fix:** Replace `kmalloc(GFP_KERNEL)` with `kmalloc(GFP_ATOMIC)` (can't sleep, may fail); or release spinlock before sleeping and re-acquire after.
 
 ---
 
 **3. False Sharing Between Spinlock Variable and Protected Data**
 
-Symptom: Spinlock acquisition seems fast in microbenchmarks but shows high cache-to-cache traffic in production; profiler shows lock variable and protected data sharing cache lines.
+**Symptom:** Spinlock acquisition seems fast in microbenchmarks but shows high cache-to-cache traffic in production; profiler shows lock variable and protected data sharing cache lines.
 
-Root Cause: The spinlock integer and the data it protects are on the same cache line; spinning on the lock invalidates the data's cache line.
+**Root Cause:** The spinlock integer and the data it protects are on the same cache line; spinning on the lock invalidates the data's cache line.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 perf c2c report
 # Shows HITM on same cache line for both spinlock and data
 ```
 
-Fix: Align the spinlock variable to its own cache line (64-byte aligned, padded).
+**Fix:** Align the spinlock variable to its own cache line (64-byte aligned, padded).
 
-Prevention: Place spinlock at the start of a struct; add `char pad[60]` after it before the protected data.
+**Prevention:** Place spinlock at the start of a struct; add `char pad[60]` after it before the protected data.
 
 ---
 

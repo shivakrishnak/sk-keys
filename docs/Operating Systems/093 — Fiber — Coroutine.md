@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Modern services handle thousands of simultaneous IO-bound operations —
 HTTP requests waiting on database responses, network reads pending
 remote data. With OS threads, each waiting operation ties up a thread:
@@ -44,11 +44,11 @@ but destroys readability. Code that logically reads top-to-bottom
 becomes a nest of callbacks, error handlers, and continuation-passing
 closures. Reasoning about control flow becomes impossible.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Neither "one thread per task" nor "callback hell" scales: the first
 exhausts OS resources, the second makes code unmaintainable.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Fiber / Coroutine** was created — a lightweight
 user-space execution unit that looks like synchronous code but can
 suspend without blocking an OS thread, making sequential-looking code
@@ -94,7 +94,7 @@ threads cap at thousands.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. **Explicit yield points**: a fiber only suspends at places the code
    explicitly marks (await, yield, suspend) — never preempted by a timer.
@@ -103,16 +103,16 @@ CORE INVARIANTS:
 3. **User-space scheduling**: switching between fibers is a function call
    in the runtime, not a syscall — ~10 ns vs ~1 µs for OS context switch.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given that fibers cooperate voluntarily, the runtime scheduler is simple:
 maintain a queue of runnable fibers; when one yields, pop the next and
 resume it by restoring its saved stack pointer and registers. The OS sees
 one thread doing work; inside, hundreds of fibers take turns.
 
-THE TRADE-OFFS:
-Gain: millions of concurrent tasks on a handful of OS threads; sequential
+**THE TRADE-OFFS:**
+**Gain:** millions of concurrent tasks on a handful of OS threads; sequential
 readable code; near-zero context switch cost.
-Cost: CPU-bound fibers that never yield will starve all others on that
+**Cost:** CPU-bound fibers that never yield will starve all others on that
 OS thread (cooperative = one bad actor can block all); debugging
 stack traces cross yield points and are harder to read; shared state
 is still unsafe if multiple OS threads run the fiber scheduler.
@@ -121,11 +121,11 @@ is still unsafe if multiple OS threads run the fiber scheduler.
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A service handles 1,000 concurrent database queries. Each query takes
 50 ms total: 1 ms CPU + 49 ms waiting for DB response.
 
-WHAT HAPPENS WITHOUT FIBER (OS threads):
+**WHAT HAPPENS WITHOUT FIBER (OS threads):**
 1,000 threads created. 1,000 × 1 MB stacks = 1 GB memory. OS scheduler
 manages 1,000 threads. During the 49 ms wait, each thread blocks on
 a socket read — the OS parks it but still owns the stack. With 4 CPU
@@ -133,7 +133,7 @@ cores, at most 4 threads run simultaneously; the other 996 sleep in the
 kernel. Creating and context-switching 1,000 threads costs ~10 ms/second
 of overhead.
 
-WHAT HAPPENS WITH FIBER:
+**WHAT HAPPENS WITH FIBER:**
 1,000 fibers created on 4 OS threads (one per core). Fiber 1 starts
 query, hits await socket.read(), suspends (saves 2 KB stack). Fiber 2
 starts immediately. While the DB responds (49 ms), the 4 OS threads
@@ -141,7 +141,7 @@ cycle through all 1,000 fibers at the 1 ms CPU portions. When Fiber 1's
 response arrives, it's re-queued and resumes in microseconds.
 Memory: 1,000 × 2 KB = 2 MB. Context switch: ~10 ns each.
 
-THE INSIGHT:
+**THE INSIGHT:**
 IO-bound concurrency is 98% waiting. Fibers eliminate the cost of waiting
 by making the wait invisible to the OS thread.
 
@@ -271,7 +271,7 @@ fun fetchUser(id: Int, cont: Continuation): Any {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 HTTP request arrives
@@ -286,7 +286,7 @@ HTTP request arrives
   → Fiber completes → scheduler reclaims stack
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Fiber throws uncaught exception
@@ -297,7 +297,7 @@ Fiber throws uncaught exception
   → Error propagated to caller via await/join
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 1,000,000 concurrent fibers, scheduler queue management and memory
 for saved stacks becomes the bottleneck. Go's goroutine scheduler uses
 work-stealing across OS threads to balance load. Java Virtual Thread
@@ -393,17 +393,17 @@ needs true simultaneous execution on multiple cores.
 
 **1. Blocking a Fiber on CPU-bound work**
 
-Symptom:
+**Symptom:**
 All requests on one OS thread stall while one request processes a
 large computation. Latency spikes to hundreds of milliseconds. Other
 fibers on the same OS thread cannot run.
 
-Root Cause:
+**Root Cause:**
 A fiber runs a CPU-intensive loop (e.g., image processing, crypto)
 without yielding. Since fibers are cooperative, no other fiber can run
 on that OS thread until the computation completes.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Kotlin: coroutine debugger shows blocked coroutines
@@ -413,7 +413,7 @@ jcmd <pid> Thread.dump_to_file -format=json /tmp/threads.json
 grep -c "PINNED" /tmp/threads.json
 ```
 
-Fix: dispatch CPU-bound work to a dedicated thread pool dispatcher:
+**Fix:** dispatch CPU-bound work to a dedicated thread pool dispatcher:
 
 ```kotlin
 // BAD: blocking the coroutine dispatcher
@@ -424,20 +424,20 @@ withContext(Dispatchers.Default) { heavyCpuComputation() }
 // suspend fun handler() { heavyCpuComputation() } // blocks IO dispatcher
 ```
 
-Prevention: use `Dispatchers.Default` (thread pool) for CPU work,
+**Prevention:** use `Dispatchers.Default` (thread pool) for CPU work,
 `Dispatchers.IO` (blocking-aware pool) for legacy blocking IO.
 
 **2. Structured Concurrency Violation / Leaked Coroutine**
 
-Symptom:
+**Symptom:**
 Long-running coroutines accumulate. Memory grows. Application never
 fully shuts down — some background tasks keep running.
 
-Root Cause:
+**Root Cause:**
 Coroutines launched with `GlobalScope.launch` or bare `async` outside
 a structured scope have no parent to cancel them on shutdown.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Kotlin: coroutine debug dump
@@ -448,7 +448,7 @@ Thread.getAllStackTraces().keys.forEach { t ->
 DebugProbes.dumpCoroutines()
 ```
 
-Fix: always use structured scopes:
+**Fix:** always use structured scopes:
 
 ```kotlin
 // BAD: GlobalScope is a fire-and-forget leak
@@ -460,21 +460,21 @@ lifecycleScope.launch { longRunningTask() }
 coroutineScope { launch { longRunningTask() } }
 ```
 
-Prevention: ban `GlobalScope` in code reviews; use structured
+**Prevention:** ban `GlobalScope` in code reviews; use structured
 concurrency scopes tied to the owning component's lifecycle.
 
 **3. Carrier Thread Pinning (Java Virtual Threads)**
 
-Symptom:
+**Symptom:**
 Virtual thread throughput does not improve over platform threads.
 `jdk.tracePinnedThreads` shows frequent pinning events.
 
-Root Cause:
+**Root Cause:**
 Virtual threads cannot unmount from their carrier OS thread when
 blocked inside a `synchronized` block or native method. The carrier
 thread is pinned — it cannot run other virtual threads.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # JVM flag to log pinning events
@@ -482,7 +482,7 @@ java -Djdk.tracePinnedThreads=full -jar app.jar
 # Or JFR event: jdk.VirtualThreadPinned
 ```
 
-Fix: replace `synchronized` with `ReentrantLock` in hot paths:
+**Fix:** replace `synchronized` with `ReentrantLock` in hot paths:
 
 ```java
 // BAD: pins carrier thread when blocking
@@ -498,7 +498,7 @@ try {
 } finally { lock.unlock(); }
 ```
 
-Prevention: audit `synchronized` usage in IO-heavy paths before
+**Prevention:** audit `synchronized` usage in IO-heavy paths before
 migrating to virtual threads.
 
 ---

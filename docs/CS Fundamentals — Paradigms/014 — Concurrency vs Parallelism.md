@@ -32,15 +32,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 Imagine a web server that handles one request completely before starting the next. User A uploads a large file — takes 10 seconds. Users B, C, D, E, F are queued waiting. Users B–F each wait 10+ seconds for a simple 5ms database lookup. The server is single-threaded and sequential — maximum throughput is 1 request per 10 seconds no matter how many CPUs the machine has or how many users are waiting.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 Modern computers have 8, 16, 32 cores. Most work is IO-bound (waiting for disk, network, database). A server that processes one thing at a time wastes 99% of CPU capacity waiting. The internet-scale systems we depend on — handling millions of simultaneous users — are physically impossible without structured techniques for managing many tasks at once.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 This is exactly why the distinction between concurrency and parallelism was formalised — because they solve different problems. Concurrency addresses the _structure_ of programs that must make progress on multiple tasks. Parallelism addresses the _execution_ strategy that uses multiple processors simultaneously. Understanding the difference determines whether your performance problem is architectural (needs concurrency) or hardware utilisation (needs parallelism).
 
@@ -68,13 +68,13 @@ You can have concurrency on a single core (tasks interleave). You can have paral
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Concurrency is a _design decision_ — it affects how you structure code, not what hardware you need.
 2. Parallelism is a _hardware constraint_ — you can only have true parallelism if you have multiple execution units.
 3. Concurrency enables parallelism — you must first design a concurrent system before a scheduler can run its parts in parallel.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 On a single-core CPU, an operating system achieves concurrency by time-slicing: Thread 1 runs for 10ms, gets preempted, Thread 2 runs for 10ms, and so on. Both threads make progress (concurrency), but never simultaneously (no parallelism). The illusion of simultaneous execution is created by rapid switching.
 
@@ -82,7 +82,7 @@ On an 8-core CPU, eight threads can truly run simultaneously (parallelism) — b
 
 The critical implication: designing for concurrency is a prerequisite for scaling on multi-core hardware. If your program is single-threaded, adding CPUs achieves nothing. If your program is concurrent but IO-bound, you may get performance from concurrency alone (event loop, async I/O) without needing parallelism.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
 Concurrency gain: better resource utilisation, responsiveness, ability to handle many tasks with fewer resources.
 Concurrency cost: coordination complexity (shared state, races, deadlocks), harder to reason about, harder to test.
@@ -94,19 +94,19 @@ Parallelism cost: data dependency management, synchronisation overhead, Amdahl's
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A server must handle 100 simultaneous web requests. Each request takes: 1ms of CPU computation + 50ms waiting for a database query.
 
-WHAT HAPPENS WITHOUT CONCURRENCY (sequential):
+**WHAT HAPPENS WITHOUT CONCURRENCY (sequential):**
 Thread 1 handles Request 1: 1ms CPU + 50ms waiting = 51ms. While waiting, the CPU is idle. Thread 1 starts Request 2 only after Request 1 completes. To handle 100 requests sequentially: 100 × 51ms = 5,100ms. The CPU is busy only 1ms out of every 51ms — 2% utilisation.
 
-WHAT HAPPENS WITH CONCURRENCY (async I/O):
+**WHAT HAPPENS WITH CONCURRENCY (async I/O):**
 Thread 1 starts Request 1, issues the database query, and immediately starts Request 2 while waiting for the DB. The event loop manages 100 in-flight requests on a single thread, swapping in CPU work whenever a DB response arrives. 100 requests complete in approximately 51ms (not 5,100ms) — 100× improvement. CPU utilisation approaches 100% during the 1ms computation windows.
 
-WHAT HAPPENS WITH PARALLELISM (8 cores, 8 threads):
+**WHAT HAPPENS WITH PARALLELISM (8 cores, 8 threads):**
 8 threads each handle 12–13 requests, all running simultaneously. Total: ~651ms (8 × 51ms / 8 cores, but IO limits the speedup). Parallelism helps less than concurrency here because the bottleneck is IO wait, not CPU computation.
 
-THE INSIGHT:
+**THE INSIGHT:**
 For IO-bound workloads (which describes most web services), concurrency alone gives 100× throughput improvement. Parallelism adds relatively little because the bottleneck is waiting for IO, not executing CPU instructions. Misdiagnosing an IO bottleneck as "needs more CPUs" when the real fix is "needs better concurrency design" is a common and expensive mistake.
 
 ---
@@ -209,7 +209,7 @@ The concurrency/parallelism distinction comes from Rob Pike's formulation: "Conc
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 Client sends 1000 requests
@@ -225,7 +225,7 @@ IO completes → callback/resume resumes task
 Response sent to client
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 CPU-bound task runs on event loop thread
@@ -240,7 +240,7 @@ Observable: high CPU on one core, idle on others;
             request queue depth growing
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 At 100,000 requests/second, thread-per-request models (one OS thread per request) hit OS limits (~thousands of threads max). Async event loops (Node.js, Netty, Go goroutines) scale to millions of concurrent connections on the same hardware because they don't allocate an OS thread per connection — they use lightweight coroutines or callbacks. Parallelism at this scale means routing to multiple instances (horizontal scaling), not adding threads within one instance.
 
@@ -353,13 +353,13 @@ app.get("/compute", (req, res) => {
 
 **Blocking the Event Loop**
 
-Symptom:
+**Symptom:**
 Node.js or async Python service has excellent average latency but periodic latency spikes where all requests pause simultaneously. Spikes correlate with certain request types.
 
-Root Cause:
+**Root Cause:**
 A CPU-bound computation (regex on large string, JSON.parse on large payload, synchronous file I/O) runs on the event loop thread, blocking it for tens or hundreds of milliseconds. All other in-flight requests queue up behind the blocked loop.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```javascript
 // Node.js: monitor event loop lag
@@ -374,23 +374,23 @@ setInterval(() => {
 // npx clinic flame -- node server.js
 ```
 
-Fix:
+**Fix:**
 Move CPU-bound work to worker threads (`worker_threads`), off-process via a job queue, or break large synchronous operations into chunks yielded with `setImmediate`. Replace synchronous IO (`fs.readFileSync`) with async (`fs.promises.readFile`).
 
-Prevention:
+**Prevention:**
 Never perform CPU-bound work or synchronous IO in event-loop-based services. All handlers must return control quickly (< 1ms).
 
 ---
 
 **Thread Starvation in Thread Pool**
 
-Symptom:
+**Symptom:**
 Service has many threads configured but throughput plateaus. Thread pool queue depth grows. Requests time out waiting to enter the pool.
 
-Root Cause:
+**Root Cause:**
 Threads are blocked waiting for IO (DB, network, file). The pool is "full" of blocked threads — each holding a thread but doing no CPU work. Adding more threads just adds more blocked threads.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Java: check thread states in running JVM
@@ -402,23 +402,23 @@ jstack <PID> | grep -A2 "java.lang.Thread.State"
 # ThreadMXBean.getDaemonThreadCount()
 ```
 
-Fix:
+**Fix:**
 Switch from blocking IO to async/reactive IO (Project Reactor, WebFlux, virtual threads in Java 21+). Or increase pool size to account for IO wait time: `pool_size = core_count × (1 + io_wait_time / cpu_time)` (Little's Law).
 
-Prevention:
+**Prevention:**
 Design services from the ground up as async. Use reactive frameworks for IO-bound workloads. Monitor thread state distribution in production.
 
 ---
 
 **Data Race on Shared State**
 
-Symptom:
+**Symptom:**
 Intermittent, non-reproducible bugs. Values occasionally wrong. Crashes in code that "looks correct." Bugs disappear under debugger (Heisenbug).
 
-Root Cause:
+**Root Cause:**
 Two threads read-modify-write shared state without synchronisation. Thread 1 reads value (5), Thread 2 reads value (5), Thread 1 writes 6, Thread 2 writes 6 (instead of 7). The increment is lost.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Java: ThreadSanitizer equivalent via race detection tools
@@ -432,10 +432,10 @@ go run -race main.go
 gcc -fsanitize=thread -g -o app app.c && ./app
 ```
 
-Fix:
+**Fix:**
 Use thread-safe data structures (`AtomicInteger`, `ConcurrentHashMap`), synchronisation (`synchronized`, `ReentrantLock`), or — better — eliminate shared state through message passing (channels, actor model).
 
-Prevention:
+**Prevention:**
 Prefer immutable data. Use concurrent collections from the standard library. Enable race detector in CI (`go test -race`). Code review all shared mutable state access patterns.
 
 ---

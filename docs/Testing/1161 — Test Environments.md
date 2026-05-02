@@ -212,15 +212,15 @@ services:
 
 **1. Environment Config Drift (staging ≠ production)**
 Cause: Manual changes to staging not reflected in IaC; different config values.
-Fix: All environments provisioned from the same IaC templates; config values only differ (not structure).
+**Fix:** All environments provisioned from the same IaC templates; config values only differ (not structure).
 
 **2. Shared Staging Bottleneck**
 Cause: Multiple teams deploy to staging simultaneously, breaking each other's tests.
-Fix: Ephemeral environments per PR/branch; or queue-based deployment to staging with environment locks.
+**Fix:** Ephemeral environments per PR/branch; or queue-based deployment to staging with environment locks.
 
 **3. "Works in CI, Fails in Staging" (Missing Service)**
 Cause: CI mocks a dependency; staging uses a real service that behaves differently.
-Fix: Use contract tests (Pact) to ensure mocks accurately represent real services.
+**Fix:** Use contract tests (Pact) to ensure mocks accurately represent real services.
 
 ---
 

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Object allocation requires finding free memory on the heap. In a general-purpose heap allocator (like C's `malloc`), finding free space means scanning a free list or using a buddy system, handling fragmentation, and acquiring locks for thread safety. In a multi-threaded Java application with thousands of objects per second, this lock contention and fragmentation management becomes a significant bottleneck.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 High-throughput Java servers allocate millions of objects per second across dozens of threads. If each allocation requires a lock and a free-list scan, allocation becomes the bottleneck. The allocation mechanism must be O(1) and lock-free.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Eden Space enables pointer-bump allocation: all free space is at the end of the region, and allocating an object simply advances a pointer. Combined with Thread-Local Allocation Buffers (TLABs), this makes allocation lock-free and nearly as fast as stack allocation. This is why Eden Space exists as a dedicated, contiguous allocation region.
 
 ---
@@ -64,23 +64,23 @@ Eden's key property is that it is collected by ABANDONMENT, not by scanning dead
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. New objects must be allocated extremely fast (nanoseconds per object in hot paths).
 2. Most new objects die before the next collection — the GC work for them should be zero.
 3. Live survivors must be moved out to enable Eden reset.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 requires contiguous allocation (pointer bump), not free list scanning. TLABs give each thread a private segment, eliminating inter-thread contention during allocation. Invariant 2 justifies "collect by copying survivors": instead of marking dead objects, copy the few live ones and reset the region. Cost is proportional to live objects, not dead ones. Invariant 3 requires the copying mechanism (Survivor spaces) to have capacity for the surviving objects.
 
-THE TRADE-OFFS:
-Gain: Near-zero allocation cost per object; GC cost proportional to survivors (not garbage); no fragmentation in Eden.
-Cost: Eden must be contiguous memory; the collecting node must stop-the-world to safely enumerate GC roots; TLABs waste some Eden space when threads get refilled (partial TLABs at GC time).
+**THE TRADE-OFFS:**
+**Gain:** Near-zero allocation cost per object; GC cost proportional to survivors (not garbage); no fragmentation in Eden.
+**Cost:** Eden must be contiguous memory; the collecting node must stop-the-world to safely enumerate GC roots; TLABs waste some Eden space when threads get refilled (partial TLABs at GC time).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 100 threads, each allocating 1000 objects per second. Without Eden/TLABs: each allocation acquires a global heap lock, finds a free block via free list, and returns a pointer.
 
 WITHOUT EDEN/TLAB:
@@ -89,7 +89,7 @@ WITHOUT EDEN/TLAB:
 WITH EDEN/TLAB:
 Each of the 100 threads has its own TLAB in Eden (e.g., 256KB each). Within the TLAB, allocation = one pointer-bump instruction. No lock, no scan. 100,000 allocations per second × 2ns per allocation = 0.2ms total overhead. 25× faster than the lock-based approach. TLAB refill (acquire new Eden slice) occurs every ~1000 allocations per thread — rare, briefly requires a global lock.
 
-THE INSIGHT:
+**THE INSIGHT:**
 TLABs eliminate allocation lock contention by giving each thread a private allocation area within Eden. Most allocations need zero synchronisation, making allocation effectively free in the steady state.
 
 ---
@@ -98,11 +98,11 @@ TLABs eliminate allocation lock contention by giving each thread a private alloc
 
 > Eden is like the daily intake area of a sorting facility. Trucks (threads) unload packages (objects) at their own unloading bay (TLAB). At end of day (Minor GC), packages not claimed by anyone (unreachable objects) are discarded in bulk, and the bays are instantly reset to empty. A tiny fraction of packages are forwarded to long-term storage (Survivor → Old Gen). The intake area starts fresh every day.
 
-"Unloading bay" → TLAB (thread-local slice of Eden)
-"Packages being dumped on the bay" → object allocation via pointer-bump
-"End of day bulk discard" → Minor GC absorbs all dead Eden objects
-"Forwarded packages" → surviving objects copied to Survivor
-"Bay reset" → Eden freed by pointer reset (no per-object cleanup)
+- "Unloading bay" → TLAB (thread-local slice of Eden)
+- "Packages being dumped on the bay" → object allocation via pointer-bump
+- "End of day bulk discard" → Minor GC absorbs all dead Eden objects
+- "Forwarded packages" → surviving objects copied to Survivor
+- "Bay reset" → Eden freed by pointer reset (no per-object cleanup)
 
 Where this analogy breaks down: unlike a physical bay, Eden's "reset" doesn't sweep or clean — it just moves the allocation pointer back to the start. The old data remains in memory until overwritten by new allocations.
 
@@ -184,7 +184,7 @@ After Minor GC:
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Application threads allocate objects via 'new'
   → Thread checks TLAB top pointer ← YOU ARE HERE
@@ -199,7 +199,7 @@ Application threads allocate objects via 'new'
   → Threads resume with fresh TLABs
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Object too large for TLAB / Eden
   (size > threshold, typically Eden/2)
@@ -211,7 +211,7 @@ Object too large for TLAB / Eden
   → Observable: large objects in Old Gen histogram
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 1,000 concurrent threads with aggressive allocation, the frequency of TLAB refills increases proportionally. Each refill requires an atomic operation on the Eden allocation pointer. At extreme thread counts (hundreds), refill contention can become measurable. G1GC addresses this with region-level TLAB allocation — each thread gets an entire region (1–32 MB), drastically reducing refill frequency.
 
 ---
@@ -305,11 +305,11 @@ How to choose: No choice needed — all `new` allocations go to Eden via TLAB au
 
 **1. Eden Too Small → Excessive Minor GC**
 
-Symptom: `jstat` shows `YGC` count increasing every second; application latency spikes periodically every few hundred milliseconds.
+**Symptom:** `jstat` shows `YGC` count increasing every second; application latency spikes periodically every few hundred milliseconds.
 
-Root Cause: Allocation rate exceeds Eden capacity → Eden fills and triggers Minor GC too frequently.
+**Root Cause:** Allocation rate exceeds Eden capacity → Eden fills and triggers Minor GC too frequently.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstat -gcutil <pid> 500
 # If E% (Eden utilization) regularly hits 100%
@@ -322,15 +322,15 @@ jstat -gc <pid> 1000 | awk '{
 }'
 ```
 
-Prevention: Increase Young Gen size; use G1GC with `MaxGCPauseMillis` for adaptive sizing.
+**Prevention:** Increase Young Gen size; use G1GC with `MaxGCPauseMillis` for adaptive sizing.
 
 **2. Large Object Allocation Pressure on Old Gen**
 
-Symptom: Old Generation fills faster than expected; heap dump shows large arrays in Old Gen; no corresponding cache growth.
+**Symptom:** Old Generation fills faster than expected; heap dump shows large arrays in Old Gen; no corresponding cache growth.
 
-Root Cause: Application allocates large objects (>Eden/2) bypassing Eden — going directly to Old Gen, increasing major GC frequency.
+**Root Cause:** Application allocates large objects (>Eden/2) bypassing Eden — going directly to Old Gen, increasing major GC frequency.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jcmd <pid> GC.class_histogram | grep "\[B\|byte\[\]"
 # "\[B" = byte arrays (often the large allocators)
@@ -340,22 +340,22 @@ java -Xlog:gc+humongous=debug -jar myapp.jar
 # G1GC log for humongous allocation events
 ```
 
-Prevention: Reuse large buffers (pool `ByteBuffer`); serialize to pre-allocated streams; avoid large arrays in request processing paths.
+**Prevention:** Reuse large buffers (pool `ByteBuffer`); serialize to pre-allocated streams; avoid large arrays in request processing paths.
 
 **3. TLAB Waste from Thread Exit**
 
-Symptom: Eden utilisation jumps irregularly; `jstat` shows unexpectedly high Eden allocation but low actual object count.
+**Symptom:** Eden utilisation jumps irregularly; `jstat` shows unexpectedly high Eden allocation but low actual object count.
 
-Root Cause: Threads that exit before their TLAB is full leave unused TLAB space as "waste." In high thread churn applications (thread-per-request, unbounded thread pools), this can be significant.
+**Root Cause:** Threads that exit before their TLAB is full leave unused TLAB space as "waste." In high thread churn applications (thread-per-request, unbounded thread pools), this can be significant.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 java -Xlog:gc+tlab=debug -jar myapp.jar 2>&1 | \
   grep "tlab retired"
 # Output shows per-thread TLAB waste on retirement
 ```
 
-Prevention: Use thread pools with bounded, long-lived threads; virtual threads (Java 21) use smaller TLABs, reducing waste per virtual thread.
+**Prevention:** Use thread pools with bounded, long-lived threads; virtual threads (Java 21) use smaller TLABs, reducing waste per virtual thread.
 
 ---
 

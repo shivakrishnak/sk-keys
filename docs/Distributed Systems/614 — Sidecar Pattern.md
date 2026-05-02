@@ -295,7 +295,7 @@ spec:
 
 **Sidecar Not Injected — Service Running Without mTLS**
 
-Symptom: Istio audit shows one service communicating in plaintext (no mTLS). Security
+**Symptom:** Istio audit shows one service communicating in plaintext (no mTLS). Security
 scanner flags the service as non-compliant. Pod was deployed before Istio was installed
 on the namespace (no injection annotation).
 
@@ -303,9 +303,9 @@ Cause: Istio auto-injection is namespace-based. The namespace was missing the
 `istio-injection: enabled` label when the pod was first created. Pod was never
 restarted, so Envoy was never injected.
 
-Fix: Add namespace label: `kubectl label namespace production istio-injection=enabled`.
+**Fix:** Add namespace label: `kubectl label namespace production istio-injection=enabled`.
 Rolling restart all pods: `kubectl rollout restart deployment -n production`.
-Prevention: admission controller or OPA policy that blocks pod creation in the
+**Prevention:** admission controller or OPA policy that blocks pod creation in the
 namespace if Envoy sidecar is absent (architectural fitness function).
 
 ---

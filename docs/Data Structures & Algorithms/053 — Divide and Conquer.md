@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You need to sort 1,000,000 numbers. The obvious approach: pick each element and find its sorted position by comparing with all others — O(N²). At 1 billion comparisons per second, this takes 1 second for 1M elements... but 10,000 seconds for 100M elements. The problem grows faster than linear — it doesn't scale.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 O(N²) algorithms fail at production scale. Brute-force "compare everything with everything" or "scan everything for each element" approaches are fundamentally limited because they exploit no structure in the problem.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 If you can split a problem into two halves that can be solved independently and then combined cheaply, you've reduced a single hard problem into two easier ones. Each half recursively splits — the tree has depth log N, and at each level, total work is O(N). Total: O(N log N). This is exactly why Divide and Conquer was created.
 
 ---
@@ -63,13 +63,13 @@ The key is that subproblems must be *independent* — solving the left half does
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The problem must be decomposable into strictly smaller subproblems of the same type.
 2. Subproblems are independent (no shared state between halves — this distinguishes D&C from DP).
 3. There exists a non-recursive base case (typically N=1 or N=0).
 4. Solutions can be combined: `combine(solve(left), solve(right)) = solve(whole)`.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Time complexity — Master Theorem**:
 T(N) = a·T(N/b) + f(N) where a = subproblems, b = size reduction factor, f(N) = combine cost.
 
@@ -83,15 +83,15 @@ Brute force: O(N²) — N work for each of N elements.
 Divide and Conquer: O(N log N) — O(N) combine across O(log N) levels.
 The "tree height" factor (log N) replaces the "all pairs" factor (N).
 
-THE TRADE-OFFS:
-Gain: Often transforms O(N²) to O(N log N) or O(N) to O(log N).
-Cost: Recursion overhead (call stack), combine step complexity, harder to reason about (need Master Theorem for analysis).
+**THE TRADE-OFFS:**
+**Gain:** Often transforms O(N²) to O(N log N) or O(N) to O(log N).
+**Cost:** Recursion overhead (call stack), combine step complexity, harder to reason about (need Master Theorem for analysis).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Find the maximum element in an array of N numbers.
 
 BRUTE FORCE:
@@ -112,10 +112,10 @@ D&C is powerful when two merged sorted halves can be combined in O(N) — becaus
 
 > Divide and Conquer is like a military campaign that's too large for one general. Split the territory into independent zones; each zone commander handles their zone independently; then consolidate control at the top. No zone commander needs input from another to do their job.
 
-"Territory split" → divide into subproblems
-"Zone commander solves zone" → conquer subproblem recursively
-"Independent zones" → no shared state between subproblems
-"Consolidate control" → combine step
+- "Territory split" → divide into subproblems
+- "Zone commander solves zone" → conquer subproblem recursively
+- "Independent zones" → no shared state between subproblems
+- "Consolidate control" → combine step
 
 Where this analogy breaks down: Military zones often share borders requiring coordination — if subproblems share state, that's Dynamic Programming territory, not Divide and Conquer.
 
@@ -195,7 +195,7 @@ int binarySearch(int[] arr, int lo, int hi, int target) {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Problem of size N
 → Split into subproblems (size N/b each)
@@ -205,7 +205,7 @@ Problem of size N
 → Total: O(N × log N) or O(log N) depending on combine
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Combine step is O(N²) instead of O(N)
 → Total: O(N² log N) — WORSE than brute force O(N²)
@@ -213,7 +213,7 @@ Combine step is O(N²) instead of O(N)
 → This is why D&C is algorithm-specific, not universally applicable
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For N=10^9, mergesort's O(N log N) ≈ 30 billion operations — feasible in ~30 seconds single-threaded. D&C parallelises naturally: left and right halves are independent, so they can run on separate cores. Parallel mergesort achieves O(N log N / P) on P cores (bounded by the final merge). The independence of subproblems is not just a conceptual property — it's the source of D&C's parallelism advantage.
 
 ---
@@ -292,37 +292,37 @@ How to choose: D&C when subproblems are independent. DP when subproblems overlap
 
 **1. StackOverflowError from D&C on large N**
 
-Symptom: D&C algorithm crashes on large inputs.
+**Symptom:** D&C algorithm crashes on large inputs.
 
-Root Cause: Recursion depth = O(log N) for balanced D&C — usually safe up to N=2^10000. But for unbalanced D&C (e.g., quicksort on sorted input: O(N) depth), StackOverflowError occurs.
+**Root Cause:** Recursion depth = O(log N) for balanced D&C — usually safe up to N=2^10000. But for unbalanced D&C (e.g., quicksort on sorted input: O(N) depth), StackOverflowError occurs.
 
-Fix: Use iterative approaches or balance the cut. For quicksort: use random pivot or median-of-3.
+**Fix:** Use iterative approaches or balance the cut. For quicksort: use random pivot or median-of-3.
 
-Prevention: Verify the recursion tree is balanced; test with adversarial inputs (sorted, reverse-sorted).
+**Prevention:** Verify the recursion tree is balanced; test with adversarial inputs (sorted, reverse-sorted).
 
 ---
 
 **2. Integer overflow in midpoint calculation**
 
-Symptom: Infinite loop or wrong result for very large `lo` and `hi` values.
+**Symptom:** Infinite loop or wrong result for very large `lo` and `hi` values.
 
-Root Cause: `mid = (lo + hi) / 2` overflows when `lo + hi > Integer.MAX_VALUE`.
+**Root Cause:** `mid = (lo + hi) / 2` overflows when `lo + hi > Integer.MAX_VALUE`.
 
-Fix: Use `mid = lo + (hi - lo) / 2` — equivalent but safe.
+**Fix:** Use `mid = lo + (hi - lo) / 2` — equivalent but safe.
 
-Prevention: Always use the safe midpoint formula in production code.
+**Prevention:** Always use the safe midpoint formula in production code.
 
 ---
 
 **3. Combine step is O(N²) — defeats purpose**
 
-Symptom: Algorithm is correct but 10× slower than expected for large N.
+**Symptom:** Algorithm is correct but 10× slower than expected for large N.
 
-Root Cause: Combine step iterates through both halves independently (O(N) each × O(N) pairs = O(N²) total per level).
+**Root Cause:** Combine step iterates through both halves independently (O(N) each × O(N) pairs = O(N²) total per level).
 
-Fix: Redesign combine to be O(N) (e.g., mergesort's merge scans both halves once).
+**Fix:** Redesign combine to be O(N) (e.g., mergesort's merge scans both halves once).
 
-Prevention: Before coding D&C, explicitly analyse the combine step complexity.
+**Prevention:** Before coding D&C, explicitly analyse the combine step complexity.
 
 ---
 

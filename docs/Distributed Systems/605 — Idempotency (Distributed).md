@@ -277,13 +277,13 @@ public class PaymentService {
 
 **In-Progress Limbo (locked_at but never completed)**
 
-Symptom: Clients receive 409 "Request in progress" indefinitely for a specific
+**Symptom:** Clients receive 409 "Request in progress" indefinitely for a specific
 idempotency key. The original request never completed (server crashed mid-operation).
 
 Cause: locked_at is set but response_body is never stored (crash between processing
 and response storage). Subsequent requests see "in progress" and refuse to proceed.
 
-Fix: Add a lock timeout. If locked_at > 30 seconds ago and response is still NULL →
+**Fix:** Add a lock timeout. If locked_at > 30 seconds ago and response is still NULL →
 assume the original request crashed → mark key as "failed" → allow reprocessing.
 Implement a background sweeper that cleans up stale locked-but-never-completed keys.
 

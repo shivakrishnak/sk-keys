@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Sticky Sessions"
 parent: "System Design"
@@ -128,7 +128,7 @@ WITH Sticky Sessions:
 > A hospital where patients see different doctors on each visit, but their medical records are stored only by their personal doctor (not in a shared system). If the patient sees any doctor other than their own, the doctor has no history. The hospital's receptionist (load balancer) keeps a card: "Patient Smith → always route to Dr. A." Sticky sessions are the receptionist's routing card. The real fix: move records to a shared hospital database so any doctor can treat any patient.
 
 "Receptionist's routing card" = load balancer session persistence table
-"Patient → Doctor mapping" = session → server binding
+- "Patient → Doctor mapping" = session → server binding
 "Medical records in doctor's office only" = session state in server RAM
 "Shared hospital database" = external session store (Redis)
 

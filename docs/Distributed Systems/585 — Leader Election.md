@@ -257,13 +257,13 @@ Clients must not assume a "yes" from the leader means the write is committed unt
 
 **Frequent Re-elections (Election Storms)**
 
-Symptom: Cluster logs show rapid succession of term increments; leaders hold
+**Symptom:** Cluster logs show rapid succession of term increments; leaders hold
 positions for <1s before new elections; write throughput drops to near zero.
 
 Causes: Network jitter repeatedly exceeds election timeout; election timeout
 too short for the network latency in the environment.
 
-Fix: Increase election timeout to 3-5× the 99th-percentile heartbeat RTT.
+**Fix:** Increase election timeout to 3-5× the 99th-percentile heartbeat RTT.
 Enable leader stickiness (prefer re-electing current leader when healthy).
 
 Diagnosis:
@@ -278,12 +278,12 @@ journalctl -u etcd | grep -E "election|term|leader"
 
 **Vote Split (No Leader Elected)**
 
-Symptom: Cluster enters repeated election cycles; no node achieves majority.
+**Symptom:** Cluster enters repeated election cycles; no node achieves majority.
 
 Cause: Even number of nodes (N=4) with 2-2 vote splits, or randomisation is
 insufficient and multiple candidacies fire simultaneously.
 
-Fix: Use odd number of nodes (3, 5, 7) to ensure a majority is achievable
+**Fix:** Use odd number of nodes (3, 5, 7) to ensure a majority is achievable
 with fewer tie scenarios. Raft's randomised timeout handles this; in practice
 with odd N, splits are rare.
 

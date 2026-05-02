@@ -386,14 +386,14 @@ Content rules:
   - This section makes the reader WANT to understand the concept
 
 Structure:
-  WORLD WITHOUT IT:
-    [Concrete scenario showing the pain]
+  **WORLD WITHOUT IT:**
+  [Concrete scenario showing the pain]
 
-  THE BREAKING POINT:
-    [Specific failure mode — what actually crashes/slows/breaks]
+  **THE BREAKING POINT:**
+  [Specific failure mode — what actually crashes/slows/breaks]
 
-  THE INVENTION MOMENT:
-    "This is exactly why [KEYWORD] was created."
+  **THE INVENTION MOMENT:**
+  "This is exactly why [KEYWORD] was created."
 
 ─────────────────────────────────────────────────────────────────────────
 5.5  TEXTBOOK DEFINITION  [REQUIRED]
@@ -452,21 +452,21 @@ Content rules:
   - Structure: Core Invariants → Derived Design → Trade-offs
   - Use this template:
 
-    CORE INVARIANTS:
+    **CORE INVARIANTS:**
     (The things always true about this concept — its axioms)
     1. [Invariant]
     2. [Invariant]
     3. [Invariant]
 
-    DERIVED DESIGN:
+    **DERIVED DESIGN:**
     (Given those invariants, here is what MUST be true
      about any correct implementation)
     [Explanation building from invariants to design]
 
-    THE TRADE-OFFS:
+    **THE TRADE-OFFS:**
     (What you give up to get this — every design has a cost)
-    Gain: [what you get]
-    Cost: [what you sacrifice]
+    **Gain:** [what you get]
+    **Cost:** [what you sacrifice]
 
   - Use short code blocks or ASCII diagrams where needed
   - Ask and answer: "Could we do this differently?"
@@ -487,20 +487,20 @@ Content rules:
   - Exactly ONE thought experiment
   - Follows this structure:
 
-    SETUP:
+    **SETUP:**
     [Minimal scenario — 2–3 sentences. Strip everything
      non-essential. Make it as simple as possible while
      still capturing the core idea.]
 
-    WHAT HAPPENS WITHOUT [KEYWORD]:
+    **WHAT HAPPENS WITHOUT [KEYWORD]:**
     [Step-by-step: show the exact failure. Be concrete.
      Show exact data, timing, error, corruption.]
 
-    WHAT HAPPENS WITH [KEYWORD]:
+    **WHAT HAPPENS WITH [KEYWORD]:**
     [Step-by-step: show how it fixes the failure.
      Same steps — different outcome.]
 
-    THE INSIGHT:
+    **THE INSIGHT:**
     [1–2 sentences: the generalised truth the experiment reveals.
      This should feel like an "aha" moment.]
 
@@ -521,8 +521,9 @@ map of reality they can carry in their head and apply rapidly.
 Content rules:
   - Primary analogy in > blockquote
   - After analogy: explicit 1:1 mapping of every element
-  - Format for mapping:
-    "[Analogy element]" → [technical element]
+  - Format for mapping (one item per line, use list format):
+    - "[Analogy element]" → [technical element]
+    - "[Analogy element]" → [technical element]
   - Test the analogy: does it hold for the most common use cases?
     Does it break misleadingly at edge cases? Fix or flag this.
   - End with: "Where this analogy breaks down:" + 1 sentence
@@ -613,14 +614,14 @@ Content rules:
      10x / 100x / 1000x the normal load or data volume]
   - Format:
 
-    NORMAL FLOW:
+    **NORMAL FLOW:**
     [Input] → [Step 1] → [Step 2] → [THIS CONCEPT ← YOU ARE HERE]
            → [Step 3] → [Output]
 
-    FAILURE PATH:
+    **FAILURE PATH:**
     [THIS CONCEPT fails] → [what cascades] → [observable symptom]
 
-    WHAT CHANGES AT SCALE:
+    **WHAT CHANGES AT SCALE:**
     [How behaviour shifts under production load]
 
 ─────────────────────────────────────────────────────────────────────────
@@ -723,21 +724,21 @@ Content rules:
 
     **[Failure Mode Name]**
 
-    Symptom:
+    **Symptom:**
     [What the engineer observes — error message, metric spike,
      log pattern, user complaint. Be specific.]
 
-    Root Cause:
+    **Root Cause:**
     [Why this happens technically. Not just "it broke" —
      the exact mechanism that causes the failure.]
 
-    Diagnostic Command / Tool:
+    **Diagnostic Command / Tool:**
     [actual command to observe this in a running system]
 
-    Fix:
+    **Fix:**
     [bad and good code/config]
 
-    Prevention:
+    **Prevention:**
     [1 sentence: what to do at design time to prevent this.]
 
   - Covers ALL of: code bugs, configuration errors, operational
@@ -881,6 +882,8 @@ TABLES:
   - Comparison tables: last column = "Best For" recommendation
 
 SECTION SPACING (CRITICAL):
+  - Every ### section heading MUST be preceded by a --- horizontal
+    rule: [blank line] → [---] → [blank line] → [### heading]
   - Every ### heading and --- divider MUST have ONE blank line before
     and ONE blank line after
   - Skip content inside ``` code fences — never inject blank lines
@@ -892,7 +895,7 @@ FILE ENCODING:
   - Always UTF-8 without BOM
   - PowerShell: [System.IO.File]::WriteAllText(path, content,
     [System.Text.UTF8Encoding]::new($false))
-    
+
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 7: CONTENT QUALITY STANDARDS
 ═══════════════════════════════════════════════════════════════════════════
@@ -992,11 +995,22 @@ tags:
 ---
 
 ### 🔥 The Problem This Solves
-[WORLD WITHOUT IT: concrete pain scenario. 100–200 words.
- End: "This is exactly why [KEYWORD] was created."]
+
+**WORLD WITHOUT IT:**
+[Concrete pain scenario. 100–200 words.]
+
+**THE BREAKING POINT:**
+[Specific failure — what crashes/slows/breaks.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why [KEYWORD] was created."
+
+---
 
 ### 📘 Textbook Definition
 [2–4 sentences. Formal. Technically precise. No analogies.]
+
+---
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -1009,43 +1023,51 @@ tags:
 **One insight:**
 [The thing that separates knowing the name from understanding it.]
 
+---
+
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. [Always true about this concept]
 2. [Always true about this concept]
 3. [Always true about this concept]
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 [How the invariants force the design.]
 
-THE TRADE-OFFS:
-Gain: [what you get]
-Cost: [what you sacrifice]
+**THE TRADE-OFFS:**
+**Gain:** [what you get]
+**Cost:** [what you sacrifice]
+
+---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 [Minimal scenario — strip everything non-essential.]
 
-WHAT HAPPENS WITHOUT [KEYWORD]:
+**WHAT HAPPENS WITHOUT [KEYWORD]:**
 [Step-by-step concrete failure.]
 
-WHAT HAPPENS WITH [KEYWORD]:
+**WHAT HAPPENS WITH [KEYWORD]:**
 [Step-by-step fix — same scenario, better outcome.]
 
-THE INSIGHT:
+**THE INSIGHT:**
 [The generalised truth revealed by this experiment.]
+
+---
 
 ### 🧠 Mental Model / Analogy
 > [Primary analogy in blockquote.]
 
 [Explicit mapping:]
-"[Analogy element]" → [technical element]
-"[Analogy element]" → [technical element]
-"[Analogy element]" → [technical element]
+- "[Analogy element]" → [technical element]
+- "[Analogy element]" → [technical element]
+- "[Analogy element]" → [technical element]
 
 Where this analogy breaks down: [1 sentence.]
+
+---
 
 ### 📶 Gradual Depth — Four Levels
 
@@ -1061,24 +1083,32 @@ Where this analogy breaks down: [1 sentence.]
 **Level 4 — Why it was designed this way (senior/staff):**
 [Design decisions. Alternatives rejected. Edge cases.]
 
+---
+
 ### ⚙️ How It Works (Mechanism)
 [Step-by-step. ASCII diagrams. WHY each step exists.
  Minimum words by difficulty: ★☆☆=150, ★★☆=300, ★★★=500]
 
+---
+
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 [Input] → [Step 1] → [THIS CONCEPT ← YOU ARE HERE] → [Output]
 
-FAILURE PATH:
+**FAILURE PATH:**
 [THIS CONCEPT fails] → [cascade] → [observable symptom]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 [2–3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
 
 ### 💻 Code Example
 [REQUIRED if programmatic. SKIP for pure theory.]
 [BAD then GOOD. Labelled examples. Annotated. Max 70 chars/line.]
+
+---
 
 ### ⚖️ Comparison Table
 [REQUIRED if alternatives exist. SKIP if singleton concept.]
@@ -1091,9 +1121,13 @@ WHAT CHANGES AT SCALE:
 
 How to choose: [2 sentences — decision rule.]
 
+---
+
 ### 🔁 Flow / Lifecycle
 [INCLUDE ONLY if meaningful multi-phase lifecycle exists.]
 [ASCII diagram: phases, triggers, transitions, error paths.]
+
+---
 
 ### ⚠️ Common Misconceptions
 
@@ -1104,15 +1138,17 @@ How to choose: [2 sentences — decision rule.]
 | [wrong belief] | [correct reality] |
 | [wrong belief] | [correct reality] |
 
+---
+
 ### 🚨 Failure Modes & Diagnosis
 
 **1. [Failure Mode Name]**
 
-Symptom: [What the engineer observes.]
+**Symptom:** [What the engineer observes.]
 
-Root Cause: [Exact technical mechanism.]
+**Root Cause:** [Exact technical mechanism.]
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 [real command]
 ```
@@ -1126,9 +1162,11 @@ Fix:
 [good code]
 ```
 
-Prevention: [1 sentence design-time action.]
+**Prevention:** [1 sentence design-time action.]
 
 [Repeat for each failure mode — minimum 3]
+
+---
 
 ### 🔗 Related Keywords
 
@@ -1140,6 +1178,8 @@ Prevention: [1 sentence design-time action.]
 
 **Alternatives / Comparisons:**
 - `Keyword` — [how it differs]
+
+---
 
 ### 📌 Quick Reference Card
 
@@ -1269,8 +1309,11 @@ FORMATTING:
   ☐ Analogies in > blockquote format only
   ☐ BAD pattern shown before GOOD pattern in all code
   ☐ No H2 headers in entry body
-  ☐ Horizontal rule --- precedes the Think section
-  ☐ Every ### heading has one blank line before and after
+  ☐ Every ### heading is preceded by --- horizontal rule
+  ☐ Every ### heading and --- divider has one blank line before and after
+  ☐ Structure labels bold: **WORLD WITHOUT IT:**, **CORE INVARIANTS:**, **SETUP:**, **NORMAL FLOW:**, etc.
+  ☐ Failure mode sub-labels bold: **Symptom:**, **Root Cause:**, **Diagnostic:**, **Fix:**, **Prevention:**
+  ☐ Analogy mappings use list format: - "element" → technical
   ☐ File saved as UTF-8 without BOM
 
 TEACHING PRINCIPLES (Section 1):

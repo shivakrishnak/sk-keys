@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine 10 programs running on a machine with 4 GB of RAM, each hardcoded to use absolute physical memory addresses. Program A occupies 0x0000–0x3FFF. Program B must start at 0x4000, and the programmer must know this at compile time. If you want to run an 11th program but RAM is full, you either evict an entire program or crash. Worse, Program A can freely read and modify Program B's memory since both use real physical addresses — no isolation, no protection.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 This is exactly how early embedded systems and MS-DOS worked. It meant: no multitasking without programmer coordination, no memory isolation, and you could never run a program that needed more memory than was physically available.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why Virtual Memory was created — to give each process the illusion of having its own full, private address space, while the OS secretly manages which physical RAM (or disk) backs each region.
 
 ---
@@ -65,41 +65,41 @@ The most powerful consequence of virtual memory is isolation: two processes can 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Every virtual address used by a process must be translated to a physical address before RAM can be accessed.
 2. Each process has its own page table — the same virtual address in two processes maps to different (or the same, if shared) physical pages.
 3. A virtual page can be backed by RAM, disk (swap), a file, or be marked "not present" — the OS decides.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given that every address must be translated, the CPU needs a fast translation path. The hardware MMU (Memory Management Unit) does the translation using the page table, which is a tree structure in RAM. Since RAM access for every translation would double memory latency, the TLB (Translation Lookaside Buffer) caches recent virtual→physical translations. The OS loads the page table base pointer into the CR3 register (x86-64) on every context switch, so each process gets its own translation context.
 
-THE TRADE-OFFS:
-Gain: Process isolation, demand paging (run programs larger than RAM), memory sharing (read-only code shared between processes), memory protection.
-Cost: Every memory access has TLB lookup overhead; page table itself consumes RAM (a 4-level page table can be 512 GB of virtual space per process); page faults (cold starts, swap) add microseconds to milliseconds of latency.
+**THE TRADE-OFFS:**
+**Gain:** Process isolation, demand paging (run programs larger than RAM), memory sharing (read-only code shared between processes), memory protection.
+**Cost:** Every memory access has TLB lookup overhead; page table itself consumes RAM (a 4-level page table can be 512 GB of virtual space per process); page faults (cold starts, swap) add microseconds to milliseconds of latency.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Two programs both declare `int x = 5` at address `0x601000`. Machine has 1 GB RAM.
 
-WHAT HAPPENS WITHOUT virtual memory:
+**WHAT HAPPENS WITHOUT virtual memory:**
 
 1. Both programs compile with absolute addresses.
 2. They can't both run — address `0x601000` belongs to whoever loaded first.
 3. If forced to coexist, writing `x=10` in Program A also changes Program B's `x`.
 4. System is either single-tasking or requires manual address-space partitioning.
 
-WHAT HAPPENS WITH virtual memory:
+**WHAT HAPPENS WITH virtual memory:**
 
 1. Program A's `0x601000` maps to physical page at `0x2A000` (OS choice).
 2. Program B's `0x601000` maps to physical page at `0x7F000`.
 3. Both write to "their" `0x601000` — they modify entirely different physical bytes.
 4. OS can even swap Program B's page to disk while A runs — A sees no difference.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Virtual memory is not just about running programs larger than RAM. Its primary value is **isolation**: the same virtual address in different processes is a completely different location in physical memory. This single fact makes modern multitasking operating systems possible.
 
 ---
@@ -108,11 +108,11 @@ Virtual memory is not just about running programs larger than RAM. Its primary v
 
 > Virtual memory is like a phone book where each city (process) has its own directory, and "Main Street #42" means different physical streets in different cities. The GPS (MMU + TLB) translates your city's address to GPS coordinates (physical address) instantly.
 
-"City-specific phone book" → per-process page table
-"Street address" → virtual address
-"GPS coordinates" → physical address
-"Phone book lookup" → TLB hit (fast) or page table walk (slow)
-"Address not found" → page fault → OS handler
+- "City-specific phone book" → per-process page table
+- "Street address" → virtual address
+- "GPS coordinates" → physical address
+- "Phone book lookup" → TLB hit (fast) or page table walk (slow)
+- "Address not found" → page fault → OS handler
 
 Where this analogy breaks down: Unlike a phone book, page tables are 4 levels deep and can map 128 TB of virtual space — no phone book ever handled that.
 
@@ -169,7 +169,7 @@ The 4-level page table design (vs. inverted or hashed page tables used by some a
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [Process: int *p = malloc(4096)]
@@ -182,10 +182,10 @@ NORMAL FLOW:
    → [Resume: *p = 42 succeeds, 42 written to RAM]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [Process accesses unmapped address] → [Page Fault] → [Kernel: no VMA for this address] → [SIGSEGV sent] → [Process killed]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 A JVM with a 256 GB heap requires millions of page table entries — the page tables themselves consume gigabytes of RAM. At this scale, huge pages (2 MB THP) reduce TLB pressure 512× compared to 4 KB pages. On NUMA systems, page placement becomes critical: accessing a physical page on the "wrong" NUMA node costs 2–4× the latency of a local page.
 
 ---
@@ -241,11 +241,11 @@ How to choose: Virtual memory is the default for all modern OS. Use shared `mmap
 
 **1. Out-of-Memory (OOM) Kill**
 
-Symptom: Process suddenly killed; `dmesg` shows "oom-kill event"; no exception in application logs.
+**Symptom:** Process suddenly killed; `dmesg` shows "oom-kill event"; no exception in application logs.
 
-Root Cause: System ran out of physical RAM and swap. OOM killer selects a process to kill based on oom_score (typically the largest consumer).
+**Root Cause:** System ran out of physical RAM and swap. OOM killer selects a process to kill based on oom_score (typically the largest consumer).
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 dmesg | grep -i "oom\|killed process"
@@ -253,38 +253,38 @@ cat /proc/<PID>/status | grep VmRSS
 free -h
 ```
 
-Fix: Increase RAM or swap, reduce heap allocation, tune `vm.overcommit_memory`, or set `oom_score_adj=-1000` for critical processes.
+**Fix:** Increase RAM or swap, reduce heap allocation, tune `vm.overcommit_memory`, or set `oom_score_adj=-1000` for critical processes.
 
-Prevention: Set container memory limits (`docker run -m 512m`); monitor RSS with Prometheus `process_resident_memory_bytes`.
+**Prevention:** Set container memory limits (`docker run -m 512m`); monitor RSS with Prometheus `process_resident_memory_bytes`.
 
 ---
 
 **2. TLB Thrashing (Page Table Walk Storms)**
 
-Symptom: High `%sys` CPU in `perf stat`; `dTLB-load-misses` metric very high; large working sets with 4 KB pages.
+**Symptom:** High `%sys` CPU in `perf stat`; `dTLB-load-misses` metric very high; large working sets with 4 KB pages.
 
-Root Cause: Large working set exceeds TLB capacity (typically 1500–4000 entries); every access requires a slow page walk (~100 cycles each).
+**Root Cause:** Large working set exceeds TLB capacity (typically 1500–4000 entries); every access requires a slow page walk (~100 cycles each).
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 perf stat -e dTLB-loads,dTLB-load-misses,iTLB-loads \
     -p <PID> -- sleep 10
 ```
 
-Fix: Enable Transparent Huge Pages (`echo always > /sys/kernel/mm/transparent_hugepage/enabled`) for large heap applications like JVMs and databases.
+**Fix:** Enable Transparent Huge Pages (`echo always > /sys/kernel/mm/transparent_hugepage/enabled`) for large heap applications like JVMs and databases.
 
-Prevention: JVM: add `-XX:+UseHugeTLBFS` or `-XX:+UseLargePages`. Configure huge pages: `echo 512 > /proc/sys/vm/nr_hugepages`.
+**Prevention:** JVM: add `-XX:+UseHugeTLBFS` or `-XX:+UseLargePages`. Configure huge pages: `echo 512 > /proc/sys/vm/nr_hugepages`.
 
 ---
 
 **3. Swap Thrashing**
 
-Symptom: System response becomes extremely slow; disk I/O spikes; `vmstat 1` shows high `si` (swap-in) and `so` (swap-out) values; page fault rate > 1000/sec.
+**Symptom:** System response becomes extremely slow; disk I/O spikes; `vmstat 1` shows high `si` (swap-in) and `so` (swap-out) values; page fault rate > 1000/sec.
 
-Root Cause: Working set of active processes exceeds physical RAM; OS continuously swaps pages in and out. Each swap operation takes 1–10 ms (disk), turning normal RAM accesses (ns) into millisecond operations.
+**Root Cause:** Working set of active processes exceeds physical RAM; OS continuously swaps pages in and out. Each swap operation takes 1–10 ms (disk), turning normal RAM accesses (ns) into millisecond operations.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 vmstat 1
@@ -293,9 +293,9 @@ vmstat 1
 sar -B 1 10  # pgfault/s and pgmajfault/s
 ```
 
-Fix: Add RAM, reduce concurrent process count, use `cgroups` memory limits to prevent any single process from consuming all RAM.
+**Fix:** Add RAM, reduce concurrent process count, use `cgroups` memory limits to prevent any single process from consuming all RAM.
 
-Prevention: Monitor `node_vmstat_pgmajfault` in Prometheus; alert when major faults > 100/sec; set `vm.swappiness=10` to prefer keeping data in RAM.
+**Prevention:** Monitor `node_vmstat_pgmajfault` in Prometheus; alert when major faults > 100/sec; set `vm.swappiness=10` to prefer keeping data in RAM.
 
 ---
 

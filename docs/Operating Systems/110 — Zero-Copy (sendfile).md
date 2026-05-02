@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 To serve a file over a network with traditional I/O: `read()` the file into a user-space buffer, then `write()` to the socket. This requires 4 data copies: (1) disk → kernel page cache, (2) page cache → user buffer, (3) user buffer → kernel socket buffer, (4) socket buffer → NIC. Copies 2 and 3 cross the kernel/user boundary — they're pure overhead. For a file-serving application, this means 2× unnecessary copies for 100% of traffic.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 In 2003, Kafka's designers ran benchmarks: at 600MB/s throughput (their SSD speed), traditional `read`/`write` consumed one full CPU core doing memory copies. With zero-copy `sendfile`, that CPU overhead dropped by 65%. At modern NVMe speeds (7GB/s), the waste is even more extreme — the copies become the bottleneck, not the storage.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 `sendfile()` was introduced in Linux 2.2 (1999) and was used by the Solaris kernel even earlier. The insight: the OS already has the file data in the page cache AND controls the socket buffers — there's no reason to route the data through user space. The kernel can move it internally.
 
 ---
@@ -65,13 +65,13 @@ Every copy is CPU time and memory bandwidth consumed. At 10 Gbps, copying 1.25 G
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Data must traverse a path; the question is how many copies that path requires.
 2. The kernel controls both the source (page cache) and destination (socket buffer/NIC).
 3. Any copy through user space is avoidable if both endpoints are kernel-controlled.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Traditional path (4 copies, 2 context switches):**
 
 ```
@@ -98,15 +98,15 @@ page cache → [DMA descriptor] → NIC         ← 0 CPU copies
 
 Only the file descriptor (pointer + length) is sent to the NIC; the NIC DMA-reads directly from page cache pages. Requires NIC with `SG_IO` scatter-gather capability.
 
-THE TRADE-OFFS:
-Gain: Up to 65% reduction in CPU usage for file serving; higher throughput per CPU; less memory bandwidth consumed.
-Cost: Data cannot be modified in flight (no TLS without additional mechanism); requires both source and destination to be kernel-managed; `mmap`+`write` is more flexible but has different trade-offs; sendfile is Linux/Unix specific (no Windows sendfile equivalent — use `TransmitFile`).
+**THE TRADE-OFFS:**
+**Gain:** Up to 65% reduction in CPU usage for file serving; higher throughput per CPU; less memory bandwidth consumed.
+**Cost:** Data cannot be modified in flight (no TLS without additional mechanism); requires both source and destination to be kernel-managed; `mmap`+`write` is more flexible but has different trade-offs; sendfile is Linux/Unix specific (no Windows sendfile equivalent — use `TransmitFile`).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Serve 1 million 10KB files in one second (10 GB/s) on a server with a 10 Gbps NIC and NVMe SSD.
 
 TRADITIONAL read/write:
@@ -122,7 +122,7 @@ SENDFILE (with scatter-gather DMA):
 - CPU free for request handling, TLS, etc.
 - Same 10 Gbps throughput achievable at < 20% CPU
 
-THE INSIGHT:
+**THE INSIGHT:**
 Zero-copy is not about speed of individual transfers — it's about keeping the data path off the CPU, leaving CPU cycles for actual application logic.
 
 ---
@@ -203,7 +203,7 @@ Consumer fetches messages for topic partition
   → Broker CPU: parses request + builds sendfile args only
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 sendfile with TLS (without kTLS):
@@ -336,28 +336,28 @@ strace -e trace=sendfile -p $(pgrep nginx) 2>&1 | head -20
 
 **1. sendfile Silently Falling Back to read/write in Java**
 
-Symptom: Java file server has high CPU despite using `FileChannel.transferTo()`; profiler shows time in `read`/`write` syscalls.
+**Symptom:** Java file server has high CPU despite using `FileChannel.transferTo()`; profiler shows time in `read`/`write` syscalls.
 
-Root Cause: `transferTo` falls back if: destination is not a `SocketChannel` (e.g., `SSLEngine` wrapping), file is on network filesystem (NFS), or OS sendfile unsupported for the file type.
+**Root Cause:** `transferTo` falls back if: destination is not a `SocketChannel` (e.g., `SSLEngine` wrapping), file is on network filesystem (NFS), or OS sendfile unsupported for the file type.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 strace -e trace=sendfile,sendfile64,read,write -p <PID> 2>&1 | head -50
 # If you see read+write instead of sendfile64, it's fallen back
 ```
 
-Fix: Ensure destination is a `SocketChannel` directly (not wrapped). For TLS, use Netty with OpenSSL + zero-copy TLS or upgrade to kernel with kTLS.
+**Fix:** Ensure destination is a `SocketChannel` directly (not wrapped). For TLS, use Netty with OpenSSL + zero-copy TLS or upgrade to kernel with kTLS.
 
 ---
 
 **2. sendfile with O_DIRECT Conflict**
 
-Symptom: `sendfile()` returns `EINVAL` or falls back to copy path.
+**Symptom:** `sendfile()` returns `EINVAL` or falls back to copy path.
 
-Root Cause: Source file was opened with `O_DIRECT`; sendfile requires page-cache-backed files.
+**Root Cause:** Source file was opened with `O_DIRECT`; sendfile requires page-cache-backed files.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check open flags on fd
@@ -365,26 +365,26 @@ cat /proc/<PID>/fdinfo/<fd>
 # Look for: flags: 0100002 (O_RDONLY|O_DIRECT = 0x8002)
 ```
 
-Fix: Remove O_DIRECT from files used with sendfile; use O_DIRECT only for database buffer pool fds.
+**Fix:** Remove O_DIRECT from files used with sendfile; use O_DIRECT only for database buffer pool fds.
 
 ---
 
 **3. TLS Throughput Bottleneck**
 
-Symptom: HTTPS file server saturates CPU at ~2 Gbps on a 10 Gbps NIC; non-HTTPS uses < 5% CPU for same traffic.
+**Symptom:** HTTPS file server saturates CPU at ~2 Gbps on a 10 Gbps NIC; non-HTTPS uses < 5% CPU for same traffic.
 
-Root Cause: TLS requires user-space encrypt/decrypt; sendfile can't be used; every HTTPS byte goes through user space twice.
+**Root Cause:** TLS requires user-space encrypt/decrypt; sendfile can't be used; every HTTPS byte goes through user space twice.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 perf top -p <nginx_pid>
 # High time in: SSL_write, EVP_EncryptUpdate = TLS copy bottleneck
 ```
 
-Fix: Enable kTLS in kernel (5.2+) + Nginx with `ssl_sendfile on` + OpenSSL 3.0 kTLS provider.
+**Fix:** Enable kTLS in kernel (5.2+) + Nginx with `ssl_sendfile on` + OpenSSL 3.0 kTLS provider.
 
-Prevention: Benchmark TLS throughput during capacity planning; plan for 3–5× more CPU for TLS vs plaintext at line rate.
+**Prevention:** Benchmark TLS throughput during capacity planning; plan for 3–5× more CPU for TLS vs plaintext at line rate.
 
 ---
 

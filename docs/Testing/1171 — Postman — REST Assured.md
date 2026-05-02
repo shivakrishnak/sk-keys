@@ -333,11 +333,11 @@ pm.environment.set("lastOrderId", pm.response.json().orderId);
 
 **1. Postman Collection JSON Merge Conflicts**
 Cause: Multiple developers editing the same collection — JSON format creates large diffs.
-Fix: One collection owner per team; or migrate to REST Assured for code-controlled tests.
+**Fix:** One collection owner per team; or migrate to REST Assured for code-controlled tests.
 
 **2. REST Assured Tests Leaking State**
 Cause: `RestAssured.baseURI` set statically; tests run in parallel with different base URIs.
-Fix: Use `RequestSpecBuilder` per test class instead of static `RestAssured.` configuration.
+**Fix:** Use `RequestSpecBuilder` per test class instead of static `RestAssured.` configuration.
 
 ---
 

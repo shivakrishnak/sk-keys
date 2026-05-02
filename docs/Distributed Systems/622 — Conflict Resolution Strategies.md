@@ -337,7 +337,7 @@ Riak (MVR + siblings):
 
 **Silently Losing Customer Data via LWW**
 
-Symptom: Customer reports their order preferences keep resetting to old values.
+**Symptom:** Customer reports their order preferences keep resetting to old values.
 Analytics shows writes succeed (no errors). Interleaved writes pattern in logs.
 Two mobile devices for the same user account writing concurrently.
 
@@ -346,7 +346,7 @@ Mobile client B (clock ahead): writes "theme=light" at T=101 (concurrent with A)
 Server-side LWW: T=101 > T=100 → keeps "theme=light", discards "theme=dark".
 Client A's write was valid (user intent) but lost.
 
-Fix: (1) Use conditional writes with an optimistic lock version counter:
+**Fix:** (1) Use conditional writes with an optimistic lock version counter:
 GET: returns (value="dark", version=5)
 PUT: ConditionExpression="version=5" → if another write changed version, retry.
 (2) Use CRDT-compatible data (if the preference is a "last-known state" like theme,

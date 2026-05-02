@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You are building a currency arbitrage detector. The weighted graph has currencies as nodes and exchange rates as edges — but represented as negative logarithms of rates (so shortest path = highest-value conversion). Some exchange rates in this representation become negative edge weights. Dijkstra's algorithm cannot handle these — it finalises distances too eagerly and misses the benefit of negative-weight edges discovered later.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Financial routing graphs, VLSI timing analysis graphs, and difference-constraint systems all contain negative edge weights. Dijkstra's greedy finalisation property breaks entirely on negative edges. You need an algorithm that can keep distances "open" to improvement even after initial processing.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Instead of greedily finalising nodes one by one, relax ALL edges in the graph, V-1 times. After k iterations, `dist[v]` holds the shortest path using at most k edges. After V-1 iterations, all shortest paths of length up to V-1 edges are found — which covers all simple paths (simple paths have at most V-1 edges). A final V-th pass checks if any distance can still be relaxed: if yes, a negative cycle exists (distances would decrease forever). This is exactly why **Bellman-Ford** was created.
 
 ---
@@ -64,12 +64,12 @@ Dijkstra locks in distances greedily; Bellman-Ford keeps all distances "negotiab
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. After `k` relaxation passes, `dist[v] ≤` the shortest path from source to `v` using **at most k edges**.
 2. Any simple path has at most **V-1 edges** — V-1 passes are therefore sufficient to find all shortest paths.
 3. If `dist[v]` still decreases after V-1 passes, there exists a **negative cycle** reachable from source, making the shortest path `-∞` for nodes on or reachable from that cycle.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The DP structure is explicit: `dist_k[v] = min over all edges (u→v): dist_{k-1}[u] + weight(u→v)`. This recurrence computes "shortest path using at most k edges" directly.
 
 In practice, both `dist_k` and `dist_{k-1}` can use the same array — early relaxation (using an updated value in the same pass) only speeds up convergence, never produces wrong results (for correctness, a two-array approach preserves the strict k-edge semantics, but the single-array approach still terminates correctly).
@@ -80,28 +80,28 @@ After V-1 passes, perform pass V. If any edge (u→v) satisfies `dist[u] + w < d
 **Why Dijkstra fails and Bellman-Ford succeeds:**
 Dijkstra finalises node A at distance 5. If a later negative edge (B→A, weight -10) is discovered, A's true shortest distance is `dist[B] + (-10)`, potentially less than 5. Dijkstra never re-processes A. Bellman-Ford does not finalise nodes — every pass may re-relax every edge, catching all such improvements.
 
-THE TRADE-OFFS:
-Gain: Handles negative edges; detects negative cycles; simpler to implement correctly than Dijkstra.
-Cost: O(VE) vs Dijkstra's O((V+E) log V) — much slower for large graphs. For a graph with V=1000, E=500000: Bellman-Ford needs 500,000,000 operations; Dijkstra needs ~6,500,000.
+**THE TRADE-OFFS:**
+**Gain:** Handles negative edges; detects negative cycles; simpler to implement correctly than Dijkstra.
+**Cost:** O(VE) vs Dijkstra's O((V+E) log V) — much slower for large graphs. For a graph with V=1000, E=500000: Bellman-Ford needs 500,000,000 operations; Dijkstra needs ~6,500,000.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Graph: S→A (weight 4), S→B (weight 5), B→A (weight -6). Shortest path from S to A?
 
-WHAT HAPPENS WITH DIJKSTRA:
+**WHAT HAPPENS WITH DIJKSTRA:**
 Pass 1: Pop S. dist[A]=4, dist[B]=5. Pop A (dist=4, finalised).
 Discover B→A (weight -6). True dist[A] = dist[B] + (-6) = 5 + (-6) = -1.
 But A is already finalised at 4. Dijkstra returns: dist[A] = 4. WRONG.
 
-WHAT HAPPENS WITH BELLMAN-FORD:
+**WHAT HAPPENS WITH BELLMAN-FORD:**
 Pass 1: Relax S→A: dist[A]=4. Relax S→B: dist[B]=5. Relax B→A: dist[B]+(-6)=-1 < 4 → dist[A]=-1.
 Pass 2: Relax S→A: 4 > -1, no change. Relax S→B: 5, no change. Relax B→A: -1. No change.
 After V-1=2 passes: dist[A] = -1. CORRECT.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Bellman-Ford "re-negotiates" A's distance in pass 1 when it processes B→A after setting dist[A]=4. Dijkstra cannot do this because it finalises A immediately. The key difference is not algorithmic cleverness — it is the willingness to reconsider.
 
 ---
@@ -110,11 +110,11 @@ Bellman-Ford "re-negotiates" A's distance in pass 1 when it processes B→A afte
 
 > Bellman-Ford is like a price negotiation network. Everyone starts with "infinite price" except the seller (source = 0). Each round, everyone asks their neighbours: "Could you sell to me cheaper via you than my current best offer?" After V-1 rounds, all stable minimum prices are found. If in round V someone gets a lower price — there's a loop deal where everyone in the cycle can keep lowering prices forever. That loop is the negative cycle.
 
-"Current best offer" → dist[v]
-"Asking neighbour" → edge relaxation
-"V-1 rounds" → V-1 Bellman-Ford passes
-"Round V still lowers price" → negative cycle detected
-"Loop deal" → prices decrease forever = no stable shortest path
+- "Current best offer" → dist[v]
+- "Asking neighbour" → edge relaxation
+- "V-1 rounds" → V-1 Bellman-Ford passes
+- "Round V still lowers price" → negative cycle detected
+- "Loop deal" → prices decrease forever = no stable shortest path
 
 Where this analogy breaks down: In real negotiation, loops don't create infinite savings. In weighted graphs, negative cycles allow paths of arbitrarily small total weight — the "shortest path" becomes undefined (−∞).
 
@@ -172,7 +172,7 @@ If a complete pass makes no updates to any `dist[v]`, the algorithm has converge
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Weighted graph (may have negative edges)
 → Initialize dist[] = ∞, dist[src] = 0
@@ -183,7 +183,7 @@ Weighted graph (may have negative edges)
 → Return dist[] (or "negative cycle" error)
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Negative cycle reachable from source
 → V-th pass still relaxes some edge
@@ -194,7 +194,7 @@ Negative cycle reachable from source
 → Caller decides: filter out, report error
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For dense networks (V=10000, E=10⁸), Bellman-Ford's O(VE) = 10¹² operations is infeasible. Use SPFA (queue-based Bellman-Ford) for average O(kE) where k ≪ V in practice. For Internet routing, distributed Bellman-Ford (RIP protocol) runs asynchronously — each router only re-relaxes when it receives an update from a neighbour. The "counting to infinity" problem (slow convergence on link failures with negative distance loops) is managed by split-horizon and route poisoning heuristics.
 
 ---
@@ -366,11 +366,11 @@ How to choose: Use Bellman-Ford when negative edges exist and you need guarantee
 
 **1. Integer overflow during distance addition**
 
-Symptom: Incorrect distances; random-looking wrong answers; negative distances on graphs with no negative edges.
+**Symptom:** Incorrect distances; random-looking wrong answers; negative distances on graphs with no negative edges.
 
-Root Cause: `dist[u] = Integer.MAX_VALUE`. Adding any weight gives overflow: `MAX_VALUE + 1 = -2147483648`. All subsequent comparisons are corrupted.
+**Root Cause:** `dist[u] = Integer.MAX_VALUE`. Adding any weight gives overflow: `MAX_VALUE + 1 = -2147483648`. All subsequent comparisons are corrupted.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // If dist[v] suddenly decreases before any
 // valid relaxation, overflow has occurred
@@ -378,7 +378,7 @@ System.out.println("OVERFLOW at v=" + v +
     " dist[u]+w=" + (dist[u] + w));
 ```
 
-Fix:
+**Fix:**
 ```java
 // Guard: only relax if u is reachable
 if (dist[u] != Integer.MAX_VALUE
@@ -386,17 +386,17 @@ if (dist[u] != Integer.MAX_VALUE
     dist[v] = dist[u] + w;
 ```
 
-Prevention: Always guard with a reachability check before addition.
+**Prevention:** Always guard with a reachability check before addition.
 
 ---
 
 **2. False negative cycle detection due to source isolation**
 
-Symptom: Algorithm reports "negative cycle" but no actual cycle exists; the reported cycle nodes are not reachable from the source.
+**Symptom:** Algorithm reports "negative cycle" but no actual cycle exists; the reported cycle nodes are not reachable from the source.
 
-Root Cause: The V-th pass check finds an edge (u→v) where `dist[u]+w < dist[v]`, but `u` was never relaxed (dist[u] = ∞). Initial ∞ + w = overflow → incorrect trigger.
+**Root Cause:** The V-th pass check finds an edge (u→v) where `dist[u]+w < dist[v]`, but `u` was never relaxed (dist[u] = ∞). Initial ∞ + w = overflow → incorrect trigger.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 for (int[] edge : edges) {
     int u=edge[0], v=edge[1], w=edge[2];
@@ -407,19 +407,19 @@ for (int[] edge : edges) {
 }
 ```
 
-Fix: Skip edges where `dist[u] == MAX_VALUE` in the negative cycle check (node u is unreachable, its edge cannot contribute to a meaningful cycle).
+**Fix:** Skip edges where `dist[u] == MAX_VALUE` in the negative cycle check (node u is unreachable, its edge cannot contribute to a meaningful cycle).
 
-Prevention: Always guard the negative cycle check with a reachability condition.
+**Prevention:** Always guard the negative cycle check with a reachability condition.
 
 ---
 
 **3. "Counting to infinity" in distributed Bellman-Ford**
 
-Symptom: After a link failure, routing tables slowly count up to "infinity" through many update cycles, causing prolonged routing loops.
+**Symptom:** After a link failure, routing tables slowly count up to "infinity" through many update cycles, causing prolonged routing loops.
 
-Root Cause: In distributed Bellman-Ford (RIP protocol), when a link breaks, nodes that previously used the broken link to reach a destination keep advertising stale routes to each other. They incrementally count the hop count up to the infinity threshold (typically 16 in RIP) before convergence.
+**Root Cause:** In distributed Bellman-Ford (RIP protocol), when a link breaks, nodes that previously used the broken link to reach a destination keep advertising stale routes to each other. They incrementally count the hop count up to the infinity threshold (typically 16 in RIP) before convergence.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # On a router (Cisco IOS) check RIP updates:
 debug ip rip
@@ -427,9 +427,9 @@ debug ip rip
 # to 16 (infinity) on a removed route
 ```
 
-Fix: Implement split-horizon (don't advertise a route back to the neighbour from which it was learned) and route poisoning (immediately advertise infinity for a failed route) to accelerate convergence.
+**Fix:** Implement split-horizon (don't advertise a route back to the neighbour from which it was learned) and route poisoning (immediately advertise infinity for a failed route) to accelerate convergence.
 
-Prevention: Use BGP or OSPF (which use link-state, not distance-vector algorithms) for production Internet routing where convergence speed matters.
+**Prevention:** Use BGP or OSPF (which use link-state, not distance-vector algorithms) for production Internet routing where convergence speed matters.
 
 ---
 

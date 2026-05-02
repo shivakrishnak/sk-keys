@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 RAM is finite. If a process needs 4GB but only 2GB of RAM is free, the only option is to kill the process. Systems in the 1970s with 256KB of RAM could run programs of 1MB — only because they used virtual memory + swap to page program segments from disk on demand.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Swap solves the "not enough RAM" problem by using disk space as an overflow. But it introduces a new failure mode: if the total working set of all active processes exceeds physical RAM, the OS must constantly swap pages between RAM and disk. Each swap-in evicts another needed page (swap-out). That page is soon needed again. The OS spends 100% of time in page fault handling — essentially no useful work is done. This is thrashing.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Peter Denning's 1968 "working set" model showed that thrashing occurs when the sum of working sets exceeds physical memory, and introduced the solution: working set policy — only keep processes whose working sets fit in memory; swap out (suspend) entire processes that can't fit.
 
 ---
@@ -115,9 +115,9 @@ Linux: /proc/vmstat
   pgmajfault (major page faults) spikes → pages being read from swap
 ```
 
-THE TRADE-OFFS:
-Gain: System remains functional under moderate overcommit; processes don't OOM on occasional memory spikes.
-Cost: Swap-in latency is 5–6 orders of magnitude higher than RAM; under overcommit, swap can make the system worse (thrashing) compared to just killing processes (OOM killer).
+**THE TRADE-OFFS:**
+**Gain:** System remains functional under moderate overcommit; processes don't OOM on occasional memory spikes.
+**Cost:** Swap-in latency is 5–6 orders of magnitude higher than RAM; under overcommit, swap can make the system worse (thrashing) compared to just killing processes (OOM killer).
 
 ---
 
@@ -297,7 +297,7 @@ resources:
 
 **1. Java GC Pause Explosion**
 
-Symptom: JVM GC logs show stop-the-world pauses of 10s+ (normally <200ms); application unresponsive; Kubernetes pod restarts due to liveness probe timeout.
+**Symptom:** JVM GC logs show stop-the-world pauses of 10s+ (normally <200ms); application unresponsive; Kubernetes pod restarts due to liveness probe timeout.
 
 Diagnosis:
 
@@ -310,13 +310,13 @@ vmstat 1 | awk '{print $7, $8, $17}'    # si, so, cpu_wait
 # High si during GC = heap pages being swapped in
 ```
 
-Fix: `vm.swappiness=0`, `--memory-swap` container limit, `-XX:+AlwaysPreTouch`, add RAM.
+**Fix:** `vm.swappiness=0`, `--memory-swap` container limit, `-XX:+AlwaysPreTouch`, add RAM.
 
 ---
 
 **2. OOM Kill in Production Container**
 
-Symptom: Kubernetes event: `OOMKilled`; container restarts; memory metrics show usage near limit before death.
+**Symptom:** Kubernetes event: `OOMKilled`; container restarts; memory metrics show usage near limit before death.
 
 Diagnosis:
 
@@ -330,7 +330,7 @@ dmesg | grep -i "oom"
 # Shows: which process, RSS at kill time, memory state
 ```
 
-Fix: Increase memory limit, profile for memory leaks (heap dump), enable swap with container cgroup v2 limit as temporary measure.
+**Fix:** Increase memory limit, profile for memory leaks (heap dump), enable swap with container cgroup v2 limit as temporary measure.
 
 ---
 

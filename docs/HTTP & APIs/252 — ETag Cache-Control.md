@@ -404,16 +404,16 @@ public class OrderController {
 
 **304 Responses Not Working**
 
-Symptom:
+**Symptom:**
 Client sends `If-None-Match` header, server returns `200 OK` with full body every time
 even though content didn't change.
 
-Root Cause:
+**Root Cause:**
 ETag computation includes non-deterministic elements (timestamp of serialization, random
 UUID field, Java HashMap insertion order affecting JSON field sequence) — each request
 generates a different ETag even for identical data.
 
-Diagnostic:
+**Diagnostic:**
 
 ```java
 // Test: call GET twice, compare ETags:

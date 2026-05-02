@@ -32,10 +32,10 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Modern CPUs have multiple levels of cache (L1/L2/L3). Each CPU core may cache a variable differently. Thread T1 running on Core 1 writes `flag = true`. Thread T2 running on Core 2 reads `flag` — but Core 2's cache is stale, and T2 reads `flag = false`. T1's write is invisible to T2 even though it happened first. Without `volatile`, the JIT compiler may additionally reorder instructions and cache values in registers, making stale reads the default, not the exception.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A classic stop-flag pattern:
 ```java
 boolean running = true;        // NOT volatile
@@ -47,7 +47,7 @@ void run() {
 ```
 The JIT compiler sees `running` never changes inside `run()` and optimizes it to `while (true)` — hoisting the read out of the loop forever. The thread runs indefinitely even after `stop()` is called.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **`volatile`** was created — to tell the JVM and CPU "this variable is shared across threads — never cache it, always read from and write to main memory, and don't reorder accesses to it."
 
 ---
@@ -73,12 +73,12 @@ This is exactly why **`volatile`** was created — to tell the JVM and CPU "this
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Each volatile read reads the most recently written value by any thread.
 2. A volatile write happens-before any subsequent volatile read of the same variable.
 3. volatile does NOT prevent interleaving of compound operations (volatility is per-read/write, not per sequence).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 2 (happens-before): the HB guarantee is transitive. If Thread T1 writes volatile `flag` after updating a non-volatile `data`, and Thread T2 reads volatile `flag` and then reads non-volatile `data` — the HB chain `data write → flag write → flag read → data read` ensures T2 sees T1's `data` value. This is the "piggyback" pattern used for lazy initialization.
 
 ```
@@ -95,15 +95,15 @@ Java Memory Model volatile semantics:
     3. Store-Load barrier (prevent subsequent loads from cache)
 ```
 
-THE TRADE-OFFS:
-Gain: Visibility guarantee; prevents JIT caching in registers; prevents instruction reorder around volatile access; cheaper than `synchronized`.
-Cost: No mutual exclusion; compound operations still race; memory barriers add latency (~5-40ns on x86 vs ~1ns for cached reads); heavy use on hot paths can impede JIT optimization.
+**THE TRADE-OFFS:**
+**Gain:** Visibility guarantee; prevents JIT caching in registers; prevents instruction reorder around volatile access; cheaper than `synchronized`.
+**Cost:** No mutual exclusion; compound operations still race; memory barriers add latency (~5-40ns on x86 vs ~1ns for cached reads); heavy use on hot paths can impede JIT optimization.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A status flag checked by worker threads that can be set by a control thread.
 
 WITHOUT volatile (broken):
@@ -137,7 +137,7 @@ void increment() { count++; } // STILL a race!
 // Fix: AtomicInteger or synchronized
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 `volatile` makes each individual read/write atomic (for long and double, `volatile` also prevents word tearing). But it doesn't make sequences of reads and writes atomic. `count++` is a sequence — it needs synchronized or AtomicInteger.
 
 ---
@@ -146,10 +146,10 @@ THE INSIGHT:
 
 > `volatile` is like a public whiteboard in a shared workspace vs. a personal notepad. Without volatile: each developer copies info to their notepad and updates it occasionally. With volatile: there's one whiteboard — every read and write happens on the whiteboard directly. You see exactly what others wrote and in the order they wrote it. But if two people simultaneously try to update "count" on the whiteboard (read-add-write), they can still overwrite each other.
 
-"Personal notepad" → CPU register or cache.
-"Public whiteboard" → main memory.
-"Making it volatile" → forcing all reads/writes to the whiteboard.
-"Two people updating simultaneously" → unsynchronized compound operations (still unsafe).
+- "Personal notepad" → CPU register or cache.
+- "Public whiteboard" → main memory.
+- "Making it volatile" → forcing all reads/writes to the whiteboard.
+- "Two people updating simultaneously" → unsynchronized compound operations (still unsafe).
 
 Where this analogy breaks down: Main memory is shared but CPUs can still serve stale cache values without hardware cache coherence. `volatile` triggers memory barriers that force cache coherence — not exactly "all reads go to a single board" but functionally equivalent at the JVM level.
 
@@ -235,7 +235,7 @@ NORMAL FLOW (stop flag):
     → [T2 exits loop: shutdown complete]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Counter uses volatile for count++]
     → [T1: volatile read: count=5]
@@ -246,7 +246,7 @@ FAILURE PATH:
     → [Use AtomicInteger or synchronized instead]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At high-frequency access (millions/second), volatile reads and writes add measurable latency compared to entirely CPU-local data. On x86, reads are free but writes have ~40ns latency (memory fence). On ARM, both can be expensive. Hot-path metrics should never use volatile — use `AtomicLong` with `lazySet()` for metrics that don't need immediate visibility.
 
 ---
@@ -340,32 +340,32 @@ How to choose: `volatile` for simple flag/reference updates checked in multiple 
 
 **JIT-Cached Non-volatile Flag (Thread Never Stops)**
 
-Symptom: Worker thread ignores `running = false` and continues forever.
+**Symptom:** Worker thread ignores `running = false` and continues forever.
 
-Root Cause: JIT hoisted `running` flag read out of the loop (register caching).
+**Root Cause:** JIT hoisted `running` flag read out of the loop (register caching).
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Run with JIT disabled to confirm:
 java -Djava.compiler=NONE MyApp
 # If thread stops correctly without JIT, flag is JIT-cached
 ```
 
-Fix: Add `volatile` keyword to the flag field.
+**Fix:** Add `volatile` keyword to the flag field.
 
-Prevention: All flags read in loops that can be set by another thread must be `volatile`.
+**Prevention:** All flags read in loops that can be set by another thread must be `volatile`.
 
 ---
 
 **Word Tearing on non-volatile long/double**
 
-Symptom: Read of a `long` or `double` field returns a value combining old and new bits (corrupted value).
+**Symptom:** Read of a `long` or `double` field returns a value combining old and new bits (corrupted value).
 
-Root Cause: 64-bit `long`/`double` writes are not atomic on 32-bit JVMs without `volatile`. The write of the upper 32 bits and lower 32 bits can be interleaved.
+**Root Cause:** 64-bit `long`/`double` writes are not atomic on 32-bit JVMs without `volatile`. The write of the upper 32 bits and lower 32 bits can be interleaved.
 
-Fix: Declare `long`/`double` fields `volatile` if shared across threads.
+**Fix:** Declare `long`/`double` fields `volatile` if shared across threads.
 
-Prevention: Any `long` or `double` field accessed from multiple threads should be `volatile` or synchronized. Modern 64-bit JVMs typically treat 64-bit writes as atomic, but the JMM does not guarantee it without `volatile`.
+**Prevention:** Any `long` or `double` field accessed from multiple threads should be `volatile` or synchronized. Modern 64-bit JVMs typically treat 64-bit writes as atomic, but the JMM does not guarantee it without `volatile`.
 
 ---
 

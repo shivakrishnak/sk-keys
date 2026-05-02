@@ -387,13 +387,13 @@ class CheckoutServiceIntegrationTest {
 
 **Stub Not Matching — Returns 404 from WireMock**
 
-Symptom:
+**Symptom:**
 Test fails with 404 from WireMock. Stub was defined. Request looks correct.
 
 Root Cause (most common):
 URL path mismatch (trailing slash, different casing, query param included in urlEqualTo).
 
-Diagnostic:
+**Diagnostic:**
 
 ```java
 // WireMock Admin API — see all received requests:

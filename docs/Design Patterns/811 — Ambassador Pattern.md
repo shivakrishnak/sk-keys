@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Ambassador Pattern"
 parent: "Design Patterns"
@@ -167,7 +167,7 @@ WITH Ambassador:
 > A diplomatic ambassador: represents your country in a foreign nation. You (the application/government) send a message to the ambassador ("please request more grain"). The ambassador translates it into the local diplomatic language, navigates cultural protocols, retries if the foreign official is unavailable, escalates if communication breaks down, and returns a translated response to you. You never had to speak Japanese, navigate foreign protocol, or handle diplomatic failures directly.
 
 "Your government sends a message to the ambassador" = application calls `localhost:9000/inventory`
-"Ambassador translates to local diplomatic language" = protocol translation (REST → gRPC)
+- "Ambassador translates to local diplomatic language" = protocol translation (REST → gRPC)
 "Retries if foreign official unavailable" = retry policy on 5xx or connection failure
 "Escalates if communication breaks down" = circuit breaking on sustained failures
 "Returns translated response to you" = returns REST response to the application

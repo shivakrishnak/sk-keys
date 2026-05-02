@@ -271,16 +271,16 @@ jobs:
 
 **1. BindException: Port Already in Use**
 Cause: Multiple parallel tests start embedded servers on the same port.
-Fix: `@SpringBootTest(webEnvironment = RANDOM_PORT)` — each test gets a random available port.
+**Fix:** `@SpringBootTest(webEnvironment = RANDOM_PORT)` — each test gets a random available port.
 
 **2. UniqueConstraintViolation in Parallel Tests**
 Cause: Multiple tests insert records with the same unique field value.
-Fix: Unique data per test using UUID-based identifiers.
+**Fix:** Unique data per test using UUID-based identifiers.
 
 **3. Tests Pass Alone, Fail in Parallel**
 Cause: Static mutable state (e.g., a static `List` being shared across test classes).
 Diagnosis: Run tests in random order; run two specific tests together to reproduce.
-Fix: Remove static mutable state; inject dependencies instead.
+**Fix:** Remove static mutable state; inject dependencies instead.
 
 ---
 

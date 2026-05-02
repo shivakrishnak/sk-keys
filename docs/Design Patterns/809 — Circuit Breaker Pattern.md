@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Circuit Breaker Pattern"
 parent: "Design Patterns"
@@ -150,7 +150,7 @@ WITH Circuit Breaker:
 "Breaker trips (OPEN) on power surge" = circuit breaker opens when downstream failure rate exceeds threshold
 "House still has power on other circuits" = other downstream services unaffected (Bulkhead + Circuit Breaker)
 "Fix the problem, flip breaker back (HALF-OPEN)" = wait duration expires, test calls permitted
-"Breaker trips again if problem persists" = test calls fail in HALF-OPEN → back to OPEN
+- "Breaker trips again if problem persists" = test calls fail in HALF-OPEN → back to OPEN
 "Protects wiring from fire" = protects thread pool from exhaustion; prevents cascading failure
 
 ---

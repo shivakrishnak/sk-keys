@@ -386,14 +386,14 @@ public class GatewayConfig {
 
 **Gateway Becomes the Bottleneck**
 
-Symptom:
+**Symptom:**
 All services appear slow. Latency P99 spikes. Gateway CPU at 80%+.
 
-Root Cause:
+**Root Cause:**
 Gateway is the single process handing all traffic AND doing expensive operations
 (fetching JWKS on every request, large regex route matching, memory-hungry plugins).
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check gateway plugin latency contribution:

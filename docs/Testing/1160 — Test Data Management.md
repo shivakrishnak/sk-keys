@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 QA team's test environment has a database seeded months ago. Tests use data that was created by other tests, manually inserted by developers, or copied from production (containing real PII). Tests pass or fail depending on what state the data is in. Adding a test sometimes breaks 10 others. The database is 50GB, mostly old test data from abandoned features. Tests use real customer names and emails (GDPR violation — production data in test environment). "Why did CI fail? Oh, someone changed the test data in the shared environment." Welcome to Test Data Hell.
 
 ---
@@ -310,12 +310,12 @@ void getUsersWithRoles() {
 **1. Tests Fail When Run Concurrently (Parallel Test Failures)**
 
 Cause: Tests share database records; concurrent inserts violate unique constraints.
-Fix: Use UUID-based unique data per test. Use unique email/username per test run.
+**Fix:** Use UUID-based unique data per test. Use unique email/username per test run.
 
 **2. Staging Environment Data Drift → Tests Unreliable**
 
 Cause: Staging database accumulates state from manual testing, failed tests, old deployments.
-Fix: Regular staging environment reset. Per-run data provisioning with cleanup.
+**Fix:** Regular staging environment reset. Per-run data provisioning with cleanup.
 
 ---
 

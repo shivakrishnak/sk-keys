@@ -32,7 +32,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 `Future.get()` blocks the calling thread. To chain async operations (fetch service A, then use result to call service B, then combine with service C result), blocking `Future.get()` occupies real threads doing nothing but waiting:
 ```java
 Future<A> fa = pool.submit(() -> callA());
@@ -42,10 +42,10 @@ B b = fb.get();             // Thread 1: blocked again
 ```
 Two blocking waits = two threads occupied doing nothing. In a web server with 1,000 concurrent request pipelines, 2,000 threads are blocked waiting for I/O. The thread pool is exhausted.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A microservice gateway chains 5 downstream calls per request (auth, catalog, pricing, inventory, recommendations). With blocking `Future.get()`, each request occupies a thread for the entire 200ms chain. At 5,000 concurrent requests: 5,000 blocked threads. The JVM runs out of memory or degrades badly.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **`CompletableFuture`** was created — to chain async operations as callbacks without blocking any thread to wait, composing async pipelines that use threads only during actual computation, not during waiting.
 
 ---
@@ -71,12 +71,12 @@ This is exactly why **`CompletableFuture`** was created — to chain async opera
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A `CompletableFuture` can be completed by any thread at any time, not just the executor that created it.
 2. Callback registration (`.thenApply`, `.thenCompose`) returns a NEW `CompletableFuture` representing the chained result.
 3. If the future is already complete when a callback is registered, the callback executes immediately (synchronously or in the notifying thread).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 2, chaining creates an immutable DAG of `CompletableFuture` nodes. The terminal node fires when all upstream nodes complete. Intermediate nodes fire in whatever thread completes the upstream.
 
 ```
@@ -95,15 +95,15 @@ Given invariant 2, chaining creates an immutable DAG of `CompletableFuture` node
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Non-blocking; composable pipelines; error handling at any point; combines multiple async operations; integrates with reactive frameworks.
-Cost: Complex debugging (no linear stack trace); exception semantics require care (unhandled exceptions silently swallowed); thread pool for callbacks matters (avoid using network thread pool for CPU callbacks); hard to cancel mid-chain.
+**THE TRADE-OFFS:**
+**Gain:** Non-blocking; composable pipelines; error handling at any point; combines multiple async operations; integrates with reactive frameworks.
+**Cost:** Complex debugging (no linear stack trace); exception semantics require care (unhandled exceptions silently swallowed); thread pool for callbacks matters (avoid using network thread pool for CPU callbacks); hard to cancel mid-chain.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A user profile endpoint: fetch user, fetch preferences, combine into ProfileResponse.
 
 WITH BlockING Future:
@@ -127,7 +127,7 @@ return userCF.thenCombine(prefsCF, ProfileResponse::new)
 // T1 submits and registers callback — doesn't block during fetch
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 `thenCombine` runs when BOTH are complete — the callback is registered, not blocked. Thread T1 is freed immediately after `supplyAsync`. The combines fires in whatever thread finishes last. Total time = max(userFetch, prefsFetch), not sum.
 
 ---
@@ -136,9 +136,9 @@ THE INSIGHT:
 
 > `CompletableFuture` is a promise chain. You set up a chain of "promises": "promise to fetch user, then when done, promise to transform, then when done, promise to send response." You hand off the chain setup and walk away. The chain self-executes — each link fires when the previous one completes, driven by events, not blocked threads.
 
-"Promise to do X after Y" → `.thenApply()`, `.thenCompose()`.
-"Promise to handle both value and error" → `.handle()`.
-"Collect the chain's final result" → `.get()` or `.join()`.
+- "Promise to do X after Y" → `.thenApply()`, `.thenCompose()`.
+- "Promise to handle both value and error" → `.handle()`.
+- "Collect the chain's final result" → `.get()` or `.join()`.
 
 Where this analogy breaks down: Promise chains in JavaScript execute in the event loop (single-threaded). Java `CompletableFuture` chains execute in thread pools — multiple threads can process different stages simultaneously, with ordering governed by the data dependency graph.
 
@@ -221,7 +221,7 @@ CompletableFuture.supplyAsync(() -> fetchData())
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [supplyAsync(() -> fetchUser(id), pool)]  ← YOU ARE HERE
     → [Pool thread T1: fetchUser() runs]
@@ -231,7 +231,7 @@ NORMAL FLOW:
     → [pipeline completes → .join() returns]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [fetchUser() throws RuntimeException]
     → [CF marked exceptional]
@@ -241,7 +241,7 @@ FAILURE PATH:
     → [downstream stages continue with fallback]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At high scale, the choice of executor for async callbacks is critical. Using `ForkJoinPool.commonPool()` (the default for `thenApplyAsync` with no executor) for I/O callbacks starves CPU tasks. Use a dedicated executor for I/O-bound callback chains. Virtual threads (Java 21) simplify this: `Executors.newVirtualThreadPerTaskExecutor()` scales to millions of concurrent I/O operations without thread starvation.
 
 ---
@@ -320,11 +320,11 @@ How to choose: Use `CompletableFuture` for async pipelines involving single resu
 
 **Silent Exception Swallowing**
 
-Symptom: Pipeline appears to run but produces no output. No exception logged.
+**Symptom:** Pipeline appears to run but produces no output. No exception logged.
 
-Root Cause: `CompletableFuture` without exception handling; exception in a stage swallows silently.
+**Root Cause:** `CompletableFuture` without exception handling; exception in a stage swallows silently.
 
-Fix:
+**Fix:**
 ```java
 // Always add exception handler or observe the future:
 CompletableFuture.supplyAsync(() -> riskyOp(), pool)
@@ -338,17 +338,17 @@ CompletableFuture.supplyAsync(() -> riskyOp(), pool)
     });
 ```
 
-Prevention: Every `CompletableFuture` chain must have at least one `exceptionally` or `handle` to prevent silent failure.
+**Prevention:** Every `CompletableFuture` chain must have at least one `exceptionally` or `handle` to prevent silent failure.
 
 ---
 
 **Thread Pool Starvation from Sync Callbacks**
 
-Symptom: I/O thread pool fully occupied with computation tasks; application latency spikes.
+**Symptom:** I/O thread pool fully occupied with computation tasks; application latency spikes.
 
-Root Cause: CPU-bound callbacks registered with `thenApply` (not `thenApplyAsync`) run in the I/O thread that completed the upstream future.
+**Root Cause:** CPU-bound callbacks registered with `thenApply` (not `thenApplyAsync`) run in the I/O thread that completed the upstream future.
 
-Fix:
+**Fix:**
 ```java
 // BAD: CPU compute runs in I/O thread
 CompletableFuture.supplyAsync(() -> fetchFromDB(), ioPool)
@@ -359,17 +359,17 @@ CompletableFuture.supplyAsync(() -> fetchFromDB(), ioPool)
     .thenApplyAsync(data -> heavyCPUTransform(data), cpuPool);
 ```
 
-Prevention: Use `thenXxxAsync(fn, executor)` for callbacks that should not run in the upstream's thread.
+**Prevention:** Use `thenXxxAsync(fn, executor)` for callbacks that should not run in the upstream's thread.
 
 ---
 
 **allOf Not Propagating Individual Errors**
 
-Symptom: `allOf().join()` completes but individual futures have exceptions. Results treated as null.
+**Symptom:** `allOf().join()` completes but individual futures have exceptions. Results treated as null.
 
-Root Cause: `allOf()` completes normally even if individual futures failed. Each future must be checked separately.
+**Root Cause:** `allOf()` completes normally even if individual futures failed. Each future must be checked separately.
 
-Fix:
+**Fix:**
 ```java
 CompletableFuture<Void> all = CompletableFuture.allOf(f1, f2, f3);
 all.join();

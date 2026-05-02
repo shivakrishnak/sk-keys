@@ -259,13 +259,13 @@ public class RecommendationFallback implements RecommendationClient {
 
 **Silent Fallback — Failures Hidden from Operators**
 
-Symptom: Users experience degraded (not broken) homepage. Recommendations are stale.
+**Symptom:** Users experience degraded (not broken) homepage. Recommendations are stale.
 Operators are unaware — no alerts firing. The issue persists for hours undetected.
 
 Cause: Fallback is working correctly (serving cached data) but no metrics are emitted
 for fallback invocations. Operators have no visibility into how often fallback runs.
 
-Fix: Every fallback MUST increment a metric:
+**Fix:** Every fallback MUST increment a metric:
 `metrics.counter("fallback.invocations", "service", "recommendation").increment()`
 Create alert: if `fallback.invocations > 0` for more than 5 minutes → alert (P2/warning).
 Only when `fallback.invocations > 10%` of requests → escalate to P1.

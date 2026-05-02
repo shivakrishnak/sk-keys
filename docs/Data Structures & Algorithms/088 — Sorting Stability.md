@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Sort employees first by department, then by salary. You sort by salary first to get salary-ordered list. Then you sort by department. Without stability, the second sort scrambles the salary order within departments — employees in "Engineering" come out sorted by department but no longer in salary order within the department. Every secondary sort breaks the primary sort's ordering.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Multi-key sorting requires sorting multiple times, each sort refining the previous. This only works correctly if each sort preserves the relative ordering established by previous sorts. An unstable sort makes "sort by salary, then department" produce incorrect multi-key ordering.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 A sort that preserves the relative order of equal elements — a **stable sort** — makes multi-key sorting compositional: sort by least-significant key first, then by most significant key. Equal-key elements retain their previously established order (from prior sorts). MergeSort and TimSort are canonical stable sorts. This is exactly why **Sorting Stability** matters.
 
 ---
@@ -64,12 +64,12 @@ Stability only matters when elements are considered "equal" by the sort key but 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Equal elements are not identical: two elements with the same sort key may differ in other fields.
 2. Stability preserves the information in those other fields' ordering — it's information-conserving for the unsorted dimensions.
 3. Making any sort stable: augment each element with its original index `(key, original_index)`. Use `original_index` as tiebreaker. This increases key size by 1 field but guarantees stability.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Why MergeSort is naturally stable:**
 When merging two sorted halves, if `left[i]` and `right[j]` have equal keys, MergeSort takes from `left` first (left index is earlier in original array). This preserves relative order.
 
@@ -79,24 +79,24 @@ During partitioning, equal elements can be swapped past each other relative to t
 **Multi-key sorting via stable sort:**
 Sort by field K1 first (stable), then by K2 (stable). Elements with equal K2 retain their K1 order from the first sort. Generalizes: sort by K1, K2, ..., Kn from least significant to most significant, each sort stable. Final order: lexicographic by (Kn, ..., K2, K1).
 
-THE TRADE-OFFS:
-Gain: Compositional multi-key sorting; predictable ordering; preserves original order for equal elements.
-Cost: Stable sorts typically require O(N) extra space (MergeSort). Augmentation approach (+original_index) increases comparison key size.
+**THE TRADE-OFFS:**
+**Gain:** Compositional multi-key sorting; predictable ordering; preserves original order for equal elements.
+**Cost:** Stable sorts typically require O(N) extra space (MergeSort). Augmentation approach (+original_index) increases comparison key size.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Sort student records by grade (A, B, C, D) who are already ordered by name (alphabetical) within each grade.
 
-WHAT HAPPENS WITH UNSTABLE SORT (HeapSort):
+**WHAT HAPPENS WITH UNSTABLE SORT (HeapSort):**
 Input: [Alice-A, Bob-A, Carol-B, Dave-B]. Sort by grade. HeapSort may swap Alice and Bob (both grade A) while building the heap. Output: [Bob-A, Alice-A, Dave-B, Carol-B]. The alphabetical ordering within grades is destroyed.
 
-WHAT HAPPENS WITH STABLE SORT (MergeSort):
+**WHAT HAPPENS WITH STABLE SORT (MergeSort):**
 Input: [Alice-A, Bob-A, Carol-B, Dave-B]. Sort by grade. MergeSort preserves equal elements' relative order. Output: [Alice-A, Bob-A, Carol-B, Dave-B]. Alphabetical order within grades maintained — you get a "free" secondary sort.
 
-THE INSIGHT:
+**THE INSIGHT:**
 A stable sort on grade gives you "sorted by grade, then alphabetically by name" — for free — because the input was already alphabetically sorted. This is the foundation of multi-key radix sort: by sorting on each key from least significant to most significant using a stable sort, you build a multi-key sorted order without a multi-key comparator.
 
 ---
@@ -105,10 +105,10 @@ A stable sort on grade gives you "sorted by grade, then alphabetically by name" 
 
 > Stable sorting is like sorting a deck of playing cards: if two cards have the same value (say, both are 7s), you keep them in their original left-to-right order. An unstable sort might swap the 7♠ and 7♥ without reason. A stable sort guarantees: "I only moved cards when necessary — I never disturbed the original order otherwise."
 
-"Two 7s" → two elements with equal sort key
-"Original left-to-right order" → original array order
-"Stable: keep 7♠ before 7♥" → stable sort preserves relative order
-"Unstable: might swap 7s" → unstable sort has no guarantee for equal keys
+- "Two 7s" → two elements with equal sort key
+- "Original left-to-right order" → original array order
+- "Stable: keep 7♠ before 7♥" → stable sort preserves relative order
+- "Unstable: might swap 7s" → unstable sort has no guarantee for equal keys
 
 Where this analogy breaks down: In practice, playing cards with the same rank are interchangeable (suit is visible but secondary). The analogy works when the cards have hidden information beyond their face value that determines their "true" position.
 
@@ -178,7 +178,7 @@ Stability was a formal requirement in database sorting (SQL `ORDER BY` with mult
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Multi-field sort requirement
 → Identify sort keys K1 (primary), K2 (secondary)
@@ -189,7 +189,7 @@ Multi-field sort requirement
 → Result: sorted by K1, equal K1 → sorted by K2
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Unstable sort used for multi-key sort
 → Equal-K1 elements have wrong K2 order
@@ -199,7 +199,7 @@ Unstable sort used for multi-key sort
 → Fix: replace sort with stable variant (TimSort, MergeSort)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For 10-billion-row database sorts (external sort), stability requires merge-based external sort (not in-memory QuickSort). TimSort adapted for external merge is used in most database systems and Hadoop. The O(N) extra space for stability becomes significant: 10B rows × 100 bytes = 1TB extra space. PostgreSQL, MySQL use merge sort for large sorts to guarantee stability and ordering.
 
 ---
@@ -294,37 +294,37 @@ How to choose: Use TimSort (Java default for objects) for most multi-key or orde
 
 **1. Using unstable sort for multi-key sort by composition**
 
-Symptom: Employees sorted by department but salary order within department is random, not correct.
+**Symptom:** Employees sorted by department but salary order within department is random, not correct.
 
-Root Cause: Each `Arrays.sort(int[])` call disrupts the previous sort's equal-element ordering. Results are non-deterministic.
+**Root Cause:** Each `Arrays.sort(int[])` call disrupts the previous sort's equal-element ordering. Results are non-deterministic.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Test: sort by salary then department
 // Expected: within each dept, employees sorted by salary
 // If salaries within dept are scrambled: unstable sort used
 ```
 
-Fix: Replace with `Arrays.sort(Object[], Comparator)` (TimSort, stable). Or compose with `thenComparingInt` in a single `Comparator`.
+**Fix:** Replace with `Arrays.sort(Object[], Comparator)` (TimSort, stable). Or compose with `thenComparingInt` in a single `Comparator`.
 
-Prevention: Never use primitive array sort for multi-key object sorting. Use `Comparator.comparing().thenComparing()`.
+**Prevention:** Never use primitive array sort for multi-key object sorting. Use `Comparator.comparing().thenComparing()`.
 
 ---
 
 **2. Radix sort using unstable inner sort**
 
-Symptom: Radix sort on integer sequences produces incorrect sorted order even for small N.
+**Symptom:** Radix sort on integer sequences produces incorrect sorted order even for small N.
 
-Root Cause: Inner counting sort lacks stability (updates count array without preserving order).
+**Root Cause:** Inner counting sort lacks stability (updates count array without preserving order).
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Test input: [321, 123, 231] (digit sort by units)
 // Expected intermediate: [321, 231, 123] (sort by units: 1,1,3)
 // If 321 and 231 are swapped: inner sort is unstable
 ```
 
-Fix: Implement counting sort with right-to-left element placement:
+**Fix:** Implement counting sort with right-to-left element placement:
 ```java
 // WRONG (unstable): fill left-to-right
 for (int x : input) output[count[digit(x, d)]++] = x;
@@ -333,17 +333,17 @@ for (int i = n-1; i >= 0; i--)
     output[--prefixSum[digit(input[i], d)]] = input[i];
 ```
 
-Prevention: Always implement radix sort's inner counting sort with right-to-left placement for stability.
+**Prevention:** Always implement radix sort's inner counting sort with right-to-left placement for stability.
 
 ---
 
 **3. Non-deterministic sort results in production database queries**
 
-Symptom: `ORDER BY` in MySQL returns different row orders for equal-key rows between identical queries; pagination breaks (page 2 shows records from page 1).
+**Symptom:** `ORDER BY` in MySQL returns different row orders for equal-key rows between identical queries; pagination breaks (page 2 shows records from page 1).
 
-Root Cause: Without a stable sort or a unique tiebreaker, equal-key rows have non-deterministic order that changes between queries.
+**Root Cause:** Without a stable sort or a unique tiebreaker, equal-key rows have non-deterministic order that changes between queries.
 
-Diagnostic:
+**Diagnostic:**
 ```sql
 -- Check if ORDER BY has a unique tiebreaker:
 SELECT * FROM users ORDER BY department;
@@ -352,9 +352,9 @@ SELECT * FROM users ORDER BY department;
 SELECT * FROM users ORDER BY department, id;
 ```
 
-Fix: Always include a unique column (e.g., `id`) as the final tiebreaker in SQL `ORDER BY` clauses.
+**Fix:** Always include a unique column (e.g., `id`) as the final tiebreaker in SQL `ORDER BY` clauses.
 
-Prevention: Lint SQL queries to require unique tiebreaker in `ORDER BY`; document this requirement in query guidelines.
+**Prevention:** Lint SQL queries to require unique tiebreaker in `ORDER BY`; document this requirement in query guidelines.
 
 ---
 

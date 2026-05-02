@@ -32,17 +32,17 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Thread T1 produces items, Thread T2 consumes them. T2 needs to wait when the buffer is empty. Without wait/notify, T2 must busy-wait (spin):
 ```java
 while (buffer.isEmpty()) { /* spin */ } // consumes 100% CPU doing nothing
 ```
 Spinning is wasteful — T2 uses an entire CPU core just checking a condition that doesn't change until T1 produces. It also prevents T1 from running on single-core systems (or under heavy multi-core load).
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A producer-consumer system with 100 consumer threads. Without wait/notify, all 100 threads spin when the queue is empty. 100% CPU consumed by busy-waiting. Producers can't get CPU time to produce items. System deadlocks under its own spinning.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **`wait/notify`** was created — to allow a thread to release its lock, park itself efficiently (no CPU consumption), and be awakened precisely when the condition it's waiting for might be true.
 
 ---
@@ -76,12 +76,12 @@ synchronized (lock) {
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. `wait()` RELEASES the monitor lock — this is what allows the notifying thread to acquire the lock to call `notify()`.
 2. After `notify()`, the awakened thread must RE-ACQUIRE the lock before it can proceed past `wait()`.
 3. Spurious wakeups are possible — always use `while` loop, never `if`.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1 + 2: the standard pattern is:
 ```java
 // Waiter:
@@ -102,15 +102,15 @@ synchronized (lock) {
 **Why is spurious wakeup possible?**
 POSIX `pthread_cond_wait` (which `Object.wait()` may use internally on Linux) can spuriously return without a signal — implementation details of the OS condition variable. Treating wakes as informational ("something may have changed — recheck") rather than definitive ("the condition is definitely true") is the correct model.
 
-THE TRADE-OFFS:
-Gain: Efficient cooperative waiting (no CPU spin); lock-integrated (condition check and state change in same critical section).
-Cost: Must always be in `synchronized`; must use `while` loop; `notify()` picks arbitrary waiter (may pick wrong one); multiple conditions need multiple objects or `Condition` (ReentrantLock); missed notifications if `notify()` fires before `wait()`.
+**THE TRADE-OFFS:**
+**Gain:** Efficient cooperative waiting (no CPU spin); lock-integrated (condition check and state change in same critical section).
+**Cost:** Must always be in `synchronized`; must use `while` loop; `notify()` picks arbitrary waiter (may pick wrong one); multiple conditions need multiple objects or `Condition` (ReentrantLock); missed notifications if `notify()` fires before `wait()`.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Classic bounded producer-consumer with one buffer slot.
 
 WITHOUT wait/notify (busy spin):
@@ -141,7 +141,7 @@ synchronized (lock) {
 }
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 `if(condition) wait()` is always wrong because: (1) spurious wakeups exist; (2) multiple waiters may be woken by `notifyAll()` but only one can consume the item — the rest find the condition false.
 
 ---
@@ -150,10 +150,10 @@ THE INSIGHT:
 
 > `wait()` is like a chef going on break when there's nothing to cook: they hand back the kitchen key (release lock), go to the break room, and wait. When the maître d' has ingredients ready (notify), they wake one chef, who returns to the kitchen, picks up the key (re-acquire lock), checks if there's actually food to cook (while loop — could have been false alarm), and either cooks or waits again.
 
-"Hand back kitchen key" → `wait()` releases monitor.
-"Wake one chef" → `notify()` picks arbitrary waiter.
-"Check if food is actually there" → `while` loop recheck.
-"False alarm" → spurious wakeup.
+- "Hand back kitchen key" → `wait()` releases monitor.
+- "Wake one chef" → `notify()` picks arbitrary waiter.
+- "Check if food is actually there" → `while` loop recheck.
+- "False alarm" → spurious wakeup.
 
 Where this analogy breaks down: `notifyAll()` wakes all chefs — only one needs to cook. The others check and go back to break (re-wait). This is correct but "thundering herd" — all woken, most immediately wait again.
 
@@ -263,7 +263,7 @@ FAILURE PATH (missed notification):
     → [Fix: ALWAYS check condition inside synchronized]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, hand-written `wait/notify` is replaced by `java.util.concurrent` classes:
 - `BlockingQueue` — producer-consumer
 - `CountDownLatch` — one-time coordination
@@ -347,21 +347,21 @@ How to choose: Use `BlockingQueue` for producer-consumer. Use `CountDownLatch` f
 
 **Missed Notification (notify before wait)**
 
-Symptom: Thread waits forever even though the condition was satisfied.
+**Symptom:** Thread waits forever even though the condition was satisfied.
 
-Root Cause: Condition was checked BEFORE entering `synchronized`, then `notify()` fired, then thread entered `wait()` — too late.
+**Root Cause:** Condition was checked BEFORE entering `synchronized`, then `notify()` fired, then thread entered `wait()` — too late.
 
-Fix: Always check condition inside `synchronized`, change condition inside `synchronized`, call `notify()` inside `synchronized`.
+**Fix:** Always check condition inside `synchronized`, change condition inside `synchronized`, call `notify()` inside `synchronized`.
 
 ---
 
 **Using `if` instead of `while` — Spurious Wakeup Bug**
 
-Symptom: Intermittent NullPointerException or IllegalStateException after `wait()` returns.
+**Symptom:** Intermittent NullPointerException or IllegalStateException after `wait()` returns.
 
-Root Cause: Condition was false when thread woke up (spurious or beaten by another thread).
+**Root Cause:** Condition was false when thread woke up (spurious or beaten by another thread).
 
-Fix:
+**Fix:**
 ```java
 // WRONG:
 if (buffer.isEmpty()) lock.wait();
@@ -376,11 +376,11 @@ buffer.take(); // safe — while loop guarantees true
 
 **Deadlock: notifying thread can't acquire lock**
 
-Symptom: Notifier calls `notify()` but no waiting thread unblocks.
+**Symptom:** Notifier calls `notify()` but no waiting thread unblocks.
 
-Root Cause: Waiter called `wait()` with wrong object. Notifier called `notify()` on a different object.
+**Root Cause:** Waiter called `wait()` with wrong object. Notifier called `notify()` on a different object.
 
-Fix: Ensure both `wait()` and `notify()` are called on the SAME object.
+**Fix:** Ensure both `wait()` and `notify()` are called on the SAME object.
 
 ---
 

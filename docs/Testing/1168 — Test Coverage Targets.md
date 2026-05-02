@@ -289,11 +289,11 @@ Lesson: coverage targets require test quality enforcement too.
 **1. Coverage Gaming (Tests Without Assertions)**
 Cause: Developers add assertion-free tests to meet coverage targets.
 Detection: Mutation testing reveals surviving mutations (tests that don't catch bugs).
-Fix: Require meaningful assertions in code review; run PITest on critical modules.
+**Fix:** Require meaningful assertions in code review; run PITest on critical modules.
 
 **2. Legacy Code Drag (Low Coverage Due to Untested Legacy)**
 Cause: Large legacy codebase with no tests brings overall coverage down.
-Fix: Enforce `new_coverage > 80%` (SonarQube: `new_lines_to_cover`) instead of overall coverage. Prevents penalizing teams for legacy they can't easily retrofit.
+**Fix:** Enforce `new_coverage > 80%` (SonarQube: `new_lines_to_cover`) instead of overall coverage. Prevents penalizing teams for legacy they can't easily retrofit.
 
 ---
 

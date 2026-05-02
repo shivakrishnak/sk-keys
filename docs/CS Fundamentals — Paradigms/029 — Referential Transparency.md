@@ -31,15 +31,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 In imperative code, calling `getOrder(id)` twice might return different results if the order was modified between calls. Calling `generateInvoiceNumber()` twice returns different numbers each time. Using `System.currentTimeMillis()` in a calculation makes the result time-dependent. Expressions like these are not interchangeable with their values — you cannot reason about the program by reasoning about values; you must reason about the sequence of operations, the current state of the world, and when each expression was evaluated.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 Testing a function that calls `LocalDate.now()` requires either: running the test at exactly the right time, mocking the clock (adding a parameter just for testing), or accepting that the test is non-deterministic. A function with five calls to `Math.random()` cannot be unit tested reproducibly. The more expressions in a codebase that are time-dependent, state-dependent, or order-dependent, the harder it becomes to reason about correctness or write reliable tests.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 Referential transparency is the formal property that resolves this: if `f(x)` is referentially transparent, you can always replace `f(x)` with its return value without changing the program's behaviour. This is exactly the property of mathematical functions — `sin(π/6) = 0.5` always. A codebase where all expressions are referentially transparent can be reasoned about algebraically: you substitute, reorder, and cache freely. Functional programming is the discipline of writing most code to be referentially transparent, reserving non-transparent expressions for explicitly marked boundaries.
 
@@ -67,14 +67,14 @@ Referential transparency is the bridge between code and mathematics. Once you ha
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. An expression is RT iff replacing it with its value never changes observable program behaviour.
 2. Pure functions produce RT expressions. Impure functions do not.
 3. RT is transitive: if `f` and `g` are both RT, then `f(g(x))` is RT.
 4. RT is compositional: building a system from RT components produces an RT system.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 ```
 REFERENTIALLY TRANSPARENT:
@@ -96,16 +96,16 @@ NOT REFERENTIALLY TRANSPARENT:
   Actual: nextId() + nextId() = 1 + 2 = 3 — order matters
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
-Gain: equational reasoning (substitute equals for equals); memoization is always correct; parallelism is always safe; compiler optimisations are always valid; testing is trivial (no mocks needed, no setup required).
-Cost: some inherently stateful operations (generating unique IDs, reading current time, I/O) cannot be RT by nature; achieving RT requires functional design discipline; some patterns that feel natural in OOP (getters that compute lazily) may violate RT.
+**Gain:** equational reasoning (substitute equals for equals); memoization is always correct; parallelism is always safe; compiler optimisations are always valid; testing is trivial (no mocks needed, no setup required).
+**Cost:** some inherently stateful operations (generating unique IDs, reading current time, I/O) cannot be RT by nature; achieving RT requires functional design discipline; some patterns that feel natural in OOP (getters that compute lazily) may violate RT.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A compiler is optimising your program. It sees `calculateTax(income)` called twice with the same argument. Should it cache the first result and return it for the second call?
 
 IF `calculateTax` IS REFERENTIALLY TRANSPARENT:
@@ -137,7 +137,7 @@ double calculateTax(double income) {
 // Parallel: NOT SAFE (audit log race condition)
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The compiler can only safely optimise RT expressions. Modern JIT compilers (JVM, V8, GCC) perform escape analysis, constant folding, and dead code elimination — all assuming that expressions with the same inputs produce the same outputs. Impure code constrains optimisation; pure code enables it.
 
 ---
@@ -235,7 +235,7 @@ private int computeFactorial(int n) {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 Pure function called: calculateDiscount(order)
@@ -259,7 +259,7 @@ Tests need only: assert calculateDiscount(order) == expected
 (no mocks, no setup, no teardown)
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Function appears pure but reads mutable state:
@@ -280,7 +280,7 @@ Diagnosis: add discountTable as parameter:
 Now: same arguments → same result always → RT restored
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 At scale, distributed compute frameworks rely on RT for correctness. Apache Spark RDD transformations are assumed RT: `rdd.map(f)` in a Spark job can be re-executed on failure (lineage-based recovery) because `f` is assumed to produce the same result given the same partition. If `f` is not RT (writes to external DB, increments a counter), re-execution on task retry produces duplicate side effects — data corruption. At Google scale, MapReduce requires pure map and reduce functions — not just for parallelism, but for correct speculative execution (running duplicate tasks on slow workers and using the first to finish).
 
@@ -400,13 +400,13 @@ int impureFib(int n) {
 
 **Clock-Dependent Code Causing Flaky Tests**
 
-Symptom:
+**Symptom:**
 Tests pass most of the time but fail occasionally — especially around midnight, end-of-month, daylight savings transitions, or when CI servers are slow. `LocalDate.now()`, `Instant.now()`, `System.currentTimeMillis()` in business logic.
 
-Root Cause:
+**Root Cause:**
 Using the real clock makes the function non-RT — it depends on external state (the current time). The function returns different results on different test runs, at different times of day.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```java
 // SEARCH for clock reads in business logic:
@@ -418,7 +418,7 @@ Diagnostic Command / Tool:
 // If it fails at 00:00:00 but passes at 23:59:58: clock dependency confirmed
 ```
 
-Fix:
+**Fix:**
 Inject a `Clock` parameter (Java's `Clock.systemUTC()` or `Clock.fixed(...)` for tests). Pass the clock to functions that need the current time. Tests use `Clock.fixed(Instant.parse("2024-01-15T12:00:00Z"), ZoneOffset.UTC)` — always deterministic.
 
 ```java
@@ -434,7 +434,7 @@ LocalDate getContractExpiry(Contract contract, Clock clock) {
 // Test: getContractExpiry(contract, Clock.fixed(...)) — always deterministic
 ```
 
-Prevention:
+**Prevention:**
 Code review rule: no `LocalDate.now()`, `Instant.now()`, or `Math.random()` in business logic. These must be passed as parameters or injected as dependencies.
 
 ---

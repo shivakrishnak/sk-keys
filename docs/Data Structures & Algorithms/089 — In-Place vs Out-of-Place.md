@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You need to sort a 16 GB array on a machine with 16 GB RAM. An out-of-place MergeSort allocates another 16 GB for its merge buffer — total 32 GB needed; the system runs out of memory. Alternatively, on an embedded device with 256 KB RAM, any algorithm that allocates proportional extra memory simply cannot run.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Memory is finite. Proportional-space algorithms fail when input size approaches available memory. For large datasets in production (in-memory databases, batch sort jobs), the difference between O(1) and O(N) extra space determines whether the algorithm fits in RAM at all.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 QuickSort and HeapSort are in-place sorters: they rearrange elements within the input array using only O(log N) or O(1) extra space (recursion stack / swap variables). This makes them runnable on arrays that fill memory to capacity. The trade-off: in-place often means unstable or more complex implementation. This is exactly why **In-Place vs Out-of-Place** is a fundamental algorithm design choice.
 
 ---
@@ -64,17 +64,17 @@ In-place doesn't mean "no extra space ever" — it means O(1) or O(log N) extra.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. An in-place algorithm achieves its transformation via reordering elements within the original array, using constant or logarithmic auxiliary space.
 2. Every swap is a three-operation sequence: `tmp=a; a=b; b=tmp` — three register operations, O(1) extra.
 3. Recursion counts: O(d) stack frames where d = recursion depth. For QuickSort: O(log N) expected stack depth → considered in-place. For MergeSort: O(log N) stack + O(N) merge buffer → out-of-place due to merge buffer.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **HeapSort in-place proof:** Heapify builds a max-heap in the original array (O(N)). Extract max: swap root with last element, shrink heap by 1, sift down. Each extraction is in-place — only swaps within the original array. Total extra memory: `tmp` variable for swap = O(1).
 
 **In-place MergeSort complexity:** Exists but extremely complex. Algorithms like Kronrod's in-place merge achieve O(1) extra space but at O(N log² N) time due to internal data movements. Not used in practice.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 In-place gain: minimises memory footprint; better cache performance (data stays in same memory location).
 In-place cost: often cannot be stable (QuickSort unstable); more complex implementation; may have higher constant factors.
 Out-of-place gain: simpler implementation; stability preservation (MergeSort); original data preserved.
@@ -84,16 +84,16 @@ Out-of-place cost: O(N) extra memory; potential cache miss increase (two arrays 
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Sort a 4 GB array on a machine with exactly 4 GB RAM available for the array (plus OS, JVM overhead).
 
-WHAT HAPPENS WITH OUT-OF-PLACE MERGESORT:
+**WHAT HAPPENS WITH OUT-OF-PLACE MERGESORT:**
 MergeSort allocates a 4 GB merge buffer: total memory = 8 GB. `OutOfMemoryError`. Sort fails entirely. The machine cannot even start the sort.
 
-WHAT HAPPENS WITH IN-PLACE QUICKSORT:
+**WHAT HAPPENS WITH IN-PLACE QUICKSORT:**
 QuickSort uses only the `tmp` variable in swap + O(log N) stack frames ≈ O(log N × frame_size). For N=4GB / 8 bytes = 500M elements, stack depth ~30 frames × 64 bytes/frame = ~2 KB. Total extra: ~2 KB. Sort succeeds. Input array fits exactly in available RAM.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The in-place algorithm scales to any array that fits in memory; the out-of-place algorithm can only sort arrays that fit in half the available memory. For large data, in-place is not a convenience — it's a prerequisite.
 
 ---
@@ -102,10 +102,10 @@ The in-place algorithm scales to any array that fits in memory; the out-of-place
 
 > In-place is like solving a sliding puzzle (15-puzzle): you rearrange tiles using only the empty square as a buffer. Out-of-place is like picking up all tiles, sorting them, then placing them back. The sliding puzzle approach uses only the empty square (O(1) extra) but requires specific sequences of moves. Picking all tiles up requires space to hold them all (O(N) extra) but allows arbitrary placement.
 
-"Sliding puzzle (empty square)" → in-place algorithm (O(1) buffer)
-"Picking up all tiles" → out-of-place (O(N) extra space)
-"Specific swap sequences" → in-place algorithms' algorithmic constraints
-"Arbitrary placement" → out-of-place's flexibility (e.g., can be stable)
+- "Sliding puzzle (empty square)" → in-place algorithm (O(1) buffer)
+- "Picking up all tiles" → out-of-place (O(N) extra space)
+- "Specific swap sequences" → in-place algorithms' algorithmic constraints
+- "Arbitrary placement" → out-of-place's flexibility (e.g., can be stable)
 
 Where this analogy breaks down: Not all puzzles have O(1) solutions in the sliding puzzle sense — in-place stable MergeSort is extremely complex. The analogy makes in-place look simpler when it's often more complex to implement correctly.
 
@@ -174,7 +174,7 @@ The in-place/out-of-place distinction intersects with the external sort problem:
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Array of N elements, M bytes available RAM
 → Compute required memory:
@@ -187,7 +187,7 @@ Array of N elements, M bytes available RAM
 → Algorithm selection → sort
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Out-of-place algorithm on memory-constrained system
 → OOM during merge buffer allocation
@@ -197,7 +197,7 @@ Out-of-place algorithm on memory-constrained system
 → Fix: switch to in-place algorithm or offload to disk
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For 1 billion records (8 bytes each = 8 GB), MergeSort needs 16 GB — impractical on an 8 GB machine. External sort: read 100M-record chunks (800 MB), sort each in-place with QuickSort (fits in RAM), write 10 sorted runs to disk, merge 10 runs with minimal in-memory buffers. Each merge step reads/writes disk once: O(N log₁₀(N/100M)) = O(N) disk I/O. The in-place step enables the external sort to work.
 
 ---
@@ -303,11 +303,11 @@ How to choose: Use QuickSort/HeapSort for memory-constrained single-key sorts. U
 
 **1. Out-of-place algorithm causes OOM on large input**
 
-Symptom: `java.lang.OutOfMemoryError: Java heap space` during sort of large dataset.
+**Symptom:** `java.lang.OutOfMemoryError: Java heap space` during sort of large dataset.
 
-Root Cause: Sort algorithm allocates O(N) extra array. For N=10^8 longs (800 MB input), sort allocates another 800 MB: total 1.6 GB, exceeds JVM heap.
+**Root Cause:** Sort algorithm allocates O(N) extra array. For N=10^8 longs (800 MB input), sort allocates another 800 MB: total 1.6 GB, exceeds JVM heap.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check heap usage at sort start:
 jstat -gc <pid> 1000
@@ -317,19 +317,19 @@ java -Xmx4g MyApp  # temporary fix
 # Permanent: replace MergeSort with Arrays.sort(int[]) (QuickSort)
 ```
 
-Fix: For primitive arrays, use `Arrays.sort(int[])` (in-place). For objects requiring stability, increase heap or use external sort.
+**Fix:** For primitive arrays, use `Arrays.sort(int[])` (in-place). For objects requiring stability, increase heap or use external sort.
 
-Prevention: Estimate memory per algorithm type before choosing; add a memory check before large operations.
+**Prevention:** Estimate memory per algorithm type before choosing; add a memory check before large operations.
 
 ---
 
 **2. In-place algorithm corrupts original data needed later**
 
-Symptom: Algorithm produces correct output, but original array is needed for later operation and is now sorted/modified.
+**Symptom:** Algorithm produces correct output, but original array is needed for later operation and is now sorted/modified.
 
-Root Cause: In-place algorithm modified the input array. The caller expected it to be unchanged.
+**Root Cause:** In-place algorithm modified the input array. The caller expected it to be unchanged.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Before sort: arr = [3,1,4,1,5]
 sort(arr); // in-place!
@@ -337,28 +337,28 @@ sort(arr); // in-place!
 processOriginalOrder(arr); // BUG: order modified
 ```
 
-Fix: Clone array before passing to in-place algorithm: `int[] toSort = arr.clone();`.
+**Fix:** Clone array before passing to in-place algorithm: `int[] toSort = arr.clone();`.
 
-Prevention: API contract: document whether method modifies input. Immutable inputs: pass a copy. Java's `Arrays.sort` contract: sorts the array in-place.
+**Prevention:** API contract: document whether method modifies input. Immutable inputs: pass a copy. Java's `Arrays.sort` contract: sorts the array in-place.
 
 ---
 
 **3. QuickSort recursion stack overflow for large sorted input**
 
-Symptom: `StackOverflowError` when sorting already-sorted array of 100,000 elements with naive QuickSort.
+**Symptom:** `StackOverflowError` when sorting already-sorted array of 100,000 elements with naive QuickSort.
 
-Root Cause: Pivot always chosen as first element on sorted array; partition is O(N) deep. Stack depth = N = 100,000 frames × 64 bytes = ~6 MB usually exceeds default JVM stack (~512 KB).
+**Root Cause:** Pivot always chosen as first element on sorted array; partition is O(N) deep. Stack depth = N = 100,000 frames × 64 bytes = ~6 MB usually exceeds default JVM stack (~512 KB).
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check stack depth:
 jstack <pid> | grep "quickSort" | wc -l
 # If count ≈ N: degenerate recursion
 ```
 
-Fix: Use randomised pivot (`ThreadLocalRandom`); or tail recursion optimisation (always recurse on smaller partition first, iterate on larger). Or use `Arrays.sort()` which uses dual-pivot QuickSort with insertion sort fallback.
+**Fix:** Use randomised pivot (`ThreadLocalRandom`); or tail recursion optimisation (always recurse on smaller partition first, iterate on larger). Or use `Arrays.sort()` which uses dual-pivot QuickSort with insertion sort fallback.
 
-Prevention: Never use first-element pivot without randomisation; `Arrays.sort(int[])` handles this correctly.
+**Prevention:** Never use first-element pivot without randomisation; `Arrays.sort(int[])` handles this correctly.
 
 ---
 

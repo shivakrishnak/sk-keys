@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Every `read()` system call on a file goes directly to disk. Disks are 100,000× slower than DRAM. Any program that reads the same file twice — or two processes reading the same file — each pay full disk latency. A web server serving the same HTML file to 10,000 clients would read it from disk 10,000 times.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Even with fast SSDs (0.1ms), a server doing 100,000 reads/second of the same file would spend all its time waiting for storage. And without a write buffer, every `write()` would also block until the disk confirms the write — turning a fast database insert into a 1–10ms disk round trip for every row.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 The page cache (merged with the buffer cache in Linux 2.4) solves both: reads fill the cache on first access, subsequent reads are served from DRAM (nanoseconds); writes go to cache immediately (acknowledged to the caller) and are flushed to disk asynchronously by kernel writeback threads.
 
 ---
@@ -65,25 +65,25 @@ The page cache is global — when process A reads `/etc/hosts`, the pages are ca
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. All file data access (except O_DIRECT) goes through the page cache.
 2. Cache pages are 4KB (matching the hardware page size) for efficiency.
 3. Dirty pages are eventually written to disk — "eventually" is controlled by dirty_expire_centisecs and dirty_writeback_centisecs.
 4. The kernel can evict clean pages under memory pressure (they can be re-read from disk); dirty pages must be written before eviction.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Each page cache entry is a `struct page` indexed in a radix tree (or xarray in newer kernels) by `(inode, page_offset)`. When `read()` is called: check xarray for the page → miss → submit disk read → wait → insert page into xarray → return data. When `write()`: check xarray → insert/update page → mark dirty → return. Writeback threads (`kworker/flush-*`) periodically scan for dirty pages older than `dirty_expire_centisecs` (default 3 seconds) and submit them for disk write.
 
-THE TRADE-OFFS:
-Gain: Read latency from cache = nanoseconds vs microseconds from SSD; write latency = nanoseconds (no disk wait); same file shared in memory across all processes; reduces disk wear.
-Cost: Writes are not durable until writeback completes (power loss = data loss for unfsync'd writes); page cache consumes RAM (competes with application heap); O_DIRECT bypasses cache but is complex to use correctly; `mmap` + page cache interaction has subtle consistency rules.
+**THE TRADE-OFFS:**
+**Gain:** Read latency from cache = nanoseconds vs microseconds from SSD; write latency = nanoseconds (no disk wait); same file shared in memory across all processes; reduces disk wear.
+**Cost:** Writes are not durable until writeback completes (power loss = data loss for unfsync'd writes); page cache consumes RAM (competes with application heap); O_DIRECT bypasses cache but is complex to use correctly; `mmap` + page cache interaction has subtle consistency rules.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A Java application reads the same 1MB configuration file on every HTTP request (100 req/sec).
 
 WITHOUT PAGE CACHE:
@@ -98,7 +98,7 @@ WITH PAGE CACHE (default):
 - Disk cost: amortised over all reads; effectively zero for a file that doesn't change
 - Memory cost: 1MB of page cache
 
-THE INSIGHT:
+**THE INSIGHT:**
 The page cache makes file reading behave like memory access for hot data. This is why Redis can boast "sub-millisecond reads" — its data is in the page cache (or its own heap), not on disk.
 
 ---
@@ -301,11 +301,11 @@ cat /proc/vmstat | grep -E "nr_dirty|writeback"
 
 **1. Write() Appears Slow — Write Storm Throttling**
 
-Symptom: `write()` calls that normally return in microseconds suddenly take tens of milliseconds; usually during large file operations.
+**Symptom:** `write()` calls that normally return in microseconds suddenly take tens of milliseconds; usually during large file operations.
 
-Root Cause: Dirty page ratio exceeded `vm.dirty_ratio` (10% of RAM default); kernel throttles writes until writeback drains.
+**Root Cause:** Dirty page ratio exceeded `vm.dirty_ratio` (10% of RAM default); kernel throttles writes until writeback drains.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Watch dirty page count in real time
@@ -316,19 +316,19 @@ iostat -x 1
 # High %util + high wkB/s during slow period = writeback saturation
 ```
 
-Fix: Reduce `vm.dirty_ratio` and `vm.dirty_background_ratio`; increase writeback throughput; use O_DIRECT for large writes.
+**Fix:** Reduce `vm.dirty_ratio` and `vm.dirty_background_ratio`; increase writeback throughput; use O_DIRECT for large writes.
 
-Prevention: Profile dirty page growth vs writeback rate; alert when dirty pages exceed 5% of RAM.
+**Prevention:** Profile dirty page growth vs writeback rate; alert when dirty pages exceed 5% of RAM.
 
 ---
 
 **2. Data Loss After Crash (Missing fsync)**
 
-Symptom: After power loss or OS crash, database shows inconsistent state; recently committed transactions are missing.
+**Symptom:** After power loss or OS crash, database shows inconsistent state; recently committed transactions are missing.
 
-Root Cause: Application called `write()` and considered data committed, but `fsync()` was never called; dirty pages lost on crash.
+**Root Cause:** Application called `write()` and considered data committed, but `fsync()` was never called; dirty pages lost on crash.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check if your app calls fsync — trace syscalls
@@ -336,19 +336,19 @@ strace -e trace=fsync,fdatasync,sync_file_range -p <PID>
 # Should see fsync() after every transaction commit
 ```
 
-Fix: Add `fsync()`/`fdatasync()` after critical writes. Use `FileChannel.force()` in Java.
+**Fix:** Add `fsync()`/`fdatasync()` after critical writes. Use `FileChannel.force()` in Java.
 
-Prevention: Enforce durability in tests using crash-recovery test harnesses (e.g., fsck after simulated crash).
+**Prevention:** Enforce durability in tests using crash-recovery test harnesses (e.g., fsck after simulated crash).
 
 ---
 
 **3. Page Cache Eviction Causing Latency Spikes**
 
-Symptom: Application is fast normally but periodically has latency spikes; `vmstat` shows high page-in activity at spike time.
+**Symptom:** Application is fast normally but periodically has latency spikes; `vmstat` shows high page-in activity at spike time.
 
-Root Cause: Page cache evicted hot data under memory pressure (another process consuming RAM); re-reads from disk cause latency.
+**Root Cause:** Page cache evicted hot data under memory pressure (another process consuming RAM); re-reads from disk cause latency.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 vmstat 1 | awk '{print $7, $8}'  # si/so = swap in/out
@@ -358,9 +358,9 @@ vmstat 1 | awk '{print $7, $8}'  # si/so = swap in/out
 vmtouch -l /path/to/critical/file  # lock in RAM
 ```
 
-Fix: Increase available RAM; use `mlock()` for critical data; `MADV_WILLNEED` to hint prefetch.
+**Fix:** Increase available RAM; use `mlock()` for critical data; `MADV_WILLNEED` to hint prefetch.
 
-Prevention: Monitor cache hit ratio; alert when page-in rate on hot paths increases.
+**Prevention:** Monitor cache hit ratio; alert when page-in rate on hot paths increases.
 
 ---
 

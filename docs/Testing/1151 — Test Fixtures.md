@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Each test method contains 20 lines of setup code (create user, create cart, add items, create discount). The same setup is copy-pasted across 30 test methods. A change to the `User` constructor requires editing 30 tests. The setup code dwarfs the actual test assertion. With test fixtures, the setup is defined once, reused everywhere, and tests read as "given this state, when this happens, then this result."
 
 ---
@@ -284,12 +284,12 @@ class OrderBuilder {
 **1. Tests Fail After Unrelated Changes**
 
 Cause: Shared `@BeforeAll` fixture is modified; many tests depend on its exact state.
-Fix: Prefer `@BeforeEach` (fresh per-test) over `@BeforeAll` for test data. Reserve `@BeforeAll` for infrastructure setup (containers, schemas).
+**Fix:** Prefer `@BeforeEach` (fresh per-test) over `@BeforeAll` for test data. Reserve `@BeforeAll` for infrastructure setup (containers, schemas).
 
 **2. Fixture Uses Hardcoded IDs → Parallel Test Failures**
 
 Cause: Multiple tests insert records with `id = 1` → duplicate key violation in parallel execution.
-Fix: Use `UUID.randomUUID()` or auto-generated IDs in all test data builders.
+**Fix:** Use `UUID.randomUUID()` or auto-generated IDs in all test data builders.
 
 ---
 

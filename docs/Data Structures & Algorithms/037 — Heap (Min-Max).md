@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You are building an emergency room triage system. Patients arrive continuously with varying severity scores. At any moment, the doctor needs to see the most critical patient. If you store patients in an unsorted array, finding the most critical is O(N) every time. If you use a sorted array, finding the most critical is O(1) — but each new patient requires O(N) insertion to maintain sort order. With 1,000 arrivals per hour, 500 removals per hour, that is 750,000 element shifts per hour just for triage ordering.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 You need O(1) find-minimum but O(log N) insert/remove. A sorted array gives O(1) find but O(N) insert. An unsorted array gives O(1) insert but O(N) find. No simple array achieves both.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 You don't need the entire array sorted — you only need the minimum always at the front. A partially-ordered tree where every parent is smaller than its children guarantees the minimum is always the root, and both insert and remove-min are O(log N). Storing this tree in an array (by level order) eliminates pointer overhead. This is exactly why the Heap was created.
 
 ---
@@ -63,12 +63,12 @@ A Heap deliberately maintains only *partial* order — not full sorting. This is
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The tree is *complete* — all levels filled left-to-right; this enables array storage.
 2. Every parent ≤ children (min-heap). No constraint between siblings.
 3. The root is always the global minimum.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Array index arithmetic** (0-indexed):
 - Parent of node i: `(i - 1) / 2`
 - Left child of i: `2 * i + 1`
@@ -85,24 +85,24 @@ Remove root; move last element to root; compare with smaller child; swap if larg
 **Heap build from array (Floyd algorithm):**
 Instead of N individual inserts (O(N log N)), start from the last non-leaf (`N/2 - 1`) and sift down each element toward the root. Total work is O(N) because most nodes are near the leaves where sift-down is shortest.
 
-THE TRADE-OFFS:
-Gain: O(1) find-min, O(log N) insert and extract-min, O(N) build.
-Cost: No O(log N) search for arbitrary elements, no sorted iteration (only partial order).
+**THE TRADE-OFFS:**
+**Gain:** O(1) find-min, O(log N) insert and extract-min, O(N) build.
+**Cost:** No O(log N) search for arbitrary elements, no sorted iteration (only partial order).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A printer queue with jobs of priority 1–10 (1=highest). Jobs arrive and depart constantly. At any moment, you must serve the highest-priority job.
 
-WHAT HAPPENS WITH SORTED ARRAY:
+**WHAT HAPPENS WITH SORTED ARRAY:**
 Every new job insertion binary-searches its position (O(log N)) then shifts all lower-priority jobs right (O(N)). With 1,000 active jobs, each arrival costs ~500 shifts.
 
-WHAT HAPPENS WITH HEAP:
+**WHAT HAPPENS WITH HEAP:**
 New job appended at end: O(1). Sifted up to its correct position: O(log N) comparisons, zero shifts. Get next job: `array[0]` — O(1). Remove it: swap with last, sift down: O(log N). No shifting ever.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The heap achieves O(log N) insert without shifting because it uses tree hierarchy instead of array contiguity to encode order. The "shape" of the tree — not the index — carries the ordering information.
 
 ---
@@ -111,10 +111,10 @@ The heap achieves O(log N) insert without shifting because it uses tree hierarch
 
 > A Heap is like a corporate hierarchy where the CEO (minimum value) is always at the top and every manager earns less than both their direct reports (employees). When the CEO leaves, the most junior employee temporarily takes the chair, then everyone shuffles up one level until proper order is restored.
 
-"CEO at top" → minimum at index 0
-"Each manager < both reports" → heap property
-"Employee temporarily takes CEO chair" → last element moves to root
-"Reshuffle up one level" → sift-down O(log N)
+- "CEO at top" → minimum at index 0
+- "Each manager < both reports" → heap property
+- "Employee temporarily takes CEO chair" → last element moves to root
+- "Reshuffle up one level" → sift-down O(log N)
 
 Where this analogy breaks down: A corporate hierarchy has unique reporting chains; a heap has no ordering between siblings (left child may be larger or smaller than right child), so the analogy breaks for "lateral comparisons."
 
@@ -191,7 +191,7 @@ Children of 3: out of bounds → stop
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 New element arrives
 → Append to end of array
@@ -201,7 +201,7 @@ New element arrives
 → Extract minimum: move last to root, sift-down
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Mutable element changes comparison value after insertion
 → Heap property violated
@@ -209,7 +209,7 @@ Mutable element changes comparison value after insertion
 → Fix: never mutate elements in a PriorityQueue
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10 million elements, Java's `PriorityQueue` performs well (arrays up to ~40MB for objects). However, `siftDown` causes cache misses as it chases far-apart indices. At extreme scale, a **d-ary heap** (d=4 or d=8 children per node) reduces tree height and improves cache efficiency — used in production schedulers. For concurrent priority queues, `PriorityBlockingQueue` exists but serialises all operations; Fibonacci heaps offer O(1) decrease-key but are rarely practical in Java due to pointer overhead.
 
 ---
@@ -333,18 +333,18 @@ Heap property maintained after every operation
 
 **1. Heap returned wrong minimum after element mutation**
 
-Symptom: `pq.poll()` returns an element that is not the smallest; ordering appears corrupted.
+**Symptom:** `pq.poll()` returns an element that is not the smallest; ordering appears corrupted.
 
-Root Cause: An element inside the PriorityQueue was mutated after insertion. Heap property depends on immutable comparison values; mutation violates it.
+**Root Cause:** An element inside the PriorityQueue was mutated after insertion. Heap property depends on immutable comparison values; mutation violates it.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Add assertion before poll():
 assert pq.stream().allMatch(e -> e.compareTo(pq.peek()) >= 0);
 # Will fail when heap property is violated
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: mutate inside heap
 task.setPriority(1);  // still in pq — heap now invalid
@@ -355,41 +355,41 @@ task.setPriority(1);
 pq.offer(task);
 ```
 
-Prevention: Elements in PriorityQueue must be effectively immutable regarding their comparison field.
+**Prevention:** Elements in PriorityQueue must be effectively immutable regarding their comparison field.
 
 ---
 
 **2. O(N) linear scan instead of O(log N) extract**
 
-Symptom: "Priority queue" implementation is slow; profiler shows O(N) per extraction.
+**Symptom:** "Priority queue" implementation is slow; profiler shows O(N) per extraction.
 
-Root Cause: Using a sorted `List` (scanning for min on every poll) instead of a proper `PriorityQueue`.
+**Root Cause:** Using a sorted `List` (scanning for min on every poll) instead of a proper `PriorityQueue`.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 ./profiler.sh -e cpu -d 10 <pid>
 # Time in Collections.min() or List.sort() called repeatedly
 ```
 
-Fix: Replace `List` + `Collections.min()` with `PriorityQueue`.
+**Fix:** Replace `List` + `Collections.min()` with `PriorityQueue`.
 
-Prevention: Identify "I need the smallest/largest element" use cases and always reach for `PriorityQueue`.
+**Prevention:** Identify "I need the smallest/largest element" use cases and always reach for `PriorityQueue`.
 
 ---
 
 **3. PriorityQueue with wrong comparator direction**
 
-Symptom: Algorithm returns K largest elements when K smallest were needed (or vice versa).
+**Symptom:** Algorithm returns K largest elements when K smallest were needed (or vice versa).
 
-Root Cause: Used natural order (min-heap) when max-heap was needed, or reversed comparator incorrectly.
+**Root Cause:** Used natural order (min-heap) when max-heap was needed, or reversed comparator incorrectly.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Unit test with known input: [5,1,3,2,4], K=2
 # K smallest should be [1,2]; if you get [4,5] → wrong heap
 ```
 
-Fix:
+**Fix:**
 ```java
 // For K smallest: use MAX heap to track K smallest
 PriorityQueue<Integer> maxH =
@@ -399,7 +399,7 @@ PriorityQueue<Integer> maxH =
 PriorityQueue<Integer> minH = new PriorityQueue<>();
 ```
 
-Prevention: Write the invariant in a comment: `// max-heap: top = largest of K smallest so far`.
+**Prevention:** Write the invariant in a comment: `// max-heap: top = largest of K smallest so far`.
 
 ---
 

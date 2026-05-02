@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You deploy a new version. The application starts — JVM launches, port binds — but the database password environment variable wasn't injected in the new deployment config. The application silently fails on every user request (connection pool throws on first query). No smoke test: 100% of user traffic hits the broken version for 5 minutes until someone notices the error rate spike.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 You need a fast sanity check between "the process started" and "it's handling real traffic." A smoke test verifies: database connected, cache connected, critical endpoints respond, authentication works. If any smoke test fails, deployment is rolled back before any user traffic is routed.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 The term comes from hardware testing: power on a new circuit board and check it doesn't "smoke" (catch fire). The electrical engineer doesn't run full diagnostics — just "did it survive powering on?" Applied to software deployment: does the application survive starting up and handling a basic request?
 
 ---
@@ -95,9 +95,9 @@ deploy.sh:
   4. Run full regression suite (async, parallel)
 ```
 
-THE TRADE-OFFS:
-Gain: Catches catastrophic failures within 60s of deployment; prevents broken code from reaching users; fast feedback on deployment issues.
-Cost: Must be maintained alongside deployment process; too many smoke tests = slow feedback (should be < 2 minutes total); false positives (flaky smoke tests block deployments).
+**THE TRADE-OFFS:**
+**Gain:** Catches catastrophic failures within 60s of deployment; prevents broken code from reaching users; fast feedback on deployment issues.
+**Cost:** Must be maintained alongside deployment process; too many smoke tests = slow feedback (should be < 2 minutes total); false positives (flaky smoke tests block deployments).
 
 ---
 
@@ -290,12 +290,12 @@ echo "All smoke tests passed ✓"
 **1. Smoke Test Blocks Valid Deployment (False Positive)**
 
 Cause: Smoke test checks a non-critical dependency that's temporarily down; OR smoke test has timing race (pod not fully warmed up).
-Fix: Health checks should reflect critical-path dependencies only. Use retries in smoke test: `curl --retry 3 --retry-delay 5`. Use readiness probe correctly: pod isn't marked Ready until startup is complete.
+**Fix:** Health checks should reflect critical-path dependencies only. Use retries in smoke test: `curl --retry 3 --retry-delay 5`. Use readiness probe correctly: pod isn't marked Ready until startup is complete.
 
 **2. Smoke Test Passes but Production is Broken**
 
 Cause: Smoke test covers happy path; production failure is in an edge case; OR smoke test uses a different code path than production.
-Fix: Smoke tests must exercise the same code paths users take. After production incident: add a smoke test for the specific failure scenario.
+**Fix:** Smoke tests must exercise the same code paths users take. After production incident: add a smoke test for the specific failure scenario.
 
 ---
 

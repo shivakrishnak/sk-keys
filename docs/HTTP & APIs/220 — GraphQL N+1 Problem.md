@@ -444,15 +444,15 @@ void users_query_does_not_cause_n_plus_1() {
 
 **Classic N+1 Under Load**
 
-Symptom:
+**Symptom:**
 P99 latency for a GraphQL query spikes from 50ms to 8 seconds under production traffic.
 DB CPU maxes out. Query logs show hundreds of identical queries with different bind params.
 
-Root Cause:
+**Root Cause:**
 A list resolver for a relationship field (e.g., `User.posts`) fires one DB query
 per parent entity.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```sql
 -- PostgreSQL: find queries repeated many times in a short window
@@ -470,10 +470,10 @@ ProxyDataSource proxyDS = ProxyDataSourceBuilder
     .build();
 ```
 
-Fix:
+**Fix:**
 Wrap the list resolver with `@BatchMapping` or manual DataLoader.
 
-Prevention:
+**Prevention:**
 Add query count assertions to GraphQL integration tests.
 Use datasource-proxy or p6spy in test scope.
 
@@ -481,15 +481,15 @@ Use datasource-proxy or p6spy in test scope.
 
 **DataLoader Cache Leak Between Requests**
 
-Symptom:
+**Symptom:**
 Users randomly see stale data from other users' requests.
 Reproducible under concurrent load, not in single-user testing.
 
-Root Cause:
+**Root Cause:**
 DataLoader instance created as an application-scoped singleton bean.
 Its internal cache persists and is shared across concurrent requests.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```java
 // Check: is DataLoader a @Bean singleton?
@@ -503,11 +503,11 @@ public DataLoader<String, User> userDataLoader() {
 // graphql-java: DataLoaderRegistry created in InstrumentationState per request
 ```
 
-Fix:
+**Fix:**
 Ensure DataLoader instances are created fresh per request.
 Use `BatchLoaderRegistry` in Spring for GraphQL (it's per-request aware).
 
-Prevention:
+**Prevention:**
 Integration test with concurrent requests using different users.
 Assert that user A cannot see user B's data.
 

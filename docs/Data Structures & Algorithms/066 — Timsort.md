@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 vanilla mergesort treats every array as completely random — it always splits into exactly two halves, ignoring the order already present in real-world data. A database result set sorted by timestamp then queried with new records inserted in order might be 95% already sorted. Standard mergesort still performs the full O(N log N) work, ignoring this existing order.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Real-world data is rarely random. Arrays arrive partially sorted (database query results, log files already partially ordered, records with several fields already in order). Algorithms designed for worst-case random inputs waste operations on already-ordered sequences. A "smart" sort could be O(N) for already-sorted data and O(N log N) for random — but no classic algorithm achieves this without sacrifice.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Tim Peters designed Timsort in 2002 for Python. The key insight: scan the array for **natural runs** (already-sorted sequences, ascending or descending). Extend each run to a minimum length using insertion sort (insertion sort is O(N²) overall but O(N) on nearly-sorted data for small N). Then merge runs together using a carefully designed merge order that balances run sizes using a stack — the "galloping" merge accelerates through long ordered sequences. This is exactly why **Timsort** was created.
 
 ---
@@ -64,12 +64,12 @@ Timsort is an **adaptive** algorithm — its work is proportional to the disorde
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The input is decomposed into **runs** — maximal ascending (or descending-then-reversed) sequences.
 2. Every run is extended to at least `minrun` length using **insertion sort** — insertion sort is O(N) on nearly-sorted small arrays.
 3. A merge stack maintains the **balance invariant**: for runs A, B, C on the stack (top = C): `|A| > |B| + |C|` and `|B| > |C|`. This ensures total merge cost is O(N log N).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Why minrun = 32 to 64?**
 For N elements with runs of minrun each, there are approximately N/minrun runs. These runs are then merged in a balanced manner. minrun is chosen so that N/minrun is a power of 2 (or close), making merges perfectly balanced. Empirically, 32–64 is optimal on modern hardware (cache line size × small).
 
@@ -79,15 +79,15 @@ Without the invariant, always merging adjacent runs could degenerate: if run siz
 **Galloping mode:**
 During merge, if one run consistently wins comparisons (e.g., 7+ consecutive elements from left beat all from right), enter "galloping mode" — use exponential search to find where the current run's contribution ends, then copy the whole block at once. This is O(1) per element for long monotone streaks. Disabled when elements alternate between left/right (random order).
 
-THE TRADE-OFFS:
-Gain: O(N) on nearly-sorted data; O(N log N) worst case; stable; excellent real-world performance.
-Cost: Complex implementation (~500 lines in CPython vs ~30 lines for naive mergesort); O(N) auxiliary space.
+**THE TRADE-OFFS:**
+**Gain:** O(N) on nearly-sorted data; O(N log N) worst case; stable; excellent real-world performance.
+**Cost:** Complex implementation (~500 lines in CPython vs ~30 lines for naive mergesort); O(N) auxiliary space.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Array of 100 elements: [sorted 80 elements] + [random 20 elements].
 
 WITHOUT TIMSORT (standard mergesort):
@@ -96,7 +96,7 @@ Split at mid=50 (ignoring the natural 80-element run). Mergesort recursively spl
 WITH TIMSORT:
 Scan: finds run 1 = first 80 elements (already sorted). Run 2 = last 20 elements. Merge run 1 (size 80) with run 2 (size 20): O(80+20) = 100 comparisons. Wait — run 2 is not sorted. Insertion sort run 2 (20 elements, random): O(20²)/2 ≈ 200 comparisons worst case, but likely much fewer. Then merge: ~100 comparisons. Total: ~300 comparisons vs ~650. Timsort is roughly 2x faster on this input.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Timsort's adaptive behaviour means it performs work proportional to the **entropy** of the input, not just its size. The fewer sorted runs that need merging, the less work is done. For random data, the work is similar to plain mergesort; for real-world data (which has significant existing order), Timsort is substantially faster.
 
 ---
@@ -105,10 +105,10 @@ Timsort's adaptive behaviour means it performs work proportional to the **entrop
 
 > Timsort is like a professional archivist sorting documents. Instead of blindly shuffling everything into a single pile and sorting from scratch, the archivist first identifies which files are already in order (runs). They slightly re-organise small clusters (insertion sort small runs to minrun size), then systematically merge the ordered clusters in the most balanced possible order. The already-ordered work is never redone.
 
-"Already-ordered files" → natural runs in input
-"Organise small clusters" → insertion sort to extend runs to minrun
-"Merge ordered clusters in balanced order" → merge stack with balance invariant
-"Never redo ordered work" → O(N) for already-sorted input
+- "Already-ordered files" → natural runs in input
+- "Organise small clusters" → insertion sort to extend runs to minrun
+- "Merge ordered clusters in balanced order" → merge stack with balance invariant
+- "Never redo ordered work" → O(N) for already-sorted input
 
 Where this analogy breaks down: Real archivists can see the whole document set at once. Timsort makes one sequential pass to identify runs, then merges blindly — it cannot skip ahead to see future optimal run boundaries.
 
@@ -159,7 +159,7 @@ The merge invariants were designed to ensure that the total number of merges is 
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Real-world object array (partially sorted)
 → Compute minrun for this N
@@ -173,7 +173,7 @@ Real-world object array (partially sorted)
 → O(N) if pre-sorted, O(N log N) general
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Pathological input crafts run sizes that
 violate balance invariant implementation assumptions
@@ -182,7 +182,7 @@ violate balance invariant implementation assumptions
 → Modern: invariant proof ensures O(N log N)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For N=10⁸ elements, Timsort's run detection phase (O(N)) avoids the O(N log N) overhead of naive mergesort for partially-sorted inputs. In practice (database results, log files), 30-70% of real data has significant existing order, making Timsort 2-4x faster than theoretical random-data analysis would suggest.
 
 ---
@@ -307,11 +307,11 @@ How to choose: Use language-provided sort (Timsort) by default for objects. Use 
 
 **1. Using unstable sort where stable sort is required**
 
-Symptom: After multi-key sort (sort by B, then sort by A), elements with equal A values are not in B-order.
+**Symptom:** After multi-key sort (sort by B, then sort by A), elements with equal A values are not in B-order.
 
-Root Cause: Using `Arrays.sort(int[])` (Dual-Pivot Quicksort, unstable) or Quicksort instead of `Arrays.sort(Integer[])` / `Arrays.sort(objects, comparator)` (Timsort, stable).
+**Root Cause:** Using `Arrays.sort(int[])` (Dual-Pivot Quicksort, unstable) or Quicksort instead of `Arrays.sort(Integer[])` / `Arrays.sort(objects, comparator)` (Timsort, stable).
 
-Diagnostic:
+**Diagnostic:**
 {% raw %}
 ```java
 // Stability test:
@@ -324,19 +324,19 @@ assert rows[0][1]==1 && rows[1][1]==2 : "Unstable!";
 ```
 {% endraw %}
 
-Fix: Use `Arrays.sort` with a Comparator (uses Timsort for object arrays). Never use `int[]` sort when stability matters — box to `Integer[]` first or use a comparator.
+**Fix:** Use `Arrays.sort` with a Comparator (uses Timsort for object arrays). Never use `int[]` sort when stability matters — box to `Integer[]` first or use a comparator.
 
-Prevention: Document stability requirements at sort call sites. Java: Object sort = stable (Timsort). Primitive sort = unstable (Dual-Pivot Quicksort).
+**Prevention:** Document stability requirements at sort call sites. Java: Object sort = stable (Timsort). Primitive sort = unstable (Dual-Pivot Quicksort).
 
 ---
 
 **2. Timsort run detection creating too many tiny runs (all-random data)**
 
-Symptom: Timsort is not faster than plain mergesort on random data; profiling shows many small runs.
+**Symptom:** Timsort is not faster than plain mergesort on random data; profiling shows many small runs.
 
-Root Cause: On truly random data, Timsort finds only runs of length 1-2 (no existing order). All runs are extended to minrun via insertion sort. This is effectively a bottom-up mergesort with extra overhead from run detection.
+**Root Cause:** On truly random data, Timsort finds only runs of length 1-2 (no existing order). All runs are extended to minrun via insertion sort. This is effectively a bottom-up mergesort with extra overhead from run detection.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Measure Timsort on random vs sorted data:
 # If random is not significantly slower,
@@ -345,17 +345,17 @@ Diagnostic:
 # on random data — it's designed for real-world
 ```
 
-Prevention: Not a failure — it is expected behaviour. Timsort on random data performs similarly to mergesort, which is the correct fallback.
+**Prevention:** Not a failure — it is expected behaviour. Timsort on random data performs similarly to mergesort, which is the correct fallback.
 
 ---
 
 **3. Using Timsort's assumed stability for external comparators with side effects**
 
-Symptom: Comparator is called with the same pair in both orders (a,b) and (b,a); side effects trigger twice per pair.
+**Symptom:** Comparator is called with the same pair in both orders (a,b) and (b,a); side effects trigger twice per pair.
 
-Root Cause: Any comparison-based sort may call the comparator on any pair in any order. Timsort's stability only guarantees output order — not the order of comparator invocations.
+**Root Cause:** Any comparison-based sort may call the comparator on any pair in any order. Timsort's stability only guarantees output order — not the order of comparator invocations.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Anti-pattern: logging in comparator
 Arrays.sort(arr, (a,b) -> {
@@ -364,9 +364,9 @@ Arrays.sort(arr, (a,b) -> {
 }); // log volume is not predictable
 ```
 
-Fix: Move side effects out of the comparator. Log before/after sort, not inside.
+**Fix:** Move side effects out of the comparator. Log before/after sort, not inside.
 
-Prevention: Comparators must be pure functions (no side effects). Java's documentation explicitly requires this.
+**Prevention:** Comparators must be pure functions (no side effects). Java's documentation explicitly requires this.
 
 ---
 

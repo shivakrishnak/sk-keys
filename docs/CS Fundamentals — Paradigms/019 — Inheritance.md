@@ -32,15 +32,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 You have three classes: `Dog`, `Cat`, `Bird`. Each has `name`, `age`, `eat()`, `sleep()`. They differ only in `speak()` and `move()`. Without a way to share the common parts, you copy-paste the `name`, `age`, `eat()`, `sleep()` implementation three times. When you need to add `owner` to all animals, you make the same change in three places. Miss one: subtle bug. Change the sleep logic: change it three times.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 At scale, this copy-paste proliferates — 50 animal types, each duplicating the same 200 lines of shared logic. A single bug fix requires 50 edits. A new capability requires 50 additions. The codebase grows in size but not in complexity — pure duplication. The violation: identical code exists in multiple places, which is the root of maintenance catastrophe.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 This is exactly why inheritance was created — to let a derived class _inherit_ the shared implementation from a base class, adding or overriding only what differs. Define `Animal` once with shared fields and methods. `Dog`, `Cat`, `Bird` inherit from `Animal` and only implement their specific behaviour.
 
@@ -68,22 +68,22 @@ Inheritance is powerful for "is-a" relationships where the subclass genuinely is
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. A subclass must honour all contracts of its superclass — it must be substitutable wherever the superclass is expected (Liskov Substitution Principle).
 2. Inheritance creates a _compile-time_ dependency: the subclass is bound to the superclass at compile time.
 3. Private members of the superclass are not accessible in the subclass — only public/protected members are inherited.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 The superclass defines the shared contract and default implementation. Subclasses override specific methods to specialise behaviour while inheriting everything else. The base class provides the template; subclasses fill in the variable parts.
 
 In memory: a `Dog` object contains all `Animal` fields plus its own. The object header points to `Dog`'s vtable, which contains `Dog`'s overridden methods and inherits the rest from `Animal`'s vtable.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
-Gain: code reuse (shared implementation in one place), polymorphism (subclass can be used as superclass type), type hierarchy clarity.
-Cost: tight coupling (subclass depends on superclass internals — the "fragile base class" problem), violation of encapsulation (protected members expose internals to subclasses), deep hierarchies become impossible to understand, inheritance is a static relationship (set at compile time — can't change at runtime like composition can).
+**Gain:** code reuse (shared implementation in one place), polymorphism (subclass can be used as superclass type), type hierarchy clarity.
+**Cost:** tight coupling (subclass depends on superclass internals — the "fragile base class" problem), violation of encapsulation (protected members expose internals to subclasses), deep hierarchies become impossible to understand, inheritance is a static relationship (set at compile time — can't change at runtime like composition can).
 
 The industry has largely moved toward "favour composition over inheritance" for behaviour reuse, reserving inheritance for true "is-a" type relationships.
 
@@ -91,7 +91,7 @@ The industry has largely moved toward "favour composition over inheritance" for 
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You inherit `Stack` from `ArrayList` because a stack needs storage and ArrayList provides it.
 
 WHAT GOES WRONG:
@@ -99,7 +99,7 @@ WHAT GOES WRONG:
 
 This is the `java.util.Stack` bug — it actually extends `Vector` (an old ArrayList) and inherits `add(index, element)`, `elementAt(index)`, and other non-stack operations. The Liskov Substitution Principle is violated: you cannot use `Stack` everywhere `Vector` is expected without risk, because `Stack` adds the expectation of LIFO ordering that `Vector.add(0, x)` violates.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Inheritance is appropriate when the "is-a" relationship holds for the _entire_ interface, not just selected parts. `Stack` should _contain_ an `ArrayList` (composition), not _be_ an `ArrayList` (inheritance). If you can imagine calling an inherited method in a way that violates the subclass's contract, inheritance is the wrong model.
 
 ---
@@ -210,7 +210,7 @@ class Dog extends Animal {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 Method call: animal.speak()
@@ -240,7 +240,7 @@ Subtle data corruption — stack is no longer LIFO
 Observable: stack.pop() returns wrong element
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 In large codebases, deep inheritance hierarchies (5+ levels) become impossible to trace. "What does `EnterpriseUserManagerServiceImpl.process()` do?" requires reading 5 superclasses. Google's style guides and many large organisations explicitly limit inheritance depth to 2. At the framework level (Spring, Hibernate), inheritance is used deliberately but shallowly — abstract base classes provide template implementations for extension points, not for reuse.
 
@@ -389,13 +389,13 @@ public class CsvExporter extends DataExporter {
 
 **Fragile Base Class**
 
-Symptom:
+**Symptom:**
 Changing an `internal` method in the base class breaks a subclass that overrides it. The subclass was calling `super.method()` and the parent changed its sequence of internal calls.
 
-Root Cause:
+**Root Cause:**
 The superclass's `protected` or overridable methods form an implicit contract with subclasses. Changing the internal call order breaks subclasses that override steps in the sequence.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Find all overrides of a base class method:
@@ -404,23 +404,23 @@ grep -rn "@Override" src/ --include="*.java" | \
 # All hits are subclasses that will be affected by a base change
 ```
 
-Fix:
+**Fix:**
 Make internal helper methods `private` to prevent overriding. Use composition — extract the varying part into a strategy object. Make the template method `final` to prevent subclass interference.
 
-Prevention:
+**Prevention:**
 "Design and document for inheritance, or prohibit it" (Effective Java). If a class isn't designed for extension, mark it `final`. Document every `protected` method as part of the public API.
 
 ---
 
 **Liskov Substitution Principle Violation**
 
-Symptom:
+**Symptom:**
 Code that works correctly with the base class fails silently or incorrectly with the subclass. The subclass changes behaviour in a way the caller doesn't expect.
 
-Root Cause:
+**Root Cause:**
 The subclass overrides a method and weakens preconditions, strengthens postconditions, or throws exceptions not declared by the superclass — violating the substitutability guarantee.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```java
 // Test: any code that works with Animal should work with Dog
@@ -434,10 +434,10 @@ void dogSatisfiesAnimalContract() {
 }
 ```
 
-Fix:
+**Fix:**
 Redesign the hierarchy — either strengthen the base class contract, weaken the restriction in the subclass, or switch to composition + interfaces.
 
-Prevention:
+**Prevention:**
 Write contract tests for base classes. Run them against all subclasses in CI. Any subclass that fails a base class contract test is an LSP violation.
 
 ---

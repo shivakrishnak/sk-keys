@@ -43,13 +43,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 The JIT compiler makes aggressive optimizations based on what it has observed: "this callsite always receives `ArrayList`, so I'll inline `ArrayList.add()` directly." These optimistic assumptions are what make JIT-compiled code faster than statically-compiled code. But what happens when the assumption is wrong — when a `LinkedList` shows up at that callsite for the first time? Without deoptimization, the compiled code would call `ArrayList.add()` on a `LinkedList` reference, causing memory corruption, wrong results, or a crash.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 An optimistic JIT optimizer without a fallback mechanism would be unsafe. It could only make conservative assumptions (never inline virtual calls, never eliminate null checks) — making it no better than a static compiler. The trade-off between safety and performance would be unresolvable.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Deoptimization** was created — to allow the JIT to make aggressive, potentially-wrong optimistic bets while ensuring correctness is never violated by providing a mechanism to transparently undo the optimization when it turns out to be wrong.
 
 ---
@@ -75,12 +75,12 @@ The deep insight is that deoptimization makes the JIT's *optimism safe*. Without
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The JVM must always produce correct results — optimization cannot compromise correctness.
 2. JIT's best optimizations (method inlining, null-check elimination, type specialization) require assumptions that *might* be violated at runtime.
 3. Deoptimization allows these assumptions to be *tried* rather than *proven*.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The JVM inserts **uncommon traps** at every speculative optimization point in compiled code. These are tiny code stubs that:
 1. Check the speculation (e.g., is this still an `ArrayList`?).
 2. If the check passes (the common case): continue at full speed.
@@ -103,15 +103,15 @@ The JVM inserts **uncommon traps** at every speculative optimization point in co
 └─────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: JIT can make aggressive speculative optimizations; correctness is guaranteed.
-Cost: Deoptimization is expensive (~microseconds to milliseconds); code must maintain "debug metadata" (mapping compiled state → interpreter state) even for optimized code paths; repeated deoptimization of the same method is a performance cliff.
+**THE TRADE-OFFS:**
+**Gain:** JIT can make aggressive speculative optimizations; correctness is guaranteed.
+**Cost:** Deoptimization is expensive (~microseconds to milliseconds); code must maintain "debug metadata" (mapping compiled state → interpreter state) even for optimized code paths; repeated deoptimization of the same method is a performance cliff.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A method `processOrder(Order o)` is called 1 million times with `MarketOrder`. C2 inlines `MarketOrder.execute()` under a speculative monomorphic type guard. Performance is excellent at 100ns/call.
 
 FIRST `StopLimitOrder` ARRIVES (invocation 1,000,001):
@@ -124,7 +124,7 @@ FIRST `StopLimitOrder` ARRIVES (invocation 1,000,001):
 7. Method is marked as having a deoptimized trap count; if traps keep firing, method is re-queued for recompilation.
 8. On re-compilation with updated profile (MarketOrder + StopLimitOrder seen), C2 produces bimorphic inline or removes assumptions.
 
-THE INSIGHT:
+**THE INSIGHT:**
 One deoptimization event is cheap and nearly invisible (~1µs). Repeated deoptimization of the same method every millisecond is catastrophic — a constant trap/recompile cycle that keeps the method at interpreted speed.
 
 ---
@@ -133,11 +133,11 @@ One deoptimization event is cheap and nearly invisible (~1µs). Repeated deoptim
 
 > Imagine a stunt coordinator who pre-rigs a "safe fall" mat under every dangerous stunt. Most stunts go perfectly — the mat is never used. But its existence is what allows the stuntperson to attempt the dangerous stunt at all. Deoptimization is the mat: it's expensive to set up (debug metadata in compiled code), rarely used, but makes the aggressive stunt (speculative optimization) safe to attempt.
 
-"Dangerous stunt" → speculative JIT optimization (inlining, null-check removal).
-"Pre-rigged mat" → uncommon trap stub + deoptimization metadata.
-"Stunt goes wrong" → optimization assumption violated at runtime.
-"Falling to the mat" → deoptimization: execution transferred to interpreter.
-"Coordinator learning" → JVM re-profiling and re-compiling with updated knowledge.
+- "Dangerous stunt" → speculative JIT optimization (inlining, null-check removal).
+- "Pre-rigged mat" → uncommon trap stub + deoptimization metadata.
+- "Stunt goes wrong" → optimization assumption violated at runtime.
+- "Falling to the mat" → deoptimization: execution transferred to interpreter.
+- "Coordinator learning" → JVM re-profiling and re-compiling with updated knowledge.
 
 Where this analogy breaks down: The mat is used once and reset. Deoptimization can happen repeatedly for the same code path — and if it happens too often, it signals a fundamental design problem in the code's type structure.
 
@@ -215,7 +215,7 @@ If a method's compiled code is invalidated (type assumption fundamentally wrong)
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [C2 compiled code executing]
     → [Type guard: obj is ArrayList?]
@@ -232,7 +232,7 @@ RARE CASE:
     → [Bimorphic inline: ArrayList OR LinkedList path]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Deoptimization happens 1000 times/sec for same method]
     → [Method flag: "Not compilable at C2"]
@@ -241,7 +241,7 @@ FAILURE PATH:
     → [Diagnosis: find the megamorphic callsite]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In a microservice fleet processing diverse request types, deoptimization events can cascade during a feature flag rollout that introduces a new code path. At 10,000 instances, all simultaneously receiving a new type after a deploy, a simultaneous deoptimization storm can create a brief cluster-wide throughput cliff lasting 5–30 seconds while all instances re-profile and re-compile.
 
 ---
@@ -338,13 +338,13 @@ How to choose: Speculative inlining with deopt is optimal for stable, throughput
 
 **Deoptimization Storm After Deployment**
 
-Symptom:
+**Symptom:**
 Immediately after a new version deploys, P99 latency spikes for 30–60 seconds across all pods. Throughput drops 30–50%. Recovers without intervention.
 
-Root Cause:
+**Root Cause:**
 New code introduces new types or code paths that violate JIT assumptions across many compiled methods simultaneously. All pods deoptimize, re-profile, and recompile.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # JFR deoptimization events:
 java -XX:StartFlightRecording=duration=120s,\
@@ -356,23 +356,23 @@ java -XX:+TraceDeoptimization 2>&1 | \
   grep "deoptimizing" | head -100
 ```
 
-Fix:
+**Fix:**
 Pre-warm new pods with production-representative synthetic traffic before routing live traffic. Use canary deployment to limit blast radius.
 
-Prevention:
+**Prevention:**
 Validate that new types introduced go through warm-up load before production traffic cutover.
 
 ---
 
 **Not-Compilable Method (Permanent Deoptimization)**
 
-Symptom:
+**Symptom:**
 `PrintCompilation` shows a method repeatedly cycling through tiers. Eventually stops cycling and stays interpreted. Method is a hot path — throughput permanently reduced.
 
-Root Cause:
+**Root Cause:**
 The method has been deoptimized enough times (default threshold: 40) that the JVM marks it "not compilable". The type profile is permanently megamorphic or the method has other fundamental properties preventing stable speculation.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 jcmd <pid> Compiler.queue
 # Method absent from queue despite being hot
@@ -380,33 +380,33 @@ jcmd <pid> Compiler.queue
 java -XX:+PrintCompilation 2>&1 | grep "made not compilable"
 ```
 
-Fix:
+**Fix:**
 Refactor the problematic method to extract the stable monomorphic hot path from the polymorphic uncommon path.
 
-Prevention:
+**Prevention:**
 Profile type diversity at callsites in performance-critical paths before production.
 
 ---
 
 **Class Loading Triggering Mass Deoptimization**
 
-Symptom:
+**Symptom:**
 ServiceA loads a plugin JAR at runtime. Suddenly, dozens of compiled methods across the JVM deoptimize simultaneously. GC pause metrics spike. 
 
-Root Cause:
+**Root Cause:**
 Loading a new class that is a subclass of an existing class invalidates "no subclass exists" assumptions made by C2. This triggers bulk deoptimization of all methods that relied on that class hierarchy assumption.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -XX:+TraceClassLoading \
      -XX:+TraceDeoptimization 2>&1 | \
   grep "class_check\|Unloading"
 ```
 
-Fix:
+**Fix:**
 If the class hierarchy must be open (plugin architectures), avoid relying on "leaf class" virtual dispatch optimizations. Mark performance-critical implementations `final` to make the JVM's assumptions explicit and correct.
 
-Prevention:
+**Prevention:**
 Load plugins at startup (before JIT compiles the hot path) rather than lazily mid-operation.
 
 ---

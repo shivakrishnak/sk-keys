@@ -407,16 +407,16 @@ public class UserController { ... }
 
 **Preflight Cached with Wrong Headers**
 
-Symptom:
+**Symptom:**
 Added `X-Custom-Header` to API requests. Works sometimes, fails others. Works after
 hard-reload. Same code in different browsers behaves differently.
 
-Root Cause:
+**Root Cause:**
 Browser cached the previous preflight response (via `Access-Control-Max-Age`).
 Old preflight didn't list `X-Custom-Header` in `Access-Control-Allow-Headers`.
 Browser uses cached result → blocks actual request.
 
-Diagnostic:
+**Diagnostic:**
 
 ```
 # Open browser DevTools → Network tab

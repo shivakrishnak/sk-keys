@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 An engineer designs a circuit layout tool. They want to minimise wire length (metric TSP). A compiler assigns variables to registers (graph coloring). A security researcher asks if an encrypted password can be cracked (SAT). Each seems like a different problem. They spend months optimising each independently, unaware they're all fighting the same fundamental difficulty.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Without a unified theory of computational difficulty, researchers reinvent the wheel. Each hard problem is treated as uniquely difficult. Progress on one yields no insight into others. Resources are wasted on searching for polynomial algorithms for problems that may not have them.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Cook (1971) proved that SAT is "NP-Complete" — any problem whose solution can be verified in polynomial time can be transformed (in polynomial time) into a SAT instance. Karp (1972) showed 21 fundamental problems — TSP, clique, knapsack, 3-coloring, vertex cover — are all equivalent in computational hardness. Solving any one in polynomial time solves all others. This is exactly why **NP-Completeness** is the central concept in computational complexity theory.
 
 ---
@@ -64,34 +64,34 @@ The defining power of NP-completeness is not just that one specific problem is h
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. **NP = can-verify-fast:** A problem is in NP if for every YES instance, there is a short proof (polynomial length certificate) checkable in polynomial time.
 2. **NP-hardness = at-least-as-hard-as-all-NP:** A problem H is NP-hard if for every L ∈ NP, there exists a polynomial-time reduction from L to H (f such that x ∈ L iff f(x) ∈ H).
 3. **NP-completeness = NP ∩ NP-hard:** The problem is in NP (verifiable fast) AND at least as hard as all NP problems.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The proof method for NP-completeness:
 1. Show the problem is in NP: describe the polynomial-time certificate and verifier.
 2. Show the problem is NP-hard: reduce a known NP-complete problem (e.g., SAT, 3-SAT, Vertex Cover) to your problem in polynomial time.
 
-THE TRADE-OFFS:
-Gain: A universal "difficulty certificate" — proving NP-completeness tells users no polynomial algorithm is likely; guides them toward approximation, heuristics, or exact methods for small inputs.
-Cost: Does not prove the problem is unsolvable or exponential in all cases — special instances may be easy. NP-completeness is a worst-case statement, not an average-case one.
+**THE TRADE-OFFS:**
+**Gain:** A universal "difficulty certificate" — proving NP-completeness tells users no polynomial algorithm is likely; guides them toward approximation, heuristics, or exact methods for small inputs.
+**Cost:** Does not prove the problem is unsolvable or exponential in all cases — special instances may be easy. NP-completeness is a worst-case statement, not an average-case one.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You need to decide if a directed graph with 50 vertices has a Hamiltonian cycle (visits every vertex exactly once and returns to start).
 
-WHAT HAPPENS WITH BRUTE FORCE:
+**WHAT HAPPENS WITH BRUTE FORCE:**
 50! ≈ 3 × 10^64 possible orderings of vertices to check. At 10^9 checks/second: 10^55 seconds — longer than the age of the universe.
 
-WHAT HAPPENS WITH VERIFICATION:
+**WHAT HAPPENS WITH VERIFICATION:**
 Given a claimed Hamiltonian cycle [1, 3, 7, 12, ...], verify: (1) Is it a permutation of all 50 vertices? (2) Does each consecutive pair have a directed edge? 50 checks — milliseconds.
 
-THE INSIGHT:
+**THE INSIGHT:**
 This asymmetry — milliseconds to VERIFY vs 10^55 seconds to FIND — is the essence of NP. The solution is a short, checkable certificate. Finding the certificate is computationally intractable. If someone handed you the certificate, you'd accept it immediately; generating it from scratch without luck is (apparently) exponentially hard.
 
 ---
@@ -100,10 +100,10 @@ This asymmetry — milliseconds to VERIFY vs 10^55 seconds to FIND — is the es
 
 > NP-Complete problems are like crossword puzzles: filling in a completed grid takes minutes to verify (is each word a real English word in the right spot?), but constructing the entire grid under all constraints takes expert human time. The "completed grid" is the certificate; generating it correctly is the NP-complete task.
 
-"Completed crossword grid" → solution certificate
-"Verify all words fit" → polynomial-time certificate verification
-"Design puzzle from scratch" → solve the NP-complete problem
-"All crosswords share the same fundamental verification structure" → all NP-complete problems are polynomially equivalent
+- "Completed crossword grid" → solution certificate
+- "Verify all words fit" → polynomial-time certificate verification
+- "Design puzzle from scratch" → solve the NP-complete problem
+- "All crosswords share the same fundamental verification structure" → all NP-complete problems are polynomially equivalent
 
 Where this analogy breaks down: Crossword construction is not technically proven NP-complete for all sizes (it depends on the dictionary and grid constraints). The analogy captures the verification asymmetry but not the formal reduction structure—the key technical property of NP-completeness.
 
@@ -167,7 +167,7 @@ Cook's 1971 theorem used the machinery of non-deterministic Turing machines: NP 
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 New computational problem encountered
 → Formulate as decision problem (YES/NO)
@@ -178,7 +178,7 @@ New computational problem encountered
 → Strategy: use approximation / heuristic / FPT algorithm
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Claimed all instances require exponential time
 → Special structure missed (e.g., graph is planar → 3-coloring in poly time)
@@ -187,7 +187,7 @@ Claimed all instances require exponential time
   (interval graphs → polynomial coloring, etc.)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 Modern SAT solvers (CDCL: MiniSAT, CaDiCaL, Kissat) handle millions of variables and clauses in seconds for industrial instances despite NP-completeness. Hardware verification, chip design, and automated theorem proving all rely on NP-complete SAT/SMT solvers in daily production use. The gap between worst-case NP-hardness and average-case tractability is massive for structured real-world instances.
 
 ---
@@ -280,11 +280,11 @@ How to choose: If your problem reduces from any known NP-complete problem, it's 
 
 **1. Applying exact exponential algorithms to large NP-complete instances**
 
-Symptom: Tool runs for hours/days on real-world inputs of modest size.
+**Symptom:** Tool runs for hours/days on real-world inputs of modest size.
 
-Root Cause: NP-complete exact solver (backtracking, DP) has exponential worst-case; real-world instances may hit this worst case.
+**Root Cause:** NP-complete exact solver (backtracking, DP) has exponential worst-case; real-world instances may hit this worst case.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Profile running time vs input size N:
 # If doubling N doubles runtime: O(N) or O(N²) — fine
@@ -293,19 +293,19 @@ time ./solver input_n10.txt    # e.g., 0.01s
 time ./solver input_n20.txt    # e.g., 10s (1000× increase for 2× N)
 ```
 
-Fix: Switch to approximation algorithm, heuristic, or SAT solver for large N.
+**Fix:** Switch to approximation algorithm, heuristic, or SAT solver for large N.
 
-Prevention: Document maximum tractable N in the tool's user guide.
+**Prevention:** Document maximum tractable N in the tool's user guide.
 
 ---
 
 **2. Claiming a problem is NP-complete without verifying ∈ NP**
 
-Symptom: "NP-complete" classification is wrong; problem may be PSPACE-complete or undecidable.
+**Symptom:** "NP-complete" classification is wrong; problem may be PSPACE-complete or undecidable.
 
-Root Cause: NP-completeness requires proving ∈ NP (certificate verifiable in poly time). Some hard problems are not in NP (e.g., TQBF is PSPACE-complete; Halting Problem is undecidable).
+**Root Cause:** NP-completeness requires proving ∈ NP (certificate verifiable in poly time). Some hard problems are not in NP (e.g., TQBF is PSPACE-complete; Halting Problem is undecidable).
 
-Diagnostic:
+**Diagnostic:**
 ```
 Checklist:
 ☐ Is the problem a decision problem (YES/NO)?
@@ -314,19 +314,19 @@ Checklist:
 If no to any: may not be in NP
 ```
 
-Fix: Explicitly describe the polynomial certificate and verifier before claiming NP-completeness.
+**Fix:** Explicitly describe the polynomial certificate and verifier before claiming NP-completeness.
 
-Prevention: Follow the two-step proof: (1) ∈ NP, (2) NP-hard via reduction.
+**Prevention:** Follow the two-step proof: (1) ∈ NP, (2) NP-hard via reduction.
 
 ---
 
 **3. Ignoring special structure of problem instances**
 
-Symptom: Exponential algorithm used on instances with special structure that admits polynomial solutions.
+**Symptom:** Exponential algorithm used on instances with special structure that admits polynomial solutions.
 
-Root Cause: NP-completeness is for general graphs/formulas. Planar graphs → 4-colorable in poly time. Horn clauses → SAT in O(N). Interval graphs → coloring in O(N log N).
+**Root Cause:** NP-completeness is for general graphs/formulas. Planar graphs → 4-colorable in poly time. Horn clauses → SAT in O(N). Interval graphs → coloring in O(N log N).
 
-Diagnostic:
+**Diagnostic:**
 ```
 Ask: What structure does my input have?
 - Are all clauses Horn? → poly-time SAT (unit propagation)
@@ -334,9 +334,9 @@ Ask: What structure does my input have?
 - Are variables intervals? → poly-time graph coloring
 ```
 
-Fix: Classify the input structure; apply specialised polynomial algorithm when available.
+**Fix:** Classify the input structure; apply specialised polynomial algorithm when available.
 
-Prevention: Always check if the problem instance is a special case before treating as general NP-complete.
+**Prevention:** Always check if the problem instance is a special case before treating as general NP-complete.
 
 ---
 

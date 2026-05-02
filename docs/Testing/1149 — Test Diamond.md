@@ -290,13 +290,13 @@ class PaymentServiceConsumerPactTest {
 
 **1. No Contract Tests → Silent Service Incompatibility**
 
-Symptom: Service B deployed, breaks Service A — only discovered in production or E2E tests.
-Fix: Add Pact consumer-driven contract tests between every service pair that communicates.
+**Symptom:** Service B deployed, breaks Service A — only discovered in production or E2E tests.
+**Fix:** Add Pact consumer-driven contract tests between every service pair that communicates.
 
 **2. Service Tests Too Slow (Full Spring Context + DB for Each Test)**
 
 Cause: Each test class starts a new Spring context.
-Fix: Use `@SpringBootTest` with shared application context; share Testcontainers containers via static lifecycle.
+**Fix:** Use `@SpringBootTest` with shared application context; share Testcontainers containers via static lifecycle.
 
 ---
 

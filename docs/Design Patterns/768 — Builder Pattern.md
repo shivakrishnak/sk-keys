@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Builder Pattern"
 parent: "Design Patterns"
@@ -190,7 +190,7 @@ WITH Builder:
 "Order form" = Builder (accumulates parameters step by step)
 "Each named field" = named builder methods (no positional confusion)
 "Model = required" = validation in build()
-"Submit the form → car built" = build() creates the immutable product
+- "Submit the form → car built" = build() creates the immutable product
 "Can't change the car after delivery" = final fields in the built object
 
 ---

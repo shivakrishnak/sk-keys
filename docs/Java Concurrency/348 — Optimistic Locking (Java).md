@@ -35,10 +35,10 @@ tags:
 WORLD WITHOUT IT (pessimistic locking):
 Pessimistic locking says: "conflicts WILL happen — lock first, do work, release." For 1,000 users reading a product price and 1 batch job updating it per hour, the 1,000 readers all acquire and release the lock synchronously. They block each other (pessimistically) even though they never actually conflict. 99.9% of lock acquisition is wasted overhead for conflicts that never happen.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A global product catalog receives 100,000 reads/second and updates once per hour. With pessimistic locking (synchronized), all reads serialise — throughput capped at 1M reads/min. With optimistic locking, reads proceed without locks; the hourly update detects no conflict and succeeds immediately. Throughput: effectively unlimited reads.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 **Optimistic locking** assumes conflicts are rare and expensive verification is preferable to the constant overhead of locks.
 
 ---
@@ -64,12 +64,12 @@ Optimistic locking wins when: conflicts are rare AND the cost of re-doing work o
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. No exclusive lock is held during the read — other writers can modify concurrently.
 2. At commit time, the state is verified to be unchanged since the read.
 3. On conflict, the transaction is retried (not blocked — it fails fast and starts fresh).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 ```
 Optimistic locking flow:
 
@@ -90,15 +90,15 @@ This contrasts with pessimistic locking:
   → Other threads BLOCKED throughout steps 1-5
 ```
 
-THE TRADE-OFFS:
-Gain: No lock contention overhead for reads; high read throughput; no blocking.
-Cost: Writes may fail and require retry (wasted work); under high write contention, retry storms can degrade throughput; ABA problem exists if version not used (CAS-based optimistic); more complex code.
+**THE TRADE-OFFS:**
+**Gain:** No lock contention overhead for reads; high read throughput; no blocking.
+**Cost:** Writes may fail and require retry (wasted work); under high write contention, retry storms can degrade throughput; ABA problem exists if version not used (CAS-based optimistic); more complex code.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 10,000 threads reading inventory, 1 thread updating.
 
 PESSIMISTIC (synchronized):
@@ -119,7 +119,7 @@ Next reads: read stock=99, validate version=2: success
 Throughput: effectively unlimited reads (CPU/memory bound)
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 In the 10,000-read / 1-update scenario, optimistic locking has ~10,000× higher read throughput. Every conflict triggers a retry, but conflicts are rare (< 0.01% of reads coincide with the single update per testing cycle).
 
 ---
@@ -128,10 +128,10 @@ In the 10,000-read / 1-update scenario, optimistic locking has ~10,000× higher 
 
 > Optimistic locking is like editing a Wikipedia article without coordination. You read the current version (timestamp noted), make your edits, and try to save — the system checks if the article changed since you read. If yes, your edit is rejected (conflict) and you must re-read and redo. For most edits, no one else is editing the same section simultaneously, so saves succeed first try.
 
-"Read version" → record current timestamp/version.
-"Save with edit conflict check" → CAS or version check at commit.
-"Edit conflict → redo" → optimistic locking retry.
-"No conflict" → common case; succeeds without any lock at all.
+- "Read version" → record current timestamp/version.
+- "Save with edit conflict check" → CAS or version check at commit.
+- "Edit conflict → redo" → optimistic locking retry.
+- "No conflict" → common case; succeeds without any lock at all.
 
 Where this analogy breaks down: Wikipedia shows you the conflict clearly. Code retries silently — unless the developer implements conflict logging, retries are invisible and hard to diagnose under unexpected write contention.
 
@@ -218,7 +218,7 @@ CONFLICT FLOW:
     → [T1: UPDATE WHERE version=4: success]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 Under write contention, optimistic retries compound. 100 threads updating the same entity: on average `N/2` retries per successful update. At extreme contention, optimistic locking degrades to N² work per N threads — much worse than pessimistic. Monitor retry rates with metrics: >5% retry rate indicates optimistic is wrong choice for this workload.
 
 ---
@@ -285,11 +285,11 @@ How to choose: Use optimistic for catalog-style data (reads >> writes). Use pess
 
 **Retry Storm Under High Contention**
 
-Symptom: Database CPU spikes, many `OptimisticLockException` retries logged. Throughput degrades.
+**Symptom:** Database CPU spikes, many `OptimisticLockException` retries logged. Throughput degrades.
 
-Root Cause: Many concurrent writers to same entity. Retry logic causes 2× work per conflict.
+**Root Cause:** Many concurrent writers to same entity. Retry logic causes 2× work per conflict.
 
-Fix:
+**Fix:**
 ```java
 // Add exponential backoff to retries:
 @Retryable(include = OptimisticLockException.class,
@@ -302,9 +302,9 @@ Fix:
 
 **Silent Data Loss (Missing retry implementation)**
 
-Symptom: `OptimisticLockException` logged but no retry. Update silently discarded.
+**Symptom:** `OptimisticLockException` logged but no retry. Update silently discarded.
 
-Fix: Implement retry logic — use `@Retryable` (Spring Retry), manual retry loop, or return conflict to the caller to decide.
+**Fix:** Implement retry logic — use `@Retryable` (Spring Retry), manual retry loop, or return conflict to the caller to decide.
 
 ---
 

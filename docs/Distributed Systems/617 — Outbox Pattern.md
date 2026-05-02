@@ -287,14 +287,14 @@ public class OrderService {
 
 **Relay Down — Outbox Table Overflowing**
 
-Symptom: Downstream services stop receiving events. Order placed but inventory not
+**Symptom:** Downstream services stop receiving events. Order placed but inventory not
 reserved, payment not processed. Outbox table growing at 1000 rows/minute.
 Customer-visible impact: orders stuck in PENDING state.
 
 Cause: Debezium connector crashed and was not paged. Outbox table now has 2 million
 unprocessed rows.
 
-Fix: (1) Restart Debezium connector. It resumes from last committed WAL position.
+**Fix:** (1) Restart Debezium connector. It resumes from last committed WAL position.
 (2) If WAL position was lost: replay from earliest unpublished outbox row.
 (3) Consumers are idempotent — duplicate events processed correctly.
 (4) Prevention: alert on `outbox_events count(published_at IS NULL) > 500`.

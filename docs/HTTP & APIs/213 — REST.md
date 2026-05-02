@@ -491,14 +491,14 @@ strong typing. Use WebSocket for real-time bidirectional communication.
 
 **Chatty API (N+1 REST Pattern)**
 
-Symptom: Loading a list page requires 1 + N API calls (1 for the list, N for
+**Symptom:** Loading a list page requires 1 + N API calls (1 for the list, N for
 each item's details); mobile client sees 500ms page load even though server
 processes each call in 10ms.
 
-Root Cause: REST's resource granularity matches individual entities well but
+**Root Cause:** REST's resource granularity matches individual entities well but
 requires aggregation at client or API layer for composed views.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Chrome DevTools Network tab: count requests per page load
@@ -509,27 +509,27 @@ grep "GET /api/users/" access.log | awk '{print $1}' \
   | sort | uniq -c | sort -rn | head -5
 ```
 
-Fix: Add composite endpoints: `GET /users?include=orders,profile` or implement
+**Fix:** Add composite endpoints: `GET /users?include=orders,profile` or implement
 GraphQL for flexible field selection. Design "view" resources that aggregate
 related data: `GET /user-dashboard/123` returns everything needed for the
 dashboard in one call.
 
-Prevention: Design API around consumer use cases, not just data entities.
+**Prevention:** Design API around consumer use cases, not just data entities.
 Apply BFF (Backend for Frontend) pattern for mobile vs web clients.
 
 ---
 
 **Broken Caching (GET with Side Effects)**
 
-Symptom: CDN serves stale data even after the data changes; state changes
+**Symptom:** CDN serves stale data even after the data changes; state changes
 triggered by hitting "refresh" in browser; inconsistent results from refreshing.
 
-Root Cause: API uses GET requests for operations with side effects
+**Root Cause:** API uses GET requests for operations with side effects
 (incrementing view counters, recording "last seen", triggering actions).
 CDN caches GET responses and serves stale data, but also misses side effects
 on cache hits.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check if GET responses trigger side effects by examining logs:
@@ -539,10 +539,10 @@ SELECT COUNT(*) FROM view_events WHERE date = today;
 # If CDN hit rate is 80%, GETs >> db updates — side effects missed
 ```
 
-Fix: Never use GET for operations with side effects. Use POST for actions.
+**Fix:** Never use GET for operations with side effects. Use POST for actions.
 Move "last seen" tracking to async background processes triggered separately.
 
-Prevention: Code review: any GET handler that writes to a database is a bug.
+**Prevention:** Code review: any GET handler that writes to a database is a bug.
 Enforce this with architecture tests (ArchUnit).
 
 ---

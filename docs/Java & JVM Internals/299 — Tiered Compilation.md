@@ -43,13 +43,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Pre-Java 7, you chose between two JVM modes at startup: `-client` (C1 only: fast startup, low peak performance) or `-server` (C2 only: slow startup, high peak performance). These were mutually exclusive. A web service using `-server` took 60–120 seconds to reach peak throughput while C2 compiled every hot method from scratch. Using `-client` left throughput permanently at 30–40% of what `-server` would have achieved.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A high-traffic e-commerce site rolls out new pods during a traffic surge. Each new pod in `-server` mode takes 90 seconds of poor performance before C2 finishes compiling. The load balancer routes traffic to the new pods too early. CPU hits 100% processing requests in slow interpreted/C1 code. The site experiences a partial outage during the rollout. Engineering team is forced to do rolling deployments at 3 AM when traffic is low.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Tiered Compilation** was created — to automatically orchestrate all compilation levels in a single JVM, starting fast with C1 and progressively improving to C2, handling both startup latency and peak throughput without any configuration.
 
 ---
@@ -75,12 +75,12 @@ The tier transition is not just "faster code" — each tier transition also chan
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Cold code should not pay compilation overhead; hot code must pay it because the payoff is enormous.
 2. Better profiling data → better C2 optimization decisions → higher return on compilation investment.
 3. JIT compilation consumes CPU; too much compilation overhead kills application responsiveness.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 The five tiers and their thresholds:
 
@@ -100,15 +100,15 @@ The CompilationPolicy governs transitions:
 - If the C2 queue is short (not overloaded), methods skip directly from Tier 0 → Tier 3 → Tier 4.
 - If the C2 queue is long (overloaded), methods go Tier 0 → Tier 1 → Tier 2 → stop (C2 not triggered) — this is the **load shedding** mechanism that prevents compilation from overloading the system under startup bursts.
 
-THE TRADE-OFFS:
-Gain: Auto-tuning across startup and peak; single JVM mode works for all use cases.
-Cost: Added JVM complexity; profiling overhead at Tier 3 (a few percent); more compiler threads needed for optimal performance; Code Cache must accommodate both C1 and C2 code simultaneously.
+**THE TRADE-OFFS:**
+**Gain:** Auto-tuning across startup and peak; single JVM mode works for all use cases.
+**Cost:** Added JVM complexity; profiling overhead at Tier 3 (a few percent); more compiler threads needed for optimal performance; Code Cache must accommodate both C1 and C2 code simultaneously.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Two identical servers start simultaneously at 08:00. Server A: no tiered compilation (C2 only). Server B: tiered compilation. Both receive 5,000 requests/second immediately.
 
 SERVER A (no tiered):
@@ -122,7 +122,7 @@ SERVER B (tiered):
 - 08:01: C1 Tier 3 profiling data ready. C2 starts compiling with profile-guided data.
 - 08:02: C2 compilation done. Requests: 20ms. Same peak as Server A.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Server A has 5 minutes of SLA violations. Server B has 30 seconds of elevated latency, then 90 seconds of acceptable performance, then optimal. Tiered compilation's warmup curve is fundamentally smoother — it never leaves hot code at interpreter speed if any compiled version exists.
 
 ---
@@ -131,10 +131,10 @@ Server A has 5 minutes of SLA violations. Server B has 30 seconds of elevated la
 
 > Think of tiered compilation as an express lane highway system. All cars start in the slowest lane (interpreter). After a few miles (invocations), they can merge into a faster lane (C1, no profiling). After more miles with consistent good driving, GPS traffic analysis kicks in (C1 full profiling). Eventually, frequent drivers get a personalized AI-optimized route suggested (C2). The highway system monitors all lanes in real time and manages congestion (compiler queue load shedding) by temporarily holding some cars in slower lanes when the fast lanes are full.
 
-"Slowest lane" → Tier 0 interpreter.
-"Fast lane" → C1 compiled code (Tier 1/2/3).
-"AI-optimized route" → C2 profile-guided compilation.
-"Congestion management" → CompilationPolicy load shedding.
+- "Slowest lane" → Tier 0 interpreter.
+- "Fast lane" → C1 compiled code (Tier 1/2/3).
+- "AI-optimized route" → C2 profile-guided compilation.
+- "Congestion management" → CompilationPolicy load shedding.
 
 Where this analogy breaks down: Unlike a highway, tiers are not about physical capacity — a method at Tier 2 can occupy exactly the same CPU as a method at Tier 4. The "lanes" here represent code quality levels, not resource slots.
 
@@ -198,7 +198,7 @@ Each compilation level has its own queue. When Tier 4 (C2) queue depth exceeds a
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Application start]
     → [All methods: Tier 0 (interpreter)]
@@ -209,7 +209,7 @@ NORMAL FLOW:
     → [New occasionally-called methods: stay Tier 1/2]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Very high startup load]
     → [C2 queue overwhelmed]
@@ -219,7 +219,7 @@ FAILURE PATH:
     → [Fix: reduce initial load, or increase CICompilerCount]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 100 JVM instances starting simultaneously (Kubernetes rolling deploy), the aggregate compilation load compounds: each JVM runs its own compiler threads, stealing CPU from application threads. With 4 compiler threads per pod and 100 pods on shared nodes, compilation overhead can cause node-level CPU saturation. Modern container-aware JVMs (Java 10+) detect CPU quotas correctly, but `CICompilerCount` should still be explicitly tuned for containerized deployments.
 
 ---
@@ -303,13 +303,13 @@ How to choose: Default tiered compilation is the right answer for 95% of Java se
 
 **Stuck at Tier 3 — Peak Performance Never Reached**
 
-Symptom:
+**Symptom:**
 `PrintCompilation` shows all important methods at tier 3 but never advancing to tier 4. Throughput plateaus at 40–60% of expected peak.
 
-Root Cause:
+**Root Cause:**
 C2 compiler queue is saturated. The CompilationPolicy has stopped submitting new methods to C2. Common causes: too many concurrent method compilations, `CICompilerCount` too low for the number of hot methods.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 jcmd <pid> Compiler.queue
 # If C2 queue is consistently > 50 methods deep, it's overwhelmed
@@ -318,58 +318,58 @@ java -XX:+PrintCompilation 2>&1 | grep " 4 " | wc -l
 # Count C2 compiled methods — if growing slowly, queue is bottlenecked
 ```
 
-Fix:
+**Fix:**
 ```bash
 java -XX:CICompilerCount=8 MyApp
 # Or reduce tier 4 threshold:
 java -XX:Tier4InvocationThreshold=2000 MyApp
 ```
 
-Prevention:
+**Prevention:**
 Profile compilation queue depth in LoadTest environments. Size `CICompilerCount` proactively.
 
 ---
 
 **Compilation Storm During Auto-Scaling**
 
-Symptom:
+**Symptom:**
 New pods added by autoscaler immediately show high CPU (>80%). Application throughput is actually lower than before scaling. 
 
-Root Cause:
+**Root Cause:**
 Each new pod starts cold compilation simultaneously. Compilation threads compete with application threads for CPU, reducing application throughput below the equivalent of fewer, warm pods.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 top -H -p <pid>
 # Look for JIT threads (named "C1 CompilerThread" or "C2 CompilerThread")
 # consuming large CPU slices
 ```
 
-Fix:
+**Fix:**
 Implement a warm-up delay in readiness probe: only mark pod Ready after 60 seconds of sustained traffic. Or pre-warm pods with a synthetic load script before routing traffic.
 
-Prevention:
+**Prevention:**
 Add a readiness probe endpoint that checks JIT progress (e.g., confirm that a set of critical methods have been compiled via MBean metrics).
 
 ---
 
 **Tiered Compilation Disabled Accidentally**
 
-Symptom:
+**Symptom:**
 JVM starts and stays at consistent, sub-optimal throughput. `PrintCompilation` shows tier 4 compilations never appear.
 
-Root Cause:
+**Root Cause:**
 `-XX:-TieredCompilation` was set in the JVM startup script (or an environment variable injects it). This disables tiered compilation entirely. All compilations use C2 from scratch or not at all, depending on other flags.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 jcmd <pid> VM.flags | grep TieredCompilation
 ```
 
-Fix:
+**Fix:**
 Remove `-XX:-TieredCompilation` from JVM args.
 
-Prevention:
+**Prevention:**
 Document and version-control all JVM startup flags. Add automated checks that validate JVM flags match expected configuration on startup.
 
 ---

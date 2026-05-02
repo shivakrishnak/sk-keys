@@ -32,10 +32,10 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 `Executors.newFixedThreadPool(10)` uses an unbounded `LinkedBlockingQueue`. At 100 tasks/second with 10 threads processing at 30 seconds each, the queue grows at 90 tasks/second — eventually OOM. There's no way to customise rejection behaviour, queue depth, or keep-alive time without understanding and using `ThreadPoolExecutor` directly.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 `ThreadPoolExecutor` is the fully-configurable thread pool — all factory methods in `Executors` delegate to it with preset parameters. Direct usage enables production-tuned configurations.
 
 ---
@@ -61,7 +61,7 @@ The counterintuitive ThreadPoolExecutor growth: new threads are only created whe
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Threads are created on-demand up to `corePoolSize` first, then tasks queue, then threads scale to `maximumPoolSize` if queue full.
 2. Threads above `corePoolSize` are removed after `keepAliveTime` idle; core threads are permanent (unless `allowCoreThreadTimeOut(true)`).
 3. The queue type determines pool behaviour under load: unbounded → no limit on queued tasks; bounded → enables scaling beyond corePoolSize.
@@ -90,15 +90,15 @@ new ArrayBlockingQueue<>(100) // blocks scale-out + rejection
 new SynchronousQueue<>() // no queuing — immediate thread or bail
 ```
 
-THE TRADE-OFFS:
-Gain: Full control over all pool parameters; configurable rejection; custom thread factories; performance tuning.
-Cost: Complex to configure correctly; wrong parameters cause OOM, starvation, or excessive thread creation; developers must understand growth model.
+**THE TRADE-OFFS:**
+**Gain:** Full control over all pool parameters; configurable rejection; custom thread factories; performance tuning.
+**Cost:** Complex to configure correctly; wrong parameters cause OOM, starvation, or excessive thread creation; developers must understand growth model.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP: Service needing backpressure for external API calls.
+**SETUP:** Service needing backpressure for external API calls.
 
 MISCONFIGURED (Executors.newFixedThreadPool):
 ```java
@@ -122,7 +122,7 @@ ThreadPoolExecutor pool = new ThreadPoolExecutor(
 // → caller slows down → natural flow control
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 `CallerRunsPolicy` as rejection handler provides natural backpressure — when the pool is full, the submitting thread runs the task itself, slowing submission rate to match processing rate.
 
 ---
@@ -283,10 +283,10 @@ How to choose: Direct `ThreadPoolExecutor` for production when you need bounded 
 jcmd <pid> VM.info | grep "OutOfMemory"
 jstack <pid> | grep "pool-" -c  # count pool threads
 ```
-Fix: Use `new ArrayBlockingQueue<>(maxCapacity)` + appropriate rejection handler.
+**Fix:** Use `new ArrayBlockingQueue<>(maxCapacity)` + appropriate rejection handler.
 
 **Threads not scaling (stuck at corePoolSize):**
-Fix: Use `SynchronousQueue` instead of bounded queue to force direct thread creation, or pre-start core threads: `executor.prestartAllCoreThreads()`.
+**Fix:** Use `SynchronousQueue` instead of bounded queue to force direct thread creation, or pre-start core threads: `executor.prestartAllCoreThreads()`.
 
 ---
 

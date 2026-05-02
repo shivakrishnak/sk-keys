@@ -238,12 +238,12 @@ TOTAL:                $179.89
 **1. Approved Files Not Committed**
 Cause: Developer forgot to commit `.approved.txt` files after first approval.
 Result: CI always fails (no approved file to compare against).
-Fix: Add check: if `.approved.txt` is missing, fail with clear "approve this test first" message. Lint: `git ls-files --others --exclude-standard | grep '.received.'` should be empty.
+**Fix:** Add check: if `.approved.txt` is missing, fail with clear "approve this test first" message. Lint: `git ls-files --others --exclude-standard | grep '.received.'` should be empty.
 
 **2. Auto-Approving Without Review**
 Cause: Developer runs `approvals.approve_all()` without reading the diff.
 Result: Bugs captured as "approved" baseline.
-Fix: Approval workflow in code review — PR reviewer sees the `.approved.txt` diff in the PR.
+**Fix:** Approval workflow in code review — PR reviewer sees the `.approved.txt` diff in the PR.
 
 ---
 

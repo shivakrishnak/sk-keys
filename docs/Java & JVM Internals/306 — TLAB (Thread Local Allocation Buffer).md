@@ -44,13 +44,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Every object allocation in Java reserves memory in the shared Eden heap. If all threads allocate into the same shared memory region, every `new` keyword requires acquiring a lock or using a CAS operation to advance the shared allocation pointer. At 20 threads each allocating 1,000 objects per millisecond, that is 20,000 CAS collisions per millisecond. The heap becomes a serialization point — the anti-pattern of concurrent programming.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A high-throughput trading system allocates 50 million objects per second across 32 threads. Without TLAB, every allocation contends for the heap's bump pointer — causing 50 million lock/CAS operations per second. Thread scheduling collisions and cache thrashing make allocation the bottleneck. 80% of CPU time is spent on allocation overhead, not on financial calculations.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **TLAB** was created — to eliminate heap allocation contention by giving each thread a pre-reserved private chunk of Eden. Within a thread's TLAB, object allocation is a single pointer increment — zero synchronization, zero contention.
 
 ---
@@ -76,12 +76,12 @@ TLAB makes `new Object()` a two-instruction operation: load a pointer and increm
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Object allocation is the most frequent operation in any Java program — it must be as cheap as possible.
 2. Shared mutable state requires synchronization — shared allocation pointers are contended under concurrent allocation.
 3. Memory locality matters — allocating from the same region as your thread's recently-used objects improves cache performance.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Eden heap → divided into N TLABs (one per active thread) + a shared remainder.
 
 For each new object allocation:
@@ -106,15 +106,15 @@ For each new object allocation:
 └─────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Lock-free per-thread allocation; near-zero allocation cost; better cache locality; eliminates allocation bottleneck.
-Cost: TLAB waste (unused space at end of TLAB when retired); larger effective Eden needed to accommodate all TLABs; objects from different threads are not co-located in memory (reducing cross-thread object co-locality).
+**THE TRADE-OFFS:**
+**Gain:** Lock-free per-thread allocation; near-zero allocation cost; better cache locality; eliminates allocation bottleneck.
+**Cost:** TLAB waste (unused space at end of TLAB when retired); larger effective Eden needed to accommodate all TLABs; objects from different threads are not co-located in memory (reducing cross-thread object co-locality).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Two implementations of a simple message-processing pipeline. Each of 16 threads processes 10,000 messages/second, creating 3 small objects per message (30,000 objects/sec per thread, 480,000 objects/sec total).
 
 WITHOUT TLAB (shared Eden pointer):
@@ -123,7 +123,7 @@ Each object allocation: CAS on shared pointer. On 16 threads, CAS retry rate: ~6
 WITH TLAB:
 Thread requests new TLAB (1 CAS) for 512KB (~170,000 small objects). Per-object allocation: 2 instructions ≈ 1ns. Total: 480,000 × 1ns = 0.48ms/second. Speedup: 50x. TLAB exhaustion rate: ~3 TLAB requests per second per thread (very infrequent CAS).
 
-THE INSIGHT:
+**THE INSIGHT:**
 TLAB converts O(allocations) synchronization operations to O(TLABs) operations — reducing synchronization by 1,000-100,000x for typical workloads. This makes Java's managed allocation competitive with C's bump allocator.
 
 ---
@@ -132,11 +132,11 @@ TLAB converts O(allocations) synchronization operations to O(TLABs) operations �
 
 > Each thread has a checkbook (TLAB). The thread writes checks freely without going to the bank for each transaction. When the checkbook runs out, the thread visits the bank (Eden) once to get a new checkbook. The bank visit requires locking (CAS), but it happens only once per 1,000 checks rather than once per check.
 
-"Checkbook" → TLAB (private allocation buffer).
-"Writing a check" → `tlab.top += size` (pointer increment).
-"Bank visit" → CAS on Eden's shared allocation pointer.
-"Checkbook page" → TLAB segment.
-"Bank runs out of checks" → Eden full → Minor GC triggered.
+- "Checkbook" → TLAB (private allocation buffer).
+- "Writing a check" → `tlab.top += size` (pointer increment).
+- "Bank visit" → CAS on Eden's shared allocation pointer.
+- "Checkbook page" → TLAB segment.
+- "Bank runs out of checks" → Eden full → Minor GC triggered.
 
 Where this analogy breaks down: Unused checks at the end of a checkbook are wasted. TLABs have the same waste problem — the unused space at the end of a TLAB when it is retired is filled with a dummy object and counted as "TLAB waste" in GC statistics.
 
@@ -206,7 +206,7 @@ G1GC uses per-region allocation. TLABs are allocated within G1's regions (region
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Thread creates object]
     → [Check TLAB fast path]  ← YOU ARE HERE
@@ -226,7 +226,7 @@ EDEN FULL:
     → [Eden reset, new TLABs claimed]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Thread allocation rate > TLAB size capacity]
     → [TLAB waste too high (unused end of TLABs)]
@@ -235,7 +235,7 @@ FAILURE PATH:
     → [Tune: -XX:TLABSize=NN or -XX:TLABWasteTargetPercent]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 With 1,000 threads (common in virtual thread workloads — Java 21+), 1,000 simultaneous TLABs could consume 1,000 × default_TLAB_size = 1,000 × 512KB = 512MB of Eden — before any actual object allocation. The JVM's adaptive TLAB resizing reduces this by giving smaller TLABs to threads with low allocation rates. Monitor via `-XX:+PrintTLAB` to ensure virtual thread workloads don't exhaust Eden with TLAB overhead.
 
 ---
@@ -320,13 +320,13 @@ How to choose: TLAB covers 95%+ of all Java object allocations automatically. On
 
 **TLAB Waste Causing Premature Minor GC**
 
-Symptom:
+**Symptom:**
 GC logs show Minor GC running more frequently than expected. Eden appears to fill quickly but heap usage is not proportional to object creation rate. `PrintTLAB` shows high waste percentages.
 
-Root Cause:
+**Root Cause:**
 Many threads with low allocation rates receive TLABs that are too large for their actual usage pattern. Most of each TLAB is wasted (filled with dummy int[] at retirement). Eden fills with waste rather than live objects.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -Xlog:gc+tlab*=debug MyApp 2>&1 | grep "waste"
 # Look for waste > 5% on most threads
@@ -334,7 +334,7 @@ java -Xlog:gc+tlab*=debug MyApp 2>&1 | grep "waste"
 # Or via JFR TLAB report
 ```
 
-Fix:
+**Fix:**
 ```bash
 # Reduce maximum TLAB size:
 java -XX:TLABSize=64k MyApp
@@ -343,20 +343,20 @@ java -XX:TLABSize=64k MyApp
 java -XX:TLABWasteTargetPercent=1 MyApp
 ```
 
-Prevention:
+**Prevention:**
 Profile TLAB waste in load testing. Alert if GC log shows consistent waste > 3%.
 
 ---
 
 **Contention on Eden When TLAB Refilling Under Load**
 
-Symptom:
+**Symptom:**
 Under heavy multi-threaded load (100+ threads), GC logs show very high Minor GC frequency. CPU shows significant time in `ParNew` or parallel GC threads. JFR shows high TLAB refill count per thread.
 
-Root Cause:
+**Root Cause:**
 With many threads all refilling TLABs simultaneously, CAS contention on the Eden pointer increases. Under extreme load, this manifests as high CAS retry counts and elevated allocation path latency.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Perf record to see allocation-related stalls:
 # Linux: perf stat -e cas:cpu_cycles_waiting java MyApp
@@ -365,27 +365,27 @@ jcmd <pid> JFR.start filename=alloc.jfr
 # In JMC: Memory → TLAB → Allocation Stalls
 ```
 
-Fix:
+**Fix:**
 Increase Eden size (reduces refill frequency):
 ```bash
 java -Xmn2g MyApp   # Set Young Gen to 2GB
 ```
 Or reduce thread count if possible.
 
-Prevention:
+**Prevention:**
 Load test with production-representative thread pool sizes. Tune Eden size to achieve <1 TLAB refill/second per thread.
 
 ---
 
 **Virtual Threads TLAB Exhausting Eden**
 
-Symptom:
+**Symptom:**
 Spring Boot 3 application with virtual threads (Java 21+) shows unexpected OOM or high GC frequency when executing 10,000 concurrent requests.
 
-Root Cause:
+**Root Cause:**
 Virtual threads are mounted on carrier threads. If 100 carrier threads each have a TLAB, and each virtual thread resets the TLAB state on park/unpark, TLAB overhead per carrier thread is multiplied.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Check carrier thread count and TLAB state:
 java -XX:+PrintTLAB \
@@ -393,14 +393,14 @@ java -XX:+PrintTLAB \
      -jar myapp.jar 2>&1 | grep "TLAB.refills"
 ```
 
-Fix:
+**Fix:**
 Tune carrier thread count and Eden size for virtual thread workloads:
 ```bash
 java -Djdk.virtualThreadScheduler.parallelism=16 \
      -Xmn4g MyApp   # larger Eden for TLAB multiplied by carriers
 ```
 
-Prevention:
+**Prevention:**
 Load test virtual thread applications specifically for TLAB pressure with representative concurrent load.
 
 ---

@@ -310,15 +310,15 @@ allure open target/site/allure-maven-plugin/
 
 **1. Report Not Generated on Failure**
 Cause: CI step exits early (fail-fast); report generation step never runs.
-Fix: `if: always()` in GitHub Actions; `always()` in Jenkins post-build step — ensures report generation runs regardless of test outcome.
+**Fix:** `if: always()` in GitHub Actions; `always()` in Jenkins post-build step — ensures report generation runs regardless of test outcome.
 
 **2. Flaky Tests Invisible in Aggregate Reports**
 Cause: Aggregate "98% pass rate" looks fine; individual test with 60% pass rate is hidden.
-Fix: Track and report per-test pass rate (not just aggregate). Alert when any individual test falls below threshold.
+**Fix:** Track and report per-test pass rate (not just aggregate). Alert when any individual test falls below threshold.
 
 **3. Historical Reports Not Retained**
 Cause: CI artifacts deleted after 7 days; no trend data available.
-Fix: Publish test summary to a persistent store (database, Allure server, Gradle Enterprise). Or increase artifact retention period.
+**Fix:** Publish test summary to a persistent store (database, Allure server, Gradle Enterprise). Or increase artifact retention period.
 
 ---
 

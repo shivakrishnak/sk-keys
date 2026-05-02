@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You write tests for `sort(list)`:
 
 - `sort([3, 1, 2])` → `[1, 2, 3]` ✓
@@ -40,7 +40,7 @@ You write tests for `sort(list)`:
 
 You feel confident. But there's a bug: `sort` fails when the list has more than 1,000 elements (integer overflow in merge step). Or it fails for lists containing `Integer.MIN_VALUE`. Or it fails when the same element appears 3+ times. Your hand-picked examples never hit these cases. Property-based testing would generate thousands of random lists — including those edge cases you didn't think of — and find the bug automatically.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Example-based tests verify: "given THIS input, I get THIS output." Property-based tests verify: "for ANY valid input, THIS invariant holds." The invariants (properties) are higher-level: "sorted list is always sorted," "sorted list has same length as input," "sorted list is a permutation of input." These three properties together fully specify correct sort behavior.
 
 ---
@@ -296,12 +296,12 @@ class StringEncoderPropertyTest {
 **1. Flaky PBT (Passes Sometimes, Fails Sometimes)**
 
 Cause: PBT is randomized; with a low `tries` setting, the failing case may not be generated every run.
-Fix: Increase `tries`. Once a failure is found, the seed is logged — add `@Seed(123)` to reproduce deterministically.
+**Fix:** Increase `tries`. Once a failure is found, the seed is logged — add `@Seed(123)` to reproduce deterministically.
 
 **2. Property Too Weak (Test Always Passes Even With Bugs)**
 
 Cause: Property allows too many outcomes (e.g., "result is not null" — true even if result is completely wrong).
-Fix: Strengthen the property: combine multiple invariants. Use the oracle pattern: compare with a simple reference implementation.
+**Fix:** Strengthen the property: combine multiple invariants. Use the oracle pattern: compare with a simple reference implementation.
 
 ---
 

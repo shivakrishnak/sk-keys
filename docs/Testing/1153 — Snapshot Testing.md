@@ -31,7 +31,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A React component renders a navigation menu with 15 items, nested structure, and ARIA attributes. Writing assertions manually: `expect(menu.children.length).toBe(15)`, `expect(menu.querySelector('[aria-expanded]'))` — dozens of assertions, tedious to write, and they only check what the developer thought to check. When a developer changes the component, they must manually update all assertions. With snapshot testing, the first run captures the full rendered output as the "expected," and any future change (intentional or accidental) is immediately flagged.
 
 ---
@@ -225,12 +225,12 @@ class OrderSummaryTest {
 **1. Snapshots Updated Automatically Without Review**
 
 Cause: CI pipeline runs `jest --updateSnapshot` automatically, committing all changes.
-Fix: Never auto-update in CI. Let tests fail; require developer review and manual `--updateSnapshot` locally.
+**Fix:** Never auto-update in CI. Let tests fail; require developer review and manual `--updateSnapshot` locally.
 
 **2. Snapshot Explosion (1,000 lines, impossible to review)**
 
 Cause: Snapshotting entire page components or large API responses.
-Fix: Snapshot specific sub-components or specific fields. Use `toMatchObject` for API responses (check specific fields, not entire response).
+**Fix:** Snapshot specific sub-components or specific fields. Use `toMatchObject` for API responses (check specific fields, not entire response).
 
 ---
 

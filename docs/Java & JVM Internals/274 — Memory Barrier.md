@@ -33,13 +33,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Modern CPUs execute instructions out of order (out-of-order execution) and cache memory writes in CPU-local write buffers before flushing to main memory. Two threads on two separate CPU cores can see a completely different ordering of memory writes than what the source code specifies. Thread A writes `flag = true` after `data = 42`, but Thread B may observe `flag = true` while still seeing `data = 0` — a broken ordering that makes concurrent programming pathologically unreliable.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Without a mechanism to constrain reordering, every concurrent algorithm is potentially broken by default. Algorithms that assume "if B sees flag=true, then B sees data=42" — which is logically guaranteed by program order — are silently wrong on multicore CPUs because the guarantee doesn't hold without explicit barriers.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Memory Barriers are CPU-level instructions that enforce ordering constraints: all writes before the barrier must be flushed and visible to other CPUs before any write after the barrier. This is exactly why Memory Barriers exist: they restore the programmer's intuitive ordering expectations in the face of CPU and compiler reordering.
 
 ---
@@ -65,32 +65,32 @@ The gap between Java's happens-before abstraction and actual CPU instructions is
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. CPUs and compilers legally reorder memory operations for performance if they appear safe from a single-thread perspective.
 2. Reorderings that appear safe in single-threaded context can break multi-threaded invariants.
 3. The programmer needs a way to prevent specific reorderings across thread boundaries.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 is the source of the problem. Invariant 2 limits what reorderings are acceptable. Invariant 3 requires an explicit mechanism. The design: insert a barrier instruction at points where ordering must be preserved. The barrier's semantic depends on type: a store-store barrier prevents two stores from swapping order; a store-load barrier (the most expensive, used by `volatile` reads) prevents any subsequent load from executing before all prior stores are globally visible.
 
-THE TRADE-OFFS:
-Gain: Correct multi-threaded behaviour; memory writes visible across CPUs as intended.
-Cost: CPU barrier instructions flush write buffers, preventing out-of-order execution optimisations in the CPUs — measurable throughput cost on memory-intensive concurrent code.
+**THE TRADE-OFFS:**
+**Gain:** Correct multi-threaded behaviour; memory writes visible across CPUs as intended.
+**Cost:** CPU barrier instructions flush write buffers, preventing out-of-order execution optimisations in the CPUs — measurable throughput cost on memory-intensive concurrent code.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Two threads. Thread A: `data = 42; flag = true;`. Thread B in loop: `if (flag) use(data)`.
 
-WHAT HAPPENS WITHOUT MEMORY BARRIER:
+**WHAT HAPPENS WITHOUT MEMORY BARRIER:**
 CPU A's write buffer has `data = 42` pending. CPU A flushes `flag = true` first (CPU reordering — it's in a different cache line). CPU B reads `flag = true`. CPU B reads `data` — still 0 in its cache. `use(data)` receives 0, not 42. Silent data corruption. No exception. No error. Just a wrong value propagated silently.
 
-WHAT HAPPENS WITH MEMORY BARRIER:
+**WHAT HAPPENS WITH MEMORY BARRIER:**
 Thread A writes `data = 42` (ordinary write). Thread A executes a store-store barrier (emitted by `volatile int flag` write). The barrier forces all prior stores (including `data = 42`) to be globally visible. Then Thread A writes `flag = true` (`volatile`). Thread B reads `flag = true` (`volatile` read). `volatile` read includes a load-load barrier, ensuring all subsequent loads see the post-barrier memory state. Thread B reads `data` — guaranteed to see `42`.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Memory Barriers don't just prevent reordering — they ensure cross-CPU cache coherence. Without flushing write buffers and invalidating stale cache lines, correct multi-threaded programming is impossible on modern multicore hardware.
 
 ---
@@ -99,10 +99,10 @@ Memory Barriers don't just prevent reordering — they ensure cross-CPU cache co
 
 > A Memory Barrier is like a toll booth on a dual-carriageway merge. All cars (memory operations) from both lanes (before the barrier) must come to a complete stop and pay the toll (flush to main memory) before any car in the lanes beyond the booth can move (subsequent memory operations). The barrier guarantees that every operation before it is fully complete before any operation after it begins.
 
-"Cars before the toll" → memory reads/writes before the barrier
-"Paying the toll (stop/flush)" → flushing CPU write buffers, invalidating remote caches
-"Cars after the toll" → subsequent memory reads/writes
-"Dual carriageway (multiple CPU cores)" → parallel execution across CPUs
+- "Cars before the toll" → memory reads/writes before the barrier
+- "Paying the toll (stop/flush)" → flushing CPU write buffers, invalidating remote caches
+- "Cars after the toll" → subsequent memory reads/writes
+- "Dual carriageway (multiple CPU cores)" → parallel execution across CPUs
 
 Where this analogy breaks down: unlike a toll booth, the cost of a memory barrier is not constant — it varies by type (store-store is cheaper than store-load) and by the amount of pending data in the write buffer.
 
@@ -187,7 +187,7 @@ On ARM64:
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Thread A writes volatile field
   → JIT emits StoreStore barrier (flush pending stores)
@@ -200,7 +200,7 @@ Thread A writes volatile field
   → happens-before relationship established
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Missing barrier (no volatile / no synchronized)
   → CPU A's write buffer may hold pending writes
@@ -211,7 +211,7 @@ Missing barrier (no volatile / no synchronized)
   → Intermittent wrong results, impossible to reproduce
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale with many CPU cores, memory barrier costs increase because flushing write buffers to globally-coherent shared memory (L3 cache / DRAM) involves cache coherency protocol (MESI) messages between all cores. A spin loop with a `volatile` read on a 96-core machine generates 96× the MESI traffic compared to a single-core machine. This is why high-throughput concurrent libraries use techniques like `VarHandle.getAcquire()`/`setRelease()` (weaker but sufficient barriers) instead of full `volatile` semantics.
 
 ---
@@ -342,11 +342,11 @@ How to choose: Use `volatile` for simple flag/state sharing. Use `VarHandle.setR
 
 **1. Data Race from Missing Barrier (Non-volatile Shared Field)**
 
-Symptom: Intermittent wrong values in shared state; bug only reproducible on ARM/POWER hardware or high-core-count x86; never reproducible in development.
+**Symptom:** Intermittent wrong values in shared state; bug only reproducible on ARM/POWER hardware or high-core-count x86; never reproducible in development.
 
-Root Cause: Reading a shared mutable field without `volatile` or `synchronized` — no barrier, stale cached value.
+**Root Cause:** Reading a shared mutable field without `volatile` or `synchronized` — no barrier, stale cached value.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # JCStress — test memory ordering correctness
 mvn archetype:generate \
@@ -361,31 +361,31 @@ java -XX:StartFlightRecording=settings=profile \
 # Helgrind (Valgrind) for native thread analysis
 ```
 
-Prevention: All shared mutable state must be protected by `volatile`, `synchronized`, or `java.util.concurrent` classes — no exceptions on multicore systems.
+**Prevention:** All shared mutable state must be protected by `volatile`, `synchronized`, or `java.util.concurrent` classes — no exceptions on multicore systems.
 
 **2. Incorrect Double-Checked Locking**
 
-Symptom: Singleton returns a partially-initialised object; constructor appears to run but fields are not set; extremely rare, only on certain platforms.
+**Symptom:** Singleton returns a partially-initialised object; constructor appears to run but fields are not set; extremely rare, only on certain platforms.
 
-Root Cause: Without `volatile` on the singleton reference, the JIT/CPU may publish the reference before the constructor's field stores are visible to other threads.
+**Root Cause:** Without `volatile` on the singleton reference, the JIT/CPU may publish the reference before the constructor's field stores are visible to other threads.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # JCStress test specifically for DCL:
 # See OpenJDK jcstress tests for DoubleCheckedLocking
 ```
 
-Fix: Make the singleton reference `volatile`. See Code Example 1.
+**Fix:** Make the singleton reference `volatile`. See Code Example 1.
 
-Prevention: Use `volatile` for any pattern where a reference is published to other threads after construction; consider using `static` holder pattern (class initialization guarantee) as an alternative.
+**Prevention:** Use `volatile` for any pattern where a reference is published to other threads after construction; consider using `static` holder pattern (class initialization guarantee) as an alternative.
 
 **3. Performance Degradation from Unnecessary Volatiles**
 
-Symptom: Benchmark shows 10–50× performance regression in a tight loop after adding `volatile` to a counter.
+**Symptom:** Benchmark shows 10–50× performance regression in a tight loop after adding `volatile` to a counter.
 
-Root Cause: `volatile` on a hot-path variable inserts StoreLoad barriers, preventing CPU out-of-order execution and causing cache coherency traffic.
+**Root Cause:** `volatile` on a hot-path variable inserts StoreLoad barriers, preventing CPU out-of-order execution and causing cache coherency traffic.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Profile with perf on Linux
 perf stat -e cache-references,cache-misses \
@@ -393,7 +393,7 @@ perf stat -e cache-references,cache-misses \
 # High cache-misses with volatile hot path = barrier cost
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: volatile on every inner-loop iteration
 volatile long counter = 0;
@@ -405,7 +405,7 @@ for (long i = 0; i < 1_000_000; i++) localCounter++;
 counter = localCounter;  // one volatile write at end
 ```
 
-Prevention: Avoid `volatile` in tight inner loops; use `LongAdder` for high-contention counters (uses internal striping to reduce barrier cost).
+**Prevention:** Avoid `volatile` in tight inner loops; use `LongAdder` for high-contention counters (uses internal striping to reduce barrier cost).
 
 ---
 

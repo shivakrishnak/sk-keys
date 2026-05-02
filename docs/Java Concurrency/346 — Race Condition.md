@@ -35,10 +35,10 @@ tags:
 WORLD WITHOUT IT (understanding):
 Race conditions are the most common and hardest-to-diagnose class of concurrent bugs. They produce non-deterministic failures — the program works correctly 99% of the time and fails mysteriously 1% of the time. Traditional debugging is nearly impossible (adding `println` statements changes timing and makes the bug disappear). Without understanding race conditions as a concept, developers cannot systematically identify, prevent, or fix them.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A race condition in a banking service causes intermittent over-drafting. Two concurrent withdrawal requests both pass "sufficient funds" check simultaneously, then both deduct. The account goes negative. The bug manifests only during high traffic when two withdrawals for the same account arrive within milliseconds. Testing with a single thread — no bug. Testing with two threads at normal load — rare. Bug only manifests under peak load with exact timing.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Understanding **race conditions** enables developers to: identify shared mutable state in concurrent code, recognize check-then-act patterns as inherently racy, apply appropriate synchronization mechanisms (`synchronized`, CAS, `AtomicInteger`), and write concurrent code that is correct by construction.
 
 ---
@@ -64,7 +64,7 @@ Race conditions are found at **compound non-atomic operations**. `count++` looks
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Any shared mutable state accessed by multiple threads is a potential race condition.
 2. A race condition requires at least one write — two concurrent reads are safe.
 3. Race conditions are timing-dependent — always possible in theory, but only manifests when threads interleave at the exact wrong point.
@@ -91,14 +91,14 @@ Pattern 3: Lazy Initialization
   T2: obj = new Obj()  // second creation! Previous lost
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 Race conditions trade performance (no synchronization overhead) for correctness. The goal is not eliminating all sharing but ensuring all shared mutable state has proper HB guarantees.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 10,000 threads each increment a shared counter once. Expected: 10,000.
 
 ```java
@@ -117,7 +117,7 @@ for (int i = 0; i < 10_000; i++) {
 // Lost increment: count goes from 5 to 6 twice instead of 5 to 7
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 `count++` "looks" atomic from the source code. At the bytecode level it's `getfield`, `iadd`, `putfield` — three separate JVM operations. Any interleaving between these is a race.
 
 ---
@@ -126,10 +126,10 @@ THE INSIGHT:
 
 > A race condition is like two people filling out the last form at a government office. Both check if the form is available (yes). Both start filling it out. Both turn it in — but only one can be processed. The other is invalid. The office didn't coordinate who could take the form — a race condition in form access.
 
-"Checking if form is available" → reading shared state.
-"Both taking the form" → both threads proceeding past a non-atomic check.
-"Both turning in" → both modifying shared state.
-"Only one valid" → one thread's work is lost/overwritten.
+- "Checking if form is available" → reading shared state.
+- "Both taking the form" → both threads proceeding past a non-atomic check.
+- "Both turning in" → both modifying shared state.
+- "Only one valid" → one thread's work is lost/overwritten.
 
 Where this analogy breaks down: In the form analogy, one form is invalid and caught. In code, the race condition often produces a silently wrong result with no indication of failure — a counter at 9,999 instead of 10,000 produces no exception.
 
@@ -250,7 +250,7 @@ FIX FLOW:
     → [T2: no withdrawal — correct]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At high concurrency (10K+ requests/second), race conditions that appear 1-in-a-million at 100 RPS become 1-in-a-hundred at 10K RPS. What seems like a "rare edge case" in testing is a near-certain occurrence at scale. The severity of race conditions grows nonlinearly with load.
 
 ---

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine you need to store 1,000 temperature readings from a sensor. Without a structured container, you either declare 1,000 separate variables (`temp1`, `temp2`, … `temp1000`) and hard-code every access, or you use a linked structure where each element lives at an arbitrary memory address. Both approaches break the moment you need to read the 500th reading directly — you either can't name it or must traverse 499 nodes.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Arbitrary memory placement makes direct-index access impossible. Any "jump to element N" operation becomes O(N) because you must follow pointers. A loop over all elements is slow not just algorithmically, but physically: the CPU prefetcher cannot predict the next address and cache misses dominate runtime.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 If all elements are the same size and stored back-to-back in memory, then `address(i) = base + i * element_size`. Any element is reachable in one arithmetic operation — O(1). This is exactly why the Array was created.
 
 ---
@@ -64,12 +64,12 @@ The power of an array is not just storage — it's *predictable addressing*. Bec
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. All elements are the same fixed size in bytes.
 2. Elements occupy a contiguous block of memory — no gaps.
 3. The index maps to an address via a single multiply-add: `base + i * size`.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given these invariants, three properties emerge automatically:
 - **O(1) random access** — address computation is one machine instruction.
 - **O(N) insert/delete in middle** — shifting elements preserves contiguity.
@@ -79,24 +79,24 @@ Can we relax invariant 1 (same size)? Then we need a secondary index mapping `i 
 
 Can we relax invariant 2 (contiguous)? Then you have a linked list — O(N) access, O(1) insertion.
 
-THE TRADE-OFFS:
-Gain: O(1) random access, excellent cache locality, minimal overhead.
-Cost: Fixed size (resize requires full copy), O(N) insert/delete in the middle.
+**THE TRADE-OFFS:**
+**Gain:** O(1) random access, excellent cache locality, minimal overhead.
+**Cost:** Fixed size (resize requires full copy), O(N) insert/delete in the middle.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You have 5 integers: `[10, 20, 30, 40, 50]`. You need to print the 3rd element.
 
-WHAT HAPPENS WITHOUT ARRAY:
+**WHAT HAPPENS WITHOUT ARRAY:**
 Each value is at an arbitrary address. To find the 3rd, you must start at element 1, follow a pointer to element 2, follow another pointer to element 3. Three memory accesses, three potential cache misses.
 
-WHAT HAPPENS WITH ARRAY:
+**WHAT HAPPENS WITH ARRAY:**
 Elements live at addresses 100, 104, 108, 112, 116 (4 bytes each). Element 3 → `100 + 2*4 = 108`. One calculation, one memory access. No traversal.
 
-THE INSIGHT:
+**THE INSIGHT:**
 O(1) access is not a feature of clever algorithms — it is a direct consequence of physical memory layout. Structure your data in memory correctly, and the laws of physics give you speed for free.
 
 ---
@@ -105,10 +105,10 @@ O(1) access is not a feature of clever algorithms — it is a direct consequence
 
 > An array is a spreadsheet column: each cell is the same size, numbered from row 1, and you can jump to row 500 instantly without scrolling past rows 1–499.
 
-"Numbered cell" → index
-"Same-size cell" → fixed element size
-"Column layout" → contiguous memory
-"Jump to row N" → O(1) address calculation
+- "Numbered cell" → index
+- "Same-size cell" → fixed element size
+- "Column layout" → contiguous memory
+- "Jump to row N" → O(1) address calculation
 
 Where this analogy breaks down: A spreadsheet column can grow without limit; a fixed-size array cannot — you must allocate a new, larger column and copy.
 
@@ -163,7 +163,7 @@ A 64-byte cache line holds 16 ints. A sequential scan of a 1,000-element array g
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Declare size → JVM allocates contiguous block
 → Write elements via index [ARRAY ACCESS ← YOU ARE HERE]
@@ -171,7 +171,7 @@ Declare size → JVM allocates contiguous block
 → Iterate sequentially (cache-friendly)
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 arr[i] where i >= arr.length
 → JVM bounds check fails
@@ -179,7 +179,7 @@ arr[i] where i >= arr.length
 → Stack unwinds to nearest catch or terminates thread
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 A 100M-element array occupies 400 MB for ints. Allocation becomes a GC pressure event. At this scale, prefer chunked arrays (array of arrays) or off-heap buffers (`ByteBuffer.allocateDirect`) to avoid GC pauses. Sequential access stays cache-friendly regardless of size.
 
 ---
@@ -261,17 +261,17 @@ How to choose: Use array/ArrayList when you read more than you insert. Use Linke
 
 **1. ArrayIndexOutOfBoundsException**
 
-Symptom: `java.lang.ArrayIndexOutOfBoundsException: Index 10 out of bounds for length 10` — crash at runtime.
+**Symptom:** `java.lang.ArrayIndexOutOfBoundsException: Index 10 out of bounds for length 10` — crash at runtime.
 
-Root Cause: Off-by-one error. Array length is 10, valid indices are 0–9. Accessing index 10 is past the end.
+**Root Cause:** Off-by-one error. Array length is 10, valid indices are 0–9. Accessing index 10 is past the end.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check the stack trace line number in the crash log:
 grep "ArrayIndexOutOfBoundsException" app.log | tail -5
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: fencepost error
 for (int i = 0; i <= arr.length; i++) process(arr[i]);
@@ -280,23 +280,23 @@ for (int i = 0; i <= arr.length; i++) process(arr[i]);
 for (int i = 0; i < arr.length; i++) process(arr[i]);
 ```
 
-Prevention: Always use `i < arr.length` in loop conditions; use enhanced for-each when index is not needed.
+**Prevention:** Always use `i < arr.length` in loop conditions; use enhanced for-each when index is not needed.
 
 ---
 
 **2. NullPointerException on uninitialized array**
 
-Symptom: `NullPointerException` when accessing `arr[i]` even though `arr` was declared.
+**Symptom:** `NullPointerException` when accessing `arr[i]` even though `arr` was declared.
 
-Root Cause: `int[] arr;` declares a reference, not an array. The reference is `null` until assigned.
+**Root Cause:** `int[] arr;` declares a reference, not an array. The reference is `null` until assigned.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Add null check before access; check with debugger
 System.out.println(arr == null); // true if not initialized
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD
 int[] arr;
@@ -307,23 +307,23 @@ int[] arr = new int[10];
 arr[0] = 5;
 ```
 
-Prevention: Always initialise arrays at declaration site.
+**Prevention:** Always initialise arrays at declaration site.
 
 ---
 
 **3. Column-major iteration causing cache thrashing**
 
-Symptom: Inner nested loop on a 2D array runs 5–10× slower than expected for large matrices.
+**Symptom:** Inner nested loop on a 2D array runs 5–10× slower than expected for large matrices.
 
-Root Cause: Java's `int[M][N]` stores each row as a separate heap object. Column-major traversal (`matrix[r][c]` with `c` in outer loop) accesses non-contiguous memory every step, defeating the CPU prefetcher.
+**Root Cause:** Java's `int[M][N]` stores each row as a separate heap object. Column-major traversal (`matrix[r][c]` with `c` in outer loop) accesses non-contiguous memory every step, defeating the CPU prefetcher.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Profile with async-profiler to see cache-miss rate:
 ./profiler.sh -e cache-misses -d 10 -f flamegraph.html <pid>
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: column-major on row-major storage
 for (int c = 0; c < N; c++)
@@ -334,7 +334,7 @@ for (int r = 0; r < M; r++)
     for (int c = 0; c < N; c++) sum += m[r][c];
 ```
 
-Prevention: Always iterate row-by-row in Java 2D arrays; for truly 2D work, use a 1D array with manual indexing `m[r*N + c]` for guaranteed contiguity.
+**Prevention:** Always iterate row-by-row in Java 2D arrays; for truly 2D work, use a 1D array with manual indexing `m[r*N + c]` for guaranteed contiguity.
 
 ---
 

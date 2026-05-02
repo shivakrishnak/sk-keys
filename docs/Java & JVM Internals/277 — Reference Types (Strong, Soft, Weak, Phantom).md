@@ -33,13 +33,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Java only has strong references by default. Every object you reference lives until you explicitly null the reference. Building a cache with Java's default reference model means: if you hold the cache entry strongly, the object never gets evicted (memory leak). If you remove from the cache, you lose data. There's no middle ground: "hold weakly — keep the object when memory is available, but let GC collect it when memory is tight." 
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Applications need memory-sensitive caching: "keep these 10,000 parsed Document objects around as long as memory allows, but let the GC collect them under memory pressure rather than causing an OutOfMemoryError." This behaviour is impossible with only strong references, which either keep objects forever or don't keep them at all.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Four carefully calibrated reference strengths give applications fine-grained control over GC interaction — letting the GC collect objects selectively based on memory pressure or lifecycle. This is exactly why Java's reference type hierarchy exists.
 
 ---
@@ -70,24 +70,24 @@ Phantom references fundamentally changed the post-collection cleanup story: `fin
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Strong reachability always keeps an object alive — this is the base case.
 2. Softer references allow GC to override program "ownership" when resources are scarce.
 3. Reference strength is a one-way ratchet: stronger → weaker → dead (objects never become more strongly reachable via the reference itself).
 4. `ReferenceQueue` provides a notification mechanism when soft/weak/phantom references are cleared.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 2 enables memory-sensitive caching — memory pressure triggers collection of soft references automatically. Invariant 3 ensures consistency: you cannot accidentally "resurrect" an object by holding a soft ref after a strong ref is removed. Invariant 4 enables the notification-on-collect pattern used for cleanup actions that must run after collection.
 
-THE TRADE-OFFS:
-Gain: Fine-grained control over GC interaction; enables memory-sensitive caches; enables post-collection cleanup without finalizers.
-Cost: Complexity; incorrect use (e.g., using WeakReference where SoftReference is needed) causes premature collection; ReferenceQueue requires active polling or background thread.
+**THE TRADE-OFFS:**
+**Gain:** Fine-grained control over GC interaction; enables memory-sensitive caches; enables post-collection cleanup without finalizers.
+**Cost:** Complexity; incorrect use (e.g., using WeakReference where SoftReference is needed) causes premature collection; ReferenceQueue requires active polling or background thread.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A document parser caches 1000 parsed DOM trees. DOM trees are expensive to recompute (50ms each). Total DOM trees in memory = 500 MB. Available heap = 600 MB.
 
 WITH STRONG REFERENCES:
@@ -96,7 +96,7 @@ All 1000 DOM trees stay in memory indefinitely (strongly reachable from the cach
 WITH SOFT REFERENCES:
 All 1000 DOM trees held by `SoftReference`. Available heap = 600 MB, used = 500 MB for trees. New parse request needs 50 MB more. GC detects imminent OOM situation. Clears soft references (some or all 1000 DOM trees freed). The 50 MB becomes available. New parse succeeds. If the cached tree is requested later: `ref.get()` returns null → reparse. Performance degradation (one reparse) vs application crash.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Soft references trade computation (reparse on eviction) for memory safety (no OOM). This is a principled decision about resource management that is impossible to express with only strong references.
 
 ---
@@ -105,10 +105,10 @@ Soft references trade computation (reparse on eviction) for memory safety (no OO
 
 > Reference types are like storage options for a collector's library. Strong = items in a locked vault (never touched by the cleaner). Soft = items in a display case (cleaner can bag them up if the building runs out of fire-escape capacity). Weak = items on open shelves (cleaner picks them up at next tidying round). Phantom = a tag left behind when an item is removed (tells the collector it's gone, but the item is already gone).
 
-"Locked vault" → Strong Reference (GC cannot collect)
-"Display case cleared before capacity crisis" → SoftReference (cleared before OOM)
-"Open shelf items cleared at tidying" → WeakReference (cleared at next GC)
-"Tag left behind" → PhantomReference (notified after collection, `.get()` = null)
+- "Locked vault" → Strong Reference (GC cannot collect)
+- "Display case cleared before capacity crisis" → SoftReference (cleared before OOM)
+- "Open shelf items cleared at tidying" → WeakReference (cleared at next GC)
+- "Tag left behind" → PhantomReference (notified after collection, `.get()` = null)
 
 Where this analogy breaks down: unlike a physical library, Java's GC makes the collection decision algorithmically, not based on physical space. "Memory pressure" is measured by heap utilisation metrics, not human perception.
 
@@ -196,7 +196,7 @@ Object alwaysNull = phantom.get(); // ALWAYS null
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Application uses SoftReference-based cache
   → Request for cached item
@@ -212,7 +212,7 @@ Application uses SoftReference-based cache
   → ReferenceQueue used for cleanup/metrics
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Weak reference used where soft reference needed:
   → Every Minor GC clears all weak refs
@@ -223,7 +223,7 @@ Weak reference used where soft reference needed:
     use WeakReference only for canonicalization
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, large SoftReference-based caches (e.g., a 10 GB parsed-object cache) interact with GC pressure in subtle ways. The JVM makes soft reference clearing decisions based on heap free space and a "soft reference LRU seconds-per-mb" heuristic (`-XX:SoftRefLRUPolicyMSPerMB=1000`). Tuning this flag controls how aggressively soft refs are cleared under pressure. At extreme scale (100 GB heap), tracking thousands of ReferenceQueue entries becomes itself a performance consideration.
 
 ---
@@ -380,17 +380,17 @@ How to choose: Default to strong. Use `SoftReference` for caches where eviction 
 
 **1. Cache with Stale Null Soft References**
 
-Symptom: Cache map grows unboundedly even though GC has cleared the referenced objects — map has millions of entries with cleared (`null`) SoftReferences.
+**Symptom:** Cache map grows unboundedly even though GC has cleared the referenced objects — map has millions of entries with cleared (`null`) SoftReferences.
 
-Root Cause: After GC clears a SoftReference, the entry remains in the map with a dead `SoftReference` wrapper. The map itself is strongly held — the wrapper stays forever.
+**Root Cause:** After GC clears a SoftReference, the entry remains in the map with a dead `SoftReference` wrapper. The map itself is strongly held — the wrapper stays forever.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jcmd <pid> GC.class_histogram | grep SoftReference
 # Millions of SoftReference instances with null referents
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: never clean stale entries
 map.computeIfAbsent(key, k -> new SoftReference<>(compute(k)));
@@ -406,15 +406,15 @@ public V get(K key) {
 // BEST: use Caffeine cache with weakValues() / softValues()
 ```
 
-Prevention: Use production-ready caching libraries (Caffeine) instead of hand-rolled SoftReference maps — they handle entry eviction correctly.
+**Prevention:** Use production-ready caching libraries (Caffeine) instead of hand-rolled SoftReference maps — they handle entry eviction correctly.
 
 **2. WeakReference Unexpectedly Null (Premature Collection)**
 
-Symptom: `weakRef.get()` returns `null` immediately after creation; object was collected before expected use.
+**Symptom:** `weakRef.get()` returns `null` immediately after creation; object was collected before expected use.
 
-Root Cause: The object was only held by the WeakReference and no strong references. Without a strong reference path, GC collected it immediately.
+**Root Cause:** The object was only held by the WeakReference and no strong references. Without a strong reference path, GC collected it immediately.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // BAD: no strong reference keeps object alive
 WeakReference<MyObj> ref = new WeakReference<>(new MyObj());
@@ -430,17 +430,17 @@ WeakReference<MyObj> ref = new WeakReference<>(strongRef);
 
 **3. finalize() Delays Collection Two GC Cycles**
 
-Symptom: Objects with `finalize()` methods survive longer than expected; GC pressure from long-lived finalizable objects; heap grows between finalization cycles.
+**Symptom:** Objects with `finalize()` methods survive longer than expected; GC pressure from long-lived finalizable objects; heap grows between finalization cycles.
 
-Root Cause: Finalizable objects require two GC cycles: one to detect and queue for finalization, one (after finalizer runs) to actually collect.
+**Root Cause:** Finalizable objects require two GC cycles: one to detect and queue for finalization, one (after finalizer runs) to actually collect.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jcmd <pid> GC.class_histogram | grep "Finalizable\|finalize"
 # Large count of objects awaiting finalization = bottleneck
 ```
 
-Prevention: Remove `finalize()` from all classes; use `AutoCloseable` + try-with-resources or `Cleaner` API for cleanup. Mark all legacy `finalize()` usages for migration.
+**Prevention:** Remove `finalize()` from all classes; use `AutoCloseable` + try-with-resources or `Cleaner` API for cleanup. Mark all legacy `finalize()` usages for migration.
 
 ---
 

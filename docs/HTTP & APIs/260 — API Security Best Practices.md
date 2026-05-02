@@ -361,7 +361,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
 
 **BOLA in Production — Detection**
 
-Symptom:
+**Symptom:**
 Unusual GET request patterns: one API key calling GET /orders/{id} sequentially
 for thousands of consecutive IDs. Data exfiltration in progress.
 

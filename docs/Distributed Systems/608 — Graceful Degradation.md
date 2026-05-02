@@ -276,7 +276,7 @@ public class ProductPageService {
 
 **Degradation Path Untested — Fails During Incident**
 
-Symptom: Recommendations service goes down. Fallback is supposed to return static
+**Symptom:** Recommendations service goes down. Fallback is supposed to return static
 defaults. Instead, the fallback code throws a NullPointerException (uninitialized
 static data map). Product pages return 500 instead of degraded 200.
 
@@ -284,7 +284,7 @@ Cause: Fallback logic was written but never tested. The static data map is loade
 startup but a classloading issue prevents initialization. Fallback fails silently during
 normal operation (never invoked) until it's needed.
 
-Fix: Test fallback paths explicitly in integration tests. Chaos engineering: in staging,
+**Fix:** Test fallback paths explicitly in integration tests. Chaos engineering: in staging,
 inject failures into non-critical services and assert that pages render with degraded
 content (not errors). Create a "degradation mode" runbook that can disable specific
 services via feature flags and verifies degraded rendering manually before each major event.

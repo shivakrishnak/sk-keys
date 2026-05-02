@@ -250,12 +250,12 @@ public class SafeClock {
 
 **Backward Time Jump Breaks Application Logic**
 
-Symptom: Application logs show timestamp going from 10:00:05.000 to 10:00:04.987;
+**Symptom:** Application logs show timestamp going from 10:00:05.000 to 10:00:04.987;
 "created_at > updated_at" database constraints violated; scheduled jobs fire twice.
 
 Cause: NTP step correction backward to sync with time server.
 
-Fix: Use `CLOCK_MONOTONIC` (Java: `System.nanoTime()`) for all elapsed time
+**Fix:** Use `CLOCK_MONOTONIC` (Java: `System.nanoTime()`) for all elapsed time
 measurements. For database timestamps, use `clock_timestamp()` with awareness it
 can drift; for sequencing, use a logical counter or Postgres' `txid_current()`.
 

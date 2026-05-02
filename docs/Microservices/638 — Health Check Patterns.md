@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Health Check Patterns"
 parent: "Microservices"
@@ -176,10 +176,10 @@ WITH Health Checks:
 
 > Liveness and Readiness checks are like two questions asked before letting a surgeon operate: (1) Liveness: "Is the surgeon conscious and responsive?" — if not, call an ambulance (restart). (2) Readiness: "Is the surgeon scrubbed, gowned, and ready to begin?" — if not, hold the patient in pre-op (don't send traffic), but don't fire the surgeon (no restart). A surgeon might be conscious but not ready (still scrubbing in). A surgeon who collapses mid-surgery needs an ambulance — regardless of readiness.
 
-"Surgeon conscious" = process alive, not deadlocked → Liveness probe
-"Scrubbed and gowned" = dependencies healthy, cache loaded → Readiness probe
-"Call an ambulance" = container restart (kubelet) → Liveness failure
-"Hold in pre-op" = remove from load balancer pool → Readiness failure
+- "Surgeon conscious" = process alive, not deadlocked → Liveness probe
+- "Scrubbed and gowned" = dependencies healthy, cache loaded → Readiness probe
+- "Call an ambulance" = container restart (kubelet) → Liveness failure
+- "Hold in pre-op" = remove from load balancer pool → Readiness failure
 
 ---
 

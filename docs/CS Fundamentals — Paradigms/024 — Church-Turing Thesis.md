@@ -30,15 +30,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 In the 1930s, mathematicians were trying to answer Hilbert's Entscheidungsproblem: "Is there a mechanical procedure that can determine the truth or falsity of any mathematical statement?" Three independent formalisms were proposed: Turing machines (Turing, 1936), lambda calculus (Church, 1936), and general recursive functions (Gödel/Herbrand). Each claimed to capture "what can be computed by a finite procedure." They were different in form — but were they equivalent?
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 If these three models were different in computational power, there would be no single notion of "computable." One model might compute things another couldn't. You'd need to specify which model you meant every time you said "this is computable." Mathematics and computer science would have no unified foundation for reasoning about computation.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 Church and Turing independently proved that lambda calculus and Turing machines are equivalent — they compute exactly the same class of functions. The _thesis_ (not a theorem — it cannot be formally proved) then asserts: this class equals the class of all functions that any physical or conceptual machine could compute by following a finite, deterministic procedure. It defines the absolute ceiling of computation.
 
@@ -66,13 +66,13 @@ This thesis is foundational but subtle. The Halting Problem is unsolvable not be
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. "Effective procedure" = algorithm: a finite description, deterministic steps, executable by a person or machine following rules, no creativity required.
 2. Three models (Turing machine, lambda calculus, general recursive functions) are provably equivalent — each can simulate the others.
 3. The thesis is an empirical claim: every known model of computation computes exactly the same class of functions.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 ```
 "Effectively Computable"
@@ -88,7 +88,7 @@ DERIVED DESIGN:
         ≡ Cellular automaton (Rule 110, Conway's Game of Life)
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
 The thesis is powerful precisely because it cannot be proved — it's a claim about the informal notion of "mechanical computation." If the thesis is correct:
 
@@ -103,7 +103,7 @@ If the thesis is wrong (no evidence of this): there would exist a physical proce
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Someone claims they've built a "hypercomputer" — a physical device that solves the Halting Problem: given any program and input, it outputs "halts" or "loops forever" in finite time.
 
 IF THE CHURCH-TURING THESIS IS TRUE:
@@ -112,7 +112,7 @@ This is impossible. By Turing's proof, the Halting Problem is undecidable for Tu
 YOUR ANALYSIS:
 The claim must be false by one of: (a) the device produces wrong answers for some inputs, (b) the device takes infinite time for some inputs, (c) the device doesn't actually compute what they claim, or (d) the Church-Turing Thesis is wrong (refuting it would be the biggest discovery in the history of mathematics).
 
-THE INSIGHT:
+**THE INSIGHT:**
 The Church-Turing Thesis is so robust that when a new computation model is proposed (quantum, optical, DNA), the _first_ question researchers ask is: "Is it equivalent to a Turing machine?" So far, the answer has always been yes for computability (though quantum gives polynomial speedups for specific problems — a complexity, not computability, advantage).
 
 ---
@@ -198,7 +198,7 @@ By Church-Turing Thesis: undecidable for any computational system.
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 New computation model proposed
@@ -214,7 +214,7 @@ If both proofs hold: new model = TM (same computability class)
 Church-Turing Thesis reinforced (no new model has exceeded TM)
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Undecidable problem presented
@@ -230,7 +230,7 @@ Engineering response:
   - Heuristic: solve most practical cases, miss some
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 At scale, undecidability becomes an architectural constraint. DevSecOps SAST tools (static application security testing) can never guarantee they find all security vulnerabilities — this is a consequence of Rice's theorem. Performance profiling tools can identify hotspots but cannot statically guarantee a program runs within a given time budget for arbitrary input — Halting Problem. Engineering around undecidability means designing for practical coverage (95% of cases) rather than theoretical completeness (100% of all cases).
 
@@ -337,13 +337,13 @@ type Infinite<T> = { value: T; next: Infinite<T> };
 
 **Expecting a Static Analysis Tool to Find All Bugs (Ignoring Undecidability)**
 
-Symptom:
+**Symptom:**
 Team relies on static analysis as a sufficient security gate. Vulnerabilities pass through that the tool reports as clean. Or tool produces thousands of false positives.
 
-Root Cause:
+**Root Cause:**
 By Rice's Theorem (a corollary of the Church-Turing Thesis), all non-trivial semantic properties of programs are undecidable. No static analysis tool can be simultaneously sound (no false negatives), complete (no false positives), and terminating for arbitrary Turing-complete programs.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```
 Evaluate your static analysis tool by category:
@@ -358,10 +358,10 @@ No tool achieves all three simultaneously.
 Design your security process to assume gaps exist.
 ```
 
-Fix:
+**Fix:**
 Layer multiple tools with different trade-offs. Combine static analysis + dynamic analysis (fuzzing, runtime sanitisers) + code review. Treat static analysis as a filter, not a proof of correctness.
 
-Prevention:
+**Prevention:**
 Accept the fundamental constraint. Design defence-in-depth: no single tool gates releases; multiple independent mechanisms compensate for each tool's blind spots.
 
 ---

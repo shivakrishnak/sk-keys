@@ -256,11 +256,11 @@ Impact: Invalidates the entire experiment — results are not causal.
 **2. Novelty Effect**
 Cause: New experience gets extra attention/engagement due to novelty, not because it's better.
 Detection: Check if B's advantage decays over time (plot metric by days since exposure).
-Fix: Run experiment longer; analyze returning users separately.
+**Fix:** Run experiment longer; analyze returning users separately.
 
 **3. Interaction Effects Between Simultaneous Experiments**
 Cause: User in experiment 1 Treatment × experiment 2 Treatment — interaction unknown.
-Fix: Mutual exclusivity for related experiments; interaction analysis for known interactions.
+**Fix:** Mutual exclusivity for related experiments; interaction analysis for known interactions.
 
 ---
 

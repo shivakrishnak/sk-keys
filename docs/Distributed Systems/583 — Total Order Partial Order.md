@@ -230,11 +230,11 @@ Result: every node applies operations in identical total order
 
 **Replica Divergence from Different Operation Orders**
 
-Symptom: Two replicas start with identical state, receive the same operations, but end up in different states. READ queries to different replicas return different values for the same key.
+**Symptom:** Two replicas start with identical state, receive the same operations, but end up in different states. READ queries to different replicas return different values for the same key.
 
-Root Cause: No total order enforced — replicas applied concurrent operations in different sequences (network delivery order varied).
+**Root Cause:** No total order enforced — replicas applied concurrent operations in different sequences (network delivery order varied).
 
-Fix: Route all writes through a single coordinator that assigns a total order (Raft leader), or use a consensus protocol (Paxos multi-decree) to agree on the sequence before any node applies operations.
+**Fix:** Route all writes through a single coordinator that assigns a total order (Raft leader), or use a consensus protocol (Paxos multi-decree) to agree on the sequence before any node applies operations.
 
 ---
 

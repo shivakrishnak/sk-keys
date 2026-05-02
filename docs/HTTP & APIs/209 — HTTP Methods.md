@@ -454,15 +454,15 @@ is impractical.
 
 **Using POST for Idempotent Operations (Duplicate Creates)**
 
-Symptom: Duplicate records in database after network retries; race conditions
+**Symptom:** Duplicate records in database after network retries; race conditions
 visible in database unique constraint violations; users report seeing duplicate
 orders/payments.
 
-Root Cause: POST is not idempotent. When a mobile client retries a failed
+**Root Cause:** POST is not idempotent. When a mobile client retries a failed
 POST (network timeout), the server may have processed the first request but
 failed to return the response.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check for duplicate records in database:
@@ -473,7 +473,7 @@ GROUP BY email HAVING COUNT(*) > 1;
 grep "POST /users" access.log | awk '{print $10}' | sort | uniq -d
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // Use Idempotency-Key header to detect duplicates:
@@ -487,20 +487,20 @@ public ResponseEntity<Order> createOrder(
 }
 ```
 
-Prevention: Accept an `Idempotency-Key` header on all POST endpoints.
+**Prevention:** Accept an `Idempotency-Key` header on all POST endpoints.
 Cache server responses keyed by that value for 24–48 hours.
 
 ---
 
 **PUT vs PATCH Confusion (Silent Data Loss)**
 
-Symptom: User updates only their email, but their phone number disappears;
+**Symptom:** User updates only their email, but their phone number disappears;
 partial PUT calls silently clear fields not included in the request body.
 
-Root Cause: Client sends PUT with only changed fields instead of full resource.
+**Root Cause:** Client sends PUT with only changed fields instead of full resource.
 Server replaces the entire resource, setting unspecified fields to null.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Compare before/after state:
@@ -513,23 +513,23 @@ curl -s https://api.example.com/users/123 | jq .phone
 # Result: null  ← data loss
 ```
 
-Fix: Use PATCH for partial updates. If you must use PUT, always send the
+**Fix:** Use PATCH for partial updates. If you must use PUT, always send the
 complete resource representation (fetch current state first, then modify).
 
-Prevention: Document method semantics clearly in OpenAPI spec. Return 400
+**Prevention:** Document method semantics clearly in OpenAPI spec. Return 400
 for PUT requests that are missing required fields.
 
 ---
 
 **405 Method Not Allowed — CORS Preflight Failure**
 
-Symptom: Browser shows CORS error; DevTools shows a `405 Method Not Allowed`
+**Symptom:** Browser shows CORS error; DevTools shows a `405 Method Not Allowed`
 on an OPTIONS request; the actual API request never fires.
 
-Root Cause: The server does not handle `OPTIONS` requests for CORS preflight.
+**Root Cause:** The server does not handle `OPTIONS` requests for CORS preflight.
 Browsers automatically send OPTIONS before cross-origin POST/PUT/PATCH/DELETE.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Simulate CORS preflight manually:
@@ -540,7 +540,7 @@ curl -X OPTIONS \
 # Should return 200 or 204, not 405
 ```
 
-Fix: Configure CORS globally in Spring Boot:
+**Fix:** Configure CORS globally in Spring Boot:
 
 ```java
 @Bean
@@ -554,7 +554,7 @@ public CorsConfigurationSource corsConfigurationSource() {
 }
 ```
 
-Prevention: Always register OPTIONS as an allowed method in any HTTP framework
+**Prevention:** Always register OPTIONS as an allowed method in any HTTP framework
 or API gateway CORS configuration.
 
 ---

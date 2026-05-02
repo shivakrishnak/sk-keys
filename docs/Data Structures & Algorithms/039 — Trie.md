@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You are building an autocomplete feature for a search engine. A user types "prog" and you must instantly return all words starting with "prog": "program", "programming", "progress", "programmer". You have 1 million words in a HashMap. Prefix search requires scanning all 1 million entries and checking if each starts with "prog" — O(N) per keystroke, and users type fast.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A HashMap finds an exact key in O(1) — but it has no concept of "starts with" because keys with the same prefix are scattered across buckets. Prefix search requires either O(N) full scan or sorting (O(N log N) rebuild, O(log N + K) query with TreeMap). Neither is fast enough for real-time autocomplete at scale.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 If you store words letter-by-letter in a tree where each level represents one character position, then all words sharing a prefix share a tree path. "prog" navigates to a single node from which all descendants are words with that prefix. This is exactly why the Trie was created.
 
 ---
@@ -63,12 +63,12 @@ Unlike a HashMap, a Trie is not just about retrieving a single key — it is abo
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Each node represents one character position; the root represents the empty prefix.
 2. A node at depth d has exactly the characters at position d for all words with its ancestor path as prefix.
 3. A word is "present" when a path from root to a terminal node spells it exactly.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Each node has `children[26]` (or a HashMap) for next-character branching. Complexity depends on the branching factor and string length:
 - **Insert** "apple": traverse/create nodes for 'a'→'p'→'p'→'l'→'e', mark last as terminal. O(L).
 - **Search** "apple": traverse 5 nodes, check terminal flag. O(L).
@@ -79,24 +79,24 @@ Array children (`children[26]`) vs HashMap children:
 - Array: O(1) child lookup per character, but 26 pointers per node even if few children are non-null — wasteful for sparse alphabets.
 - HashMap: amortised O(1) lookup, no wasted pointers for empty children, more memory-efficient for large alphabets (e.g., Unicode).
 
-THE TRADE-OFFS:
-Gain: O(L) all operations, O(L + K) prefix enumeration, shared prefix storage.
-Cost: High memory for dense alphabets with many nodes; slower than HashMap for exact-key lookups due to L comparisons vs 1 hash.
+**THE TRADE-OFFS:**
+**Gain:** O(L) all operations, O(L + K) prefix enumeration, shared prefix storage.
+**Cost:** High memory for dense alphabets with many nodes; slower than HashMap for exact-key lookups due to L comparisons vs 1 hash.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Autocomplete for a dataset of 1,000 words. User has typed "pre" and wants all completions. Alphabet size = 26.
 
-WHAT HAPPENS WITH HASHMAP:
+**WHAT HAPPENS WITH HASHMAP:**
 For each of 1,000 words: call `word.startsWith("pre")` — O(L) per check, O(N × L) total. At 3 characters typed and 1,000 words of average length 7: ~7,000 comparisons. For 1,000,000 words: 7,000,000 comparisons per keystroke.
 
-WHAT HAPPENS WITH TRIE:
+**WHAT HAPPENS WITH TRIE:**
 Traverse 3 nodes ('p'→'r'→'e'). Collect all words in subtree rooted at 'e' node. If only 20 words start with "pre", only 20 words are visited. Time: O(3 + 20) = O(23) — constant regardless of total dictionary size.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The Trie's structure makes prefix queries output-sensitive: time is proportional to the result size (K), not the total data size (N). This is impossible with a HashMap because it has no structural notion of prefix.
 
 ---
@@ -105,10 +105,10 @@ The Trie's structure makes prefix queries output-sensitive: time is proportional
 
 > A Trie is like a city's street directory organised by address. To find all buildings on "Progress Street", you go to the 'P-R-O-G-R-E-S-S' path in the directory. Every building on that street is a child of the last node — you find them all without scanning the entire city.
 
-"City directory structure" → trie tree
-"Street path (P→R→O...)" → character-by-character traversal
-"Buildings on the street" → terminal nodes (complete words)
-"Shared address prefix" → shared trie path
+- "City directory structure" → trie tree
+- "Street path (P→R→O...)" → character-by-character traversal
+- "Buildings on the street" → terminal nodes (complete words)
+- "Shared address prefix" → shared trie path
 
 Where this analogy breaks down: A city directory is static; a trie can be modified (insert/delete) dynamically while maintaining its structure.
 
@@ -179,7 +179,7 @@ Found "app" node → DFS all descendants with isEndOfWord=true
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 User types prefix "prog"
 → Traverse trie: p→r→o→g (O(4) steps)
@@ -188,7 +188,7 @@ User types prefix "prog"
 → Return completions in O(K) where K = result count
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Too many words share a common prefix
 → DFS returns thousands of completions
@@ -196,7 +196,7 @@ Too many words share a common prefix
 → Fix: limit DFS to first N results; use BFS with bound
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 A 5-million-word English trie with 26-array nodes uses ~5M × 208 bytes ≈ 1 GB of memory — impractical. Production autocomplete systems use compressed tries (radix trees), DAWG, or suffix arrays with burrows-wheeler transform. Redis's autocomplete feature uses a sorted set of prefix-expanded keys. Elasticsearch uses FST (Finite State Transducers) — a form of minimal DAWG — for 10× memory compression.
 
 ---
@@ -297,52 +297,52 @@ How to choose: Use a Trie when prefix queries are the primary operation. Use a H
 
 **1. Memory explosion on large alphabets**
 
-Symptom: `OutOfMemoryError` when building a trie for URLs, email addresses, or Unicode strings.
+**Symptom:** `OutOfMemoryError` when building a trie for URLs, email addresses, or Unicode strings.
 
-Root Cause: Each node allocates `TrieNode[26]` (or [128] for ASCII) even if most children are null. Unicode alphabets (65,536 characters) make this fatal.
+**Root Cause:** Each node allocates `TrieNode[26]` (or [128] for ASCII) even if most children are null. Unicode alphabets (65,536 characters) make this fatal.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jmap -histo:live <pid> | grep TrieNode
 # Number of TrieNode objects × 208 bytes = approximate trie memory
 ```
 
-Fix: Replace `TrieNode[]` array children with `HashMap<Character, TrieNode>` children for sparse or large alphabets.
+**Fix:** Replace `TrieNode[]` array children with `HashMap<Character, TrieNode>` children for sparse or large alphabets.
 
-Prevention: Always profile memory before choosing array vs HashMap children.
+**Prevention:** Always profile memory before choosing array vs HashMap children.
 
 ---
 
 **2. Case-sensitivity bugs**
 
-Symptom: `search("Apple")` returns false after `insert("apple")` — case mismatch.
+**Symptom:** `search("Apple")` returns false after `insert("apple")` — case mismatch.
 
-Root Cause: Characters inserted as-is; 'A' → index 65, 'a' → index 97 — different nodes.
+**Root Cause:** Characters inserted as-is; 'A' → index 65, 'a' → index 97 — different nodes.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Quick test: insert lowercase, search mixed case
 trie.insert("apple");
 System.out.println(trie.search("Apple")); // false if case-sensitive
 ```
 
-Fix:
+**Fix:**
 ```java
 // Normalize at insert and search:
 word = word.toLowerCase();
 ```
 
-Prevention: Normalise all strings to lowercase (or chosen case) at both insert and search boundaries.
+**Prevention:** Normalise all strings to lowercase (or chosen case) at both insert and search boundaries.
 
 ---
 
 **3. Missing limit on autocomplete results**
 
-Symptom: Autocomplete for a single-character prefix returns millions of results, causing response timeout.
+**Symptom:** Autocomplete for a single-character prefix returns millions of results, causing response timeout.
 
-Root Cause: DFS over trie from root-level node returns all words starting with that character — potentially millions.
+**Root Cause:** DFS over trie from root-level node returns all words starting with that character — potentially millions.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Measure DFS duration for short prefixes:
 long start = System.nanoTime();
@@ -350,7 +350,7 @@ autocomplete("a");
 System.out.println(System.nanoTime() - start + "ns");
 ```
 
-Fix:
+**Fix:**
 ```java
 // Add an early-exit limit to DFS
 private void dfs(TrieNode node, StringBuilder prefix,
@@ -360,7 +360,7 @@ private void dfs(TrieNode node, StringBuilder prefix,
 }
 ```
 
-Prevention: Always add a results limit to autocomplete DFS; common default is 10–20 suggestions.
+**Prevention:** Always add a results limit to autocomplete DFS; common default is 10–20 suggestions.
 
 ---
 

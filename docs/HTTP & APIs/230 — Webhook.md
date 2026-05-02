@@ -358,11 +358,11 @@ public class StripeWebhookController {
 
 **Silent Event Loss from Unhandled Retries**
 
-Symptom:
+**Symptom:**
 Some orders never get fulfilled. No errors in your logs. Stripe dashboard shows
 "webhook failed" after 72 hours for some events.
 
-Root Cause:
+**Root Cause:**
 Your webhook endpoint was timing out (taking 31+ seconds) under load. Stripe
 retried but your server was still overloaded. After max retries, events were
 abandoned. No alerting on Stripe's failed webhook dashboard.
@@ -380,7 +380,7 @@ WHERE state = 'queued' AND created_at < NOW() - INTERVAL '5 minutes';
 # Fix: implement manual retry API for failed events
 ```
 
-Prevention:
+**Prevention:**
 Load test the webhook endpoint. Return 200 within 100ms. Process async.
 Set up alerting on provider's webhook failure dashboard.
 

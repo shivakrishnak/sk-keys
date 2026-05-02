@@ -212,15 +212,15 @@ groups:
 
 **Pitfall 1: SLO Too Strict (Budget Always Exhausted)**
 100% error budgets consumed every month → perpetual deploy freeze.
-Fix: calibrate SLO to actual user tolerance; start with a lower SLO and tighten over time.
+**Fix:** calibrate SLO to actual user tolerance; start with a lower SLO and tighten over time.
 
 **Pitfall 2: Ignoring Burn Rate**
 Budget has 30 min left at day 1 — looks fine, but if current burn rate exhausts it by day 3, it's a crisis.
-Fix: always alert on burn rate (how fast are you consuming), not just remaining balance.
+**Fix:** always alert on burn rate (how fast are you consuming), not just remaining balance.
 
 **Pitfall 3: Budget as Blame Tool**
 Ops blame dev for "burning the budget" with deploys; dev blame ops for "hoarding budget".
-Fix: error budget policies are agreed cross-functionally before any incident; it's a shared resource, not a scorecard.
+**Fix:** error budget policies are agreed cross-functionally before any incident; it's a shared resource, not a scorecard.
 
 ---
 

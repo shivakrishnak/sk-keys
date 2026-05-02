@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Token Bucket"
 parent: "System Design"
@@ -185,7 +185,7 @@ WITH Token Bucket:
 "1 coin per minute fill rate" = token fill rate (R tokens/second)
 "10 coin maximum" = bucket capacity (B, maximum burst size)
 "Parking 8 hours without topping up" = burst consumption (uses stored tokens)
-"Meter runs dry after capacity exhausted" = rate limit enforced (no tokens → deny)
+- "Meter runs dry after capacity exhausted" = rate limit enforced (no tokens → deny)
 
 ---
 

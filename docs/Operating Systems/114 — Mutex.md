@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Two threads both read a shared counter (value=5), both increment it (+1), and both write back. Both write 6. The counter should be 7. This is a **data race** — the result depends on the interleaving of reads and writes across threads. Data races corrupt shared state silently.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Any operation on shared mutable state that takes more than one instruction (read-modify-write) can be interleaved by the thread scheduler at any point. Without protection, programs produce non-deterministic results that are correct on some runs and wrong on others — the hardest class of bugs to diagnose.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Edsger Dijkstra introduced the concept of mutual exclusion in 1965 with the critical section problem. The mutex is the hardware-supported implementation: use an atomic instruction (compare-and-swap, test-and-set) to acquire a lock before entering a critical section and release it after, ensuring only one thread executes the section at a time.
 
 ---
@@ -64,27 +64,27 @@ A mutex doesn't protect data — it protects code paths. You must ensure every c
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. At most one thread holds the mutex at any moment.
 2. A thread blocked on mutex acquisition will eventually acquire it (unless the holder is deadlocked or starved).
 3. The holding thread must release the mutex — releasing from a non-holding thread is undefined behaviour in POSIX.
 4. Lock and unlock form a **happens-before** edge: all writes before `unlock()` are visible to the thread that subsequently acquires the lock.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 At the hardware level, mutex acquisition uses an atomic instruction (on x86: `LOCK CMPXCHG` or `XCHG`). The atomic ensures: read, compare, and write are a single indivisible step — no interleaving possible. If acquisition fails (lock already held), the OS kernel puts the thread in a wait queue and switches to another thread (blocking/sleeping). When the lock is released, the OS picks one waiting thread, moves it to the run queue, and it acquires the lock.
 
 The Linux **futex** (fast userspace mutex) optimises the common case: if no contention, lock/unlock require only a single atomic instruction in user space — no kernel involvement. Only when contention occurs does the kernel get involved (to put threads to sleep and wake them).
 
-THE TRADE-OFFS:
-Gain: Prevents data races; provides happens-before guarantee; enables safe shared state.
-Cost: Lock contention serialises threads (reduces parallelism); potential for deadlock (if multiple mutexes acquired in inconsistent order); priority inversion (high-priority thread blocked behind low-priority mutex holder); context-switch overhead when blocking occurs.
+**THE TRADE-OFFS:**
+**Gain:** Prevents data races; provides happens-before guarantee; enables safe shared state.
+**Cost:** Lock contention serialises threads (reduces parallelism); potential for deadlock (if multiple mutexes acquired in inconsistent order); priority inversion (high-priority thread blocked behind low-priority mutex holder); context-switch overhead when blocking occurs.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Thread A and Thread B both execute: `count++` (which compiles to: load count, add 1, store count).
 
 WITHOUT MUTEX:
@@ -106,7 +106,7 @@ Time 4: Thread B: lock() → succeeds (Thread A released it)
 Time 5: Thread B: loads count = 6, adds 1, stores count = 7  ✓
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The mutex transforms a concurrent read-modify-write into a sequential one. The price is the serial execution — during the critical section, only one thread makes progress.
 
 ---
@@ -335,11 +335,11 @@ valgrind --tool=helgrind ./my_program
 
 **1. Deadlock (Two Mutexes Acquired in Inconsistent Order)**
 
-Symptom: Application hangs; threads show BLOCKED state indefinitely; no CPU usage (threads are sleeping).
+**Symptom:** Application hangs; threads show BLOCKED state indefinitely; no CPU usage (threads are sleeping).
 
-Root Cause: Thread A holds Lock1, waits for Lock2. Thread B holds Lock2, waits for Lock1. Circular dependency → neither can proceed.
+**Root Cause:** Thread A holds Lock1, waits for Lock2. Thread B holds Lock2, waits for Lock1. Circular dependency → neither can proceed.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 jstack <PID> | grep -A 20 "deadlock\|BLOCKED"
@@ -353,19 +353,19 @@ gdb -p <PID>
 # Look for pthread_mutex_lock in all thread backtraces
 ```
 
-Fix: Always acquire multiple locks in a consistent global order. Use `tryLock()` with timeout and backoff.
+**Fix:** Always acquire multiple locks in a consistent global order. Use `tryLock()` with timeout and backoff.
 
-Prevention: Enforce lock ordering via code review. Use single-lock designs where possible. Prefer higher-level concurrency primitives.
+**Prevention:** Enforce lock ordering via code review. Use single-lock designs where possible. Prefer higher-level concurrency primitives.
 
 ---
 
 **2. Lock Leak (Exception Before Unlock)**
 
-Symptom: Application gradually slows down; threads increasingly BLOCKED; eventually a full hang.
+**Symptom:** Application gradually slows down; threads increasingly BLOCKED; eventually a full hang.
 
-Root Cause: Exception thrown inside a critical section; no `finally` block; lock never released.
+**Root Cause:** Exception thrown inside a critical section; no `finally` block; lock never released.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 jstack <PID>
@@ -374,17 +374,17 @@ jstack <PID>
 # → The lock is held by a dead thread or abandoned
 ```
 
-Fix: ALWAYS use `try { ... } finally { lock.unlock(); }` pattern. Prefer `synchronized` keyword which handles this automatically.
+**Fix:** ALWAYS use `try { ... } finally { lock.unlock(); }` pattern. Prefer `synchronized` keyword which handles this automatically.
 
 ---
 
 **3. Priority Inversion**
 
-Symptom: High-priority (latency-critical) thread has unexpectedly high latency; low-priority thread appears to be running instead.
+**Symptom:** High-priority (latency-critical) thread has unexpectedly high latency; low-priority thread appears to be running instead.
 
-Root Cause: Low-priority thread L holds a mutex needed by high-priority thread H. Medium-priority thread M preempts L. H is blocked waiting for L, but L can't run because M is always scheduled first.
+**Root Cause:** Low-priority thread L holds a mutex needed by high-priority thread H. Medium-priority thread M preempts L. H is blocked waiting for L, but L can't run because M is always scheduled first.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Linux: see priority of threads waiting on mutex
@@ -393,9 +393,9 @@ ps -eLf | grep <PID>
 # Check if a low-priority thread holds a lock needed by a high-priority one
 ```
 
-Fix: Priority inheritance protocols (`PTHREAD_PRIO_INHERIT` mutex protocol); careful lock scope minimisation; Real-Time Linux (`PREEMPT_RT`) kernel for hard real-time needs.
+**Fix:** Priority inheritance protocols (`PTHREAD_PRIO_INHERIT` mutex protocol); careful lock scope minimisation; Real-Time Linux (`PREEMPT_RT`) kernel for hard real-time needs.
 
-Prevention: Avoid sharing mutexes between threads of widely different priority; use lock-free data structures for RT-to-non-RT communication.
+**Prevention:** Avoid sharing mutexes between threads of widely different priority; use lock-free data structures for RT-to-non-RT communication.
 
 ---
 

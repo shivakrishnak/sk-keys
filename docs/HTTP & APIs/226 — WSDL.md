@@ -218,7 +218,7 @@ Payment service updates WSDL → adds required `Currency` field to request XSD.
 Partner A regenerates stubs: `wsimport -keep http://payment.example.com?wsdl`
 Generated code adds required `setCurrency(String)` method.
 Partner A's existing code fails to compile at the call site — caught at build time.
-Fix: add the currency parameter in the call. Hours, not weeks.
+**Fix:** add the currency parameter in the call. Hours, not weeks.
 
 **THE INSIGHT:**
 WSDL transforms API contract violations from runtime surprises (production
@@ -453,16 +453,16 @@ try {
 
 **WSDL Namespace Mismatch Breaking Code Generation**
 
-Symptom:
+**Symptom:**
 `wsimport` runs but generated code produces runtime errors: operations not found,
 or serialization failures when calling the service.
 
-Root Cause:
+**Root Cause:**
 The `targetNamespace` in the WSDL doesn't match the namespace used in generated
 Java packages, or the `binding` style (rpc/encoded) is outdated and not
 supported cleanly by modern code generators.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Validate WSDL with online tool or:
@@ -478,12 +478,12 @@ grep -A5 "soap:binding" service.wsdl
 # If SoapUI can call it successfully: code gen issue not service issue
 ```
 
-Fix:
+**Fix:**
 Ensure WSDL uses `document/literal` binding style.
 Try Apache CXF's `wsdl2java` if `wsimport` fails — different generator, often
 handles edge cases differently.
 
-Prevention:
+**Prevention:**
 Use WS-I Basic Profile compliant generation (set in JAX-WS `@BindingType`).
 Test code generation on WSDL changes before releasing to consumers.
 

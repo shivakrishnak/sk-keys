@@ -202,13 +202,13 @@ public class HeartbeatMonitor {
 
 **Cascading False-Positive Failure Declaration**
 
-Symptom: During high GC pauses or network congestion, multiple healthy nodes are
+**Symptom:** During high GC pauses or network congestion, multiple healthy nodes are
 declared dead simultaneously; cluster triggers mass re-elections and restarts;
 latency spikes to seconds; cascading downtime despite nodes being alive.
 
 Cause: heartbeat timeout is too tight relative to GC pause duration or p99 RTT.
 
-Fix: Tune timeout = 2-3× p99 RTT. Use phi accrual (adaptive threshold) instead of
+**Fix:** Tune timeout = 2-3× p99 RTT. Use phi accrual (adaptive threshold) instead of
 fixed timeout. Add `failureThreshold=3` to Kubernetes probes. Add GC pause
 monitoring; alert if GC pause > heartbeat_interval × 0.5 to catch mis-tuning early.
 

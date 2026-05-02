@@ -256,14 +256,14 @@ public void onItemsReserved(ItemsReserved event) {
 
 **Choreography Event Loop (Circular Dependency)**
 
-Symptom: Service A publishes EventX → Service B consumes EventX, publishes EventY
+**Symptom:** Service A publishes EventX → Service B consumes EventX, publishes EventY
 → Service A consumes EventY, publishes EventX again → infinite event loop. Message
 broker queue depth grows unboundedly. Service restarts due to memory exhaustion.
 
 Cause: Circular event subscription introduced during a feature addition. No global
 event flow diagram showing the full event topology.
 
-Fix: (1) Maintain an event topology diagram — reviewed for cycles before any new
+**Fix:** (1) Maintain an event topology diagram — reviewed for cycles before any new
 subscription is added. (2) Add correlation ID propagation: if the same correlation ID
 appears in the same service twice without completion, route to dead letter queue.
 (3) Add saga orchestration for complex workflows to eliminate possibility of circular

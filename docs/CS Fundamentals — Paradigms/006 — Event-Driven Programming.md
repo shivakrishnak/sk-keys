@@ -33,7 +33,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A GUI application needs to respond to user clicks, network
 responses, and timer expiry — all at unpredictable times.
 Without event-driven programming, the only alternative is
@@ -43,7 +43,7 @@ loop. At 60 times per second, this consumes 100% of a CPU
 core — just waiting. The application is unresponsive to all
 other inputs while blocking on any single check.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Real-world software deals with asynchronous, unpredictable
 inputs: user actions, hardware interrupts, network packets,
 timer callbacks. Sequential polling is both wasteful (burns
@@ -52,7 +52,7 @@ A web server polling for HTTP requests one at a time can
 handle ~1 request per second versus 10,000 for an event-driven
 Node.js server on the same hardware.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why Event-Driven Programming was created. By
 inverting control — "call me when something happens" instead
 of "I'll keep asking if something happened" — programs sleep
@@ -99,7 +99,7 @@ sleeping between events, not busy-waiting.
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Events are notifications that something happened — they
    carry a payload (what happened, when, with what data).
@@ -110,7 +110,7 @@ CORE INVARIANTS:
    events, routes them to registered handlers, and returns
    to waiting. It never blocks.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 3, the event loop must be non-blocking — any
 handler that blocks (sleeps, waits for I/O) stalls ALL other
 event handling. This is why Node.js's single-threaded event
@@ -125,10 +125,10 @@ The design forces:
   because handlers don't share a sequential context
 - Error handling becomes per-event, not per-function
 
-THE TRADE-OFFS:
-Gain: High concurrency on a single thread; natural fit for
+**THE TRADE-OFFS:**
+**Gain:** High concurrency on a single thread; natural fit for
 I/O-bound workloads; immediate responsiveness to inputs.
-Cost: "Callback hell" / complex async flows; no linear
+**Cost:** "Callback hell" / complex async flows; no linear
 execution trace to follow when debugging; shared mutable
 state between handlers is tricky; CPU-bound tasks
 block the event loop.
@@ -137,18 +137,18 @@ block the event loop.
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A web server receives 1,000 simultaneous HTTP requests, each
 requiring a 10ms database query. You have 1 CPU core.
 
-WHAT HAPPENS WITH THREAD-PER-REQUEST (blocking):
+**WHAT HAPPENS WITH THREAD-PER-REQUEST (blocking):**
 Each request blocks a thread for 10ms waiting for the DB.
 With a thread pool of 100 threads, you can handle 100
 concurrent requests. Requests 101–1000 queue. Thread overhead:
 each thread consumes ~1MB stack. 1000 threads = 1GB RAM.
 Throughput: 100 threads × 100 req/s = 10,000 req/s max.
 
-WHAT HAPPENS WITH EVENT-DRIVEN (non-blocking):
+**WHAT HAPPENS WITH EVENT-DRIVEN (non-blocking):**
 1 thread handles all 1,000 requests. When a DB query is
 issued, the thread doesn't wait — it registers a callback
 and handles the next request. When the DB responds (after
@@ -157,7 +157,7 @@ All 1,000 queries are in-flight simultaneously. Memory: 1
 thread + 1,000 lightweight event registrations ≈ 10MB.
 Throughput: 1,000 req / 10ms = 100,000 req/s — 10x better.
 
-THE INSIGHT:
+**THE INSIGHT:**
 For I/O-bound work, one event-driven thread can outperform
 100 blocking threads by keeping the CPU busy between I/O waits
 instead of blocking.
@@ -173,11 +173,11 @@ instead of blocking.
 > the signal to the right actions: sound alarm, notify fire
 > department, open sprinklers. Nobody polls anything.
 
-"Smoke detector" → event source (button click, HTTP request)
-"Smoke detected" → event emitted
-"The alarm system" → event dispatcher / event loop
-"Sound alarm action" → registered event handler / callback
-"The specific room" → event type (click, message, timeout)
+- "Smoke detector" → event source (button click, HTTP request)
+- "Smoke detected" → event emitted
+- "The alarm system" → event dispatcher / event loop
+- "Sound alarm action" → registered event handler / callback
+- "The specific room" → event type (click, message, timeout)
 
 Where this analogy breaks down: unlike a smoke detector,
 software events can queue up — if handlers are slow, the queue
@@ -283,7 +283,7 @@ until the blocking operation completes.
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [HTTP request arrives on socket]
@@ -298,13 +298,13 @@ NORMAL FLOW:
   → [DB callback runs, sends HTTP response]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [Handler calls synchronous sleep(5000)]
 → [Event loop blocked 5 seconds]
 → [All pending requests queue, time out]
 → [Observable: high response latency, request timeouts]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10x load, a single event loop handles it if handlers are
 non-blocking — throughput scales with I/O concurrency, not
 thread count. At 100x, CPU-bound handlers become bottlenecks
@@ -447,17 +447,17 @@ websockets, file serving). Use thread pools for CPU-bound work
 
 **1. Event Loop Blocking**
 
-Symptom:
+**Symptom:**
 Server response times spike to seconds; all requests time out
 simultaneously; CPU usage drops to near zero (loop is blocked,
 not processing).
 
-Root Cause:
+**Root Cause:**
 A synchronous operation (file read, JSON parse of large payload,
 crypto.pbkdf2Sync) is called inside an event handler, blocking
 the loop.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Node.js: detect blocking with --prof
@@ -468,7 +468,7 @@ node --prof-process isolate-*.log | grep "Heavy"
 npx clinic doctor -- node app.js
 ```
 
-Fix:
+**Fix:**
 
 ```javascript
 // BAD: blocks the event loop
@@ -500,21 +500,21 @@ app.post("/hash", async (req, res) => {
 });
 ```
 
-Prevention: Never use `*Sync` functions in request handlers;
+**Prevention:** Never use `*Sync` functions in request handlers;
 use `worker_threads` for CPU-bound tasks.
 
 **2. Event Handler Memory Leak**
 
-Symptom:
+**Symptom:**
 Memory grows continuously; `process.memoryUsage()` shows
 growing `heapUsed`; EventEmitter warning: "MaxListenersExceeded."
 
-Root Cause:
+**Root Cause:**
 Handlers are registered inside a loop or function that runs
 repeatedly, but `off()` is never called. Each registration
 holds a closure reference — the references accumulate.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Node.js: check listener counts
@@ -525,7 +525,7 @@ node --inspect app.js
 # Open chrome://inspect → Memory → Take Heap Snapshot
 ```
 
-Fix:
+**Fix:**
 
 ```javascript
 // BAD: registers a new handler on every request
@@ -542,20 +542,20 @@ app.get("/stream", (req, res) => {
 });
 ```
 
-Prevention: Always pair `on()` with `off()` for long-lived
+**Prevention:** Always pair `on()` with `off()` for long-lived
 emitters; use `once()` for single-fire handlers.
 
 **3. Unhandled Promise Rejection**
 
-Symptom:
+**Symptom:**
 Async operations silently fail; no error in logs; data appears
 missing or null unexpectedly.
 
-Root Cause:
+**Root Cause:**
 A rejected Promise inside an async event handler has no
 `.catch()` or `try/catch` — the rejection is swallowed.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Node.js: enable unhandled rejection detection
@@ -567,7 +567,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 ```
 
-Fix:
+**Fix:**
 
 ```javascript
 // BAD: rejection silently swallowed
@@ -588,7 +588,7 @@ emitter.on("request", async (req) => {
 });
 ```
 
-Prevention: Always add `try/catch` inside async event handlers;
+**Prevention:** Always add `try/catch` inside async event handlers;
 set up a global unhandledRejection listener as a safety net.
 
 ---

@@ -403,15 +403,15 @@ or trigger financial/email/notification side effects.
 
 **Duplicate Charges from Missing Idempotency Key**
 
-Symptom:
+**Symptom:**
 Customer support receives reports of duplicate charges. Database shows
 two charge records with identical amounts and times per affected user.
 
-Root Cause:
+**Root Cause:**
 POST endpoint lacks idempotency key support. Client retry logic fires on
 timeout, creating a second charge record.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```sql
 -- Find duplicate charges within 60 seconds:
@@ -424,11 +424,11 @@ HAVING COUNT(*) > 1
 ORDER BY count DESC;
 ```
 
-Fix:
+**Fix:**
 Add `Idempotency-Key` header parsing + Redis dedup store to POST /charges.
 Retroactively refund identified duplicates.
 
-Prevention:
+**Prevention:**
 All POST endpoints with financial or notification side effects must require
 `Idempotency-Key` header. Return 400 if header is missing.
 
@@ -436,16 +436,16 @@ All POST endpoints with financial or notification side effects must require
 
 **Race Condition in Idempotency Key Store**
 
-Symptom:
+**Symptom:**
 Two identical requests with the same key arrive simultaneously (client
 with concurrent workers). Both process, creating two records despite having
 the same idempotency key.
 
-Root Cause:
+**Root Cause:**
 check-then-set is not atomic. Both requests check "key absent", both
 proceed to process before either stores the result.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check Redis for duplicate processing markers:
@@ -454,11 +454,11 @@ redis-cli GET "idem:<your-key>"
 # If value is "PROCESSING" for too long: stuck lock
 ```
 
-Fix:
+**Fix:**
 Use `SET key value NX EX seconds` (atomic set-if-not-exists with TTL).
 Never use GET+SET as two separate operations.
 
-Prevention:
+**Prevention:**
 Use the Lua script or `SETNX` pattern for atomic acquisition.
 Test with concurrent load testing (k6, Gatling) with shared idempotency keys.
 

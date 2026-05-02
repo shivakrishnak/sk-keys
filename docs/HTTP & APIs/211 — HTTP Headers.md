@@ -498,13 +498,13 @@ which vary by framework and may be incorrect.
 
 **Missing Content-Type Header (Body Misparse)**
 
-Symptom: `400 Bad Request` with "incorrect content type" or body parsed as
+**Symptom:** `400 Bad Request` with "incorrect content type" or body parsed as
 empty; server logs show "Content type 'application/octet-stream' not supported."
 
-Root Cause: Client sends POST/PUT without `Content-Type` header. Framework
+**Root Cause:** Client sends POST/PUT without `Content-Type` header. Framework
 defaults to `application/octet-stream` and refuses to parse as JSON.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Test with explicit Content-Type:
@@ -517,26 +517,26 @@ curl -X POST https://api.example.com/users \
   -d '{"name": "Alice"}'
 ```
 
-Fix: Always include `Content-Type: application/json` on all POST/PUT requests
+**Fix:** Always include `Content-Type: application/json` on all POST/PUT requests
 that send JSON bodies.
 
-Prevention: Add server-side validation that rejects missing Content-Type
+**Prevention:** Add server-side validation that rejects missing Content-Type
 with `415 Unsupported Media Type`. Document required headers in OpenAPI spec.
 
 ---
 
 **Broken CORS — Missing Vary:Origin Header**
 
-Symptom: CDN serves a cached response without `Access-Control-Allow-Origin`
+**Symptom:** CDN serves a cached response without `Access-Control-Allow-Origin`
 header to cross-origin clients; browser blocks request with CORS error even
 though the server is correctly configured.
 
-Root Cause: The API's CORS handler adds `Access-Control-Allow-Origin: https://app.example.com`
+**Root Cause:** The API's CORS handler adds `Access-Control-Allow-Origin: https://app.example.com`
 for cross-origin requests but `Vary: Origin` is not set. The CDN caches the
 first response (which might have been from a same-origin request, with no
 CORS headers) and serves it to cross-origin clients.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check if Vary: Origin is present:
@@ -545,24 +545,24 @@ curl -s -I -H "Origin: https://app.example.com" \
 # Should see both Vary: Origin AND Access-Control-Allow-Origin
 ```
 
-Fix: Always include `Vary: Origin` when conditionally setting CORS headers.
+**Fix:** Always include `Vary: Origin` when conditionally setting CORS headers.
 In Spring, `CorsConfiguration` sets this automatically when CORS is properly configured.
 
-Prevention: Test CORS behaviour through the CDN, not just directly to origin.
+**Prevention:** Test CORS behaviour through the CDN, not just directly to origin.
 Verify `Vary` headers are preserved by CDN configuration.
 
 ---
 
 **Large Headers — Request Entity Too Large**
 
-Symptom: Requests with large JWT tokens or many cookies fail with `431 Request
+**Symptom:** Requests with large JWT tokens or many cookies fail with `431 Request
 Header Fields Too Large`; Nginx logs show "large_client_header_buffers overflow."
 
-Root Cause: HTTP servers have configurable limits on header size. Nginx defaults
+**Root Cause:** HTTP servers have configurable limits on header size. Nginx defaults
 to 8 KB for request headers. JWT tokens containing many claims, multiple large
 cookies, or verbose `Authorization` headers can exceed this.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Measure total header size of a request:
@@ -572,14 +572,14 @@ curl -v -H "Authorization: Bearer $(cat large-jwt.txt)" \
 echo "Authorization: Bearer $(cat large-jwt.txt)" | wc -c
 ```
 
-Fix: Increase buffer sizes for APIs that use large tokens:
+**Fix:** Increase buffer sizes for APIs that use large tokens:
 
 ```nginx
 large_client_header_buffers 4 32k;
 client_header_buffer_size 4k;
 ```
 
-Prevention: Minimise JWT claims — don't store large payloads in tokens.
+**Prevention:** Minimise JWT claims — don't store large payloads in tokens.
 Use access tokens (small) + separate user info endpoint rather than embedding
 all user data in the token.
 

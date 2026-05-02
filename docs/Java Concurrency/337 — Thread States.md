@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Before `Thread.State` was formalized (Java 5), determining why a thread was not executing required parsing low-level OS thread states or JVM internals — different JVMs reported thread status differently. There was no standard API to programmatically ask "why is this thread not running right now?"
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Two threads in the same frozen application: one waiting for I/O, one deadlocked. Both appear "not running." Without standard thread states, an APM tool can't distinguish "this is healthy waiting" from "this is a bug." Every production diagnosis required JVM-specific knowledge.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 `Thread.State` was created to standardize thread state reporting across all JVM implementations, making thread dumps portable and programmatic monitoring of thread health possible.
 
 ---
@@ -95,7 +95,7 @@ TERMINATED  → done              → no stack frames
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Thread dump snippet of a web server under load. Interpret each thread:
 
 ```
@@ -120,7 +120,7 @@ Analysis:
 - http-2 and http-3: DEADLOCK — circular lock dependency. Bug.
 - http-4: WAITING on empty queue — normal thread pool behavior, waiting for work.
 
-THE INSIGHT:
+**THE INSIGHT:**
 One RUNNABLE, one legitimate WAITING, and one DEADLOCK — all need different responses. Thread states make diagnosis unambiguous.
 
 ---

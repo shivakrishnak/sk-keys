@@ -284,14 +284,14 @@ func compensate(ctx workflow.Context, order Order, originalErr error) error {
 
 **Compensating Transaction Failure (Compensation Saga Stuck)**
 
-Symptom: Order stuck in `COMPENSATING` state. Logs show compensation C₂ (inventory
+**Symptom:** Order stuck in `COMPENSATING` state. Logs show compensation C₂ (inventory
 release) has been retried 20 times and failing with "item not found" — inventory service
 was since redeployed and item IDs changed.
 
 Cause: Compensation is not idempotent, and the target state has changed since the
 original reservation (inventory service schema migration).
 
-Fix: (1) Compensations must never throw on "already compensated" — treat it as success.
+**Fix:** (1) Compensations must never throw on "already compensated" — treat it as success.
 (2) Compensations should work with the ID captured at compensation time (stored in saga
 state), not inferred from current system state. (3) For permanently failed compensations:
 saga moves to `STUCK` state, triggers human-review queue (payment team reviews manually).

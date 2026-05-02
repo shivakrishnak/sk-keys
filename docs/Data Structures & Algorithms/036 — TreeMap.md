@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You are building a leaderboard where you need to find all players with scores between 1,000 and 5,000. You store scores in a `HashMap`. To answer the range query, you iterate every entry and check if the score falls in range — O(N) for every single query. With 10 million players and 10,000 range queries per second, that is 100 billion operations per second — impossible.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 HashMap sacrifices key ordering for O(1) speed. Once ordering is gone, range queries require full scans. Any system that needs "all keys between X and Y", "the nearest key to X", or "sorted iteration" is broken by HashMap's unordered design.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Store keys in a balanced binary search tree. Every node's left subtree has smaller keys, right subtree has larger. Finding all keys in range [lo, hi] is a single guided traversal — O(log N + K) where K is the number of results. This is exactly why the TreeMap was created.
 
 ---
@@ -63,12 +63,12 @@ TreeMap makes you pay O(log N) per operation instead of O(1) — but in return, 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. All keys in the left subtree of any node are less than the node's key.
 2. All keys in the right subtree are greater.
 3. The tree is *balanced* — height is O(log N) — so no single branch grows to O(N).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Java's `TreeMap` uses a **red-black tree** — a self-balancing BST. Every insertion and deletion may trigger rotations to maintain balance. A red-black tree guarantees height ≤ 2 × log₂(N), bounding all operations at O(log N).
 
 Range query `subMap(lo, hi)` works by:
@@ -78,24 +78,24 @@ Range query `subMap(lo, hi)` works by:
 
 Can we use a sorted array instead? Lookup would be O(log N) via binary search, but insertion would be O(N) due to shifting. Red-black trees achieve O(log N) for both.
 
-THE TRADE-OFFS:
-Gain: Sorted order, O(log N) range queries, nearest-key operations.
-Cost: O(log N) vs O(1) for basic get/put, higher constant factor, more memory per node.
+**THE TRADE-OFFS:**
+**Gain:** Sorted order, O(log N) range queries, nearest-key operations.
+**Cost:** O(log N) vs O(1) for basic get/put, higher constant factor, more memory per node.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A stock trading system must find the best available ask price ≥ the buyer's limit price. 10,000 active orders, 1,000 queries per second.
 
-WHAT HAPPENS WITH HASHMAP:
+**WHAT HAPPENS WITH HASHMAP:**
 Each query scans all 10,000 orders to find the minimum ask ≥ limit. 1,000 queries × 10,000 orders = 10 million comparisons per second.
 
-WHAT HAPPENS WITH TREEMAP:
+**WHAT HAPPENS WITH TREEMAP:**
 Orders stored by price as keys. Each query calls `ceilingKey(limitPrice)` — finds the lowest key ≥ limit in O(log 10000) = O(13) operations. 1,000 queries × 13 = 13,000 operations per second. An improvement of ~770×.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The "sorted order" that TreeMap maintains is not just cosmetic — it is a structural property that enables sub-linear range queries. HashMap cannot do this at any cost because it has structurally thrown away ordering information.
 
 ---
@@ -104,10 +104,10 @@ The "sorted order" that TreeMap maintains is not just cosmetic — it is a struc
 
 > A TreeMap is like a sorted filing cabinet where files are alphabetically ordered. Finding files between "Mango" and "Mute" means opening the 'M' drawer and pulling all consecutive files — no searching other drawers.
 
-"Alphabetical drawer order" → BST key ordering
-"Pull consecutive files" → in-order traversal
-"Finding the right drawer section" → BST navigation `floorKey/ceilingKey`
-"Adding a new file in order" → rebalanced tree insertion
+- "Alphabetical drawer order" → BST key ordering
+- "Pull consecutive files" → in-order traversal
+- "Finding the right drawer section" → BST navigation `floorKey/ceilingKey`
+- "Adding a new file in order" → rebalanced tree insertion
 
 Where this analogy breaks down: Filing cabinets don't self-balance. TreeMap automatically restructures itself on each insert to maintain O(log N) height — you never do this in a physical filing cabinet.
 
@@ -177,7 +177,7 @@ SortedMap<K,V> sub = map.subMap(3, true, 7, false);
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Key provided for put/get
 → hashCode not used; compareTo() traverses tree
@@ -186,14 +186,14 @@ Key provided for put/get
 → Range query returns live view
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Custom key class without Comparable and no Comparator
 → ClassCastException at first put()
 → Missing: implement Comparable or pass Comparator
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10M+ entries, TreeMap works correctly but has higher memory footprint (~64 bytes per entry with object headers and 5 pointers). Cache miss rate increases for random key lookups because red-black tree nodes are scattered in memory. At extreme scale, a B-tree (like those in databases) provides better cache efficiency because child nodes fill entire cache lines together. Java's TreeMap has no concurrency support; use `ConcurrentSkipListMap` for thread-safe sorted access at scale.
 
 ---
@@ -274,17 +274,17 @@ How to choose: Use TreeMap when you need sorted keys or range queries. Use HashM
 
 **1. ClassCastException with non-Comparable key**
 
-Symptom: `java.lang.ClassCastException: MyClass cannot be cast to java.lang.Comparable` on first `put()`.
+**Symptom:** `java.lang.ClassCastException: MyClass cannot be cast to java.lang.Comparable` on first `put()`.
 
-Root Cause: TreeMap requires keys to be comparable. Custom class without `Comparable` and no `Comparator` at construction.
+**Root Cause:** TreeMap requires keys to be comparable. Custom class without `Comparable` and no `Comparator` at construction.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Stack trace will point to TreeMap.compare() method
 # Check your key class definition
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: No ordering defined
 TreeMap<MyClass, String> map = new TreeMap<>();
@@ -294,43 +294,43 @@ TreeMap<MyClass, String> map =
     new TreeMap<>(Comparator.comparing(MyClass::getId));
 ```
 
-Prevention: Always define ordering explicitly for custom key types.
+**Prevention:** Always define ordering explicitly for custom key types.
 
 ---
 
 **2. Mutation of keys after insertion breaks tree invariant**
 
-Symptom: `get(key)` returns null even though the key was previously put; iteration skips entries.
+**Symptom:** `get(key)` returns null even though the key was previously put; iteration skips entries.
 
-Root Cause: Key's `compareTo()` result changed after insertion (e.g., mutable field used in comparison). Tree was built on the original value; now traversal takes wrong path.
+**Root Cause:** Key's `compareTo()` result changed after insertion (e.g., mutable field used in comparison). Tree was built on the original value; now traversal takes wrong path.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Print all entries via tree traversal vs direct iterate:
 map.forEach((k, v) -> System.out.println(k + "=" + v));
 ```
 
-Fix: Use only immutable objects as TreeMap keys.
+**Fix:** Use only immutable objects as TreeMap keys.
 
-Prevention: Make key classes immutable; document the invariant.
+**Prevention:** Make key classes immutable; document the invariant.
 
 ---
 
 **3. Performance regression vs HashMap**
 
-Symptom: Service using TreeMap is 5–10× slower than expected; profiler shows time in tree rotations.
+**Symptom:** Service using TreeMap is 5–10× slower than expected; profiler shows time in tree rotations.
 
-Root Cause: Using TreeMap where no range queries are needed — paying O(log N) for every operation unnecessarily.
+**Root Cause:** Using TreeMap where no range queries are needed — paying O(log N) for every operation unnecessarily.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 ./profiler.sh -e cpu -d 30 <pid>
 # Time concentrated in TreeMap.put() and TreeMap.fixAfterInsertion()
 ```
 
-Fix: Replace TreeMap with HashMap if sorted iteration is not required.
+**Fix:** Replace TreeMap with HashMap if sorted iteration is not required.
 
-Prevention: Choose TreeMap only when range queries or sorted iteration are a stated requirement.
+**Prevention:** Choose TreeMap only when range queries or sorted iteration are a stated requirement.
 
 ---
 

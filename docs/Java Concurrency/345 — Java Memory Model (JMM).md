@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Different CPUs have different memory ordering guarantees (x86: strong; ARM: weak). A program using `synchronized` correctly on an Intel server might inadvertently rely on x86's strong ordering, then break when deployed to an ARM server because the JVM is allowed to use the weaker ordering ARM hardware provides. Without a formal memory model, "thread safety" has no precise meaning — correctness depends on the hardware, JVM, and JIT compiler implementation.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 "Platform write once, run anywhere" breaks if memory ordering is platform-specific. A double-checked locking implementation worked on HotSpot JVM 1.4 due to implementation-specific behavior but was formally incorrect under the JMM — meaning any JVM could choose to break it. This ambiguity led to widespread production bugs.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 The **Java Memory Model** (JMM, JSR 133, Java 5) was created to specify precisely what visibility guarantees Java programs have, independent of hardware — defining the minimum ordering rules all compliant JVMs must enforce, and explicitly allowing JVMs and hardware to reorder instructions UNLESS synchronisation is used.
 
 ---
@@ -64,12 +64,12 @@ The JMM allows JVMs to reorder and cache anything that doesn't break happens-bef
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Without synchronization, threads have no visibility guarantee — writes may be invisible, reordered, or speculated.
 2. The happens-before relation is transitive: if A HB B and B HB C, then A HB C.
 3. A program with **no data races** (all shared mutable accesses happen-before each other) behaves as if sequentially consistent.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The happens-before rules from the JMM:
 - **Program order**: within a thread, each action happens-before the next (single-thread ordering).
 - **Monitor lock/unlock**: unlock on a monitor HB every subsequent lock on the same monitor.
@@ -99,14 +99,14 @@ Happens-Before (HB) Examples:
     → Write may NOT be visible; any value possible
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 The JMM's weakness is that it specifies minimal guarantees — JVMs may provide MORE ordering than required. Code that "works" because of JVM-specific behavior may break on a different JVM. Always reason from the JMM specification, not from observed behavior.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Classic JMM visibility test:
 ```java
 int value = 0;
@@ -135,7 +135,7 @@ volatile boolean ready = false;
 // Guaranteed: if T2 sees ready=true, it also sees value=42
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The HB chain through `volatile ready` also extends to ALL writes before `volatile ready` (program order + transitivity). This is the "piggyback" JMM property — one volatile write can make non-volatile writes visible.
 
 ---
@@ -144,9 +144,9 @@ The HB chain through `volatile ready` also extends to ALL writes before `volatil
 
 > The JMM is like a musical score with timing rules. Musicians (threads) play simultaneously, but certain notes have timing relationships: "drum beat N happens before violin note M." Between unmarked notes, musicians are free to play whenever is efficient. The JMM marks which operations have cross-thread timing relationships (happens-before); everything else is unordered.
 
-"Drum beat N → violin note M" → write(volatile) → read(volatile).
-"Free timing" → non-volatile reads/writes are unordered.
-"Musical score" → JMM specification.
+- "Drum beat N → violin note M" → write(volatile) → read(volatile).
+- "Free timing" → non-volatile reads/writes are unordered.
+- "Musical score" → JMM specification.
 
 Where this analogy breaks down: Music is continuous; the JMM's happens-before is partial — two actions without a HB relationship are unordered but may still coincidentally appear ordered. The JMM only guarantees no ordering for races; it doesn't guarantee any particular wrong value.
 
@@ -239,7 +239,7 @@ FAILURE PATH (broken HB):
     → [Program has a data race — undefined behavior]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, understanding the JMM helps diagnose concurrency bugs that appear only under load. A `volatile` flag that "works" in single-threaded tests but fails in production at 10K RPS is a JMM issue — the JIT aggressively reordering code with no synchronization. Memory model issues are the hardest-to-reproduce production bugs.
 
 ---
@@ -318,11 +318,11 @@ How to choose: Use `synchronized` for compound operations. Use `volatile` for si
 
 **Data Race — Inconsistent View**
 
-Symptom: Intermittent wrong values, NullPointerExceptions, corrupted state — hard to reproduce.
+**Symptom:** Intermittent wrong values, NullPointerExceptions, corrupted state — hard to reproduce.
 
-Root Cause: Shared variable accessed without HB guarantee. JIT caches value in register.
+**Root Cause:** Shared variable accessed without HB guarantee. JIT caches value in register.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Run with Thread Sanitizer (OpenJDK TSAN support):
 # Or: Java Race Condition Detector
@@ -332,7 +332,7 @@ Diagnostic:
 java -XX:+PrintCompilation MyApp 2>&1 | grep "data race"
 ```
 
-Fix: Add `synchronized` or `volatile` to all accesses of the shared variable. Ensure all paths to the variable establish HB.
+**Fix:** Add `synchronized` or `volatile` to all accesses of the shared variable. Ensure all paths to the variable establish HB.
 
 ---
 

@@ -454,16 +454,16 @@ window.addEventListener("beforeunload", () => source.close());
 
 **SSE Broken by Buffering Proxy**
 
-Symptom:
+**Symptom:**
 SSE works in direct browser tests but not through corporate proxy or nginx.
 Events arrive in batches (buffered) rather than individually, or don't arrive
 until connection closes.
 
-Root Cause:
+**Root Cause:**
 HTTP proxy is buffering the response body, waiting until the connection closes
 before forwarding. SSE requires events to be flushed immediately.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Test SSE directly vs through proxy:
@@ -480,7 +480,7 @@ Fix (server-side):
 Add response header `X-Accel-Buffering: no` to disable nginx buffering.
 Add `Cache-Control: no-cache` to prevent any caching layer from buffering.
 
-Prevention:
+**Prevention:**
 Test SSE through your actual production proxy/CDN stack before launch.
 Never strip `X-Accel-Buffering: no` headers in proxy configuration.
 
@@ -488,16 +488,16 @@ Never strip `X-Accel-Buffering: no` headers in proxy configuration.
 
 **SseEmitter Memory Leak (Spring MVC)**
 
-Symptom:
+**Symptom:**
 Memory grows steadily with each new SSE subscriber. After running for hours,
 OutOfMemoryError occurs with thousands of `SseEmitter` objects in heap.
 
-Root Cause:
+**Root Cause:**
 `SseEmitter` objects added to the emitters list but never removed when the
 client disconnects. `onCompletion`, `onTimeout`, and `onError` handlers were
 not registered, so disconnected emitters stay in the list forever.
 
-Fix:
+**Fix:**
 Always register all three handlers:
 
 ```java
@@ -508,7 +508,7 @@ emitter.onError(e -> emitters.remove(emitter));
 
 Set reasonable timeout: `new SseEmitter(60_000L)` (60 seconds).
 
-Prevention:
+**Prevention:**
 Use Spring WebFlux (`Flux<ServerSentEvent>`) for better backpressure handling.
 Monitor emitter list size as a metric.
 

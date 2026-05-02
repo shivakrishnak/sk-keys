@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Adapter Pattern"
 parent: "Design Patterns"
@@ -184,7 +184,7 @@ WITH Adapter:
 "You (English)" = client code using target interface
 "Expert witness (French only)" = adaptee (third-party/legacy class)
 "Interpreter" = adapter
-"Translates English → French → English" = adapter's translation logic
+- "Translates English → French → English" = adapter's translation logic
 "Neither you nor witness changes" = neither client nor adaptee is modified
 
 ---

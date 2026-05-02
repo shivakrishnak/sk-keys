@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Before paging, OSes used segmentation — memory was divided into variable-size segments (code, stack, heap). This caused **external fragmentation**: after allocating and freeing segments of different sizes, the free memory becomes a patchwork of small gaps. You might have 500 MB total free, but no single gap large enough for a 200 MB allocation. Compaction (shuffling processes around to merge gaps) is expensive — you can't move a running process's code without updating every pointer in it.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 As systems ran more and longer-lived processes, fragmentation worsened over time. The "500 MB free but can't allocate 200 MB" problem caused allocation failures in production systems. Compaction could take seconds — unacceptable for interactive use.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why Paging was created — fixed-size pages eliminate external fragmentation because any free page frame fits any page, and the page table handles the scattering transparently.
 
 ---
@@ -65,41 +65,41 @@ The genius of paging is that physical contiguity is no longer required. A proces
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Every page is the same size (4 KB standard; 2 MB huge pages). Every frame is the same size.
 2. Any free frame can hold any page — no size mismatch possible (no external fragmentation).
 3. The page table records the mapping; the hardware MMU performs the translation using it.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 A virtual address is split into two fields: the high bits = page number (VPN), the low bits = offset within the page. The MMU looks up VPN in the page table to get the physical frame number (PFN), then appends the unchanged offset. Since the offset is preserved (only the high bits change), a 4 KB page needs 12 offset bits, meaning 52 bits for VPN on a 64-bit system — hence the multi-level page table structure to avoid storing 2^52 entries.
 
-THE TRADE-OFFS:
-Gain: No external fragmentation; any free frame usable anywhere; supports demand paging and swapping.
-Cost: Internal fragmentation (last page partially used); page table itself uses memory (4-level table for a process can consume MBs); TLB pressure from many small pages.
+**THE TRADE-OFFS:**
+**Gain:** No external fragmentation; any free frame usable anywhere; supports demand paging and swapping.
+**Cost:** Internal fragmentation (last page partially used); page table itself uses memory (4-level table for a process can consume MBs); TLB pressure from many small pages.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 100 MB RAM, three programs: A (30 MB), B (50 MB), C (15 MB). Program B exits, freeing 50 MB. New program D needs 40 MB.
 
-WHAT HAPPENS WITHOUT paging (segmentation):
+**WHAT HAPPENS WITHOUT paging (segmentation):**
 
 1. B's 50 MB region is freed as a single 50 MB gap.
 2. D's 40 MB fits in the gap — allocate at B's old base address.
 3. Now 10 MB remains free next to D, and 5 MB remains from C's gap.
 4. New program E needs 14 MB: two 10 MB and 5 MB fragments exist but neither fits 14 MB → allocation fails despite 15 MB free.
 
-WHAT HAPPENS WITH paging:
+**WHAT HAPPENS WITH paging:**
 
 1. B's pages are freed individually — 12,800 frames returned to the free list.
 2. D requests 10,240 frames — OS picks any 10,240 free frames from anywhere.
 3. D's pages are mapped through the page table; D sees a contiguous virtual address space.
 4. E requests 3,584 frames — picks from remaining 2,560 frames. Still works.
 
-THE INSIGHT:
+**THE INSIGHT:**
 With paging, "free memory" is a pool of interchangeable tiles. Fragmentation becomes an internal property of individual allocations, bounded to < 1 page per allocation — not an external property of the entire heap.
 
 ---
@@ -108,10 +108,10 @@ With paging, "free memory" is a pool of interchangeable tiles. Fragmentation bec
 
 > Paging is like a parking lot with identically sized spaces. Any car fits any space. The attendant (OS page table) keeps a log of which car is in which space. A truck (large process) occupies multiple spaces, and the log tracks all of them. Contrast with a valet lot that tries to park cars in order — when a van leaves, the gap is too small for a bus.
 
-"Parking space" → physical frame
-"Car" → virtual page
-"Attendant's log" → page table
-"Car at a different space than where it was last time" → page migration during defragmentation
+- "Parking space" → physical frame
+- "Car" → virtual page
+- "Attendant's log" → page table
+- "Car at a different space than where it was last time" → page migration during defragmentation
 
 Where this analogy breaks down: Physical frames are not truly interchangeable for performance — NUMA systems have local (fast) and remote (slow) frames; the allocator tries to place pages on the nearest NUMA node.
 
@@ -167,7 +167,7 @@ The 4-level page table structure is a compromise between depth (more levels = le
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [Process accesses virtual address 0x7f3a_1234]
@@ -178,10 +178,10 @@ NORMAL FLOW:
    → [Cache lookup → RAM access → data returned]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 [PTE.Present = 0] → [CPU: Page Fault #PF] → [OS page fault handler] → [Allocate frame, fill from swap/file/zero, set PTE.Present=1, resume]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 1 TB of mapped memory, a process has ~256 million PTEs consuming ~2 GB of page table memory. Linux's `khugepaged` daemon opportunistically collapses 4 KB pages into 2 MB huge pages to reduce this overhead. Database servers (PostgreSQL, MySQL) configure huge pages manually (`vm.nr_hugepages`) to avoid TLB misses on large buffer pools.
 
 ---
@@ -215,11 +215,11 @@ How to choose: Use default 4 KB paging for most workloads. Enable huge pages (TH
 
 **1. Page Table Memory Exhaustion**
 
-Symptom: System OOM despite application RSS appearing reasonable; `cat /proc/meminfo` shows high `PageTables` entry.
+**Symptom:** System OOM despite application RSS appearing reasonable; `cat /proc/meminfo` shows high `PageTables` entry.
 
-Root Cause: Process maps thousands of small anonymous regions (e.g., Java's `mmap` per class file, or many `dlopen()` calls), each requiring its own PTE chain; page table overhead exceeds heap overhead.
+**Root Cause:** Process maps thousands of small anonymous regions (e.g., Java's `mmap` per class file, or many `dlopen()` calls), each requiring its own PTE chain; page table overhead exceeds heap overhead.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 cat /proc/meminfo | grep PageTables
@@ -227,46 +227,46 @@ cat /proc/<PID>/status | grep VmPTE
 pmap -x <PID> | wc -l  # count VMAs
 ```
 
-Fix: Consolidate memory mappings; use `madvise(MADV_HUGEPAGE)` on large regions to merge PTEs. In Java, use `-XX:+UseTransparentHugePages`.
+**Fix:** Consolidate memory mappings; use `madvise(MADV_HUGEPAGE)` on large regions to merge PTEs. In Java, use `-XX:+UseTransparentHugePages`.
 
-Prevention: Monitor `node_memory_PageTables_bytes` in Prometheus; alert when > 5% of total RAM.
+**Prevention:** Monitor `node_memory_PageTables_bytes` in Prometheus; alert when > 5% of total RAM.
 
 ---
 
 **2. Internal Fragmentation from Small Allocations**
 
-Symptom: `malloc(1)` called millions of times; process RSS is much higher than the sum of requested bytes.
+**Symptom:** `malloc(1)` called millions of times; process RSS is much higher than the sum of requested bytes.
 
-Root Cause: Each `malloc(1)` is served from the heap, but the heap itself expands in page-granularity. A malloc library object header (8–16 bytes) + 1 byte payload still occupies at minimum a page's internal slot.
+**Root Cause:** Each `malloc(1)` is served from the heap, but the heap itself expands in page-granularity. A malloc library object header (8–16 bytes) + 1 byte payload still occupies at minimum a page's internal slot.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 valgrind --tool=massif ./myapp
 ms_print massif.out.<pid>
 ```
 
-Fix: Batch small allocations into pools or use a slab allocator for fixed-size objects. In C++, use object pools or `std::pmr::monotonic_buffer_resource`.
+**Fix:** Batch small allocations into pools or use a slab allocator for fixed-size objects. In C++, use object pools or `std::pmr::monotonic_buffer_resource`.
 
-Prevention: Profile memory with `massif`/`heaptrack` before scaling.
+**Prevention:** Profile memory with `massif`/`heaptrack` before scaling.
 
 ---
 
 **3. TLB Invalidation Storms on Fork**
 
-Symptom: `fork()`-heavy servers (pre-fork web servers like Apache) show high `%sys` under load; `perf stat` shows TLB flushes.
+**Symptom:** `fork()`-heavy servers (pre-fork web servers like Apache) show high `%sys` under load; `perf stat` shows TLB flushes.
 
-Root Cause: Every `fork()` requires a TLB flush on the new process (new CR3 loaded). On systems without ASID (Address Space ID), every context switch also flushes the TLB, discarding cached translations.
+**Root Cause:** Every `fork()` requires a TLB flush on the new process (new CR3 loaded). On systems without ASID (Address Space ID), every context switch also flushes the TLB, discarding cached translations.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 perf stat -e tlb:tlb_flush -p <PID> -- sleep 5
 ```
 
-Fix: Use thread-per-request (shared address space, no TLB flush on switch) or `io_uring`-based event loop to reduce fork rate. On x86-64, PCIDs (Process-Context IDs) tag TLB entries, allowing partial TLB retention across context switches — ensure kernel >= 4.14 to use them.
+**Fix:** Use thread-per-request (shared address space, no TLB flush on switch) or `io_uring`-based event loop to reduce fork rate. On x86-64, PCIDs (Process-Context IDs) tag TLB entries, allowing partial TLB retention across context switches — ensure kernel >= 4.14 to use them.
 
-Prevention: Prefer event-driven (Node.js/Netty style) over pre-fork multi-process architectures for latency-sensitive services.
+**Prevention:** Prefer event-driven (Node.js/Netty style) over pre-fork multi-process architectures for latency-sensitive services.
 
 ---
 

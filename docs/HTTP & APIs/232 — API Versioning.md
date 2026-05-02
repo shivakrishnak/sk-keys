@@ -370,15 +370,15 @@ record UserResponseV2(Long id, String name, AddressV2 address) {
 
 **Version Proliferation — Too Many Active Versions**
 
-Symptom:
+**Symptom:**
 Engineers must test changes in v1, v2, v3, v4, v5 simultaneously. Bug in v1 mapping
 class causes a v1-only outage undetected for days. 40% of traffic still on v1 from 2020.
 
-Root Cause:
+**Root Cause:**
 No systematic deprecation enforcement. Sunset dates were set but never enforced.
 v1 was kept available because "some important client might still be using it."
 
-Diagnostic:
+**Diagnostic:**
 
 ```
 # Measure usage per version via access logs or metrics
@@ -391,7 +391,7 @@ Access logs: grep v1 calls for User-Agent header → identify client types
 Add version-usage metrics per API key / JWT subject claim
 ```
 
-Fix:
+**Fix:**
 Enforce sunset dates. 90 days before: email all API key holders still on v1.
 30 days before: return 400 with migration guide for test environments.
 0 days: return 410 Gone.

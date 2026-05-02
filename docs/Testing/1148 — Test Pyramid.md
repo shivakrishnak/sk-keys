@@ -271,13 +271,13 @@ class RegistrationControllerTest {
 
 **1. The Inverted Pyramid (Ice Cream Cone)**
 
-Symptom: CI takes 4+ hours; developers skip tests; test failures are ignored.
-Fix: Identify which E2E tests cover things that could be unit/integration tested. Migrate them down.
+**Symptom:** CI takes 4+ hours; developers skip tests; test failures are ignored.
+**Fix:** Identify which E2E tests cover things that could be unit/integration tested. Migrate them down.
 
 **2. Unit Tests That Don't Actually Unit Test**
 
-Symptom: "Unit tests" use `@SpringBootTest` — they spin up the full context in 30 seconds each.
-Fix: Unit tests should NOT use Spring context. Use Mockito-only tests for unit level.
+**Symptom:** "Unit tests" use `@SpringBootTest` — they spin up the full context in 30 seconds each.
+**Fix:** Unit tests should NOT use Spring context. Use Mockito-only tests for unit level.
 
 ---
 

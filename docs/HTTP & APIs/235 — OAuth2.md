@@ -477,15 +477,15 @@ public class ServiceClientConfig {
 
 **Authorization Code Injection / CSRF on Callback**
 
-Symptom:
+**Symptom:**
 Security test shows that an attacker can insert their own `code` into the redirect
 callback URL, causing your app to exchange a code that was authorized by the attacker's
 account — logging YOU in as the ATTACKER.
 
-Root Cause:
+**Root Cause:**
 State parameter missing or not validated. PKCE not implemented.
 
-Diagnostic:
+**Diagnostic:**
 
 ```
 # Verify state parameter round-trip:

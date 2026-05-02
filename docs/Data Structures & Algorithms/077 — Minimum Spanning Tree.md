@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You are laying fibre optic cable to connect 20 cities. Each pair of cities has a cable cost. To make all cities reachable from each other, you must connect them all. Connecting every pair (complete graph) uses 190 cable segments — massively over-engineered. But you need all cities connected. What is the cheapest set of cables to install?
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 You need connectivity (all cities reachable from each other) but not redundancy. Any connected graph on V vertices requires at least V-1 edges. The challenge: which V-1 edges minimise total cost while keeping all V vertices connected? With 20 cities to choose V-1=19 cables from 190 possible cables, the brute force is C(190,19) ≈ 10^28 combinations — impossible.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 The greedy insight: always add the cheapest edge that does NOT create a cycle. After V-1 additions, the result is connected (by induction: each addition connects a new vertex to the growing tree). This is Kruskal's algorithm. Prim's grows a single tree by always adding the cheapest edge reachable from the current tree. Both find the unique MST in O(E log E). This is exactly why **Minimum Spanning Tree** algorithms were created.
 
 ---
@@ -64,33 +64,33 @@ The MST property: for any cut (partition of vertices into two non-empty groups),
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A spanning tree on V vertices has exactly V-1 edges and is connected.
 2. Adding any edge to a spanning tree creates exactly one cycle.
 3. The **cut property**: the minimum-weight edge crossing any cut of the graph is in every MST (assuming unique weights).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The cut property directly justifies greedy algorithms:
 - **Kruskal's:** Sort edges by weight. For each edge (u,v), check if u and v are in different components (use Union-Find). If yes, adding (u,v) is the minimum edge crossing the cut between u's component and v's component → it must be in the MST. Add it.
 - **Prim's:** Maintain a priority queue of edges connecting the current tree to non-tree vertices. Always extract the minimum-weight edge to a new vertex → this is the minimum edge crossing the cut between the current tree and the rest.
 
 Both algorithms are greedy and provably correct via the cut property. Their correctness is not heuristic — it is exact.
 
-THE TRADE-OFFS:
-Gain: Optimal connectivity with minimum total edge weight; provably correct; O(E log E) or O(E log V) time.
-Cost: Undirected graphs only (directed graphs need "minimum spanning arborescence" — much harder). Does not minimise path length between pairs (that's shortest path). Handles negative weights correctly (unlike shortest-path algorithms that require Dijkstra's non-negative constraint).
+**THE TRADE-OFFS:**
+**Gain:** Optimal connectivity with minimum total edge weight; provably correct; O(E log E) or O(E log V) time.
+**Cost:** Undirected graphs only (directed graphs need "minimum spanning arborescence" — much harder). Does not minimise path length between pairs (that's shortest path). Handles negative weights correctly (unlike shortest-path algorithms that require Dijkstra's non-negative constraint).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Graph with 4 vertices and edges: A-B(cost 4), A-C(cost 2), B-C(cost 1), B-D(cost 3), C-D(cost 5). Find MST.
 
-WHAT HAPPENS WITHOUT MST ALGORITHM:
+**WHAT HAPPENS WITHOUT MST ALGORITHM:**
 All spanning trees of 4 vertices have exactly 3 edges. Enumerate all 8 possible spanning trees, compute total cost, take minimum. At 20 vertices, enumeration is Cayley's formula: 20^18 ≈ 10^23 trees — impossible.
 
-WHAT HAPPENS WITH KRUSKAL'S:
+**WHAT HAPPENS WITH KRUSKAL'S:**
 Sort edges: B-C(1), A-C(2), B-D(3), A-B(4), C-D(5).
 1. B-C(1): B and C in different components → ADD. Tree: {B-C}. Cost: 1.
 2. A-C(2): A and C in different components → ADD. Tree: {B-C, A-C}. Cost: 3.
@@ -98,7 +98,7 @@ Sort edges: B-C(1), A-C(2), B-D(3), A-B(4), C-D(5).
 4. A-B(4): A and B SAME component → SKIP (would create cycle).
 5. Done: 3 edges = V-1. MST cost: 6. ✓
 
-THE INSIGHT:
+**THE INSIGHT:**
 The cycle check ensures no redundant edges. Each U-F union merges components; the MST is complete when 1 component remains. Kruskal's never "undoes" a choice — the cut property guarantees each greedy selection is permanently correct.
 
 ---
@@ -107,12 +107,12 @@ The cycle check ensures no redundant edges. Each U-F union merges components; th
 
 > Prim's algorithm is like growing a coral reef. Start with one piece of coral. Each time step, add the nearest unattached sea creature (cheapest edge to a new vertex) to the existing reef. The reef grows outward, always picking the nearest addition. After V-1 additions the entire area is covered.
 
-"Current reef" → set of tree vertices
-"Nearest sea creature" → minimum-weight edge to non-tree vertex
-"Joining the reef" → adding vertex to MST
-"Reef covers entire area" → all vertices in MST
+- "Current reef" → set of tree vertices
+- "Nearest sea creature" → minimum-weight edge to non-tree vertex
+- "Joining the reef" → adding vertex to MST
+- "Reef covers entire area" → all vertices in MST
 
-"Kruskal's" → different analogy: "cheapest powerline first, skip if it causes a ring"
+- "Kruskal's" → different analogy: "cheapest powerline first, skip if it causes a ring"
 
 Where this analogy breaks down: Prim's always grows a contiguous tree; Kruskal's processes all edges globally and can add edges between disjoint components. The reef analogy captures Prim's geographic growth but not Kruskal's global edge sorting.
 
@@ -184,7 +184,7 @@ MST appears naturally in approximation algorithms: the 2-MST approximation for T
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Weighted undirected connected graph G=(V,E,w)
 → Choose algorithm: Kruskal (sparse) / Prim (dense)
@@ -196,7 +196,7 @@ Weighted undirected connected graph G=(V,E,w)
 → Apply to: network design, clustering, TSP approx
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Graph is disconnected
 → Algorithm finds MST of each connected component (spanning forest)
@@ -207,7 +207,7 @@ Graph is disconnected
   (minimum spanning forest then merge)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For a network graph with 10 billion edges (social network), sorting all edges is infeasible. Borůvka's algorithm is preferred for parallelism: each vertex independently selects its cheapest edge, then contracted nodes repeat — O(E log V) total but naturally parallelisable. Apache Spark implementations use Borůvka's in O(log V) supersteps for distributed MST computation.
 
 ---
@@ -311,11 +311,11 @@ How to choose: For sparse graphs use Kruskal's (simple to implement, O(E log E))
 
 **1. Cycle detection missing — wrong "spanning" graph**
 
-Symptom: Algorithm adds V or more edges; result has cycles and is not a tree.
+**Symptom:** Algorithm adds V or more edges; result has cycles and is not a tree.
 
-Root Cause: Union-Find not used (or broken); both endpoints hash to the same component but union is not called correctly.
+**Root Cause:** Union-Find not used (or broken); both endpoints hash to the same component but union is not called correctly.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // After MST: verify no cycles
 assert mstEdges.size() == V - 1 :
@@ -323,19 +323,19 @@ assert mstEdges.size() == V - 1 :
 // DFS/BFS on MST: visits V vertices from any start?
 ```
 
-Fix: Use Union-Find with both `find` (path-compressed) and `union` (rank-merged) correctly.
+**Fix:** Use Union-Find with both `find` (path-compressed) and `union` (rank-merged) correctly.
 
-Prevention: Unit test Union-Find separately; test with a complete 4-vertex graph where cycles are obvious.
+**Prevention:** Unit test Union-Find separately; test with a complete 4-vertex graph where cycles are obvious.
 
 ---
 
 **2. Graph is disconnected — partial MST**
 
-Symptom: MST has fewer than V-1 edges; not all vertices are connected.
+**Symptom:** MST has fewer than V-1 edges; not all vertices are connected.
 
-Root Cause: Input graph is not fully connected; some vertices have no path to others.
+**Root Cause:** Input graph is not fully connected; some vertices have no path to others.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 int components = 0;
 for (int i = 0; i < V; i++)
@@ -344,28 +344,28 @@ System.out.println("Components: " + components);
 // components > 1 → disconnected
 ```
 
-Fix: Handle disconnected graphs explicitly: find spanning forest (one tree per component); report which components are isolated.
+**Fix:** Handle disconnected graphs explicitly: find spanning forest (one tree per component); report which components are isolated.
 
-Prevention: Pre-validate graph connectivity with BFS/DFS before MST; document precondition "connected graph required."
+**Prevention:** Pre-validate graph connectivity with BFS/DFS before MST; document precondition "connected graph required."
 
 ---
 
 **3. Confusing MST with shortest path tree**
 
-Symptom: After running Prim's "MST" from a source vertex, using it to route packets — some routes are suboptimal.
+**Symptom:** After running Prim's "MST" from a source vertex, using it to route packets — some routes are suboptimal.
 
-Root Cause: MST minimises total edge weight; shortest path tree from a source minimises individual path lengths. These are different objectives and produce different trees.
+**Root Cause:** MST minimises total edge weight; shortest path tree from a source minimises individual path lengths. These are different objectives and produce different trees.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Compare Prim MST total vs Dijkstra path costs:
 // MST may give path A→B of cost 10,
 // while direct edge A-B exists at cost 3
 ```
 
-Fix: Use Dijkstra's algorithm for shortest paths. Use MST only for network connectivity minimisation.
+**Fix:** Use Dijkstra's algorithm for shortest paths. Use MST only for network connectivity minimisation.
 
-Prevention: Clearly separate the two use cases in design documents: "MST = cheapest network; Dijkstra = fastest routes."
+**Prevention:** Clearly separate the two use cases in design documents: "MST = cheapest network; Dijkstra = fastest routes."
 
 ---
 

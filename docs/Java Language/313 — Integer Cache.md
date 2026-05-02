@@ -41,13 +41,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Every autoboxing operation allocates a new Integer object on the heap. In a web service processing requests where IDs, quantities, and counts are frequently small values (0–100), boxing the same value `42` a thousand times per second creates 1,000 Integer(42) objects — all with identical content, all consuming heap space, all producing garbage. Small integers are ubiquitous in nearly every program: loop counters, boolean flags (0/1), small HTTP status groups, array indices.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A high-volume order processing system uses `Map<Integer, Order>` with order quantities (usually 1–10). At 100,000 orders/second, boxing these small quantities without caching = 100,000 heap allocations/second of Integer objects — all identical content, all garbage after the operation. The GC processes 4MB/second of Integer garbage alone, causing frequent minor GCs.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why the **Integer Cache** was created — to pre-allocate and cache the most commonly-used Integer values so that boxing them requires no heap allocation, only a cache lookup.
 
 ---
@@ -73,12 +73,12 @@ The Integer Cache turns a potential bug (relying on `==` for boxed integer compa
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Small integers are extremely common — caching them saves significant allocation for minimal memory cost.
 2. Integer.valueOf() is the entry point for autoboxing — it's the right place to intercept and cache.
 3. Cached integers must be identical objects for `==` to work reliably (a benefit for the cached range, a hazard for the uncached range).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The Integer Cache implementation:
 ```java
 // java.lang.Integer (simplified):
@@ -140,15 +140,15 @@ Direct savings: every boxing of values -128..127 saves one heap allocation.
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Zero allocation for common small int boxing; consistent `==` behavior within cached range.
-Cost: 4KB of JVM bootstrap overhead; `==` comparison behavior changes at the cache boundary (creates bug opportunity); developers must remember the range boundary.
+**THE TRADE-OFFS:**
+**Gain:** Zero allocation for common small int boxing; consistent `==` behavior within cached range.
+**Cost:** 4KB of JVM bootstrap overhead; `==` comparison behavior changes at the cache boundary (creates bug opportunity); developers must remember the range boundary.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Senior engineer reviews code. Method compares order IDs:
 ```java
 public boolean isSameOrder(Order a, Order b) {
@@ -162,7 +162,7 @@ IN TESTING (IDs 1–100):
 IN PRODUCTION (IDs 10,000–10,999):
 `getId()` returns `Integer.valueOf(10000)`. Beyond cache → new Integer. Two calls for the same ID (10000) produce two different Integer instances. `==` compares object identity: `false`, even when the IDs are numerically equal. Orders are incorrectly treated as non-matching. Business logic fails.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The test coverage that matters for this bug is **value coverage**, not **path coverage**. A unit test with ID=100 covers the same code paths as ID=10000 — but produces completely different runtime behavior due to the Integer Cache boundary. This is one case where mutation testing or property-based testing (`@IntRange(min=1, max=Integer.MAX_VALUE)`) would catch what traditional tests miss.
 
 ---
@@ -171,11 +171,11 @@ The test coverage that matters for this bug is **value coverage**, not **path co
 
 > The Integer Cache is like a vending machine stocked only with coffee for amounts $0.01 to $1.27. For those common prices, the machine dispenses from pre-stocked supply (fast, same item). For prices over $1.28, it custom-prepares an item (slower, new each time). The critical rule: two customers buying the same pre-stocked item get the "same can" to inspect. Two customers buying a custom-prepared item get different cans. A cashier comparing "this can and that can" by physically checking if they're the same object (`==`) would be confused when $0.50 items are "identical cans" but $2.00 items aren't.
 
-"Pre-stocked items" → cached Integer objects.
-"Custom-prepared" → new Integer allocation.
-"Same can" → same object reference (== works).
-"Different cans" → different objects (== fails despite same content).
-"Cashier comparing cans" → developer using == on Integer.
+- "Pre-stocked items" → cached Integer objects.
+- "Custom-prepared" → new Integer allocation.
+- "Same can" → same object reference (== works).
+- "Different cans" → different objects (== fails despite same content).
+- "Cashier comparing cans" → developer using == on Integer.
 
 Where this analogy breaks down: The vending machine doesn't pretend the custom items are in stock — it's obvious. Integer Cache makes no visible distinction between cached and non-cached returns; both look like `Integer` to the caller.
 
@@ -241,7 +241,7 @@ java -XX:+PrintFlagsFinal \
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Source: Integer qty = orderQuantity]  // int → Integer
     → [Compiler: Integer qty = Integer.valueOf(orderQuantity)]
@@ -252,7 +252,7 @@ NORMAL FLOW:
     → [Zero heap allocation]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Source: Integer id1 = entity.getId()]  // value: 50000
     → [Integer.valueOf(50000) → new Integer(50000)]
@@ -264,7 +264,7 @@ FAILURE PATH:
     → [Works in dev/test with ids 1–100 (cached)]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, the Integer Cache's most important effect is GC. A service boxing 10 million small integers per second (-128..127 range): 0 allocations. Same service boxing 10 million large integers per second (IDs 10K+): ~320MB/second of Integer garbage. The cache directly determines whether numeric boxing is GC-free or GC-intensive for a given workload's value range.
 
 ---
@@ -370,13 +370,13 @@ How to choose: Never rely on Integer == for correctness. The cache is a performa
 
 **Production Integer == Bug (Cached Boundary)**
 
-Symptom:
+**Symptom:**
 A feature works perfectly in all environments (dev, test, staging, QA) but fails intermittently in production. The failure correlates with specific record IDs or counts that exceed 127 or 127 whichever threshold is set.
 
-Root Cause:
+**Root Cause:**
 Test fixtures use small IDs (< 128). Production data has IDs > 127. Code uses `==` for Integer comparison. The bug is conceptually present everywhere but only triggers with uncached values.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Find all Integer == usages in the codebase:
 grep -rn "==" --include="*.java" . | grep "Integer\|int_"
@@ -384,23 +384,23 @@ grep -rn "==" --include="*.java" . | grep "Integer\|int_"
 # Or IntelliJ: Inspect Code → "Suspicious use of == or != with integer" 
 ```
 
-Fix:
+**Fix:**
 Global search-and-replace of `integerVar == otherInt` with `integerVar.equals(otherInt)` or `Objects.equals(integerVar, otherInt)`.
 
-Prevention:
+**Prevention:**
 SpotBugs `EQ_COMPARETO_USE_OBJECT_EQUALS` or Checkstyle rule. Property-based test using random values including those > 127.
 
 ---
 
 **AutoBoxCacheMax Set Too High — Startup Memory Waste**
 
-Symptom:
+**Symptom:**
 JVM startup is slower than expected. Heap used immediately after startup is unexpectedly high (hundreds of MB).
 
-Root Cause:
+**Root Cause:**
 Someone set `-XX:AutoBoxCacheMax=1000000` (1 million). The cache pre-allocates 1,000,128 Integer objects at ~16 bytes each = ~16MB of heap consumed just for the Integer cache. JVM startup time increases to initialize this cache.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Check effective AutoBoxCacheMax:
 java -XX:+PrintFlagsFinal -version 2>&1 | grep AutoBoxCacheMax
@@ -408,10 +408,10 @@ java -XX:+PrintFlagsFinal -version 2>&1 | grep AutoBoxCacheMax
 jcmd <pid> VM.flags | grep AutoBoxCacheMax
 ```
 
-Fix:
+**Fix:**
 Remove or reduce the AutoBoxCacheMax flag. Only set it if specific boxing-heavy code with a controlled integer domain genuinely benefits.
 
-Prevention:
+**Prevention:**
 Document JVM flag changes. Prohibit production JVM flags that are not in the approved list without performance justification.
 
 ---

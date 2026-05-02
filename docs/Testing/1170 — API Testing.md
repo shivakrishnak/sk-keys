@@ -296,17 +296,17 @@ class UserApiIntegrationTest {
 
 **1. Testing Implementation, Not Behavior**
 Cause: API tests tied to internal field names that change with refactoring.
-Fix: Test business behavior ("order status is PENDING") not implementation details ("statusCode is 1").
+**Fix:** Test business behavior ("order status is PENDING") not implementation details ("statusCode is 1").
 
 **2. Missing Error Path Tests**
 Cause: Tests only cover happy path (200 responses); no tests for 400, 401, 403, 404.
 Result: Error handling bugs shipped to production (wrong status codes, leaked stack traces).
-Fix: Every API endpoint must have: at least one success test AND at least one error test (invalid input, missing auth).
+**Fix:** Every API endpoint must have: at least one success test AND at least one error test (invalid input, missing auth).
 
 **3. No Schema Validation**
 Cause: Tests check specific fields but not the full response schema.
 Result: API response adds unexpected fields or removes expected ones — clients break silently.
-Fix: Validate response against OpenAPI schema in every API test.
+**Fix:** Validate response against OpenAPI schema in every API test.
 
 ---
 

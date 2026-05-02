@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A hospital manages 200 patients in the waiting room. Each patient has a triage score. Nurses want to serve the most critical patient next. Using a FIFO Queue, patient #1 is served before patient #200 even if patient #200 is critical. Using a sorted list, every new patient requires locating the correct sorted position and shifting — O(N) per arrival. With 200 arrivals per hour, the sorting overhead consumes 20,000 operations per hour and grows as the list grows.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A regular Queue ignores priority entirely — it serves whoever arrived first, not whoever needs help most. Keeping a sorted list gives priority access but makes insertion expensive. Neither structure serves the core need: "always serve the most critical next, cheaply."
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 An abstract interface that guarantees "remove the highest-priority element" without specifying how the ordering is maintained internally. The Heap is the natural implementation: O(1) peek at highest priority, O(log N) insert and remove. This is exactly why the Priority Queue was created.
 
 ---
@@ -63,12 +63,12 @@ Priority Queue is an *interface contract*, not an implementation. You can back i
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The element with the highest priority is always served next.
 2. Priority is determined by comparison, not by insertion order.
 3. Equal-priority elements have no guaranteed relative order (unless the comparator breaks ties).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The heap is the canonical implementation because it satisfies all three invariants while minimising the cost of the most common operations:
 - `peek()`: O(1) — root of heap is always the extremum.
 - `offer()`: O(log N) — sift-up through tree height.
@@ -78,24 +78,24 @@ Could a sorted array work? Peek is O(1) and poll is O(1), but offer is O(N) for 
 
 Could a Fibonacci heap work? O(1) amortised insert and O(log N) extract-min — but also O(1) decrease-key, which matters for Dijkstra. In Java there is no standard `FibonacciHeap`; it's complex to implement correctly.
 
-THE TRADE-OFFS:
-Gain: Always O(1) access to extremum, O(log N) insert and remove.
-Cost: O(N) arbitrary search, no ordering among equal-priority elements, O(N log N) full sorted extraction.
+**THE TRADE-OFFS:**
+**Gain:** Always O(1) access to extremum, O(log N) insert and remove.
+**Cost:** O(N) arbitrary search, no ordering among equal-priority elements, O(N log N) full sorted extraction.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A network router receives packets with Quality-of-Service (QoS) labels: 1 (video call, high priority) and 3 (background download, low priority). 100 packets arrive per second; the router can forward 80 per second.
 
-WHAT HAPPENS WITH FIFO QUEUE:
+**WHAT HAPPENS WITH FIFO QUEUE:**
 Packets are sent in arrival order. A background download packet that arrived at t=0 blocks a video call packet that arrived at t=1. The video call stutters. QoS is meaningless.
 
-WHAT HAPPENS WITH PRIORITY QUEUE:
+**WHAT HAPPENS WITH PRIORITY QUEUE:**
 All 100 packets are inserted with their QoS priority. Each send cycle polls the minimum-priority (= highest QoS) packet. Video call packets are always forwarded before background packets, regardless of arrival order. QoS is enforced automatically.
 
-THE INSIGHT:
+**THE INSIGHT:**
 A priority queue is not just about performance — it is about *policy enforcement*. The data structure itself embodies the ordering rule: you define priority once (in the comparator), and the structure guarantees every extraction respects it.
 
 ---
@@ -104,10 +104,10 @@ A priority queue is not just about performance — it is about *policy enforceme
 
 > A Priority Queue is like a hospital emergency triage system. Patients enter in any order (insertion), but the next patient seen is always the most critical (highest priority extraction). A FIFO queue is first-come-first-served; the priority queue is most-critical-first — always.
 
-"Patient enters" → `offer(patient)`
-"Most critical patient" → element with minimum priority number
-"Doctor sees next patient" → `poll()`
-"Check who's most critical" → `peek()`
+- "Patient enters" → `offer(patient)`
+- "Most critical patient" → element with minimum priority number
+- "Doctor sees next patient" → `poll()`
+- "Check who's most critical" → `peek()`
 
 Where this analogy breaks down: In a real hospital, the triage nurse re-assesses severity continuously (effectively "decreasing the key"). Java's `PriorityQueue` does not support efficient decrease-key; for that, use a Fibonacci heap or re-insert.
 
@@ -172,7 +172,7 @@ Heap always contains K smallest elements seen so far.
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 New element with priority arrives
 → offer(): inserted, sifted to correct position
@@ -182,7 +182,7 @@ New element with priority arrives
 → Heap re-heapified for next extraction
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Element's priority field mutated after insertion
 → Heap property violated silently
@@ -191,7 +191,7 @@ Element's priority field mutated after insertion
 → Fix: remove, update, re-insert
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10M elements, Java's `PriorityQueue` performs well but `siftDown` on extraction involves cache-inefficient pointer chasing through a large array. A **4-ary heap** (`d=4`) reduces tree height and improves cache occupancy per node. For ultra-high-throughput scenarios (financial tick processing), consider lock-free priority queues from libraries like Chronicle Queue or Agrona. For concurrent access, `PriorityBlockingQueue` exists but serialises all operations through a single lock.
 
 ---
@@ -278,11 +278,11 @@ How to choose: Use Java `PriorityQueue` (binary heap) for all standard cases. Us
 
 **1. Wrong priority direction (max instead of min)**
 
-Symptom: Algorithm processes lowest-priority items first instead of highest.
+**Symptom:** Algorithm processes lowest-priority items first instead of highest.
 
-Root Cause: Used natural ordering (min-heap) when the application logic required max-first.
+**Root Cause:** Used natural ordering (min-heap) when the application logic required max-first.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Unit test: offer 3 items, poll should return highest priority
 pq.offer(new Task("low", 3));
@@ -290,7 +290,7 @@ pq.offer(new Task("high", 1));
 assert pq.poll().name().equals("high"); // fails if wrong direction
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: natural order = min heap (smallest number first)
 PriorityQueue<Task> pq = new PriorityQueue<>();
@@ -301,23 +301,23 @@ PriorityQueue<Task> pq =
         Comparator.comparingInt(Task::getPriority).reversed());
 ```
 
-Prevention: Write the direction explicitly in a comment; always unit-test with two items of different priority.
+**Prevention:** Write the direction explicitly in a comment; always unit-test with two items of different priority.
 
 ---
 
 **2. Stale entries in Dijkstra causing incorrect distances**
 
-Symptom: Dijkstra returns wrong shortest paths; some nodes reported unreachable.
+**Symptom:** Dijkstra returns wrong shortest paths; some nodes reported unreachable.
 
-Root Cause: Using the "lazy deletion" pattern (re-insert instead of decrease-key) but forgetting to skip stale entries where `dist > bestDist[node]`.
+**Root Cause:** Using the "lazy deletion" pattern (re-insert instead of decrease-key) but forgetting to skip stale entries where `dist > bestDist[node]`.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Add assertion: every polled distance should be ≤ best known
 assert dist <= bestDist[node] || isStale(node, dist);
 ```
 
-Fix:
+**Fix:**
 ```java
 while (!pq.isEmpty()) {
     int[] curr = pq.poll();
@@ -327,30 +327,30 @@ while (!pq.isEmpty()) {
 }
 ```
 
-Prevention: Always include the stale-entry guard when using lazy deletion.
+**Prevention:** Always include the stale-entry guard when using lazy deletion.
 
 ---
 
 **3. Memory leak from unbounded priority queue**
 
-Symptom: Memory grows continuously; heap dump shows PriorityQueue with millions of entries.
+**Symptom:** Memory grows continuously; heap dump shows PriorityQueue with millions of entries.
 
-Root Cause: Items are added faster than consumed; no eviction or size bound.
+**Root Cause:** Items are added faster than consumed; no eviction or size bound.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jmap -histo:live <pid> | grep PriorityQueue
 # Shows internal Object[] array size
 ```
 
-Fix: Bound the queue by checking size before insertion and evicting lowest-priority entries:
+**Fix:** Bound the queue by checking size before insertion and evicting lowest-priority entries:
 ```java
 if (pq.size() >= MAX_SIZE && pq.peek() < newElement)
     pq.poll(); // evict lowest
 pq.offer(newElement);
 ```
 
-Prevention: Always bound priority queues in streaming scenarios; monitor queue depth as a metric.
+**Prevention:** Always bound priority queues in streaming scenarios; monitor queue depth as a metric.
 
 ---
 

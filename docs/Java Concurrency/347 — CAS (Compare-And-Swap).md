@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 `synchronized` solves race conditions but has costs: acquiring a lock requires an OS-level system call when contended, parking and unparking threads introduces context switches (~1-2μs), and lock acquisition serialises all threads. For highly contended counters, a `synchronized` increment means 1 thread works while all others queue — throughput limited to one increment per lock cycle.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A metrics collection service receives 1,000,000 HTTP requests/second, each incrementing 5 different counters. With `synchronized`, each counter serialises 1M operations/second. Increments take ~500ns each under contention = 2.5 billion nanoseconds/second = 2.5 seconds/second of work for counters alone — impossible.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **CAS** was created — to perform a compare-and-update atomically at the hardware level, without the overhead of OS-managed locks, enabling **lock-free** concurrent algorithms.
 
 ---
@@ -64,7 +64,7 @@ CAS resolves the race condition problem without a lock. If ten threads all try C
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. CAS is a single atomic instruction — no thread can interleave between compare and swap.
 2. CAS either succeeds (value matched, was swapped) or fails (value changed, no modification) — no partial update.
 3. CAS does not prevent all concurrency issues — it's the basis for building lock-free algorithms, not a general replacement for all locks.
@@ -96,15 +96,15 @@ do {
 // Other thread: retry loop — reads 6, computes 7, CAS 6→7: success
 ```
 
-THE TRADE-OFFS:
-Gain: No OS lock overhead; threads spin instead of park (no context switch for uncontended + briefly contested); enables lock-free algorithms; scales better than synchronized under moderate contention.
-Cost: ABA problem (value changed from A→B→A — CAS doesn't detect); high contention = CAS spinning wastes CPU; no guarantee of fairness (starvation possible); complex to implement correct lock-free algorithms.
+**THE TRADE-OFFS:**
+**Gain:** No OS lock overhead; threads spin instead of park (no context switch for uncontended + briefly contested); enables lock-free algorithms; scales better than synchronized under moderate contention.
+**Cost:** ABA problem (value changed from A→B→A — CAS doesn't detect); high contention = CAS spinning wastes CPU; no guarantee of fairness (starvation possible); complex to implement correct lock-free algorithms.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A counter serving 1M increments/second from 100 threads.
 
 WITH synchronized:
@@ -128,7 +128,7 @@ WITH CAS (AtomicInteger.incrementAndGet()):
 - Throughput: ~5M ops/sec vs ~500K ops/sec with mutex
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 CAS eliminates the OS overhead for uncontended and briefly-contended operations. Under very high contention (hundreds of threads spinning), CAS loops waste CPU — at that point, contention avoidance (partitioning the counter) is more effective than either lock or CAS.
 
 ---
@@ -137,10 +137,10 @@ CAS eliminates the OS overhead for uncontended and briefly-contended operations.
 
 > CAS is like optimistic ticket buying. You see ticket row-5-seat-3 is available (read). You try to book it: "book row-5-seat-3 IF it's still available" (CAS). If someone else booked it millisecond before you (failure), you try another strategy — maybe row-5-seat-4 (retry). No theater staff blocking the seat for you (no lock) — you either succeed instantly or try again. The ticket system (hardware) guarantees two people can't book the exact same seat simultaneously.
 
-"Checking if seat available" → reading current value.
-"Booking if still available" → compareAndSet.
-"Other person booked first" → CAS failure.
-"Trying again" → CAS loop retry.
+- "Checking if seat available" → reading current value.
+- "Booking if still available" → compareAndSet.
+- "Other person booked first" → CAS failure.
+- "Trying again" → CAS loop retry.
 
 Where this analogy breaks down: In ticket booking with many users, you eventually find a seat. In CAS under extreme contention, you might spend many retries before succeeding. This is why `LongAdder` (striped counters) beats `AtomicLong` under truly extreme contention.
 
@@ -243,7 +243,7 @@ CONTENTION FLOW (two threads):
     → [Final: 7 (both increments counted)]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At extreme scale (1000+ threads contending on one CAS), retry loops dominate — cache line bouncing causes `MESI` protocol invalidations across cores, adding ~100ns per CAS. Solution: `LongAdder` (Java 8) uses striped counters — each thread typically updates its own stripe, combining at read time. `LongAdder.increment()` under extreme contention is 10-100× faster than `AtomicLong.incrementAndGet()`.
 
 ---
@@ -330,18 +330,18 @@ How to choose: CAS (`AtomicInteger`, `AtomicReference`) for single-variable atom
 
 **Spinning Threads Under High CAS Contention**
 
-Symptom: CPU 100%, throughput not improving with more threads.
+**Symptom:** CPU 100%, throughput not improving with more threads.
 
-Root Cause: Too many threads contending on one CAS variable — retry loops dominate.
+**Root Cause:** Too many threads contending on one CAS variable — retry loops dominate.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Async profiler: CPU flamegraph shows CAS retry loops
 ./asprof -e cpu -d 30 <pid>
 # Look for AtomicInteger.incrementAndGet in hot path
 ```
 
-Fix:
+**Fix:**
 - Replace `AtomicLong` with `LongAdder` for pure counters.
 - Shard the atomic variable across `N` variables; combine on read.
 - Redesign to reduce contention (separate per-thread accumulation, batch updates).
@@ -350,11 +350,11 @@ Fix:
 
 **ABA Problem Corruption**
 
-Symptom: Lock-free data structure invariants violated — impossible values or missing elements.
+**Symptom:** Lock-free data structure invariants violated — impossible values or missing elements.
 
-Root Cause: ABA sequence: CAS succeeded but the "unchanged" value actually changed and reverted.
+**Root Cause:** ABA sequence: CAS succeeded but the "unchanged" value actually changed and reverted.
 
-Fix:
+**Fix:**
 ```java
 // Use AtomicStampedReference to attach a version counter:
 AtomicStampedReference<Node<T>> head =
@@ -366,7 +366,7 @@ Node<T> current = head.get(stamp);
 head.compareAndSet(current, newNode, stamp[0], stamp[0] + 1);
 ```
 
-Prevention: Always examine lock-free algorithms for ABA susceptibility. Use `AtomicStampedReference` or `AtomicMarkableReference` when ABA is possible.
+**Prevention:** Always examine lock-free algorithms for ABA susceptibility. Use `AtomicStampedReference` or `AtomicMarkableReference` when ABA is possible.
 
 ---
 

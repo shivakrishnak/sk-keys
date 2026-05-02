@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A thief breaks into a museum. The bag holds 50 kg. There are 20 items: a 10 kg painting worth $60,000, a 40 kg sculpture worth $120,000, etc. The thief wants to maximise value taken. Trying all subsets: 2^20 = 1 million combinations. At 100 items: 2^100 ≈ 10^30 combinations — impossible to check in any practical time.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Pure brute-force enumeration is exponential. The observation being wasted: most combinations differ only in whether one specific item is included or not. If you already know the best selection for capacity 49 kg with the first 19 items, you only need one more check to determine the best for 50 kg with all 20 items.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Define `dp[i][w]` = maximum value using items 1..i with weight limit w. Either item i is included (add its value, reduce capacity by its weight) or excluded. This produces an O(N×W) table — polynomial in N and W. The **0/1 Knapsack** is technically NP-hard (W can be exponentially large in binary representation), but in practice W is bounded, making DP efficient. This is exactly why **Knapsack Problem** DP is a fundamental technique.
 
 ---
@@ -64,12 +64,12 @@ The DP's O(N×W) complexity looks polynomial, but W can be encoded in log₂(W) 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. **Optimal substructure:** The best selection for capacity w using items 1..i contains the best selection for the remaining capacity using items 1..i-1.
 2. **Overlapping subproblems:** The subproblem `(i-1, w)` is needed by multiple items i — recomputing it recursively is exponential without memoisation.
 3. **Integer weights:** DP with O(N×W) space requires W to be an integer (or discretizable). Fractional weights with continuous capacity cannot use this DP directly.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The recurrence follows from a binary choice for each item:
 - **Exclude item i:** `dp[i][w] = dp[i-1][w]` — best without item i.
 - **Include item i:** `dp[i][w] = dp[i-1][w - w[i]] + v[i]` — use item i, best for remaining.
@@ -79,31 +79,31 @@ Taking the maximum of these two determines the optimal choice. The table fills l
 **Space optimisation:**
 Since row i depends only on row i-1, a single 1D array of length W+1 (filled right-to-left) gives O(W) space.
 
-THE TRADE-OFFS:
-Gain: Exact optimal solution in O(N×W) — feasible when W is reasonable (up to ~10⁷).
-Cost: O(N×W) time and space — infeasible for W > 10⁸. NP-hard for arbitrary W (no known polynomial algorithm in terms of input bit-length). Items must be indivisible (0/1).
+**THE TRADE-OFFS:**
+**Gain:** Exact optimal solution in O(N×W) — feasible when W is reasonable (up to ~10⁷).
+**Cost:** O(N×W) time and space — infeasible for W > 10⁸. NP-hard for arbitrary W (no known polynomial algorithm in terms of input bit-length). Items must be indivisible (0/1).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Weights: [2, 3, 4], Values: [3, 4, 5], Capacity: 5.
 
-WHAT HAPPENS WITH BRUTE FORCE (2^3 = 8 subsets):
+**WHAT HAPPENS WITH BRUTE FORCE (2^3 = 8 subsets):**
 - {}: value=0. {A}: value=3, weight=2 ✓. {B}: value=4, weight=3 ✓.
 - {C}: value=5, weight=4 ✓. {A,B}: value=7, weight=5 ✓. {A,C}: value=8, weight=6 ✗.
 - {B,C}: value=9, weight=7 ✗. {A,B,C}: too heavy ✗.
 - Best: {A,B} value=7. 8 subsets checked.
 
-WHAT HAPPENS WITH DP:
+**WHAT HAPPENS WITH DP:**
 dp[weight=0..5], 3 items:
 After item A(w=2,v=3): dp=[0,0,3,3,3,3].
 After item B(w=3,v=4): dp=[0,0,3,4,4,7]. (capacity 5: include B(4)+dp[2]=3 → 7).
 After item C(w=4,v=5): dp=[0,0,3,4,5,7]. (capacity 5: include C(5)+dp[1]=0 → 5 < 7; keep 7).
 Result: dp[5]=7. Only 18 operations (3×6) instead of checking 8 subsets.
 
-THE INSIGHT:
+**THE INSIGHT:**
 DP avoids recomputation by storing intermediate results. When computing `dp[C=5]`, the value `dp[B=2]=3` (best for capacity 3 after item A) is already known — no re-exploration. The overlapping subproblems are all the `(capacity, item-prefix)` pairs, each computed exactly once.
 
 ---
@@ -112,11 +112,11 @@ DP avoids recomputation by storing intermediate results. When computing `dp[C=5]
 
 > The DP table is a decision worksheet. Each row is an item; each column is a capacity. Each cell says: "The best I can do with the first i items and exactly j kilograms available." You fill it cell by cell, asking: "Is this item worth including?" — always looking back one row and potentially several columns.
 
-"Item row" → one item's include/exclude decision
-"Capacity column" → available weight budget
-"Previous row same column" → exclude this item's value
-"Previous row, reduced column" → include this item's value
-"Cell value" → best total value for this item prefix + capacity
+- "Item row" → one item's include/exclude decision
+- "Capacity column" → available weight budget
+- "Previous row same column" → exclude this item's value
+- "Previous row, reduced column" → include this item's value
+- "Cell value" → best total value for this item prefix + capacity
 
 Where this analogy breaks down: The 1D space-optimised version fills right-to-left to avoid using the same item twice in a single pass — this "overwrite order" has no direct physical analogy but is a crucial implementation detail.
 
@@ -181,7 +181,7 @@ Start from `dp[N][W]`. For each item i from N to 1: if `dp[i][w] != dp[i-1][w]`,
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 N items with (weight, value) pairs + capacity W
 → Validate: W is bounded integer
@@ -193,7 +193,7 @@ N items with (weight, value) pairs + capacity W
   feature flag packing, test suite selection
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 W too large → OOM or TLE
 → System: heap overflow on dp array allocation
@@ -202,7 +202,7 @@ W too large → OOM or TLE
   if > JVM heap: switch to FPTAS ε=0.01
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In cloud resource optimisation (selecting VM types to minimise cost for given CPU/memory requirements), W can represent millions of memory increments — O(N×W) DP is infeasible. Production systems use:
 1. Greedy by value/weight ratio (fractional knapsack: optimal; 0/1: 2-approximation).
 2. LP relaxation + branch-and-bound for near-optimal with pruning.
@@ -312,11 +312,11 @@ How to choose: Use fractional knapsack when items are divisible (O(N log N), opt
 
 **1. Wrong fill direction in 1D DP (double-counting)**
 
-Symptom: 0/1 knapsack returns higher value than possible; items appear selected multiple times.
+**Symptom:** 0/1 knapsack returns higher value than possible; items appear selected multiple times.
 
-Root Cause: Left-to-right fill allows updating `dp[cap]` using an already-updated `dp[cap - w[i]]` in the same pass — item i counted twice.
+**Root Cause:** Left-to-right fill allows updating `dp[cap]` using an already-updated `dp[cap - w[i]]` in the same pass — item i counted twice.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Test: weights=[2], values=[3], capacity=4
 // 0/1: best value = 3 (select item once)
@@ -324,45 +324,45 @@ Diagnostic:
 assert knapsack1D(new int[]{2}, new int[]{3}, 4) == 3;
 ```
 
-Fix: Fill from `W` down to `w[i]` (right-to-left) for 0/1 knapsack.
+**Fix:** Fill from `W` down to `w[i]` (right-to-left) for 0/1 knapsack.
 
-Prevention: Comment fill direction; add unit test for single-item inputs.
+**Prevention:** Comment fill direction; add unit test for single-item inputs.
 
 ---
 
 **2. Array index out of bounds for large W**
 
-Symptom: `OutOfMemoryError` or `NegativeArraySizeException` when W > Integer.MAX_VALUE / 4.
+**Symptom:** `OutOfMemoryError` or `NegativeArraySizeException` when W > Integer.MAX_VALUE / 4.
 
-Root Cause: `new int[W+1]` allocation fails for W = 10^8 (400 MB for int array alone).
+**Root Cause:** `new int[W+1]` allocation fails for W = 10^8 (400 MB for int array alone).
 
-Diagnostic:
+**Diagnostic:**
 ```java
 long estimatedBytes = (long)(n + 1) * (W + 1) * 4;
 System.out.println("Estimated: " + estimatedBytes/1e6 + " MB");
 ```
 
-Fix: Use FPTAS or meet-in-the-middle when W > 10^7. For 1D DP: `new int[W+1]` only requires W+1 ints ≈ 4 × W bytes.
+**Fix:** Use FPTAS or meet-in-the-middle when W > 10^7. For 1D DP: `new int[W+1]` only requires W+1 ints ≈ 4 × W bytes.
 
-Prevention: Validate W before allocation; document max supported W in API.
+**Prevention:** Validate W before allocation; document max supported W in API.
 
 ---
 
 **3. Forgetting to guard `cap - w[i] >= 0`**
 
-Symptom: `ArrayIndexOutOfBoundsException` for items with weight > some capacity values.
+**Symptom:** `ArrayIndexOutOfBoundsException` for items with weight > some capacity values.
 
-Root Cause: Without checking `w[i-1] <= cap`, accessing `dp[i-1][cap - w[i-1]]` with `cap < w[i-1]` gives a negative index.
+**Root Cause:** Without checking `w[i-1] <= cap`, accessing `dp[i-1][cap - w[i-1]]` with `cap < w[i-1]` gives a negative index.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Check: item weight 5 with capacity 3 → cap - w = -2
 // Guard: if (w[i-1] <= cap) dp[i][cap] = max(...)
 ```
 
-Fix: Always guard `if (w[i-1] <= cap)` or in 1D: loop from `W` down to `w[i]` (loop condition prevents negative index).
+**Fix:** Always guard `if (w[i-1] <= cap)` or in 1D: loop from `W` down to `w[i]` (loop condition prevents negative index).
 
-Prevention: The 1D right-to-left loop bound `for (cap = W; cap >= w[i]; cap--)` naturally prevents this.
+**Prevention:** The 1D right-to-left loop bound `for (cap = W; cap >= w[i]; cap--)` naturally prevents this.
 
 ---
 

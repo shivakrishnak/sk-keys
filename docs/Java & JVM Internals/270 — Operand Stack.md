@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Bytecode instructions need somewhere to receive inputs and put outputs. In a register machine (x86-64), instructions name specific registers: `ADD eax, ebx`. But the JVM targets hundreds of different hardware architectures — defining a JVM instruction set in terms of x86-64 registers would lock it to x86-64 CPUs. The JVM needs an architecture-neutral way to pass data between instructions.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 If JVM instructions named real hardware registers, the bytecode wouldn't be portable. If instructions used named "virtual registers", the bytecode format would need to encode register assignments — complex to generate and verify. There must be a simpler, portable model for intermediate computation.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 A LIFO stack for intermediate values is architecture-neutral (no register naming), trivially verifiable (stack depth is statically known), and simple to target from source code (no register allocation needed at compile time). This is exactly why the Operand Stack exists as the JVM's computation model.
 
 ---
@@ -64,23 +64,23 @@ The Operand Stack is a stack machine, not a register machine. The key implicatio
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. All JVM computation flows through the Operand Stack — no instruction accesses data "in place."
 2. The stack is typed — each value has a statically verified type (int, long, float, double, reference).
 3. The maximum stack depth (`max_stack`) is computable at compile time, enabling pre-allocation.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 means the operand stack is the universal data bus between instructions. Invariant 2 enables the Bytecode Verifier to statically prove that, for example, `iadd` (integer add) will never receive a `double` on its stack — eliminating entire categories of runtime type errors. Invariant 3 means no dynamic resizing needed — the JVM allocates exactly `max_stack` slots when the frame is created.
 
-THE TRADE-OFFS:
-Gain: Architecture-neutral intermediate representation; simple code generation; static type verification.
-Cost: More bytecode operations than a register model (requires explicit push/pop); JIT must translate these to register-based native code; operand stack bytes per instruction slightly larger than register-encoded instructions.
+**THE TRADE-OFFS:**
+**Gain:** Architecture-neutral intermediate representation; simple code generation; static type verification.
+**Cost:** More bytecode operations than a register model (requires explicit push/pop); JIT must translate these to register-based native code; operand stack bytes per instruction slightly larger than register-encoded instructions.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Imagine implementing integer multiplication, `int c = a * b;`, in a register model vs. operand stack model.
 
 Register model (hypothetical JVM):
@@ -100,10 +100,10 @@ imul       // pop a and b, push a*b
 istore_3   // pop result, store as c
 ```
 
-WHAT HAPPENS WITH STACK MODEL:
+**WHAT HAPPENS WITH STACK MODEL:**
 No registers named — bytecode is architecture-neutral. The `imul` instruction doesn't say "multiply R1 and R2" — it says "multiply the top two stack values." The JVM interpreter and JIT can use any CPU's multiply instruction (x86 `IMUL`, ARM `MUL`, RISC-V `MUL`) to implement this — all invisible to the bytecode.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The operand stack is an abstraction layer between language semantics ("multiply these two values") and hardware implementation ("use THIS CPU's multiply instruction"). Abstraction layers enable portability.
 
 ---
@@ -112,11 +112,11 @@ The operand stack is an abstraction layer between language semantics ("multiply 
 
 > The Operand Stack is like a kitchen counter. You put ingredients on it (push values), use them to cook (arithmetic/logic instructions pop+compute+push result), and the finished dish sits on the counter until the next cook picks it up (push to caller's stack on return). The counter has a fixed size (max_stack) set when the kitchen is configured.
 
-"Ingredients placed on counter" → values pushed by iload, iconst, etc.
-"Cooking action" → arithmetic/logic instruction (iadd, imul, if_icmpeq)
-"Finished dish" → result pushed back onto stack
-"Counter size limit" → max_stack (from Code attribute)
-"Next cook picks up the dish" → ireturn passes top of stack to caller
+- "Ingredients placed on counter" → values pushed by iload, iconst, etc.
+- "Cooking action" → arithmetic/logic instruction (iadd, imul, if_icmpeq)
+- "Finished dish" → result pushed back onto stack
+- "Counter size limit" → max_stack (from Code attribute)
+- "Next cook picks up the dish" → ireturn passes top of stack to caller
 
 Where this analogy breaks down: unlike a kitchen counter that holds physical objects, the Operand Stack is strictly LIFO — you can only access the top value, not reach in and pull from the middle.
 
@@ -207,7 +207,7 @@ Before call to: int service.process(int x, int y)
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 JVM starts executing method bytecodes
   → iload_1: reads local var slot 1
@@ -220,7 +220,7 @@ JVM starts executing method bytecodes
     pushes return value to caller's operand stack
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Operand stack underflow (invalid bytecode)
   → Bytecode Verifier catches this at class load
@@ -231,7 +231,7 @@ Operand stack underflow (invalid bytecode)
     instrumentation / ASM code generation)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, the operand stack itself is irrelevant to performance — after JIT compilation, the operand stack is compiled away into CPU registers. What matters is the JIT's ability to allocate the optimal registers for the values that were on the stack. High-frequency methods compiled by C2 (the optimizing JIT compiler) typically have their operand stack operations completely eliminated — all intermediate values live in CPU registers.
 
 ---
@@ -340,11 +340,11 @@ How to choose: As a JVM developer you cannot choose; the JVM uses the operand st
 
 **1. VerifyError: Operand Stack Underflow**
 
-Symptom: `java.lang.VerifyError: (class: MyClass, method: myMethod) stack underflow` at class loading time.
+**Symptom:** `java.lang.VerifyError: (class: MyClass, method: myMethod) stack underflow` at class loading time.
 
-Root Cause: Bytecode instrumentation (ASM, Javassist, CGLIB) generated code that pops more values than are on the stack — an invalid sequence that the verifier catches.
+**Root Cause:** Bytecode instrumentation (ASM, Javassist, CGLIB) generated code that pops more values than are on the stack — an invalid sequence that the verifier catches.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Enable verbose verification
 java -Xverify:all -jar myapp.jar
@@ -354,7 +354,7 @@ javap -c MyClass.class
 # Look for pop/iadd/etc. earlier than corresponding push
 ```
 
-Fix:
+**Fix:**
 ```java
 // When using ASM to generate bytecode:
 // BAD: manually specify stack frames (error-prone)
@@ -367,30 +367,30 @@ ClassWriter cw = new ClassWriter(
 );
 ```
 
-Prevention: Always use `COMPUTE_FRAMES | COMPUTE_MAXS` when generating or transforming bytecode with ASM; run generated classes through the verifier in tests.
+**Prevention:** Always use `COMPUTE_FRAMES | COMPUTE_MAXS` when generating or transforming bytecode with ASM; run generated classes through the verifier in tests.
 
 **2. max_stack Mismatch in Manually Crafted Bytecode**
 
-Symptom: Class loads fine but execution crashes with internal JVM error or gives wrong results.
+**Symptom:** Class loads fine but execution crashes with internal JVM error or gives wrong results.
 
-Root Cause: Manually specifying `max_stack` lower than the actual maximum depth used by the bytecode. The frame is allocated too small and the operand stack overflows off the end.
+**Root Cause:** Manually specifying `max_stack` lower than the actual maximum depth used by the bytecode. The frame is allocated too small and the operand stack overflows off the end.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Verify a specific class
 javap -verbose MyClass.class | grep "stack="
 # If actual executed stack depth > stated max_stack → bug
 ```
 
-Prevention: Use `COMPUTE_MAXS` in ASM; never manually specify max_stack/max_locals when transforming bytecode.
+**Prevention:** Use `COMPUTE_MAXS` in ASM; never manually specify max_stack/max_locals when transforming bytecode.
 
 **3. `dup` / `dup_x1` Confusion in Manual Bytecode**
 
-Symptom: Generated proxy or instrumented code causes `VerifyError: Bad type on operand stack` or unexpected `ClassCastException` at runtime.
+**Symptom:** Generated proxy or instrumented code causes `VerifyError: Bad type on operand stack` or unexpected `ClassCastException` at runtime.
 
-Root Cause: Wrong `dup` variant used. `dup` duplicates the top value (1-word). `dup2` duplicates either a 2-word value (`long`/`double`) or two 1-word values. Using `dup` on a `long` corrupts the stack.
+**Root Cause:** Wrong `dup` variant used. `dup` duplicates the top value (1-word). `dup2` duplicates either a 2-word value (`long`/`double`) or two 1-word values. Using `dup` on a `long` corrupts the stack.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Disassemble and trace the operand stack manually
 javap -c -verbose ProblematicClass.class
@@ -398,7 +398,7 @@ javap -c -verbose ProblematicClass.class
 # Check: is there a dup where there should be dup2?
 ```
 
-Prevention: Never manually code dup variants for `long`/`double`. Use ASM's `Type` class to determine word size and select the correct dup instruction.
+**Prevention:** Never manually code dup variants for `long`/`double`. Use ASM's `Type` class to determine word size and select the correct dup instruction.
 
 ---
 

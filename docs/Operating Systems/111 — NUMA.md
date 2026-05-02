@@ -35,10 +35,10 @@ tags:
 WORLD WITHOUT IT (SMP / UMA):
 Symmetric Multi-Processing (SMP) with Uniform Memory Access: all CPUs share one memory bus to one memory bank. Every CPU has the same latency to any address. Easy to program — no memory placement decisions needed.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A server with 32 cores sharing one memory bus hits a bandwidth bottleneck. The bus becomes the bottleneck, not the CPUs. Scaling past ~8 cores on a single bus requires multiple memory banks. The only question is: how do you connect them?
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 NUMA connects each CPU socket to its own local memory bank, with inter-socket links (HyperTransport for AMD, QPI/UPI for Intel) for cross-socket access. Local memory: 60–80ns latency, full bandwidth. Remote memory (other socket): 120–160ns latency, shared bandwidth. This scales to 256+ cores — but now latency is non-uniform, and the OS and application must know about it.
 
 ---
@@ -65,25 +65,25 @@ The latency difference (1.5–4×) is invisible in profilers that don't attribut
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Each NUMA node has: local CPUs, local DRAM, local L3 cache (often).
 2. Inter-node links have bandwidth limits — remote accesses compete for link bandwidth.
 3. OS default allocation policy: allocate on the node of the first-touching thread.
 4. Context switches can move a thread to a different NUMA node, making previously-local memory now remote.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The OS NUMA allocator (Linux: `libnuma`, `mbind()`, `set_mempolicy()`) attempts **first-touch allocation**: the first thread to access a page determines its NUMA node. For a thread pool, if the OS scheduler migrates threads across nodes (context switch to a different CPU socket), their heap memory remains on the original node — now all accesses are remote. NUMA-aware applications: (1) pin threads to specific NUMA nodes (`numactl --cpunodebind=0`), (2) allocate memory from the same node as the operating thread (`numactl --membind=0`), (3) pre-touch memory from the thread that will use it.
 
-THE TRADE-OFFS:
-Gain: Scales to 100+ cores without single memory bus bottleneck; full bandwidth per node.
-Cost: Remote accesses significantly slower; thread migration can silently cause remote accesses; interleaved workloads (random shared data) can't benefit from locality; OS/application complexity to manage placement.
+**THE TRADE-OFFS:**
+**Gain:** Scales to 100+ cores without single memory bus bottleneck; full bandwidth per node.
+**Cost:** Remote accesses significantly slower; thread migration can silently cause remote accesses; interleaved workloads (random shared data) can't benefit from locality; OS/application complexity to manage placement.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 2-socket server: Node 0 (CPUs 0–15, 64GB RAM), Node 1 (CPUs 16–31, 64GB RAM). JVM starts on CPUs 0–15, allocates heap on Node 0.
 
 NORMAL OPERATION:
@@ -99,7 +99,7 @@ NUMA FAILURE MODE:
 - 2.5× memory latency → GC pauses increase by 2–3× → stop-the-world pauses spike
 - Application appears to degrade without any code change
 
-THE INSIGHT:
+**THE INSIGHT:**
 This is the silent NUMA problem: everything looks fine in CPU utilization and GC counters until you check `numastat -c <PID>` and see 90% remote hits.
 
 ---
@@ -295,11 +295,11 @@ spec:
 
 **1. Silent NUMA Remote Hit Degradation**
 
-Symptom: Java application has 2–3× worse GC pause times on production server vs local machine; CPU utilization looks normal.
+**Symptom:** Java application has 2–3× worse GC pause times on production server vs local machine; CPU utilization looks normal.
 
-Root Cause: Production server is multi-socket (NUMA); JVM heap allocated on Node 0, but OS migrated JVM threads to Node 1; all heap accesses are now remote.
+**Root Cause:** Production server is multi-socket (NUMA); JVM heap allocated on Node 0, but OS migrated JVM threads to Node 1; all heap accesses are now remote.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check NUMA topology first
@@ -314,19 +314,19 @@ ps -o pid,psr -p $(pgrep java) | head -5
 # psr = processor; if scattered across sockets = problem
 ```
 
-Fix: `numactl --cpunodebind=0 --membind=0 java ...` to pin to Node 0.
+**Fix:** `numactl --cpunodebind=0 --membind=0 java ...` to pin to Node 0.
 
-Prevention: Add NUMA topology check to deployment runbook; configure Kubernetes `topologyManagerPolicy: single-numa-node`.
+**Prevention:** Add NUMA topology check to deployment runbook; configure Kubernetes `topologyManagerPolicy: single-numa-node`.
 
 ---
 
 **2. GC Thread NUMA Mismatch in G1**
 
-Symptom: G1 GC pause times are good during warm-up but degrade after extended runtime.
+**Symptom:** G1 GC pause times are good during warm-up but degrade after extended runtime.
 
-Root Cause: `-XX:+UseNUMA` splits heap into NUMA regions, but application threads (not GC threads) started accessing cross-NUMA regions due to object graph traversal; GC threads working on remote regions.
+**Root Cause:** `-XX:+UseNUMA` splits heap into NUMA regions, but application threads (not GC threads) started accessing cross-NUMA regions due to object graph traversal; GC threads working on remote regions.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Enable GC logging with NUMA detail
@@ -334,17 +334,17 @@ java -XX:+UseNUMA -Xlog:gc+numa=debug -Xlog:gc -Xmx8g ...
 # Look for: "NUMA allocation fail" or high remote access in GC logs
 ```
 
-Fix: Review object layout — ensure hot objects are allocated on the same NUMA node as their accessing threads.
+**Fix:** Review object layout — ensure hot objects are allocated on the same NUMA node as their accessing threads.
 
 ---
 
 **3. Kubernetes Pod Eviction Due to NUMA Memory Pressure**
 
-Symptom: Pod with NUMA-pinned memory (single-numa-node policy) fails to schedule or is evicted when the target NUMA node is memory-pressured even though total system RAM is available.
+**Symptom:** Pod with NUMA-pinned memory (single-numa-node policy) fails to schedule or is evicted when the target NUMA node is memory-pressured even though total system RAM is available.
 
-Root Cause: `single-numa-node` TopologyManager policy requires all resources on one node; if Node 0 has < 32GB free but Node 1 has 60GB free, a 32GB-requesting pod can't be placed on Node 0 and scheduling fails.
+**Root Cause:** `single-numa-node` TopologyManager policy requires all resources on one node; if Node 0 has < 32GB free but Node 1 has 60GB free, a 32GB-requesting pod can't be placed on Node 0 and scheduling fails.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 kubectl describe pod <pod-name>
@@ -355,9 +355,9 @@ kubectl get node <node> -o json | \
 numactl --hardware  # on the host: check per-node free memory
 ```
 
-Fix: Use `best-effort` TopologyManager policy for workloads that can tolerate cross-NUMA access; reserve `single-numa-node` for strict latency requirements.
+**Fix:** Use `best-effort` TopologyManager policy for workloads that can tolerate cross-NUMA access; reserve `single-numa-node` for strict latency requirements.
 
-Prevention: Monitor per-NUMA-node memory utilization; don't overcommit individual nodes.
+**Prevention:** Monitor per-NUMA-node memory utilization; don't overcommit individual nodes.
 
 ---
 

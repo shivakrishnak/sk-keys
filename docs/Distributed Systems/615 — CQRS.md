@@ -273,14 +273,14 @@ public OrderSummaryDto getOrderSummary(String orderId) {
 
 **Read Model Desync (Projector Failure)**
 
-Symptom: Customer dashboard shows orders as "PLACED" but they were actually shipped
+**Symptom:** Customer dashboard shows orders as "PLACED" but they were actually shipped
 yesterday. Event projector has a bug that causes it to skip `OrderShipped` events.
 Dead letter queue is filling up with unprocessed events.
 
 Cause: Projector threw an uncaught exception on `OrderShipped` events (NPE — tracking
 number was null in test data, not expected in production).
 
-Fix: (1) Immediately: fix the projector to handle null tracking numbers.
+**Fix:** (1) Immediately: fix the projector to handle null tracking numbers.
 (2) Recovery: replay `OrderShipped` events from the DLQ (dead letter queue).
 (3) Verify: compare read model checksums against write model counts.
 (4) Prevention: projectors must be idempotent (replay-safe); add specific test for

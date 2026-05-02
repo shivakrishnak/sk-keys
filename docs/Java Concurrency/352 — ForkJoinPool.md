@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Divide-and-conquer algorithms split a problem into independent subtasks and combine results. With `ThreadPoolExecutor`, a coordinator thread submits subtasks and calls `future.get()` — blocking itself while waiting. A divide-into-8 problem: coordinator blocked waiting for each level, pool threads working. The blocked coordinator wastes a thread and reduces effective concurrency.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A merge sort of 10M elements with 8 CPU cores. With `ThreadPoolExecutor(8)`: the coordinator thread splits, submits, and blocks (waiting) — effectively using threads as waiting threads, not working threads. Actual parallelism < 8 because blocked threads don't work. Only the leaf-level tasks use all 8 cores simultaneously.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 **`ForkJoinPool`** was created for exactly this pattern — it allows blocked threads (waiting for subtasks) to pick up other available work instead of truly blocking — maximising CPU utilisation for divide-and-conquer workloads.
 
 ---
@@ -64,12 +64,12 @@ Work-stealing reduces contention vs. a single shared queue: each thread works fr
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Each worker has a private `ArrayDeque` — NO contention between workers doing their own work.
 2. Stealing is from the TAIL (oldest task) — the thief's access pattern differs from the owner's, minimising lock contention on the deque.
 3. `fork()` + `join()` in a task triggers the worker to pick up other available work instead of blocking during `join()`.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The work-stealing mechanism:
 ```
 Worker T1's deque (LIFO for owner, FIFO for stealers):
@@ -85,15 +85,15 @@ When T1 calls join(subtask) and subtask is not done:
 
 This is different from a regular ThreadPoolExecutor where `future.get()` truly parks the thread doing nothing.
 
-THE TRADE-OFFS:
-Gain: High CPU utilisation for recursive divide-and-conquer; no blocked waiting threads; efficient for parallel streams.
-Cost: Overhead of deque management and stealing; JVM-wide common pool shared by all parallel streams + CompletableFuture; blocking I/O in common pool tasks is catastrophic; not ideal for simple task queues (use ThreadPoolExecutor instead).
+**THE TRADE-OFFS:**
+**Gain:** High CPU utilisation for recursive divide-and-conquer; no blocked waiting threads; efficient for parallel streams.
+**Cost:** Overhead of deque management and stealing; JVM-wide common pool shared by all parallel streams + CompletableFuture; blocking I/O in common pool tasks is catastrophic; not ideal for simple task queues (use ThreadPoolExecutor instead).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Sum an array of 1M integers in parallel.
 
 WITH ThreadPoolExecutor (inefficient):
@@ -128,7 +128,7 @@ long result = ForkJoinPool.commonPool()
     .invoke(new SumTask(arr, 0, arr.length));
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 `right.compute()` runs inline (no fork overhead for last subtask). `left.fork()` + `left.join()` allows the worker to pick up other tasks during join — no wasted blocking.
 
 ---
@@ -137,9 +137,9 @@ THE INSIGHT:
 
 > ForkJoinPool is like a construction crew with a critical-path work policy. Foreman (coordinator) divides blueprint into tasks (fork), each worker takes a task. When someone finishes early (idle), they look around — the slowest team has leftover tasks — they pick one up (steal) without coordination overhead. No worker ever stands idle as long as work exists.
 
-"Foreman divides blueprint" → `RecursiveTask.fork()`.
-"Picking up another team's leftover tasks" → work-stealing.
-"All workers contributing" → work-stealing prevents idle CPU cores.
+- "Foreman divides blueprint" → `RecursiveTask.fork()`.
+- "Picking up another team's leftover tasks" → work-stealing.
+- "All workers contributing" → work-stealing prevents idle CPU cores.
 
 ---
 
@@ -235,7 +235,7 @@ customPool.submit(
     → [T1: combines left + right → result to parent]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 ForkJoinPool parallelism should equal available CPU cores for CPU-bound work. For tasks below `THRESHOLD`, sequential is faster (spawn overhead > parallelism gain). Tune threshold: too small = too many fork() calls, too large = too little parallelism.
 
 ---
@@ -294,11 +294,11 @@ How to choose: ForkJoinPool for CPU-bound recursive algorithms and parallel stre
 # Thread dump: all ForkJoinPool workers BLOCKED on I/O
 jstack <pid> | grep "ForkJoinPool.commonPool" -A5
 ```
-Fix: Use dedicated `ForkJoinPool` for workloads with any blocking I/O.
+**Fix:** Use dedicated `ForkJoinPool` for workloads with any blocking I/O.
 
 **Task granularity too fine (threshold too small):**
-Symptom: Overhead exceeds benefit; poor performance despite parallelism.
-Fix: Increase threshold. Benchmark with JMH varying threshold sizes.
+**Symptom:** Overhead exceeds benefit; poor performance despite parallelism.
+**Fix:** Increase threshold. Benchmark with JMH varying threshold sizes.
 
 ---
 

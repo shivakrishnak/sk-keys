@@ -32,7 +32,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A developer writes `String query = "SELECT * FROM users WHERE id = " + userId;` — a SQL injection vulnerability. It passes all unit tests, all integration tests, all load tests. It ships to production. An attacker sends `userId = "1 OR 1=1"` and downloads the entire users table. Without security testing, functional correctness tests miss security vulnerabilities entirely — because the code is functionally correct, it just responds to malicious input unexpectedly.
 
 THE CRITICAL INSIGHT:
@@ -282,12 +282,12 @@ public class UserController {
 **1. Too Many SAST False Positives → Team Ignores All Alerts**
 
 Cause: Default SAST rules tuned for all languages/frameworks, not your specific codebase.
-Fix: Tune rules for your framework (disable irrelevant rules, add custom rules). Require triage for every new HIGH alert before suppressing.
+**Fix:** Tune rules for your framework (disable irrelevant rules, add custom rules). Require triage for every new HIGH alert before suppressing.
 
 **2. DAST Scans Never Run Because They're Too Slow**
 
 Cause: Full ZAP active scan takes 2-4 hours; not practical for every PR.
-Fix: Run passive (baseline) scan on every PR (fast); active scan only on staging/release branches.
+**Fix:** Run passive (baseline) scan on every PR (fast); active scan only on staging/release branches.
 
 ---
 

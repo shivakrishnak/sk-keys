@@ -32,7 +32,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 When a lambda's only purpose is to call an existing method, the lambda is noise:
 ```java
 names.stream()
@@ -42,10 +42,10 @@ names.stream()
 ```
 Each lambda is a wrapper: it takes `s`, passes it to a method, and returns the result. The `s`-as-parameter and `s`-as-argument are identical characters with zero informational value. Writing `s -> s.method()` adds visual noise without clarifying intent.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A data processing pipeline chains 15 operations, each a thin lambda wrapping one method call. 15 identical `x -> x.method()` patterns, each 20 characters of noise before the method name. In code review, readers must parse each lambda to notice it's just a passthrough.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Method References** were created — to directly name the method without the redundant parameter-passing scaffolding, letting the compiler infer the functional interface binding.
 
 ---
@@ -71,12 +71,12 @@ The real power of method references is readability: `map(String::toUpperCase)` r
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A method reference is syntactic sugar for a lambda that calls exactly one method.
 2. The method's signature must match the target functional interface's abstract method signature.
 3. The four kinds of method references differ in how the receiver (the object on which the method is called) is bound.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The four forms correspond to four kinds of dispatch:
 
 | Form | Syntax | Lambda Equivalent | When to Use |
@@ -101,15 +101,15 @@ Function<String, Integer> parse = Integer::parseInt;
 Supplier<ArrayList<String>> makeList = ArrayList::new;
 ```
 
-THE TRADE-OFFS:
-Gain: Cleaner syntax when a lambda does only one method call; method names serve as self-documenting intent.
-Cost: Four different forms require knowing which applies; method references can be ambiguous when method names are overloaded; nested method references are unreadable.
+**THE TRADE-OFFS:**
+**Gain:** Cleaner syntax when a lambda does only one method call; method names serve as self-documenting intent.
+**Cost:** Four different forms require knowing which applies; method references can be ambiguous when method names are overloaded; nested method references are unreadable.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A stream pipeline to print all user emails.
 
 WITHOUT METHOD REFERENCES:
@@ -128,7 +128,7 @@ users.stream()
     .forEach(System.out::println); // same: calls println
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 Method references replace lambdas that are pure method calls. The `email.contains("@")` check must remain a lambda because it adds a non-method-call argument. Method references are not always applicable — only when the lambda is a direct passthrough to a method.
 
 ---
@@ -137,9 +137,9 @@ Method references replace lambdas that are pure method calls. The `email.contain
 
 > A method reference is like a shortcut key on a keyboard. Instead of typing out the full command (lambda), you press Ctrl+C (method reference). The shortcut is only valid when the action exactly matches a predefined operation. Custom multi-step actions need full lambda expressions.
 
-"Predefined shortcut (Ctrl+C)" → method reference (`String::toUpperCase`).
-"Custom action" → lambda expression (`s -> s.toUpperCase().trim()`).
-"Shortcut works only exactly" → method reference works only when lambda calls exactly one method.
+- "Predefined shortcut (Ctrl+C)" → method reference (`String::toUpperCase`).
+- "Custom action" → lambda expression (`s -> s.toUpperCase().trim()`).
+- "Shortcut works only exactly" → method reference works only when lambda calls exactly one method.
 
 Where this analogy breaks down: Keyboard shortcuts do a fixed action; method references are generic — `String::length` applies to any `String`, not one specific instance (for the unbound form).
 
@@ -223,7 +223,7 @@ ArrayList<String> sized = sizedListFactory.apply(16);
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Source: names.stream().map(String::toUpperCase)]
     → [Compiler: String::toUpperCase is unbound instance ref]
@@ -233,7 +233,7 @@ NORMAL FLOW:
     → [Result: stream of uppercase strings]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Ambiguous overloaded method reference]
     → [Compiler: reference to println is ambiguous]
@@ -242,7 +242,7 @@ FAILURE PATH:
     → [or cast: (Consumer<String>) System.out::println]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 Method references and lambdas have identical performance characteristics — both use `invokedynamic` + `LambdaMetafactory`. At scale, the advantage of method references is code review and readability. In codebases with hundreds of stream pipelines, method references reduce visual noise, making reviews faster and bugs more visible.
 
 ---
@@ -322,11 +322,11 @@ How to choose: Use method references for lambdas that directly call exactly one 
 
 **Ambiguous Method Reference**
 
-Symptom: Compile error "reference to [method] is ambiguous".
+**Symptom:** Compile error "reference to [method] is ambiguous".
 
-Root Cause: Referenced method is overloaded; compiler cannot determine which overload matches the functional interface.
+**Root Cause:** Referenced method is overloaded; compiler cannot determine which overload matches the functional interface.
 
-Fix:
+**Fix:**
 ```java
 // BAD: ambiguous — println has multiple overloads
 names.forEach(System.out::println); // may work for String
@@ -343,11 +343,11 @@ names.forEach(printer);
 
 **Wrong Method Reference Form**
 
-Symptom: Compile error "invalid method reference" or "method not found."
+**Symptom:** Compile error "invalid method reference" or "method not found."
 
-Root Cause: Using static reference form for instance method (or vice versa).
+**Root Cause:** Using static reference form for instance method (or vice versa).
 
-Fix:
+**Fix:**
 ```java
 // BAD: mixing up forms
 List<String> names = users.stream()

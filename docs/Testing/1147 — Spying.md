@@ -280,12 +280,12 @@ class NotificationServiceTest {
 **1. Real Method Called During Spy Setup (NPE in `when()`)**
 
 Cause: `when(spy.riskyMethod()).thenReturn(x)` — `riskyMethod()` is called for real during setup, throws NPE.
-Fix: Always use `doReturn(x).when(spy).riskyMethod()` with spies.
+**Fix:** Always use `doReturn(x).when(spy).riskyMethod()` with spies.
 
 **2. Spy Causes Real Side Effects in Tests (Database Written, Email Sent)**
 
 Cause: A method that wasn't stubbed executed its real implementation.
-Fix: Identify all methods with side effects and stub them with `doNothing()` or `doReturn()`. Or: use a Fake instead of a Spy.
+**Fix:** Identify all methods with side effects and stub them with `doNothing()` or `doReturn()`. Or: use a Fake instead of a Spy.
 
 ---
 

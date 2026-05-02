@@ -32,15 +32,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 Some problems are naturally self-similar: a file system directory contains files and other directories; a binary tree node has a value and two subtree nodes; a sorting algorithm divides a list into sub-lists and sorts them. Without recursion, you'd need to handle these self-similar structures with explicit stacks and loops — writing code that manages the "undo" state manually, tracking depth with index variables, and reasoning about arbitrary nesting levels without the language's natural mechanism for managing nested calls.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 Traversing a file directory with unknown depth using explicit loops requires maintaining a manual stack, pushing directories and popping them — essentially reimplementing what the call stack already does naturally. The code is verbose, error-prone, and harder to verify correct than the actual problem warrants.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 This is exactly why recursion was embraced as a programming construct — it lets you express self-similar problems naturally, leveraging the call stack to manage "return to where I was" automatically, making the code match the structure of the problem directly.
 
@@ -68,13 +68,13 @@ Recursion works because every self-similar problem can be expressed as: "handle 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Every recursive call must move toward the base case — the input must get strictly smaller (or the recursive step must reduce the problem).
 2. The base case must be reachable from any valid input — infinite recursion is a bug.
 3. Each call's state is independent — local variables are preserved per call frame on the call stack.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 The call stack acts as an implicit data structure. Each recursive call pushes a frame; each return pops a frame. The stack builds up during descent (processing) and unwinds during ascent (returning accumulated results).
 
@@ -89,19 +89,19 @@ factorial(4):
   frame: n=4 → returns 4 × 6 = 24
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
-Gain: code that mirrors the problem's structure; natural for self-similar data (trees, graphs, nested structures); often more concise than iterative equivalents.
-Cost: stack space proportional to recursion depth; risk of stack overflow for deep recursion; function call overhead per recursive step; debugging requires understanding call stack depth.
+**Gain:** code that mirrors the problem's structure; natural for self-similar data (trees, graphs, nested structures); often more concise than iterative equivalents.
+**Cost:** stack space proportional to recursion depth; risk of stack overflow for deep recursion; function call overhead per recursive step; debugging requires understanding call stack depth.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Traverse a binary tree and print all values. The tree can have any depth.
 
-WHAT HAPPENS WITHOUT RECURSION (iterative):
+**WHAT HAPPENS WITHOUT RECURSION (iterative):**
 
 ```java
 // Must manually manage stack to mimic what recursion gives for free:
@@ -119,7 +119,7 @@ void traverse(Node root) {
 // hard to reason about without running it
 ```
 
-WHAT HAPPENS WITH RECURSION:
+**WHAT HAPPENS WITH RECURSION:**
 
 ```java
 void traverse(Node node) {
@@ -132,7 +132,7 @@ void traverse(Node node) {
 // trivially correct because base case is obvious
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 Recursion turns "how do I traverse this?" into "what do I do at this node + trust that the same logic handles the subtrees." The iterative version is doing manually what the recursive version gets from the language automatically. For self-similar structures, recursion isn't just shorter — it's _correct by construction_.
 
 ---
@@ -216,7 +216,7 @@ Solution: memoization (cache results to avoid recomputation)
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 factorial(4) called
@@ -235,7 +235,7 @@ Stack unwinds:
 Result: 24
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 No base case (or base case unreachable):
@@ -250,7 +250,7 @@ Stack trace shows repeated function name 100s of times
 Observable: java.lang.StackOverflowError at recursiveMethod
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 Processing a linked list of 1 million elements recursively requires 1 million stack frames — guaranteed stack overflow on any standard JVM. At production scale, recursive algorithms must be analysed for maximum depth and converted to iteration with an explicit stack when depth could exceed ~1000. Tree traversal on a balanced BST with 1 million nodes: depth = log₂(1,000,000) ≈ 20 — perfectly safe recursion depth.
 
@@ -369,13 +369,13 @@ void traverseIterative(File root) {
 
 **StackOverflowError from Deep Recursion**
 
-Symptom:
+**Symptom:**
 `java.lang.StackOverflowError` with stack trace showing the recursive method repeated hundreds of times. Occurs for large inputs or when traversing deep structures.
 
-Root Cause:
+**Root Cause:**
 Each recursive call consumes a stack frame. Default JVM thread stack is 256KB–1MB. For large inputs, the frame count exceeds stack capacity.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check current thread stack size in JVM:
@@ -389,23 +389,23 @@ java -Xss4m -jar app.jar  # 4MB per thread stack
 # if (depth > 500) throw new RuntimeException("Too deep: " + depth);
 ```
 
-Fix:
+**Fix:**
 Convert to iterative with explicit `Deque<>` stack. Or ensure input is bounded (e.g., tree is balanced). Or use tail recursion if language supports TCO.
 
-Prevention:
+**Prevention:**
 Analyse maximum possible recursion depth during design. Any recursion on user-supplied data (file paths, JSON nesting, tree depth) must have a depth limit.
 
 ---
 
 **Missing or Unreachable Base Case**
 
-Symptom:
+**Symptom:**
 StackOverflowError even for small inputs. Stack trace shows the function at the same input values repeatedly.
 
-Root Cause:
+**Root Cause:**
 Base case condition is wrong (off-by-one), or the recursive call doesn't reduce the input toward the base case (input size unchanged or growing).
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```java
 // Add trace logging to verify base case is reached:
@@ -418,10 +418,10 @@ public int factorial(int n) {
 // check the condition (n <= 1 vs n == 0 vs n <= 0)
 ```
 
-Fix:
+**Fix:**
 Verify the base case covers all terminal inputs. Ensure the recursive step strictly reduces the input toward the base case. Add a `n < 0` guard for safety if negative inputs are possible.
 
-Prevention:
+**Prevention:**
 Write the base case test first. Test with input = 0, 1, and -1 before testing larger values.
 
 ---

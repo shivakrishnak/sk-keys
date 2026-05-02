@@ -299,15 +299,15 @@ test("checkout shows error when payment fails", async ({ page }) => {
 
 **1. Selector Brittleness (Breaks After UI Refactor)**
 Cause: Tests use CSS classes or XPath tied to implementation structure.
-Fix: Use `data-testid` attributes; use ARIA roles (`getByRole`). Agree with dev team: test IDs are stable contracts.
+**Fix:** Use `data-testid` attributes; use ARIA roles (`getByRole`). Agree with dev team: test IDs are stable contracts.
 
 **2. Flaky Tests Due to Animation/Transition**
 Cause: Click fires while element is animating; click lands on wrong element or is lost.
-Fix: Playwright handles most cases with auto-wait. For custom animations: `locator.waitFor({ state: 'stable' })` or disable animations in test config.
+**Fix:** Playwright handles most cases with auto-wait. For custom animations: `locator.waitFor({ state: 'stable' })` or disable animations in test config.
 
 **3. Tests Pass Locally, Fail in CI (Headless vs. Headed)**
 Cause: Headless browser has different viewport, font rendering, or missing environment variables.
-Fix: Match CI environment locally: `playwright test --headed=false`. Use Playwright's Docker image in CI for consistency.
+**Fix:** Match CI environment locally: `playwright test --headed=false`. Use Playwright's Docker image in CI for consistency.
 
 ---
 

@@ -402,15 +402,15 @@ public WebServerFactoryCustomizer<TomcatServletWebServerFactory> cookieConfig() 
 
 **CSRF Token Misconfiguration — Double-Submit Without SOP Enforcement**
 
-Symptom:
+**Symptom:**
 Security test: an attacker sets their own cookie value for XSRF-TOKEN and sends the
 same value in the header → request accepted. Double-submit cookie pattern bypassed.
 
-Root Cause:
+**Root Cause:**
 Double-submit cookie with same subdomain sharing. Subdomain `evil.company.com` can set
 cookies for `.company.com`, allowing the attacker to override the CSRF cookie.
 
-Diagnostic:
+**Diagnostic:**
 
 ```
 # Test for subdomain cookie injection:

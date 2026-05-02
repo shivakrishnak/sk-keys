@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 An e-commerce site handles 200 req/sec on normal days. Black Friday approaches — estimated 2,000 req/sec peak. Without load testing: the team has no idea if the system handles 2,000 RPS. They guess "probably fine" based on 200 RPS experience. Black Friday arrives: at 1,400 RPS, connection pool exhausted, database becomes the bottleneck, p99 latency spikes to 15 seconds. Checkout fails. Revenue loss: $2M.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Traffic growth is non-linear. A system that handles 200 RPS smoothly may fail at 1,400 RPS because: the database connection pool is sized for 200 RPS; a blocking mutex becomes a bottleneck at high concurrency; caches heat at low load but miss under different access patterns at high load. These failure modes don't appear at low load. Only load testing at the target level reveals them.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Load testing as a discipline became critical with internet-scale applications in the late 1990s (dot-com era). The failure of online retailer toysrus.com in 1999 (site went down during Christmas due to load) made load testing mainstream. Netflix's Chaos Engineering (2010s) extended the concept: if failure under load is inevitable, simulate it continuously and build resilience.
 
 ---
@@ -107,9 +107,9 @@ When load test fails, correlate:
   High latency late in test → memory leak / GC pressure
 ```
 
-THE TRADE-OFFS:
-Gain: Identifies bottlenecks before production load events; enables capacity planning; validates horizontal scaling.
-Cost: Requires production-like environment (expensive); risk of accidental production data corruption if run against production; results depend heavily on test data quality.
+**THE TRADE-OFFS:**
+**Gain:** Identifies bottlenecks before production load events; enables capacity planning; validates horizontal scaling.
+**Cost:** Requires production-like environment (expensive); risk of accidental production data corruption if run against production; results depend heavily on test data quality.
 
 ---
 
@@ -328,12 +328,12 @@ export default function ({ token }) {
 **1. Load Test Passes in Staging, Fails in Production**
 
 Cause: Staging has 1/10th the data of production; queries that hit indexes in staging scan full tables in production.
-Fix: Use production data volume in staging (or anonymised copy). Add EXPLAIN ANALYZE for queries to catch missing indexes.
+**Fix:** Use production data volume in staging (or anonymised copy). Add EXPLAIN ANALYZE for queries to catch missing indexes.
 
 **2. Load Test Results Vary 50% Between Runs**
 
 Cause: JVM JIT not warmed up, shared environment, GC timing variation.
-Fix: 5-minute warmup run excluded from metrics. Dedicated isolated environment. Run 3 times and use median.
+**Fix:** 5-minute warmup run excluded from metrics. Dedicated isolated environment. Run 3 times and use median.
 
 ---
 

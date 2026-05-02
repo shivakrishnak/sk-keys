@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 After submitting an async task, how do you get its result? With `Runnable`, you have no return path. You'd store results in shared state and use `CountDownLatch` or `Object.wait/notify` to poll for completion — custom synchronisation for every result-retrieval case. Different async APIs use different completion signals — no standard contract for "is the task done and what did it return?"
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A service submits 10 database queries in parallel using raw `Thread` objects. The calling code uses 10 `AtomicReference<Result>` fields plus a `CountDownLatch(10)`. The result collection code is 30 lines of boilerplate. Adding exception handling doubles it. Adding timeout support doubles it again.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **`Future<V>`** was created — to be the standard contract for "I will give you the result eventually" — handling waiting, result retrieval, exception propagation, timeout, and cancellation in one standard interface.
 
 ---
@@ -64,12 +64,12 @@ This is exactly why **`Future<V>`** was created — to be the standard contract 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A `Future` can be in three states: incomplete, completed (with value), or completed (with exception), or cancelled.
 2. `get()` blocks if not yet complete and returns the value (or throws) once available.
 3. Cancellation attempts to prevent the task from running; if already running, only interrupts if `mayInterruptIfRunning=true`.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 `FutureTask<V>` is both `Runnable` and `Future<V>`. When submitted to an executor:
 - Executor calls `FutureTask.run()` on a worker thread.
 - `run()` calls the wrapped `Callable.call()`.
@@ -90,15 +90,15 @@ DERIVED DESIGN:
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Standard result retrieval interface; exception propagation; timeout; cancellation.
-Cost: `get()` is synchronous/blocking; no chaining or composition; cannot react to completion without polling; `cancel()` doesn't guarantee task termination.
+**THE TRADE-OFFS:**
+**Gain:** Standard result retrieval interface; exception propagation; timeout; cancellation.
+**Cost:** `get()` is synchronous/blocking; no chaining or composition; cannot react to completion without polling; `cancel()` doesn't guarantee task termination.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Two long-running computations needed for a report. Submit both, collect both results.
 
 WITHOUT Future (submit-then-wait pattern error):
@@ -120,7 +120,7 @@ Report2 r2 = f2.get(); // report2 may already be done
 // Total: max(5, 5) = 5 seconds — parallel!
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The key to using `Future` correctly is **submitting before blocking**. Each `get()` blocks only on its specific task; parallel tasks run simultaneously. Submit all first, block for results later.
 
 ---
@@ -129,10 +129,10 @@ The key to using `Future` correctly is **submitting before blocking**. Each `get
 
 > A `Future` is a claim ticket at a dry cleaner. You drop off your clothes (submit task), get a numbered ticket (`Future`). You can come back and check ("is order #42 ready?" — `isDone()`). When you show up, you either get your clothes or hear "we had a problem" (`ExecutionException`). You can also say "I changed my mind, discard it" (`cancel()`).
 
-"Claim ticket" → `Future<V>` reference.
-"Coming back to check" → `isDone()`.
-"Blocking at the counter" → `get()`.
-"Problem with order" → `ExecutionException(cause)`.
+- "Claim ticket" → `Future<V>` reference.
+- "Coming back to check" → `isDone()`.
+- "Blocking at the counter" → `get()`.
+- "Problem with order" → `ExecutionException(cause)`.
 
 Where this analogy breaks down: A dry cleaner gives you your item and you keep it. `Future.get()` can be called multiple times — after the first call, the result is cached and returned immediately.
 
@@ -208,7 +208,7 @@ List<Data> results = futures.stream()
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [submit(callable)] → [FutureTask created]     ← YOU ARE HERE
     → [Worker thread executes callable.call()]
@@ -218,7 +218,7 @@ NORMAL FLOW:
     → [future.get() returns stored value V]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [callable throws RuntimeException]
     → [FutureTask state: EXCEPTIONAL]
@@ -227,7 +227,7 @@ FAILURE PATH:
     → [getCause() → original RuntimeException]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, blocking `future.get()` in a loop creates a bottleneck — results are processed sequentially. Use `CompletableFuture` for reactive, non-blocking result handling. For batch processing, `ExecutorService.invokeAll()` submits all and returns when all complete (more efficient than manual submit + get loop).
 
 ---
@@ -294,21 +294,21 @@ How to choose: Use `Future` for simple "submit then collect" patterns. Use `Comp
 
 **Blocking get() Negating Parallelism**
 
-Symptom: "Parallel" code runs sequentially — total time = sum of all task times.
+**Symptom:** "Parallel" code runs sequentially — total time = sum of all task times.
 
-Root Cause: `submit()` followed immediately by `get()` before submitting other tasks.
+**Root Cause:** `submit()` followed immediately by `get()` before submitting other tasks.
 
-Fix: Submit all tasks, store futures in a list, then iterate and call `get()`.
+**Fix:** Submit all tasks, store futures in a list, then iterate and call `get()`.
 
 ---
 
 **Swallowed ExecutionException**
 
-Symptom: Task failed silently. No exception visible to caller.
+**Symptom:** Task failed silently. No exception visible to caller.
 
-Root Cause: `ExecutionException` caught but cause not extracted or rethrown.
+**Root Cause:** `ExecutionException` caught but cause not extracted or rethrown.
 
-Fix:
+**Fix:**
 ```java
 try { return f.get(); }
 catch (ExecutionException e) {

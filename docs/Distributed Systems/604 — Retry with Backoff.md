@@ -249,14 +249,14 @@ public class PaymentService {
 
 **Retry Storm Overwhelming a Recovering Service**
 
-Symptom: Service B goes down for 60 seconds. During recovery at t=60s, Service A's
+**Symptom:** Service B goes down for 60 seconds. During recovery at t=60s, Service A's
 retries create a load spike 10× normal. Service B immediately dies again under the
 retry storm. Cycle repeats. Service B cannot stay recovered for more than a few seconds.
 
 Cause: Service A has max_attempts=10, no circuit breaker, no jitter. All 1000 instances
 of Service A retry simultaneously at t=60s.
 
-Fix: (1) Add circuit breaker: after 50% failure rate, open circuit for 60s → Service B
+**Fix:** (1) Add circuit breaker: after 50% failure rate, open circuit for 60s → Service B
 gets 60s recovery time without bombardment. (2) Add decorrelated jitter to spread
 remaining retries. (3) Reduce max_attempts to 3. (4) Add retry budget at cluster level:
 limit total retries to 10% of successful calls via service mesh rate limiting.

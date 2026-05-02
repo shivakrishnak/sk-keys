@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Without page faults, the OS would have to load a program's entire memory into RAM before allowing it to execute. A program that uses 8 GB of data structures must have all 8 GB in physical RAM even if the program only accesses 500 MB during a typical run. This wastes memory and makes startup slow. Worse, you couldn't run programs larger than physical RAM at all.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Mainframes in the 1960s faced this exact problem. Programmers had to manually manage overlays — loading and unloading segments of code from disk manually, a tedious and error-prone process.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why the Page Fault mechanism was created — it allows the OS to load pages lazily, on demand, only when a process actually accesses them. Programs start instantly, memory is allocated only when used, and processes larger than RAM become possible.
 
 ---
@@ -65,34 +65,34 @@ Most page faults are minor and invisible — they are the normal mechanism by wh
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. A page fault happens when PTE.Present = 0, regardless of reason.
 2. The OS — not the CPU — decides what "not present" means: lazy allocation, swapped out, file-backed, or illegal access.
 3. After the fault is handled successfully, the CPU retries the faulting instruction from the beginning.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The CPU cannot distinguish "this page is swapped out" from "this address is completely invalid" — both have Present=0. The OS must decide. Linux's `do_page_fault()` handler looks up the faulting address in the process's VMA (Virtual Memory Area) list. If a VMA covers the address: it's a handleable fault — allocate a page (minor) or read from swap/file (major). If no VMA covers the address: it's an invalid access → SIGSEGV.
 
-THE TRADE-OFFS:
-Gain: Demand paging (lazy allocation), programs larger than RAM, fast startup, memory overcommit.
-Cost: Major faults add 1–10 ms latency (disk read); first-access page faults add 1–10 µs (minor). Latency-sensitive apps must pre-fault pages with `mlock()` to avoid runtime faults.
+**THE TRADE-OFFS:**
+**Gain:** Demand paging (lazy allocation), programs larger than RAM, fast startup, memory overcommit.
+**Cost:** Major faults add 1–10 ms latency (disk read); first-access page faults add 1–10 µs (minor). Latency-sensitive apps must pre-fault pages with `mlock()` to avoid runtime faults.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A Java process with a 4 GB heap. It allocates a 1 GB byte array: `byte[] data = new byte[1_000_000_000]`.
 
-WHAT HAPPENS WITHOUT page fault (eager allocation):
+**WHAT HAPPENS WITHOUT page fault (eager allocation):**
 
 1. OS must immediately find 250,000 physical pages (4 KB each) for the 1 GB array.
 2. All 1 GB is reserved and zeroed before the allocation returns.
 3. If 1 GB RAM is not available immediately → allocation fails even if the array will only use 10 MB.
 4. JVM startup takes longer as heap is faulted in eagerly.
 
-WHAT HAPPENS WITH page fault (demand paging):
+**WHAT HAPPENS WITH page fault (demand paging):**
 
 1. OS creates a VMA entry for 1 GB of address space — no physical pages allocated.
 2. `new byte[1_000_000_000]` returns instantly.
@@ -100,7 +100,7 @@ WHAT HAPPENS WITH page fault (demand paging):
 4. Each fault allocates one zero page (~1 µs). Only pages actually accessed consume RAM.
 5. If only 10 MB is accessed, only ~2,500 physical pages are ever used.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Page faults turn memory allocation from an eager, physical operation into a lazy, virtual contract. "Allocating" memory is just making a promise; the OS only pays with real RAM when the process collects on the promise.
 
 ---
@@ -109,10 +109,10 @@ Page faults turn memory allocation from an eager, physical operation into a lazy
 
 > A page fault is an on-demand printing system. A book exists as a master template (disk/swap). Your personal copy only prints pages when you actually open to them. The first time you turn to a page, the printer fires up (minor/major fault). If you reference a page number that doesn't exist in the book at all, you get an error.
 
-"Turning to a page" → accessing a virtual address
-"Printing a new page" → minor fault — OS allocates a zero page
-"Fetching from archive" → major fault — OS reads page from swap or file
-"Page number doesn't exist" → invalid fault → SIGSEGV
+- "Turning to a page" → accessing a virtual address
+- "Printing a new page" → minor fault — OS allocates a zero page
+- "Fetching from archive" → major fault — OS reads page from swap or file
+- "Page number doesn't exist" → invalid fault → SIGSEGV
 
 Where this analogy breaks down: Unlike printing, a major page fault can be eliminated by pre-loading ("prefaulting") — `mlock()` pre-prints all pages before runtime access.
 
@@ -167,7 +167,7 @@ The fault-and-retry design (CPU retries the faulting instruction after handling)
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [Process: first access to malloc'd address]
@@ -181,7 +181,7 @@ NORMAL FLOW:
 FAILURE PATH (major):
 [Access to swapped-out page] → [#PF] → [OS: read from swap device] → [I/O waits 5ms] → [Page loaded] → [PTE installed] → [Process resumes 5ms late]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 A JVM starting with a 32 GB heap on a cold machine triggers 8 million minor page faults — visible as a 2–5 second pause before the first request is served. Production JVMs use `-XX:+AlwaysPreTouch` to pre-fault all heap pages at startup, eliminating runtime fault latency at the cost of longer startup. At 10K containers starting simultaneously on a host, page fault storms can saturate the kernel's page allocator lock.
 
 ---
@@ -215,11 +215,11 @@ How to choose: You don't choose fault types — the OS determines them. Optimise
 
 **1. Major Fault Storm (Swap Thrashing)**
 
-Symptom: Application latency spikes to hundreds of milliseconds; `vmstat 1` shows high `majflt` and `pgmajfault`; disk I/O spikes on the swap device.
+**Symptom:** Application latency spikes to hundreds of milliseconds; `vmstat 1` shows high `majflt` and `pgmajfault`; disk I/O spikes on the swap device.
 
-Root Cause: Working set larger than available RAM; pages being evicted and re-loaded continuously.
+**Root Cause:** Working set larger than available RAM; pages being evicted and re-loaded continuously.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 vmstat 1 5
@@ -227,19 +227,19 @@ vmstat 1 5
 perf stat -e major-faults -p <PID> -- sleep 5
 ```
 
-Fix: Increase RAM, reduce memory footprint, add swap on faster storage (NVMe), or use `cgroups` to limit competing processes.
+**Fix:** Increase RAM, reduce memory footprint, add swap on faster storage (NVMe), or use `cgroups` to limit competing processes.
 
-Prevention: Monitor `node_vmstat_pgmajfault` in Prometheus; alert on > 10/sec in production.
+**Prevention:** Monitor `node_vmstat_pgmajfault` in Prometheus; alert on > 10/sec in production.
 
 ---
 
 **2. JVM Startup Latency from Minor Faults**
 
-Symptom: Spring Boot app takes 30+ seconds to serve first request; `perf stat` shows millions of minor faults during startup.
+**Symptom:** Spring Boot app takes 30+ seconds to serve first request; `perf stat` shows millions of minor faults during startup.
 
-Root Cause: Large JVM heap allocated but not touched during startup; first requests trigger millions of demand-paging faults.
+**Root Cause:** Large JVM heap allocated but not touched during startup; first requests trigger millions of demand-paging faults.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 /usr/bin/time -v java -jar app.jar 2>&1 | grep "Page faults"
@@ -247,7 +247,7 @@ Diagnostic:
 perf stat -e minor-faults java -jar app.jar
 ```
 
-Fix:
+**Fix:**
 
 ```bash
 # BAD: default heap (demand paging on first access)
@@ -258,17 +258,17 @@ java -Xmx8g -XX:+AlwaysPreTouch -jar app.jar
 # Slower startup, but zero fault latency at runtime
 ```
 
-Prevention: Use container readiness probes to delay traffic until warmup completes.
+**Prevention:** Use container readiness probes to delay traffic until warmup completes.
 
 ---
 
 **3. userfaultfd Page Fault Handling Latency**
 
-Symptom: CRIU restore or VM live migration takes unexpectedly long; process appears to start but hangs on memory access.
+**Symptom:** CRIU restore or VM live migration takes unexpectedly long; process appears to start but hangs on memory access.
 
-Root Cause: `userfaultfd` handler in user space is too slow to service faults; faulting thread blocks waiting for the handler to deliver a page.
+**Root Cause:** `userfaultfd` handler in user space is too slow to service faults; faulting thread blocks waiting for the handler to deliver a page.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Monitor userfaultfd events
@@ -277,9 +277,9 @@ cat /proc/<PID>/fdinfo/<fd_num>
 echo 1 > /sys/kernel/debug/tracing/events/mm/mm_userfaultfd_handler_enabled
 ```
 
-Fix: Optimise the userfaultfd handler to use larger batch transfers and minimise locking. Pre-populate critical regions with `UFFDIO_COPY` before the process accesses them.
+**Fix:** Optimise the userfaultfd handler to use larger batch transfers and minimise locking. Pre-populate critical regions with `UFFDIO_COPY` before the process accesses them.
 
-Prevention: Benchmark userfaultfd handler throughput vs required fault-handling rate before relying on it in latency-sensitive paths.
+**Prevention:** Benchmark userfaultfd handler throughput vs required fault-handling rate before relying on it in latency-sensitive paths.
 
 ---
 

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A method needs to store named variables: `int x = 5; String name = "Alice"; long total = 0L;`. If there were no named storage within a frame, every intermediate value would have to live on the operand stack — but the operand stack is strictly LIFO and cannot hold multiple named values accessible in any order. The stack can only hold what is currently being computed.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 You need to use a variable multiple times in different expressions: `x * 2` in one place, `x + y` in another. With only an operand stack, you'd have to recompute `x` each time. Named, addressable per-frame storage is required for any non-trivial method.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 The Local Variable Table is the indexed array within each Stack Frame that provides named, reusable storage for all the method's variables. This is why the Local Variable Table exists: it is the persistent-within-frame storage that the operand stack lacks.
 
 ---
@@ -64,23 +64,23 @@ The LVT enables random-access retrieval of variables (`iload_1`, `iload_2` can b
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Local variables and parameters must be addressable by position (index), not by name, at runtime.
 2. The total number of slots required is deterministic at compile time.
 3. `long` and `double` values require two consecutive slots.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 mandates an indexed (array) storage, not a stack. Invariant 2 enables the `max_locals` attribute to be set at compile time in the class file, allowing exact frame size pre-allocation. Invariant 3 reflects the 32-bit slot width — the JVM's "word size" for most operations. The JVM uses a 32-bit slot for uniformity; 64-bit types (long, double) simply occupy two slots via an implicit pairing convention.
 
-THE TRADE-OFFS:
-Gain: O(1) random access to any local variable; compile-time predictable size enabling zero-overhead frame allocation.
-Cost: Slot reuse across scopes can obscure debugging; 64-bit types use 2 slots, making slot indexing slightly surprising.
+**THE TRADE-OFFS:**
+**Gain:** O(1) random access to any local variable; compile-time predictable size enabling zero-overhead frame allocation.
+**Cost:** Slot reuse across scopes can obscure debugging; 64-bit types use 2 slots, making slot indexing slightly surprising.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A method has three local variables used in different computations:
 ```java
 int process(int a, int b) {
@@ -91,13 +91,13 @@ int process(int a, int b) {
 ```
 `sum` is used after it's computed, and `product` is computed later. Both need to be accessible after being stored.
 
-WHAT HAPPENS WITH ONLY AN OPERAND STACK (no LVT):
+**WHAT HAPPENS WITH ONLY AN OPERAND STACK (no LVT):**
 Compute `a + b = 7`. Push 7 onto the stack. Now compute `a * b`. But we need `a` and `b` again — they've been consumed by `iadd`. We'd have to either recompute them or never pop them. The stack becomes cluttered with values from different computations mixed together, making code verification and generation extremely complex.
 
-WHAT HAPPENS WITH LVT:
+**WHAT HAPPENS WITH LVT:**
 Slot 1=a=3, slot 2=b=4 (loaded from parameters). Compute `a + b = 7`, store to slot 3=sum. Compute `a * b = 12` by loading slots 1 and 2 again independently, store to slot 4=product. Load slots 3 and 4 independently, add, return. Random access enables clean computation without value re-pushing.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Random-access storage (LVT) and sequential-access computation (operand stack) are complementary models. Variables need random access; intermediate computation needs LIFO. The JVM separates these concerns cleanly inside each frame.
 
 ---
@@ -106,11 +106,11 @@ Random-access storage (LVT) and sequential-access computation (operand stack) ar
 
 > The Local Variable Table is a row of light switches on a control panel, each labelled with a slot number. Any switch can be flipped on or off at any time (iload/istore), in any order. The Operand Stack, by contrast, is a stack of sticky notes — you can only read or remove the top note.
 
-"Labelled switch slot N" → local variable slot N in the array
-"Flipping switch on (iload_N)" → pushing slot N's value onto operand stack
-"Flipping switch off (istore_N)" → storing operand stack top into slot N
-"Row of 10 switches" → max_locals=10 allocated in the frame
-"Sticky notes stack" → operand stack (strictly LIFO)
+- "Labelled switch slot N" → local variable slot N in the array
+- "Flipping switch on (iload_N)" → pushing slot N's value onto operand stack
+- "Flipping switch off (istore_N)" → storing operand stack top into slot N
+- "Row of 10 switches" → max_locals=10 allocated in the frame
+- "Sticky notes stack" → operand stack (strictly LIFO)
 
 Where this analogy breaks down: unlike light switches, slots hold typed values (int, long, reference) and can only hold one value at a time per slot — setting a slot overwrites its previous value.
 
@@ -207,7 +207,7 @@ Variables that go out of scope before others are declared share slots:
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Method invocation: process(3, 4)
   → New frame created
@@ -222,7 +222,7 @@ Method invocation: process(3, 4)
   → Frame destroyed (LVT slots freed)
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Accessing uninitialised local variable (Java level)
   → javac catches this: "variable x might not have
@@ -231,7 +231,7 @@ Accessing uninitialised local variable (Java level)
     that it is written before it is read
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, the LVT is irrelevant to performance — JIT-compiled methods have their LVT slots optimised to CPU registers. The LVT becomes important again only during deoptimisation: the JIT must have enough information to reconstruct the LVT state from register values (via the DebugInfo data structure) so that, if deoptimisation is needed (e.g., for exception handling), the interpreter can resume from the correct LVT state.
 
 ---
@@ -335,48 +335,48 @@ How to choose: LVT is for persistence within a method; operand stack is for in-f
 
 **1. Debug Symbols Stripped — Unhelpful Stack Traces**
 
-Symptom: Stack traces in production show generic variable names or none at all; debugger shows `slot[1]`, `slot[2]` instead of variable names.
+**Symptom:** Stack traces in production show generic variable names or none at all; debugger shows `slot[1]`, `slot[2]` instead of variable names.
 
-Root Cause: Production JARs compiled with `-g:none` or obfuscated with ProGuard, stripping the optional `LocalVariableTable` debug attribute.
+**Root Cause:** Production JARs compiled with `-g:none` or obfuscated with ProGuard, stripping the optional `LocalVariableTable` debug attribute.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check for debug symbols
 javap -l -c MyClass.class | grep LocalVariable
 # If no LocalVariableTable section: debug stripped
 ```
 
-Fix:
+**Fix:**
 ```bash
 # Compile with debug symbols (default for javac)
 javac -g MyClass.java  # includes all debug info
 # or -g:lines,vars for specific debug attrs
 ```
 
-Prevention: Compile production code with at least `-g:lines` for line numbers in stack traces; use obfuscation mappings (ProGuard's mapping.txt) to restore names in crash reports.
+**Prevention:** Compile production code with at least `-g:lines` for line numbers in stack traces; use obfuscation mappings (ProGuard's mapping.txt) to restore names in crash reports.
 
 **2. VerifyError from Slot Type Mismatch**
 
-Symptom: `VerifyError: Bad local variable type` when loading a class with manually crafted or instrumented bytecode.
+**Symptom:** `VerifyError: Bad local variable type` when loading a class with manually crafted or instrumented bytecode.
 
-Root Cause: A bytecode instruction expects an `int` at a slot but an `Object` reference is there — or a slot is used before it has been initialised in a particular code path.
+**Root Cause:** A bytecode instruction expects an `int` at a slot but an `Object` reference is there — or a slot is used before it has been initialised in a particular code path.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 javap -c -verbose OffendingClass.class
 # Trace through the bytecode: does iload at slot N
 # come after the slot was initialised with an int?
 ```
 
-Prevention: Use ASM `COMPUTE_FRAMES` to let ASM track variable types automatically; never manually specify LVT slot types in instrumentation code.
+**Prevention:** Use ASM `COMPUTE_FRAMES` to let ASM track variable types automatically; never manually specify LVT slot types in instrumentation code.
 
 **3. Debugger Cannot Resolve Variable at Certain Lines**
 
-Symptom: IDE debugger shows "variable not in scope" for a local variable even though the line appears to be within the variable's scope.
+**Symptom:** IDE debugger shows "variable not in scope" for a local variable even though the line appears to be within the variable's scope.
 
-Root Cause: The `LocalVariableTable` attribute marks the start bytecode offset after the variable is first assigned. Before its first store, it is technically "not in scope" even if it's been declared.
+**Root Cause:** The `LocalVariableTable` attribute marks the start bytecode offset after the variable is first assigned. Before its first store, it is technically "not in scope" even if it's been declared.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 javap -l Calculator.class
 # Check LocalVariableTable: "Start" column
@@ -384,7 +384,7 @@ javap -l Calculator.class
 # (= after the first store instruction, not at declaration)
 ```
 
-Prevention: For debugging, ensure debug compilation; consider initialising variables on declaration for predictable scope start.
+**Prevention:** For debugging, ensure debug compilation; consider initialising variables on declaration for predictable scope start.
 
 ---
 

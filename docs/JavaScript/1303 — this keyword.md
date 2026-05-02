@@ -152,10 +152,10 @@ Without dynamic this:
 > Think of `this` as a **name badge** assigned right before a function runs. If you're called as a method on an object, you get that object's badge. If you're called with `new`, you get a fresh blank badge. If you call with `call(obj)`, you're handed a specific badge. If called standalone, you get whatever the default badge is (global or nothing). Arrow functions are permanent employees who always wear the badge of the department they were hired into — they never swap badges.
 
 "Badge" = the `this` binding
-"Called as method on obj" = implicit binding → obj's badge
-"call(obj) / apply(obj)" = explicit binding → forced badge
-"new Fn()" = new binding → fresh badge for new instance
-"Standalone call" = default binding → global/undefined
+- "Called as method on obj" = implicit binding → obj's badge
+- "call(obj) / apply(obj)" = explicit binding → forced badge
+- "new Fn()" = new binding → fresh badge for new instance
+- "Standalone call" = default binding → global/undefined
 "Arrow function permanent department badge" = lexical this from enclosing scope
 
 ---

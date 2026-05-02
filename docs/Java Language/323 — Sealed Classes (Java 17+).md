@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A payment system models payment results as a class hierarchy: `PaymentResult`, extended by `Success`, `Failure`, `Pending`, `Refunded`. A method handling results uses `instanceof` chains. Without sealed classes, there is no compile-time guarantee that the chain is exhaustive. A new `Disputed` subtype is added — the handling code has been deployed to 12 microservices, none of which know about `Disputed`. All 12 silently fall through to a default case that throws `IllegalStateException("Unknown state")` or, worse, does nothing.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 The `Disputed` branch is missing in the revenue recognition service. Disputed transactions are silently ignored. $2M in disputed payments is unrecognised in accounting for a quarter. The bug is found only during an audit.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Sealed Classes** were created — to close a type hierarchy so the compiler knows all permitted subtypes and can verify that every `switch` expression handles every case, turning a runtime logic hole into a compile error in every consuming service.
 
 ---
@@ -64,12 +64,12 @@ The real value of sealed types is not inheritance control — it's exhaustive sw
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The set of permitted subclasses is finite and fully known at compile time.
 2. Every direct permitted subclass must be in the same package (or named module) as the sealed class.
 3. Every switch expression (not statement) over a sealed type is exhaustively checked by the compiler.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1, `switch` expressions can be proven exhaustive: if all `N` permitted subtypes have a case, the switch handles all possible values. The compiler rejects switches missing cases. This is the algebraic data type — a sum type whose variants are precisely enumerated.
 
 Given invariant 3, adding a new permitted subtype (`case Disputed` to `PaymentResult`) forces every caller with a sealed switch to handle the new case or explicitly provide a default. This is safe change propagation by the type system.
@@ -96,15 +96,15 @@ String describe(PaymentResult result) {
 // Add Disputed to permits → compile error here until handled
 ```
 
-THE TRADE-OFFS:
-Gain: Compiler-enforced exhaustive handling; closed type hierarchy for clear domain modeling; enables pattern matching; documents all valid states in one place.
-Cost: Requires Java 17+; all permitted subclasses must be in same compilation unit (module limitation); `non-sealed` escape hatch weakens the guarantee; breaks "open-closed principle" — adding a new variant forces all consumers to update.
+**THE TRADE-OFFS:**
+**Gain:** Compiler-enforced exhaustive handling; closed type hierarchy for clear domain modeling; enables pattern matching; documents all valid states in one place.
+**Cost:** Requires Java 17+; all permitted subclasses must be in same compilation unit (module limitation); `non-sealed` escape hatch weakens the guarantee; breaks "open-closed principle" — adding a new variant forces all consumers to update.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A shape rendering engine: `Shape` can be `Circle`, `Rectangle`, or `Triangle`. The `render()` function must handle all three.
 
 WITHOUT SEALED CLASSES:
@@ -133,7 +133,7 @@ String render(Shape s) {
 // Every switch MUST add case or default — no silent bugs
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 Without sealing, the type hierarchy is open — new subtypes can appear silently. With sealing, the hierarchy is closed — the compiler knows every possible type and can verify that every switch handles them all. The shift from runtime surprises to compile-time errors is the entire value.
 
 ---
@@ -142,9 +142,9 @@ Without sealing, the type hierarchy is open — new subtypes can appear silently
 
 > A sealed type is like a formal menu at a restaurant. The kitchen makes exactly these 5 dishes — no substitutions. When a waiter takes orders, the restaurant can verify at order time (compile time) that every order is for a listed dish. No order can arrive for an unlisted dish. A regular class hierarchy is an open menu where new dishes can appear any time — the waiter can only check at serving time (runtime).
 
-"Listed dishes only" → permitted subclasses only.
-"Order verification at order time" → exhaustiveness check at compile time.
-"New dish added: waiter must be retrained" → new subtype: all switch expressions must be updated or won't compile.
+- "Listed dishes only" → permitted subclasses only.
+- "Order verification at order time" → exhaustiveness check at compile time.
+- "New dish added: waiter must be retrained" → new subtype: all switch expressions must be updated or won't compile.
 
 Where this analogy breaks down: `non-sealed` is like putting "other items available" at the bottom of the menu — it re-opens that branch. A `non-sealed` permitted subclass breaks the exhaustiveness guarantee for anything that extends it.
 
@@ -232,7 +232,7 @@ javap -verbose PaymentResult.class | grep -A5 "PermittedSubclasses"
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Developer adds Disputed to PaymentResult permits]
     → [javac compiles PaymentResult.java]
@@ -244,7 +244,7 @@ NORMAL FLOW:
     → [No silent fallthrough — $2M bug prevented]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [switch with default added to suppress compile error]
     → [Disputed falls to default: "Unknown case" logged]
@@ -252,7 +252,7 @@ FAILURE PATH:
     → [Fix: remove default, handle Disputed explicitly]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In a large monorepo with many services, a sealed type change propagates compile errors to every consumer immediately — forcing all teams to update before the new code ships. This is the "Strangler Fig" pattern's compile-time equivalent: the type system itself prevents gradual, uncontrolled migration. Balancing safety (no default) with change velocity (teams need time to update) leads to the transitional helper pattern: keep a default that throws with a deprecation warning, remove it in the next API version.
 
 ---
@@ -362,13 +362,13 @@ How to choose: Use sealed interfaces with records when modeling a closed domain 
 
 **IncompatibleClassChangeError at Runtime (Subclass Violation)**
 
-Symptom:
+**Symptom:**
 `java.lang.IncompatibleClassChangeError: class FraudResult is not a permitted subtype`.
 
-Root Cause:
+**Root Cause:**
 A class compiled against an older version of a sealed interface (before sealing was added, or with a different permits list) is loaded at runtime after the sealed interface was updated.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check sealed class bytecode:
 javap -verbose PaymentResult.class \
@@ -378,22 +378,22 @@ javap -verbose PaymentResult.class \
 javap -verbose FraudResult.class | grep "implements"
 ```
 
-Fix:
+**Fix:**
 Ensure all classes and sealed interfaces are compiled together and deployed together. Never allow binary-incompatible versions of sealed hierarchies to coexist at runtime. Use module versions to enforce compatibility.
 
-Prevention: Treat sealed hierarchy changes as breaking API changes requiring coordinated deployment.
+**Prevention:** Treat sealed hierarchy changes as breaking API changes requiring coordinated deployment.
 
 ---
 
 **Missing Case Causes default to Silently Handle New Variant**
 
-Symptom:
+**Symptom:**
 New variant added to sealed hierarchy. No compile error because switch has `default`. New variant handled by generic default case — behaviour is wrong but no exception.
 
-Root Cause:
+**Root Cause:**
 `default` in a switch over a sealed type acts as a catch-all that suppresses the exhaustiveness benefit. The new case falls to the default silently.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Search for switch on sealed types with a default:
 grep -rn "switch.*PaymentResult\|default ->" \
@@ -401,7 +401,7 @@ grep -rn "switch.*PaymentResult\|default ->" \
 # Any switch with 'default' over a sealed type is suspect
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: default suppresses exhaustiveness check
 String handle(PaymentResult r) {
@@ -423,19 +423,19 @@ String handle(PaymentResult r) {
 }
 ```
 
-Prevention: Never add `default` to switch expressions over sealed types unless you explicitly intend to handle future subtypes generically. Use `default -> throw new AssertionError("New sealed type not handled: " + r)` as a safety net during transition.
+**Prevention:** Never add `default` to switch expressions over sealed types unless you explicitly intend to handle future subtypes generically. Use `default -> throw new AssertionError("New sealed type not handled: " + r)` as a safety net during transition.
 
 ---
 
 **non-sealed Escape Hatch Breaks Exhaustiveness**
 
-Symptom:
+**Symptom:**
 `switch` over a sealed type reports "not exhaustive" even though all listed `permits` subclasses are handled.
 
-Root Cause:
+**Root Cause:**
 One of the permitted subclasses is `non-sealed`, meaning the compiler cannot guarantee it has no further subtypes. The switch can't be exhaustive if an unlisted type could appear.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 javac MyService.java
 # error: the switch expression does not cover all possible
@@ -444,7 +444,7 @@ javac MyService.java
 javap -verbose Shape.class | grep "PermittedSubclasses" -A10
 ```
 
-Fix:
+**Fix:**
 ```java
 // Option 1: change non-sealed to final (if no extension needed)
 final class ExtPlugin implements Plugin {}
@@ -459,7 +459,7 @@ String describe(Plugin p) {
 }
 ```
 
-Prevention: Use `non-sealed` only when third-party extension is genuinely needed. Document the exhaustiveness tradeoff explicitly in the API contract.
+**Prevention:** Use `non-sealed` only when third-party extension is genuinely needed. Document the exhaustiveness tradeoff explicitly in the API contract.
 
 ---
 

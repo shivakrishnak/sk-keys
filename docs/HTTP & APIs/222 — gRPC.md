@@ -460,16 +460,16 @@ public class UserLookupService {
 
 **gRPC UNAVAILABLE / Connection Refused at Scale**
 
-Symptom:
+**Symptom:**
 Service intermittently returns `StatusRuntimeException: UNAVAILABLE` under load.
 Reducing RPS makes the error disappear.
 
-Root Cause:
+**Root Cause:**
 gRPC uses HTTP/2, which limits concurrent streams per connection
 (`MAX_CONCURRENT_STREAMS`, default 100 in many servers). A single channel
 with one HTTP/2 connection at 100+ concurrent calls will fail.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check channel pool size — grpc-java:
@@ -486,11 +486,11 @@ ManagedChannel channel = ManagedChannelBuilder
     .build();
 ```
 
-Fix:
+**Fix:**
 Create multiple channels (connection pool) or use a client load balancer
 that distributes calls across multiple connections/server replicas.
 
-Prevention:
+**Prevention:**
 Load test gRPC endpoints before production. Monitor `grpc_client_started_total`
 and `grpc_server_started_total` Prometheus metrics for connection saturation.
 
@@ -498,16 +498,16 @@ and `grpc_server_started_total` Prometheus metrics for connection saturation.
 
 **Proto Schema Breaking Change**
 
-Symptom:
+**Symptom:**
 After deploying a new service version, old clients receive garbled or missing
 field values. No errors — just wrong data.
 
-Root Cause:
+**Root Cause:**
 A developer renamed a field or reused a field number in the `.proto` file.
 Protobuf serializes by field number, not name — renaming is safe; reusing
 a number for a different type is a breaking binary incompatibility.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Use buf (proto lint + breaking change detection):
@@ -519,11 +519,11 @@ git diff main -- user.proto
 # Look for changed field numbers
 ```
 
-Fix:
+**Fix:**
 Never reuse field numbers. To "remove" a field: use `reserved` keyword.
 New fields must always use new, unused field numbers.
 
-Prevention:
+**Prevention:**
 Run `buf breaking` in CI pipeline. Fail builds that introduce breaking changes.
 Maintain a `.proto` change review process.
 

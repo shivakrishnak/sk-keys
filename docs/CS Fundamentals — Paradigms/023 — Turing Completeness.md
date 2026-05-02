@@ -31,15 +31,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 In the 1930s, there was no formal definition of "what can a computer compute?" Different mathematical systems (lambda calculus, combinatory logic, recursive functions) were being developed independently to formalise computation. Without a universal measure, you couldn't reason about whether two languages were equivalent, whether a problem was fundamentally solvable, or whether one notation was strictly less powerful than another.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 If someone designs a new language and claims "you can write any program in it," how do you verify this? Is SQL as powerful as Python? Is HTML a programming language? Is a rule engine a computer? Without a formal definition of "computable," these questions have no rigorous answers — just opinions.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 Alan Turing defined a simple abstract machine (the Turing machine) that captured the essence of computation. Any system that can simulate this machine can compute the same class of problems. This gave a precise definition: a system is _Turing complete_ if and only if it can simulate a Turing machine. Turing completeness is the binary property that separates "capable of arbitrary computation" from "limited to a specific class of operations."
 
@@ -67,7 +67,7 @@ The minimum requirements are surprisingly simple: conditional branching + unboun
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. **Minimum requirements for Turing completeness:**
    - Conditional execution (if state = X, go to Y)
@@ -76,7 +76,7 @@ CORE INVARIANTS:
 2. **Turing completeness is relative**: Turing machines have infinite tape. Real machines have finite memory. "Turing complete" in practice means "Turing complete for inputs that fit in memory."
 3. **Turing completeness is not about speed, safety, or usability** — it's purely about _what can be computed_.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 A Turing machine consists of:
 
@@ -100,16 +100,16 @@ To simulate this in any programming language:
 
 Every general-purpose language provides this. Therefore every general-purpose language is Turing complete.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
-Gain: a Turing-complete system can express any algorithm, any computation. Expressive power is maximal.
-Cost: Turing completeness implies the _Halting Problem_ is undecidable — there is no general algorithm to determine whether an arbitrary program will terminate. This means Turing-complete languages cannot be fully analysed for termination. Template metaprogramming, build systems, and configuration languages that are accidentally Turing complete inherit this undecidability problem.
+**Gain:** a Turing-complete system can express any algorithm, any computation. Expressive power is maximal.
+**Cost:** Turing completeness implies the _Halting Problem_ is undecidable — there is no general algorithm to determine whether an arbitrary program will terminate. This means Turing-complete languages cannot be fully analysed for termination. Template metaprogramming, build systems, and configuration languages that are accidentally Turing complete inherit this undecidability problem.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You design a query language for a database. Users write queries like `SELECT * FROM users WHERE age > 30`. Is this language Turing complete?
 
 WITHOUT TURING COMPLETENESS:
@@ -118,7 +118,7 @@ Standard SQL (no CTEs, no procedural extensions) is _not_ Turing complete. You c
 WITH ACCIDENTAL TURING COMPLETENESS:
 SQL:1999 added recursive CTEs (`WITH RECURSIVE`). With recursive CTEs + sufficient capability, SQL becomes Turing complete. This is useful for graph traversals and hierarchical data, but it introduces the halting problem: you can now write a SQL query that never terminates.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Language designers sometimes _intentionally_ avoid Turing completeness. Configuration languages (YAML, TOML), CSS (mostly), and template languages (Jinja without extensions) are intentionally limited to prevent arbitrary code execution from configuration files — a security and predictability feature. When a language accidentally becomes Turing complete (CSS animations + clever selectors), it creates unforeseen attack vectors and undecidability problems.
 
 ---
@@ -205,7 +205,7 @@ Conditional + loop + unbounded memory = Turing complete.
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 Question: "Is this system Turing complete?"
@@ -224,7 +224,7 @@ Implications:
   - Static analysis limited to over-/under-approximations
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Missing unbounded memory:
@@ -241,7 +241,7 @@ Missing conditional branching:
   → CSS transitions before animations (debated) — limited expressiveness
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 In enterprise systems, accidental Turing completeness in DSLs causes maintenance nightmares. A business rules engine intended for simple pricing rules that becomes Turing complete over time can have rules that conflict in undecidable ways — no static tool can guarantee rule safety. Kubernetes YAML + custom operators can trigger arbitrary code execution in controllers — the configuration language's effective expressiveness approaches Turing completeness via indirection.
 
@@ -352,13 +352,13 @@ SELECT COUNT(*) FROM counter;
 
 **Accidental Turing Completeness in Configuration/DSL**
 
-Symptom:
+**Symptom:**
 Business rules engine, template language, or configuration system starts exhibiting non-terminating behaviour. Users write rules that loop or recurse unexpectedly. Security team flags configuration files as a code injection vector.
 
-Root Cause:
+**Root Cause:**
 The language/system accumulated features over time (template includes → recursive includes; rule references → rule cycles; YAML anchors + custom operators → arbitrary computation) until it crossed the Turing completeness threshold.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```
 Audit the DSL for:
@@ -370,10 +370,10 @@ If all three: likely Turing complete.
 Formal check: attempt to implement a self-referential computation.
 ```
 
-Fix:
+**Fix:**
 Add explicit cycle detection and depth limits. Restrict language features that enable recursion. Use a formal grammar to define the language and verify non-Turing-completeness.
 
-Prevention:
+**Prevention:**
 Design DSLs with a formal specification. Explicitly state whether the language should be Turing complete. If not, prove it (e.g., use a termination argument for every construct). Consider total functional programming tools (Agda, Coq, Dhall) for configuration languages that need computation.
 
 ---

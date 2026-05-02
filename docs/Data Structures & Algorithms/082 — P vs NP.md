@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You need to know whether to keep searching for a fast algorithm for a problem (like SAT or TSP), or whether to accept that none exists and switch to approximation. Without a theory of computational limits, every "hard" problem receives the same response: "keep trying." Research effort is wasted indefinitely.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Decades of failed attempts to find polynomial algorithms for problems like Hamiltonian Cycle and satisfiability. Decades also of failed proofs that none exist. The field needed a formal framework to state "these problems are equivalently hard" and "this is the barrier we must cross or prove insurmountable."
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 P is the class of problems solvable in polynomial time. NP is the class verifiable in polynomial time. P ⊆ NP trivially (if you can solve it fast, you can verify fast). But does NP ⊆ P? Is every verifiable problem also efficiently solvable? This is the **P vs NP** question posed formally by Cook (1971) — now a Millennium Prize Problem worth $1 million. This is exactly why **P vs NP** is the central open question in algorithm theory.
 
 ---
@@ -64,12 +64,12 @@ The practical significance of P≠NP (the widely believed answer): RSA, AES, and
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. **P ⊆ NP always:** Any polynomial-time algorithm can be its own verifier — just run it and check the answer.
 2. **NP-complete problems are in both NP and NP-hard simultaneously** — the intersection where the question is sharpest.
 3. **Cook-Levin theorem:** SAT is NP-complete — if SAT ∈ P, then P = NP. Conversely, if any NP-complete problem is in P, all NP-complete problems are in P (by transitivity of reductions).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The P vs NP question reduces to: "Is there a polynomial-time algorithm for SAT?" (or equivalently, any other NP-complete problem). Two centuries of work has produced neither a polynomial algorithm nor a proof of impossibility. The proof of P ≠ NP requires showing a superpolynomial lower bound for a concrete hard problem — a task that exceeds current mathematical tools (natural proofs barrier, algebraisation barrier, relativisation barrier).
 
 **Barriers to proof:**
@@ -77,7 +77,7 @@ The P vs NP question reduces to: "Is there a polynomial-time algorithm for SAT?"
 - **Natural proofs (Razborov-Rudich):** Most "natural" lower bound techniques cannot separate P from NP given standard cryptographic assumptions.
 - **Algebraisation:** Neither algebraic proof techniques alone suffice.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 If P = NP: polynomial algorithms for all NP problems; AI planning, drug discovery, circuit optimisation become trivially fast; all public-key cryptography broken.
 If P ≠ NP: complexity hierarchy is non-trivial; NP-complete problems are inherently intractable in worst case; cryptography remains secure.
 
@@ -85,16 +85,16 @@ If P ≠ NP: complexity hierarchy is non-trivial; NP-complete problems are inher
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You receive a "proof" that P = NP. Before announcing, you test it on factoring large numbers (the basis of RSA-2048). Factoring is widely believed to be in NP but not P.
 
-WHAT HAPPENS IF THE PROOF IS CORRECT:
+**WHAT HAPPENS IF THE PROOF IS CORRECT:**
 Your polynomial algorithm factors a 2048-bit RSA key in seconds. Every encrypted message on the internet (HTTPS, banking, email) becomes readable. Certificate authorities' private keys become extractable. The global financial system collapses within hours of the algorithm becoming public.
 
-WHAT HAPPENS IF P ≠ NP (strongly believed):
+**WHAT HAPPENS IF P ≠ NP (strongly believed):**
 Such a polynomial factoring algorithm cannot exist (at least, not one derived from a P=NP resolution, since factoring is not known to be NP-complete). RSA remains secure. The proof must have an error.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The P vs NP question is not theoretical indulgence. The security of every encrypted transaction you make today rests on the assumption that P ≠ NP — or more precisely, that certain problems (factoring, discrete logarithm) are not in P. The stakes of this open question are the entire digital security infrastructure.
 
 ---
@@ -103,10 +103,10 @@ The P vs NP question is not theoretical indulgence. The security of every encryp
 
 > P vs NP is the question of whether a maze's exit can always be found as quickly as walking a given path can be verified. If I show you a path (sequence of turns) through a maze, you can verify in seconds whether it reaches the exit. Finding the path in the first place might take hours. P=NP would mean: if you can check a maze path quickly, you could also find it equally quickly.
 
-"Walking a given path through the maze" → verifying a certificate
-"Finding the exit in the maze" → solving the NP problem
-"P=NP" → finding is as fast as checking
-"P≠NP" → finding is fundamentally harder than checking
+- "Walking a given path through the maze" → verifying a certificate
+- "Finding the exit in the maze" → solving the NP problem
+- "P=NP" → finding is as fast as checking
+- "P≠NP" → finding is fundamentally harder than checking
 
 Where this analogy breaks down: Maze solving is in P (BFS/DFS in O(V+E)). The analogy requires imagining a maze so complex that no known efficient algorithm finds the exit, yet verifying a path takes only seconds.
 
@@ -171,7 +171,7 @@ Therefore: NP ⊆ P → P = NP
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 New problem P to solve efficiently
 → Classify: Is P in NP? (Can certificates be verified fast?)
@@ -185,7 +185,7 @@ New problem P to solve efficiently
 → No pursuit of elusive polynomial algorithm for NPC
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 P vs NP proves P = NP (hypothetical):
 → All NP-complete problems solved in poly time
@@ -199,7 +199,7 @@ P vs NP proves P ≠ NP:
 → Focus shifts to: average-case, parameterised, approximation
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 The question has no "scale" dimension — it is a mathematical question about the existence of algorithms, not about any particular system. However, at the scale of real-world cryptography: RSA-2048 requires factoring a 617-digit number. The best known factoring algorithm (GNFS) runs in exp(O(N^(1/3))) — sub-exponential but not polynomial. If P = NP, a polynomial algorithm would exist — but we don't know its degree, and constants matter. A O(N^1000) algorithm technically satisfies P but is useless in practice.
 
 ---
@@ -282,11 +282,11 @@ BigInteger[] factorBreaksRSA(BigInteger n) {
 
 **1. Spending months seeking polynomial algorithm for NP-complete problem**
 
-Symptom: Engineering team exhausted after six months; no polynomial algorithm found for their graph coloring/scheduling tool.
+**Symptom:** Engineering team exhausted after six months; no polynomial algorithm found for their graph coloring/scheduling tool.
 
-Root Cause: Problem is NP-complete; no polynomial algorithm exists (under P≠NP assumption).
+**Root Cause:** Problem is NP-complete; no polynomial algorithm exists (under P≠NP assumption).
 
-Diagnostic:
+**Diagnostic:**
 ```
 Verify NP-completeness:
 1. Does my problem generalise Vertex Cover / Hamiltonian Cycle?
@@ -294,28 +294,28 @@ Verify NP-completeness:
 If yes: stop seeking poly algorithm → switch to approximation
 ```
 
-Fix: Accept NP-hardness; implement 2-approximation or PTAS; use heuristic for large inputs.
+**Fix:** Accept NP-hardness; implement 2-approximation or PTAS; use heuristic for large inputs.
 
-Prevention: Perform complexity classification before committing to algorithm design.
+**Prevention:** Perform complexity classification before committing to algorithm design.
 
 ---
 
 **2. Treating NP-intermediate as P or NP-complete without evidence**
 
-Symptom: System builds on "factoring is NP-complete" in security documentation — factoring is believed NP-intermediate, not NP-complete.
+**Symptom:** System builds on "factoring is NP-complete" in security documentation — factoring is believed NP-intermediate, not NP-complete.
 
-Root Cause: Factoring is in NP but not known NP-hard; the reduction from 3-SAT to factoring is unknown.
+**Root Cause:** Factoring is in NP but not known NP-hard; the reduction from 3-SAT to factoring is unknown.
 
-Diagnostic:
+**Diagnostic:**
 ```
 Known NP-complete: SAT, Graph-3Color, Hamiltonicity, TSP
 Known NP-intermediate (likely): Factoring, Discrete Log, GI
 Known poly time: Primality (AKS)
 ```
 
-Fix: Distinguish "computationally hard by assumption" (factoring) from "NP-complete" (SAT). Both justify cryptographic use but for different reasons.
+**Fix:** Distinguish "computationally hard by assumption" (factoring) from "NP-complete" (SAT). Both justify cryptographic use but for different reasons.
 
-Prevention: In security documentation: cite specific hardness assumption, not generic "NP-completeness."
+**Prevention:** In security documentation: cite specific hardness assumption, not generic "NP-completeness."
 
 ---
 

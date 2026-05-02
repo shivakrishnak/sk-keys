@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 With 4-level paging on x86-64, translating a single virtual address requires walking the page table: 4 memory reads (PGD → PUD → PMD → PTE) + 1 final access to the actual data = 5 RAM accesses per program memory access. RAM latency is ~100 ns. This means every byte your program reads costs 500 ns just in address translation overhead — making modern software 5× slower than physics requires.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Early virtual memory implementations without TLBs were measured as running at 20–30% of the speed of equivalent physical-address programs. For compute-intensive applications, virtual memory was simply too expensive to use.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why the TLB was created — a tiny, on-chip fully-associative cache of recent virtual→physical translations that turns a 4-step page table walk into a 1-cycle lookup for frequently accessed pages.
 
 ---
@@ -65,45 +65,45 @@ The TLB works because programs have spatial and temporal locality — the same p
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Every virtual memory access requires a virtual→physical translation.
 2. Page table walks are slow (4+ memory accesses); TLB hits are fast (1 cycle).
 3. TLB is hardware-managed: fills automatically on miss, invalidated on specific events.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The TLB must be fully associative (any entry can hold any translation) and very fast — implemented in SRAM with CAM (Content-Addressable Memory) for parallel lookup. Size is limited by chip area and power: L1 iTLB and dTLB are typically 64–128 entries; L2 TLB (shared) 1,500–4,096 entries. On context switch, the TLB must be invalidated (flushed) or tagged with a Process Context ID (PCID) to avoid using stale translations from the previous process. With PCID (Intel) or ASID (ARM), each TLB entry is tagged with a process identifier, allowing the TLB to hold entries for multiple processes simultaneously without flushing.
 
-THE TRADE-OFFS:
-Gain: Near-zero translation overhead for working sets that fit in TLB coverage.
-Cost: TLB misses are expensive (~40–100 cycles); context switches invalidate TLB (unless ASID used); TLB shootdowns (multi-core page table modifications) require inter-processor interrupts (IPIs) which stall all CPUs.
+**THE TRADE-OFFS:**
+**Gain:** Near-zero translation overhead for working sets that fit in TLB coverage.
+**Cost:** TLB misses are expensive (~40–100 cycles); context switches invalidate TLB (unless ASID used); TLB shootdowns (multi-core page table modifications) require inter-processor interrupts (IPIs) which stall all CPUs.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A tight inner loop accesses 1,000 different 4 KB pages randomly (4 MB total working set).
 
-WHAT HAPPENS WITHOUT TLB (or with a full TLB):
+**WHAT HAPPENS WITHOUT TLB (or with a full TLB):**
 
 1. Every access to a new page requires a page table walk: 4 × 100 ns = 400 ns overhead.
 2. 1,000 accesses × 400 ns = 400 µs extra overhead per loop iteration.
 3. L1 cache hits become irrelevant — translation overhead dominates.
 
-WHAT HAPPENS WITH TLB (and 128 entries covers 512 KB):
+**WHAT HAPPENS WITH TLB (and 128 entries covers 512 KB):**
 
 1. First 128 page accesses: TLB misses — page walks.
 2. Pages 129–1000 cycle through, constantly evicting cached translations.
 3. TLB miss rate = ~87%; high overhead persists.
 
-WHAT HAPPENS WITH huge pages (2 MB, 128 entries covers 256 MB):
+**WHAT HAPPENS WITH huge pages (2 MB, 128 entries covers 256 MB):**
 
 1. All 1,000 accesses fit within 2 huge pages → 2 TLB entries cover the entire working set.
 2. After first 2 misses, all subsequent accesses are TLB hits.
 3. Translation overhead drops to ~1 cycle per access.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Page size selection is fundamentally a TLB coverage problem. For large working sets, the benefit of huge pages comes almost entirely from TLB coverage, not from reduced page fault count.
 
 ---
@@ -112,11 +112,11 @@ Page size selection is fundamentally a TLB coverage problem. For large working s
 
 > The TLB is like a translator's cheat sheet. Translating a document from Japanese to English requires looking up every word in a dictionary (page table walk — slow). The translator keeps their most-used 1,500 words on a laminated sheet at their desk (TLB). Words on the cheat sheet are translated in a glance (1 cycle). Obscure words require a full dictionary lookup (page table walk). When a new document arrives in a different domain, they swap cheat sheets (context switch with TLB flush).
 
-"Cheat sheet" → TLB
-"Word lookup" → virtual address translation
-"Dictionary" → page table in RAM
-"Switching to new document" → context switch
-"ASID tag on each entry" → using PCID so cheat sheets from multiple translators coexist
+- "Cheat sheet" → TLB
+- "Word lookup" → virtual address translation
+- "Dictionary" → page table in RAM
+- "Switching to new document" → context switch
+- "ASID tag on each entry" → using PCID so cheat sheets from multiple translators coexist
 
 Where this analogy breaks down: Unlike a cheat sheet, the TLB is hardware — it fills and evicts automatically with no explicit programmer control (except huge page selection and ASID management).
 
@@ -167,7 +167,7 @@ When a PTE is modified (page remapped), the kernel must invalidate the TLB entry
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 [Process accesses data at VA 0x7f000123]
@@ -180,7 +180,7 @@ NORMAL FLOW:
 FAILURE PATH (TLB miss + page table walk):
 [TLB miss] → [Hardware page walker: 4 RAM reads, ~100 ns each] → [PTE found, TLB filled] → [access proceeds]
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 On a 256-core machine with a shared workload, a kernel `munmap()` of a shared memory region triggers 256 simultaneous TLB shootdown IPIs. Each IPI stalls the receiving CPU for ~2–5 µs. At high remapping rates (e.g., a database buffer pool with frequent eviction), shootdown storms can consume 10–30% of CPU time. Mitigation: batch TLB invalidations, use huge pages (fewer PTEs = fewer shootdowns), or use `memfd_secret()` for regions that don't need shootdown broadcast.
 
 ---
@@ -265,11 +265,11 @@ How to choose: You don't choose TLB levels — profile with `perf` to find miss 
 
 **1. High dTLB Miss Rate (Working Set Too Large for TLB)**
 
-Symptom: Application 2–5× slower than expected despite L3 cache hit rate being acceptable; `perf stat` shows dTLB-load-misses > 5%.
+**Symptom:** Application 2–5× slower than expected despite L3 cache hit rate being acceptable; `perf stat` shows dTLB-load-misses > 5%.
 
-Root Cause: Random-access pattern across a memory region larger than TLB coverage (128 entries × 4 KB = 512 KB); each access requires a full page table walk.
+**Root Cause:** Random-access pattern across a memory region larger than TLB coverage (128 entries × 4 KB = 512 KB); each access requires a full page table walk.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 perf stat -e dTLB-loads,dTLB-load-misses \
@@ -278,19 +278,19 @@ perf stat -e dTLB-loads,dTLB-load-misses \
 # If dTLB-load-misses / dTLB-loads > 5%: TLB problem
 ```
 
-Fix: Switch to 2 MB huge pages. For JVMs: `-XX:+UseLargePages -XX:LargePageSizeInBytes=2m`.
+**Fix:** Switch to 2 MB huge pages. For JVMs: `-XX:+UseLargePages -XX:LargePageSizeInBytes=2m`.
 
-Prevention: Design data structures for sequential access; avoid pointer-chasing through large node sets.
+**Prevention:** Design data structures for sequential access; avoid pointer-chasing through large node sets.
 
 ---
 
 **2. TLB Shootdown Bottleneck**
 
-Symptom: Kernel time high under concurrent `mmap`/`munmap` or page remapping; `perf` shows high `tlb:tlb_flush` events; server-wide latency spikes correlated with one process's remapping.
+**Symptom:** Kernel time high under concurrent `mmap`/`munmap` or page remapping; `perf` shows high `tlb:tlb_flush` events; server-wide latency spikes correlated with one process's remapping.
 
-Root Cause: Shared page table modification (e.g., shared memory remapping) sends IPIs to all CPUs to flush TLB entries; each CPU pauses for IPI handling.
+**Root Cause:** Shared page table modification (e.g., shared memory remapping) sends IPIs to all CPUs to flush TLB entries; each CPU pauses for IPI handling.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 perf trace -e tlb:tlb_flush --pid <PID> 2>&1 | head -20
@@ -298,19 +298,19 @@ perf trace -e tlb:tlb_flush --pid <PID> 2>&1 | head -20
 cat /proc/interrupts | grep TLB
 ```
 
-Fix: Reduce frequency of `mmap`/`munmap` by reusing mapped regions. Use `MAP_POPULATE` at mmap time to front-load the shootdowns. Avoid shared writeable mappings.
+**Fix:** Reduce frequency of `mmap`/`munmap` by reusing mapped regions. Use `MAP_POPULATE` at mmap time to front-load the shootdowns. Avoid shared writeable mappings.
 
-Prevention: Architect memory management to allocate large regions once and reuse them rather than frequent remapping.
+**Prevention:** Architect memory management to allocate large regions once and reuse them rather than frequent remapping.
 
 ---
 
 **3. KPTI Performance Regression**
 
-Symptom: After Linux kernel upgrade (4.15+, post-Meltdown), syscall-heavy workloads run 10–30% slower; confirmed by comparing `perf stat` before/after.
+**Symptom:** After Linux kernel upgrade (4.15+, post-Meltdown), syscall-heavy workloads run 10–30% slower; confirmed by comparing `perf stat` before/after.
 
-Root Cause: Kernel Page Table Isolation switches CR3 on every syscall (user→kernel and back). Without PCID, this flushes the TLB twice per syscall.
+**Root Cause:** Kernel Page Table Isolation switches CR3 on every syscall (user→kernel and back). Without PCID, this flushes the TLB twice per syscall.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Verify KPTI is active
@@ -319,9 +319,9 @@ dmesg | grep "page table isolation"
 grep -o 'pcid' /proc/cpuinfo | head -1
 ```
 
-Fix: On supported CPUs (Sandy Bridge+), PCID reduces KPTI overhead. Ensure kernel >= 4.15 with PCID support: `CONFIG_X86_INTEL_PCID`. Consider kernel command line: `pti=auto` (default on vulnerable CPUs, disabled on patched CPUs).
+**Fix:** On supported CPUs (Sandy Bridge+), PCID reduces KPTI overhead. Ensure kernel >= 4.15 with PCID support: `CONFIG_X86_INTEL_PCID`. Consider kernel command line: `pti=auto` (default on vulnerable CPUs, disabled on patched CPUs).
 
-Prevention: Reduce syscall rate using `io_uring` batch I/O; upgrade to patched hardware to disable PTI entirely.
+**Prevention:** Reduce syscall rate using `io_uring` batch I/O; upgrade to patched hardware to disable PTI entirely.
 
 ---
 

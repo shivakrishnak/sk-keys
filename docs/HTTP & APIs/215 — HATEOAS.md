@@ -560,14 +560,14 @@ few clients. The `self` link is universally recommended even without full HATEOA
 
 **Client Hardcoding URLs (HATEOAS Anti-Pattern)**
 
-Symptom: API URL structure changes → clients break with 404s; no benefit from
+**Symptom:** API URL structure changes → clients break with 404s; no benefit from
 HATEOAS despite server implementation; mobile app needs emergency release.
 
-Root Cause: Client teams ignored `_links` and hardcoded URL patterns anyway,
+**Root Cause:** Client teams ignored `_links` and hardcoded URL patterns anyway,
 defeating the entire purpose of HATEOAS. Common when HATEOAS isn't enforced
 by API contract tests.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Search client code for hardcoded API URL patterns:
@@ -578,24 +578,24 @@ grep -r '"/orders/' frontend-src/ | grep -v "_links"
 curl -s https://api.example.com/orders/123 | jq '._links'
 ```
 
-Fix: Code review policy: all API URLs must come from parsed `_links`.
+**Fix:** Code review policy: all API URLs must come from parsed `_links`.
 Add a linting rule that flags URL string construction for API paths.
 
-Prevention: Provide a client SDK that wraps HATEOAS navigation. Teams use
+**Prevention:** Provide a client SDK that wraps HATEOAS navigation. Teams use
 the SDK, not raw `fetch`, preventing URL hardcoding at the source.
 
 ---
 
 **Missing Self Link (Resource Identity)**
 
-Symptom: Clients cannot bookmark or reference specific resources; after a POST
+**Symptom:** Clients cannot bookmark or reference specific resources; after a POST
 201 response, client doesn't know the canonical URL of the created resource.
 
-Root Cause: Responses missing the `self` link. The `self` `rel` is the minimum
+**Root Cause:** Responses missing the `self` link. The `self` `rel` is the minimum
 viable HATEOAS — it provides the resource's canonical URL for bookmarking,
 caching, and subsequent operations.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check if responses include self links:
@@ -608,25 +608,25 @@ curl -s -D - -X POST -H "Content-Type: application/json" \
   | grep -E "Location|self"
 ```
 
-Fix: Always include `self` link in every resource response. Minimum viable
+**Fix:** Always include `self` link in every resource response. Minimum viable
 HATEOAS: just `self`. In Spring HATEOAS, add `.withSelfRel()` to every
 `EntityModel.of()` call.
 
-Prevention: Add an API contract test asserting `_links.self` is present on
+**Prevention:** Add an API contract test asserting `_links.self` is present on
 all 200/201 responses returning entity resources.
 
 ---
 
 **Circular Links (HATEOAS Self-Reference Loops)**
 
-Symptom: Client enters infinite navigation loop; memory exhaustion in
+**Symptom:** Client enters infinite navigation loop; memory exhaustion in
 recursive link-following implementations; response payloads grow exponentially
 when `_embedded` resources include full HATEOAS representations.
 
-Root Cause: Embedded sub-resources include their full HATEOAS links, which
+**Root Cause:** Embedded sub-resources include their full HATEOAS links, which
 include their parent's URL, which includes the sub-resources...
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Check response size for circular embedding:
@@ -634,11 +634,11 @@ curl -s https://api.example.com/orders/123 | wc -c
 # If > 50KB for a simple order, likely has circular _embedded references
 ```
 
-Fix: In `_embedded` resources, include only `self` links — not full HATEOAS
+**Fix:** In `_embedded` resources, include only `self` links — not full HATEOAS
 representations. Top-level resources include full action links;
 embedded references include only their canonical URL.
 
-Prevention: Define a response shape contract in API design review: embedded
+**Prevention:** Define a response shape contract in API design review: embedded
 resources use minimal representation (`id` + `self` link only).
 
 ---

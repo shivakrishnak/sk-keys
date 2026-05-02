@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Ride-Sharing System Design"
 parent: "System Design"
@@ -231,11 +231,11 @@ WITH ride-sharing architecture:
 > A city's taxi dispatch system with a zone map. The city is divided into numbered blocks (Geohash cells). Available taxis are listed on a board under their current block number (Redis: set of drivers per Geohash). When a customer calls: dispatcher checks the board for all taxis in blocks adjacent to the customer's address, calls the nearest ones, connects customer and driver. During the ride: radio updates from the taxi's GPS (location updates) are broadcast to the customer's device (WebSocket push). Meter running = IN_TRIP state. Meter stops = TRIP_COMPLETED.
 
 "Numbered city blocks" = Geohash cells (geographic area divided into addressable cells)
-"Board listing taxis per block" = Redis sets {geohash → driver_ids}
+- "Board listing taxis per block" = Redis sets {geohash → driver_ids}
 "Dispatcher checks adjacent blocks" = query 9 adjacent Geohash cells for available drivers
 "Radio updates during ride" = WebSocket location push every 2 seconds
 "Meter running" = IN_TRIP state (state machine)
-"Meter stops → payment" = TRIP_COMPLETED → RIDE_PAID transition
+- "Meter stops → payment" = TRIP_COMPLETED → RIDE_PAID transition
 
 ---
 

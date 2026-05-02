@@ -469,16 +469,16 @@ public class AccountEndpoint {
 
 **SOAP Namespace Mismatch**
 
-Symptom:
+**Symptom:**
 SOAP calls fail with `"could not find operation for request"` or
 `"deserialisation error"`. The XML looks valid to the human eye.
 
-Root Cause:
+**Root Cause:**
 The XML namespace in the request Body element doesn't match what
 the WSDL specifies. SOAP dispatching is namespace-sensitive — even
 a trailing slash difference causes routing failure.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Inspect the raw SOAP request vs WSDL:
@@ -496,11 +496,11 @@ curl -v -X POST http://service/endpoint \
 # File → New SOAP Project → Import WSDL → generates valid envelopes
 ```
 
-Fix:
+**Fix:**
 Exactly match the `targetNamespace` from the WSDL in request XML.
 Use generated stubs (JAX-WS / CXF) rather than hand-crafting XML.
 
-Prevention:
+**Prevention:**
 Never hand-craft SOAP XML — always use generated stubs or SoapUI.
 Add contract testing against the WSDL in CI pipeline.
 
@@ -508,16 +508,16 @@ Add contract testing against the WSDL in CI pipeline.
 
 **SOAP Service Times Out on Large Payloads**
 
-Symptom:
+**Symptom:**
 SOAP calls with large XML payloads (>10MB) timeout before completing.
 Smaller payloads work fine. No error logged server-side.
 
-Root Cause:
+**Root Cause:**
 DOM-based XML parsing loads the entire SOAP envelope into memory before
 processing. 10MB of data can expand to 100MB+ in DOM object graph.
 Heap pressure causes GC pauses exceeding connection timeout.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```
 # Check GC activity during large SOAP call:
@@ -529,13 +529,13 @@ Diagnostic Command / Tool:
 # CXF: configure streaming data handler
 ```
 
-Fix:
+**Fix:**
 For large binary payloads: use MTOM (Message Transmission Optimization
 Mechanism) which attaches binary data as MIME parts instead of
 Base64-encoding it inside XML.
 For large XML: switch to StAX-based streaming parser.
 
-Prevention:
+**Prevention:**
 Set maximum SOAP message size limits at the server.
 For truly large payloads, consider streaming alternatives (gRPC client streaming, chunked HTTP).
 

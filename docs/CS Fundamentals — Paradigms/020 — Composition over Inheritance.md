@@ -33,15 +33,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 You model a video game with inheritance. `Character` is the base. `FlyingCharacter extends Character`. `SwimmingCharacter extends Character`. Now you need a character that can both fly and swim. Java doesn't allow `extends FlyingCharacter, SwimmingCharacter`. You create `FlyingSwimmingCharacter extends FlyingCharacter` and copy-paste the swimming logic. Later: `FlyingShootingCharacter`, `SwimmingShootingCharacter`, `FlyingSwimmingShootingCharacter`. The explosion of subclasses is called the "combinatorial explosion" problem.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 With n independent behaviours, inheritance requires 2^n subclasses to cover all combinations. Four behaviours (fly, swim, shoot, stealth) = 16 subclasses. Each new ability doubles the hierarchy. The hierarchy becomes unmanageable at 3–4 orthogonal dimensions. You can't give a character new abilities at runtime — inheritance is static.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 This is exactly why "composition over inheritance" was formalised as a principle in _Design Patterns_ (Gang of Four, 1994) — to replace behaviour stacking via class hierarchy with behaviour assembly via object combination. Instead of `extends FlyingSwimmingCharacter`, the character _has_ a `MovementStrategy` and an `AttackStrategy` — components that can be mixed, matched, and swapped at runtime without touching the character's class.
 
@@ -69,13 +69,13 @@ Inheritance is a compile-time contract: you can't change what a `FlyingCharacter
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. Inheritance is a static, compile-time relationship — you cannot change what a class extends at runtime.
 2. Composition is a dynamic, runtime relationship — you can swap components via assignment or dependency injection.
 3. An object needs to _be a type_ (use inheritance) but it can _have behaviours_ from many sources (use composition).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 With inheritance: behaviour comes from the class hierarchy — fixed at compile time. To change behaviour, you need a different subclass.
 
@@ -96,7 +96,7 @@ COMPOSITION MODEL:
   Combinations: n × m instead of 2^(n+m)
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
 Composition gain: runtime flexibility, no combinatorial explosion, loose coupling, easy testing (mock components), no fragile base class.
 Composition cost: more boilerplate (delegation — must forward calls to components), sometimes less readable ("what strategy does this object have?"), requires designing component interfaces upfront.
@@ -108,10 +108,10 @@ Inheritance cost: rigid, static, fragile, prevents multiple behaviour combinatio
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Build a notification system. Currently: `EmailNotifier`. Requirements change: SMS support. Then Slack. Then batching (send all notifications at end of day, not immediately). Then retries (retry failed sends 3 times).
 
-WHAT HAPPENS WITH INHERITANCE:
+**WHAT HAPPENS WITH INHERITANCE:**
 
 ```
 EmailNotifier
@@ -127,7 +127,7 @@ SlackNotifier + 3 more = 12 classes total for 4 features
 
 Every new feature doubles the hierarchy. Every new channel adds 4 more classes.
 
-WHAT HAPPENS WITH COMPOSITION:
+**WHAT HAPPENS WITH COMPOSITION:**
 
 ```
 Notifier (interface): send(message)
@@ -154,7 +154,7 @@ Notifier n = new RetryingNotifier(
 // Add Slack + batching + retry: 0 new classes, just compose differently
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 Composition scales as `n + m` (behaviours + channels); inheritance scales as `2^(n+m)`. For 5 channels and 5 cross-cutting behaviours, composition requires 10 classes; inheritance requires 32. Composition wins overwhelmingly at scale.
 
 ---
@@ -242,7 +242,7 @@ COMPOSITION:
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 New requirement: add retry behaviour to all notifiers
@@ -262,7 +262,7 @@ Zero changes to callers — all see Notifier interface
 New behaviour: one new class
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Composition chain too deep → hard to trace execution
@@ -277,7 +277,7 @@ Fix: limit decorator depth; add clear logging at each layer
      with component identification
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 At scale (50+ services), composition over inheritance at the architecture level means microservices — each service is a focused component with a clear interface. Cross-cutting concerns (auth, logging, retry, circuit breaking) are added as middleware/decorators, not inherited. This is composition at the deployment topology level: the same principle that prevents class hierarchy explosion prevents service hierarchy explosion.
 
@@ -448,13 +448,13 @@ class AllInOneMachine(
 
 **Combinatorial Class Explosion from Inheritance**
 
-Symptom:
+**Symptom:**
 Codebase has many classes with names like `LoggingRetryingEmailNotifier`, `LoggingBatchingEmailNotifier`, `RetryingSmsNotifier` — systematically combining features across types. Every new feature multiplies the class count.
 
-Root Cause:
+**Root Cause:**
 Inheritance was used for behaviour reuse. Each cross-cutting concern (logging, retry, batching) creates a parallel subclass hierarchy for every base type.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Count classes with multiple feature words in their names:
@@ -466,23 +466,23 @@ find src/notifications -name "*.java" | wc -l
 # If much larger than the number of notifier types + concerns: explosion
 ```
 
-Fix:
+**Fix:**
 Refactor using Decorator pattern. Create one class per concern (LoggingDecorator, RetryDecorator). Compose them at configuration time.
 
-Prevention:
+**Prevention:**
 When adding a new cross-cutting concern: ask "does this need to be added to N other classes?" If yes, it's a candidate for a decorator/composition approach.
 
 ---
 
 **Deep Hierarchy Behaviour Tracing**
 
-Symptom:
+**Symptom:**
 Debugger shows 8-level call stack when a simple method is called. Behaviour changes happen at multiple levels in the hierarchy. Bug is traced to an ancestor class 5 levels up.
 
-Root Cause:
+**Root Cause:**
 Deep inheritance hierarchy (5+ levels). Method behaviour is assembled across multiple overrides in multiple classes. No single place to see the full behaviour.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Visualise the class hierarchy depth:
@@ -495,10 +495,10 @@ grep -rn "extends" src/ --include="*.java" | \
   awk '{print $NF}' | sort | uniq -c | sort -rn | head -10
 ```
 
-Fix:
+**Fix:**
 Flatten the hierarchy by extracting shared behaviour into composed objects. Replace abstract methods with strategy injection. Aim for maximum 2 levels of inheritance depth for domain classes.
 
-Prevention:
+**Prevention:**
 Code review standard: no class hierarchy deeper than 2 levels (class → abstract base → concrete) without explicit justification. Prefer flat hierarchies.
 
 ---

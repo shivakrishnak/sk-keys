@@ -43,13 +43,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 The JVM shipped two separate modes: "client" mode (fast compilation, modest optimization, suitable for GUIs and short-lived apps) and "server" mode (slow compilation, aggressive optimization, only suitable after long warmup). If you needed a server with both fast startup and high throughput, you had to pick one and accept its downsides. Running `-server` meant the first 60 seconds of production traffic were painfully slow as C2 compiled everything from scratch. Running `-client` meant the server never reached peak performance.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A production API service uses `-server` mode. It handles 2,000 req/s but during a rollout the pod starts cold. For the first 45 seconds, latency is 400ms (CPU-bound interpretation). 99th percentile SLA is 200ms. Alarms fire. Engineers manually delay traffic switching to new pods. Deployment takes 30 minutes instead of 5.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **C1 and C2** exist as a two-compiler pipeline within the same JVM — C1 for fast, cheap early compilation to reduce cold-start pain, while C2 handles proven-hot methods with expensive global optimization for peak throughput.
 
 ---
@@ -75,12 +75,12 @@ The critical insight is that C1 and C2 are not redundant — C1 produces *instru
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Fast compiler → low-latency startup; aggressive compiler → high throughput.
 2. Profiling data quality increases with more execution time — the more you observe a method running, the better optimization decisions you can make.
 3. Compilation is expensive CPU work — the compiler must not steal so many cycles that it hurts the application.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given these constraints, the optimal architecture is a pipeline:
 - **Tier 0** (Interpreter): Gather initial profiling, cheap, triggers on first invocation.
 - **Tier 1–2** (C1, minimal/limited profiling): Quick native code for moderately-invoked methods. Reduces interpreter overhead fast.
@@ -102,15 +102,15 @@ Given these constraints, the optimal architecture is a pipeline:
 └─────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Best of both worlds — fast startup (C1) and peak throughput (C2) in a single JVM.
-Cost: Methods hot enough for C2 are compiled twice (C1 then C2), consuming more CPU. Both compilers consume memory (Code Cache). Complex C2 compilation can cause compilation pauses if the compiler queue grows.
+**THE TRADE-OFFS:**
+**Gain:** Best of both worlds — fast startup (C1) and peak throughput (C2) in a single JVM.
+**Cost:** Methods hot enough for C2 are compiled twice (C1 then C2), consuming more CPU. Both compilers consume memory (Code Cache). Complex C2 compilation can cause compilation pauses if the compiler queue grows.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A REST endpoint `calculateTax()` is called 100,000 times per second. It contains a tight loop with arithmetic, a virtual dispatch, and a conditional.
 
 C1 COMPILATION (at ~100 invocations):
@@ -119,7 +119,7 @@ C1 compiles `calculateTax()` in 200µs. The result is ~3x faster than the interp
 C2 COMPILATION (at ~10,000 invocations):
 C2 receives the method + C1 profile data. It sees: branch always taken (removes the `if` body from hot path), virtual call always dispatches to `TaxCalculatorImpl` (inlines the entire implementation). C2 produces code 50x faster than the interpreter, 15x faster than C1, with the tax calculation effectively reduced to a few ALU instructions.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Without C1's profiling instrumentation phase, C2 would be compiling a *cold* method with no type information — forced to include full virtual dispatch and all branch paths. C1's instrumented code is not just a fast interim solution; it is a profiling mechanism that *feeds* C2's optimizer.
 
 ---
@@ -128,10 +128,10 @@ Without C1's profiling instrumentation phase, C2 would be compiling a *cold* met
 
 > Picture a two-round architectural design process. Round 1 (C1): architects produce a quick floor plan sketch — functional, clients can start building immediately, done in hours. Simultaneously, the sketch is used as a real building so architects observe exactly which rooms are used most, which doors are opened constantly, and which hallways are always congested. Round 2 (C2): using those observations, architects produce an optimized final design with wider hallways exactly where needed, smaller rooms nobody uses, and the most-used doors widened into archways.
 
-"Floor plan sketch" → C1 compiled code.
-"Observing room usage" → C1 profiling instrumentation (branch and type counters).
-"Optimized final design" → C2 compiled code using C1's profile data.
-"Most-used doors widened" → method inlining at confirmed monomorphic callsites.
+- "Floor plan sketch" → C1 compiled code.
+- "Observing room usage" → C1 profiling instrumentation (branch and type counters).
+- "Optimized final design" → C2 compiled code using C1's profile data.
+- "Most-used doors widened" → method inlining at confirmed monomorphic callsites.
 
 Where this analogy breaks down: Architects do the second pass once. C2 may deoptimize and re-compile multiple times as runtime behavior changes.
 
@@ -198,7 +198,7 @@ Segmented cache prevents C1 code (which may be evicted when C2 code replaces it)
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Method first called] → [Tier 0: Interpreted]
     → [Invocation count crosses Tier 1 threshold (~200)]
@@ -212,7 +212,7 @@ NORMAL FLOW:
     → [C2: install, method ~20-50x faster than interpreter]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [C2 queue backed up under heavy startup load]
     → [Methods stuck at C1 or Tier 3]
@@ -225,7 +225,7 @@ FAILURE PATH:
     → [Performance temporarily degrades]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In containerized environments with CPU throttling, the JIT compilation threads compete with application threads for the CPU quota. At scale with many containers, setting `CICompilerCount` too high degrades application throughput during warmup. At 1000+ concurrent JVM instances (microservice fleet), the aggregate compilation overhead is significant — driving adoption of ahead-of-time profiling with JEP 410 (AOT cache) in Java 24+.
 
 ---
@@ -314,13 +314,13 @@ How to choose: Leave tiered compilation enabled (default). Tune `TieredStopAtLev
 
 **C2 Compilation Thread Saturation**
 
-Symptom:
+**Symptom:**
 During startup or traffic spikes, CPU usage is high but application throughput is low. `PrintCompilation` shows a very long queue of pending C2 compilations.
 
-Root Cause:
+**Root Cause:**
 The default number of C2 compiler threads (often 2–4) is insufficient for the rate at which hot methods are discovered. Methods queue up waiting for C2 compilation and continue running at C1 speed.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 jcmd <pid> Compiler.queue
 # Shows methods waiting in compiler queue
@@ -329,62 +329,62 @@ jstat -compiler <pid> 1000
 # Monitor Compiled count per second
 ```
 
-Fix:
+**Fix:**
 ```bash
 java -XX:CICompilerCount=6 MyApp
 # Or tune compilation thresholds to defer C2:
 java -XX:Tier4CompileThreshold=40000 MyApp
 ```
 
-Prevention:
+**Prevention:**
 Performance test with realistic warmup load. Set `CICompilerCount` based on profiled compilation queue depth.
 
 ---
 
 **C2 Deoptimizes Hot Method Repeatedly**
 
-Symptom:
+**Symptom:**
 `PrintCompilation` shows the same method compiling at tier 4, then immediately appearing at tier 0, then tier 4 again, cycling every few seconds. Throughput oscillates.
 
-Root Cause:
+**Root Cause:**
 A type assumption made by C2 is violated repeatedly (e.g., a megamorphic callsite that occasionally receives a rare type). Each violation forces deoptimization and re-compilation.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 java -XX:+TraceDeoptimization MyApp 2>&1 | \
   grep "deoptimizing"
 # Shows method + deoptimization reason
 ```
 
-Fix:
+**Fix:**
 Identify the polymorphic callsite in the method. Refactor: separate the rare-type path from the hot main path (method dispatch or explicit type check before submission).
 
-Prevention:
+**Prevention:**
 Profile your application's polymorphic callsites. Methods with >3 receiver types at a single callsite will never benefit from C2's type inlining.
 
 ---
 
 **Code Cache Fragmentation After GC Integration**
 
-Symptom:
+**Symptom:**
 Over time, Code Cache utilization stays high even though application method count is stable. `Compiler.codecache` shows fragmented regions.
 
-Root Cause:
+**Root Cause:**
 Old C1 (tier 1/3) code that was replaced by C2 (tier 4) leaves "not-entrant" or "zombie" code entries that are not immediately reclaimed. The Code Cache sweeper runs periodically but may not keep pace if code is being invalidated faster than swept.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 jcmd <pid> Compiler.codecache
 # Check for high "free_blocks" with low "total free" utilization
 ```
 
-Fix:
+**Fix:**
 ```bash
 java -XX:+UseCodeCacheFlushing \
      -XX:ReservedCodeCacheSize=512m MyApp
 ```
 
-Prevention:
+**Prevention:**
 Monitor Code Cache waste/free ratio in production dashboards. Alert if used > 80% of reserved.
 
 ---

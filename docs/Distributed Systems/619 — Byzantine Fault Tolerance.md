@@ -234,7 +234,7 @@ Key advantage over PBFT:
 
 **View Change Liveness Failure (Leader is Byzantine)**
 
-Symptom: PBFT cluster stops making progress. Requests time out. Clients get no
+**Symptom:** PBFT cluster stops making progress. Requests time out. Clients get no
 responses. Logs show "view change in progress" repeating in a loop.
 
 Cause: The PBFT primary (leader) is Byzantine — selectively forwarding messages to
@@ -246,7 +246,7 @@ Analysis: If f Byzantine nodes collude to disrupt consecutive view change rounds
 they can stall progress for up to f consecutive view changes. PBFT view change is
 vulnerable to leader Byzantine behavior.
 
-Fix: Use BFT algorithms with bounded view change (HotStuff: allows leaderless
+**Fix:** Use BFT algorithms with bounded view change (HotStuff: allows leaderless
 fallback). Rotate leaders frequently to minimize disruption window. Monitor view
 change rate: > 1 view change per minute = Byzantine leader behavior, page immediately.
 

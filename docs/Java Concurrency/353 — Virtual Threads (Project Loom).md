@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Platform threads (1:1 with OS threads) cost ~1MB of stack. A server handling 10,000 concurrent HTTP requests that each make a blocking database call needs 10,000 platform threads = 10GB of stack memory. Context switches between thousands of OS threads add OS scheduler overhead. Thread pool sizes become critical tuning parameters — too small: requests queue; too large: memory and context-switch overhead.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Java reactive frameworks (Spring WebFlux, Vert.x) exist BECAUSE of platform thread limitations. Reactive code avoids blocking with callbacks and `CompletableFuture` chains — but at the cost of drastically reduced code readability. The entire "reactive paradigm" in Java is a workaround for "we can't have 100,000 threads."
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 **Virtual threads** (Project Loom, Java 21 GA) solve this at the JVM level — making each blocking I/O call efficiently unmount the thread from the OS, with no programmer effort. Blocking code remains readable and correct; scalability matches reactive without the complexity.
 
 ---
@@ -64,12 +64,12 @@ Virtual threads do NOT improve CPU-bound code — only I/O-bound blocking code b
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. One virtual thread runs on exactly one carrier at any moment; one carrier runs one virtual thread at a time.
 2. Blocking operations in JDK code (`SocketInputStream.read()`, `Thread.sleep()`, `Object.wait()`) are instrumented to unmount the virtual thread rather than blocking the carrier.
 3. Virtual threads cannot be "pinned" to a carrier permanently — EXCEPT when inside `synchronized` blocks or calling native methods (`native` methods pin until return).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 ```
 Virtual Thread ↔ Carrier Thread (ForkJoinPool worker):
 
@@ -96,15 +96,15 @@ try { socket.read(); } // virtual thread can unmount
 finally { lock.unlock(); }
 ```
 
-THE TRADE-OFFS:
-Gain: Millions of concurrent threads at low cost; no reactive framework needed for scalability; existing blocking code runs efficiently; structured concurrency enabled.
-Cost: Pinning in `synchronized` blocks cancels benefit; CPU-bound code gains nothing; `ThreadLocal` semantics change (performance — each VT can have its own TL copy, increasing memory for millions of VTs); debugging is more complex.
+**THE TRADE-OFFS:**
+**Gain:** Millions of concurrent threads at low cost; no reactive framework needed for scalability; existing blocking code runs efficiently; structured concurrency enabled.
+**Cost:** Pinning in `synchronized` blocks cancels benefit; CPU-bound code gains nothing; `ThreadLocal` semantics change (performance — each VT can have its own TL copy, increasing memory for millions of VTs); debugging is more complex.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 10,000 concurrent HTTP requests, each calling a database (10ms latency).
 
 WITH PLATFORM THREADS (10 pool size):
@@ -123,7 +123,7 @@ After 10ms: all 10,000 VTs mount and process results
 Throughput: 10,000 req/10ms = 1,000,000 req/sec theoretical
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The database connection pool is now the bottleneck, not the thread count. Virtual threads expose the actual system constraints (DB pool size, network bandwidth) rather than creating artificial thread-count constraints.
 
 ---
@@ -132,10 +132,10 @@ The database connection pool is now the bottleneck, not the thread count. Virtua
 
 > Virtual threads are like browser tabs in a computer. Each tab is a "virtual process" (virtual thread) — you can have 100 tabs open. Most are idle (waiting for page load = waiting for I/O). The actual CPU work (renderer = carrier thread) jumps between tabs — rendering a page here, processing JS there. Tabs waiting for network data don't use the CPU.
 
-"Browser tabs" → virtual threads.
-"CPU renderer" → carrier threads (4-8, based on CPU count).
-"Tab waiting for page load" → virtual thread unmounted during I/O.
-"Renderer switches to another tab" → carrier mounts a different virtual thread.
+- "Browser tabs" → virtual threads.
+- "CPU renderer" → carrier threads (4-8, based on CPU count).
+- "Tab waiting for page load" → virtual thread unmounted during I/O.
+- "Renderer switches to another tab" → carrier mounts a different virtual thread.
 
 Where this analogy breaks down: Browser tabs are isolated (no shared memory). Virtual threads share heap — all the concurrent access rules still apply. Virtual threads are NOT a concurrency correctness tool — only a scalability tool.
 
@@ -240,7 +240,7 @@ PINNING PATH:
     → [Fix: replace synchronized with ReentrantLock]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, the connection pool (database, HTTP client) becomes the bottleneck instead of thread count. Size connection pools large enough for the concurrency level. JVM metric: `jdk.VirtualThreadPinned` JFR event — monitor pinning frequency to identify `synchronized` block performance issues.
 
 ---
@@ -326,9 +326,9 @@ How to choose: Virtual threads for I/O-heavy workloads (HTTP servers, DB-calling
 
 **Virtual Thread Pinning**
 
-Symptom: High carrier thread utilisation despite low VT count; throughput doesn't improve.
+**Symptom:** High carrier thread utilisation despite low VT count; throughput doesn't improve.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Enable pinning trace:
 java -Djdk.tracePinnedThreads=full MyApp 2>&1 | grep "pinned"
@@ -338,27 +338,27 @@ jcmd <pid> JFR.start duration=30s filename=vt.jfr
 jfr print --events jdk.VirtualThreadPinned vt.jfr
 ```
 
-Fix: Replace `synchronized` blocks containing I/O with `ReentrantLock`.
+**Fix:** Replace `synchronized` blocks containing I/O with `ReentrantLock`.
 
 ---
 
 **Memory Growth from ThreadLocal in Millions of VTs**
 
-Symptom: Heap grows linearly with concurrent virtual thread count.
+**Symptom:** Heap grows linearly with concurrent virtual thread count.
 
-Root Cause: `ThreadLocal` creates per-thread copies — millions of VTs = millions of TL copies.
+**Root Cause:** `ThreadLocal` creates per-thread copies — millions of VTs = millions of TL copies.
 
-Fix: Use `ScopedValues` (Java 21) for immutable context. Avoid large `ThreadLocal` values in VT-heavy code.
+**Fix:** Use `ScopedValues` (Java 21) for immutable context. Avoid large `ThreadLocal` values in VT-heavy code.
 
 ---
 
 **Connection Pool Exhaustion**
 
-Symptom: Virtual threads scale fine but DB/HTTP performance degrades.
+**Symptom:** Virtual threads scale fine but DB/HTTP performance degrades.
 
-Root Cause: 10,000 VTs all trying to use a 10-connection pool — 9,990 VTs block on connection acquisition.
+**Root Cause:** 10,000 VTs all trying to use a 10-connection pool — 9,990 VTs block on connection acquisition.
 
-Fix: Size connection pool for expected concurrency: `spring.datasource.hikari.maximum-pool-size=100` (or appropriate for workload).
+**Fix:** Size connection pool for expected concurrency: `spring.datasource.hikari.maximum-pool-size=100` (or appropriate for workload).
 
 ---
 

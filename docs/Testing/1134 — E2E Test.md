@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 All unit and integration tests pass. But the JavaScript frontend sends a Date in ISO format, the Java backend expects a Unix timestamp, and the conversion code was added by a different team. The system is "integrated" — but this mismatch was never tested end-to-end. Without E2E tests, the first person to experience this bug is a real user.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Unit and integration tests verify components in isolation or small combinations. E2E tests verify that the entire system — browser, API gateway, multiple microservices, database, CDN, authentication — works together as a user actually uses it. No subset of lower-level tests can catch cross-layer assumptions and format mismatches that only appear when the full stack is assembled.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Selenium (2004) introduced browser automation as a testing tool: programmatically drive a real browser, click buttons, fill forms, assert page content. Playwright (Microsoft, 2020) modernised the model: native Chrome DevTools Protocol, auto-wait semantics, network interception, and multi-browser support without flakiness.
 
 ---
@@ -89,9 +89,9 @@ WHAT E2E TESTS SHOULD COVER:
 PLAYWRIGHT AUTO-WAIT:
 The main cause of flaky Selenium tests: `Thread.sleep(3000)` — arbitrary sleeps. Playwright's auto-wait automatically waits for elements to be visible, enabled, and stable before interacting. No `Thread.sleep()` needed. This is the key innovation over Selenium that reduces flakiness from ~30% to ~1%.
 
-THE TRADE-OFFS:
-Gain: Highest confidence that the system works end-to-end; tests real user flows; catches cross-layer assumptions.
-Cost: Slowest (minutes per test); flakiest (UI changes, timing, network); most expensive to maintain; requires full environment.
+**THE TRADE-OFFS:**
+**Gain:** Highest confidence that the system works end-to-end; tests real user flows; catches cross-layer assumptions.
+**Cost:** Slowest (minutes per test); flakiest (UI changes, timing, network); most expensive to maintain; requires full environment.
 
 ---
 
@@ -289,12 +289,12 @@ export default defineConfig({
 **1. Flaky E2E Tests in CI**
 
 Cause: Race conditions (element not loaded before interaction), timing-dependent assertions, shared test state.
-Fix: Playwright auto-wait handles most cases. Use `expect(locator).toBeVisible()` instead of `waitForTimeout()`. Isolate tests: each test creates its own user/data. Use `test.retries(2)` with `on-first-retry` tracing to distinguish real failures from flakiness.
+**Fix:** Playwright auto-wait handles most cases. Use `expect(locator).toBeVisible()` instead of `waitForTimeout()`. Isolate tests: each test creates its own user/data. Use `test.retries(2)` with `on-first-retry` tracing to distinguish real failures from flakiness.
 
 **2. E2E Tests Slow Down CI Pipeline**
 
 Cause: 20+ E2E tests × 3min each = 60min pipeline.
-Fix: Run E2E tests in parallel (`workers: 4`), shard across CI nodes, run only on main/release branches (not every feature branch PR).
+**Fix:** Run E2E tests in parallel (`workers: 4`), shard across CI nodes, run only on main/release branches (not every feature branch PR).
 
 ---
 

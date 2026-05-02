@@ -230,13 +230,13 @@ public class RecommendationService {
 
 **Bulkhead Sized Too Small — Legitimate Traffic Rejected**
 
-Symptom: Recommendation API returns 503 errors during normal traffic. Metrics show
+**Symptom:** Recommendation API returns 503 errors during normal traffic. Metrics show
 `bulkhead.recommendation.rejected_calls` increasing during business hours.
 
 Cause: Thread pool max size (10) is insufficient for actual concurrency during peak.
 Little's Law: expected 15 concurrent calls at p99 latency, but pool is 10.
 
-Fix: Recalculate pool size using production traffic metrics. Set pool = p99_concurrent_calls
+**Fix:** Recalculate pool size using production traffic metrics. Set pool = p99_concurrent_calls
 × 1.5 safety factor. Set queue depth = 2 × pool_size. Monitor
 `bulkhead.recommendation.available_concurrent_calls` — alert if < 25% free at p99 load.
 

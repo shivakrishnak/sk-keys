@@ -33,13 +33,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A database with 1 billion row IDs must quickly answer "does row X exist before performing an expensive disk read?" Storing all 1 billion IDs in a HashSet requires ~8 GB (8 bytes per 64-bit ID). This exceeds the available in-memory budget for many systems. The alternative — always doing the disk read — burns I/O bandwidth on rows that don't exist ("unnecessary negative lookups"), which can represent 50–90% of all disk reads in sparse databases.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 You need membership testing for billions of items with limited memory. HashSets are exact but memory-intensive. Any solution that trades perfect accuracy for a 10× or 100× memory reduction — with **no false negatives** and a tunable false-positive rate — would save enormous I/O and memory costs.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Use a bit array (not byte array). Hash each element to k positions and set those bits. A query checks if all k bits are set. If any bit is 0 → definitely not in set. If all bits are 1 → probably in set (might be a false positive from other elements setting the same bits). This structure uses ~10 bits per element vs ~64 bits for a 64-bit pointer. This is exactly why the Bloom Filter was created.
 
 ---
@@ -65,12 +65,12 @@ The Bloom filter's power is its asymmetric error model: **no false negatives, so
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. If x was inserted, all k hash bits MUST be set → query always returns "probably yes" → zero false negatives.
 2. If x was NOT inserted, at least one of its k hash bits has probability > 0 of being clear → query might return "probably yes" (false positive) OR "definitely no" (true negative).
 3. Elements cannot be deleted (clearing one element's bits might clear bits shared by other elements).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Optimal k** (number of hash functions): minimise false positive rate. Taking derivatives: `k_optimal = (m/n) × ln(2) ≈ 0.693 × (m/n)`.
 
 **False positive probability**: `p ≈ (1 - e^(-kn/m))^k`. With m=10n (10 bits/element) and k=7: `p ≈ 0.0082` (0.82%). With m=20n, k=14: `p ≈ 0.000063` (0.006%).
@@ -79,24 +79,24 @@ DERIVED DESIGN:
 
 Can we delete elements? Not from a standard Bloom filter. The Counting Bloom Filter stores counts instead of bits, supporting deletion at 4× the memory cost.
 
-THE TRADE-OFFS:
-Gain: 10–100× smaller than HashMap, O(k) = O(1) insert and query, zero false negatives.
-Cost: Cannot enumerate members, cannot delete (standard), false positives require tuning, FP rate grows as elements added beyond design capacity.
+**THE TRADE-OFFS:**
+**Gain:** 10–100× smaller than HashMap, O(k) = O(1) insert and query, zero false negatives.
+**Cost:** Cannot enumerate members, cannot delete (standard), false positives require tuning, FP rate grows as elements added beyond design capacity.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 1 billion URLs in a web crawler's "already visited" set. Memory budget: 1.25 GB. HashMap would need ~50 GB for URL strings.
 
-WHAT HAPPENS WITHOUT BLOOM FILTER:
+**WHAT HAPPENS WITHOUT BLOOM FILTER:**
 Must use either disk-based storage (100× slower than RAM) or a truncated in-memory set. Re-crawling already seen URLs wastes bandwidth. Missing URLs due to incomplete in-memory set creates an incorrect crawl.
 
-WHAT HAPPENS WITH BLOOM FILTER:
+**WHAT HAPPENS WITH BLOOM FILTER:**
 10 bits/URL × 1 billion URLs = 10 billion bits = 1.25 GB. Fits in RAM. False positive rate at 1% means 1% of "new" URLs are wrongly shown as visited — a tiny crawl miss, acceptable for non-critical deduplication. Zero false negatives means a truly already-visited URL is never re-crawled.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The key question is "which error is more expensive?" In many systems, false negatives (missing a real match) are catastrophic, while false positives (doing one redundant expensive check) are acceptable. Bloom filters are designed for exactly this cost asymmetry.
 
 ---
@@ -105,10 +105,10 @@ The key question is "which error is more expensive?" In many systems, false nega
 
 > A Bloom filter is like a passport stamp. When you visit a country, the border officer stamps your passport. To check "have you been to France?", they look at the French stamps ink marks. If no French marks: you've never been. If marks exist: you probably have — but marks can bleed and look similar. The filter is the ink-mark check; your actual passport history is the ground truth.
 
-"Passport page (bits)" → bit array
-"Stamp (multiple ink spots)" → k hash positions set to 1
-"Looking for French marks" → checking k hash positions
-"Ink bleed from another stamp" → false positive
+- "Passport page (bits)" → bit array
+- "Stamp (multiple ink spots)" → k hash positions set to 1
+- "Looking for French marks" → checking k hash positions
+- "Ink bleed from another stamp" → false positive
 
 Where this analogy breaks down: Passport stamps are unique per page; hash positions in a Bloom filter are truly shared — multiple elements can set the same bit. There's no way to tell which element set a given bit.
 
@@ -181,7 +181,7 @@ filter.mightContain("dave@example.com");  // rare: might be true (FP)
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Request arrives with key K
 → Bloom filter.mightContain(K)?
@@ -191,7 +191,7 @@ Request arrives with key K
 → Lookup confirms presence or FP
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 More elements than design capacity inserted
 → False positive rate rises rapidly above tuned threshold
@@ -200,7 +200,7 @@ More elements than design capacity inserted
 → Fix: monitor n/capacity ratio; resize or rebuild filter
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10 billion elements, with 10 bits/element, you need 12.5 GB per Bloom filter — may exceed single-machine memory. Partition the problem: each shard maintains its own filter for its key range. Distributed Bloom filters across multiple nodes require careful routing. Alternatively, use Count-Min Sketch for approximate frequency counting, or Quotient Filter for deletable membership.
 
 ---
@@ -293,11 +293,11 @@ How to choose: Use Bloom filter when you need membership testing, can tolerate f
 
 **1. False positive rate exceeds design threshold**
 
-Symptom: Bloom filter "mightContain" returns true for most queries, including clearly absent items; downstream lookup sees excessive misses.
+**Symptom:** Bloom filter "mightContain" returns true for most queries, including clearly absent items; downstream lookup sees excessive misses.
 
-Root Cause: Number of inserted elements exceeded the design capacity (expectedInsertions parameter). Bits become mostly 1; all k hash positions for any query are likely all 1.
+**Root Cause:** Number of inserted elements exceeded the design capacity (expectedInsertions parameter). Bits become mostly 1; all k hash positions for any query are likely all 1.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Monitor fill ratio regularly:
 System.out.println("Approx inserts: " +
@@ -307,19 +307,19 @@ System.out.println("FP prob: " +
 // Alert when > 2× design FP rate
 ```
 
-Fix: Rebuild filter with larger capacity; or shard the filter by key range.
+**Fix:** Rebuild filter with larger capacity; or shard the filter by key range.
 
-Prevention: Monitor `approximateElementCount() / expectedInsertions` ratio; alert at 90% capacity.
+**Prevention:** Monitor `approximateElementCount() / expectedInsertions` ratio; alert at 90% capacity.
 
 ---
 
 **2. Accepting "true" as definitive (missing false positive handling)**
 
-Symptom: Application returns incorrect data or crashes when Bloom filter returns true but element is absent.
+**Symptom:** Application returns incorrect data or crashes when Bloom filter returns true but element is absent.
 
-Root Cause: Code treats `mightContain() == true` as a guarantee instead of an indication to verify.
+**Root Cause:** Code treats `mightContain() == true` as a guarantee instead of an indication to verify.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Bug pattern — treating mightContain as definitive:
 if (filter.mightContain(key)) {
@@ -327,7 +327,7 @@ if (filter.mightContain(key)) {
 }
 ```
 
-Fix:
+**Fix:**
 ```java
 if (filter.mightContain(key)) {
     Value v = cache.get(key);
@@ -335,25 +335,25 @@ if (filter.mightContain(key)) {
 }
 ```
 
-Prevention: Always treat `mightContain()` as a hint, never a guarantee. Document this contract prominently.
+**Prevention:** Always treat `mightContain()` as a hint, never a guarantee. Document this contract prominently.
 
 ---
 
 **3. Serialisation mismatch across restarts**
 
-Symptom: After service restart, Bloom filter behaves as if empty — all previously inserted elements are "not found."
+**Symptom:** After service restart, Bloom filter behaves as if empty — all previously inserted elements are "not found."
 
-Root Cause: In-memory Bloom filter not persisted to disk on shutdown; rebuilt empty on startup.
+**Root Cause:** In-memory Bloom filter not persisted to disk on shutdown; rebuilt empty on startup.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check logs for "BloomFilter initialized" on startup
 # If seen on every restart, filter is ephemeral
 ```
 
-Fix: Serialise filter state to disk on shutdown; load on startup. Guava: `filter.writeTo(outputStream)` / `BloomFilter.readFrom(inputStream, funnel)`.
+**Fix:** Serialise filter state to disk on shutdown; load on startup. Guava: `filter.writeTo(outputStream)` / `BloomFilter.readFrom(inputStream, funnel)`.
 
-Prevention: Treat Bloom filter as a persistent component if it protects against I/O — always persist and restore.
+**Prevention:** Treat Bloom filter as a persistent component if it protects against I/O — always persist and restore.
 
 ---
 

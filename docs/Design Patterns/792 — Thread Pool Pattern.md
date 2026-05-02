@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Thread Pool Pattern"
 parent: "Design Patterns"
@@ -198,7 +198,7 @@ WITH Thread Pool:
 "Post office" = ThreadPoolExecutor
 "Counters (5)" = worker threads (corePoolSize)
 "Customers wait in line" = task queue (BlockingQueue)
-"Line too long → no new customers accepted" = rejection policy (queue full + maxPoolSize reached)
+- "Line too long → no new customers accepted" = rejection policy (queue full + maxPoolSize reached)
 "Closing time" = shutdown() + awaitTermination()
 
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Auto Scaling"
 parent: "System Design"
@@ -160,7 +160,7 @@ WITH Auto Scaling:
 "Supervisor" = auto scaling controller
 "Agents" = EC2 instances / pods
 "Call queue length" = scaling metric (CPU, request queue depth)
-"Queue > threshold → call agents" = scale-out policy trigger
+- "Queue > threshold → call agents" = scale-out policy trigger
 "Agents going home" = scale-in / instance termination
 
 ---

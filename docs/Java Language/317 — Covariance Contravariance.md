@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Consider two operations: (1) reading animals from a shelter and printing them — works safely with any subtype; (2) adding animals to a shelter — must respect the specific type the shelter holds. Without a formal vocabulary for when subtype substitution is safe, developers either over-restrict APIs (every method duplicated per subtype) or under-restrict them (accepting `Object` everywhere and casting manually, risking runtime errors).
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A team builds a generic pipeline framework. `Processor<T>` transforms T values. A `LoggingProcessor<Object>` should work anywhere a `Processor<String>` is expected — after all, a processor that handles any Object certainly handles Strings. But parameterised types are invariant: `Processor<Object>` is rejected where `Processor<String>` is expected. The team falls back to raw types, losing all safety.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why the formal theory of **Covariance and Contravariance** was applied to Java generics — to give developers a precise language for expressing "this generic parameter is safe to widen" or "safe to narrow", captured in Java as `? extends T` and `? super T`.
 
 ---
@@ -64,12 +64,12 @@ The direction of variance depends on whether the type is in a "producer" (output
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Covariant positions are "read-only" for the type: if I know the container holds a subtype of T, I can safely read T from it.
 2. Contravariant positions are "write-only" for the type: if I know the container accepts a supertype of T, I can safely write T into it.
 3. Invariant positions require exact type match: both reads and writes of the exact type must be safe simultaneously.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Consider `List<T>`:
 - Read (`get()`) returns `T` — covariant position; `List<Dog>` can supply `Animal` (Dog is-a Animal).
 - Write (`add(T)`) takes `T` — contravariant position; `List<Animal>` can accept `Dog` (Dog is-a Animal).
@@ -104,15 +104,15 @@ Function<? super Dog, ? extends Animal>
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Formal framework for type-safe generality; enables expressing "read-only" and "write-only" contracts in the type system.
-Cost: Complexity — understanding variance requires abstract thinking about type relationships; incorrect variance annotations create subtle bugs or overly complex API signatures.
+**THE TRADE-OFFS:**
+**Gain:** Formal framework for type-safe generality; enables expressing "read-only" and "write-only" contracts in the type system.
+**Cost:** Complexity — understanding variance requires abstract thinking about type relationships; incorrect variance annotations create subtle bugs or overly complex API signatures.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Java arrays are covariant (unlike generics). `Dog[] dogs` can be assigned to `Animal[] animals`. Watch what happens.
 
 WITHOUT ENFORCEMENT:
@@ -132,7 +132,7 @@ List<Dog> dogs = new ArrayList<>();
 // No runtime check needed — safety is compile-time
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 Java made arrays covariant (pre-generics era, for convenience) and pays with `ArrayStoreException` at runtime. Java made generics invariant and pays with more complex wildcard syntax. The trade-off is: covariant arrays = simple syntax but runtime risk; invariant generics = complex wildcards but compile-time safety. Wildcards (`? extends T`) add back controlled covariance without the runtime risk, because they prohibit writes.
 
 ---
@@ -141,9 +141,9 @@ Java made arrays covariant (pre-generics era, for convenience) and pays with `Ar
 
 > Imagine type variance as a one-way valve. A covariant valve lets subtypes flow out to supertype containers (output valve: narrow → wide). A contravariant valve lets supertypes flow into subtype containers (input valve: wide → narrow). An invariant container has no valve — nothing flows in either direction unless it's exactly the right type.
 
-"Covariant output valve" → `? extends T` — Dog flows out as Animal.
-"Contravariant input valve" → `? super T` — Animal comparator accepted for Dog input.
-"Invariant container" → `T` exact — only exact type passes.
+- "Covariant output valve" → `? extends T` — Dog flows out as Animal.
+- "Contravariant input valve" → `? super T` — Animal comparator accepted for Dog input.
+- "Invariant container" → `T` exact — only exact type passes.
 
 Where this analogy breaks down: Real valves are symmetric — a covariant valve would also allow wide types to "pour in" from above. Generic covariance (`? extends T`) specifically prohibits writing to prevent type corruption, which has no direct physical valve analogy.
 
@@ -216,7 +216,7 @@ javac -verbose MyClass.java 2>&1 | grep "error\|warning"
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Source: dogs.sort(animalComparator)]
     → [dogs is List<Dog>]
@@ -229,7 +229,7 @@ NORMAL FLOW:
     → [Type-safe: no casts, no runtime failures]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Source: void display(List<Animal> animals)]
     → [Caller: display(dogList) where dogList = List<Dog>]
@@ -239,7 +239,7 @@ FAILURE PATH:
     → [Or: fix design to use exact type consistently]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In large frameworks (Spring, Guice, Kafka client APIs), variance errors are amplified across thousands of callsites. A library that uses `List<ConcreteType>` where `List<? extends Base>` would be appropriate forces every user to duplicate or convert data. Correct variance annotation in library APIs saves downstream developers significant boilerplate across large codebases.
 
 ---
@@ -341,20 +341,20 @@ How to choose: In Java you have no choice — use wildcards (`? extends`, `? sup
 
 **Invariance Preventing Reuse — API Too Specific**
 
-Symptom:
+**Symptom:**
 Library users constantly write adapter code to convert `List<Subtype>` to `List<BaseType>` before calling library methods. Code like `new ArrayList<Animal>(dogList)` appears everywhere.
 
-Root Cause:
+**Root Cause:**
 Library method accepts `List<Animal>` but callers have `List<Dog>`. Invariance requires exact match. The allocation of a new list is unnecessary — the data is identical, only the declared type differs.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Search for conversion patterns in caller code:
 grep -rn "new ArrayList<.*>(.*List)" --include="*.java" .
 # Each hit may indicate an invariance workaround
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: forces List<Animal> — callers must convert
 List<Animal> findSick(List<Animal> animals) { ... }
@@ -365,19 +365,19 @@ List<Animal> findSick(List<? extends Animal> animals) {
 }
 ```
 
-Prevention: Apply PECS during initial API design. Every collection parameter that is only read should be `? extends T`.
+**Prevention:** Apply PECS during initial API design. Every collection parameter that is only read should be `? extends T`.
 
 ---
 
 **ArrayStoreException from Array Covariance**
 
-Symptom:
+**Symptom:**
 `ArrayStoreException` at runtime on an array write operation that appears type-safe from the variable declaration.
 
-Root Cause:
+**Root Cause:**
 Array covariance allows `Dog[] → Animal[]` assignment. When a `Cat` is written through the `Animal[]` reference, the JVM's runtime type check (every array write is checked) detects the mismatch.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Stack trace shows ArrayStoreException at array store:
 # java.lang.ArrayStoreException: Cat cannot be stored in Dog[]
@@ -387,7 +387,7 @@ Diagnostic:
 grep -rn "\[\] " --include="*.java" . | grep "= new.*\[\]"
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: array covariance allows unsafe write later
 Animal[] animals = new Dog[5]; // covariant — compiles
@@ -398,19 +398,19 @@ List<? extends Animal> animals = new ArrayList<Dog>();
 // animals.add(new Cat()); // compile error — safe
 ```
 
-Prevention: Prefer `List<? extends T>` over covariant array assignments when the collection type needs to be widened.
+**Prevention:** Prefer `List<? extends T>` over covariant array assignments when the collection type needs to be widened.
 
 ---
 
 **Wrong Variance Direction on Consumer Parameter**
 
-Symptom:
+**Symptom:**
 A utility method that adds elements to a collection fails for all subtype collections. Users are confused — intuitively the method "should work."
 
-Root Cause:
+**Root Cause:**
 The method uses `? extends T` (covariant) for a write-only parameter. The compiler correctly rejects writes via covariant wildcards.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 javac MyUtil.java
 # error: no suitable method found for add(T)
@@ -418,7 +418,7 @@ javac MyUtil.java
 # (argument mismatch; T cannot be converted to CAP#1)
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: covariant wildcard on consumer (write) param
 void addAll(
@@ -435,7 +435,7 @@ void addAll(
 }
 ```
 
-Prevention: Apply PECS consistently — consumer parameters always use `? super T`, never `? extends T`.
+**Prevention:** Apply PECS consistently — consumer parameters always use `? super T`, never `? extends T`.
 
 ---
 

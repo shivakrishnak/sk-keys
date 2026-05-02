@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Thread A holds Lock 1, Thread B holds Lock 2. Thread A requests Lock 2 (blocked). Thread B requests Lock 1 (blocked). Neither can proceed. The program hangs silently — no exception, no error, no output. In production, this causes a service to stop responding completely, typically requiring a restart.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Deadlock is particularly dangerous because: (1) it's non-deterministic (depends on thread scheduling timing), (2) it may happen only under load (higher concurrency increases probability), (3) it produces no diagnostic output by default, (4) in distributed systems, it can involve processes across machines, making it even harder to detect.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Dijkstra identified and formalised deadlock conditions in the 1960s. The four Coffman conditions (1971) provide the definitive model. Detection, prevention, and avoidance algorithms (Banker's algorithm, lock ordering, timeout-based breaking) are all responses to these conditions.
 
 ---
@@ -90,7 +90,7 @@ DETECTION STRATEGIES (allow, then detect):
 - Build a Resource Allocation Graph (RAG): nodes are threads and resources; edges are "holds" and "waits-for". A cycle in the RAG = deadlock.
 - Database engines detect transaction deadlocks by maintaining a wait-for graph and periodically checking for cycles.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 Prevention (lock ordering): simple and effective but requires discipline across the entire codebase. Detection + recovery: allows higher concurrency but requires victim selection and transaction rollback. Avoidance (Banker's algorithm): guarantees no deadlock but requires knowing maximum resource needs in advance — not practical for most software.
 
 ---
@@ -128,7 +128,7 @@ Thread 2: lockA.lock() → lockB.lock() → ... → unlock both
 // No circular wait possible
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The deadlock arose solely from inconsistent acquisition order. The fix requires no algorithm, no timeouts — just a convention enforced by code review and static analysis.
 
 ---
@@ -336,11 +336,11 @@ long[] deadlockedIds = tmx.findDeadlockedThreads();  // null if none
 
 **1. Production Service Hangs (No Response)**
 
-Symptom: Service stops responding; health checks fail; all threads BLOCKED; CPU usage drops to zero.
+**Symptom:** Service stops responding; health checks fail; all threads BLOCKED; CPU usage drops to zero.
 
-Root Cause: Deadlock in request-handling threads; all handlers blocked waiting for locks in a cycle.
+**Root Cause:** Deadlock in request-handling threads; all handlers blocked waiting for locks in a cycle.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Java: generate thread dump
@@ -351,19 +351,19 @@ kill -3 <PID>  # sends SIGQUIT → JVM dumps threads to stderr
 cat /proc/<PID>/task/*/status | grep State
 ```
 
-Fix: Identify the deadlocking threads from jstack output; fix lock ordering in source code.
+**Fix:** Identify the deadlocking threads from jstack output; fix lock ordering in source code.
 
-Prevention: Add a deadlock monitoring thread in production that calls `tmx.findDeadlockedThreads()` every 30 seconds and alerts.
+**Prevention:** Add a deadlock monitoring thread in production that calls `tmx.findDeadlockedThreads()` every 30 seconds and alerts.
 
 ---
 
 **2. Database Deadlock Spike Under Load**
 
-Symptom: "Deadlock found" errors spike during peak traffic; transaction retry rate increases; P99 latency spikes.
+**Symptom:** "Deadlock found" errors spike during peak traffic; transaction retry rate increases; P99 latency spikes.
 
-Root Cause: Hot rows accessed in different order by concurrent transactions.
+**Root Cause:** Hot rows accessed in different order by concurrent transactions.
 
-Diagnostic:
+**Diagnostic:**
 
 ```sql
 -- MySQL: last deadlock info
@@ -374,9 +374,9 @@ SHOW ENGINE INNODB STATUS\G
 SELECT * FROM pg_locks WHERE NOT granted;
 ```
 
-Fix: Ensure all transactions accessing the same rows do so in consistent order; use `SELECT ... FOR UPDATE` in the same order across transactions.
+**Fix:** Ensure all transactions accessing the same rows do so in consistent order; use `SELECT ... FOR UPDATE` in the same order across transactions.
 
-Prevention: Test with concurrent load using `pgbench` (PostgreSQL) or `sysbench` (MySQL) before production.
+**Prevention:** Test with concurrent load using `pgbench` (PostgreSQL) or `sysbench` (MySQL) before production.
 
 ---
 

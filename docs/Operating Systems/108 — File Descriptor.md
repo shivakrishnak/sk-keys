@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Every early OS required programs to pass file names or physical addresses to I/O functions. File names are long strings that require path resolution on every I/O call. Physical addresses require programs to know hardware layout. Concurrent operations on the same file from the same program require coordinating shared state everywhere.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Unix's design goal was that "everything is a file" — regular files, directories, devices, sockets, pipes, and terminals should all use the same read/write interface. But you can't use a pathname as a stable handle: the file could be renamed mid-operation. You can't use physical addresses: they break portability and expose hardware.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 The solution was to give each process a small integer per open resource. The integer is an opaque handle — it means nothing to user code except "this is my resource." The OS maintains a table mapping integers to open file descriptions. This gave Unix the uniform I/O interface that made "everything is a file" possible.
 
 ---
@@ -64,14 +64,14 @@ The level of indirection (process fd table → open file description → inode) 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. An fd is process-scoped and non-negative; 0, 1, 2 are always stdin/stdout/stderr.
 2. `open()` always returns the lowest available fd number.
 3. Closing an fd releases the slot — subsequent opens may reuse the number.
 4. Forked children inherit copies of the parent's fd table (same open file descriptions).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The three-level indirection (fd → open file description → inode) is deliberate:
 
 - **Level 1 (fd table):** Small, per-process, holds flags like `FD_CLOEXEC` (close on exec). Cheap to copy at `fork()`.
@@ -80,15 +80,15 @@ The three-level indirection (fd → open file description → inode) is delibera
 
 This layering means: after `fork()`, parent and child share the same file offset (read by one advances position for the other), which was essential for shell I/O redirection before pipes were invented.
 
-THE TRADE-OFFS:
-Gain: Uniform interface for all I/O resources; cheap integer-based reference; composable with all syscalls; epoll/select/poll all work on fds enabling heterogeneous wait sets.
-Cost: Finite per-process limit (`ulimit -n`, default 1024 or 65536); fd leaks cause `EMFILE` errors; fds inherited across `exec()` unless `FD_CLOEXEC` set (security risk).
+**THE TRADE-OFFS:**
+**Gain:** Uniform interface for all I/O resources; cheap integer-based reference; composable with all syscalls; epoll/select/poll all work on fds enabling heterogeneous wait sets.
+**Cost:** Finite per-process limit (`ulimit -n`, default 1024 or 65536); fd leaks cause `EMFILE` errors; fds inherited across `exec()` unless `FD_CLOEXEC` set (security risk).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A web server forks a child for each request.
 
 WHAT HAPPENS:
@@ -113,7 +113,7 @@ Child (before exec):
   survive exec() in the child → fd leak
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 Every `open()` in a library you call, every socket the framework opens, every temporary file — if not marked `O_CLOEXEC`, it leaks into child processes via `exec()`. This is both a resource leak and a security vulnerability (child inherits your database socket).
 
 ---
@@ -304,11 +304,11 @@ cat /proc/sys/fs/file-nr
 
 **1. EMFILE — Too Many Open File Descriptors**
 
-Symptom: Application fails with `java.io.IOException: Too many open files` or C `open()` returns `EMFILE`.
+**Symptom:** Application fails with `java.io.IOException: Too many open files` or C `open()` returns `EMFILE`.
 
-Root Cause: Process has reached its fd limit; usually a fd leak (resource not closed in error path).
+**Root Cause:** Process has reached its fd limit; usually a fd leak (resource not closed in error path).
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check current limit vs usage
@@ -318,38 +318,38 @@ lsof -p <PID> | sort -k 9 | uniq -c | sort -rn | head
 # Find what type of fd is leaking (sockets, files, pipes)
 ```
 
-Fix: Add try-with-resources; trace all `open()`/`socket()` to matching `close()`.
+**Fix:** Add try-with-resources; trace all `open()`/`socket()` to matching `close()`.
 
-Prevention: Instrument code to track fd count in tests. Set `ulimit -n 1048576` for servers that genuinely need many fds.
+**Prevention:** Instrument code to track fd count in tests. Set `ulimit -n 1048576` for servers that genuinely need many fds.
 
 ---
 
 **2. Use-After-Close (fd Reuse Bug)**
 
-Symptom: Writing to a socket corrupts a file (or vice versa); data goes to wrong destination.
+**Symptom:** Writing to a socket corrupts a file (or vice versa); data goes to wrong destination.
 
-Root Cause: Code closes an fd, then uses the old integer believing it's still valid. OS reassigned that integer to a new resource.
+**Root Cause:** Code closes an fd, then uses the old integer believing it's still valid. OS reassigned that integer to a new resource.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 strace -e trace=open,close,read,write,socket -p <PID> 2>&1 | grep "fd N"
 # Watch for close(N) followed by read(N)/write(N)
 ```
 
-Fix: Set fd variable to -1 after closing. Check fd before use.
+**Fix:** Set fd variable to -1 after closing. Check fd before use.
 
-Prevention: Never store raw fd integers in long-lived data structures without lifecycle management.
+**Prevention:** Never store raw fd integers in long-lived data structures without lifecycle management.
 
 ---
 
 **3. FD Leak Across exec (Security Issue)**
 
-Symptom: Child process inherits sensitive fd (database socket, private key file handle).
+**Symptom:** Child process inherits sensitive fd (database socket, private key file handle).
 
-Root Cause: `open()` or `socket()` called without `O_CLOEXEC`/`SOCK_CLOEXEC`; fd survives `execve()`.
+**Root Cause:** `open()` or `socket()` called without `O_CLOEXEC`/`SOCK_CLOEXEC`; fd survives `execve()`.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # After exec, check inherited fds in new process
@@ -357,9 +357,9 @@ ls -la /proc/<PID>/fd/
 # Compare with expected fds (stdin/stdout/stderr only)
 ```
 
-Fix: Always use `O_CLOEXEC` on every `open()` and `SOCK_CLOEXEC` on every `socket()`.
+**Fix:** Always use `O_CLOEXEC` on every `open()` and `SOCK_CLOEXEC` on every `socket()`.
 
-Prevention: Audit with `lsof -p <exec'd PID>` in tests. Add `fcntl(fd, F_SETFD, FD_CLOEXEC)` as a belt-and-suspenders measure.
+**Prevention:** Audit with `lsof -p <exec'd PID>` in tests. Add `fcntl(fd, F_SETFD, FD_CLOEXEC)` as a belt-and-suspenders measure.
 
 ---
 

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A distributed cache has 4 nodes. You hash keys with `node = hash(key) % 4`. Client requests route correctly to the right node. Now a 5th node is added: `hash(key) % 5`. For a dataset with 1 million keys, ~80% of them map to a different node than before. All these keys are "cache misses" — the cache is effectively emptied. Similarly, removing a node causes mass rerouting. In a production system with millions of requests per second, this is catastrophic.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Simple modulo hashing ties every key's node assignment to the total number of nodes. Change the node count by 1, and the denominator changes, shuffling almost all assignments. The cost of scaling — adding or removing nodes — is proportional to the entire dataset, not just the affected fraction.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Place both keys and nodes on a circle (hash ring) from 0 to 2^32. Each key is assigned to the first node clockwise from its position. Adding a node only affects keys between the new node and its predecessor — typically 1/N of all keys. Removing a node only affects its own 1/N share. This is exactly why the Consistent Hash Ring was created.
 
 ---
@@ -64,12 +64,12 @@ The "ring" is not a data structure by itself — it is the *hash space* interpre
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Both nodes and keys are mapped to the same circular hash space [0, 2^32).
 2. A key is assigned to the node whose position is the smallest value ≥ the key's hash (clockwise neighbor).
 3. Adding/removing a node changes assignments only for keys in the arc adjacent to that node.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Implementation** using `TreeMap<Long, String>` (ring):
 - Add node S: `ring.put(hash(S), S)`
 - Remove node S: `ring.remove(hash(S))`
@@ -79,15 +79,15 @@ DERIVED DESIGN:
 
 **Virtual nodes** (vnodes): each physical node is hashed to V positions on the ring. With V=150, the law of large numbers produces near-uniform distribution across all physical nodes. V=150 means each physical node occupies 150 arcs; the probability of any arc being assigned to the wrong node is negligible.
 
-THE TRADE-OFFS:
-Gain: O(K/N) remapping on topology change, horizontal scaling without cache invalidation.
-Cost: Implementation complexity with virtual nodes, uneven physical load without vnodes, ring requires O(N×V) memory.
+**THE TRADE-OFFS:**
+**Gain:** O(K/N) remapping on topology change, horizontal scaling without cache invalidation.
+**Cost:** Implementation complexity with virtual nodes, uneven physical load without vnodes, ring requires O(N×V) memory.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Cache cluster of 3 nodes, 300 keys uniformly distributed (100 per node). Add a 4th node.
 
 WITHOUT CONSISTENT HASHING (modulo):
@@ -96,7 +96,7 @@ Naive: `node = hash(key) % N`. Old N=3, new N=4. `hash(key) % 3 ≠ hash(key) % 
 WITH CONSISTENT HASHING:
 New node inserted between node A (at position 100) and node B (at position 200). Keys between positions 100 and new node's position (150) — approximately 50 keys — transfer from B to the new node. 250 keys stay exactly where they are. Only ~17% of keys remapped.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Consistent hashing limits the blast radius of topology changes to 1/N of the dataset — deterministically. This transforms "restart causes total cache miss" into "scale operation causes ~10% cache miss." The same principle applies to distributed database sharding (Dynamo, Cassandra) and load balancing.
 
 ---
@@ -105,11 +105,11 @@ Consistent hashing limits the blast radius of topology changes to 1/N of the dat
 
 > Consistent hashing is like assigning countries on a globe to the nearest time zone capital. When a new capital is added, only countries between it and the previous capital reassign. Removing a capital redistributes only its own countries to the next capital — not the whole map.
 
-"Globe circumference" → hash ring [0, 2^32)
-"Time zone capital" → node hash position
-"Country" → key hash position
-"Nearest clockwise capital" → assigned node
-"New capital added" → new node absorbs adjacent arc
+- "Globe circumference" → hash ring [0, 2^32)
+- "Time zone capital" → node hash position
+- "Country" → key hash position
+- "Nearest clockwise capital" → assigned node
+- "New capital added" → new node absorbs adjacent arc
 
 Where this analogy breaks down: Capitals are chosen geographically; nodes on the hash ring are placed by their hash value — uniform in expectation but clustered in practice without virtual nodes.
 
@@ -199,7 +199,7 @@ Key X hashes to position 1.5B → nearest clockwise = A2 → routes to A
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Client sends request with key K
 → hash(K) computed
@@ -209,7 +209,7 @@ Client sends request with key K
 → Node processes request
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Target node fails
 → Ring doesn't automatically update
@@ -219,7 +219,7 @@ Target node fails
 → 1/N of requests experience temporary miss
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 1,000+ nodes, each with V=150 virtual nodes, the ring has 150,000 entries. `TreeMap` lookups are O(log 150,000) ≈ 17 comparisons — still fast. The metadata size (ring) fits comfortably in memory. At 10,000+ nodes, gossip propagation of ring changes becomes the bottleneck — each topology change must propagate to all nodes. Consistent hashing is well-proven at Cassandra's scale (thousands of nodes, petabyte datasets).
 
 ---
@@ -287,11 +287,11 @@ How to choose: Use Consistent Hash Ring for general distributed caching with dyn
 
 **1. Severe load imbalance without virtual nodes**
 
-Symptom: One cache node handles 40% of requests while others handle 15% each.
+**Symptom:** One cache node handles 40% of requests while others handle 15% each.
 
-Root Cause: Without virtual nodes, physical node hash positions cluster non-uniformly. One node may own an arc 4× larger than average.
+**Root Cause:** Without virtual nodes, physical node hash positions cluster non-uniformly. One node may own an arc 4× larger than average.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check key distribution per node:
 ring.getNodeKeyCount().forEach((node, count) ->
@@ -299,38 +299,38 @@ ring.getNodeKeyCount().forEach((node, count) ->
 # Look for nodes with 2-3x average key count
 ```
 
-Fix: Add V=150 virtual nodes per physical node. Rebalance data after adding vnodes.
+**Fix:** Add V=150 virtual nodes per physical node. Rebalance data after adding vnodes.
 
-Prevention: Always use virtual nodes in production. V≥100 is typical for good statistical balance.
+**Prevention:** Always use virtual nodes in production. V≥100 is typical for good statistical balance.
 
 ---
 
 **2. All keys route to same node after ring rebuild**
 
-Symptom: After service restart, one node receives 100% of traffic.
+**Symptom:** After service restart, one node receives 100% of traffic.
 
-Root Cause: `hash()` function is not deterministic across restarts (e.g., uses Java `hashCode()` which is JVM-instance dependent, random salt, etc.).
+**Root Cause:** `hash()` function is not deterministic across restarts (e.g., uses Java `hashCode()` which is JVM-instance dependent, random salt, etc.).
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Test: same key, same hash before and after restart?
 System.out.println(hash("test-key")); // run twice
 // If different: hash is non-deterministic
 ```
 
-Fix: Use a deterministic hash: MurmurHash3, SHA-256, or `Hashing.murmur3_128()` from Guava.
+**Fix:** Use a deterministic hash: MurmurHash3, SHA-256, or `Hashing.murmur3_128()` from Guava.
 
-Prevention: Never use Java's `Object.hashCode()` or anything that changes between JVM runs for routing decisions.
+**Prevention:** Never use Java's `Object.hashCode()` or anything that changes between JVM runs for routing decisions.
 
 ---
 
 **3. Hot shard from poor key distribution**
 
-Symptom: One virtual node receives disproportionate traffic regardless of virtual node count.
+**Symptom:** One virtual node receives disproportionate traffic regardless of virtual node count.
 
-Root Cause: Key space is not uniformly distributed. Many keys cluster at nearby hash values (e.g., monotonically increasing integer keys).
+**Root Cause:** Key space is not uniformly distributed. Many keys cluster at nearby hash values (e.g., monotonically increasing integer keys).
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Histogram of key hash values:
 keys.stream().mapToLong(k -> hash(k)).sorted()
@@ -339,9 +339,9 @@ keys.stream().mapToLong(k -> hash(k)).sorted()
         System.out.println(bucket + ": " + list.size()));
 ```
 
-Fix: Pre-hash keys through a secondary uniform hash before ring assignment. Apply a salt transformation to integer IDs.
+**Fix:** Pre-hash keys through a secondary uniform hash before ring assignment. Apply a salt transformation to integer IDs.
 
-Prevention: Validate key distribution is uniform before deploying consistent hashing; test with production key samples.
+**Prevention:** Validate key distribution is uniform before deploying consistent hashing; test with production key samples.
 
 ---
 

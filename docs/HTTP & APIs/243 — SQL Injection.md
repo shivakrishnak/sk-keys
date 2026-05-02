@@ -382,12 +382,12 @@ public List<User> findAllSorted(String sortField, String direction) {
 
 **Second-Order SQL Injection**
 
-Symptom:
+**Symptom:**
 Security scanner finds no injection at signup (input is properly sanitized).
 But a dormant payload stored in the database is later used unsafely in an admin query,
 triggering SQL injection when an admin views a user record.
 
-Root Cause:
+**Root Cause:**
 
 ```
 1. Signup: username = "admin'--" → sanitized/escaped before insert → stored safely

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Generic types in Java are invariant: `List<Dog>` is NOT a `List<Animal>`, even though `Dog extends Animal`. This is correct for safety (you can't allow writing a `Cat` into a `List<Dog>`), but it makes reusable utility methods impossible. A method `void printAll(List<Animal> animals)` cannot be called with a `List<Dog>` — even though printing is read-only and perfectly safe.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A zoo application's `AnimalShelter` class has 20 methods that iterate collections: `printAnimals()`, `countHealthy()`, `findOldest()`, `exportToCsv()`. Without wildcards, every method must be duplicated for every animal subtype: `printDogs()`, `printCats()`, `printBirds()`. Adding a new animal type requires updating 20 methods. This is combinatorial explosion.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Bounded Wildcards** were created — to express "I only need to read from this collection" (`? extends T`) or "I only need to write into this collection" (`? super T`), allowing reuse across related types while the compiler enforces exactly which operations are safe.
 
 ---
@@ -64,12 +64,12 @@ The PECS rule — **P**roducer **E**xtends, **C**onsumer **S**uper — is the co
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. `List<? extends T>` is covariant: safe to read elements as `T`, unsafe to write (you don't know the exact subtype).
 2. `List<? super T>` is contravariant: safe to write `T` elements in, unsafe to read other than as `Object` (you don't know the exact supertype).
 3. If you need both reads and writes of a specific type, use `List<T>` — the invariant form.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Why can't you add to `List<? extends Animal>`? Say it holds a `List<Dog>` at runtime. If you could add a `Cat`, you'd corrupt the `Dog` list. The compiler prevents this by making the element type for writes of `List<? extends Animal>` be the capture of the unknown subtype — and since the precise subtype is unknown, no concrete type (except `null`) satisfies it.
 
 Why can you add `Dog` to `List<? super Dog>`? Say it holds a `List<Animal>`. Adding a `Dog` is safe because `Dog` is-a `Animal`. Reading back as `Object` is safe because everything is-an `Object`. But reading as `Animal` is NOT guaranteed safe — the list might actually be a `List<Object>`, not a `List<Animal>`.
@@ -86,18 +86,18 @@ Why can you add `Dog` to `List<? super Dog>`? Say it holds a `List<Animal>`. Add
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Enables covariant and contravariant use of generic collections without sacrificing type safety.
-Cost: Wildcard types are harder to read; wildcards cannot be combined arbitrarily; wildcard capture creates complex compiler error messages that confuse developers.
+**THE TRADE-OFFS:**
+**Gain:** Enables covariant and contravariant use of generic collections without sacrificing type safety.
+**Cost:** Wildcard types are harder to read; wildcards cannot be combined arbitrarily; wildcard capture creates complex compiler error messages that confuse developers.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A `copy(source, destination)` method that copies elements from one list to another. Both lists hold some type of `Number`.
 
-WHAT HAPPENS WITHOUT BOUNDED WILDCARDS:
+**WHAT HAPPENS WITHOUT BOUNDED WILDCARDS:**
 ```java
 void copy(List<Number> src, List<Number> dst) {
     dst.addAll(src);
@@ -107,7 +107,7 @@ void copy(List<Number> src, List<Number> dst) {
 ```
 The method is useless for subtypes.
 
-WHAT HAPPENS WITH BOUNDED WILDCARDS:
+**WHAT HAPPENS WITH BOUNDED WILDCARDS:**
 ```java
 void copy(
     List<? extends Number> src,  // producer: we read
@@ -121,7 +121,7 @@ copy(doubleList, objectList); // OK
 copy(floatList, numberList);  // OK
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 By separating the concerns of reading (extends) and writing (super), the method becomes maximally flexible while the compiler still prevents `dst.add("hello")` — a String is not a Number.
 
 ---
@@ -130,9 +130,9 @@ By separating the concerns of reading (extends) and writing (super), the method 
 
 > Think of `? extends T` as a read-only dispensing machine for type T: guaranteed to give you T, won't take anything back. Think of `? super T` as a deposit slot accepting T: you can drop T in, but what you get back is just "stuff" (Object).
 
-"Dispensing machine for T" → `List<? extends T>` — `get()` returns T, `add()` rejected.
-"Deposit slot accepting T" → `List<? super T>` — `add(T)` accepted, `get()` returns Object.
-"Two-way exchange counter" → `List<T>` — both get and add work with exact type T.
+- "Dispensing machine for T" → `List<? extends T>` — `get()` returns T, `add()` rejected.
+- "Deposit slot accepting T" → `List<? super T>` — `add(T)` accepted, `get()` returns Object.
+- "Two-way exchange counter" → `List<T>` — both get and add work with exact type T.
 
 Where this analogy breaks down: In reality you can call `add(null)` on a `List<? extends T>` — null is the one value without a type. The analogy treats the dispensing machine as absolutely read-only, which is not quite true.
 
@@ -220,7 +220,7 @@ NORMAL FLOW (PECS copy example):
     → [Read restricted to Object]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Developer forgets PECS, uses List<Number> both src/dst]
     → [List<Integer> cannot be passed as List<Number>]
@@ -228,7 +228,7 @@ FAILURE PATH:
     → [Fix: add wildcards to signature]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In large codebases, wildcards appear extensively in utility APIs (`Collections`, `Stream`, `Comparator`). Misapplication of PECS is a frequent code smell — either missing wildcards (overly restrictive API) or wildcards in both positions on the same parameter (sign of design confusion). Code reviews should flag methods that accept `List<T>` when they only read, because this unnecessarily restricts callers.
 
 ---
@@ -333,13 +333,13 @@ How to choose: Apply PECS. If your method only reads from the collection, use `?
 
 **API Too Restrictive — Missing extends on Producer Parameter**
 
-Symptom:
+**Symptom:**
 Callers constantly get "incompatible types" compile errors when passing lists of subtypes. Team duplicates methods for every subtype.
 
-Root Cause:
+**Root Cause:**
 Method signature uses exact `List<T>` for a parameter that is only read. This forces callers to convert lists, duplicating data unnecessarily.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Search for methods that accept List<ConcreteType> but
 # only call read operations (no add/set/remove):
@@ -348,7 +348,7 @@ grep -rn "List<[A-Z]" --include="*.java" . | \
 # Review each callsite: does it need write access?
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: restricts to exact list type
 void display(List<Animal> animals) {
@@ -361,26 +361,26 @@ void display(List<? extends Animal> animals) {
 }
 ```
 
-Prevention: Code review rule — any method parameter that is a `List<ConcreteType>` and never modified should become `List<? extends ConcreteType>`.
+**Prevention:** Code review rule — any method parameter that is a `List<ConcreteType>` and never modified should become `List<? extends ConcreteType>`.
 
 ---
 
 **Wildcard Capture Failure — Cannot Assign Wildcard Read to Typed Variable**
 
-Symptom:
+**Symptom:**
 Compiler error "incompatible types: CAP#1 cannot be converted to T" when trying to use an element read from a `List<?>` in a typed context.
 
-Root Cause:
+**Root Cause:**
 Wildcard capture creates a fresh unnamed type `CAP#1` that cannot be assigned to a named type variable. The fix requires a capture helper.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Compiler message like:
 # error: incompatible types: CAP#1 cannot be converted to T
 # where CAP#1 is a fresh type-variable
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: cannot swap on List<?>
 void swap(List<?> list, int i, int j) {
@@ -402,19 +402,19 @@ private <E> void swapCapture(
 }
 ```
 
-Prevention: When you need to use an element read from a wildcard list in a write operation on the same list, always use a capture helper method.
+**Prevention:** When you need to use an element read from a wildcard list in a write operation on the same list, always use a capture helper method.
 
 ---
 
 **Comparator Type Mismatch Surprise**
 
-Symptom:
+**Symptom:**
 `Collections.sort(List<Dog> dogs, Comparator<Animal> byAge)` fails to compile with "wrong first argument type."
 
-Root Cause:
+**Root Cause:**
 `Collections.sort` signature is `sort(List<T> list, Comparator<? super T> c)`. The actual wildcard `? super Dog` accepts `Comparator<Dog>`, `Comparator<Animal>`, `Comparator<Object>`. The error occurs when the sort method is misread as requiring `Comparator<T>` exactly.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Read the actual JDK signature:
 javap java.util.Collections | grep "sort"
@@ -423,7 +423,7 @@ javap java.util.Collections | grep "sort"
 #   java.util.Comparator<? super T>)
 ```
 
-Fix:
+**Fix:**
 ```java
 // This WORKS even though comparator is Comparator<Animal>
 // because Animal super Dog satisfies ? super Dog
@@ -434,7 +434,7 @@ List<Dog> dogs = getDogs();
 dogs.sort(byAge);  // OK — PECS: Dog consumer super Dog
 ```
 
-Prevention: Prefer lambda or method reference comparators (`Comparator.comparing(Dog::getName)`) which let the compiler infer types correctly.
+**Prevention:** Prefer lambda or method reference comparators (`Comparator.comparing(Dog::getName)`) which let the compiler infer types correctly.
 
 ---
 

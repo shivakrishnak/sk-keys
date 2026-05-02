@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Two problems illustrate the dilemma: (A) "Is this 2048-bit number prime?" A deterministic answer requires full factoring — computationally infeasible. (B) "Sort this array" — a randomised pivot selection makes QuickSort fast in expectation but could (with tiny probability) take O(N²). In both cases, randomness helps — but differently. Without a taxonomy of how randomness is used, engineers conflate these two very different reliability models and make wrong trade-off decisions.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A Miller-Rabin primality test called 40 times gives a primality answer right with probability 1 - (1/4)^40 ≈ 1 - 10^-24. A cryptographic library treating this as "definitely correct" works fine; one treating it as "sometimes wrong" rejects it unnecessarily. Conflating "always correct but occasionally slow" with "usually correct but occasionally wrong" leads to incorrect system design.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Solovay and Strassen formalised the distinction in 1977: Monte Carlo algorithms bind time but not correctness; Las Vegas algorithms bind correctness but not time. This taxonomy enables rigorous analysis of randomized algorithm trade-offs. This is exactly why **Monte Carlo vs Las Vegas** is the foundational classification for randomized algorithms.
 
 ---
@@ -64,12 +64,12 @@ The critical design choice: which is worse for your system — unpredictably lon
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. **Las Vegas:** `∀ inputs, all executions: output is CORRECT. E[runtime] < ∞.`
 2. **Monte Carlo:** `∀ inputs, all executions: runtime ≤ T(N). Pr[output is CORRECT] ≥ 1-δ.`
 3. **Amplification:** Monte Carlo errors can be reduced exponentially cheaply. Running k independent Monte Carlo trials and taking majority: `error ≤ δ^k`.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Converting between types:**
 - **Las Vegas → Monte Carlo:** Run Las Vegas until time limit T; if not complete, output "don't know" or a default. Error probability = Pr[LV runs > T] (controlled by Markov's inequality).
 - **Monte Carlo → Las Vegas:** Repeat Monte Carlo until you can verify the output is correct (needs a fast verifier). If there is a poly-time verifier, you get a Las Vegas algorithm running Monte Carlo + verify until correct. Expected time: T(N) / (1-δ).
@@ -78,7 +78,7 @@ DERIVED DESIGN:
 - **One-sided error:** "COMPOSITE" is always certain; "PRIME" might be wrong (false prime). Only one answer can be mistaken. Miller-Rabin is one-sided: if it returns "COMPOSITE", it's definitely composite.
 - **Two-sided error:** Both "YES" and "NO" can be wrong with bounded probability. Majority vote on k runs: `error ≤ (max(δ_YES, δ_NO))^k`.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 Las Vegas gain: guaranteed correctness. Cost: unpredictable runtime (dangerous for real-time systems).
 Monte Carlo gain: bounded deterministic runtime. Cost: probabilistic correctness (dangerous for safety-critical, cryptographic use).
 
@@ -86,19 +86,19 @@ Monte Carlo gain: bounded deterministic runtime. Cost: probabilistic correctness
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Primary test: "Is N prime?" Secondary use: a streaming service needs to pick a random prime for Diffie-Hellman key exchange, taking at most 100 milliseconds.
 
-WHAT HAPPENS WITH A PURELY DETERMINISTIC ALGORITHM:
+**WHAT HAPPENS WITH A PURELY DETERMINISTIC ALGORITHM:**
 Trial division: O(√N) = O(2^(k/2)) for k-bit N. For k=512 bits: √(2^512) = 2^256 operations. Seconds become geological epochs. Unusable.
 
-WHAT HAPPENS WITH A LAS VEGAS ALGORITHM THAT VERIFIED PRIMES:
+**WHAT HAPPENS WITH A LAS VEGAS ALGORITHM THAT VERIFIED PRIMES:**
 No such polynomial Las Vegas algorithm exists for primality testing (AKS is deterministic, not Las Vegas — it's deterministic polynomial time). Randomised algorithms for primality are all Monte Carlo.
 
-WHAT HAPPENS WITH MILLER-RABIN (MONTE CARLO, ONE-SIDED):
+**WHAT HAPPENS WITH MILLER-RABIN (MONTE CARLO, ONE-SIDED):**
 For each random base a: check Miller-Rabin witness condition. 40 rounds → error ≤ (1/4)^40 ≈ 10^-24. Runtime: 40 × O(k²) = O(k²) bit operations for k-bit N. For k=512: milliseconds. For key exchange: run 40 rounds → 99.9999999999999999999999% confidence of prime → use it. For a stream of 10M key exchanges per day: nearly zero probability of any false prime in the history of the system.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Miller-Rabin's Monte Carlo error is so small it's practically non-existent. The trade-off (bounded time, extremely small error) is asymmetrically good: the error probability per run approaches 1/4^40 → 10^-24, which is smaller than the probability of a cosmic ray corrupting the chip during computation. Correctness and time guarantees both effectively achieved.
 
 ---
@@ -107,10 +107,10 @@ Miller-Rabin's Monte Carlo error is so small it's practically non-existent. The 
 
 > Las Vegas algorithm = a gambler who always leaves with exactly what they came with (correctness) but may stay at the casino arbitrarily long before leaving (variable time). Monte Carlo algorithm = a gambler who always leaves after exactly one hour (time bound) but occasionally leaves with wrong change (error). Which is safer depends on: is your flight leaving in 2 hours (time constraint) or is every dollar critical (correctness constraint)?
 
-"Always leaves with exact money" → always correct output
-"May stay arbitrarily long" → variable runtime (Las Vegas)
-"Always leaves after one hour" → bounded runtime (Monte Carlo)
-"Occasionally wrong change" → bounded error probability
+- "Always leaves with exact money" → always correct output
+- "May stay arbitrarily long" → variable runtime (Las Vegas)
+- "Always leaves after one hour" → bounded runtime (Monte Carlo)
+- "Occasionally wrong change" → bounded error probability
 
 Where this analogy breaks down: Casinos can't control whether a customer stays — the analogy works in reverse (the algorithm controls its own termination, the casino doesn't). Also, in Las Vegas algorithms the expected time is finite and well-analyzed — the analogy suggests potentially infinite time, which is technically true but practically bounded.
 
@@ -183,7 +183,7 @@ The Monte Carlo/ Las Vegas distinction corresponds to the BPP/RP/co-RP/ZPP hiera
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Problem requires randomized algorithm
 → Classify: is bounded time or bounded error more critical?
@@ -197,7 +197,7 @@ Problem requires randomized algorithm
 → Deploy to production
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Monte Carlo error materialises in production
 → Symptom: system outputs wrong result for rare inputs
@@ -207,7 +207,7 @@ Monte Carlo error materialises in production
   if Las Vegas exists for the problem
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 10^9 operations/day with Monte Carlo error δ=10^-9: expected 1 error per day. At 10^12 ops/day: ~1000 errors/day. Scale amplifies Monte Carlo errors. For safety-critical systems at scale: use Las Vegas or deterministic algorithms. For statistical systems at scale (analytics): Monte Carlo error is acceptable (false positives in Bloom filter: 1% rate, expected 10M/day false positives for 1B queries, which is acceptable for a cache).
 
 ---
@@ -326,11 +326,11 @@ How to choose: Use Las Vegas when output correctness is non-negotiable. Use Mont
 
 **1. Using Miller-Rabin "prime" result as absolute proof in cryptography**
 
-Symptom: Rare probabilistic "prime" is actually composite; cryptographic key generated with composite modulus; RSA security completely broken.
+**Symptom:** Rare probabilistic "prime" is actually composite; cryptographic key generated with composite modulus; RSA security completely broken.
 
-Root Cause: Miller-Rabin with insufficient rounds (e.g., k=5, error ≤ 1/4^5 ≈ 0.001) used in production key generation.
+**Root Cause:** Miller-Rabin with insufficient rounds (e.g., k=5, error ≤ 1/4^5 ≈ 0.001) used in production key generation.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Java BigInteger uses Miller-Rabin internally:
 // isProbablePrime(certainty) where certainty ≥ 100 is safe
@@ -339,37 +339,37 @@ BigInteger n = BigInteger.probablePrime(2048, new SecureRandom());
 n.isProbablePrime(100); // certainty=100: error ≤ 10^-30
 ```
 
-Fix: Use `certainty ≥ 80` for Java `BigInteger.isProbablePrime`; use `certainty ≥ 100` for production cryptographic keys.
+**Fix:** Use `certainty ≥ 80` for Java `BigInteger.isProbablePrime`; use `certainty ≥ 100` for production cryptographic keys.
 
-Prevention: FIPS 186-4 mandates ≥ 4 rounds for 3072-bit primes; Java default in key generation uses sufficient rounds.
+**Prevention:** FIPS 186-4 mandates ≥ 4 rounds for 3072-bit primes; Java default in key generation uses sufficient rounds.
 
 ---
 
 **2. Las Vegas algorithm without expected time analysis causes production stalls**
 
-Symptom: Randomised hash table insert occasionally takes several seconds under high load.
+**Symptom:** Randomised hash table insert occasionally takes several seconds under high load.
 
-Root Cause: Las Vegas rehashing: each insert triggers a collision resolution that may cascade; expected O(1) but variance can spike under high load factor.
+**Root Cause:** Las Vegas rehashing: each insert triggers a collision resolution that may cascade; expected O(1) but variance can spike under high load factor.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Monitor p99/p999 latency for hash insertions:
 # If p999 latency >> p50: Las Vegas variance is the cause
 ```
 
-Fix: Bound Las Vegas execution with a fallback (convert to Monte Carlo if time budget exceeded); use deterministic bounded-time data structure for p999-SLA-critical paths.
+**Fix:** Bound Las Vegas execution with a fallback (convert to Monte Carlo if time budget exceeded); use deterministic bounded-time data structure for p999-SLA-critical paths.
 
-Prevention: Profile p99, p999 latency of Las Vegas operations in production-scale load tests.
+**Prevention:** Profile p99, p999 latency of Las Vegas operations in production-scale load tests.
 
 ---
 
 **3. Treating one-sided Monte Carlo as two-sided**
 
-Symptom: Repeated runs of Miller-Rabin never converge to absolute certainty; engineer tries to iterate until 100% certain.
+**Symptom:** Repeated runs of Miller-Rabin never converge to absolute certainty; engineer tries to iterate until 100% certain.
 
-Root Cause: Misunderstanding that COMPOSITE in Miller-Rabin is always certain (one-sided). Engineer thinks both COMPOSITE and PRIME might be wrong.
+**Root Cause:** Misunderstanding that COMPOSITE in Miller-Rabin is always certain (one-sided). Engineer thinks both COMPOSITE and PRIME might be wrong.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Miller-Rabin is ONE-SIDED:
 // COMPOSITE (returned false): 100% certain
@@ -377,9 +377,9 @@ Diagnostic:
 // There is NO false COMPOSITE result ever.
 ```
 
-Fix: Understand one-sided: only PRIME answers may be wrong. Increase k to reduce PRIME error.
+**Fix:** Understand one-sided: only PRIME answers may be wrong. Increase k to reduce PRIME error.
 
-Prevention: Document error model clearly: one-sided vs two-sided. One-sided: COMPOSITE always certain; PRIME has bounded error.
+**Prevention:** Document error model clearly: one-sided vs two-sided. One-sided: COMPOSITE always certain; PRIME has bounded error.
 
 ---
 

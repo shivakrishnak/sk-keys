@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Find pattern "ABCABD" in text "ABCABCABCABD" (length N=12). The naïve algorithm tries every starting position: align pattern at text[0], compare 6 characters — mismatch at position 5. Shift by 1, align at text[1], compare again from scratch. For text of length N and pattern of length M, worst case: N × M comparisons = O(N×M).
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 For a virus scanner checking a 1 GB log file for a malicious 100-byte signature, O(N×M) = 10⁹ × 100 = 10¹¹ comparisons — over 100 seconds on modern hardware. For intrusion detection on 10 Gbps network traffic, the system falls behind in milliseconds.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 When the naïve algorithm encounters a mismatch after matching k characters of the pattern, it discards all information about those k matched characters. But that matched prefix tells you exactly how far you can shift the pattern forward without missing a match — because the longest proper prefix of the matched portion that is also a suffix determines the next valid alignment. This is the KMP insight. Rabin-Karp uses a different insight: hash the pattern, then slide a rolling hash over the text — full comparison only on hash matches. Both achieve O(N+M). This is exactly why **String Matching algorithms** were created.
 
 ---
@@ -64,18 +64,18 @@ KMP's `lps` (longest proper prefix/suffix) array is the key. `lps[i]` tells you:
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. The text pointer `i` never moves backward in KMP — it only ever advances.
 2. `lps[k]` = length of the longest proper prefix of `pattern[0..k]` that is also a suffix of `pattern[0..k]`. This is precomputed in O(M).
 3. On mismatch at `(text[i], pattern[j])`, instead of shifting by 1, shift the pattern by `j - lps[j-1]` positions — equivalent to setting `j = lps[j-1]`. Total pattern shifts across the entire search ≤ N.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The KMP failure function encodes overlapping structure in the pattern. For "ABCABD": `lps = [0,0,0,1,2,0]`. After matching "ABCAB" then failing on "D", `j = lps[4] = 2`, meaning restart comparison at pattern[2] ("C") — the text has already matched the "AB" prefix of "AB C ABD" for free.
 
 **Rabin-Karp rolling hash:**
 Hash a window of length M: `H(s[i..i+M-1]) = (s[i]·b^(M-1) + s[i+1]·b^(M-2) + ... + s[i+M-1]) mod p`. Sliding one position: remove the contribution of `s[i]` and add `s[i+M]`. This is O(1) per slide using modular arithmetic. Only when `H(window) == H(pattern)` do we perform a full O(M) character comparison to confirm (avoiding hash collision false positives).
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 KMP: guaranteed O(N+M), O(M) preprocessing, no false positives, text pointer never retreats. Cost: moderate implementation complexity; the `lps` table logic is non-obvious.
 Rabin-Karp: O(N+M) expected, O(N×M) worst case (many collisions), but trivially extends to multiple patterns (check against a hash set). Naturally handles 2D pattern matching.
 Both: O(M) extra space for the failure function / pattern hash.
@@ -84,15 +84,15 @@ Both: O(M) extra space for the failure function / pattern hash.
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Text `T = "AAAAAB"`, Pattern `P = "AAAB"` (N=6, M=4).
 
-WHAT HAPPENS WITH NAÏVE:
+**WHAT HAPPENS WITH NAÏVE:**
 - Align at T[0]: compare 'A','A','A','B' vs P[0..3]. T[3]='A' ≠ P[3]='B'. Mismatch at 3. Shift 1.
 - Align at T[1]: compare T[1..4]='AAAB' vs P. T[4]='A' ≠ P[3]='B'. Shift 1.
 - Align at T[2]: T[2..5]='AAAB' vs P. T[5]='B'=P[3]. Match! But cost: 3+3+4=10 comparisons.
 
-WHAT HAPPENS WITH KMP:
+**WHAT HAPPENS WITH KMP:**
 - `lps` for "AAAB": at 'A','A','A','B': lps=[0,1,2,0].
 - i=0,j=0: T[0]='A'=P[0] → j=1.
 - i=1,j=1: T[1]='A'=P[1] → j=2.
@@ -103,7 +103,7 @@ WHAT HAPPENS WITH KMP:
 - i=4,j=2: T[4]='A'=P[2] → j=3.
 - i=5,j=3: T[5]='B'=P[3] → j=4. j==M → MATCH at i-M+1=2. Total: 8 comparisons.
 
-THE INSIGHT:
+**THE INSIGHT:**
 KMP's text pointer `i` only ever moved forward — never back. Even in the worst case of "AAAA...AB"-style inputs that cost O(N×M) naïvely, KMP stays O(N+M) because the lps table encodes the "already matched" prefix length, preventing re-examination.
 
 ---
@@ -112,11 +112,11 @@ KMP's text pointer `i` only ever moved forward — never back. Even in the worst
 
 > KMP is a detective reviewing evidence. When you fail to match a suspect's alibi at step 7, you don't throw away everything you verified in steps 1–6. Instead, you look at your notes: "I confirmed steps 1–4 already match the beginning of the alibi. So when I resume, start from step 4, not step 1." The `lps` array is your notes.
 
-"Detective's notes" → `lps` failure function
-"Current suspect position (already matched)" → current `j` value
-"Failed at step j+1" → mismatch at `pattern[j]` vs `text[i]`
-"Resume from lps[j-1]" → `j = lps[j-1]`
-"Text pointer i never retreats" → never re-examine confirmed text
+- "Detective's notes" → `lps` failure function
+- "Current suspect position (already matched)" → current `j` value
+- "Failed at step j+1" → mismatch at `pattern[j]` vs `text[i]`
+- "Resume from lps[j-1]" → `j = lps[j-1]`
+- "Text pointer i never retreats" → never re-examine confirmed text
 
 Where this analogy breaks down: The analogy suggests going backward in the investigation; KMP never re-examines text characters — only the pattern pointer retreats. The text pointer is strictly monotone.
 
@@ -200,7 +200,7 @@ KMP was independently published by Knuth, Morris, and Pratt in 1977. Its `lps` f
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Long text T (e.g., log file, genome, network packet)
 → Short pattern P (e.g., error signature, gene, malware)
@@ -213,7 +213,7 @@ Long text T (e.g., log file, genome, network packet)
 → Downstream: alert, replace, extract
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Hash collision in Rabin-Karp
 → Full O(M) character compare triggered for false positive
@@ -222,7 +222,7 @@ Hash collision in Rabin-Karp
 → Or: switch to KMP for guaranteed O(N+M)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In production search engines (Elasticsearch), full-text search is NOT done with KMP/Rabin-Karp per query. Text is preprocessed into an inverted index: each word → [list of document IDs + positions]. At query time, lookup is O(1) per term, O(K log D) to intersect K result lists of D documents. KMP is used at index-build time for tokenization and at the data-structure level for wildcard queries. For DNA databases (~3 billion base pairs), suffix arrays and BWT (FM-index) enable O(M log N) search with sublinear space.
 
 ---
@@ -344,30 +344,30 @@ How to choose: Use KMP for guaranteed O(N+M) single-pattern matching. Use Rabin-
 
 **1. Off-by-one in LPS table construction**
 
-Symptom: KMP returns wrong match positions or misses matches.
+**Symptom:** KMP returns wrong match positions or misses matches.
 
-Root Cause: Incorrect base case handling (`lps[0] = 0` is always correct; mistakes occur at the `else if (len != 0)` branch — not decrementing via `lps[len-1]` instead of `len = 0`.
+**Root Cause:** Incorrect base case handling (`lps[0] = 0` is always correct; mistakes occur at the `else if (len != 0)` branch — not decrementing via `lps[len-1]` instead of `len = 0`.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Print lps and verify manually for simple pattern
 // "AAAB" should give [0,1,2,0]
 System.out.println(Arrays.toString(buildLPS("AAAB")));
 ```
 
-Fix: Test `buildLPS` independently with known patterns ("ABCABC" → [0,0,0,1,2,3]).
+**Fix:** Test `buildLPS` independently with known patterns ("ABCABC" → [0,0,0,1,2,3]).
 
-Prevention: Add unit tests for `buildLPS` before integrating into search.
+**Prevention:** Add unit tests for `buildLPS` before integrating into search.
 
 ---
 
 **2. Rabin-Karp negative hash values**
 
-Symptom: Hash comparisons always fail; no matches found despite correct input.
+**Symptom:** Hash comparisons always fail; no matches found despite correct input.
 
-Root Cause: In Java, `(wh - text.charAt(i) * pw % MOD)` can go negative due to modular subtraction.
+**Root Cause:** In Java, `(wh - text.charAt(i) * pw % MOD)` can go negative due to modular subtraction.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Print intermediate hash values
 System.out.println("window hash: " + wh);
@@ -375,27 +375,27 @@ System.out.println("pattern hash: " + ph);
 // If wh is negative: modular subtraction bug
 ```
 
-Fix: Add `+ MOD` before the final `% MOD`: `(wh - x + MOD) % MOD`.
+**Fix:** Add `+ MOD` before the final `% MOD`: `(wh - x + MOD) % MOD`.
 
-Prevention: Always add `MOD` before `% MOD` when subtraction is involved.
+**Prevention:** Always add `MOD` before `% MOD` when subtraction is involved.
 
 ---
 
 **3. Overlapping matches missed**
 
-Symptom: Pattern "ABA" in text "ABABA" found only twice but three overlapping matches exist.
+**Symptom:** Pattern "ABA" in text "ABABA" found only twice but three overlapping matches exist.
 
-Root Cause: After a match at position `i`, advancing by `m` (pattern length) skips overlapping matches. Should advance by 1 or by `lps[m-1]`.
+**Root Cause:** After a match at position `i`, advancing by `m` (pattern length) skips overlapping matches. Should advance by 1 or by `lps[m-1]`.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // For "ABA" in "ABABA", expected positions: 0, 2
 // If only 0 found: check post-match advancement
 ```
 
-Fix: After recording a match, set `j = lps[j-1]` (not `j = 0`) to continue finding overlapping matches.
+**Fix:** After recording a match, set `j = lps[j-1]` (not `j = 0`) to continue finding overlapping matches.
 
-Prevention: Explicitly test with overlapping patterns: "AA" in "AAAA" should return 3 matches.
+**Prevention:** Explicitly test with overlapping patterns: "AA" in "AAAA" should return 3 matches.
 
 ---
 

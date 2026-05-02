@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Law of Demeter"
 parent: "Software Architecture Patterns"
@@ -177,7 +177,7 @@ WITH LoD:
 "Asking your neighbor" = calling a method on your immediate collaborator
 "Neighbor tells their dog" = delegation — intermediate object navigates its own internals
 "You don't need to know they have a dog" = caller isolated from internal structure
-"Walk through house → find dog → yard" = `a.getNeighbor().getDog().getFetch().getBall()`
+- "Walk through house → find dog → yard" = `a.getNeighbor().getDog().getFetch().getBall()`
 
 ---
 

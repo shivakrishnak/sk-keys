@@ -32,7 +32,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 In Java before 8, passing behaviour required anonymous inner classes:
 ```java
 button.addActionListener(new ActionListener() {
@@ -43,10 +43,10 @@ button.addActionListener(new ActionListener() {
 ```
 Six lines to pass one function call. The boilerplate (class declaration, `public`, method signature, `@Override`) drowns the actual logic (`handleClick(e)`). Worse: each anonymous class generates a new `.class` file at compile time, adding startup overhead.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A UI application with 50 button handlers, 20 comparators, 30 thread tasks, and 15 event listeners. That's 115 anonymous inner class definitions — 115 class files, 115 file loads at startup, and 300+ lines of boilerplate syntax for logic that could be expressed in 50 lines.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Lambda Expressions** were created — to replace anonymous inner classes implementing functional interfaces with concise inline function literals, enabling behaviour to be coded where it's used, not in a named detour.
 
 ---
@@ -72,12 +72,12 @@ Lambda expressions are NOT closures in the traditional sense — they cannot mod
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A lambda expression is an instance of a functional interface — it "fills in" the single abstract method.
 2. Captured variables must be effectively final (not mutated after assignment in the enclosing scope).
 3. A lambda's `this` reference refers to the enclosing class instance (not the lambda itself), unlike anonymous inner classes where `this` refers to the anonymous class instance.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1: `Predicate<String> p = s -> s.isBlank()` — the lambda body IS the implementation of `Predicate.test()`.
 
 Given invariant 2: captured variables being effectively final allows stateless lambdas to be singletons — the bootstrap can return the same instance every time, avoiding per-call allocation.
@@ -94,15 +94,15 @@ Lambda syntax forms:
   Typed params:  (String x, int y) -> expression
 ```
 
-THE TRADE-OFFS:
-Gain: Concise inline behaviour; eliminates anonymous class files; enables functional stream pipelines; supports closure over effectively final variables.
-Cost: Debugging lambda stack traces is harder (lambda name is generated, e.g., `lambda$main$0`); effectively final restriction surprises newcomers; `this` semantics differ from anonymous classes; capturing lambdas allocate per-call.
+**THE TRADE-OFFS:**
+**Gain:** Concise inline behaviour; eliminates anonymous class files; enables functional stream pipelines; supports closure over effectively final variables.
+**Cost:** Debugging lambda stack traces is harder (lambda name is generated, e.g., `lambda$main$0`); effectively final restriction surprises newcomers; `this` semantics differ from anonymous classes; capturing lambdas allocate per-call.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A thread pool where tasks must access a shared counter — one version uses a lambda, one uses an anonymous class.
 
 WITH ANONYMOUS CLASS (old way):
@@ -126,7 +126,7 @@ executor.submit(() -> {
 count++; // COMPILE ERROR if this line exists: count must be effectively final
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The `count++` after the lambda is forbidden — making `count` effectively mutable would allow data races in parallel pipelines. The compiler prevents you from creating a lambda that captures a mutable local, which would require synchronisation to be thread-safe. The restriction is the safety guarantee.
 
 ---
@@ -135,9 +135,9 @@ The `count++` after the lambda is forbidden — making `count` effectively mutab
 
 > A lambda is like a recipe card written on the spot. Rather than saying "go to the recipe book, find recipe #47, cook that," you write the recipe directly on a note and hand it over. It's just text with instructions — no name, no filing, no ceremony. The person following it doesn't need to know where it came from.
 
-"Recipe card written on the spot" → lambda literal `(x) -> x * 2`.
-"Recipe book entry" → named class/method.
-"Person following it doesn't need to know origin" → functional interface caller doesn't know lambda vs anonymous class.
+- "Recipe card written on the spot" → lambda literal `(x) -> x * 2`.
+- "Recipe book entry" → named class/method.
+- "Person following it doesn't need to know origin" → functional interface caller doesn't know lambda vs anonymous class.
 
 Where this analogy breaks down: Recipe cards can reference ingredients not on the card (captures). Lambda captures must be effectively final — the "ingredients" can't change after the card is written.
 
@@ -237,7 +237,7 @@ javap -p MyClass.class
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Source: list.stream().filter(u -> u.isActive())]
     → [Compiler: lambda body → private static method]  ← YOU ARE HERE
@@ -249,7 +249,7 @@ NORMAL FLOW:
     → [Matching elements pass through filter]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Capturing lambda: int count = 0; () -> count++]
     → [Compiler: count is modified → not effectively final]
@@ -258,7 +258,7 @@ FAILURE PATH:
     → [Fix: use AtomicInteger or final wrapper]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At scale, the most important distinction is between stateless and capturing lambdas. Stateless lambdas are JVM-level singletons after first call — zero allocation per use. Capturing lambdas allocate a new instance for each set of captured values. In tight loops, a capturing lambda in a `forEach` allocates one object per element. Profiling tools (async-profiler, JFR) identify lambda allocation sites.
 
 ---
@@ -351,11 +351,11 @@ How to choose: Use lambdas for all single-method functional interface implementa
 
 **Debugging Lambda Stack Traces**
 
-Symptom: Stack trace shows `lambda$main$0` — unclear which lambda in the source file.
+**Symptom:** Stack trace shows `lambda$main$0` — unclear which lambda in the source file.
 
-Root Cause: Generated lambda method names are positional (`$0`, `$1`) not meaningful.
+**Root Cause:** Generated lambda method names are positional (`$0`, `$1`) not meaningful.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Map lambda to source:
 javap -p -l MyClass.class | grep "lambda" -A3
@@ -364,7 +364,7 @@ javap -p -l MyClass.class | grep "lambda" -A3
 # IntelliJ: "Analyze → Show Bytecode" for specific lambda
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: anonymous lambda hard to identify in trace
 users.stream()
@@ -380,17 +380,17 @@ users.stream()
     .forEach(this::process);
 ```
 
-Prevention: Extract complex lambdas (3+ conditions) to named private methods and use method references. Stack traces will show the actual method name.
+**Prevention:** Extract complex lambdas (3+ conditions) to named private methods and use method references. Stack traces will show the actual method name.
 
 ---
 
 **Memory Leak via Long-lived Capturing Lambda**
 
-Symptom: Heap grows over time. Large objects not GC'd even though they appear abandoned.
+**Symptom:** Heap grows over time. Large objects not GC'd even though they appear abandoned.
 
-Root Cause: A long-lived capturing lambda holds a reference to an outer object (via captured variable or `this`). The outer object cannot be GC'd as long as the lambda is alive.
+**Root Cause:** A long-lived capturing lambda holds a reference to an outer object (via captured variable or `this`). The outer object cannot be GC'd as long as the lambda is alive.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Heap dump analysis:
 jmap -dump:live,format=b,file=heap.hprof <pid>
@@ -399,7 +399,7 @@ jmap -dump:live,format=b,file=heap.hprof <pid>
 # with large retained heaps
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: lambda captures `this` → service holds userService alive
 class OrderService {
@@ -420,17 +420,17 @@ Runnable createTask(Long userId) {
 }
 ```
 
-Prevention: Audit lambdas scheduled in long-lived executors or stored in static collections. Ensure they don't capture large objects or `this`.
+**Prevention:** Audit lambdas scheduled in long-lived executors or stored in static collections. Ensure they don't capture large objects or `this`.
 
 ---
 
 **ClassCastException from Lambda Type Inference Ambiguity**
 
-Symptom: `ClassCastException` at lambda invocation site — cast inserted by compiler.
+**Symptom:** `ClassCastException` at lambda invocation site — cast inserted by compiler.
 
-Root Cause: Lambda inferred to wrong functional interface type due to ambiguous overloaded method.
+**Root Cause:** Lambda inferred to wrong functional interface type due to ambiguous overloaded method.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Compiler usually catches this with:
 # error: incompatible types: inferred type does not conform
@@ -438,7 +438,7 @@ Diagnostic:
 # methods accepting different functional interface types
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: ambiguous overload
 void process(Runnable r)  { r.run(); }
@@ -451,7 +451,7 @@ process(() -> System.out.println("hello")); // Runnable? Supplier?
 process((Runnable) () -> System.out.println("hello"));
 ```
 
-Prevention: Avoid overloading methods with different functional interface types that accept the same lambda body shape.
+**Prevention:** Avoid overloading methods with different functional interface types that accept the same lambda body shape.
 
 ---
 

@@ -32,15 +32,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 In distributed systems, network calls can fail, time out, or succeed but have their response lost in transit. The caller cannot distinguish between "the operation never happened" and "the operation happened but I didn't get a response." If the caller retries, and the operation already completed, it might execute twice. Charging a customer twice, creating a duplicate order, sending two emails — these are the consequences of non-idempotent operations in unreliable networks.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 A payment processing service receives a charge request. It processes the charge and sends a success response — but the network drops the response. The caller, seeing a timeout, retries. The payment processor doesn't know this is a retry and charges the customer again. The customer is charged twice. This is the most common class of data corruption bug in distributed systems.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 Idempotency is the property that prevents this: design operations so that executing them multiple times has the same effect as executing them once. Then retries are safe — the second execution is a no-op (or verifies the first succeeded). Idempotency keys, database unique constraints, and at-most-once/exactly-once semantics in messaging systems are all implementations of this principle.
 
@@ -68,14 +68,14 @@ Idempotency is critical at every network boundary in a distributed system. Any o
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. `f(f(x)) = f(x)` — applying the operation twice gives the same result as once
 2. Idempotency is about _observable effects_, not just return values. `DELETE /orders/123` should produce "order 123 is deleted" whether called once or five times
 3. Idempotency is scoped: an operation may be idempotent for a given idempotency key but not globally (idempotency key "abc123" maps to one specific charge)
 4. Idempotency does not mean the operation is a no-op on retry — it means the _net observable effect_ is the same
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 ```
 IDEMPOTENT OPERATIONS:
@@ -105,16 +105,16 @@ NON-IDEMPOTENT OPERATIONS:
     2nd call: counter = 2  ← different effect!
 ```
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
-Gain: safe retries without duplicates; simplifies distributed systems error handling; eliminates a whole class of "double-charge" / "double-create" bugs.
-Cost: idempotency keys require storage (idempotency key DB/cache); key management adds complexity; choosing the right idempotency scope requires design; "exactly-once" messaging is expensive (requires distributed coordination — most systems settle for "at-least-once" + idempotent consumers).
+**Gain:** safe retries without duplicates; simplifies distributed systems error handling; eliminates a whole class of "double-charge" / "double-create" bugs.
+**Cost:** idempotency keys require storage (idempotency key DB/cache); key management adds complexity; choosing the right idempotency scope requires design; "exactly-once" messaging is expensive (requires distributed coordination — most systems settle for "at-least-once" + idempotent consumers).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Design the payment API for a payment processor. Clients might experience network timeouts and retry. How do you prevent double-charges?
 
 NAIVE DESIGN (no idempotency):
@@ -155,7 +155,7 @@ POST /charges
 Customer is charged $100 exactly once. CORRECT.
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 The idempotency key converts a non-idempotent `POST` (create charge) into an idempotent operation (create charge OR return existing charge for this key). This is the production-grade solution used by Stripe, Braintree, and every serious payment API.
 
 ---
@@ -251,7 +251,7 @@ Safe = no server state changed; Idempotent = same effect on retry
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 Client calls CREATE PAYMENT (POST) with idempotency key "key-abc"
@@ -292,7 +292,7 @@ Scenario C: Two simultaneous retries (race condition)
   Result: payment processed once ✓ (requires optimistic locking or DB constraint)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 At scale (millions of API calls/hour), idempotency stores must be fast and consistent. Redis is commonly used (set with NX flag: `SET key value NX EX 86400` — set only if not exists, expire in 24h). At Stripe's scale, the idempotency key store must handle millions of keys with sub-millisecond lookup, survive node failures (Redis cluster/sentinel), and have atomic check-and-set (no race conditions between key lookup and key creation). The idempotency key also becomes an audit trail: every payment attempt is recorded. This doubles as a fraud detection data source — patterns of retries with the same key may indicate network issues; patterns of retries with different keys may indicate fraud.
 
@@ -436,13 +436,13 @@ public void handlePaymentEvent(PaymentEvent event) {
 
 **Double-Charge from Missing Idempotency Key**
 
-Symptom:
+**Symptom:**
 Customer support receives complaint: "I was charged twice." Database shows two charges with identical amounts at timestamps seconds apart. Payment gateway shows two successful transactions.
 
-Root Cause:
+**Root Cause:**
 `POST /payments` endpoint is not idempotent. Client experienced a network timeout, retried with a new request (no idempotency key), and the payment processor created a second charge.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```sql
 -- Find duplicate charges within 60 seconds from the same customer:
@@ -461,20 +461,20 @@ ORDER BY charge_count DESC;
 Fix (immediate): refund the duplicate charge.
 Fix (permanent): add idempotency key support to `POST /payments`. Require clients to send an `Idempotency-Key` header. Store keys in Redis with 24-hour TTL. Return the original response on duplicate key.
 
-Prevention:
+**Prevention:**
 API contract: all mutating endpoints that clients might retry MUST support idempotency keys. Document this in the API spec. Add server-side validation: reject `POST /payments` requests without `Idempotency-Key` header (or generate one from request hash as fallback). Review retry logic in all API clients — ensure they reuse the same idempotency key on retries of the same logical operation.
 
 ---
 
 **Idempotency Store Race Condition (Two Simultaneous Retries)**
 
-Symptom:
+**Symptom:**
 Despite idempotency key implementation, occasional duplicate records in database. Race condition under load.
 
-Root Cause:
+**Root Cause:**
 Check-then-act is not atomic: two threads check for the key simultaneously, both find it absent, both proceed to process, both create records.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```java
 // BUGGY: non-atomic check-then-act
@@ -493,10 +493,10 @@ processPayment(request);
 idempotencyStore.update(key, result);
 ```
 
-Fix:
+**Fix:**
 Use atomic `SET NX` (Redis: `SET key value NX EX seconds`) or database unique constraint (`INSERT ... ON CONFLICT DO NOTHING`) to make the key creation atomic. The winner processes; the loser polls for the result.
 
-Prevention:
+**Prevention:**
 Idempotency store operations must always be atomic. Never use read-then-write patterns. Redis NX flag, `SELECT FOR UPDATE`, or unique DB constraint are the correct primitives.
 
 ---

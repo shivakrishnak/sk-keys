@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "@Transactional"
 parent: "Spring Core"
@@ -135,8 +135,8 @@ WITH @Transactional:
 > Think of `@Transactional` as a "save game" checkpoint in a video game. When you enter a `@Transactional` method, Spring saves the current state (begins a transaction). If you complete the method successfully, the progress is saved permanently (commit). If the method crashes (RuntimeException), Spring reloads the checkpoint — everything is exactly as it was before you entered (rollback). Manual transactions are like playing without any auto-save: if the game crashes, you have lost all progress since the last manual save.
 
 "Save game checkpoint" = transaction begin (getTransaction)
-"Complete level" = method returns normally → commit
-"Game crashes" = RuntimeException thrown → rollback to checkpoint
+- "Complete level" = method returns normally → commit
+- "Game crashes" = RuntimeException thrown → rollback to checkpoint
 "Multiple game actions" = multiple DB calls all within the same transaction
 
 ---

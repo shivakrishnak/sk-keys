@@ -413,11 +413,11 @@ public class CatalogController {
 
 **Stale Data Served After Update**
 
-Symptom:
+**Symptom:**
 Price updated in admin UI. Customers still see old price for 5 minutes. CDN is serving
 stale cached response.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Check CDN cache status header:

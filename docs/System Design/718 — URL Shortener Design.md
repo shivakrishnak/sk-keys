@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "URL Shortener Design"
 parent: "System Design"
@@ -208,7 +208,7 @@ WITH proper URL shortener design:
 
 "Numbered ticket" = short code (Base62 encoded unique ID)
 "Pre-printed ticket book" = KGS pre-generated key pool (no collision, no coordination)
-"Coat retrieval from ticket" = redirect lookup (short_code → long_url)
+- "Coat retrieval from ticket" = redirect lookup (short_code → long_url)
 "Front desk with popular items" = Redis cache (hot URLs served from memory)
 "Full coat rack" = sharded MySQL (cold URL lookups on cache miss)
 

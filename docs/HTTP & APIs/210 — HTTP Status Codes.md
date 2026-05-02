@@ -470,14 +470,14 @@ and jitter. Never retry without a finite maximum attempts count.
 
 **200-for-Errors Anti-pattern (Monitoring Blindness)**
 
-Symptom: Monitoring shows 0% error rate while users report failures; custom
+**Symptom:** Monitoring shows 0% error rate while users report failures; custom
 error parsing logic duplicated in every client; circuit breakers never open.
 
-Root Cause: API returns `200 OK` for all responses, including errors, with
+**Root Cause:** API returns `200 OK` for all responses, including errors, with
 error details only in response body. All HTTP infrastructure treats responses
 as successful.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Find 200 responses that contain error indicators:
@@ -488,23 +488,23 @@ curl -s https://api.example.com/users/NONEXISTENT | jq .
 # Returns {"status": "error", "message": "not found"} ... with 200 HTTP
 ```
 
-Fix: Map all error conditions to correct 4xx/5xx codes. Use Spring's
+**Fix:** Map all error conditions to correct 4xx/5xx codes. Use Spring's
 `@ResponseStatus` or `@ExceptionHandler` to ensure consistent mapping.
 
-Prevention: Add an integration test asserting that error conditions return
+**Prevention:** Add an integration test asserting that error conditions return
 non-2xx codes. Include HTTP status code in API contract tests.
 
 ---
 
 **Incorrect 403 vs 404 Leaking Resource Existence**
 
-Symptom: Attackers enumerate valid resource IDs by observing which IDs return
+**Symptom:** Attackers enumerate valid resource IDs by observing which IDs return
 403 (exists but forbidden) vs 404 (doesn't exist) — leaking sensitive data.
 
-Root Cause: Server returns 403 for authenticated-but-unauthorised access to
+**Root Cause:** Server returns 403 for authenticated-but-unauthorised access to
 existing resources, revealing that the resource exists.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Security test: compare responses for own vs other user's resource:
@@ -515,11 +515,11 @@ curl -H "Authorization: Bearer alice_token" \
 # Difference reveals 12345 exists and alice can't access it
 ```
 
-Fix: For sensitive resources, return 404 instead of 403 when the caller
+**Fix:** For sensitive resources, return 404 instead of 403 when the caller
 shouldn't even know the resource exists (security through obscurity, but
 legitimate here).
 
-Prevention: Decide intentionally per endpoint: is resource existence itself
+**Prevention:** Decide intentionally per endpoint: is resource existence itself
 sensitive? If yes, use 404 for all unauthorised accesses.
 
 ---

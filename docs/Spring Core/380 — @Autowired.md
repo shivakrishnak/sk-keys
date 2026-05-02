@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "@Autowired"
 parent: "Spring Core"
@@ -155,8 +155,8 @@ WITH `@Autowired`:
 "Kitchen station declaring a need" = `@Autowired` annotation
 "Procurement system" = `AutowiredAnnotationBeanPostProcessor`
 "Supplier match by product type" = bean resolution by type
-"Two suppliers → need clarification" = multiple beans → need `@Qualifier`
-"Required supply, no supplier" = `required = true` → `NoSuchBeanDefinitionException`
+- "Two suppliers → need clarification" = multiple beans → need `@Qualifier`
+- "Required supply, no supplier" = `required = true` → `NoSuchBeanDefinitionException`
 
 ---
 

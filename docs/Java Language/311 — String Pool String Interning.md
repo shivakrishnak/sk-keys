@@ -42,13 +42,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Every time Java code evaluates the string literal `"hello"` in two different places, it would create two separate heap objects, both containing `h-e-l-l-o`. In a server application with hundreds of classes each containing string literals like `"application/json"`, `"Content-Type"`, `"GET"`, `"POST"`, each class load creates a fresh copy of each literal. Even more: `"application/json"` appears in 80 different classes, creating 80 separate 32-byte objects holding the same content.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 A content platform has 10,000 articles, each stored with a MIME type of `"text/html"`. Without a string pool, each article object holds a separate `String` instance. 10,000 × (16 bytes header + 8 bytes char pointer + length/hash = ~40 bytes) = 400KB for identical content. In a JVM processing millions of HTTP headers, duplicated `"Content-Type"` strings alone waste megabytes.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why the **String Pool** was created — to maintain a de-duplicated table of String instances so all string literals with identical content share one JVM object.
 
 ---
@@ -74,12 +74,12 @@ String Pool lookup uses `==` (reference equality) after interning. This is why `
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. `String` is immutable in Java — the same String object can be safely shared by any number of references.
 2. String literals in Java source are known at compile time — they can be deduplicated at class load.
 3. `String.intern()` provides a runtime hook to join the pool explicitly.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 **Compile-time interning:**
 At compile time, the Java compiler places string literal values in the class file's constant pool. At class loading, the JVM resolves these constants against the String Table (the runtime String Pool). If a matching entry exists: return the existing reference. If not: create a new String object, add to table, return reference.
@@ -108,15 +108,15 @@ At compile time, the Java compiler places string literal values in the class fil
 └────────────────────────────────────────────────┘
 ```
 
-THE TRADE-OFFS:
-Gain: Memory savings for repeated string literals; reference equality check for interned strings is O(1).
-Cost: String Table is a global concurrent hash table (contention under high intern() rate); String Pool GC is less efficient than normal object GC (requires table scan); `.intern()` has non-trivial overhead (~100ns for lookup hit).
+**THE TRADE-OFFS:**
+**Gain:** Memory savings for repeated string literals; reference equality check for interned strings is O(1).
+**Cost:** String Table is a global concurrent hash table (contention under high intern() rate); String Pool GC is less efficient than normal object GC (requires table scan); `.intern()` has non-trivial overhead (~100ns for lookup hit).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Two ways to check if a configuration value equals "debug":
 
 ```java
@@ -131,7 +131,7 @@ Developer assumes `==` works like `.equals()`. It works in testing (where `getCo
 WITH UNDERSTANDING:
 `getConfigValue("log.level")` reads from a file, creating a new String: `new String("debug")`. This new String is NOT in the pool. `logLevel == "debug"` compares two different object references → `false`. The `if` block never executes. Config has no effect.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The String Pool is an optimization, not a language contract. Any String not explicitly interned (via `intern()` or being a literal) lives outside the pool. Always use `.equals()` for String value comparison — reference equality (`==`) only works reliably for pool members.
 
 ---
@@ -140,11 +140,11 @@ The String Pool is an optimization, not a language contract. Any String not expl
 
 > The String Pool is like a post office's address book. The address book has one canonical entry for each address. When a letter (string) arrives, the post office checks: "is this address already in the book?" If yes, use the existing entry number. If no, register it. Every letter to "123 Main St" gets the same address book entry number — they all point to the same canonical representation.
 
-"Address book entry" → String Pool entry.
-"New letter arrives" → new String literal or intern() call.
-"Entry number" → reference to the single canonical String object.
-"Checking the book" → String Table hash table lookup.
-"Two letters same address" → two literals or interned strings with same content share one object.
+- "Address book entry" → String Pool entry.
+- "New letter arrives" → new String literal or intern() call.
+- "Entry number" → reference to the single canonical String object.
+- "Checking the book" → String Table hash table lookup.
+- "Two letters same address" → two literals or interned strings with same content share one object.
 
 Where this analogy breaks down: Our address book persists forever. Java's String Pool can lose entries via GC if no strong references to the pooled String remain outside the pool — the pool uses weak references (Java 7+).
 
@@ -222,7 +222,7 @@ java -XX:StringTableSize=1048573 MyApp  # ~1M entries
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [Java class loads with literal "Content-Type"]
     → [LDC bytecode: load constant]
@@ -239,7 +239,7 @@ AT RUNTIME with intern():
     → [fromNetwork == "Content-Type" now true]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [Excessive runtime intern() calls]
     → [String Table grows: millions of entries]
@@ -248,7 +248,7 @@ FAILURE PATH:
     → [Fix: reduce intern() usage, use explicit caches instead]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In a high-volume service interning thousands of distinct strings per second (e.g., interning HTTP header names), the String Table becomes a global contention point. Each `intern()` call acquires a table segment lock. At scale with 100 threads each calling `intern()` 10,000 times/second = 1M intern calls/second — String Table becomes a lock contention bottleneck. Alternative: explicit `ConcurrentHashMap<String, String>` application-level cache with `computeIfAbsent` for explicit deduplication without the JVM table overhead.
 
 ---
@@ -351,58 +351,58 @@ How to choose: Use string literals for constants. Never use `new String("literal
 
 **String Table OOM (PermGen Era — Java 6)**
 
-Symptom:
+**Symptom:**
 `OutOfMemoryError: PermGen space` in Java 6 applications with heavy `intern()` usage.
 
-Root Cause:
+**Root Cause:**
 Java 6 stores the String Pool in PermGen (fixed size, not GC'd by default). Every interned string permanently occupies PermGen.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 # Java 6 monitoring:
 jmap -permstat <pid>
 # Count interned String entries in PermGen
 ```
 
-Fix:
+**Fix:**
 Upgrade to Java 8+ (pool moved to heap). Or stop interning arbitrary strings.
 
-Prevention:
+**Prevention:**
 In Java 8+: not applicable. String Pool is GCable.
 
 ---
 
 **Excessive intern() Calls Causing GC Overhead**
 
-Symptom:
+**Symptom:**
 Minor GC pause times increase gradually over hours. GC stats show growing String Table. Eventually GC spends significant time clearing dead String Table entries.
 
-Root Cause:
+**Root Cause:**
 Code paths call `intern()` on arbitrary user-input strings (e.g., request parameters, JSON field values). Millions of unique strings enter the pool; most are short-lived but the table maintains weak references until the next GC.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```bash
 jcmd <pid> VM.stringtable
 # Monitor "Number of entries" growing → intern() abuse
 ```
 
-Fix:
+**Fix:**
 Remove `intern()` from hot paths processing user input. Use `ConcurrentHashMap<String, String>` for explicit, controlled deduplication with limited size.
 
-Prevention:
+**Prevention:**
 Code review: `intern()` should only appear in constants, enum-like values, or controlled finite value sets.
 
 ---
 
 **`==` String Comparison Bug in Boolean Test**
 
-Symptom:
+**Symptom:**
 Configuration-driven behavior not working in production. Works in unit tests. Bug is intermittent and hard to reproduce.
 
-Root Cause:
+**Root Cause:**
 Code uses `==` to compare strings. In tests, the value comes from a literal (pool) and matches. In production, the value comes from file/DB/network — not in pool — and `==` returns false.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 ```java
 // Add debug logging to identify:
 log.debug("Expected '{}' ({}), Got '{}' ({})",
@@ -411,10 +411,10 @@ log.debug("Expected '{}' ({}), Got '{}' ({})",
 // Different identity hash codes confirm different objects
 ```
 
-Fix:
+**Fix:**
 Replace all `==` String comparisons with `.equals()` or `Objects.equals()`. Add Checkstyle rule: warn on String `==` comparison.
 
-Prevention:
+**Prevention:**
 Add Checkstyle or SpotBugs rule to flag `==` comparisons involving String types.
 
 ---

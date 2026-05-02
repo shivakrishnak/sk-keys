@@ -350,16 +350,16 @@ public CollectionModel<EntityModel<OrderDto>> listOrders(
 
 **Client Hardcodes Link URL Instead of Following Rel**
 
-Symptom:
+**Symptom:**
 HATEOAS API deployed. Client team "follows links" but hardcodes the href value from
 the first API call: `const cancelUrl = "/api/v1/orders/" + id + "/cancellations"`.
 URL changes. Client breaks. HATEOAS provided no benefit.
 
-Root Cause:
+**Root Cause:**
 Team didn't follow the HATEOAS philosophy. Links must be treated as OPAQUE — client
 follows `_links.cancel.href`, not constructs it independently.
 
-Fix:
+**Fix:**
 ```javascript
 // ❌ Hardcoding the pattern:
 const cancelUrl = `/api/v1/orders/${orderId}/cancellations`;

@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You count cumulative votes in an election as they come in. After each batch, you need: (1) the total votes for candidate A from district 1 to district K (a prefix sum), and (2) to add a new batch to district J (a point update). A prefix-sum array answers queries in O(1) but requires O(N) to update (recompute all sums at positions ≥ J). A plain array updates in O(1) but queries in O(N). With 1 million districts and 1 million updates, both approaches are too slow.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 There is a fundamental tension: O(1) prefix query requires precomputed sums, but updates invalidate all downstream sums (O(N) to fix). Any structure that wants O(log N) for both must find a way to partially precompute sums at multiple granularities.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Store each position's contribution at multiple granularities determined by its lowest-set bit. Position 6 (binary 110) is responsible for 2 elements; position 8 (binary 1000) for 8 elements. A clever bit trick (`i += i & (-i)` and `i -= i & (-i)`) navigates exactly the right nodes in O(log N). This is exactly why the Fenwick Tree was created.
 
 ---
@@ -63,12 +63,12 @@ The number of steps in a Fenwick tree query is exactly the number of set bits in
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. `tree[i]` stores the sum of elements from `i - (i & -i) + 1` to `i`.
 2. `i & -i` extracts the lowest set bit of i: for i=6 (110), `6 & -6 = 2` → stores 2 elements.
 3. Navigation uses only bit manipulation — no pointers or explicit parent/child arrays.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **prefixSum(i)**: sum `tree[i]`, then jump to `i -= i & (-i)`, repeat until i=0.
 ```
 prefixSum(7) = tree[7] + tree[6] + tree[4]
@@ -89,27 +89,27 @@ update(5, +1):
 
 **Query [L, R]**: `prefixSum(R) - prefixSum(L-1)` — two prefix queries.
 
-THE TRADE-OFFS:
-Gain: O(log N) query and update, O(N) space, smallest possible code for this complexity.
-Cost: Only works for operations with an inverse (subtraction for sum; doesn't generalise to min/max unlike segment tree). Conceptually harder to understand than segment tree.
+**THE TRADE-OFFS:**
+**Gain:** O(log N) query and update, O(N) space, smallest possible code for this complexity.
+**Cost:** Only works for operations with an inverse (subtraction for sum; doesn't generalise to min/max unlike segment tree). Conceptually harder to understand than segment tree.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Array [1, 2, 3, 4, 5]. Query prefix sum to index 5. Update index 3 by +10.
 
-WHAT HAPPENS WITHOUT FENWICK (prefix array):
+**WHAT HAPPENS WITHOUT FENWICK (prefix array):**
 Prefix: [1, 3, 6, 10, 15]. Query prefix[5] = 15. O(1).
 Update index 3: must recompute prefix[3..5]: O(N) = 3 operations.
 
-WHAT HAPPENS WITH FENWICK:
+**WHAT HAPPENS WITH FENWICK:**
 Array maps to tree[1..5] with responsibility ranges by lowest set bit.
 Query prefix[5]: `tree[5] + tree[4]` = (5) + (1+2+3+4) = 5 + 10 = 15. O(log 5) = 2 steps.
 Update index 3 by +10: update tree[3], tree[4] — 2 nodes. O(log 5) = 2 steps.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The Fenwick tree achieves something that seems impossible: O(log N) for both prefix queries and point updates, without a segment tree's implementation complexity. The trick is that each position "owns" a number of elements equal to its lowest set bit — a property that lets bit arithmetic replace pointer traversal.
 
 ---
@@ -118,9 +118,9 @@ The Fenwick tree achieves something that seems impossible: O(log N) for both pre
 
 > A Fenwick tree is like a nested Russian doll of partial sums. The outermost doll contains sums of 8 elements, inside it a doll for 4 elements, inside one for 2, inside one for 1. To answer a prefix query, you open exactly the right dolls and add their contents.
 
-"Outermost doll (size 8)" → tree[8] stores elements 1–8
-"4-element doll" → tree[4] stores elements 1–4
-"Specific nesting determined by bit" → i & (-i) picks the right doll
+- "Outermost doll (size 8)" → tree[8] stores elements 1–8
+- "4-element doll" → tree[4] stores elements 1–4
+- "Specific nesting determined by bit" → i & (-i) picks the right doll
 
 Where this analogy breaks down: Dolls nest strictly inside each other; Fenwick tree ranges can overlap depending on the query position. The bit arithmetic correctly selects non-overlapping partial sums automatically.
 
@@ -198,7 +198,7 @@ class BIT {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Array element updated
 → update(i, delta): propagate upward via i += i&(-i)
@@ -207,7 +207,7 @@ Array element updated
 → Range query: two prefix queries, subtract
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Use 0-based indexing with a 1-indexed BIT
 → update(0, delta): Loop i=0 → 0 forever (i&-i=0)
@@ -215,7 +215,7 @@ Use 0-based indexing with a 1-indexed BIT
 → Fix: always use 1-based indexing with BIT
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At N=10^8, the BIT uses 400 MB for int array — feasible but pushed. For 64-bit sums (long), 800 MB. At larger scales, BITs are distributed across shards, each handling a range, with a meta-BIT tracking shard sums. Modern competitive programming uses BITs up to N=10^7 comfortably; beyond that, offline algorithms (sorting queries) often outperform.
 
 ---
@@ -288,47 +288,47 @@ How to choose: Use Fenwick tree when your operation is sum (or has an inverse); 
 
 **1. Infinite loop from zero-index usage**
 
-Symptom: Program hangs indefinitely on `update(0, delta)` or `prefixSum(0)`.
+**Symptom:** Program hangs indefinitely on `update(0, delta)` or `prefixSum(0)`.
 
-Root Cause: BIT is 1-based. At i=0, `i & (-i) = 0` → loop never terminates.
+**Root Cause:** BIT is 1-based. At i=0, `i & (-i) = 0` → loop never terminates.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstack <pid> | grep "BIT\|update\|prefixSum"
 # Thread stuck in BIT loop
 ```
 
-Fix: Always add 1 to 0-based indices before calling BIT. If your array is 0-indexed, wrap the BIT calls: `bit.update(i + 1, delta)`.
+**Fix:** Always add 1 to 0-based indices before calling BIT. If your array is 0-indexed, wrap the BIT calls: `bit.update(i + 1, delta)`.
 
-Prevention: Document clearly: "BIT is 1-indexed; all inputs must be ≥ 1."
+**Prevention:** Document clearly: "BIT is 1-indexed; all inputs must be ≥ 1."
 
 ---
 
 **2. Wrong range query from off-by-one in L boundary**
 
-Symptom: Range query `[L, R]` returns sum including index L-1.
+**Symptom:** Range query `[L, R]` returns sum including index L-1.
 
-Root Cause: `rangeSum(L, R)` uses `prefixSum(L)` instead of `prefixSum(L-1)`.
+**Root Cause:** `rangeSum(L, R)` uses `prefixSum(L)` instead of `prefixSum(L-1)`.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Test: array [1,2,3,4,5], query [2,4] should be 2+3+4=9
 assert bit.rangeSum(2, 4) == 9; // fails if using prefixSum(L) instead of prefixSum(L-1)
 ```
 
-Fix: `rangeSum(l, r) = prefixSum(r) - prefixSum(l-1)` — always subtract `l-1`, not `l`.
+**Fix:** `rangeSum(l, r) = prefixSum(r) - prefixSum(l-1)` — always subtract `l-1`, not `l`.
 
-Prevention: Write a unit test for `rangeSum` that includes the boundary elements.
+**Prevention:** Write a unit test for `rangeSum` that includes the boundary elements.
 
 ---
 
 **3. Overflow for large sum values**
 
-Symptom: prefixSum returns negative number or incorrect large value.
+**Symptom:** prefixSum returns negative number or incorrect large value.
 
-Root Cause: `tree[]` is `int` but cumulative sum exceeds `Integer.MAX_VALUE` (≈ 2 billion).
+**Root Cause:** `tree[]` is `int` but cumulative sum exceeds `Integer.MAX_VALUE` (≈ 2 billion).
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Check if max possible sum exceeds Integer.MAX_VALUE
 long maxPossibleSum = (long)N * maxElementValue;
@@ -336,9 +336,9 @@ if (maxPossibleSum > Integer.MAX_VALUE)
     System.out.println("Overflow risk!");
 ```
 
-Fix: Use `long[] tree` instead of `int[] tree`.
+**Fix:** Use `long[] tree` instead of `int[] tree`.
 
-Prevention: Default to `long` for BIT arrays in production; the memory difference is minimal.
+**Prevention:** Default to `long` for BIT arrays in production; the memory difference is minimal.
 
 ---
 

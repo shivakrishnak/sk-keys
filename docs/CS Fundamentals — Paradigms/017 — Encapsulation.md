@@ -31,15 +31,15 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 
 In early procedural programs, all data was global or passed by reference. A `user` struct contained `balance`, `name`, `email`. Any function anywhere in the codebase could directly modify `user.balance = -9999` or set `user.email = null` without validation. One buggy function in one module could corrupt the state of an object used by 50 other modules. Tracing the corruption required reviewing every function that touched the data.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 
 As codebases grew to hundreds of modules, the number of places that could corrupt any given piece of data grew proportionally. Testing became impossible — you'd need to test every combination of every function that could modify every field. Bugs became nearly unfindable. The data and the code that manages it were completely separate, with no enforcement of their relationship.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 
 This is exactly why encapsulation was created — to bind data and the methods that validly operate on it into a single unit, while hiding the data from direct external access. Once `balance` is private, _only_ `BankAccount.deposit()` and `BankAccount.withdraw()` can change it — and those methods enforce the business rules. The corruption surface shrinks from "everywhere" to "one class."
 
@@ -67,13 +67,13 @@ Encapsulation is not primarily about hiding — it's about control. By forcing a
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 
 1. An object's state must always be internally consistent — it should never be in a "half-changed" or invalid state.
 2. The rules that maintain this consistency are business logic: "balance cannot go negative," "email must be valid."
 3. If external code can bypass these rules by directly setting fields, the rules are only suggestions — not guarantees.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 
 Make data `private`. Provide `public` methods that modify state only through validated transitions. Now every modification to `balance` must go through `withdraw()`, which checks `balance >= amount` before proceeding. The object's internal consistency is guaranteed by construction — not by convention.
 
@@ -88,19 +88,19 @@ With encapsulation:
 
 The difference: with public fields, invariant enforcement is a _social contract_ (developers agree not to violate rules). With encapsulation, it's a _technical enforcement_ (the compiler/runtime prevents direct access). Social contracts fail under pressure; technical enforcement does not.
 
-THE TRADE-OFFS:
+**THE TRADE-OFFS:**
 
-Gain: invariant preservation, controlled change surface, isolated state management, safe to change internal representation.
-Cost: more boilerplate (getters/setters), potential for "anemic domain model" (classes that are just data containers with no real behaviour — violating the spirit of encapsulation while following the letter).
+**Gain:** invariant preservation, controlled change surface, isolated state management, safe to change internal representation.
+**Cost:** more boilerplate (getters/setters), potential for "anemic domain model" (classes that are just data containers with no real behaviour — violating the spirit of encapsulation while following the letter).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 A `BankAccount` class has two fields: `balance` and `transactionCount`. There's a business rule: every deposit/withdrawal increments `transactionCount`. The bank charges a fee after 10 transactions.
 
-WHAT HAPPENS WITHOUT ENCAPSULATION:
+**WHAT HAPPENS WITHOUT ENCAPSULATION:**
 
 ```
 // Fields are public — any code can do this:
@@ -112,7 +112,7 @@ account.balance -= 50;   // withdrawal, same mistake
 // There's no single place to find the bug.
 ```
 
-WHAT HAPPENS WITH ENCAPSULATION:
+**WHAT HAPPENS WITH ENCAPSULATION:**
 
 ```
 // Fields private; only these methods exist:
@@ -124,7 +124,7 @@ account.withdraw(50);   // internally: validates; balance -= 50; count++;
 // Audit the two methods → understand all possible state transitions.
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 Encapsulation creates a single source of truth for state transitions. With public fields, a bug could be in 500 places. With encapsulation, state transitions exist in exactly one place per operation — making the system auditable, debuggable, and correct by construction.
 
 ---
@@ -225,7 +225,7 @@ public void withdraw(int amount) {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 
 ```
 External code wants to modify account balance
@@ -241,7 +241,7 @@ Object remains in valid state
 External code receives result (success or exception)
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 
 ```
 Invariant validation fails in withdraw()
@@ -254,7 +254,7 @@ Object still in valid state — never partially modified
 Observable: caller gets exception, not corrupted state
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 
 In a large codebase with 500 engineers, encapsulation is the primary mechanism preventing "shotgun surgery" — changes to one concept rippling across hundreds of files. Without it, a change to how `balance` is stored (say, switching from `int` to `BigDecimal` for precision) requires finding every direct access to the field. With encapsulation, only the internal implementation of `BankAccount` changes. At microservice scale, encapsulation extends to service boundaries — the service's internal database schema is private; the API is the public interface.
 
@@ -375,13 +375,13 @@ public final class Money {
 
 **Anemic Domain Model**
 
-Symptom:
+**Symptom:**
 All classes are data holders with getters/setters. Business logic lives in Service classes that fetch objects, modify fields via setters, and save them. The "domain objects" have no intelligence — they're just structs with verbose API.
 
-Root Cause:
+**Root Cause:**
 Developers learned "make fields private, add getters/setters" without the second half: "put behaviour in the class." The result looks like encapsulation but provides none of the invariant-protection benefits.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```bash
 # Count ratio of setters to domain methods per class:
@@ -390,23 +390,23 @@ grep -c "public void [a-z]" src/domain/*.java  # count domain methods
 # If setter count >> domain methods: anemic domain model
 ```
 
-Fix:
+**Fix:**
 Move business operations into the domain class. Replace `account.setBalance(account.getBalance() - amount)` with `account.withdraw(amount)`. Make the object responsible for its own transitions.
 
-Prevention:
+**Prevention:**
 In code review, question every public setter on a domain class: "Can external code set this to an invalid value via this setter?" If yes, make it private and provide a validated method.
 
 ---
 
 **Invariant Violation via Exposed Internal State**
 
-Symptom:
+**Symptom:**
 An object's internal collection is returned by reference. External code modifies the collection directly, bypassing the class's methods. The object's state becomes inconsistent.
 
-Root Cause:
+**Root Cause:**
 A getter returns a mutable reference to an internal data structure: `public List<Transaction> getTransactions() { return transactions; }`. External code calls `account.getTransactions().clear()`.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```java
 // Spot: returning mutable references to internal collections
@@ -416,7 +416,7 @@ grep -n "return transactions\|return orders\|return items" \
 // Each hit is a potential invariant violation
 ```
 
-Fix:
+**Fix:**
 
 ```java
 // BAD: returning mutable reference
@@ -431,7 +431,7 @@ public List<Transaction> getTransactions() {
 // Or return a new ArrayList copy for full isolation
 ```
 
-Prevention:
+**Prevention:**
 Collections returned from public methods should be unmodifiable views or defensive copies. In Kotlin/Scala, use `List` (immutable) vs `MutableList` explicitly. Review all getter return types.
 
 ---

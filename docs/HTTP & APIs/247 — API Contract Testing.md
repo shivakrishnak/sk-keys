@@ -421,15 +421,15 @@ class UserServiceProviderPactTest {
 
 **Pact Verification Fails Despite No Breaking Change**
 
-Symptom:
+**Symptom:**
 Provider CI fails Pact verification. Provider team insists they made no breaking changes.
 Consumer pact specified exact response body, not type matchers.
 
-Root Cause:
+**Root Cause:**
 Consumer pact uses exact value matching (`"name": "Alice"`) instead of type matchers.
 Provider's test database has `"name": "Bob"` → mismatch.
 
-Diagnostic:
+**Diagnostic:**
 
 ```bash
 # Read the pact verification output:

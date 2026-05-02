@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A web crawler discovers 10 billion web pages. Which pages are in "web rings" (mutually reachable cycles of links)? A social network wants to find "tightly knit communities" in a directed follower graph. A compiler detects circular module dependencies. All require finding groups of nodes where every node can reach every other — a simple BFS from one node doesn't reveal this mutual reachability structure.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Checking all pairs for mutual reachability takes O(V×(V+E)) — for 10 billion nodes that's 10^20 operations. Even BFS from every node is O(V²) for dense graphs. The structure of mutual reachability is invisible to simple traversal.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 DFS finish times carry structural information about the graph. In Kosaraju's algorithm: one DFS on the original graph records finish times; a second DFS on the **reversed** graph, processing vertices in decreasing finish order, visits exactly one SCC per DFS tree. In Tarjan's algorithm: a single DFS uses a stack and "low-link" values to identify SCCs as subtrees. Both run in O(V+E). This is exactly why **Strongly Connected Component** algorithms were invented.
 
 ---
@@ -64,31 +64,31 @@ SCCs partition a directed graph into its "irreducible" mutual-reachability group
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Within an SCC, every vertex is reachable from every other vertex — the SCC is a maximal mutual-reachability group.
 2. Between SCCs, edges go only one way in the condensation DAG (if u∈SCC_A can reach v∈SCC_B, no vertex in SCC_B can reach any vertex in SCC_A — otherwise they'd be the same SCC).
 3. In a DFS, if vertex v is in the same SCC as u, then v must be visited before u's DFS tree finishes (v is a descendant of u or vice versa in the same DFS tree).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Kosaraju's:** Observation — in DFS of a graph, the last vertex to finish is in a "source" SCC of the condensation. In the reversed graph Gᵀ, the SCC containing the last-finishing vertex of G is now a "sink" — no edges leave it. So a DFS from that vertex in Gᵀ explores exactly that SCC and no more.
 
 **Tarjan's:** Maintain a stack of "potentially in the same SCC" vertices. `disc[v]` = DFS discovery time; `low[v]` = minimum discovery time reachable from the subtree rooted at v via back edges. When `low[v] == disc[v]`, v is the root of an SCC — pop the stack until (and including) v.
 
-THE TRADE-OFFS:
-Gain: O(V+E) — linear time for complete SCC decomposition; produces DAG condensation enabling topological analysis.
-Cost: Tarjan's is a single pass but requires careful stack management and low-link logic (error-prone to implement). Kosaraju's is two passes with a simpler mental model but allocates the reversed graph.
+**THE TRADE-OFFS:**
+**Gain:** O(V+E) — linear time for complete SCC decomposition; produces DAG condensation enabling topological analysis.
+**Cost:** Tarjan's is a single pass but requires careful stack management and low-link logic (error-prone to implement). Kosaraju's is two passes with a simpler mental model but allocates the reversed graph.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Directed graph: A→B, B→C, C→A (triangle cycle), B→D, D→E.
 
-WHAT HAPPENS WITHOUT SCC:
+**WHAT HAPPENS WITHOUT SCC:**
 BFS from A reaches {A,B,C,D,E}. BFS from D reaches {D,E}. You can't tell which vertices are "mutually reachable" without checking every reverse path manually: O(V²).
 
-WHAT HAPPENS WITH TARJAN'S SCC:
+**WHAT HAPPENS WITH TARJAN'S SCC:**
 DFS from A: visit A(disc=0), B(disc=1), C(disc=2).
 C: check back edge C→A: low[C] = min(low[C], disc[A]) = 0. Return to B: low[B] = min(low[B], low[C]) = 0. Visit D(disc=3), E(disc=4).
 E: no outgoing edges. low[E]=disc[E]=4. low[E]==disc[E] → SCC: pop {E}. SCC1={E}.
@@ -96,7 +96,7 @@ D: low[D]=3=disc[D] → SCC: pop {D}. SCC2={D}.
 B: low[B]=0 ≠ disc[B]=1. Continue. Return to A: low[A]=0=disc[A] → SCC: pop {A,B,C}. SCC3={A,B,C}.
 Result: 3 SCCs: {E}, {D}, {A,B,C}. Condensation: {A,B,C}→{D}→{E} — a linear DAG.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The low-link value propagates up the DFS tree, detecting when a subtree has a back edge to an ancestor — meaning a cycle exists. The SCC root is the vertex where low equals disc, signalling no further cycle escapes this subtree.
 
 ---
@@ -105,10 +105,10 @@ The low-link value propagates up the DFS tree, detecting when a subtree has a ba
 
 > Think of a directed graph as a city's one-way road system. An SCC is a "neighbourhood" where you can drive from any intersection to any other using only the roads within the neighbourhood. The condensation DAG is the city's inter-neighbourhood highway system — all highways go one way between neighbourhoods. Once you leave a neighbourhood via a highway, you cannot return by road.
 
-"Neighbourhood" → SCC
-"Can drive between any two intersections" → mutual reachability
-"One-way highway leaving neighbourhood" → inter-SCC edge in condensation
-"Condensation DAG" → the high-level city map without cycles
+- "Neighbourhood" → SCC
+- "Can drive between any two intersections" → mutual reachability
+- "One-way highway leaving neighbourhood" → inter-SCC edge in condensation
+- "Condensation DAG" → the high-level city map without cycles
 
 Where this analogy breaks down: A neighbourhood's border is geographic; SCC membership is determined by reachability, not physical proximity. A node can be its own SCC (no cycles through it), unlike a neighbourhood always containing multiple buildings.
 
@@ -181,7 +181,7 @@ Tarjan's SCC is the basis of Hopcroft-Tarjan biconnected components, bridge find
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Directed graph G (dependencies, links, transactions)
 → [SCC ALGORITHM ← YOU ARE HERE]
@@ -194,7 +194,7 @@ Directed graph G (dependencies, links, transactions)
   dependency order, community detection
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Cross edges incorrectly treated as back edges
 → low[v] updated with cross-edge disc time
@@ -206,7 +206,7 @@ Cross edges incorrectly treated as back edges
 → Fix: only update low[v] with disc[w] if onStack[w]==true
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For web-scale directed graphs (10 billion nodes, 100 billion edges — e.g., Twitter follower graph), single-machine DFS is infeasible. Distributed SCC algorithms (e.g., Forward-Backward Algorithm, FWBW) operate in O(D) rounds where D is the diameter: forward BFS identifies vertices reachable from a pivot; backward BFS identifies vertices that reach the pivot; intersection is one SCC. Repeated iterations find all SCCs in O(D × log V) rounds distributed across a cluster.
 
 ---
@@ -321,11 +321,11 @@ How to choose: Use Tarjan's for single-machine implementations (one pass, no gra
 
 **1. Incorrect low-link update for cross edges**
 
-Symptom: Separate SCCs merged into one incorrectly large SCC.
+**Symptom:** Separate SCCs merged into one incorrectly large SCC.
 
-Root Cause: `low[v] = min(low[v], disc[w])` applied to cross edges (where `onStack[w] == false`) — this connects unrelated SCCs.
+**Root Cause:** `low[v] = min(low[v], disc[w])` applied to cross edges (where `onStack[w] == false`) — this connects unrelated SCCs.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Verify for simple test: graph A→B, B→C, C→A, A→D
 // Expected SCCs: {A,B,C}, {D}
@@ -334,38 +334,38 @@ int[] sccs = findSCCs(4, adj);
 assert sccs[3] != sccs[0] : "D wrongly merged with A's SCC";
 ```
 
-Fix: Guard low-link update with `if (onStack[w])` for non-tree edges.
+**Fix:** Guard low-link update with `if (onStack[w])` for non-tree edges.
 
-Prevention: Unit test with a graph containing both back edges and cross edges.
+**Prevention:** Unit test with a graph containing both back edges and cross edges.
 
 ---
 
 **2. Stack overflow on large graphs (recursive DFS)**
 
-Symptom: `StackOverflowError` for graphs with long chains (e.g., a path 10,000 vertices long).
+**Symptom:** `StackOverflowError` for graphs with long chains (e.g., a path 10,000 vertices long).
 
-Root Cause: Recursive DFS depth equals path length — JVM default stack ~10,000 frames.
+**Root Cause:** Recursive DFS depth equals path length — JVM default stack ~10,000 frames.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 java -Xss100m MyApp  # temporary fix
 # Or monitor stack depth:
 jstack <pid> | grep "tarjanDFS" | wc -l
 ```
 
-Fix: Convert Tarjan's to iterative DFS using an explicit stack. This is non-trivial but necessary for production use on large graphs.
+**Fix:** Convert Tarjan's to iterative DFS using an explicit stack. This is non-trivial but necessary for production use on large graphs.
 
-Prevention: Estimate maximum path length in your graph; if > 5,000, use iterative implementation from the start.
+**Prevention:** Estimate maximum path length in your graph; if > 5,000, use iterative implementation from the start.
 
 ---
 
 **3. Condensation DAG contains duplicate edges**
 
-Symptom: Algorithms on the condensation DAG produce wrong results (e.g., topological sort counts wrong in-degrees).
+**Symptom:** Algorithms on the condensation DAG produce wrong results (e.g., topological sort counts wrong in-degrees).
 
-Root Cause: Multiple edges between the same pair of SCCs in the original graph produce duplicate edges in the condensation.
+**Root Cause:** Multiple edges between the same pair of SCCs in the original graph produce duplicate edges in the condensation.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Check for duplicate edges in condensation:
 Map<Integer, Set<Integer>> seen = new HashMap<>();
@@ -374,9 +374,9 @@ for edge (u,v) in condensation:
         System.out.println("Duplicate edge: " + u + " → " + v);
 ```
 
-Fix: Use a `Set<Long>` to deduplicate edges when building the condensation; only add unique (sccId[u], sccId[v]) pairs.
+**Fix:** Use a `Set<Long>` to deduplicate edges when building the condensation; only add unique (sccId[u], sccId[v]) pairs.
 
-Prevention: Always use a set for condensation edge tracking; deduplicate before building the condensation graph.
+**Prevention:** Always use a set for condensation edge tracking; deduplicate before building the condensation graph.
 
 ---
 

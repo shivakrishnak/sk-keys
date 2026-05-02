@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You need to make change for $0.86 using the fewest coins possible (denominations: 25¢, 10¢, 5¢, 1¢). Trying all combinations: there are billions of possibilities. Dynamic programming: O(amount × denominations) — polynomial but requires a table. Is there a faster approach?
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 For large combinatorial problems, exhaustive search is exponential. Dynamic programming is polynomial but requires O(amount) space per denomination. Some problems have a simpler structure that allows a correct short-cut — but identifying when that shortcut is valid is the challenge.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 For this specific coin system, always picking the largest coin that fits (25¢, then 10¢, etc.) always produces the optimal answer. The "greedy choice" at each step is locally optimal, and remarkably, locally optimal choices compose into a globally optimal solution. This is the **Greedy Choice Property** — when it holds, a greedy algorithm beats DP in both time and simplicity. This is exactly why Greedy Algorithms were created.
 
 ---
@@ -63,12 +63,12 @@ The hardest part of using greedy is *proving* the Greedy Choice Property — tha
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. At each step, make the best locally available choice.
 2. Never reconsider a choice once made.
 3. Prove (or rely on known proof) that local optimality implies global optimality for this specific problem.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Standard greedy framework:**
 1. Define a selection criterion (which option is "best" at each step).
 2. Prove the Greedy Choice Property for this criterion.
@@ -83,15 +83,15 @@ Coin problem with denominations [1, 3, 4]: change for 6.
 Greedy: 4+1+1 = 3 coins. Optimal: 3+3 = 2 coins. Greedy picks 4 first but this is suboptimal.
 The standard USD/EU coin systems satisfy the greedy choice property; non-standard denominations may not.
 
-THE TRADE-OFFS:
-Gain: Often O(N log N) or O(N), simple implementation, no need for state table.
-Cost: Correctness hard to verify; fails silently if greedy choice property doesn't hold; not universally applicable.
+**THE TRADE-OFFS:**
+**Gain:** Often O(N log N) or O(N), simple implementation, no need for state table.
+**Cost:** Correctness hard to verify; fails silently if greedy choice property doesn't hold; not universally applicable.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Activity Selection: given N activities with start and end times, select maximum number of non-overlapping activities.
 
 BRUTE FORCE: Try all 2^N subsets, check each for compatibility. O(2^N).
@@ -104,7 +104,7 @@ Activity ending earliest leaves the most remaining time for future activities. C
 PROOF SKETCH (exchange argument):
 Suppose an optimal solution O doesn't include the earliest-ending activity A. Swap the first activity in O with A. A ends earlier or at the same time, so it's still compatible with everything O was compatible with. The result is at least as good as O and includes A. So there's always an optimal solution that includes the greedy choice.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The "exchange argument" is the standard proof technique for greedy: show that any optimal solution can be transformed to include the greedy choice without getting worse. If this holds for every step, greedy is globally optimal.
 
 ---
@@ -113,10 +113,10 @@ The "exchange argument" is the standard proof technique for greedy: show that an
 
 > Greedy is like a packing strategy for a suitcase: always pack the densest item first (most value per cm³). This fills the suitcase with maximum value per space. But if items are discrete and indivisible, the densest-first approach may leave wasted space that a different combination would fill better. Greedy works for the "fractional knapsack" (items divisible) but not the "0/1 knapsack" (items whole).
 
-"Densest item first" → greedy selection criterion
-"Fractional knapsack" → greedy works (items are divisible)
-"0/1 knapsack" → greedy fails (items are indivisible)
-"Wasted space from indivisibility" → greedy choice property violated
+- "Densest item first" → greedy selection criterion
+- "Fractional knapsack" → greedy works (items are divisible)
+- "0/1 knapsack" → greedy fails (items are indivisible)
+- "Wasted space from indivisibility" → greedy choice property violated
 
 Where this analogy breaks down: "Densest" is a well-defined ordering; greedy selection criteria are problem-specific and may be non-obvious (e.g., Huffman encoding's criterion is character frequency).
 
@@ -207,7 +207,7 @@ Greedy FAILS for 0/1 knapsack.
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Problem requires selecting items/choices optimally
 → Identify greedy criterion (what "best at each step" means)
@@ -217,7 +217,7 @@ Problem requires selecting items/choices optimally
 → Globally optimal solution
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Apply greedy without proof of correctness
 → Produces a feasible but suboptimal solution
@@ -226,7 +226,7 @@ Apply greedy without proof of correctness
 → Use DP if greedy fails even one counterexample
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 Greedy's O(N log N) is excellent at scale: 1 billion elements in ~30 log(10^9) ≈ 30 billion comparisons. The sort step dominates; the greedy scan is O(N). For streaming data (can't sort), greedy must be adapted with priority queues (Dijkstra: O((V+E) log V)). At distributed scale, greedy algorithms solve the local problem on each shard; global optimality requires careful aggregation.
 
 ---
@@ -298,30 +298,30 @@ How to choose: Use greedy when you can prove the greedy choice property. Use DP 
 
 **1. Greedy produces suboptimal solution (silently)**
 
-Symptom: Algorithm output is feasible but not optimal; noticed when comparing with DP solution.
+**Symptom:** Algorithm output is feasible but not optimal; noticed when comparing with DP solution.
 
-Root Cause: Greedy choice property doesn't hold for the specific problem or input.
+**Root Cause:** Greedy choice property doesn't hold for the specific problem or input.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Compare greedy vs DP on identical inputs:
 assert greedySolve(input) == dpSolve(input)
     : "Greedy failed on: " + Arrays.toString(input);
 ```
 
-Fix: Use DP if even one counterexample fails. Alternatively, find a different greedy criterion (rare but sometimes possible).
+**Fix:** Use DP if even one counterexample fails. Alternatively, find a different greedy criterion (rare but sometimes possible).
 
-Prevention: Never claim greedy correctness without a formal proof or known theoretical result.
+**Prevention:** Never claim greedy correctness without a formal proof or known theoretical result.
 
 ---
 
 **2. Wrong sort criterion produces incorrect greedy**
 
-Symptom: Greedy returns wrong answers on certain inputs; other inputs are correct.
+**Symptom:** Greedy returns wrong answers on certain inputs; other inputs are correct.
 
-Root Cause: The ordering criterion is subtly wrong (e.g., sorting by start time for activity selection instead of end time).
+**Root Cause:** The ordering criterion is subtly wrong (e.g., sorting by start time for activity selection instead of end time).
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Test with hand-crafted cases:
 // Activities: [(1,10),(2,3),(4,5)] — sorted by end time
@@ -330,28 +330,28 @@ Diagnostic:
 assert activitySelection(acts).size() == 2;
 ```
 
-Fix: Ensure sort key matches the greedy choice property. For activity selection: end time, not start time.
+**Fix:** Ensure sort key matches the greedy choice property. For activity selection: end time, not start time.
 
-Prevention: Trace greedy on 3–4 hand-crafted examples before coding; include a degenerate case (early-starting but late-ending activity should be rejected).
+**Prevention:** Trace greedy on 3–4 hand-crafted examples before coding; include a degenerate case (early-starting but late-ending activity should be rejected).
 
 ---
 
 **3. Off-by-one in greedy scan**
 
-Symptom: Greedy produces one too few or one too many selections.
+**Symptom:** Greedy produces one too few or one too many selections.
 
-Root Cause: Boundary condition in greedy comparison (`>=` vs `>`, off-by-one in end time).
+**Root Cause:** Boundary condition in greedy comparison (`>=` vs `>`, off-by-one in end time).
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Use exact boundary input: two activities with same end time
 // Activities: [(1,5),(3,5)] — both end at 5
 // Expected: only one selected (they overlap at end = start)
 ```
 
-Fix: Verify the overlap condition (strictly overlapping: `start < lastEnd`, or non-overlapping: `start >= lastEnd`).
+**Fix:** Verify the overlap condition (strictly overlapping: `start < lastEnd`, or non-overlapping: `start >= lastEnd`).
 
-Prevention: Define "compatible" precisely: "activity starts at or after last selected activity ends" → `act.start >= lastEnd`.
+**Prevention:** Define "compatible" precisely: "activity starts at or after last selected activity ends" → `act.start >= lastEnd`.
 
 ---
 

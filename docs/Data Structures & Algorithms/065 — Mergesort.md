@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You need to sort 1 million Employee objects by salary. Quicksort achieves O(N log N) on average but is **not stable** — two employees with equal salaries might swap positions. If you previously sorted by last name, a Quicksort on salary will scramble employees with identical salaries into arbitrary order. Also, Quicksort can degrade to O(N²) on adversarial input.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 For sorting objects (not just primitives), two requirements often conflict: stability (preserve relative order of equal elements) and guaranteed O(N log N) performance. Quicksort provides neither guarantee. You need a sort that is both stable and worst-case O(N log N).
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Divide the array in half. Sort each half independently. Merge the two sorted halves by comparing front-to-front and always choosing the smaller element — if equal, choose the left half's element (preserving order = stability). This merge step is O(N) — two sorted arrays can be merged without any backtracking. The recursion produces O(log N) levels, each doing O(N) work in total. This is exactly why **Mergesort** was created.
 
 ---
@@ -64,12 +64,12 @@ Mergesort's strength is its predictability — O(N log N) regardless of input, n
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Mergesort's correctness relies on one fact: **two sorted arrays can be merged into one sorted array in O(N) time** using two pointers.
 2. The recursion terminates because sub-arrays strictly shrink. An array of size 1 is trivially sorted.
 3. The merge step is **stable** if left-half elements are chosen before right-half when equal.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 The merge operation is the core insight. Given two sorted arrays L and R, maintain pointers `i` (into L) and `j` (into R). Compare L[i] and R[j]; write the smaller. For stability: if equal, write L[i] (left has priority). Advance the pointer of the written element. When one array is exhausted, copy the remaining elements of the other.
 
 **Why O(N log N) is a lower bound for comparison sort:**
@@ -78,15 +78,15 @@ Any comparison sort must distinguish N! possible input orderings. Information-th
 **Why Quicksort beats Mergesort in practice despite same big-O:**
 Mergesort writes to an auxiliary buffer then back — two passes per merge. Quicksort's in-place partition does one pass. For random data, Quicksort's cache-sequential access pattern gives 2-4x speedup despite the same asymptotic complexity. Mergesort wins when: stability required, adversarial inputs possible, or sorting linked lists (mergesort is O(1) space for linked lists — no random access needed; Quicksort on linked lists is O(N) space).
 
-THE TRADE-OFFS:
-Gain: O(N log N) guaranteed (no adversarial cases); stable; parallelisable; ideal for linked lists and external sort.
-Cost: O(N) auxiliary space; worse cache performance than Quicksort for in-memory random data.
+**THE TRADE-OFFS:**
+**Gain:** O(N log N) guaranteed (no adversarial cases); stable; parallelisable; ideal for linked lists and external sort.
+**Cost:** O(N) auxiliary space; worse cache performance than Quicksort for in-memory random data.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Array: [5, 2, 4, 6, 1, 3]. Walk through mergesort.
 
 SPLIT PHASE:
@@ -102,7 +102,7 @@ Merge [6]+[1]=[1,6]. Merge [3]=[3].
 Merge [1,6]+[3]=[1,3,6].
 Merge [2,4,5]+[1,3,6]=[1,2,3,4,5,6]. Done.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Each merge level does O(N) total work across all merge operations at that level (all sub-arrays together span the full array). With O(log N) levels, total work is O(N log N) — and this is the same regardless of the initial order of elements. Mergesort's tree is always perfectly balanced — unlike Quicksort where adversarial inputs can create a degenerate tree.
 
 ---
@@ -111,10 +111,10 @@ Each merge level does O(N) total work across all merge operations at that level 
 
 > Mergesort is like a library reorganisation project. You sort all books by category, then by author within each category, then by title within each author — each step works with already-organised smaller groups and just merges them. The merge operation is clean: always take whichever book comes next alphabetically from either pile. You never have to re-examine a book you've already filed.
 
-"Sort smaller groups first" → recursive sort of halves
-"Always take alphabetically-next book" → two-pointer merge comparison
-"Already-filed books never re-examined" → O(N) merge (no backtracking)
-"Final merge = fully sorted" → merging two sorted halves produces sorted whole
+- "Sort smaller groups first" → recursive sort of halves
+- "Always take alphabetically-next book" → two-pointer merge comparison
+- "Already-filed books never re-examined" → O(N) merge (no backtracking)
+- "Final merge = fully sorted" → merging two sorted halves produces sorted whole
 
 Where this analogy breaks down: A real library reorganisation would reorder books in-place (no extra shelf space). Mergesort requires an auxiliary array for the merge buffer — the equivalent of a temporary staging shelf, which real libraries often don't have.
 
@@ -180,7 +180,7 @@ void mergesortBottomUp(int[] arr) {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Unsorted array of N elements
 → [MERGESORT ← YOU ARE HERE]
@@ -191,7 +191,7 @@ Unsorted array of N elements
 → O(N log N) time, O(N) space, stable
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Very large N with constrained memory
 → Auxiliary array of N elements = N×4 bytes
@@ -202,7 +202,7 @@ Very large N with constrained memory
   with streaming merge from disk
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 Mergesort is the basis for **external sorting** — data too large for RAM. Write sorted chunks to disk (run generation phase), then K-way merge the sorted chunks. Apache Spark's sort shuffle uses distributed mergesort: each task sorts its partition, and the shuffle merge combines sorted partitions across machines. For N=1 TB of data on 100 machines, each machine processes 10 GB, sorts it (mergesort), and the sorted outputs are merged using a priority queue.
 
 ---
@@ -336,11 +336,11 @@ How to choose: Use Mergesort for objects requiring stable sort, linked list sort
 
 **1. Off-by-one in merge boundaries**
 
-Symptom: Sorted output has duplicate values, missing values, or values out of order.
+**Symptom:** Sorted output has duplicate values, missing values, or values out of order.
 
-Root Cause: `mid` calculation or loop bounds are wrong. `mid = (lo+hi)/2` overflows for large indices; loop conditions `i <= mid` vs `i < mid` are critical.
+**Root Cause:** `mid` calculation or loop bounds are wrong. `mid = (lo+hi)/2` overflows for large indices; loop conditions `i <= mid` vs `i < mid` are critical.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Test on tiny arrays: [2,1], [3,1,2]
 // Verify all elements present after sort
@@ -353,38 +353,38 @@ assert before.equals(after)
     : "Elements lost or duplicated!";
 ```
 
-Fix: Use `mid = lo + (hi - lo) / 2` (overflow-safe). Loop conditions: `i <= mid`, `j <= hi` (not `<`). Always verify element count before/after.
+**Fix:** Use `mid = lo + (hi - lo) / 2` (overflow-safe). Loop conditions: `i <= mid`, `j <= hi` (not `<`). Always verify element count before/after.
 
-Prevention: Unit test edge cases: single element, two elements, all-equal elements, reversed input.
+**Prevention:** Unit test edge cases: single element, two elements, all-equal elements, reversed input.
 
 ---
 
 **2. Auxiliary array allocated inside recursive calls (memory thrashing)**
 
-Symptom: Extremely slow sorting; heap allocation spikes visible in profiler; GC pressure high.
+**Symptom:** Extremely slow sorting; heap allocation spikes visible in profiler; GC pressure high.
 
-Root Cause: `int[] temp = new int[hi-lo+1]` inside the `merge()` method allocates a new array on every recursive call. For `mergesort(arr, 0, N-1)`, this allocates O(N log N) total memory — for N=10⁶, roughly 80 MB of garbage.
+**Root Cause:** `int[] temp = new int[hi-lo+1]` inside the `merge()` method allocates a new array on every recursive call. For `mergesort(arr, 0, N-1)`, this allocates O(N log N) total memory — for N=10⁶, roughly 80 MB of garbage.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Java: enable GC logging
 java -Xlog:gc* -jar Sort.jar
 # Look for repeated minor GC during sort
 ```
 
-Fix: Allocate `temp` once in the outer `sort()` method and pass it to every recursive call.
+**Fix:** Allocate `temp` once in the outer `sort()` method and pass it to every recursive call.
 
-Prevention: Never allocate auxiliary memory inside the recursive step. Pre-allocate before recursion begins.
+**Prevention:** Never allocate auxiliary memory inside the recursive step. Pre-allocate before recursion begins.
 
 ---
 
 **3. Instability due to wrong comparison operator**
 
-Symptom: Elements with equal keys are reordered unexpectedly after sort.
+**Symptom:** Elements with equal keys are reordered unexpectedly after sort.
 
-Root Cause: Using `<` instead of `<=` when comparing left vs right sub-array elements. `if (temp[i] < temp[j])` (strict less than) will choose right-half elements on equal — making sort unstable.
+**Root Cause:** Using `<` instead of `<=` when comparing left vs right sub-array elements. `if (temp[i] < temp[j])` (strict less than) will choose right-half elements on equal — making sort unstable.
 
-Diagnostic:
+**Diagnostic:**
 {% raw %}
 ```java
 // Test stability with equal-key objects:
@@ -396,9 +396,9 @@ assert data[0][1]=="B" && data[1][1]=="C"
 ```
 {% endraw %}
 
-Fix: Change to `if (temp[i] <= temp[j])` — when equal, left wins (preserves order).
+**Fix:** Change to `if (temp[i] <= temp[j])` — when equal, left wins (preserves order).
 
-Prevention: Comment stability requirement explicitly. Document: `<=` for stable, `<` for unstable.
+**Prevention:** Comment stability requirement explicitly. Document: `<=` for stable, `<` for unstable.
 
 ---
 

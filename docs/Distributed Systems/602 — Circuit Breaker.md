@@ -247,14 +247,14 @@ public class CircuitBreaker {
 
 **Circuit Breaker Flapping (Oscillating OPEN ↔ HALF-OPEN)**
 
-Symptom: Logs show circuit rapidly cycling between OPEN and HALF-OPEN every 30
+**Symptom:** Logs show circuit rapidly cycling between OPEN and HALF-OPEN every 30
 seconds; downstream service appears to be recovering but breaker keeps re-opening.
 
 Cause: `waitDurationInOpenState` (30s) is shorter than downstream recovery time (5-10
 minutes). Half-open probe fires before service is stable; probe fails; circuit re-opens
 immediately.
 
-Fix: Increase `waitDurationInOpenState` to match downstream recovery profile. Use
+**Fix:** Increase `waitDurationInOpenState` to match downstream recovery profile. Use
 exponential backoff for OPEN-to-HALF-OPEN transition. Alert when circuit flaps more
 than 3× in 10 minutes — indicates systemic downstream issue requiring human escalation.
 

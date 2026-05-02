@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 The kernel needs to allocate memory for thousands of transient objects: a process creates a socket → kernel needs a `sock` struct (192 bytes); receives a packet → needs an `sk_buff` (240 bytes); creates a file → needs a `file` struct (256 bytes). With naive allocation (first-fit or best-fit), each allocation/deallocation leaves fragments. After millions of allocations: the kernel has plenty of free memory in total, but no contiguous blocks of the required size — **external fragmentation**. Or the kernel must always round up to power-of-2, wasting internal space — **internal fragmentation**.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Two levels of fragmentation problem: (1) Page-level: the kernel needs contiguous physical pages for DMA buffers, huge pages, etc. Naive allocation fragments physical memory. (2) Sub-page level: most kernel objects are 64–512 bytes. Allocating a full 4KB page for a 192-byte struct wastes 3904 bytes × thousands of concurrent objects = GBs wasted. These two levels require two different allocators.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 **Buddy system** (Knowlton, 1965): page-level allocator. **Slab allocator** (Bonwick, 1994, SunOS 5.4): object-level allocator on top of buddy. Slab observation: object creation (constructor + cache warming) is expensive; if you never destroy the object (just "free to free-list"), the next allocation gets a warm, already-initialised object. The slab allocator is a per-object-type free-list that keeps objects initialised and cache-hot.
 
 ---
@@ -109,9 +109,9 @@ kfree(task_struct*):
   → If slab fully free AND global free list has excess: return to buddy
 ```
 
-THE TRADE-OFFS:
-Gain: O(1) allocation and deallocation for both page-level (buddy) and object-level (slab); minimal fragmentation; CPU-local allocation avoids NUMA penalties.
-Cost: Buddy wastes up to 50% of allocation (rounding to power-of-2); slab wastes memory holding objects that will be reused (memory "committed" to each cache can be large); SLUB debugging (`CONFIG_SLUB_DEBUG`) has significant overhead.
+**THE TRADE-OFFS:**
+**Gain:** O(1) allocation and deallocation for both page-level (buddy) and object-level (slab); minimal fragmentation; CPU-local allocation avoids NUMA penalties.
+**Cost:** Buddy wastes up to 50% of allocation (rounding to power-of-2); slab wastes memory holding objects that will be reused (memory "committed" to each cache can be large); SLUB debugging (`CONFIG_SLUB_DEBUG`) has significant overhead.
 
 ---
 
@@ -332,7 +332,7 @@ free_pages((unsigned long)vaddr, 2);
 
 **1. Slab Memory Leak (kernel)**
 
-Symptom: Memory usage grows continuously; `free -h` shows decreasing `available`; `cat /proc/meminfo` shows `Slab` growing; application and page cache sizes unchanged.
+**Symptom:** Memory usage grows continuously; `free -h` shows decreasing `available`; `cat /proc/meminfo` shows `Slab` growing; application and page cache sizes unchanged.
 
 Diagnosis:
 
@@ -351,7 +351,7 @@ Root Cause Examples: dentry cache growth from filesystem with millions of short-
 
 **2. Buddy System Fragmentation (unable to allocate huge pages)**
 
-Symptom: `grep HugePages_Free /proc/meminfo` shows 0 despite `MemFree` being large; `cat /proc/buddyinfo` shows many order-0 to order-3 blocks but none at order-9 (2MB).
+**Symptom:** `grep HugePages_Free /proc/meminfo` shows 0 despite `MemFree` being large; `cat /proc/buddyinfo` shows many order-0 to order-3 blocks but none at order-9 (2MB).
 
 Diagnosis:
 
@@ -365,7 +365,7 @@ echo 1 > /proc/sys/vm/compact_memory
 # Re-check buddyinfo after compaction
 ```
 
-Fix: `vm.min_free_kbytes` increase forces more aggressive reclaim before fragmentation; `khugepaged` (THP daemon) performs compaction; for critical workloads use `hugetlbfs` with pre-reserved huge pages at boot.
+**Fix:** `vm.min_free_kbytes` increase forces more aggressive reclaim before fragmentation; `khugepaged` (THP daemon) performs compaction; for critical workloads use `hugetlbfs` with pre-reserved huge pages at boot.
 
 ---
 

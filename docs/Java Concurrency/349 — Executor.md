@@ -32,10 +32,10 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Code that submits work to threads is coupled to the threading mechanism. `new Thread(task).start()` creates a new OS thread for every task — not reusable, no limits, no lifecycle management. Swapping from "new thread per task" to "thread pool" requires rewriting every submission site.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 **`Executor`** separates "what to run" (`Runnable`) from "how to run it" — enabling the threading strategy to change without modifying task code.
 
 ---
@@ -61,12 +61,12 @@ The `Executor` interface enables strategy pattern for execution. `execute(task)`
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. `execute(Runnable)` submits a task — it does not specify when or where it runs.
 2. `Executor` makes no guarantees about execution order, timing, or thread.
 3. Execution may be asynchronous (thread pool) or synchronous (direct executor).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 ```java
 // Direct executor: runs in calling thread
 Executor direct = Runnable::run;
@@ -83,15 +83,15 @@ newThreadEach.execute(() -> doWork());
 pool.execute(() -> doWork());
 ```
 
-THE TRADE-OFFS:
-Gain: Decouples task from execution; enables strategy pattern; the interface is minimal.
-Cost: `execute(Runnable)` only — no result retrieval, no lifecycle. For richer functionality, use `ExecutorService`.
+**THE TRADE-OFFS:**
+**Gain:** Decouples task from execution; enables strategy pattern; the interface is minimal.
+**Cost:** `execute(Runnable)` only — no result retrieval, no lifecycle. For richer functionality, use `ExecutorService`.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Toggle execution strategy for tests vs. production.
 
 ```java
@@ -110,7 +110,7 @@ void processOrders(List<Order> orders, Executor exec) {
 }
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 Injecting `Executor` as a dependency enables test-friendly synchronous execution alongside production thread pool execution — the code never changes, only the injected strategy.
 
 ---
@@ -232,9 +232,9 @@ How to choose: Use `ExecutorService` in production (richer API). Use `Executor` 
 ### 🚨 Failure Modes & Diagnosis
 
 **Task rejection in bounded executor:**
-Symptom: `RejectedExecutionException` on `execute()`.
+**Symptom:** `RejectedExecutionException` on `execute()`.
 
-Fix: Configure `RejectedExecutionHandler` or use unbounded queue (with caution for memory).
+**Fix:** Configure `RejectedExecutionHandler` or use unbounded queue (with caution for memory).
 
 ---
 

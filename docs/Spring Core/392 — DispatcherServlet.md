@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "DispatcherServlet"
 parent: "Spring Core"
@@ -156,7 +156,7 @@ WITH DispatcherServlet:
 > Think of the DispatcherServlet as an airport operations centre. All flights (HTTP requests) arrive at the main terminal (DispatcherServlet). Operations consults the flight schedule (HandlerMapping) to determine which gate (controller) this flight should go to. Ground crews (HandlerInterceptors) check and prepare the plane before and after docking. The gate agent (HandlerAdapter) manages the actual boarding process (method invocation). If there is an incident (exception), the incident management team (HandlerExceptionResolver) handles it. The same operations centre manages ALL flights — there is no separate operations centre for each gate.
 
 "Airport operations centre" = DispatcherServlet (single coordination point)
-"Flight schedule" = HandlerMapping (URL → controller mapping)
+- "Flight schedule" = HandlerMapping (URL → controller mapping)
 "Gate" = @Controller or @RestController method
 "Ground crew check before docking" = HandlerInterceptor.preHandle()
 "Gate agent managing boarding" = HandlerAdapter (invokes controller method)

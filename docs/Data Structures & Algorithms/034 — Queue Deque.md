@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine a print-job spooler. Multiple users send documents to one printer. Without a Queue, there is no fair ordering — whoever checks the list last wins, jobs are processed in random order, early senders wait indefinitely, and the system is unpredictable and unfair.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Processing tasks in arrival order requires that the structure rewards patience: the earlier you arrived, the sooner you are served. A Stack does the opposite — last in, first out. A random-access list requires an external pointer to the "current" position and manual management. Neither enforces fairness automatically.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Restrict the collection so items are added to one end (tail) and removed from the other end (head). The first item added is always the first removed. Processing order matches arrival order automatically. This is exactly why the Queue was created.
 
 ---
@@ -63,36 +63,36 @@ A Queue's power is *fairness and predictability*. Any system that must process i
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Items exit in the exact order they entered (FIFO).
 2. Add (enqueue) happens at the tail; remove (dequeue) happens at the head.
 3. All four operations (enqueue, dequeue, peekHead, peekTail) are O(1).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 To maintain O(1) at both ends without shifting, we need two independently movable pointers. An array with head and tail indices, interpreted as a circular buffer, achieves this. When tail wraps past the end of the array, it returns to index 0 — "circular" means we reuse vacated space without copying.
 
 Why not just use an array with index 0 as head? Dequeuing from index 0 requires shifting all elements left — O(N). The circular buffer avoids this entirely: dequeue is just `head++`, enqueue is just `elements[tail++] = val`.
 
 **Deque** extends to O(1) at the head too: `addFirst` is `elements[--head] = val`, `removeFirst` is `head++`. Both ends are symmetric.
 
-THE TRADE-OFFS:
-Gain: O(1) enqueue/dequeue, fair FIFO processing.
-Cost: No random access; O(N) search/access by value or index.
+**THE TRADE-OFFS:**
+**Gain:** O(1) enqueue/dequeue, fair FIFO processing.
+**Cost:** No random access; O(N) search/access by value or index.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 You are implementing BFS on a graph with 1,000 nodes. You need to visit all nodes level by level (breadth-first), processing all neighbours before their children.
 
-WHAT HAPPENS WITHOUT QUEUE (using Stack accidentally):
+**WHAT HAPPENS WITHOUT QUEUE (using Stack accidentally):**
 You use a Stack. When you visit node A with neighbours B and C, you push C then B. You pop B next — then B's children — going deep instead of broad. You implement DFS, not BFS. Level-by-level processing is destroyed.
 
-WHAT HAPPENS WITH QUEUE:
+**WHAT HAPPENS WITH QUEUE:**
 You enqueue B and C. You dequeue B (first in), process it, enqueue B's children. Then dequeue C, process it, enqueue C's children. You maintain level order because arrival order = processing order.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The difference between BFS and DFS is literally one data structure choice: Queue vs Stack. The algorithm is identical — only the container changes. This makes the Queue's FIFO contract the precise mechanism that determines exploration order in graph traversal.
 
 ---
@@ -101,10 +101,10 @@ The difference between BFS and DFS is literally one data structure choice: Queue
 
 > A Deque is like a queue at an airport with a VIP fast-track entrance at the front AND a regular entrance at the back. Normal passengers join the back; VIPs join the front. The agent at the desk always serves from the front. You can also pull someone off the back if they need to leave before being served.
 
-"VIP entering front" → `addFirst()`
-"Normal joining back" → `addLast()`
-"Agent serving front" → `removeFirst()`
-"Person leaving back" → `removeLast()`
+- "VIP entering front" → `addFirst()`
+- "Normal joining back" → `addLast()`
+- "Agent serving front" → `removeFirst()`
+- "Person leaving back" → `removeLast()`
 
 Where this analogy breaks down: Real airport queues have a fixed order once joined; a Deque allows removal from either end at any time — there's no "cutting" social contract in the data structure.
 
@@ -171,7 +171,7 @@ while (!queue.isEmpty()) {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Producer generates task
 → task.offer() adds to tail [QUEUE ← YOU ARE HERE]
@@ -180,7 +180,7 @@ Producer generates task
 → Next task immediately available
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Producer far outpaces consumer
 → Queue grows unbounded
@@ -188,7 +188,7 @@ Producer far outpaces consumer
 → Fix: use bounded BlockingQueue with back-pressure
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At high producer-consumer rates, a single `ArrayDeque` with external synchronization is a bottleneck. Use `ArrayBlockingQueue` (bounded, blocks producer when full) or `LinkedTransferQueue` (unbounded, lock-free for high throughput). The choice between bounded and unbounded is a back-pressure decision: bounded queues push back to the producer, preventing OOM.
 
 ---
@@ -270,56 +270,56 @@ How to choose: For single-threaded use, `ArrayDeque` is always preferred. For pr
 
 **1. Unbounded queue causing OutOfMemoryError**
 
-Symptom: Heap exhaustion after sustained high load; heap dump shows millions of queue entries.
+**Symptom:** Heap exhaustion after sustained high load; heap dump shows millions of queue entries.
 
-Root Cause: Producer rate exceeds consumer rate; unbounded `ArrayDeque` or `LinkedList` grows until OOM.
+**Root Cause:** Producer rate exceeds consumer rate; unbounded `ArrayDeque` or `LinkedList` grows until OOM.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jmap -histo:live <pid> | head -20
 # Look for large ArrayDeque or Node count
 ```
 
-Fix: Replace with `ArrayBlockingQueue` with a capacity limit and implement back-pressure (block or drop with alert).
+**Fix:** Replace with `ArrayBlockingQueue` with a capacity limit and implement back-pressure (block or drop with alert).
 
-Prevention: Always bound queues in producer-consumer systems; monitor queue depth as a metric.
+**Prevention:** Always bound queues in producer-consumer systems; monitor queue depth as a metric.
 
 ---
 
 **2. Queue processed in wrong order (DFS instead of BFS)**
 
-Symptom: BFS algorithm visits nodes in depth-first order; level-order output is wrong.
+**Symptom:** BFS algorithm visits nodes in depth-first order; level-order output is wrong.
 
-Root Cause: Accidentally used a `Stack`/`push`+`pop` instead of a Queue's `offer`+`poll`.
+**Root Cause:** Accidentally used a `Stack`/`push`+`pop` instead of a Queue's `offer`+`poll`.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Review code: are you using push/pop (Stack) 
 # or offer/poll (Queue)?
 grep -n "push\|pop\|offer\|poll" BfsAlgorithm.java
 ```
 
-Fix: Replace `stack.push/pop` with `queue.offer/poll`.
+**Fix:** Replace `stack.push/pop` with `queue.offer/poll`.
 
-Prevention: Name your variable `queue` when BFS is intended; use it only through the `Queue` interface.
+**Prevention:** Name your variable `queue` when BFS is intended; use it only through the `Queue` interface.
 
 ---
 
 **3. Concurrent modification from unsynchronized access**
 
-Symptom: `ConcurrentModificationException` or corrupt queue state in multi-threaded code.
+**Symptom:** `ConcurrentModificationException` or corrupt queue state in multi-threaded code.
 
-Root Cause: `ArrayDeque` is not thread-safe; concurrent offer and poll corrupt head/tail indices.
+**Root Cause:** `ArrayDeque` is not thread-safe; concurrent offer and poll corrupt head/tail indices.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstack <pid> | grep "RUNNABLE" 
 # Multiple threads in ArrayDeque methods simultaneously
 ```
 
-Fix: Use `ArrayBlockingQueue`, `LinkedBlockingDeque`, or `ConcurrentLinkedQueue` for shared queues.
+**Fix:** Use `ArrayBlockingQueue`, `LinkedBlockingDeque`, or `ConcurrentLinkedQueue` for shared queues.
 
-Prevention: Never share a plain `ArrayDeque` between threads without external locking.
+**Prevention:** Never share a plain `ArrayDeque` between threads without external locking.
 
 ---
 

@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A developer deploys an algorithm that processes streaming sensor data with 100,000 records. The algorithm builds an in-memory copy of all records for analysis. In the test environment (16 GB RAM) it runs fine. In production on embedded hardware (512 MB RAM), it crashes with `OutOfMemoryError` when the data buffer exceeds available memory.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Optimising only for time complexity ignores a critical resource: memory. An algorithm that runs in O(N log N) time but uses O(2^N) memory is useless for large N. Memory is bounded in every real system; running out of it causes crashes, swapping, and effective outages — not just slowdowns.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Apply the same scaling analysis to auxiliary memory usage as to time. Express how much additional memory grows with input size, drop constants, keep dominant terms. This gives a language for comparing algorithms on both dimensions simultaneously. This is exactly why Space Complexity analysis was created.
 
 ---
@@ -63,12 +63,12 @@ Space complexity includes the **call stack**. A recursive algorithm with N neste
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Auxiliary space is measured independently of input size.
 2. Recursive call depth contributes to space: each stack frame is O(1) auxiliary space.
 3. Space is typically measured in terms of element count; hardware effects (cache, page size) are ignored.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **What counts as space:**
 - Explicit allocations: arrays, lists, maps — each element contributes.
 - Call stack frames: each recursive call pushes a frame (local variables, return address).
@@ -86,15 +86,15 @@ DERIVED DESIGN:
 - O(N): copying input, BFS queue (may hold up to N nodes), memoization
 - O(N²): 2D DP table, adjacency matrix
 
-THE TRADE-OFFS:
-Gain: Identifies memory bottlenecks, enables embedded/constrained deployment.
-Cost: Space optimisation often increases time complexity or code complexity (space-time trade-off is nearly universal).
+**THE TRADE-OFFS:**
+**Gain:** Identifies memory bottlenecks, enables embedded/constrained deployment.
+**Cost:** Space optimisation often increases time complexity or code complexity (space-time trade-off is nearly universal).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Compute all Fibonacci numbers from fib(0) to fib(N).
 
 APPROACH 1 — Store all results (O(N) space):
@@ -119,7 +119,7 @@ Uses O(1) auxiliary space.
 
 WHAT CHANGES: For N=1,000,000, Approach 1 allocates ~4 MB; Approach 2 allocates ~32B (three integers). On an Arduino with 2 KB RAM, only Approach 2 works.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Often, the previous computation's intermediate results can be discarded immediately. Recognising which prior values are still needed (and which aren't) is the key to space optimisation. Here, only `prev2` and `prev1` are needed — the rest of the array is waste.
 
 ---
@@ -128,9 +128,9 @@ Often, the previous computation's intermediate results can be discarded immediat
 
 > Space complexity is like your desk space: an in-place algorithm solves the puzzle by rearranging pieces on the same table (O(1) extra). A copy-based algorithm moves all pieces to a second table, works there, then brings results back (O(N) extra). The more data you need on the second table simultaneously, the more desks you need.
 
-"Rearranging pieces on same table" → in-place, O(1) auxiliary space
-"Second table for scratch work" → auxiliary array, O(N)
-"How many desks do you need?" → space complexity
+- "Rearranging pieces on same table" → in-place, O(1) auxiliary space
+- "Second table for scratch work" → auxiliary array, O(N)
+- "How many desks do you need?" → space complexity
 
 Where this analogy breaks down: Real desk space can be reclaimed by clearing it; memory allocations must be explicitly freed or garbage-collected — unused space still counts until released.
 
@@ -221,7 +221,7 @@ Total auxiliary: O(N) temp array + O(log N) stack
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Algorithm designed
 → Identify all data structures growing with N
@@ -232,7 +232,7 @@ Algorithm designed
 → Select implementation for deployment constraints
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 O(N²) DP table in production with N=10,000
 → 10,000² ints = 400 MB allocation
@@ -241,7 +241,7 @@ O(N²) DP table in production with N=10,000
 → Many DP problems need only last 1-2 rows of the table
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 Space complexity becomes critical in three scenarios: (1) embedded/mobile with limited RAM (O(1) algorithms preferred), (2) distributed systems where each node handles large partitions, (3) high-frequency services where GC pressure from large allocations creates latency spikes. Modern JVMs with large heaps tolerate O(N) space for N up to ~100M elements; beyond that, off-heap or streaming approaches are needed.
 
 ---
@@ -324,56 +324,56 @@ How to choose: When memory is tight (embedded, streaming), prefer in-place algor
 
 **1. StackOverflowError from deep recursion (O(N) stack)**
 
-Symptom: `java.lang.StackOverflowError` on large inputs.
+**Symptom:** `java.lang.StackOverflowError` on large inputs.
 
-Root Cause: Recursive algorithm with O(N) depth — each call adds a ~1 KB stack frame; JVM default stack is 512 KB–1 MB (500–1,000 frames limit).
+**Root Cause:** Recursive algorithm with O(N) depth — each call adds a ~1 KB stack frame; JVM default stack is 512 KB–1 MB (500–1,000 frames limit).
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 java -Xss1m MyApp  # increase stack — band-aid, not fix
 jstack <pid> | grep "StackOverflowError"
 ```
 
-Fix: Convert to iterative with explicit stack (O(log N) or O(depth) with heap allocation instead of call stack).
+**Fix:** Convert to iterative with explicit stack (O(log N) or O(depth) with heap allocation instead of call stack).
 
-Prevention: For any algorithm that recurses to depth N, implement iteratively in production code.
+**Prevention:** For any algorithm that recurses to depth N, implement iteratively in production code.
 
 ---
 
 **2. OutOfMemoryError from O(N²) DP table**
 
-Symptom: OOM when DP table dimensions are both large (e.g., `dp[10000][10000]`).
+**Symptom:** OOM when DP table dimensions are both large (e.g., `dp[10000][10000]`).
 
-Root Cause: 10,000 × 10,000 × 4 bytes = 400 MB for int table — may exceed container memory limit.
+**Root Cause:** 10,000 × 10,000 × 4 bytes = 400 MB for int table — may exceed container memory limit.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Calculate before allocating:
 long bytes = (long)m * n * 4; // int = 4 bytes
 System.out.println("DP table: " + bytes / 1_048_576 + " MB");
 ```
 
-Fix: Use rolling-row optimisation (O(N) space) when only previous row is needed.
+**Fix:** Use rolling-row optimisation (O(N) space) when only previous row is needed.
 
-Prevention: Always calculate memory footprint of 2D+ arrays before coding — `m * n * elementSize`.
+**Prevention:** Always calculate memory footprint of 2D+ arrays before coding — `m * n * elementSize`.
 
 ---
 
 **3. GC pressure from allocating O(N) objects in hot path**
 
-Symptom: Throughput fine on average but tail latency spikes (p99 >> p50); GC logs show frequent young-gen collections.
+**Symptom:** Throughput fine on average but tail latency spikes (p99 >> p50); GC logs show frequent young-gen collections.
 
-Root Cause: Algorithm in hot path creates O(N) short-lived objects per request; GC must collect them, causing stop-the-world pauses.
+**Root Cause:** Algorithm in hot path creates O(N) short-lived objects per request; GC must collect them, causing stop-the-world pauses.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 java -Xlog:gc* MyApp 2>&1 | grep "Pause"
 # Look for frequent short GC pauses
 ```
 
-Fix: Pre-allocate and reuse object pools; use primitive arrays instead of boxed types; use off-heap storage for large allocations.
+**Fix:** Pre-allocate and reuse object pools; use primitive arrays instead of boxed types; use off-heap storage for large allocations.
 
-Prevention: In hot paths, prefer primitive arrays over `ArrayList<Integer>`; use `int[]` instead of `List<Integer>` for numeric data.
+**Prevention:** In hot paths, prefer primitive arrays over `ArrayList<Integer>`; use `int[]` instead of `List<Integer>` for numeric data.
 
 ---
 

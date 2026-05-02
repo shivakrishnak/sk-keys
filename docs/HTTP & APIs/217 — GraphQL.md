@@ -433,14 +433,14 @@ User user = response.getData("user", User.class);
 
 **N+1 Query Explosion**
 
-Symptom:
+**Symptom:**
 A query requesting 50 users with their posts fires 51 database queries
 (1 for users + 50 for posts). Dashboard loads in 8 seconds.
 
-Root Cause:
+**Root Cause:**
 `User.posts` resolver executes once per User in the list without batching.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```
 # Enable Spring Boot SQL logging:
@@ -451,12 +451,12 @@ logging.level.org.hibernate.SQL=DEBUG
 # Should see n=1 for a batched query, not n=50
 ```
 
-Fix:
+**Fix:**
 Implement DataLoader pattern — batch all userId lookups into one
 `WHERE user_id IN (...)` query. Spring for GraphQL has built-in
 `@BatchMapping` annotation for this.
 
-Prevention:
+**Prevention:**
 Every list resolver that fetches related data must use DataLoader/batching.
 Set up query count assertions in integration tests.
 
@@ -464,15 +464,15 @@ Set up query count assertions in integration tests.
 
 **Deeply Nested Query — Denial of Service**
 
-Symptom:
+**Symptom:**
 A malicious (or buggy) client sends:
 `{ user { friends { friends { friends { friends { name } } } } } }`
 causing exponential resolver calls, maxing out the database.
 
-Root Cause:
+**Root Cause:**
 GraphQL allows arbitrary query depth by default. No depth limit configured.
 
-Diagnostic Command / Tool:
+**Diagnostic Command / Tool:**
 
 ```
 # Add query depth limit to GraphQL config:
@@ -481,11 +481,11 @@ InstrumentationMaxQueryDepth depth = 10;
 # Also add query complexity limit
 ```
 
-Fix:
+**Fix:**
 Add `maxQueryDepth` and `maxQueryComplexity` limits in GraphQL engine config.
 Use persisted queries in production to allowlist known-safe queries.
 
-Prevention:
+**Prevention:**
 Always configure depth limiting and query complexity scoring in production.
 Consider persisted queries for public-facing APIs.
 

@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Imagine Eden Space and Old Generation with nothing in between. Every object that survives one Minor GC would have to go directly to Old Generation. But Old Generation is collected infrequently and expensively (Major GC). If every temporarily-long-lived object (living through 2–3 GC cycles and then dying) goes to Old Generation, it fills the Old Gen with "medium-life" objects that should have died in Young Gen, triggering expensive Major GC far too frequently.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Objects that survive one GC cycle are not necessarily long-lived. A temporary connection wrapper might live for 5 requests before being released (surviving ~5 Minor GC cycles). If it goes directly to Old Gen after the first survival, it joins the long-lived objects and accelerates Old Gen fill. The GC needs a staging area to confirm that an object is truly long-lived before committing it to the expensive-to-collect Old Generation.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Survivor Space is the staging area — the "quarantine zone" where objects prove their longevity by surviving multiple Minor GC cycles before being promoted. This is exactly why Survivor Space exists: to filter out medium-life objects from polluting the Old Generation.
 
 ---
@@ -64,23 +64,23 @@ The two-Survivor design is elegant: it eliminates fragmentation in the Young Gen
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Objects need multiple GC cycle opportunities to prove long-lived status (avoid premature Old Gen promotion).
 2. The collecting region (Survivor) must always have a clean, empty destination for copying live objects.
 3. Age must be tracked per-object to implement the promotion threshold correctly.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 requires multiple survival opportunities — hence the age counter and configurable threshold. Invariant 2 requires two Survivor spaces: one active (containing objects currently living there), one empty (target for the next copy). After each GC, the roles swap. Invariant 3 is implemented via age bits in the Object Header (GC age bits, typically 4 bits, max age 15).
 
-THE TRADE-OFFS:
-Gain: Filters medium-life objects from Old Generation; prevents unnecessary Major GC; clean compaction via copying.
-Cost: Two Survivor spaces means 50% waste in the Survivor area (one is always empty); if Survivor space is too small, objects are promoted before they would naturally die (premature promotion).
+**THE TRADE-OFFS:**
+**Gain:** Filters medium-life objects from Old Generation; prevents unnecessary Major GC; clean compaction via copying.
+**Cost:** Two Survivor spaces means 50% waste in the Survivor area (one is always empty); if Survivor space is too small, objects are promoted before they would naturally die (premature promotion).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Object P is a "medium-life" object. It's created for a user session (lives ~5 seconds). Minor GC runs every 2 seconds. MaxTenuringThreshold = 15.
 
 WITHOUT SURVIVOR SPACE (Eden directly to Old Gen):
@@ -89,7 +89,7 @@ P created in Eden. At Minor GC (2s): P is alive → promoted to Old Gen immediat
 WITH SURVIVOR SPACE:
 P created in Eden. GC 1: P alive → copy from Eden to S1 (age=1). GC 2: P alive → copy from S1 to S0 (age=2). GC 3 (7 seconds, P is now dead): P NOT reachable → NOT copied. P's memory in S0 abandoned. No Old Gen involvement at all. Major GC frequency unchanged.
 
-THE INSIGHT:
+**THE INSIGHT:**
 Survivor Space acts as filter: objects that die young are reclaimed in Young Gen; objects that die medium-term are reclaimed in Young Gen; only truly long-lived objects reach Old Gen. This dramatically reduces Old Gen fill rate and major GC frequency.
 
 ---
@@ -98,12 +98,12 @@ Survivor Space acts as filter: objects that die young are reclaimed in Young Gen
 
 > The two Survivor spaces (S0, S1) are like a revolving door between Eden (the lobby) and Old Generation (the office building). Objects enter through Eden and wait in S0 (the first waiting room). At each GC cycle, the waiting rooms flip: everyone in S0 moves to S1, everyone in S1 moves to S0 (if they've waited long enough: out the door to Old Gen). Anyone who finishes their business during the cycle doesn't get moved — they disappear.
 
-"First waiting room (S0)" → active Survivor space
-"Second waiting room (S1)" → passive (empty) Survivor space
-"Flipping the rooms" → S0/S1 role swap after Minor GC
-"Waiting long enough" → reaching MaxTenuringThreshold
-"Out the door to Old Gen" → promotion
-"Finishing business and disappearing" → dying before threshold, collected in Young Gen
+- "First waiting room (S0)" → active Survivor space
+- "Second waiting room (S1)" → passive (empty) Survivor space
+- "Flipping the rooms" → S0/S1 role swap after Minor GC
+- "Waiting long enough" → reaching MaxTenuringThreshold
+- "Out the door to Old Gen" → promotion
+- "Finishing business and disappearing" → dying before threshold, collected in Young Gen
 
 Where this analogy breaks down: unlike a revolving door where objects physically move, the JVM copies objects' bytes to the new Survivor space — the old copy in the source space is abandoned.
 
@@ -185,7 +185,7 @@ The JVM tracks age distribution statistics (`-XX:+PrintTenuringDistribution`) af
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Object created in Eden (age 0)
   → GC 1: alive → S1 (age 1)
@@ -198,7 +198,7 @@ Object created in Eden (age 0)
   → GC 1 → GC 2 → ... → GC 15: alive → Old Generation
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Survivor overflow:
   → Survivor too small for surviving objects
@@ -209,7 +209,7 @@ Survivor overflow:
   → Fix: -XX:SurvivorRatio=4 (larger Survivor relative to Eden)
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At high object survival rates (e.g., a workload with many medium-lived objects like 1-minute HTTP sessions), Survivor space becomes the bottleneck. Objects continuously bounce between S0 and S1, consuming CPU for copying. If survival rate is genuinely high, lowering `MaxTenuringThreshold` (e.g., to 5) promotes objects faster, reducing Young Gen copying overhead. The trade-off: fewer Major GCs caught early vs. slightly faster Old Gen fill.
 
 ---
@@ -303,11 +303,11 @@ How to choose: For most applications, use G1GC defaults (adaptive). Only tune Su
 
 **1. Survivor Space Overflow → Premature Promotion**
 
-Symptom: Old Generation fills rapidly; `jstat` shows `TT` (tenuring threshold) consistently at 1 or 2; `S0U` or `S1U` always at nearly 100%.
+**Symptom:** Old Generation fills rapidly; `jstat` shows `TT` (tenuring threshold) consistently at 1 or 2; `S0U` or `S1U` always at nearly 100%.
 
-Root Cause: Too many objects surviving Minor GC relative to Survivor capacity. Objects promoted early (age 1–2) instead of ageing to 15.
+**Root Cause:** Too many objects surviving Minor GC relative to Survivor capacity. Objects promoted early (age 1–2) instead of ageing to 15.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 java -XX:+PrintTenuringDistribution -jar myapp.jar
 # If age 1 objects already exceed Survivor size → overflow
@@ -316,7 +316,7 @@ jstat -gc <pid> 1000
 # TT < MTT and S0/S1 at 100% consistently → overflow
 ```
 
-Fix:
+**Fix:**
 ```bash
 # Increase Survivor size (decrease ratio)
 java -XX:SurvivorRatio=4 -jar myapp.jar
@@ -324,15 +324,15 @@ java -XX:SurvivorRatio=4 -jar myapp.jar
 java -XX:NewSize=1g -XX:MaxNewSize=1g -jar myapp.jar
 ```
 
-Prevention: Use `PrintTenuringDistribution` in testing to understand survival rates before production sizing.
+**Prevention:** Use `PrintTenuringDistribution` in testing to understand survival rates before production sizing.
 
 **2. Long Minor GC from Large Survivor (Object Copying Overhead)**
 
-Symptom: Minor GC takes 20–50ms instead of expected <10ms; large amount of data copied per Minor GC.
+**Symptom:** Minor GC takes 20–50ms instead of expected <10ms; large amount of data copied per Minor GC.
 
-Root Cause: Large Survivor contains many surviving objects — each must be copied. More bytes to copy → longer pause.
+**Root Cause:** Large Survivor contains many surviving objects — each must be copied. More bytes to copy → longer pause.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstat -gcutil <pid> 1000
 # If S0 or S1 near 100% after GC AND YGC pause long
@@ -342,22 +342,22 @@ java -Xlog:gc+heap=debug -jar myapp.jar
 # Shows bytes copied per Minor GC
 ```
 
-Fix:
+**Fix:**
 ```java
 // Application-level fix: reduce medium-life object creation
 // Cache using bounded Caffeine instead of unbounded Map
 // Close resources promptly to reduce Survivor fill rate
 ```
 
-Prevention: Keep object lifetimes bimodal: either die in Eden or live long enough to warrant Old Gen. Medium-life objects are the Survivor's worst enemy.
+**Prevention:** Keep object lifetimes bimodal: either die in Eden or live long enough to warrant Old Gen. Medium-life objects are the Survivor's worst enemy.
 
 **3. Incorrect Tenuring Threshold (TT=1 always)**
 
-Symptom: Objects promoted after only 1 GC cycle; Old Gen pressure; `TT` column in `jstat` always shows 1.
+**Symptom:** Objects promoted after only 1 GC cycle; Old Gen pressure; `TT` column in `jstat` always shows 1.
 
-Root Cause: Adaptive tenuring algorithm calculates that threshold should be 1 (Survivor already more than half full at age 1). Either Survivor is genuinely too small, or there are many unexpectedly long-lived objects.
+**Root Cause:** Adaptive tenuring algorithm calculates that threshold should be 1 (Survivor already more than half full at age 1). Either Survivor is genuinely too small, or there are many unexpectedly long-lived objects.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Check what's surviving to Survivor:
 java -XX:+PrintTenuringDistribution \
@@ -367,7 +367,7 @@ java -XX:+PrintTenuringDistribution \
 # OR: Survivor too small → increase Young Gen
 ```
 
-Prevention: Profile application object lifetimes with async-profiler allocation profiling before production deployment sizing.
+**Prevention:** Profile application object lifetimes with async-profiler allocation profiling before production deployment sizing.
 
 ---
 

@@ -32,10 +32,10 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A database connection pool should allow at most 10 concurrent users. `synchronized` allows exactly 1. `ReentrantLock` allows exactly 1. There's no built-in mechanism to say "allow up to 10 threads, block the 11th until one finishes."
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 **`Semaphore`** generalises mutual exclusion to N-way access control — a mutex is a semaphore with 1 permit.
 
 ---
@@ -61,7 +61,7 @@ Semaphore = N-slot mutex: N threads can hold it simultaneously; the (N+1)th bloc
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Permits are not thread-owned — any thread can call `release()`, even a thread that didn't call `acquire()`. This enables producer-consumer signalling.
 2. `Semaphore(0).acquire()` blocks until at least one `release()` — like a gate that starts closed.
 3. Permits can be negative conceptually during construction, but `availablePermits()` returns max(0, count).
@@ -77,15 +77,15 @@ Semaphore state machine:
   T1.release()  → permits = 1, T11 unblocked → permits = 0
 ```
 
-THE TRADE-OFFS:
-Gain: N-way access control; producer-consumer gate (start at 0); non-reentrant by design (intentional for resource pools).
-Cost: Not reentrant; different thread can release (can be a feature OR a bug); permits don't belong to threads — no deadlock detection available.
+**THE TRADE-OFFS:**
+**Gain:** N-way access control; producer-consumer gate (start at 0); non-reentrant by design (intentional for resource pools).
+**Cost:** Not reentrant; different thread can release (can be a feature OR a bug); permits don't belong to threads — no deadlock detection available.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP: Connection pool with 10 connections.
+**SETUP:** Connection pool with 10 connections.
 
 ```java
 Semaphore pool = new Semaphore(10);
@@ -101,7 +101,7 @@ void returnConnection(Connection conn) {
 }
 ```
 
-THE INSIGHT: Semaphore enforces the constraint "at most 10 concurrent users" without managing identity — it just counts. Any thread can call `release()` as long as the count doesn't exceed the intended maximum.
+**THE INSIGHT:** Semaphore enforces the constraint "at most 10 concurrent users" without managing identity — it just counts. Any thread can call `release()` as long as the count doesn't exceed the intended maximum.
 
 ---
 
@@ -264,6 +264,7 @@ pool.release(); // permits now > initial capacity
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A producer-consumer system uses `Semaphore notEmpty = new Semaphore(0)` and `Semaphore notFull = new Semaphore(capacity)`. The producer calls `notFull.acquire()` before adding and `notEmpty.release()` after; the consumer calls `notEmpty.acquire()` before taking and `notFull.release()` after. Compare this to using `BlockingQueue` — explain what `BlockingQueue` adds beyond the raw semaphore coordination, specifically regarding exception handling, thread interruption, and collection iteration safety.

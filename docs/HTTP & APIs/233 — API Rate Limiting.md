@@ -391,15 +391,15 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
 **Rate Limit Bypass at Distributed Gateway**
 
-Symptom:
+**Symptom:**
 Client making 5x the declared limit without getting 429. Rate limit metrics look
 correct on each individual node but total throughput is N×limit.
 
-Root Cause:
+**Root Cause:**
 Rate limit counter is in-process (memory) per gateway instance, not shared via Redis.
 5 gateway nodes × 100 req/min limit = 500 effective req/min per client.
 
-Diagnostic:
+**Diagnostic:**
 
 ```
 # Test: hit API 120 req/min (expect 429 at 101):
@@ -412,7 +412,7 @@ done
 # AWS API Gateway: check usage plan quota settings (gateway-level, not per instance)
 ```
 
-Fix:
+**Fix:**
 Use Redis as the shared rate limit counter backend. All gateway instances share state.
 Use Lua scripts for atomic check-and-increment.
 

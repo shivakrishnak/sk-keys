@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 You need to sort 10 million IP addresses (32-bit integers). The comparison-based lower bound says any algorithm must make at least N log₂ N ≈ 230 million comparisons. For a constraint like integers in [0, 2^32), can you beat this bound?
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 The O(N log N) lower bound applies **only to comparison-based algorithms** — algorithms whose only operation is comparing pairs of elements. If elements have structure (they are integers with individual digits), you can exploit that structure to sort without comparisons.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Sort by the least significant digit first, then by the next digit, and so on — using a stable sort for each digit. "Stable" means elements with the same digit preserve their order from the previous pass. After sorting by all D digits, the entire array is sorted. Each pass is O(N + radix) counting sort. Total: O(D × (N + radix)) = O(D × N) for fixed radix. For 32-bit integers with radix=256: D=4 passes. For N=10^7, that's 40 million operations — beating comparison sort's 230 million. This is exactly why **Radix Sort** was created.
 
 ---
@@ -64,12 +64,12 @@ Radix sort can only beat comparison sort when the key size is bounded. If number
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Each pass processes one digit position using a **stable** sub-sort. Stability is non-negotiable — it preserves the partial ordering from previous passes.
 2. After processing digit position `k` (LSD order), all elements are ordered correctly by their suffixes (least significant k digits).
 3. After all D passes, all D digits are processed — full ordering is correct.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 **Why LSD (least significant first)?**
 LSD works because after each pass, the partial order from previous passes is preserved (stable sub-sort). When two numbers agree on digits 1..k, their relative order from previous round is maintained — so the overall sort is correct after all D rounds.
 
@@ -79,15 +79,15 @@ MSD requires recursive sub-sorting: sort by most significant digit, then indepen
 **Counting Sort as the sub-sort:**
 For radix r (e.g., 256 for bytes), counting sort counts occurrences of each digit value (0..r-1), computes prefix sums to get output positions, then writes elements to output array in order. This is O(N + r) per pass and — crucially — stable.
 
-THE TRADE-OFFS:
-Gain: O(N × D) total, beating O(N log N) comparison sort when D is small.
-Cost: Only applicable to integers or fixed-structure keys; O(N + r) extra space; not in-place; radix choice affects performance (large radix = fewer passes but more memory).
+**THE TRADE-OFFS:**
+**Gain:** O(N × D) total, beating O(N log N) comparison sort when D is small.
+**Cost:** Only applicable to integers or fixed-structure keys; O(N + r) extra space; not in-place; radix choice affects performance (large radix = fewer passes but more memory).
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Sort [170, 45, 75, 90, 802, 24, 2, 66] by decimal digit (radix=10).
 
 PASS 1 (ones digit): Group by last digit.
@@ -103,7 +103,7 @@ PASS 3 (hundreds digit):
 0: [2, 24, 45, 66, 75, 90], 1: [170], 8: [802].
 Output: [2, 24, 45, 66, 75, 90, 170, 802]. Sorted! ✓
 
-THE INSIGHT:
+**THE INSIGHT:**
 After pass 2, [802, 2] appear before [170] — correct because both have smaller tens digit than 1. Pass 3 finalises by hundreds — 2, 24, 45 etc. all start with 0 (implicit) so they stay before 170. The stability of each pass preserves the previous pass's ordering — this is the key invariant that makes the whole algorithm correct.
 
 ---
@@ -112,10 +112,10 @@ After pass 2, [802, 2] appear before [170] — correct because both have smaller
 
 > Radix Sort is like sorting a stack of envelopes by ZIP code. First, sort by last digit of ZIP (0-9). Then re-sort by fourth digit, then third, second, first — keeping the sub-sorted order within each digit group (stable). After 5 rounds for 5-digit ZIPs, all envelopes are in order. Each round is just grouping into 10 buckets and collecting — no head-to-head comparisons needed.
 
-"Last digit of ZIP" → least significant digit (LSD sort)
-"10 buckets per round" → radix = 10 counting sort
-"Keeping sub-sorted order within digit group" → stability requirement
-"5 rounds for 5-digit ZIP" → D passes for D-digit numbers
+- "Last digit of ZIP" → least significant digit (LSD sort)
+- "10 buckets per round" → radix = 10 counting sort
+- "Keeping sub-sorted order within digit group" → stability requirement
+- "5 rounds for 5-digit ZIP" → D passes for D-digit numbers
 
 Where this analogy breaks down: ZIP codes always have exactly 5 digits. For variable-length strings (words of different lengths), MSD radix sort is more natural — LSD requires padding shorter strings which wastes work.
 
@@ -166,7 +166,7 @@ If we process elements left-to-right when writing to output, later elements with
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Array of N integers in [0, 2^32)
 → Choose radix r=256, passes D=4
@@ -178,7 +178,7 @@ Array of N integers in [0, 2^32)
 → Sorted array in O(4*N) = O(N) time
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Negative integers present
 → Two's complement representation: negative
@@ -189,7 +189,7 @@ Negative integers present
   or sort unsigned then separate sign groups
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 For N=10⁹ (1 billion integers, ~4 GB), Radix Sort with r=256 needs D=4 auxiliary arrays of 4 GB each — 16 GB total. Impractical. Solution: stream-process in chunks fitting in L3 cache (say 4M integers); radix-sort each chunk; then merge the sorted chunks using K-way merge. This is essentially parallel external radix sort used in Hadoop sort benchmark winners.
 
 ---
@@ -328,11 +328,11 @@ How to choose: Use Radix Sort for large arrays of fixed-width integers where the
 
 **1. Left-to-right instead of right-to-left output phase breaks stability**
 
-Symptom: Sort produces wrong results; elements with same digit are in wrong relative order.
+**Symptom:** Sort produces wrong results; elements with same digit are in wrong relative order.
 
-Root Cause: Iterating input left-to-right when writing to output causes later elements to land in earlier positions (stealing slots from earlier elements), violating stability.
+**Root Cause:** Iterating input left-to-right when writing to output causes later elements to land in earlier positions (stealing slots from earlier elements), violating stability.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 // Test stability: [12, 22, 32] sorted by ones digit
 // All have digit 2; order must be preserved
@@ -342,19 +342,19 @@ assert arr[0]==12 && arr[1]==22 && arr[2]==32
     : "Stability violated!";
 ```
 
-Fix: Iterate input **right-to-left** when writing to output array. This ensures earlier input elements take earlier available slots for their digit group.
+**Fix:** Iterate input **right-to-left** when writing to output array. This ensures earlier input elements take earlier available slots for their digit group.
 
-Prevention: Comment this direction requirement explicitly: "// Right-to-left for stability."
+**Prevention:** Comment this direction requirement explicitly: "// Right-to-left for stability."
 
 ---
 
 **2. Handling negative integers as unsigned — wrong sort order**
 
-Symptom: Negative integers sort after all positive integers (e.g., -1 sorts after 1000000).
+**Symptom:** Negative integers sort after all positive integers (e.g., -1 sorts after 1000000).
 
-Root Cause: Two's complement negative integers have MSB=1. When treated as unsigned 32-bit: -1 = 0xFFFFFFFF = 4,294,967,295 — larger than any positive.
+**Root Cause:** Two's complement negative integers have MSB=1. When treated as unsigned 32-bit: -1 = 0xFFFFFFFF = 4,294,967,295 — larger than any positive.
 
-Diagnostic:
+**Diagnostic:**
 ```java
 int[] arr = {5, -3, 2, -1, 0};
 radixSort(arr);
@@ -362,28 +362,28 @@ radixSort(arr);
 // Correct: [-3, -1, 0, 2, 5]
 ```
 
-Fix: Handle negatives separately (sort absolute values, reverse, prefix to positive result) or offset all values to make non-negative.
+**Fix:** Handle negatives separately (sort absolute values, reverse, prefix to positive result) or offset all values to make non-negative.
 
-Prevention: Document clearly whether the sort supports negative integers. Add input validation.
+**Prevention:** Document clearly whether the sort supports negative integers. Add input validation.
 
 ---
 
 **3. Radix too large causing memory exhaustion**
 
-Symptom: `OutOfMemoryError` during Radix Sort.
+**Symptom:** `OutOfMemoryError` during Radix Sort.
 
-Root Cause: Choosing r=2^16 (65536) creates a count array of 65536 entries — fine. But if this is called in inner loops or with many threads, multiplication of N × r auxiliary arrays exhausts heap.
+**Root Cause:** Choosing r=2^16 (65536) creates a count array of 65536 entries — fine. But if this is called in inner loops or with many threads, multiplication of N × r auxiliary arrays exhausts heap.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 java -verbose:gc -Xmx512m RadixSort
 # Look for: "GC overhead limit exceeded"
 # Profile with: jcmd <pid> VM.native_memory
 ```
 
-Fix: Use r=256 (byte-level radix) as the default. Only increase radix if profiling shows pass count is the bottleneck and memory is available.
+**Fix:** Use r=256 (byte-level radix) as the default. Only increase radix if profiling shows pass count is the bottleneck and memory is available.
 
-Prevention: Benchmark D×(N+r) vs (N+r)×D for different r values before choosing. Default to r=256.
+**Prevention:** Benchmark D×(N+r) vs (N+r)×D for different r values before choosing. Default to r=256.
 
 ---
 

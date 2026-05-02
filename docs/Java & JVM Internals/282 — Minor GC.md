@@ -32,13 +32,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Without targeted Young Generation collection, the only option is Full GC — scanning the entire heap. For an application with 4 GB of live Old Gen objects and 50 MB of short-lived Eden objects dying every second, a full 4 GB scan every second is catastrophically expensive. The entire heap must be paused, marked, swept, and compacted — all for the purpose of reclaiming 50 MB of Eden garbage that could be identified in a targeted 50 MB scan.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Collecting the entire heap when only 1% of heap objects are candidates is a 100× inefficiency. The GC must be able to scope its work to only the region where garbage is dense — the Young Generation.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Minor GC is the targeted, fast, frequent collection of only the Young Generation — skipping the vast, mostly-live Old Generation entirely. This is why Minor GC exists as a distinct event from full heap collection.
 
 ---
@@ -64,23 +64,23 @@ Minor GC is fast not because the JVM is clever, but because of the Generational 
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. Minor GC must be scoped to only the Young Generation to be fast.
 2. Old Generation objects can reference Young Generation objects (cross-gen refs must be handled).
 3. The collection result must be equivalent to a full heap collection (no object incorrectly collected).
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Invariant 1 means Minor GC cannot scan Old Gen — but invariant 2 means some Old Gen references are GC Roots for Young Gen objects. The Card Table solves this: a compact summary of which Old Gen regions have references into Young Gen. Only these card-table-marked regions are scanned during Minor GC, not the entire Old Gen. Invariant 3 is satisfied by combining stack GC Roots with card table Old-Gen-to-Young-Gen roots.
 
-THE TRADE-OFFS:
-Gain: O(Young Gen live objects) collection cost rather than O(full heap live objects); frequency tunable via Eden size.
-Cost: Stop-the-world pause (typically 1–20ms); card table maintenance overhead on every Old→Young reference write (write barrier); promotion fills Old Gen over time, eventually requiring expensive Major GC.
+**THE TRADE-OFFS:**
+**Gain:** O(Young Gen live objects) collection cost rather than O(full heap live objects); frequency tunable via Eden size.
+**Cost:** Stop-the-world pause (typically 1–20ms); card table maintenance overhead on every Old→Young reference write (write barrier); promotion fills Old Gen over time, eventually requiring expensive Major GC.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 Application allocates 100 MB in Eden in 2 seconds. 98 MB dies, 2 MB survives.
 
 WITHOUT MINOR GC (only Full GC available):
@@ -89,7 +89,7 @@ Every 2 seconds (when Eden fills), a Full GC scans the entire 4 GB heap. 4 GB of
 WITH MINOR GC:
 Every 2 seconds (when Eden fills), Minor GC scans only Young Gen. 2 MB of live objects are traced and copied. 98 MB is abandoned. Pause = a few milliseconds. Application processes 2 seconds, pauses 5ms, processes 2 seconds, pauses 5ms... throughput = 99.75%.
 
-THE INSIGHT:
+**THE INSIGHT:**
 The "most of the heap is live objects that are never garbage" observation justifies skipping Old Gen in Minor GC. If you must scan 4 GB to collect 100 MB, you're paying too much. Minor GC targets where the garbage is dense.
 
 ---
@@ -98,12 +98,12 @@ The "most of the heap is live objects that are never garbage" observation justif
 
 > Minor GC is like sorting your desk mail drawer at the end of each day. 95% is junk mail (dead objects) — discard instantly. 5% are papers to keep — move to the filing cabinet (Survivor/Old Gen). The whole operation takes 2 minutes. You don't re-examine every file in the entire office (Old Gen) every day — just the drawer where today's mail landed.
 
-"Desk mail drawer" → Eden Space (daily new allocations)
-"Junk mail" → dead objects (not reachable from GC Roots)
-"Papers to keep" → surviving objects (reachable)
-"Filing cabinet" → Survivor Space / Old Generation
-"2-minute sort" → Minor GC pause (few ms to ~20ms)
-"Not re-examining office files" → skipping Old Gen during Minor GC
+- "Desk mail drawer" → Eden Space (daily new allocations)
+- "Junk mail" → dead objects (not reachable from GC Roots)
+- "Papers to keep" → surviving objects (reachable)
+- "Filing cabinet" → Survivor Space / Old Generation
+- "2-minute sort" → Minor GC pause (few ms to ~20ms)
+- "Not re-examining office files" → skipping Old Gen during Minor GC
 
 Where this analogy breaks down: unlike humans who know which mail is junk by reading it, the JVM determines liveness by tracing reference chains — it doesn't look at the content of objects.
 
@@ -194,7 +194,7 @@ Timeline:
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 Allocation rate fills Eden every Δt seconds
   → Minor GC triggered ← YOU ARE HERE
@@ -208,7 +208,7 @@ Allocation rate fills Eden every Δt seconds
   → Repeat
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 Minor GC cannot complete in <MaxGCPauseMillis:
   → Too many surviving objects (large Survivor copy)
@@ -219,7 +219,7 @@ Minor GC cannot complete in <MaxGCPauseMillis:
     increasing together
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 At 1M requests/sec, allocation rate is enormous. Eden fills faster, Minor GC runs more frequently. At 100k req/sec with 1KB/request allocation: 100 MB/s → 256 MB Eden fills in 2.56 seconds. Minor GC frequency = 0.4/second. With 5ms average pause: 0.2% time in Minor GC — excellent. At 1M req/sec: frequency = 4/second, still manageable. The Young Generation handles high throughput well; it's the promotion rate that causes problems at scale.
 
 ---
@@ -320,26 +320,26 @@ How to choose: Minor GC: tune Eden size and Survivor to minimise frequency and o
 
 **1. Excessive Minor GC Frequency**
 
-Symptom: YGC increases many times per second; application sees periodic latency spikes matching GC frequency.
+**Symptom:** YGC increases many times per second; application sees periodic latency spikes matching GC frequency.
 
-Root Cause: Eden too small for the allocation rate; refilling every few hundred milliseconds.
+**Root Cause:** Eden too small for the allocation rate; refilling every few hundred milliseconds.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstat -gcutil <pid> 500
 # E% filling to 100% every few samples → Eden too small
 # Plot EU over time: should be sawtooth, not rapid zigzag
 ```
 
-Prevention: Increase Eden/Young Gen size. Use G1GC and set `MaxGCPauseMillis` to let GC adapt.
+**Prevention:** Increase Eden/Young Gen size. Use G1GC and set `MaxGCPauseMillis` to let GC adapt.
 
 **2. Long Minor GC Pause (Survivor Working Set Too Large)**
 
-Symptom: Minor GC pauses are 50–200ms; p99 request latency is high; short GC pauses are fine but long tail is problematic.
+**Symptom:** Minor GC pauses are 50–200ms; p99 request latency is high; short GC pauses are fine but long tail is problematic.
 
-Root Cause: Too many objects surviving Minor GC — large amount of data being copied from Eden to Survivor and from Survivor to Survivor. Common in apps with many medium-life objects.
+**Root Cause:** Too many objects surviving Minor GC — large amount of data being copied from Eden to Survivor and from Survivor to Survivor. Common in apps with many medium-life objects.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 java -Xlog:gc+phases=debug -jar myapp.jar
 # "Object Copy" phase duration shows copy volume
@@ -348,15 +348,15 @@ java -XX:+PrintTenuringDistribution -jar myapp.jar
 # High age-distribution bytes = many surviving objects
 ```
 
-Prevention: Reduce medium-life objects (those surviving 2–10 GC cycles); lower MaxTenuringThreshold to promote them out of Young Gen sooner.
+**Prevention:** Reduce medium-life objects (those surviving 2–10 GC cycles); lower MaxTenuringThreshold to promote them out of Young Gen sooner.
 
 **3. Minor GC Triggering Full GC (Promotion Failure)**
 
-Symptom: Every Minor GC is immediately followed by a Full GC; `jstat` shows FGC incrementing with every YGC.
+**Symptom:** Every Minor GC is immediately followed by a Full GC; `jstat` shows FGC incrementing with every YGC.
 
-Root Cause: Minor GC cannot promote surviving objects to Old Gen (Old Gen full). This causes "promotion failure," triggering a Full GC.
+**Root Cause:** Minor GC cannot promote surviving objects to Old Gen (Old Gen full). This causes "promotion failure," triggering a Full GC.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 jstat -gcutil <pid> 1000
 # FGC incrementing with YGC = promotion failure
@@ -365,7 +365,7 @@ java -Xlog:gc:file=/tmp/gc.log:time -jar myapp.jar
 grep "Promotion failed\|Evacuation Failure" /tmp/gc.log
 ```
 
-Prevention: Increase Old Gen size (increase `-Xmx` or decrease `-XX:NewRatio`); fix memory leaks to reduce Old Gen fill rate.
+**Prevention:** Increase Old Gen size (increase `-Xmx` or decrease `-XX:NewRatio`); fix memory leaks to reduce Old Gen fill rate.
 
 ---
 

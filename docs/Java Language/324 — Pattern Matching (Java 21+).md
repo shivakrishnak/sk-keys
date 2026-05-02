@@ -32,7 +32,7 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 Before pattern matching, type-based dispatch in Java required a verbose, error-prone pattern:
 ```java
 if (shape instanceof Circle) {
@@ -45,10 +45,10 @@ if (shape instanceof Circle) {
 ```
 Three problems: (1) the `instanceof` test is immediately followed by a cast that the compiler knows is safe — yet requires explicit syntax; (2) no exhaustiveness checking — if a new `Triangle` subtype is added, silence; (3) verbose nesting bloat for deeply structured data.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 An AST interpreter processes 20 node types. The evaluation function chains 20 `instanceof` checks and 20 casts. Every new node type requires adding to 8 different functions, each with the same cast pattern. One function is missed — a `NullPointerException` in production when the new node type is encountered.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 This is exactly why **Pattern Matching** was created — to combine the type test and binding into one expression, and to pair with sealed types for compile-enforced exhaustiveness that catches missing cases before deployment.
 
 ---
@@ -74,12 +74,12 @@ Pattern matching is most powerful when combined with sealed types and `switch` e
 
 ### 🔩 First Principles Explanation
 
-CORE INVARIANTS:
+**CORE INVARIANTS:**
 1. A pattern matches a value if the value satisfies the test AND binds any declared variables.
 2. `switch` pattern expressions over sealed types are exhaustive — all permitted subtypes must have a case.
 3. Pattern variables are only in scope where the compiler can prove the match succeeded.
 
-DERIVED DESIGN:
+**DERIVED DESIGN:**
 Given invariant 1: `instanceof String s` tests `obj != null && obj instanceof String`, then binds `s` for use within the scope where the match is proven. Flow-typing ensures `s` is only accessible where the test was provably true.
 
 Given invariant 2: the combination of sealed types + switch expressions creates sum-type dispatch — the compiler verifies the switch covers all permitted subtypes. Adding a new type to the sealed hierarchy breaks every exhaustive switch.
@@ -94,15 +94,15 @@ Pattern types:
   Nested record:    case Rect(Point(int x1,int y1), ...)
 ```
 
-THE TRADE-OFFS:
-Gain: Eliminates redundant casts; exhaustive checking with sealed types; enables algebraic data processing; cleaner visitor-pattern replacement.
-Cost: Requires Java 21+; record deconstruction patterns require Java 21 (record patterns in switch); nested patterns can become complex; `default` suppresses exhaustiveness checking.
+**THE TRADE-OFFS:**
+**Gain:** Eliminates redundant casts; exhaustive checking with sealed types; enables algebraic data processing; cleaner visitor-pattern replacement.
+**Cost:** Requires Java 21+; record deconstruction patterns require Java 21 (record patterns in switch); nested patterns can become complex; `default` suppresses exhaustiveness checking.
 
 ---
 
 ### 🧪 Thought Experiment
 
-SETUP:
+**SETUP:**
 An expression evaluator for a sealed `Expr` hierarchy: `Num(int)`, `Add(Expr, Expr)`, `Mul(Expr, Expr)`.
 
 WITHOUT PATTERN MATCHING:
@@ -130,7 +130,7 @@ int eval(Expr e) {
 }
 ```
 
-THE INSIGHT:
+**THE INSIGHT:**
 Pattern matching with sealed types turns the visitor pattern's boilerplate into a single expression. The compiler proves the switch is exhaustive at compile time. Adding `Sub` to the `Expr` hierarchy breaks the `eval` switch — a compile error, not a runtime exception.
 
 ---
@@ -139,10 +139,10 @@ Pattern matching with sealed types turns the visitor pattern's boilerplate into 
 
 > Pattern matching is like a sorting machine with shape-specific slots. A coin goes through the first slot that matches its shape — round slot for pennies, rectangular for cards. Each slot not only sorts but also labels the item for what to do next. You know the machine handles all shapes because the manufacturer listed all slot shapes explicitly.
 
-"Shape-specific slot" → type pattern (`case Circle c`).
-"Labels the item" → binds the variable (`c` is typed as `Circle`).
-"Manufacturer's list" → sealed type `permits` clause.
-"Machine handles all shapes" → exhaustiveness check.
+- "Shape-specific slot" → type pattern (`case Circle c`).
+- "Labels the item" → binds the variable (`c` is typed as `Circle`).
+- "Manufacturer's list" → sealed type `permits` clause.
+- "Machine handles all shapes" → exhaustiveness check.
 
 Where this analogy breaks down: The sorting machine processes each item once. Java's pattern switch tries cases in order — the first matching case wins, unlike a machine that might try all slots simultaneously.
 
@@ -238,7 +238,7 @@ String describeOriginLine(Line line) {
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
-NORMAL FLOW:
+**NORMAL FLOW:**
 ```
 [switch (paymentResult) {...]
     → [JVM: invokedynamic bootstrap for pattern switch]
@@ -250,7 +250,7 @@ NORMAL FLOW:
     → [Runtime: no unchecked fallthrough]
 ```
 
-FAILURE PATH:
+**FAILURE PATH:**
 ```
 [New sealed subtype Disputed added to PaymentResult]
     → [Compiler: switch is no longer exhaustive]
@@ -259,7 +259,7 @@ FAILURE PATH:
     → [All services must be updated before compilation]
 ```
 
-WHAT CHANGES AT SCALE:
+**WHAT CHANGES AT SCALE:**
 In large codebases, pattern matching with sealed types makes type-based dispatch refactor-safe. When a domain type evolves, all dispatch points are found immediately by the compiler. The transition from `instanceof` chains to pattern switches is safe incrementally: `instanceof` patterns are backward-compatible additions; sealed + switch exhaustiveness is opt-in per type hierarchy.
 
 ---
@@ -343,37 +343,37 @@ How to choose: Use pattern switch over sealed types for any domain where the set
 
 **Missing case after sealed hierarchy extension**
 
-Symptom: Compile error: "switch expression does not cover all possible input values".
+**Symptom:** Compile error: "switch expression does not cover all possible input values".
 
-Root Cause: New permitted type added to sealed interface; not handled in exhaustive switch.
+**Root Cause:** New permitted type added to sealed interface; not handled in exhaustive switch.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 javac -source 21 MyHandler.java
 # error: the switch expression does not cover all possible
 # input values
 ```
 
-Fix: Add the missing case to the switch, or add `default -> throw new AssertionError("Unhandled: " + value)` as a transitional measure.
+**Fix:** Add the missing case to the switch, or add `default -> throw new AssertionError("Unhandled: " + value)` as a transitional measure.
 
-Prevention: Run `javac` with full `-source 21` in CI. Treat "switch not exhaustive" as a build-blocking error.
+**Prevention:** Run `javac` with full `-source 21` in CI. Treat "switch not exhaustive" as a build-blocking error.
 
 ---
 
 **Variable Out of Scope (Flow Typing)**
 
-Symptom: Compile error "cannot find symbol: variable s" after a negated `instanceof`.
+**Symptom:** Compile error "cannot find symbol: variable s" after a negated `instanceof`.
 
-Root Cause: Pattern variable scope follows flow typing — variable only in scope where compiler proves match succeeded.
+**Root Cause:** Pattern variable scope follows flow typing — variable only in scope where compiler proves match succeeded.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 javac MyClass.java
 # error: cannot find symbol: s
 # method: boolean isLong(Object obj)
 ```
 
-Fix:
+**Fix:**
 ```java
 // BAD: s not in scope after negated instanceof
 if (!(obj instanceof String s)) return false;
@@ -384,23 +384,23 @@ return s.length() > 100;
 // the negated check because we returned for non-String
 ```
 
-Prevention: Understand flow-typing rules: pattern variable is in scope in the branch where the match is provably true.
+**Prevention:** Understand flow-typing rules: pattern variable is in scope in the branch where the match is provably true.
 
 ---
 
 **NullPointerException in Pattern Switch**
 
-Symptom: `NullPointerException` thrown from `switch` expression at runtime.
+**Symptom:** `NullPointerException` thrown from `switch` expression at runtime.
 
-Root Cause: Pre-Java-21, `switch` throws NPE when the selector is `null`. Java 21 allows `case null` explicitly.
+**Root Cause:** Pre-Java-21, `switch` throws NPE when the selector is `null`. Java 21 allows `case null` explicitly.
 
-Diagnostic:
+**Diagnostic:**
 ```bash
 # Stack trace: NullPointerException at switch ...
 # The switch selector is null
 ```
 
-Fix:
+**Fix:**
 ```java
 // Java 21+: handle null explicitly in case
 String result = switch (obj) {
@@ -410,7 +410,7 @@ String result = switch (obj) {
 };
 ```
 
-Prevention: Always add `case null` in pattern switches when the selector can be null.
+**Prevention:** Always add `case null` in pattern switches when the selector can be null.
 
 ---
 

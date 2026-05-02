@@ -31,13 +31,13 @@ tags:
 
 ### 🔥 The Problem This Solves
 
-WORLD WITHOUT IT:
+**WORLD WITHOUT IT:**
 A new feature is added — a product search endpoint that joins 3 tables. Unit tests: pass (mock DB). Integration tests: pass (5 test rows). Production: 2 million product rows. The first search query takes 4.2 seconds. p99 latency is 8.5 seconds. SLA: 200ms. The feature is functionally correct but performance-incorrect. Without performance tests, this is discovered under production load.
 
-THE BREAKING POINT:
+**THE BREAKING POINT:**
 Correctness and performance are orthogonal. A function can return the right answer in O(n²) time and pass all correctness tests. Only by running it under representative load — the right number of users, the right data volume, the right concurrency — does the performance gap become visible.
 
-THE INVENTION MOMENT:
+**THE INVENTION MOMENT:**
 Apache JMeter (1998) was the first widely adopted HTTP load testing tool. Gatling (2011, Scala) brought a code-first, high-throughput approach. k6 (2017) brought modern JavaScript-based performance tests as code, with CI/CD integration. The shift: from "performance test before release (QA team)" to "performance test in every CI pipeline."
 
 ---
@@ -102,9 +102,9 @@ New code introduces N+1 query:
   → 520 > 190 × 1.2 (228ms) → FAIL → deployment blocked
 ```
 
-THE TRADE-OFFS:
-Gain: Catches performance regressions before production; documents capacity; enables SLA commitments.
-Cost: Requires production-like environment + production-like data volumes; expensive to run continuously; results affected by test environment noise.
+**THE TRADE-OFFS:**
+**Gain:** Catches performance regressions before production; documents capacity; enables SLA commitments.
+**Cost:** Requires production-like environment + production-like data volumes; expensive to run continuously; results affected by test environment noise.
 
 ---
 
@@ -280,7 +280,7 @@ Tools: APM traces (Datadog, Dynatrace, Jaeger) — correlate high-latency reques
 **2. Performance Test Results Not Reproducible**
 
 Cause: GC pauses (G1GC stop-the-world), JIT compilation (not warmed up), test environment load.
-Fix: 5-minute warmup run before measurement. Pin JVM: `-server -XX:+UseG1GC`. Use dedicated performance environment. Run multiple iterations and average.
+**Fix:** 5-minute warmup run before measurement. Pin JVM: `-server -XX:+UseG1GC`. Use dedicated performance environment. Run multiple iterations and average.
 
 ---
 
