@@ -22,14 +22,14 @@ tags:
 ⚡ TL;DR — Abstraction hides complexity behind a simple interface, letting you use something without knowing how it works internally.
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #016         │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆        │
+│ #016 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
 ├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Imperative Programming,               │                        │
-│              │ Object-Oriented Programming (OOP)     │                        │
-│ Used by:     │ Encapsulation, Polymorphism,          │                        │
-│              │ Design Patterns                       │                        │
-│ Related:     │ Encapsulation, Information Hiding,    │                        │
-│              │ Interfaces                            │                        │
+│ Depends on: │ Imperative Programming, │ │
+│ │ Object-Oriented Programming (OOP) │ │
+│ Used by: │ Encapsulation, Polymorphism, │ │
+│ │ Design Patterns │ │
+│ Related: │ Encapsulation, Information Hiding, │ │
+│ │ Interfaces │ │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
 ---
@@ -62,6 +62,7 @@ This is exactly why abstraction was invented — to let you use a system's capab
 Abstraction is a complexity shield — what's inside doesn't matter, only what it does.
 
 **One analogy:**
+
 > Driving a car is an abstraction over thousands of mechanical and electronic components. You turn the wheel, press the pedal — you don't need to understand combustion, differential gears, or ABS sensors. The car's interface is: wheel, pedals, gear lever. Everything else is hidden.
 
 **One insight:**
@@ -85,7 +86,7 @@ The interface is a contract: "call me with these inputs, I return this output, w
 
 THE TRADE-OFFS:
 
-Gain: manage complexity, enable parallel development, allow replacement, reduce coupling.  
+Gain: manage complexity, enable parallel development, allow replacement, reduce coupling.
 Cost: abstractions can be wrong — a wrong abstraction is worse than no abstraction, because it misleads. Performance can be lost to abstraction layers. "Leaky abstractions" force consumers to understand internals anyway.
 
 Joel Spolsky's Law of Leaky Abstractions: all non-trivial abstractions leak — the underlying complexity eventually shows through. TCP provides reliable delivery, but network failures make it unreliable. The abstraction leaks when the network fails.
@@ -113,12 +114,13 @@ Abstraction is the mechanism that localises change. Without it, every change rip
 > An abstraction is like an **electrical outlet**. You plug in any device — laptop, phone charger, blender — without knowing how the power grid delivers 240V. The outlet is the interface. The power grid (generators, transformers, cables) is the hidden implementation. New devices plug in without needing to understand electricity generation. The grid can be upgraded (from coal to solar) without changing every outlet or device.
 
 **Mapping:**
-- "Outlet" → interface / API  
-- "Plug and socket standard" → interface contract  
-- "Power grid internals" → implementation details  
-- "New device" → new consumer of the abstraction  
-- "Upgrading the grid" → changing the implementation  
-- "Outlet stays the same" → interface stability  
+
+- "Outlet" → interface / API
+- "Plug and socket standard" → interface contract
+- "Power grid internals" → implementation details
+- "New device" → new consumer of the abstraction
+- "Upgrading the grid" → changing the implementation
+- "Outlet stays the same" → interface stability
 
 **Where this analogy breaks down:** Electrical outlets are physical standards that change slowly (decades). Software abstractions can change rapidly — versioning and backward compatibility are ongoing challenges that the electricity analogy sidesteps.
 
@@ -130,7 +132,7 @@ Abstraction is the mechanism that localises change. Without it, every change rip
 Abstraction means hiding the complicated stuff so you only deal with the simple parts. When you use Google Maps, you type an address and get directions — you don't need to understand satellite positioning, map rendering algorithms, or traffic sensor networks. Abstraction is everywhere in software: functions, classes, libraries, APIs — each hides something complicated and offers a simple handle.
 
 **Level 2 — How to use it (junior developer):**
-Create functions to hide implementation steps. Create classes to group related data and behaviour. Use interfaces to define what a class *does* without specifying *how*. When other parts of your code depend on the interface (not the class), you can replace the implementation freely. In Java, if `UserRepository` is an interface, you can have `JpaUserRepository` in production and `InMemoryUserRepository` in tests — same interface, different implementations, code works with either.
+Create functions to hide implementation steps. Create classes to group related data and behaviour. Use interfaces to define what a class _does_ without specifying _how_. When other parts of your code depend on the interface (not the class), you can replace the implementation freely. In Java, if `UserRepository` is an interface, you can have `JpaUserRepository` in production and `InMemoryUserRepository` in tests — same interface, different implementations, code works with either.
 
 **Level 3 — How it works (mid-level engineer):**
 Abstraction in OOP is realised through interfaces, abstract classes, and polymorphism. The compiler enforces that a class implementing an interface fulfils its contract. Method dispatch (virtual dispatch) resolves which implementation to call at runtime. Abstraction at the architecture level manifests as bounded contexts (DDD), microservice contracts (OpenAPI), and API versioning — each creates an explicit boundary between "what I expose" and "how I work." The key engineering discipline: depend on abstractions, not concretions (Dependency Inversion Principle).
@@ -236,6 +238,7 @@ At large scale, abstractions become the communication protocol between teams. Se
 ### 💻 Code Example
 
 **Example 1 — Wrong: no abstraction, direct coupling:**
+
 ```java
 // BAD: business logic directly couples to FileStorage
 public class UserService {
@@ -250,6 +253,7 @@ public class UserService {
 ```
 
 **Example 2 — Right: abstraction via interface:**
+
 ```java
 // GOOD: define the interface (the what)
 public interface UserStore {
@@ -285,6 +289,7 @@ public class UserService {
 ```
 
 **Example 3 — Abstraction levels in Java standard library:**
+
 ```java
 // Level 1: highest abstraction — just use it
 List<String> names = new ArrayList<>();
@@ -308,14 +313,14 @@ names.stream()
 
 ### ⚖️ Comparison Table
 
-| Abstraction Mechanism | What It Hides | What It Exposes | Language Example |
-|---|---|---|---|
-| **Function/Method** | Implementation steps | Name, parameters, return type | Every language |
-| Interface/Protocol | Concrete type | Capability contract | Java, TypeScript, Go |
-| Abstract Class | Partial implementation | Template + contract | Java, Python, C++ |
-| Module/Package | Internal structure | Public API | All languages |
-| Microservice API | Entire service internals | HTTP endpoints | REST, GraphQL |
-| OS Syscall | Hardware interaction | Portable system API | POSIX, Win32 |
+| Abstraction Mechanism | What It Hides            | What It Exposes               | Language Example     |
+| --------------------- | ------------------------ | ----------------------------- | -------------------- |
+| **Function/Method**   | Implementation steps     | Name, parameters, return type | Every language       |
+| Interface/Protocol    | Concrete type            | Capability contract           | Java, TypeScript, Go |
+| Abstract Class        | Partial implementation   | Template + contract           | Java, Python, C++    |
+| Module/Package        | Internal structure       | Public API                    | All languages        |
+| Microservice API      | Entire service internals | HTTP endpoints                | REST, GraphQL        |
+| OS Syscall            | Hardware interaction     | Portable system API           | POSIX, Win32         |
 
 **How to choose:** Use functions for hiding steps, interfaces for hiding types, modules for hiding subsystems, APIs for hiding services. The more you need to vary or replace the hidden part, the stronger the abstraction boundary should be.
 
@@ -323,13 +328,13 @@ names.stream()
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Abstraction = making things simpler | Abstraction hides complexity but doesn't remove it. The complexity is still there — it's just underneath. Debugging often requires un-abstracting (looking at the hidden implementation). |
-| More abstraction layers = better design | Excessive abstraction adds indirection overhead and makes code harder to trace. The right number of layers is the minimum needed to manage real change. |
-| Abstraction prevents performance optimisation | Abstractions that are too thick can prevent optimisation. But abstractions can also *enable* optimisation — the implementer can change algorithms freely without breaking consumers. |
-| Abstract classes are better than interfaces | Abstract classes couple the hierarchy; interfaces don't. Prefer interfaces — they allow a class to fulfil multiple contracts. Use abstract classes only when sharing code, not just a contract. |
-| Once defined, abstractions are stable | Abstractions that don't match the domain evolve into technical debt. Expect to refine abstractions as understanding deepens — premature abstraction is as harmful as no abstraction. |
+| Misconception                                 | Reality                                                                                                                                                                                         |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Abstraction = making things simpler           | Abstraction hides complexity but doesn't remove it. The complexity is still there — it's just underneath. Debugging often requires un-abstracting (looking at the hidden implementation).       |
+| More abstraction layers = better design       | Excessive abstraction adds indirection overhead and makes code harder to trace. The right number of layers is the minimum needed to manage real change.                                         |
+| Abstraction prevents performance optimisation | Abstractions that are too thick can prevent optimisation. But abstractions can also _enable_ optimisation — the implementer can change algorithms freely without breaking consumers.            |
+| Abstract classes are better than interfaces   | Abstract classes couple the hierarchy; interfaces don't. Prefer interfaces — they allow a class to fulfil multiple contracts. Use abstract classes only when sharing code, not just a contract. |
+| Once defined, abstractions are stable         | Abstractions that don't match the domain evolve into technical debt. Expect to refine abstractions as understanding deepens — premature abstraction is as harmful as no abstraction.            |
 
 ---
 
@@ -344,6 +349,7 @@ Root Cause:
 The interface doesn't expose enough to do the job. Consumers reach through the abstraction to get what they need. The abstraction boundary is breached.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Find direct references to implementations (should be near zero):
 grep -rn "FileUserStore\|DatabaseUserStore" src/ \
@@ -368,6 +374,7 @@ Root Cause:
 The abstraction was designed at the wrong level — too low (exposes too much detail, forcing consumers to manage it) or too high (hides controls needed for specific use cases).
 
 Diagnostic Command / Tool:
+
 ```bash
 # Count lines needed to accomplish common tasks via this interface
 # If > 5 lines for "save a user", the abstraction is too low
@@ -389,15 +396,18 @@ Test-drive the interface design by writing consumer code first (TDD). If the con
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Imperative Programming` — abstraction is built on top of imperative operations; functions are the first and simplest abstraction
 - `Object-Oriented Programming (OOP)` — OOP's primary contribution is packaging abstraction with data (classes, interfaces)
 
 **Builds On This (learn these next):**
+
 - `Encapsulation` — the mechanism that enforces abstraction: hiding internal state behind methods
 - `Polymorphism` — using abstractions (interfaces) to write code that works with any conforming implementation
 - `Design Patterns` — patterns like Strategy, Repository, and Facade are systematic applications of abstraction
 
 **Alternatives / Comparisons:**
+
 - `Information Hiding` — Parnas's formulation: modules hide design decisions that are likely to change. Abstraction and information hiding are complementary — abstraction defines what to show; information hiding defines what to conceal
 - `Interfaces` — the Java/TypeScript mechanism for expressing an abstraction contract without implementation
 - `Encapsulation` — often confused with abstraction; encapsulation bundles data+behaviour and enforces access; abstraction defines what behaviour to expose

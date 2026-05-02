@@ -22,13 +22,13 @@ tags:
 ⚡ TL;DR — Synchronous code waits for each operation to complete before continuing; asynchronous code initiates an operation and moves on, continuing when the result arrives.
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #015         │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆        │
+│ #015 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
 ├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Concurrency vs Parallelism            │                        │
-│ Used by:     │ Event Loop, Reactive Programming,     │                        │
-│              │ HTTP & APIs                           │                        │
-│ Related:     │ Blocking vs Non-Blocking I/O,         │                        │
-│              │ Event Loop, Callbacks                 │                        │
+│ Depends on: │ Concurrency vs Parallelism │ │
+│ Used by: │ Event Loop, Reactive Programming, │ │
+│ │ HTTP & APIs │ │
+│ Related: │ Blocking vs Non-Blocking I/O, │ │
+│ │ Event Loop, Callbacks │ │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
 ---
@@ -61,10 +61,11 @@ This is exactly why asynchronous programming was created — to separate the ini
 Synchronous = "I'll wait here until you're done." Asynchronous = "Call me when you're done — I'll do other things."
 
 **One analogy:**
+
 > Synchronous is a phone call — you hold the line, waiting, until the person answers and speaks. Asynchronous is a text message — you send it and immediately put your phone away; you'll get a notification when they reply, and you can do other things in the meantime.
 
 **One insight:**
-The critical difference is *what happens to the calling thread during a wait*. Synchronous code *holds* the thread captive; asynchronous code *releases* the thread to do other work. This single distinction is why async web servers handle 10,000× more concurrent connections on the same hardware.
+The critical difference is _what happens to the calling thread during a wait_. Synchronous code _holds_ the thread captive; asynchronous code _releases_ the thread to do other work. This single distinction is why async web servers handle 10,000× more concurrent connections on the same hardware.
 
 ---
 
@@ -81,19 +82,20 @@ DERIVED DESIGN:
 Synchronous design is simple: `result = database.query(sql)` — the function blocks until the DB responds. One thread per concurrent operation required. Simple to read, simple to debug, simple to reason about — but wasteful when IO-heavy.
 
 Asynchronous design separates initiation from completion:
+
 1. Call `database.query(sql, callback)` — operation registered with OS kernel (epoll/kqueue/IOCP)
 2. Thread returns immediately — free to handle other requests
 3. OS notifies the event loop when data is ready
 4. Callback/continuation resumes with the result
 
-The key mechanism is the *event loop* + *non-blocking IO syscalls*. The OS can manage thousands of in-flight IO operations simultaneously at the kernel level; the program just registers callbacks.
+The key mechanism is the _event loop_ + _non-blocking IO syscalls_. The OS can manage thousands of in-flight IO operations simultaneously at the kernel level; the program just registers callbacks.
 
 THE TRADE-OFFS:
 
-Sync gain: sequential reasoning, simple call stack, easy debugging, natural error propagation.  
+Sync gain: sequential reasoning, simple call stack, easy debugging, natural error propagation.
 Sync cost: thread-per-request model doesn't scale beyond thousands of concurrent connections.
 
-Async gain: massive concurrency on minimal threads, scales to millions of connections.  
+Async gain: massive concurrency on minimal threads, scales to millions of connections.
 Async cost: "callback hell," inversion of control, harder stack traces, error handling complexity, requires careful threading model.
 
 ---
@@ -104,6 +106,7 @@ SETUP:
 A service fetches 5 user profiles from a database. Each fetch takes 100ms. The service runs on a single thread.
 
 WHAT HAPPENS SYNCHRONOUSLY:
+
 ```
 t=0ms:   fetch user 1 (thread blocks waiting)
 t=100ms: fetch user 2 (thread blocks waiting)
@@ -112,9 +115,11 @@ t=300ms: fetch user 4 (thread blocks waiting)
 t=400ms: fetch user 5 (thread blocks waiting)
 t=500ms: all done
 ```
+
 Total: 500ms. Thread occupied the entire time.
 
 WHAT HAPPENS ASYNCHRONOUSLY:
+
 ```
 t=0ms:   issue fetch for user 1 (non-blocking, returns immediately)
          issue fetch for user 2 (non-blocking, returns immediately)
@@ -125,6 +130,7 @@ t=0ms:   issue fetch for user 1 (non-blocking, returns immediately)
 t≈100ms: all 5 results arrive (nearly simultaneously)
          callbacks/continuations resume with results
 ```
+
 Total: ~100ms. Thread was free for other work during the wait.
 
 THE INSIGHT:
@@ -137,13 +143,14 @@ THE INSIGHT:
 > Synchronous code is a **coffee shop where you stand at the counter** until your drink is made (1–3 minutes), blocking the queue. Asynchronous code is a **coffee shop with a buzzer** — you order, get a buzzer, sit down, and do other things. When your drink is ready, the buzzer notifies you.
 
 **Mapping:**
-- "Standing at the counter blocking" → synchronous blocking call  
-- "Ordering and sitting down" → initiating an async operation  
-- "Buzzer notification" → callback / Promise resolution / await resume  
-- "Doing other things while waiting" → thread handling other requests  
-- "Multiple people waiting with buzzers simultaneously" → thousands of in-flight async operations  
 
-**Where this analogy breaks down:** In the coffee shop, the notification always arrives on the same "person" (the calling code). In async systems, the callback may execute on a *different thread* than the one that initiated the call — introducing threading concerns the coffee shop analogy doesn't capture.
+- "Standing at the counter blocking" → synchronous blocking call
+- "Ordering and sitting down" → initiating an async operation
+- "Buzzer notification" → callback / Promise resolution / await resume
+- "Doing other things while waiting" → thread handling other requests
+- "Multiple people waiting with buzzers simultaneously" → thousands of in-flight async operations
+
+**Where this analogy breaks down:** In the coffee shop, the notification always arrives on the same "person" (the calling code). In async systems, the callback may execute on a _different thread_ than the one that initiated the call — introducing threading concerns the coffee shop analogy doesn't capture.
 
 ---
 
@@ -203,18 +210,18 @@ The C10K problem (1999) was solved by separating thread management from connecti
 ```javascript
 // What you write:
 async function getUser(id) {
-    const user = await db.find(id);   // yield point 1
-    const posts = await blog.list(user.id); // yield point 2
-    return { user, posts };
+  const user = await db.find(id); // yield point 1
+  const posts = await blog.list(user.id); // yield point 2
+  return { user, posts };
 }
 
 // What the compiler generates (conceptually):
 function getUser(id) {
-    return db.find(id).then(user => {
-        return blog.list(user.id).then(posts => {
-            return { user, posts };
-        });
+  return db.find(id).then((user) => {
+    return blog.list(user.id).then((posts) => {
+      return { user, posts };
     });
+  });
 }
 // Each await becomes a .then() — a registered callback
 // The function's local state is preserved in a closure
@@ -272,6 +279,7 @@ At 100,000 concurrent connections, synchronous thread-per-request requires 100,0
 ### 💻 Code Example
 
 **Example 1 — Synchronous: sequential, blocking (problematic for scale):**
+
 ```java
 // SYNC: each DB call blocks; thread held for entire duration
 public UserProfile buildProfile(Long userId) {
@@ -284,6 +292,7 @@ public UserProfile buildProfile(Long userId) {
 ```
 
 **Example 2 — Asynchronous: concurrent DB queries (Java CompletableFuture):**
+
 ```java
 // ASYNC: all three DB calls in parallel
 public CompletableFuture<UserProfile> buildProfile(Long userId) {
@@ -305,37 +314,36 @@ public CompletableFuture<UserProfile> buildProfile(Long userId) {
 ```
 
 **Example 3 — JavaScript async/await:**
+
 ```javascript
 // SYNC equivalent (wrong — blocks Node.js event loop):
 // const data = fs.readFileSync('/data/users.json');  // BLOCKS
 
 // ASYNC: correct Node.js pattern
 async function loadUsers() {
-    try {
-        // await suspends this function but NOT the event loop
-        const data = await fs.promises.readFile('/data/users.json');
-        return JSON.parse(data);
-    } catch (err) {
-        throw new Error(`Failed to load users: ${err.message}`);
-    }
+  try {
+    // await suspends this function but NOT the event loop
+    const data = await fs.promises.readFile("/data/users.json");
+    return JSON.parse(data);
+  } catch (err) {
+    throw new Error(`Failed to load users: ${err.message}`);
+  }
 }
 
 // Multiple concurrent awaits:
 async function buildDashboard(userId) {
-    // Sequential (100ms + 50ms = 150ms total):
-    // const user = await getUser(userId);
-    // const stats = await getStats(userId);
+  // Sequential (100ms + 50ms = 150ms total):
+  // const user = await getUser(userId);
+  // const stats = await getStats(userId);
 
-    // Concurrent (max(100ms, 50ms) = 100ms total):
-    const [user, stats] = await Promise.all([
-        getUser(userId),
-        getStats(userId)
-    ]);
-    return { user, stats };
+  // Concurrent (max(100ms, 50ms) = 100ms total):
+  const [user, stats] = await Promise.all([getUser(userId), getStats(userId)]);
+  return { user, stats };
 }
 ```
 
 **Example 4 — Python asyncio:**
+
 ```python
 import asyncio
 import aiohttp
@@ -356,13 +364,13 @@ async def fetch_all_users(user_ids):
 
 ### ⚖️ Comparison Table
 
-| Pattern | Readability | Scalability | Debugging | Error Handling |
-|---|---|---|---|---|
-| **Synchronous (blocking)** | Excellent | Poor (threads) | Easy (stack trace) | Natural (try/catch) |
-| Callbacks | Poor (nested) | Excellent | Hard (no stack) | Verbose (per-callback) |
-| Promises/Futures | Good (chainable) | Excellent | Moderate | `.catch()` chains |
-| async/await | Excellent | Excellent | Moderate | Natural (try/catch) |
-| Reactive Streams | Good (for streams) | Excellent | Hard | Operators |
+| Pattern                    | Readability        | Scalability    | Debugging          | Error Handling         |
+| -------------------------- | ------------------ | -------------- | ------------------ | ---------------------- |
+| **Synchronous (blocking)** | Excellent          | Poor (threads) | Easy (stack trace) | Natural (try/catch)    |
+| Callbacks                  | Poor (nested)      | Excellent      | Hard (no stack)    | Verbose (per-callback) |
+| Promises/Futures           | Good (chainable)   | Excellent      | Moderate           | `.catch()` chains      |
+| async/await                | Excellent          | Excellent      | Moderate           | Natural (try/catch)    |
+| Reactive Streams           | Good (for streams) | Excellent      | Hard               | Operators              |
 
 **How to choose:** Use async/await for any new IO-bound code — it combines the readability of synchronous code with the scalability of async. Use reactive streams (Project Reactor, RxJava) only when you need backpressure control or complex event stream transformations.
 
@@ -370,13 +378,13 @@ async def fetch_all_users(user_ids):
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| async/await makes code run faster | async/await doesn't change how fast individual operations run — it changes how efficiently the thread is used while waiting. IO latency is unchanged. |
-| async code is always non-blocking | async code is only as non-blocking as the libraries it calls. Calling a blocking JDBC driver inside async code blocks the thread — the async wrapper doesn't help. |
+| Misconception                                   | Reality                                                                                                                                                                           |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| async/await makes code run faster               | async/await doesn't change how fast individual operations run — it changes how efficiently the thread is used while waiting. IO latency is unchanged.                             |
+| async code is always non-blocking               | async code is only as non-blocking as the libraries it calls. Calling a blocking JDBC driver inside async code blocks the thread — the async wrapper doesn't help.                |
 | JavaScript is asynchronous because it has await | JavaScript is event-loop-based. `await` is syntax for yielding and resuming. The event loop processes one task at a time — `await` just marks where context switches are allowed. |
-| More async = better performance | Async is optimal for IO-bound work. For CPU-bound work, async adds overhead with no benefit. The right choice depends on what the bottleneck is. |
-| Async errors are handled like sync errors | Unhandled Promise rejections in JavaScript are easy to miss — they don't crash the process by default (though they now emit warnings). Always handle async errors explicitly. |
+| More async = better performance                 | Async is optimal for IO-bound work. For CPU-bound work, async adds overhead with no benefit. The right choice depends on what the bottleneck is.                                  |
+| Async errors are handled like sync errors       | Unhandled Promise rejections in JavaScript are easy to miss — they don't crash the process by default (though they now emit warnings). Always handle async errors explicitly.     |
 
 ---
 
@@ -391,6 +399,7 @@ Root Cause:
 An async handler calls a blocking library (JDBC, `requests` in Python, `fs.readFileSync`). The blocking call holds the event loop thread while waiting — defeating the purpose of async. The framework is async; the underlying call is not.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Java/Netty: check if Netty I/O threads are blocked
 jstack <PID> | grep -A 10 "netty"
@@ -418,33 +427,35 @@ Root Cause:
 A Promise chain or async function throws an error but no `.catch()` handler or try/catch wraps the await. The error is swallowed and execution continues from the caller's perspective.
 
 Diagnostic Command / Tool:
+
 ```javascript
 // Enable crash on unhandled rejection (Node.js 15+):
 // node --unhandled-rejections=throw server.js
 
 // Or listen globally:
-process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-    process.exit(1);  // crash fast — silent failures are worse
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  process.exit(1); // crash fast — silent failures are worse
 });
 ```
 
 Fix:
+
 ```javascript
 // BAD: unhandled rejection
 async function handler(req, res) {
-    const user = await db.findUser(req.params.id); // could throw!
-    res.json(user);
+  const user = await db.findUser(req.params.id); // could throw!
+  res.json(user);
 }
 
 // GOOD: explicit error handling
 async function handler(req, res) {
-    try {
-        const user = await db.findUser(req.params.id);
-        res.json(user);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+  try {
+    const user = await db.findUser(req.params.id);
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 }
 ```
 
@@ -462,16 +473,18 @@ Root Cause:
 Developer wrote sequential awaits when the operations have no data dependency — each `await` waits for completion before the next starts.
 
 Diagnostic Command / Tool:
+
 ```javascript
 // Detect by timing individual awaits:
 const t0 = Date.now();
-const user = await getUser(id);       // 100ms
-const posts = await getPosts(id);     // 100ms
-const stats = await getStats(id);     // 100ms
-console.log(Date.now() - t0);  // 300ms — should be ~100ms!
+const user = await getUser(id); // 100ms
+const posts = await getPosts(id); // 100ms
+const stats = await getStats(id); // 100ms
+console.log(Date.now() - t0); // 300ms — should be ~100ms!
 ```
 
 Fix:
+
 ```javascript
 // BAD: sequential awaits — 300ms total
 const user = await getUser(id);
@@ -480,9 +493,9 @@ const stats = await getStats(id);
 
 // GOOD: parallel awaits — ~100ms total
 const [user, posts, stats] = await Promise.all([
-    getUser(id),
-    getPosts(id),
-    getStats(id)
+  getUser(id),
+  getPosts(id),
+  getStats(id),
 ]);
 ```
 
@@ -494,14 +507,17 @@ Review all sequential awaits during code review — ask "do these operations hav
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Concurrency vs Parallelism` — async programming is the mechanism that enables concurrency; understanding the distinction clarifies why async is needed
 
 **Builds On This (learn these next):**
+
 - `Event Loop` — the execution model that powers async single-threaded code (Node.js, browser JavaScript)
 - `Reactive Programming` — async streams that add backpressure, composition operators, and declarative data flow on top of async primitives
 - `HTTP & APIs` — async is essential for building APIs that handle many concurrent connections efficiently
 
 **Alternatives / Comparisons:**
+
 - `Blocking vs Non-Blocking I/O` — the OS-level mechanism underlying async: non-blocking syscalls are what make async possible at the kernel level
 - `Callbacks vs Promises vs async/await` — three generations of async API design, each solving the readability problems of the previous
 - `Virtual Threads (Java 21)` — a new model that lets you write synchronous-looking code while the JVM handles async scheduling underneath
