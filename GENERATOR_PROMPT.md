@@ -146,7 +146,12 @@ Every file MUST begin with this EXACT structure.
 No extra fields. No missing fields. No deviations.
 
 ---
-number: NNN
+layout: default
+title: "Keyword Name"
+parent: "Category Name"
+nav_order: NNNN
+permalink: /category-slug/keyword-slug/
+number: "NNNN"
 category: Category Name
 difficulty: ★☆☆
 depends_on: Keyword1, Keyword2, Keyword3
@@ -160,12 +165,41 @@ tags:
 
 FIELD RULES:
 
+layout:
+  - Always: default
+  - Fixed value — never change
+
+title:
+  - The keyword name in double quotes
+  - Must match the H1 title line exactly
+  - Example: "Event Loop", "Vertical Scaling", "JVM"
+
+parent:
+  - The exact category title that matches the category folder's index.md
+  - Must come from the category → parent mapping table (see batch workflow)
+  - Example: "System Design", "Java & JVM Internals", "Testing"
+
+nav_order:
+  - The global keyword number as a plain integer (no quotes, no padding)
+  - Used by Just the Docs for sidebar ordering
+  - Example: 681, 261, 1293
+
+permalink:
+  - Derived from: /<category-slug>/<keyword-slug>/
+  - category-slug: lowercase, hyphens, no special chars
+  - keyword-slug: lowercase version of the keyword name
+    (spaces → hyphens, remove parentheses, ampersands → and)
+  - Example: /system-design/vertical-scaling/
+             /java/jvm/
+             /testing/unit-test/
+  - Use the category slug from the mapping table in the batch workflow
+
 number:
-  - Four-digit zero-padded integer (updated for 1770 keywords)
-  - Example: 0001, 0261, 1293
+  - Four-digit zero-padded integer, in double quotes
+  - Example: "0001", "0261", "1293"
 
 category:
-  - Exact category name from master list
+  - Exact category name from master list (no quotes)
   - Valid values:
     CS Fundamentals — Paradigms |
     Data Structures & Algorithms |
@@ -231,7 +265,7 @@ used_by:
 
 related:
   - Sibling concepts at same level (alternatives, comparisons)
-  - NEW FIELD — captures lateral connections
+  - Captures lateral connections
   - Comma-separated plain text
   - NO brackets, NO wiki links
   - Maximum 5
@@ -919,13 +953,21 @@ SECTION 8: COMPLETE ENTRY SKELETON — COPY EXACTLY
 ═══════════════════════════════════════════════════════════════════════════
 
 ---
-number: NNNN
-category: [Category Name]
+layout: default
+title: "Keyword Name"
+parent: "Category Name"
+nav_order: NNNN
+permalink: /category-slug/keyword-slug/
+number: "NNNN"
+category: Category Name
 difficulty: [★☆☆ | ★★☆ | ★★★]
 depends_on: Keyword1, Keyword2
 used_by: Keyword1, Keyword2
 related: Keyword1, Keyword2
-tags: #tag1, #tag2, #tag3
+tags:
+  - tag1
+  - tag2
+  - tag3
 ---
 
 # NNNN — KEYWORD NAME
@@ -1164,13 +1206,18 @@ SECTION 10: SELF-VALIDATION CHECKLIST
 Run this before outputting any entry:
 
 FRONTMATTER:
-  ☐ number: 4-digit padded, matches title and filename
-  ☐ category: from approved list (Section 3)
+  ☐ layout: always "default"
+  ☐ title: keyword name in double quotes, matches H1 title
+  ☐ parent: exact category title from mapping table
+  ☐ nav_order: plain integer matching the keyword number
+  ☐ permalink: /category-slug/keyword-slug/ (lowercase, hyphenated)
+  ☐ number: 4-digit padded in double quotes, matches filename
+  ☐ category: from approved list (Section 3), no quotes
   ☐ difficulty: exactly one of three star values
   ☐ depends_on: plain text, no brackets, max 5
   ☐ used_by: plain text, no brackets, max 5
-  ☐ related: plain text, no brackets, max 5 (NEW)
-  ☐ tags: # prefixed, comma-separated, from taxonomy (Section 4)
+  ☐ related: plain text, no brackets, max 5
+  ☐ tags: YAML array items, no # prefix, from taxonomy (Section 4)
 
 STRUCTURE (20 sections check):
   ☐ 5.1  Title line with keyword name
@@ -1617,5 +1664,169 @@ RULES:
 - One commit per batch of 10
 - Follow the full GENERATOR_PROMPT.md v2.0 spec for every single entry
 - If a category folder doesn't exist yet, create it with an appropriate index.md
+```
+
+---
+
+## ♻️ Upgrade Existing Files to v2 — Rolling Batch Update
+
+Use this to upgrade all v1-format files to the v2 spec in continuous rolling batches of 10.
+No confirmation prompts — it keeps going until every file is upgraded.
+
+```
+You are an automated upgrade agent for the sk-keys Technical Dictionary.
+Your job: upgrade every v1 keyword entry to the v2.0 spec, 10 files at a time,
+committing after each batch, rolling continuously until all files are done.
+
+═══════════════════════════════════════════════════════════════════════
+HOW TO DETECT A v1 FILE
+═══════════════════════════════════════════════════════════════════════
+
+A file is considered v1 (needs upgrade) if ANY of the following are true:
+
+FRONTMATTER missing any of these fields:
+  - layout
+  - title
+  - parent
+  - nav_order
+  - permalink
+
+CONTENT missing any of these section headers:
+  - ### 🔥 The Problem This Solves
+  - ### ⏱️ Understand It in 30 Seconds
+  - ### 🧪 Thought Experiment
+  - ### 📶 Gradual Depth — Four Levels
+  - ### 🔄 The Complete Picture — End-to-End Flow
+  - ### ⚖️ Comparison Table
+  - ### 🚨 Failure Modes & Diagnosis
+
+A file is considered v2 (already upgraded) only if ALL above fields and
+section headers are present. Skip it and move to the next.
+
+═══════════════════════════════════════════════════════════════════════
+YOUR WORKFLOW — RUNS CONTINUOUSLY UNTIL ALL FILES ARE UPGRADED
+═══════════════════════════════════════════════════════════════════════
+
+LOOP (repeat automatically, no confirmation needed):
+
+  STEP 1 — FIND NEXT 10 v1 FILES:
+    Scan ALL .md files inside docs/ recursively (exclude index.md files).
+    For each file, check if it is v1 using the detection rules above.
+    Collect the next 10 v1 files ordered by keyword number (lowest first).
+    If fewer than 10 remain, process however many are left.
+    If 0 remain, print the DONE report and stop.
+
+  STEP 2 — REPORT THE BATCH:
+    Print:
+      "⚙️ Upgrading batch — files NNN–NNN:"
+      List each file: "#NNNN — Keyword Name  (Category | ★ Difficulty)"
+
+  STEP 3 — UPGRADE EACH FILE:
+    For each of the 10 files:
+
+    a. READ the existing file and extract these values:
+         - number       ← from frontmatter or filename prefix
+         - keyword name ← from the H1 title line (# NNN — KEYWORD NAME)
+         - category     ← from frontmatter
+         - difficulty   ← from frontmatter
+         - depends_on   ← from frontmatter (keep existing value)
+         - used_by      ← from frontmatter (keep existing value)
+         - related      ← from frontmatter if present, else derive from content
+
+    b. DERIVE the new frontmatter fields:
+         - layout     → always: default
+         - title      → keyword name in double quotes
+         - parent     → exact category title from mapping table below
+         - nav_order  → keyword number as plain integer
+         - permalink  → /category-slug/keyword-slug/
+                        (keyword-slug: lowercase, spaces→hyphens,
+                         strip parentheses, & → and)
+         - number     → zero-padded 4-digit string in double quotes
+         - tags       → keep existing tags if valid, else derive from content
+
+    c. REGENERATE the file completely using GENERATOR_PROMPT.md v2.0 spec.
+       Do NOT patch the old file. Fully rewrite it from scratch.
+       Preserve: keyword number, name, category, difficulty.
+       Generate fresh: all 20 content sections per v2 spec.
+
+    d. WRITE the new content to the SAME file path, overwriting the old file.
+
+  STEP 4 — COMMIT THE BATCH:
+    After all 10 files are rewritten:
+      git add docs/
+      git commit -m "upgrade: v1→v2 keywords NNNN–NNNN — <Category or mixed> batch <N>"
+    Do NOT run git push.
+
+  STEP 5 — LOOP:
+    Immediately go back to STEP 1.
+    Do NOT ask for confirmation.
+    Do NOT pause.
+    Keep looping until 0 v1 files remain.
+
+  WHEN ALL FILES ARE DONE, print:
+    "✅ All keyword files upgraded to v2.0.
+     Total upgraded: [N] files across [X] batches.
+     Run 'git log --oneline' to see all upgrade commits."
+
+═══════════════════════════════════════════════════════════════════════
+CATEGORY → PARENT TITLE → PERMALINK SLUG MAPPING
+═══════════════════════════════════════════════════════════════════════
+
+  CS Fundamentals — Paradigms    | "CS Fundamentals — Paradigms"    | /cs-fundamentals/
+  Data Structures & Algorithms   | "Data Structures & Algorithms"   | /dsa/
+  Operating Systems              | "Operating Systems"              | /operating-systems/
+  Linux                          | "Linux"                          | /linux/
+  Networking                     | "Networking"                     | /networking/
+  HTTP & APIs                    | "HTTP & APIs"                    | /http-apis/
+  Java & JVM Internals           | "Java & JVM Internals"           | /java/
+  Java Language                  | "Java Language"                  | /java-language/
+  Java Concurrency               | "Java Concurrency"               | /java-concurrency/
+  Spring Core                    | "Spring Core"                    | /spring/
+  Database Fundamentals          | "Database Fundamentals"          | /databases/
+  NoSQL & Distributed Databases  | "NoSQL & Distributed Databases"  | /nosql/
+  Caching                        | "Caching"                        | /caching/
+  Data Fundamentals              | "Data Fundamentals"              | /data-fundamentals/
+  Big Data & Streaming           | "Big Data & Streaming"           | /big-data-streaming/
+  Distributed Systems            | "Distributed Systems"            | /distributed-systems/
+  Microservices                  | "Microservices"                  | /microservices/
+  System Design                  | "System Design"                  | /system-design/
+  Software Architecture Patterns | "Software Architecture Patterns" | /software-architecture/
+  Design Patterns                | "Design Patterns"                | /design-patterns/
+  Containers                     | "Containers"                     | /containers/
+  Kubernetes                     | "Kubernetes"                     | /kubernetes/
+  Cloud — AWS                    | "Cloud — AWS"                    | /cloud-aws/
+  Cloud — Azure                  | "Cloud — Azure"                  | /cloud-azure/
+  CI/CD                          | "CI/CD"                          | /ci-cd/
+  Git & Branching Strategy       | "Git & Branching Strategy"       | /git/
+  Maven & Build Tools (Java)     | "Maven & Build Tools (Java)"     | /maven-build/
+  Code Quality                   | "Code Quality"                   | /code-quality/
+  Testing                        | "Testing"                        | /testing/
+  Observability & SRE            | "Observability & SRE"            | /observability/
+  HTML                           | "HTML"                           | /html/
+  CSS                            | "CSS"                            | /css/
+  JavaScript                     | "JavaScript"                     | /javascript/
+  TypeScript                     | "TypeScript"                     | /typescript/
+  React                          | "React"                          | /react/
+  Node.js                        | "Node.js"                        | /nodejs/
+  npm & Package Management       | "npm & Package Management"       | /npm/
+  Webpack & Build Tools          | "Webpack & Build Tools"          | /webpack-build/
+  AI Foundations                 | "AI Foundations"                 | /ai-foundations/
+  LLMs & Prompt Engineering      | "LLMs & Prompt Engineering"      | /llms/
+  RAG & Agents & LLMOps          | "RAG & Agents & LLMOps"          | /rag-agents/
+  Platform & Modern SWE          | "Platform & Modern SWE"          | /platform-engineering/
+  Behavioral & Leadership        | "Behavioral & Leadership"        | /leadership/
+
+═══════════════════════════════════════════════════════════════════════
+RULES
+═══════════════════════════════════════════════════════════════════════
+
+- Never modify index.md files
+- Never modify files that already pass the v2 detection check
+- Always overwrite the SAME file path — do not create new files
+- One commit per batch of 10 (or fewer for the final batch)
+- Commit message format: "upgrade: v1→v2 keywords NNNN–NNNN — batch N"
+- Do NOT git push
+- Do NOT pause between batches — keep rolling
+- Follow GENERATOR_PROMPT.md v2.0 spec exactly for every single entry
 ```
 ````
