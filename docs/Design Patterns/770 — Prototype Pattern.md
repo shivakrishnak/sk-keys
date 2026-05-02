@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Prototype Pattern"
 parent: "Design Patterns"
@@ -6,63 +6,63 @@ nav_order: 770
 permalink: /design-patterns/prototype-pattern/
 number: "770"
 category: Design Patterns
-difficulty: â˜…â˜…â˜†
+difficulty: ★★☆
 depends_on: "Object-Oriented Programming, Builder Pattern"
 used_by: "Object copying, Game entities, Test fixtures, Expensive initialization"
 tags: #intermediate, #design-patterns, #creational, #cloning, #oop
 ---
 
-# 770 â€” Prototype Pattern
+# 770 — Prototype Pattern
 
 `#intermediate` `#design-patterns` `#creational` `#cloning` `#oop`
 
-âš¡ TL;DR â€” **Prototype** creates new objects by **cloning an existing object** (the prototype) rather than constructing from scratch â€” useful when object creation is expensive, when the exact type is unknown at compile time, or when you need copies of pre-configured objects without re-running their initialization logic.
+⚡ TL;DR — **Prototype** creates new objects by **cloning an existing object** (the prototype) rather than constructing from scratch — useful when object creation is expensive, when the exact type is unknown at compile time, or when you need copies of pre-configured objects without re-running their initialization logic.
 
-| #770            | Category: Design Patterns                                              | Difficulty: â˜…â˜…â˜† |
+| #770            | Category: Design Patterns                                              | Difficulty: ★★☆ |
 | :-------------- | :--------------------------------------------------------------------- | :-------------- |
 | **Depends on:** | Object-Oriented Programming, Builder Pattern                           |                 |
 | **Used by:**    | Object copying, Game entities, Test fixtures, Expensive initialization |                 |
 
 ---
 
-### ðŸ“˜ Textbook Definition
+### 📘 Textbook Definition
 
 **Prototype** (GoF, 1994): a creational design pattern that specifies the kinds of objects to create using a prototypical instance and creates new objects by copying (cloning) that prototype. Solves the problem of creating objects when: (1) the class to instantiate is specified at runtime, not compile time; (2) instances of a class can have only a few different combinations of state, and it is more convenient to clone a prototype than to instantiate and configure manually; (3) creation is expensive and cloning from a pre-initialized prototype is cheaper. GoF intent: "Specify the kinds of objects to create using a prototypical instance, and create new objects by copying this prototype." Java: `Cloneable` interface + `Object.clone()`, or copy constructors, or serialization-based cloning.
 
 ---
 
-### ðŸŸ¢ Simple Definition (Easy)
+### 🟢 Simple Definition (Easy)
 
-A photocopier. You have an original document (the prototype). Instead of retyping the document for each recipient, you copy it. The copies start as identical clones of the original. You can then make changes to individual copies â€” editing recipient name, date â€” without affecting the original. The original is the prototype; each photocopy is a cloned instance.
-
----
-
-### ðŸ”µ Simple Definition (Elaborated)
-
-Game development: loading a complex enemy character involves reading from disk, processing textures, setting up physics state â€” takes 200ms. You create one "template goblin" (prototype) with all that initialized. For each new goblin spawned, `goblinTemplate.clone()` â€” 1ms. Each clone starts with identical state but can then diverge (different position, different HP randomization). Prototype avoids repeating expensive initialization for each new instance.
+A photocopier. You have an original document (the prototype). Instead of retyping the document for each recipient, you copy it. The copies start as identical clones of the original. You can then make changes to individual copies — editing recipient name, date — without affecting the original. The original is the prototype; each photocopy is a cloned instance.
 
 ---
 
-### ðŸ”© First Principles Explanation
+### 🔵 Simple Definition (Elaborated)
 
-**Deep copy vs. shallow copy â€” the most critical nuance:**
+Game development: loading a complex enemy character involves reading from disk, processing textures, setting up physics state — takes 200ms. You create one "template goblin" (prototype) with all that initialized. For each new goblin spawned, `goblinTemplate.clone()` — 1ms. Each clone starts with identical state but can then diverge (different position, different HP randomization). Prototype avoids repeating expensive initialization for each new instance.
+
+---
+
+### 🔩 First Principles Explanation
+
+**Deep copy vs. shallow copy — the most critical nuance:**
 
 ```
 SHALLOW COPY:
 
   class Config {
-      String name;                    // immutable â€” safe to share
-      List<String> allowedHosts;      // mutable â€” DANGER if shared
+      String name;                    // immutable — safe to share
+      List<String> allowedHosts;      // mutable — DANGER if shared
   }
 
   Config original = new Config("production", new ArrayList<>(List.of("api.example.com")));
   Config copy     = original.clone();  // SHALLOW copy
 
   // After shallow copy:
-  // copy.name           â†’ same "production" String (safe â€” String is immutable)
-  // copy.allowedHosts   â†’ SAME LIST OBJECT as original.allowedHosts
+  // copy.name           → same "production" String (safe — String is immutable)
+  // copy.allowedHosts   → SAME LIST OBJECT as original.allowedHosts
 
-  copy.allowedHosts.add("evil.com");   // â† modifies BOTH original AND copy!
+  copy.allowedHosts.add("evil.com");   // ← modifies BOTH original AND copy!
   System.out.println(original.allowedHosts);  // ["api.example.com", "evil.com"] OOPS!
 
 DEEP COPY:
@@ -79,19 +79,19 @@ DEEP COPY:
   }
 
   // Now: copy.allowedHosts is a NEW list with the same elements.
-  // Modifying copy.allowedHosts doesn't affect original. âœ“
+  // Modifying copy.allowedHosts doesn't affect original. ✓
 
 JAVA CLONEABLE PROBLEMS:
 
   Problems with Java's Cloneable + Object.clone():
-  1. Cloneable is a MARKER INTERFACE â€” no clone() method in the interface!
+  1. Cloneable is a MARKER INTERFACE — no clone() method in the interface!
      Object.clone() checks if class implements Cloneable at runtime.
      If not: throws CloneNotSupportedException.
 
   2. Object.clone() creates a SHALLOW copy without calling constructor.
-     Final fields cannot be reassigned during clone â†’ deep copy of final fields is impossible.
+     Final fields cannot be reassigned during clone → deep copy of final fields is impossible.
 
-  3. Must call super.clone() everywhere in the hierarchy â€” fragile.
+  3. Must call super.clone() everywhere in the hierarchy — fragile.
 
   4. Exception handling ceremony: CloneNotSupportedException is checked.
 
@@ -143,7 +143,7 @@ BETTER ALTERNATIVES TO Object.clone():
 
 PROTOTYPE REGISTRY:
 
-  // Store named prototypes â€” clone from registry instead of constructing:
+  // Store named prototypes — clone from registry instead of constructing:
   class ShapeRegistry {
       private final Map<String, Shape> prototypes = new HashMap<>();
 
@@ -164,22 +164,22 @@ PROTOTYPE REGISTRY:
 
 ---
 
-### â“ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
 WITHOUT Prototype:
 
-- Creating each game enemy from scratch: 200ms Ã— 50 enemies = 10 seconds of loading
+- Creating each game enemy from scratch: 200ms × 50 enemies = 10 seconds of loading
 - Re-running complex initialization (disk I/O, texture loading) for every instance
 
 WITH Prototype:
-â†’ Initialize once, clone for each new instance: 1ms per clone
-â†’ Prototype registry: named, pre-configured templates; consumers clone without knowing concrete type
+→ Initialize once, clone for each new instance: 1ms per clone
+→ Prototype registry: named, pre-configured templates; consumers clone without knowing concrete type
 
 ---
 
-### ðŸ§  Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
-> A cookie dough and cookie cutters. You spend 30 minutes making the perfect dough (the prototype). Each cookie is stamped from the same dough â€” instant. If you stamp and then want a chocolate chip variant, you add chips to that specific stamped copy without changing the original dough. Each copy is independent after cloning â€” it can evolve separately.
+> A cookie dough and cookie cutters. You spend 30 minutes making the perfect dough (the prototype). Each cookie is stamped from the same dough — instant. If you stamp and then want a chocolate chip variant, you add chips to that specific stamped copy without changing the original dough. Each copy is independent after cloning — it can evolve separately.
 
 "Perfect dough" = prototype (expensive to make once)
 "Stamp a cookie" = clone() (cheap)
@@ -188,21 +188,21 @@ WITH Prototype:
 
 ---
 
-### âš™ï¸ How It Works (Mechanism)
+### ⚙️ How It Works (Mechanism)
 
 ```
 PROTOTYPE PATTERN:
 
-  Â«interfaceÂ»
+  «interface»
   Prototype
-  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  ──────────
   +clone(): Prototype
 
   ConcretePrototype
-  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  ──────────────────
   -field1, field2, ...
   +clone(): ConcretePrototype
-      â†’ copy constructor OR deep copy
+      → copy constructor OR deep copy
 
   CLIENT:
   ConcretePrototype p1 = original.clone();  // don't call new!
@@ -211,32 +211,32 @@ PROTOTYPE PATTERN:
 
 ---
 
-### ðŸ”„ How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 Expensive object construction + need many similar instances
-        â”‚
-        â–¼
-Prototype Pattern â—„â”€â”€â”€â”€ (you are here)
+        │
+        ▼
+Prototype Pattern ◄──── (you are here)
 (clone from pre-initialized prototype instead of constructing)
-        â”‚
-        â”œâ”€â”€ Builder Pattern: build complex object; Builder = construction; Prototype = copy
-        â”œâ”€â”€ Object Pool: pool reuses instances (reset state); Prototype creates new copies
-        â”œâ”€â”€ Factory Method: Factory creates from scratch; Prototype creates from clone
-        â””â”€â”€ Flyweight: shares instances (read-only); Prototype creates independent copies
+        │
+        ├── Builder Pattern: build complex object; Builder = construction; Prototype = copy
+        ├── Object Pool: pool reuses instances (reset state); Prototype creates new copies
+        ├── Factory Method: Factory creates from scratch; Prototype creates from clone
+        └── Flyweight: shares instances (read-only); Prototype creates independent copies
 ```
 
 ---
 
-### ðŸ’» Code Example
+### 💻 Code Example
 
 {% raw %}
 ```java
 // Copy constructor approach (preferred over Cloneable):
 public class EmailTemplate {
-    private final String subject;       // immutable â€” shared safely
-    private final List<String> to;      // mutable â€” must deep copy
-    private final Map<String, String> variables;  // mutable â€” must deep copy
+    private final String subject;       // immutable — shared safely
+    private final List<String> to;      // mutable — must deep copy
+    private final Map<String, String> variables;  // mutable — must deep copy
 
     // Primary constructor:
     public EmailTemplate(String subject, List<String> to, Map<String, String> vars) {
@@ -279,7 +279,7 @@ EmailTemplate forBob = welcomeTemplate
 
 ---
 
-### âš ï¸ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | Misconception                                                         | Reality                                                                                                                                                                                                                                                                                                                                                   |
 | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -289,19 +289,19 @@ EmailTemplate forBob = welcomeTemplate
 
 ---
 
-### ðŸ”¥ Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 **Shared mutable state after shallow copy:**
 
 ```java
-// ANTI-PATTERN â€” shallow copy of mutable collection:
+// ANTI-PATTERN — shallow copy of mutable collection:
 class OrderTemplate implements Cloneable {
     List<OrderItem> items;   // mutable
 
     @Override
     public OrderTemplate clone() {
         try {
-            return (OrderTemplate) super.clone();  // SHALLOW copy â€” items list shared!
+            return (OrderTemplate) super.clone();  // SHALLOW copy — items list shared!
         } catch (CloneNotSupportedException e) { throw new AssertionError(); }
     }
 }
@@ -312,9 +312,9 @@ template.items.add(new OrderItem("Widget", 1));
 OrderTemplate copy = template.clone();
 copy.items.add(new OrderItem("Gadget", 2));  // modifies BOTH template AND copy's items!
 
-System.out.println(template.items.size());  // 2 â€” template polluted! Bug.
+System.out.println(template.items.size());  // 2 — template polluted! Bug.
 
-// FIX â€” deep copy mutable fields:
+// FIX — deep copy mutable fields:
 @Override
 public OrderTemplate clone() {
     try {
@@ -326,52 +326,52 @@ public OrderTemplate clone() {
     } catch (CloneNotSupportedException e) { throw new AssertionError(); }
 }
 
-// BEST FIX â€” avoid Cloneable entirely; use copy constructor:
+// BEST FIX — avoid Cloneable entirely; use copy constructor:
 OrderTemplate copy = new OrderTemplate(template);  // copy constructor handles deep copy explicitly
 ```
 
 ---
 
-### ðŸ”— Related Keywords
+### 🔗 Related Keywords
 
-- `Builder Pattern` â€” builds complex objects step by step; Prototype copies an existing one
-- `Object Pool Pattern` â€” pools and reuses objects (resets state); Prototype creates new independent copies
-- `Flyweight Pattern` â€” shares immutable objects to save memory; Prototype creates independent mutable copies
-- `Factory Method` â€” creates new objects; Prototype clones an existing configured object
-- `Deep Copy vs. Shallow Copy` â€” fundamental concept; Prototype must handle correctly
-
----
-
-### ðŸ“Œ Quick Reference Card
-
-```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚ KEY IDEA     â”‚ Clone a pre-initialized prototype instead â”‚
-â”‚              â”‚ of constructing from scratch. New object  â”‚
-â”‚              â”‚ starts as a copy, can then diverge.       â”‚
-â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
-â”‚ USE WHEN     â”‚ Object creation is expensive; need many   â”‚
-â”‚              â”‚ similar pre-configured instances; type is â”‚
-â”‚              â”‚ unknown at compile time                   â”‚
-â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
-â”‚ AVOID WHEN   â”‚ Objects have complex deep graphs that are â”‚
-â”‚              â”‚ hard to copy correctly; cloning semantics â”‚
-â”‚              â”‚ are unclear (which fields are shared?)   â”‚
-â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
-â”‚ ONE-LINER    â”‚ "Cookie stamp: make perfect dough once,   â”‚
-â”‚              â”‚  stamp as many cookies as needed â€” each  â”‚
-â”‚              â”‚  starts identical, then evolves on its   â”‚
-â”‚              â”‚  own."                                    â”‚
-â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
-â”‚ NEXT EXPLORE â”‚ Builder Pattern â†’ Object Pool Pattern â†’   â”‚
-â”‚              â”‚ Flyweight Pattern â†’ Deep vs Shallow Copy  â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-```
+- `Builder Pattern` — builds complex objects step by step; Prototype copies an existing one
+- `Object Pool Pattern` — pools and reuses objects (resets state); Prototype creates new independent copies
+- `Flyweight Pattern` — shares immutable objects to save memory; Prototype creates independent mutable copies
+- `Factory Method` — creates new objects; Prototype clones an existing configured object
+- `Deep Copy vs. Shallow Copy` — fundamental concept; Prototype must handle correctly
 
 ---
 
-### ðŸ§  Think About This Before We Continue
+### 📌 Quick Reference Card
 
-**Q1.** Java 14+ introduced records: `record Point(int x, int y) {}`. Records are immutable â€” you can't modify them after creation. They also get auto-generated `equals()`, `hashCode()`, and `toString()` but NO `clone()`. For an immutable record, is Prototype Pattern even necessary? Or does it collapse into something else? How do Java `record` "wither" methods (`withX(newValue)`) relate to the Prototype pattern concept?
+```
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Clone a pre-initialized prototype instead │
+│              │ of constructing from scratch. New object  │
+│              │ starts as a copy, can then diverge.       │
+├──────────────┼───────────────────────────────────────────┤
+│ USE WHEN     │ Object creation is expensive; need many   │
+│              │ similar pre-configured instances; type is │
+│              │ unknown at compile time                   │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Objects have complex deep graphs that are │
+│              │ hard to copy correctly; cloning semantics │
+│              │ are unclear (which fields are shared?)   │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Cookie stamp: make perfect dough once,   │
+│              │  stamp as many cookies as needed — each  │
+│              │  starts identical, then evolves on its   │
+│              │  own."                                    │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Builder Pattern → Object Pool Pattern →   │
+│              │ Flyweight Pattern → Deep vs Shallow Copy  │
+└──────────────────────────────────────────────────────────┘
+```
+
+---
+
+### 🧠 Think About This Before We Continue
+
+**Q1.** Java 14+ introduced records: `record Point(int x, int y) {}`. Records are immutable — you can't modify them after creation. They also get auto-generated `equals()`, `hashCode()`, and `toString()` but NO `clone()`. For an immutable record, is Prototype Pattern even necessary? Or does it collapse into something else? How do Java `record` "wither" methods (`withX(newValue)`) relate to the Prototype pattern concept?
 
 **Q2.** In game development, an Entity Component System (ECS) is common. Entities are just IDs; Components are data objects attached to entities. If you want to "spawn 100 enemy goblins," you might have a "prefab" goblin entity (prototype). Cloning the goblin means copying all its component data. However, some components should be shared (read-only mesh data, textures) while others must be independent (health, position). How would you design this partial deep copy / partial shared reference cloning in an ECS? What role does the Flyweight pattern play here?

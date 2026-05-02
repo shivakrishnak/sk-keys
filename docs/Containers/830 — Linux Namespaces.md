@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Linux Namespaces"
 parent: "Containers"
@@ -6,38 +6,38 @@ nav_order: 830
 permalink: /containers/linux-namespaces/
 number: "830"
 category: Containers
-difficulty: â˜…â˜…â˜…
+difficulty: ★★★
 depends_on: "Container, Docker"
 used_by: "cgroups, Docker Image, Kubernetes"
 tags: #containers, #linux, #namespaces, #isolation, #kernel, #pid-namespace
 ---
 
-# 830 â€” Linux Namespaces
+# 830 — Linux Namespaces
 
 `#containers` `#linux` `#namespaces` `#isolation` `#kernel` `#pid-namespace`
 
-âš¡ TL;DR â€” **Linux namespaces** are the kernel mechanism that makes containers possible. A namespace wraps a global system resource so that processes inside the namespace see only their own isolated instance. Docker creates a new set of namespaces (PID, Network, Mount, UTS, IPC, User) per container â€” that's why the container "thinks" it's alone on the machine. Namespaces â‰  isolation from resource exhaustion (that's cgroups). Namespaces = isolation of identity and visibility.
+⚡ TL;DR — **Linux namespaces** are the kernel mechanism that makes containers possible. A namespace wraps a global system resource so that processes inside the namespace see only their own isolated instance. Docker creates a new set of namespaces (PID, Network, Mount, UTS, IPC, User) per container — that's why the container "thinks" it's alone on the machine. Namespaces ≠ isolation from resource exhaustion (that's cgroups). Namespaces = isolation of identity and visibility.
 
-| #830            | Category: Containers              | Difficulty: â˜…â˜…â˜… |
+| #830            | Category: Containers              | Difficulty: ★★★ |
 | :-------------- | :-------------------------------- | :-------------- |
 | **Depends on:** | Container, Docker                 |                 |
 | **Used by:**    | cgroups, Docker Image, Kubernetes |                 |
 
 ---
 
-### ðŸ“˜ Textbook Definition
+### 📘 Textbook Definition
 
-**Linux namespaces**: a kernel feature (Linux 3.8+, with types added incrementally since 2.4) that partitions kernel resources such that processes in one namespace see a different set of resources than processes in another. Namespace types: **PID** (process IDs â€” container's PID 1 is the daemon; host sees it as PID 12345); **Network** (eth0, routing tables, iptables rules, port bindings â€” each container has its own network stack); **Mount** (`/proc/mounts` â€” container sees only its own mount points; different view of the filesystem); **UTS** (hostname and domain name â€” container can have a different hostname); **IPC** (System V IPC, POSIX message queues â€” isolated IPC resources); **User** (UID/GID mapping â€” container's root (UID 0) maps to an unprivileged host UID); **Cgroup** (view of the cgroup hierarchy); **Time** (per-namespace `clock_realtime` and `clock_monotonic`, Linux 5.6+). Syscalls: `clone(CLONE_NEWPID | CLONE_NEWNET | ...)` creates a new namespace and places the child process in it; `unshare()` dissociates from namespaces; `setns()` joins an existing namespace (how `docker exec` works). Namespaces are represented as files: `/proc/<pid>/ns/<type>` â€” holding a file descriptor open keeps the namespace alive even if all processes exit.
-
----
-
-### ðŸŸ¢ Simple Definition (Easy)
-
-When you run a Docker container, Docker asks the Linux kernel: "give this process a new PID namespace" â†’ the container's process starts as PID 1 (even though the host sees it as PID 12345). Docker also gives it a new network namespace â†’ the container has its own `eth0`, its own IP address. New mount namespace â†’ the container sees its own filesystem (Ubuntu base image), not the host's filesystem. This is all implemented in the Linux kernel â€” Docker is just a tool that calls kernel APIs to set up these namespaces. Containers are essentially processes with kernel-enforced "tunnel vision."
+**Linux namespaces**: a kernel feature (Linux 3.8+, with types added incrementally since 2.4) that partitions kernel resources such that processes in one namespace see a different set of resources than processes in another. Namespace types: **PID** (process IDs — container's PID 1 is the daemon; host sees it as PID 12345); **Network** (eth0, routing tables, iptables rules, port bindings — each container has its own network stack); **Mount** (`/proc/mounts` — container sees only its own mount points; different view of the filesystem); **UTS** (hostname and domain name — container can have a different hostname); **IPC** (System V IPC, POSIX message queues — isolated IPC resources); **User** (UID/GID mapping — container's root (UID 0) maps to an unprivileged host UID); **Cgroup** (view of the cgroup hierarchy); **Time** (per-namespace `clock_realtime` and `clock_monotonic`, Linux 5.6+). Syscalls: `clone(CLONE_NEWPID | CLONE_NEWNET | ...)` creates a new namespace and places the child process in it; `unshare()` dissociates from namespaces; `setns()` joins an existing namespace (how `docker exec` works). Namespaces are represented as files: `/proc/<pid>/ns/<type>` — holding a file descriptor open keeps the namespace alive even if all processes exit.
 
 ---
 
-### ðŸ”µ Simple Definition (Elaborated)
+### 🟢 Simple Definition (Easy)
+
+When you run a Docker container, Docker asks the Linux kernel: "give this process a new PID namespace" → the container's process starts as PID 1 (even though the host sees it as PID 12345). Docker also gives it a new network namespace → the container has its own `eth0`, its own IP address. New mount namespace → the container sees its own filesystem (Ubuntu base image), not the host's filesystem. This is all implemented in the Linux kernel — Docker is just a tool that calls kernel APIs to set up these namespaces. Containers are essentially processes with kernel-enforced "tunnel vision."
+
+---
+
+### 🔵 Simple Definition (Elaborated)
 
 Namespaces answer "what can this process SEE?" (visibility isolation):
 
@@ -45,23 +45,23 @@ Namespaces answer "what can this process SEE?" (visibility isolation):
 - **Network namespace**: the container has its own network stack; port 80 in the container doesn't conflict with port 80 on the host or in another container
 - **Mount namespace**: the container sees a different root filesystem; `ls /` shows the container's OS, not the host's
 - **UTS namespace**: `hostname` inside the container returns the container name, not the host's hostname
-- **User namespace**: container's root (UID 0) maps to UID 100000 on the host â€” the container "thinks" it's root but is actually unprivileged on the host (rootless containers)
+- **User namespace**: container's root (UID 0) maps to UID 100000 on the host — the container "thinks" it's root but is actually unprivileged on the host (rootless containers)
 
-Namespaces do NOT limit CPU/memory usage â€” that's **cgroups**. Namespaces + cgroups together = container isolation.
+Namespaces do NOT limit CPU/memory usage — that's **cgroups**. Namespaces + cgroups together = container isolation.
 
 ---
 
-### ðŸ”© First Principles Explanation
+### 🔩 First Principles Explanation
 
 {% raw %}
 ```
 NAMESPACE TYPES DEEP DIVE:
 
 1. PID NAMESPACE:
-   Without PID namespace: all processes see all PIDs â†’ container could kill host's sshd
+   Without PID namespace: all processes see all PIDs → container could kill host's sshd
    With PID namespace: container has its own PID tree; PID 1 = container's init process
 
-   Host view:    PID 1 (init/systemd) â†’ PID 12345 (container's bash)
+   Host view:    PID 1 (init/systemd) → PID 12345 (container's bash)
    Container view: PID 1 (bash)
 
    Nested PID namespaces: container can create child PID namespaces
@@ -80,12 +80,12 @@ NAMESPACE TYPES DEEP DIVE:
    Docker: creates veth pair (virtual Ethernet cable):
      veth0 (container end, named eth0 in container)
      veth1234 (host end, attached to docker0 bridge)
-   docker run -p 8080:80: iptables DNAT rule: host:8080 â†’ container:80
+   docker run -p 8080:80: iptables DNAT rule: host:8080 → container:80
 
    Network namespaces for pods (Kubernetes):
    All containers in a pod SHARE the same network namespace
-   â†’ Same IP, same ports (can't both listen on :80)
-   â†’ Communicate via localhost
+   → Same IP, same ports (can't both listen on :80)
+   → Communicate via localhost
    The "pause" container holds the network namespace; app containers join it
 
 3. MOUNT NAMESPACE:
@@ -101,29 +101,29 @@ NAMESPACE TYPES DEEP DIVE:
 
 4. UTS NAMESPACE (Unix Time-sharing System):
    Isolates hostname and domainname
-   docker run --hostname mycontainer ubuntu hostname â†’ "mycontainer"
+   docker run --hostname mycontainer ubuntu hostname → "mycontainer"
    Host hostname unchanged
    (Historically for multi-tenant Unix time-sharing systems)
 
 5. IPC NAMESPACE:
    Isolates: System V shared memory (shmget), semaphores, message queues
    POSIX shared memory (/dev/shm)
-   â†’ Container can't attach to host's shared memory segments
+   → Container can't attach to host's shared memory segments
 
    Kubernetes pods: containers in a pod share IPC namespace
-   â†’ They can communicate via POSIX shared memory
+   → They can communicate via POSIX shared memory
 
 6. USER NAMESPACE (rootless containers):
    Maps UIDs/GIDs between namespace and host
 
-   Container: UID 0 (root)  â†’ Host: UID 100000 (unprivileged)
-   Container: UID 1000      â†’ Host: UID 101000
+   Container: UID 0 (root)  → Host: UID 100000 (unprivileged)
+   Container: UID 1000      → Host: UID 101000
 
    /etc/subuid: defines the mapping range
 
    Benefits:
    - Container root can't affect host files owned by real root
-   - Process escaping container namespace â†’ unprivileged on host
+   - Process escaping container namespace → unprivileged on host
    - No setuid/capabilities escalation to real root
 
    Docker: rootless mode uses user namespaces (default in Podman)
@@ -140,14 +140,14 @@ SYSCALLS:
   setns(2):   join an existing namespace (by fd from /proc/<pid>/ns/<type>)
 
   # docker exec implementation:
-  # /proc/<container-PID>/ns/pid  â†’ open fd
-  # setns(fd, CLONE_NEWPID)       â†’ join container's PID namespace
-  # setns(net_fd, CLONE_NEWNET)   â†’ join container's network namespace
-  # exec("bash")                  â†’ start bash in container's namespaces
+  # /proc/<container-PID>/ns/pid  → open fd
+  # setns(fd, CLONE_NEWPID)       → join container's PID namespace
+  # setns(net_fd, CLONE_NEWNET)   → join container's network namespace
+  # exec("bash")                  → start bash in container's namespaces
 
   # Namespace persistence (even with no processes):
   # bind mount /proc/<pid>/ns/net to /run/netns/mynet
-  # â†’ network namespace persists for later use (ip netns attach)
+  # → network namespace persists for later use (ip netns attach)
 
 DEMONSTRATION:
 
@@ -166,7 +166,7 @@ DEMONSTRATION:
   # Check container's namespaces:
   CONTAINER_PID=$(docker inspect --format '{{.State.Pid}}' mycontainer)
   ls -la /proc/$CONTAINER_PID/ns/
-  # net -> net:[4026532198]   â† unique namespace inode
+  # net -> net:[4026532198]   ← unique namespace inode
   # pid -> pid:[4026532201]
   # mnt -> mnt:[4026532199]
 
@@ -177,19 +177,19 @@ DEMONSTRATION:
 
 ---
 
-### â“ Why Does This Exist (Why Before What)
+### ❓ Why Does This Exist (Why Before What)
 
-Before namespaces, process isolation required either: (1) separate physical machines (expensive), (2) virtual machines (heavy: full OS per VM, minutes to boot, GB RAM overhead), or (3) chroot (filesystem isolation only, not network/PID). Namespaces provide lightweight isolation at the process level â€” no full OS, no hardware virtualization, near-zero overhead. The Linux kernel already manages these global resources (PIDs, network stacks, mounts); namespaces are virtualizations of these existing kernel data structures. Result: containers start in milliseconds, use ~10MB overhead (vs ~200MB for a VM), and can run thousands per host.
-
----
-
-### ðŸ§  Mental Model / Analogy
-
-> **Namespaces are like one-way mirrors in an apartment building**: each tenant (container) sees only their own apartment (their own PID space, network, filesystem). They can't see into other apartments. But the building manager (host OS kernel) can see into all apartments through the one-way mirror â€” the host can `ps aux` and see all container processes, `nsenter` to join any namespace, or `docker exec` to enter a container. The tenants don't see the building structure; they think they're in a standalone house. The mirrors (namespaces) create the illusion of isolation without building separate physical buildings (VMs).
+Before namespaces, process isolation required either: (1) separate physical machines (expensive), (2) virtual machines (heavy: full OS per VM, minutes to boot, GB RAM overhead), or (3) chroot (filesystem isolation only, not network/PID). Namespaces provide lightweight isolation at the process level — no full OS, no hardware virtualization, near-zero overhead. The Linux kernel already manages these global resources (PIDs, network stacks, mounts); namespaces are virtualizations of these existing kernel data structures. Result: containers start in milliseconds, use ~10MB overhead (vs ~200MB for a VM), and can run thousands per host.
 
 ---
 
-### âš™ï¸ How It Works (Mechanism)
+### 🧠 Mental Model / Analogy
+
+> **Namespaces are like one-way mirrors in an apartment building**: each tenant (container) sees only their own apartment (their own PID space, network, filesystem). They can't see into other apartments. But the building manager (host OS kernel) can see into all apartments through the one-way mirror — the host can `ps aux` and see all container processes, `nsenter` to join any namespace, or `docker exec` to enter a container. The tenants don't see the building structure; they think they're in a standalone house. The mirrors (namespaces) create the illusion of isolation without building separate physical buildings (VMs).
+
+---
+
+### ⚙️ How It Works (Mechanism)
 
 ```
 DOCKER CONTAINER CREATION SEQUENCE:
@@ -197,7 +197,7 @@ DOCKER CONTAINER CREATION SEQUENCE:
   docker run ubuntu bash
 
   1. Docker daemon: clone(CLONE_NEWPID|CLONE_NEWNET|CLONE_NEWNS|CLONE_NEWUTS|CLONE_NEWIPC)
-     â†’ new process + new namespaces created
+     → new process + new namespaces created
 
   2. PID namespace: child process is PID 1 in new namespace
 
@@ -218,8 +218,8 @@ DOCKER CONTAINER CREATION SEQUENCE:
      (cgroups = separate kernel mechanism from namespaces)
 
   7. exec("bash"): replace clone child with bash
-     â†’ bash runs with new namespaces
-     â†’ bash PID is 1 inside the PID namespace
+     → bash runs with new namespaces
+     → bash PID is 1 inside the PID namespace
 
   Teardown (docker stop):
   1. Send SIGTERM to PID 1 in container
@@ -232,25 +232,25 @@ DOCKER CONTAINER CREATION SEQUENCE:
 
 ---
 
-### ðŸ”„ How It Connects (Mini-Map)
+### 🔄 How It Connects (Mini-Map)
 
 ```
 Need process isolation without full VMs
-        â”‚
-        â–¼
-Linux Namespaces â—„â”€â”€ (you are here)
+        │
+        ▼
+Linux Namespaces ◄── (you are here)
 (kernel-level resource partitioning per process)
-        â”‚
-        â”œâ”€â”€ Container: a container IS a process with its own set of namespaces
-        â”œâ”€â”€ Docker: tool that calls clone()/setns() to set up namespaces
-        â”œâ”€â”€ cgroups: limits CPU/memory (resource usage); namespaces limit visibility
-        â”œâ”€â”€ OverlayFS: provides isolated filesystem view within mount namespace
-        â””â”€â”€ Kubernetes: each pod has its own network namespace; containers share it
+        │
+        ├── Container: a container IS a process with its own set of namespaces
+        ├── Docker: tool that calls clone()/setns() to set up namespaces
+        ├── cgroups: limits CPU/memory (resource usage); namespaces limit visibility
+        ├── OverlayFS: provides isolated filesystem view within mount namespace
+        └── Kubernetes: each pod has its own network namespace; containers share it
 ```
 
 ---
 
-### ðŸ’» Code Example
+### 💻 Code Example
 
 {% raw %}
 ```bash
@@ -289,7 +289,7 @@ sudo nsenter -t $CONTAINER_PID --net ss -tlnp
 
 ---
 
-### âš ï¸ Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | Misconception                                           | Reality                                                                                                                                                                                                                                                                                                                              |
 | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -299,12 +299,12 @@ sudo nsenter -t $CONTAINER_PID --net ss -tlnp
 
 ---
 
-### ðŸ”¥ Pitfalls in Production
+### 🔥 Pitfalls in Production
 
 ```
 PITFALL: container escape via privileged mode
 
-  docker run --privileged myapp   â† DANGEROUS: disables namespace isolation
+  docker run --privileged myapp   ← DANGEROUS: disables namespace isolation
   # --privileged:
   # - mounts host /dev with full device access
   # - grants all Linux capabilities (including SYS_ADMIN, NET_ADMIN)
@@ -320,14 +320,14 @@ PITFALL: container escape via privileged mode
 
 PITFALL: PID 1 problem (SIGTERM not forwarded)
 
-  # Container starts shell script â†’ shell starts java â†’ java is PID 2
+  # Container starts shell script → shell starts java → java is PID 2
   # docker stop sends SIGTERM to PID 1 (the shell)
-  # Shell: receives SIGTERM â†’ exits â†’ java gets SIGKILL immediately
-  # Java: no graceful shutdown â†’ potential data corruption / connection leak
+  # Shell: receives SIGTERM → exits → java gets SIGKILL immediately
+  # Java: no graceful shutdown → potential data corruption / connection leak
 
   # FIX: use exec form in Dockerfile (java becomes PID 1):
-  # âŒ CMD ["sh", "-c", "java -jar app.jar"]   â† shell is PID 1
-  # âœ… CMD ["java", "-jar", "app.jar"]         â† java is PID 1
+  # ❌ CMD ["sh", "-c", "java -jar app.jar"]   ← shell is PID 1
+  # ✅ CMD ["java", "-jar", "app.jar"]         ← java is PID 1
 
   # Or use tini as PID 1 (proper init: forwards signals, reaps zombies):
   ENTRYPOINT ["/usr/bin/tini", "--"]
@@ -336,40 +336,40 @@ PITFALL: PID 1 problem (SIGTERM not forwarded)
 
 ---
 
-### ðŸ”— Related Keywords
+### 🔗 Related Keywords
 
-- `Container` â€” a process with Linux namespaces; namespaces are the implementation mechanism
-- `Docker` â€” tool that calls kernel namespace APIs on your behalf
-- `cgroups` â€” complements namespaces: limits resource USAGE (CPU/memory)
-- `OverlayFS` â€” provides the container's isolated filesystem view within the mount namespace
-- `Kubernetes` â€” pods use network namespaces (shared per pod); each pod has isolated network
-
----
-
-### ðŸ“Œ Quick Reference Card
-
-```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚ NAMESPACE TYPES:                                         â”‚
-â”‚ PID   â†’ process isolation (container's PID 1)          â”‚
-â”‚ NET   â†’ own network stack (eth0, ports, routing)       â”‚
-â”‚ MNT   â†’ own filesystem view (OverlayFS root)           â”‚
-â”‚ UTS   â†’ own hostname                                    â”‚
-â”‚ IPC   â†’ own IPC resources (shared memory, semaphores)  â”‚
-â”‚ USER  â†’ UID/GID remapping (rootless containers)        â”‚
-â”‚ CGRP  â†’ own cgroup view                                â”‚
-â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
-â”‚ SYSCALLS: clone() create | setns() join | unshare() leaveâ”‚
-â”‚ TOOLS: nsenter, unshare, ip netns, /proc/<pid>/ns/      â”‚
-â”‚ INSPECT: ls -la /proc/<PID>/ns/                         â”‚
-â”‚ Namespaces = visibility | cgroups = resource limits     â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-```
+- `Container` — a process with Linux namespaces; namespaces are the implementation mechanism
+- `Docker` — tool that calls kernel namespace APIs on your behalf
+- `cgroups` — complements namespaces: limits resource USAGE (CPU/memory)
+- `OverlayFS` — provides the container's isolated filesystem view within the mount namespace
+- `Kubernetes` — pods use network namespaces (shared per pod); each pod has isolated network
 
 ---
 
-### ðŸ§  Think About This Before We Continue
+### 📌 Quick Reference Card
 
-**Q1.** Container runtime security relies on namespace isolation, but namespaces are implemented in the kernel â€” a kernel bug can bypass them. The `runc` container runtime has had multiple CVEs (CVE-2019-5736, CVE-2021-30465) that allowed container escape to the host. Kubernetes response to these: gVisor (Google), Kata Containers (Intel), Firecracker (Amazon). These use VM-based isolation (each pod runs in a lightweight VM) while maintaining a container-like API. Compare the security model and performance trade-offs between: (a) standard runc containers (namespace isolation), (b) gVisor (user-space kernel), (c) Kata Containers (full VM kernel). When would you choose each?
+```
+┌──────────────────────────────────────────────────────────┐
+│ NAMESPACE TYPES:                                         │
+│ PID   → process isolation (container's PID 1)          │
+│ NET   → own network stack (eth0, ports, routing)       │
+│ MNT   → own filesystem view (OverlayFS root)           │
+│ UTS   → own hostname                                    │
+│ IPC   → own IPC resources (shared memory, semaphores)  │
+│ USER  → UID/GID remapping (rootless containers)        │
+│ CGRP  → own cgroup view                                │
+├──────────────────────────────────────────────────────────┤
+│ SYSCALLS: clone() create | setns() join | unshare() leave│
+│ TOOLS: nsenter, unshare, ip netns, /proc/<pid>/ns/      │
+│ INSPECT: ls -la /proc/<PID>/ns/                         │
+│ Namespaces = visibility | cgroups = resource limits     │
+└──────────────────────────────────────────────────────────┘
+```
 
-**Q2.** The PID namespace means a container's processes have PID 1 = the main process. In Linux, PID 1 has special responsibilities: it's the parent of all orphaned processes and is responsible for reaping zombie processes. If your container runs a Java app (PID 1) and that app spawns child processes that terminate â€” without proper init handling, those children become zombies (entries in the process table that can't be cleaned). How does `tini` solve this? How does Kubernetes handle this in pods? What happens to zombie processes if PID 1 doesn't call `waitpid()`?
+---
+
+### 🧠 Think About This Before We Continue
+
+**Q1.** Container runtime security relies on namespace isolation, but namespaces are implemented in the kernel — a kernel bug can bypass them. The `runc` container runtime has had multiple CVEs (CVE-2019-5736, CVE-2021-30465) that allowed container escape to the host. Kubernetes response to these: gVisor (Google), Kata Containers (Intel), Firecracker (Amazon). These use VM-based isolation (each pod runs in a lightweight VM) while maintaining a container-like API. Compare the security model and performance trade-offs between: (a) standard runc containers (namespace isolation), (b) gVisor (user-space kernel), (c) Kata Containers (full VM kernel). When would you choose each?
+
+**Q2.** The PID namespace means a container's processes have PID 1 = the main process. In Linux, PID 1 has special responsibilities: it's the parent of all orphaned processes and is responsible for reaping zombie processes. If your container runs a Java app (PID 1) and that app spawns child processes that terminate — without proper init handling, those children become zombies (entries in the process table that can't be cleaned). How does `tini` solve this? How does Kubernetes handle this in pods? What happens to zombie processes if PID 1 doesn't call `waitpid()`?
