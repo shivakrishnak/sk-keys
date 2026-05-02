@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — An inode is the metadata record for every file/directory on disk (permissions, size, block pointers) — separate from the filename; the VFS is the kernel abstraction that makes ext4, XFS, and NFS all look the same to user code.
 
-| #0123 | Category: Operating Systems | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Virtual Memory, System Call (syscall) | |
-| **Used by:** | File Descriptor, Memory-Mapped File (mmap), Docker Layers | |
-| **Related:** | ext4, XFS, VFS, dentry, Page Cache, Hard Link | |
+| #0123           | Category: Operating Systems                               | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------- | :-------------- |
+| **Depends on:** | Virtual Memory, System Call (syscall)                     |                 |
+| **Used by:**    | File Descriptor, Memory-Mapped File (mmap), Docker Layers |                 |
+| **Related:**    | ext4, XFS, VFS, dentry, Page Cache, Hard Link             |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ The **Virtual File System (VFS)** is the Linux kernel's abstraction layer betwee
 Inode = file's identity card (metadata + data location); filename = label on the door; directory = door-label-to-identity-card mapping.
 
 **One analogy:**
+
 > A hospital patient has a medical record (inode) identified by patient ID. The hospital directory maps names ("John Smith") to patient IDs. Multiple nurses can refer to "John Smith", "Mr. Smith", or "Bed 42" — all pointing to the same medical record. Renaming the patient in one directory doesn't change the medical record. The record itself stores everything except the name.
 
 **One insight:**
@@ -58,6 +59,7 @@ Hard links only work within a filesystem because inode numbers are only unique w
 ### 🔩 First Principles Explanation
 
 INODE ON DISK (ext4):
+
 ```c
 struct ext4_inode {
     __le16  i_mode;         // File type + permissions (rwxrwxrwx)
@@ -77,6 +79,7 @@ struct ext4_inode {
 ```
 
 DIRECTORY ENTRY (dentry):
+
 ```
 /home/alice/notes.txt
   ↓ (directory lookup: "notes.txt")
@@ -109,6 +112,7 @@ df -i /var/log      # Shows: Inodes: 1048576, IUsed: 1048576, IFree: 0
 Each file requires one inode. ext4's default inode density: 1 inode per 16KB of space. On a 16GB partition: ~1 million inodes. With millions of small files: inodes exhausted, space remains.
 
 Fix at mkfs time:
+
 ```bash
 mkfs.ext4 -T small /dev/sdb1  # Higher inode density (1 per 1KB)
 ```
@@ -170,6 +174,7 @@ The separation of name (dentry) and metadata (inode) is what makes POSIX rename(
 ### 🔄 The Complete Picture — End-to-End Flow
 
 ATOMIC FILE UPDATE PATTERN (rename trick):
+
 ```bash
 # Application: update config file atomically
 # Pattern used by: Kubernetes, etcd, many databases
@@ -195,6 +200,7 @@ ATOMIC FILE UPDATE PATTERN (rename trick):
 ### 💻 Code Example
 
 Example 1 — Inode info in Python:
+
 ```python
 import os
 
@@ -209,6 +215,7 @@ print(f"mtime:         {stat.st_mtime}")      # modification time
 ```
 
 Example 2 — Hard link vs symbolic link:
+
 ```python
 import os
 
@@ -225,6 +232,7 @@ print(s1.st_nlink)              # 2 — both names count as links
 ```
 
 Example 3 — Atomic file write (Java NIO):
+
 ```java
 import java.nio.file.*;
 
@@ -248,23 +256,23 @@ Files.move(temp, target,
 
 ### ⚖️ Comparison Table
 
-| Feature | ext4 | XFS | btrfs | NFS |
-|---|---|---|---|---|
-| Inode allocation | Fixed at mkfs | Dynamic | Dynamic | Server-side |
-| Max file size | 16TB | 8EB | 16EB | Server-side |
-| Inline data | Yes (small files) | No | Yes | N/A |
-| Copy-on-Write | No | No | Yes | N/A |
-| Snapshots | No | Yes (limited) | Yes | N/A |
-| Small file perf | Good | Medium | Medium | Network-bound |
+| Feature          | ext4              | XFS           | btrfs   | NFS           |
+| ---------------- | ----------------- | ------------- | ------- | ------------- |
+| Inode allocation | Fixed at mkfs     | Dynamic       | Dynamic | Server-side   |
+| Max file size    | 16TB              | 8EB           | 16EB    | Server-side   |
+| Inline data      | Yes (small files) | No            | Yes     | N/A           |
+| Copy-on-Write    | No                | No            | Yes     | N/A           |
+| Snapshots        | No                | Yes (limited) | Yes     | N/A           |
+| Small file perf  | Good              | Medium        | Medium  | Network-bound |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Deleting a file frees its space immediately" | Only when link count = 0 AND no process has the file open; `unlink()` decrements link count |
-| "Renaming a file updates its mtime" | Rename updates ctime (inode change), not mtime (data modification) |
-| "You can run out of disk space with free inodes" | Yes — inode exhaustion is a separate limit from block exhaustion |
-| "Hard links work across filesystems" | No — inodes are filesystem-local; cross-filesystem links require copies (or symlinks) |
+| Misconception                                    | Reality                                                                                     |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| "Deleting a file frees its space immediately"    | Only when link count = 0 AND no process has the file open; `unlink()` decrements link count |
+| "Renaming a file updates its mtime"              | Rename updates ctime (inode change), not mtime (data modification)                          |
+| "You can run out of disk space with free inodes" | Yes — inode exhaustion is a separate limit from block exhaustion                            |
+| "Hard links work across filesystems"             | No — inodes are filesystem-local; cross-filesystem links require copies (or symlinks)       |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -273,6 +281,7 @@ Files.move(temp, target,
 Symptom: `touch newfile` or `write()` fails with ENOSPC despite `df -h` showing free space.
 
 Diagnosis:
+
 ```bash
 df -i /var/log     # Shows IFree: 0 → inode exhaustion
 find /var/log -maxdepth 1 -type d | while read d; do
@@ -295,15 +304,18 @@ Fix: Clients must handle ESTALE by re-walking the path; NFS v4 uses persistent f
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Virtual Memory` — page cache maps inode data into memory
 - `System Call (syscall)` — file operations (open/read/write/stat) are all syscalls into VFS
 
 **Builds On This (learn these next):**
+
 - `File Descriptor` — the user-space handle that references a VFS file object
 - `Memory-Mapped File (mmap)` — maps inode's page cache directly into process address space
 - `Page Cache` — kernel caches inode data blocks here to avoid disk I/O
 
 **Alternatives / Comparisons:**
+
 - `Object Storage (S3)` — no inodes, no directories — flat namespace with key → object; no rename atomicity
 - `Windows NTFS MFT` — analogous to inode table (Master File Table records)
 
@@ -337,6 +349,7 @@ Fix: Clients must handle ESTALE by re-walking the path; NFS v4 uses persistent f
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Docker images use a layered filesystem (OverlayFS on modern systems). Each layer is a set of file changes. OverlayFS merges a "lower" (read-only) directory and an "upper" (read-write) directory into a single "merged" view. When a container modifies a file that exists only in the lower layer, OverlayFS performs a **copy-up**: it copies the file from lower to upper, then the container modifies the copy. This copy-up triggers an inode allocation in the upper layer. Describe the exact performance implications of this copy-up for a Java application in a Docker container that does: (1) writes to a log file inside the container, (2) reads a large read-only configuration file, and (3) calls `stat()` on a file that exists in a lower layer but hasn't been accessed yet. Which of these triggers a copy-up and what is the overhead?

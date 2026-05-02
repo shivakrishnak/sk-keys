@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Test reporting transforms raw test results (pass/fail counts) into actionable insights — failure diagnosis, trend analysis, flakiness detection, and coverage visualization — enabling teams to understand and improve their testing effectiveness.
 
-| #1175 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, CI-CD, JUnit 5 | |
-| **Used by:** | Developers, QA, Tech Leads, Engineering Management | |
-| **Related:** | JUnit 5, CI-CD, SonarQube Quality Gate, Observability, Test Coverage Targets | |
+| #1175           | Category: Testing                                                            | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Unit Test, CI-CD, JUnit 5                                                    |                 |
+| **Used by:**    | Developers, QA, Tech Leads, Engineering Management                           |                 |
+| **Related:**    | JUnit 5, CI-CD, SonarQube Quality Gate, Observability, Test Coverage Targets |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -46,21 +46,23 @@ Test A fails today. Was it flaky or a real failure? Without historical test data
 Test reports answer "what failed, why, and how often" — turning test results into engineering decisions.
 
 **One analogy:**
+
 > Test reporting is the **control room dashboard**: during a NASA mission, raw telemetry data from thousands of sensors is useless. The dashboard transforms it into actionable signals — green lights for OK, amber for warning, red for immediate action required. Test reports are the dashboard for your test suite's health.
 
 ### 🔩 First Principles Explanation
 
 JUNIT XML — THE UNIVERSAL FORMAT:
+
 ```xml
 <!-- JUnit XML: produced by JUnit, TestNG, pytest, Jest, etc. -->
 <!-- Consumed by: Jenkins, GitHub Actions, GitLab CI, Allure, SonarQube -->
-<testsuite name="OrderServiceTest" tests="15" failures="1" errors="0" 
+<testsuite name="OrderServiceTest" tests="15" failures="1" errors="0"
            skipped="2" time="3.456">
-    
-    <testcase name="placeOrder_success" classname="com.example.OrderServiceTest" 
+
+    <testcase name="placeOrder_success" classname="com.example.OrderServiceTest"
               time="0.123"/>
-    
-    <testcase name="placeOrder_outOfStock_throws409" 
+
+    <testcase name="placeOrder_outOfStock_throws409"
               classname="com.example.OrderServiceTest" time="0.045">
         <failure type="AssertionError">
             Expected: 409
@@ -69,21 +71,22 @@ JUNIT XML — THE UNIVERSAL FORMAT:
             Caused by: NullPointerException at OrderService.java:234
         </failure>
     </testcase>
-    
+
     <testcase name="placeOrder_paymentFailed" classname="com.example.OrderServiceTest">
         <skipped message="@Disabled: payment gateway not available in CI"/>
     </testcase>
-    
+
 </testsuite>
 ```
 
 REPORTING TOOLS:
+
 ```
 1. MAVEN SUREFIRE HTML REPORT:
    Generated at: target/surefire-reports/index.html
    Shows: pass/fail per class and method, stack traces for failures
    Run: mvn test → automatic
-   
+
 2. ALLURE REPORT (rich, interactive):
    Integration: allure-junit5 + @Description, @Epic, @Feature, @Story annotations
    Generates: interactive HTML with:
@@ -92,7 +95,7 @@ REPORTING TOOLS:
      - Flaky tests detection
      - Attachment support (screenshots, logs, response bodies)
      - BDD-style test descriptions
-   
+
    @Test
    @Description("Order placed with valid credit card should return orderId")
    @Epic("Order Management")
@@ -110,7 +113,7 @@ REPORTING TOOLS:
    Uses JUnit XML to show test results in PR/workflow summary:
    - Total tests, passed, failed, skipped counts
    - List of failed tests with links to workflow step
-   
+
    - uses: dorny/test-reporter@v1
      with:
        name: Unit Tests
@@ -125,6 +128,7 @@ REPORTING TOOLS:
 ```
 
 KEY METRICS IN TEST REPORTS:
+
 ```
 PASS RATE:
   Current run: passed/total
@@ -137,7 +141,7 @@ DURATION:
 FAILURE ANALYSIS:
   Failure rate per test: "Test X fails 20% of runs → flaky"
   Failure correlation: tests that fail together (shared state issue)
-  
+
 COVERAGE TRENDS:
   Coverage this run vs. last week
   Coverage per module (is payment module dropping below 80%?)
@@ -148,6 +152,7 @@ SKIP RATE:
 ```
 
 FLAKINESS TRACKING:
+
 ```
 To detect flaky tests, track per-test history:
 
@@ -168,6 +173,7 @@ Tools that track this automatically:
 ### 🧪 Thought Experiment
 
 THE MISSING SKIP AUDIT:
+
 ```
 Project has 500 tests. CI always shows 500 run, 498 passed, 2 skipped.
 "Good enough."
@@ -185,7 +191,7 @@ Test report with SKIP TREND would have shown:
   Month 2: 5 skipped
   Month 3: 12 skipped
   Month 6: 20 skipped (alert: skip rate increasing)
-  
+
 Rule: @Disabled must have: (1) explanation, (2) JIRA ticket, (3) expiry (delete if not fixed within 30 days)
 ```
 
@@ -219,12 +225,12 @@ void placeOrder_validCard_returnsPendingOrder() {
     Allure.step("Given a product in stock", () -> {
         productService.setStock("PROD-001", 10);
     });
-    
+
     Allure.step("When order is placed with valid payment token", () -> {
         response = orderService.placeOrder(
             new OrderRequest("PROD-001", 1, "tok_visa_valid"));
     });
-    
+
     Allure.step("Then order status should be PENDING", () -> {
         assertThat(response.getStatus()).isEqualTo(OrderStatus.PENDING);
         assertThat(response.getOrderId()).isNotNull();
@@ -239,10 +245,10 @@ void placeOrder_validCard_returnsPendingOrder() {
 
 - name: Publish Test Report
   uses: dorny/test-reporter@v1
-  if: always()  # Run even if tests fail
+  if: always() # Run even if tests fail
   with:
     name: Unit Tests
-    path: 'target/surefire-reports/*.xml'
+    path: "target/surefire-reports/*.xml"
     reporter: java-junit
     fail-on-error: true
 
@@ -262,21 +268,21 @@ allure open target/site/allure-maven-plugin/
 
 ### ⚖️ Comparison Table
 
-| Tool | Type | Rich UI | Trend | Flakiness | Best For |
-|---|---|---|---|---|---|
-| JUnit XML | Format | No | No | No | CI parsing standard |
-| Maven Surefire HTML | Static HTML | Basic | No | No | Quick local review |
-| Allure Report | Interactive HTML | Excellent | Yes | Yes | Comprehensive test reporting |
-| Playwright HTML Report | Interactive HTML | Excellent (E2E) | No | Basic | E2E test diagnosis |
-| Gradle Enterprise | Cloud analytics | Excellent | Yes | Yes | Enterprise at scale |
+| Tool                   | Type             | Rich UI         | Trend | Flakiness | Best For                     |
+| ---------------------- | ---------------- | --------------- | ----- | --------- | ---------------------------- |
+| JUnit XML              | Format           | No              | No    | No        | CI parsing standard          |
+| Maven Surefire HTML    | Static HTML      | Basic           | No    | No        | Quick local review           |
+| Allure Report          | Interactive HTML | Excellent       | Yes   | Yes       | Comprehensive test reporting |
+| Playwright HTML Report | Interactive HTML | Excellent (E2E) | No    | Basic     | E2E test diagnosis           |
+| Gradle Enterprise      | Cloud analytics  | Excellent       | Yes   | Yes       | Enterprise at scale          |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "JUnit pass/fail count is sufficient reporting" | Without failure details, duration trends, and flakiness tracking, teams can't act on test health |
-| "Coverage report = test quality report" | Coverage shows what was executed; test quality requires mutation testing, failure analysis, and assertion review |
-| "Test reports are for QA only" | Test health metrics are engineering metrics — part of sprint health tracking and technical debt management |
+| Misconception                                   | Reality                                                                                                          |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| "JUnit pass/fail count is sufficient reporting" | Without failure details, duration trends, and flakiness tracking, teams can't act on test health                 |
+| "Coverage report = test quality report"         | Coverage shows what was executed; test quality requires mutation testing, failure analysis, and assertion review |
+| "Test reports are for QA only"                  | Test health metrics are engineering metrics — part of sprint health tracking and technical debt management       |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -319,6 +325,7 @@ Fix: Publish test summary to a persistent store (database, Allure server, Gradle
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Allure Report integrates with BDD frameworks (Cucumber, JBehave) to produce business-readable test reports. Describe: (1) how Cucumber BDD scenarios (`Given / When / Then`) are rendered in Allure as structured test steps with each step's pass/fail status, (2) how product owners and non-technical stakeholders can read Allure reports organized by `@Epic` and `@Feature` to understand what business behaviors are tested and passing, (3) the Allure Testops platform (Allure's enterprise product) — persistent test case management, linking test runs to requirements and bugs, test ownership, and historical analytics, (4) how screenshots captured by Playwright or Selenium tests are attached to Allure reports for failed tests — providing instant visual context for failure diagnosis without needing to reproduce locally, and (5) the "living documentation" value proposition — Allure reports as a continuously updated, always-accurate record of what the application does, linked to the code that verifies it.

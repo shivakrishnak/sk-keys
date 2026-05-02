@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — `fork()` creates an exact copy of the current process; `exec()` replaces that copy's image with a new program. Together, they are how Unix spawns every new process.
 
-| #0121 | Category: Operating Systems | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Process, Thread, System Call (syscall), Virtual Memory | |
-| **Used by:** | Shell, Process Supervision, Docker | |
-| **Related:** | COW (Copy-on-Write), execve, waitpid, Zombie Process | |
+| #0121           | Category: Operating Systems                            | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------- | :-------------- |
+| **Depends on:** | Process, Thread, System Call (syscall), Virtual Memory |                 |
+| **Used by:**    | Shell, Process Supervision, Docker                     |                 |
+| **Related:**    | COW (Copy-on-Write), execve, waitpid, Zombie Process   |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -52,6 +52,7 @@ The **fork-exec pattern** is the standard Unix mechanism for spawning a new proc
 `fork()` = copy yourself; `exec()` = become someone else. Shell runs ls by: fork (copy shell) then exec (become ls).
 
 **One analogy:**
+
 > Fork is like photocopying your entire desk setup (documents, pens, open books). Exec is then throwing away everything on your desk and replacing it with the materials for a completely different project. The desk (PID, file handles) stays the same; the content (program code, memory) is replaced.
 
 **One insight:**
@@ -60,6 +61,7 @@ Between fork and exec, the child has a unique moment: it's a copy of the parent 
 ### 🔩 First Principles Explanation
 
 FORK SEMANTICS:
+
 ```c
 pid_t pid = fork();
 if (pid < 0) {
@@ -76,6 +78,7 @@ if (pid < 0) {
 ```
 
 EXEC SEMANTICS:
+
 ```c
 // In child after fork:
 execvp("ls", argv);  // replaces program image with ls
@@ -95,6 +98,7 @@ Cost: Fork in large processes is still slow (page table duplication, TLB flush);
 ### 🧪 Thought Experiment
 
 SHELL PIPE IMPLEMENTATION (`ls | grep .md`):
+
 ```
 Shell:
 1. pipe(pipefd) → creates pipefd[0]=read, pipefd[1]=write
@@ -168,6 +172,7 @@ The fork-exec split is a design choice that emerged from PDP-7 Unix (1969). It w
 ### 🔄 The Complete Picture — End-to-End Flow
 
 SHELL COMMAND EXECUTION:
+
 ```
 1. User types: ls -la /tmp
 
@@ -200,6 +205,7 @@ SHELL COMMAND EXECUTION:
 ### 💻 Code Example
 
 Example 1 — Basic fork-exec in C:
+
 ```c
 #include <unistd.h>
 #include <sys/wait.h>
@@ -226,6 +232,7 @@ int main() {
 ```
 
 Example 2 — Fork-exec with pipe (implementing `ls | wc -l`):
+
 ```c
 int pipefd[2];
 pipe(pipefd);
@@ -254,6 +261,7 @@ waitpid(wc_pid, NULL, 0);
 ```
 
 Example 3 — Java ProcessBuilder (uses fork-exec):
+
 ```java
 // Java ProcessBuilder → fork-exec under the hood on Linux
 ProcessBuilder pb = new ProcessBuilder("ls", "-la", "/tmp");
@@ -269,23 +277,23 @@ System.out.println("Exit: " + exitCode);
 
 ### ⚖️ Comparison Table
 
-| Mechanism | Copies Parent? | New Program? | Use Case |
-|---|---|---|---|
-| **fork()** | Yes (COW) | No | Create child, then modify or exec |
-| **exec()** | N/A (replaces) | Yes | Replace current program image |
-| **fork() + exec()** | Yes, then discarded | Yes | Standard process spawning |
-| **vfork()** | Shares parent mm | Yes (must exec/exit) | Legacy, ultra-fast pre-exec |
-| **posix_spawn()** | No (atomic) | Yes | Efficient on large-heap processes |
-| **clone()** (Linux) | Selective | No | Threads, containers (namespace control) |
+| Mechanism           | Copies Parent?      | New Program?         | Use Case                                |
+| ------------------- | ------------------- | -------------------- | --------------------------------------- |
+| **fork()**          | Yes (COW)           | No                   | Create child, then modify or exec       |
+| **exec()**          | N/A (replaces)      | Yes                  | Replace current program image           |
+| **fork() + exec()** | Yes, then discarded | Yes                  | Standard process spawning               |
+| **vfork()**         | Shares parent mm    | Yes (must exec/exit) | Legacy, ultra-fast pre-exec             |
+| **posix_spawn()**   | No (atomic)         | Yes                  | Efficient on large-heap processes       |
+| **clone()** (Linux) | Selective           | No                   | Threads, containers (namespace control) |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "fork() copies all memory immediately" | COW: physical pages only copied on write; page tables are copied |
-| "exec() closes all file descriptors" | Only FDs with FD_CLOEXEC are closed; others are inherited into new program |
-| "fork() is always slow for large processes" | COW makes fork fast; slow only when child writes many pages before exec |
-| "fork() creates a thread" | fork creates a PROCESS (separate address space); threads use clone() with CLONE_VM |
+| Misconception                               | Reality                                                                            |
+| ------------------------------------------- | ---------------------------------------------------------------------------------- |
+| "fork() copies all memory immediately"      | COW: physical pages only copied on write; page tables are copied                   |
+| "exec() closes all file descriptors"        | Only FDs with FD_CLOEXEC are closed; others are inherited into new program         |
+| "fork() is always slow for large processes" | COW makes fork fast; slow only when child writes many pages before exec            |
+| "fork() creates a thread"                   | fork creates a PROCESS (separate address space); threads use clone() with CLONE_VM |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -296,6 +304,7 @@ Symptom: System becomes unresponsive; `fork failed: Resource temporarily unavail
 Root Cause: Process calling fork() in a loop without exec/exit; each child also forks: `:(){ :|:& };:` in bash.
 
 Prevention:
+
 ```bash
 # Set per-user process limit
 ulimit -u 1024          # session-level
@@ -313,6 +322,7 @@ Symptom: Child process (different program) unexpectedly holds parent's socket/fi
 Root Cause: Parent opened fd without O_CLOEXEC; fork+exec child inherits fd.
 
 Fix:
+
 ```c
 // Set O_CLOEXEC at open time
 int fd = open("file.txt", O_RDONLY | O_CLOEXEC);
@@ -324,16 +334,19 @@ fcntl(fd, F_SETFD, FD_CLOEXEC);
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Process` — fork creates a new process; need process model first
 - `Virtual Memory` — COW relies on virtual memory page mapping
 - `System Call (syscall)` — fork/exec are system calls
 
 **Builds On This (learn these next):**
+
 - `COW (Copy-on-Write)` — the optimisation that makes fork cheap for large processes
 - `Zombie Process` — what a fork'd child becomes after exit before waitpid()
 - `Linux Namespaces` — Docker uses clone() (not fork-exec) to create isolated containers
 
 **Alternatives / Comparisons:**
+
 - `posix_spawn()` — avoids fork overhead for large processes; fewer composability options
 - `CreateProcess()` (Windows) — atomic; no fork-exec pattern; separate environment setup API
 
@@ -366,6 +379,7 @@ fcntl(fd, F_SETFD, FD_CLOEXEC);
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Redis uses fork() for its persistence mechanisms (BGSAVE/BGREWRITEAOF). When Redis calls fork(), the child process gets a COW copy of the entire dataset. If Redis is handling 100k writes/second with a 10GB dataset, and the BGSAVE fork'd child takes 30 seconds to write the RDB file, approximately how many COW page faults occur and what is the memory overhead? Calculate the worst-case scenario (all writes touch different pages, 4KB page size) and explain why Redis documentation warns about memory usage doubling during BGSAVE on a write-heavy system.

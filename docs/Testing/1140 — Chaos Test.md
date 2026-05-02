@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Chaos testing deliberately injects failures (kill a pod, saturate a network, corrupt a dependency) into a running system to verify resilience mechanisms work and discover unknown failure modes before users do.
 
-| #1140 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Stress Test, Distributed Systems, Observability | |
-| **Used by:** | SRE, Resilience Engineering, Netflix, Google | |
-| **Related:** | Chaos Monkey, GameDay, Fault Injection, Circuit Breaker, Chaos Engineering | |
+| #1140           | Category: Testing                                                          | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Stress Test, Distributed Systems, Observability                            |                 |
+| **Used by:**    | SRE, Resilience Engineering, Netflix, Google                               |                 |
+| **Related:**    | Chaos Monkey, GameDay, Fault Injection, Circuit Breaker, Chaos Engineering |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -49,6 +49,7 @@ Netflix's Chaos Monkey (2010) by Yury Izrailevsky and Ariel Tseitlin was the fir
 Chaos test = deliberately break something, verify the system survives, find out what you didn't know you didn't know.
 
 **One analogy:**
+
 > A fire drill is chaos engineering: you deliberately trigger the fire alarm (inject a failure), verify people evacuate safely (steady state maintained), and discover weaknesses before a real fire (the blocked stairwell, the broken exit sign). Chaos engineering is the fire drill for distributed systems.
 
 **One insight:**
@@ -57,48 +58,50 @@ Chaos engineering is not just about the failures you can think of — it's about
 ### 🔩 First Principles Explanation
 
 CHAOS EXPERIMENT PROTOCOL (scientific method):
+
 ```
 1. DEFINE STEADY STATE:
    - p99 API latency < 200ms
    - Error rate < 0.1%
    - All services returning 200 on /health
-   
+
 2. FORM HYPOTHESIS:
    "Steady state continues when the payment service is unavailable"
-   
+
 3. INJECT FAILURE:
    - Kill payment service pods (kubectl delete pod payment-service-*)
    - OR: network partition (iptables DROP on payment service port)
    - OR: CPU saturation (stress-ng --cpu 100%)
    - OR: disk full (fill /var/log with junk)
    - OR: high latency (tc netem delay 500ms)
-   
+
 4. OBSERVE:
    - Does the product listing page still work? (expected: yes, degraded)
    - Does checkout still work? (expected: graceful error "payment unavailable")
    - Does the system recover after payment service returns?
    - Any cascade failures to unrelated services?
-   
+
 5. VERIFY OR FALSIFY:
    PASS: checkout shows graceful error, other features unaffected, recovery in 10s
    FAIL: cascade to product service, OR recovery required manual restart
-   
+
 6. DOCUMENT AND FIX:
    Finding: Cache service not isolated from payment timeout → cascade
    Fix: Add bulkhead for payment service calls
 ```
 
 CHAOS TOOLS:
+
 ```
 Kubernetes:
   - Chaos Mesh (CNCF): pod kill, network partition, disk I/O
   - Litmus Chaos (CNCF): workflow-based chaos experiments
   - Gremlin: enterprise SaaS chaos platform
-  
+
 Netflix OSS:
   - Chaos Monkey: random EC2 instance termination
   - Chaos Kong: terminate entire AWS regions
-  
+
 AWS:
   - Fault Injection Simulator (FIS): AWS-native chaos for EC2, RDS, ECS
 
@@ -114,15 +117,16 @@ Cost: Risk of unintended impact (blast radius must be controlled); requires matu
 ### 🧪 Thought Experiment
 
 THE HEALTH CHECK CASCADE BUG:
+
 ```
 System: 5 microservices, each with /health endpoint
 Health check implementation:
   /health → SELECT 1 FROM users LIMIT 1  (DB connectivity check)
-  
+
 Chaos experiment: saturate order-service DB (inject slow queries)
   Expected: order-service degrades, other services unaffected
   Actual: ALL services degrade
-  
+
 Root cause:
   order-service DB slow → order-service /health times out
   Load balancer health check fails → removes order-service instances
@@ -233,13 +237,13 @@ metadata:
   namespace: staging
 spec:
   action: pod-kill
-  mode: one          # kill one pod at a time
+  mode: one # kill one pod at a time
   selector:
     namespaces: [staging]
     labelSelectors:
       "app": "payment-service"
   scheduler:
-    cron: "@every 2m"  # kill a pod every 2 minutes
+    cron: "@every 2m" # kill a pod every 2 minutes
 
 ---
 # Chaos Mesh: NetworkChaos - inject 500ms latency + 10% packet loss
@@ -257,10 +261,10 @@ spec:
       "app": "order-service"
   delay:
     latency: "500ms"
-    correlation: "25"   # 25% correlated with previous latency
+    correlation: "25" # 25% correlated with previous latency
     jitter: "100ms"
   loss:
-    loss: "10"          # 10% packet loss
+    loss: "10" # 10% packet loss
   duration: "10m"
 ```
 
@@ -287,22 +291,22 @@ toxiproxy-cli toxic remove order-service -n packet_loss
 
 ### ⚖️ Comparison Table
 
-| Testing Type | What is Tested | Failure Mode | Goal |
-|---|---|---|---|
-| Unit test | Function logic | Incorrect output | Correctness |
-| Integration test | Component interaction | Integration bug | Correctness |
-| Load test | Performance at scale | SLA breach | Performance |
-| Stress test | Performance beyond max | Breaking point | Capacity |
-| **Chaos test** | Resilience under failure | Unknown failure modes | Resilience |
+| Testing Type     | What is Tested           | Failure Mode          | Goal        |
+| ---------------- | ------------------------ | --------------------- | ----------- |
+| Unit test        | Function logic           | Incorrect output      | Correctness |
+| Integration test | Component interaction    | Integration bug       | Correctness |
+| Load test        | Performance at scale     | SLA breach            | Performance |
+| Stress test      | Performance beyond max   | Breaking point        | Capacity    |
+| **Chaos test**   | Resilience under failure | Unknown failure modes | Resilience  |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Chaos testing = breaking things randomly" | Chaos engineering is hypothesis-driven and controlled; not random destruction |
+| Misconception                                | Reality                                                                                                        |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| "Chaos testing = breaking things randomly"   | Chaos engineering is hypothesis-driven and controlled; not random destruction                                  |
 | "Chaos tests should have pass/fail criteria" | Chaos tests document what happens; the finding may be "PASS: resilient" or "FAIL: cascade" — both are valuable |
-| "Only large companies need chaos testing" | Any distributed system with > 3 services benefits; the simpler the experiment, the more accessible |
-| "Chaos testing is only for production" | Start in staging; progress to production only after staging experiments pass |
+| "Only large companies need chaos testing"    | Any distributed system with > 3 services benefits; the simpler the experiment, the more accessible             |
+| "Chaos testing is only for production"       | Start in staging; progress to production only after staging experiments pass                                   |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -350,6 +354,7 @@ Prevention: Use Kubernetes namespace selectors. Start with `mode: one` (one pod)
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Netflix's Chaos Kong terminates an entire AWS availability zone (AZ) to test multi-AZ resilience. To run this experiment safely, Netflix requires: (1) circuit breakers verified, (2) graceful degradation proven, (3) AZ-independent data replication, (4) traffic shifting automation tested. Describe the exact sequencing of what happens when an AZ goes down: at t=0, the AZ's EC2 instances stop responding. Describe: (a) how the ELB health checks detect the AZ failure and over what time period, (b) how Route 53 weighted routing shifts traffic to healthy AZs, (c) why DynamoDB global tables (eventual consistency) behave differently from RDS Multi-AZ (synchronous replication) during this failure, and (d) the "recovery" phase — what prevents thundering herd when the AZ comes back online.

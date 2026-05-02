@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Golden path testing validates the most critical, highest-value user journeys (the "happy paths" core to business value) to ensure they work end-to-end, serving as the minimum bar for deployment confidence.
 
-| #1167 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | E2E Test, Smoke Test, Test Environments | |
-| **Used by:** | QA Teams, Platform Engineers, Developers | |
-| **Related:** | Smoke Test, E2E Test, Approval Testing, Canary Deployment, Observability | |
+| #1167           | Category: Testing                                                        | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | E2E Test, Smoke Test, Test Environments                                  |                 |
+| **Used by:**    | QA Teams, Platform Engineers, Developers                                 |                 |
+| **Related:**    | Smoke Test, E2E Test, Approval Testing, Canary Deployment, Observability |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -45,11 +45,13 @@ THE DEPLOYMENT CONFIDENCE QUESTION:
 Golden path tests = the vital few user journeys that must work — fast, automated deployment gate.
 
 **One analogy:**
+
 > Golden path tests are the **hospital vital signs check** (heart rate, blood pressure, oxygen) — not a full body scan. If vitals are stable, the patient is stable enough for discharge. The full diagnostic work-up comes later. Vitals give confidence quickly; comprehensive testing provides completeness slowly.
 
 ### 🔩 First Principles Explanation
 
 IDENTIFYING GOLDEN PATHS:
+
 ```
 CRITERIA for golden path selection:
   1. Frequency: most frequently used user journeys
@@ -60,21 +62,22 @@ CRITERIA for golden path selection:
 EXAMPLE — E-commerce platform golden paths:
   1. User Registration Journey:
      → Homepage → Register → Email verification → Login → Profile
-     
+
   2. Product Discovery + Purchase:
      → Search → Product page → Add to cart → Checkout → Order confirmation
-     
+
   3. Order Management:
      → Login → Orders → Order detail → Track shipment
-     
+
   4. Account Access:
      → Login → Dashboard → Account settings
-     
+
   These 4 paths cover: auth, core commerce, post-purchase — the entire business loop.
   If ANY fails → users cannot transact → deployment blocked.
 ```
 
 GOLDEN PATH vs FULL E2E vs SMOKE TEST:
+
 ```
                     ┌───────────────┬─────────────────┬──────────────────┐
                     │  Smoke Test   │  Golden Path    │  Full E2E Suite  │
@@ -96,21 +99,22 @@ GOLDEN PATH vs FULL E2E vs SMOKE TEST:
 ```
 
 IMPLEMENTATION STRATEGY:
+
 ```
 1. CATALOG critical paths (workshop with product, engineering, business):
    → Map user journeys by revenue/frequency impact
    → Select top N paths as "golden"
    → Document acceptance criteria for each
-   
+
 2. AUTOMATE as focused E2E tests (Playwright, Cypress):
    → One test file per golden path
    → Each test: < 60 seconds
    → No flakiness tolerated (zero tolerance)
-   
+
 3. RUN in fast CI stage (pre-deployment gate):
    Stage 1 (< 5 min): Golden path tests
    Stage 2 (< 30 min): Full E2E suite (nightly or on release)
-   
+
 4. ALERT: Golden path failure = STOP deployment + immediate alert
    Full E2E failure = track and fix before next release (not immediate blocker)
 ```
@@ -118,6 +122,7 @@ IMPLEMENTATION STRATEGY:
 ### 🧪 Thought Experiment
 
 WHEN THE SEARCH BROKE AND NOBODY KNEW:
+
 ```
 E-commerce site: full E2E suite has 800 tests, takes 90 minutes.
 Golden path tests: 8 tests, takes 4 minutes.
@@ -132,7 +137,7 @@ Without golden path tests: 2 hours until full E2E run finds it; meanwhile 10,000
 With golden path tests: Deployment blocked at 4-minute gate.
                         Zero users impacted. Zero revenue lost.
 
-Lesson: a fast, focused golden path suite gives faster feedback on critical failures 
+Lesson: a fast, focused golden path suite gives faster feedback on critical failures
         than a slow, comprehensive suite that runs infrequently.
 ```
 
@@ -154,33 +159,33 @@ Lesson: a fast, focused golden path suite gives faster feedback on critical fail
 
 ```typescript
 // Playwright — golden path: user purchases a product
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Golden Path: Product Purchase', () => {
-  
-  test('user can search, add to cart, and checkout', async ({ page }) => {
+test.describe("Golden Path: Product Purchase", () => {
+  test("user can search, add to cart, and checkout", async ({ page }) => {
     // 1. Search
-    await page.goto('/');
-    await page.fill('[data-testid="search-input"]', 'laptop');
-    await page.press('[data-testid="search-input"]', 'Enter');
-    await expect(page.locator('[data-testid="product-card"]').first()).toBeVisible();
-    
+    await page.goto("/");
+    await page.fill('[data-testid="search-input"]', "laptop");
+    await page.press('[data-testid="search-input"]', "Enter");
+    await expect(
+      page.locator('[data-testid="product-card"]').first(),
+    ).toBeVisible();
+
     // 2. Product page
     await page.locator('[data-testid="product-card"]').first().click();
     await expect(page.locator('[data-testid="product-title"]')).toBeVisible();
     await expect(page.locator('[data-testid="add-to-cart"]')).toBeEnabled();
-    
+
     // 3. Add to cart
     await page.click('[data-testid="add-to-cart"]');
-    await expect(page.locator('[data-testid="cart-count"]')).toHaveText('1');
-    
+    await expect(page.locator('[data-testid="cart-count"]')).toHaveText("1");
+
     // 4. Checkout
-    await page.goto('/checkout');
+    await page.goto("/checkout");
     await expect(page.locator('[data-testid="order-summary"]')).toBeVisible();
-    
+
     // Golden path validated: search → product → cart → checkout
   });
-  
 });
 ```
 
@@ -193,10 +198,10 @@ jobs:
     steps:
       - name: Run golden path tests
         run: npx playwright test --project=golden-paths
-  
+
   full-e2e:
     name: Full E2E Suite
-    needs: [golden-path, deploy]  # runs after deployment succeeds
+    needs: [golden-path, deploy] # runs after deployment succeeds
     timeout-minutes: 60
     steps:
       - name: Run full E2E
@@ -205,20 +210,20 @@ jobs:
 
 ### ⚖️ Comparison Table
 
-| | Smoke Test | Golden Path | Full E2E |
-|---|---|---|---|
-| Scope | App is alive | Critical value paths | All scenarios |
-| Speed | < 1 min | 2-10 min | 30-120 min |
-| Deployment gate | Yes (pre-deploy) | Yes (primary gate) | No (nightly) |
+|                  | Smoke Test        | Golden Path           | Full E2E         |
+| ---------------- | ----------------- | --------------------- | ---------------- |
+| Scope            | App is alive      | Critical value paths  | All scenarios    |
+| Speed            | < 1 min           | 2-10 min              | 30-120 min       |
+| Deployment gate  | Yes (pre-deploy)  | Yes (primary gate)    | No (nightly)     |
 | Failure severity | Critical (outage) | Critical (value path) | Medium (feature) |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Golden path = happy path only" | Golden path can include critical error paths (e.g., "card declined handled gracefully") — critical, not necessarily happy |
-| "More E2E tests = more confidence" | A fast, reliable golden path suite gives more actionable deployment confidence than a slow, comprehensive suite |
-| "Golden path is the only test you need" | Golden paths are the MINIMUM, not sufficient — the full test pyramid still applies |
+| Misconception                           | Reality                                                                                                                   |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| "Golden path = happy path only"         | Golden path can include critical error paths (e.g., "card declined handled gracefully") — critical, not necessarily happy |
+| "More E2E tests = more confidence"      | A fast, reliable golden path suite gives more actionable deployment confidence than a slow, comprehensive suite           |
+| "Golden path is the only test you need" | Golden paths are the MINIMUM, not sufficient — the full test pyramid still applies                                        |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -258,6 +263,7 @@ Fix: Zero flakiness tolerance for golden paths — fix flakiness immediately (hi
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Golden path tests are run against production (or production-like environments) continuously, not just on deployment. Describe: (1) the "synthetic monitoring" pattern — golden path tests run on a schedule (every 5 minutes) against production, alerting when they fail (this is how you detect "the search broke at 3am for no apparent reason"), (2) the tooling overlap between test automation (Playwright/Cypress) and synthetic monitoring (Datadog Synthetics, New Relic Synthetics) — many companies use the same Playwright tests for both, (3) the test data management challenge (tests run against production — must not create real orders, so use dedicated test accounts, test product SKUs, and payment test tokens), and (4) how synthetic monitoring golden path results feed into SLO/SLI dashboards (each golden path test = a synthetic SLI probe for a critical user journey).

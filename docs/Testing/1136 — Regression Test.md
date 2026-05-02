@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A regression test verifies that code changes don't break previously working functionality — it's the safety net that catches "it worked before your change" bugs.
 
-| #1136 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, Integration Test, CI-CD | |
-| **Used by:** | CI-CD, Release Gating, Bug Fix Verification | |
-| **Related:** | Test Suite, Test Coverage, Flaky Tests, Bisect | |
+| #1136           | Category: Testing                              | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------- | :-------------- |
+| **Depends on:** | Unit Test, Integration Test, CI-CD             |                 |
+| **Used by:**    | CI-CD, Release Gating, Bug Fix Verification    |                 |
+| **Related:**    | Test Suite, Test Coverage, Flaky Tests, Bisect |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ The specific practice of writing a regression test before fixing a bug (**bug-dr
 Regression test = "this worked yesterday — prove it still works today."
 
 **One analogy:**
+
 > Every time a building inspector finds a code violation during an inspection, they add it to the checklist. Every future inspection includes that item. Buildings can't regress to the same violation. Regression tests are the growing inspection checklist for your software.
 
 **One insight:**
@@ -58,6 +59,7 @@ The most valuable regression tests come from production bugs. Every production i
 ### 🔩 First Principles Explanation
 
 BUG-DRIVEN TESTING WORKFLOW:
+
 ```
 1. Bug reported: "Checkout fails for users with apostrophe in last name (O'Brien)"
 2. Write failing test FIRST:
@@ -76,6 +78,7 @@ BUG-DRIVEN TESTING WORKFLOW:
 
 REGRESSION TEST SELECTION:
 When CI takes 30 minutes with 5000 tests, you can't run all tests on every commit. Strategies:
+
 - **Test impact analysis**: only run tests that cover changed code (JVM: `mvn -Dsurefire.runOrder=testng -Dsurefire.failIfNoSpecifiedTests=false`)
 - **Risk-based selection**: always run smoke tests; run integration tests on changes to integration layers; run full suite before release
 - **Parallel execution**: split tests across workers (Maven Surefire `forkCount`, Gradle parallel)
@@ -87,6 +90,7 @@ Cost: Growing test suite = slower CI; maintaining tests as code evolves; flaky r
 ### 🧪 Thought Experiment
 
 THE DATE PARSING REGRESSION:
+
 ```
 Release 1.0: DateParser.parse("2024-01-15") works correctly
 Developer: "I'll optimise date parsing with a regex"
@@ -207,21 +211,21 @@ void checkout_internationalNames_succeed(String lastName) {
 
 ### ⚖️ Comparison Table
 
-| Practice | Goal | Trigger |
-|---|---|---|
+| Practice            | Goal                                | Trigger                  |
+| ------------------- | ----------------------------------- | ------------------------ |
 | **Regression Test** | Prevent known bugs from reappearing | Bug fix commits, all PRs |
-| Unit Test | Verify function behavior | Development, TDD |
-| Smoke Test | Verify deploy health | Post-deployment |
-| E2E Test | Verify user journeys | Release gates |
+| Unit Test           | Verify function behavior            | Development, TDD         |
+| Smoke Test          | Verify deploy health                | Post-deployment          |
+| E2E Test            | Verify user journeys                | Release gates            |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Regression tests are a special test type" | All tests in your suite are regression tests — they all run to detect regressions |
-| "Only write regression tests for bugs" | Write them for any behavior you want to preserve through future changes |
-| "100% regression test pass = no bugs" | Tests can't cover unknown scenarios; they cover known scenarios |
-| "Regression tests slow down development" | Regression tests prevent the 10× more expensive rework of fixing same bugs repeatedly |
+| Misconception                              | Reality                                                                               |
+| ------------------------------------------ | ------------------------------------------------------------------------------------- |
+| "Regression tests are a special test type" | All tests in your suite are regression tests — they all run to detect regressions     |
+| "Only write regression tests for bugs"     | Write them for any behavior you want to preserve through future changes               |
+| "100% regression test pass = no bugs"      | Tests can't cover unknown scenarios; they cover known scenarios                       |
+| "Regression tests slow down development"   | Regression tests prevent the 10× more expensive rework of fixing same bugs repeatedly |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -263,6 +267,7 @@ Fix: Quarantine flaky tests (`@Disabled` + ticket); investigate root cause syste
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** `git bisect` is a binary search algorithm for finding the commit that introduced a regression. `git bisect start; git bisect bad HEAD; git bisect good v1.0.0` checks out the middle commit; you mark it good or bad; it halves the search space. `git bisect run mvn test -Dtest=MyRegressionTest` automates this — the test itself determines good/bad. With 200 commits between v1.0.0 and HEAD: (a) how many commits does git bisect need to check (log₂(200) ≈ 8), (b) if the test takes 2 minutes to run, total bisect time is 16 minutes vs checking all 200 (400 min), (c) describe a scenario where `git bisect run` gives a false result (the test itself is flaky or the bug requires multiple commits together — a "compound regression").

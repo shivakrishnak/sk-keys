@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A stress test pushes a system beyond its expected maximum load until it fails, revealing where it breaks and how gracefully it degrades — answering "what is our actual limit, and do we fail safely?"
 
-| #1139 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Load Test, Performance Test, Observability | |
-| **Used by:** | SRE, Capacity Planning, Chaos Engineering, Incident Prevention | |
-| **Related:** | Load Test, Soak Test, Chaos Test, Breaking Point, Autoscaling | |
+| #1139           | Category: Testing                                              | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Load Test, Performance Test, Observability                     |                 |
+| **Used by:**    | SRE, Capacity Planning, Chaos Engineering, Incident Prevention |                 |
+| **Related:**    | Load Test, Soak Test, Chaos Test, Breaking Point, Autoscaling  |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -48,6 +48,7 @@ A **stress test** is a type of performance test that increases load beyond the s
 Stress test = push past maximum until it breaks, observe HOW it breaks, verify it recovers.
 
 **One analogy:**
+
 > Material stress testing: engineers apply increasing force to a bridge beam until it breaks, observe the failure point, and examine whether it bends gracefully (ductile failure: warning before collapse) or shatters suddenly (brittle failure: no warning). Software stress tests look for the same: does your service degrade gracefully (shed load, return 503) or fail brittlely (deadlock, data corruption, unrecoverable state)?
 
 **One insight:**
@@ -56,6 +57,7 @@ The most important outcome of a stress test is not the breaking point itself —
 ### 🔩 First Principles Explanation
 
 STRESS TEST PROTOCOL:
+
 ```
 1. Establish baseline: run load test at expected peak (2,000 RPS) → confirm PASS
 2. Increment load beyond peak in steps: +20% per step, hold 5 minutes each:
@@ -85,10 +87,11 @@ STRESS TEST PROTOCOL:
 ```
 
 GRACEFUL DEGRADATION PATTERNS:
+
 ```
 Load shedding: when at capacity, reject new requests with 503 (Retry-After)
   → Users see error, can retry; server stays responsive for current load
-  
+
 Circuit breaker: when downstream fails, open circuit, return fallback
   → Users get cached/degraded response; server not overwhelmed by retries
 
@@ -106,6 +109,7 @@ Cost: Requires dedicated environment (stress can damage or leave residual state)
 ### 🧪 Thought Experiment
 
 DISCOVERING THE CASCADING FAILURE:
+
 ```
 Stress test at 4,000 RPS (2× expected peak):
   t=0: 4,000 RPS applied
@@ -204,45 +208,45 @@ Pre-release stress test for new search feature:
 
 ```javascript
 // k6 stress test with incremental stages
-import http from 'k6/http';
-import { check, sleep } from 'k6';
-import { Rate, Trend } from 'k6/metrics';
+import http from "k6/http";
+import { check, sleep } from "k6";
+import { Rate, Trend } from "k6/metrics";
 
-const errorRate = new Rate('error_rate');
+const errorRate = new Rate("error_rate");
 
 export const options = {
   stages: [
     // Baseline
-    { duration: '5m', target: 200 },
-    { duration: '5m', target: 200 },
+    { duration: "5m", target: 200 },
+    { duration: "5m", target: 200 },
     // Stress phases (incremental)
-    { duration: '3m', target: 300 },
-    { duration: '5m', target: 300 },
-    { duration: '3m', target: 400 },
-    { duration: '5m', target: 400 },
-    { duration: '3m', target: 600 },
-    { duration: '5m', target: 600 },
-    { duration: '3m', target: 800 },
-    { duration: '5m', target: 800 },
+    { duration: "3m", target: 300 },
+    { duration: "5m", target: 300 },
+    { duration: "3m", target: 400 },
+    { duration: "5m", target: 400 },
+    { duration: "3m", target: 600 },
+    { duration: "5m", target: 600 },
+    { duration: "3m", target: 800 },
+    { duration: "5m", target: 800 },
     // Recovery phase: return to baseline
-    { duration: '5m', target: 200 },
-    { duration: '5m', target: 200 },
+    { duration: "5m", target: 200 },
+    { duration: "5m", target: 200 },
   ],
   // No hard thresholds — observe rather than fail
   // (Stress tests document behavior; they're not pass/fail gates)
 };
 
-export default function() {
-  const res = http.get(`${__ENV.BASE_URL}/api/products/search?q=laptop`,
-    { timeout: '10s' }
-  );
+export default function () {
+  const res = http.get(`${__ENV.BASE_URL}/api/products/search?q=laptop`, {
+    timeout: "10s",
+  });
 
   errorRate.add(res.status >= 500 || res.status === 0);
 
   check(res, {
-    'status ok or overloaded': (r) =>
+    "status ok or overloaded": (r) =>
       r.status === 200 || r.status === 503 || r.status === 429,
-    'no unexpected errors': (r) => r.status !== 500,  // 503 is expected, 500 is not
+    "no unexpected errors": (r) => r.status !== 500, // 503 is expected, 500 is not
   });
 
   sleep(1 + Math.random() * 2);
@@ -250,6 +254,7 @@ export default function() {
 ```
 
 Spring Boot load shedding with `RateLimiter`:
+
 ```java
 @RestController
 public class SearchController {
@@ -270,21 +275,21 @@ public class SearchController {
 
 ### ⚖️ Comparison Table
 
-| Type | Load | Goal | Pass/Fail |
-|---|---|---|---|
-| Load Test | Expected max | Verify SLA met | Hard threshold |
-| **Stress Test** | Beyond max | Find breaking point + failure mode | Observe (no hard fail) |
-| Soak Test | 70% load, long duration | Detect resource leaks | Resource growth threshold |
-| Spike Test | Sudden surge | Verify autoscaling response | Recovery time threshold |
+| Type            | Load                    | Goal                               | Pass/Fail                 |
+| --------------- | ----------------------- | ---------------------------------- | ------------------------- |
+| Load Test       | Expected max            | Verify SLA met                     | Hard threshold            |
+| **Stress Test** | Beyond max              | Find breaking point + failure mode | Observe (no hard fail)    |
+| Soak Test       | 70% load, long duration | Detect resource leaks              | Resource growth threshold |
+| Spike Test      | Sudden surge            | Verify autoscaling response        | Recovery time threshold   |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Stress tests should have pass/fail criteria" | Stress tests document behavior; the outcome (failure mode) is the result — not a binary pass/fail |
-| "High breaking point = better" | Breaking point matters less than failure mode; graceful degradation at 3,000 RPS > data corruption at 5,000 RPS |
-| "Recovery is automatic" | Recovery must be TESTED — many systems require manual intervention after stress |
-| "Stress test and load test are the same" | Load test: verify SLA at expected load; stress test: find limits beyond expected load |
+| Misconception                                 | Reality                                                                                                         |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| "Stress tests should have pass/fail criteria" | Stress tests document behavior; the outcome (failure mode) is the result — not a binary pass/fail               |
+| "High breaking point = better"                | Breaking point matters less than failure mode; graceful degradation at 3,000 RPS > data corruption at 5,000 RPS |
+| "Recovery is automatic"                       | Recovery must be TESTED — many systems require manual intervention after stress                                 |
+| "Stress test and load test are the same"      | Load test: verify SLA at expected load; stress test: find limits beyond expected load                           |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -331,6 +336,7 @@ Prevention: Use WireMock or mocks for downstream dependencies during stress test
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Netflix's Chaos Monkey randomly terminates production EC2 instances during business hours. This is effectively a stress test in production with a specific failure injection (instance death). Netflix found that by normalising chaos in production (small continuous failures), they build more resilient systems than companies that only experience failures during accidental outages. Compare Netflix's production chaos engineering to a pre-production stress test: (a) what class of failures does production chaos catch that staging stress tests miss (different traffic patterns, actual production data, real third-party API behavior), (b) what safety requirements must be in place before running production chaos (circuit breakers, graceful degradation verified, business hours only), and (c) why Netflix runs chaos during business hours (not nights/weekends) — what does this tell you about their confidence in their resilience?

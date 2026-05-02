@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Gatling and k6 are load testing tools that simulate thousands of concurrent users against your application, measuring response times, throughput, and error rates to validate performance requirements and find breaking points.
 
-| #1173 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Performance Test, Load Test, Stress Test | |
-| **Used by:** | Performance Engineers, DevOps, SREs | |
-| **Related:** | Performance Test, Load Test, Stress Test, Observability, Grafana, k6 | |
+| #1173           | Category: Testing                                                    | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Performance Test, Load Test, Stress Test                             |                 |
+| **Used by:**    | Performance Engineers, DevOps, SREs                                  |                 |
+| **Related:**    | Performance Test, Load Test, Stress Test, Observability, Grafana, k6 |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -43,11 +43,13 @@ Unit and integration tests verify correctness for a single user. Load testing ve
 Load testing = simulate N concurrent users hitting your app; measure response time + error rate; find breaking point.
 
 **One analogy:**
+
 > Load testing is a **fire drill for your infrastructure**: instead of discovering your building's evacuation capacity when there's a real fire, you schedule a drill — 500 people, all at once, through the exit doors. You measure: how long does evacuation take? When does it become chaotic? Where are the bottlenecks (narrow staircase = database connection pool)? You fix them before the real emergency.
 
 ### 🔩 First Principles Explanation
 
 LOAD TEST TYPES:
+
 ```
 LOAD TEST (expected peak):
   Simulate expected maximum concurrent users
@@ -71,64 +73,71 @@ SPIKE TEST (sudden surge):
 ```
 
 k6 EXAMPLE:
+
 ```javascript
 // k6 script: load test the checkout API
-import http from 'k6/http';
-import { check, sleep } from 'k6';
-import { Rate, Trend } from 'k6/metrics';
+import http from "k6/http";
+import { check, sleep } from "k6";
+import { Rate, Trend } from "k6/metrics";
 
 // Custom metrics
-const errorRate = new Rate('errors');
-const checkoutTime = new Trend('checkout_duration_ms');
+const errorRate = new Rate("errors");
+const checkoutTime = new Trend("checkout_duration_ms");
 
 export const options = {
-    stages: [
-        { duration: '2m', target: 100 },   // ramp up: 0 → 100 users
-        { duration: '5m', target: 100 },   // steady: 100 users for 5 min
-        { duration: '2m', target: 500 },   // spike: 100 → 500 users
-        { duration: '5m', target: 500 },   // sustained: 500 users
-        { duration: '2m', target: 0 },     // ramp down
-    ],
-    thresholds: {
-        http_req_duration: ['p(95)<500'],  // 95% of requests < 500ms
-        http_req_failed: ['rate<0.01'],    // < 1% error rate
-        errors: ['rate<0.01'],
-    },
+  stages: [
+    { duration: "2m", target: 100 }, // ramp up: 0 → 100 users
+    { duration: "5m", target: 100 }, // steady: 100 users for 5 min
+    { duration: "2m", target: 500 }, // spike: 100 → 500 users
+    { duration: "5m", target: 500 }, // sustained: 500 users
+    { duration: "2m", target: 0 }, // ramp down
+  ],
+  thresholds: {
+    http_req_duration: ["p(95)<500"], // 95% of requests < 500ms
+    http_req_failed: ["rate<0.01"], // < 1% error rate
+    errors: ["rate<0.01"],
+  },
 };
 
 export default function () {
-    const start = Date.now();
-    
-    const response = http.post(
-        'https://staging.myapp.com/api/v1/checkout',
-        JSON.stringify({ cartId: '12345', paymentToken: 'tok_test' }),
-        { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${__ENV.AUTH_TOKEN}` } }
-    );
-    
-    const duration = Date.now() - start;
-    checkoutTime.add(duration);
-    
-    const passed = check(response, {
-        'status is 200': (r) => r.status === 200,
-        'response time < 1s': (r) => r.timings.duration < 1000,
-        'has orderId': (r) => JSON.parse(r.body).orderId !== undefined,
-    });
-    
-    errorRate.add(!passed);
-    
-    sleep(1);  // Think time between requests (realistic user pacing)
+  const start = Date.now();
+
+  const response = http.post(
+    "https://staging.myapp.com/api/v1/checkout",
+    JSON.stringify({ cartId: "12345", paymentToken: "tok_test" }),
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${__ENV.AUTH_TOKEN}`,
+      },
+    },
+  );
+
+  const duration = Date.now() - start;
+  checkoutTime.add(duration);
+
+  const passed = check(response, {
+    "status is 200": (r) => r.status === 200,
+    "response time < 1s": (r) => r.timings.duration < 1000,
+    "has orderId": (r) => JSON.parse(r.body).orderId !== undefined,
+  });
+
+  errorRate.add(!passed);
+
+  sleep(1); // Think time between requests (realistic user pacing)
 }
 ```
 
 GATLING EXAMPLE (Java DSL):
+
 ```java
 public class CheckoutSimulation extends Simulation {
-    
+
     HttpProtocolBuilder httpProtocol = http
         .baseUrl("https://staging.myapp.com")
         .acceptHeader("application/json")
         .header("Authorization", "Bearer " + System.getenv("AUTH_TOKEN"));
-    
+
     ScenarioBuilder checkoutScenario = scenario("Checkout Flow")
         .exec(
             http("Search Products")
@@ -154,7 +163,7 @@ public class CheckoutSimulation extends Simulation {
                 .check(status().is(200))
                 .check(responseTimeInMillis().lt(500))
         );
-    
+
     {
         setUp(
             checkoutScenario.injectOpen(
@@ -173,6 +182,7 @@ public class CheckoutSimulation extends Simulation {
 ```
 
 INTERPRETING RESULTS:
+
 ```
 k6/Gatling report key metrics:
 
@@ -192,6 +202,7 @@ RED FLAGS:
 ### 🧪 Thought Experiment
 
 THE CONNECTION POOL SOAK TEST DISCOVERY:
+
 ```
 Application: 50 concurrent DB connections in connection pool.
 Load: 200 concurrent users.
@@ -263,22 +274,22 @@ k6 run \
 
 ### ⚖️ Comparison Table
 
-| | Gatling | k6 | JMeter |
-|---|---|---|---|
-| Language | Java/Scala DSL | JavaScript | GUI/XML |
-| Performance | Excellent | Excellent | Good |
-| Reports | HTML (built-in) | JSON + Grafana | GUI |
-| CI integration | Maven plugin | CLI | CLI |
-| Cloud support | Gatling Enterprise | Grafana Cloud k6 | BlazeMeter |
-| Learning curve | Medium | Low | High |
+|                | Gatling            | k6               | JMeter     |
+| -------------- | ------------------ | ---------------- | ---------- |
+| Language       | Java/Scala DSL     | JavaScript       | GUI/XML    |
+| Performance    | Excellent          | Excellent        | Good       |
+| Reports        | HTML (built-in)    | JSON + Grafana   | GUI        |
+| CI integration | Maven plugin       | CLI              | CLI        |
+| Cloud support  | Gatling Enterprise | Grafana Cloud k6 | BlazeMeter |
+| Learning curve | Medium             | Low              | High       |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Load tests should always run against production" | Use staging (same size as prod); load testing production risks real user impact |
-| "Passing load test = ready for production" | If staging ≠ production (different DB size, different caching), results don't transfer |
-| "1,000 VUs = 1,000 concurrent requests" | VUs include think time (sleep); actual concurrent requests = VUs × (request_time / cycle_time) |
+| Misconception                                     | Reality                                                                                        |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| "Load tests should always run against production" | Use staging (same size as prod); load testing production risks real user impact                |
+| "Passing load test = ready for production"        | If staging ≠ production (different DB size, different caching), results don't transfer         |
+| "1,000 VUs = 1,000 concurrent requests"           | VUs include think time (sleep); actual concurrent requests = VUs × (request_time / cycle_time) |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -321,6 +332,7 @@ Fix: Dedicate a separate monitoring stack for load test runs; or use a different
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Percentile-based performance metrics (p50, p95, p99) are the industry standard for characterizing response time distributions. Describe: (1) why averages are misleading for response time (a 50ms average can mask a 10% of requests taking 5 seconds — 1 in 10 users has a terrible experience), (2) the "long tail" problem in distributed systems — how independent service calls compound: if 3 services each have p99=200ms, the p99 of the combined call is NOT 200ms (it's the probability that at least one of the 3 is slow), (3) the Apdex score — a standardized satisfaction metric (T=target, F=frustration threshold; satisfied=response<T, tolerating=T<response<4T, frustrated=response>4T; Apdex=(satisfied+0.5×tolerating)/total), and (4) why load testing with percentile thresholds at the p95 or p99 level is appropriate for SLO definition ("99% of users experience < 500ms" corresponds directly to p99 < 500ms).

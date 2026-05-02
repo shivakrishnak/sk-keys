@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A unit test verifies a single function or class in isolation, with dependencies replaced by mocks or stubs, running in milliseconds with no external systems.
 
-| #1131 | Category: Testing | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Functions, Classes, Methods | |
-| **Used by:** | TDD, Test Pyramid, CI-CD | |
-| **Related:** | Integration Test, Mocking, Assertions, Test Coverage | |
+| #1131           | Category: Testing                                    | Difficulty: ★☆☆ |
+| :-------------- | :--------------------------------------------------- | :-------------- |
+| **Depends on:** | Functions, Classes, Methods                          |                 |
+| **Used by:**    | TDD, Test Pyramid, CI-CD                             |                 |
+| **Related:**    | Integration Test, Mocking, Assertions, Test Coverage |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -48,6 +48,7 @@ A **unit test** is an automated test that verifies the behaviour of a single **u
 Unit test = call a function with known inputs → assert the output matches expectation, with no databases or network involved.
 
 **One analogy:**
+
 > Testing each component of a car separately before assembly: test the engine on a bench (not in the car), test the brakes on a rig, test the electronics in isolation. Unit tests are bench tests for code. Integration tests are assembly tests. End-to-end tests are test drives.
 
 **One insight:**
@@ -56,6 +57,7 @@ A unit test that requires a running database is not a unit test — it's an inte
 ### 🔩 First Principles Explanation
 
 UNIT TEST STRUCTURE (Arrange-Act-Assert):
+
 ```java
 // ARRANGE: set up inputs and dependencies
 User user = new User("alice", "alice@example.com");
@@ -73,6 +75,7 @@ verify(pricing).getDiscount(user); // verify interaction
 ```
 
 WHAT MAKES A GOOD UNIT:
+
 - One logical concept per test (not "test all of OrderService")
 - Test the contract (input → expected output), not the implementation
 - Boundary cases: null input, empty list, zero, max value, negative
@@ -85,6 +88,7 @@ Cost: Mocking can hide integration bugs; over-mocking leads to tests that pass b
 ### 🧪 Thought Experiment
 
 WHAT IS THE "UNIT"?
+
 ```
 Option A (too small): test each line individually
   → Tests are fragile, test implementation not behavior
@@ -145,6 +149,7 @@ Never: crosses a process boundary
 ### 🔄 The Complete Picture — End-to-End Flow
 
 TDD CYCLE (Red-Green-Refactor):
+
 ```
 1. RED: Write failing test first
    @Test
@@ -232,21 +237,21 @@ class OrderPricingServiceTest {
 
 ### ⚖️ Comparison Table
 
-| Test Type | Scope | Speed | Dependencies | Confidence |
-|---|---|---|---|---|
-| **Unit** | One function/class | <100ms | Mocked | Low–medium (isolated) |
-| Integration | Multiple layers | 1–30s | Real DB/service | High (real behavior) |
-| E2E | Full user flow | 10s–5min | Full stack | Very high (reality) |
-| Contract | Service boundary | 1–10s | Pact framework | Medium (API contract) |
+| Test Type   | Scope              | Speed    | Dependencies    | Confidence            |
+| ----------- | ------------------ | -------- | --------------- | --------------------- |
+| **Unit**    | One function/class | <100ms   | Mocked          | Low–medium (isolated) |
+| Integration | Multiple layers    | 1–30s    | Real DB/service | High (real behavior)  |
+| E2E         | Full user flow     | 10s–5min | Full stack      | Very high (reality)   |
+| Contract    | Service boundary   | 1–10s    | Pact framework  | Medium (API contract) |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "100% coverage = no bugs" | Coverage measures lines executed, not all behaviors tested; you can have 100% coverage with wrong assertions |
-| "More mocking = better isolation" | Over-mocking produces tests that verify mock behavior, not real behavior; mock at architectural boundaries only |
-| "Unit tests are slow to write" | TDD discipline: tests as fast as possible; the slow part is writing code without clear requirements (TDD forces clarity) |
-| "Unit tests replace integration tests" | Unit tests verify units in isolation; integration tests verify units working together; both are required |
+| Misconception                          | Reality                                                                                                                  |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| "100% coverage = no bugs"              | Coverage measures lines executed, not all behaviors tested; you can have 100% coverage with wrong assertions             |
+| "More mocking = better isolation"      | Over-mocking produces tests that verify mock behavior, not real behavior; mock at architectural boundaries only          |
+| "Unit tests are slow to write"         | TDD discipline: tests as fast as possible; the slow part is writing code without clear requirements (TDD forces clarity) |
+| "Unit tests replace integration tests" | Unit tests verify units in isolation; integration tests verify units working together; both are required                 |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -291,6 +296,7 @@ Fix: Only test public API. Use `verify()` sparingly — only for critical side e
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** JUnit 5's `@ExtendWith(MockitoExtension.class)` creates a new test instance per test method (lifecycle `PER_METHOD`). If you change to `@TestInstance(PER_CLASS)`, the same instance is shared across all test methods — meaning mocks are shared too. Describe the exact bug that would occur in the `OrderPricingServiceTest` above if `PER_CLASS` lifecycle was used without calling `Mockito.reset()` between tests, and explain why the second test might pass or fail depending on execution order.

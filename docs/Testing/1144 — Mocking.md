@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A mock is a test double that replaces a real dependency, verifies that specific interactions (method calls) occur, and controls what values the dependency returns — enabling unit tests to run without real databases, APIs, or external services.
 
-| #1144 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, Dependency Injection, Interfaces | |
-| **Used by:** | Developers, TDD Practitioners | |
-| **Related:** | Stubbing, Faking, Spying, Mockito, Test Double, Dependency Injection | |
+| #1144           | Category: Testing                                                    | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Unit Test, Dependency Injection, Interfaces                          |                 |
+| **Used by:**    | Developers, TDD Practitioners                                        |                 |
+| **Related:**    | Stubbing, Faking, Spying, Mockito, Test Double, Dependency Injection |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -45,11 +45,13 @@ A **mock** is a test double (a replacement for a real object in tests) that: (1)
 Mock = fake dependency that records interactions and returns scripted responses.
 
 **One analogy:**
+
 > Testing a pilot in a flight simulator: the simulator is a mock of the real aircraft. It returns realistic responses to inputs (stubbing), and the instructor can verify the pilot performed the right sequence of actions (verification). The test doesn't require a real plane, real fuel, or real passengers.
 
 ### 🔩 First Principles Explanation
 
 TEST DOUBLE TAXONOMY (Gerard Meszaros):
+
 ```
 Dummy:  passed but never used (filling parameter lists)
 Stub:   returns pre-programmed responses; no interaction verification
@@ -59,6 +61,7 @@ Spy:    wraps real object; records calls to a real implementation
 ```
 
 MOCKITO EXAMPLE — complete mock lifecycle:
+
 ```java
 // ARRANGE: create mock and program its behavior (stubbing)
 PaymentGateway gateway = mock(PaymentGateway.class);
@@ -79,6 +82,7 @@ verifyNoMoreInteractions(gateway);                 // no other calls
 ```
 
 WHEN TO MOCK:
+
 ```
 ✓ Mock: external services (Stripe, Twilio, S3)
 ✓ Mock: database repositories (for service-layer unit tests)
@@ -93,6 +97,7 @@ WHEN TO MOCK:
 ### 🧪 Thought Experiment
 
 OVER-MOCKING — THE FRAGILE TEST PROBLEM:
+
 ```java
 // Service code:
 public Order createOrder(Cart cart) {
@@ -109,9 +114,9 @@ void createOrder() {
     when(orderRepository.save(any())).thenReturn(savedOrder);
     when(emailService.sendConfirmation(any())).thenReturn(true);
     when(inventoryService.reserveItems(any())).thenReturn(true);
-    
+
     service.createOrder(cart);
-    
+
     verify(orderRepository).save(any());
     verify(emailService).sendConfirmation(savedOrder);
     verify(inventoryService).reserveItems(cart.getItems());
@@ -184,7 +189,7 @@ Result: PaymentService logic is tested in complete isolation
   → No network calls
   → Runs in < 10ms
   → Deterministic (no real external state)
-  
+
 Integration test (separate, without mocking):
   → Uses Testcontainers (real DB)
   → Uses WireMock (mock Stripe HTTP server)
@@ -217,7 +222,7 @@ class PaymentServiceTest {
 
         // ASSERT outcome
         assertThat(receipt.getTransactionId()).isEqualTo("txn-456");
-        
+
         // VERIFY interactions
         verify(gateway).charge(card, 50.0);
         verify(emailService).sendConfirmation(eq(card.getHolderEmail()), argThat(r ->
@@ -240,21 +245,21 @@ class PaymentServiceTest {
 
 ### ⚖️ Comparison Table
 
-| Test Double | Returns Values | Verifies Calls | Real Logic |
-|---|---|---|---|
-| Dummy | No (null/empty) | No | No |
-| Stub | Yes (programmed) | No | No |
-| **Mock** | Yes (programmed) | **Yes** | No |
-| Spy | Real (or programmed) | Yes | **Yes** |
-| Fake | Real (lightweight) | No | Yes (simplified) |
+| Test Double | Returns Values       | Verifies Calls | Real Logic       |
+| ----------- | -------------------- | -------------- | ---------------- |
+| Dummy       | No (null/empty)      | No             | No               |
+| Stub        | Yes (programmed)     | No             | No               |
+| **Mock**    | Yes (programmed)     | **Yes**        | No               |
+| Spy         | Real (or programmed) | Yes            | **Yes**          |
+| Fake        | Real (lightweight)   | No             | Yes (simplified) |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Mock = stub" | Mocks verify interactions; stubs only return values. Mockito can do both. |
-| "Always mock all dependencies" | Over-mocking creates brittle tests tied to implementation; mock at boundaries only |
-| "If I mock everything, tests are fast" | True, but tests may pass when code is wrong (mock hides real interaction issues) |
+| Misconception                              | Reality                                                                                                    |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| "Mock = stub"                              | Mocks verify interactions; stubs only return values. Mockito can do both.                                  |
+| "Always mock all dependencies"             | Over-mocking creates brittle tests tied to implementation; mock at boundaries only                         |
+| "If I mock everything, tests are fast"     | True, but tests may pass when code is wrong (mock hides real interaction issues)                           |
 | "Mocks make integration tests unnecessary" | Mocks confirm your code calls dependencies correctly; integration tests confirm the real dependencies work |
 
 ### 🚨 Failure Modes & Diagnosis
@@ -295,6 +300,7 @@ Fix: Verify observable behavior (outputs, returned values) not internal interact
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Mockito's `@InjectMocks` uses either constructor injection, setter injection, or field injection (in that priority order) to inject mocks. Field injection (`@InjectMocks` with no constructor) is convenient for tests but has a hidden danger: it will silently succeed even if there's no matching field, meaning the real object (not mock) is used. Describe: (1) why constructor injection is preferred in both production code AND tests, (2) how to verify that Mockito actually injected your mock (not a real object), and (3) the `strictMocks()` extension and why Mockito introduced it (catches unused stubs and unnecessary stubbing).

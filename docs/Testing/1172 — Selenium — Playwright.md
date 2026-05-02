@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Selenium and Playwright are browser automation frameworks for end-to-end UI testing — they control a real browser programmatically to simulate user interactions and verify application behavior from the user's perspective.
 
-| #1172 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | E2E Test, Test Environments, HTML, JavaScript | |
-| **Used by:** | QA Engineers, Frontend Developers | |
-| **Related:** | E2E Test, Flaky Tests, Golden Path Testing, API Testing, Cypress | |
+| #1172           | Category: Testing                                                | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------- | :-------------- |
+| **Depends on:** | E2E Test, Test Environments, HTML, JavaScript                    |                 |
+| **Used by:**    | QA Engineers, Frontend Developers                                |                 |
+| **Related:**    | E2E Test, Flaky Tests, Golden Path Testing, API Testing, Cypress |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -46,11 +46,13 @@ Selenium WebDriver (2004) was the industry standard for 20 years. It works but h
 Browser automation = programmatically control a browser to simulate user behavior and verify the UI.
 
 **One analogy:**
+
 > Selenium/Playwright is a **robot typing at a keyboard and clicking a mouse** through your application — exactly like a user would. The difference: the robot never forgets a step, runs at 3am, and reports exactly what went wrong when a step fails.
 
 ### 🔩 First Principles Explanation
 
 SELENIUM WEBDRIVER ARCHITECTURE:
+
 ```
 Test Code (Java/Python/JS)
     ↓  WebDriver API
@@ -79,6 +81,7 @@ driver.quit();
 ```
 
 PLAYWRIGHT ARCHITECTURE:
+
 ```
 Test Code (TypeScript/Python/Java/.NET)
     ↓  Playwright API
@@ -92,23 +95,23 @@ KEY IMPROVEMENTS OVER SELENIUM:
   1. Auto-wait: ALL actions wait for element to be actionable before proceeding
      → No explicit waits needed for most cases
      → page.click("#submit") automatically waits for button to be visible + enabled
-     
+
   2. Built-in assertions with auto-retry:
      await expect(page.locator("#result")).toHaveText("Success");
      // Auto-retries until text appears (up to timeout)
      // NOT a point-in-time assertion that fails if element not yet rendered
-     
+
   3. Browser contexts = isolated browsing sessions:
      const context = await browser.newContext();  // fresh cookies, storage
      const page = await context.newPage();
      // Multiple independent sessions in one browser instance
-     
+
   4. Network interception:
      await page.route("**/api/products", route => {
          route.fulfill({ json: [{ id: 1, name: "Test Product" }] });
      });
      // Mock API responses without a real backend
-     
+
   5. Trace viewer:
      playwright show-trace trace.zip
      // Step-by-step screenshots, network requests, console logs
@@ -116,22 +119,23 @@ KEY IMPROVEMENTS OVER SELENIUM:
 ```
 
 LOCATOR STRATEGIES — BEST PRACTICES:
+
 ```
 WORST (fragile):
   By.xpath("//div[@class='container']/div[2]/button[1]")
   // Breaks if any parent structure changes
-  
+
 BAD:
   By.cssSelector(".submit-btn")  // CSS class can change
-  
+
 BETTER:
   By.id("submit-order")  // IDs are stable
-  
+
 BEST (Playwright):
   page.getByRole("button", { name: "Submit Order" })    // ARIA role + text
   page.getByTestId("submit-order")                       // data-testid attribute
   page.getByLabel("Email address")                       // Label → input association
-  
+
 RATIONALE:
   data-testid="submit-order" attributes are explicitly for testing
   → Developers don't change them for styling/refactoring
@@ -142,12 +146,13 @@ RATIONALE:
 ### 🧪 Thought Experiment
 
 SELENIUM vs PLAYWRIGHT FLAKINESS COMPARISON:
+
 ```
 Selenium test:
   driver.findElement(By.id("result")).getText()  // → often fails: element not loaded
-  
+
   "Fix": Thread.sleep(2000);  // → brittle, slow, still occasionally fails
-  
+
   Better: WebDriverWait.until(textToBePresentInElement(...))  // verbose
 
 Playwright test:
@@ -155,12 +160,12 @@ Playwright test:
   await expect(result).toHaveText("Order confirmed");
   // Playwright automatically polls until text appears (up to 5s default)
   // No sleep, no explicit wait, no flakiness
-  
+
 RESULT:
   Same test scenario.
   Selenium version: 20 lines, flaky 5% of the time, verbose.
   Playwright version: 3 lines, rock-solid, readable.
-  
+
 This is the core reason the industry has largely shifted to Playwright (2024).
 ```
 
@@ -182,89 +187,91 @@ This is the core reason the industry has largely shifted to Playwright (2024).
 
 ```typescript
 // playwright.config.ts
-import { defineConfig } from '@playwright/test';
+import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
-  testDir: './tests',
+  testDir: "./tests",
   fullyParallel: true,
   timeout: 30_000,
   expect: { timeout: 5_000 },
   use: {
-    baseURL: 'http://localhost:3000',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    baseURL: "http://localhost:3000",
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
   },
   projects: [
-    { name: 'chromium', use: { browserName: 'chromium' } },
-    { name: 'firefox',  use: { browserName: 'firefox' } },
+    { name: "chromium", use: { browserName: "chromium" } },
+    { name: "firefox", use: { browserName: "firefox" } },
   ],
 });
 ```
 
 ```typescript
 // tests/checkout.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
 // Page Object
 class CheckoutPage {
   constructor(private page: Page) {}
-  
+
   async addProductToCart(productName: string) {
-    await this.page.getByRole('heading', { name: productName }).click();
-    await this.page.getByRole('button', { name: 'Add to cart' }).click();
-    await expect(this.page.getByTestId('cart-count')).toHaveText('1');
+    await this.page.getByRole("heading", { name: productName }).click();
+    await this.page.getByRole("button", { name: "Add to cart" }).click();
+    await expect(this.page.getByTestId("cart-count")).toHaveText("1");
   }
-  
+
   async proceedToCheckout() {
-    await this.page.getByRole('link', { name: 'Cart' }).click();
-    await this.page.getByRole('button', { name: 'Proceed to Checkout' }).click();
+    await this.page.getByRole("link", { name: "Cart" }).click();
+    await this.page
+      .getByRole("button", { name: "Proceed to Checkout" })
+      .click();
   }
 }
 
-test('user can add product and checkout', async ({ page }) => {
+test("user can add product and checkout", async ({ page }) => {
   const checkout = new CheckoutPage(page);
-  
-  await page.goto('/products');
-  await checkout.addProductToCart('Laptop Stand');
+
+  await page.goto("/products");
+  await checkout.addProductToCart("Laptop Stand");
   await checkout.proceedToCheckout();
-  
+
   await expect(page).toHaveURL(/\/checkout/);
-  await expect(page.getByTestId('order-summary')).toBeVisible();
-  await expect(page.getByTestId('total-price')).toHaveText(/\$\d+\.\d{2}/);
+  await expect(page.getByTestId("order-summary")).toBeVisible();
+  await expect(page.getByTestId("total-price")).toHaveText(/\$\d+\.\d{2}/);
 });
 
 // Mock API for isolated UI testing
-test('checkout shows error when payment fails', async ({ page }) => {
-  await page.route('**/api/orders', route => {
-    route.fulfill({ status: 402, json: { error: 'Payment declined' } });
+test("checkout shows error when payment fails", async ({ page }) => {
+  await page.route("**/api/orders", (route) => {
+    route.fulfill({ status: 402, json: { error: "Payment declined" } });
   });
-  
-  await page.goto('/checkout');
-  await page.getByRole('button', { name: 'Place Order' }).click();
-  
-  await expect(page.getByRole('alert')).toContainText('Payment declined');
+
+  await page.goto("/checkout");
+  await page.getByRole("button", { name: "Place Order" }).click();
+
+  await expect(page.getByRole("alert")).toContainText("Payment declined");
 });
 ```
 
 ### ⚖️ Comparison Table
 
-| | Selenium | Playwright | Cypress |
-|---|---|---|---|
-| Age | 2004 | 2020 | 2017 |
-| Language support | Many | TypeScript, JS, Python, Java, .NET | JavaScript/TypeScript |
-| Auto-wait | Manual | Built-in | Built-in |
-| Cross-browser | Yes | Yes (Chromium, Firefox, WebKit) | Chromium only (mainly) |
-| Network intercept | Limited | Full | Full |
-| Speed | Slower | Fast | Fast |
-| Flakiness | Higher | Lower | Lower |
+|                   | Selenium | Playwright                         | Cypress                |
+| ----------------- | -------- | ---------------------------------- | ---------------------- |
+| Age               | 2004     | 2020                               | 2017                   |
+| Language support  | Many     | TypeScript, JS, Python, Java, .NET | JavaScript/TypeScript  |
+| Auto-wait         | Manual   | Built-in                           | Built-in               |
+| Cross-browser     | Yes      | Yes (Chromium, Firefox, WebKit)    | Chromium only (mainly) |
+| Network intercept | Limited  | Full                               | Full                   |
+| Speed             | Slower   | Fast                               | Fast                   |
+| Flakiness         | Higher   | Lower                              | Lower                  |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "E2E tests should cover everything" | E2E tests are slow and costly; use sparingly for golden paths; test logic in unit/API tests |
-| "Selenium is dead" | Selenium is still widely used; Playwright is the modern choice for new projects |
-| "Browser automation replaces API testing" | Browser tests verify UI behavior; API tests verify service behavior — both are needed |
+| Misconception                             | Reality                                                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------- |
+| "E2E tests should cover everything"       | E2E tests are slow and costly; use sparingly for golden paths; test logic in unit/API tests |
+| "Selenium is dead"                        | Selenium is still widely used; Playwright is the modern choice for new projects             |
+| "Browser automation replaces API testing" | Browser tests verify UI behavior; API tests verify service behavior — both are needed       |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -306,6 +313,7 @@ Fix: Match CI environment locally: `playwright test --headed=false`. Use Playwri
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Playwright's auto-wait mechanism is the core innovation over Selenium. Describe the internal mechanism: (1) when `page.click(locator)` is called, Playwright runs a series of "actionability checks" — element is attached to DOM, visible, stable (not animating), enabled, and not obscured — before clicking, (2) the default timeout (5 seconds) and how to configure it globally vs. per-action, (3) `expect(locator).toHaveText()` vs. `locator.textContent()` — the first auto-retries until the condition is met; the second is a point-in-time read that returns immediately (use for assertion; avoid for value extraction before it's ready), (4) `waitForSelector` vs. `locator.waitFor()` (old API vs. new locator-based API), and (5) race conditions that auto-wait DOESN'T prevent — for example, clicking a button that triggers an async operation and then immediately asserting on the result (the result might not be rendered yet); the fix: assert on a visible element that only appears when the async operation completes.

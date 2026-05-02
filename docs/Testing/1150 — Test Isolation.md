@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Test isolation means each test runs independently, with no shared state from previous tests — so tests can be run in any order, in parallel, and individually, with consistent results.
 
-| #1150 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, Test Fixtures, Mocking | |
-| **Used by:** | All Developers | |
-| **Related:** | Test Fixtures, Mocking, Flaky Tests, Test Data Management, Database Cleanup | |
+| #1150           | Category: Testing                                                           | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Unit Test, Test Fixtures, Mocking                                           |                 |
+| **Used by:**    | All Developers                                                              |                 |
+| **Related:**    | Test Fixtures, Mocking, Flaky Tests, Test Data Management, Database Cleanup |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -33,6 +33,7 @@ WORLD WITHOUT IT:
 Tests pass when run all together, fail when run individually. Test 42 passes only because Test 41 created a user in the database. Delete Test 41, and Test 42 fails. Reorder the tests, and five tests fail. A developer runs `./gradlew test --tests UserServiceTest#canLogin` — fails. Runs the full suite — passes. The test suite is useless as a diagnostic tool because failures depend on execution context.
 
 THE CONTAMINATION PATTERN:
+
 ```
 Test 1: creates user "alice" in DB
 Test 2: counts all users → expects 1 → gets 1 ✓
@@ -50,11 +51,13 @@ Test 4: counts all users → expects 1 → gets 2 ✗ ← contaminated by Tests 
 Each test is an island — sets up what it needs, cleans up what it made.
 
 **One analogy:**
+
 > A well-isolated test is like a **hotel room**: cleaned before each guest (setup), and cleaned after (teardown). Each guest finds the same blank-slate room, regardless of who stayed before. If cleaning is skipped, the next guest finds someone else's mess.
 
 ### 🔩 First Principles Explanation
 
 THE FOUR ISOLATION REQUIREMENTS:
+
 ```
 1. INDEPENDENT SETUP: each test creates its own data/state
    BAD:  Test 42 relies on User created by Test 41
@@ -67,13 +70,14 @@ THE FOUR ISOLATION REQUIREMENTS:
 
 3. ORDER INDEPENDENCE: same result in any order
    Test: can pass in isolation if all isolation rules are followed
-   
+
 4. PARALLEL SAFETY: can run concurrently
    BAD:  two tests create User with email "alice@test.com" → unique constraint
    GOOD: each test uses unique data (random email, UUID-based)
 ```
 
 ISOLATION STRATEGIES FOR DATABASE TESTS:
+
 ```java
 // Strategy 1: @Transactional (Spring) — rolls back after each test
 @SpringBootTest
@@ -102,13 +106,14 @@ class OrderRepositoryTest {
 ```
 
 ISOLATION IN UNIT TESTS (simpler):
+
 ```java
 @ExtendWith(MockitoExtension.class)
 class CartServiceTest {
     // Mockito creates FRESH mocks for each test method automatically
     @Mock CartRepository repo;
     @InjectMocks CartService service;
-    
+
     // No shared state between tests — each test gets new mock instances
     // mockitoExtension.beforeEach() creates them, afterEach() resets them
 }
@@ -117,12 +122,13 @@ class CartServiceTest {
 ### 🧪 Thought Experiment
 
 TEST ORDER SENSITIVITY BUG:
+
 ```
 Tests run in alphabetical order by default in JUnit 5:
   Test A: createAdmin → creates user with role ADMIN
   Test B: createUser → creates user with role USER
   Test C: countAdmins → expects 0 admins (no test setup!)
-  
+
 Running only Test C: PASS (empty DB)
 Running A then C: FAIL (1 admin in DB)
 Running B then C: PASS (no admin)
@@ -208,7 +214,7 @@ class UserServiceIntegrationTest {
 void createUser_withUniqueEmail_succeeds() {
     // WRONG: fixed email → fails when run in parallel
     service.createUser("test@example.com");
-    
+
     // CORRECT: unique email per test run
     String email = "test-" + UUID.randomUUID() + "@example.com";
     service.createUser(email);
@@ -234,20 +240,20 @@ class IsolatedServiceTest {
 
 ### ⚖️ Comparison Table
 
-| Isolation Strategy | Mechanism | Pros | Cons |
-|---|---|---|---|
-| `@Transactional` (Spring) | Auto-rollback | Zero cleanup code | Doesn't test commit/rollback behavior |
-| `@BeforeEach deleteAll()` | Explicit delete | Tests commit behavior | Slow for large datasets |
-| Per-test Testcontainer | Fresh DB container | Perfect isolation | Very slow startup |
-| Unique test data (UUID) | No collision | Parallel-safe | State accumulates |
+| Isolation Strategy        | Mechanism          | Pros                  | Cons                                  |
+| ------------------------- | ------------------ | --------------------- | ------------------------------------- |
+| `@Transactional` (Spring) | Auto-rollback      | Zero cleanup code     | Doesn't test commit/rollback behavior |
+| `@BeforeEach deleteAll()` | Explicit delete    | Tests commit behavior | Slow for large datasets               |
+| Per-test Testcontainer    | Fresh DB container | Perfect isolation     | Very slow startup                     |
+| Unique test data (UUID)   | No collision       | Parallel-safe         | State accumulates                     |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Tests pass in CI so isolation is fine" | Tests may pass in serial but fail when parallelized — isolation issues hidden by serial execution |
+| Misconception                                               | Reality                                                                                                        |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| "Tests pass in CI so isolation is fine"                     | Tests may pass in serial but fail when parallelized — isolation issues hidden by serial execution              |
 | "@Transactional on test = real transaction behavior tested" | `@Transactional` on test rolls back — you're NOT testing commit behavior; use a separate test for transactions |
-| "Isolation only matters for DB tests" | Unit tests also need isolation: static mutable state, singletons, shared caches can contaminate unit tests |
+| "Isolation only matters for DB tests"                       | Unit tests also need isolation: static mutable state, singletons, shared caches can contaminate unit tests     |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -285,6 +291,7 @@ Fix: Use unique data per test (UUID-based), or use database transaction isolatio
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** `@Transactional` on a Spring test class causes automatic rollback — but this has a subtle trap: if your production code also uses `@Transactional`, the behavior in tests differs from production. Specifically, if your service method is annotated `@Transactional(propagation=REQUIRES_NEW)`, the test's outer transaction does NOT propagate — the inner transaction commits for real. Describe: (1) which Spring transaction propagation types are affected by test-level `@Transactional`, (2) how to test code that REQUIRES a commit (e.g., testing that a `TransactionSynchronizationManager.afterCommit()` callback fires), and (3) the alternative of using `@DirtiesContext` and when to use it instead of `@Transactional`.

@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A/B testing is a controlled experiment that splits users into groups, shows each group a different variant (A or B), and uses statistical analysis to determine which variant performs better on a target metric.
 
-| #1165 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Feature Flags, Statistical Significance, Metrics | |
-| **Used by:** | Product Managers, Developers, Data Scientists | |
-| **Related:** | Feature Flags, Canary Deployment, Blue-Green Deployment, Observability | |
+| #1165           | Category: Testing                                                      | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Feature Flags, Statistical Significance, Metrics                       |                 |
+| **Used by:**    | Product Managers, Developers, Data Scientists                          |                 |
+| **Related:**    | Feature Flags, Canary Deployment, Blue-Green Deployment, Observability |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -45,27 +45,29 @@ A/B testing is NOT a software testing technique (like unit tests). It's a **prod
 A/B test = two groups, two variants, real users, data decides — not opinion.
 
 **One analogy:**
+
 > A/B testing is a **randomized clinical trial for product decisions**: Group A gets the placebo (current design), Group B gets the treatment (new design). After N weeks, measure outcomes. If the treatment group shows statistically significant improvement — roll it out. Same scientific rigor as medicine, applied to software products.
 
 ### 🔩 First Principles Explanation
 
 STATISTICAL FOUNDATIONS:
+
 ```
 1. HYPOTHESIS:
    H₀ (null): Variant B has no effect on conversion rate
    H₁ (alternative): Variant B increases conversion rate
-   
+
 2. SAMPLE SIZE (power analysis):
    Before starting: calculate minimum users needed
-   
+
    Inputs:
    - Baseline conversion rate: 5% (current)
    - Minimum Detectable Effect (MDE): 1% (we want to detect ≥1% improvement)
    - Statistical power: 80% (80% chance of detecting a real effect)
    - Significance level: α = 0.05 (5% false positive rate)
-   
+
    Result: ~7,500 users per variant (15,000 total)
-   
+
    DON'T run the test until you have this sample size
    (peeking at results early and stopping = p-hacking)
 
@@ -73,7 +75,7 @@ STATISTICAL FOUNDATIONS:
    User assignment: hash(user_id + experiment_id) % 100
    → Deterministic: same user always in same group
    → Roughly 50/50 split
-   
+
    Criteria:
    - Assignment is sticky (user doesn't flip between groups)
    - Assignment is independent of behavior (not biased by user characteristics)
@@ -81,11 +83,11 @@ STATISTICAL FOUNDATIONS:
 4. MEASUREMENT:
    Primary metric: checkout_completed / users_shown_checkout_page
    Guard rails: don't let B improve conversion but break page load time
-   
+
 5. STATISTICAL SIGNIFICANCE:
    After required sample size is collected:
    p-value < 0.05 → statistically significant
-   
+
    p-value = probability of observing this result if H₀ is true
    p = 0.02 → "2% chance this result is just random variation"
    → Reject H₀ → Variant B has a real effect
@@ -93,20 +95,21 @@ STATISTICAL FOUNDATIONS:
 6. PRACTICAL SIGNIFICANCE:
    Statistical significance ≠ practical significance
    p = 0.001, effect = +0.01% conversion → statistically real but not worth shipping
-   
+
    Always check: "Is the effect size worth the engineering cost?"
 ```
 
 IMPLEMENTATION:
+
 ```java
 // Feature flag drives A/B variant assignment
 @GetMapping("/checkout")
 public String checkout(HttpServletRequest request) {
     String userId = getCurrentUserId(request);
-    
+
     // Experiment service: consistent assignment based on userId
     Variant variant = experimentService.assign(userId, "checkout-button-color");
-    
+
     if (variant == Variant.TREATMENT) {
         return "checkout_green_button";  // Variant B
     } else {
@@ -118,13 +121,13 @@ public String checkout(HttpServletRequest request) {
 @PostMapping("/order")
 public ResponseEntity<?> placeOrder(...) {
     Order order = orderService.createOrder(...);
-    
+
     // Track experiment event for metrics
     analyticsService.track(userId, "order_placed", Map.of(
         "experiment", "checkout-button-color",
         "variant", experimentService.getVariant(userId, "checkout-button-color").name()
     ));
-    
+
     return ResponseEntity.ok(order);
 }
 ```
@@ -132,6 +135,7 @@ public ResponseEntity<?> placeOrder(...) {
 ### 🧪 Thought Experiment
 
 THE MULTIPLE TESTING PROBLEM:
+
 ```
 Team runs 20 A/B tests simultaneously.
 Each test uses α=0.05 (5% false positive rate).
@@ -177,13 +181,13 @@ def calculate_sample_size(baseline_rate, mde, alpha=0.05, power=0.8):
     mde: minimum detectable effect (e.g., 0.01 for 1% absolute improvement)
     """
     treatment_rate = baseline_rate + mde
-    
+
     # Pooled standard error
     pooled_p = (baseline_rate + treatment_rate) / 2
-    
+
     z_alpha = stats.norm.ppf(1 - alpha/2)  # 1.96 for alpha=0.05
     z_beta = stats.norm.ppf(power)          # 0.84 for power=0.8
-    
+
     n = (z_alpha + z_beta)**2 * (2 * pooled_p * (1 - pooled_p)) / (mde**2)
     return math.ceil(n)
 
@@ -205,20 +209,20 @@ public class ExperimentService {
 
 ### ⚖️ Comparison Table
 
-| | A/B Test | Canary Deployment | Feature Flag |
-|---|---|---|---|
-| Purpose | Measure user behavior metric | Validate stability/correctness | Control feature rollout |
-| Primary metric | Business metric (conversion) | Error rate, latency | N/A |
-| Statistical rigor | Required | Not required | Not required |
-| Who decides winner | Statistics (p-value) | Engineer (error rate) | Product/business |
+|                    | A/B Test                     | Canary Deployment              | Feature Flag            |
+| ------------------ | ---------------------------- | ------------------------------ | ----------------------- |
+| Purpose            | Measure user behavior metric | Validate stability/correctness | Control feature rollout |
+| Primary metric     | Business metric (conversion) | Error rate, latency            | N/A                     |
+| Statistical rigor  | Required                     | Not required                   | Not required            |
+| Who decides winner | Statistics (p-value)         | Engineer (error rate)          | Product/business        |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Stop the test when p < 0.05" | "Peeking" inflates false positive rate — run to predetermined sample size |
-| "A/B test everything" | Only test decisions with high uncertainty and sufficient traffic; low-traffic pages can't reach significance |
-| "Statistical significance = we should ship it" | Also requires practical significance — a 0.01% improvement isn't worth shipping |
+| Misconception                                  | Reality                                                                                                      |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| "Stop the test when p < 0.05"                  | "Peeking" inflates false positive rate — run to predetermined sample size                                    |
+| "A/B test everything"                          | Only test decisions with high uncertainty and sufficient traffic; low-traffic pages can't reach significance |
+| "Statistical significance = we should ship it" | Also requires practical significance — a 0.01% improvement isn't worth shipping                              |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -262,6 +266,7 @@ Fix: Mutual exclusivity for related experiments; interaction analysis for known 
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The "peeking problem" in A/B testing: standard t-tests assume a fixed sample size known in advance. When you check results repeatedly during an experiment and stop when p < 0.05, the actual false positive rate is much higher than 5%. Describe: (1) mathematically why sequential peeking inflates false positive rate (each "peek" is an independent chance to get p < 0.05 by chance — with 20 peeks, false positive rate approaches 30%), (2) sequential testing methods that allow continuous monitoring without inflation: the Sequential Probability Ratio Test (SPRT), always-valid p-values (anytime inference), and Bayesian approaches (posterior probability), and (3) why these methods are increasingly used at high-traffic companies (Airbnb, Netflix) where waiting for fixed sample sizes means slow decision velocity.

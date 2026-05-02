@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Test parallelization runs multiple tests simultaneously to reduce total test suite execution time, but requires strict test isolation to prevent race conditions, shared state corruption, and port conflicts.
 
-| #1163 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Test Isolation, Flaky Tests, Concurrency vs Parallelism | |
-| **Used by:** | Developers, CI-CD Engineers | |
-| **Related:** | Test Isolation, Flaky Tests, JUnit 5, Test Environments, Test Data Management | |
+| #1163           | Category: Testing                                                             | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Test Isolation, Flaky Tests, Concurrency vs Parallelism                       |                 |
+| **Used by:**    | Developers, CI-CD Engineers                                                   |                 |
+| **Related:**    | Test Isolation, Flaky Tests, JUnit 5, Test Environments, Test Data Management |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -45,44 +45,46 @@ Simply enabling parallelization without preparation causes: port conflicts (two 
 Parallel tests = faster CI; but only if tests are truly isolated (no shared mutable state).
 
 **One analogy:**
+
 > Parallel tests are like **chefs working simultaneously in one kitchen**: if each chef has their own workstation, ingredients, and utensils (test isolation), they work efficiently without interfering. If they share a cutting board, the same bowl of ingredients, and the same stove burner — chaos. The kitchen (shared state) must be designed for concurrent use.
 
 ### 🔩 First Principles Explanation
 
 GRANULARITY LEVELS:
+
 ```
 1. METHOD-LEVEL PARALLEL (within one class):
-   
+
    JUnit 5 configuration:
    # junit-platform.properties
    junit.jupiter.execution.parallel.enabled=true
    junit.jupiter.execution.parallel.mode.default=concurrent        # methods parallel
    junit.jupiter.execution.parallel.mode.classes.default=same_thread  # classes sequential
-   
+
    Requirement: test methods don't share mutable state
    Risk: shared @BeforeAll setup data (must be immutable or thread-safe)
 
 2. CLASS-LEVEL PARALLEL:
-   
+
    junit.jupiter.execution.parallel.mode.classes.default=concurrent
-   
+
    Each class runs on its own thread
    Requirement: classes don't share databases without isolation
    Common: each class gets own Testcontainers instance OR uses @Transactional rollback
 
 3. PROCESS-LEVEL (Maven fork):
-   
+
    # surefire plugin — fork per CPU core
    <configuration>
      <forkCount>1C</forkCount>  <!-- 1 fork per CPU core -->
      <reuseForks>true</reuseForks>
    </configuration>
-   
+
    Each fork is a separate JVM — stronger isolation
    Cost: JVM startup per fork (mitigated by reuseForks=true)
 
 4. MACHINE-LEVEL (CI matrix):
-   
+
    # GitHub Actions matrix strategy
    jobs:
      test:
@@ -91,29 +93,30 @@ GRANULARITY LEVELS:
            shard: [1, 2, 3, 4]
        steps:
          - run: ./mvnw test -Dgroups=shard${{ matrix.shard }}
-   
+
    Tests grouped by tag and distributed across 4 machines
    4x parallelism at CI level
 ```
 
 ISOLATION REQUIREMENTS FOR PARALLEL TESTS:
+
 ```
 PROBLEM: Database conflicts
   Thread A: INSERT user (email='alice@test.com')
   Thread B: INSERT user (email='alice@test.com')  -- UniqueConstraintException
-  
+
 SOLUTION: Thread-safe unique data generation
   String email = "test-" + Thread.currentThread().getId() + "-" + UUID.randomUUID() + "@test.invalid";
 
 PROBLEM: Port binding conflict
   Thread A: start server on port 8080
   Thread B: start server on port 8080  -- BindException
-  
+
 SOLUTION: Random port per test class
   @SpringBootTest(webEnvironment = RANDOM_PORT)
 
 PROBLEM: Testcontainers performance (one container per class = N containers for N parallel classes)
-  
+
 SOLUTION: Static Testcontainers (shared across classes in same JVM, isolated via schema/keyspace)
   @Container
   static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15")
@@ -122,13 +125,14 @@ SOLUTION: Static Testcontainers (shared across classes in same JVM, isolated via
 PROBLEM: Sequence generators (auto-increment IDs conflict)
   Thread A: insert gets ID=1; assert ID=1
   Thread B: insert gets ID=2; Thread A assertion fails if it assumed ID=1
-  
+
 SOLUTION: Never assert on auto-generated IDs; assert on behavior/content
 ```
 
 ### 🧪 Thought Experiment
 
 THE SEQUENTIAL → PARALLEL MIGRATION:
+
 ```
 Test suite: 200 integration tests, 45 minutes sequential
 Goal: < 10 minutes
@@ -145,11 +149,11 @@ Step 2: Fix isolation for parallel execution
 Step 3: Enable class-level parallel execution
   junit.jupiter.execution.parallel.mode.classes.default=concurrent
   parallel.config.fixed.parallelism=8  (8 CPU cores available)
-  
+
 Step 4: Measure
   200 tests in parallel → ~7 minutes (6x speedup)
   20 slow tests still take 7 minutes (they're the bottleneck)
-  
+
 Step 5: Isolate slow tests
   @Tag("slow-integration") on 20 slow tests
   Run slow tests in separate CI stage (parallel machines)
@@ -187,18 +191,18 @@ junit.jupiter.execution.parallel.config.fixed.parallelism=8
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Transactional  // Each test method rolls back
 class OrderServiceParallelTest {
-    
+
     @Autowired OrderService orderService;
     @Autowired UserService userService;
-    
+
     @Test
     void placeOrder_success() {
         // Thread-unique user — no collision with parallel tests
         String uniqueEmail = "test-" + UUID.randomUUID() + "@test.invalid";
         User user = userService.createUser(uniqueEmail);
-        
+
         Order order = orderService.placeOrder(user.getId(), "product-001");
-        
+
         assertThat(order.getStatus()).isEqualTo(OrderStatus.PENDING);
         // @Transactional ensures rollback after test — no cleanup needed
     }
@@ -222,20 +226,20 @@ jobs:
 
 ### ⚖️ Comparison Table
 
-| | Sequential | Thread-parallel | Process-parallel | Machine-parallel |
-|---|---|---|---|---|
-| Setup complexity | None | Low | Medium | High |
-| Isolation strength | N/A | Weak (shared JVM) | Strong (separate JVM) | Strongest |
-| Speedup | 1x | N threads | N CPUs | N machines |
-| Shared state risk | None | High | Low | None |
+|                    | Sequential | Thread-parallel   | Process-parallel      | Machine-parallel |
+| ------------------ | ---------- | ----------------- | --------------------- | ---------------- |
+| Setup complexity   | None       | Low               | Medium                | High             |
+| Isolation strength | N/A        | Weak (shared JVM) | Strong (separate JVM) | Strongest        |
+| Speedup            | 1x         | N threads         | N CPUs                | N machines       |
+| Shared state risk  | None       | High              | Low                   | None             |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Enable parallel = automatic speedup" | Only if tests are isolated; without isolation, parallelism causes flakiness |
-| "More parallelism always helps" | Bottlenecks (database connections, startup time) limit speedup; Amdahl's law applies |
-| "Unit tests are always safe to parallelize" | Not if they use static mutable state or file system I/O to shared paths |
+| Misconception                               | Reality                                                                              |
+| ------------------------------------------- | ------------------------------------------------------------------------------------ |
+| "Enable parallel = automatic speedup"       | Only if tests are isolated; without isolation, parallelism causes flakiness          |
+| "More parallelism always helps"             | Bottlenecks (database connections, startup time) limit speedup; Amdahl's law applies |
+| "Unit tests are always safe to parallelize" | Not if they use static mutable state or file system I/O to shared paths              |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -278,6 +282,7 @@ Fix: Remove static mutable state; inject dependencies instead.
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Amdahl's Law states that the speedup from parallelization is limited by the sequential portion: `S = 1 / (1 - p + p/n)` where p = parallelizable fraction, n = number of processors. Apply this to a test suite: if 80% of tests can be parallelized and 20% must be sequential (due to shared resource contention), calculate the maximum theoretical speedup regardless of how many parallel workers are added. Discuss: (1) what the "sequential portion" typically represents in a test suite (database migrations, Testcontainers startup, schema initialization), (2) how to minimize the sequential portion (lazy initialization, parallel container startup), and (3) the practical "sweet spot" number of parallel threads given that each thread opens database connections, and most connection pools cap at 10-20 connections.

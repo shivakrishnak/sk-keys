@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Penetration testing (pen testing) is authorized simulated cyberattack on a system — a security professional actively tries to exploit vulnerabilities to discover weaknesses before real attackers do.
 
-| #1169 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Security Test (SAST-DAST), Networking, HTTP & APIs | |
-| **Used by:** | Security Teams, DevSecOps, Red Teams | |
-| **Related:** | Security Test (SAST-DAST), OWASP, DAST, Threat Modeling, DevSecOps | |
+| #1169           | Category: Testing                                                  | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Security Test (SAST-DAST), Networking, HTTP & APIs                 |                 |
+| **Used by:**    | Security Teams, DevSecOps, Red Teams                               |                 |
+| **Related:**    | Security Test (SAST-DAST), OWASP, DAST, Threat Modeling, DevSecOps |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -45,18 +45,20 @@ PCI DSS, ISO 27001, SOC 2, HIPAA all require regular penetration testing. "We ru
 Pen testing = hire an ethical hacker to attack your system before real attackers do.
 
 **One analogy:**
+
 > Pen testing is **hiring a professional locksmith to try to break into your building**: they use all the techniques a real burglar would (pick locks, test windows, social engineer the receptionist), but report what they found instead of robbing you. The goal is to discover weaknesses before a criminal does.
 
 ### 🔩 First Principles Explanation
 
 METHODOLOGY — THE PTES (PENETRATION TESTING EXECUTION STANDARD):
+
 ```
 PHASE 1: PRE-ENGAGEMENT
   → Define scope: which systems, applications, networks
   → Rules of Engagement: what's off-limits (production DBs?), timing
   → Emergency contacts: if tester accidentally causes an outage
   → Legal authorization: written permission (without this = criminal offense)
-  
+
 PHASE 2: RECONNAISSANCE (Information Gathering)
   → Passive: OSINT (open-source intelligence)
     - Shodan (internet-exposed ports/services)
@@ -94,7 +96,7 @@ PHASE 5: EXPLOITATION
   → Escalate privileges (low user → admin → root)
   → Move laterally (from one server to others in the network)
   → Exfiltrate sample data (prove impact)
-  
+
   TOOLS: Metasploit, Burp Suite, SQLMap, John the Ripper
 
 PHASE 6: POST-EXPLOITATION
@@ -109,27 +111,28 @@ PHASE 7: REPORTING
 ```
 
 COMMON FINDINGS (what pen testers find):
+
 ```
 1. IDOR (Insecure Direct Object Reference):
    GET /api/orders/12345 returns YOUR order
    GET /api/orders/12344 returns ANOTHER USER's order
    → Access control not enforced per resource
-   
+
 2. Business Logic Bypass:
    Apply coupon code to already-discounted item
    → Server doesn't validate cumulative discount limits
    → $500 product for $0.01
-   
+
 3. Authentication Bypass:
    POST /reset-password with email=victim@example.com
    Server returns: token=abc123 in the response body (not just via email)
    → Account takeover without email access
-   
+
 4. Verbose Error Messages:
    POST /api/login with SQL injection in password
    Response: "Error: java.sql.SQLException: ORA-01756..."
    → Database type and schema structure leaked
-   
+
 5. Exposed Admin Interfaces:
    /admin accessible without authentication
    /actuator/env exposes application config (Spring Boot default)
@@ -139,6 +142,7 @@ COMMON FINDINGS (what pen testers find):
 ### 🧪 Thought Experiment
 
 THE IDOR CHAIN:
+
 ```
 Tester finds: GET /api/v1/users/profile?id=10045 returns user profile
 Sequential IDs → tries id=10044 → another user's profile (IDOR)
@@ -216,21 +220,21 @@ Remediation:
 
 ### ⚖️ Comparison Table
 
-| | SAST | DAST | Pen Test |
-|---|---|---|---|
-| What it finds | Code-level vulnerabilities | Runtime vulnerabilities | Business logic + chained attacks |
-| Speed | Seconds-minutes | Minutes-hours | Days-weeks |
-| Human expertise | No | No | Yes (critical differentiator) |
-| Business logic testing | No | Partially | Yes |
-| Compliance satisfies | Partially | Partially | Yes (PCI, SOC 2, ISO 27001) |
+|                        | SAST                       | DAST                    | Pen Test                         |
+| ---------------------- | -------------------------- | ----------------------- | -------------------------------- |
+| What it finds          | Code-level vulnerabilities | Runtime vulnerabilities | Business logic + chained attacks |
+| Speed                  | Seconds-minutes            | Minutes-hours           | Days-weeks                       |
+| Human expertise        | No                         | No                      | Yes (critical differentiator)    |
+| Business logic testing | No                         | Partially               | Yes                              |
+| Compliance satisfies   | Partially                  | Partially               | Yes (PCI, SOC 2, ISO 27001)      |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "SAST/DAST replaces pen testing" | Automated tools miss business logic flaws, vulnerability chains, and novel attack paths that require human creativity |
+| Misconception                        | Reality                                                                                                                 |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| "SAST/DAST replaces pen testing"     | Automated tools miss business logic flaws, vulnerability chains, and novel attack paths that require human creativity   |
 | "Once a year pen test is sufficient" | Annual pen tests miss new vulnerabilities introduced throughout the year; continuous program (bug bounty) fills the gap |
-| "Pass = secure" | Pen test passing means no critical findings during that engagement; it doesn't mean no vulnerabilities exist |
+| "Pass = secure"                      | Pen test passing means no critical findings during that engagement; it doesn't mean no vulnerabilities exist            |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -274,6 +278,7 @@ Fix: Test against staging (production clone). If production testing required, ou
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The OWASP Top 10 provides a framework for understanding common web application security risks. For each of these 3 critical categories, describe: (1) **Broken Access Control** (A01): beyond IDOR — describe horizontal vs. vertical privilege escalation, forced browsing (accessing /admin without following the navigation link), JWT manipulation (changing the `role` claim), and `cors` misconfiguration (`Access-Control-Allow-Origin: *` on authenticated endpoints); (2) **Injection** (A03): beyond SQL injection — OS command injection (`; cat /etc/passwd`), LDAP injection, template injection (Jinja2/Thymeleaf), and how parameterized queries/prepared statements prevent SQL injection but not other injection types; (3) **Security Misconfiguration** (A05): default credentials (admin/admin), Spring Boot Actuator endpoints exposed in production (`/actuator/heapdump` — memory dump with credentials), verbose error messages, S3 bucket public access, and how security hardening checklists prevent these.

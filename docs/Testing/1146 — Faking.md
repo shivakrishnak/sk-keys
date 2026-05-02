@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A fake is a test double with a real, working implementation that is simpler or faster than the production version — like an in-memory database instead of PostgreSQL, or a local file system instead of S3.
 
-| #1146 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, Mocking, Interfaces | |
-| **Used by:** | Developers, TDD Practitioners | |
-| **Related:** | Mocking, Stubbing, Spying, Test Doubles, In-Memory Database | |
+| #1146           | Category: Testing                                           | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------- | :-------------- |
+| **Depends on:** | Unit Test, Mocking, Interfaces                              |                 |
+| **Used by:**    | Developers, TDD Practitioners                               |                 |
+| **Related:**    | Mocking, Stubbing, Spying, Test Doubles, In-Memory Database |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -41,22 +41,25 @@ A **fake** is a test double that has an actual working implementation, but takes
 Fake = real working code, simplified — in-memory instead of disk/network.
 
 **One analogy:**
+
 > A fake is a **rehearsal stage set**: it looks real enough for the actors to perform correctly, but it's made of lighter materials and isn't weatherproof. It would collapse in a real storm (can't handle production load), but it works perfectly for rehearsals (tests).
 
 ### 🔩 First Principles Explanation
 
 FAKE VS STUB VS MOCK:
+
 ```
 Stub: when asked "findById(1)", always return Alice. No logic.
 Mock: when asked "findById(1)", return Alice AND verify it was called.
 Fake: implements full find/save/delete with a HashMap.
       findById(1) → looks up HashMap[1] → returns what was actually saved.
-      
+
 The fake KNOWS about the data saved in previous steps.
 Stubs don't — they return pre-programmed responses regardless of state.
 ```
 
 HAND-WRITTEN FAKE REPOSITORY:
+
 ```java
 // Interface (shared by real and fake)
 public interface UserRepository {
@@ -104,12 +107,13 @@ assertThat(service.getAllUsers()).hasSize(2); // fake remembers both saves
 ```
 
 WHY FAKES ARE VALUABLE:
+
 ```
 Test scenario: create 3 users, get all, delete one, get all again
-  
+
   With stubs: must stub findAll() to return 3 users, then 2 users
     → tedious, fragile, tests setup not behavior
-    
+
   With fake: save 3 users, call getAll(), delete one, call getAll() again
     → fake naturally tracks state
     → test is readable and reflects real behavior
@@ -118,6 +122,7 @@ Test scenario: create 3 users, get all, delete one, get all again
 ### 🧪 Thought Experiment
 
 IN-MEMORY MESSAGE QUEUE FAKE:
+
 ```java
 // Fake for Apache Kafka in tests
 public class FakeMessageQueue implements MessageQueue {
@@ -133,7 +138,7 @@ public class FakeMessageQueue implements MessageQueue {
         Queue<String> queue = topics.get(topic);
         return queue != null ? Optional.ofNullable(queue.poll()) : Optional.empty();
     }
-    
+
     // Test helper
     public List<String> getMessages(String topic) {
         return new ArrayList<>(topics.getOrDefault(topic, new LinkedList<>()));
@@ -196,21 +201,21 @@ class UserServiceTest {
 
 ### ⚖️ Comparison Table
 
-| | Stub | Mock | Fake |
-|---|---|---|---|
-| Has real logic | ✗ | ✗ | ✓ |
-| Stateful (remembers saves) | ✗ | ✗ | ✓ |
-| Hand-written | Sometimes | No (framework) | Always |
-| Verifies calls | ✗ | ✓ | ✗ |
-| Reused across tests | Rarely | Rarely | Usually |
+|                            | Stub      | Mock           | Fake    |
+| -------------------------- | --------- | -------------- | ------- |
+| Has real logic             | ✗         | ✗              | ✓       |
+| Stateful (remembers saves) | ✗         | ✗              | ✓       |
+| Hand-written               | Sometimes | No (framework) | Always  |
+| Verifies calls             | ✗         | ✓              | ✗       |
+| Reused across tests        | Rarely    | Rarely         | Usually |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Fakes are only for databases" | Fakes suit any stateful or complex dependency: queues, caches, filesystems, email servers |
-| "H2 is a perfect fake for PostgreSQL" | H2 dialect differences mean some PostgreSQL-specific SQL fails on H2; Testcontainers is safer |
-| "Fakes don't need tests" | Fakes can have bugs too; run a contract test suite against both the fake and real implementation |
+| Misconception                         | Reality                                                                                          |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| "Fakes are only for databases"        | Fakes suit any stateful or complex dependency: queues, caches, filesystems, email servers        |
+| "H2 is a perfect fake for PostgreSQL" | H2 dialect differences mean some PostgreSQL-specific SQL fails on H2; Testcontainers is safer    |
+| "Fakes don't need tests"              | Fakes can have bugs too; run a contract test suite against both the fake and real implementation |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -243,6 +248,7 @@ Fix: Contract test the fake against the real implementation. Use Testcontainers 
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** H2 in-memory database is the most common Java fake for database tests. But H2 has dialect differences from PostgreSQL: `ILIKE` doesn't exist in H2, `::jsonb` type casting fails, `ON CONFLICT DO UPDATE` (upsert) syntax differs. Describe: (1) three specific H2 compatibility issues that cause tests to pass on H2 but fail on PostgreSQL, (2) how `spring.jpa.database-platform=H2Dialect` setting interacts with native queries (`@Query(nativeQuery=true)`), and (3) the Testcontainers alternative — at what test level you'd use Testcontainers vs H2, and the trade-off in build time.

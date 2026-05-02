@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A spy wraps a real object, delegates all calls to its real implementation, but records every interaction — allowing you to verify what was called while the real code actually executes. Spies also enable selective stubbing (override specific methods while keeping the rest real).
 
-| #1147 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Mocking, Stubbing, Unit Test | |
-| **Used by:** | Developers, TDD Practitioners | |
-| **Related:** | Mocking, Stubbing, Faking, Test Doubles, Mockito Spy | |
+| #1147           | Category: Testing                                    | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------- | :-------------- |
+| **Depends on:** | Mocking, Stubbing, Unit Test                         |                 |
+| **Used by:**    | Developers, TDD Practitioners                        |                 |
+| **Related:**    | Mocking, Stubbing, Faking, Test Doubles, Mockito Spy |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -41,11 +41,13 @@ A **spy** (or partial mock) is a test double that wraps a real object. By defaul
 Spy = real object with a wiretap + selective method override capability.
 
 **One analogy:**
+
 > A spy is a **surveillance camera** on a real employee: the employee does their actual job (real implementation), but a camera records every action (interaction recording). If needed, you can also intercept specific actions ("if they try to open the safe, redirect them to a dummy safe" — selective stubbing).
 
 ### 🔩 First Principles Explanation
 
 SPY LIFECYCLE IN MOCKITO:
+
 ```java
 // Create spy from real object
 List<String> realList = new ArrayList<>();
@@ -67,6 +69,7 @@ assertThat(spyList.get(0)).isEqualTo("hello");  // real (NOT stubbed)
 ```
 
 KEY RULE — USE `doReturn()` NOT `when()` WITH SPIES:
+
 ```java
 // WRONG: when() with spy calls the real method FIRST, then stubs
 when(spy.someMethod()).thenReturn("mocked");
@@ -78,6 +81,7 @@ doReturn("mocked").when(spy).someMethod();
 ```
 
 WHEN TO USE A SPY:
+
 ```
 Use Spy when:
   ✓ You want to test a real implementation but verify it calls collaborators
@@ -96,6 +100,7 @@ Spies used AS CODE SMELL: hiding design problems (class is too large to mock cle
 ### 🧪 Thought Experiment
 
 SPYING ON AN ABSTRACT CLASS TEMPLATE METHOD:
+
 ```java
 // Abstract class with template method pattern
 public abstract class DataExporter {
@@ -165,7 +170,7 @@ Testing AuditService that wraps UserService:
 AuditService:
   UserService userService (real dependency)
   AuditLog auditLog (mock)
-  
+
   public User createUser(UserDto dto) {
     User user = userService.createUser(dto);  // calls real UserService
     auditLog.record("USER_CREATED", user.getId());  // call to mock
@@ -181,10 +186,10 @@ Test:
 
   // Verify real UserService was called correctly
   verify(spyUserService).createUser(any(UserDto.class));
-  
+
   // Verify audit log was called with correct user ID
   verify(mockAuditLog).record(eq("USER_CREATED"), eq(created.getId()));
-  
+
   // Real UserService logic ran → user actually created in fakeRepo
   assertThat(fakeRepo.findById(created.getId())).isPresent();
 ```
@@ -228,21 +233,21 @@ class NotificationServiceTest {
 
 ### ⚖️ Comparison Table
 
-| | Mock | Spy |
-|---|---|---|
-| Base behavior | All methods stubbed (return null/0 by default) | All methods delegate to real object |
-| Creation | `mock(Class.class)` | `spy(realObject)` |
-| Stubbing syntax | `when(mock.method()).thenReturn(x)` | `doReturn(x).when(spy).method()` |
-| Use case | Replace entire dependency | Observe/partially override real object |
-| Risk | Tests don't exercise real logic | May cause real side effects if not careful |
+|                 | Mock                                           | Spy                                        |
+| --------------- | ---------------------------------------------- | ------------------------------------------ |
+| Base behavior   | All methods stubbed (return null/0 by default) | All methods delegate to real object        |
+| Creation        | `mock(Class.class)`                            | `spy(realObject)`                          |
+| Stubbing syntax | `when(mock.method()).thenReturn(x)`            | `doReturn(x).when(spy).method()`           |
+| Use case        | Replace entire dependency                      | Observe/partially override real object     |
+| Risk            | Tests don't exercise real logic                | May cause real side effects if not careful |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Spy is a safer mock" | Spy exercises real code — real side effects (DB writes, emails) can occur if not stubbed |
-| "`when(spy.method())` is correct" | Calls real method first! Use `doReturn().when(spy).method()` instead |
-| "Spies are always better than mocks" | Spies are better when you WANT real logic; mocks are better for external dependencies |
+| Misconception                        | Reality                                                                                  |
+| ------------------------------------ | ---------------------------------------------------------------------------------------- |
+| "Spy is a safer mock"                | Spy exercises real code — real side effects (DB writes, emails) can occur if not stubbed |
+| "`when(spy.method())` is correct"    | Calls real method first! Use `doReturn().when(spy).method()` instead                     |
+| "Spies are always better than mocks" | Spies are better when you WANT real logic; mocks are better for external dependencies    |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -280,6 +285,7 @@ Fix: Identify all methods with side effects and stub them with `doNothing()` or 
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The use of `@Spy @InjectMocks` in Mockito is considered a "test smell" by many practitioners. The scenario: you have a `UserService` with a `sendWelcomeEmail()` method that you want to stub in tests of the same `UserService`. To do this, you create a spy on `UserService` itself. Describe why this is a design smell (the service is doing too many things — user management AND email sending), what the correct refactoring is (extract `EmailService` as a separate dependency), and how after refactoring, you'd use a plain `@Mock EmailService` instead of a `@Spy UserService`.

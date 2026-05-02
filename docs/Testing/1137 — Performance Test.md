@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A performance test measures whether a system meets its speed and throughput requirements under defined conditions — verifying that p99 latency, throughput, and resource utilisation stay within SLA bounds.
 
-| #1137 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Integration Test, HTTP and APIs, Observability | |
-| **Used by:** | CI-CD, SRE, Capacity Planning, SLA Verification | |
-| **Related:** | Load Test, Stress Test, Latency, Throughput, Gatling, k6 | |
+| #1137           | Category: Testing                                        | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------- | :-------------- |
+| **Depends on:** | Integration Test, HTTP and APIs, Observability           |                 |
+| **Used by:**    | CI-CD, SRE, Capacity Planning, SLA Verification          |                 |
+| **Related:**    | Load Test, Stress Test, Latency, Throughput, Gatling, k6 |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -48,6 +48,7 @@ Apache JMeter (1998) was the first widely adopted HTTP load testing tool. Gatlin
 Performance test = run many concurrent users at the system, measure latency and throughput, verify SLA is met.
 
 **One analogy:**
+
 > Correctness tests check that a bridge is built according to spec. Performance tests check that the bridge can handle 10,000 cars per day without collapsing. Both are required — a structurally correct bridge that can only handle 100 cars/day fails in production.
 
 **One insight:**
@@ -56,6 +57,7 @@ Always measure **percentiles**, not averages. Average latency can be 50ms while 
 ### 🔩 First Principles Explanation
 
 KEY METRICS:
+
 ```
 Throughput:    Requests per second (RPS) the system can sustain
 Latency:       Response time distribution:
@@ -68,6 +70,7 @@ Saturation:    CPU %, memory %, connection pool exhaustion
 ```
 
 LOAD PROFILE TYPES:
+
 ```
 Baseline:  Measure single-user latency (no load)
 Ramp up:   Gradually increase from 0 → 1000 users over 5 minutes
@@ -78,6 +81,7 @@ Stress:    Increase past peak until error rate > 1% → find breaking point
 ```
 
 PERFORMANCE REGRESSION DETECTION:
+
 ```
 CI gate: performance test in every deployment
   → Current p99 latency: 185ms
@@ -97,10 +101,11 @@ Cost: Requires production-like environment + production-like data volumes; expen
 ### 🧪 Thought Experiment
 
 N+1 QUERY DETECTION BY PERFORMANCE TEST:
+
 ```
 User list endpoint: GET /api/users?page=1
   → Returns 20 users
-  
+
 Code introduced N+1:
   for each user:
     SELECT * FROM addresses WHERE user_id = ?  (N queries)
@@ -181,64 +186,64 @@ CI Performance Gate Pipeline:
 
 ```javascript
 // k6 performance test (JavaScript)
-import http from 'k6/http';
-import { check, sleep } from 'k6';
-import { Trend, Rate } from 'k6/metrics';
+import http from "k6/http";
+import { check, sleep } from "k6";
+import { Trend, Rate } from "k6/metrics";
 
-const searchLatency = new Trend('search_latency');
-const errorRate = new Rate('errors');
+const searchLatency = new Trend("search_latency");
+const errorRate = new Rate("errors");
 
 export const options = {
   stages: [
-    { duration: '2m', target: 50 },   // ramp up
-    { duration: '5m', target: 100 },  // sustained load
-    { duration: '2m', target: 0 },    // ramp down
+    { duration: "2m", target: 50 }, // ramp up
+    { duration: "5m", target: 100 }, // sustained load
+    { duration: "2m", target: 0 }, // ramp down
   ],
   thresholds: {
-    'http_req_duration': ['p(95)<500', 'p(99)<1000'],  // SLA gates
-    'errors': ['rate<0.01'],           // < 1% error rate
-    'search_latency': ['p(99)<500'],   // custom metric
+    http_req_duration: ["p(95)<500", "p(99)<1000"], // SLA gates
+    errors: ["rate<0.01"], // < 1% error rate
+    search_latency: ["p(99)<500"], // custom metric
   },
 };
 
-export default function() {
+export default function () {
   // Simulate search user journey
   const searchRes = http.get(
     `${__ENV.BASE_URL}/api/products/search?q=laptop&page=1`,
-    { headers: { 'Authorization': `Bearer ${__ENV.TEST_TOKEN}` } }
+    { headers: { Authorization: `Bearer ${__ENV.TEST_TOKEN}` } },
   );
 
   searchLatency.add(searchRes.timings.duration);
   errorRate.add(searchRes.status !== 200);
 
   check(searchRes, {
-    'status 200': (r) => r.status === 200,
-    'has products': (r) => JSON.parse(r.body).items?.length > 0,
-    'response time < 500ms': (r) => r.timings.duration < 500,
+    "status 200": (r) => r.status === 200,
+    "has products": (r) => JSON.parse(r.body).items?.length > 0,
+    "response time < 500ms": (r) => r.timings.duration < 500,
   });
 
-  sleep(Math.random() * 2 + 1);  // think time: 1–3 seconds
+  sleep(Math.random() * 2 + 1); // think time: 1–3 seconds
 }
 ```
 
 ### ⚖️ Comparison Table
 
-| Test | Goal | Duration | Load Type | Key Metric |
-|---|---|---|---|---|
-| **Performance** | SLA verification | 15–30min | Expected + peak | p95/p99 latency |
-| Load | Capacity validation | 30–60min | Expected max | Throughput, error rate |
-| Stress | Breaking point | 1–2h | Beyond peak | First degradation point |
-| Soak | Stability | 8–24h | Sustained moderate | Memory growth, error rate trend |
-| Spike | Sudden peak | 15–30min | Instant surge | Recovery time |
+| Test            | Goal                | Duration | Load Type          | Key Metric                      |
+| --------------- | ------------------- | -------- | ------------------ | ------------------------------- |
+| **Performance** | SLA verification    | 15–30min | Expected + peak    | p95/p99 latency                 |
+| Load            | Capacity validation | 30–60min | Expected max       | Throughput, error rate          |
+| Stress          | Breaking point      | 1–2h     | Beyond peak        | First degradation point         |
+| Soak            | Stability           | 8–24h    | Sustained moderate | Memory growth, error rate trend |
+| Spike           | Sudden peak         | 15–30min | Instant surge      | Recovery time                   |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Average latency is the key metric" | Percentiles matter; p99 can be 100× average; SLAs are written in percentiles |
-| "Performance test once before release" | Performance regressions are introduced by any code change; test in every CI pipeline |
-| "More VUs = more realistic" | Test must reflect real user patterns (think time, user journeys); 1000 VUs with 0ms think time is not realistic |
-| "Performance test environment doesn't need to match production" | 10x smaller environment gives completely different results; must use production-like data volumes and hardware |
+| Misconception                                                   | Reality                                                                                                         |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| "Average latency is the key metric"                             | Percentiles matter; p99 can be 100× average; SLAs are written in percentiles                                    |
+| "Performance test once before release"                          | Performance regressions are introduced by any code change; test in every CI pipeline                            |
+| "More VUs = more realistic"                                     | Test must reflect real user patterns (think time, user journeys); 1000 VUs with 0ms think time is not realistic |
+| "Performance test environment doesn't need to match production" | 10x smaller environment gives completely different results; must use production-like data volumes and hardware  |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -280,6 +285,7 @@ Fix: 5-minute warmup run before measurement. Pin JVM: `-server -XX:+UseG1GC`. Us
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Little's Law states: `N = λ × R`, where N = average number of concurrent requests in the system, λ = throughput (requests/second), R = average response time (seconds). If your SLA requires p99 < 200ms and you expect 500 RPS peak load, calculate the minimum concurrency (N) required in your performance test. If your application has a connection pool of 20 connections and each query takes 10ms: what is the maximum throughput before connection pool exhaustion (hint: 20 connections × 100 queries/sec per connection = 2000 QPS), and at 500 RPS user load, what is the implied database concurrency (N_db = λ_db × R_db)?

@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Approval testing captures the output of code (a "received" file), compares it to a previously approved "golden master", and fails if they differ — letting humans approve new outputs rather than manually writing assertions.
 
-| #1164 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Snapshot Testing, Unit Test, Test Data Management | |
-| **Used by:** | Developers, QA | |
-| **Related:** | Snapshot Testing, Golden Path Testing, Regression Test, ApprovalTests | |
+| #1164           | Category: Testing                                                     | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Snapshot Testing, Unit Test, Test Data Management                     |                 |
+| **Used by:**    | Developers, QA                                                        |                 |
+| **Related:**    | Snapshot Testing, Golden Path Testing, Regression Test, ApprovalTests |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -45,11 +45,13 @@ You inherit 10,000 lines of untested legacy code. You don't know what it's suppo
 Approval testing = capture output as "golden file"; if output changes, diff is shown for human approval.
 
 **One analogy:**
+
 > Approval testing is like a **visual diff for documents**: a lawyer approves a contract template once. Every time the template-generating code runs, the output is shown to the lawyer as a redline (tracked changes). The lawyer approves or rejects the changes. No need to manually check every clause — just review the diff.
 
 ### 🔩 First Principles Explanation
 
 APPROVAL TEST WORKFLOW:
+
 ```
 FIRST RUN (no approved file exists):
   1. Test runs → generates output (received file)
@@ -61,11 +63,11 @@ FIRST RUN (no approved file exists):
 
 SUBSEQUENT RUNS (approved file exists):
   If code output unchanged → received == approved → PASS
-  
+
   If code output changed:
     CASE A (bug): received ≠ approved
       Test FAILS → diff shows what changed → dev fixes bug
-      
+
     CASE B (intentional change): received ≠ approved
       Test FAILS → human reviews diff → approves: updates approved file
       Approved file updated → test passes
@@ -73,18 +75,19 @@ SUBSEQUENT RUNS (approved file exists):
 FILE STORAGE:
   approved files → committed in git alongside test code
   received files → generated at test time, ignored by .gitignore
-  
+
   Git diff of approved file = intentional behavior change
   (same as snapshot testing)
 ```
 
 TOOLS AND FORMATS:
+
 ```
 JAVA: ApprovalTests library
   Approvals.verify(myObject);
   Approvals.verifyAsJson(myObject);
   Approvals.verifyHtml(htmlString);
-  
+
   Files generated:
     src/test/java/.../MyTest.myMethod.approved.txt
     src/test/java/.../MyTest.myMethod.received.txt
@@ -104,6 +107,7 @@ DIFF TOOL INTEGRATION:
 ### 🧪 Thought Experiment
 
 CHARACTERIZATION TEST FOR LEGACY CODE:
+
 ```
 Legacy method: calculateTax(invoice)
   → 500 lines, no tests, you don't fully understand it
@@ -148,7 +152,7 @@ import org.approvaltests.Approvals;
 import com.spun.util.io.FileUtils;
 
 class InvoiceReportTest {
-    
+
     @Test
     void invoiceReport_complexFormat() {
         Invoice invoice = Invoice.builder()
@@ -157,15 +161,15 @@ class InvoiceReportTest {
             .item("Gadget", 2, 49.99)
             .discount(0.10)
             .build();
-        
+
         String report = reportGenerator.generate(invoice);
-        
+
         Approvals.verify(report);
         // First run: creates InvoiceReportTest.invoiceReport_complexFormat.received.txt
         // After approval: InvoiceReportTest.invoiceReport_complexFormat.approved.txt
         // Future runs: compare received vs approved
     }
-    
+
     @Test
     void invoiceReport_asJson() {
         Invoice invoice = buildTestInvoice();
@@ -191,21 +195,21 @@ TOTAL:                $179.89
 
 ### ⚖️ Comparison Table
 
-| | Assertion-based Test | Approval Test | Snapshot Test (Jest) |
-|---|---|---|---|
-| Assertion authoring | Manual, explicit | None (auto-capture) | None (auto-capture) |
-| Handles complex output | Poor (many asserts) | Excellent | Excellent |
-| Human review of changes | Not inherent | Required (by design) | Optional |
-| Git diff on behavior change | No | Yes (approved file) | Yes (snapshot file) |
-| Best for | Simple values | Complex output, legacy | React component output |
+|                             | Assertion-based Test | Approval Test          | Snapshot Test (Jest)   |
+| --------------------------- | -------------------- | ---------------------- | ---------------------- |
+| Assertion authoring         | Manual, explicit     | None (auto-capture)    | None (auto-capture)    |
+| Handles complex output      | Poor (many asserts)  | Excellent              | Excellent              |
+| Human review of changes     | Not inherent         | Required (by design)   | Optional               |
+| Git diff on behavior change | No                   | Yes (approved file)    | Yes (snapshot file)    |
+| Best for                    | Simple values        | Complex output, legacy | React component output |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                   | Reality                                                                                                        |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | "Approval tests are the same as snapshot tests" | Conceptually similar; approval tests emphasize the human review step; snapshot tests (Jest) are more automated |
-| "Auto-approving CI failures is fine" | Auto-approving defeats the purpose — the human review of diffs IS the test value |
-| "Approval tests replace all assertions" | Not for simple values — they're most valuable for complex, multi-field output |
+| "Auto-approving CI failures is fine"            | Auto-approving defeats the purpose — the human review of diffs IS the test value                               |
+| "Approval tests replace all assertions"         | Not for simple values — they're most valuable for complex, multi-field output                                  |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -244,6 +248,7 @@ Fix: Approval workflow in code review — PR reviewer sees the `.approved.txt` d
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Characterization testing (a form of approval testing) is used to establish a regression baseline for legacy code before refactoring. Describe the full workflow: (1) selecting test inputs that exercise representative code paths (without understanding the code, use code coverage to detect untested paths), (2) the "if it runs, it's the right answer" assumption (you're testing what the code DOES, not what it SHOULD do), (3) the risk: what if the existing behavior contains bugs? (the tests will "approve" buggy behavior — document known bugs separately), and (4) how approval tests transition: initially serving as characterization tests, then replaced with intention-revealing unit tests as the legacy code is understood and refactored. What is the exit strategy for approval tests?

@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — API testing validates HTTP API behavior — status codes, response schemas, business logic, error handling, authentication, and performance — directly at the API layer, without a UI, faster and more reliable than E2E UI tests.
 
-| #1170 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | HTTP & APIs, Integration Test, REST | |
-| **Used by:** | Developers, QA Engineers | |
-| **Related:** | Integration Test, Contract Test, Postman, REST Assured, WireMock, Pact | |
+| #1170           | Category: Testing                                                      | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | HTTP & APIs, Integration Test, REST                                    |                 |
+| **Used by:**    | Developers, QA Engineers                                               |                 |
+| **Related:**    | Integration Test, Contract Test, Postman, REST Assured, WireMock, Pact |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -45,45 +45,47 @@ The frontend team is still building the UI. Backend APIs are done. How do you ve
 API testing = verify HTTP APIs directly (no UI) — faster, more stable, and broader coverage than UI tests.
 
 **One analogy:**
+
 > API testing is **calling a restaurant kitchen directly** (rather than going through the dining room): you speak directly to the chef, order a specific dish, and verify what comes out of the kitchen — without waiting for a waiter, table setting, or menu. You can test the kitchen's output faster, more accurately, and test things the dining room experience never would (kitchen safety, ingredient quality, preparation time).
 
 ### 🔩 First Principles Explanation
 
 WHAT TO TEST IN AN API:
+
 ```
 1. HAPPY PATH:
    GET /users/123
    Expected: 200 OK, body = { "id": 123, "name": "Alice", "email": "alice@example.com" }
-   
+
 2. VALIDATION ERRORS:
    POST /users with missing required field "email"
    Expected: 400 Bad Request, body = { "error": "email is required" }
-   
+
    POST /users with invalid email format
    Expected: 400 Bad Request, body = { "error": "email format is invalid" }
-   
+
 3. NOT FOUND:
    GET /users/99999 (doesn't exist)
    Expected: 404 Not Found
-   
+
 4. AUTHORIZATION:
    GET /admin/users without auth token
    Expected: 401 Unauthorized
-   
+
    GET /admin/users with non-admin token
    Expected: 403 Forbidden
-   
+
 5. BUSINESS LOGIC:
    POST /orders with quantity=-1
    Expected: 400 Bad Request (not a 500!)
-   
+
    POST /orders for out-of-stock product
    Expected: 409 Conflict or 422 Unprocessable Entity
-   
+
 6. PERFORMANCE:
    GET /users?page=1&size=100
    Expected: response time < 200ms
-   
+
 7. SCHEMA VALIDATION:
    All responses should match the OpenAPI specification
    No extra fields, no missing required fields, correct types
@@ -103,6 +105,7 @@ HTTP STATUS CODE SEMANTICS:
 ```
 
 REST ASSURED (Java) — FLUENT API TEST:
+
 ```java
 given()
     .header("Authorization", "Bearer " + token)
@@ -123,21 +126,22 @@ given()
 ### 🧪 Thought Experiment
 
 THE API THAT RETURNS 200 FOR EVERYTHING:
+
 ```
 Terrible API design (but it exists):
   POST /createUser { "name": "Alice" }
   Response: 200 OK, { "success": false, "error": "email is required" }
-  
+
   The API returns 200 even when the operation FAILED.
   Clients must parse the body to determine success/failure.
   API tests: checking statusCode(200) passes even for errors.
-  
+
   Correct design:
   POST /users { "name": "Alice" }  (missing email)
   Response: 400 Bad Request, { "error": "email is required" }
-  
+
   API test: statusCode(400) — unambiguous failure signal.
-  
+
   Lesson: API tests enforce HTTP semantics contract.
   If your API always returns 200, tests lose their signal value.
 ```
@@ -162,15 +166,15 @@ Terrible API design (but it exists):
 // Spring Boot API Test — MockMvc (fast, no HTTP overhead)
 @WebMvcTest(UserController.class)
 class UserControllerTest {
-    
+
     @Autowired MockMvc mockMvc;
     @MockBean UserService userService;
-    
+
     @Test
     void getUser_found_returns200() throws Exception {
         when(userService.findById(123L))
             .thenReturn(new User(123L, "Alice", "alice@example.com"));
-        
+
         mockMvc.perform(get("/api/v1/users/123")
                 .header("Authorization", "Bearer valid-token"))
             .andExpect(status().isOk())
@@ -178,23 +182,23 @@ class UserControllerTest {
             .andExpect(jsonPath("$.name").value("Alice"))
             .andExpect(jsonPath("$.email").value("alice@example.com"));
     }
-    
+
     @Test
     void getUser_notFound_returns404() throws Exception {
         when(userService.findById(999L)).thenThrow(new UserNotFoundException(999L));
-        
+
         mockMvc.perform(get("/api/v1/users/999")
                 .header("Authorization", "Bearer valid-token"))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.error").value("User 999 not found"));
     }
-    
+
     @Test
     void createUser_missingEmail_returns400() throws Exception {
         String requestBody = """
             { "name": "Alice" }
             """;
-        
+
         mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
@@ -202,7 +206,7 @@ class UserControllerTest {
             .andExpect(jsonPath("$.errors[0].field").value("email"))
             .andExpect(jsonPath("$.errors[0].message").value("must not be blank"));
     }
-    
+
     @Test
     void getUser_unauthenticated_returns401() throws Exception {
         mockMvc.perform(get("/api/v1/users/123"))
@@ -215,15 +219,15 @@ class UserControllerTest {
 // REST Assured — full HTTP integration test
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class UserApiIntegrationTest {
-    
+
     @LocalServerPort int port;
-    
+
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
         RestAssured.basePath = "/api/v1";
     }
-    
+
     @Test
     void createAndGetUser_fullCycle() {
         // Create
@@ -236,7 +240,7 @@ class UserApiIntegrationTest {
             .statusCode(201)
             .body("name", equalTo("Alice"))
             .extract().path("id");
-        
+
         // Retrieve
         given()
         .when()
@@ -251,20 +255,20 @@ class UserApiIntegrationTest {
 
 ### ⚖️ Comparison Table
 
-| | Unit Test | API Test (MockMvc) | API Test (REST Assured) | E2E (Playwright) |
-|---|---|---|---|---|
-| Layer | Business logic | HTTP layer + logic | Full HTTP stack | Full browser stack |
-| Speed | Milliseconds | Milliseconds | Milliseconds | Seconds |
-| Scope | Single class | Controller + service | Full app stack | Full app + browser |
-| Brittle to UI changes | N/A | N/A | No (no UI) | Yes |
+|                       | Unit Test      | API Test (MockMvc)   | API Test (REST Assured) | E2E (Playwright)   |
+| --------------------- | -------------- | -------------------- | ----------------------- | ------------------ |
+| Layer                 | Business logic | HTTP layer + logic   | Full HTTP stack         | Full browser stack |
+| Speed                 | Milliseconds   | Milliseconds         | Milliseconds            | Seconds            |
+| Scope                 | Single class   | Controller + service | Full app stack          | Full app + browser |
+| Brittle to UI changes | N/A            | N/A                  | No (no UI)              | Yes                |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "API tests = E2E tests" | API tests test the API layer; E2E tests drive a UI. API tests are faster and more stable |
-| "Postman is just for manual testing" | Postman collections run via Newman in CI pipelines as automated API tests |
-| "200 status code = success" | 200 only means HTTP-level success; business logic errors can return 200 (bad design) — test the response body too |
+| Misconception                        | Reality                                                                                                           |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| "API tests = E2E tests"              | API tests test the API layer; E2E tests drive a UI. API tests are faster and more stable                          |
+| "Postman is just for manual testing" | Postman collections run via Newman in CI pipelines as automated API tests                                         |
+| "200 status code = success"          | 200 only means HTTP-level success; business logic errors can return 200 (bad design) — test the response body too |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -309,6 +313,7 @@ Fix: Validate response against OpenAPI schema in every API test.
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** OpenAPI specification serves as both documentation and a contract for API testing. Describe: (1) how tools like `swagger-request-validator` validate that every API test request and response conforms to the OpenAPI spec (request validation: required params present, correct types; response validation: response schema matches the declared spec), (2) the "spec-first" vs. "code-first" debate — spec-first (write OpenAPI YAML → generate server stubs → implement) vs. code-first (implement → generate OpenAPI from annotations → validate), trade-offs of each, (3) how Dredd works — takes the OpenAPI spec and runs example requests from it against your real API, failing if responses don't match, effectively making the spec itself into a test suite, and (4) the challenge of keeping the OpenAPI spec in sync with the implementation (spec drift) — automated tools (`springdoc-openapi` in Spring Boot) that generate the spec from code annotations prevent drift by making the spec a build artifact.

@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Livelock is when threads are active (not blocked) but repeatedly cancel each other's progress — like two people in a hallway endlessly mirroring each other's sidestep.
 
-| #0119 | Category: Operating Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Deadlock, Mutex, Thread | |
-| **Used by:** | Retry Logic, Network Backoff, Lock-Free Algorithms | |
-| **Related:** | Deadlock, Starvation, Backoff Strategy, CAS Loop | |
+| #0119           | Category: Operating Systems                        | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------- | :-------------- |
+| **Depends on:** | Deadlock, Mutex, Thread                            |                 |
+| **Used by:**    | Retry Logic, Network Backoff, Lock-Free Algorithms |                 |
+| **Related:**    | Deadlock, Starvation, Backoff Strategy, CAS Loop   |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -48,6 +48,7 @@ The solution (randomised exponential backoff) was formalised for network protoco
 Livelock = busy but stuck; threads keep reacting to each other, burning CPU, and making no progress.
 
 **One analogy:**
+
 > Two people walking toward each other in a narrow corridor. Person A steps left to let B pass. Person B also steps left. They're face to face again. Both step right. Again face to face. Neither is frozen (not deadlock) — both are actively moving — but neither gets past. Randomise the direction and they'll eventually pass.
 
 **One insight:**
@@ -56,6 +57,7 @@ Livelock is harder to diagnose than deadlock: threads are RUNNABLE in the OS sch
 ### 🔩 First Principles Explanation
 
 CORE INVARIANTS:
+
 1. Threads are executing (not sleeping/blocked).
 2. Each thread's actions cause the other to undo theirs.
 3. The combined state cycles — no terminal condition is ever reached.
@@ -63,6 +65,7 @@ CORE INVARIANTS:
 
 DERIVED DESIGN:
 **Minimal livelock example:**
+
 ```
 Thread A:                     Thread B:
 acquire(lockA)                acquire(lockB)
@@ -70,7 +73,9 @@ acquire(lockA)                acquire(lockB)
   release(lockA)                release(lockB)
   [retry]                       [retry]
 ```
+
 If both threads always retry at the same interval, they always collide:
+
 ```
 t=0: A acquires lockA; B acquires lockB
 t=1: A tries lockB (fail); B tries lockA (fail)
@@ -79,6 +84,7 @@ t=3: A acquires lockA; B acquires lockB  [cycle repeats]
 ```
 
 FIX — randomised backoff:
+
 ```
 t=0: A acquires lockA; B acquires lockB
 t=1: A tries lockB (fail); B tries lockA (fail)
@@ -86,6 +92,7 @@ t=2: A releases lockA, sleeps 17ms; B releases lockB, sleeps 3ms
 t=5: B acquires lockB, acquires lockA (free!) → proceeds
 t=22: A retries → acquires lockA, lockB → proceeds
 ```
+
 Randomisation breaks symmetry → threads proceed at different times.
 
 THE TRADE-OFFS:
@@ -98,6 +105,7 @@ SETUP:
 Two database clients both implementing "optimistic retry on deadlock". Both update rows in different order. The database detects deadlock and rolls back one. The rolled-back client immediately retries. They immediately deadlock again. The database rolls back the other. It immediately retries. They deadlock again.
 
 SYMPTOMS:
+
 ```
 Client A: 100% CPU
 Client B: 100% CPU
@@ -108,6 +116,7 @@ Transaction committed: 0
 This is a livelock between clients at the application level, even though each individual deadlock is resolved by the database.
 
 FIX (exponential backoff with jitter):
+
 ```python
 import random, time
 
@@ -175,6 +184,7 @@ The Ethernet CSMA/CD backoff used a binary exponential backoff: on the first col
 ### 🔄 The Complete Picture — End-to-End Flow
 
 REAL-WORLD RETRY STORM (microservices livelock):
+
 ```
 Service A (auth): rate-limited at 500ms → retry
 Service B (product): dependent on auth → also waits
@@ -198,6 +208,7 @@ Service C: 500ms + rand(0–100ms) = 589ms
 ### 💻 Code Example
 
 Example 1 — Livelock with uniform retry:
+
 ```java
 // LIVELOCK PRONE: uniform retry interval
 void transferLivelock(Account a, Account b) {
@@ -218,6 +229,7 @@ void transferLivelock(Account a, Account b) {
 ```
 
 Example 2 — Exponential backoff with jitter (fix):
+
 ```java
 // LIVELOCK SAFE: exponential backoff + jitter
 void transferSafe(Account a, Account b, double amount)
@@ -245,6 +257,7 @@ void transferSafe(Account a, Account b, double amount)
 ```
 
 Example 3 — Database retry with jitter (Spring/Java):
+
 ```java
 @Service
 public class OrderService {
@@ -276,21 +289,21 @@ public class OrderService {
 
 ### ⚖️ Comparison Table
 
-| Condition | Threads Running? | CPU Used? | Detectable by jstack? | Fix |
-|---|---|---|---|---|
-| **Deadlock** | No (BLOCKED) | No | Yes ("Found one Java-level deadlock") | Lock ordering, tryLock |
-| **Livelock** | Yes (RUNNABLE) | Yes (100%) | No | Randomised backoff, jitter |
-| **Starvation** | Mixed | Varies | Partial (threads waiting) | Fair locks, priority |
-| **Race Condition** | Yes | Varies | No | Synchronization |
+| Condition          | Threads Running? | CPU Used?  | Detectable by jstack?                 | Fix                        |
+| ------------------ | ---------------- | ---------- | ------------------------------------- | -------------------------- |
+| **Deadlock**       | No (BLOCKED)     | No         | Yes ("Found one Java-level deadlock") | Lock ordering, tryLock     |
+| **Livelock**       | Yes (RUNNABLE)   | Yes (100%) | No                                    | Randomised backoff, jitter |
+| **Starvation**     | Mixed            | Varies     | Partial (threads waiting)             | Fair locks, priority       |
+| **Race Condition** | Yes              | Varies     | No                                    | Synchronization            |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Livelock is a type of deadlock" | No — deadlock = blocked threads; livelock = running threads; opposite symptoms |
-| "100% CPU with no progress = infinite loop" | Could be livelock (two threads) or a spin loop; check thread interaction |
-| "tryLock prevents livelock" | tryLock prevents deadlock; without backoff, it CAUSES livelock |
-| "Livelock only happens with locks" | Also in message-based systems (request-reject-retry cycles), network protocols (collision retry), and CAS loops |
+| Misconception                               | Reality                                                                                                         |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| "Livelock is a type of deadlock"            | No — deadlock = blocked threads; livelock = running threads; opposite symptoms                                  |
+| "100% CPU with no progress = infinite loop" | Could be livelock (two threads) or a spin loop; check thread interaction                                        |
+| "tryLock prevents livelock"                 | tryLock prevents deadlock; without backoff, it CAUSES livelock                                                  |
+| "Livelock only happens with locks"          | Also in message-based systems (request-reject-retry cycles), network protocols (collision retry), and CAS loops |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -301,6 +314,7 @@ Symptom: All services show high CPU; zero successful transactions; each service'
 Root Cause: All services retry with fixed intervals aligned to same period; each retry wave saturates the downstream service which rejects, causing another retry wave.
 
 Diagnostic:
+
 ```bash
 # Check retry pattern timing
 grep "retry" service.log | awk '{print $1}' | uniq -c
@@ -324,6 +338,7 @@ Symptom: Lock-free queue shows 100% CPU on multiple threads, near-zero throughpu
 Root Cause: All threads CAS-fail simultaneously, all immediately retry, all fail again.
 
 Diagnostic:
+
 ```bash
 perf stat -e instructions,cpu-cycles,cache-misses ./benchmark
 # Extremely high cycles/instruction ratio (> 10) = lots of retries
@@ -335,16 +350,19 @@ Fix: Add `Thread.onSpinWait()` after CAS failure; or add small random sleep; or 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Deadlock` — livelock is the dynamic counterpart of deadlock; understand deadlock first
 - `Mutex` — livelock arises in lock-release-retry patterns
 - `Thread` — requires multiple threads reacting to each other
 
 **Builds On This (learn these next):**
+
 - `Starvation` — a thread that is perpetually passed over, related but distinct from livelock
 - `Exponential Backoff` — the standard fix for livelock in retry-based systems
 - `Circuit Breaker Pattern` — prevents retry storms in microservices
 
 **Alternatives / Comparisons:**
+
 - `Deadlock` — both are progress failures; deadlock: blocked, no CPU; livelock: running, CPU consumed
 - `Starvation` — indefinite postponement without a cycle; one thread is perpetually bypassed
 - `Thundering Herd` — many threads wake simultaneously and compete; similar to livelock in effect but different cause
@@ -379,6 +397,7 @@ Fix: Add `Thread.onSpinWait()` after CAS failure; or add small random sleep; or 
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** AWS's retry recommendations include "full jitter" (`sleep = random(0, cap * 2^attempt)`) vs "equal jitter" (`sleep = cap/2 + random(0, cap/2)`). Equal jitter prevents very short retries (ensuring some minimum backoff) while full jitter allows near-zero sleeps. For a system with 1000 clients all simultaneously hitting a rate limit: at what load does equal jitter outperform full jitter (fewer total retries before success), and at what load does full jitter win? Derive the answer by modeling the expected number of collisions per retry round as a function of client count and jitter strategy.

@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A flaky test is a test that produces inconsistent results (pass sometimes, fail sometimes) on the same code — undermining trust in the test suite, causing CI reruns, and masking real failures.
 
-| #1162 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Test Isolation, Integration Test, E2E Test | |
-| **Used by:** | Developers, QA, DevOps | |
-| **Related:** | Test Isolation, Test Environments, Test Parallelization, Test Data Management | |
+| #1162           | Category: Testing                                                             | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Test Isolation, Integration Test, E2E Test                                    |                 |
+| **Used by:**    | Developers, QA, DevOps                                                        |                 |
+| **Related:**    | Test Isolation, Test Environments, Test Parallelization, Test Data Management |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -42,36 +42,38 @@ A **flaky test** is a test that is non-deterministic — it does not consistentl
 Flaky = sometimes red, sometimes green, same code — destroys CI trust.
 
 **One analogy:**
+
 > A flaky test is like a **faulty smoke detector** that sometimes goes off for no reason. You start ignoring it. Then there's a real fire, and you ignore that too. The detector has destroyed its own credibility and the safety system it was meant to provide.
 
 ### 🔩 First Principles Explanation
 
 ROOT CAUSES TAXONOMY:
+
 ```
 1. TIMING / ASYNC ISSUES (most common):
-   
+
    BAD: Thread.sleep(500) hoping async operation completes
    Thread.sleep(500);
    assertThat(cache.get("key")).isEqualTo("value");
    // Flaky: on slow CI server, 500ms isn't enough
-   
+
    GOOD: Await with timeout
    await().atMost(5, SECONDS).until(() -> cache.get("key") != null);
    // Deterministic: waits up to 5s, asserts immediately when condition met
-   
+
    TOOLS: Awaitility (Java), waitFor (Jest), cy.wait (Cypress)
 
 2. TEST ORDER DEPENDENCY:
-   
+
    BAD: Test A creates user; Test B assumes user exists
    class UserServiceTest {
      @Test void createUser() { service.createUser("alice"); }
-     @Test void getUserProfile() { 
+     @Test void getUserProfile() {
        User u = service.getUser("alice");  // Fails if createUser ran after
        assertThat(u).isNotNull();
      }
    }
-   
+
    GOOD: Each test creates its own data:
    @Test void getUserProfile() {
      service.createUser("alice");  // self-sufficient
@@ -79,31 +81,31 @@ ROOT CAUSES TAXONOMY:
    }
 
 3. RESOURCE CONTENTION (parallel tests):
-   
+
    BAD: Two tests both use port 8080
    // Test A: start server on 8080
    // Test B: start server on 8080 — BindException
-   
+
    GOOD: Random port assignment
    @SpringBootTest(webEnvironment = RANDOM_PORT)
    // Each test gets a random available port
 
 4. EXTERNAL DEPENDENCIES:
-   
+
    BAD: Test calls real external API
    Weather weather = weatherClient.getCurrentWeather("London");
    assertThat(weather.getTemp()).isGreaterThan(-50);
    // Flaky: network failure, rate limit, API change
-   
+
    GOOD: Mock external dependency
    when(weatherClient.getCurrentWeather("London"))
      .thenReturn(new Weather(20.0, "Sunny"));
 
 5. TIME DEPENDENCY:
-   
+
    BAD: assertEquals(LocalDate.now(), order.getCreatedDate());
    // Flaky at midnight (test runs just before midnight, assertion just after)
-   
+
    GOOD: Use Clock abstraction
    Clock clock = Clock.fixed(Instant.parse("2024-01-15T10:00:00Z"), UTC);
    Order order = new Order(clock);
@@ -111,22 +113,23 @@ ROOT CAUSES TAXONOMY:
 ```
 
 DETECTING FLAKY TESTS:
+
 ```
 1. Flakiness detection in CI (run N times):
    # GitHub Actions: retry failed tests
    ./mvnw test -Dsurefire.rerunFailingTestsCount=3
-   
+
    If test passes on retry → flagged as flaky
-   
+
 2. Test run history analysis:
    Track pass rate per test over last 100 runs
    If pass rate < 99% → flaky candidate
-   
+
 3. Quarantine strategy:
    @Tag("flaky")
    @Disabled("Quarantined: flaky due to timing issue, tracked in JIRA-1234")
    @Test void someFlakeyTest() { ... }
-   
+
    → Run main suite without @flaky tag
    → Run flaky suite separately (don't block CI)
    → Fix flaky tests with target SLA
@@ -135,6 +138,7 @@ DETECTING FLAKY TESTS:
 ### 🧪 Thought Experiment
 
 THE CASCADING IGNORE:
+
 ```
 Month 1: Test A starts failing 5% of the time. Team reruns until green.
 Month 2: 3 more flaky tests appear. Team accepts re-run culture.
@@ -143,7 +147,7 @@ Month 3: Real bug introduced. Test B fails consistently.
           Developer re-runs 3 times. It keeps failing.
           "Well, the CI is unreliable. Let me just merge."
           → Real bug ships to production.
-          
+
 The flaky tests didn't just waste time — they destroyed the diagnostic value
 of the test suite. Zero flaky tests = zero tolerance culture.
 ```
@@ -171,9 +175,9 @@ import static org.awaitility.Awaitility.*;
 @Test
 void cacheIsPopulatedAsync() {
     service.triggerCacheLoad("product-001");
-    
+
     // BAD: Thread.sleep(1000) — hardcoded wait, flaky
-    
+
     // GOOD: await with timeout
     await()
         .atMost(5, SECONDS)
@@ -186,9 +190,9 @@ void cacheIsPopulatedAsync() {
 // Fixing time-dependent tests with Clock
 class OrderService {
     private final Clock clock;
-    
+
     OrderService(Clock clock) { this.clock = clock; }
-    
+
     Order createOrder() {
         return Order.builder()
             .createdAt(LocalDateTime.now(clock))
@@ -200,7 +204,7 @@ class OrderService {
 void orderHasCorrectTimestamp() {
     Clock fixed = Clock.fixed(Instant.parse("2024-06-01T09:00:00Z"), UTC);
     OrderService service = new OrderService(fixed);
-    
+
     Order order = service.createOrder();
     assertThat(order.getCreatedAt())
         .isEqualTo(LocalDateTime.parse("2024-06-01T09:00:00"));
@@ -210,21 +214,21 @@ void orderHasCorrectTimestamp() {
 
 ### ⚖️ Comparison Table
 
-| Cause | Symptom | Fix |
-|---|---|---|
-| Thread.sleep | Fails on slow servers | Awaitility await |
-| Shared database | Fails in parallel/random order | @BeforeEach setup, @AfterEach cleanup |
-| Real network call | Fails on network issues | Mock with WireMock/Mockito |
-| Hardcoded port | BindException | RANDOM_PORT |
-| LocalDate.now() | Fails at midnight | Inject fixed Clock |
+| Cause             | Symptom                        | Fix                                   |
+| ----------------- | ------------------------------ | ------------------------------------- |
+| Thread.sleep      | Fails on slow servers          | Awaitility await                      |
+| Shared database   | Fails in parallel/random order | @BeforeEach setup, @AfterEach cleanup |
+| Real network call | Fails on network issues        | Mock with WireMock/Mockito            |
+| Hardcoded port    | BindException                  | RANDOM_PORT                           |
+| LocalDate.now()   | Fails at midnight              | Inject fixed Clock                    |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                            | Reality                                                                      |
+| ---------------------------------------- | ---------------------------------------------------------------------------- |
 | "Just re-run it, flaky tests are normal" | Flaky tests are test bugs — they must be fixed; re-running hides the problem |
-| "Retrying in CI fixes flakiness" | Retry masks flakiness; only fixing the root cause eliminates it |
-| "Flaky = the test is wrong, delete it" | Flaky tests often cover real behavior — fix the flakiness, keep the coverage |
+| "Retrying in CI fixes flakiness"         | Retry masks flakiness; only fixing the root cause eliminates it              |
+| "Flaky = the test is wrong, delete it"   | Flaky tests often cover real behavior — fix the flakiness, keep the coverage |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -267,6 +271,7 @@ Fix: Inject `Clock` and fix it for all date/time operations in the system under 
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Shared database state is the most common cause of test order dependency flakiness. Describe a complete test isolation strategy for a Spring Boot application using PostgreSQL: (1) `@Transactional` on test class — how Spring's test transaction management works (transaction begun before test, rolled back after — never committed), (2) the limitation of `@Transactional` rollback (doesn't work for tests that spin up separate threads or use `@Async` services), (3) `@Sql` with `executionPhase = AFTER_TEST_METHOD` for explicit cleanup, (4) using TestContainers with `@DirtiesContext` to get a fresh container per test class, and (5) the performance impact of each strategy — which is fastest, which gives the strongest isolation guarantee?

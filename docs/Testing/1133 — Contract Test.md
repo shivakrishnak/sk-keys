@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A contract test verifies that a service (provider) honours the API expectations of its consumers, without deploying both together — enabling microservices teams to deploy independently with confidence.
 
-| #1133 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Integration Test, HTTP and APIs, Microservices | |
-| **Used by:** | Microservices, Consumer-Driven Contract Testing, CI-CD | |
-| **Related:** | Pact, Spring Cloud Contract, CDC Testing, Consumer, Provider | |
+| #1133           | Category: Testing                                            | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------- | :-------------- |
+| **Depends on:** | Integration Test, HTTP and APIs, Microservices               |                 |
+| **Used by:**    | Microservices, Consumer-Driven Contract Testing, CI-CD       |                 |
+| **Related:**    | Pact, Spring Cloud Contract, CDC Testing, Consumer, Provider |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ A **contract test** (specifically **Consumer-Driven Contract test**) is a testin
 Contract test = consumer writes its expectations as a test; provider proves it meets those expectations — no shared environment needed.
 
 **One analogy:**
+
 > A supplier contract in business: the buyer specifies exactly what they need (dimensions, tolerances, delivery schedule). The supplier doesn't need the buyer present to verify they can meet the spec — they test their product against the spec. If the product passes the spec, the supplier can ship independently.
 
 **One insight:**
@@ -58,6 +59,7 @@ Pact specifically tests that the consumer can parse what the provider actually r
 ### 🔩 First Principles Explanation
 
 PACT WORKFLOW:
+
 ```
 CONSUMER SIDE (Service A tests):
   1. Consumer test: mock the provider using Pact mock server
@@ -68,7 +70,7 @@ CONSUMER SIDE (Service A tests):
   3. Pact file published to Pact Broker (shared registry)
 
 PROVIDER SIDE (Service B CI):
-  1. Provider verifies: 
+  1. Provider verifies:
      → Load pact.json for Service A from Pact Broker
      → Replay recorded request against real Service B
      → Compare actual response to pact's expected response
@@ -84,15 +86,17 @@ CAN I DEPLOY? (Pact Broker):
 
 MATCHING RULES (key feature):
 Contract test with flexible matching (not exact values):
+
 ```json
 {
   "matchingRules": {
-    "$.body.userId":  {"match": "type"},      // any string
-    "$.body.email":   {"match": "regex", "regex": "^\\S+@\\S+$"},
-    "$.body.amount":  {"match": "decimal"}     // any decimal number
+    "$.body.userId": { "match": "type" }, // any string
+    "$.body.email": { "match": "regex", "regex": "^\\S+@\\S+$" },
+    "$.body.amount": { "match": "decimal" } // any decimal number
   }
 }
 ```
+
 This prevents brittle tests that fail when the provider returns different but valid values.
 
 THE TRADE-OFFS:
@@ -102,6 +106,7 @@ Cost: Requires Pact Broker infrastructure; test setup complexity; contracts are 
 ### 🧪 Thought Experiment
 
 BREAKING CHANGE DETECTION:
+
 ```
 Current contract (from consumer A's pact file):
   GET /users/123 → {userId: "123", email: "...", plan: "premium"}
@@ -203,11 +208,11 @@ With contract test:
    @Provider("AuthService") @PactBroker
    class AuthServiceContractTest {
        @TestTarget public final HttpTarget target = new HttpTarget(port);
-       
+
        @State("user 123 exists")
        void userExists() { testUserRepository.save(testUser("123")); }
    }
-   
+
 5. Provider verifies: GET /users/123 response matches pact
 6. can-i-deploy passes for both services → deploy
 ```
@@ -278,21 +283,21 @@ class UserServiceProviderTest {
 
 ### ⚖️ Comparison Table
 
-| Test Type | Tests What | Environment | Speed | Coupling |
-|---|---|---|---|---|
-| Unit test | Business logic | None (mocks) | <100ms | None |
-| Contract test | API interface compatibility | Provider only | 1–10s | Pact Broker |
-| Integration test | Real DB/service behavior | Docker | 5–30s | Docker |
-| E2E test | Full user flow | Full stack deployed | Minutes | Full stack |
+| Test Type        | Tests What                  | Environment         | Speed   | Coupling    |
+| ---------------- | --------------------------- | ------------------- | ------- | ----------- |
+| Unit test        | Business logic              | None (mocks)        | <100ms  | None        |
+| Contract test    | API interface compatibility | Provider only       | 1–10s   | Pact Broker |
+| Integration test | Real DB/service behavior    | Docker              | 5–30s   | Docker      |
+| E2E test         | Full user flow              | Full stack deployed | Minutes | Full stack  |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Contract tests replace E2E tests" | They complement; contract tests verify interface; E2E tests verify business flows |
-| "Pact tests all edge cases of the provider" | Pact only tests what the consumer uses; not the provider's full API surface |
+| Misconception                                  | Reality                                                                                           |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| "Contract tests replace E2E tests"             | They complement; contract tests verify interface; E2E tests verify business flows                 |
+| "Pact tests all edge cases of the provider"    | Pact only tests what the consumer uses; not the provider's full API surface                       |
 | "Provider breaking its own contract is caught" | Only if consumers test for that behavior; new provider features not consumed won't be in any pact |
-| "Contract tests are only for HTTP" | Pact v3/v4 supports async messaging (Kafka, SQS) contracts too |
+| "Contract tests are only for HTTP"             | Pact v3/v4 supports async messaging (Kafka, SQS) contracts too                                    |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -341,6 +346,7 @@ Fix: Add logging in state handler, verify state setup creates expected data befo
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Pact's consumer test runs against a Pact mock server — which means the consumer test never touches the real provider. The contract (pact file) records what the consumer sent and what it expected to receive. The provider verification replays the exact request and compares the actual response. But what if the consumer sends a request with a body that contains fields the provider doesn't care about, or the provider's response headers include new headers the consumer didn't expect? Describe Pact's content-type negotiation and response body matching in detail: what happens to unexpected response fields (they are ignored by default — additive changes are safe), what happens to unexpected request fields (provider receives them — safe), and how `PactDslJsonBody.minArrayLike()` prevents brittleness in array responses.

@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A test environment is an isolated, controlled infrastructure replica (or approximation) where tests execute without affecting production — ranging from a developer's local machine to a full production-like staging environment.
 
-| #1161 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Integration Test, E2E Test, CI-CD | |
-| **Used by:** | QA Teams, DevOps, Developers | |
-| **Related:** | Test Isolation, Test Data Management, Testcontainers, Docker Compose, CI-CD | |
+| #1161           | Category: Testing                                                           | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Integration Test, E2E Test, CI-CD                                           |                 |
+| **Used by:**    | QA Teams, DevOps, Developers                                                |                 |
+| **Related:**    | Test Isolation, Test Data Management, Testcontainers, Docker Compose, CI-CD |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -42,11 +42,13 @@ A **test environment** is a controlled, reproducible infrastructure configuratio
 Test environments = where tests run; each tier balances fidelity (how production-like) vs. cost/speed.
 
 **One analogy:**
+
 > Test environments are like **rehearsal spaces for a theater production**: actors first rehearse lines at home (local dev), then in a rehearsal room (CI), then in a dress rehearsal on the actual stage (staging), then opening night (production). Each space adds more fidelity — costume, lighting, full audience — at increasing cost and visibility.
 
 ### 🔩 First Principles Explanation
 
 ENVIRONMENT TIER MATRIX:
+
 ```
 ┌──────────────┬────────────────────┬────────────┬──────────────┬──────────────┐
 │ Environment  │ Purpose            │ Who runs   │ Data         │ Fidelity     │
@@ -71,17 +73,18 @@ ENVIRONMENT TIER MATRIX:
 ```
 
 EPHEMERAL vs. PERSISTENT ENVIRONMENTS:
+
 ```
 EPHEMERAL (CI):
   + Created on demand, destroyed after tests
   + Perfect isolation (no shared state)
   + Cost: pay-per-use
   - Slow to create (if complex infrastructure)
-  
+
   Approach: Docker Compose in CI
   docker-compose.yml spins up: app + postgres + redis + kafka
   Run tests → teardown all containers
-  
+
 PERSISTENT (staging):
   + Always on, faster test execution start
   + Can test long-running behaviors
@@ -93,16 +96,17 @@ PERSISTENT (staging):
 ### 🧪 Thought Experiment
 
 ENVIRONMENT PARITY — THE MISSING CONFIG:
+
 ```
 Application works in staging.
 Deployed to production → NullPointerException on first request.
 
-Root cause: 
+Root cause:
   Staging has env var: FEATURE_FLAG_NEW_CHECKOUT=true
   Production: FEATURE_FLAG_NEW_CHECKOUT is not set (defaults to null → NPE)
-  
+
   This was never caught because staging was "close enough" to production
-  
+
 Lesson: environment parity requires:
   1. Identical configuration structure (all vars defined, even if values differ)
   2. "Production-like" config in staging — no staging-only workarounds
@@ -128,7 +132,7 @@ Lesson: environment parity requires:
 
 ```yaml
 # docker-compose.yml — local/CI environment definition
-version: '3.8'
+version: "3.8"
 services:
   app:
     build: .
@@ -167,19 +171,19 @@ services:
 
 ### ⚖️ Comparison Table
 
-| | Local | CI (ephemeral) | Staging | Production |
-|---|---|---|---|---|
-| Cost | Dev time | CI compute | Always-on infra | Real cost |
-| Isolation | High | Perfect | Shared/contention | N/A |
-| Fidelity | Low | Medium | High | Exact |
-| Data | Generated | Generated | Anonymized | Real |
+|           | Local     | CI (ephemeral) | Staging           | Production |
+| --------- | --------- | -------------- | ----------------- | ---------- |
+| Cost      | Dev time  | CI compute     | Always-on infra   | Real cost  |
+| Isolation | High      | Perfect        | Shared/contention | N/A        |
+| Fidelity  | Low       | Medium         | High              | Exact      |
+| Data      | Generated | Generated      | Anonymized        | Real       |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Staging is identical to production" | Config drift, scale differences, and data differences are almost always present |
-| "Tests should only run in staging" | Tests must run in every environment tier; shift left means running tests earlier and more frequently |
+| Misconception                               | Reality                                                                                                             |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| "Staging is identical to production"        | Config drift, scale differences, and data differences are almost always present                                     |
+| "Tests should only run in staging"          | Tests must run in every environment tier; shift left means running tests earlier and more frequently                |
 | "One shared test environment is sufficient" | Shared environments cause bottlenecks and non-deterministic tests; ephemeral or isolated environments are preferred |
 
 ### 🚨 Failure Modes & Diagnosis
@@ -218,6 +222,7 @@ Fix: Use contract tests (Pact) to ensure mocks accurately represent real service
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** "Infrastructure parity" means test environments should mirror production topology and configuration. Describe what "parity" means at each layer: (1) infrastructure parity (same cloud provider, same instance types, same networking topology — VPCs, subnets, security groups), (2) application configuration parity (same environment variables structure, same feature flag service, same secrets management — Vault/AWS Secrets Manager), (3) data parity (production data volume, realistic distributions) vs. data compliance (no PII in test environments), and (4) dependency parity (same third-party service versions, same API versions). Which parity dimensions are most commonly violated and why?

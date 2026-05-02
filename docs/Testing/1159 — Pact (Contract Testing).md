@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Pact is a consumer-driven contract testing framework: the API consumer writes a test defining what it expects from the provider; Pact generates a contract file (pact); the provider verifies its API fulfills the contract — enabling independent deployment of services with confidence.
 
-| #1159 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Contract Test, Integration Test, Microservices | |
-| **Used by:** | Microservices Teams, API Teams | |
-| **Related:** | Contract Test, WireMock, Consumer-Driven Contracts, Pact Broker, Test Diamond | |
+| #1159           | Category: Testing                                                             | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Contract Test, Integration Test, Microservices                                |                 |
+| **Used by:**    | Microservices Teams, API Teams                                                |                 |
+| **Related:**    | Contract Test, WireMock, Consumer-Driven Contracts, Pact Broker, Test Diamond |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -45,17 +45,19 @@ Standard API-first (provider-driven): provider publishes spec → consumers adap
 Pact = consumer writes what it needs, provider proves it delivers — without direct communication.
 
 **One analogy:**
+
 > Pact is a **supplier agreement** process: the restaurant (consumer) tells the food supplier (provider) exactly what quality and specification they need ("10kg free-range eggs, grade A"). The supplier verifies they can supply that specification before accepting the order. If the supplier changes their egg source, they verify the new source still meets the restaurant's spec before delivering. No surprises on delivery day.
 
 ### 🔩 First Principles Explanation
 
 PACT WORKFLOW:
+
 ```
 1. CONSUMER SIDE (Order Service):
-   
+
    @ExtendWith(PactConsumerTestExt.class)
    class OrderServicePactConsumerTest {
-     
+
      @Pact(consumer = "order-service", provider = "payment-service")
      RequestResponsePact createPact(PactDslWithProvider builder) {
        return builder
@@ -74,48 +76,49 @@ PACT WORKFLOW:
                .stringMatcher("status", "succeeded|failed"))
          .toPact();
      }
-     
+
      @Test
      @PactTestFor(pactMethod = "createPact")
      void chargePayment_shouldHandleResponse(MockServer mockServer) {
        // MockServer is a Pact-controlled server, returns the defined response
        PaymentClient client = new PaymentClient(mockServer.getUrl());
        ChargeResult result = client.charge(50.00, "USD", "tok_test");
-       
+
        // Verify consumer CAN handle the response format
        assertThat(result.getChargeId()).isNotNull();
        assertThat(result.getStatus()).isIn("succeeded", "failed");
      }
    }
-   
+
    → Generates: pact/order-service-payment-service.json
    → Uploaded to Pact Broker
 
 2. PROVIDER SIDE (Payment Service):
-   
+
    @SpringBootTest(webEnvironment = RANDOM_PORT)
    @Provider("payment-service")
    @PactBroker(url = "${PACT_BROKER_URL}")
    class PaymentServicePactProviderTest {
-     
+
      @TestTemplate
      @ExtendWith(PactVerificationInvocationContextProvider.class)
      void verifyPact(PactVerificationContext context) {
        context.verifyInteraction();
      }
-     
+
      @State("payment service is available")
      void paymentServiceAvailable() {
        // Set up test state — no special setup needed
      }
    }
-   
+
    → Downloads pact from Pact Broker
    → Runs each interaction against real Spring Boot app
    → If real response matches pact → PASS → safe to deploy
 ```
 
 THE "CAN I DEPLOY" CHECK:
+
 ```bash
 # Before deploying payment-service v2.0:
 pact-broker can-i-deploy \
@@ -136,6 +139,7 @@ pact-broker can-i-deploy \
 ### 🧪 Thought Experiment
 
 THE FIELD RENAME BUG — PACT CATCHES IT:
+
 ```
 Payment Service developer renames field: "chargeId" → "transactionId"
 (In a non-Pact world: this silently breaks all consumers)
@@ -143,22 +147,22 @@ Payment Service developer renames field: "chargeId" → "transactionId"
 With Pact:
   1. Order Service consumer test: expects field "chargeId"
      pact file: { "chargeId": { "match": "type", "example": "ch_123" } }
-     
+
   2. Payment Service provider verification:
      Real response: { "transactionId": "ch_123" }
      Pact expects: "chargeId" field
      → PROVIDER VERIFICATION FAILS in Payment Service CI
-     
+
   3. Developer sees: "Order Service pact requires 'chargeId' field — not found"
      Options: (a) revert rename, (b) talk to Order Service team about migration
-     
+
   4. If transitional: Payment Service returns BOTH fields for a version:
      { "chargeId": "ch_123", "transactionId": "ch_123" }  // backward compatible
      → Pact: PASS
      → Order Service can deploy new code using "transactionId" first
      → Then Payment Service removes "chargeId"
      → Order Service pact updated to expect "transactionId"
-     
+
   Result: coordinated, safe API evolution without integration incidents
 ```
 
@@ -183,7 +187,7 @@ With Pact:
 @ExtendWith(PactConsumerTestExt.class)
 @PactTestFor(providerName = "product-service")
 class ProductServicePactConsumerTest {
-    
+
     @Pact(consumer = "order-service")
     RequestResponsePact getProductPact(PactDslWithProvider builder) {
         return builder
@@ -200,13 +204,13 @@ class ProductServicePactConsumerTest {
                     .booleanType("available"))
             .toPact();
     }
-    
+
     @Test
     @PactTestFor(pactMethod = "getProductPact")
     void getProduct_canParseResponse(MockServer mockServer) {
         ProductClient client = new ProductClient(mockServer.getUrl());
         Product product = client.getProduct("p123");
-        
+
         assertThat(product.getProductId()).isNotNull();
         assertThat(product.getPrice()).isPositive();
     }
@@ -219,21 +223,21 @@ class ProductServicePactConsumerTest {
 @Provider("product-service")
 @PactBroker(url = "${PACT_BROKER_URL}", tags = {"main"})
 class ProductServicePactProviderTest {
-    
+
     @LocalServerPort
     int port;
-    
+
     @BeforeEach
     void setupTarget(PactVerificationContext context) {
         context.setTarget(new HttpTestTarget("localhost", port));
     }
-    
+
     @TestTemplate
     @ExtendWith(PactVerificationInvocationContextProvider.class)
     void verifyPact(PactVerificationContext context) {
         context.verifyInteraction();
     }
-    
+
     @State("product p123 exists")
     void productExists() {
         productRepository.save(new Product("p123", "Widget", 9.99, true));
@@ -243,21 +247,21 @@ class ProductServicePactProviderTest {
 
 ### ⚖️ Comparison Table
 
-| | Integration Test (Testcontainers) | Pact Contract Test | E2E Test |
-|---|---|---|---|
-| What it tests | Service internal behavior | Service API contract | Full user journey |
-| Requires running provider | No (Pact mock server) | No (consumer) / Yes (provider) | Yes (all services) |
-| Speed | Medium | Fast (consumer) | Slow |
-| Catches schema drift | ✗ | ✓ | ✓ (eventually) |
-| Feedback loop | Minutes | Minutes (per service) | Hours |
+|                           | Integration Test (Testcontainers) | Pact Contract Test             | E2E Test           |
+| ------------------------- | --------------------------------- | ------------------------------ | ------------------ |
+| What it tests             | Service internal behavior         | Service API contract           | Full user journey  |
+| Requires running provider | No (Pact mock server)             | No (consumer) / Yes (provider) | Yes (all services) |
+| Speed                     | Medium                            | Fast (consumer)                | Slow               |
+| Catches schema drift      | ✗                                 | ✓                              | ✓ (eventually)     |
+| Feedback loop             | Minutes                           | Minutes (per service)          | Hours              |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Pact replaces integration tests" | Pact verifies the contract; integration tests verify behavior; both needed |
-| "Provider-driven contracts (OpenAPI) is equivalent" | OpenAPI spec can drift; Pact verification runs against the real API |
-| "Pact requires both services to change simultaneously" | Pact enables independent deployment; `can-i-deploy` ensures safety |
+| Misconception                                          | Reality                                                                    |
+| ------------------------------------------------------ | -------------------------------------------------------------------------- |
+| "Pact replaces integration tests"                      | Pact verifies the contract; integration tests verify behavior; both needed |
+| "Provider-driven contracts (OpenAPI) is equivalent"    | OpenAPI spec can drift; Pact verification runs against the real API        |
+| "Pact requires both services to change simultaneously" | Pact enables independent deployment; `can-i-deploy` ensures safety         |
 
 ### 📌 Quick Reference Card
 
@@ -277,6 +281,7 @@ class ProductServicePactProviderTest {
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Pact uses "type matching" (`stringType`, `numberType`) rather than value matching (`equalTo("ch_123")`) in consumer pacts. Explain why type matching is better for contracts: (a) value matching creates brittle pacts (test data becomes part of the contract), (b) type matching expresses what the consumer ACTUALLY cares about (field exists and has correct type), (c) when value matching IS appropriate (enum values, status codes, specific string formats). Describe the `PactDslJsonBody` matchers for: regex validation, datetime format, array min/max length, and nested object matching.

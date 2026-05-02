@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A stub is a test double that returns pre-programmed responses to calls, allowing tests to control what a dependency returns without caring whether that method was actually called.
 
-| #1145 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, Mocking, Dependency Injection | |
-| **Used by:** | Developers, TDD Practitioners | |
-| **Related:** | Mocking, Faking, Spying, Test Doubles, Mockito | |
+| #1145           | Category: Testing                              | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------- | :-------------- |
+| **Depends on:** | Unit Test, Mocking, Dependency Injection       |                 |
+| **Used by:**    | Developers, TDD Practitioners                  |                 |
+| **Related:**    | Mocking, Faking, Spying, Test Doubles, Mockito |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -41,11 +41,13 @@ A **stub** is a test double that provides canned answers to calls made during a 
 Stub = fake return value; no verification of whether it was called.
 
 **One analogy:**
+
 > A stub is a **pre-recorded answer line**: when the code dials the number for "what's the user's credit score?" the stub answers "750" — regardless of what the question was or how many times the code asks. The stub doesn't care about the conversation; it just has a scripted answer.
 
 ### 🔩 First Principles Explanation
 
 STUB VS MOCK — THE KEY DISTINCTION:
+
 ```java
 // STUB: only programs return value, no verification
 UserRepository stub = mock(UserRepository.class);
@@ -61,6 +63,7 @@ verify(mockRepo).findById(1L); // VERIFICATION: asserts it was called
 ```
 
 In Mockito, the same object can act as both stub and mock:
+
 - Stub behavior: `when(...).thenReturn(...)`
 - Mock verification: `verify(...)`
 
@@ -68,6 +71,7 @@ Using it only as a stub (no `verify`) = stub usage.
 Using it with `verify` = mock usage.
 
 STUBBING SCENARIOS:
+
 ```java
 // Stub: simple return value
 when(repo.findById(1L)).thenReturn(Optional.of(user));
@@ -88,6 +92,7 @@ when(repo.findByEmail("admin@company.com")).thenReturn(Optional.of(admin));
 ### 🧪 Thought Experiment
 
 CONTROLLING TEST SCENARIOS WITH STUBS:
+
 ```
 Test: OrderService.getOrderTotal() with discounts
 
@@ -194,20 +199,20 @@ class WeatherAlertServiceTest {
 
 ### ⚖️ Comparison Table
 
-| | Stub | Mock | Fake |
-|---|---|---|---|
-| Returns scripted values | ✓ | ✓ | ✓ (real logic) |
-| Verifies calls | ✗ | ✓ | ✗ |
-| Has real logic | ✗ | ✗ | ✓ |
-| Framework needed | Yes | Yes | No (hand-written) |
+|                         | Stub | Mock | Fake              |
+| ----------------------- | ---- | ---- | ----------------- |
+| Returns scripted values | ✓    | ✓    | ✓ (real logic)    |
+| Verifies calls          | ✗    | ✓    | ✗                 |
+| Has real logic          | ✗    | ✗    | ✓                 |
+| Framework needed        | Yes  | Yes  | No (hand-written) |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Stubbing and mocking are the same thing" | Stubs provide responses; mocks also verify interactions |
-| "Stubs should have verify() calls" | Stubs intentionally do NOT verify; use mock if you need verification |
-| "Unnecessary stubs are harmless" | They indicate either dead code paths or misaligned tests; clean them up |
+| Misconception                             | Reality                                                                 |
+| ----------------------------------------- | ----------------------------------------------------------------------- |
+| "Stubbing and mocking are the same thing" | Stubs provide responses; mocks also verify interactions                 |
+| "Stubs should have verify() calls"        | Stubs intentionally do NOT verify; use mock if you need verification    |
+| "Unnecessary stubs are harmless"          | They indicate either dead code paths or misaligned tests; clean them up |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -243,6 +248,7 @@ Fix: Use `any()` for flexible matching, or debug argument values with `ArgumentC
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Describe the difference between state verification and behaviour verification in tests, and when each is appropriate. State verification: after the test, assert that the object's state changed correctly (the returned value, the modified field). Behaviour verification: assert that the correct interactions with dependencies occurred (verify the right methods were called). Give three examples where state verification is sufficient and three examples where behaviour verification is necessary — and explain what class of bug only behaviour verification would catch.

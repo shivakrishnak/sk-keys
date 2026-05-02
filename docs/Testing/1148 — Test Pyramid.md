@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — The Test Pyramid is a model for the ideal distribution of tests: many fast unit tests at the base, fewer integration tests in the middle, and very few slow E2E tests at the top — prioritizing speed and feedback over comprehensive end-to-end coverage.
 
-| #1148 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, Integration Test, E2E Test | |
-| **Used by:** | Engineering Teams, QA, Tech Leads | |
-| **Related:** | Test Diamond, Unit Test, Integration Test, E2E Test, Test Strategy | |
+| #1148           | Category: Testing                                                  | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Unit Test, Integration Test, E2E Test                              |                 |
+| **Used by:**    | Engineering Teams, QA, Tech Leads                                  |                 |
+| **Related:**    | Test Diamond, Unit Test, Integration Test, E2E Test, Test Strategy |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -46,11 +46,13 @@ The **Test Pyramid** (coined by Mike Cohn in _Succeeding with Agile_, popularise
 Many unit tests, some integration tests, few E2E tests — faster feedback at lower cost.
 
 **One analogy:**
+
 > The test pyramid is like a building's **inspection schedule**: daily inspections at the component level (unit tests — fast, cheap, frequent), monthly inspections at the floor level (integration tests), annual full-building inspection (E2E — slow, expensive, infrequent). The daily inspections catch most problems fast; the annual inspection verifies the whole building but rarely finds issues the daily inspections missed.
 
 ### 🔩 First Principles Explanation
 
 THE PYRAMID RATIOS (rough guideline, not prescriptive):
+
 ```
             ★★
           [E2E Tests]
@@ -70,6 +72,7 @@ Total: ~6 minutes CI feedback
 ```
 
 WHAT EACH LEVEL TESTS:
+
 ```
 Unit tests:
   - Individual functions, methods, classes
@@ -91,6 +94,7 @@ E2E tests:
 ```
 
 THE ANTI-PATTERN — ICE CREAM CONE:
+
 ```
         ★★★★★★★★
            [E2E]
@@ -108,6 +112,7 @@ Result: slow CI, flaky tests, late feedback, expensive maintenance
 ### 🧪 Thought Experiment
 
 THE FLAKINESS TRAP:
+
 ```
 E2E test: "User can check out and receive order confirmation email"
   Steps: 1. Register user, 2. Add to cart, 3. Enter payment, 4. Place order,
@@ -221,20 +226,20 @@ class RegistrationControllerTest {
 
 ### ⚖️ Comparison Table
 
-| Level | Speed | Cost | Confidence | Flakiness |
-|---|---|---|---|---|
-| Unit | < 1ms | Low | Logic only | Very low |
-| Integration | 100ms–5s | Medium | Component interactions | Low |
-| E2E | 5s–3min | High | Full user journey | High |
+| Level       | Speed    | Cost   | Confidence             | Flakiness |
+| ----------- | -------- | ------ | ---------------------- | --------- |
+| Unit        | < 1ms    | Low    | Logic only             | Very low  |
+| Integration | 100ms–5s | Medium | Component interactions | Low       |
+| E2E         | 5s–3min  | High   | Full user journey      | High      |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "E2E tests give the highest confidence" | E2E tests give full-journey confidence but are slow, flaky, and expensive — complement, not replace, lower tests |
-| "The pyramid ratios are exact rules" | They are guidelines; optimize for your risk profile and system type |
-| "More tests = better" | Wrong tests (too many E2E) slow CI and increase flakiness |
-| "Unit tests don't catch integration bugs" | Correct — that's why integration tests exist. Each level catches different bugs. |
+| Misconception                             | Reality                                                                                                          |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| "E2E tests give the highest confidence"   | E2E tests give full-journey confidence but are slow, flaky, and expensive — complement, not replace, lower tests |
+| "The pyramid ratios are exact rules"      | They are guidelines; optimize for your risk profile and system type                                              |
+| "More tests = better"                     | Wrong tests (too many E2E) slow CI and increase flakiness                                                        |
+| "Unit tests don't catch integration bugs" | Correct — that's why integration tests exist. Each level catches different bugs.                                 |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -272,6 +277,7 @@ Fix: Unit tests should NOT use Spring context. Use Mockito-only tests for unit l
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The "testing honeycomb" (Spotify model for microservices) inverts the pyramid slightly: fewer unit tests, more integration tests, few E2E. The argument: in microservices, the value is in the service contract (API/event behavior), not in isolated unit logic. Compare the pyramid vs. honeycomb for: (1) a monolithic domain-rich e-commerce application (complex pricing, discount, tax logic), (2) a microservice that is primarily a thin CRUD API over a PostgreSQL database, (3) a microservice that coordinates three other services (orchestrator pattern). For each, argue which model is more appropriate and what the top-3 test scenarios at each level would be.

@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — SonarQube is a static analysis platform that measures code quality across multiple dimensions (coverage, bugs, vulnerabilities, code smells, duplications); the Quality Gate is a configurable pass/fail threshold applied in CI to prevent code that doesn't meet standards from being merged.
 
-| #1174 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Test Coverage Targets, Code Quality, CI-CD, SAST | |
-| **Used by:** | Developers, Tech Leads, DevOps | |
-| **Related:** | Test Coverage Targets, SAST, CI-CD, Code Smells, Technical Debt | |
+| #1174           | Category: Testing                                               | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Test Coverage Targets, Code Quality, CI-CD, SAST                |                 |
+| **Used by:**    | Developers, Tech Leads, DevOps                                  |                 |
+| **Related:**    | Test Coverage Targets, SAST, CI-CD, Code Smells, Technical Debt |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -43,11 +43,13 @@ Code reviews catch style and logic issues but are inconsistent — different rev
 SonarQube analyzes code quality + security; Quality Gate enforces a configurable minimum bar in CI.
 
 **One analogy:**
+
 > SonarQube is the **building code inspector** for software: before a building (deployment) is approved for occupancy, it must pass inspection (Quality Gate). The inspection checks: structural integrity (bugs), electrical safety (security vulnerabilities), fire code compliance (specific standards), and general habitability (code smells, coverage). Fail any check → the building isn't approved until the defects are fixed.
 
 ### 🔩 First Principles Explanation
 
 SONARQUBE ANALYSIS DIMENSIONS:
+
 ```
 1. BUGS (Reliability):
    Actual or likely errors in the code:
@@ -55,7 +57,7 @@ SONARQUBE ANALYSIS DIMENSIONS:
    - Resource leak: stream/connection opened, never closed
    - Unreachable code: branch that can never be executed
    - Incorrect API usage: String comparison with == instead of .equals()
-   
+
    SEVERITY: Blocker / Critical / Major / Minor / Info
 
 2. VULNERABILITIES (Security):
@@ -65,7 +67,7 @@ SONARQUBE ANALYSIS DIMENSIONS:
    - Insecure deserialization
    - Weak cryptography: MD5 / SHA-1 for password hashing
    - XXE vulnerability in XML parsing
-   
+
 3. SECURITY HOTSPOTS:
    Code that needs security review (not definitively a vulnerability):
    - HTTP request: is the URL from user input? (potential SSRF)
@@ -101,6 +103,7 @@ SONARQUBE QUALITY GATE — SONAR WAY (DEFAULT):
 ```
 
 CI INTEGRATION FLOW:
+
 ```
 Developer push → CI pipeline:
 
@@ -108,7 +111,7 @@ Developer push → CI pipeline:
 2. mvn sonar:sonar             # Send code + coverage to SonarQube server
    -Dsonar.host.url=...
    -Dsonar.token=...
-   
+
 3. SonarQube analysis runs:
    → Static analysis on changed files
    → Coverage ingested from JaCoCo report
@@ -121,30 +124,31 @@ Developer push → CI pipeline:
 5. CI pipeline checks Quality Gate result:
    → mvn sonar:sonar exits with error code if Quality Gate FAILED
    → Or: use sonar-quality-gate step in CI to poll result
-   
+
 6. Build fails if Quality Gate FAILED → PR cannot be merged
    (Branch protection rule: Quality Gate must pass)
 ```
 
 SONARQUBE "NEW CODE" vs "OVERALL CODE":
+
 ```
 CRITICAL CONFIGURATION: New Code Period
 
 Traditional: analyze the whole codebase → entire legacy codebase's issues appear → overwhelming
 
 SonarQube "New Code" approach:
-  Define "new code period": 
+  Define "new code period":
     - Since previous version
-    - Since specific date  
+    - Since specific date
     - Since last 30 days
     - Based on merge commits (recommended for PRs)
-  
+
   Quality Gate conditions on NEW CODE ONLY:
   → Developers only responsible for code they're changing
   → Legacy code issues tracked but don't block new PRs
   → "Clean as you go" principle: each PR must not INTRODUCE new issues
   → Over time, overall quality improves as new code meets higher standard
-  
+
   This is the correct way to use SonarQube in a large legacy codebase:
   Don't penalize teams for legacy they didn't write;
   require quality for code they ARE writing.
@@ -153,20 +157,21 @@ SonarQube "New Code" approach:
 ### 🧪 Thought Experiment
 
 THE SECURITY VULNERABILITY CAUGHT AT THE GATE:
+
 ```
 Developer adds new feature: user can provide a file path to upload from.
 Code:
   String filePath = request.getParameter("filePath");
   File file = new File(filePath);
   InputStream is = new FileInputStream(file);
-  
+
 SonarQube analysis:
   VULNERABILITY: Path Traversal (CWE-22)
   Line 42: "filePath" comes from HTTP request parameter — unsanitized
   An attacker could provide: filePath = "../../../../etc/passwd"
   This could expose sensitive server files.
   SEVERITY: Critical
-  
+
 Quality Gate: NEW VULNERABILITIES = 0 condition → FAILED
 Build fails → PR cannot be merged → vulnerability never ships.
 
@@ -178,7 +183,7 @@ Fix:
       throw new SecurityException("Path traversal attempt detected");
   }
   // Now safe to use resolved path
-  
+
 Quality Gate re-run: PASSED → PR can merge.
 ```
 
@@ -248,21 +253,21 @@ sonar.exclusions=**/generated/**,**/config/**  # exclude generated code from ana
 
 ### ⚖️ Comparison Table
 
-| Tool | Focus | Coverage | Security | CI Integration |
-|---|---|---|---|---|
-| SonarQube/SonarCloud | Comprehensive | Yes | Yes | Native |
-| Checkstyle | Style only | No | No | Maven/Gradle |
-| SpotBugs | Bugs | No | Partial | Maven/Gradle |
-| PMD | Bugs + Style | No | No | Maven/Gradle |
-| OWASP Dep-Check | Known CVEs in deps | No | Yes | Maven/Gradle |
+| Tool                 | Focus              | Coverage | Security | CI Integration |
+| -------------------- | ------------------ | -------- | -------- | -------------- |
+| SonarQube/SonarCloud | Comprehensive      | Yes      | Yes      | Native         |
+| Checkstyle           | Style only         | No       | No       | Maven/Gradle   |
+| SpotBugs             | Bugs               | No       | Partial  | Maven/Gradle   |
+| PMD                  | Bugs + Style       | No       | No       | Maven/Gradle   |
+| OWASP Dep-Check      | Known CVEs in deps | No       | Yes      | Maven/Gradle   |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Passing Quality Gate = secure code" | Quality Gate catches KNOWN patterns; manual security review and pen testing still required |
-| "SonarQube runs the tests" | SonarQube ingests coverage reports from testing tools (JaCoCo); it doesn't execute tests |
-| "All findings must be fixed" | Security hotspots can be reviewed and marked "acknowledged" (won't block gate after review); false positives can be marked as such |
+| Misconception                        | Reality                                                                                                                            |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| "Passing Quality Gate = secure code" | Quality Gate catches KNOWN patterns; manual security review and pen testing still required                                         |
+| "SonarQube runs the tests"           | SonarQube ingests coverage reports from testing tools (JaCoCo); it doesn't execute tests                                           |
+| "All findings must be fixed"         | Security hotspots can be reviewed and marked "acknowledged" (won't block gate after review); false positives can be marked as such |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -305,6 +310,7 @@ Fix: Use branch analysis (analyze only changed files on feature branches); full 
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Technical debt in SonarQube is measured in "remediation time" — the estimated time to fix all code smells. A project might have "45 days of technical debt." Describe: (1) how SonarQube calculates debt — each rule violation has an estimated fix time (e.g., "rename variable" = 5 minutes; "extract method > 150 lines" = 30 minutes); sum of all violations = total debt, (2) the SQALE method (Software Quality Assessment based on Lifecycle Expectations) that SonarQube's debt model is based on, (3) the "Technical Debt Ratio" (debt / cost to write the application from scratch) — a ratio under 5% = excellent, 5-10% = medium, > 20% = very high, (4) why debt is measured in time (developer effort to fix) rather than a dimensionless score (makes it actionable: "we need 45 days of sprint capacity to clear debt"), and (5) the "clean code" philosophy: rather than dedicating a sprint to debt reduction, apply the "Boy Scout Rule" — leave every piece of code you touch cleaner than you found it; SonarQube's new code analysis enforces this incrementally.

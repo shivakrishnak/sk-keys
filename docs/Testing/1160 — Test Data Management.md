@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Test Data Management (TDM) is the discipline of creating, maintaining, and controlling the data used in tests — ensuring tests have the right data, in the right state, without contaminating each other or violating compliance requirements.
 
-| #1160 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Test Isolation, Test Fixtures, Integration Test | |
-| **Used by:** | QA Teams, Developers, DevOps | |
-| **Related:** | Test Fixtures, Test Isolation, Testcontainers, Database Cleanup, GDPR | |
+| #1160           | Category: Testing                                                     | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Test Isolation, Test Fixtures, Integration Test                       |                 |
+| **Used by:**    | QA Teams, Developers, DevOps                                          |                 |
+| **Related:**    | Test Fixtures, Test Isolation, Testcontainers, Database Cleanup, GDPR |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -42,44 +42,46 @@ QA team's test environment has a database seeded months ago. Tests use data that
 TDM = right data, right state, every time — isolated, compliant, repeatable.
 
 **One analogy:**
+
 > Test Data Management is the **props department** on a film set: before each scene (test), the props crew ensures every prop (data record) is in exactly the right place, in exactly the right condition. After the scene, they reset everything. They also ensure no real valuable artifacts (PII = production data) are used as props — replicas only.
 
 ### 🔩 First Principles Explanation
 
 TDM STRATEGIES BY TEST LEVEL:
+
 ```
 UNIT TESTS:
   → Create data in test code (builders, Object Mother)
   → No database, no persistence
   → No TDM infrastructure needed
-  
+
 INTEGRATION TESTS (single service + real DB):
   Strategy 1: @Transactional rollback (Spring)
     → Test runs in a transaction
     → Transaction rolled back after test
     → DB returns to pre-test state automatically
-    
+
   Strategy 2: @BeforeEach truncate
     → Delete all rows before each test
     → Insert only what the test needs
     → More explicit but slower
-    
+
   Strategy 3: Testcontainers (fresh DB per class)
     → New Docker container per test class
     → Perfect isolation
     → Slowest (container startup)
-    
+
 E2E TESTS (full environment):
   Strategy 1: Dedicated test environment with seed data
     → Known baseline data loaded before test suite
     → Tests create additional data; cleanup after
     → Problem: state drift between runs
-    
+
   Strategy 2: Per-run data isolation
     → Each test run creates uniquely-identified data
     → Tests never share data
     → Cleanup: delete by run ID
-    
+
   Strategy 3: Data factories (Faker/Datafaker)
     → Generate realistic synthetic data per test
     → Unique IDs prevent conflicts
@@ -87,6 +89,7 @@ E2E TESTS (full environment):
 ```
 
 DATA MASKING FOR COMPLIANCE:
+
 ```
 Production data in test environments = GDPR violation
 (UK NHS was fined £500k for using real patient data in test)
@@ -96,19 +99,20 @@ Techniques:
      → Datafaker (Java), Faker (Python/Ruby)
      → Realistic-looking but fictional names, emails, addresses
      → UUID-based IDs (no collision with production)
-  
+
   2. Data masking/subsetting (enterprise tools):
      → Copy production schema, replace PII with masked values
      → email: "alice@example.com" → "user_8f7a2@test.invalid"
      → SSN: "123-45-6789" → "000-00-0001"
      → Tools: Delphix, IBM Optim, AWS DMS with transformation
-  
+
   3. Never use production data in tests:
      → Policy enforcement: no production DB credentials in CI
      → Test environments: separate databases, no production data
 ```
 
 TEST DATA LIFECYCLE:
+
 ```
 CREATION → USE → CLEANUP → DISPOSAL
     ↑                         ↓
@@ -123,11 +127,12 @@ Version control for test data:
 ### 🧪 Thought Experiment
 
 THE GDPR AUDIT:
+
 ```
 Company uses production database snapshot in staging environment
   → Contains: real names, emails, purchase history of 100k users
-  
-GDPR audit: 
+
+GDPR audit:
   Q: "Where is production user data stored?"
   A: "In production... and staging... and dev... and CI..."
   Result: GDPR violation (Article 25 — Data Protection by Design)
@@ -213,7 +218,7 @@ import net.datafaker.Faker;
 
 class UserTestDataFactory {
     private static final Faker faker = new Faker();
-    
+
     public static CreateUserRequest generateUser() {
         return CreateUserRequest.builder()
             .name(faker.name().fullName())
@@ -222,7 +227,7 @@ class UserTestDataFactory {
             .address(faker.address().streetAddress())
             .build();
     }
-    
+
     public static CreateOrderRequest generateOrder(String userId) {
         return CreateOrderRequest.builder()
             .userId(userId)
@@ -238,9 +243,9 @@ void orderPlacement_fullFlow() {
     CreateUserRequest userRequest = UserTestDataFactory.generateUser();
     String userId = userService.createUser(userRequest).getId();
     cleanupRegistry.registerForCleanup("users", userId);  // ensure cleanup
-    
+
     // ... test logic ...
-    
+
     // @AfterAll: cleanupRegistry.deleteAll() removes all registered IDs
 }
 ```
@@ -258,21 +263,21 @@ void getUsersWithRoles() {
 
 ### ⚖️ Comparison Table
 
-| Strategy | Isolation | Speed | Complexity | Use Case |
-|---|---|---|---|---|
-| @Transactional rollback | Per-test | Fast | Low | Integration tests |
-| @BeforeEach deleteAll | Per-test | Medium | Low | Integration tests |
-| Testcontainers (fresh) | Per-class | Slow | Medium | Integration tests |
-| Faker + cleanup by ID | Per-run | Fast | Medium | E2E tests |
-| Data masking | Shared | N/A | High | Staging environments |
+| Strategy                | Isolation | Speed  | Complexity | Use Case             |
+| ----------------------- | --------- | ------ | ---------- | -------------------- |
+| @Transactional rollback | Per-test  | Fast   | Low        | Integration tests    |
+| @BeforeEach deleteAll   | Per-test  | Medium | Low        | Integration tests    |
+| Testcontainers (fresh)  | Per-class | Slow   | Medium     | Integration tests    |
+| Faker + cleanup by ID   | Per-run   | Fast   | Medium     | E2E tests            |
+| Data masking            | Shared    | N/A    | High       | Staging environments |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Production data is the most realistic test data" | PII in test = compliance violation; synthetic data is safer and sufficient |
-| "One shared test database is fine" | Shared databases cause non-deterministic tests; isolation strategies are required |
-| "Test data cleanup is optional" | Uncleaned test data accumulates; databases grow; tests become order-dependent |
+| Misconception                                     | Reality                                                                           |
+| ------------------------------------------------- | --------------------------------------------------------------------------------- |
+| "Production data is the most realistic test data" | PII in test = compliance violation; synthetic data is safer and sufficient        |
+| "One shared test database is fine"                | Shared databases cause non-deterministic tests; isolation strategies are required |
+| "Test data cleanup is optional"                   | Uncleaned test data accumulates; databases grow; tests become order-dependent     |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -311,6 +316,7 @@ Fix: Regular staging environment reset. Per-run data provisioning with cleanup.
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** GDPR Article 25 ("Data Protection by Design and by Default") requires that organizations minimize personal data processing. Using production data in test environments is a common GDPR violation. Describe the technical controls to enforce this: (1) how to prevent CI/CD pipelines from having production database credentials (separate accounts, network policies, IAM policies), (2) the data anonymization pipeline: production dump → PII identification (using column-name heuristics or ML) → masking → import to staging, (3) how to handle referential integrity when masking (masking user emails consistently so foreign key relationships remain valid), and (4) GDPR Article 17 (right to erasure) — if a test database contains masked data derived from a real user who requests erasure, is the masked data covered?

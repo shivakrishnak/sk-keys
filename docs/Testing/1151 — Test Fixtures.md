@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A test fixture is the known, fixed state of the world a test needs to run: the objects, data, and environment set up before a test executes and torn down afterward.
 
-| #1151 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, Test Isolation | |
-| **Used by:** | All Developers | |
-| **Related:** | Test Isolation, Test Data Management, BeforeEach, Builder Pattern, Object Mother | |
+| #1151           | Category: Testing                                                                | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Unit Test, Test Isolation                                                        |                 |
+| **Used by:**    | All Developers                                                                   |                 |
+| **Related:**    | Test Isolation, Test Data Management, BeforeEach, Builder Pattern, Object Mother |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -42,39 +42,42 @@ A **test fixture** is the set of preconditions or state necessary for running a 
 Fixtures = the setup your test needs to run + the teardown to clean up.
 
 **One analogy:**
+
 > A fixture is like the **chef's mise en place** (French: everything in its place): before cooking begins, every ingredient is prepped, measured, and in position. The cooking (the test) starts from a known, prepared state. Without mise en place, cooking is chaotic and inconsistent.
 
 ### 🔩 First Principles Explanation
 
 JUNIT 5 FIXTURE LIFECYCLE:
+
 ```java
 @TestInstance(PER_CLASS)  // default: PER_METHOD (new instance per test)
 class CartServiceTest {
-    
+
     private CartService service;
     private FakeProductRepository productRepo;
-    
+
     @BeforeAll      // once before all tests — for expensive setup
     static void initDatabase() { /* start Testcontainers */ }
-    
+
     @BeforeEach     // before each test — reset state
     void setup() {
         productRepo = new FakeProductRepository();
         service = new CartService(productRepo);
         // fresh service for each test — isolation guaranteed
     }
-    
+
     @Test void addItem_incrementsCartSize() { /* ... */ }
     @Test void removeItem_decrementsCartSize() { /* ... */ }
-    
+
     @AfterEach void cleanup() { /* clear any side effects */ }
-    
+
     @AfterAll      // once after all tests
     static void shutdownDatabase() { /* stop Testcontainers */ }
 }
 ```
 
 TEST DATA BUILDER PATTERN (avoid object construction repetition):
+
 ```java
 // Without builder: scattered, brittle
 User user = new User("alice", "alice@example.com", "password123",
@@ -93,7 +96,7 @@ class UserBuilder {
     private String email = "test@example.com";
     private UserRole role = UserRole.STANDARD;
     private boolean active = true;
-    
+
     public static UserBuilder aUser() { return new UserBuilder(); }
     public UserBuilder withEmail(String email) { this.email = email; return this; }
     public UserBuilder withRole(UserRole role) { this.role = role; return this; }
@@ -102,13 +105,14 @@ class UserBuilder {
 ```
 
 FIXTURE CATEGORIES:
+
 ```
 1. Fresh fixture:  created fresh before each test (@BeforeEach)
    → Maximum isolation; preferred default
-   
+
 2. Shared fixture: created once for all tests in a class (@BeforeAll)
    → Good for expensive setup (DB containers); requires careful isolation
-   
+
 3. Persistent fixture: pre-existing in the DB/file system
    → Fragile: any change to pre-existing data breaks tests
    → Avoid for automated tests; use only for exploratory testing
@@ -117,13 +121,14 @@ FIXTURE CATEGORIES:
 ### 🧪 Thought Experiment
 
 FIXTURE BLOAT — THE ANTI-PATTERN:
+
 ```java
 @BeforeEach
 void setup() {
     // 40 lines of setup
     // Creates 5 users, 3 orders, 2 products, 1 discount, 1 cart, 1 customer...
     // Tests only use 2 of these objects
-    
+
     // Problems:
     // 1. Hard to understand: which objects does THIS test need?
     // 2. Slow: creates objects that aren't used
@@ -184,7 +189,7 @@ Test method:
     .withTotal(100.00)
     .build();
   repo.save(order);
-  
+
   // Test: confirm order
   service.confirm(order.getId());
   assertThat(repo.findById(order.getId()).get().getStatus()).isEqualTo(CONFIRMED);
@@ -204,7 +209,7 @@ class OrderMother {
             .createdAt(Instant.now())
             .build();
     }
-    
+
     public static Order aConfirmedOrder() {
         return aPendingOrder().toBuilder().status(CONFIRMED).build();
     }
@@ -215,7 +220,7 @@ class OrderBuilder {
     private OrderStatus status = PENDING;
     private BigDecimal total = BigDecimal.valueOf(50.0);
     private UUID customerId = UUID.randomUUID();
-    
+
     public static OrderBuilder anOrder() { return new OrderBuilder(); }
     public OrderBuilder withStatus(OrderStatus s) { this.status = s; return this; }
     public OrderBuilder withTotal(double t) { this.total = BigDecimal.valueOf(t); return this; }
@@ -233,20 +238,20 @@ class OrderBuilder {
 
 ### ⚖️ Comparison Table
 
-| Pattern | Purpose | Trade-offs |
-|---|---|---|
-| `@BeforeEach` | Per-test setup | Runs before every test — keep fast |
-| `@BeforeAll` | Per-class setup | One-time — good for containers; requires careful isolation |
-| Object Mother | Named factory methods | Quick for common cases; can get large |
-| Test Data Builder | Fluent customization | Verbose to write; highly flexible |
+| Pattern           | Purpose               | Trade-offs                                                 |
+| ----------------- | --------------------- | ---------------------------------------------------------- |
+| `@BeforeEach`     | Per-test setup        | Runs before every test — keep fast                         |
+| `@BeforeAll`      | Per-class setup       | One-time — good for containers; requires careful isolation |
+| Object Mother     | Named factory methods | Quick for common cases; can get large                      |
+| Test Data Builder | Fluent customization  | Verbose to write; highly flexible                          |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "More shared fixture = better (less duplication)" | Shared fixture increases coupling between tests; prefer fresh fixtures per test |
-| "Object Mother is just a utility class" | Object Mother encodes domain knowledge (what makes a valid pending order); it's a design artifact |
-| "Fixtures should create complete, realistic objects" | Fixtures should create MINIMAL objects — only the fields relevant to the test under test |
+| Misconception                                        | Reality                                                                                           |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| "More shared fixture = better (less duplication)"    | Shared fixture increases coupling between tests; prefer fresh fixtures per test                   |
+| "Object Mother is just a utility class"              | Object Mother encodes domain knowledge (what makes a valid pending order); it's a design artifact |
+| "Fixtures should create complete, realistic objects" | Fixtures should create MINIMAL objects — only the fields relevant to the test under test          |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -285,6 +290,7 @@ Fix: Use `UUID.randomUUID()` or auto-generated IDs in all test data builders.
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The Object Mother pattern was coined by Peter Schuh and Stephanie Punke (ThoughtWorks, 2003). As a codebase grows, Object Mother classes can become bloated "God factories" with hundreds of creation methods. Describe: (1) how the Object Mother and Builder patterns complement each other (Object Mother for common named scenarios, Builder for per-test customization), (2) how to use Kotlin data class `copy()` as a lightweight builder alternative, and (3) the `@ParameterizedTest` + `@MethodSource` combination for driving multiple fixture variations through the same test logic — when does this replace a Builder and when is a Builder still cleaner?

@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Test-Driven Infrastructure (TDI) applies TDD principles to infrastructure code: write tests for infrastructure behavior first, then write the Terraform/Ansible/CloudFormation code to make them pass — ensuring infrastructure is both correct and continuously validated.
 
-| #1166 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | TDD, Infrastructure as Code, Terraform, Cloud | |
-| **Used by:** | DevOps Engineers, Platform Engineers, SREs | |
-| **Related:** | TDD, CI-CD, Terraform, Terratest, InSpec, Test Environments | |
+| #1166           | Category: Testing                                           | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------- | :-------------- |
+| **Depends on:** | TDD, Infrastructure as Code, Terraform, Cloud               |                 |
+| **Used by:**    | DevOps Engineers, Platform Engineers, SREs                  |                 |
+| **Related:**    | TDD, CI-CD, Terraform, Terratest, InSpec, Test Environments |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -43,11 +43,13 @@ Application code has unit tests, integration tests, CI pipelines. Infrastructure
 Test infrastructure the same way you test application code — unit, integration, compliance tests.
 
 **One analogy:**
+
 > Testing infrastructure is like **home inspection**: before a building is occupied, inspectors verify: electrical wiring is correct, plumbing holds pressure, fire exits are accessible, load-bearing walls are intact. Without inspection, the building might look fine but fail under load. Infrastructure testing is the automated inspector — running after every IaC change.
 
 ### 🔩 First Principles Explanation
 
 TESTING PYRAMID FOR INFRASTRUCTURE:
+
 ```
           /\
          /  \   COMPLIANCE TESTS (InSpec, AWS Config)
@@ -66,7 +68,7 @@ UNIT-LEVEL (static analysis — no cloud):
   terraform fmt --check     → formatting check
   tfsec .                   → security misconfiguration scan
   checkov -d .              → broad misconfiguration scan
-  
+
   Example tfsec finding:
   CRITICAL: Security group allows unrestricted access to SSH
   → aws_security_group.web with ingress 0.0.0.0/0 port 22
@@ -76,9 +78,9 @@ INTEGRATION-LEVEL (Terratest — real cloud):
     opts := &terraform.Options{TerraformDir: "../modules/s3"}
     defer terraform.Destroy(t, opts)           // cleanup always runs
     terraform.InitAndApply(t, opts)            // deploy real S3 bucket
-    
+
     bucketName := terraform.Output(t, opts, "bucket_name")
-    
+
     // Verify bucket is private (not public)
     s3Client := aws.NewS3Client(t, "us-east-1")
     publicAccessBlock := aws.GetS3BucketPublicAccessBlock(t, s3Client, bucketName)
@@ -91,7 +93,7 @@ COMPLIANCE-LEVEL (InSpec):
   describe aws_ec2_instances do
     its('instance_ids') { should_not be_empty }
   end
-  
+
   aws_ec2_instances.instance_ids.each do |instance_id|
     describe aws_ec2_instance(instance_id) do
       it { should_not have_public_ip_address }
@@ -100,16 +102,17 @@ COMPLIANCE-LEVEL (InSpec):
 ```
 
 TERRAFORM UNIT TESTS (terraform test - native, v1.6+):
+
 ```hcl
 # tests/s3_bucket.tftest.hcl
 run "s3_bucket_is_private" {
   command = plan  # or apply
-  
+
   assert {
     condition     = aws_s3_bucket_public_access_block.this.block_public_acls == true
     error_message = "S3 bucket must block public ACLs"
   }
-  
+
   assert {
     condition     = aws_s3_bucket_server_side_encryption_configuration.this != null
     error_message = "S3 bucket must be encrypted"
@@ -120,6 +123,7 @@ run "s3_bucket_is_private" {
 ### 🧪 Thought Experiment
 
 THE SECURITY GROUP DRIFT:
+
 ```
 Week 1: Terraform code correctly restricts SSH to VPN CIDR (10.0.0.0/8)
 Week 2: Ops engineer manually adds 0.0.0.0/0 SSH rule for "temporary debugging"
@@ -179,19 +183,19 @@ import (
 
 func TestS3BucketSecurity(t *testing.T) {
     t.Parallel()
-    
+
     opts := &terraform.Options{
         TerraformDir: "../modules/s3",
         Vars: map[string]interface{}{
             "bucket_name": "test-bucket-" + strings.ToLower(random.UniqueId()),
         },
     }
-    
+
     defer terraform.Destroy(t, opts)  // always cleanup
     terraform.InitAndApply(t, opts)
-    
+
     bucketName := terraform.Output(t, opts, "bucket_name")
-    
+
     // Verify public access is blocked
     actualPublicAccessBlock := aws.GetS3BucketPublicAccessBlock(t, "us-east-1", bucketName)
     assert.True(t, aws.BoolValue(actualPublicAccessBlock.BlockPublicAcls))
@@ -210,21 +214,21 @@ func TestS3BucketSecurity(t *testing.T) {
 
 ### ⚖️ Comparison Table
 
-| Tool | Level | Cloud Access | Speed | Coverage |
-|---|---|---|---|---|
-| terraform validate | Unit | No | Seconds | Syntax only |
-| tfsec / Checkov | Unit | No | Seconds | Security patterns |
-| Terraform test (.tftest) | Unit/Integration | Optional | Seconds-minutes | Custom assertions |
-| Terratest | Integration | Yes (real deploy) | Minutes-hours | Full behavior |
-| InSpec | Compliance | Yes (live infra) | Minutes | Ongoing drift |
+| Tool                     | Level            | Cloud Access      | Speed           | Coverage          |
+| ------------------------ | ---------------- | ----------------- | --------------- | ----------------- |
+| terraform validate       | Unit             | No                | Seconds         | Syntax only       |
+| tfsec / Checkov          | Unit             | No                | Seconds         | Security patterns |
+| Terraform test (.tftest) | Unit/Integration | Optional          | Seconds-minutes | Custom assertions |
+| Terratest                | Integration      | Yes (real deploy) | Minutes-hours   | Full behavior     |
+| InSpec                   | Compliance       | Yes (live infra)  | Minutes         | Ongoing drift     |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Terraform plan shows what will change — no tests needed" | Plan shows intent but not correctness; tests verify properties of actual deployed infrastructure |
-| "Static analysis is enough" | tfsec catches known patterns; Terratest verifies actual cloud behavior (permissions, network connectivity, service availability) |
-| "Compliance tests only for regulated industries" | Security hygiene (no SSH to 0.0.0.0/0, all buckets private) applies everywhere |
+| Misconception                                             | Reality                                                                                                                          |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| "Terraform plan shows what will change — no tests needed" | Plan shows intent but not correctness; tests verify properties of actual deployed infrastructure                                 |
+| "Static analysis is enough"                               | tfsec catches known patterns; Terratest verifies actual cloud behavior (permissions, network connectivity, service availability) |
+| "Compliance tests only for regulated industries"          | Security hygiene (no SSH to 0.0.0.0/0, all buckets private) applies everywhere                                                   |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -262,6 +266,7 @@ Fix: Fast path in PR: unit-only (tfsec + validate); Terratest runs on merge to m
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Terratest deploys real cloud infrastructure (AWS, GCP, Azure) in tests. Describe the cost management strategy: (1) test account isolation — Terratest tests should run in a dedicated test AWS account (not production), using AWS Organizations with SCPs that prevent expensive resource types (GPU instances, large RDS multi-AZ) from being created, (2) resource tagging — every Terratest resource tagged with `test=true`, `created_by=terratest`, `created_at=timestamp`, enabling the cloud janitor to automatically delete resources older than 2 hours, (3) test duration optimization — parallelize tests with `t.Parallel()`, cache Terraform provider downloads between runs, and use VPC with pre-created dependencies (reduce per-test VPC creation overhead), and (4) cost estimation — using `infracost` CLI to estimate the cost of infrastructure before deploying it (run in CI on `terraform plan` output).

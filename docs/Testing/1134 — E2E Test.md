@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — An End-to-End (E2E) test exercises a complete user scenario through the full deployed system — browser → API → database → back — verifying the whole application works as users actually experience it.
 
-| #1134 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Integration Test, HTTP and APIs, Browser Automation | |
-| **Used by:** | CI-CD, Release Gating, Acceptance Testing | |
-| **Related:** | Selenium, Playwright, Cypress, Smoke Test, Test Pyramid | |
+| #1134           | Category: Testing                                       | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------ | :-------------- |
+| **Depends on:** | Integration Test, HTTP and APIs, Browser Automation     |                 |
+| **Used by:**    | CI-CD, Release Gating, Acceptance Testing               |                 |
+| **Related:**    | Selenium, Playwright, Cypress, Smoke Test, Test Pyramid |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -49,6 +49,7 @@ An **End-to-End (E2E) test** is an automated test that exercises a complete user
 E2E test = a robot that uses your app like a real user and checks that everything works, from click to database.
 
 **One analogy:**
+
 > Unit test = test a single puzzle piece's shape. Integration test = verify two pieces click together. E2E test = assemble the entire puzzle and verify the final image looks correct.
 
 **One insight:**
@@ -57,6 +58,7 @@ E2E tests should be few in number (Test Pyramid: 10x fewer E2E than integration 
 ### 🔩 First Principles Explanation
 
 TEST PYRAMID RATIO:
+
 ```
          /\
         /  \         E2E Tests: ~5–20 tests
@@ -71,6 +73,7 @@ TEST PYRAMID RATIO:
 ```
 
 WHAT E2E TESTS SHOULD COVER:
+
 - Critical happy path: "User registers, logs in, purchases product, receives confirmation"
 - Critical error paths: "Payment fails → order not placed → user sees clear error"
 - NOT: every edge case (use unit tests), every API field (use contract tests)
@@ -85,6 +88,7 @@ Cost: Slowest (minutes per test); flakiest (UI changes, timing, network); most e
 ### 🧪 Thought Experiment
 
 THE PERFECT SETUP THAT STILL FAILS E2E:
+
 ```
 Service A: 100% unit test coverage
 Service B: 100% unit test coverage
@@ -149,6 +153,7 @@ E2E tests catch integration assumptions that no lower-level test can reach.
 ### 🔄 The Complete Picture — End-to-End Flow
 
 CRITICAL USER JOURNEY: "User purchases a product"
+
 ```
 Playwright test:
 1. page.goto('/products/laptop-1')
@@ -177,18 +182,18 @@ Playwright test:
 
 ```typescript
 // Playwright E2E test (TypeScript)
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page } from "@playwright/test";
 
 // Page Object Model
 class LoginPage {
   constructor(private page: Page) {}
 
   async login(email: string, password: string) {
-    await this.page.goto('/login');
-    await this.page.getByLabel('Email').fill(email);
-    await this.page.getByLabel('Password').fill(password);
-    await this.page.getByRole('button', { name: 'Sign In' }).click();
-    await this.page.waitForURL('/dashboard');  // auto-waits
+    await this.page.goto("/login");
+    await this.page.getByLabel("Email").fill(email);
+    await this.page.getByLabel("Password").fill(password);
+    await this.page.getByRole("button", { name: "Sign In" }).click();
+    await this.page.waitForURL("/dashboard"); // auto-waits
   }
 }
 
@@ -196,62 +201,62 @@ class CheckoutPage {
   constructor(private page: Page) {}
 
   async purchaseItem(itemName: string) {
-    await this.page.getByRole('link', { name: itemName }).click();
-    await this.page.getByRole('button', { name: 'Add to Cart' }).click();
-    await this.page.getByRole('link', { name: 'Checkout' }).click();
-    await this.page.getByRole('button', { name: 'Place Order' }).click();
+    await this.page.getByRole("link", { name: itemName }).click();
+    await this.page.getByRole("button", { name: "Add to Cart" }).click();
+    await this.page.getByRole("link", { name: "Checkout" }).click();
+    await this.page.getByRole("button", { name: "Place Order" }).click();
     await this.page.waitForURL(/\/order-confirmation\/\d+/);
   }
 }
 
 // Critical user journey test
-test('user can purchase a product', async ({ page }) => {
+test("user can purchase a product", async ({ page }) => {
   const loginPage = new LoginPage(page);
   const checkout = new CheckoutPage(page);
 
-  await loginPage.login('alice@example.com', 'password123');
-  await checkout.purchaseItem('Laptop Pro');
+  await loginPage.login("alice@example.com", "password123");
+  await checkout.purchaseItem("Laptop Pro");
 
   // Verify confirmation page
-  await expect(page.getByText('Order confirmed!')).toBeVisible();
-  await expect(page.getByText('Laptop Pro')).toBeVisible();
+  await expect(page.getByText("Order confirmed!")).toBeVisible();
+  await expect(page.getByText("Laptop Pro")).toBeVisible();
 
   // Verify order ID is displayed
-  const orderIdText = await page.getByTestId('order-id').textContent();
+  const orderIdText = await page.getByTestId("order-id").textContent();
   expect(orderIdText).toMatch(/ORD-\d{6}/);
 });
 
 // playwright.config.ts
 export default defineConfig({
-  testDir: './e2e',
-  retries: process.env.CI ? 2 : 0,  // retry flaky tests in CI
+  testDir: "./e2e",
+  retries: process.env.CI ? 2 : 0, // retry flaky tests in CI
   workers: process.env.CI ? 2 : undefined,
   use: {
-    baseURL: process.env.APP_URL || 'http://localhost:3000',
-    trace: 'on-first-retry',    // capture trace for debugging retries
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    baseURL: process.env.APP_URL || "http://localhost:3000",
+    trace: "on-first-retry", // capture trace for debugging retries
+    screenshot: "only-on-failure",
+    video: "retain-on-failure",
   },
 });
 ```
 
 ### ⚖️ Comparison Table
 
-| Test Level | Speed | Coverage | Maintenance | # Tests |
-|---|---|---|---|---|
-| Unit | <100ms | Logic | Low | 1000s |
-| Integration | 1–30s | Components | Medium | 100s |
-| Contract | 1–10s | API interface | Medium | 10s |
-| **E2E** | 1–5min | User journey | High | 5–20 |
+| Test Level  | Speed  | Coverage      | Maintenance | # Tests |
+| ----------- | ------ | ------------- | ----------- | ------- |
+| Unit        | <100ms | Logic         | Low         | 1000s   |
+| Integration | 1–30s  | Components    | Medium      | 100s    |
+| Contract    | 1–10s  | API interface | Medium      | 10s     |
+| **E2E**     | 1–5min | User journey  | High        | 5–20    |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "More E2E tests = more confidence" | More E2E tests = slower CI + more maintenance; Test Pyramid: keep E2E tests few and focused |
-| "E2E tests replace manual testing" | Cover critical happy paths + top error paths; exploratory testing still finds unexpected issues |
+| Misconception                            | Reality                                                                                                          |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| "More E2E tests = more confidence"       | More E2E tests = slower CI + more maintenance; Test Pyramid: keep E2E tests few and focused                      |
+| "E2E tests replace manual testing"       | Cover critical happy paths + top error paths; exploratory testing still finds unexpected issues                  |
 | "Selenium and Playwright are equivalent" | Playwright is significantly less flaky (auto-wait, modern browser protocols); prefer Playwright for new projects |
-| "E2E tests should cover every edge case" | Edge cases belong in unit tests; E2E tests should cover user journeys, not all combinations |
+| "E2E tests should cover every edge case" | Edge cases belong in unit tests; E2E tests should cover user journeys, not all combinations                      |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -294,6 +299,7 @@ Fix: Run E2E tests in parallel (`workers: 4`), shard across CI nodes, run only o
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Playwright's `page.getByRole('button', {name: 'Login'})` uses ARIA roles and accessible names to locate elements. This is different from `page.locator('#login-btn')` (by ID) or `page.locator('.btn-primary')` (by CSS class). Explain: (1) why role-based selectors are more resilient to UI refactors than ID/CSS selectors, (2) when role-based selectors fail (the button doesn't have an accessible name, or the role is not correctly assigned), (3) how `data-testid` attributes (`page.getByTestId('login-button')`) balance specificity and resilience, and (4) the argument against `data-testid` from the accessibility-first testing philosophy.

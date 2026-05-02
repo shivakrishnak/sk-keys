@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Deadlock is when two or more threads each hold a resource the other needs, forming a cycle of waiting — none can proceed.
 
-| #0118 | Category: Operating Systems | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Mutex, Thread, Condition Variable | |
-| **Used by:** | Database Transaction Management, OS Resource Scheduling, Distributed Systems | |
-| **Related:** | Livelock, Starvation, Resource Allocation Graph, Banker's Algorithm | |
+| #0118           | Category: Operating Systems                                                  | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Mutex, Thread, Condition Variable                                            |                 |
+| **Used by:**    | Database Transaction Management, OS Resource Scheduling, Distributed Systems |                 |
+| **Related:**    | Livelock, Starvation, Resource Allocation Graph, Banker's Algorithm          |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -41,6 +41,7 @@ Dijkstra identified and formalised deadlock conditions in the 1960s. The four Co
 ### 📘 Textbook Definition
 
 **Deadlock** is a situation in which two or more threads (or processes) are permanently blocked, each waiting for a resource held by another thread in the cycle. Deadlock requires all four **Coffman conditions** simultaneously:
+
 1. **Mutual Exclusion**: at least one resource is held in a non-shareable mode.
 2. **Hold and Wait**: a thread holds at least one resource while waiting to acquire another.
 3. **No Preemption**: resources cannot be forcibly taken from a thread; only voluntary release.
@@ -54,6 +55,7 @@ Breaking any single Coffman condition prevents deadlock.
 Deadlock = circular wait where everyone holds what others need and no one will release first.
 
 **One analogy:**
+
 > Two cars on a one-lane bridge from opposite ends, each refusing to back up. Neither can proceed. Neither reverses. They wait forever. Removing any condition breaks the deadlock: allow one car to reverse (no "no preemption"), build a two-lane bridge ("mutual exclusion" broken), or enforce a rule that cars enter only from the north end (lock ordering — "circular wait" broken).
 
 **One insight:**
@@ -62,18 +64,21 @@ The simplest and most practical prevention strategy is **consistent lock orderin
 ### 🔩 First Principles Explanation
 
 CORE INVARIANTS (Coffman Conditions):
+
 1. Mutual exclusion: at least one resource must be held exclusively — cannot be shared.
 2. Hold and Wait: thread holds resources while waiting for more — releases nothing.
 3. No preemption: resources cannot be taken away — only voluntarily released.
 4. Circular wait: T1 waits for T2, T2 waits for T3, ..., Tn waits for T1.
 
 PREVENTION STRATEGIES (break one condition):
+
 - Break mutual exclusion: use lock-free data structures (not always possible).
 - Break hold-and-wait: acquire all needed resources atomically or release all and retry.
 - Break no preemption: use `tryLock(timeout)` — if timeout expires, release all held locks.
 - Break circular wait: **lock ordering** — define a global order; always acquire locks in that order.
 
 DETECTION STRATEGIES (allow, then detect):
+
 - Build a Resource Allocation Graph (RAG): nodes are threads and resources; edges are "holds" and "waits-for". A cycle in the RAG = deadlock.
 - Database engines detect transaction deadlocks by maintaining a wait-for graph and periodically checking for cycles.
 
@@ -83,6 +88,7 @@ Prevention (lock ordering): simple and effective but requires discipline across 
 ### 🧪 Thought Experiment
 
 CLASSIC DEADLOCK:
+
 ```java
 ReentrantLock lockA = new ReentrantLock();
 ReentrantLock lockB = new ReentrantLock();
@@ -102,6 +108,7 @@ lockA.lock();  // Thread 2 blocks here (A held by Thread 1)
 ```
 
 FIX (consistent lock ordering):
+
 ```java
 // BOTH threads always acquire lockA before lockB
 Thread 1: lockA.lock() → lockB.lock() → ... → unlock both
@@ -117,6 +124,7 @@ The deadlock arose solely from inconsistent acquisition order. The fix requires 
 ### 🧠 Mental Model / Analogy
 
 > Four cars at a 4-way intersection (Coffman conditions mapped):
+>
 > 1. Mutual exclusion: each lane can only be used by one car at a time.
 > 2. Hold and Wait: each car occupies one lane and wants another.
 > 3. No preemption: no car backs up (no preemption allowed).
@@ -163,6 +171,7 @@ Database deadlock detection was chosen over prevention because database transact
 ### 🔄 The Complete Picture — End-to-End Flow
 
 MYSQL INNODB DEADLOCK DETECTION:
+
 ```
 T1: BEGIN; UPDATE accounts SET balance=... WHERE id=1; (holds row 1 lock)
 T2: BEGIN; UPDATE accounts SET balance=... WHERE id=2; (holds row 2 lock)
@@ -180,6 +189,7 @@ Application: retry T2 transaction → succeeds
 ```
 
 FAILURE PATH (distributed deadlock — no detection):
+
 ```
 Service A: acquires lock for User 1's account (database)
 Service B: acquires lock for User 2's account (database)
@@ -193,6 +203,7 @@ Fix: timeout + retry; or distributed lock manager; or order requests
 ### 💻 Code Example
 
 Example 1 — Classic deadlock + prevention:
+
 ```java
 // DEADLOCK PRONE — inconsistent lock order
 class TransferService {
@@ -223,6 +234,7 @@ class SafeTransferService {
 ```
 
 Example 2 — tryLock with timeout (breaks "hold and wait"):
+
 ```java
 // Acquire both locks or release and retry
 ReentrantLock lockA = new ReentrantLock();
@@ -248,6 +260,7 @@ boolean acquireBothLocks(long timeoutMs) throws InterruptedException {
 ```
 
 Example 3 — jstack deadlock diagnosis:
+
 ```bash
 # Java: detect deadlock in running JVM
 jstack <PID>
@@ -258,7 +271,7 @@ jstack <PID>
 #   waiting to lock monitor 0x... (lockA, held by "Thread-0")
 # "Thread-0":
 #   waiting to lock monitor 0x... (lockB, held by "Thread-1")
-# 
+#
 # Java stack information for the threads listed above:
 # Thread-0:
 #   at TransferService.transfer(TransferService.java:7)
@@ -276,22 +289,22 @@ long[] deadlockedIds = tmx.findDeadlockedThreads();  // null if none
 
 ### ⚖️ Comparison Table
 
-| Condition | Prevention | Detection | Cost |
-|---|---|---|---|
-| **Mutual exclusion** | Lock-free data structures | Hard to detect | High (refactoring) |
-| **Hold and wait** | tryLock + release all | N/A | Medium (retry logic) |
-| **No preemption** | tryLock timeout | N/A | Low (add timeout) |
-| **Circular wait** | Lock ordering | RAG cycle detection | Low (convention) |
+| Condition            | Prevention                | Detection           | Cost                 |
+| -------------------- | ------------------------- | ------------------- | -------------------- |
+| **Mutual exclusion** | Lock-free data structures | Hard to detect      | High (refactoring)   |
+| **Hold and wait**    | tryLock + release all     | N/A                 | Medium (retry logic) |
+| **No preemption**    | tryLock timeout           | N/A                 | Low (add timeout)    |
+| **Circular wait**    | Lock ordering             | RAG cycle detection | Low (convention)     |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Deadlock throws an exception" | No — threads silently block forever; no exception, no error |
-| "Lock-free code can't deadlock" | Lock-free code cannot deadlock by definition (no locks to cycle on); but it can livelock |
-| "ReentrantLock deadlock is detected by JVM" | jstack detects both synchronized and ReentrantLock deadlocks |
-| "Deadlock only involves two threads" | Any cycle works: T1→T2→T3→T1 is a three-thread deadlock |
-| "Increasing thread count fixes deadlock" | More threads increases deadlock probability by increasing concurrent lock acquisition |
+| Misconception                               | Reality                                                                                  |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| "Deadlock throws an exception"              | No — threads silently block forever; no exception, no error                              |
+| "Lock-free code can't deadlock"             | Lock-free code cannot deadlock by definition (no locks to cycle on); but it can livelock |
+| "ReentrantLock deadlock is detected by JVM" | jstack detects both synchronized and ReentrantLock deadlocks                             |
+| "Deadlock only involves two threads"        | Any cycle works: T1→T2→T3→T1 is a three-thread deadlock                                  |
+| "Increasing thread count fixes deadlock"    | More threads increases deadlock probability by increasing concurrent lock acquisition    |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -302,6 +315,7 @@ Symptom: Service stops responding; health checks fail; all threads BLOCKED; CPU 
 Root Cause: Deadlock in request-handling threads; all handlers blocked waiting for locks in a cycle.
 
 Diagnostic:
+
 ```bash
 # Java: generate thread dump
 kill -3 <PID>  # sends SIGQUIT → JVM dumps threads to stderr
@@ -324,6 +338,7 @@ Symptom: "Deadlock found" errors spike during peak traffic; transaction retry ra
 Root Cause: Hot rows accessed in different order by concurrent transactions.
 
 Diagnostic:
+
 ```sql
 -- MySQL: last deadlock info
 SHOW ENGINE INNODB STATUS\G
@@ -340,16 +355,19 @@ Prevention: Test with concurrent load using `pgbench` (PostgreSQL) or `sysbench`
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Mutex` — deadlock requires mutually exclusive locks; understand mutex first
 - `Thread` — deadlock is a multi-thread phenomenon
 - `Condition Variable` — incorrect condition variable usage (missing notify) can cause deadlock
 
 **Builds On This (learn these next):**
+
 - `Livelock` — threads are active but stuck in a retrying loop; not truly blocked like deadlock
 - `Starvation` — a thread never acquires resources despite not being in a deadlock cycle
 - `Distributed Systems consensus` — distributed deadlock (across services) requires distributed detection
 
 **Alternatives / Comparisons:**
+
 - `Livelock` — threads active but stuck looping (e.g., two people walking toward each other, both step aside to the same side, repeat)
 - `Starvation` — one thread never runs; not a mutual cycle but unfair scheduling
 
@@ -383,6 +401,7 @@ Prevention: Test with concurrent load using `pgbench` (PostgreSQL) or `sysbench`
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Dijkstra's Banker's Algorithm is a deadlock avoidance algorithm: before granting a resource request, the OS simulates a hypothetical future where all running processes request their maximum resources and checks whether a "safe state" (all can complete) exists. If not, the request is delayed. This algorithm is used in virtually zero production operating systems. Explain why: what are the three practical requirements of Banker's Algorithm that make it unworkable in a general-purpose OS, and what simpler mechanism do real OSes use to handle resource exhaustion?

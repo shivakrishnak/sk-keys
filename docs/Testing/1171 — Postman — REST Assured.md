@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Postman is a GUI tool for manual and automated API testing via collections; REST Assured is a Java DSL for fluent HTTP API assertions in code — both are the primary tools for API test automation at different levels of the stack.
 
-| #1171 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | API Testing, HTTP & APIs, REST | |
-| **Used by:** | Developers, QA Engineers | |
-| **Related:** | API Testing, REST Assured, MockMvc, Integration Test, OpenAPI | |
+| #1171           | Category: Testing                                             | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------ | :-------------- |
+| **Depends on:** | API Testing, HTTP & APIs, REST                                |                 |
+| **Used by:**    | Developers, QA Engineers                                      |                 |
+| **Related:**    | API Testing, REST Assured, MockMvc, Integration Test, OpenAPI |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -43,11 +43,13 @@ Manually testing APIs with curl or a GUI tool after every deployment is error-pr
 Postman = GUI-first API testing (great for exploration + collections); REST Assured = code-first API testing (integrates with Java test suite).
 
 **One analogy:**
+
 > Postman is the **workshop for building and testing API requests** — you tinker interactively until the request is right, then save it as a recipe. REST Assured is the **factory floor** — you codify the recipes as automated tests that run at scale, every build, without a human.
 
 ### 🔩 First Principles Explanation
 
 POSTMAN:
+
 ```
 COLLECTION STRUCTURE:
   Collection: "Order Service API"
@@ -64,19 +66,19 @@ TEST SCRIPTS (JavaScript, runs in Postman sandbox):
   pm.test("Status code is 201", function() {
     pm.response.to.have.status(201);
   });
-  
+
   pm.test("Response has orderId", function() {
     const json = pm.response.json();
     pm.expect(json.orderId).to.not.be.undefined;
   });
-  
+
   // Extract value for subsequent request
   pm.environment.set("orderId", pm.response.json().orderId);
 
 ENVIRONMENT VARIABLES:
   {{baseUrl}}    = https://api.staging.myapp.com
   {{authToken}}  = eyJhbGci...
-  
+
   Different environments: local, staging, production
   Same collection, different base URLs
 
@@ -89,6 +91,7 @@ NEWMAN (CLI — CI pipeline):
 ```
 
 REST ASSURED:
+
 ```java
 // Setup (global)
 @BeforeAll
@@ -96,7 +99,7 @@ static void setup() {
     RestAssured.baseURI = "http://localhost";
     RestAssured.port = 8080;
     RestAssured.basePath = "/api/v1";
-    
+
     // Request logging for debugging
     RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 }
@@ -104,7 +107,7 @@ static void setup() {
 // Test
 @Test
 void createOrder_validRequest_returns201() {
-    String orderId = 
+    String orderId =
       given()
         .header("Authorization", "Bearer " + getTestToken())
         .contentType(ContentType.JSON)
@@ -129,7 +132,7 @@ void createOrder_validRequest_returns201() {
         .body("items.size()", equalTo(1))
       .extract()
         .path("orderId");
-    
+
     // Use extracted orderId in subsequent verification
     given()
       .header("Authorization", "Bearer " + getTestToken())
@@ -155,6 +158,7 @@ ResponseSpecification successSpec = new ResponseSpecBuilder()
 ```
 
 POSTMAN vs REST ASSURED — WHEN TO USE WHICH:
+
 ```
 POSTMAN:
   ✓ API exploration and development
@@ -178,6 +182,7 @@ REST ASSURED:
 ### 🧪 Thought Experiment
 
 FROM POSTMAN TO CI:
+
 ```
 QA Engineer workflow:
   1. Manually tests API in Postman
@@ -187,7 +192,7 @@ QA Engineer workflow:
   5. Commits JSON to git repository
   6. CI pipeline: newman run collection.json --environment ci.json
   7. Newman output: JUnit XML → CI picks up test results
-  
+
 Result: Manual Postman testing converted to automated CI pipeline
          with minimal developer overhead.
 
@@ -215,16 +220,16 @@ Limitation: Collection JSON in git → merge conflicts are painful
 // REST Assured — complete integration test example
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class OrderApiTest {
-    
+
     @LocalServerPort int port;
     private String authToken;
-    
+
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
         authToken = obtainAuthToken("testuser@test.invalid", "password");
     }
-    
+
     @Test
     void orderLifecycle() {
         // 1. Create order
@@ -239,7 +244,7 @@ class OrderApiTest {
             .body("status", equalTo("PENDING"))
         .extract()
             .path("orderId");
-        
+
         // 2. Confirm order
         given()
             .auth().oauth2(authToken)
@@ -248,7 +253,7 @@ class OrderApiTest {
         .then()
             .statusCode(200)
             .body("status", equalTo("CONFIRMED"));
-        
+
         // 3. Verify final state
         given()
             .auth().oauth2(authToken)
@@ -266,16 +271,16 @@ class OrderApiTest {
 ```javascript
 // Postman test script (JavaScript in "Tests" tab)
 pm.test("Create order returns 201", () => {
-    pm.response.to.have.status(201);
+  pm.response.to.have.status(201);
 });
 
 pm.test("Response has valid orderId", () => {
-    const json = pm.response.json();
-    pm.expect(json.orderId).to.match(/^ORD-[0-9]+$/);
+  const json = pm.response.json();
+  pm.expect(json.orderId).to.match(/^ORD-[0-9]+$/);
 });
 
 pm.test("Status is PENDING", () => {
-    pm.expect(pm.response.json().status).to.equal("PENDING");
+  pm.expect(pm.response.json().status).to.equal("PENDING");
 });
 
 // Store for subsequent requests
@@ -284,21 +289,21 @@ pm.environment.set("lastOrderId", pm.response.json().orderId);
 
 ### ⚖️ Comparison Table
 
-| | Postman | REST Assured | MockMvc |
-|---|---|---|---|
-| Language | JavaScript (scripts) | Java | Java |
-| Real HTTP | Yes | Yes | No (in-process) |
-| Version control | JSON (difficult) | Code (easy) | Code (easy) |
-| CI integration | Newman CLI | JUnit/Maven | JUnit/Maven |
-| Best for | Exploration, QA teams | Java project tests | Fast unit-level API tests |
+|                 | Postman               | REST Assured       | MockMvc                   |
+| --------------- | --------------------- | ------------------ | ------------------------- |
+| Language        | JavaScript (scripts)  | Java               | Java                      |
+| Real HTTP       | Yes                   | Yes                | No (in-process)           |
+| Version control | JSON (difficult)      | Code (easy)        | Code (easy)               |
+| CI integration  | Newman CLI            | JUnit/Maven        | JUnit/Maven               |
+| Best for        | Exploration, QA teams | Java project tests | Fast unit-level API tests |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Postman is just a manual testing tool" | Postman Collections + Newman provide full CI automation capability |
-| "REST Assured replaces unit tests" | REST Assured is for integration-level HTTP tests; unit tests (MockMvc or Mockito) are still needed for business logic |
-| "REST Assured requires a running server" | Can use Spring Boot Test with `MockMvc` adapter for in-process testing with REST Assured's DSL |
+| Misconception                            | Reality                                                                                                               |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| "Postman is just a manual testing tool"  | Postman Collections + Newman provide full CI automation capability                                                    |
+| "REST Assured replaces unit tests"       | REST Assured is for integration-level HTTP tests; unit tests (MockMvc or Mockito) are still needed for business logic |
+| "REST Assured requires a running server" | Can use Spring Boot Test with `MockMvc` adapter for in-process testing with REST Assured's DSL                        |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -334,6 +339,7 @@ Fix: Use `RequestSpecBuilder` per test class instead of static `RestAssured.` co
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Postman's JavaScript test sandbox runs in a Node.js-like environment with access to `pm.*` APIs. Describe: (1) the `pm.sendRequest()` function — used within pre-request scripts to obtain an auth token and store it as an environment variable before each request runs, enabling fully automated OAuth 2.0 flows in Postman collections, (2) Postman's data-driven testing with CSV/JSON files — running the same request multiple times with different input values (like JUnit's `@ParameterizedTest`), (3) the Postman Flows visual builder (newer feature) for orchestrating complex API sequences with conditional logic, and (4) the corporate governance concern: Postman collections contain API credentials and base URLs — describe the security risk and how to mitigate it (never commit collections with real credentials; use environment variables; use Postman Vault for secrets).

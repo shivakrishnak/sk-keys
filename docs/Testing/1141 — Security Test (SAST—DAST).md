@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Security testing verifies that software cannot be exploited. SAST (Static Application Security Testing) analyses source code for vulnerabilities without running it; DAST (Dynamic Application Security Testing) attacks a running application like a hacker would.
 
-| #1141 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | CI-CD, Code Quality, HTTP and APIs | |
-| **Used by:** | Security Engineers, DevSecOps, SRE, Compliance | |
-| **Related:** | SonarQube, OWASP, Penetration Testing, Dependency Scanning, CVE | |
+| #1141           | Category: Testing                                               | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------- | :-------------- |
+| **Depends on:** | CI-CD, Code Quality, HTTP and APIs                              |                 |
+| **Used by:**    | Security Engineers, DevSecOps, SRE, Compliance                  |                 |
+| **Related:**    | SonarQube, OWASP, Penetration Testing, Dependency Scanning, CVE |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,11 +50,13 @@ Security vulnerabilities are not bugs in the traditional sense. The code does ex
 SAST = security code review at scale (automated); DAST = automated pen test against running app.
 
 **One analogy:**
+
 > SAST is a structural inspection of a building's blueprints for fire code violations (before the building is built). DAST is a fire marshal walking through the completed building, trying every door and exit to find actual hazards.
 
 ### 🔩 First Principles Explanation
 
 OWASP TOP 10 (2021) — what security tests catch:
+
 ```
 A01: Broken Access Control  ← DAST (try accessing /admin without auth)
 A02: Cryptographic Failures  ← SAST (detect weak cipher usage in code)
@@ -69,6 +71,7 @@ A10: SSRF                   ← DAST (probe internal endpoints)
 ```
 
 DEVSECOPS PIPELINE:
+
 ```
 Developer commit →
   [SAST: Semgrep/SonarQube] → scan on every PR, fail on HIGH severity
@@ -86,6 +89,7 @@ Deploy to pre-prod →
 ### 🧪 Thought Experiment
 
 SAST FINDS WHAT DAST MISSES:
+
 ```java
 // SAST catches this immediately:
 private static final String SECRET = "my-secret-key-12345"; // hardcoded credential
@@ -95,6 +99,7 @@ private static final String SECRET = "my-secret-key-12345"; // hardcoded credent
 ```
 
 DAST FINDS WHAT SAST MISSES:
+
 ```
 SAST on a JWT authentication endpoint: code looks correct
 DAST test: send JWT with algorithm "none" (alg=none attack)
@@ -187,7 +192,7 @@ jobs:
       - name: Run Snyk SCA
         uses: snyk/actions/maven@master
         with:
-          args: --severity-threshold=high  # fail on HIGH+ CVEs
+          args: --severity-threshold=high # fail on HIGH+ CVEs
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 ```
@@ -197,16 +202,16 @@ jobs:
 @RestController
 @RequestMapping("/api")
 public class UserController {
-    
+
     // BAD: SAST flags this — no authorization check
     @GetMapping("/admin/users")
     public List<User> getAllUsers() { ... }
-    
+
     // GOOD: SAST passes this
     @GetMapping("/admin/users")
     @PreAuthorize("hasRole('ADMIN')")
     public List<User> getAllUsers() { ... }
-    
+
     // BAD: SAST flags SQL injection pattern
     @GetMapping("/users/{id}")
     public User getUser(@PathVariable String id, JdbcTemplate jdbc) {
@@ -214,7 +219,7 @@ public class UserController {
             "SELECT * FROM users WHERE id = " + id,  // SAST: SQL injection
             User.class);
     }
-    
+
     // GOOD: parameterized query
     @GetMapping("/users/{id}")
     public User getUser(@PathVariable String id, JdbcTemplate jdbc) {
@@ -227,22 +232,22 @@ public class UserController {
 
 ### ⚖️ Comparison Table
 
-| | SAST | DAST | SCA | Manual Pen Test |
-|---|---|---|---|---|
-| When | At build time | At test time | At build time | Quarterly |
-| What | Code patterns | Runtime behavior | Dependency CVEs | Logic flaws |
-| False positives | High (20-40%) | Low | Low | Very low |
-| Speed | Fast (minutes) | Slow (hours) | Fast | Slow (days) |
-| Cost | Low | Medium | Low | High |
+|                 | SAST           | DAST             | SCA             | Manual Pen Test |
+| --------------- | -------------- | ---------------- | --------------- | --------------- |
+| When            | At build time  | At test time     | At build time   | Quarterly       |
+| What            | Code patterns  | Runtime behavior | Dependency CVEs | Logic flaws     |
+| False positives | High (20-40%)  | Low              | Low             | Very low        |
+| Speed           | Fast (minutes) | Slow (hours)     | Fast            | Slow (days)     |
+| Cost            | Low            | Medium           | Low             | High            |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "SAST is enough" | SAST misses runtime issues (auth bypass, server misconfiguration, logic flaws) |
-| "DAST replaces manual pen testing" | DAST tools can't reason about business logic; manual pen testers find design flaws |
-| "100% SAST clean = secure" | SAST has 20-40% false negatives; "clean SAST" is necessary, not sufficient |
-| "Security testing slows development" | Shift-left: fixing in CI is 100× cheaper than fixing in production |
+| Misconception                        | Reality                                                                            |
+| ------------------------------------ | ---------------------------------------------------------------------------------- |
+| "SAST is enough"                     | SAST misses runtime issues (auth bypass, server misconfiguration, logic flaws)     |
+| "DAST replaces manual pen testing"   | DAST tools can't reason about business logic; manual pen testers find design flaws |
+| "100% SAST clean = secure"           | SAST has 20-40% false negatives; "clean SAST" is necessary, not sufficient         |
+| "Security testing slows development" | Shift-left: fixing in CI is 100× cheaper than fixing in production                 |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -281,6 +286,7 @@ Fix: Run passive (baseline) scan on every PR (fast); active scan only on staging
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** SQL injection has been the #1 or #2 web vulnerability for 20+ years despite being well-understood and having known fixes (parameterized queries). SAST tools reliably detect string-concatenated SQL since ~2000. Explain the gap: (1) why developers still introduce SQL injection despite SAST tools available, (2) why ORM frameworks (Hibernate, JPA) reduced but didn't eliminate SQL injection (HQL injection, native queries, `@Query` with string concat), (3) the specific category of SQL injection SAST tools miss (second-order injection: stored user input later used in a query), and (4) how DAST tests specifically for second-order injection.

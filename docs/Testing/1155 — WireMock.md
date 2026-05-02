@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — WireMock is a programmable HTTP server used in tests to simulate external APIs and services — enabling integration tests that test your HTTP client code without calling real external services.
 
-| #1155 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Integration Test, HTTP and APIs, Stubbing | |
-| **Used by:** | Java Developers, API Integration Testers | |
-| **Related:** | Stubbing, Testcontainers, Mockito, Contract Test, HTTP Client Testing | |
+| #1155           | Category: Testing                                                     | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Integration Test, HTTP and APIs, Stubbing                             |                 |
+| **Used by:**    | Java Developers, API Integration Testers                              |                 |
+| **Related:**    | Stubbing, Testcontainers, Mockito, Contract Test, HTTP Client Testing |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -44,11 +44,13 @@ WireMock fills the gap: it's a real HTTP server that runs in your test, returns 
 WireMock = fake HTTP server in your test — program it like a mock, but for real HTTP calls.
 
 **One analogy:**
+
 > WireMock is a **traffic roundabout** redirecting your service's outbound HTTP calls: instead of reaching Stripe's servers, the call is intercepted by WireMock, which returns a scripted response. Your service code doesn't know the difference — it sent a real HTTP request and got a real HTTP response.
 
 ### 🔩 First Principles Explanation
 
 WIREMOCK VS MOCKITO — WHAT EACH TESTS:
+
 ```
 Mockito mock of StripeClient.charge():
   Tests: does your service call charge() with the right arguments?
@@ -67,11 +69,12 @@ WireMock stub of POST /v1/charges:
 ```
 
 WIREMOCK JUNIT 5 SETUP:
+
 ```java
 @SpringBootTest
 @WireMockTest  // starts WireMock server on random port
 class StripePaymentServiceTest {
-    
+
     @Test
     void charge_successfulPayment_returnsTransactionId(WireMockRuntimeInfo wm) {
         // STUB: program WireMock response
@@ -84,19 +87,19 @@ class StripePaymentServiceTest {
                 .withBody("""
                     {"id": "ch_123", "status": "succeeded", "amount": 5000}
                 """)));
-        
+
         // ACT: call service that makes real HTTP to WireMock server
         PaymentResult result = stripeService.charge("tok_test", 50.00, "USD");
-        
+
         // ASSERT result
         assertThat(result.getTransactionId()).isEqualTo("ch_123");
-        
+
         // VERIFY request was made correctly
         verify(postRequestedFor(urlEqualTo("/v1/charges"))
             .withRequestBody(containing("amount=5000"))
             .withRequestBody(containing("currency=usd")));
     }
-    
+
     @Test
     void charge_rateLimited_retriesAndSucceeds(WireMockRuntimeInfo wm) {
         stubFor(post("/v1/charges")
@@ -104,13 +107,13 @@ class StripePaymentServiceTest {
             .whenScenarioStateIs(STARTED)
             .willReturn(aResponse().withStatus(429).withHeader("Retry-After", "1"))
             .willSetStateTo("second-attempt"));
-        
+
         stubFor(post("/v1/charges")
             .inScenario("rate-limit-then-success")
             .whenScenarioStateIs("second-attempt")
             .willReturn(aResponse().withStatus(200)
                 .withBody("{\"id\":\"ch_456\",\"status\":\"succeeded\"}")));
-        
+
         // Verify: service retries after 429 and succeeds on second attempt
         PaymentResult result = stripeService.charge("tok_test", 50.00, "USD");
         assertThat(result.getTransactionId()).isEqualTo("ch_456");
@@ -120,6 +123,7 @@ class StripePaymentServiceTest {
 ```
 
 FAULT INJECTION WITH WIREMOCK:
+
 ```java
 // Simulate network failure
 stubFor(post("/v1/charges")
@@ -137,16 +141,17 @@ stubFor(get("/api/data")
 ### 🧪 Thought Experiment
 
 FINDING THE HEADER BUG WITH WIREMOCK:
+
 ```
 Without WireMock: Mockito mocks StripeClient.charge(token, amount)
   Unit tests pass: charge() is called with correct arguments
-  
+
 Deploy to staging: payments fail
   Debug: Stripe returns 401 Unauthorized
   Root cause: Authorization header is "Bearer " + apiKey
     but apiKey was accidentally double-encoded → "Bearer%20sk_test_..."
     Stripe rejects the malformed header
-    
+
 This bug is INVISIBLE to Mockito (which mocks the Java method call)
 WireMock would have caught it:
   verify(...).withHeader("Authorization", equalTo("Bearer sk_test_123"))
@@ -175,17 +180,17 @@ WireMock would have caught it:
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @WireMockTest
 class WeatherServiceTest {
-    
+
     @Autowired
     private WeatherService weatherService;
-    
+
     @DynamicPropertySource
     static void configure(DynamicPropertyRegistry registry) {
         // Point service to WireMock server
         registry.add("weather.api.url",
             () -> "http://localhost:" + wireMockPort);
     }
-    
+
     @Test
     void getCurrentWeather_returnsTemperature(@WireMockRuntimeInfo wm) {
         stubFor(get(urlPathEqualTo("/weather/current"))
@@ -195,18 +200,18 @@ class WeatherServiceTest {
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBodyFile("weather-london.json")));  // file in __files/
-        
+
         WeatherData result = weatherService.getCurrent("London");
-        
+
         assertThat(result.getTemperature()).isEqualTo(20.5);
         assertThat(result.getCondition()).isEqualTo("Cloudy");
     }
-    
+
     @Test
     void getCurrentWeather_serviceDown_throwsWeatherException() {
         stubFor(get(urlPathEqualTo("/weather/current"))
             .willReturn(aResponse().withStatus(503)));
-        
+
         assertThatThrownBy(() -> weatherService.getCurrent("London"))
             .isInstanceOf(WeatherServiceException.class)
             .hasMessage("Weather service unavailable");
@@ -216,22 +221,22 @@ class WeatherServiceTest {
 
 ### ⚖️ Comparison Table
 
-| | Mockito Mock | WireMock |
-|---|---|---|
-| Level | Java interface | HTTP transport |
-| Tests HTTP headers/URL | ✗ | ✓ |
-| Tests serialization | ✗ | ✓ |
-| Tests retry/timeout logic | ✗ | ✓ |
-| Speed | Microseconds | Milliseconds |
-| Use case | Internal dependencies | External HTTP APIs |
+|                           | Mockito Mock          | WireMock           |
+| ------------------------- | --------------------- | ------------------ |
+| Level                     | Java interface        | HTTP transport     |
+| Tests HTTP headers/URL    | ✗                     | ✓                  |
+| Tests serialization       | ✗                     | ✓                  |
+| Tests retry/timeout logic | ✗                     | ✓                  |
+| Speed                     | Microseconds          | Milliseconds       |
+| Use case                  | Internal dependencies | External HTTP APIs |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "WireMock replaces Mockito" | They operate at different layers; use both: Mockito for domain logic, WireMock for HTTP boundaries |
-| "WireMock stubs are always up-to-date" | Stubs can drift from real APIs; use contract tests (Pact) to keep stubs synchronized |
-| "WireMock requires a running server" | WireMock can run embedded in JUnit — no separate server needed |
+| Misconception                          | Reality                                                                                            |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| "WireMock replaces Mockito"            | They operate at different layers; use both: Mockito for domain logic, WireMock for HTTP boundaries |
+| "WireMock stubs are always up-to-date" | Stubs can drift from real APIs; use contract tests (Pact) to keep stubs synchronized               |
+| "WireMock requires a running server"   | WireMock can run embedded in JUnit — no separate server needed                                     |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -268,6 +273,7 @@ Fix: Use Pact consumer-driven contract testing to generate stubs, or run a perio
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** WireMock's record-playback mode allows recording real API calls to generate stubs automatically. The workflow: (1) point your service at WireMock in proxy mode (WireMock forwards requests to real API, records responses); (2) run your service against the real API once; (3) WireMock saves all requests/responses as stub files; (4) future tests use saved stubs. Describe: (a) the security risk of recording (API keys, PII in responses get saved to files — how to sanitize?); (b) when recorded stubs go stale (real API changes); (c) how to combine record-playback with Pact consumer tests to maintain stub freshness; (d) the "contract test as stub generator" pattern.

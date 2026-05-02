@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Swap extends RAM to disk for rarely-used pages; thrashing is when processes spend more time swapping pages in/out than executing — the system grinds to a halt.
 
-| #0124 | Category: Operating Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Virtual Memory, Paging, Page Fault, TLB | |
-| **Used by:** | Memory Management, Container Resource Limits, Performance Tuning | |
-| **Related:** | OOM Killer, Huge Pages, mlock, cgroups memory.limit | |
+| #0124           | Category: Operating Systems                                      | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Virtual Memory, Paging, Page Fault, TLB                          |                 |
+| **Used by:**    | Memory Management, Container Resource Limits, Performance Tuning |                 |
+| **Related:**    | OOM Killer, Huge Pages, mlock, cgroups memory.limit              |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ Peter Denning's 1968 "working set" model showed that thrashing occurs when the s
 Swap = overflow RAM to disk (slow, but workable); thrashing = so much swapping that the system stops doing real work.
 
 **One analogy:**
+
 > A restaurant kitchen with 10 active dishes. The chef can only hold 5 plates at a time. Swap is: store the other 5 plates on a shelf (slow to reach). Thrashing is: the shelf and counter are so busy being shuffled — put plate A on shelf, bring plate B to counter, put B back, bring A again — that no actual cooking happens. Everyone is moving plates but zero meals are being prepared.
 
 **One insight:**
@@ -58,6 +59,7 @@ Thrashing is self-reinforcing: each page fault blocks a process (waiting for dis
 ### 🔩 First Principles Explanation
 
 LINUX MEMORY PRESSURE:
+
 ```
 Memory zones:  [Free] [Active] [Inactive] [Swap cache]
 
@@ -74,6 +76,7 @@ kswapd (background): continuously monitors free pages
 ```
 
 SWAP SUBSYSTEM:
+
 ```
 Process accesses swapped-out page (virtual address X):
   → Page fault (not-present)
@@ -84,7 +87,7 @@ Process accesses swapped-out page (virtual address X):
   → Update PTE: virtual X → physical frame
   → Evict some other page (if memory still low)
   → Return to user process
-  
+
 Latency: ~10ms (SSD) to ~100ms (HDD) per swap-in
 vs L3 cache hit: ~10ns
 vs RAM: ~100ns
@@ -92,6 +95,7 @@ Swap is 5–6 orders of magnitude slower than RAM
 ```
 
 THRASHING DETECTION:
+
 ```
 Metric: CPU busy % vs useful work %
 Normal: CPU 70% busy → 70% executing instructions
@@ -113,6 +117,7 @@ KUBERNETES CONTAINER SWAP DEBATE:
 A container with `memory: limit: 2Gi` allocates 2.5GB. Without swap: kernel OOM killer kills the container. With swap enabled on the node: the extra 512MB goes to swap (SSD). The container continues with degraded performance.
 
 Which is better?
+
 - **OOM kill**: container crashes → Kubernetes restarts it → clean state in seconds.
 - **Swap overflow**: container continues but at degraded performance for the duration of the load spike. If the spike is transient (5s), swap is better. If the spike is sustained (hours), thrashing is worse than a restart.
 
@@ -171,6 +176,7 @@ Peter Denning's working set model (1968): process's working set W(t, Δ) = set o
 ### 🔄 The Complete Picture — End-to-End Flow
 
 JAVA HEAP SWAPPED OUT (worst case):
+
 ```
 1. System memory 95% used; kswapd starts swapping Java heap pages
 
@@ -195,6 +201,7 @@ JAVA HEAP SWAPPED OUT (worst case):
 ### 💻 Code Example
 
 Example 1 — Monitor swap activity (Linux):
+
 ```bash
 # Real-time swap monitoring
 vmstat 1 10   # si=swap-in, so=swap-out (KB/s); sustained > 100 = pressure
@@ -208,6 +215,7 @@ done | sort -t: -k2 -rn | head -20
 ```
 
 Example 2 — Prevent swapping for critical Java process (mlock):
+
 ```java
 // Using JNA to call mlockall (lock all pages in RAM)
 // In production: use -XX:+AlwaysPreTouch + systemd MemoryLock= instead
@@ -223,15 +231,17 @@ Example 2 — Prevent swapping for critical Java process (mlock):
 ```
 
 Example 3 — Container memory limit and OOM vs swap:
+
 ```yaml
 # Kubernetes pod spec
 resources:
   requests:
-    memory: "4Gi"    # guaranteed allocation
+    memory: "4Gi" # guaranteed allocation
   limits:
-    memory: "6Gi"    # OOM kill if exceeded (with swap disabled on node)
+    memory: "6Gi" # OOM kill if exceeded (with swap disabled on node)
 
-# Node configuration (disable swap): 
+
+# Node configuration (disable swap):
 # vm.swappiness=0 or kubelet --fail-swap-on=true (default Kubernetes)
 # Container cgroup memory.limit = 6Gi; memory.swap.limit = 6Gi (no swap)
 # If container allocates 6.1Gi: OOM killer kills container process
@@ -240,22 +250,22 @@ resources:
 
 ### ⚖️ Comparison Table
 
-| Memory State | Description | CPU impact | Response time |
-|---|---|---|---|
-| All in RAM | Normal operation | 0% overhead | Nanoseconds |
-| Some on swap (occasional) | Light pressure | 1–5% overhead | +10ms on swapped pages |
-| Heavy swap (frequent) | Sustained pressure | 20–50% overhead | +100ms avg response |
-| **Thrashing** | Continuous swap cycle | ~100% iowait | Seconds per operation |
-| OOM kill | Process terminated | — | Process restart time |
+| Memory State              | Description           | CPU impact      | Response time          |
+| ------------------------- | --------------------- | --------------- | ---------------------- |
+| All in RAM                | Normal operation      | 0% overhead     | Nanoseconds            |
+| Some on swap (occasional) | Light pressure        | 1–5% overhead   | +10ms on swapped pages |
+| Heavy swap (frequent)     | Sustained pressure    | 20–50% overhead | +100ms avg response    |
+| **Thrashing**             | Continuous swap cycle | ~100% iowait    | Seconds per operation  |
+| OOM kill                  | Process terminated    | —               | Process restart time   |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Disabling swap is always better" | For real-time/latency-sensitive apps: yes. For desktop/batch: swap allows more concurrent work than OOM killing |
-| "Swap to SSD is fast enough" | SSD swap: ~0.1ms per page; RAM: ~0.0001ms. For GC scanning 2GB heap: 200M page faults × 0.1ms = 20,000 seconds of potential latency |
-| "More swap = more memory" | Swap trades latency for capacity; under overcommit, more swap extends the thrashing window rather than preventing it |
-| "kswapd at 100% CPU is normal" | kswapd sustained at > 5–10% CPU = memory pressure; 100% = thrashing |
+| Misconception                     | Reality                                                                                                                             |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| "Disabling swap is always better" | For real-time/latency-sensitive apps: yes. For desktop/batch: swap allows more concurrent work than OOM killing                     |
+| "Swap to SSD is fast enough"      | SSD swap: ~0.1ms per page; RAM: ~0.0001ms. For GC scanning 2GB heap: 200M page faults × 0.1ms = 20,000 seconds of potential latency |
+| "More swap = more memory"         | Swap trades latency for capacity; under overcommit, more swap extends the thrashing window rather than preventing it                |
+| "kswapd at 100% CPU is normal"    | kswapd sustained at > 5–10% CPU = memory pressure; 100% = thrashing                                                                 |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -264,6 +274,7 @@ resources:
 Symptom: JVM GC logs show stop-the-world pauses of 10s+ (normally <200ms); application unresponsive; Kubernetes pod restarts due to liveness probe timeout.
 
 Diagnosis:
+
 ```bash
 # Check if JVM heap pages are swapped
 cat /proc/<java_pid>/status | grep VmSwap  # e.g., VmSwap: 2000000 kB = 2GB swapped
@@ -282,6 +293,7 @@ Fix: `vm.swappiness=0`, `--memory-swap` container limit, `-XX:+AlwaysPreTouch`, 
 Symptom: Kubernetes event: `OOMKilled`; container restarts; memory metrics show usage near limit before death.
 
 Diagnosis:
+
 ```bash
 kubectl describe pod <pod> | grep -A 5 "OOMKilled"
 # Check memory limit vs actual usage
@@ -297,16 +309,19 @@ Fix: Increase memory limit, profile for memory leaks (heap dump), enable swap wi
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Virtual Memory` — swap is the backing store for virtual pages not in RAM
 - `Paging` — swap is invoked when all RAM page frames are occupied
 - `Page Fault` — swap-in is triggered by a major page fault
 
 **Builds On This (learn these next):**
+
 - `OOM Killer` — Linux's last resort when swap is also exhausted
 - `Huge Pages` — large pages (2MB) reduce TLB pressure and can be locked in RAM (no swap)
 - `cgroups memory` — per-container memory and swap limits
 
 **Alternatives / Comparisons:**
+
 - `mlock()` — lock specific pages in RAM, preventing their swap
 - `zswap` / `zram` — compressed in-memory swap (faster than disk, still slower than RAM)
 
@@ -340,6 +355,7 @@ Fix: Increase memory limit, profile for memory leaks (heap dump), enable swap wi
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Linux's OOM (Out of Memory) killer is the last resort when both RAM and swap are exhausted. It uses an **OOM score** (`/proc/<pid>/oom_score`) to select a victim: score is based on RSS (larger process = higher score), process uptime (newer = higher score), and adjustments (`/proc/<pid>/oom_score_adj` can be -1000 to 1000). The OOM killer kills the highest-scoring process. If your database process (large RSS, critical, long-running) has default OOM score 800 and your Node.js HTTP server (small RSS, can restart) has score 100: the OOM killer will kill the database. Fix this by: (a) explaining `oom_score_adj = -1000` to protect the database, (b) setting `oom_score_adj = 1000` on the Node.js process to make it the preferred victim, and (c) describing why running both in separate Kubernetes pods (separate cgroups) is the architecturally correct solution.

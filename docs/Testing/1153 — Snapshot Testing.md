@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Snapshot testing captures the output of a component or function as a "golden file," then compares future runs against it — automatically flagging any change in output for developer review.
 
-| #1153 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, CI-CD | |
-| **Used by:** | Frontend Developers, API Developers | |
-| **Related:** | Visual Regression Testing, Jest Snapshots, Approval Testing, API Testing | |
+| #1153           | Category: Testing                                                        | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Unit Test, CI-CD                                                         |                 |
+| **Used by:**    | Frontend Developers, API Developers                                      |                 |
+| **Related:**    | Visual Regression Testing, Jest Snapshots, Approval Testing, API Testing |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -42,20 +42,22 @@ A React component renders a navigation menu with 15 items, nested structure, and
 Snapshot = "take a photo" of output on first run; fail if output changes in future runs.
 
 **One analogy:**
+
 > Snapshot testing is like **comparing passport photos**: you take a photo when issued, compare new photos against it. Any change (haircut, glasses, aging) is flagged — you decide if the change is intentional (update the snapshot) or unexpected (investigate).
 
 ### 🔩 First Principles Explanation
 
 SNAPSHOT LIFECYCLE:
+
 ```
 First run:
   1. Component renders to: "<nav><ul><li>Home</li>...</ul></nav>"
   2. No snapshot file exists yet → create snapshot file (committed to git)
   3. Test PASSES (first run always passes)
-  
+
 Subsequent runs:
   4. Component renders to same output → matches snapshot → PASS
-  
+
 After code change:
   5. Developer changes: "<nav class="nav">..." (adds CSS class)
   6. Snapshot comparison: DIFFERS → TEST FAILS
@@ -72,6 +74,7 @@ After accidental regression:
 ```
 
 SNAPSHOT FILE (Jest — stored in `__snapshots__/`):
+
 ```javascript
 // Button.test.js.snap
 exports[`Button renders correctly 1`] = `
@@ -87,6 +90,7 @@ exports[`Button renders correctly 1`] = `
 ```
 
 WHEN SNAPSHOT TESTING SHINES:
+
 ```
 ✓ UI components (React/Vue/Angular) — render output
 ✓ API responses — verify JSON structure doesn't regress
@@ -100,6 +104,7 @@ WHEN SNAPSHOT TESTING SHINES:
 ### 🧪 Thought Experiment
 
 THE ACCIDENTAL REGRESSION CATCH:
+
 ```
 UI change: developer updates a shared CSS class name
 Component snapshot test fails for Button, Card, Header, Modal (4 components)
@@ -133,20 +138,20 @@ With snapshot tests:
 
 ```javascript
 // React component snapshot test (Jest + React Testing Library)
-import { render } from '@testing-library/react';
-import { Button } from './Button';
+import { render } from "@testing-library/react";
+import { Button } from "./Button";
 
-test('Button renders correctly', () => {
+test("Button renders correctly", () => {
   const { container } = render(
     <Button variant="primary" onClick={() => {}}>
       Click me
-    </Button>
+    </Button>,
   );
   expect(container.firstChild).toMatchSnapshot();
 });
 
 // Inline snapshot (small, readable)
-test('Button renders label', () => {
+test("Button renders label", () => {
   const { container } = render(<Button>Save</Button>);
   expect(container.firstChild).toMatchInlineSnapshot(`
     <button class="btn">
@@ -164,9 +169,9 @@ class OrderSummaryTest {
         Order order = OrderBuilder.anOrder()
             .withItems(List.of(new Item("Widget", 9.99)))
             .build();
-        
+
         String actual = orderFormatter.format(order);
-        
+
         // Custom snapshot comparison
         assertMatchesSnapshot("order_summary", actual);
         // First run: writes actual to "order_summary.approved.txt"
@@ -177,21 +182,21 @@ class OrderSummaryTest {
 
 ### ⚖️ Comparison Table
 
-| | Snapshot Test | Assertion-Based Unit Test |
-|---|---|---|
-| What it checks | Output didn't change | Specific property holds |
-| First run | Creates snapshot | Fails or passes |
-| Update workflow | `--updateSnapshot` | Edit assertion value |
-| Catches regressions | Automatically | Only for tested properties |
-| Explains WHY | ✗ (shows diff, not intent) | ✓ (assertion names reason) |
+|                     | Snapshot Test              | Assertion-Based Unit Test  |
+| ------------------- | -------------------------- | -------------------------- |
+| What it checks      | Output didn't change       | Specific property holds    |
+| First run           | Creates snapshot           | Fails or passes            |
+| Update workflow     | `--updateSnapshot`         | Edit assertion value       |
+| Catches regressions | Automatically              | Only for tested properties |
+| Explains WHY        | ✗ (shows diff, not intent) | ✓ (assertion names reason) |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Snapshot tests replace unit tests" | Snapshots catch regressions; unit tests verify behavior. Complement each other. |
-| "Passing snapshot = correct" | Snapshots verify "same as last time" — if the original snapshot had a bug, it persists |
-| "Always update failing snapshots" | Review the diff first! Update only when the change is intentional |
+| Misconception                       | Reality                                                                                |
+| ----------------------------------- | -------------------------------------------------------------------------------------- |
+| "Snapshot tests replace unit tests" | Snapshots catch regressions; unit tests verify behavior. Complement each other.        |
+| "Passing snapshot = correct"        | Snapshots verify "same as last time" — if the original snapshot had a bug, it persists |
+| "Always update failing snapshots"   | Review the diff first! Update only when the change is intentional                      |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -228,6 +233,7 @@ Fix: Snapshot specific sub-components or specific fields. Use `toMatchObject` fo
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Snapshot tests are often criticized as "testing implementation details" — they capture the current structure of the UI, not the user-facing behavior. The React Testing Library philosophy: test what the user sees (text, roles, labels) not what the component renders (DOM structure). Describe: (1) how `toMatchSnapshot()` on a component tree can break for reasons unrelated to user-facing behavior (e.g., wrapper `<div>` added for styling), (2) how `toMatchInlineSnapshot()` on specific text content is more behavior-oriented, (3) the alternative of using role-based assertions (`getByRole('button', {name: 'Submit'})`) instead of snapshots for critical user-facing behavior, and (4) when full DOM snapshots are appropriate vs when they're testing implementation.

@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A load test applies the expected maximum concurrent user load to a system and verifies it sustains acceptable throughput, latency, and error rate — answering "can we handle our busiest day?"
 
-| #1138 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Performance Test, HTTP and APIs, Observability | |
-| **Used by:** | Capacity Planning, SRE, Black Friday Preparation | |
-| **Related:** | Stress Test, Spike Test, Soak Test, k6, Gatling, JMeter | |
+| #1138           | Category: Testing                                       | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------ | :-------------- |
+| **Depends on:** | Performance Test, HTTP and APIs, Observability          |                 |
+| **Used by:**    | Capacity Planning, SRE, Black Friday Preparation        |                 |
+| **Related:**    | Stress Test, Spike Test, Soak Test, k6, Gatling, JMeter |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ Load tests are distinguished from: **stress tests** (load exceeding maximum to f
 Load test = simulate your busiest day, measure if the system survives with acceptable performance.
 
 **One analogy:**
+
 > A fire drill in an office building tests if all 500 occupants can evacuate in under 3 minutes. The drill uses the real building, all 500 people, the real stairs. You don't do the drill with 10 people and extrapolate. Load testing is the fire drill for your application.
 
 **One insight:**
@@ -58,27 +59,28 @@ Bottlenecks don't appear until load exceeds the bottleneck's capacity. Common bo
 ### 🔩 First Principles Explanation
 
 LOAD TEST DESIGN:
+
 ```
 1. Define target load: "peak expected traffic"
    - Normal day: 200 RPS
    - Sale event: 10× = 2,000 RPS
    - Black Friday: 20× = 4,000 RPS (size for this)
-   
+
 2. Define user scenarios (realistic traffic mix):
    - 60% browse products (lightweight GET)
    - 25% search products (complex query)
    - 10% add to cart / checkout (writes, transactions)
    - 5% authentication (high CPU)
-   
+
 3. Think time: users don't send requests as fast as possible
    - Think time: 1–5 seconds between requests (models human behavior)
    - Without think time: 100 VUs × 10 req/s = 1,000 RPS
    - With 2s think time: 100 VUs × 0.5 req/s = 50 RPS
-   
-4. Data variety: 
+
+4. Data variety:
    - Don't reuse same product ID (cache hit rate 100% → unrealistic)
    - Use realistic distribution (80% of traffic hits 20% of products)
-   
+
 5. Assert thresholds:
    - p95 < 500ms, p99 < 1000ms
    - Error rate < 0.5%
@@ -86,6 +88,7 @@ LOAD TEST DESIGN:
 ```
 
 BOTTLENECK IDENTIFICATION:
+
 ```
 When load test fails, correlate:
   High latency + high DB connection wait → connection pool too small
@@ -103,6 +106,7 @@ Cost: Requires production-like environment (expensive); risk of accidental produ
 ### 🧪 Thought Experiment
 
 DISCOVERING THE CONNECTION POOL BOTTLENECK:
+
 ```
 Load test: ramp to 2,000 RPS
 
@@ -177,6 +181,7 @@ Re-run: p99 = 92ms at 2,000 RPS → PASS
 ### 🔄 The Complete Picture — End-to-End Flow
 
 BLACK FRIDAY LOAD PREPARATION:
+
 ```
 1. Define target: 10× normal traffic = 2,000 RPS, 30-minute sustained
 2. Run load test on staging (production-identical infrastructure)
@@ -196,69 +201,78 @@ BLACK FRIDAY LOAD PREPARATION:
 
 ```javascript
 // k6 realistic load test with user journey
-import http from 'k6/http';
-import { check, sleep } from 'k6';
-import { SharedArray } from 'k6/data';
+import http from "k6/http";
+import { check, sleep } from "k6";
+import { SharedArray } from "k6/data";
 
-const products = new SharedArray('products', () =>
-  JSON.parse(open('./test-data/products.json'))  // 10,000 product IDs
+const products = new SharedArray(
+  "products",
+  () => JSON.parse(open("./test-data/products.json")), // 10,000 product IDs
 );
 
 export const options = {
   stages: [
-    { duration: '5m', target: 200 },   // ramp up
-    { duration: '20m', target: 500 },  // peak load
-    { duration: '5m', target: 0 },     // ramp down
+    { duration: "5m", target: 200 }, // ramp up
+    { duration: "20m", target: 500 }, // peak load
+    { duration: "5m", target: 0 }, // ramp down
   ],
   thresholds: {
-    'http_req_duration{name:checkout}': ['p(99)<2000'],
-    'http_req_duration{name:search}': ['p(95)<300'],
-    'http_req_failed': ['rate<0.005'],   // 0.5% error rate max
+    "http_req_duration{name:checkout}": ["p(99)<2000"],
+    "http_req_duration{name:search}": ["p(95)<300"],
+    http_req_failed: ["rate<0.005"], // 0.5% error rate max
   },
 };
 
 export function setup() {
   // Login once and return auth token for reuse
-  const res = http.post(`${__ENV.BASE_URL}/api/auth/login`, JSON.stringify({
-    username: 'loadtest@example.com', password: 'loadtest123'
-  }), { headers: { 'Content-Type': 'application/json' } });
-  return { token: res.json('token') };
+  const res = http.post(
+    `${__ENV.BASE_URL}/api/auth/login`,
+    JSON.stringify({
+      username: "loadtest@example.com",
+      password: "loadtest123",
+    }),
+    { headers: { "Content-Type": "application/json" } },
+  );
+  return { token: res.json("token") };
 }
 
-export default function({ token }) {
-  const headers = { 'Authorization': `Bearer ${token}` };
+export default function ({ token }) {
+  const headers = { Authorization: `Bearer ${token}` };
 
   // Browse product (Pareto: 80% of requests use 20% of products)
-  const productIndex = Math.random() < 0.8
-    ? Math.floor(Math.random() * products.length * 0.2)  // popular
-    : Math.floor(Math.random() * products.length);        // long tail
+  const productIndex =
+    Math.random() < 0.8
+      ? Math.floor(Math.random() * products.length * 0.2) // popular
+      : Math.floor(Math.random() * products.length); // long tail
 
   const productRes = http.get(
     `${__ENV.BASE_URL}/api/products/${products[productIndex].id}`,
-    { headers, tags: { name: 'product-detail' } }
+    { headers, tags: { name: "product-detail" } },
   );
-  check(productRes, { 'product found': (r) => r.status === 200 });
-  sleep(1 + Math.random() * 2);  // 1–3s think time
+  check(productRes, { "product found": (r) => r.status === 200 });
+  sleep(1 + Math.random() * 2); // 1–3s think time
 
   // Search (25% of VUs)
   if (Math.random() < 0.25) {
     const searchRes = http.get(
       `${__ENV.BASE_URL}/api/products/search?q=laptop`,
-      { headers, tags: { name: 'search' } }
+      { headers, tags: { name: "search" } },
     );
-    check(searchRes, { 'search results': (r) => r.status === 200 });
+    check(searchRes, { "search results": (r) => r.status === 200 });
     sleep(2 + Math.random() * 3);
   }
 
   // Checkout (10% of VUs)
-  if (Math.random() < 0.10) {
+  if (Math.random() < 0.1) {
     const checkoutRes = http.post(
       `${__ENV.BASE_URL}/api/checkout`,
       JSON.stringify({ productId: products[productIndex].id, quantity: 1 }),
-      { headers: { ...headers, 'Content-Type': 'application/json' },
-        tags: { name: 'checkout' } }
+      {
+        headers: { ...headers, "Content-Type": "application/json" },
+        tags: { name: "checkout" },
+      },
     );
-    check(checkoutRes, { 'checkout success': (r) => r.status === 201 });
+    check(checkoutRes, { "checkout success": (r) => r.status === 201 });
     sleep(3 + Math.random() * 5);
   }
 }
@@ -266,22 +280,22 @@ export default function({ token }) {
 
 ### ⚖️ Comparison Table
 
-| Type | Load Level | Duration | Goal |
-|---|---|---|---|
-| **Load** | Expected max (e.g., 2,000 RPS) | 30–60min | Verify SLA at peak |
-| Stress | Beyond max (find breaking point) | 1–2h | Capacity limit |
-| Spike | Sudden surge (0 → max in 30s) | 15–30min | Autoscaling response |
-| Soak | 70% load | 8–24h | Resource leak detection |
-| Scalability | Incremental (100→200→400 RPS) | Multi-step | Scaling efficiency |
+| Type        | Load Level                       | Duration   | Goal                    |
+| ----------- | -------------------------------- | ---------- | ----------------------- |
+| **Load**    | Expected max (e.g., 2,000 RPS)   | 30–60min   | Verify SLA at peak      |
+| Stress      | Beyond max (find breaking point) | 1–2h       | Capacity limit          |
+| Spike       | Sudden surge (0 → max in 30s)    | 15–30min   | Autoscaling response    |
+| Soak        | 70% load                         | 8–24h      | Resource leak detection |
+| Scalability | Incremental (100→200→400 RPS)    | Multi-step | Scaling efficiency      |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Load test with more VUs = higher load" | Without think time, 10 VUs can generate same load as 1000 VUs; target RPS, not VU count |
-| "All test requests should be identical" | Real users access different URLs; identical requests = unrealistic cache hit rate |
+| Misconception                                          | Reality                                                                                        |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| "Load test with more VUs = higher load"                | Without think time, 10 VUs can generate same load as 1000 VUs; target RPS, not VU count        |
+| "All test requests should be identical"                | Real users access different URLs; identical requests = unrealistic cache hit rate              |
 | "Staging load test results predict production exactly" | Staging tests reveal bottlenecks; exact numbers differ based on hardware, data volume, network |
-| "Load test once a year" | Load test before every significant traffic event and after major architecture changes |
+| "Load test once a year"                                | Load test before every significant traffic event and after major architecture changes          |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -324,6 +338,7 @@ Fix: 5-minute warmup run excluded from metrics. Dedicated isolated environment. 
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The TCP TIME_WAIT state creates a performance trap in load tests: after a TCP connection is closed, the client port enters TIME_WAIT for 2× MSL (60–120 seconds on Linux). A load generator creating 1000 connections/second exhausts the ephemeral port range (32768–60999, ~28000 ports) in 28 seconds. Subsequent connection attempts fail with "Cannot assign requested address." Describe: (1) why this is a load generator problem (not a server problem), (2) how `SO_REUSEADDR` and `net.ipv4.tcp_tw_reuse` kernel settings mitigate it, (3) why HTTP keep-alive connections (persistent connections) are the correct architectural fix (reduce connection creation rate), and (4) how Gatling and k6 handle this by default (both use HTTP/1.1 keep-alive by default — but if your server closes connections aggressively, this reverts to the same problem).

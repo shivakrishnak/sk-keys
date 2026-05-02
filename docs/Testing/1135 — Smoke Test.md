@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — A smoke test is a fast, shallow check run immediately after deployment to verify the application starts, connects to its dependencies, and handles the most basic requests — before running the full test suite or routing production traffic.
 
-| #1135 | Category: Testing | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | E2E Test, Integration Test, CI-CD | |
-| **Used by:** | Deployment Verification, CI-CD, Blue-Green Deployments | |
-| **Related:** | Sanity Test, E2E Test, Health Check, Canary Deployment | |
+| #1135           | Category: Testing                                      | Difficulty: ★☆☆ |
+| :-------------- | :----------------------------------------------------- | :-------------- |
+| **Depends on:** | E2E Test, Integration Test, CI-CD                      |                 |
+| **Used by:**    | Deployment Verification, CI-CD, Blue-Green Deployments |                 |
+| **Related:**    | Sanity Test, E2E Test, Health Check, Canary Deployment |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ A **sanity test** is similar but typically verifies a specific area after a focu
 Smoke test = "is it alive and not on fire?" — run right after deploy, before routing traffic.
 
 **One analogy:**
+
 > Before flying a commercial aircraft after maintenance, pilots do a pre-flight check: control surfaces move, instruments power on, fuel is loaded, engines turn over. They don't test every possible flight scenario — just enough to verify the aircraft is safe to take off. Smoke tests are the pre-flight check for software.
 
 **One insight:**
@@ -58,6 +59,7 @@ A smoke test's value is in what it checks first and fast. It runs in 30–60 sec
 ### 🔩 First Principles Explanation
 
 WHAT A SMOKE TEST SHOULD CHECK:
+
 ```
 1. Application starts: returns 200 on GET /health
 2. Database connected: a basic query succeeds
@@ -74,6 +76,7 @@ What smoke tests should NOT check:
 ```
 
 DEPLOYMENT GATE PATTERN:
+
 ```
 deploy.sh:
   1. Deploy new version → pod starts
@@ -91,10 +94,11 @@ Cost: Must be maintained alongside deployment process; too many smoke tests = sl
 ### 🧪 Thought Experiment
 
 SMOKE TEST SAVES PRODUCTION:
+
 ```
 10:30 AM: New version deployed (feature: new payment provider)
 10:30:01: Smoke test: GET /health → 200 ✓
-10:30:02: Smoke test: DB ping → success ✓  
+10:30:02: Smoke test: DB ping → success ✓
 10:30:03: Smoke test: POST /api/payments (test card) → 500 ✗
 
 Error: "Payment provider API key not set in environment"
@@ -154,6 +158,7 @@ Without smoke test: 5 minutes of failed payments before human notices
 ### 🔄 The Complete Picture — End-to-End Flow
 
 KUBERNETES BLUE-GREEN WITH SMOKE TESTS:
+
 ```bash
 # deploy.sh
 NEW_VERSION="v1.2.3"
@@ -237,22 +242,22 @@ echo "All smoke tests passed ✓"
 
 ### ⚖️ Comparison Table
 
-| Test Type | When Run | Duration | Coverage | Purpose |
-|---|---|---|---|---|
-| Unit test | Pre-commit / CI | <1s | Logic | Catch code bugs |
-| Integration test | CI build | 1–5min | Components | Catch integration bugs |
-| **Smoke test** | Post-deploy | 30–60s | Critical paths | Catch deployment failures |
-| E2E test | Post-deploy (async) | 5–30min | User journeys | Full confidence |
-| Load test | Scheduled | Hours | Performance | Capacity planning |
+| Test Type        | When Run            | Duration | Coverage       | Purpose                   |
+| ---------------- | ------------------- | -------- | -------------- | ------------------------- |
+| Unit test        | Pre-commit / CI     | <1s      | Logic          | Catch code bugs           |
+| Integration test | CI build            | 1–5min   | Components     | Catch integration bugs    |
+| **Smoke test**   | Post-deploy         | 30–60s   | Critical paths | Catch deployment failures |
+| E2E test         | Post-deploy (async) | 5–30min  | User journeys  | Full confidence           |
+| Load test        | Scheduled           | Hours    | Performance    | Capacity planning         |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Smoke tests = comprehensive tests" | Smoke tests are intentionally shallow; they verify "alive and connected," not business logic |
-| "Health check endpoint = smoke test" | Health check is part of a smoke test; a smoke test also includes basic API calls |
+| Misconception                          | Reality                                                                                      |
+| -------------------------------------- | -------------------------------------------------------------------------------------------- |
+| "Smoke tests = comprehensive tests"    | Smoke tests are intentionally shallow; they verify "alive and connected," not business logic |
+| "Health check endpoint = smoke test"   | Health check is part of a smoke test; a smoke test also includes basic API calls             |
 | "Smoke tests replace regression tests" | They complement; smoke tests are fast gates; regression tests are comprehensive verification |
-| "More smoke tests = safer deployment" | More tests = slower deployment gate; keep smoke tests under 2 minutes |
+| "More smoke tests = safer deployment"  | More tests = slower deployment gate; keep smoke tests under 2 minutes                        |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -294,6 +299,7 @@ Fix: Smoke tests must exercise the same code paths users take. After production 
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Kubernetes `livenessProbe` and `readinessProbe` are always-on automated smoke tests. `readinessProbe` failure removes the pod from the Service's endpoint list (stops receiving traffic); `livenessProbe` failure kills the pod and restarts it. A Spring Boot app with `/actuator/health` for both probes has a subtle problem: `actuator/health` includes disk space checks. If disk fills up (logs), the health check returns DOWN → readiness fails → pod removed from traffic. But the application is otherwise functional. Describe the correct configuration of Spring Boot Actuator health groups to have: (a) `readinessProbe` that only checks application-critical dependencies (DB, cache), (b) `livenessProbe` that only checks if the JVM is alive (not deadlocked), and (c) a separate `/actuator/health` endpoint that shows the full health picture for monitoring dashboards.

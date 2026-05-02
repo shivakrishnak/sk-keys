@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — The buddy system splits/merges RAM in power-of-2 blocks to allocate pages fast with minimal fragmentation; the slab allocator sits on top and caches fixed-size kernel objects (inodes, task_structs) to avoid per-object allocation overhead.
 
-| #0125 | Category: Operating Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Virtual Memory, Paging, Page Fault, Cache Line | |
-| **Used by:** | Kernel Memory Allocation, malloc, JVM, Database Buffer Pools | |
-| **Related:** | Fragmentation, SLAB, SLUB, kmalloc, mmap | |
+| #0125           | Category: Operating Systems                                  | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------- | :-------------- |
+| **Depends on:** | Virtual Memory, Paging, Page Fault, Cache Line               |                 |
+| **Used by:**    | Kernel Memory Allocation, malloc, JVM, Database Buffer Pools |                 |
+| **Related:**    | Fragmentation, SLAB, SLUB, kmalloc, mmap                     |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ The **slab allocator** (implemented as **SLUB** in Linux 2.6.23+) sits above the
 Buddy = splits/merges RAM pages in power-of-2; slab = caches pre-made kernel objects so allocation is just "pop from free list."
 
 **One analogy:**
+
 > Buddy: a parking garage that only sells parking spots in powers of 2 (1, 2, 4, 8 spots). Need 3 spots? Get 4. Return them: the adjacent 4 might merge back to 8. This makes merging trivial (you always know your buddy's location).
 > Slab: a kitchen with pre-made pancake batter. Need a pancake? Take one from the warm stack (O(1), cache-hot). Return a pancake? Put it back (no cooking needed). Way faster than mixing batter from scratch each time.
 
@@ -59,6 +60,7 @@ The slab allocator's key insight is not just reuse — it's **NUMA and cache loc
 ### 🔩 First Principles Explanation
 
 BUDDY SYSTEM OPERATION:
+
 ```
 Free lists: order 0 (4KB), 1 (8KB), 2 (16KB), ... 10 (4MB)
 Initial state: one large block at order 10
@@ -81,10 +83,11 @@ Buddy address calculation:
 ```
 
 SLUB ALLOCATOR:
+
 ```
 kmem_cache for task_struct (size=9216 bytes):
   slab = 3 pages (12KB) holding 1 task_struct + metadata
-  
+
   Free list per CPU (e.g., CPU 0):
     [task_struct*] → [task_struct*] → [task_struct*] → NULL
 
@@ -92,7 +95,7 @@ kmalloc(sizeof(task_struct)):
   → Check CPU 0's free list (no lock, atomic ptr swap)
   → Pop head → return pre-zeroed, pre-constructed object
   → If free list empty: get new slab from buddy system
-  
+
 kfree(task_struct*):
   → Push back onto CPU 0's free list
   → If slab fully free AND global free list has excess: return to buddy
@@ -108,6 +111,7 @@ SLAB OBJECT REUSE PERFORMANCE:
 Test: allocate 1M inodes, free all, allocate 1M inodes again.
 
 Without slab (raw kmalloc each time):
+
 ```
 1M alloc × (buddy split + zeroing + inode init + VFS init) = 1.2 seconds
 1M free  × (inode destroy + VFS cleanup + buddy merge) = 0.8 seconds
@@ -116,6 +120,7 @@ Total: 3.2 seconds
 ```
 
 With slab allocator:
+
 ```
 1M alloc × (pop from free list, already initialised) = 0.05 seconds
 1M free  × (push to free list, keep initialised) = 0.04 seconds
@@ -182,6 +187,7 @@ Bonwick's original slab paper (1994) identified three costs: (1) object construc
 ### 🔄 The Complete Picture — End-to-End Flow
 
 NETWORK PACKET RECEIVE PATH (sk_buff allocation):
+
 ```
 NIC receives Ethernet frame:
 1. NIC DMA: writes packet data to pre-allocated DMA ring buffer
@@ -210,6 +216,7 @@ Without slab (raw kmalloc): ~1000ns each → can't keep up
 ### 💻 Code Example
 
 Example 1 — View slab usage (Linux):
+
 ```bash
 # Top slab caches by memory usage
 slabtop -o | head -30
@@ -226,6 +233,7 @@ cat /proc/meminfo | grep -i slab
 ```
 
 Example 2 — Kernel module: creating a custom slab cache:
+
 ```c
 #include <linux/slab.h>
 
@@ -257,6 +265,7 @@ kmem_cache_destroy(my_cache);
 ```
 
 Example 3 — Buddy system: get/free pages:
+
 ```c
 #include <linux/gfp.h>
 
@@ -275,23 +284,23 @@ free_pages((unsigned long)vaddr, 2);
 
 ### ⚖️ Comparison Table
 
-| Allocator | Level | Granularity | Algorithm | Best For |
-|---|---|---|---|---|
-| **Buddy system** | Kernel | Pages (4KB–4MB) | Power-of-2 split/merge | Contiguous page allocation |
-| **SLUB** | Kernel | Objects (8B–8KB) | Per-CPU free lists | Fixed-size kernel objects |
-| **kmalloc** | Kernel | Arbitrary (uses SLUB) | Size classes | General kernel allocations |
-| **tcmalloc** | Userspace | Objects (8B–256KB) | Per-thread size classes | C++ server allocations |
-| **jemalloc** | Userspace | Objects | Per-thread arenas | Firefox, Redis, FreeBSD |
-| **JVM TLAB** | JVM | Java objects | Bump pointer in thread-local area | Java object allocation |
+| Allocator        | Level     | Granularity           | Algorithm                         | Best For                   |
+| ---------------- | --------- | --------------------- | --------------------------------- | -------------------------- |
+| **Buddy system** | Kernel    | Pages (4KB–4MB)       | Power-of-2 split/merge            | Contiguous page allocation |
+| **SLUB**         | Kernel    | Objects (8B–8KB)      | Per-CPU free lists                | Fixed-size kernel objects  |
+| **kmalloc**      | Kernel    | Arbitrary (uses SLUB) | Size classes                      | General kernel allocations |
+| **tcmalloc**     | Userspace | Objects (8B–256KB)    | Per-thread size classes           | C++ server allocations     |
+| **jemalloc**     | Userspace | Objects               | Per-thread arenas                 | Firefox, Redis, FreeBSD    |
+| **JVM TLAB**     | JVM       | Java objects          | Bump pointer in thread-local area | Java object allocation     |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Buddy system wastes memory" | Worst-case 50% waste for power-of-2 rounding, but in practice most allocations are exact powers of 2; slab caches further reduce waste |
-| "Slab allocator is just a free list" | It also provides CPU locality (per-CPU caches), NUMA awareness (per-node partial lists), and keeps objects initialised between uses |
-| "kmalloc(N) allocates exactly N bytes" | Rounds up to the nearest size class; `kmalloc(200)` gets a 256-byte slab object |
-| "SLAB and SLUB are the same" | SLAB (older): complex with coloring and per-CPU/per-node caches separately. SLUB (modern): simplified, per-CPU active slab pointer, no coloring |
+| Misconception                          | Reality                                                                                                                                         |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Buddy system wastes memory"           | Worst-case 50% waste for power-of-2 rounding, but in practice most allocations are exact powers of 2; slab caches further reduce waste          |
+| "Slab allocator is just a free list"   | It also provides CPU locality (per-CPU caches), NUMA awareness (per-node partial lists), and keeps objects initialised between uses             |
+| "kmalloc(N) allocates exactly N bytes" | Rounds up to the nearest size class; `kmalloc(200)` gets a 256-byte slab object                                                                 |
+| "SLAB and SLUB are the same"           | SLAB (older): complex with coloring and per-CPU/per-node caches separately. SLUB (modern): simplified, per-CPU active slab pointer, no coloring |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -300,6 +309,7 @@ free_pages((unsigned long)vaddr, 2);
 Symptom: Memory usage grows continuously; `free -h` shows decreasing `available`; `cat /proc/meminfo` shows `Slab` growing; application and page cache sizes unchanged.
 
 Diagnosis:
+
 ```bash
 # Check growing slab caches
 watch -n 5 'slabtop -o | head -20'
@@ -318,6 +328,7 @@ Root Cause Examples: dentry cache growth from filesystem with millions of short-
 Symptom: `grep HugePages_Free /proc/meminfo` shows 0 despite `MemFree` being large; `cat /proc/buddyinfo` shows many order-0 to order-3 blocks but none at order-9 (2MB).
 
 Diagnosis:
+
 ```bash
 cat /proc/buddyinfo
 # Node 0, zone Normal: 512 256 128 64 32 8 0 0 0 0 0
@@ -333,16 +344,19 @@ Fix: `vm.min_free_kbytes` increase forces more aggressive reclaim before fragmen
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Virtual Memory` — buddy system allocates physical page frames; virtual memory maps them
 - `Paging` — buddy allocates contiguous physical pages; paging maps virtual to physical
 - `Cache Line` — slab coloring and per-CPU caches optimize for cache line locality
 
 **Builds On This (learn these next):**
+
 - `NUMA` — SLUB's per-node partial lists exist specifically for NUMA topology
 - `Huge Pages` — require contiguous physical pages; depend on buddy system order-9 blocks
 - `Fragmentation` — the specific problem both buddy and slab are designed to prevent
 
 **Alternatives / Comparisons:**
+
 - `tcmalloc / jemalloc` — userspace equivalents of slab (per-thread caches, size classes)
 - `JVM TLAB` — thread-local allocation buffers: same insight as per-CPU slab caches applied to JVM heap
 
@@ -375,6 +389,7 @@ Fix: `vm.min_free_kbytes` increase forces more aggressive reclaim before fragmen
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The JVM's Thread-Local Allocation Buffer (TLAB) is conceptually identical to SLUB's per-CPU active slab: each thread has a small region of the Eden heap (~1% of Eden by default) where it allocates Java objects using bump-pointer allocation (just increment a pointer — no lock, no CAS). TLAB exhaustion triggers TLAB refill from the shared Eden (which requires a CAS or lock). In G1GC, each region (1–32MB) is independently managed. Explain: (1) why bump-pointer allocation in TLAB is O(1) with no synchronization, (2) what happens when an object is larger than the TLAB, (3) how TLAB size is dynamically adjusted by the JVM (hint: based on allocation rate and GC frequency), and (4) why a system with 1000 threads each with 1MB TLABs might waste more Eden space than it saves in synchronization overhead.

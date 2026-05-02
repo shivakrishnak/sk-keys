@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Test coverage measures what percentage of code is exercised by tests; coverage targets (e.g., 80%) set a minimum bar — but high coverage doesn't guarantee good tests, and the target itself is less important than what untested code represents.
 
-| #1168 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Unit Test, TDD, Code Quality | |
-| **Used by:** | Developers, QA, Tech Leads | |
-| **Related:** | TDD, Code Quality, SonarQube Quality Gate, CI-CD, Unit Test | |
+| #1168           | Category: Testing                                           | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------- | :-------------- |
+| **Depends on:** | Unit Test, TDD, Code Quality                                |                 |
+| **Used by:**    | Developers, QA, Tech Leads                                  |                 |
+| **Related:**    | TDD, Code Quality, SonarQube Quality Gate, CI-CD, Unit Test |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -45,11 +45,13 @@ THE 80% MYTH:
 Coverage = % of code executed by tests; targets prevent regression; but high coverage ≠ good tests.
 
 **One analogy:**
+
 > Coverage is like **reading comprehension as measured by page-turn count**: you can turn every page of a textbook (100% line coverage) without understanding any of it (no meaningful assertions). Coverage measures whether the tests VISITED the code, not whether they VERIFIED it correctly.
 
 ### 🔩 First Principles Explanation
 
 COVERAGE TYPES ILLUSTRATED:
+
 ```java
 public String classify(int n) {
     if (n > 0) {              // Line 1
@@ -65,22 +67,23 @@ TEST A: classify(5) → "positive"
   Line coverage: Lines 1,2,3 executed = 3/6 = 50%
   Branch coverage: Only (n>0 = true) branch taken = 1/4 branches = 25%
   Missing: n<0, n==0 cases
-  
+
 TEST A + B: classify(5), classify(-3)
   Line coverage: Lines 1-5 = 5/6 = 83%
   Branch coverage: 3/4 = 75%
   Missing: n==0 case (Lines 5,6 = "else" branch)
-  
+
 ALL THREE TESTS: classify(5), classify(-3), classify(0)
   Line coverage: 100%
   Branch coverage: 100%
-  
+
 BUT: if tests have no assertions (just call classify()):
   Coverage: 100%  ← Completely meaningless
   Bugs caught: 0  ← Tests never fail, even with bugs
 ```
 
 WHAT COVERAGE TELLS YOU AND DOESN'T:
+
 ```
 TELLS YOU:
   ✓ Which code has NEVER been executed in tests
@@ -104,20 +107,21 @@ EXAMPLE OF HIGH COVERAGE, BAD TEST:
 MUTATION TESTING (coverage of assertion quality):
   JaCoCo measures coverage of code execution.
   PIT (PITest) measures coverage of ASSERTIONS.
-  
+
   PITest injects bugs (mutations):
     → changes + to - in arithmetic
     → changes > to >= in conditions
     → removes return statements
-  
+
   If mutated code causes test failure → mutation "killed" (good)
   If mutated code passes all tests → mutation "survived" (bad — test doesn't catch this bug)
-  
+
   Mutation score = killed / (killed + survived)
   High mutation score = tests actually catch bugs
 ```
 
 COVERAGE TARGETS IN PRACTICE:
+
 ```
 SonarQube Quality Gate example:
   conditions:
@@ -144,6 +148,7 @@ PRAGMATIC APPROACH:
 ### 🧪 Thought Experiment
 
 THE COVERAGE GAMING DISASTER:
+
 ```
 Team mandated: 80% coverage required before merge.
 Developer adds new payment processing feature (100 lines).
@@ -160,7 +165,7 @@ Developer needs to merge by EOD.
 Coverage: 92% — check!
 Real bug: when card.getToken() returns null, NullPointerException in production.
 Test would have caught it with: assertThat(result.getStatus()).isEqualTo(SUCCESS);
-          
+
 Lesson: coverage targets require test quality enforcement too.
         Code review must check: does every test have meaningful assertions?
         Mutation testing is the antidote.
@@ -242,20 +247,20 @@ Lesson: coverage targets require test quality enforcement too.
 
 ### ⚖️ Comparison Table
 
-| Coverage Type | What It Measures | Strength | Tool |
-|---|---|---|---|
-| Line/Statement | Lines executed | Weak | JaCoCo |
-| Branch | If/else paths | Medium | JaCoCo |
-| Path | All execution paths | Strong (impractical) | N/A |
-| Mutation | Assertion effectiveness | Strongest | PITest |
+| Coverage Type  | What It Measures        | Strength             | Tool   |
+| -------------- | ----------------------- | -------------------- | ------ |
+| Line/Statement | Lines executed          | Weak                 | JaCoCo |
+| Branch         | If/else paths           | Medium               | JaCoCo |
+| Path           | All execution paths     | Strong (impractical) | N/A    |
+| Mutation       | Assertion effectiveness | Strongest            | PITest |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "100% coverage = no bugs" | Coverage measures execution, not correctness; 100% with no assertions = 0% bugs caught |
-| "80% is the magic number" | The "right" target depends on: risk of the code, cost of testing, technology (generated code excluded) |
-| "Decreasing coverage is always bad" | Deleting unused code decreases coverage (lines removed were covered) — coverage% drop can be fine |
+| Misconception                       | Reality                                                                                                |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| "100% coverage = no bugs"           | Coverage measures execution, not correctness; 100% with no assertions = 0% bugs caught                 |
+| "80% is the magic number"           | The "right" target depends on: risk of the code, cost of testing, technology (generated code excluded) |
+| "Decreasing coverage is always bad" | Deleting unused code decreases coverage (lines removed were covered) — coverage% drop can be fine      |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -294,6 +299,7 @@ Fix: Enforce `new_coverage > 80%` (SonarQube: `new_lines_to_cover`) instead of o
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Mutation testing with PITest measures test quality by injecting synthetic bugs. Describe the mechanics: (1) the mutation operators — arithmetic operator replacement (+→-), conditional boundary replacement (>→>=), negate conditionals (if(x>0) → if(!(x>0))), void method calls removal, return value mutation; (2) why running PITest is expensive (each mutation requires re-running the test suite — 100 mutations × 10 second test run = 1,000 seconds), (3) optimization strategies — run PITest only on changed classes (incremental mutation), run only tests that cover the mutated method (coverage-guided mutation), limit to high-risk packages, (4) interpreting results: a surviving mutation in payment processing is a P1 (write the missing test); a surviving mutation in a logging statement is acceptable, and (5) the "equivalent mutation" problem (some mutations produce code that is semantically identical — these can never be killed and should be excluded from the score).

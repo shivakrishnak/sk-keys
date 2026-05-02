@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Starvation is when a thread is perpetually denied CPU or resources because higher-priority threads or unfair algorithms always take precedence — the thread is alive but never runs.
 
-| #0120 | Category: Operating Systems | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Deadlock, Livelock, Scheduler — Preemption, Mutex | |
-| **Used by:** | Thread Priority, Fair Scheduling, ReadWriteLock | |
-| **Related:** | Deadlock, Livelock, Priority Inversion, Aging | |
+| #0120           | Category: Operating Systems                       | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------ | :-------------- |
+| **Depends on:** | Deadlock, Livelock, Scheduler — Preemption, Mutex |                 |
+| **Used by:**    | Thread Priority, Fair Scheduling, ReadWriteLock   |                 |
+| **Related:**    | Deadlock, Livelock, Priority Inversion, Aging     |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -48,6 +48,7 @@ OS scheduling research in the 1960s–70s introduced **aging**: gradually increa
 Starvation = a thread waits forever not because of a cycle or bug, but because the scheduler always picks someone else.
 
 **One analogy:**
+
 > A busy restaurant: VIP customers always get seated first. If VIPs keep arriving, regular customers in the queue wait indefinitely — the queue grows, but the regulars never get a table. No deadlock (no circular waiting), no livelock (everyone is moving) — just perpetual unfairness.
 
 **One insight:**
@@ -56,18 +57,21 @@ Starvation is the expected result of priority-based scheduling without aging or 
 ### 🔩 First Principles Explanation
 
 CORE INVARIANTS:
+
 1. A starved thread is runnable but never scheduled (or waiting for a resource that's never granted).
 2. No cycle exists (distinguishes from deadlock).
 3. The thread is not looping productively (distinguishes from livelock).
 4. Other threads continuously prevent the starved thread from being selected.
 
 CAUSES:
+
 - **Priority-based preemption**: High-priority threads always run; low-priority never scheduled.
 - **Unfair mutex**: Non-FIFO lock acquisition; a thread repeatedly loses to faster competitors.
 - **Reader-writer lock writer starvation**: New readers allowed in while a writer waits.
 - **Resource exhaustion with unfair allocation**: Threads with more concurrent requests get more resources.
 
 SOLUTIONS:
+
 - **Aging**: Gradually increase priority of waiting threads. OS schedulers (Linux CFS, Windows scheduler) use this implicitly.
 - **Fair mutex**: FIFO queue for lock acquisition (`new ReentrantLock(true)` in Java).
 - **Writer preference**: ReadWriteLock blocks new readers if a writer is waiting.
@@ -81,6 +85,7 @@ Cost: Throughput: a fair FIFO lock has higher overhead than unfair; aging compli
 ### 🧪 Thought Experiment
 
 READER-WRITER LOCK WRITER STARVATION:
+
 ```
 Situation: 100 reader threads arrive continuously at 10ms intervals
 ReadWriteLock (unfair, allows new readers):
@@ -151,6 +156,7 @@ The tension between "highest priority runs" and "all threads eventually run" is 
 ### 🔄 The Complete Picture — End-to-End Flow
 
 FAIR REENTRANTLOCK (FIFO acquisition):
+
 ```
 Thread A (req 1): lock.lock() → acquires (queue empty)
 Thread B (req 2): lock.lock() → enqueues (position 1)
@@ -165,6 +171,7 @@ All threads served in arrival order → no starvation
 ```
 
 UNFAIR LOCK (default ReentrantLock):
+
 ```
 Thread A holds lock; B, C, D queued
 Thread A: unlock()
@@ -178,6 +185,7 @@ Thread A: unlock()
 ### 💻 Code Example
 
 Example 1 — Fair vs unfair lock:
+
 ```java
 // UNFAIR (default) — faster throughput but starvation possible
 ReentrantLock unfairLock = new ReentrantLock();
@@ -190,6 +198,7 @@ ReentrantLock fairLock = new ReentrantLock(true);
 ```
 
 Example 2 — ReadWriteLock writer starvation fix:
+
 ```java
 // WRITER STARVATION PRONE: default ReadWriteLock
 ReadWriteLock rwLock = new ReentrantReadWriteLock();
@@ -214,6 +223,7 @@ if (!sl.validate(stamp)) {         // Check if still valid
 ```
 
 Example 3 — Detect starvation via thread wait time monitoring:
+
 ```java
 // Monitor lock wait time to detect starvation
 public class MonitoredLock {
@@ -236,21 +246,21 @@ public class MonitoredLock {
 
 ### ⚖️ Comparison Table
 
-| Progress Failure | Threads Active? | CPU? | Detectable? | Fix |
-|---|---|---|---|---|
-| **Deadlock** | No (BLOCKED) | No | Yes (jstack) | Lock ordering |
-| Livelock | Yes | 100% | Hard (RUNNABLE) | Jitter/backoff |
-| **Starvation** | Starved = WAITING | Low for starved | Possible (wait time) | Fair lock, aging |
-| Priority Inversion | Mixed | Normal | Possible | Priority inheritance |
+| Progress Failure   | Threads Active?   | CPU?            | Detectable?          | Fix                  |
+| ------------------ | ----------------- | --------------- | -------------------- | -------------------- |
+| **Deadlock**       | No (BLOCKED)      | No              | Yes (jstack)         | Lock ordering        |
+| Livelock           | Yes               | 100%            | Hard (RUNNABLE)      | Jitter/backoff       |
+| **Starvation**     | Starved = WAITING | Low for starved | Possible (wait time) | Fair lock, aging     |
+| Priority Inversion | Mixed             | Normal          | Possible             | Priority inheritance |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Starvation = deadlock" | Different: deadlock is a cycle; starvation is perpetual unfairness without a cycle |
-| "Thread.setPriority() prevents starvation" | High priority can CAUSE starvation in low-priority threads; it doesn't prevent starvation in the prioritised thread |
-| "Fair=true in ReentrantLock is always better" | Fair lock has higher overhead (CLH queue maintenance); only use when starvation is actually a concern |
-| "Low-priority JVM threads never starve" | On JVM with OS-mapped threads and a preemptive OS (Linux/macOS), low-priority threads still run (CFS prevents true starvation), but on Windows with priority 1 threads, starvation is real |
+| Misconception                                 | Reality                                                                                                                                                                                    |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "Starvation = deadlock"                       | Different: deadlock is a cycle; starvation is perpetual unfairness without a cycle                                                                                                         |
+| "Thread.setPriority() prevents starvation"    | High priority can CAUSE starvation in low-priority threads; it doesn't prevent starvation in the prioritised thread                                                                        |
+| "Fair=true in ReentrantLock is always better" | Fair lock has higher overhead (CLH queue maintenance); only use when starvation is actually a concern                                                                                      |
+| "Low-priority JVM threads never starve"       | On JVM with OS-mapped threads and a preemptive OS (Linux/macOS), low-priority threads still run (CFS prevents true starvation), but on Windows with priority 1 threads, starvation is real |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -261,6 +271,7 @@ Symptom: Housekeeping tasks (cache eviction, log rotation, index rebuild) never 
 Root Cause: High-priority request threads monopolise executor thread pool or CPU; low-priority housekeeping tasks scheduled but never selected.
 
 Diagnostic:
+
 ```java
 // Check scheduled task execution lag
 scheduledExecutor.schedule(
@@ -286,6 +297,7 @@ Symptom: Cache hit rate is high but cache updates lag minutes behind the source;
 Root Cause: High reader throughput holds readLock continuously; cache writer (invalidation) acquires writeLock but waits indefinitely.
 
 Diagnostic:
+
 ```java
 ReentrantReadWriteLock rwl = (ReentrantReadWriteLock) cacheLock;
 log.info("Write queue length: {}", rwl.getQueueLength());
@@ -298,16 +310,19 @@ Fix: Use `new ReentrantReadWriteLock(true)` (fair) or `StampedLock` for optimist
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Deadlock` — distinguish from starvation; both are progress failures, different cause
 - `Livelock` — active non-progress; contrast with starvation (passive non-progress)
 - `Scheduler — Preemption` — starvation arises from scheduling policy; need scheduler understanding
 
 **Builds On This (learn these next):**
+
 - `Priority Inversion` — related failure: high-priority thread blocked by low-priority one holding a mutex
 - `Fair Scheduling` — the solution concept that prevents starvation
 - `ReadWriteLock` — the concrete data structure where writer starvation is a real production issue
 
 **Alternatives / Comparisons:**
+
 - `Priority Inversion` — high-priority thread starved specifically because it's waiting for a mutex held by a low-priority thread (Mars Pathfinder bug)
 - `Thundering Herd` — many threads stall, then all rush; related to starvation recovery
 
@@ -341,6 +356,7 @@ Fix: Use `new ReentrantReadWriteLock(true)` (fair) or `StampedLock` for optimist
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The Mars Pathfinder priority inversion bug (1997): a high-priority meteorology task was being reset by the watchdog timer because it couldn't run. The reason: a low-priority task held a mutex needed by a medium-priority task, which held a mutex needed by the high-priority meteorology task. The medium-priority task's continuous preemption of the low-priority task prevented the low-priority task from releasing the mutex. This is priority inversion — the high-priority task's effective priority was inverted to match the low-priority mutex holder's priority. Describe the exact priority inheritance fix that solved this on Mars Pathfinder, and why priority inheritance on POSIX systems (`PTHREAD_PRIO_INHERIT`) is not enabled by default despite the obvious benefit.

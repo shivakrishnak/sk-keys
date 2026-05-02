@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — The Test Diamond is an alternative to the Test Pyramid for API-centric and microservices architectures: fewer unit tests, a large middle layer of service/integration tests (especially contract tests), and few E2E tests — reflecting that the primary value and risk is in service interactions, not internal logic.
 
-| #1149 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Test Pyramid, Integration Test, Contract Test | |
-| **Used by:** | Microservices Teams, API-First Teams | |
-| **Related:** | Test Pyramid, Test Honeycomb, Contract Test, API Testing, Microservices | |
+| #1149           | Category: Testing                                                       | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Test Pyramid, Integration Test, Contract Test                           |                 |
+| **Used by:**    | Microservices Teams, API-First Teams                                    |                 |
+| **Related:**    | Test Pyramid, Test Honeycomb, Contract Test, API Testing, Microservices |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -48,11 +48,13 @@ The **Test Diamond** (also associated with the "testing honeycomb" by Spotify) i
 Test Diamond = most tests at the service interaction layer, fewer unit + fewer E2E.
 
 **One analogy:**
+
 > In microservices, the risk is at the **junctions** (service boundaries) — like road intersections are where most accidents happen. The test diamond puts the most test coverage at the junctions (contract tests, service tests), fewer tests on individual road segments (unit tests), and fewer tests on full-city routes (E2E).
 
 ### 🔩 First Principles Explanation
 
 THE PYRAMID VS DIAMOND — WHEN TO USE EACH:
+
 ```
 PYRAMID suits:
   ✓ Monolith with rich domain logic (pricing, rules, algorithms)
@@ -67,6 +69,7 @@ DIAMOND suits:
 ```
 
 DIAMOND SHAPE:
+
 ```
       ★★
     [E2E]
@@ -80,6 +83,7 @@ DIAMOND SHAPE:
 ```
 
 SERVICE TEST (fits the widest diamond layer):
+
 ```
 What a service test covers:
   ✓ HTTP request → controller → service → repository → database (Testcontainers)
@@ -94,6 +98,7 @@ What it does NOT cover:
 ```
 
 CONTRACT TESTS IN THE DIAMOND:
+
 ```
 Service A (consumer) expects:
   GET /api/orders/{id}
@@ -110,6 +115,7 @@ Result: if Service B changes its response schema, contract test fails immediatel
 ### 🧪 Thought Experiment
 
 THE MICROSERVICES BUG THAT UNIT TESTS CAN'T CATCH:
+
 ```
 Service A (Order Service):
   Sends: { "amount": 99.90, "currency": "USD" }
@@ -193,10 +199,10 @@ Risk coverage: service contract, DB schema, HTTP layer, critical flows
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
 class OrderControllerServiceTest {
-    
+
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15");
-    
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -238,21 +244,21 @@ class PaymentServiceConsumerPactTest {
 
 ### ⚖️ Comparison Table
 
-| | Test Pyramid | Test Diamond (Honeycomb) |
-|---|---|---|
-| Widest layer | Unit tests | Service/integration/contract tests |
-| Use case | Domain-rich monolith | Microservices, API-centric |
-| Primary risk | Logic bugs | Interface/contract bugs |
-| Unit test role | Central | Supporting (where logic exists) |
-| Contract test role | Optional | Central |
+|                    | Test Pyramid         | Test Diamond (Honeycomb)           |
+| ------------------ | -------------------- | ---------------------------------- |
+| Widest layer       | Unit tests           | Service/integration/contract tests |
+| Use case           | Domain-rich monolith | Microservices, API-centric         |
+| Primary risk       | Logic bugs           | Interface/contract bugs            |
+| Unit test role     | Central              | Supporting (where logic exists)    |
+| Contract test role | Optional             | Central                            |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Diamond replaces pyramid everywhere" | Diamond suits microservices; pyramid suits logic-rich systems; match to your risk profile |
-| "Unit tests are unimportant in diamond" | They're fewer, but still important for complex logic; don't skip them where logic exists |
-| "E2E tests verify contract too" | E2E tests verify user journeys; contract tests verify API schemas — different failure modes |
+| Misconception                           | Reality                                                                                     |
+| --------------------------------------- | ------------------------------------------------------------------------------------------- |
+| "Diamond replaces pyramid everywhere"   | Diamond suits microservices; pyramid suits logic-rich systems; match to your risk profile   |
+| "Unit tests are unimportant in diamond" | They're fewer, but still important for complex logic; don't skip them where logic exists    |
+| "E2E tests verify contract too"         | E2E tests verify user journeys; contract tests verify API schemas — different failure modes |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -289,6 +295,7 @@ Fix: Use `@SpringBootTest` with shared application context; share Testcontainers
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** The "consumer-driven contract testing" model (Pact) means the consumer defines what they need from the provider, and the provider verifies it satisfies those needs. This creates a dependency: the provider can't change its API without checking all consumer pacts. Compare this to: (1) provider-driven contracts (provider publishes an OpenAPI spec, consumers adapt), and (2) schema registry for Kafka events (producer publishes Avro schema, consumers register compatibility). When is consumer-driven preferable, and when is provider-driven or schema registry more appropriate? Relate to: tight vs. loose coupling, number of consumers, rate of API change.

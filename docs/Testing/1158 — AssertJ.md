@@ -21,29 +21,32 @@ tags:
 
 ⚡ TL;DR — AssertJ is a Java assertion library that replaces JUnit's basic `assertEquals()` with a fluent, readable API: `assertThat(result).isEqualTo(expected)` — with type-safe methods for collections, exceptions, strings, optionals, and custom assertions.
 
-| #1158 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JUnit 5, Unit Test | |
-| **Used by:** | Java Developers | |
-| **Related:** | JUnit 5, Mockito, Hamcrest, Test Readability | |
+| #1158           | Category: Testing                            | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------- | :-------------- |
+| **Depends on:** | JUnit 5, Unit Test                           |                 |
+| **Used by:**    | Java Developers                              |                 |
+| **Related:**    | JUnit 5, Mockito, Hamcrest, Test Readability |                 |
 
 ### 🔥 The Problem This Solves
 
 JUnit's basic assertions produce unhelpful failure messages:
+
 ```
 AssertionError: expected:<true> but was:<false>
 // Which assertion? Why was it false? What was the actual value?
 ```
 
 AssertJ failure messages:
+
 ```
-AssertionError: 
+AssertionError:
 expected: ["Alice", "Bob"]
  but was: ["Alice", "Charlie"]
 // Clear: sorted() changed Bob to Charlie
 ```
 
 And JUnit's assertion order is easily confused:
+
 ```java
 // JUnit: which is expected, which is actual?
 assertEquals(expected, actual);  // or assertEquals(actual, expected)?
@@ -63,11 +66,13 @@ assertThat(user.getName()).isEqualTo("Alice");
 AssertJ = `assertThat(x).isEqualTo(y)` and many readable, type-specific assertion methods.
 
 **One analogy:**
+
 > AssertJ turns test assertions from terse mathematical notation (`assertEquals(a, b)`) into English sentences (`assertThat(cart.total).isEqualTo(100.0)`). The test reads like a specification: "assert that cart total is equal to 100.0."
 
 ### 🔩 First Principles Explanation
 
 ASSERTION CATEGORIES AND EXAMPLES:
+
 ```java
 // ===== PRIMITIVE / OBJECT =====
 assertThat(42).isEqualTo(42);
@@ -129,6 +134,7 @@ soft.assertAll();  // reports ALL failures, not just the first
 ```
 
 EXTRACTING FROM COLLECTIONS:
+
 ```java
 List<User> users = service.getAllUsers();
 
@@ -151,17 +157,18 @@ assertThat(users)
 ```
 
 CUSTOM ASSERTIONS (domain-specific):
+
 ```java
 // Extend AbstractAssert for your domain
 public class OrderAssert extends AbstractAssert<OrderAssert, Order> {
     public OrderAssert(Order actual) { super(actual, OrderAssert.class); }
     public static OrderAssert assertThat(Order order) { return new OrderAssert(order); }
-    
+
     public OrderAssert isConfirmed() {
         assertThat(actual.getStatus()).isEqualTo(CONFIRMED);
         return this;  // for chaining
     }
-    
+
     public OrderAssert hasTotalOf(double amount) {
         assertThat(actual.getTotal()).isEqualByComparingTo(BigDecimal.valueOf(amount));
         return this;
@@ -229,22 +236,22 @@ void userProfile_hasAllRequiredFields() {
 
 ### ⚖️ Comparison Table
 
-| | JUnit Assertions | AssertJ |
-|---|---|---|
-| Readability | `assertEquals(a, b)` | `assertThat(a).isEqualTo(b)` |
-| Failure message | "expected: X but was: Y" | Full context with values |
-| Collection checks | Limited | Rich (containsExactly, extracting) |
-| Exception checking | `assertThrows()` | `assertThatThrownBy()` |
-| Soft assertions | `assertAll()` | `SoftAssertions` |
-| Custom assertions | ✗ | `AbstractAssert` extension |
+|                    | JUnit Assertions         | AssertJ                            |
+| ------------------ | ------------------------ | ---------------------------------- |
+| Readability        | `assertEquals(a, b)`     | `assertThat(a).isEqualTo(b)`       |
+| Failure message    | "expected: X but was: Y" | Full context with values           |
+| Collection checks  | Limited                  | Rich (containsExactly, extracting) |
+| Exception checking | `assertThrows()`         | `assertThatThrownBy()`             |
+| Soft assertions    | `assertAll()`            | `SoftAssertions`                   |
+| Custom assertions  | ✗                        | `AbstractAssert` extension         |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "AssertJ replaces JUnit" | AssertJ replaces JUnit's assertion methods; JUnit 5 still provides the test runner |
-| "More assertion methods = more test logic" | Rich assertions still verify one thing; they just do it more expressively |
-| "Soft assertions hide failures" | Soft assertions collect ALL failures before reporting — you see more failures, not fewer |
+| Misconception                              | Reality                                                                                  |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| "AssertJ replaces JUnit"                   | AssertJ replaces JUnit's assertion methods; JUnit 5 still provides the test runner       |
+| "More assertion methods = more test logic" | Rich assertions still verify one thing; they just do it more expressively                |
+| "Soft assertions hide failures"            | Soft assertions collect ALL failures before reporting — you see more failures, not fewer |
 
 ### 📌 Quick Reference Card
 
@@ -265,6 +272,7 @@ void userProfile_hasAllRequiredFields() {
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** AssertJ's `usingRecursiveComparison()` compares objects field-by-field without requiring `equals()` to be implemented. This is powerful for domain objects where you don't want to implement `equals()` for production code but need equality in tests. Describe: (1) when `usingRecursiveComparison()` is appropriate vs. implementing `equals()` (domain object without identity concept vs. entity with ID), (2) how `ignoringFields("id", "createdAt")` handles auto-generated fields in comparisons, (3) the performance implications for deeply nested object graphs, and (4) how `usingComparatorForType(BigDecimalComparator.class, BigDecimal.class)` customizes comparison for financial amounts.

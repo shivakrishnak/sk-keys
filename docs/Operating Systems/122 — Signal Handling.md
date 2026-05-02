@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Signals are asynchronous software interrupts sent to a process; signal handlers let a process respond to termination requests, crashes, and external notifications without polling.
 
-| #0122 | Category: Operating Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Process, System Call (syscall), Fork — Exec | |
-| **Used by:** | Graceful Shutdown, Process Supervision, Unix Daemons | |
-| **Related:** | SIGTERM, SIGKILL, SIGINT, sigaction, kill() | |
+| #0122           | Category: Operating Systems                          | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------- | :-------------- |
+| **Depends on:** | Process, System Call (syscall), Fork — Exec          |                 |
+| **Used by:**    | Graceful Shutdown, Process Supervision, Unix Daemons |                 |
+| **Related:**    | SIGTERM, SIGKILL, SIGINT, sigaction, kill()          |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -50,6 +50,7 @@ Signal delivery is asynchronous: the signal is delivered to the process at the n
 Signals = software interrupts; `SIGTERM` = "please stop"; `SIGKILL` = "stop now, no choice"; your handler = what you do when you get them.
 
 **One analogy:**
+
 > Signals are like a tap on the shoulder while you're working. SIGINT (Ctrl+C) is a polite "excuse me, stop." SIGTERM is a formal "please wrap up." SIGKILL is a forceful grab — you can't ignore it. Your signal handler is your trained response to each type of tap — you can decide to finish your sentence (graceful shutdown) or immediately drop everything (immediate shutdown).
 
 **One insight:**
@@ -58,12 +59,14 @@ The reason signal handlers are hard to write correctly: they're asynchronous —
 ### 🔩 First Principles Explanation
 
 SIGNAL LIFECYCLE:
+
 1. **Generation**: Signal is sent via `kill()`, hardware exception (fault), kernel event (child exits → SIGCHLD).
 2. **Pending**: Signal is recorded in the process's `pending` bitmask (task_struct.pending).
 3. **Delivery**: At kernel-userspace transition (syscall return, interrupt return), kernel checks for pending unblocked signals → delivers.
 4. **Disposition**: Default (terminate/core/stop/ignore) OR custom handler OR SIG_IGN.
 
 SIGNAL MASKS:
+
 ```c
 sigset_t mask;
 sigemptyset(&mask);
@@ -85,6 +88,7 @@ Cost: Signal handlers are extremely hard to write correctly (async-signal-safety
 ### 🧪 Thought Experiment
 
 GRACEFUL SHUTDOWN WITH SIGTERM:
+
 ```
 Kubernetes (or systemctl stop): sends SIGTERM to PID 1 of container
 → Process has SIGTERM handler registered
@@ -112,6 +116,7 @@ A `SIGTERM` handler is the contract between the process and its process supervis
 ### 🧠 Mental Model / Analogy
 
 > A process is like a chef working in a kitchen. Signals are messages handed to them:
+>
 > - SIGTERM: "Chef, please finish what you're cooking and then close up."
 > - SIGKILL: "FIRE — everyone out NOW" (no one can ignore this).
 > - SIGINT: Ctrl+C at the terminal — "Hey, I changed my mind, can you stop?"
@@ -172,6 +177,7 @@ The "signal handler set a flag, main loop checks flag" pattern emerged because P
 ### 🔄 The Complete Picture — End-to-End Flow
 
 SPRING BOOT / JAVA APPLICATION GRACEFUL SHUTDOWN:
+
 ```
 1. Kubernetes decides to roll deploy new version
 2. Pod gets SIGTERM (from Kubernetes → Docker → PID 1 in container)
@@ -195,6 +201,7 @@ SPRING BOOT / JAVA APPLICATION GRACEFUL SHUTDOWN:
 ```
 
 Java shutdown hook setup:
+
 ```java
 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
     log.info("SIGTERM received, starting graceful shutdown...");
@@ -207,6 +214,7 @@ Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 ### 💻 Code Example
 
 Example 1 — sigaction (POSIX, recommended over signal()):
+
 ```c
 #include <signal.h>
 #include <stdio.h>
@@ -240,6 +248,7 @@ int main() {
 ```
 
 Example 2 — signalfd (Linux, event-loop friendly):
+
 ```c
 #include <sys/signalfd.h>
 #include <signal.h>
@@ -266,6 +275,7 @@ if (read(sfd, &si, sizeof(si)) == sizeof(si)) {
 ```
 
 Example 3 — Python signal handler (application):
+
 ```python
 import signal
 import sys
@@ -291,25 +301,25 @@ sys.exit(0)
 
 ### ⚖️ Comparison Table
 
-| Signal | Number | Default Action | Catchable? | Common Use |
-|---|---|---|---|---|
-| **SIGTERM** | 15 | Terminate | Yes | Graceful shutdown request |
-| **SIGKILL** | 9 | Terminate | **No** | Forced kill (last resort) |
-| **SIGINT** | 2 | Terminate | Yes | Ctrl+C user interrupt |
-| **SIGSEGV** | 11 | Terminate+core | Yes (dangerous) | Segmentation fault |
-| **SIGCHLD** | 17/20 | Ignore | Yes | Child process state changed |
-| **SIGHUP** | 1 | Terminate | Yes | Reload config (daemons) |
-| **SIGALRM** | 14 | Terminate | Yes | Timer expiry |
-| **SIGUSR1/2** | 10/12 | Terminate | Yes | Application-defined |
+| Signal        | Number | Default Action | Catchable?      | Common Use                  |
+| ------------- | ------ | -------------- | --------------- | --------------------------- |
+| **SIGTERM**   | 15     | Terminate      | Yes             | Graceful shutdown request   |
+| **SIGKILL**   | 9      | Terminate      | **No**          | Forced kill (last resort)   |
+| **SIGINT**    | 2      | Terminate      | Yes             | Ctrl+C user interrupt       |
+| **SIGSEGV**   | 11     | Terminate+core | Yes (dangerous) | Segmentation fault          |
+| **SIGCHLD**   | 17/20  | Ignore         | Yes             | Child process state changed |
+| **SIGHUP**    | 1      | Terminate      | Yes             | Reload config (daemons)     |
+| **SIGALRM**   | 14     | Terminate      | Yes             | Timer expiry                |
+| **SIGUSR1/2** | 10/12  | Terminate      | Yes             | Application-defined         |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "SIGTERM always kills immediately" | SIGTERM is a REQUEST — the process can catch it and handle gracefully; SIGKILL is the forced kill |
-| "Signal handlers can call any function" | Only async-signal-safe functions; most useful functions (malloc, printf, locks) are NOT safe |
-| "kill -9 is always the right way to stop a process" | Only as a last resort; prevents cleanup and data loss; always try SIGTERM first |
-| "Java shutdown hooks run on SIGKILL" | No — JVM hooks only run on SIGTERM/SIGINT/normal exit; SIGKILL is unblockable |
+| Misconception                                       | Reality                                                                                           |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| "SIGTERM always kills immediately"                  | SIGTERM is a REQUEST — the process can catch it and handle gracefully; SIGKILL is the forced kill |
+| "Signal handlers can call any function"             | Only async-signal-safe functions; most useful functions (malloc, printf, locks) are NOT safe      |
+| "kill -9 is always the right way to stop a process" | Only as a last resort; prevents cleanup and data loss; always try SIGTERM first                   |
+| "Java shutdown hooks run on SIGKILL"                | No — JVM hooks only run on SIGTERM/SIGINT/normal exit; SIGKILL is unblockable                     |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -320,12 +330,14 @@ Symptom: `docker stop` waits 10s then forcefully kills; "graceful shutdown" log 
 Root Cause: PID 1 in container is a shell script, not the application. Shell does not forward SIGTERM to the application. Application never receives SIGTERM.
 
 Diagnostic:
+
 ```bash
 docker exec <container> ps aux   # Is PID 1 the app or a shell?
 # If PID 1 = /bin/sh -c "java -jar app.jar" → shell is PID 1
 ```
 
 Fix:
+
 ```dockerfile
 # WRONG: shell form (PID 1 = sh)
 CMD java -jar app.jar
@@ -347,6 +359,7 @@ Symptom: Process receives SIGTERM, hangs indefinitely, never exits; SIGKILL requ
 Root Cause: Signal handler calls a non-async-signal-safe function that takes a lock; the signal interrupted the main thread while that same lock was held.
 
 Diagnostic:
+
 ```bash
 gdb -p <pid>
 (gdb) thread apply all bt  # Check all thread stacks
@@ -359,16 +372,19 @@ Fix: Signal handler only sets `volatile sig_atomic_t shutdown = 1;`. Main loop c
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Process` — signals are sent to processes; need process model
 - `System Call (syscall)` — signal() and sigaction() are syscalls; signal delivery happens at syscall boundaries
 - `Fork — Exec` — signals interact with fork (inherited handlers) and exec (handlers reset to default)
 
 **Builds On This (learn these next):**
+
 - `Unix Daemons` — use SIGHUP for config reload, SIGTERM for stop
 - `Process Supervision` — supervisors (systemd, Docker) use SIGTERM+SIGKILL lifecycle
 - `Graceful Shutdown Patterns` — the production application of SIGTERM handling
 
 **Alternatives / Comparisons:**
+
 - `signalfd()` — Linux file-descriptor-based signal delivery; composable with epoll/io_uring
 - `eventfd()` — simpler fd-based notification for same-process inter-thread events
 
@@ -402,6 +418,7 @@ Fix: Signal handler only sets `volatile sig_atomic_t shutdown = 1;`. Main loop c
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A JVM process is the target of a SIGSEGV (segmentation fault). JVM's HotSpot registers its own SIGSEGV signal handler for two legitimate purposes: (1) null pointer exception handling (NullPointerException is implemented via SIGSEGV — accessing address 0 causes segfault → JVM handler catches it → throws NPE to Java code) and (2) GC write barriers (some GC implementations use memory protection faults as notifications). Explain how JVM's SIGSEGV handler distinguishes between: a "legitimate" NPE (should be converted to Java NPE), a GC write barrier signal (should be consumed silently), and a real native crash (should generate a hs_err_pid.log and terminate). What `siginfo_t` fields does it use to make this distinction?

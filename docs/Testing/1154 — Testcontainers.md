@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Testcontainers is a Java library that starts real Docker containers (PostgreSQL, Redis, Kafka, etc.) programmatically in tests — giving you real database/service behavior in integration tests without a persistent external setup.
 
-| #1154 | Category: Testing | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Docker, Integration Test, Containers | |
-| **Used by:** | Java Developers, Spring Boot Teams | |
-| **Related:** | Docker, Integration Test, Faking, WireMock, H2 Database | |
+| #1154           | Category: Testing                                       | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------ | :-------------- |
+| **Depends on:** | Docker, Integration Test, Containers                    |                 |
+| **Used by:**    | Java Developers, Spring Boot Teams                      |                 |
+| **Related:**    | Docker, Integration Test, Faking, WireMock, H2 Database |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -45,33 +45,35 @@ Alternative: "just use a shared dev PostgreSQL database." Problems: (1) develope
 Testcontainers = start a real PostgreSQL (or Redis, Kafka, etc.) Docker container in your test, use it, discard it.
 
 **One analogy:**
+
 > Testcontainers is like **renting a hotel room for each test**: you get a fresh, real room (real database), use it for your test, and check out (container destroyed). Compare to the H2 fake — using a cardboard cutout of a hotel room. The real room has all the real properties (real plumbing = real SQL engine); the cardboard room looks similar but isn't.
 
 ### 🔩 First Principles Explanation
 
 TESTCONTAINERS BASIC USAGE:
+
 ```java
 @Testcontainers
 @SpringBootTest
 class UserRepositoryTest {
-    
+
     @Container
-    static PostgreSQLContainer<?> postgres = 
+    static PostgreSQLContainer<?> postgres =
         new PostgreSQLContainer<>("postgres:15")
             .withDatabaseName("testdb")
             .withUsername("test")
             .withPassword("test");
-    
+
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
     }
-    
+
     @Autowired
     private UserRepository repo;
-    
+
     @Test
     void saveAndFindUser() {
         User user = new User("alice@example.com");
@@ -83,6 +85,7 @@ class UserRepositoryTest {
 ```
 
 CONTAINER LIFECYCLE OPTIONS:
+
 ```java
 // Option 1: Static container — shared across all tests in the class
 @Container
@@ -98,13 +101,14 @@ PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15");
 
 // Option 3: Reuse mode — container shared across test classes
 @Container
-static PostgreSQLContainer<?> postgres = 
+static PostgreSQLContainer<?> postgres =
     new PostgreSQLContainer<>("postgres:15").withReuse(true);
 // Container survives across test class restarts
 // Requires explicit cleanup (@BeforeEach deleteAll or TRUNCATE)
 ```
 
 AVAILABLE CONTAINERS:
+
 ```
 Databases:  PostgreSQLContainer, MySQLContainer, MongoDBContainer,
             OracleContainer, CassandraContainer
@@ -118,29 +122,30 @@ Custom:     GenericContainer("any-image:tag")
 ### 🧪 Thought Experiment
 
 THE KAFKA CONSUMER TEST:
+
 ```java
 @Testcontainers
 class OrderEventConsumerTest {
-    
+
     @Container
     static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0"));
-    
+
     @Test
     void consumer_processesOrderPlacedEvent() throws Exception {
         // Configure consumer to connect to test Kafka
         OrderEventConsumer consumer = new OrderEventConsumer(kafka.getBootstrapServers());
-        
+
         // Produce a test event to real Kafka
         KafkaProducer<String, String> producer = createProducer(kafka.getBootstrapServers());
-        producer.send(new ProducerRecord<>("orders", "order-123", 
+        producer.send(new ProducerRecord<>("orders", "order-123",
             "{\"orderId\":\"123\",\"status\":\"PLACED\"}")).get();
-        
+
         // Verify consumer processes it
         await().atMost(5, SECONDS).untilAsserted(() ->
             assertThat(orderRepository.findById("123")).isPresent()
                 .hasValueSatisfying(o -> assertThat(o.getStatus()).isEqualTo(PLACED)));
     }
-    
+
     // Tests against REAL Kafka — same serialization, same partition behavior,
     // same consumer group semantics as production
 }
@@ -191,7 +196,7 @@ Spring Boot app: UserService with PostgreSQL
 Test strategy (with Testcontainers):
   Unit tests: Mockito, no container (fast)
   Integration tests: Testcontainers PostgreSQL (real SQL)
-  
+
 Integration test run:
   1. Maven: mvn test
   2. JUnit starts UserRepositoryTest class
@@ -203,7 +208,7 @@ Integration test run:
   8. @Test duplicateEmail(): INSERT twice → DataIntegrityViolationException PASS
   9. All 20 tests run → container stopped
   10. Total time: 12s (8s container start + 4s tests)
-  
+
 vs H2 alternative: 2s but misses PostgreSQL-specific behavior
 vs shared DB: non-deterministic, requires network
 ```
@@ -215,31 +220,31 @@ vs shared DB: non-deterministic, requires network
 @SpringBootTest
 @Testcontainers
 class OrderRepositoryTest {
-    
+
     @Container
     @ServiceConnection  // auto-configures datasource — no @DynamicPropertySource needed
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15");
-    
+
     @Autowired OrderRepository repo;
-    
+
     @Test
     @Transactional  // auto-rollback after test
     void findByStatus_returnsMatchingOrders() {
         repo.save(new Order(UUID.randomUUID(), PENDING, BigDecimal.valueOf(50)));
         repo.save(new Order(UUID.randomUUID(), CONFIRMED, BigDecimal.valueOf(75)));
-        
+
         List<Order> pending = repo.findByStatus(PENDING);
         assertThat(pending).hasSize(1);
         assertThat(pending.get(0).getTotal()).isEqualByComparingTo("50");
     }
-    
+
     @Test
     @Transactional
     void jsonb_queryWorks() {
         // This fails with H2! PostgreSQL-specific JSONB query
         repo.save(new Order(UUID.randomUUID(), PENDING, BigDecimal.valueOf(100),
             Map.of("source", "mobile")));  // stored as JSONB
-        
+
         List<Order> mobileOrders = repo.findByMetadataSource("mobile");
         assertThat(mobileOrders).hasSize(1);
     }
@@ -248,21 +253,21 @@ class OrderRepositoryTest {
 
 ### ⚖️ Comparison Table
 
-| | H2 In-Memory | Testcontainers | Shared Dev DB |
-|---|---|---|---|
-| Isolation | Good (per-JVM) | Excellent (per-run) | Poor (shared) |
-| Production parity | Low (different engine) | Exact (same Docker image) | High |
-| Speed | Fast (no startup) | Medium (8-30s startup) | Fast |
-| CI setup | Zero | Docker required | Network access needed |
-| Dialect differences | High risk | Zero risk | Zero risk |
+|                     | H2 In-Memory           | Testcontainers            | Shared Dev DB         |
+| ------------------- | ---------------------- | ------------------------- | --------------------- |
+| Isolation           | Good (per-JVM)         | Excellent (per-run)       | Poor (shared)         |
+| Production parity   | Low (different engine) | Exact (same Docker image) | High                  |
+| Speed               | Fast (no startup)      | Medium (8-30s startup)    | Fast                  |
+| CI setup            | Zero                   | Docker required           | Network access needed |
+| Dialect differences | High risk              | Zero risk                 | Zero risk             |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                     | Reality                                                                                     |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | "Testcontainers requires a running Docker daemon" | Yes — this is a CI requirement; Docker is available in GitHub Actions, GitLab CI by default |
-| "Use Testcontainers for every unit test" | Testcontainers is for integration tests; unit tests should use mocks/fakes |
-| "withReuse=true makes tests non-isolated" | Reuse containers, but isolate data with @Transactional or TRUNCATE in @BeforeEach |
+| "Use Testcontainers for every unit test"          | Testcontainers is for integration tests; unit tests should use mocks/fakes                  |
+| "withReuse=true makes tests non-isolated"         | Reuse containers, but isolate data with @Transactional or TRUNCATE in @BeforeEach           |
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -301,6 +306,7 @@ Fix: Test with `docker run` in CI to replicate locally. Check if CI uses Docker-
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Testcontainers' `withReuse(true)` flag keeps the container alive across test class runs in the same JVM session — dramatically reducing startup overhead. But it requires careful test isolation since state can leak between test classes. Describe the tradeoffs: (1) when `withReuse=true` is safe (read-only tests, tests that explicitly TRUNCATE before each test class), (2) the `@DirtiesContext` + Testcontainers interaction (context restart reuses or restarts the container?), (3) the `TC_REUSE_ENABLE=true` environment variable for CI reuse, and (4) the "Testcontainers Desktop" tool that enables container reuse in development — and why this is different from CI reuse.

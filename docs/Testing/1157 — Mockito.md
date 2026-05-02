@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Mockito is the dominant Java mocking framework: it generates mock objects at runtime, allows stubbing return values, captures arguments, and verifies method interactions — all with a fluent API designed to produce readable tests.
 
-| #1157 | Category: Testing | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Mocking, JUnit 5, Unit Test | |
-| **Used by:** | Java Developers | |
-| **Related:** | Mocking, Stubbing, Spying, JUnit 5, Test Doubles | |
+| #1157           | Category: Testing                                | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------- | :-------------- |
+| **Depends on:** | Mocking, JUnit 5, Unit Test                      |                 |
+| **Used by:**    | Java Developers                                  |                 |
+| **Related:**    | Mocking, Stubbing, Spying, JUnit 5, Test Doubles |                 |
 
 ### 🔥 The Problem This Solves
 
@@ -41,11 +41,13 @@ Pre-Mockito, Java developers wrote manual mock objects by hand (implementing int
 Mockito = write `mock(ClassName.class)` instead of 50 lines of hand-written mock boilerplate.
 
 **One analogy:**
+
 > Mockito is a **professional costume designer**: you describe what role the actor should play (the interface), and Mockito dresses them in the perfect costume (mock object) instantly — complete with scripted responses for specific cues and a record of every scene they appeared in.
 
 ### 🔩 First Principles Explanation
 
 COMPLETE MOCKITO REFERENCE:
+
 ```java
 // ============ CREATION ============
 UserRepo mock = mock(UserRepo.class);     // plain mock (all methods return null/0/false)
@@ -100,6 +102,7 @@ inOrder.verify(emailService).send(any());
 ```
 
 MOCKITO ANNOTATIONS:
+
 ```java
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -107,7 +110,7 @@ class UserServiceTest {
     @Mock EmailService emailService;
     @Captor ArgumentCaptor<User> userCaptor;
     @InjectMocks UserService service;  // injects @Mock fields into service
-    
+
     @Test void test() {
         // All annotations automatically initialized by MockitoExtension
     }
@@ -115,6 +118,7 @@ class UserServiceTest {
 ```
 
 STRICT STUBBING (Mockito default since 3.x):
+
 ```java
 // Strict mode:
 // 1. Fails if a stub is never called during the test (UnnecessaryStubbingException)
@@ -131,18 +135,19 @@ void testWithFlexibleStubs() { ... }
 ### 🧪 Thought Experiment
 
 ARGUMENTCAPTOR FOR COMPLEX OBJECT ASSERTIONS:
+
 ```java
 @Test
 void createUser_sendsWelcomeEmailWithCorrectContent() {
     service.createUser(new UserDto("Alice", "alice@test.com"));
-    
+
     // How do you verify the email that was sent?
     // Option A: verify(email).send("alice@test.com", any()) — only checks email address
     // Option B: ArgumentCaptor to inspect the full Email object
-    
+
     ArgumentCaptor<Email> emailCaptor = ArgumentCaptor.forClass(Email.class);
     verify(emailService).send(emailCaptor.capture());
-    
+
     Email sentEmail = emailCaptor.getValue();
     assertThat(sentEmail.getTo()).isEqualTo("alice@test.com");
     assertThat(sentEmail.getSubject()).isEqualTo("Welcome to the platform!");
@@ -203,7 +208,7 @@ class OrderServiceTest {
 
         // VERIFY notification sent
         verify(notifications).sendOrderConfirmation(eq("alice@test.com"), any(Order.class));
-        
+
         // VERIFY no unexpected calls
         verifyNoMoreInteractions(notifications);
     }
@@ -222,21 +227,21 @@ class OrderServiceTest {
 
 ### ⚖️ Comparison Table
 
-| Feature | Mockito | Manual Mock |
-|---|---|---|
-| Setup time | `mock(Repo.class)` | 50 lines of code |
-| Stub flexibility | Any method, any args, any return | Hard-coded |
-| Argument capture | `ArgumentCaptor` | Manual field tracking |
-| Verification | `verify()` | Counter fields |
-| Type safety | Runtime (reflection) | Compile time |
+| Feature          | Mockito                          | Manual Mock           |
+| ---------------- | -------------------------------- | --------------------- |
+| Setup time       | `mock(Repo.class)`               | 50 lines of code      |
+| Stub flexibility | Any method, any args, any return | Hard-coded            |
+| Argument capture | `ArgumentCaptor`                 | Manual field tracking |
+| Verification     | `verify()`                       | Counter fields        |
+| Type safety      | Runtime (reflection)             | Compile time          |
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`when()` with spy is safe" | `when(spy.method())` calls real method during setup — use `doReturn().when()` |
-| "UnnecessaryStubbingException is a bug" | It's a valuable signal: a stub that's never used is dead code or a misaligned test |
-| "Mockito 5 changed everything" | Core API is backward compatible; biggest changes: inline mock maker default, Java 17+ support |
+| Misconception                           | Reality                                                                                       |
+| --------------------------------------- | --------------------------------------------------------------------------------------------- |
+| "`when()` with spy is safe"             | `when(spy.method())` calls real method during setup — use `doReturn().when()`                 |
+| "UnnecessaryStubbingException is a bug" | It's a valuable signal: a stub that's never used is dead code or a misaligned test            |
+| "Mockito 5 changed everything"          | Core API is backward compatible; biggest changes: inline mock maker default, Java 17+ support |
 
 ### 📌 Quick Reference Card
 
@@ -257,6 +262,7 @@ class OrderServiceTest {
 ```
 
 ---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** `@InjectMocks` uses three injection strategies in priority order: constructor injection, setter injection, field injection. Describe why constructor injection is preferred (explicit dependencies, immutable), when Mockito silently falls back to field injection (no constructor with matching types), and the hidden danger: if field injection succeeds for some mocks but not others, Mockito doesn't warn you — some dependencies are null. Write a test that proves this happens and describe how to detect and prevent it.
