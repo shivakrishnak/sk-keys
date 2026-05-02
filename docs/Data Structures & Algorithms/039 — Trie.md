@@ -4,352 +4,384 @@ title: "Trie"
 parent: "Data Structures & Algorithms"
 nav_order: 39
 permalink: /dsa/trie/
-number: "039"
+number: "0039"
 category: Data Structures & Algorithms
 difficulty: ★★☆
-depends_on: Array, HashMap, Tree Data Structures
-used_by: Autocomplete, Spell Checker, IP Routing (LPM), Word Search, String Matching
+depends_on: HashMap, Array
+used_by: String Matching (KMP, Rabin-Karp), Prefix Search
+related: HashMap, Radix Tree, Aho-Corasick
 tags:
   - datastructure
-  - algorithm
   - intermediate
-  - string
+  - algorithm
+  - performance
 ---
 
 # 039 — Trie
 
-`#datastructure` `#algorithm` `#intermediate` `#string`
+⚡ TL;DR — A Trie stores strings by their shared prefixes, enabling O(L) lookup and prefix search impossible to do this efficiently with a HashMap.
 
-⚡ TL;DR — A tree where each node represents a character prefix, enabling O(L) insert/search/prefix-check for strings where L is the string length — independent of the number of strings stored.
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│ #039         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
+├──────────────┼────────────────────────────────────────┼────────────────────────┤
+│ Depends on:  │ HashMap, Array                         │                        │
+│ Used by:     │ String Matching, Prefix Search         │                        │
+│ Related:     │ HashMap, Radix Tree, Aho-Corasick      │                        │
+└─────────────────────────────────────────────────────────────────────────────────┘
 
-| #039 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Array, HashMap, Tree Data Structures | |
-| **Used by:** | Autocomplete, Spell Checker, IP Routing (LPM), Word Search, String Matching | |
+### 🔥 The Problem This Solves
 
----
+WORLD WITHOUT IT:
+You are building an autocomplete feature for a search engine. A user types "prog" and you must instantly return all words starting with "prog": "program", "programming", "progress", "programmer". You have 1 million words in a HashMap. Prefix search requires scanning all 1 million entries and checking if each starts with "prog" — O(N) per keystroke, and users type fast.
+
+THE BREAKING POINT:
+A HashMap finds an exact key in O(1) — but it has no concept of "starts with" because keys with the same prefix are scattered across buckets. Prefix search requires either O(N) full scan or sorting (O(N log N) rebuild, O(log N + K) query with TreeMap). Neither is fast enough for real-time autocomplete at scale.
+
+THE INVENTION MOMENT:
+If you store words letter-by-letter in a tree where each level represents one character position, then all words sharing a prefix share a tree path. "prog" navigates to a single node from which all descendants are words with that prefix. This is exactly why the Trie was created.
 
 ### 📘 Textbook Definition
 
-A **trie** (also called a prefix tree or re-trie-val tree) is a rooted tree data structure where each node represents a shared prefix of one or more strings, and edges represent individual characters. Each path from root to a marked terminal node spells out one of the stored strings. For an alphabet of size Σ, each node has up to Σ children (typically stored as an array of size 26 for lowercase letters, or a `HashMap` for variable alphabets). All strings sharing a common prefix share the same initial path. Operations — `insert`, `search`, and `startsWith` — run in O(L) time where L is the string length, independent of the number of strings n in the trie.
+A **Trie** (also called a prefix tree or digital tree) is a multiway tree data structure for storing strings where each node represents one character of a key. The path from root to any node spells a prefix; a "terminal" flag at a node indicates a complete word. Insert, search, and prefix-search operations complete in O(L) where L is the length of the key or prefix — independent of the number of stored strings. Nodes typically store child references as an array of 26 (for lowercase alphabet) or a HashMap for sparse alphabets.
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-A trie is a tree where you spell out a word letter by letter as you walk down the tree — "apple" and "app" share the "a-p-p" path, saving space and enabling fast prefix search.
+**One line:**
+A tree where each path from root to a node spells a word's prefix, sharing storage among words with common beginnings.
 
-### 🔵 Simple Definition (Elaborated)
+**One analogy:**
+> Think of a paper dictionary. Letters on spine tabs lead you level by level: 'A' on the first tab, 'AP' on the second, 'APP' on the third — all "APP" words share that path. Prefix search means "find the 'PROG' tab and read all words below it."
 
-Storing 1,000 strings in a HashMap and searching requires hashing the query string — O(L) for hashing. A trie does better for prefix operations: "does any stored word start with 'pre'?" takes exactly 3 steps in a trie (follow p→r→e) regardless of how many words are stored. The key insight: words sharing a prefix share a path in the tree. "cat," "car," and "card" all start with "ca" — stored as a single shared "ca" node in the trie. This shared-prefix compression makes tries the canonical structure for autocomplete, dictionary lookup, IP longest-prefix matching, and predictive text.
+**One insight:**
+Unlike a HashMap, a Trie is not just about retrieving a single key — it is about navigating a *shared prefix tree* where structure encodes relationships between strings. All words with the same prefix physically share the same tree path, making prefix queries a single traversal rather than N individual lookups.
 
 ### 🔩 First Principles Explanation
 
-**Structure:**
+CORE INVARIANTS:
+1. Each node represents one character position; the root represents the empty prefix.
+2. A node at depth d has exactly the characters at position d for all words with its ancestor path as prefix.
+3. A word is "present" when a path from root to a terminal node spells it exactly.
 
-```
-Trie containing: ["app", "apple", "apply", "ape", "bat"]
+DERIVED DESIGN:
+Each node has `children[26]` (or a HashMap) for next-character branching. Complexity depends on the branching factor and string length:
+- **Insert** "apple": traverse/create nodes for 'a'→'p'→'p'→'l'→'e', mark last as terminal. O(L).
+- **Search** "apple": traverse 5 nodes, check terminal flag. O(L).
+- **Prefix** "app": traverse 3 nodes, return all descendants via DFS. O(L + K) for K results.
+- **Delete**: clear terminal flag (or prune leaf nodes if no children). O(L).
 
-         root
-       /      \
-      a*        b*
-     /           \
-    p*             a*
-   / \              \
-  p*  e*             t*[end]
-  |
-  l*
- / \
-e* y*
-[end][end]
+Array children (`children[26]`) vs HashMap children:
+- Array: O(1) child lookup per character, but 26 pointers per node even if few children are non-null — wasteful for sparse alphabets.
+- HashMap: amortised O(1) lookup, no wasted pointers for empty children, more memory-efficient for large alphabets (e.g., Unicode).
 
-* = node, [end] = end-of-word marker
-```
+THE TRADE-OFFS:
+Gain: O(L) all operations, O(L + K) prefix enumeration, shared prefix storage.
+Cost: High memory for dense alphabets with many nodes; slower than HashMap for exact-key lookups due to L comparisons vs 1 hash.
 
-**Node design — two approaches:**
+### 🧪 Thought Experiment
 
-```java
-// Approach 1: Fixed-size array (fast, memory-heavy)
-class TrieNode {
-    TrieNode[] children = new TrieNode[26]; // a-z
-    boolean isEnd;
-}
-// Memory: 26 * 8 bytes per node = 208 bytes even if most children null
+SETUP:
+Autocomplete for a dataset of 1,000 words. User has typed "pre" and wants all completions. Alphabet size = 26.
 
-// Approach 2: HashMap (memory-efficient, slightly slower)
-class TrieNode {
-    Map<Character, TrieNode> children = new HashMap<>();
-    boolean isEnd;
-}
-// Memory: proportional to actual children count
-```
+WHAT HAPPENS WITH HASHMAP:
+For each of 1,000 words: call `word.startsWith("pre")` — O(L) per check, O(N × L) total. At 3 characters typed and 1,000 words of average length 7: ~7,000 comparisons. For 1,000,000 words: 7,000,000 comparisons per keystroke.
 
-**Insert "apple":**
+WHAT HAPPENS WITH TRIE:
+Traverse 3 nodes ('p'→'r'→'e'). Collect all words in subtree rooted at 'e' node. If only 20 words start with "pre", only 20 words are visited. Time: O(3 + 20) = O(23) — constant regardless of total dictionary size.
 
-```
-root -> a -> p -> p -> l -> e (mark isEnd=true)
-Each level: if child for character doesn't exist, create it; else follow it
-Time: O(len("apple")) = O(5)
-```
-
-**Search "app" (exact):** Follow a→p→p. Is last node's `isEnd = true`? No (only "apple"/"apply"/"apply" end beyond here) → "app" is NOT a stored word but IS a prefix.
-
-**startsWith("app"):** Follow a→p→p. Reached without null pointer → "app" IS a prefix. O(3).
-
-**Complexity:**
-
-| Operation | Time | Space |
-|---|---|---|
-| insert | O(L) | O(L × Σ) per word worst case |
-| search (exact) | O(L) | — |
-| startsWith (prefix) | O(L) | — |
-| delete | O(L) | — |
-| Total space | — | O(n × L) worst case, better with shared prefixes |
-
-### ❓ Why Does This Exist (Why Before What)
-
-WITHOUT Trie (using HashSet/HashMap for string storage):
-
-- `startsWith("pre")`: must scan ALL stored strings — O(n × L) total.
-- Autocomplete: must scan all words to find those starting with prefix — O(n × L).
-- IP longest prefix matching with 500k routes: O(n) scan per packet → too slow.
-
-What breaks without it:
-1. DNS resolver/ router with 500k routes: O(500k) lookup per packet = unusable.
-2. Autocomplete with 1M words: O(1M × avg_length) per keystroke = unacceptable.
-
-WITH Trie:
-→ Prefix check in O(L) — no scan of other strings.
-→ Autocomplete: follow prefix path in O(L), then collect all words below: O(results).
-→ IP routing: longest prefix match in O(32) for IPv4 (32-bit addresses).
+THE INSIGHT:
+The Trie's structure makes prefix queries output-sensitive: time is proportional to the result size (K), not the total data size (N). This is impossible with a HashMap because it has no structural notion of prefix.
 
 ### 🧠 Mental Model / Analogy
 
-> A trie is like a printed dictionary organised by letters. "Apple," "application," and "apply" all share the "appl" section. If you want all words starting with "appl," you flip to the "appl" page and list everything on that page and beyond — you don't scan from page 1. The shared prefix path is the page number; the depth is the specificity of the prefix.
+> A Trie is like a city's street directory organised by address. To find all buildings on "Progress Street", you go to the 'P-R-O-G-R-E-S-S' path in the directory. Every building on that street is a child of the last node — you find them all without scanning the entire city.
 
-"Dictionary section" = trie subtree, "flipping to the right page" = following prefix path, "listing everything on that page" = DFS from the prefix node.
+"City directory structure" → trie tree
+"Street path (P→R→O...)" → character-by-character traversal
+"Buildings on the street" → terminal nodes (complete words)
+"Shared address prefix" → shared trie path
+
+Where this analogy breaks down: A city directory is static; a trie can be modified (insert/delete) dynamically while maintaining its structure.
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+A tree where you spell words letter by letter, and all words sharing a start share the same tree path. Finding all words starting with "pr" means going to the 'p' then 'r' node and collecting everything below.
+
+**Level 2 — How to use it (junior developer):**
+Java has no built-in Trie. Implement with a `TrieNode` class: `boolean isEndOfWord; TrieNode[] children = new TrieNode[26]`. `insert(word)`: for each char `c - 'a'`, create child if null, advance. `search(word)`: traverse; return `isEndOfWord` at last char. `startsWith(prefix)`: traverse; return true if path exists.
+
+**Level 3 — How it works (mid-level engineer):**
+Children stored as `TrieNode[26]` — index is `ch - 'a'`. Memory per node: 26 references × 8 bytes = 208 bytes per node for empty children array. For Unicode or large alphabets, replace array with `HashMap<Character, TrieNode>`. A compressed trie (Patricia tree/radix tree) collapses single-child chains into edge labels — reduces node count dramatically for sparse dictionaries.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+The standard 26-array implementation is a time-space trade-off: array indexing is branchless and cache-friendly (O(1) child access) but wastes ~200 bytes per node for rarely-filled children. Real-world autocomplete systems use **compressed tries** (radix trees) or DAWG (Directed Acyclic Word Graph) which further deduplicate shared suffixes. Linux routing tables use radix-2 tries (binary tries) for IP prefix matching — O(32) lookup for IPv4 regardless of routing table size.
 
 ### ⚙️ How It Works (Mechanism)
 
-**Autocomplete implementation:**
-
-```
-Trie with: ["apple", "app", "apply", "banana"]
-
-Query: startsWith("app") → returns ["app", "apple", "apply"]
-
-1. Navigate to node for "app": root→a→p→p
-2. DFS from this node, collect all isEnd=true paths:
-   - "app" node: isEnd=true → collect "app"
-   - →l→e: isEnd=true → collect "apple"
-   - →l→y: isEnd=true → collect "apply"
-Time: O(L + results) = very fast for prefix queries
+**TrieNode structure:**
+```java
+class TrieNode {
+    TrieNode[] children = new TrieNode[26];
+    boolean isEndOfWord;
+}
 ```
 
-**Compressed trie (PATRICIA trie / radix tree):**
-
-For memory efficiency, compress chains of single-child nodes into single edges labeled with the full substring. The compressed trie for {apple, application} stores "appl" as a single edge, branching at 'e' vs 'ic'.
-
-### 🔄 How It Connects (Mini-Map)
-
+**Insert "apple" into empty trie:**
 ```
-HashMap (string storage, O(L) exact match only)
-        ↓ prefix operations needed
-Trie ← you are here
-  (O(L) insert/search/prefix; shared prefix compression)
-        ↓ compressed variant
-Radix Tree / PATRICIA Trie (IP routing, fewer nodes)
-        ↓ used in
-Autocomplete | Spell Check | IP Routing (LPM)
-Word Search | String Matching | T9 Predictive Text
+root → [a] create, → [p] create, → [p] existing,
+      → [l] create, → [e] create, mark isEndOfWord=true
 ```
+
+**Prefix search "app" — all words starting with "app":**
+```
+root → a (index 0) → p (index 15) → p (index 15)
+Found "app" node → DFS all descendants with isEndOfWord=true
+→ returns ["apple", "apply", "approach", ...]
+```
+
+┌───────────────────────────────────────────────────────┐
+│  Trie storing: "app", "apple", "apply", "apt"         │
+│                                                       │
+│  root                                                 │
+│    └── [a]                                            │
+│         └── [p]                                       │
+│              ├── [p]★ (app)                           │
+│              │    ├── [l]                             │
+│              │    │    ├── [e]★ (apple)               │
+│              │    │    └── [y]★ (apply)               │
+│              └── [t]★ (apt)                           │
+│                                                       │
+│  ★ = isEndOfWord = true                               │
+└───────────────────────────────────────────────────────┘
+
+**Search vs startsWith:**
+```java
+// search("app") → found node at 'p', isEndOfWord=true → true
+// search("ap")  → found node at 'p', isEndOfWord=false → false
+// startsWith("ap") → found node at 'p', exists → true
+```
+
+### 🔄 The Complete Picture — End-to-End Flow
+
+NORMAL FLOW:
+```
+User types prefix "prog"
+→ Traverse trie: p→r→o→g (O(4) steps)
+→ [TRIE ← YOU ARE HERE]
+→ DFS from "prog" node to collect all descendants
+→ Return completions in O(K) where K = result count
+```
+
+FAILURE PATH:
+```
+Too many words share a common prefix
+→ DFS returns thousands of completions
+→ Response time grows with result set K
+→ Fix: limit DFS to first N results; use BFS with bound
+```
+
+WHAT CHANGES AT SCALE:
+A 5-million-word English trie with 26-array nodes uses ~5M × 208 bytes ≈ 1 GB of memory — impractical. Production autocomplete systems use compressed tries (radix trees), DAWG, or suffix arrays with burrows-wheeler transform. Redis's autocomplete feature uses a sorted set of prefix-expanded keys. Elasticsearch uses FST (Finite State Transducers) — a form of minimal DAWG — for 10× memory compression.
 
 ### 💻 Code Example
 
-Example 1 — Standard trie implementation:
-
+**Example 1 — Basic Trie implementation:**
 ```java
 class Trie {
-    private static class Node {
-        Node[] children = new Node[26];
-        boolean isEnd;
-    }
-
-    private final Node root = new Node();
+    private TrieNode root = new TrieNode();
 
     public void insert(String word) {
-        Node node = root;
+        TrieNode cur = root;
         for (char c : word.toCharArray()) {
-            int idx = c - 'a';
-            if (node.children[idx] == null)
-                node.children[idx] = new Node();
-            node = node.children[idx];
+            int i = c - 'a';
+            if (cur.children[i] == null)
+                cur.children[i] = new TrieNode();
+            cur = cur.children[i];
         }
-        node.isEnd = true;
+        cur.isEndOfWord = true;
     }
 
     public boolean search(String word) {
-        Node node = findNode(word);
-        return node != null && node.isEnd;
+        TrieNode node = findNode(word);
+        return node != null && node.isEndOfWord;
     }
 
     public boolean startsWith(String prefix) {
         return findNode(prefix) != null;
     }
 
-    private Node findNode(String s) {
-        Node node = root;
+    private TrieNode findNode(String s) {
+        TrieNode cur = root;
         for (char c : s.toCharArray()) {
-            int idx = c - 'a';
-            if (node.children[idx] == null) return null;
-            node = node.children[idx];
+            int i = c - 'a';
+            if (cur.children[i] == null) return null;
+            cur = cur.children[i];
         }
-        return node;
+        return cur;
     }
 }
 ```
 
-Example 2 — Autocomplete (all words with prefix):
-
+**Example 2 — Autocomplete (return all words with prefix):**
 ```java
-public List<String> autocomplete(String prefix) {
-    Node node = findNode(prefix);
-    if (node == null) return Collections.emptyList();
-
+List<String> autocomplete(String prefix) {
+    TrieNode node = findNode(prefix);
+    if (node == null) return List.of();
     List<String> results = new ArrayList<>();
+    // DFS from prefix node, collecting endOfWord paths
     dfs(node, new StringBuilder(prefix), results);
     return results;
 }
 
-private void dfs(Node node, StringBuilder path,
-                  List<String> results) {
-    if (node.isEnd) results.add(path.toString());
+private void dfs(TrieNode node,
+                 StringBuilder prefix,
+                 List<String> results) {
+    if (node.isEndOfWord)
+        results.add(prefix.toString());
     for (int i = 0; i < 26; i++) {
         if (node.children[i] != null) {
-            path.append((char)('a' + i));
-            dfs(node.children[i], path, results);
-            path.deleteCharAt(path.length() - 1);
+            prefix.append((char)('a' + i));
+            dfs(node.children[i], prefix, results);
+            prefix.deleteCharAt(prefix.length() - 1);
         }
     }
 }
 ```
 
-Example 3 — Word Search II (LeetCode 212) using Trie for pruning:
+### ⚖️ Comparison Table
 
-```java
-// Search grid for multiple words from a dictionary
-// Trie enables pruning: if no word starts with current path, stop
-void solve(char[][] board, Trie trie, int i, int j,
-           TrieNode node, StringBuilder path,
-           List<String> result) {
-    char c = board[i][j];
-    TrieNode next = node.children[c - 'a'];
-    if (next == null) return; // no word starts with this prefix → prune!
+| Structure | Exact lookup | Prefix search | Memory | Best For |
+|---|---|---|---|---|
+| **Trie** | O(L) | O(L + K) | High (sparse) | Prefix queries, autocomplete |
+| HashMap | O(1) avg | O(N) scan | Medium | Exact key lookup |
+| TreeMap | O(log N) | O(log N + K) | Medium | Sorted prefix scan |
+| Sorted Array | O(log N) | O(log N + K) | Low | Static dictionary |
+| Radix Tree | O(L) | O(L + K) | Low | Memory-efficient trie |
 
-    path.append(c);
-    board[i][j] = '#'; // mark visited
-
-    if (next.isEnd) result.add(path.toString());
-
-    // Explore 4 directions
-    int[] dr = {0,0,1,-1}, dc = {1,-1,0,0};
-    for (int d = 0; d < 4; d++) {
-        int ni = i + dr[d], nj = j + dc[d];
-        if (ni>=0 && ni<board.length &&
-            nj>=0 && nj<board[0].length &&
-            board[ni][nj] != '#') {
-            solve(board, trie, ni, nj, next, path, result);
-        }
-    }
-
-    board[i][j] = c; // restore
-    path.deleteCharAt(path.length() - 1);
-}
-```
+How to choose: Use a Trie when prefix queries are the primary operation. Use a HashMap when only exact lookups are needed. Use a radix tree (PATRICIA trie) when memory is a constraint for large dictionaries.
 
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
 |---|---|
-| Trie always uses less memory than HashMap/HashSet | For sparse dictionaries with heterogeneous prefixes, the 26-pointer array per node wastes far more memory than a HashMap storing only existing strings. Use HashMap children for sparse alphabets. |
-| Trie is faster than HashMap for exact string lookup | For exact lookup, HashMap O(L) with good hash is comparable to Trie O(L). Trie's advantage is O(L) prefix operations — exact lookup is not uniquely better. |
-| Trie nodes store characters | Edges represent characters; nodes represent the state after consuming a prefix of characters. The root represents the empty string. |
-| Tries only work for alphabetic strings | Tries work for any discrete alphabet: binary (IP routing), Unicode, DNA sequences, file system paths. |
-| A trie with n words has exactly n × L nodes | Shared prefixes reduce total nodes significantly. In the worst case (no shared prefixes) it's n × L; in the best case (all words share a root prefix), it approaches L_max + diverging suffixes. |
+| Trie is always faster than HashMap | For exact single-key lookup, HashMap O(1) often outperforms Trie O(L); Trie wins on prefix operations |
+| Tries are only for lowercase letters | Tries work with any alphabet; use HashMap<Character, TrieNode> for Unicode, numbers, or mixed alphabets |
+| A Trie automatically uses less memory than storing all strings | Each node uses ~200 bytes for a 26-branch array; a trie can use MORE memory than a HashMap for sparse word sets |
+| search() and startsWith() return the same result for exact words | `search("app")` requires `isEndOfWord=true`; `startsWith("app")` only requires the path to exist |
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**1. Using Array-Based Trie for Non-English Characters**
+**1. Memory explosion on large alphabets**
 
-```java
-// BAD: Fixed 26-slot array for Unicode input
-class TrieNode { TrieNode[] children = new TrieNode[26]; }
-// index = c - 'a' → fails for 'À', '中', emoji!
+Symptom: `OutOfMemoryError` when building a trie for URLs, email addresses, or Unicode strings.
 
-// GOOD: HashMap children for non-ASCII or variable alphabet
-class TrieNode {
-    Map<Character, TrieNode> children = new HashMap<>();
-}
-// Or for IP routing: int[2] children for binary trie
+Root Cause: Each node allocates `TrieNode[26]` (or [128] for ASCII) even if most children are null. Unicode alphabets (65,536 characters) make this fatal.
+
+Diagnostic:
+```bash
+jmap -histo:live <pid> | grep TrieNode
+# Number of TrieNode objects × 208 bytes = approximate trie memory
 ```
 
-**2. Memory Explosion with Sparse Word Sets**
+Fix: Replace `TrieNode[]` array children with `HashMap<Character, TrieNode>` children for sparse or large alphabets.
 
-```java
-// BAD: 26-pointer array for storing 100 long unique words
-// 100 words × 10 chars = 1000 nodes × 26 × 8 bytes = 208 KB
-// for just 100 words! (normal would be ~100 × 10 = 1 KB)
-
-// GOOD: HashMap-based children or use compressed trie
-// Or: for large datasets, consider compressed radix tries
-```
-
-**3. Thread Safety — Shared Trie Without Synchronisation**
-
-```java
-// BAD: Shared mutable Trie in concurrent context
-Trie globalTrie = new Trie(); // shared across threads
-threads.forEach(t -> t.setTrie(globalTrie));
-// Concurrent inserts → race condition on node creation
-
-// GOOD: Build trie once (immutable after build), read concurrently
-// Or: use read-write lock for concurrent insert + search
-ReadWriteLock lock = new ReentrantReadWriteLock();
-// insert: lock.writeLock(); search: lock.readLock()
-```
-
-### 🔗 Related Keywords
-
-- `HashMap` — alternative for exact-match string storage; no prefix support.
-- `Array` — the backing storage for each trie node's fixed-alphabet children.
-- `DFS` — the traversal algorithm used to enumerate all words with a given prefix.
-- `IP Routing (LPM)` — longest-prefix matching uses a binary trie (0/1) for IPv4/IPv6.
-- `String Matching` — Aho-Corasick algorithm extends trie with failure links for multi-pattern search.
-
-### 📌 Quick Reference Card
-
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Prefix-sharing tree: O(L) insert/search/ │
-│              │ prefix-check; shared prefixes = space win.│
-├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Autocomplete, spell check, IP routing,   │
-│              │ word search, prefix counting.             │
-├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ No prefix queries needed → HashMap;       │
-│              │ non-English chars → use HashMap children; │
-│              │ very sparse word set → memory overhead.   │
-├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Trie: words sharing a beginning share    │
-│              │ a path — prefix queries for free."        │
-├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Graph → BFS → DFS → Aho-Corasick          │
-└──────────────────────────────────────────────────────────┘
-```
+Prevention: Always profile memory before choosing array vs HashMap children.
 
 ---
 
+**2. Case-sensitivity bugs**
+
+Symptom: `search("Apple")` returns false after `insert("apple")` — case mismatch.
+
+Root Cause: Characters inserted as-is; 'A' → index 65, 'a' → index 97 — different nodes.
+
+Diagnostic:
+```java
+// Quick test: insert lowercase, search mixed case
+trie.insert("apple");
+System.out.println(trie.search("Apple")); // false if case-sensitive
+```
+
+Fix:
+```java
+// Normalize at insert and search:
+word = word.toLowerCase();
+```
+
+Prevention: Normalise all strings to lowercase (or chosen case) at both insert and search boundaries.
+
+---
+
+**3. Missing limit on autocomplete results**
+
+Symptom: Autocomplete for a single-character prefix returns millions of results, causing response timeout.
+
+Root Cause: DFS over trie from root-level node returns all words starting with that character — potentially millions.
+
+Diagnostic:
+```bash
+# Measure DFS duration for short prefixes:
+long start = System.nanoTime();
+autocomplete("a");
+System.out.println(System.nanoTime() - start + "ns");
+```
+
+Fix:
+```java
+// Add an early-exit limit to DFS
+private void dfs(TrieNode node, StringBuilder prefix,
+                 List<String> results, int limit) {
+    if (results.size() >= limit) return;
+    // ...rest of DFS
+}
+```
+
+Prevention: Always add a results limit to autocomplete DFS; common default is 10–20 suggestions.
+
+### 🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- `HashMap` — alternative to the children array in trie nodes; essential for sparse or large alphabets.
+- `Array` — the standard backing store for children in a fixed-alphabet trie.
+
+**Builds On This (learn these next):**
+- `String Matching (KMP, Rabin-Karp)` — Aho-Corasick (multi-pattern matching) is built on a trie with failure links.
+- `Radix Tree / Compressed Trie` — a memory-optimised variant of the trie.
+
+**Alternatives / Comparisons:**
+- `HashMap` — O(1) exact lookup but O(N) prefix search; use when prefix queries are not needed.
+- `TreeMap` — O(log N) prefix scan via `subMap`; simpler but slower than a trie for large dictionaries.
+
+### 📌 Quick Reference Card
+
+┌──────────────────────────────────────────────────────────┐
+│ WHAT IT IS   │ Prefix tree: each node = one character;   │
+│              │ shared prefixes share tree paths          │
+├──────────────┼───────────────────────────────────────────┤
+│ PROBLEM IT   │ HashMap cannot answer "all keys starting  │
+│ SOLVES       │ with X" faster than O(N) scan             │
+├──────────────┼───────────────────────────────────────────┤
+│ KEY INSIGHT  │ Prefix queries are O(L+K) — output-       │
+│              │ sensitive, not input-size sensitive        │
+├──────────────┼───────────────────────────────────────────┤
+│ USE WHEN     │ Autocomplete, spell check, IP routing,    │
+│              │ word games, dictionary prefix search      │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Only exact lookups needed (use HashMap);  │
+│              │ memory is tight with large alphabet       │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ O(L+K) prefix power vs high memory usage  │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "A tree where every branch is a letter    │
+│              │  and every path is a word"                │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ HashMap → String Matching → Bloom Filter  │
+└──────────────────────────────────────────────────────────┘
+
+---
 ### 🧠 Think About This Before We Continue
 
-**Q1.** An IP router implementing longest-prefix matching (LPM) uses a binary trie where each bit of the IP address determines left (0) or right (1) at each level. For IPv4 (32 bits), the trie has depth 32. If a routing table has 500,000 routes, compare the memory usage of storing these routes in a sorted array vs. a binary trie, assuming routes are /16 to /32 prefixes with significant prefix sharing (typical for regional allocations). Which structure has better memory efficiency in practice, and what algorithmic benefit does the trie provide that the sorted array cannot?
+**Q1.** A spell checker must find all dictionary words within edit distance 1 of a user's input (one character added, deleted, or changed). A HashMap checks exact matches in O(1) but cannot find "near misses." A trie allows prefix traversal. Design an algorithm using a trie to find all words within edit distance 1 in O(26L) rather than O(N×L) where N is the dictionary size. What trie traversal technique enables this, and how does the branching factor of 26 replace N in the complexity?
 
-**Q2.** The Aho-Corasick algorithm extends a trie with "failure links" — pointers from each node to the longest proper suffix of that node's path that is also a prefix in the trie. Describe at a high level how failure links enable O(n + m + z) multi-pattern string matching (n = text length, m = total pattern length, z = matches found), contrasting with naive multi-pattern matching and explaining why simple per-pattern KMP falls short for many simultaneous patterns.
+**Q2.** A network router stores 500,000 IP address prefixes (/8 to /32) in a binary trie for longest-prefix matching. Each routing lookup must find the most-specific matching prefix for an incoming packet's destination address. Why is a binary trie (one bit per level, 32 levels for IPv4) preferred over a traditional 256-array trie for IP routing? What is the memory trade-off, and how does the CIDR prefix length distribution in real routing tables affect the practical depth of lookups?
 

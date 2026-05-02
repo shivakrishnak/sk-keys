@@ -4,373 +4,588 @@ title: "Reactive Programming"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 7
 permalink: /cs-fundamentals/reactive-programming/
-number: "7"
+number: "0007"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆
-depends_on: Functional Programming, Event-Driven Programming, Synchronous vs Asynchronous
-used_by: Node.js, Microservices, Concurrency vs Parallelism
-tags: #pattern, #architecture, #intermediate, #distributed, #performance
+depends_on: Event-Driven Programming, Functional Programming, Asynchronous Programming
+used_by: Spring WebFlux, RxJava, Reactive Streams
+related: Event-Driven Programming, Functional Programming, Actor Model
+tags:
+  - intermediate
+  - pattern
+  - architecture
+  - java
+  - concurrency
+  - streaming
 ---
 
-# 7 — Reactive Programming
+# 007 — Reactive Programming
 
-`#pattern` `#architecture` `#intermediate` `#distributed` `#performance`
+⚡ TL;DR — Reactive programming treats data as streams of events that you compose and transform with functional operators, automatically propagating changes through the pipeline.
 
-⚡ TL;DR — A paradigm for composing asynchronous data streams using functional operators, where values propagate automatically when upstream data changes.
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│ #0007 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
+├──────────────┼───────────────────────────────────────┼─────────────────────────┤
+│ Depends on: │ Event-Driven Programming, │ │
+│ │ Functional Programming, │ │
+│ │ Asynchronous Programming │ │
+│ Used by: │ Spring WebFlux, RxJava, │ │
+│ │ Reactive Streams │ │
+│ Related: │ Event-Driven Programming, │ │
+│ │ Functional Programming, Actor Model │ │
+└─────────────────────────────────────────────────────────────────────────────────┘
 
-| #7              | Category: CS Fundamentals — Paradigms                                         | Difficulty: ★★☆ |
-| :-------------- | :---------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Functional Programming, Event-Driven Programming, Synchronous vs Asynchronous |                 |
-| **Used by:**    | Node.js, Microservices, Concurrency vs Parallelism                            |                 |
+### 🔥 The Problem This Solves
 
----
+WORLD WITHOUT IT:
+A microservice must: fetch user data from a database (50ms),
+simultaneously call three external APIs (100-200ms each), combine
+the results, filter, and stream 10,000 items to the client.
+Without reactive programming, you'd either block a thread per
+I/O operation (expensive at scale), or hand-wire callbacks for
+every async combination — merging three concurrent callbacks into
+one result is 50 lines of error-prone Promise coordination code.
+Adding backpressure (not overwhelming a slow consumer) means
+inventing your own flow control.
+
+THE BREAKING POINT:
+Modern systems require: concurrency (multiple I/O sources),
+composition (combining streams), transformation (functional
+operators), and flow control (backpressure). Callback-based
+event-driven code handles one source at a time; combining
+multiple async sources with error handling and backpressure
+produces unmaintainable code.
+
+THE INVENTION MOMENT:
+This is exactly why Reactive Programming was created. Instead
+of wiring callbacks manually, you declare: "this stream is
+userEvents merged with apiResults, filtered by X, batched by Y,
+with a 500ms timeout." The reactive library handles threading,
+backpressure, error propagation, and cancellation automatically.
 
 ### 📘 Textbook Definition
 
-**Reactive programming** is a declarative programming paradigm centred on asynchronous data streams and the propagation of change. A reactive system expresses logic as transformations on streams of values over time, using functional operators (map, filter, flatMap, merge, zip) to compose them. When upstream data changes, downstream computations automatically re-evaluate. Foundational implementations include ReactiveX (RxJava, RxJS), Project Reactor (used in Spring WebFlux), and the Java 9 `Flow` API (based on the Reactive Streams specification).
+Reactive programming is a paradigm for building asynchronous,
+non-blocking programs around observable data streams. It extends
+event-driven programming with a composable, functional API for
+transforming and combining streams. Core abstractions include:
+Observable/Publisher (a source of zero or more events),
+Observer/Subscriber (a consumer of those events), and Operators
+(functional transformations: `map`, `filter`, `merge`, `flatMap`,
+`zip`). Backpressure — the ability of a slow consumer to signal
+a fast producer to slow down — is a first-class concern.
+Implementations include RxJava, Project Reactor (Spring WebFlux),
+RxJS, and the JDK's `java.util.concurrent.Flow`.
 
----
+### ⏱️ Understand It in 30 Seconds
 
-### 🟢 Simple Definition (Easy)
+**One line:**
+Data arrives as streams; you declare transformations on those streams, not step-by-step procedures.
 
-Reactive programming means treating data as a river: values flow through, and you describe what to do with each value as it arrives — filtering, transforming, combining — automatically, as the stream changes over time.
+**One analogy:**
 
----
+> Reactive programming is like a spreadsheet. When cell A1
+> changes, B2 (which depends on A1) automatically updates.
+> You declare the relationship once — `B2 = A1 * 2` — and
+> changes propagate automatically. You never manually "push"
+> updates; the dependency graph does it for you.
 
-### 🔵 Simple Definition (Elaborated)
-
-In traditional event-driven code, you write callbacks — "when this event fires, do this." Reactive programming lifts that to a higher level: you define a _pipeline_ of transformations over a _stream of events_, using the same `map`/`filter`/`reduce` operations from functional programming, but applied to values arriving asynchronously over time. A stock price feed, user input events, or HTTP response chunks are all streams. You compose them with operators: filter out low-volume trades, map price to profit margin, merge two streams from different exchanges. The result is a declarative, composable, automatically-updating computation graph.
-
----
+**One insight:**
+The spreadsheet insight is the essence: you declare WHAT
+depends on WHAT, not HOW to propagate changes. When a new
+HTTP request arrives, the entire pipeline from "request received"
+to "response sent" is already declared. The library wires it.
 
 ### 🔩 First Principles Explanation
 
-**The problem: callback composition does not scale.**
+CORE INVARIANTS:
 
-Event-driven programming solved the blocking I/O problem, but building complex workflows from callbacks is brittle:
+1. Everything is a stream — a sequence of events over time.
+   A database result set, an HTTP response body, user clicks,
+   a timer — all are streams of one or more items.
+2. Streams are composed with operators — map, filter, flatMap,
+   merge, zip transform and combine streams without manual
+   callback wiring.
+3. Backpressure is first-class — a slow subscriber can signal
+   the publisher to pause, preventing out-of-memory crashes
+   from fast producers overwhelming slow consumers.
+
+DERIVED DESIGN:
+Given invariant 1, I/O operations return streams (Mono<T> for
+0 or 1 result, Flux<T> for N results in Reactor) rather than
+blocking values or callbacks. Given invariant 2, complex async
+workflows are declarative pipelines — no shared mutable state
+between operators. Given invariant 3, `Flux.buffer(100)` or
+`onBackpressureDrop()` are built-in, not hand-coded.
+
+THE TRADE-OFFS:
+Gain: High throughput on I/O-bound workloads (non-blocking,
+no thread-per-request); composable async pipelines;
+built-in backpressure; automatic error propagation.
+Cost: Steep learning curve; debugging requires understanding
+the subscription model; stack traces are unreadable
+(operators, not your code, appear at the top); not
+appropriate for CPU-bound work.
+
+### 🧪 Thought Experiment
+
+SETUP:
+Fetch 3 user profiles concurrently, filter those with premium
+accounts, enrich each with purchase history, then stream results
+to the client as they arrive.
+
+WHAT HAPPENS WITH CALLBACKS:
 
 ```javascript
-// Combine two async operations — callback hell
-getUserById(id, (err, user) => {
-  if (err) handleError(err);
-  getOrdersByUser(user.id, (err, orders) => {
-    if (err) handleError(err);
-    // error handling duplicated at every level
-    // impossible to retry or timeout elegantly
-  });
-});
-```
-
-**The constraint:** Real systems must merge streams, debounce inputs, retry on failure, apply backpressure when a consumer is slow, and compose dozens of async operations — all in a readable, maintainable way.
-
-**The insight:** A stream of asynchronous events is mathematically a collection of values over time. The same functional operators that work on lists (`map`, `filter`, `flatMap`) can work on streams — with the difference that values arrive asynchronously.
-
-**The solution — Observable streams with functional operators:**
-
-```java
-// RxJava: compose a pipeline over an async stream
-Observable.fromCallable(() -> userService.fetchUser(id))
-    .subscribeOn(Schedulers.io())           // async, on IO thread
-    .flatMap(user -> orderService.fetchOrders(user.getId()))
-    .filter(order -> order.getTotal() > 100)
-    .map(Order::getSummary)
-    .observeOn(AndroidSchedulers.mainThread())
-    .subscribe(
-        summary -> updateUI(summary),       // onNext
-        error   -> showError(error)         // onError — centralised
-    );
-```
-
-One pipeline, centralised error handling, declarative intent. Compare to the nested callback version above.
-
-The Reactive Manifesto (2013) extended this to system architecture: responsive, resilient, elastic, and message-driven.
-
----
-
-### ❓ Why Does This Exist (Why Before What)
-
-WITHOUT Reactive Programming:
-
-```java
-// Combining two async sources with callbacks
-userService.findById(id, (user, err) -> {
-    if (err != null) { log(err); return; }
-    orderService.findByUser(user, (orders, err2) -> {
-        if (err2 != null) { log(err2); return; }
-        // duplicated error handling, no timeout, no retry
-        // if orders is huge, consumer is overwhelmed
+fetchProfile(1, (p1) => {
+  fetchProfile(2, (p2) => {
+    fetchProfile(3, (p3) => {
+      const premium = [p1, p2, p3].filter((p) => p.premium);
+      let done = 0;
+      premium.forEach((p) => {
+        fetchHistory(p.id, (history) => {
+          p.history = history;
+          done++;
+          if (done === premium.length) sendAll(premium);
+        });
+      });
     });
-});
+  });
+}); // 4 levels deep, no backpressure, no error handling
 ```
 
-What breaks without it:
+WHAT HAPPENS WITH REACTIVE:
 
-1. Error handling is duplicated at every callback nesting level.
-2. Backpressure (slow consumer, fast producer) has no standard mechanism.
-3. Composing 5+ async sources produces unreadable pyramids of callbacks.
-4. Retry, timeout, and circuit-breaker logic must be hand-coded per operation.
+```java
+Flux.just(1, 2, 3)
+    .flatMap(id -> fetchProfile(id))   // concurrent fetch
+    .filter(p -> p.isPremium())        // synchronous filter
+    .flatMap(p -> enrichWithHistory(p))// concurrent enrich
+    .subscribe(client::send);          // stream to client
+// Linear, composable, backpressure built in
+```
 
-WITH Reactive Programming:
-→ A single error handler at the end of the pipeline catches all upstream errors.
-→ Backpressure operators (`onBackpressureBuffer`, `onBackpressureDrop`) protect slow consumers.
-→ `retry(3)`, `timeout(5s)`, `debounce(300ms)` are one-line operator additions.
-→ Merging, zipping, and splitting streams is declarative and composable.
+3 lines of declarative pipeline vs. 15 lines of nested callbacks.
 
----
+THE INSIGHT:
+Reactive programming makes concurrent async workflows look as
+simple as synchronous ones — the complexity is absorbed by the
+library's operator implementations.
 
 ### 🧠 Mental Model / Analogy
 
-> Think of a water treatment plant. Raw water (events) flows in from multiple rivers (data sources). It passes through a series of filters and treatment stages (operators): sediment removal (filter), chemical dosing (map), quality testing (validation). Multiple streams merge at various points. The plant automatically reacts to whatever volume arrives — no human manually pulls water from one pipe to the next.
+> Reactive programming is a factory assembly line. Raw materials
+> (events) enter at one end. Each station on the line transforms
+> the item (map, filter). Some stations merge two lines into one
+> (zip, merge). The line moves at the speed of the slowest
+> station — backpressure ensures items don't pile up and overflow
+> the floor. You design the line layout; the factory runs it.
 
-"River water flowing in" = asynchronous data stream
-"Treatment stage / filter" = operator (map, filter, flatMap)
-"Merging rivers" = `merge()` or `zip()` operator
-"Output to distribution" = subscriber (terminal consumer)
-"Water volume varying" = backpressure management
+"Raw materials entering" → events emitted by the source
+"Each assembly station" → an operator (map, filter, flatMap)
+"Merging two conveyor lines" → merge() or zip() operators
+"Line speed matching the slowest station" → backpressure
+"Factory running automatically" → reactive library execution
 
-The key insight: the _flow_ is automatic and declarative. You configure the pipeline once; it processes all future data without manual intervention.
+Where this analogy breaks down: unlike a physical assembly line,
+reactive streams can fork (one source to multiple subscribers)
+and have hot vs. cold semantics that have no physical equivalent.
 
----
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+Reactive programming is a way of writing code where you describe
+what should happen to data as it arrives, rather than waiting
+for all data to arrive before processing. Like a water slide
+— as soon as water enters the top, it flows through every
+turn and arrives at the bottom without waiting.
+
+**Level 2 — How to use it (junior developer):**
+In Spring WebFlux, return `Mono<T>` for single async results
+and `Flux<T>` for streams. Use `.map()` to transform, `.filter()`
+to remove items, `.flatMap()` for async operations, `.zip()` to
+combine two streams. Subscribe at the end to trigger execution —
+the pipeline is lazy until subscribed. Use `.subscribe(onNext,
+onError, onComplete)` or return from a controller method.
+
+**Level 3 — How it works (mid-level engineer):**
+A Reactor `Flux` is a lazy publisher — nothing executes until
+`subscribe()` is called. The subscription propagates UP the
+operator chain, each operator wrapping the previous as a
+subscriber. When the source emits an item, it flows DOWN the
+chain through each operator. `flatMap` launches a new inner
+stream for each item, concurrently, merging results as they
+complete. Backpressure is implemented via `request(n)` calls:
+a subscriber requests N items; the publisher only emits N.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+The Reactive Streams specification (2013, led by Lightbend,
+Netflix, Pivotal) standardised the `Publisher`/`Subscriber`/
+`Subscription` interfaces — solved by defining `request(n)`
+for backpressure. Project Reactor (Spring Reactor) builds on
+this spec. The design chose operator fusion (compile adjacent
+operators into one iteration) for performance. Spring WebFlux
+adopted Reactor to solve the N+1 thread problem in Spring MVC:
+with Reactor's event loop (Netty), 1 thread serves thousands of
+concurrent requests vs. 1 thread per request in Tomcat. The
+cost: reactive code doesn't compose with imperative `try/catch`
+or standard Java generics — you must stay inside the reactive
+context (no `Mono.block()` in production).
 
 ### ⚙️ How It Works (Mechanism)
 
-**Observable / Publisher — Subscriber Contract:**
-
 ```
-┌───────────────────────────────────────────────┐
-│         Reactive Stream Pipeline              │
-│                                               │
-│  ┌─────────────┐                              │
-│  │  Producer   │  emits items over time       │
-│  │ (Observable)│                              │
-│  └──────┬──────┘                              │
-│         │                                     │
-│         ▼  operator chain                     │
-│  ┌──────────────┐  ┌──────────────┐           │
-│  │  map(f)      │→ │  filter(p)   │           │
-│  └──────────────┘  └──────┬───────┘           │
-│                            │                   │
-│         ┌──────────────────┤                   │
-│         ▼                  ▼                   │
-│  ┌──────────────┐  ┌───────────────┐          │
-│  │ flatMap(g)   │  │ onError(...)  │          │
-│  └──────┬───────┘  └───────────────┘          │
-│         │                                      │
-│         ▼                                      │
-│  ┌─────────────┐                              │
-│  │ Subscriber  │  consumes items              │
-│  │ (terminal)  │                              │
-│  └─────────────┘                              │
-└───────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│         REACTIVE PIPELINE EXECUTION              │
+├──────────────────────────────────────────────────┤
+│                                                  │
+│  Flux.fromIterable([1,2,3])  ← Source            │
+│       ↓ subscribe() propagates UP                │
+│  .map(n -> n * 2)            ← Operator 1        │
+│       ↓                                          │
+│  .filter(n -> n > 2)         ← Operator 2        │
+│       ↓                                          │
+│  .subscribe(System.out::println) ← Subscriber    │
+│                                                  │
+│  EXECUTION (flows DOWN after subscribe):         │
+│  Source emits 1 → map(1)=2 → filter(2>2)? NO    │
+│  Source emits 2 → map(2)=4 → filter(4>2)? YES   │
+│                → subscriber.onNext(4)            │
+│  Source emits 3 → map(3)=6 → filter(6>2)? YES   │
+│                → subscriber.onNext(6)            │
+│  Source completes → subscriber.onComplete()      │
+└──────────────────────────────────────────────────┘
 ```
 
-**Backpressure — protecting slow consumers:**
+**Subscription assembly:** Calling `.subscribe()` triggers
+assembly — each operator wraps the downstream as a Subscriber.
+The chain is: Source → MapSubscriber → FilterSubscriber →
+your Subscriber. Nothing runs yet.
+
+**Item emission:** The source calls `onNext(item)` on the first
+subscriber in the chain. The item flows through each operator
+synchronously on the calling thread (unless a `subscribeOn`/
+`publishOn` changes the scheduler).
+
+**flatMap:** Launches a new inner stream per item and subscribes
+to it. Results arrive in completion order (not emission order).
+Concurrency is limited by `flatMap(fn, concurrency)` parameter.
+
+**Backpressure:** A subscriber calls `subscription.request(n)`.
+The source only emits `n` items. `Flux.onBackpressureDrop()`
+drops items if the subscriber can't keep up.
+
+### 🔄 The Complete Picture — End-to-End Flow
+
+NORMAL FLOW:
 
 ```
-Fast Producer:    ─── item ─── item ─── item ─── item ──►
-                                                        ↓
-                                               ┌────────────┐
-                                               │ Buffer /   │
-                                               │ Drop /     │
-                                               │ Error      │
-                                               └────────────┘
-                                                        ↓
-Slow Consumer:    ─────────── item ──────────── item ──►
+[HTTP request arrives on Netty thread]
+  → [Router matches, calls controller]
+  → [Controller returns Flux<Product>]
+  → [Spring subscribes to Flux ← YOU ARE HERE]
+  → [DB driver emits results non-blocking]
+  → [map/filter operators transform each item]
+  → [Items streamed to HTTP response as they arrive]
+  → [onComplete: HTTP response finished]
 ```
 
-**Key Operators:**
+FAILURE PATH:
+[DB connection fails → onError(ex)]
+→ [Propagates down the operator chain]
+→ [Spring maps to HTTP 500 response]
+→ [Observable: error in HTTP response, logs with stack trace]
 
-| Operator      | Purpose                                      |
-| ------------- | -------------------------------------------- |
-| `map(f)`      | Transform each item                          |
-| `filter(p)`   | Drop items not matching predicate            |
-| `flatMap(f)`  | Expand one item to a stream, merge results   |
-| `merge()`     | Interleave two streams                       |
-| `zip()`       | Pair items from two streams                  |
-| `debounce(t)` | Emit only if silent for duration `t`         |
-| `retry(n)`    | Re-subscribe on error, up to `n` times       |
-| `timeout(d)`  | Error if no item emitted within duration `d` |
-
----
-
-### 🔄 How It Connects (Mini-Map)
-
-```
-Functional Programming  +  Event-Driven Programming
-              │                        │
-              └───────────┬────────────┘
-                          ▼
-               Reactive Programming
-               (you are here)
-                          │
-          ┌───────────────┼──────────────┐
-          ▼               ▼              ▼
-      RxJava         Project Reactor    RxJS
-    (Android)      (Spring WebFlux)  (Angular)
-          │               │
-          ▼               ▼
-   Backpressure     Microservices
-                  (non-blocking APIs)
-```
-
----
+WHAT CHANGES AT SCALE:
+At 10x load, a Netty+WebFlux server handles it with the same
+thread count — non-blocking I/O scales with concurrency, not
+threads. At 100x, the bottleneck shifts to DB connection pool
+size (R2DBC). At 1000x, backpressure prevents OOM when DB is
+slower than the producer; without it, `Flux` buffers grow
+unboundedly and cause heap exhaustion.
 
 ### 💻 Code Example
 
-**Example 1 — RxJava: compose async operations:**
+**Example 1 — Spring WebFlux reactive REST endpoint:**
 
 ```java
-// Fetch user, then their orders, filter, transform
-userRepository.findById(userId)          // Observable<User>
-    .flatMap(user ->
-        orderRepository.findByUser(user)) // Observable<Order>
-    .filter(order -> order.isActive())    // keep active only
-    .map(Order::toSummaryDTO)             // transform
-    .take(10)                             // first 10 only
-    .subscribeOn(Schedulers.io())         // async on IO thread
-    .observeOn(Schedulers.computation())  // process on CPU pool
-    .subscribe(
-        dto   -> results.add(dto),        // onNext
-        error -> log.error("Failed", error), // onError
-        ()    -> sendResponse(results)    // onComplete
-    );
-```
+// BAD (blocking MVC — thread-per-request)
+@GetMapping("/products")
+List<Product> getProducts() {
+    return productRepository.findAll();  // blocks thread
+}
 
-**Example 2 — Spring WebFlux (Project Reactor):**
-
-```java
-// Non-blocking REST endpoint returning a Flux (stream)
-@GetMapping("/orders")
-public Flux<OrderDTO> getOrders(@RequestParam String userId) {
-    return orderService.findByUser(userId)  // Flux<Order>
-        .filter(Order::isActive)
-        .map(orderMapper::toDTO)
-        .onErrorResume(ex ->
-            Flux.error(new ResponseStatusException(
-                HttpStatus.INTERNAL_SERVER_ERROR)));
+// GOOD (reactive WebFlux — non-blocking)
+@GetMapping(value = "/products",
+    produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+Flux<Product> getProducts() {
+    // Returns immediately; items stream as DB emits them
+    return productRepository.findAll(); // returns Flux<Product>
 }
 ```
 
-**Example 3 — Backpressure handling:**
+**Example 2 — Combining concurrent async calls:**
 
 ```java
-// BAD: no backpressure — subscriber overwhelmed
-Observable.range(1, 1_000_000)
-    .observeOn(Schedulers.computation())
-    .subscribe(n -> Thread.sleep(10)); // too slow — MissingBackpressureException
+// Fetch user and their orders CONCURRENTLY, then combine
+Mono<UserProfile> profile = userService.findById(userId);
+Mono<List<Order>> orders  = orderService.findByUserId(userId);
 
-// GOOD: buffer backpressure — absorb bursts
-Flowable.range(1, 1_000_000)
-    .onBackpressureBuffer(1000)         // buffer up to 1000 items
-    .observeOn(Schedulers.computation())
-    .subscribe(n -> Thread.sleep(10));  // safe
+// zip waits for BOTH to complete, then combines:
+Mono<UserDashboard> dashboard = Mono.zip(profile, orders)
+    .map(tuple -> new UserDashboard(
+        tuple.getT1(),    // user profile
+        tuple.getT2()     // orders list
+    ));
+// Both HTTP calls fire simultaneously — not sequentially
 ```
 
----
+**Example 3 — Backpressure control:**
+
+```java
+// BAD: no backpressure — fast source overwhelms slow consumer
+Flux.range(1, 1_000_000)
+    .subscribe(item -> {
+        slowProcess(item);  // takes 10ms each → OOM
+    });
+
+// GOOD: control flow with limitRate
+Flux.range(1, 1_000_000)
+    .limitRate(100)         // request 100 at a time
+    .subscribe(item -> {
+        slowProcess(item);  // consumer sets the pace
+    });
+```
+
+**Example 4 — Error handling in reactive pipeline:**
+
+```java
+userService.findById(id)
+    .flatMap(user -> orderService.getOrders(user.getId()))
+    .onErrorResume(UserNotFoundException.class,
+        ex -> Mono.just(Collections.emptyList()))  // fallback
+    .onErrorMap(DatabaseException.class,
+        ex -> new ServiceUnavailableException(ex)) // remap
+    .timeout(Duration.ofSeconds(5))
+    .subscribe(
+        orders -> sendResponse(orders),
+        error  -> sendError(error)
+    );
+```
+
+### ⚖️ Comparison Table
+
+| Approach                      | Concurrency | Backpressure | Composability | Best For                    |
+| ----------------------------- | ----------- | ------------ | ------------- | --------------------------- |
+| **Reactive (Reactor/RxJava)** | Very high   | Built-in     | High          | I/O-heavy microservices     |
+| CompletableFuture (Java)      | High        | None         | Medium        | Simple async tasks          |
+| Thread pool (blocking)        | Medium      | Manual       | Low           | CPU-bound work              |
+| Event callbacks               | High        | None         | Low           | Simple single-source events |
+
+How to choose: Use reactive for I/O-heavy microservices needing
+high throughput and stream processing. Use CompletableFuture
+for simpler async coordination. Use blocking threads for CPU-bound
+computation or when the reactive learning curve isn't justified.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                            | Reality                                                                                                                                                               |
-| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Reactive programming is just callbacks with nicer syntax | Reactive programming adds operator composition, backpressure, declarative error handling, and stream merging — qualitatively more powerful                            |
-| Reactive systems are always faster                       | Non-blocking adds overhead for CPU-bound tasks; gains appear with I/O-bound workloads where threads would otherwise block                                             |
-| `Observable` and `Flowable` are interchangeable          | `Observable` has no backpressure support; `Flowable` implements the Reactive Streams spec with backpressure — use `Flowable` for high-volume or unbounded sources     |
-| Reactive programming eliminates all async complexity     | It restructures the complexity into a different model; debugging reactive pipelines requires understanding the operator chain and subscription lifecycle              |
-| Spring WebFlux is always better than Spring MVC          | WebFlux shines for I/O-heavy, high-concurrency APIs; for CPU-bound or database-heavy synchronous workloads, Spring MVC with a thread pool is simpler and often faster |
+| Misconception                             | Reality                                                                                                                       |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Reactive means faster for everything      | Reactive only wins for I/O-bound workloads; for CPU-bound tasks, thread pools are more appropriate                            |
+| Calling .block() is a safe escape hatch   | `Mono.block()` inside a reactive pipeline deadlocks on the event loop thread — never use in production code                   |
+| reactive = concurrent by default          | Reactor executes on a single thread unless you explicitly add `subscribeOn`/`publishOn` with a scheduler                      |
+| Reactive programming is RxJava or Reactor | Reactive programming is the paradigm; RxJava, Reactor, RxJS, and Akka Streams are implementations of different specifications |
 
----
+### 🚨 Failure Modes & Diagnosis
 
-### 🔥 Pitfalls in Production
+**1. Blocking Call Inside Reactive Pipeline**
 
-**Blocking calls inside a reactive pipeline**
+Symptom:
+Request latency spikes under load; all requests slow down
+simultaneously; thread dump shows Netty threads blocked.
 
-```java
-// BAD: blocking DB call inside reactive pipeline freezes scheduler thread
-Mono.fromCallable(() -> userRepository.findByIdBlocking(id)) // BLOCKS
-    .subscribeOn(Schedulers.single()) // single-thread scheduler now stalled
-    .subscribe(user -> process(user));
+Root Cause:
+A blocking JDBC call, `Thread.sleep()`, or `.block()` inside
+a reactive operator monopolises the event loop thread.
 
-// GOOD: use reactive repository or boundedElastic scheduler for blocking
-Mono.fromCallable(() -> userRepository.findByIdBlocking(id))
-    .subscribeOn(Schedulers.boundedElastic()) // thread pool for blocking ops
-    .subscribe(user -> process(user));
+Diagnostic:
+
+```bash
+# Reactor: enable BlockHound to detect blocking calls
+BlockHound.install();
+# Throws BlockingOperationError when blocking detected in reactor thread
+
+# Thread dump to see what's blocking
+jstack <pid> | grep -A 10 "reactor-http-nio"
 ```
 
----
-
-**Forgetting to subscribe — cold observables do nothing until subscribed**
+Fix:
 
 ```java
-// BAD: pipeline defined but never subscribed — nothing executes
-Flux<User> users = userService.findAll()
-    .filter(User::isActive)
-    .map(User::toDTO);
-// No .subscribe() or .block() — this is a declaration, not execution
-
-// GOOD: trigger execution by subscribing
-userService.findAll()
-    .filter(User::isActive)
-    .map(User::toDTO)
-    .subscribe(dto -> results.add(dto));
-```
-
----
-
-**Missing error handling causing silent stream termination**
-
-```java
-// BAD: unhandled error terminates the stream silently
-stream.subscribe(item -> process(item));
-// If process() throws, the stream terminates with no error logged
-
-// GOOD: always handle onError
-stream.subscribe(
-    item  -> process(item),
-    error -> log.error("Stream error", error), // onError
-    ()    -> log.info("Stream complete")        // onComplete
+// BAD: blocking JDBC inside reactive pipeline
+Flux<User> users = Flux.fromIterable(
+    jdbcTemplate.queryForList("SELECT * FROM users") // BLOCKS!
 );
+
+// GOOD: use R2DBC (reactive database driver)
+Flux<User> users = r2dbcTemplate.select(User.class).all();
+// OR: wrap blocking call with boundedElastic scheduler
+Mono<List<User>> users = Mono.fromCallable(
+    () -> jdbcTemplate.queryForList("SELECT * FROM users")
+).subscribeOn(Schedulers.boundedElastic()); // off-loop thread
 ```
 
----
+Prevention: Never call blocking APIs on reactor-http threads;
+use R2DBC for databases, reactive HTTP clients for downstream.
+
+**2. Missing Backpressure → OOM**
+
+Symptom:
+Heap exhaustion under load; `OutOfMemoryError` when producer
+is faster than consumer; growing buffer in heap dumps.
+
+Root Cause:
+A fast producer emits items faster than the subscriber can
+process. Without backpressure, items buffer in memory unboundedly.
+
+Diagnostic:
+
+```bash
+# Monitor heap growth under load
+jstat -gcutil <pid> 1000
+# Look for: Old Gen growing steadily
+
+# Heap dump analysis
+jmap -dump:live,format=b,file=heap.hprof <pid>
+# Look for large internal Reactor queue arrays
+```
+
+Fix:
+
+```java
+// BAD: no backpressure strategy
+Flux<Event> stream = kafkaConsumer.receive()
+    .map(this::processEvent);  // if slow, buffer grows
+
+// GOOD: explicit backpressure strategy
+Flux<Event> stream = kafkaConsumer.receive()
+    .onBackpressureBuffer(10_000)   // bounded buffer
+    .onBackpressureDrop(event ->    // drop if full
+        log.warn("Dropped: {}", event.id()))
+    .map(this::processEvent);
+```
+
+Prevention: Always define a backpressure strategy; set buffer
+bounds explicitly; monitor queue depth as a key metric.
+
+**3. Context Loss Across Async Boundaries**
+
+Symptom:
+MDC (logging context), security context, or tracing IDs missing
+in logs; `NullPointerException` from context values that were
+set before the reactive pipeline.
+
+Root Cause:
+`ThreadLocal` values don't cross async boundaries — the reactive
+pipeline runs on different threads, and the original ThreadLocal
+values are absent.
+
+Diagnostic:
+
+```bash
+# Check logs — tracing IDs or user IDs missing in async ops
+# Compare log output between sync and async paths
+grep "traceId" application.log | grep "null"
+```
+
+Fix:
+
+```java
+// BAD: ThreadLocal context lost across flatMap
+MDC.put("userId", userId);
+Mono.fromCallable(() -> fetchUser(userId))
+    .flatMap(user -> {
+        log.info("User: {}", MDC.get("userId")); // null here!
+        return processUser(user);
+    });
+
+// GOOD: use Reactor Context for cross-thread context
+return Mono.deferContextual(ctx -> {
+        String uid = ctx.get("userId");
+        log.info("User: {}", uid);  // available here
+        return fetchUser(uid);
+    })
+    .contextWrite(Context.of("userId", userId));
+```
+
+Prevention: Use Reactor Context (not ThreadLocal) for values
+that must survive across async boundaries; configure MDC with
+Reactor's MDC support hooks.
 
 ### 🔗 Related Keywords
 
-- `Functional Programming` — reactive is FP applied to streams over time; operators like `map` and `filter` are direct imports
-- `Event-Driven Programming` — the paradigm reactive extends with composable, backpressured stream operators
-- `Synchronous vs Asynchronous` — reactive pipelines are inherently asynchronous; understanding this distinction is a prerequisite
-- `Backpressure` — the mechanism that protects slow consumers from fast producers; native to the Reactive Streams spec
-- `Observer Pattern` — the design pattern underlying the Observable/Subscriber relationship
-- `Concurrency vs Parallelism` — reactive achieves high concurrency via non-blocking I/O, not parallelism
-- `Microservices` — reactive HTTP clients (WebClient) enable non-blocking microservice communication
-- `Node.js` — built on an event loop that embodies reactive principles in JavaScript
+**Prerequisites (understand these first):**
 
----
+- `Event-Driven Programming` — reactive builds a composable API on top of EDP
+- `Functional Programming` — reactive operators are pure functional transforms
+- `Synchronous vs Asynchronous` — reactive is fundamentally async
+
+**Builds On This (learn these next):**
+
+- `Spring WebFlux` — Spring's reactive web framework built on Reactor
+- `Reactive Streams` — the JVM standard spec reactive libraries implement
+- `Backpressure` — the flow control mechanism first-class in reactive systems
+
+**Alternatives / Comparisons:**
+
+- `Event-Driven Programming` — reactive's predecessor; less composable
+- `Actor Model` — Akka's alternative: isolated actors with message passing
+- `CompletableFuture` — Java's simpler async primitive; no backpressure
 
 ### 📌 Quick Reference Card
 
-```
 ┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Compose async data streams with           │
-│              │ functional operators; change propagates   │
+│ WHAT IT IS │ Composable async data streams with │
+│ │ functional operators and backpressure │
 ├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ High-concurrency I/O, real-time data,     │
-│              │ composing multiple async sources          │
+│ PROBLEM IT │ Concurrent async I/O composition with │
+│ SOLVES │ backpressure; callback hell; thread waste │
 ├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ CPU-bound work; simple request/response   │
-│              │ with no fan-out or stream merging         │
+│ KEY INSIGHT │ The spreadsheet model: declare │
+│ │ dependencies, changes propagate auto │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Reactive is to callbacks what algebra    │
-│              │ is to arithmetic — composition at scale." │
+│ USE WHEN │ I/O-heavy microservices, streaming APIs, │
+│ │ high-concurrency non-blocking systems │
 ├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ RxJava → Project Reactor → Backpressure   │
-│              │ → Spring WebFlux → Kafka Streams          │
+│ AVOID WHEN │ CPU-bound work; small codebases where │
+│ │ blocking code is simpler and sufficient │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF │ High throughput + composability vs. │
+│ │ debugging complexity + steep learning │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER │ "A spreadsheet: declare relationships, │
+│ │ changes flow automatically downstream." │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Spring WebFlux → Reactor Core │
+│ │ → Reactive Streams spec │
 └──────────────────────────────────────────────────────────┘
-```
 
 ---
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** A Spring WebFlux service makes three parallel downstream API calls using `Flux.zip()` and combines the results. One of the three APIs consistently responds in 2 seconds while the others respond in 50ms. Describe exactly what happens to throughput and latency for every request through this endpoint, and what operator strategies exist to mitigate the slow dependency.
+**Q1.** A Spring WebFlux service uses `flatMap` to call an
+external HTTP API for each item in a `Flux` of 10,000 product
+IDs. The external API rate-limits to 100 requests/second.
+Without any concurrency control, what happens to the external
+API and the service's memory? Design the exact operator chain
+that respects the rate limit, and explain which operator provides
+backpressure vs. which provides concurrency limiting.
 
-**Q2.** A reactive Kafka consumer using Project Reactor processes 100,000 messages per second. The downstream database write takes 5ms per message. With no backpressure configuration, what failure mode occurs at the subscriber, how does the Reactive Streams `Subscription.request(n)` protocol prevent it, and what is the trade-off of setting the request size too low vs too high?
+**Q2.** A developer migrates a Spring MVC endpoint to WebFlux
+for performance. In testing, the WebFlux version is actually
+SLOWER than the MVC version for a workload of 10 concurrent
+requests, each requiring a 50ms computation. Explain exactly
+why this happens — and define the precise workload characteristic
+that determines whether WebFlux will be faster or slower than
+MVC.

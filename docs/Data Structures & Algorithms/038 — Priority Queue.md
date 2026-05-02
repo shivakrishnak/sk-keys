@@ -4,329 +4,376 @@ title: "Priority Queue"
 parent: "Data Structures & Algorithms"
 nav_order: 38
 permalink: /dsa/priority-queue/
-number: "038"
+number: "0038"
 category: Data Structures & Algorithms
 difficulty: ★★☆
-depends_on: Heap (Min/Max), Queue / Deque, Comparator
-used_by: Dijkstra's Algorithm, A* Search, K Largest Elements, Task Scheduling, Huffman Coding
+depends_on: Heap (Min/Max), Queue / Deque
+used_by: Dijkstra, A* Search, Huffman Coding, Event Simulation
+related: Heap (Min/Max), Queue / Deque, TreeMap
 tags:
   - datastructure
-  - algorithm
   - intermediate
+  - algorithm
+  - performance
 ---
 
 # 038 — Priority Queue
 
-`#datastructure` `#algorithm` `#intermediate`
+⚡ TL;DR — A Priority Queue always serves the highest-priority element next, regardless of insertion order, in O(log N) time.
 
-⚡ TL;DR — A queue variant where each element has a priority, and dequeue always removes the highest-priority (min or max) element regardless of insertion order.
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│ #038         │ Category: Data Structures & Algorithms │ Difficulty: ★★☆        │
+├──────────────┼────────────────────────────────────────┼────────────────────────┤
+│ Depends on:  │ Heap (Min/Max), Queue / Deque          │                        │
+│ Used by:     │ Dijkstra, A* Search, Event Simulation  │                        │
+│ Related:     │ Heap (Min/Max), Queue / Deque, TreeMap │                        │
+└─────────────────────────────────────────────────────────────────────────────────┘
 
-| #038 | Category: Data Structures & Algorithms | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Heap (Min/Max), Queue / Deque, Comparator | |
-| **Used by:** | Dijkstra's Algorithm, A* Search, K Largest Elements, Task Scheduling, Huffman Coding | |
+### 🔥 The Problem This Solves
 
----
+WORLD WITHOUT IT:
+A hospital manages 200 patients in the waiting room. Each patient has a triage score. Nurses want to serve the most critical patient next. Using a FIFO Queue, patient #1 is served before patient #200 even if patient #200 is critical. Using a sorted list, every new patient requires locating the correct sorted position and shifting — O(N) per arrival. With 200 arrivals per hour, the sorting overhead consumes 20,000 operations per hour and grows as the list grows.
+
+THE BREAKING POINT:
+A regular Queue ignores priority entirely — it serves whoever arrived first, not whoever needs help most. Keeping a sorted list gives priority access but makes insertion expensive. Neither structure serves the core need: "always serve the most critical next, cheaply."
+
+THE INVENTION MOMENT:
+An abstract interface that guarantees "remove the highest-priority element" without specifying how the ordering is maintained internally. The Heap is the natural implementation: O(1) peek at highest priority, O(log N) insert and remove. This is exactly why the Priority Queue was created.
 
 ### 📘 Textbook Definition
 
-A **priority queue** is an abstract data type representing a collection of elements, each associated with a priority, supporting two fundamental operations: `insert(element, priority)` in O(log n) and `extractMin()` / `extractMax()` — removing and returning the highest-priority element — in O(log n). Unlike a FIFO queue where dequeue order reflects insertion order, a priority queue dequeues elements by priority. In Java, `java.util.PriorityQueue<E>` implements a min-priority queue via a binary min-heap; for a max-priority queue, pass `Comparator.reverseOrder()` or a custom comparator.
+A **Priority Queue** is an abstract data type that operates like a queue but where each element has an associated priority. Elements are dequeued in priority order (highest priority first), not insertion order. The priority queue interface specifies: `insert(element, priority)`, `extractMax/Min()`, and `peekMax/Min()`. The standard implementation is a binary heap, which provides O(log N) insert and extract, and O(1) peek at the extremum.
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-A priority queue is like a hospital emergency room — patients aren't seen in arrival order but in urgency order. The most critical case is always handled first, regardless of when they arrived.
+**One line:**
+A queue that always gives you the most important item next, not the oldest.
 
-### 🔵 Simple Definition (Elaborated)
+**One analogy:**
+> An airline check-in desk has a normal queue, but a gate agent occasionally calls forward passengers with connections departing in 20 minutes. No matter when they arrived, urgency determines next service. The priority queue is that gate agent's mental model formalised.
 
-A regular queue is strictly FIFO — first in, first out. A priority queue replaces "first in" with "highest priority" — the element with the highest urgency (lowest number in min-heap, or highest in max-heap) is always extracted next, regardless of insertion order. This is implemented via a heap, which maintains the highest-priority element at the root. The power of a priority queue lies in O(log n) operations — Dijkstra's algorithm, A* search, Huffman coding, event-driven simulation, and task scheduling all rely on this property.
+**One insight:**
+Priority Queue is an *interface contract*, not an implementation. You can back it with a heap (standard), a sorted array (if writes are rare), or a Fibonacci heap (if decrease-key operations dominate). Choosing the right implementation depends on your operation mix — the interface stays the same.
 
 ### 🔩 First Principles Explanation
 
-**Priority queue contract:**
-```
-insert(element)   → O(log n); element has an implicit or explicit priority
-peek()            → O(1);     return highest-priority element without removing
-poll() / extract  → O(log n); remove and return highest-priority element
-isEmpty()         → O(1)
-size()            → O(1)
-```
+CORE INVARIANTS:
+1. The element with the highest priority is always served next.
+2. Priority is determined by comparison, not by insertion order.
+3. Equal-priority elements have no guaranteed relative order (unless the comparator breaks ties).
 
-**Priority source options in Java PriorityQueue:**
-1. Natural ordering: elements implement `Comparable<E>` (Integer, String, etc.).
-2. Comparator: explicit comparator passed at construction.
-3. Custom class: implement `Comparable`, defining `compareTo()`.
+DERIVED DESIGN:
+The heap is the canonical implementation because it satisfies all three invariants while minimising the cost of the most common operations:
+- `peek()`: O(1) — root of heap is always the extremum.
+- `offer()`: O(log N) — sift-up through tree height.
+- `poll()`: O(log N) — sift-down after moving last element to root.
 
-**Min-heap vs max-heap as priority queues:**
+Could a sorted array work? Peek is O(1) and poll is O(1), but offer is O(N) for insertion. If offers > polls (common in streaming), the heap is faster overall.
 
-```java
-// Min priority queue (default): smallest value = highest priority
-PriorityQueue<Integer> minPQ = new PriorityQueue<>();
+Could a Fibonacci heap work? O(1) amortised insert and O(log N) extract-min — but also O(1) decrease-key, which matters for Dijkstra. In Java there is no standard `FibonacciHeap`; it's complex to implement correctly.
 
-// Max priority queue: largest value = highest priority
-PriorityQueue<Integer> maxPQ =
-    new PriorityQueue<>(Comparator.reverseOrder());
+THE TRADE-OFFS:
+Gain: Always O(1) access to extremum, O(log N) insert and remove.
+Cost: O(N) arbitrary search, no ordering among equal-priority elements, O(N log N) full sorted extraction.
 
-// Priority by field (e.g., task priority number — lower = more urgent)
-PriorityQueue<Task> taskPQ =
-    new PriorityQueue<>(Comparator.comparing(Task::getPriority));
-```
+### 🧪 Thought Experiment
 
-**Priority queue with change-priority (decrease-key):**
+SETUP:
+A network router receives packets with Quality-of-Service (QoS) labels: 1 (video call, high priority) and 3 (background download, low priority). 100 packets arrive per second; the router can forward 80 per second.
 
-Java's standard PriorityQueue doesn't support O(log n) decrease-key. Workarounds:
-1. **Lazy deletion:** Add updated item with new priority; mark old entry as deleted. Check on extraction.
-2. **HashMap tracking:** Store {element: heap_position} to find element in O(1) then sift.
+WHAT HAPPENS WITH FIFO QUEUE:
+Packets are sent in arrival order. A background download packet that arrived at t=0 blocks a video call packet that arrived at t=1. The video call stutters. QoS is meaningless.
 
-### ❓ Why Does This Exist (Why Before What)
+WHAT HAPPENS WITH PRIORITY QUEUE:
+All 100 packets are inserted with their QoS priority. Each send cycle polls the minimum-priority (= highest QoS) packet. Video call packets are always forwarded before background packets, regardless of arrival order. QoS is enforced automatically.
 
-WITHOUT Priority Queue:
-
-- Task scheduling: iterate all tasks to find highest priority each time = O(n) per extraction = O(n²) total.
-- Dijkstra's algorithm: without priority queue, must scan all unvisited nodes to find minimum = O(V²).
-- Huffman coding: merge two lowest-frequency nodes in each step — O(n) if linear scan.
-
-What breaks without it:
-1. Dijkstra on a graph with 1M nodes: O(V²) = 10^12 operations vs O(E log V) = ~20M.
-2. Any algorithm requiring "next best element" in a dynamic set degrades to O(n).
-
-WITH Priority Queue:
-→ Dijkstra O(E log V), Prim O(E log V) — practical on real-world graphs.
-→ Event-driven simulation: process events in time order efficiently.
-→ Top-K extraction: O(n log k) instead of O(n log n) full sort.
+THE INSIGHT:
+A priority queue is not just about performance — it is about *policy enforcement*. The data structure itself embodies the ordering rule: you define priority once (in the comparator), and the structure guarantees every extraction respects it.
 
 ### 🧠 Mental Model / Analogy
 
-> A priority queue is the hospital ER triage system. Patients (elements) arrive throughout the day (inserts, O(log n) to maintain triage order). The nurse always calls the most critical patient next (extractMin — the patient with the lowest "urgency score," O(log n)). A stable patient who arrived 6 hours ago waits behind a critical case who just arrived. The triage board is maintained as a heap — the most critical patient is always at the top.
+> A Priority Queue is like a hospital emergency triage system. Patients enter in any order (insertion), but the next patient seen is always the most critical (highest priority extraction). A FIFO queue is first-come-first-served; the priority queue is most-critical-first — always.
 
-"Triage board" = heap, "most critical first" = extractMin, "urgency score" = priority value.
+"Patient enters" → `offer(patient)`
+"Most critical patient" → element with minimum priority number
+"Doctor sees next patient" → `poll()`
+"Check who's most critical" → `peek()`
+
+Where this analogy breaks down: In a real hospital, the triage nurse re-assesses severity continuously (effectively "decreasing the key"). Java's `PriorityQueue` does not support efficient decrease-key; for that, use a Fibonacci heap or re-insert.
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+A special queue where the most important item always comes out first, no matter when it was added.
+
+**Level 2 — How to use it (junior developer):**
+Java's `PriorityQueue<E>` is a min-heap by default — `poll()` returns the smallest element. For max-heap: `new PriorityQueue<>(Collections.reverseOrder())`. For custom priority: `new PriorityQueue<>(Comparator.comparing(Job::getPriority))`. Use `offer()` to add, `poll()` to remove-and-return the min, `peek()` to see without removing. Check `isEmpty()` before `poll()`.
+
+**Level 3 — How it works (mid-level engineer):**
+Java `PriorityQueue` is backed by a binary min-heap in an `Object[]` array. `offer(e)` places `e` at the last position and calls `siftUp()`. `poll()` removes the root, places the last element at root, and calls `siftDown()`. Both are O(log N). The `remove(Object o)` method requires a linear scan (O(N)) to find the element before removing it — there is no O(log N) arbitrary removal.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+The lack of O(log N) decrease-key in Java's `PriorityQueue` is a deliberate simplification. Decrease-key requires the queue to find the element in O(1) (via a position hashtable). Java's implementation avoids this overhead for the common case. In Dijkstra implementations, this is worked around by inserting duplicate entries with updated distances and using a "visited" check to skip stale ones — an accepted trade-off. For true decrease-key support, third-party Fibonacci or d-ary heap libraries are needed.
 
 ### ⚙️ How It Works (Mechanism)
 
-**Dijkstra's algorithm with PriorityQueue:**
-
-```
-Graph: A→B:1, A→C:4, B→C:2, B→D:5, C→D:1
-
-PQ: {(A,0)}
-Extract (A,0): dist[A]=0. Add (B,1), (C,4) → PQ: {(B,1),(C,4)}
-Extract (B,1): dist[B]=1. Add (C,3),(D,6) → PQ: {(C,3),(C,4),(D,6)}
-Extract (C,3): dist[C]=3. Add (D,4)        → PQ: {(C,4),(D,4),(D,6)}
-Extract (C,4): skip (C already visited/relaxed)
-Extract (D,4): dist[D]=4. Done!
-
-Shortest paths: A→B=1, A→C=3, A→D=4
-```
-
-**Event simulation pattern:**
-
+**Standard Dijkstra pattern (no decrease-key needed):**
 ```java
-// Time-ordered event processing
-PriorityQueue<Event> events =
-    new PriorityQueue<>(Comparator.comparing(Event::getTime));
+PriorityQueue<int[]> pq =
+    new PriorityQueue<>(Comparator.comparingInt(a -> a[0]));
+// a[0] = distance, a[1] = node
 
-events.offer(new Event(100, "timeout"));
-events.offer(new Event(50,  "user_click"));
-events.offer(new Event(75,  "api_response"));
-
-while (!events.isEmpty()) {
-    Event e = events.poll(); // always processes earliest event
-    process(e);
-    // May generate new future events
+pq.offer(new int[]{0, src}); // distance 0 to source
+while (!pq.isEmpty()) {
+    int[] curr = pq.poll(); // always minimum distance
+    int dist = curr[0], node = curr[1];
+    // Instead of decrease-key: just insert duplicate
+    // and skip stale entries
+    if (dist > bestDist[node]) continue;
+    // process...
 }
 ```
 
-### 🔄 How It Connects (Mini-Map)
+**Bounded priority queue (top-K):**
+```
+Keep a max-heap of size K.
+For each new element e:
+  If heap.size() < K: offer(e)
+  Else if e < heap.peek(): poll(); offer(e)
+  Else: skip
+Heap always contains K smallest elements seen so far.
+```
 
+┌──────────────────────────────────────────────┐
+│  Priority Queue operations                   │
+│                                              │
+│  offer(5): sift-up → O(log N)               │
+│  offer(2): sift-up → becomes new root        │
+│  peek():   return root (2) → O(1)           │
+│  poll():   remove root (2), sift-down        │
+│            → next min becomes root → O(log N)│
+└──────────────────────────────────────────────┘
+
+### 🔄 The Complete Picture — End-to-End Flow
+
+NORMAL FLOW:
 ```
-Heap (Min/Max) [implementation]
-        ↓ abstracted as
-Priority Queue ← you are here
-  (abstract data type: insert + extractMin/Max)
-        ↓ used by
-Dijkstra | A* | Prim's MST
-K-Largest | Merge K Sorted Lists
-Huffman Coding | Event Simulation
-Task Scheduling
+New element with priority arrives
+→ offer(): inserted, sifted to correct position
+→ [PRIORITY QUEUE ← YOU ARE HERE]
+→ poll(): highest-priority element removed
+→ Caller processes most-urgent element
+→ Heap re-heapified for next extraction
 ```
+
+FAILURE PATH:
+```
+Element's priority field mutated after insertion
+→ Heap property violated silently
+→ poll() returns wrong (non-minimum) element
+→ Algorithm produces incorrect results
+→ Fix: remove, update, re-insert
+```
+
+WHAT CHANGES AT SCALE:
+At 10M elements, Java's `PriorityQueue` performs well but `siftDown` on extraction involves cache-inefficient pointer chasing through a large array. A **4-ary heap** (`d=4`) reduces tree height and improves cache occupancy per node. For ultra-high-throughput scenarios (financial tick processing), consider lock-free priority queues from libraries like Chronicle Queue or Agrona. For concurrent access, `PriorityBlockingQueue` exists but serialises all operations through a single lock.
 
 ### 💻 Code Example
 
-Example 1 — Merge K Sorted Lists using PriorityQueue:
-
+**Example 1 — Task scheduler by priority:**
 ```java
-// Merge K sorted arrays into one sorted array
-// PriorityQueue holds one element per array, ordered by value
-public int[] mergeKSortedArrays(int[][] arrays) {
-    // Entry: (value, array_index, element_index)
-    record Entry(int val, int arr, int idx)
-        implements Comparable<Entry> {
-        public int compareTo(Entry o) {
-            return Integer.compare(val, o.val);
-        }
+record Task(String name, int priority)
+    implements Comparable<Task> {
+    @Override
+    public int compareTo(Task o) {
+        // Lower number = higher priority
+        return Integer.compare(this.priority, o.priority);
     }
-
-    PriorityQueue<Entry> pq = new PriorityQueue<>();
-    for (int i = 0; i < arrays.length; i++) {
-        if (arrays[i].length > 0)
-            pq.offer(new Entry(arrays[i][0], i, 0));
-    }
-
-    List<Integer> result = new ArrayList<>();
-    while (!pq.isEmpty()) {
-        Entry e = pq.poll();           // O(log k)
-        result.add(e.val());
-        if (e.idx() + 1 < arrays[e.arr()].length) {
-            pq.offer(new Entry(
-                arrays[e.arr()][e.idx() + 1],
-                e.arr(), e.idx() + 1)); // O(log k)
-        }
-    }
-    return result.stream().mapToInt(i -> i).toArray();
 }
-// Total time: O(n log k) where n = total elements, k = arrays
-```
 
-Example 2 — Task scheduler with custom priority:
+PriorityQueue<Task> scheduler = new PriorityQueue<>();
+scheduler.offer(new Task("backup",    3));
+scheduler.offer(new Task("video-call",1));
+scheduler.offer(new Task("email",     2));
 
-```java
-PriorityQueue<Task> scheduler = new PriorityQueue<>(
-    Comparator.comparing(Task::getPriority) // low num = high priority
-              .thenComparing(Task::getSubmitTime) // FIFO for same priority
-);
-
-scheduler.offer(new Task("Email", 3, now()));
-scheduler.offer(new Task("Deploy", 1, now())); // highest priority
-scheduler.offer(new Task("Meeting", 2, now()));
-
-// Processes: Deploy (1) → Meeting (2) → Email (3)
 while (!scheduler.isEmpty()) {
-    Task t = scheduler.poll();
-    System.out.println("Processing: " + t.getName());
+    System.out.println(scheduler.poll().name());
 }
+// Output: video-call → email → backup
 ```
 
-Example 3 — Heap without standard PQ (when decrease-key needed via lazy deletion):
-
+**Example 2 — Merge K sorted arrays:**
 ```java
-// Dijkstra with lazy deletion workaround
-PriorityQueue<long[]> pq = new PriorityQueue<>(
-    Comparator.comparingLong(arr -> arr[0]));  // [dist, node]
-long[] dist = new long[n];
-Arrays.fill(dist, Long.MAX_VALUE);
-dist[src] = 0;
-pq.offer(new long[]{0, src});
-
-while (!pq.isEmpty()) {
-    long[] curr = pq.poll();
-    long d = curr[0]; int u = (int) curr[1];
-
-    if (d > dist[u]) continue; // lazy deletion: stale entry
-
-    for (int[] edge : graph.get(u)) {
-        int v = edge[0]; long w = edge[1];
-        if (dist[u] + w < dist[v]) {
-            dist[v] = dist[u] + w;
-            pq.offer(new long[]{dist[v], v}); // new entry
-            // old entry for v stays; will be skipped above
+int[] mergeKSortedArrays(int[][] arrays) {
+    // min-heap: [value, arrIdx, elemIdx]
+    PriorityQueue<int[]> pq =
+        new PriorityQueue<>(Comparator.comparingInt(a -> a[0]));
+    int totalLen = 0;
+    for (int i = 0; i < arrays.length; i++) {
+        if (arrays[i].length > 0) {
+            pq.offer(new int[]{arrays[i][0], i, 0});
+            totalLen += arrays[i].length;
         }
     }
+    int[] result = new int[totalLen];
+    int idx = 0;
+    while (!pq.isEmpty()) {
+        int[] curr = pq.poll();
+        result[idx++] = curr[0];
+        int ai = curr[1], ei = curr[2];
+        if (ei + 1 < arrays[ai].length)
+            pq.offer(new int[]{arrays[ai][ei+1], ai, ei+1});
+    }
+    return result;
 }
 ```
+
+### ⚖️ Comparison Table
+
+| Implementation | insert | extract | decrease-key | Best For |
+|---|---|---|---|---|
+| **Binary Heap** | O(log N) | O(log N) | O(N) | General purpose |
+| Fibonacci Heap | O(1) amort. | O(log N) | O(1) amort. | Decrease-key heavy (Dijkstra) |
+| d-ary Heap (d=4) | O(log_d N) | O(d log_d N) | O(log_d N) | Cache-efficient bulk workloads |
+| Sorted Array | O(N) | O(1) | O(N) | Read-dominant, small N |
+| Sorted TreeMap | O(log N) | O(log N) | O(log N) | Range queries also needed |
+
+How to choose: Use Java `PriorityQueue` (binary heap) for all standard cases. Use Fibonacci heap (3rd party) only when decrease-key is called more than extract-min. For cache performance at scale, use a 4-ary heap.
 
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
 |---|---|
-| PriorityQueue is a sorted queue | PriorityQueue is a heap, not a sorted structure. poll() extracts in priority order, but iterating the PriorityQueue does NOT yield sorted output. |
-| PriorityQueue handles duplicate priorities in insertion order | PriorityQueue (Java) does not guarantee FIFO within the same priority. Use a secondary comparator (e.g., insertion timestamp) for stable ordering within priority. |
-| PriorityQueue supports O(log n) decrease-key | Java's PriorityQueue does NOT expose decrease-key in O(log n). See lazy deletion pattern above. |
-| PriorityQueue.remove(element) is O(1) | remove(element) is O(n) — it scans the underlying array to find the element then sifts. Only poll() is O(log n). |
-| A priority queue can only be a heap | Priority queues can also be implemented as sorted arrays or Fibonacci heaps. Fibonacci heaps theoretically offer O(1) amortised decrease-key. |
+| PriorityQueue iterates in priority order | `for (E e : pq)` does NOT iterate in heap order; use repeated `poll()` for sorted output |
+| PriorityQueue handles ties in insertion order | Equal priorities have no insertion-order guarantee; add a tie-breaker to your comparator |
+| remove(Object) is O(log N) | `PriorityQueue.remove(Object)` is O(N) — requires linear scan |
+| PriorityQueue is thread-safe | Not thread-safe; use `PriorityBlockingQueue` for concurrent access |
+| Priority Queue equals Heap | Priority Queue is the abstract interface; Heap is the implementation — a PQ can be backed by any ordered structure |
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**1. PriorityQueue Not Thread-Safe**
+**1. Wrong priority direction (max instead of min)**
 
+Symptom: Algorithm processes lowest-priority items first instead of highest.
+
+Root Cause: Used natural ordering (min-heap) when the application logic required max-first.
+
+Diagnostic:
 ```java
-// BAD: Shared PriorityQueue in concurrent code
+// Unit test: offer 3 items, poll should return highest priority
+pq.offer(new Task("low", 3));
+pq.offer(new Task("high", 1));
+assert pq.poll().name().equals("high"); // fails if wrong direction
+```
+
+Fix:
+```java
+// BAD: natural order = min heap (smallest number first)
 PriorityQueue<Task> pq = new PriorityQueue<>();
-// Multiple threads offer/poll → internal state corruption
 
-// GOOD: PriorityBlockingQueue for thread safety
-BlockingQueue<Task> pq = new PriorityBlockingQueue<>();
-// put/take are blocking; offer/poll are non-blocking
+// GOOD: reverse for max-first by number
+PriorityQueue<Task> pq =
+    new PriorityQueue<>(
+        Comparator.comparingInt(Task::getPriority).reversed());
 ```
 
-**2. Comparing Objects Without Consistent Total Order**
-
-```java
-// BAD: Comparator violates transitivity
-PriorityQueue<Task> pq = new PriorityQueue<>(
-    (a, b) -> a.isUrgent() ? -1 : 1
-    // Not a valid total order! compareTo(a,b) and compareTo(b,a)
-    // can both return -1 → undefined heap behaviour
-);
-
-// GOOD: Ensure comparator defines a valid total order
-PriorityQueue<Task> pq = new PriorityQueue<>(
-    Comparator.comparing(Task::getPriority)
-              .thenComparing(Task::getId) // tie-break for stability
-);
-```
-
-**3. Memory Leak — Never-Polled Expired Entries**
-
-```java
-// BAD: Lazy deletion heap grows unboundedly
-// Each decrease-key adds a new entry; old ones never removed
-// If graph has 1M edges: PQ grows to 1M even when logically empty
-
-// GOOD: Bound PQ growth by tracking visited nodes
-Set<Integer> visited = new HashSet<>();
-while (!pq.isEmpty()) {
-    long[] curr = pq.poll();
-    int node = (int) curr[1];
-    if (visited.contains(node)) continue; // skip stale
-    visited.add(node);
-    // process...
-}
-// visited set bounds PQ effective size to O(V)
-```
-
-### 🔗 Related Keywords
-
-- `Heap (Min/Max)` — the data structure implementing priority queue.
-- `Queue / Deque` — the FIFO queue contrast; priority queue sacrifices FIFO for priority.
-- `Dijkstra's Algorithm` — the canonical shortest-path algorithm built on priority queue.
-- `HeapSort` — sorting algorithm using heap's extract-max repeatedly.
-- `K Largest Elements` — classic interview problem solved with min-heap of size k.
-- `Comparator` — the Java interface for defining custom priority ordering.
-
-### 📌 Quick Reference Card
-
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Dequeue always returns highest-priority   │
-│              │ element; insert and extract both O(log n).│
-├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Dijkstra, A*, task scheduling, top-K,     │
-│              │ merge K sorted, event simulation.         │
-├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ FIFO needed → Queue; sorted iteration →   │
-│              │ TreeSet/TreeMap; thread-safe → PBQ.       │
-├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "PQ: the doctor who sees the sickest      │
-│              │ patient next, not the earliest."          │
-├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Dijkstra → Huffman → Merge K Sorted Lists │
-└──────────────────────────────────────────────────────────┘
-```
+Prevention: Write the direction explicitly in a comment; always unit-test with two items of different priority.
 
 ---
 
+**2. Stale entries in Dijkstra causing incorrect distances**
+
+Symptom: Dijkstra returns wrong shortest paths; some nodes reported unreachable.
+
+Root Cause: Using the "lazy deletion" pattern (re-insert instead of decrease-key) but forgetting to skip stale entries where `dist > bestDist[node]`.
+
+Diagnostic:
+```bash
+# Add assertion: every polled distance should be ≤ best known
+assert dist <= bestDist[node] || isStale(node, dist);
+```
+
+Fix:
+```java
+while (!pq.isEmpty()) {
+    int[] curr = pq.poll();
+    int d = curr[0], u = curr[1];
+    if (d > dist[u]) continue; // skip stale — REQUIRED
+    // process u...
+}
+```
+
+Prevention: Always include the stale-entry guard when using lazy deletion.
+
+---
+
+**3. Memory leak from unbounded priority queue**
+
+Symptom: Memory grows continuously; heap dump shows PriorityQueue with millions of entries.
+
+Root Cause: Items are added faster than consumed; no eviction or size bound.
+
+Diagnostic:
+```bash
+jmap -histo:live <pid> | grep PriorityQueue
+# Shows internal Object[] array size
+```
+
+Fix: Bound the queue by checking size before insertion and evicting lowest-priority entries:
+```java
+if (pq.size() >= MAX_SIZE && pq.peek() < newElement)
+    pq.poll(); // evict lowest
+pq.offer(newElement);
+```
+
+Prevention: Always bound priority queues in streaming scenarios; monitor queue depth as a metric.
+
+### 🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- `Heap (Min/Max)` — the binary heap is the standard implementation backing `PriorityQueue`.
+- `Queue / Deque` — contrasts FIFO ordering with priority ordering.
+
+**Builds On This (learn these next):**
+- `Dijkstra` — uses a min-heap priority queue to extract the nearest unvisited node efficiently.
+- `A* Search` — extends Dijkstra with a heuristic; uses priority queue ordered by `f(n) = g(n) + h(n)`.
+
+**Alternatives / Comparisons:**
+- `TreeMap` — also provides min/max access but additionally supports range queries; higher constant factor.
+- `Heap (Min/Max)` — the implementation detail; Priority Queue is the abstract contract.
+
+### 📌 Quick Reference Card
+
+┌──────────────────────────────────────────────────────────┐
+│ WHAT IT IS   │ Queue that always serves the highest-     │
+│              │ priority element next (O(1) peek,         │
+│              │ O(log N) insert/extract)                  │
+├──────────────┼───────────────────────────────────────────┤
+│ PROBLEM IT   │ FIFO ignores urgency; sorted list is      │
+│ SOLVES       │ too slow for dynamic inserts              │
+├──────────────┼───────────────────────────────────────────┤
+│ KEY INSIGHT  │ It's an interface, not just a heap —      │
+│              │ the implementation is swappable           │
+├──────────────┼───────────────────────────────────────────┤
+│ USE WHEN     │ Scheduling, Dijkstra, top-K streaming,    │
+│              │ event simulation, network QoS             │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Need arbitrary search/update (O(N))       │
+│              │ or guaranteed FIFO tie-breaking           │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ O(log N) priority access vs no ordering   │
+│              │ between equal-priority elements           │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "An ER triage desk: always treats the     │
+│              │  most critical patient next"              │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Heap → Dijkstra → A* Search               │
+└──────────────────────────────────────────────────────────┘
+
+---
 ### 🧠 Think About This Before We Continue
 
-**Q1.** Dijkstra's algorithm with a binary min-heap has complexity O((V+E) log V). With a Fibonacci heap supporting O(1) amortised decrease-key, it improves to O(E + V log V). For a dense graph with E = V², calculate when the Fibonacci heap version provides meaningful speedup vs. the binary heap version, and explain why despite its theoretical advantage, Fibonacci heaps are rarely used in production implementations of Dijkstra — citing practical factors.
+**Q1.** Dijkstra's algorithm uses a priority queue to process the nearest unvisited node first. Java's `PriorityQueue` has no O(log N) decrease-key operation. The workaround is to re-insert a node with its updated distance and skip stale entries when polled. For a dense graph with V=10,000 vertices and E=50,000,000 edges, how many total queue entries can accumulate with this approach, and at what point does the memory overhead of stale entries make this approach impractical compared to a true decrease-key heap?
 
-**Q2.** You are designing a real-time auction system where bids arrive continuously and you must always serve the current highest bid within 1 millisecond. The constraint is that bids can be retracted (removed) and modified (price updated) in real-time. Java's `PriorityQueue` lacks O(log n) arbitrary removal and decrease-key. Design a data structure combining a `PriorityQueue` (or heap) with additional structures to support O(log n) insert, O(log n) remove-by-id, O(log n) update-bid, and O(1) get-max operations — and analyse the space complexity of your solution.
+**Q2.** A real-time trading engine receives 500,000 order events per second and must always process the highest-value order first. The team debates between a binary heap `PriorityQueue` and a `TreeMap`. Both offer O(log N) insert and extract. Given that orders are rarely cancelled (decrease-key not needed), what are the concrete performance differences between the two under this workload, and in what scenario would `TreeMap`'s O(log N) range query capability justify its higher constant factor?
 
