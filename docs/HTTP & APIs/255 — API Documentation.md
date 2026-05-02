@@ -23,13 +23,13 @@ tags:
 ⚡ TL;DR — API documentation is the written and interactive material that tells developers how to use an API: what endpoints exist, what parameters they accept, what responses they return, how to authenticate, and what errors to expect — ranging from auto-generated OpenAPI/Swagger UI to hand-crafted guides, code samples, and developer portals.
 
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ #255         │ Category: HTTP & APIs              │ Difficulty: ★☆☆      │
+│ #255 │ Category: HTTP & APIs │ Difficulty: ★☆☆ │
 ├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ OpenAPI/Swagger, REST              │                      │
-│ Used by:     │ API Consumers, Developer Portals,  │                      │
-│              │ SDK Generation                     │                      │
-│ Related:     │ OpenAPI/Swagger, API Design Best  │                      │
-│              │ Practices, API Contract Testing    │                      │
+│ Depends on: │ OpenAPI/Swagger, REST │ │
+│ Used by: │ API Consumers, Developer Portals, │ │
+│ │ SDK Generation │ │
+│ Related: │ OpenAPI/Swagger, API Design Best │ │
+│ │ Practices, API Contract Testing │ │
 └──────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -69,6 +69,7 @@ API documentation is the instruction manual for your API — without it, develop
 can't integrate, and with poor documentation, they integrate incorrectly.
 
 **One analogy:**
+
 > API documentation is like IKEA assembly instructions.
 > Without them: customers stare at a pile of parts (endpoints, headers, JSON fields)
 > with no idea how they fit together.
@@ -156,7 +157,7 @@ API A (poor documentation):
   - Errors: "Returns standard HTTP errors"
   - No changelog
   - No SDK
-  
+
   Developer experience:
   → How do I get a token? (asks on Slack, waits 1 day)
   → What does 422 look like? (trial and error, 2 hours)
@@ -168,12 +169,12 @@ API B (excellent documentation — Stripe-level):
   - Authentication: OAuth2 flow diagram + curl example + Java snippet
   - Every endpoint: example request + example response (realistic data)
   - Every error code: name, description, what it means, how to handle
-    "422 INVALID_CARD_NUMBER: The card number failed Luhn check. 
+    "422 INVALID_CARD_NUMBER: The card number failed Luhn check.
      Prompt user to re-enter card details."
   - Getting started guide: working end-to-end example in 15 minutes
   - Changelog with migration guides
   - SDK: stripe-java, stripe-python auto-generated from spec
-  
+
   Developer experience:
   → Follows Getting Started guide, first call works in 30 minutes
   → Time-to-production-integration: 2 hours
@@ -261,21 +262,21 @@ SPRING BOOT DOCUMENTATION PIPELINE:
 DOCUMENTATION WORKFLOW (design-first):
 
   1. Write openapi.yaml spec (reviewed by team)
-  
+
   2. Generate: Swagger UI (internal dev)
                Redoc    (external partners)
                SDK (openapi-generator: Java, Python, TypeScript)
-  
+
   3. Write conceptual docs:
      README.md → "Getting Started"
      AUTHENTICATION.md → OAuth2 flow diagram + curl examples
      ERRORS.md → all error codes + handling guides
      CONCEPTS.md → "how pagination works" + examples
      CHANGELOG.md → all changes, breaking + non-breaking, migration guide
-  
+
   4. Host on developer portal (Readme.com / Mintlify / Stoplight):
      Spec reference + conceptual docs + changelog → single searchable portal
-  
+
   5. CI validation:
      Spectral: lint spec quality (all ops have summary, all 4xx documented)
      Dredd: examples in spec match live API behavior
@@ -344,24 +345,24 @@ public class CreatePaymentRequest {
 
 ### ⚖️ Comparison Table
 
-| Tool | Best For | Interactive | Styling | Hosting |
-|---|---|---|---|---|
-| **Swagger UI** | Development/internal | ✅ Try-it-now | Basic | Self-hosted |
-| **Redoc** | External/public docs | ❌ Read-only | Professional | Self-hosted |
-| **Stoplight Elements** | Embeddable | ✅ | Modern | Self-hosted |
-| **Readme.com** | Developer portal | ✅ | Custom | SaaS |
-| **Mintlify** | Modern developer docs | ✅ | Excellent | SaaS |
-| **Postman** | API testing + docs | ✅ | Good | Cloud |
+| Tool                   | Best For              | Interactive   | Styling      | Hosting     |
+| ---------------------- | --------------------- | ------------- | ------------ | ----------- |
+| **Swagger UI**         | Development/internal  | ✅ Try-it-now | Basic        | Self-hosted |
+| **Redoc**              | External/public docs  | ❌ Read-only  | Professional | Self-hosted |
+| **Stoplight Elements** | Embeddable            | ✅            | Modern       | Self-hosted |
+| **Readme.com**         | Developer portal      | ✅            | Custom       | SaaS        |
+| **Mintlify**           | Modern developer docs | ✅            | Excellent    | SaaS        |
+| **Postman**            | API testing + docs    | ✅            | Good         | Cloud       |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Auto-generated docs are sufficient | Auto-generated reference covers WHAT. Developers also need WHY and HOW: guides, tutorials, error handling explanations — all human-written |
+| Misconception                         | Reality                                                                                                                                                        |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Auto-generated docs are sufficient    | Auto-generated reference covers WHAT. Developers also need WHY and HOW: guides, tutorials, error handling explanations — all human-written                     |
 | Documentation can be added at the end | Docs written after the fact are always incomplete. Design-first (spec → implementation) produces better documentation because the contract is reviewed upfront |
-| Only public APIs need documentation | Internal APIs need documentation too. If another team can't understand your API without asking you directly, documentation is missing |
+| Only public APIs need documentation   | Internal APIs need documentation too. If another team can't understand your API without asking you directly, documentation is missing                          |
 
 ---
 
@@ -375,6 +376,7 @@ Consumer writes `Long.parseLong(response.getAmount())` → works in test, breaks
 actual integer response.
 
 Diagnostic:
+
 ```bash
 # Use Dredd to validate spec examples match live API:
 dredd openapi.yaml http://localhost:8080
