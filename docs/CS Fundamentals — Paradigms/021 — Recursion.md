@@ -23,14 +23,14 @@ tags:
 ⚡ TL;DR — Recursion is a function calling itself with a smaller version of the same problem until reaching a base case that stops the chain.
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #021         │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆        │
+│ #021 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
 ├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Functional Programming,               │                        │
-│              │ Memory Management Models              │                        │
-│ Used by:     │ Tail Recursion, Data Structures       │                        │
-│              │ & Algorithms, Divide and Conquer      │                        │
-│ Related:     │ Tail Recursion, Iteration, Stack      │                        │
-│              │ Overflow                              │                        │
+│ Depends on: │ Functional Programming, │ │
+│ │ Memory Management Models │ │
+│ Used by: │ Tail Recursion, Data Structures │ │
+│ │ & Algorithms, Divide and Conquer │ │
+│ Related: │ Tail Recursion, Iteration, Stack │ │
+│ │ Overflow │ │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
 ---
@@ -53,7 +53,7 @@ This is exactly why recursion was embraced as a programming construct — it let
 
 ### 📘 Textbook Definition
 
-**Recursion** is a programming technique in which a function calls itself, directly or indirectly, as part of its execution. A correct recursive function has two components: a **base case** — one or more conditions under which the function returns a result without further recursion — and a **recursive case** — a call to itself with a *strictly smaller* input that moves toward the base case. Each call creates a new stack frame preserving the local state; the call stack unwinds as base cases are reached and results propagate back up to the original call.
+**Recursion** is a programming technique in which a function calls itself, directly or indirectly, as part of its execution. A correct recursive function has two components: a **base case** — one or more conditions under which the function returns a result without further recursion — and a **recursive case** — a call to itself with a _strictly smaller_ input that moves toward the base case. Each call creates a new stack frame preserving the local state; the call stack unwinds as base cases are reached and results propagate back up to the original call.
 
 ---
 
@@ -63,6 +63,7 @@ This is exactly why recursion was embraced as a programming construct — it let
 Recursion solves a problem by reducing it to a smaller version of the same problem.
 
 **One analogy:**
+
 > Russian nesting dolls (Matryoshka): to find the innermost doll, you open the outermost, which contains the next, which contains the next — you keep opening until you find one that doesn't open (the base case), then you're done.
 
 **One insight:**
@@ -95,7 +96,7 @@ factorial(4):
 
 THE TRADE-OFFS:
 
-Gain: code that mirrors the problem's structure; natural for self-similar data (trees, graphs, nested structures); often more concise than iterative equivalents.  
+Gain: code that mirrors the problem's structure; natural for self-similar data (trees, graphs, nested structures); often more concise than iterative equivalents.
 Cost: stack space proportional to recursion depth; risk of stack overflow for deep recursion; function call overhead per recursive step; debugging requires understanding call stack depth.
 
 ---
@@ -106,6 +107,7 @@ SETUP:
 Traverse a binary tree and print all values. The tree can have any depth.
 
 WHAT HAPPENS WITHOUT RECURSION (iterative):
+
 ```java
 // Must manually manage stack to mimic what recursion gives for free:
 void traverse(Node root) {
@@ -123,6 +125,7 @@ void traverse(Node root) {
 ```
 
 WHAT HAPPENS WITH RECURSION:
+
 ```java
 void traverse(Node node) {
     if (node == null) return;          // base case
@@ -135,7 +138,7 @@ void traverse(Node node) {
 ```
 
 THE INSIGHT:
-Recursion turns "how do I traverse this?" into "what do I do at this node + trust that the same logic handles the subtrees." The iterative version is doing manually what the recursive version gets from the language automatically. For self-similar structures, recursion isn't just shorter — it's *correct by construction*.
+Recursion turns "how do I traverse this?" into "what do I do at this node + trust that the same logic handles the subtrees." The iterative version is doing manually what the recursive version gets from the language automatically. For self-similar structures, recursion isn't just shorter — it's _correct by construction_.
 
 ---
 
@@ -144,11 +147,12 @@ Recursion turns "how do I traverse this?" into "what do I do at this node + trus
 > Recursion is like **Russian nesting dolls with instructions**. Each doll has a note: "Open me, read this value, then open the inner doll, and when you're done with it, read this value again." You follow the same instruction at every level. When you reach a solid doll (base case), you start returning. The instructions at each level execute on the way back up.
 
 **Mapping:**
-- "Each doll" → each stack frame  
-- "The instruction on each doll" → the function body  
-- "Inner doll" → the recursive call  
-- "Solid doll" → the base case  
-- "Reading the value on the way back up" → post-recursion code (e.g., `return n * factorial(n-1)`)  
+
+- "Each doll" → each stack frame
+- "The instruction on each doll" → the function body
+- "Inner doll" → the recursive call
+- "Solid doll" → the base case
+- "Reading the value on the way back up" → post-recursion code (e.g., `return n * factorial(n-1)`)
 
 **Where this analogy breaks down:** Real dolls have a fixed depth. Recursion depth depends on the input — it's determined at runtime, not fixed in advance. Also, deep nesting with no base case = stack overflow (you keep opening dolls forever and never stop).
 
@@ -166,7 +170,7 @@ Write the base case first — the condition where you return without recursing. 
 Each call pushes a stack frame (~100–500 bytes on JVM) containing local variables, parameters, and the return address. The maximum recursion depth is approximately `stack_size / frame_size` — for JVM's default 512KB–1MB thread stack, this is roughly 1,000–10,000 calls. Deep recursion (tree depth, large n) risks `StackOverflowError`. Convert to iteration with an explicit stack for large inputs, or use tail recursion (which compilers can optimise to reuse the stack frame). Recursion on a balanced tree: O(log n) depth. Recursion on an unbalanced tree or linked list: O(n) depth — stack overflow risk.
 
 **Level 4 — Why it was designed this way (senior/staff):**
-Recursion is the natural expression of induction in mathematics: "base case + inductive step." This correspondence makes recursive algorithms provably correct by induction. Functional languages (Haskell, Erlang, Scheme) make recursion the *primary* looping mechanism — there are no `for` loops. Tail recursion optimisation (TCO) makes this feasible: tail-recursive calls are compiled into jumps, not new stack frames, so recursion depth doesn't grow. In Haskell, a function that recursively processes a million-element list uses O(1) stack space with TCO. Java deliberately doesn't implement TCO — a design choice prioritising stack trace clarity over recursion efficiency, forcing iterative approaches for deep recursion.
+Recursion is the natural expression of induction in mathematics: "base case + inductive step." This correspondence makes recursive algorithms provably correct by induction. Functional languages (Haskell, Erlang, Scheme) make recursion the _primary_ looping mechanism — there are no `for` loops. Tail recursion optimisation (TCO) makes this feasible: tail-recursive calls are compiled into jumps, not new stack frames, so recursion depth doesn't grow. In Haskell, a function that recursively processes a million-element list uses O(1) stack space with TCO. Java deliberately doesn't implement TCO — a design choice prioritising stack trace clarity over recursion efficiency, forcing iterative approaches for deep recursion.
 
 ---
 
@@ -260,6 +264,7 @@ Processing a linked list of 1 million elements recursively requires 1 million st
 ### 💻 Code Example
 
 **Example 1 — Classic recursion: factorial:**
+
 ```java
 // Base case + recursive case — the two required components
 public int factorial(int n) {
@@ -271,6 +276,7 @@ public int factorial(int n) {
 ```
 
 **Example 2 — Tree traversal (natural recursive structure):**
+
 ```java
 class TreeNode {
     int val;
@@ -290,6 +296,7 @@ public List<Integer> inorder(TreeNode node) {
 ```
 
 **Example 3 — Recursive with memoization (fixing exponential duplication):**
+
 ```java
 // BAD: naive fibonacci — O(2^n) time due to duplicate calls
 public int fib(int n) {
@@ -310,6 +317,7 @@ public long fibMemo(int n) {
 ```
 
 **Example 4 — Converting deep recursion to iteration (stack overflow prevention):**
+
 ```java
 // RISKY: recursive file traversal (depth unbounded in production)
 void traverseRecursive(File dir) {
@@ -339,12 +347,12 @@ void traverseIterative(File root) {
 
 ### ⚖️ Comparison Table
 
-| Approach | Stack Usage | Risk | Code Clarity | Use For |
-|---|---|---|---|---|
-| **Recursion** | O(depth) call frames | StackOverflow if depth > ~1000 | High (mirrors structure) | Trees, graphs, D&C, depth ≤ 1000 |
-| Iteration | O(1) | None | Medium (explicit state) | Linked lists, large n, depth unknown |
-| Tail recursion (TCO) | O(1) (with compiler) | None if compiler supports TCO | High | Deep recursion in functional langs |
-| Memoized recursion | O(n) for cache | Cache size | High + correct | Overlapping subproblems (DP) |
+| Approach             | Stack Usage          | Risk                           | Code Clarity             | Use For                              |
+| -------------------- | -------------------- | ------------------------------ | ------------------------ | ------------------------------------ |
+| **Recursion**        | O(depth) call frames | StackOverflow if depth > ~1000 | High (mirrors structure) | Trees, graphs, D&C, depth ≤ 1000     |
+| Iteration            | O(1)                 | None                           | Medium (explicit state)  | Linked lists, large n, depth unknown |
+| Tail recursion (TCO) | O(1) (with compiler) | None if compiler supports TCO  | High                     | Deep recursion in functional langs   |
+| Memoized recursion   | O(n) for cache       | Cache size                     | High + correct           | Overlapping subproblems (DP)         |
 
 **How to choose:** Use recursion when the problem is naturally recursive (trees, graphs, divide-and-conquer) and maximum depth is bounded and small (< 1000). Use iteration with explicit stack when depth is unbounded or large. Use memoized recursion when subproblems overlap (fibonacci, dynamic programming).
 
@@ -352,13 +360,13 @@ void traverseIterative(File root) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Recursion is always slower than iteration | For balanced tree operations, recursion and iteration have the same asymptotic complexity. The per-call overhead (stack frame) is small — typically 10–50ns. Iterative with explicit stack has similar overhead. |
-| All recursion leads to stack overflow | Only deep recursion (depth > thread stack size / frame size ≈ 1000–10000) causes overflow. Tree traversal on a balanced 1M-node tree: depth = 20. Safe. |
-| Recursion means re-computing everything | Only naive recursion without memoization re-computes. Memoized or dynamic programming versions compute each subproblem exactly once. |
-| You can always convert recursion to a loop | Yes, using an explicit stack. But some recursions (mutual recursion, continuations) require non-trivial transformations. The point is you *can* if needed for depth reasons. |
-| Tail recursion is the same as recursion | Tail recursion is a specific form where the recursive call is the *last* operation. With TCO, it compiles to a loop — O(1) stack. Regular recursion doesn't qualify for this optimisation. |
+| Misconception                              | Reality                                                                                                                                                                                                          |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Recursion is always slower than iteration  | For balanced tree operations, recursion and iteration have the same asymptotic complexity. The per-call overhead (stack frame) is small — typically 10–50ns. Iterative with explicit stack has similar overhead. |
+| All recursion leads to stack overflow      | Only deep recursion (depth > thread stack size / frame size ≈ 1000–10000) causes overflow. Tree traversal on a balanced 1M-node tree: depth = 20. Safe.                                                          |
+| Recursion means re-computing everything    | Only naive recursion without memoization re-computes. Memoized or dynamic programming versions compute each subproblem exactly once.                                                                             |
+| You can always convert recursion to a loop | Yes, using an explicit stack. But some recursions (mutual recursion, continuations) require non-trivial transformations. The point is you _can_ if needed for depth reasons.                                     |
+| Tail recursion is the same as recursion    | Tail recursion is a specific form where the recursive call is the _last_ operation. With TCO, it compiles to a loop — O(1) stack. Regular recursion doesn't qualify for this optimisation.                       |
 
 ---
 
@@ -373,6 +381,7 @@ Root Cause:
 Each recursive call consumes a stack frame. Default JVM thread stack is 256KB–1MB. For large inputs, the frame count exceeds stack capacity.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Check current thread stack size in JVM:
 java -XX:+PrintFlagsFinal -version 2>&1 | grep ThreadStackSize
@@ -402,6 +411,7 @@ Root Cause:
 Base case condition is wrong (off-by-one), or the recursive call doesn't reduce the input toward the base case (input size unchanged or growing).
 
 Diagnostic Command / Tool:
+
 ```java
 // Add trace logging to verify base case is reached:
 public int factorial(int n) {
@@ -424,15 +434,18 @@ Write the base case test first. Test with input = 0, 1, and -1 before testing la
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Functional Programming` — recursion is the primary looping mechanism in functional languages; understanding immutability clarifies why recursive patterns emerge
 - `Memory Management Models` — recursion uses the call stack, which is OS/JVM-managed memory; understanding stack vs heap clarifies overflow risks
 
 **Builds On This (learn these next):**
+
 - `Tail Recursion` — the optimised form of recursion that reuses stack frames and eliminates stack overflow risk
 - `Divide and Conquer` — the algorithmic paradigm that uses recursion to split problems: mergesort, quicksort, binary search
 - `Memoization` — the technique that transforms exponential recursive solutions (fibonacci) into linear ones by caching subproblem results
 
 **Alternatives / Comparisons:**
+
 - `Iteration` — the loop-based alternative; always possible but sometimes less natural for recursive structures
 - `Tail Recursion` — a specific form of recursion that compilers can optimise; eliminates stack overflow risk with O(1) stack
 - `Dynamic Programming` — replaces overlapping recursive subproblems with bottom-up or top-down memoized solutions
@@ -473,6 +486,6 @@ Write the base case test first. Test with input = 0, 1, and -1 before testing la
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** Mutual recursion: function A calls function B, which calls function A. Classic example: `isEven(n) = isOdd(n-1)`, `isOdd(n) = isEven(n-1)`, with `isEven(0) = true`. This is perfectly correct but creates two alternating stack frames growing in tandem. What is the maximum stack depth for `isEven(1000)`, and how does it compare to direct recursion `factorial(1000)`? If the language supports TCO for *tail* mutual recursion (trampolining), what transformation makes mutual tail recursion safe?
+**Q1.** Mutual recursion: function A calls function B, which calls function A. Classic example: `isEven(n) = isOdd(n-1)`, `isOdd(n) = isEven(n-1)`, with `isEven(0) = true`. This is perfectly correct but creates two alternating stack frames growing in tandem. What is the maximum stack depth for `isEven(1000)`, and how does it compare to direct recursion `factorial(1000)`? If the language supports TCO for _tail_ mutual recursion (trampolining), what transformation makes mutual tail recursion safe?
 
 **Q2.** A JSON parser handles arbitrary nesting: objects containing arrays containing objects, to any depth. A real JSON payload from a user could be maliciously crafted with 100,000 levels of nesting — enough to cause a stack overflow in any recursive parser. What are the two engineering approaches to make a JSON parser safe against malicious input, and which approach is used by production parsers like Jackson and how does it handle both the safety and the performance requirements simultaneously?
