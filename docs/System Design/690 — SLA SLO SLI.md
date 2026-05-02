@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "SLA / SLO / SLI"
 parent: "System Design"
@@ -6,60 +6,60 @@ nav_order: 690
 permalink: /system-design/sla-slo-sli/
 number: "690"
 category: System Design
-difficulty: ★★☆
+difficulty: â˜…â˜…â˜†
 depends_on: "Observability, Error Budget"
 used_by: "Error Budget, MTTR / MTBF"
 tags: #intermediate, #reliability, #observability, #architecture, #foundational
 ---
 
-# 690 — SLA / SLO / SLI
+# 690 â€” SLA / SLO / SLI
 
 `#intermediate` `#reliability` `#observability` `#architecture` `#foundational`
 
-⚡ TL;DR — **SLI** measures reliability (what you observe), **SLO** is your internal target (what you commit to internally), **SLA** is a contractual promise (what you commit to customers with financial consequences for breach).
+âš¡ TL;DR â€” **SLI** measures reliability (what you observe), **SLO** is your internal target (what you commit to internally), **SLA** is a contractual promise (what you commit to customers with financial consequences for breach).
 
-| #690            | Category: System Design     | Difficulty: ★★☆ |
+| #690            | Category: System Design     | Difficulty: â˜…â˜…â˜† |
 | :-------------- | :-------------------------- | :-------------- |
 | **Depends on:** | Observability, Error Budget |                 |
 | **Used by:**    | Error Budget, MTTR / MTBF   |                 |
 
 ---
 
-### 📘 Textbook Definition
+### ðŸ“˜ Textbook Definition
 
-**Service Level Indicator (SLI)** is a quantitative measure of a service's behaviour from the user's perspective — a carefully defined metric that captures service performance. Common SLIs: availability (fraction of successful requests), latency (fraction of requests below a threshold), throughput (requests per second), error rate, durability. **Service Level Objective (SLO)** is an internal target value or range for an SLI, expressed as a percentage over a time window: "99.9% of requests should succeed in a rolling 28-day window." SLOs are internal commitments — engineering targets used to drive reliability work. **Service Level Agreement (SLA)** is a contractual commitment made to customers that specifies consequences (financial penalties, credits, remediation) if the service fails to meet defined targets. SLAs are typically set looser than SLOs — SLO breaches alert engineering before SLA breaches affect customers. Together, these three concepts form the foundation of SRE (Site Reliability Engineering).
-
----
-
-### 🟢 Simple Definition (Easy)
-
-- **SLI**: what you actually measure — "99.95% of requests succeeded this month"
-- **SLO**: your internal goal — "we want 99.9% success rate"
-- **SLA**: your customer contract — "we promise 99.5%, we'll pay a credit if we miss it"
-
-SLI ≥ SLO > SLA (measurements exceed objectives; objectives exceed contracts)
+**Service Level Indicator (SLI)** is a quantitative measure of a service's behaviour from the user's perspective â€” a carefully defined metric that captures service performance. Common SLIs: availability (fraction of successful requests), latency (fraction of requests below a threshold), throughput (requests per second), error rate, durability. **Service Level Objective (SLO)** is an internal target value or range for an SLI, expressed as a percentage over a time window: "99.9% of requests should succeed in a rolling 28-day window." SLOs are internal commitments â€” engineering targets used to drive reliability work. **Service Level Agreement (SLA)** is a contractual commitment made to customers that specifies consequences (financial penalties, credits, remediation) if the service fails to meet defined targets. SLAs are typically set looser than SLOs â€” SLO breaches alert engineering before SLA breaches affect customers. Together, these three concepts form the foundation of SRE (Site Reliability Engineering).
 
 ---
 
-### 🔵 Simple Definition (Elaborated)
+### ðŸŸ¢ Simple Definition (Easy)
 
-Think of it as three concentric circles of commitment. The outermost circle is the SLI — raw measurement, no judgment. The middle circle is the SLO — your internal engineering target (ambitious but achievable). The innermost circle is the SLA — the contractual floor you promise customers (conservative, well below your SLO). Engineering tries to maintain SLO. If SLO is breached, it's a reliability incident. If SLA is breached, it's a legal/financial problem. The gap between SLO and SLA is the buffer — early warning that prevents SLA breaches.
+- **SLI**: what you actually measure â€” "99.95% of requests succeeded this month"
+- **SLO**: your internal goal â€” "we want 99.9% success rate"
+- **SLA**: your customer contract â€” "we promise 99.5%, we'll pay a credit if we miss it"
+
+SLI â‰¥ SLO > SLA (measurements exceed objectives; objectives exceed contracts)
 
 ---
 
-### 🔩 First Principles Explanation
+### ðŸ”µ Simple Definition (Elaborated)
+
+Think of it as three concentric circles of commitment. The outermost circle is the SLI â€” raw measurement, no judgment. The middle circle is the SLO â€” your internal engineering target (ambitious but achievable). The innermost circle is the SLA â€” the contractual floor you promise customers (conservative, well below your SLO). Engineering tries to maintain SLO. If SLO is breached, it's a reliability incident. If SLA is breached, it's a legal/financial problem. The gap between SLO and SLA is the buffer â€” early warning that prevents SLA breaches.
+
+---
+
+### ðŸ”© First Principles Explanation
 
 **Why this three-layer model exists:**
 
 ```
 THE RELIABILITY MEASUREMENT PROBLEM:
   How do you know if your service is "reliable"?
-  "The service is up" → vague, binary, not useful.
-  "Users are happy" → unmeasurable, subjective.
+  "The service is up" â†’ vague, binary, not useful.
+  "Users are happy" â†’ unmeasurable, subjective.
 
   NEED: precise, measurable, actionable definitions.
 
-SERVICE LEVEL INDICATOR (SLI) — the measurement:
+SERVICE LEVEL INDICATOR (SLI) â€” the measurement:
 
   Definition: SLI = (good events) / (total events)
 
@@ -75,7 +75,7 @@ SERVICE LEVEL INDICATOR (SLI) — the measurement:
 
     NOTE: Use percentile thresholds (P99, P95), not averages.
     Average latency hides tail latency: 1% of users waiting 10 seconds
-    while average is 50ms — average says "great", P99 says "broken".
+    while average is 50ms â€” average says "great", P99 says "broken".
 
   ERROR RATE SLI:
     SLI = 1 - (5xx errors / total requests)
@@ -84,7 +84,7 @@ SERVICE LEVEL INDICATOR (SLI) — the measurement:
   DURABILITY SLI (for storage systems):
     SLI = (objects retrievable on demand) / (objects stored)
 
-SERVICE LEVEL OBJECTIVE (SLO) — the internal target:
+SERVICE LEVEL OBJECTIVE (SLO) â€” the internal target:
 
   SLO = target threshold for an SLI.
   Example: "SLI_availability >= 99.9% over rolling 28 days"
@@ -99,7 +99,7 @@ SERVICE LEVEL OBJECTIVE (SLO) — the internal target:
 
     TOO TIGHT (99.9999% = 31 seconds downtime/year):
       Nearly impossible to achieve consistently.
-      Any incident → SLO breach → engineering distracted by alerts.
+      Any incident â†’ SLO breach â†’ engineering distracted by alerts.
       Leads to: alert fatigue, engineering burnout, risk aversion.
 
     TOO LOOSE (90% = 36 days downtime/year):
@@ -114,16 +114,16 @@ SERVICE LEVEL OBJECTIVE (SLO) — the internal target:
 ERROR BUDGET: SLO to actionable budget:
 
   Error Budget = 1 - SLO
-  SLO = 99.9% → Error Budget = 0.1% = 43.2 minutes/month allowed downtime
+  SLO = 99.9% â†’ Error Budget = 0.1% = 43.2 minutes/month allowed downtime
 
   Error Budget Consumed = 1 - current SLI
-  If SLI = 99.85% → consumed 0.15% (exceeded 0.1% budget → SLO breach)
+  If SLI = 99.85% â†’ consumed 0.15% (exceeded 0.1% budget â†’ SLO breach)
 
   Error Budget drives decisions:
   - Budget remaining: can deploy new features (accepting risk of failures)
   - Budget exhausted: freeze deployments, focus on reliability only
 
-SERVICE LEVEL AGREEMENT (SLA) — the contract:
+SERVICE LEVEL AGREEMENT (SLA) â€” the contract:
 
   SLA is ALWAYS set looser than SLO.
   Example:
@@ -132,8 +132,8 @@ SERVICE LEVEL AGREEMENT (SLA) — the contract:
     Buffer: 0.4% (safety margin)
 
   Why looser?
-  - SLO breach: engineering alert → investigation starts before customers notice
-  - SLA breach: customers already impacted → legal/financial consequences
+  - SLO breach: engineering alert â†’ investigation starts before customers notice
+  - SLA breach: customers already impacted â†’ legal/financial consequences
 
   SLA PENALTIES (typical):
     99.5% to 99.0%: 10% service credit
@@ -141,7 +141,7 @@ SERVICE LEVEL AGREEMENT (SLA) — the contract:
     Below 95.0%: 50% service credit or right to terminate
 
   AWS S3 SLA: 99.9% monthly uptime commitment.
-  (Note: S3 SLO is much higher — designed for 99.999999999% durability)
+  (Note: S3 SLO is much higher â€” designed for 99.999999999% durability)
 
   PRACTICAL NOTE: Many "SLAs" in informal conversations are actually SLOs.
   When a team says "our SLA is 99.9%", they often mean their internal target.
@@ -150,22 +150,22 @@ SERVICE LEVEL AGREEMENT (SLA) — the contract:
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### â“ Why Does This Exist (Why Before What)
 
 WITHOUT SLI/SLO/SLA framework:
 
-- Reliability debates: "Is this acceptable?" — subjective, politically charged
+- Reliability debates: "Is this acceptable?" â€” subjective, politically charged
 - Engineering prioritisation: impossible to justify reliability work vs. features
-- Customer trust: no measurable promises → customers cannot evaluate fit for purpose
+- Customer trust: no measurable promises â†’ customers cannot evaluate fit for purpose
 
 WITH SLI/SLO/SLA framework:
-→ Objective measurement: "SLI is 99.85%, SLO is 99.9% → error budget exhausted"
-→ Decision framework: error budget remaining → ship features; exhausted → reliability sprint
-→ Customer accountability: contractual commitments with specific consequences
+â†’ Objective measurement: "SLI is 99.85%, SLO is 99.9% â†’ error budget exhausted"
+â†’ Decision framework: error budget remaining â†’ ship features; exhausted â†’ reliability sprint
+â†’ Customer accountability: contractual commitments with specific consequences
 
 ---
 
-### 🧠 Mental Model / Analogy
+### ðŸ§  Mental Model / Analogy
 
 > An airline's on-time performance system. The SLI is the actual measurement: "87.3% of flights this month departed within 15 minutes of schedule." The SLO is the airline's internal target: "we want to hit 90%." The SLA is the contract: "we guarantee 85% on-time performance in our service agreement with corporate clients, or we provide travel credits." The airline tries to beat its SLO (90%) so it never gets close to breaching its SLA (85%).
 
@@ -176,10 +176,11 @@ WITH SLI/SLO/SLA framework:
 
 ---
 
-### ⚙️ How It Works (Mechanism)
+### âš™ï¸ How It Works (Mechanism)
 
 **Prometheus + Grafana SLO dashboard:**
 
+{%- raw -%}
 ```yaml
 # prometheus rule: SLI calculation and SLO alerting
 
@@ -221,27 +222,28 @@ groups:
       # = 0.5: half budget consumed
       # < 0.0: budget exceeded (SLO breached)
 ```
+{%- endraw -%}
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### ðŸ”„ How It Connects (Mini-Map)
 
 ```
 Observability
-(metrics, traces, logs — data collection)
-        │
-        ▼ (define what to measure and target)
-SLI / SLO / SLA ◄──── (you are here)
-(measure → target → contract)
-        │
-        ├── Error Budget (SLO → budget → deployment decision gate)
-        ├── MTTR / MTBF (reliability metrics that feed SLI calculations)
-        └── Alerting (SLO burn rate → PagerDuty → on-call response)
+(metrics, traces, logs â€” data collection)
+        â”‚
+        â–¼ (define what to measure and target)
+SLI / SLO / SLA â—„â”€â”€â”€â”€ (you are here)
+(measure â†’ target â†’ contract)
+        â”‚
+        â”œâ”€â”€ Error Budget (SLO â†’ budget â†’ deployment decision gate)
+        â”œâ”€â”€ MTTR / MTBF (reliability metrics that feed SLI calculations)
+        â””â”€â”€ Alerting (SLO burn rate â†’ PagerDuty â†’ on-call response)
 ```
 
 ---
 
-### 💻 Code Example
+### ðŸ’» Code Example
 
 **SLO calculation and error budget tracking in Python:**
 
@@ -293,24 +295,24 @@ result = tracker.error_budget_consumed(current_sli=0.9991)
 #   "budget_total_minutes": 40.3,
 #   "budget_consumed_minutes": 36.3,
 #   "budget_remaining_minutes": 4.0,
-#   "budget_remaining_pct": 9.9  # 90% of budget consumed — warning!
+#   "budget_remaining_pct": 9.9  # 90% of budget consumed â€” warning!
 # }
 ```
 
 ---
 
-### ⚠️ Common Misconceptions
+### âš ï¸ Common Misconceptions
 
 | Misconception                                              | Reality                                                                                                                                                                                                                                                |
 | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 100% SLO is the goal                                       | 100% is not achievable and attempting it is counterproductive: it means no deployments (risk of downtime), extreme conservatism, and eventual user disappointment anyway. Honest, achievable SLOs (99.9%, 99.5%) are better than dishonest 100% claims |
-| SLA and SLO are the same thing                             | SLO is an internal engineering target with no contractual commitment. SLA is a legal contract with financial consequences. SLA is always set looser than SLO — the gap is your safety buffer to prevent SLA breaches                                   |
+| SLA and SLO are the same thing                             | SLO is an internal engineering target with no contractual commitment. SLA is a legal contract with financial consequences. SLA is always set looser than SLO â€” the gap is your safety buffer to prevent SLA breaches                                   |
 | Measuring availability as uptime/downtime is the right SLI | Binary uptime/downtime misses partial degradation. A server returning 500 errors 30% of the time is "up" by binary measure but failing users. Request success rate SLI captures this. Modern SRE: measure from the user's perspective                  |
-| SLOs should be set as high as possible to show ambition    | SLOs should be calibrated to what users actually need. Over-ambitious SLOs breach constantly → alert fatigue, engineering burnout. Calibrated SLOs breach rarely but meaningfully → each breach is a real signal                                       |
+| SLOs should be set as high as possible to show ambition    | SLOs should be calibrated to what users actually need. Over-ambitious SLOs breach constantly â†’ alert fatigue, engineering burnout. Calibrated SLOs breach rarely but meaningfully â†’ each breach is a real signal                                       |
 
 ---
 
-### 🔥 Pitfalls in Production
+### ðŸ”¥ Pitfalls in Production
 
 **Measuring SLI from the wrong vantage point:**
 
@@ -320,11 +322,11 @@ PROBLEM: measuring SLI from inside your service (server-side metrics)
   Server-side:
     http_requests_total{status="200"}: 9,990,000
     http_requests_total{status="5xx"}: 10,000
-    Calculated SLI: 99.9% — looks great!
+    Calculated SLI: 99.9% â€” looks great!
 
   Client-side reality (Synthetic monitoring from outside):
     30% of requests: timing out before server responds (TCP connection timeout)
-    These timeouts: never reach server → never counted in server-side metrics
+    These timeouts: never reach server â†’ never counted in server-side metrics
     Real user SLI: 70% (30% of requests failing)
 
   Root cause: load balancer connectivity issue upstream of server metrics.
@@ -359,41 +361,41 @@ FIX: Multi-layer SLI measurement
 
 ---
 
-### 🔗 Related Keywords
+### ðŸ”— Related Keywords
 
-- `Error Budget` — derived from SLO: `error_budget = 1 - SLO`, drives deployment decisions
-- `Observability` — provides the metrics, traces, and logs that SLIs are calculated from
-- `MTTR / MTBF` — operational metrics that feed into availability SLI calculations
-- `Alerting / On-call` — SLO burn rate alerts trigger on-call response
-- `Capacity Planning` — SLO targets inform required capacity headroom
-
----
-
-### 📌 Quick Reference Card
-
-```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ SLI = measure | SLO = internal target     │
-│              │ SLA = customer contract (SLO buffer > SLA)│
-├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Defining reliability targets; error budget│
-│              │ decisions; customer-facing commitments    │
-├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Setting SLA = SLO (no buffer → SLA breach │
-│              │ on first incident); measuring from inside │
-├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Measure what users feel (SLI), target    │
-│              │  what you can achieve (SLO), promise what │
-│              │  you can guarantee (SLA)."                │
-├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Error Budget → Burn Rate Alerts           │
-│              │ → MTTR / MTBF                             │
-└──────────────────────────────────────────────────────────┘
-```
+- `Error Budget` â€” derived from SLO: `error_budget = 1 - SLO`, drives deployment decisions
+- `Observability` â€” provides the metrics, traces, and logs that SLIs are calculated from
+- `MTTR / MTBF` â€” operational metrics that feed into availability SLI calculations
+- `Alerting / On-call` â€” SLO burn rate alerts trigger on-call response
+- `Capacity Planning` â€” SLO targets inform required capacity headroom
 
 ---
 
-### 🧠 Think About This Before We Continue
+### ðŸ“Œ Quick Reference Card
+
+```
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ KEY IDEA     â”‚ SLI = measure | SLO = internal target     â”‚
+â”‚              â”‚ SLA = customer contract (SLO buffer > SLA)â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ USE WHEN     â”‚ Defining reliability targets; error budgetâ”‚
+â”‚              â”‚ decisions; customer-facing commitments    â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ AVOID WHEN   â”‚ Setting SLA = SLO (no buffer â†’ SLA breach â”‚
+â”‚              â”‚ on first incident); measuring from inside â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ ONE-LINER    â”‚ "Measure what users feel (SLI), target    â”‚
+â”‚              â”‚  what you can achieve (SLO), promise what â”‚
+â”‚              â”‚  you can guarantee (SLA)."                â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ NEXT EXPLORE â”‚ Error Budget â†’ Burn Rate Alerts           â”‚
+â”‚              â”‚ â†’ MTTR / MTBF                             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+```
+
+---
+
+### ðŸ§  Think About This Before We Continue
 
 **Q1.** You are setting SLOs for a new payment processing API. The engineering team proposes: availability SLO 99.99%, latency SLO P99 < 100ms. The sales team has already committed to customers: "enterprise-grade, five nines availability." Identify three specific problems with the proposed SLOs and the sales promise. What process would you follow to set correct, calibrated SLOs, and what would you do about the already-made sales promise?
 

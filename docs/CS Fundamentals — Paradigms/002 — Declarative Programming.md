@@ -1,12 +1,12 @@
----
+﻿---
 layout: default
 title: "Declarative Programming"
-parent: "CS Fundamentals — Paradigms"
+parent: "CS Fundamentals â€” Paradigms"
 nav_order: 2
 permalink: /cs-fundamentals/declarative-programming/
 number: "0002"
-category: CS Fundamentals — Paradigms
-difficulty: ★☆☆
+category: CS Fundamentals â€” Paradigms
+difficulty: â˜…â˜†â˜†
 depends_on: Imperative Programming, Functions
 used_by: Functional Programming, Reactive Programming, SQL
 related: Imperative Programming, Functional Programming, Domain-Specific Languages
@@ -17,42 +17,42 @@ tags:
   - first-principles
 ---
 
-# 002 — Declarative Programming
+# 002 â€” Declarative Programming
 
-⚡ TL;DR — Declarative programming means telling the computer WHAT you want, not HOW to get it — you describe the goal, the system figures out the steps.
+âš¡ TL;DR â€” Declarative programming means telling the computer WHAT you want, not HOW to get it â€” you describe the goal, the system figures out the steps.
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #0002 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
-├──────────────┼───────────────────────────────────────┼─────────────────────────┤
-│ Depends on: │ Imperative Programming, Functions │ │
-│ Used by: │ Functional Programming, SQL, React │ │
-│ Related: │ Imperative Programming, Functional, │ │
-│ │ Domain-Specific Languages │ │
-└─────────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ #0002 â”‚ Category: CS Fundamentals â€” Paradigms â”‚ Difficulty: â˜…â˜†â˜† â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Depends on: â”‚ Imperative Programming, Functions â”‚ â”‚
+â”‚ Used by: â”‚ Functional Programming, SQL, React â”‚ â”‚
+â”‚ Related: â”‚ Imperative Programming, Functional, â”‚ â”‚
+â”‚ â”‚ Domain-Specific Languages â”‚ â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-### 🔥 The Problem This Solves
+### ðŸ”¥ The Problem This Solves
 
 WORLD WITHOUT IT:
 Imagine querying a database imperatively: you'd have to open the
 file, iterate every row, compare each field manually, collect
 matches, sort them yourself, and handle pagination by hand. For a
 query involving 3 tables and 5 conditions, that's hundreds of
-lines of code — all of which you'd rewrite for every new query.
+lines of code â€” all of which you'd rewrite for every new query.
 
 THE BREAKING POINT:
 When the "how" of fetching data is identical every time (scan,
 filter, sort, project), writing it out manually wastes effort and
-introduces inconsistency. The "what" — give me all users over 30
-in London sorted by name — is always the interesting part.
+introduces inconsistency. The "what" â€” give me all users over 30
+in London sorted by name â€” is always the interesting part.
 
 THE INVENTION MOMENT:
 This is exactly why Declarative Programming was created. SQL in
 1974 let programmers say `SELECT name FROM users WHERE age > 30`
-— describing the desired result. The database engine figures out
-the execution plan. HTML lets you say "this is a heading" — the
+â€” describing the desired result. The database engine figures out
+the execution plan. HTML lets you say "this is a heading" â€” the
 browser figures out how to render it.
 
-### 📘 Textbook Definition
+### ðŸ“˜ Textbook Definition
 
 Declarative programming is a paradigm in which programs specify
 WHAT computation should be performed rather than HOW to perform it.
@@ -62,7 +62,7 @@ optimal execution strategy. SQL, HTML, CSS, Prolog, and functional
 languages (when used without explicit recursion patterns) are
 canonical examples.
 
-### ⏱️ Understand It in 30 Seconds
+### â±ï¸ Understand It in 30 Seconds
 
 **One line:**
 Describe the outcome you want; let the system work out the steps.
@@ -70,25 +70,25 @@ Describe the outcome you want; let the system work out the steps.
 **One analogy:**
 
 > Ordering at a restaurant is declarative: you say "I'll have the
-> salmon, medium rare." You don't tell the chef how to cook it —
+> salmon, medium rare." You don't tell the chef how to cook it â€”
 > step by step, knife by knife. You declare the desired result.
 
 **One insight:**
 Declarative code is often shorter and more readable than its
 imperative equivalent because it removes the accidental complexity
-of HOW — loops, counters, temporary variables — and leaves only
+of HOW â€” loops, counters, temporary variables â€” and leaves only
 the essential complexity of WHAT. The trade-off is less control
 over performance.
 
-### 🔩 First Principles Explanation
+### ðŸ”© First Principles Explanation
 
 CORE INVARIANTS:
 
-1. The program describes a relationship or desired state — not
+1. The program describes a relationship or desired state â€” not
    the procedure to achieve it.
-2. The execution strategy is delegated — a query planner,
+2. The execution strategy is delegated â€” a query planner,
    runtime, or compiler determines the steps.
-3. Declarative code is often closer to the problem domain —
+3. Declarative code is often closer to the problem domain â€”
    SQL looks like English because the "how" is abstracted away.
 
 DERIVED DESIGN:
@@ -108,10 +108,10 @@ code to maintain, queries that survive schema changes.
 Cost: Less control over execution; harder to express irregular
 procedural logic; debugging requires understanding the engine.
 
-### 🧪 Thought Experiment
+### ðŸ§ª Thought Experiment
 
 SETUP:
-You want all product names with price under £50, sorted alphabetically,
+You want all product names with price under Â£50, sorted alphabetically,
 from a table of 10 million products.
 
 WHAT HAPPENS WITHOUT DECLARATIVE (imperative SQL-equivalent):
@@ -140,49 +140,49 @@ Code: 3 lines. Result is the same.
 
 THE INSIGHT:
 Declarative abstraction lets the engine exploit knowledge you
-don't have — index structures, statistics, parallelism — to
+don't have â€” index structures, statistics, parallelism â€” to
 execute far better than hand-written imperative code would.
 
-### 🧠 Mental Model / Analogy
+### ðŸ§  Mental Model / Analogy
 
 > Declarative programming is like filing a tax form. You fill in the
 > boxes: income, deductions, dependants. You declare the facts. The
 > tax authority's system calculates the result using rules you
-> never see. You described WHAT is true about your situation — the
+> never see. You described WHAT is true about your situation â€” the
 > HOW is the government's problem.
 
-"Filling in the boxes" → writing declarative statements
-"The tax form fields" → the declarative API/schema
-"The tax calculation engine" → the runtime/query planner
-"Your tax bill" → the computed result
+"Filling in the boxes" â†’ writing declarative statements
+"The tax form fields" â†’ the declarative API/schema
+"The tax calculation engine" â†’ the runtime/query planner
+"Your tax bill" â†’ the computed result
 
 Where this analogy breaks down: unlike tax forms, declarative
-programs can compose and nest — you can build complex pipelines
+programs can compose and nest â€” you can build complex pipelines
 from simple declarative expressions.
 
-### 📶 Gradual Depth — Four Levels
+### ðŸ“¶ Gradual Depth â€” Four Levels
 
-**Level 1 — What it is (anyone can understand):**
+**Level 1 â€” What it is (anyone can understand):**
 Declarative programming is telling the computer what you want, not
 how to get it. Like asking a librarian for "the three most recent
-sci-fi novels" — you don't explain how they should search the
+sci-fi novels" â€” you don't explain how they should search the
 shelves.
 
-**Level 2 — How to use it (junior developer):**
+**Level 2 â€” How to use it (junior developer):**
 SQL is declarative: write `WHERE`, `ORDER BY`, `GROUP BY` and let
 the database handle it. HTML is declarative: write `<button>` and
 the browser renders it. In React, you declare what the UI should
-look like given the current state — React handles the DOM updates.
+look like given the current state â€” React handles the DOM updates.
 
-**Level 3 — How it works (mid-level engineer):**
+**Level 3 â€” How it works (mid-level engineer):**
 Declarative systems separate the specification from the execution
 engine. A SQL query is parsed into a logical plan (relational
 algebra), then a query optimizer rewrites it into a physical plan
 (choosing indexes, join algorithms), then an executor runs it.
 The same SELECT can execute 100x faster with a different physical
-plan — the declarative interface is stable while the engine evolves.
+plan â€” the declarative interface is stable while the engine evolves.
 
-**Level 4 — Why it was designed this way (senior/staff):**
+**Level 4 â€” Why it was designed this way (senior/staff):**
 The declarative paradigm emerged from formal logic (Prolog) and
 relational algebra (Codd's 1970 paper). The key insight: if you
 have a closed-world model (complete data), you can derive all
@@ -192,34 +192,34 @@ Modern systems like Apache Spark DataFrames and TensorFlow graphs
 adopt declarative APIs precisely to enable distributed execution
 optimisation invisible to the user.
 
-### ⚙️ How It Works (Mechanism)
+### âš™ï¸ How It Works (Mechanism)
 
 The execution pipeline for a declarative system typically has
 three distinct phases:
 
 ```
-┌──────────────────────────────────────────────────┐
-│      DECLARATIVE EXECUTION PIPELINE              │
-├──────────────────────────────────────────────────┤
-│                                                  │
-│  [Declarative Statement]                         │
-│       ↓                                          │
-│  [Parser] → Abstract Syntax Tree                 │
-│       ↓                                          │
-│  [Semantic Analysis / Binding]                   │
-│       ↓                                          │
-│  [Logical Plan] (what operations)                │
-│       ↓                                          │
-│  [Optimiser] ← YOU ARE HERE                      │
-│       ↓  (rewrites to physical plan)             │
-│  [Physical Plan] (how to execute)                │
-│       ↓                                          │
-│  [Executor] → Result                             │
-└──────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚      DECLARATIVE EXECUTION PIPELINE              â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                  â”‚
+â”‚  [Declarative Statement]                         â”‚
+â”‚       â†“                                          â”‚
+â”‚  [Parser] â†’ Abstract Syntax Tree                 â”‚
+â”‚       â†“                                          â”‚
+â”‚  [Semantic Analysis / Binding]                   â”‚
+â”‚       â†“                                          â”‚
+â”‚  [Logical Plan] (what operations)                â”‚
+â”‚       â†“                                          â”‚
+â”‚  [Optimiser] â† YOU ARE HERE                      â”‚
+â”‚       â†“  (rewrites to physical plan)             â”‚
+â”‚  [Physical Plan] (how to execute)                â”‚
+â”‚       â†“                                          â”‚
+â”‚  [Executor] â†’ Result                             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Parsing:** The declarative statement is tokenised and parsed into
-an AST — a structural representation of the query's meaning.
+an AST â€” a structural representation of the query's meaning.
 
 **Optimisation:** This is the declarative paradigm's superpower.
 The optimiser applies algebraic transformations: push filters down
@@ -241,36 +241,36 @@ the optimiser picks a bad plan. A filter that matches 80% of rows
 gets pushed down, but it's slower than a full scan. Performance
 degrades invisibly because the programmer has no control.
 
-### 🔄 The Complete Picture — End-to-End Flow
+### ðŸ”„ The Complete Picture â€” End-to-End Flow
 
 NORMAL FLOW:
 
 ```
 [Developer writes SELECT/HTML/JSX]
-  → [Parser produces AST]
-  → [Binder resolves names to schema]
-  → [Logical plan: relational algebra]
-  → [Optimiser rewrites plan ← YOU ARE HERE]
-  → [Physical plan: index scan, hash join]
-  → [Executor runs plan]
-  → [Result returned to application]
+  â†’ [Parser produces AST]
+  â†’ [Binder resolves names to schema]
+  â†’ [Logical plan: relational algebra]
+  â†’ [Optimiser rewrites plan â† YOU ARE HERE]
+  â†’ [Physical plan: index scan, hash join]
+  â†’ [Executor runs plan]
+  â†’ [Result returned to application]
 ```
 
 FAILURE PATH:
-[Stale statistics → bad plan → full scan instead of index]
-→ [Query runs 100x slower]
-→ [Observable: slow query log, high I/O metrics]
+[Stale statistics â†’ bad plan â†’ full scan instead of index]
+â†’ [Query runs 100x slower]
+â†’ [Observable: slow query log, high I/O metrics]
 
 WHAT CHANGES AT SCALE:
 At 10x data volume, the optimiser's choice of join order matters
-exponentially — a wrong join order on 10M rows vs 1M rows
+exponentially â€” a wrong join order on 10M rows vs 1M rows
 increases cost by 100x. At 100x, declarative frameworks like Spark
 transparently distribute execution across a cluster while the
 `DataFrame.filter().groupBy()` API stays identical to single-node.
 
-### 💻 Code Example
+### ðŸ’» Code Example
 
-**Example 1 — Imperative vs Declarative: filter and sort (Python):**
+**Example 1 â€” Imperative vs Declarative: filter and sort (Python):**
 
 ```python
 products = [
@@ -293,7 +293,7 @@ result = sorted(
 # Output: ['Monitor', 'Mouse']
 ```
 
-**Example 2 — SQL declarative query:**
+**Example 2 â€” SQL declarative query:**
 
 ```sql
 -- BAD: trying to be "imperative" in SQL (cursor-based)
@@ -310,8 +310,9 @@ INSERT INTO large_orders
 SELECT * FROM orders WHERE total > 100;
 ```
 
-**Example 3 — React declarative UI:**
+**Example 3 â€” React declarative UI:**
 
+{%- raw -%}
 ```jsx
 // BAD (imperative DOM manipulation):
 document.getElementById("btn").style.color = "red";
@@ -327,10 +328,11 @@ function Counter({ count }) {
     </div>
   );
 }
-// React diffs and updates the DOM — we declare WHAT, not HOW
+// React diffs and updates the DOM â€” we declare WHAT, not HOW
 ```
+{%- endraw -%}
 
-### ⚖️ Comparison Table
+### âš–ï¸ Comparison Table
 
 | Style           | Control | Optimisable | Readability | Best For                |
 | --------------- | ------- | ----------- | ----------- | ----------------------- |
@@ -343,16 +345,16 @@ How to choose: Use declarative when the engine can optimise better
 than you can, or when expressing WHAT is more stable than HOW.
 Switch to imperative when you need precise control over every step.
 
-### ⚠️ Common Misconceptions
+### âš ï¸ Common Misconceptions
 
 | Misconception                                 | Reality                                                                                                                                       |
 | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| Declarative code doesn't execute imperatively | Under the hood, all declarative code compiles to imperative CPU instructions — the declarative layer is an abstraction                        |
+| Declarative code doesn't execute imperatively | Under the hood, all declarative code compiles to imperative CPU instructions â€” the declarative layer is an abstraction                        |
 | Declarative is always slower than imperative  | A SQL query planner often beats hand-written loops because it exploits indexes and statistics you can't see                                   |
-| HTML is a programming language                | HTML is declarative markup — it describes structure, not computation — but the distinction matters less than understanding what it expresses  |
-| Declarative programming means no state        | SQL queries operate on stateful tables; React components have state — declarative describes the EXPRESSION of logic, not the absence of state |
+| HTML is a programming language                | HTML is declarative markup â€” it describes structure, not computation â€” but the distinction matters less than understanding what it expresses  |
+| Declarative programming means no state        | SQL queries operate on stateful tables; React components have state â€” declarative describes the EXPRESSION of logic, not the absence of state |
 
-### 🚨 Failure Modes & Diagnosis
+### ðŸš¨ Failure Modes & Diagnosis
 
 **1. Query Plan Regression**
 
@@ -405,13 +407,13 @@ Diagnostic:
 # Enable query logging in Spring Boot application.properties
 logging.level.org.hibernate.SQL=DEBUG
 logging.level.org.hibernate.type.descriptor.sql=TRACE
-# Count queries in output — 100 users = 100+ SELECT statements
+# Count queries in output â€” 100 users = 100+ SELECT statements
 ```
 
 Fix:
 
 ```java
-// BAD: N+1 — one query per user
+// BAD: N+1 â€” one query per user
 List<User> users = userRepo.findAll();
 for (User u : users) {
     List<Order> orders = orderRepo.findByUser(u); // N queries
@@ -454,65 +456,65 @@ filtered.show(10)  # inspect before aggregation
 Prevention: Add intermediate checkpoints during development;
 write unit tests for each stage of a declarative pipeline.
 
-### 🔗 Related Keywords
+### ðŸ”— Related Keywords
 
 **Prerequisites (understand these first):**
 
-- `Imperative Programming` — understanding HOW clarifies why WHAT is valuable
-- `Functions` — declarative style often uses function composition
+- `Imperative Programming` â€” understanding HOW clarifies why WHAT is valuable
+- `Functions` â€” declarative style often uses function composition
 
 **Builds On This (learn these next):**
 
-- `Functional Programming` — the discipline of declarative code in general-purpose languages
-- `Reactive Programming` — declarative event stream composition
-- `SQL` — the canonical real-world declarative language
+- `Functional Programming` â€” the discipline of declarative code in general-purpose languages
+- `Reactive Programming` â€” declarative event stream composition
+- `SQL` â€” the canonical real-world declarative language
 
 **Alternatives / Comparisons:**
 
-- `Imperative Programming` — the contrasting paradigm; explicit HOW
-- `Domain-Specific Languages` — extreme form of declarative design for one domain
-- `Logic Programming` — fully declarative using rules and unification (Prolog)
+- `Imperative Programming` â€” the contrasting paradigm; explicit HOW
+- `Domain-Specific Languages` â€” extreme form of declarative design for one domain
+- `Logic Programming` â€” fully declarative using rules and unification (Prolog)
 
-### 📌 Quick Reference Card
+### ðŸ“Œ Quick Reference Card
 
-┌──────────────────────────────────────────────────────────┐
-│ WHAT IT IS │ Describing WHAT you want, not HOW to get │
-│ │ it — the engine figures out the steps │
-├──────────────┼───────────────────────────────────────────┤
-│ PROBLEM IT │ Removing accidental complexity of "how" │
-│ SOLVES │ from domain logic; enabling optimisation │
-├──────────────┼───────────────────────────────────────────┤
-│ KEY INSIGHT │ The engine often optimises better than │
-│ │ hand-written imperative code │
-├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN │ Query data, describe UI, configure │
-│ │ infrastructure, express transformations │
-├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN │ Precise execution control is required; │
-│ │ the engine's abstraction hides bugs │
-├──────────────┼───────────────────────────────────────────┤
-│ TRADE-OFF │ Conciseness + optimisability vs. loss of │
-│ │ control over execution strategy │
-├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER │ "Order at a restaurant — describe what │
-│ │ you want; the kitchen figures out how." │
-├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Functional → SQL → Reactive Programming │
-└──────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ WHAT IT IS â”‚ Describing WHAT you want, not HOW to get â”‚
+â”‚ â”‚ it â€” the engine figures out the steps â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ PROBLEM IT â”‚ Removing accidental complexity of "how" â”‚
+â”‚ SOLVES â”‚ from domain logic; enabling optimisation â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ KEY INSIGHT â”‚ The engine often optimises better than â”‚
+â”‚ â”‚ hand-written imperative code â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ USE WHEN â”‚ Query data, describe UI, configure â”‚
+â”‚ â”‚ infrastructure, express transformations â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ AVOID WHEN â”‚ Precise execution control is required; â”‚
+â”‚ â”‚ the engine's abstraction hides bugs â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ TRADE-OFF â”‚ Conciseness + optimisability vs. loss of â”‚
+â”‚ â”‚ control over execution strategy â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ ONE-LINER â”‚ "Order at a restaurant â€” describe what â”‚
+â”‚ â”‚ you want; the kitchen figures out how." â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ NEXT EXPLORE â”‚ Functional â†’ SQL â†’ Reactive Programming â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
 ---
 
-### 🧠 Think About This Before We Continue
+### ðŸ§  Think About This Before We Continue
 
 **Q1.** A React component re-renders every second because a parent
 passes a new object reference even though the data is identical.
 Trace step-by-step how React's declarative reconciliation algorithm
-determines what changed — and at what point does the declarative
+determines what changed â€” and at what point does the declarative
 abstraction break down, requiring you to reach for `useMemo` or
 `React.memo` as an imperative override?
 
 **Q2.** A SQL query planner chooses a full table scan over an
 available index on a column with 5 distinct values out of 1 million
-rows. Why is this the CORRECT declarative decision — and what does
+rows. Why is this the CORRECT declarative decision â€” and what does
 it reveal about the fundamental contract between a declarative
 programmer and a query engine?
