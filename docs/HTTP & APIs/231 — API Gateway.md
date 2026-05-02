@@ -23,12 +23,12 @@ tags:
 ⚡ TL;DR — An API Gateway is a reverse proxy that sits between clients and backend services, acting as the single entry point for all API traffic; it centralizes cross-cutting concerns — authentication, rate limiting, routing, logging, SSL termination, and request transformation — so individual services don't each need to implement them.
 
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ #231         │ Category: HTTP & APIs              │ Difficulty: ★★☆      │
+│ #231 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
 ├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ HTTP, REST, Load Balancer, Nets     │                      │
-│ Used by:     │ Microservices, API Mgmt, Multi-client│                     │
-│ Related:     │ Reverse Proxy, Service Mesh, BFF,   │                      │
-│              │ Rate Limiting, CORS, Auth            │                      │
+│ Depends on: │ HTTP, REST, Load Balancer, Nets │ │
+│ Used by: │ Microservices, API Mgmt, Multi-client│ │
+│ Related: │ Reverse Proxy, Service Mesh, BFF, │ │
+│ │ Rate Limiting, CORS, Auth │ │
 └──────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -76,6 +76,7 @@ through it, it checks credentials, enforces rules, and directs traffic to the ri
 place.
 
 **One analogy:**
+
 > Imagine a large office building with 20 departments (services). Without a reception
 > desk (API Gateway): every visitor must know which floor each department is on,
 > each department checks visitor badges separately (20 security checks), and there's
@@ -86,11 +87,12 @@ place.
 **One insight:**
 An API Gateway's power comes from centralizing policy enforcement at the boundary.
 Once a request passes through the gateway, backend services can trust that:
+
 - The token was valid (auth done)
 - The client hasn't exceeded rate limits (rate limiting done)
 - The request came from an allowed origin (CORS done)
 - The payload was valid JSON (schema validation done)
-Services become simpler because the gateway handled infrastructure concerns.
+  Services become simpler because the gateway handled infrastructure concerns.
 
 ---
 
@@ -136,8 +138,9 @@ Backend service receives clean, authenticated request
 
 **WHY NOT JUST USE NGINX?**
 Nginx is a reverse proxy. An API Gateway is Nginx + policy plugins + management API
-+ developer portal (often). In practice: Kong IS Nginx with a plugin layer on top.
-"API Gateway" is the architecture term; the implementation may well be Nginx.
+
+- developer portal (often). In practice: Kong IS Nginx with a plugin layer on top.
+  "API Gateway" is the architecture term; the implementation may well be Nginx.
 
 ---
 
@@ -146,6 +149,7 @@ Nginx is a reverse proxy. An API Gateway is Nginx + policy plugins + management 
 **SCENARIO:** Your company has 3 mobile clients (iOS, Android, Web) and 15 backend services. You're introducing API versioning.
 
 **WITHOUT API GATEWAY:**
+
 ```
 Problem 1: Where does v1 vs v2 routing live?
   → Each service must handle versioning internally
@@ -161,6 +165,7 @@ Problem 3: Blocking an abusive API key
 ```
 
 **WITH API GATEWAY:**
+
 ```
 Version routing: gateway routes /v1/* to old service versions, /v2/* to new
   → Services only know their own versions
@@ -358,23 +363,23 @@ public class GatewayConfig {
 
 ### ⚖️ Comparison Table
 
-| Component | Layer | Auth | Rate Limit | Service Discovery | Best For |
-|---|---|---|---|---|---|
-| **API Gateway** | Edge (north-south) | Yes | Yes | Often | External client → services |
-| **Reverse Proxy (Nginx)** | Edge | No (manual) | Plugin | No | Static routing |
-| **Service Mesh (Istio)** | Internal (east-west) | mTLS | Limited | Yes | Service-to-service |
-| **Load Balancer** | L4/L7 | No | No | Health checks | Horizontal scaling |
+| Component                 | Layer                | Auth        | Rate Limit | Service Discovery | Best For                   |
+| ------------------------- | -------------------- | ----------- | ---------- | ----------------- | -------------------------- |
+| **API Gateway**           | Edge (north-south)   | Yes         | Yes        | Often             | External client → services |
+| **Reverse Proxy (Nginx)** | Edge                 | No (manual) | Plugin     | No                | Static routing             |
+| **Service Mesh (Istio)**  | Internal (east-west) | mTLS        | Limited    | Yes               | Service-to-service         |
+| **Load Balancer**         | L4/L7                | No          | No         | Health checks     | Horizontal scaling         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| API Gateway replaces a service mesh | They solve different problems: Gateway = north-south (clients to backends), Mesh = east-west (service-to-service). Use both together |
-| API Gateway is always a single point of failure | Deploy in HA mode (multiple instances + Redis cluster for shared state); modern gateways are designed for it |
-| The gateway should do business logic | No — transform/route, don't process data. Business logic belongs in services |
-| Add all functionality as gateway plugins | Complex business rules in plugins create tight coupling to infrastructure; only cross-cutting concerns belong in the gateway |
+| Misconception                                   | Reality                                                                                                                              |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| API Gateway replaces a service mesh             | They solve different problems: Gateway = north-south (clients to backends), Mesh = east-west (service-to-service). Use both together |
+| API Gateway is always a single point of failure | Deploy in HA mode (multiple instances + Redis cluster for shared state); modern gateways are designed for it                         |
+| The gateway should do business logic            | No — transform/route, don't process data. Business logic belongs in services                                                         |
+| Add all functionality as gateway plugins        | Complex business rules in plugins create tight coupling to infrastructure; only cross-cutting concerns belong in the gateway         |
 
 ---
 
@@ -390,6 +395,7 @@ Gateway is the single process handing all traffic AND doing expensive operations
 (fetching JWKS on every request, large regex route matching, memory-hungry plugins).
 
 Diagnostic:
+
 ```bash
 # Check gateway plugin latency contribution:
 # Kong: Kong access log shows plugin latency breakdown per request

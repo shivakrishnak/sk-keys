@@ -23,12 +23,12 @@ tags:
 ⚡ TL;DR — API versioning is the practice of maintaining multiple coexisting versions of an API so that existing clients continue working while new capabilities are introduced; the primary strategies are URL path versioning (/v1/), header versioning (Accept: application/vnd.api+json;version=2), and query parameter versioning (?api-version=2).
 
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ #232         │ Category: HTTP & APIs              │ Difficulty: ★★☆      │
+│ #232 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
 ├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ HTTP, REST, API Design             │                      │
-│ Used by:     │ Public APIs, Mobile Apps, Enterprise│                     │
-│ Related:     │ API Deprecation, API GW, OpenAPI,  │                      │
-│              │ Backward Compatibility             │                      │
+│ Depends on: │ HTTP, REST, API Design │ │
+│ Used by: │ Public APIs, Mobile Apps, Enterprise│ │
+│ Related: │ API Deprecation, API GW, OpenAPI, │ │
+│ │ Backward Compatibility │ │
 └──────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -73,6 +73,7 @@ API versioning lets you change your API without breaking clients by running mult
 versions simultaneously and letting each client choose which contract it speaks.
 
 **One analogy:**
+
 > Versioning an API is like publishing a new edition of a textbook. Students who
 > already bought the 1st edition can still use it. New students get the 2nd edition
 > with corrections. Both editions exist simultaneously. You announce "1st edition
@@ -82,6 +83,7 @@ versions simultaneously and letting each client choose which contract it speaks.
 **One insight:**
 The key decision is: when is a change "breaking"? A change is breaking if it
 causes a client that was working to fail or produce wrong results:
+
 - Removing a field: breaking
 - Renaming a field: breaking
 - Changing a field's type: breaking
@@ -345,22 +347,22 @@ record UserResponseV2(Long id, String name, AddressV2 address) {
 
 ### ⚖️ Comparison Table
 
-| Strategy | Example | Visible | Cacheable | REST-Pure | Routing Ease |
-|---|---|---|---|---|---|
-| **URI Path** | `/v1/users` | ✅ | ✅ | ❌ | Very Easy |
-| **Query Param** | `/users?v=2` | ✅ | ✅ (with varying) | ❌ | Easy |
-| **Accept Header** | `Accept: application/vnd.api.v2+json` | ❌ | Needs Vary | ✅ | Harder |
-| **Custom Header** | `API-Version: 2` | ❌ | Needs Vary | ✅ | Harder |
+| Strategy          | Example                               | Visible | Cacheable         | REST-Pure | Routing Ease |
+| ----------------- | ------------------------------------- | ------- | ----------------- | --------- | ------------ |
+| **URI Path**      | `/v1/users`                           | ✅      | ✅                | ❌        | Very Easy    |
+| **Query Param**   | `/users?v=2`                          | ✅      | ✅ (with varying) | ❌        | Easy         |
+| **Accept Header** | `Accept: application/vnd.api.v2+json` | ❌      | Needs Vary        | ✅        | Harder       |
+| **Custom Header** | `API-Version: 2`                      | ❌      | Needs Vary        | ✅        | Harder       |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| All API changes require a new version | Only *breaking* changes require new versions; adding optional fields or new endpoints is non-breaking |
-| URI versioning violates REST principles | It does in theory, but in practice it's the most widely adopted and understood approach |
-| You must support old versions forever | No — announce a sunset date, track adoption, and retire when traffic is below a threshold |
+| Misconception                                    | Reality                                                                                                                                         |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| All API changes require a new version            | Only _breaking_ changes require new versions; adding optional fields or new endpoints is non-breaking                                           |
+| URI versioning violates REST principles          | It does in theory, but in practice it's the most widely adopted and understood approach                                                         |
+| You must support old versions forever            | No — announce a sunset date, track adoption, and retire when traffic is below a threshold                                                       |
 | Versioning is the same as backward compatibility | Versioning is one tool for managing backward compatibility; others include field aliasing, nullable migration fields, graceful schema evolution |
 
 ---
@@ -378,6 +380,7 @@ No systematic deprecation enforcement. Sunset dates were set but never enforced.
 v1 was kept available because "some important client might still be using it."
 
 Diagnostic:
+
 ```
 # Measure usage per version via access logs or metrics
 Prometheus: http_requests_total{path=~"/api/v1/.*"}

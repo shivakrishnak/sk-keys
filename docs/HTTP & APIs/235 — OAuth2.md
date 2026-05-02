@@ -24,12 +24,12 @@ tags:
 ⚡ TL;DR — OAuth 2.0 is an authorization framework that allows a user to grant a third-party application limited access to their resources at another service without sharing their password; the app receives a short-lived access token by directing the user through a consent flow — "Login with Google" and Stripe's API delegation are both OAuth 2.0.
 
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ #235         │ Category: HTTP & APIs              │ Difficulty: ★★☆      │
+│ #235 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
 ├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ HTTP, HTTPS, API Auth, JWT         │                      │
-│ Used by:     │ Social Login, Enterprise SSO,       │                      │
-│              │ Third-party Integrations, Mobile    │                      │
-│ Related:     │ OIDC, JWT, API Auth, API Keys, PKCE │                      │
+│ Depends on: │ HTTP, HTTPS, API Auth, JWT │ │
+│ Used by: │ Social Login, Enterprise SSO, │ │
+│ │ Third-party Integrations, Mobile │ │
+│ Related: │ OIDC, JWT, API Auth, API Keys, PKCE │ │
 └──────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -47,12 +47,13 @@ service's access. No visibility into what it accessed.
 OAuth was designed specifically to solve the password anti-pattern. The key insight:
 instead of giving a third party your credentials (full access), you give them a
 "voucher" (access token) that:
+
 1. Was issued by YOU via a consent flow ("Do you authorize CalSync to READ your calendar?")
 2. Is scoped (read-only, not write or email access)
 3. Expires (valid for 1 hour, not forever)
 4. Can be revoked (revoke just CalSync's access, not your whole account)
-OAuth 2.0 (RFC 6749, 2012) became the industry standard. OIDC built on top of it
-to standardize user authentication.
+   OAuth 2.0 (RFC 6749, 2012) became the industry standard. OIDC built on top of it
+   to standardize user authentication.
 
 ---
 
@@ -79,6 +80,7 @@ OAuth2 lets users grant third-party apps limited access to their data at another
 service, through a consent flow, without sharing their password.
 
 **One analogy:**
+
 > OAuth2 is like a valet key. Your main car key opens everything — trunk, all doors,
 > glove box. A valet key only starts the car and unlocks the driver door — limited
 > access, designed to be handed to someone you don't fully trust.
@@ -231,6 +233,7 @@ Then you issue YOUR OWN JWT to the user for subsequent requests.
 > deliver a package. FedEx can't have your room key (password).
 >
 > OAuth2 process:
+>
 > - FedEx asks the front desk (authorization server): "May I access Alice's room?"
 > - Front desk calls you: "FedEx wants to enter your room for 30 minutes to drop
 >   a package. Do you consent?"
@@ -451,23 +454,23 @@ public class ServiceClientConfig {
 
 ### ⚖️ Comparison Table
 
-| Grant Type | User Present | Use Case | PKCE | Tokens Issued |
-|---|---|---|---|---|
-| **Auth Code + PKCE** | Yes | Web/Mobile apps | Required | access + refresh |
-| **Client Credentials** | No | M2M, services | No | access only |
-| **Implicit** | Yes | (deprecated — don't use) | N/A | access only |
-| **ROPC** | Yes | (avoid for 3rd party) | No | access + refresh |
+| Grant Type             | User Present | Use Case                 | PKCE     | Tokens Issued    |
+| ---------------------- | ------------ | ------------------------ | -------- | ---------------- |
+| **Auth Code + PKCE**   | Yes          | Web/Mobile apps          | Required | access + refresh |
+| **Client Credentials** | No           | M2M, services            | No       | access only      |
+| **Implicit**           | Yes          | (deprecated — don't use) | N/A      | access only      |
+| **ROPC**               | Yes          | (avoid for 3rd party)    | No       | access + refresh |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| OAuth2 is an authentication protocol | OAuth2 is an authorization protocol — it does NOT authenticate users by itself. OIDC adds authentication (id_token, userinfo endpoint) |
-| The access_token IS the user session | The access_token grants access to a third-party resource. After validating GitHub identity, issue YOUR OWN session token |
-| Client Credentials needs PKCE | PKCE is for flows with a redirect (interactive). Client Credentials is a direct server-to-server POST — no redirect, no PKCE needed |
-| refresh_token can be stored in localStorage | Refresh tokens are long-lived and must be stored securely: HttpOnly cookie or secure device keychain — never localStorage (XSS risk) |
+| Misconception                               | Reality                                                                                                                                |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| OAuth2 is an authentication protocol        | OAuth2 is an authorization protocol — it does NOT authenticate users by itself. OIDC adds authentication (id_token, userinfo endpoint) |
+| The access_token IS the user session        | The access_token grants access to a third-party resource. After validating GitHub identity, issue YOUR OWN session token               |
+| Client Credentials needs PKCE               | PKCE is for flows with a redirect (interactive). Client Credentials is a direct server-to-server POST — no redirect, no PKCE needed    |
+| refresh_token can be stored in localStorage | Refresh tokens are long-lived and must be stored securely: HttpOnly cookie or secure device keychain — never localStorage (XSS risk)   |
 
 ---
 
@@ -484,6 +487,7 @@ Root Cause:
 State parameter missing or not validated. PKCE not implemented.
 
 Diagnostic:
+
 ```
 # Verify state parameter round-trip:
 1. Generate state = random 32-byte hex → store in session

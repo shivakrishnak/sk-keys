@@ -24,12 +24,12 @@ tags:
 ⚡ TL;DR — API authentication verifies the identity of a client making an API request; the main mechanisms are API Keys (simple shared secrets), Bearer Tokens / JWT (stateless signed tokens), OAuth 2.0 (delegated authorization), Basic Auth (username/password in header), and mTLS (mutual TLS certificate exchange) — each appropriate for different trust and use-case contexts.
 
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ #234         │ Category: HTTP & APIs              │ Difficulty: ★★☆      │
+│ #234 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
 ├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ HTTP, HTTPS, Cryptography Basics   │                      │
-│ Used by:     │ All APIs, API GW, Microservices     │                      │
-│ Related:     │ OAuth2, JWT, API Keys, HMAC, OIDC,  │                      │
-│              │ mTLS                               │                      │
+│ Depends on: │ HTTP, HTTPS, Cryptography Basics │ │
+│ Used by: │ All APIs, API GW, Microservices │ │
+│ Related: │ OAuth2, JWT, API Keys, HMAC, OIDC, │ │
+│ │ mTLS │ │
 └──────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -78,6 +78,7 @@ API authentication is proving to an API server "I am who I claim to be" before
 it will process your request — via a secret, a signed token, or a certificate.
 
 **One analogy:**
+
 > Authentication is the bouncer checking your ID. Authorization is the staff
 > deciding what you're allowed to do once inside. You need the ID check first.
 > Different IDs work in different contexts: passport (mTLS), club membership
@@ -118,14 +119,14 @@ Q3: Is the user authenticating directly with your service?
                  X-API-Key: sk_live_abc123def456ghi789
 
    Server receives key → look up in database → find associated account → grant/deny
-   
+
    Characteristics:
    + Simple to implement and use
    + Works for any HTTP client
    - Requires DB lookup on every request (unless cached)
    - No expiry unless explicitly rotated
    - Long-lived keys are security risk (no refresh)
-   
+
    Use when: developer integrations, server-to-server, webhooks
 
 2. HTTP BASIC AUTH
@@ -133,26 +134,26 @@ Q3: Is the user authenticating directly with your service?
                  (base64 of "user:password")
 
    Server: decode, look up user+hash in DB
-   
+
    + Very simple
    - Credentials on every request (even to proxies)
    - Not token-based: can't revoke without password change
    - MUST use HTTPS (trivially decoded in transit)
    - Never appropriate for end-user auth in modern APIs
-   
+
    Use when: internal admin endpoints, simple machine-to-machine with network controls
 
 3. BEARER TOKEN / JWT
    Client sends: Authorization: Bearer eyJhbGciOiJSUzI1NiJ9...
 
    Server: verify JWT signature (RSA/ECDSA/HMAC) → read claims → no DB needed
-   
+
    + Stateless verification (no DB hit)
    + Short-lived (exp claim) — limits damage from theft
    + Carries identity claims (userId, roles, scope)
    - Revocation is hard (token valid until expiry)
    - Payload is Base64-encoded, NOT encrypted (don't put secrets in it)
-   
+
    Use when: user authentication, API-to-API where issuer controls tokens
 
 4. OAUTH 2.0 BEARER TOKEN
@@ -164,19 +165,19 @@ Q3: Is the user authenticating directly with your service?
    + Refresh tokens for long-lived access without re-login
    + Scoped (token works for specific resources only)
    - More complex flow to implement
-   
+
    Use when: third-party apps accessing user data, enterprise SSO
 
 5. mTLS (MUTUAL TLS)
    Both server AND client present TLS certificates
    Server verifies client cert against trusted CA
-   
+
    + Cryptographically strong; no shared secrets
    + Certificate rotation possible without downtime
    + Works at TLS layer — transparent to application
    - Certificate provisioning complexity (requires PKI)
    - Common in zero-trust architectures and service meshes
-   
+
    Use when: service-to-service in zero-trust, high-security APIs (banking)
 ```
 
@@ -375,24 +376,24 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
 
 ### ⚖️ Comparison Table
 
-| Mechanism | Stateless | Expiry | Delegation | Complexity | Best For |
-|---|---|---|---|---|---|
-| **API Key** | No (DB) | Manual rotation | No | Low | Server-to-server, developer integration |
-| **Basic Auth** | No (DB) | None | No | Lowest | Internal/admin only |
-| **JWT Bearer** | Yes | Short-lived (exp) | No | Medium | User APIs, microservices |
-| **OAuth2** | Token yes | Short-lived + refresh | ✅ | High | Third-party delegation, SSO |
-| **mTLS** | Yes (cert) | Certificate expiry | No | High | Zero-trust, service mesh |
+| Mechanism      | Stateless  | Expiry                | Delegation | Complexity | Best For                                |
+| -------------- | ---------- | --------------------- | ---------- | ---------- | --------------------------------------- |
+| **API Key**    | No (DB)    | Manual rotation       | No         | Low        | Server-to-server, developer integration |
+| **Basic Auth** | No (DB)    | None                  | No         | Lowest     | Internal/admin only                     |
+| **JWT Bearer** | Yes        | Short-lived (exp)     | No         | Medium     | User APIs, microservices                |
+| **OAuth2**     | Token yes  | Short-lived + refresh | ✅         | High       | Third-party delegation, SSO             |
+| **mTLS**       | Yes (cert) | Certificate expiry    | No         | High       | Zero-trust, service mesh                |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Authentication = Authorization | Authentication = who you are; Authorization = what you're allowed to do. Separate concerns |
-| JWT is encrypted | JWT is Base64-encoded (not encrypted by default — use JWE for encryption); anyone can decode the payload |
-| API Keys are secure long-term | API Keys don't expire; rotate regularly (90 days). Use short-lived JWTs for user sessions |
-| OAuth2 is an authentication protocol | OAuth2 is an authorization protocol. OIDC (OpenID Connect) is the authentication layer on top of OAuth2 |
+| Misconception                        | Reality                                                                                                  |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| Authentication = Authorization       | Authentication = who you are; Authorization = what you're allowed to do. Separate concerns               |
+| JWT is encrypted                     | JWT is Base64-encoded (not encrypted by default — use JWE for encryption); anyone can decode the payload |
+| API Keys are secure long-term        | API Keys don't expire; rotate regularly (90 days). Use short-lived JWTs for user sessions                |
+| OAuth2 is an authentication protocol | OAuth2 is an authorization protocol. OIDC (OpenID Connect) is the authentication layer on top of OAuth2  |
 
 ---
 
@@ -409,6 +410,7 @@ JWT decoder configured with `jwsAlgorithm` only, not checking `iss` (issuer) or
 `aud` (audience) claims. Any RS256-signed JWT is accepted.
 
 Diagnostic / Fix:
+
 ```java
 // WRONG — only checks signature algorithm:
 NimbusJwtDecoder.withJwkSetUri(jwksUri).build();

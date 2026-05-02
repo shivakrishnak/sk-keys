@@ -23,12 +23,12 @@ tags:
 ⚡ TL;DR — API rate limiting controls how many requests a client can make in a time window; the server returns HTTP 429 (Too Many Requests) when the limit is exceeded; strategies include Fixed Window, Sliding Window, Token Bucket, and Leaky Bucket — each with different fairness and burst tolerance tradeoffs.
 
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ #233         │ Category: HTTP & APIs              │ Difficulty: ★★☆      │
+│ #233 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
 ├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ HTTP, Redis, API Gateway           │                      │
-│ Used by:     │ Public APIs, API GW, SaaS, Services│                      │
-│ Related:     │ API Throttling, API Gateway, Auth,  │                      │
-│              │ Circuit Breaker                    │                      │
+│ Depends on: │ HTTP, Redis, API Gateway │ │
+│ Used by: │ Public APIs, API GW, SaaS, Services│ │
+│ Related: │ API Throttling, API Gateway, Auth, │ │
+│ │ Circuit Breaker │ │
 └──────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -74,6 +74,7 @@ Rate limiting enforces "you can only make N requests per time window" — exceed
 it returns 429, protecting the server and ensuring fair access for all clients.
 
 **One analogy:**
+
 > Rate limiting is like a coffee shop with a loyalty punch card.
 > "10 coffees per day max per customer." If you try for the 11th, you're told
 > to come back tomorrow. This isn't because coffee is unavailable — it's so
@@ -82,6 +83,7 @@ it returns 429, protecting the server and ensuring fair access for all clients.
 
 **One insight:**
 The choice of algorithm matters more than the limit value:
+
 - Fixed Window can be "beaten" by 2x the limit at window boundaries
 - Token Bucket allows controlled bursting (good for real user behavior)
 - Leaky Bucket enforces a smooth rate regardless of burst (good for downstream protection)
@@ -365,24 +367,24 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
 ### ⚖️ Comparison Table
 
-| Algorithm | Boundary Attack | Burst Support | Memory | Precision | Best For |
-|---|---|---|---|---|---|
-| **Fixed Window** | ❌ Vulnerable | ✅ | O(1) | Low | Simple limits |
-| **Sliding Log** | ✅ Immune | Partial | O(requests) | High | Low-volume accuracy |
-| **Sliding Counter** | ✅ Near-immune | Partial | O(1) | Med-High | Scalable accuracy |
-| **Token Bucket** | ✅ Immune | ✅ Controlled | O(1) | High | User-facing APIs |
-| **Leaky Bucket** | ✅ Immune | ❌ | O(queue) | High | Downstream protection |
+| Algorithm           | Boundary Attack | Burst Support | Memory      | Precision | Best For              |
+| ------------------- | --------------- | ------------- | ----------- | --------- | --------------------- |
+| **Fixed Window**    | ❌ Vulnerable   | ✅            | O(1)        | Low       | Simple limits         |
+| **Sliding Log**     | ✅ Immune       | Partial       | O(requests) | High      | Low-volume accuracy   |
+| **Sliding Counter** | ✅ Near-immune  | Partial       | O(1)        | Med-High  | Scalable accuracy     |
+| **Token Bucket**    | ✅ Immune       | ✅ Controlled | O(1)        | High      | User-facing APIs      |
+| **Leaky Bucket**    | ✅ Immune       | ❌            | O(queue)    | High      | Downstream protection |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Rate limiting = throttling | Rate limiting rejects (429). Throttling delays (slows down). Different responses |
-| Count requests per IP for security | IP-based limits are easily bypassed by rotating IPs; use API keys + IP as secondary signal |
-| Rate limits must be per-second | Limits can be per minute, per hour, per day, or hierarchical (10/sec AND 1000/day) |
-| Redis INCR is always safe for rate limiting | INCR + check is NOT atomic; use INCR+EXPIRE in Lua script or SET with NX to avoid races |
+| Misconception                               | Reality                                                                                    |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Rate limiting = throttling                  | Rate limiting rejects (429). Throttling delays (slows down). Different responses           |
+| Count requests per IP for security          | IP-based limits are easily bypassed by rotating IPs; use API keys + IP as secondary signal |
+| Rate limits must be per-second              | Limits can be per minute, per hour, per day, or hierarchical (10/sec AND 1000/day)         |
+| Redis INCR is always safe for rate limiting | INCR + check is NOT atomic; use INCR+EXPIRE in Lua script or SET with NX to avoid races    |
 
 ---
 
@@ -399,6 +401,7 @@ Rate limit counter is in-process (memory) per gateway instance, not shared via R
 5 gateway nodes × 100 req/min limit = 500 effective req/min per client.
 
 Diagnostic:
+
 ```
 # Test: hit API 120 req/min (expect 429 at 101):
 for i in {1..120}; do

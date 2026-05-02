@@ -23,13 +23,13 @@ tags:
 ⚡ TL;DR — An operation is idempotent if applying it multiple times produces the same result as applying it once — making retries and deduplication safe.
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #030         │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆        │
+│ #030 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★★☆ │
 ├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Side Effects, Referential Transparency│                        │
-│ Used by:     │ Distributed Systems, HTTP & APIs,     │                        │
-│              │ Microservices                         │                        │
-│ Related:     │ Side Effects, Referential Transparency,│                        │
-│              │ Distributed Systems, HTTP Methods     │                        │
+│ Depends on: │ Side Effects, Referential Transparency│ │
+│ Used by: │ Distributed Systems, HTTP & APIs, │ │
+│ │ Microservices │ │
+│ Related: │ Side Effects, Referential Transparency,│ │
+│ │ Distributed Systems, HTTP Methods │ │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
 ---
@@ -62,7 +62,8 @@ An operation `f` is **idempotent** if applying it multiple times produces the sa
 Idempotent operations are safe to retry — running them twice is the same as running them once.
 
 **One analogy:**
-> An idempotent operation is like a **light switch going to ON**. Flipping it once: light is on. Flipping it again (it's already ON → no change): light is still on. The result is the same regardless of how many times you flip it *to ON*. Contrast with "toggle" (non-idempotent): the result depends on how many times you toggle — once is ON, twice is OFF, three times is ON again. In unreliable networks, idempotent operations are the switches, not the toggles.
+
+> An idempotent operation is like a **light switch going to ON**. Flipping it once: light is on. Flipping it again (it's already ON → no change): light is still on. The result is the same regardless of how many times you flip it _to ON_. Contrast with "toggle" (non-idempotent): the result depends on how many times you toggle — once is ON, twice is OFF, three times is ON again. In unreliable networks, idempotent operations are the switches, not the toggles.
 
 **One insight:**
 Idempotency is critical at every network boundary in a distributed system. Any operation that can be retried (which is any operation over a network — all of them) must be idempotent, or duplicates must be explicitly handled. The Stripe API, the AWS SDK, Kubernetes API server — all use idempotency keys. If your service doesn't, you're one network glitch away from duplicate data.
@@ -74,9 +75,9 @@ Idempotency is critical at every network boundary in a distributed system. Any o
 CORE INVARIANTS:
 
 1. `f(f(x)) = f(x)` — applying the operation twice gives the same result as once
-2. Idempotency is about *observable effects*, not just return values. `DELETE /orders/123` should produce "order 123 is deleted" whether called once or five times
+2. Idempotency is about _observable effects_, not just return values. `DELETE /orders/123` should produce "order 123 is deleted" whether called once or five times
 3. Idempotency is scoped: an operation may be idempotent for a given idempotency key but not globally (idempotency key "abc123" maps to one specific charge)
-4. Idempotency does not mean the operation is a no-op on retry — it means the *net observable effect* is the same
+4. Idempotency does not mean the operation is a no-op on retry — it means the _net observable effect_ is the same
 
 DERIVED DESIGN:
 
@@ -110,7 +111,7 @@ NON-IDEMPOTENT OPERATIONS:
 
 THE TRADE-OFFS:
 
-Gain: safe retries without duplicates; simplifies distributed systems error handling; eliminates a whole class of "double-charge" / "double-create" bugs.  
+Gain: safe retries without duplicates; simplifies distributed systems error handling; eliminates a whole class of "double-charge" / "double-create" bugs.
 Cost: idempotency keys require storage (idempotency key DB/cache); key management adds complexity; choosing the right idempotency scope requires design; "exactly-once" messaging is expensive (requires distributed coordination — most systems settle for "at-least-once" + idempotent consumers).
 
 ---
@@ -121,6 +122,7 @@ SETUP:
 Design the payment API for a payment processor. Clients might experience network timeouts and retry. How do you prevent double-charges?
 
 NAIVE DESIGN (no idempotency):
+
 ```
 POST /charges { amount: 100, customer: "cust_123" }
   → charges $100, creates charge_001, returns { id: "charge_001" }
@@ -134,6 +136,7 @@ Customer is charged $200. BUG.
 ```
 
 IDEMPOTENCY KEY DESIGN:
+
 ```
 Client generates a unique idempotency key before first attempt:
   idempotency_key = "order_5555_payment_attempt_1"  (UUID or business ID)
@@ -166,6 +169,7 @@ The idempotency key converts a non-idempotent `POST` (create charge) into an ide
 > Idempotency is like **pressing an elevator button that's already lit**. You press the button once — it's pressed. You press it again — it's already pressed, nothing changes. The elevator still comes once. Non-idempotent would be: every press sends a new request, and the elevator comes once per press — causing traffic jams. In distributed systems, the "elevator button" is an idempotency key, and "already lit" is the server's idempotency store saying "I already processed this request."
 
 **Mapping:**
+
 - "Pressing an elevator button" → making an API call
 - "Button already lit" → idempotency key already exists in server's store
 - "Nothing changes" → server returns the same result as the first call (no duplicate processing)
@@ -301,6 +305,7 @@ At scale (millions of API calls/hour), idempotency stores must be fast and consi
 ### 💻 Code Example
 
 **Example 1 — Idempotency key in a payment service (Spring Boot):**
+
 ```java
 @Service
 public class PaymentService {
@@ -342,6 +347,7 @@ public class PaymentService {
 ```
 
 **Example 2 — Database-level idempotency (upsert pattern):**
+
 ```java
 // NON-IDEMPOTENT: INSERT creates duplicate on retry
 jdbcTemplate.update(
@@ -371,6 +377,7 @@ jdbcTemplate.update(
 ```
 
 **Example 3 — Idempotent message consumer (Kafka + Spring):**
+
 ```java
 @KafkaListener(topics = "payment-events")
 public void handlePaymentEvent(PaymentEvent event) {
@@ -402,16 +409,16 @@ public void handlePaymentEvent(PaymentEvent event) {
 
 ### ⚖️ Comparison Table
 
-| Operation | Idempotent? | Why | Safe to Retry? |
-|---|---|---|---|
-| `GET /user/123` | Yes | No state change | Yes |
-| `PUT /user/123 { name: Alice }` | Yes | Same state on repeat | Yes |
-| `DELETE /user/123` | Yes | Deleted is deleted | Yes |
-| `POST /orders` (create new) | No | Creates new each time | Requires key |
-| `PATCH /counter/1 {increment: 1}` | No | Increments each time | Requires key |
-| `PATCH /user/1 {status: ACTIVE}` | Yes | SET is idempotent | Yes |
-| `INSERT INTO table` | No | Duplicates each time | Requires ON CONFLICT |
-| `INSERT ... ON CONFLICT DO UPDATE` | Yes | Upsert is idempotent | Yes |
+| Operation                          | Idempotent? | Why                   | Safe to Retry?       |
+| ---------------------------------- | ----------- | --------------------- | -------------------- |
+| `GET /user/123`                    | Yes         | No state change       | Yes                  |
+| `PUT /user/123 { name: Alice }`    | Yes         | Same state on repeat  | Yes                  |
+| `DELETE /user/123`                 | Yes         | Deleted is deleted    | Yes                  |
+| `POST /orders` (create new)        | No          | Creates new each time | Requires key         |
+| `PATCH /counter/1 {increment: 1}`  | No          | Increments each time  | Requires key         |
+| `PATCH /user/1 {status: ACTIVE}`   | Yes         | SET is idempotent     | Yes                  |
+| `INSERT INTO table`                | No          | Duplicates each time  | Requires ON CONFLICT |
+| `INSERT ... ON CONFLICT DO UPDATE` | Yes         | Upsert is idempotent  | Yes                  |
 
 **How to choose:** Design mutations as absolute-state SET operations (`SET status = 'active'`) rather than relative-change operations (`INCREMENT views by 1`) whenever possible. Add idempotency keys to any `POST` endpoint that performs important state changes. Use `ON CONFLICT DO UPDATE` (upsert) for database inserts where duplicates must be handled.
 
@@ -419,13 +426,13 @@ public void handlePaymentEvent(PaymentEvent event) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Idempotency = the operation does nothing on retry | No — the operation may DO work on retry (e.g., update a field to the same value). Idempotency means the NET OBSERVABLE EFFECT is the same. The operation can re-execute fully or return a cached result — both are valid. |
-| DELETE is always idempotent | By standard, `DELETE /resource/123` should return 2xx on second call (resource already gone). Some APIs return 404 on second call — which is technically a different response, but the net state (resource is deleted) is the same. Whether 404 violates idempotency is debated; the important thing is that the *resource* is gone either way. |
-| Idempotency and safety are the same thing | Different properties. Safe = no server state change (GET is safe). Idempotent = same effect on multiple calls (DELETE is idempotent but not safe — it changes state). A GET that logs every read is safe (no business state change) but technically not pure; a DELETE that sends one email is idempotent for state but not for email. |
-| PUT is always idempotent | `PUT` replaces the full resource — idempotent when the payload is the same. But if the server derives values from other state (e.g., `updatedAt = now()`), `PUT` may produce different state on repeated calls. Design PUT handlers carefully. |
-| Idempotency keys must be UUIDs | UUIDs are common but any unique identifier works. Stripe recommends business-meaningful keys when possible (e.g., "order_1234_payment_1") — better for debugging and audit trails than random UUIDs. |
+| Misconception                                     | Reality                                                                                                                                                                                                                                                                                                                                         |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Idempotency = the operation does nothing on retry | No — the operation may DO work on retry (e.g., update a field to the same value). Idempotency means the NET OBSERVABLE EFFECT is the same. The operation can re-execute fully or return a cached result — both are valid.                                                                                                                       |
+| DELETE is always idempotent                       | By standard, `DELETE /resource/123` should return 2xx on second call (resource already gone). Some APIs return 404 on second call — which is technically a different response, but the net state (resource is deleted) is the same. Whether 404 violates idempotency is debated; the important thing is that the _resource_ is gone either way. |
+| Idempotency and safety are the same thing         | Different properties. Safe = no server state change (GET is safe). Idempotent = same effect on multiple calls (DELETE is idempotent but not safe — it changes state). A GET that logs every read is safe (no business state change) but technically not pure; a DELETE that sends one email is idempotent for state but not for email.          |
+| PUT is always idempotent                          | `PUT` replaces the full resource — idempotent when the payload is the same. But if the server derives values from other state (e.g., `updatedAt = now()`), `PUT` may produce different state on repeated calls. Design PUT handlers carefully.                                                                                                  |
+| Idempotency keys must be UUIDs                    | UUIDs are common but any unique identifier works. Stripe recommends business-meaningful keys when possible (e.g., "order_1234_payment_1") — better for debugging and audit trails than random UUIDs.                                                                                                                                            |
 
 ---
 
@@ -440,6 +447,7 @@ Root Cause:
 `POST /payments` endpoint is not idempotent. Client experienced a network timeout, retried with a new request (no idempotency key), and the payment processor created a second charge.
 
 Diagnostic Command / Tool:
+
 ```sql
 -- Find duplicate charges within 60 seconds from the same customer:
 SELECT customer_id, amount, COUNT(*) as charge_count,
@@ -454,7 +462,7 @@ ORDER BY charge_count DESC;
 -- grep "POST /payments" access.log | awk '{print $5, $8, $10}' | sort | uniq -d
 ```
 
-Fix (immediate): refund the duplicate charge.  
+Fix (immediate): refund the duplicate charge.
 Fix (permanent): add idempotency key support to `POST /payments`. Require clients to send an `Idempotency-Key` header. Store keys in Redis with 24-hour TTL. Return the original response on duplicate key.
 
 Prevention:
@@ -471,6 +479,7 @@ Root Cause:
 Check-then-act is not atomic: two threads check for the key simultaneously, both find it absent, both proceed to process, both create records.
 
 Diagnostic Command / Tool:
+
 ```java
 // BUGGY: non-atomic check-then-act
 if (!idempotencyStore.contains(key)) {     // thread A and B both read: absent
@@ -499,15 +508,18 @@ Idempotency store operations must always be atomic. Never use read-then-write pa
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- `Side Effects` — idempotency is a property of *effectful* operations; understanding side effects explains what idempotency is protecting against
+
+- `Side Effects` — idempotency is a property of _effectful_ operations; understanding side effects explains what idempotency is protecting against
 - `Referential Transparency` — RT (pure functions, no effects) is the stronger property; idempotency is the practical safety property for effectful operations that can't be pure
 
 **Builds On This (learn these next):**
+
 - `Distributed Systems` — idempotency is a critical distributed systems design pattern; retry logic, message queues, and eventual consistency all rely on it
 - `HTTP & APIs` — idempotency is codified in HTTP method semantics; REST API design applies it throughout
 - `Microservices` — inter-service calls over the network must be idempotent for reliability; idempotency keys are a core microservices design pattern
 
 **Alternatives / Comparisons:**
+
 - `Exactly-Once Processing` — the alternative to idempotency; achieved via distributed transactions (2PC) or Kafka's transactional API; more expensive but eliminates need for idempotent consumers
 - `At-Least-Once Delivery` — the common messaging guarantee (Kafka, SQS); requires idempotent consumers to prevent duplicate processing
 - `Distributed Transactions (Saga pattern)` — an alternative approach to distributed consistency; uses compensating transactions instead of idempotency for rollback
