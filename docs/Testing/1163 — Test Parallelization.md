@@ -52,7 +52,7 @@ Parallel tests = faster CI; but only if tests are truly isolated (no shared muta
 
 GRANULARITY LEVELS:
 
-{%- raw -%}
+{% raw %}
 ```
 1. METHOD-LEVEL PARALLEL (within one class):
 
@@ -98,7 +98,7 @@ GRANULARITY LEVELS:
    Tests grouped by tag and distributed across 4 machines
    4x parallelism at CI level
 ```
-{%- endraw -%}
+{% endraw %}
 
 ISOLATION REQUIREMENTS FOR PARALLEL TESTS:
 
@@ -211,7 +211,7 @@ class OrderServiceParallelTest {
 }
 ```
 
-{%- raw -%}
+{% raw %}
 ```yaml
 # GitHub Actions â€” matrix test sharding
 jobs:
@@ -226,7 +226,7 @@ jobs:
           ./mvnw test \
             -Dsurefire.includesFile=shard-${{ matrix.shard }}.txt
 ```
-{%- endraw -%}
+{% endraw %}
 
 ### âš–ï¸ Comparison Table
 

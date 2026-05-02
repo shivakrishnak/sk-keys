@@ -361,7 +361,7 @@ Symptom: Elements with equal keys are reordered unexpectedly after sort.
 Root Cause: Using `<` instead of `<=` when comparing left vs right sub-array elements. `if (temp[i] < temp[j])` (strict less than) will choose right-half elements on equal â€” making sort unstable.
 
 Diagnostic:
-{%- raw -%}
+{% raw %}
 ```java
 // Test stability with equal-key objects:
 int[][] data = {{3,"A"},{1,"B"},{1,"C"}};
@@ -370,7 +370,7 @@ mergesort(data);
 assert data[0][1]=="B" && data[1][1]=="C"
     : "Stability violated!";
 ```
-{%- endraw -%}
+{% endraw %}
 
 Fix: Change to `if (temp[i] <= temp[j])` â€” when equal, left wins (preserves order).
 

@@ -50,7 +50,7 @@ Postman = GUI-first API testing (great for exploration + collections); REST Assu
 
 POSTMAN:
 
-{%- raw -%}
+{% raw %}
 ```
 COLLECTION STRUCTURE:
   Collection: "Order Service API"
@@ -90,7 +90,7 @@ NEWMAN (CLI â€” CI pipeline):
     --reporters cli,junit \
     --reporter-junit-export results.xml
 ```
-{%- endraw -%}
+{% endraw %}
 
 REST ASSURED:
 

@@ -312,7 +312,7 @@ SELECT * FROM orders WHERE total > 100;
 
 **Example 3 â€” React declarative UI:**
 
-{%- raw -%}
+{% raw %}
 ```jsx
 // BAD (imperative DOM manipulation):
 document.getElementById("btn").style.color = "red";
@@ -330,7 +330,7 @@ function Counter({ count }) {
 }
 // React diffs and updates the DOM â€” we declare WHAT, not HOW
 ```
-{%- endraw -%}
+{% endraw %}
 
 ### âš–ï¸ Comparison Table
 

@@ -261,7 +261,7 @@ k6 run \
 # âœ— errors: rate=0.15% > threshold=0.01%  â† THRESHOLD FAILED
 ```
 
-{%- raw -%}
+{% raw %}
 ```yaml
 # GitHub Actions â€” performance regression check
 - name: Run k6 load test
@@ -272,7 +272,7 @@ k6 run \
     AUTH_TOKEN: ${{ secrets.TEST_AUTH_TOKEN }}
     K6_CLOUD_TOKEN: ${{ secrets.K6_CLOUD_TOKEN }}
 ```
-{%- endraw -%}
+{% endraw %}
 
 ### âš–ï¸ Comparison Table
 

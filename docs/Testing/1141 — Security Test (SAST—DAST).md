@@ -170,7 +170,7 @@ Result: security issues found and fixed BEFORE production
 
 ### ðŸ’» Code Example
 
-{%- raw -%}
+{% raw %}
 ```yaml
 # GitHub Actions: SAST + SCA on every PR
 name: Security Scan
@@ -197,7 +197,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 ```
-{%- endraw -%}
+{% endraw %}
 
 ```java
 // Spring Security: example of what SAST looks for

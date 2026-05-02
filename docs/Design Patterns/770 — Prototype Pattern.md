@@ -230,7 +230,7 @@ Prototype Pattern â—„â”€â”€â”€â”€ (you are here)
 
 ### ðŸ’» Code Example
 
-{%- raw -%}
+{% raw %}
 ```java
 // Copy constructor approach (preferred over Cloneable):
 public class EmailTemplate {
@@ -275,7 +275,7 @@ EmailTemplate forBob = welcomeTemplate
     .withVariable("name", "Bob")
     .withVariable("company", "Globex");
 ```
-{%- endraw -%}
+{% endraw %}
 
 ---
 

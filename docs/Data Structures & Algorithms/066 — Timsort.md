@@ -290,7 +290,7 @@ Symptom: After multi-key sort (sort by B, then sort by A), elements with equal A
 Root Cause: Using `Arrays.sort(int[])` (Dual-Pivot Quicksort, unstable) or Quicksort instead of `Arrays.sort(Integer[])` / `Arrays.sort(objects, comparator)` (Timsort, stable).
 
 Diagnostic:
-{%- raw -%}
+{% raw %}
 ```java
 // Stability test:
 Integer[][] rows = {{1,3},{1,2},{1,1}};
@@ -300,7 +300,7 @@ Arrays.sort(rows, (a,b)->a[1]-b[1]);
 Arrays.sort(rows, (a,b)->a[0]-b[0]);
 assert rows[0][1]==1 && rows[1][1]==2 : "Unstable!";
 ```
-{%- endraw -%}
+{% endraw %}
 
 Fix: Use `Arrays.sort` with a Comparator (uses Timsort for object arrays). Never use `int[]` sort when stability matters â€” box to `Integer[]` first or use a comparator.
 

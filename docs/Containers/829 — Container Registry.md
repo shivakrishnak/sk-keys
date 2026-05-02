@@ -219,7 +219,7 @@ Container Registry â—„â”€â”€ (you are here)
 
 ### ðŸ’» Code Example
 
-{%- raw -%}
+{% raw %}
 ```yaml
 # GitHub Actions workflow: build + push to GitHub Container Registry
 name: Build and Push
@@ -275,7 +275,7 @@ jobs:
           cache-from: type=gha # GitHub Actions cache for layers
           cache-to: type=gha,mode=max
 ```
-{%- endraw -%}
+{% endraw %}
 
 ---
 

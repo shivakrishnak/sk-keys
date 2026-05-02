@@ -187,7 +187,7 @@ WITH Hot Shard mitigation:
 
 **Hot shard detection and mitigation pipeline:**
 
-{%- raw -%}
+{% raw %}
 ```
 MONITORING PIPELINE:
 
@@ -236,7 +236,7 @@ MONITORING PIPELINE:
        return shards.get(shardId);  // normal shard
    }
 ```
-{%- endraw -%}
+{% endraw %}
 
 ---
 

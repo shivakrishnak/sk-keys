@@ -263,7 +263,7 @@ Consumer-Driven Contract Testing  â—„â”€â”€â”€â”€ (you 
 
 **can-i-deploy check in GitHub Actions:**
 
-{%- raw -%}
+{% raw %}
 ```yaml
 # .github/workflows/deploy.yml (OrderService):
 - name: Publish Pact contracts
@@ -284,7 +284,7 @@ Consumer-Driven Contract Testing  â—„â”€â”€â”€â”€ (you 
   # Fails if CustomerService hasn't verified the latest OrderService contract
   # Prevents deploying OrderService if its API dependencies aren't satisfied
 ```
-{%- endraw -%}
+{% endraw %}
 
 ---
 

@@ -221,7 +221,7 @@ Docker Image â—„â”€â”€ (you are here)
 
 ### ðŸ’» Code Example
 
-{%- raw -%}
+{% raw %}
 ```bash
 # Inspect image structure
 docker image ls                                       # list local images
@@ -245,7 +245,7 @@ docker load < myapp_1.0.tar.gz                        # import on another machin
 docker scout cves nginx:1.24                          # Docker Scout (built-in)
 # or: trivy image nginx:1.24  (Aqua Trivy, widely used)
 ```
-{%- endraw -%}
+{% endraw %}
 
 ---
 

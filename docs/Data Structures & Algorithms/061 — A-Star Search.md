@@ -181,7 +181,7 @@ For city-scale road networks (V=10 million), A* with Euclidean heuristic still e
 ### ðŸ’» Code Example
 
 **Example 1 â€” A* on 2D grid:**
-{%- raw -%}
+{% raw %}
 ```java
 static final int INF = Integer.MAX_VALUE;
 
@@ -231,7 +231,7 @@ int h(int r,int c,int gr,int gc) {
     return Math.abs(r-gr)+Math.abs(c-gc);
 }
 ```
-{%- endraw -%}
+{% endraw %}
 
 **Example 2 â€” Verify admissibility:**
 ```java

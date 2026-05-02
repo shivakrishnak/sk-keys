@@ -53,7 +53,7 @@ Namespaces do NOT limit CPU/memory usage â€” that's **cgroups**. Namespaces
 
 ### ðŸ”© First Principles Explanation
 
-{%- raw -%}
+{% raw %}
 ```
 NAMESPACE TYPES DEEP DIVE:
 
@@ -173,7 +173,7 @@ DEMONSTRATION:
   # Enter container's network namespace:
   sudo nsenter -t $CONTAINER_PID --net ip addr
 ```
-{%- endraw -%}
+{% endraw %}
 
 ---
 
@@ -252,7 +252,7 @@ Linux Namespaces â—„â”€â”€ (you are here)
 
 ### ðŸ’» Code Example
 
-{%- raw -%}
+{% raw %}
 ```bash
 # Exploring namespaces with nsenter and unshare (no Docker needed)
 
@@ -285,7 +285,7 @@ ss -tlnp | grep :80     # nothing (nginx is in container's namespace)
 sudo nsenter -t $CONTAINER_PID --net ss -tlnp
 # Shows nginx listening on :80 in the container's network namespace
 ```
-{%- endraw -%}
+{% endraw %}
 
 ---
 

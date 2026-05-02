@@ -180,7 +180,7 @@ WITH SLI/SLO/SLA framework:
 
 **Prometheus + Grafana SLO dashboard:**
 
-{%- raw -%}
+{% raw %}
 ```yaml
 # prometheus rule: SLI calculation and SLO alerting
 
@@ -222,7 +222,7 @@ groups:
       # = 0.5: half budget consumed
       # < 0.0: budget exceeded (SLO breached)
 ```
-{%- endraw -%}
+{% endraw %}
 
 ---
 

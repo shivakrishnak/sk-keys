@@ -225,7 +225,7 @@ Quality Gate re-run: PASSED â†’ PR can merge.
 </plugin>
 ```
 
-{%- raw -%}
+{% raw %}
 ```yaml
 # GitHub Actions: SonarCloud analysis
 - name: Analyze with SonarCloud
@@ -240,7 +240,7 @@ Quality Gate re-run: PASSED â†’ PR can merge.
       -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
       -Dsonar.qualitygate.wait=true  # Fail CI if Quality Gate fails
 ```
-{%- endraw -%}
+{% endraw %}
 
 ```properties
 # sonar-project.properties
