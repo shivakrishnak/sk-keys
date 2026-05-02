@@ -24,14 +24,14 @@ tags:
 ⚡ TL;DR — gRPC Streaming extends standard gRPC request/response with three streaming patterns: server streaming (server sends multiple responses), client streaming (client sends multiple requests), and bidirectional streaming (both sides send concurrently) — all over a single multiplexed HTTP/2 connection.
 
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│ #224         │ Category: HTTP & APIs                  │ Difficulty: ★★★    │
+│ #224 │ Category: HTTP & APIs │ Difficulty: ★★★ │
 ├──────────────┼────────────────────────────────────────┼────────────────────┤
-│ Depends on:  │ gRPC, Protocol Buffers, HTTP/2,        │                    │
-│              │ Reactive Programming                   │                    │
-│ Used by:     │ Real-time Data Pipelines,              │                    │
-│              │ Microservices, Service Mesh            │                    │
-│ Related:     │ WebSocket, GraphQL Subscriptions,      │                    │
-│              │ Server-Sent Events                     │                    │
+│ Depends on: │ gRPC, Protocol Buffers, HTTP/2, │ │
+│ │ Reactive Programming │ │
+│ Used by: │ Real-time Data Pipelines, │ │
+│ │ Microservices, Service Mesh │ │
+│ Related: │ WebSocket, GraphQL Subscriptions, │ │
+│ │ Server-Sent Events │ │
 └──────────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -70,6 +70,7 @@ difference is just whether one or many messages are sent on either side.
 **gRPC Streaming** is the set of RPC patterns in gRPC that allow one or both
 sides of a call to send a sequence of messages over a single HTTP/2 stream.
 There are four patterns total:
+
 1. **Unary**: single request → single response (standard gRPC)
 2. **Server Streaming**: single request → stream of responses
 3. **Client Streaming**: stream of requests → single response
@@ -88,7 +89,9 @@ HTTP/2 DATA frames, allowing the gRPC layer to delineate individual messages.
 gRPC streaming lets you send a sequence of messages back and forth over one connection — server push, client upload, or full two-way conversation — all with the same typed efficiency as regular gRPC.
 
 **One analogy:**
+
 > Unary gRPC is a single text message exchange. gRPC streaming patterns are:
+>
 > - Server streaming: you ask a question, they send a long reply word by word
 > - Client streaming: you dictate a long message one word at a time, they reply once
 > - Bidirectional: a real-time phone call — both speaking and listening simultaneously
@@ -151,13 +154,16 @@ BIDIRECTIONAL:
 
 **HTTP/2 MESSAGE FRAMING:**
 Within an HTTP/2 DATA frame, gRPC messages are prefixed with 5 bytes:
+
 ```
 [compression flag: 1 byte] [message length: 4 bytes] [serialized protobuf]
 ```
+
 This framing allows multiple gRPC messages within a single HTTP/2 DATA frame,
 and allows the receiver to reconstruct message boundaries.
 
 **THE TRADE-OFFS:**
+
 - Gain: eliminates polling and repeated connection setup for real-time data.
 - Cost: long-lived streams require connection management; server must handle streams lasting minutes/hours.
 - Gain: same binary efficiency as unary gRPC for each individual message.
@@ -174,6 +180,7 @@ A financial data service delivers real-time stock price updates to client dashbo
 500,000 clients each subscribe to 10 stock symbols. Prices update 100 times/second per symbol.
 
 **POLLING APPROACH:**
+
 ```
 Requests/second = 500,000 clients × 10 symbols × (1 req / 1 second) = 5,000,000 req/s
 Each unary gRPC call: new HTTP/2 stream per call (though reusing TCP connection)
@@ -183,6 +190,7 @@ Latency: up to 1 second (polling interval)
 ```
 
 **SERVER STREAMING APPROACH:**
+
 ```
 Streams: 500,000 clients × 10 symbols = 5,000,000 concurrent open HTTP/2 streams
 Stream setup: once per subscription (when client connects)
@@ -467,14 +475,15 @@ asyncStub.tailLogs(
 
 ### ⚖️ Comparison Table
 
-| Pattern | Use Case | Server Overhead | Latency | Complexity |
-|---|---|---|---|---|
-| **Unary** | CRUD, single queries | Low | Low | Low |
-| **Server Streaming** | Feeds, subscriptions, downloads | Medium (open streams) | Very Low | Medium |
-| **Client Streaming** | Bulk upload, sensor data | Low (until final response) | Low | Medium |
-| **Bidirectional** | Chat, real-time collab, GPS | High (open streams both ways) | Very Low | High |
+| Pattern              | Use Case                        | Server Overhead               | Latency  | Complexity |
+| -------------------- | ------------------------------- | ----------------------------- | -------- | ---------- |
+| **Unary**            | CRUD, single queries            | Low                           | Low      | Low        |
+| **Server Streaming** | Feeds, subscriptions, downloads | Medium (open streams)         | Very Low | Medium     |
+| **Client Streaming** | Bulk upload, sensor data        | Low (until final response)    | Low      | Medium     |
+| **Bidirectional**    | Chat, real-time collab, GPS     | High (open streams both ways) | Very Low | High       |
 
 **vs WebSocket:**
+
 - gRPC streaming: typed, binary, generated code, connects to service mesh/proxy
 - WebSocket: untyped by default, text/binary, manual framing, direct browser support
 
@@ -482,13 +491,13 @@ asyncStub.tailLogs(
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Bidirectional streaming means request/response in alternation | Both streams are fully independent — server can send 100 messages before client sends its first |
-| Server streaming is like WebSocket | gRPC server streaming is unidirectional (server → client) after the initial request; WebSocket is full duplex from the start |
-| Cancelling a streaming call is automatic | Client cancellation must be explicitly handled server-side: check `isCancelled()` or register `setOnCancelHandler()` to avoid zombie streams |
-| gRPC streaming works through all HTTP proxies | HTTP/1.1 proxies don't support HTTP/2 streaming; require HTTP/2-aware proxies (Envoy, nginx with http2 enabled) |
-| Flow control is automatic | HTTP/2 window flow control is automatic; application-level flow control (`isReady()`) must be manually checked to prevent overwhelming the client |
+| Misconception                                                 | Reality                                                                                                                                           |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bidirectional streaming means request/response in alternation | Both streams are fully independent — server can send 100 messages before client sends its first                                                   |
+| Server streaming is like WebSocket                            | gRPC server streaming is unidirectional (server → client) after the initial request; WebSocket is full duplex from the start                      |
+| Cancelling a streaming call is automatic                      | Client cancellation must be explicitly handled server-side: check `isCancelled()` or register `setOnCancelHandler()` to avoid zombie streams      |
+| gRPC streaming works through all HTTP proxies                 | HTTP/1.1 proxies don't support HTTP/2 streaming; require HTTP/2-aware proxies (Envoy, nginx with http2 enabled)                                   |
+| Flow control is automatic                                     | HTTP/2 window flow control is automatic; application-level flow control (`isReady()`) must be manually checked to prevent overwhelming the client |
 
 ---
 
@@ -507,6 +516,7 @@ When clients disconnect, the gRPC framework marks the stream as cancelled but th
 application code continues calling `onNext()` (silently dropped) and holding resources.
 
 Diagnostic Command / Tool:
+
 ```java
 // Enable gRPC server metrics — monitor active streams:
 // With Micrometer + gRPC:
@@ -545,6 +555,7 @@ connection. A large client-streaming upload using most of the TCP window causes
 ALL other streams on the connection to pause — TCP head-of-line blocking.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Check for TCP retransmits and stalls during gRPC calls:
 netstat -s | grep -i retransmit
@@ -569,16 +580,19 @@ with latency-sensitive unary calls on the same channel.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `gRPC` — must understand unary gRPC, proto files, stub generation before streaming
 - `Protocol Buffers` — streaming messages are still protobuf-serialized
 - `HTTP/2` — streaming is built on HTTP/2 streams; must understand multiplexing and flow control
 
 **Builds On This (learn these next):**
+
 - `Real-time Data Pipelines` — server streaming is a foundation for real-time data delivery
 - `Service Mesh` — Envoy and Istio provide observability and traffic management for gRPC streaming
 - `Reactive Programming` — bidirectional streaming naturally maps to reactive stream primitives
 
 **Alternatives / Comparisons:**
+
 - `WebSocket` — unstructured bidirectional streaming; browser-native but untyped
 - `GraphQL Subscriptions` — typed real-time subscriptions built on WebSocket; for client-facing APIs
 - `Server-Sent Events` — simple unidirectional server push; HTTP/1.1 compatible, simpler than gRPC streaming

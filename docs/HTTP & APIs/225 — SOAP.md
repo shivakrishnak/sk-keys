@@ -24,13 +24,13 @@ tags:
 ⚡ TL;DR — SOAP (Simple Object Access Protocol) is an XML-based messaging protocol for exchanging structured information in web services; it defines a strict message envelope format, uses WSDL for service contracts, and enables built-in standards for security (WS-Security), transactions, and reliability — making it the dominant enterprise API protocol before REST's rise.
 
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ #225         │ Category: HTTP & APIs              │ Difficulty: ★★☆      │
+│ #225 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
 ├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ HTTP, XML, Web Services, REST      │                      │
-│ Used by:     │ Enterprise Integration, Legacy     │                      │
-│              │ Systems, Banking APIs              │                      │
-│ Related:     │ REST, gRPC, GraphQL, WSDL,        │                      │
-│              │ XML Schema                         │                      │
+│ Depends on: │ HTTP, XML, Web Services, REST │ │
+│ Used by: │ Enterprise Integration, Legacy │ │
+│ │ Systems, Banking APIs │ │
+│ Related: │ REST, gRPC, GraphQL, WSDL, │ │
+│ │ XML Schema │ │
 └──────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -54,11 +54,10 @@ has built-in enterprise reliability features (security, transactions, receipts).
 
 **THE INVENTION MOMENT:**
 SOAP was designed by Dave Winer, Don Box, Bob Atkinson, and Mohsen Al-Ghosein
-at Microsoft in 1998, submitted to W3C, and became a W3C recommendation in
-2003. The insight: use the universal HTTP transport (firewall-friendly) with
+at Microsoft in 1998, submitted to W3C, and became a W3C recommendation in 2003. The insight: use the universal HTTP transport (firewall-friendly) with
 XML (text, platform-neutral) and a standardized message envelope structure.
 WSDL (Web Services Description Language) provides the machine-readable service
-contract. Enterprise extensions (WS-*) add security, transactions, and reliability
+contract. Enterprise extensions (WS-\*) add security, transactions, and reliability
 on top. For its era, SOAP solved real problems that REST didn't address with
 formal standards.
 
@@ -73,7 +72,7 @@ consists of an **Envelope** (root element containing Header and Body), an option
 the actual message payload or fault. SOAP is transport-independent (HTTP, SMTP,
 JMS) but HTTP POST is most common. **WSDL** (Web Services Description Language)
 is the XML-based interface definition language for SOAP, describing operations,
-messages, bindings, and service endpoints. The WS-* family of specifications
+messages, bindings, and service endpoints. The WS-\* family of specifications
 extends SOAP with enterprise standards: WS-Security (message-level encryption
 and signatures), WS-ReliableMessaging (guaranteed delivery), WS-AtomicTransaction
 (distributed transactions).
@@ -86,6 +85,7 @@ and signatures), WS-ReliableMessaging (guaranteed delivery), WS-AtomicTransactio
 SOAP is XML-envelope-wrapped messages over HTTP with a formal service contract (WSDL) and enterprise extensions for security and transactions — the precursor to REST for enterprise web services.
 
 **One analogy:**
+
 > SOAP is like certified mail with a standardized envelope. The envelope (SOAP Envelope)
 > has a standard form. The header section (SOAP Header) can contain customs declarations
 > (security tokens, routing instructions). The body has your actual letter (payload).
@@ -99,7 +99,7 @@ SOAP is XML-envelope-wrapped messages over HTTP with a formal service contract (
 SOAP's verbosity, which made it "heavy" compared to REST, was the price of its
 formal guarantees. Every SOAP call is self-describing (WSDL), every message is
 structured (Envelope/Body), and enterprise extensions provide what REST still
-lacks as built-in standards: message-level security (not just transport), 
+lacks as built-in standards: message-level security (not just transport),
 distributed transactions, and acknowledged delivery. REST won the internet due
 to simplicity; SOAP held on in enterprises due to these guarantees.
 
@@ -137,6 +137,7 @@ to simplicity; SOAP held on in enterprises due to these guarantees.
 ```
 
 **WSDL COMPONENTS:**
+
 ```
 WSDL describes:
   types        — XML Schema types for messages
@@ -146,7 +147,8 @@ WSDL describes:
   service      — endpoint URL where service lives
 ```
 
-**WS-* EXTENSIONS:**
+**WS-\* EXTENSIONS:**
+
 ```
 WS-Security         — message-level encryption + digital signatures
                       (works even if TLS is terminated at intermediary)
@@ -157,10 +159,11 @@ WS-PolicyAttachment — service quality requirements expressed in WSDL
 ```
 
 **THE TRADE-OFFS:**
+
 - Gain: formal service contract (WSDL) enables auto-generated clients with compile-time type safety.
 - Cost: XML verbosity → 5–10× larger payloads than equivalent JSON/Protobuf.
 - Gain: WS-Security provides message-level security that survives multi-hop routing.
-- Cost: WS-* specifications are complex; full implementation is enterprise middleware territory.
+- Cost: WS-\* specifications are complex; full implementation is enterprise middleware territory.
 - Gain: built-in transport independence — same service can be called over HTTP, SMTP, JMS.
 - Cost: tooling required (WSDL generators, SOAP stacks) — no "just use curl" simplicity.
 
@@ -170,6 +173,7 @@ WS-PolicyAttachment — service quality requirements expressed in WSDL
 
 **SETUP:**
 A healthcare system needs to share patient records between:
+
 - Hospital A (Java, on-premises)
 - Insurance Company (COBOL mainframe)
 - Government Registry (ASP.NET)
@@ -180,13 +184,14 @@ to an agreed-upon patient data schema.
 
 **WITHOUT SOAP:**
 Three separate bilateral integrations, each custom:
+
 - Hospital→Insurance: custom HTTPS API with custom auth
 - Hospital→Gov: FTP batch files (daily)
 - Insurance→Gov: EDI X12 (legacy format)
-Three different schemas. Three different security models. No standard audit trail.
-Compliance is per-integration.
+  Three different schemas. Three different security models. No standard audit trail.
+  Compliance is per-integration.
 
-**WITH SOAP + WS-*:**
+**WITH SOAP + WS-\*:**
 One WSDL defines the patient record exchange interface.
 WS-Security: XML signature from sender + XML encryption for body.
 WS-ReliableMessaging: acknowledgment of each message + replay protection.
@@ -195,7 +200,7 @@ All three systems use the same envelope, the same schema, the same security mode
 Compliance is built into the protocol.
 
 **THE INSIGHT:**
-SOAP's enterprise WS-* stack is overkill for simple web APIs. But for
+SOAP's enterprise WS-\* stack is overkill for simple web APIs. But for
 legally mandated data exchange between organizations with compliance requirements
 (healthcare, finance, government), the formal standards ARE the feature.
 The verbosity is the price of the audit trail.
@@ -261,7 +266,7 @@ integration — before REST was articulated. The XML decision reflects the era:
 XML was the universal data interchange standard of the late 1990s/early 2000s.
 The formal WSDL contract was a direct response to CORBA's tight coupling —
 WSDL lets you describe what a service does without sharing IDL files or runtime
-environments. The WS-* stack (WS-Security, WS-RM, WS-AT) was the industry's
+environments. The WS-\* stack (WS-Security, WS-RM, WS-AT) was the industry's
 attempt to replicate CORBA/EJB's enterprise features (transactions, security,
 guaranteed delivery) in a platform-neutral way. REST won because Roy Fielding's
 2000 dissertation articulated a simpler architectural style that mapped naturally
@@ -304,6 +309,7 @@ protocol stack.
 ```
 
 **SOAP Fault (error) structure:**
+
 ```xml
 <soap:Body>
   <soap:Fault>
@@ -435,29 +441,29 @@ public class AccountEndpoint {
 
 ### ⚖️ Comparison Table
 
-| Feature | SOAP | REST/JSON | gRPC |
-|---|---|---|---|
-| **Format** | XML | JSON | Binary (Protobuf) |
-| **Transport** | HTTP, SMTP, JMS | HTTP only | HTTP/2 only |
-| **Contract** | WSDL (required, strict) | OpenAPI (optional) | .proto (required) |
-| **Security** | WS-Security (message-level) | TLS + OAuth (transport) | TLS + gRPC auth |
-| **Transactions** | WS-AtomicTransaction | None built-in | None built-in |
-| **Error handling** | SOAP Fault in body | HTTP status codes | gRPC status codes |
-| **Payload size** | Large (verbose XML) | Medium (JSON) | Small (binary) |
-| **Tooling** | IDE codegen (heavy) | curl/Postman | grpcurl/IDE |
-| **Best for** | Legacy/enterprise integration | Web/mobile APIs | Internal services |
+| Feature            | SOAP                          | REST/JSON               | gRPC              |
+| ------------------ | ----------------------------- | ----------------------- | ----------------- |
+| **Format**         | XML                           | JSON                    | Binary (Protobuf) |
+| **Transport**      | HTTP, SMTP, JMS               | HTTP only               | HTTP/2 only       |
+| **Contract**       | WSDL (required, strict)       | OpenAPI (optional)      | .proto (required) |
+| **Security**       | WS-Security (message-level)   | TLS + OAuth (transport) | TLS + gRPC auth   |
+| **Transactions**   | WS-AtomicTransaction          | None built-in           | None built-in     |
+| **Error handling** | SOAP Fault in body            | HTTP status codes       | gRPC status codes |
+| **Payload size**   | Large (verbose XML)           | Medium (JSON)           | Small (binary)    |
+| **Tooling**        | IDE codegen (heavy)           | curl/Postman            | grpcurl/IDE       |
+| **Best for**       | Legacy/enterprise integration | Web/mobile APIs         | Internal services |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| SOAP always means old/bad code | SOAP is often the only option for integrating with banking, government, or healthcare legacy systems that haven't migrated |
-| SOAP errors return non-200 HTTP status | SOAP faults are in the XML body; HTTP status code behavior is inconsistent — many servers return 200 for client faults |
-| REST is strictly better than SOAP | For message-level security, distributed transactions, and cross-org guaranteed delivery, SOAP's WS-* extensions still have no direct REST equivalent |
-| SOAP only works over HTTP | SOAP is transport-independent — it also runs over SMTP, JMS, and other transports (though HTTP POST is overwhelmingly dominant) |
-| WSDL and SOAP are the same thing | WSDL describes the service contract; SOAP is the message format — they're paired but distinct. WSDL 2.0 also supports REST/HTTP bindings |
+| Misconception                          | Reality                                                                                                                                               |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SOAP always means old/bad code         | SOAP is often the only option for integrating with banking, government, or healthcare legacy systems that haven't migrated                            |
+| SOAP errors return non-200 HTTP status | SOAP faults are in the XML body; HTTP status code behavior is inconsistent — many servers return 200 for client faults                                |
+| REST is strictly better than SOAP      | For message-level security, distributed transactions, and cross-org guaranteed delivery, SOAP's WS-\* extensions still have no direct REST equivalent |
+| SOAP only works over HTTP              | SOAP is transport-independent — it also runs over SMTP, JMS, and other transports (though HTTP POST is overwhelmingly dominant)                       |
+| WSDL and SOAP are the same thing       | WSDL describes the service contract; SOAP is the message format — they're paired but distinct. WSDL 2.0 also supports REST/HTTP bindings              |
 
 ---
 
@@ -475,6 +481,7 @@ the WSDL specifies. SOAP dispatching is namespace-sensitive — even
 a trailing slash difference causes routing failure.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Inspect the raw SOAP request vs WSDL:
 curl -v -X POST http://service/endpoint \
@@ -513,6 +520,7 @@ processing. 10MB of data can expand to 100MB+ in DOM object graph.
 Heap pressure causes GC pauses exceeding connection timeout.
 
 Diagnostic Command / Tool:
+
 ```
 # Check GC activity during large SOAP call:
 -verbose:gc or JVM GC log
@@ -538,17 +546,20 @@ For truly large payloads, consider streaming alternatives (gRPC client streaming
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `HTTP` — SOAP's most common transport; must understand POST, headers, status codes
 - `XML` — SOAP messages are XML; must understand XML syntax, namespaces, and schemas
-- `Web Services` — SOAP is the foundation of the WS-* web service standards stack
+- `Web Services` — SOAP is the foundation of the WS-\* web service standards stack
 
 **Builds On This (learn these next):**
+
 - `WSDL` — the service description language paired with SOAP; auto-generates client code
 - `XML Schema (XSD)` — defines the types used in SOAP message bodies
 - `WS-Security` — adds message-level security on top of SOAP transport
 
 **Alternatives / Comparisons:**
-- `REST` — the modern replacement for SOAP in most scenarios; simpler but lacks formal WS-* standards
+
+- `REST` — the modern replacement for SOAP in most scenarios; simpler but lacks formal WS-\* standards
 - `gRPC` — the high-performance binary alternative to SOAP for internal services
 - `GraphQL` — for complex client-driven data fetching (different use case than SOAP)
 

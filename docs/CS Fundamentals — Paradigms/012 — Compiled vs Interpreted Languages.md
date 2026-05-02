@@ -22,12 +22,12 @@ tags:
 ⚡ TL;DR — Compiled languages translate source code to machine instructions before execution; interpreted languages translate and run code line-by-line at runtime.
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│ #012         │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆        │
+│ #012 │ Category: CS Fundamentals — Paradigms │ Difficulty: ★☆☆ │
 ├──────────────┼───────────────────────────────────────┼────────────────────────┤
-│ Depends on:  │ Type Systems (Static vs Dynamic),     │                        │
-│              │ Memory Management Models              │                        │
-│ Used by:     │ JVM, JIT Compiler, Virtual Machine   │                        │
-│ Related:     │ JIT Compiler, Bytecode, Transpilation │                        │
+│ Depends on: │ Type Systems (Static vs Dynamic), │ │
+│ │ Memory Management Models │ │
+│ Used by: │ JVM, JIT Compiler, Virtual Machine │ │
+│ Related: │ JIT Compiler, Bytecode, Transpilation │ │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
 ---
@@ -50,7 +50,7 @@ This is exactly why compilers and interpreters were invented — to bridge the g
 
 ### 📘 Textbook Definition
 
-A **compiled language** is one in which source code is translated in its entirety into machine code (or an intermediate bytecode) by a compiler *before execution*. The resulting binary or bytecode is then executed directly by the CPU or virtual machine. An **interpreted language** is one in which source code is read and executed by an interpreter *at runtime*, translating and running each statement (or small block) sequentially without a prior full-program translation step. Modern languages blur this boundary through **just-in-time (JIT) compilation**, which compiles hot code paths at runtime.
+A **compiled language** is one in which source code is translated in its entirety into machine code (or an intermediate bytecode) by a compiler _before execution_. The resulting binary or bytecode is then executed directly by the CPU or virtual machine. An **interpreted language** is one in which source code is read and executed by an interpreter _at runtime_, translating and running each statement (or small block) sequentially without a prior full-program translation step. Modern languages blur this boundary through **just-in-time (JIT) compilation**, which compiles hot code paths at runtime.
 
 ---
 
@@ -60,10 +60,11 @@ A **compiled language** is one in which source code is translated in its entiret
 Compiled = translate everything first, then run; interpreted = translate and run at the same time.
 
 **One analogy:**
+
 > A compiled book is a translated novel ready to read the moment it's printed — the translator worked upfront. An interpreted conversation is a live translator relaying sentences one at a time in real-time — no preparation, but slower and less optimised.
 
 **One insight:**
-The real trade-off is not speed vs convenience — it's *when* errors are found and *who* does the work. Compilation moves heavy lifting to build time (fast runtime, early error detection). Interpretation moves it to runtime (flexible, but pays a tax on every execution).
+The real trade-off is not speed vs convenience — it's _when_ errors are found and _who_ does the work. Compilation moves heavy lifting to build time (fast runtime, early error detection). Interpretation moves it to runtime (flexible, but pays a tax on every execution).
 
 ---
 
@@ -83,10 +84,10 @@ If translation happens at runtime, the same source file runs everywhere an inter
 
 THE TRADE-OFFS:
 
-Compilation gain: maximum performance, early error detection, no runtime dependency on source code.  
+Compilation gain: maximum performance, early error detection, no runtime dependency on source code.
 Compilation cost: build step required, longer development iteration cycle, platform-specific binary.
 
-Interpretation gain: portability, fast iteration (edit and run immediately), dynamic features (eval, live code loading).  
+Interpretation gain: portability, fast iteration (edit and run immediately), dynamic features (eval, live code loading).
 Interpretation cost: slower execution, runtime errors that compilation would have caught, interpreter must be deployed with program.
 
 The industry's answer to "can we have both?" was JIT compilation — compile at runtime when you detect a hot path, getting near-compiled performance with interpreted flexibility.
@@ -100,12 +101,13 @@ You write a function that loops 1 billion times, adding 1 to a counter. Implemen
 
 WHAT HAPPENS WITHOUT COMPILATION (Python interpreted):
 For each of the 1 billion iterations, the Python interpreter:
+
 1. Reads the bytecode instruction for the increment
 2. Looks up the variable name in a dictionary
 3. Calls the integer addition method
 4. Allocates a new integer object (Python ints are immutable)
 5. Updates the dictionary reference
-This lookup, allocation, and method dispatch repeats 1 billion times. Result: ~60 seconds.
+   This lookup, allocation, and method dispatch repeats 1 billion times. Result: ~60 seconds.
 
 WHAT HAPPENS WITH COMPILATION (C compiled):
 The compiler sees the loop, infers the entire body can be reduced to a single `ADD` register instruction repeated N times. It may even constant-fold the entire result at compile time. The CPU executes one instruction per clock cycle. Result: ~0.5 seconds — 120× faster.
@@ -120,20 +122,21 @@ The interpreter's abstraction (variables as named dictionary entries, every int 
 > Compilation is like a **restaurant with prep cooks**: all ingredients are chopped, sauces made, and dishes partially assembled before service starts. When a customer orders, the final dish is served in seconds. Interpretation is like a **chef cooking everything to order from scratch**: maximum freshness and flexibility, but every dish takes the full cook time.
 
 **Mapping:**
-- "Prep work" → compilation / translation to machine code  
-- "Customer orders" → executing the program  
-- "Serving quickly" → fast runtime execution  
-- "Cooking from scratch each time" → interpreter translating on every run  
-- "Menu changes require new prep" → recompilation needed for source changes  
 
-**Where this analogy breaks down:** A JIT compiler is like a prep cook who *watches what customers order most* and pre-prepares only those dishes — a hybrid that gets you most of the speed with most of the flexibility. The prep-cook analogy misses this adaptive optimisation.
+- "Prep work" → compilation / translation to machine code
+- "Customer orders" → executing the program
+- "Serving quickly" → fast runtime execution
+- "Cooking from scratch each time" → interpreter translating on every run
+- "Menu changes require new prep" → recompilation needed for source changes
+
+**Where this analogy breaks down:** A JIT compiler is like a prep cook who _watches what customers order most_ and pre-prepares only those dishes — a hybrid that gets you most of the speed with most of the flexibility. The prep-cook analogy misses this adaptive optimisation.
 
 ---
 
 ### 📶 Gradual Depth — Four Levels
 
 **Level 1 — What it is (anyone can understand):**
-When you write code, a computer can't understand it directly — it only understands very simple binary instructions. A compiler translates your code into those instructions *before* you run the program. An interpreter translates your code *while* running it, line by line. Compiled programs tend to run faster; interpreted ones are easier to change and test quickly.
+When you write code, a computer can't understand it directly — it only understands very simple binary instructions. A compiler translates your code into those instructions _before_ you run the program. An interpreter translates your code _while_ running it, line by line. Compiled programs tend to run faster; interpreted ones are easier to change and test quickly.
 
 **Level 2 — How to use it (junior developer):**
 In compiled languages (C, Go, Rust, Java), you run a build step (`gcc main.c -o main`, `javac Main.java`) that produces a binary or bytecode file. Then you run that artifact (`./main`, `java Main`). Errors are caught at compile time — you can't run a program that doesn't compile. In interpreted languages (Python, Ruby, JavaScript in Node), you run the source directly (`python script.py`). Errors only appear when the interpreter reaches the problematic line.
@@ -142,7 +145,7 @@ In compiled languages (C, Go, Rust, Java), you run a build step (`gcc main.c -o 
 A compiler performs lexical analysis, parsing, semantic analysis, IR (intermediate representation) generation, optimisation passes, and code generation — producing a machine-code binary or bytecode. The process is multi-pass and sees the full program, enabling global optimisations. An interpreter maintains an execution context (a stack, a symbol table, a call frame) and processes instructions sequentially — it has no global view. Java uses both: `javac` compiles to platform-neutral bytecode (`.class` files), then the JVM interprets or JIT-compiles that bytecode at runtime.
 
 **Level 4 — Why it was designed this way (senior/staff):**
-Early languages (Fortran, COBOL) were compiled because hardware was slow and expensive — pay compilation cost once and run efficiently many times. Interpreted languages emerged for interactive use (LISP, Smalltalk) where the feedback loop mattered more than performance. The JVM's "compile once, run anywhere" model used bytecode as a portable intermediate, with the JVM handling the final machine translation per platform — a brilliant compromise between portability and performance. Modern JavaScript engines (V8, SpiderMonkey) use tiered JIT: interpret first, profile hot paths, compile them with increasing optimisation levels. This adaptive approach outperforms simple ahead-of-time compilation for dynamic code because it optimises based on *actual* runtime behaviour.
+Early languages (Fortran, COBOL) were compiled because hardware was slow and expensive — pay compilation cost once and run efficiently many times. Interpreted languages emerged for interactive use (LISP, Smalltalk) where the feedback loop mattered more than performance. The JVM's "compile once, run anywhere" model used bytecode as a portable intermediate, with the JVM handling the final machine translation per platform — a brilliant compromise between portability and performance. Modern JavaScript engines (V8, SpiderMonkey) use tiered JIT: interpret first, profile hot paths, compile them with increasing optimisation levels. This adaptive approach outperforms simple ahead-of-time compilation for dynamic code because it optimises based on _actual_ runtime behaviour.
 
 ---
 
@@ -196,13 +199,14 @@ Early languages (Fortran, COBOL) were compiled because hardware was slow and exp
 **JIT compilation (hybrid):**
 
 The JVM's approach:
+
 1. `javac` compiles Java source to bytecode (platform-neutral).
 2. JVM starts by interpreting bytecode.
 3. JIT profiler identifies "hot" methods (executed >10,000 times by default).
 4. JIT compiles hot methods to native machine code.
 5. Future calls use the compiled native code — interpreter overhead eliminated.
 
-**Happy path:** A compiled C binary runs a tight loop at 1 ns per iteration. A JIT-compiled Java loop approaches C speed after warm-up. A Python interpreted loop runs ~100× slower due to per-instruction overhead.  
+**Happy path:** A compiled C binary runs a tight loop at 1 ns per iteration. A JIT-compiled Java loop approaches C speed after warm-up. A Python interpreted loop runs ~100× slower due to per-instruction overhead.
 **Failure mode:** JIT compilation requires warm-up time — a Java service cold-started under load may be slow for the first 30–60 seconds while JIT compiles hot paths. Kubernetes readiness probes must account for JVM warm-up.
 
 ---
@@ -249,6 +253,7 @@ At 10,000 requests/second, JVM warm-up becomes a deployment risk — rolling res
 ### 💻 Code Example
 
 **Example 1 — C: ahead-of-time compiled to native binary:**
+
 ```c
 // sum.c — compiled: gcc sum.c -O2 -o sum
 #include <stdio.h>
@@ -264,6 +269,7 @@ int main() {
 ```
 
 **Example 2 — Python: interpreted at runtime:**
+
 ```python
 # sum.py — interpreted: python sum.py
 total = 0
@@ -273,6 +279,7 @@ print(total)  # runs in ~60s — per-instruction interpreter overhead
 ```
 
 **Example 3 — Java: compiled to bytecode, JIT at runtime:**
+
 ```java
 // Sum.java — compiled: javac Sum.java → java Sum
 public class Sum {
@@ -289,6 +296,7 @@ public class Sum {
 ```
 
 **Example 4 — Production: JVM warm-up mitigation:**
+
 ```bash
 # Check JIT compilation activity in running JVM:
 jcmd <PID> Compiler.CodeHeap_Analytics
@@ -309,16 +317,16 @@ readinessProbe:
 
 ### ⚖️ Comparison Table
 
-| Language | Execution Model | Startup Time | Peak Performance | Portability |
-|---|---|---|---|---|
-| **C / C++** | Compiled to native | Instant | Highest | Recompile per platform |
-| Go | Compiled to native | Instant | Very high | Recompile per platform |
-| Rust | Compiled to native | Instant | Highest | Recompile per platform |
-| Java | Bytecode + JIT | 1–3s (JIT warm-up) | Near-native | JAR runs anywhere (JVM) |
-| C# / .NET | Bytecode + JIT | 1–2s | Near-native | .NET runtime required |
-| Python | Interpreted (+bytecode cache) | Fast | Low (without C ext) | Any Python install |
-| JavaScript | Interpreted + JIT (V8) | Fast | Medium-high | Any browser / Node.js |
-| Ruby | Interpreted | Fast | Low | Any Ruby install |
+| Language    | Execution Model               | Startup Time       | Peak Performance    | Portability             |
+| ----------- | ----------------------------- | ------------------ | ------------------- | ----------------------- |
+| **C / C++** | Compiled to native            | Instant            | Highest             | Recompile per platform  |
+| Go          | Compiled to native            | Instant            | Very high           | Recompile per platform  |
+| Rust        | Compiled to native            | Instant            | Highest             | Recompile per platform  |
+| Java        | Bytecode + JIT                | 1–3s (JIT warm-up) | Near-native         | JAR runs anywhere (JVM) |
+| C# / .NET   | Bytecode + JIT                | 1–2s               | Near-native         | .NET runtime required   |
+| Python      | Interpreted (+bytecode cache) | Fast               | Low (without C ext) | Any Python install      |
+| JavaScript  | Interpreted + JIT (V8)        | Fast               | Medium-high         | Any browser / Node.js   |
+| Ruby        | Interpreted                   | Fast               | Low                 | Any Ruby install        |
 
 **How to choose:** Choose compiled (C, Go, Rust) when startup time, peak throughput, or bare-metal performance matter. Choose JVM/CLR for portability + near-native performance at scale. Choose interpreted (Python, Ruby) for scripting, data science, and prototyping where iteration speed matters more than execution speed.
 
@@ -326,13 +334,13 @@ readinessProbe:
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Python is always slow | CPython is slow for CPU-bound work. NumPy/Pandas use C extensions — they run at C speed. PyPy JIT-compiles Python and can match Java performance. |
-| Java is slow because it's interpreted | The JVM has a sophisticated JIT that can produce code faster than unoptimised C. "Java is slow" is 1990s thinking. |
-| Compiled = static typing | Go is compiled and has static types, but JavaScript (V8) is JIT-compiled with dynamic types. Compilation strategy and type system are independent. |
-| Scripts don't need compilation | Python compiles to `.pyc` bytecode automatically on first import — "interpreted" Python is actually bytecode-interpreted, not source-interpreted. |
-| Compiled programs can't change at runtime | JVM supports class loading at runtime, JIT deoptimisation, and bytecode instrumentation. "Compiled" does not mean "immutable at runtime." |
+| Misconception                             | Reality                                                                                                                                            |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Python is always slow                     | CPython is slow for CPU-bound work. NumPy/Pandas use C extensions — they run at C speed. PyPy JIT-compiles Python and can match Java performance.  |
+| Java is slow because it's interpreted     | The JVM has a sophisticated JIT that can produce code faster than unoptimised C. "Java is slow" is 1990s thinking.                                 |
+| Compiled = static typing                  | Go is compiled and has static types, but JavaScript (V8) is JIT-compiled with dynamic types. Compilation strategy and type system are independent. |
+| Scripts don't need compilation            | Python compiles to `.pyc` bytecode automatically on first import — "interpreted" Python is actually bytecode-interpreted, not source-interpreted.  |
+| Compiled programs can't change at runtime | JVM supports class loading at runtime, JIT deoptimisation, and bytecode instrumentation. "Compiled" does not mean "immutable at runtime."          |
 
 ---
 
@@ -347,6 +355,7 @@ Root Cause:
 The JVM starts by interpreting bytecode. JIT compilation triggers after a method is called ~10,000 times (C1/C2 thresholds). Until hot methods are compiled to native code, every call pays interpreter overhead.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Monitor JIT compilation events:
 java -XX:+PrintCompilation -jar app.jar 2>&1 | grep -v "made not entrant"
@@ -372,6 +381,7 @@ Root Cause:
 CPython's interpreter executes bytecode with per-instruction overhead: dictionary lookups for variable names, reference counting for memory, and dynamic dispatch for every operation. None of these can be eliminated in pure Python.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Profile to find hot paths:
 python -m cProfile -s cumulative script.py | head -20
@@ -397,6 +407,7 @@ Root Cause:
 Interpreted languages delay error detection to runtime. A syntax error in an uncovered code path passes all tests but crashes in production when that path executes.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Static analysis as a compile-time substitute:
 mypy --strict src/             # Python type checking
@@ -415,15 +426,18 @@ Treat static analysis, type checking, and coverage as mandatory gates in CI — 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Type Systems (Static vs Dynamic)` — compiled languages typically have static type systems; the two concepts are related but independent
 - `Memory Management Models` — compiled languages control memory layout; interpreters abstract it; both approaches have different allocation strategies
 
 **Builds On This (learn these next):**
+
 - `JIT Compiler` — the hybrid that gives interpreted languages compiled-language performance by compiling hot paths at runtime
 - `JVM` — the most sophisticated bytecode runtime, combining interpretation, JIT, and garbage collection
 - `Bytecode` — the intermediate representation used by Java, Python, and .NET between source code and machine execution
 
 **Alternatives / Comparisons:**
+
 - `Transpilation` — source-to-source compilation (TypeScript → JavaScript, CoffeeScript → JavaScript) — a form of compilation that targets another high-level language
 - `AOT Compilation` — ahead-of-time compilation in contrast to JIT; GraalVM native-image compiles Java to a native binary at build time
 - `Interpretation vs Simulation` — conceptually related: virtual machines interpret instruction sets; emulators simulate hardware architectures

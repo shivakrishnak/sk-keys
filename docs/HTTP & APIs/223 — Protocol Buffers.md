@@ -24,14 +24,14 @@ tags:
 ⚡ TL;DR — Protocol Buffers (protobuf) is Google's language-neutral, platform-neutral, extensible binary serialization format — smaller and faster to encode/decode than JSON, with a strongly typed schema defined in `.proto` files that generate code in any target language.
 
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ #223         │ Category: HTTP & APIs              │ Difficulty: ★★☆      │
+│ #223 │ Category: HTTP & APIs │ Difficulty: ★★☆ │
 ├──────────────┼────────────────────────────────────┼──────────────────────┤
-│ Depends on:  │ gRPC, Serialization,               │                      │
-│              │ Binary Encoding, Type Systems      │                      │
-│ Used by:     │ gRPC, Event Streaming (Kafka),     │                      │
-│              │ Data Interchange                   │                      │
-│ Related:     │ JSON, Avro, Thrift, MessagePack,   │                      │
-│              │ FlatBuffers                        │                      │
+│ Depends on: │ gRPC, Serialization, │ │
+│ │ Binary Encoding, Type Systems │ │
+│ Used by: │ gRPC, Event Streaming (Kafka), │ │
+│ │ Data Interchange │ │
+│ Related: │ JSON, Avro, Thrift, MessagePack, │ │
+│ │ FlatBuffers │ │
 └──────────────────────────────────────────────────────────────────────────┘
 
 ### 🔥 The Problem This Solves
@@ -42,6 +42,7 @@ But for systems making millions of inter-service calls per second, JSON's
 verbosity has real costs. A user record with 10 fields as JSON: 300 bytes,
 6ms to parse in Java. As protobuf: 60 bytes, 0.3ms to parse.
 At 100,000 requests/second, that's:
+
 - JSON: 30MB/s network, 600 CPU-seconds/s parsing
 - Protobuf: 6MB/s network, 30 CPU-seconds/s parsing
 
@@ -83,6 +84,7 @@ backward compatibility (old reader + new writer) and forward compatibility
 Protobuf is a compact, typed, self-describing binary format where field names are replaced by numbers — faster and smaller than JSON, with schema-enforced type safety.
 
 **One analogy:**
+
 > JSON is like labeling every item in a moving box: "winter coat", "winter coat",
 > "winter coat"... repeated for every box. Protobuf has a master manifest
 > (schema) that says "item #3 = winter coat." The boxes only contain the number 3,
@@ -104,11 +106,13 @@ number is the forever identity of that field.
 **WIRE FORMAT:**
 
 Protobuf encoding is a sequence of key-value pairs:
+
 ```
 Key = (field_number << 3) | wire_type
 ```
 
 Wire types:
+
 ```
 0 = Varint (int32, int64, bool, enum)
 1 = 64-bit (fixed64, double)
@@ -117,6 +121,7 @@ Wire types:
 ```
 
 **Varint encoding** (the core space-saving mechanism):
+
 - Small integers use fewer bytes: `0–127` = 1 byte; `128–16383` = 2 bytes, etc.
 - Contrast JSON: `42` = 2 bytes; `1000000` = 7 bytes
 - Protobuf `42` = 1 byte; `1000000` = 3 bytes
@@ -125,7 +130,7 @@ Wire types:
 
 ```json
 // JSON: 47 bytes (spaces removed)
-{"id":42,"name":"Alice","active":true}
+{ "id": 42, "name": "Alice", "active": true }
 ```
 
 ```
@@ -145,6 +150,7 @@ message User {
 **4× smaller in this example; real-world typically 3–10× smaller.**
 
 **BACKWARD COMPATIBILITY RULES:**
+
 ```
 SAFE:
   ✓ Add new fields with new field numbers
@@ -159,6 +165,7 @@ UNSAFE / BREAKING:
 ```
 
 **THE TRADE-OFFS:**
+
 - Gain: 3–10× smaller than JSON → network bandwidth and storage savings.
 - Cost: binary format → not human-readable; requires tooling to inspect.
 - Gain: compile-time type safety via generated code.
@@ -189,10 +196,12 @@ Analytics: still tries to interpret bytes encoded as the new type using old fiel
 If old was `int32` and new is `string`, reads garbage or crashes. ✗
 
 **SCENARIO C — Field 5 properly reserved:**
+
 ```protobuf
 reserved 5;
 reserved "old_order_status";
 ```
+
 Old analytics code doesn't use field 5 anymore (reads it as unknown → ignored).
 New code using field 5 would fail compilation (protoc enforces reserved).
 Safe evolution. ✓
@@ -406,28 +415,28 @@ User fromJson = builder.build();
 
 ### ⚖️ Comparison Table
 
-| Feature | Protobuf | JSON | Avro | Thrift |
-|---|---|---|---|---|
-| **Format** | Binary | Text | Binary | Binary |
-| **Schema** | Required (.proto) | None / optional (JSON Schema) | Required (.avsc) | Required (.thrift) |
-| **Size** | Smallest (3–10×) | Largest | Small | Small |
-| **Speed** | Fastest | Slowest | Fast | Fast |
-| **Human-readable** | No | Yes | No | No |
-| **Code gen** | Strong (10+ langs) | N/A | Java-focused | Many langs |
-| **Versioning** | Field numbers | Manual | Schema registry, aliases | Field IDs |
-| **Primary use** | gRPC, internal | REST APIs, everywhere | Kafka/Hadoop | Internal APIs |
+| Feature            | Protobuf           | JSON                          | Avro                     | Thrift             |
+| ------------------ | ------------------ | ----------------------------- | ------------------------ | ------------------ |
+| **Format**         | Binary             | Text                          | Binary                   | Binary             |
+| **Schema**         | Required (.proto)  | None / optional (JSON Schema) | Required (.avsc)         | Required (.thrift) |
+| **Size**           | Smallest (3–10×)   | Largest                       | Small                    | Small              |
+| **Speed**          | Fastest            | Slowest                       | Fast                     | Fast               |
+| **Human-readable** | No                 | Yes                           | No                       | No                 |
+| **Code gen**       | Strong (10+ langs) | N/A                           | Java-focused             | Many langs         |
+| **Versioning**     | Field numbers      | Manual                        | Schema registry, aliases | Field IDs          |
+| **Primary use**    | gRPC, internal     | REST APIs, everywhere         | Kafka/Hadoop             | Internal APIs      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Protobuf messages are self-describing | Protobuf binary is NOT self-describing — you need the `.proto` schema to decode it (unlike JSON) |
-| Renaming a field is a breaking change | Field names don't exist in the binary format — renaming is safe for binary compat; breaking only for JSON transcoding |
-| Proto3 removed required and optional — all fields are required | Opposite: in proto3, ALL fields are optional with defaults; required doesn't exist |
-| Default values in proto3 mean null can't be detected | Correct — proto3 can't distinguish `name=""` from "name not set." Use `google.protobuf.StringValue` wrapper or `optional` keyword (proto3 optional, added in 3.15) |
-| Protobuf is only for gRPC | Protobuf is frequently used as a standalone serialization format for Kafka events, database storage, and data pipelines |
+| Misconception                                                  | Reality                                                                                                                                                            |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Protobuf messages are self-describing                          | Protobuf binary is NOT self-describing — you need the `.proto` schema to decode it (unlike JSON)                                                                   |
+| Renaming a field is a breaking change                          | Field names don't exist in the binary format — renaming is safe for binary compat; breaking only for JSON transcoding                                              |
+| Proto3 removed required and optional — all fields are required | Opposite: in proto3, ALL fields are optional with defaults; required doesn't exist                                                                                 |
+| Default values in proto3 mean null can't be detected           | Correct — proto3 can't distinguish `name=""` from "name not set." Use `google.protobuf.StringValue` wrapper or `optional` keyword (proto3 optional, added in 3.15) |
+| Protobuf is only for gRPC                                      | Protobuf is frequently used as a standalone serialization format for Kafka events, database storage, and data pipelines                                            |
 
 ---
 
@@ -446,6 +455,7 @@ using number `5` again (as an `int32`). Messages with cached schema treat the
 new `int32` bytes as a `string` → garbage.
 
 Diagnostic Command / Tool:
+
 ```bash
 # Check proto history with field number reuse:
 git log -p -- path/to/schema.proto | grep "= 5;"
@@ -478,6 +488,7 @@ Proto3 doesn't differentiate between "field not present" and "field set to
 default value (0)." No null concept for basic types.
 
 Diagnostic Command / Tool:
+
 ```protobuf
 // Problem: can't tell 0 from "not set"
 message UserStats {
@@ -509,15 +520,18 @@ Default proto3 primitives are best for fields where default is always meaningful
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Serialization` — understand what serialization is before learning protobuf's specific approach
 - `Binary Encoding` — protobuf uses varint and length-delimited encoding; helps to understand binary formats
 - `Type Systems` — protobuf's schema is a type system; strongly typed vs weakly typed matters
 
 **Builds On This (learn these next):**
+
 - `gRPC` — protobuf is gRPC's serialization layer; must understand protobuf to use gRPC effectively
 - `Event Streaming (Kafka)` — protobuf is widely used as Kafka message serialization with schema registry
 
 **Alternatives / Comparisons:**
+
 - `JSON` — text format, human-readable, universal support; slower and larger
 - `Avro` — schema-based binary format popular in Kafka/Hadoop ecosystems
 - `Thrift` — Facebook's equivalent to protobuf; less popular now
