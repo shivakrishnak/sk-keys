@@ -23,11 +23,11 @@ tags:
 
 ⚡ TL;DR — VarHandle is a typed, safe replacement for `sun.misc.Unsafe` that provides fine-grained memory access modes (plain, volatile, acquire/release, opaque) and CAS operations on any field or array element with full JVM safety guarantees.
 
-| #0364 | Category: Java Concurrency | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Atomic Classes, CAS, Volatile, Java Memory Model, Unsafe | |
-| **Used by:** | Lock-Free Data Structures, High-Performance Libraries, Custom Atomics | |
-| **Related:** | AtomicInteger, Unsafe, Volatile, StampedLock, MemoryOrder | |
+| #0364           | Category: Java Concurrency                                            | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Atomic Classes, CAS, Volatile, Java Memory Model, Unsafe              |                 |
+| **Used by:**    | Lock-Free Data Structures, High-Performance Libraries, Custom Atomics |                 |
+| **Related:**    | AtomicInteger, Unsafe, Volatile, StampedLock, MemoryOrder             |                 |
 
 ---
 
@@ -56,6 +56,7 @@ Java 9 introduced `VarHandle` (JEP 193) as the official, safe, typed equivalent 
 VarHandle is the safe, official way to do CAS and precise memory-order operations on any field without using `Unsafe`.
 
 **One analogy:**
+
 > VarHandle is like a notarized power of attorney for a specific bank account field. Once notarized (at creation time), you can use it to perform any operation — read, write, CAS — with exactly the memory ordering you specify. The notarization handles all safety checks once; each use is fast. Compare to `Unsafe`: a lockpick that works on any lock but the bank might change the locks on you.
 
 **One insight:**
@@ -66,6 +67,7 @@ VarHandle's most underused feature is its memory ordering modes. Most code uses 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. VarHandle is created once via `MethodHandles.lookup()` — type safety verified at creation.
 2. Access modes map to JMM ordering guarantees:
    - `plain`: like regular field read/write — compiler/CPU can reorder freely
@@ -123,6 +125,7 @@ MEMORY ORDERING MODES vs COST:
 ```
 
 **THE TRADE-OFFS:**
+
 - **Gain:** Official API; zero overhead vs Unsafe on modern JVMs; explicit memory ordering; works in module system.
 - **Cost:** Verbose creation; requires `MethodHandles.lookup()` (module access rules apply); requires deep JMM knowledge to use correctly; harder to use than `AtomicInteger` for simple cases.
 
@@ -137,6 +140,7 @@ You're implementing a lock-free, single-producer/single-consumer (SPSC) ring buf
 Both `writeIndex` and `readIndex` are `volatile`. Every write and read of these indices incurs a full memory fence. On modern x86, a full store fence (`MFENCE`) costs ~40-100 CPU cycles. At 100M ops/sec, fences alone cost 4–10 CPU seconds per second — all overhead.
 
 **WITH VarHandle + acquire/release:**
+
 - Producer: writes to slot (plain), then `writeIndex.setRelease(newIndex)` — one store fence.
 - Consumer: `readIndex.getAcquire()` — one load fence — then reads slot (plain).
 - The acquire/release pair is sufficient: consumer's acquire read sees everything before producer's release write.
@@ -335,13 +339,13 @@ while (!NEXT.weakCompareAndSetPlain(node, expected, newNext)) {
 
 ### ⚖️ Comparison Table
 
-| API | Safety | Overhead | Access Modes | Best For |
-|---|---|---|---|---|
-| `volatile` field | JVM safe | Full fence | Volatile only | Simple shared flags |
-| `AtomicInteger/Long` | JVM safe | One extra object | Volatile | Simple counters/refs |
-| `AtomicXxxFieldUpdater` | JVM safe | String-name risk | Volatile | Legacy field CAS |
-| **VarHandle** | JVM safe | None (inlined) | All (plain to volatile) | Library internals, performance |
-| `sun.misc.Unsafe` | Not safe | None (inlined) | All | JDK internals only |
+| API                     | Safety   | Overhead         | Access Modes            | Best For                       |
+| ----------------------- | -------- | ---------------- | ----------------------- | ------------------------------ |
+| `volatile` field        | JVM safe | Full fence       | Volatile only           | Simple shared flags            |
+| `AtomicInteger/Long`    | JVM safe | One extra object | Volatile                | Simple counters/refs           |
+| `AtomicXxxFieldUpdater` | JVM safe | String-name risk | Volatile                | Legacy field CAS               |
+| **VarHandle**           | JVM safe | None (inlined)   | All (plain to volatile) | Library internals, performance |
+| `sun.misc.Unsafe`       | Not safe | None (inlined)   | All                     | JDK internals only             |
 
 **How to choose:** Use `AtomicInteger`/`AtomicLong` for application-level atomic operations — simpler API, no boilerplate. Use `VarHandle` when building libraries that need CAS on existing class fields without allocation overhead, or when you need weaker-than-volatile access modes for performance.
 
@@ -349,12 +353,12 @@ while (!NEXT.weakCompareAndSetPlain(node, expected, newNext)) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| VarHandle is just a nicer Unsafe API | VarHandle adds JVM type safety, bounds checking, module system compatibility, and correctness guarantees that Unsafe never provided. It's not "nicer Unsafe" — it's the first truly safe low-level JVM variable access API |
-| acquire/release is weaker so it's less safe | Correctness is about using the minimum ordering that your protocol requires. acquire/release is correct for producer-consumer; using volatile for it is paying extra for unneeded guarantees — wasteful but not unsafe |
+| Misconception                                          | Reality                                                                                                                                                                                                                                                                             |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| VarHandle is just a nicer Unsafe API                   | VarHandle adds JVM type safety, bounds checking, module system compatibility, and correctness guarantees that Unsafe never provided. It's not "nicer Unsafe" — it's the first truly safe low-level JVM variable access API                                                          |
+| acquire/release is weaker so it's less safe            | Correctness is about using the minimum ordering that your protocol requires. acquire/release is correct for producer-consumer; using volatile for it is paying extra for unneeded guarantees — wasteful but not unsafe                                                              |
 | VarHandle operations on x86 are equivalent to volatile | On x86's TSO (Total Store Order) model, loads have acquire semantics and stores have release semantics by default — so acquire/release and volatile produce the same machine code on x86. But on ARM or RISC-V, they produce different instructions. Write for the JMM, not for x86 |
-| You need VarHandle for all concurrent field access | You only need VarHandle for CAS operations or weaker-than-volatile memory ordering. Normal shared fields should just be `volatile` or protected by standard synchronization |
+| You need VarHandle for all concurrent field access     | You only need VarHandle for CAS operations or weaker-than-volatile memory ordering. Normal shared fields should just be `volatile` or protected by standard synchronization                                                                                                         |
 
 ---
 
@@ -367,6 +371,7 @@ while (!NEXT.weakCompareAndSetPlain(node, expected, newNext)) {
 **Root Cause:** Using `plain` or `opaque` access modes when `acquire/release` is required for correctness. x86's TSO model masks the bug; ARM's weaker memory model exposes it.
 
 **Diagnostic Command:**
+
 ```bash
 # Run stress test on ARM:
 # Use jcstress (JVM Concurrency Stress Tests) — the only
@@ -385,17 +390,20 @@ java -jar jcstress.jar -t MyOrderingTest
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Atomic Classes` — VarHandle is what atomic classes use internally; know atomic first
 - `Volatile` — VarHandle's volatile mode is the same as `volatile` field declarations
 - `Java Memory Model` — required to correctly choose access modes (acquire/release vs volatile)
 - `CAS` — the core operation VarHandle provides at field level
 
 **Builds On This (learn these next):**
+
 - `Lock-Free Data Structures` — VarHandle is the primitive used to build them
 - `Memory Ordering (C++ analogy)` — C++ std::atomic memory_order provides the same abstraction
 - `Project Loom / Structured Concurrency` — future Java concurrency building on VarHandle primitives
 
 **Alternatives / Comparisons:**
+
 - `AtomicInteger/Long` — higher-level, easier API; VarHandle for fields without allocation overhead
 - `sun.misc.Unsafe` — same power, no safety; avoid in application code
 - `AtomicReferenceFieldUpdater` — older field-CAS API; VarHandle is strictly superior

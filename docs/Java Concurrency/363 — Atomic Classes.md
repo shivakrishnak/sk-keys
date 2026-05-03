@@ -23,11 +23,11 @@ tags:
 
 ⚡ TL;DR — Atomic classes (`AtomicInteger`, `AtomicLong`, `AtomicReference`) provide lock-free thread-safe operations on single variables using CPU-level Compare-And-Swap (CAS), eliminating synchronized blocks for simple counter and reference updates.
 
-| #0363 | Category: Java Concurrency | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Volatile, CAS (Compare-And-Swap), Thread Safety, Lock-Free Programming | |
-| **Used by:** | Counters, Sequence Generators, Lock-Free Data Structures, ConcurrentHashMap | |
-| **Related:** | VarHandle, LongAdder, Volatile, ReentrantLock, ConcurrentHashMap | |
+| #0363           | Category: Java Concurrency                                                  | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Volatile, CAS (Compare-And-Swap), Thread Safety, Lock-Free Programming      |                 |
+| **Used by:**    | Counters, Sequence Generators, Lock-Free Data Structures, ConcurrentHashMap |                 |
+| **Related:**    | VarHandle, LongAdder, Volatile, ReentrantLock, ConcurrentHashMap            |                 |
 
 ---
 
@@ -56,6 +56,7 @@ Modern CPUs have atomic instructions: CAS (Compare-And-Swap) — "if this memory
 Atomic classes use CPU hardware to update a variable in one uninterruptible step — no locks, no blocking, no thread waiting.
 
 **One analogy:**
+
 > CAS is like a bank vault with a note on the door: "If the balance is $100, change it to $150 — signed, Alice." The vault attendant (CPU) checks the current balance. If it's exactly $100, they make the change and give Alice a receipt. If it's not $100 (someone else already changed it), they don't change anything and tell Alice to try again with the new balance. No queue. No waiting room. Just immediate success-or-retry.
 
 **One insight:**
@@ -66,6 +67,7 @@ Atomic classes don't eliminate contention — they eliminate blocking. Under hig
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. CAS is a single atomic CPU instruction (`CMPXCHG` on x86).
 2. CAS: atomically "if memory[addr] == expected, then memory[addr] = newVal; return success."
 3. Atomic classes wrap CAS via `sun.misc.Unsafe` / `VarHandle` (Java 9+).
@@ -123,6 +125,7 @@ KEY ATOMIC CLASSES:
 ```
 
 **THE TRADE-OFFS:**
+
 - **Gain:** No thread blocking; lower overhead than synchronized for low-medium contention; hardware-optimized on modern CPUs.
 - **Cost:** CAS retry loops under extreme contention → CPU spin → wasted cycles; ABA problem with reference types; not composable (can't atomically update two variables).
 
@@ -300,13 +303,13 @@ atomic.incrementAndGet();   // single CAS, bottleneck at high count
 
 ### ⚖️ Comparison Table
 
-| Approach | Blocking | Contention | Composable | Best For |
-|---|---|---|---|---|
-| synchronized block | Yes (OS lock) | Low (uncontended) | Yes (guards block) | Complex multi-variable atomicity |
-| **AtomicInteger/Long** | No (CAS retry) | Medium | No | Single-variable counters, flags |
-| LongAdder | No (striped CAS) | Very high | No | High-throughput pure counting |
-| volatile | No | N/A (visibility only) | No | Single-variable visibility without atomicity |
-| ReentrantLock | Yes | Medium | Yes (lock scope) | Complex operations with backoff |
+| Approach               | Blocking         | Contention            | Composable         | Best For                                     |
+| ---------------------- | ---------------- | --------------------- | ------------------ | -------------------------------------------- |
+| synchronized block     | Yes (OS lock)    | Low (uncontended)     | Yes (guards block) | Complex multi-variable atomicity             |
+| **AtomicInteger/Long** | No (CAS retry)   | Medium                | No                 | Single-variable counters, flags              |
+| LongAdder              | No (striped CAS) | Very high             | No                 | High-throughput pure counting                |
+| volatile               | No               | N/A (visibility only) | No                 | Single-variable visibility without atomicity |
+| ReentrantLock          | Yes              | Medium                | Yes (lock scope)   | Complex operations with backoff              |
 
 **How to choose:** Use Atomic classes for single-variable updates under low-medium contention. Use `LongAdder` for very high contention counters. Use `synchronized`/`ReentrantLock` when you need to atomically update multiple variables together.
 
@@ -314,12 +317,12 @@ atomic.incrementAndGet();   // single CAS, bottleneck at high count
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Atomic classes are always faster than synchronized | Under high contention with many threads, CAS retry loops spin and waste CPU cycles. `synchronized` can actually be more efficient because it parks blocked threads (freeing CPU for other work) rather than spinning |
-| volatile int counter++ is atomic | It is not. `volatile` ensures visibility; `counter++` is still three separate operations (read, increment, write). Use `AtomicInteger.incrementAndGet()` for atomic increment |
-| AtomicReference.compareAndSet protects against all races | The ABA problem: if a value changes from A to B to A, a CAS checking for A succeeds even though the state has changed. Use `AtomicStampedReference` with a version counter when ABA matters |
-| You can atomically update two AtomicIntegers with two CAS calls | Two separate CAS calls are not atomic together. Other threads can observe the state between the two calls. Use synchronized blocks to atomically update multiple variables |
+| Misconception                                                   | Reality                                                                                                                                                                                                              |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Atomic classes are always faster than synchronized              | Under high contention with many threads, CAS retry loops spin and waste CPU cycles. `synchronized` can actually be more efficient because it parks blocked threads (freeing CPU for other work) rather than spinning |
+| volatile int counter++ is atomic                                | It is not. `volatile` ensures visibility; `counter++` is still three separate operations (read, increment, write). Use `AtomicInteger.incrementAndGet()` for atomic increment                                        |
+| AtomicReference.compareAndSet protects against all races        | The ABA problem: if a value changes from A to B to A, a CAS checking for A succeeds even though the state has changed. Use `AtomicStampedReference` with a version counter when ABA matters                          |
+| You can atomically update two AtomicIntegers with two CAS calls | Two separate CAS calls are not atomic together. Other threads can observe the state between the two calls. Use synchronized blocks to atomically update multiple variables                                           |
 
 ---
 
@@ -332,6 +335,7 @@ atomic.incrementAndGet();   // single CAS, bottleneck at high count
 **Root Cause:** High thread count competing for the same atomic variable; CAS failure rate is high; threads spin in retry loops consuming CPU without productive work.
 
 **Diagnostic Command:**
+
 ```bash
 # Profile CAS operations with JFR:
 java -XX:StartFlightRecording=duration=60s,filename=app.jfr
@@ -343,6 +347,7 @@ perf report | head -30
 ```
 
 **Fix:**
+
 ```java
 // BAD: AtomicLong under extreme contention
 AtomicLong counter = new AtomicLong();
@@ -365,6 +370,7 @@ long total = counter.sum(); // reads total when needed
 **Root Cause:** Thread reads reference A, another thread removes A, adds B, removes B, re-adds A. First thread's CAS succeeds (still sees A) but A's `next` pointer may have changed.
 
 **Diagnostic Command:**
+
 ```bash
 # Reproduce with stress test + assertion:
 # Add invariant checks to data structure operations
@@ -380,16 +386,19 @@ long total = counter.sum(); // reads total when needed
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Volatile` — atomic classes build on volatile semantics for visibility
 - `CAS (Compare-And-Swap)` — the hardware primitive underlying all atomic operations
 - `Lock-Free Programming` — the programming model atomic classes enable
 
 **Builds On This (learn these next):**
+
 - `VarHandle` — Java 9+ replacement for Unsafe-based CAS; more flexible access modes
 - `LongAdder` — solves CAS contention for pure counting via cell striping
 - `Lock-Free Data Structures` — stacks, queues, lists built with atomic classes
 
 **Alternatives / Comparisons:**
+
 - `ReentrantLock` — blocking lock for complex atomic operations across multiple variables
 - `LongAdder` — better than `AtomicLong` for high-contention counting
 - `Synchronized` — simpler, broader scope; OK for uncontended or complex atomicity
