@@ -49,6 +49,7 @@ As engineering organisations scaled and became more specialised, the gap between
 Stakeholder communication is translating what engineering is doing into what stakeholders need to know, in the format they can use, before they need to ask.
 
 **One analogy:**
+
 > Stakeholder communication is like a ship's navigator briefing the captain. The navigator knows the detailed chart — currents, depth, hazards. The captain needs to make decisions about route and timing. The navigator's job is not to hand the captain the full chart (overwhelm) or to say "we're fine" (hide complexity) — it is to translate the relevant details into a decision-ready briefing: "Current conditions favour route A; route B has a 40% chance of delay due to weather; route C is slower but safest. My recommendation is A." That is stakeholder communication: the right information, at the right level, for the right decision.
 
 **One insight:**
@@ -122,7 +123,7 @@ TECHNICAL               →    BUSINESS TRANSLATION
 "We need to refactor    →    "Without this work, our
 the auth service"            ability to add new
                              authentication providers
-                             will take 3x longer — 
+                             will take 3x longer —
                              this blocks the SSO
                              partnership launch."
 
@@ -248,31 +249,38 @@ Update communication plan for next initiative
 ### 💻 Code Example
 
 **Weekly status update template:**
+
 ```markdown
 # Checkout Service — Week of 2024-03-18
 
 ## Summary
+
 🟢 On track for April 7 launch
 
 ## Shipped This Week
+
 - Payment gateway integration: complete and tested
 - Checkout flow UI: 90% complete (remaining: error states)
 
 ## In Progress
+
 - Order confirmation emails: 60% — on track
 - Load testing: starting Monday
 
 ## At Risk ⚠️
+
 - Address validation: third-party API has rate limits we
   discovered in testing. Mitigation: added caching layer
   (2 extra days). New estimate: delivery Mar 25.
   → No impact on launch date, but wanted to flag early.
 
 ## Blockers / Decisions Needed
+
 - Need confirmation from Legal on error message copy by
   Mar 21 (required for final QA). Will follow up directly.
 
 ## Next Week
+
 - Complete load testing; UI error states; address validation
 ```
 
@@ -280,26 +288,26 @@ Update communication plan for next initiative
 
 ### ⚖️ Comparison Table
 
-| Communication Type | When | Format | Audience | Key Quality |
-|---|---|---|---|---|
-| **Regular status** | Weekly | 3-bullet summary | PM, EM | Proactive, concise |
-| **Risk escalation** | Immediately on discovery | Slack + follow-up | PM, EM, exec (if needed) | Early, options-focused |
-| **Incident update** | Every 30–60 min during | Slack/war room | All affected | Frequent, factual |
-| **Post-mortem** | 24–72h after resolution | Document | Eng + stakeholders | Honest, actionable |
-| **Roadmap review** | Quarterly | Presentation | Product, exec | Strategic, investment-focused |
-| **Decision request** | When needed | Email/meeting | Decision-maker | Clear choice + recommendation |
+| Communication Type   | When                     | Format            | Audience                 | Key Quality                   |
+| -------------------- | ------------------------ | ----------------- | ------------------------ | ----------------------------- |
+| **Regular status**   | Weekly                   | 3-bullet summary  | PM, EM                   | Proactive, concise            |
+| **Risk escalation**  | Immediately on discovery | Slack + follow-up | PM, EM, exec (if needed) | Early, options-focused        |
+| **Incident update**  | Every 30–60 min during   | Slack/war room    | All affected             | Frequent, factual             |
+| **Post-mortem**      | 24–72h after resolution  | Document          | Eng + stakeholders       | Honest, actionable            |
+| **Roadmap review**   | Quarterly                | Presentation      | Product, exec            | Strategic, investment-focused |
+| **Decision request** | When needed              | Email/meeting     | Decision-maker           | Clear choice + recommendation |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Good engineers don't need to communicate — results speak" | Results reach stakeholders through communication; an undiscovered good outcome is as invisible as no outcome at all |
-| "Communicating delays is embarrassing" | Communicating delays early is professional; communicating them late is a trust failure |
-| "Technical stakeholders need more detail" | Technical stakeholders need the right technical detail — not everything; still apply the audience-adaptation principle |
-| "Communication is the PM's job" | PMs communicate product; engineers communicate technical status and risk. Both are necessary; neither covers the other fully |
-| "Short updates are better than thorough ones" | Short and thorough are not opposites: a well-crafted 3-bullet update can be thorough at the right level of detail |
+| Misconception                                              | Reality                                                                                                                      |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| "Good engineers don't need to communicate — results speak" | Results reach stakeholders through communication; an undiscovered good outcome is as invisible as no outcome at all          |
+| "Communicating delays is embarrassing"                     | Communicating delays early is professional; communicating them late is a trust failure                                       |
+| "Technical stakeholders need more detail"                  | Technical stakeholders need the right technical detail — not everything; still apply the audience-adaptation principle       |
+| "Communication is the PM's job"                            | PMs communicate product; engineers communicate technical status and risk. Both are necessary; neither covers the other fully |
+| "Short updates are better than thorough ones"              | Short and thorough are not opposites: a well-crafted 3-bullet update can be thorough at the right level of detail            |
 
 ---
 
@@ -312,6 +320,7 @@ Update communication plan for next initiative
 **Root Cause:** The TL discovered the API issue 5 days ago and assumed it would be solved before it mattered. The PM was not in the loop.
 
 **Prevention Protocol:**
+
 ```
 Rule: If a risk has > 10% chance of affecting a committed
       deadline, communicate it to the PM within 24 hours.
@@ -334,15 +343,18 @@ Rationale: The earlier the PM knows, the more options
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Technical Leadership` — stakeholder communication is a core competency of technical leaders
 - `Technical Roadmap` — the primary document requiring stakeholder communication
 
 **Builds On This (learn these next):**
+
 - `Technical Roadmap` — requires effective stakeholder communication to be useful
 - `Driving Adoption` — stakeholder communication drives adoption of technical changes
 - `Influence Without Authority` — communication is the primary tool of influence-based leadership
 
 **Alternatives / Comparisons:**
+
 - `Technical Roadmap` — the document; stakeholder communication is the practice of communicating it
 - `Driving Adoption` — communication drives adoption; stakeholder communication is the mechanism
 - `Influence Without Authority` — influence requires communication as its primary vehicle

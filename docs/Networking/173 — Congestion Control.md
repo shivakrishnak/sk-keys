@@ -49,6 +49,7 @@ Van Jacobson's 1988 paper introduced the congestion control algorithms still use
 Congestion control is TCP's throttle: it starts slow, increases the sending rate cautiously, and backs off sharply when it detects the network is full — preventing any single sender from crashing the network.
 
 **One analogy:**
+
 > Merging onto a motorway in rush hour. You can't just floor it — you'll cause a crash (congestion collapse). Instead: accelerate carefully (Slow Start), match motorway speed (Congestion Avoidance), and if someone brakes hard (packet loss), you brake sharply and then re-accelerate cautiously. TCP does exactly this, mathematically, for every connection on the internet — ensuring all senders share the road fairly.
 
 **One insight:**
@@ -62,6 +63,7 @@ Congestion control is TCP's throttle: it starts slow, increases the sending rate
 The key variable. CWND is measured in bytes (or MSS units). Sender's effective send limit: `effective_window = min(CWND, rwnd)` where rwnd is the receiver's advertised window (flow control). Bytes in flight ≤ effective_window at all times.
 
 **PHASE 1: Slow Start**
+
 ```
 Initial: CWND = 1 MSS (typically 10 MSS in modern Linux: net.ipv4.tcp_init_cwnd)
 Each ACK received: CWND += 1 MSS
@@ -70,6 +72,7 @@ Duration: until CWND >= ssthresh, or packet loss
 ```
 
 **PHASE 2: Congestion Avoidance (AIMD)**
+
 ```
 Triggered when: CWND >= ssthresh
 Each ACK received: CWND += MSS² / CWND  (additive: ~1 MSS per RTT)
@@ -79,7 +82,8 @@ Duration: until packet loss
 
 **LOSS DETECTION AND RESPONSE:**
 
-*Triple duplicate ACKs (fast retransmit):*
+_Triple duplicate ACKs (fast retransmit):_
+
 ```
 Event: 3 duplicate ACKs for same sequence number
 → A packet was lost but later packets arrived (mild congestion)
@@ -91,7 +95,8 @@ TCP Reno response:
 TCP CUBIC response: CWND reduced by ~30% (not halved)
 ```
 
-*Retransmit Timeout (RTO):*
+_Retransmit Timeout (RTO):_
+
 ```
 Event: RTO timer fires (no ACK for too long)
 → Severe congestion — multiple packets lost
@@ -118,6 +123,7 @@ BBR fundamentally changes the approach: instead of using packet loss as a conges
 Two connections share a 10 Mbps bottleneck link. Both use TCP CUBIC. RTT = 50ms. How do they share the bandwidth?
 
 **ANALYSIS:**
+
 - Each connection's CWND grows independently
 - When the bottleneck link fills (router queue builds up), packets are dropped
 - Both connections detect triple-dup-ACKs
@@ -218,15 +224,15 @@ sysctl -w net.ipv4.tcp_window_scaling=1  # must be enabled
    1 │ *
      └────────────────────────────────── Time (RTTs)
      SS│  Cong Avoid  │loss│ SS │ CA  │loss
-     
+
  SS = Slow Start (exponential)
  CA = Congestion Avoidance (linear)
  loss = packet loss event (CWND halved or reset)
- 
+
  ════════════════════════════════════
- 
+
  BBR (vs CUBIC):
- 
+
  CWND     ┌────────────────────────────────┐
  (ideal)  │   BBR: stable near BDP         │
           │   ████████████████████████████ │
@@ -241,6 +247,7 @@ sysctl -w net.ipv4.tcp_window_scaling=1  # must be enabled
 ### 💻 Code Example
 
 **Example — Observing Slow Start with iperf3:**
+
 ```bash
 # Terminal 1: Start iperf3 server
 iperf3 -s
@@ -270,6 +277,7 @@ watch -n 0.1 "ss -tn -o -i | grep cwnd"
 ```
 
 **Python: measuring congestion via retransmit rate:**
+
 ```python
 import subprocess
 import re
@@ -279,7 +287,7 @@ def get_tcp_retransmit_rate() -> dict:
     """Read TCP retransmit statistics from /proc/net/netstat."""
     with open('/proc/net/netstat', 'r') as f:
         lines = f.readlines()
-    
+
     # Parse TcpExt: header + values
     headers = None
     for line in lines:
@@ -314,24 +322,24 @@ for k, v in delta.items():
 
 ### ⚖️ Comparison Table
 
-| Algorithm | Congestion Signal | CWND Growth | Best For | Weakness |
-|---|---|---|---|---|
-| TCP Reno | Loss (3 dup ACK) | Linear (CA) | Low BDP | Slow on high BDP |
-| TCP CUBIC | Loss (3 dup ACK) | Cubic function | High BDP | Bufferbloat, RTT unfair |
-| TCP BBR | RTT + bandwidth | BDP-based | High latency, lossy | Unfair vs CUBIC at start |
-| QUIC (CUBIC/BBR) | Configurable | Configurable | Modern web | Still evolving |
+| Algorithm        | Congestion Signal | CWND Growth    | Best For            | Weakness                 |
+| ---------------- | ----------------- | -------------- | ------------------- | ------------------------ |
+| TCP Reno         | Loss (3 dup ACK)  | Linear (CA)    | Low BDP             | Slow on high BDP         |
+| TCP CUBIC        | Loss (3 dup ACK)  | Cubic function | High BDP            | Bufferbloat, RTT unfair  |
+| TCP BBR          | RTT + bandwidth   | BDP-based      | High latency, lossy | Unfair vs CUBIC at start |
+| QUIC (CUBIC/BBR) | Configurable      | Configurable   | Modern web          | Still evolving           |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Slow Start" means TCP starts slowly | Slow Start grows CWND exponentially (doubles every RTT). It's "slow" only vs sending everything at once |
-| Higher CWND = always better | CWND is bounded by `min(CWND, rwnd)`. If rwnd (receiver window) is the bottleneck, increasing CWND has no effect; fix socket buffer sizes |
+| Misconception                               | Reality                                                                                                                                                                                |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Slow Start" means TCP starts slowly        | Slow Start grows CWND exponentially (doubles every RTT). It's "slow" only vs sending everything at once                                                                                |
+| Higher CWND = always better                 | CWND is bounded by `min(CWND, rwnd)`. If rwnd (receiver window) is the bottleneck, increasing CWND has no effect; fix socket buffer sizes                                              |
 | Packet loss always means network congestion | Packet loss can be caused by wireless interference, bad cables, or overloaded hosts — not just network congestion. BBR's model-based approach is less sensitive to non-congestion loss |
-| BBR is strictly better than CUBIC | BBR can be unfair to CUBIC connections on shared bottlenecks (BBR may grab too much bandwidth initially). Mixed environments with both BBR and CUBIC senders can have fairness issues |
-| More connections = more throughput | Multiple TCP connections skip Slow Start faster in aggregate, but cause more load on routers and may be rate-limited by servers or CDNs |
+| BBR is strictly better than CUBIC           | BBR can be unfair to CUBIC connections on shared bottlenecks (BBR may grab too much bandwidth initially). Mixed environments with both BBR and CUBIC senders can have fairness issues  |
+| More connections = more throughput          | Multiple TCP connections skip Slow Start faster in aggregate, but cause more load on routers and may be rate-limited by servers or CDNs                                                |
 
 ---
 
@@ -346,6 +354,7 @@ for k, v in delta.items():
 Small CWND due to default socket buffers + Slow Start not having enough time to grow on individual connections. BDP = 1 Gbps × 150ms = 18.75 MB. With default 87KB socket buffer, max in-flight bytes = 87KB → max throughput = 87,000 bytes / 0.150s = 4.6 Mbps.
 
 **Diagnostic Commands:**
+
 ```bash
 # Test throughput
 iperf3 -c <remote> -t 30
@@ -373,16 +382,19 @@ Increase TCP socket buffers to at least 2× BDP; enable window scaling; optional
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `TCP` — congestion control is a core TCP mechanism; TCP basics are prerequisite
 - `TCP/IP Stack` — congestion operates at the transport layer
 
 **Builds On This (learn these next):**
+
 - `Flow Control` — complementary to congestion control; flow control is receiver-side rate limiting (rwnd), congestion control is network-side rate limiting (CWND)
 - `Sliding Window` — the window mechanism that implements both flow control and congestion control
 - `Bandwidth vs Throughput` — congestion control directly determines the relationship between available bandwidth and achieved throughput
 - `Network Latency Optimization` — understanding congestion control is key to latency/throughput optimisation
 
 **Alternatives / Comparisons:**
+
 - `QUIC` — QUIC has its own congestion control (BBR or CUBIC) in user space, enabling faster iteration
 - `Flow Control` — receiver-side complement to sender-side congestion control
 

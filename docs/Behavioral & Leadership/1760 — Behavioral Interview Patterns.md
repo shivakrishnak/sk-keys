@@ -39,6 +39,7 @@ A strong candidate receives "Tell me about a time you led a project through sign
 **Behavioral interview:** An interview format that uses structured past-experience questions to assess specific competencies. Format: "Tell me about a time you [specific situation]." Based on the premise that past behavior predicts future behavior.
 
 **STAR method:**
+
 - **Situation:** The context and background (1–3 sentences). Set the scene: who, what, when, where.
 - **Task:** Your specific role and responsibility in the situation.
 - **Action:** What YOU specifically did — the most important part. Use first person ("I did X") not "we did Y."
@@ -56,6 +57,7 @@ A strong candidate receives "Tell me about a time you led a project through sign
 The behavioral interview tests whether you can tell specific, structured stories about your past that demonstrate the competencies the company values — and the preparation is building a story inventory of 15–20 real experiences, formatted with STAR, that cover all major competency themes.
 
 **One analogy:**
+
 > A behavioral interview is like a court cross-examination, not a job application. You're not asked "Are you a good leader?" — you're asked "Give me a specific example of a time you demonstrated leadership." Lawyers who prepare their clients for testimony don't just tell them to "tell the truth" — they help the client recall and articulate specific episodes with vivid, accurate detail. The preparation for behavioral interviews is the same: identify the episodes from your experience that best demonstrate each competency, practise articulating them with precise detail and measurable outcomes, and be ready to be cross-examined on specifics. "What was the exact result?" "How many people were on the team?" "What would you do differently?" Prepared candidates have vivid, specific answers. Unprepared candidates give vague generalities that fail under follow-up questions.
 
 **One insight:**
@@ -129,7 +131,7 @@ SITUATION (2–3 sentences):
          3 months away. The checkout service had recurring
          latency spikes that caused 8% of purchases to timeout."
   BAD:  "I was working on checkout. There were some problems."
-  
+
   → Enough context to understand why this was challenging.
     Not so much that you never get to the action.
 
@@ -138,7 +140,7 @@ TASK (1–2 sentences):
          and lead a cross-team effort to resolve it before
          Black Friday — a 3-month window."
   BAD:  "I had to fix the problem."
-  
+
   → Your specific role. Not "the team's goal."
 
 ACTION (3–5 sentences — the most important part):
@@ -152,7 +154,7 @@ ACTION (3–5 sentences — the most important part):
          and led a 3-sprint implementation across two teams."
   BAD:  "We investigated and found the issue and fixed it
          together."
-  
+
   → Specific technical actions. First person throughout.
     Show systematic thinking, not just effort.
 
@@ -162,7 +164,7 @@ RESULT (2–3 sentences):
          incidents. The index + cache approach became a
          template for other teams facing similar patterns."
   BAD:  "It went well and we hit the deadline."
-  
+
   → Measurable outcome. Quantify when possible.
     Add: what did you learn / what would you do differently?
 ```
@@ -309,6 +311,7 @@ Post-interview: debrief; improve inventory for next round
 ### 💻 Code Example
 
 **Story inventory manager:**
+
 ```python
 from dataclasses import dataclass, field
 
@@ -391,24 +394,24 @@ coverage_report([story])
 
 ### ⚖️ Comparison Table
 
-| Level | Story scope | Leadership dimension | Scale of impact |
-|---|---|---|---|
-| **L3** | Individual task/fix | Self-management | Code, small feature |
-| **L4** | Feature or sprint | Peer collaboration | Team-level metric |
-| **L5** | Project or quarter | Cross-team influence | Product-level metric |
-| **L6/Staff** | Programme or year | Org-level strategy | Business/user metric |
+| Level        | Story scope         | Leadership dimension | Scale of impact      |
+| ------------ | ------------------- | -------------------- | -------------------- |
+| **L3**       | Individual task/fix | Self-management      | Code, small feature  |
+| **L4**       | Feature or sprint   | Peer collaboration   | Team-level metric    |
+| **L5**       | Project or quarter  | Cross-team influence | Product-level metric |
+| **L6/Staff** | Programme or year   | Org-level strategy   | Business/user metric |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Behavioral questions have no right answer" | They have no single right answer, but they have clearly better and worse answers. Specific + measurable + first-person + learning = better. Vague + "we" + no result = worse. |
-| "I can improvise behavioral answers" | You can improvise a mediocre answer. You cannot improvise a great answer — the quality difference between prepared and improvised is dramatic and immediately visible to experienced interviewers. |
-| "Negative experiences (failure) hurt my chances" | Failure stories, told with genuine ownership and clear learning, are among the strongest signals. Interviewers distrust candidates who have no failure stories. |
-| "Longer stories are better" | Target 2–3 minutes. Stories longer than 4 minutes lose interviewers. A tight 2-minute STAR story scores higher than a 6-minute ramble. |
-| "Just talk about your biggest project" | One project won't cover all competency themes. You need story variety: leadership, conflict, failure, growth, collaboration. A single project story can only cover a subset. |
+| Misconception                                    | Reality                                                                                                                                                                                            |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Behavioral questions have no right answer"      | They have no single right answer, but they have clearly better and worse answers. Specific + measurable + first-person + learning = better. Vague + "we" + no result = worse.                      |
+| "I can improvise behavioral answers"             | You can improvise a mediocre answer. You cannot improvise a great answer — the quality difference between prepared and improvised is dramatic and immediately visible to experienced interviewers. |
+| "Negative experiences (failure) hurt my chances" | Failure stories, told with genuine ownership and clear learning, are among the strongest signals. Interviewers distrust candidates who have no failure stories.                                    |
+| "Longer stories are better"                      | Target 2–3 minutes. Stories longer than 4 minutes lose interviewers. A tight 2-minute STAR story scores higher than a 6-minute ramble.                                                             |
+| "Just talk about your biggest project"           | One project won't cover all competency themes. You need story variety: leadership, conflict, failure, growth, collaboration. A single project story can only cover a subset.                       |
 
 ---
 
@@ -421,6 +424,7 @@ coverage_report([story])
 **Root Cause:** The candidate values collaboration (good trait) and reflexively shares credit (also good in production). In a behavioral interview, this pattern obscures individual signal.
 
 **Fix:**
+
 ```
 REFRAME WITHOUT SELF-AGGRANDISEMENT:
 
@@ -430,17 +434,17 @@ AFTER:  "I identified the bottleneck using distributed tracing.
          I proposed the fix: a query cache with index. I got
          team buy-in in our tech review, then led the
          implementation. The team executed the plan."
-         
+
 FORMULA:
   "I did [specific action]. The team [executed / supported / built]."
   "I decided [X] because [Y]."
   "I led [Z] which involved [A] and [B]."
-  
+
 You can still credit others:
   "I initiated the investigation; Alice found the final bug;
    together we shipped the fix. But the design decision and
    the stakeholder communication were mine to own."
-   
+
 THE RULE: In STAR, Action is always first-person.
            Results can reference team outcomes.
 ```
@@ -450,14 +454,17 @@ THE RULE: In STAR, Action is always first-person.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `STAR Method` — the foundational structure for behavioral answers
 - `Technical Interview Preparation` — behavioral is one track within comprehensive interview prep
 
 **Builds On This (learn these next):**
+
 - `Technical Interview Preparation` — the comprehensive preparation framework for all three interview tracks
 - `System Design Interview` — the technical complement to behavioral preparation
 
 **Alternatives / Comparisons:**
+
 - `System Design Interview` — the technical design track
 - `Technical Interview Preparation` — the comprehensive preparation framework
 

@@ -50,6 +50,7 @@ TCP's FIN (finish) mechanism solves this: a FIN is a one-directional close. Send
 TCP teardown is a 4-step exchange (FIN/ACK/FIN/ACK) that gracefully closes a connection, followed by TIME_WAIT — a quarantine period ensuring old packets from this connection can't corrupt future connections.
 
 **One analogy:**
+
 > Ending a phone call: "I'm done talking." (FIN) → "OK, I heard you're done." (ACK) → The other person finishes their sentence, then: "I'm done too." (FIN) → "Got it, bye!" (ACK) → You wait a minute before handing the phone to someone else (TIME_WAIT), just in case their last words are still echoing in the line. Compare to hanging up mid-sentence (RST — abortive close): fast but the other person doesn't know the call ended, and their last words were cut off.
 
 **One insight:**
@@ -62,36 +63,45 @@ TIME_WAIT is often misunderstood as a bug or performance problem. It is intentio
 **THE FOUR STEPS:**
 
 **Step 1: FIN (Active closer → Passive closer)**
+
 ```
 TCP Header: Flags=FIN+ACK, seq=X
 ```
+
 Active closer: `ESTABLISHED → FIN_WAIT_1`
 Meaning: "I have no more data to send."
 
 **Step 2: ACK (Passive closer → Active closer)**
+
 ```
 TCP Header: Flags=ACK, ack=X+1
 ```
+
 Passive closer: `ESTABLISHED → CLOSE_WAIT`
 Active closer: `FIN_WAIT_1 → FIN_WAIT_2`
 Meaning: "I received your FIN. I may still have data to send."
 
 **Step 3: FIN (Passive closer → Active closer)**
+
 ```
 TCP Header: Flags=FIN+ACK, seq=Y
 ```
+
 Passive closer: `CLOSE_WAIT → LAST_ACK`
 Meaning: "I'm also done sending. Connection can be closed."
 
 **Step 4: ACK (Active closer → Passive closer)**
+
 ```
 TCP Header: Flags=ACK, ack=Y+1
 ```
+
 Active closer: `FIN_WAIT_2 → TIME_WAIT → (after 2MSL) CLOSED`
 Passive closer: `LAST_ACK → CLOSED`
 
 **TIME_WAIT PURPOSE:**
 Two reasons for TIME_WAIT lasting 2×MSL:
+
 1. **Reliability**: If the final ACK (step 4) is lost, the passive closer retransmits its FIN. The active closer must still be in TIME_WAIT to re-send the ACK. Without TIME_WAIT, the ACK is lost and the passive closer hangs in LAST_ACK forever.
 2. **Duplicate packet prevention**: Packets from this connection could be delayed in the network for up to MSL (60 seconds). After TIME_WAIT (2×MSL), all such packets have expired. A new connection reusing the same 4-tuple won't receive stale packets from the old connection.
 
@@ -106,6 +116,7 @@ Two reasons for TIME_WAIT lasting 2×MSL:
 A microservice makes 1,000 HTTP requests/second to a backend. Each request opens a new TCP connection and closes it after the response. RTT = 2ms.
 
 **ANALYSIS:**
+
 - 1,000 connections/second × each produces 1 TIME_WAIT socket
 - TIME_WAIT duration: 60 seconds (Linux default)
 - TIME_WAIT sockets accumulating: 1,000 × 60 = 60,000 TIME_WAIT sockets
@@ -117,6 +128,7 @@ A microservice makes 1,000 HTTP requests/second to a backend. Each request opens
 New connection attempts fail: `EADDRINUSE` or `EADDRNOTAVAIL`
 
 **SOLUTIONS (in order of preference):**
+
 1. **Connection pooling**: reuse connections, avoid creating 1,000/second. Most impactful.
 2. **HTTP keep-alive**: reuse existing TCP connections across multiple HTTP requests.
 3. **SO_REUSEADDR + SO_REUSEPORT**: allow reusing TIME_WAIT ports sooner.
@@ -195,7 +207,7 @@ ss -tan state time-wait | wc -l
 └────────────────────────────────────────────────┘
 
  Client (active close)           Server (passive close)
- 
+
  ESTABLISHED                     ESTABLISHED
     │                                │
     │ close() called                 │
@@ -228,6 +240,7 @@ ss -tan state time-wait | wc -l
 ### 💻 Code Example
 
 **Example — Diagnosing TIME_WAIT and CLOSE_WAIT:**
+
 ```python
 import socket
 import subprocess
@@ -268,14 +281,14 @@ def send_and_receive(host: str, port: int, request: bytes) -> bytes:
     """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((host, port))
-    
+
     # Send request data
     sock.sendall(request)
-    
+
     # Half-close: send FIN (no more data from us)
     # Server now knows we're done sending
     sock.shutdown(socket.SHUT_WR)
-    
+
     # Receive response until server closes
     response = b''
     while True:
@@ -283,10 +296,10 @@ def send_and_receive(host: str, port: int, request: bytes) -> bytes:
         if not chunk:
             break  # Server sent FIN (empty recv = EOF)
         response += chunk
-    
+
     # Full close: server's FIN already received; send our ACK via close()
     sock.close()
-    
+
     return response
 ```
 
@@ -294,26 +307,26 @@ def send_and_receive(host: str, port: int, request: bytes) -> bytes:
 
 ### ⚖️ Comparison Table
 
-| Aspect | Graceful Close (FIN) | Abortive Close (RST) |
-|---|---|---|
-| Steps | 4-way FIN exchange | Immediate |
-| Data in flight | Preserved | Discarded |
-| TIME_WAIT | Yes (active closer) | No |
-| Peer notification | Graceful EOF | `Connection reset by peer` error |
-| Use case | Normal connection end | Error conditions, discard unread data |
-| Half-close possible | Yes (one direction) | No |
+| Aspect              | Graceful Close (FIN)  | Abortive Close (RST)                  |
+| ------------------- | --------------------- | ------------------------------------- |
+| Steps               | 4-way FIN exchange    | Immediate                             |
+| Data in flight      | Preserved             | Discarded                             |
+| TIME_WAIT           | Yes (active closer)   | No                                    |
+| Peer notification   | Graceful EOF          | `Connection reset by peer` error      |
+| Use case            | Normal connection end | Error conditions, discard unread data |
+| Half-close possible | Yes (one direction)   | No                                    |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| TIME_WAIT is a bug or performance problem | TIME_WAIT is correct behaviour preventing packet mix-up; the performance problem is creating too many short-lived connections, not TIME_WAIT itself |
-| `tcp_tw_recycle` fixes TIME_WAIT exhaustion | `tcp_tw_recycle` was removed in Linux 4.12 for being broken with NAT (breaks connections from clients behind NAT); never use it |
-| `SO_REUSEADDR` and `tcp_tw_reuse` are the same | `SO_REUSEADDR` allows binding a port in TIME_WAIT (for servers after restart). `tcp_tw_reuse` allows reusing TIME_WAIT connections for new outbound connections (for clients). Different use cases. |
-| CLOSE_WAIT is normal | Many CLOSE_WAIT connections indicate an application bug — the remote side closed the connection but the local application hasn't called `close()`. File descriptor leak. |
-| RST closes connections faster with no downsides | RST discards data in flight — appropriate for error cases but should not be used as a performance optimisation for normal connection closure |
+| Misconception                                   | Reality                                                                                                                                                                                             |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TIME_WAIT is a bug or performance problem       | TIME_WAIT is correct behaviour preventing packet mix-up; the performance problem is creating too many short-lived connections, not TIME_WAIT itself                                                 |
+| `tcp_tw_recycle` fixes TIME_WAIT exhaustion     | `tcp_tw_recycle` was removed in Linux 4.12 for being broken with NAT (breaks connections from clients behind NAT); never use it                                                                     |
+| `SO_REUSEADDR` and `tcp_tw_reuse` are the same  | `SO_REUSEADDR` allows binding a port in TIME_WAIT (for servers after restart). `tcp_tw_reuse` allows reusing TIME_WAIT connections for new outbound connections (for clients). Different use cases. |
+| CLOSE_WAIT is normal                            | Many CLOSE_WAIT connections indicate an application bug — the remote side closed the connection but the local application hasn't called `close()`. File descriptor leak.                            |
+| RST closes connections faster with no downsides | RST discards data in flight — appropriate for error cases but should not be used as a performance optimisation for normal connection closure                                                        |
 
 ---
 
@@ -328,6 +341,7 @@ def send_and_receive(host: str, port: int, request: bytes) -> bytes:
 High connection rate + short connection lifetime → thousands of TIME_WAIT sockets exhausting ephemeral port range.
 
 **Diagnostic Commands:**
+
 ```bash
 # Count TIME_WAIT sockets
 ss -tan state time-wait | wc -l
@@ -345,6 +359,7 @@ watch -n 1 "ss -tan | awk '{print \$1}' | sort | uniq -c"
 ```
 
 **Fix (in order of priority):**
+
 1. Add HTTP connection pooling (requests.Session, Apache HttpClient pool)
 2. Enable TCP keep-alive and keep connections alive
 3. `sysctl -w net.ipv4.tcp_tw_reuse=1` (safe for outbound)
@@ -356,14 +371,17 @@ watch -n 1 "ss -tan | awk '{print \$1}' | sort | uniq -c"
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `TCP` — teardown is part of TCP's connection lifecycle
 - `TCP Handshake` — complementary to teardown; both are part of TCP's connection state machine
 
 **Builds On This (learn these next):**
+
 - `Flow Control` — teardown occurs after all data is transferred; flow control manages the data transfer phase
 - `Congestion Control` — TCP's congestion window state is discarded at teardown; a new connection starts fresh
 
 **Alternatives / Comparisons:**
+
 - `QUIC` — QUIC connection teardown uses a `CONNECTION_CLOSE` frame with no TIME_WAIT equivalent (UDP has no state, so old packets naturally expire)
 
 ---

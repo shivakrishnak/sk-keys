@@ -40,14 +40,17 @@ February 2001: 17 software practitioners meet at the Snowbird ski resort, Utah. 
 ### 📘 Textbook Definition
 
 **The Agile Manifesto — 4 Values:**
+
 > "We are uncovering better ways of developing software by doing it and helping others do it. Through this work we have come to value:
+>
 > - **Individuals and interactions** over processes and tools
 > - **Working software** over comprehensive documentation
 > - **Customer collaboration** over contract negotiation
 > - **Responding to change** over following a plan
-> That is, while there is value in the items on the right, we value the items on the left more."
+>   That is, while there is value in the items on the right, we value the items on the left more."
 
 **The 12 Principles** (key examples):
+
 - Highest priority: satisfy the customer through early and continuous delivery of valuable software
 - Welcome changing requirements, even late in development
 - Deliver working software frequently, from a couple of weeks to a couple of months
@@ -69,6 +72,7 @@ February 2001: 17 software practitioners meet at the Snowbird ski resort, Utah. 
 The Agile Manifesto says: ship working software early and often, collaborate with the customer continuously, embrace change, and trust the team — as opposed to: plan exhaustively, document everything, negotiate rigidly, and control the process.
 
 **One analogy:**
+
 > Agile vs. waterfall is like GPS navigation vs. a fixed paper map. A paper map (waterfall) is planned and complete before the journey starts. If a road closes, you pull over, find an alternative on the map, and re-plan manually. GPS navigation (agile) calculates a route based on current conditions, updates continuously as conditions change, and re-routes in real time. The GPS doesn't eliminate planning — it continuously plans. Agile doesn't eliminate requirements — it continuously refines them. The difference is the cycle time of adaptation.
 
 **One insight:**
@@ -88,7 +92,7 @@ VALUE 1: INDIVIDUALS AND INTERACTIONS > PROCESSES AND TOOLS
                  or poorly supported people.
   Anti-pattern: "We have Jira, so we're agile."
                  Jira is a tool; it is not agile.
-  Practice: psychological safety; autonomy; trust; 
+  Practice: psychological safety; autonomy; trust;
             direct communication over ticket culture
 
 VALUE 2: WORKING SOFTWARE > COMPREHENSIVE DOCUMENTATION
@@ -183,6 +187,7 @@ PLANNING FALLACY AT SCALE:
 Two teams building the same product. Team A is "doing Scrum" — 2-week sprints, daily standups, backlog, retrospectives. Team B is following Agile principles without strict Scrum.
 
 **Team A (ceremony without principles):**
+
 - Sprint planning: PM hands list of 15 items; team estimates; committed
 - Standups: "I did X yesterday, I'll do Y today, no blockers" (rote)
 - Sprint demo: features demoed to PM who approves
@@ -192,6 +197,7 @@ Two teams building the same product. Team A is "doing Scrum" — 2-week sprints,
 - Result: 6-month waterfall in sprint clothing.
 
 **Team B (principles without rigid ceremony):**
+
 - Weekly iteration: small, shippable increment. Users see it.
 - Daily conversation (async): "I'm blocked on the auth API — anyone know the contract?" → resolved in 20 minutes
 - User feedback loop: every 2 weeks, 3 users try the latest version. Findings feed next week's work.
@@ -282,6 +288,7 @@ Next iteration: refined understanding → better solution
 ### 💻 Code Example
 
 **Agile principles compliance checklist:**
+
 ```python
 from dataclasses import dataclass
 
@@ -345,25 +352,25 @@ run_health_check({
 
 ### ⚖️ Comparison Table
 
-| Framework | Basis | Cadence | Best For |
-|---|---|---|---|
-| **Agile Manifesto** | Values + principles | n/a (not a framework) | Guiding philosophy; evaluating practices |
-| **Scrum** | Sprint-based; defined ceremonies | 1–4 week sprints | Teams with discrete feature work |
-| **Kanban** | Flow-based; WIP limits | Continuous | Ops work; unpredictable demand; support |
-| **XP (Extreme Programming)** | Engineering practices (TDD, pairing, CI) | Weekly iterations | Teams wanting strong technical practices |
-| **SAFe** | Large-scale agile coordination | PI Planning (quarterly) | Multiple agile teams on shared programme |
+| Framework                    | Basis                                    | Cadence                 | Best For                                 |
+| ---------------------------- | ---------------------------------------- | ----------------------- | ---------------------------------------- |
+| **Agile Manifesto**          | Values + principles                      | n/a (not a framework)   | Guiding philosophy; evaluating practices |
+| **Scrum**                    | Sprint-based; defined ceremonies         | 1–4 week sprints        | Teams with discrete feature work         |
+| **Kanban**                   | Flow-based; WIP limits                   | Continuous              | Ops work; unpredictable demand; support  |
+| **XP (Extreme Programming)** | Engineering practices (TDD, pairing, CI) | Weekly iterations       | Teams wanting strong technical practices |
+| **SAFe**                     | Large-scale agile coordination           | PI Planning (quarterly) | Multiple agile teams on shared programme |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Agile means no planning" | Agile means continuous planning, at appropriate levels of detail. Short-term plans are detailed; long-term plans are light. Planning is never eliminated. |
-| "Agile means no documentation" | Agile values working software MORE than comprehensive documentation. Documentation that serves the team and the product is valued. Documentation for its own sake is not. |
-| "We do Scrum, so we're agile" | Scrum is one implementation of agile principles. Scrum without the principles (e.g., fixed scope in sprints, no retrospective improvement) is not agile. |
-| "Agile doesn't work at scale" | Agile works at scale when the underlying principles (short cycles, customer collaboration, adaptability) are preserved. Scaling frameworks that replace the principles with heavy process are not agile. |
-| "Agile is anti-architecture" | Agile is anti-big-upfront-design. Continuous attention to technical excellence (a core principle) includes architecture evolution. Emergent architecture from self-organising teams is a principle, not an excuse for no architecture. |
+| Misconception                  | Reality                                                                                                                                                                                                                                |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Agile means no planning"      | Agile means continuous planning, at appropriate levels of detail. Short-term plans are detailed; long-term plans are light. Planning is never eliminated.                                                                              |
+| "Agile means no documentation" | Agile values working software MORE than comprehensive documentation. Documentation that serves the team and the product is valued. Documentation for its own sake is not.                                                              |
+| "We do Scrum, so we're agile"  | Scrum is one implementation of agile principles. Scrum without the principles (e.g., fixed scope in sprints, no retrospective improvement) is not agile.                                                                               |
+| "Agile doesn't work at scale"  | Agile works at scale when the underlying principles (short cycles, customer collaboration, adaptability) are preserved. Scaling frameworks that replace the principles with heavy process are not agile.                               |
+| "Agile is anti-architecture"   | Agile is anti-big-upfront-design. Continuous attention to technical excellence (a core principle) includes architecture evolution. Emergent architecture from self-organising teams is a principle, not an excuse for no architecture. |
 
 ---
 
@@ -376,6 +383,7 @@ run_health_check({
 **Root Cause:** The ceremonies were adopted; the values were not. The organisation measures process compliance (are we doing standups?) not principle adherence (are we delivering working software to users frequently?). Process measurement creates process optimisation — not software delivery improvement.
 
 **Fix:**
+
 ```
 INSPECT AGAINST PRINCIPLES:
   Pick one manifesto principle per month.
@@ -406,16 +414,19 @@ CHANGE WELCOME:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Sprint Planning` — the primary ceremony that operationalises agile principles
 - `Scrum` — the most widely used agile framework
 - `Kanban` — the flow-based alternative to sprint-based agile
 
 **Builds On This (learn these next):**
+
 - `Sprint Planning` — agile planning in practice
 - `Scrum` — the framework that implements many agile principles
 - `Retrospective` — the principle of continuous improvement in action
 
 **Alternatives / Comparisons:**
+
 - `Scrum` — specific agile framework; ceremonies implement agile principles
 - `Kanban` — alternative agile approach; no sprints; continuous flow
 - `Sprint Planning` — where the planning principle is operationalised

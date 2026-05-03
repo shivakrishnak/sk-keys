@@ -57,6 +57,7 @@ Alex Xu's "System Design Interview" (2020) standardised the preparation approach
 The system design interview rewards structured thinking and tradeoff articulation far more than encyclopaedic knowledge — knowing the RESHADED framework and 10 key components well beats knowing 50 components shallowly.
 
 **One analogy:**
+
 > A system design interview is like an architect's design review with a client. The client says "I want a building that can hold 5,000 people." A strong architect doesn't immediately draw a specific building — they ask: Is this a residential or commercial building? In which climate? What is the budget? What safety requirements apply? What is the expected load pattern? Only after clarifying constraints do they begin designing. And they explain every design decision: "I'm using a steel frame here because concrete can't span this distance efficiently — but it costs 20% more." The design interview expects the same structure: clarify → estimate → design → justify every choice with explicit tradeoffs.
 
 **One insight:**
@@ -74,7 +75,7 @@ R — REQUIREMENTS (10 minutes)
     "Users can send messages to other users"
     "Users can see a feed of posts from people they follow"
     Ask: "What are the top 3 features we need to support?"
-    
+
   Non-functional requirements (how the system behaves):
     Availability: "99.99% uptime = ~52 min downtime/year"
     Latency: "Feed load < 200ms p99"
@@ -91,7 +92,7 @@ E — ESTIMATION (5 minutes)
     Requests/second: DAU × actions/day ÷ 86,400
     Storage: data_per_user × years × DAU
     Bandwidth: bytes_per_request × requests/second
-    
+
   EXAMPLE (Twitter-scale):
     100M DAU; 20 tweets/day read; 1 write/5 days
     Read QPS: 100M × 20 / 86,400 ≈ 23,000 QPS
@@ -239,7 +240,7 @@ DEEP DIVE — ID Generation:
     Sequential: predictable, simple, no collision
     But reveals creation volume (security consideration)
   Option C: Twitter Snowflake or similar distributed ID
-  
+
   I'd choose Option B for simplicity: DB auto-increment +
   base62 encode. Collision-proof; simple to implement.
   If sequential IDs are a concern: Option C for scale.
@@ -249,7 +250,7 @@ TRADEOFFS:
     301: browser caches → less load; can't track clicks
     302: no browser cache → more load; can track analytics
     Choice depends on whether analytics are a requirement.
-    
+
   Cache: LRU, 80/20 — 20% of URLs get 80% of traffic.
   Redis with TTL; on miss: DB lookup + cache write.
   Read 4,000 QPS → cache hit rate >90% → ~400 DB reads/sec: manageable.
@@ -341,6 +342,7 @@ Interview ends; debrief + improve
 ### 💻 Code Example
 
 **System design practice tracker:**
+
 ```python
 from dataclasses import dataclass, field
 from enum import Enum
@@ -404,24 +406,24 @@ print_practice_list(PRACTICE_PROBLEMS)
 
 ### ⚖️ Comparison Table
 
-| Level | What's assessed | Differentiator |
-|---|---|---|
-| **L4 / SWE II** | Basic components, single-system design | Requirements clarification, basic tradeoffs |
-| **L5 / Senior** | Scalability, multi-component, tradeoffs | Database sharding, caching strategy, CAP reasoning |
-| **L6 / Staff** | Massive scale, failure modes, geo-distribution | Hotspot handling, consistency models, operational complexity |
+| Level               | What's assessed                                | Differentiator                                                  |
+| ------------------- | ---------------------------------------------- | --------------------------------------------------------------- |
+| **L4 / SWE II**     | Basic components, single-system design         | Requirements clarification, basic tradeoffs                     |
+| **L5 / Senior**     | Scalability, multi-component, tradeoffs        | Database sharding, caching strategy, CAP reasoning              |
+| **L6 / Staff**      | Massive scale, failure modes, geo-distribution | Hotspot handling, consistency models, operational complexity    |
 | **L7+ / Principal** | Multi-system architecture, long-term evolution | Strategic technical bets, second-order effects, org constraints |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "There is a correct architecture" | System design has no single correct answer. The interviewer assesses thinking process and tradeoff articulation, not a specific architecture. |
-| "More components = better design" | Adding complexity without justification is a negative signal. Every component should be justified by a specific requirement or constraint. |
-| "Skip requirements — waste of time" | Requirements clarification is the most important part of the interview. Designing without it almost always leads to architecture that doesn't match constraints. |
-| "Database choice doesn't matter" | SQL vs NoSQL is one of the most important decisions; must be justified by access pattern, consistency requirements, and scale. |
-| "Drawing fast impresses interviewers" | Drawing fast without explanation does not impress. A slow, clearly explained design with explicit tradeoffs scores higher. |
+| Misconception                         | Reality                                                                                                                                                          |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "There is a correct architecture"     | System design has no single correct answer. The interviewer assesses thinking process and tradeoff articulation, not a specific architecture.                    |
+| "More components = better design"     | Adding complexity without justification is a negative signal. Every component should be justified by a specific requirement or constraint.                       |
+| "Skip requirements — waste of time"   | Requirements clarification is the most important part of the interview. Designing without it almost always leads to architecture that doesn't match constraints. |
+| "Database choice doesn't matter"      | SQL vs NoSQL is one of the most important decisions; must be justified by access pattern, consistency requirements, and scale.                                   |
+| "Drawing fast impresses interviewers" | Drawing fast without explanation does not impress. A slow, clearly explained design with explicit tradeoffs scores higher.                                       |
 
 ---
 
@@ -434,6 +436,7 @@ print_practice_list(PRACTICE_PROBLEMS)
 **Root Cause:** The candidate is presenting architecture, not thinking through it. The design interview is a conversation, not a presentation. Interviewers want to hear your reasoning process in real time — not a final design after 35 minutes of silence.
 
 **Fix:**
+
 ```
 MAKE IT A CONVERSATION:
   After requirements: "Does that sound like the right scope
@@ -444,7 +447,7 @@ MAKE IT A CONVERSATION:
     to go deeper on before I continue?"
   On every major decision: "I'm choosing X over Y because
     [reason]. Does that align with what you had in mind?"
-    
+
 THINK ALOUD:
   "I'm trying to decide between fan-out on write and
    fan-out on read. Fan-out on write: fast reads, but
@@ -452,7 +455,7 @@ THINK ALOUD:
    Fan-out on read: slower reads, simpler writes.
    For this use case with 100M DAU, I'd lean toward
    fan-out on write with a hybrid for celebrities..."
-   
+
 THE INTERVIEW IS THE REASONING, NOT THE DIAGRAM.
 ```
 
@@ -461,14 +464,17 @@ THE INTERVIEW IS THE REASONING, NOT THE DIAGRAM.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Technical Interview Preparation` — the broader context for all three interview tracks
 - `System Design` — the engineering knowledge that the interview assesses
 
 **Builds On This (learn these next):**
+
 - `Technical Interview Preparation` — system design is one track within broader interview preparation
 - `Behavioral Interview Patterns` — the behavioral complement to system design
 
 **Alternatives / Comparisons:**
+
 - `Behavioral Interview Patterns` — the behavioral interview deep-dive
 - `Technical Interview Preparation` — the comprehensive preparation framework
 

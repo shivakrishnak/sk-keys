@@ -57,6 +57,7 @@ ICS (Incident Command System) was developed in the 1970s by California firefight
 Incident Command separates managing the incident from fixing the incident — one person coordinates, one communicates, others investigate — so the best debuggers are debugging, not fielding executive Slack pings.
 
 **One analogy:**
+
 > Incident Command in software engineering maps directly to how emergency rooms manage trauma. When a critical patient arrives, a trauma leader (IC equivalent) stands back from the bedside and directs: "You take airway. You establish IV access. You call for blood." The trauma leader is not performing procedures — they are managing the team, holding the big picture, and making triage decisions. The specialists are executing. Without the trauma leader, everyone crowds around the patient performing procedures independently, conflicting with each other. Incident Command is the trauma leader model for production failures.
 
 **One insight:**
@@ -78,11 +79,11 @@ WITH ICS:
   IC:  declares incident; assigns roles; makes decisions;
        declares resolution
        DOES NOT: debug, communicate externally
-  
+
   CL:  owns all external communication
        Status page updates; stakeholder pings; exec updates
        DOES NOT: debug; make technical decisions
-  
+
   SME: investigates assigned domain
        Reports findings to IC only
        DOES NOT: communicate externally; make response calls
@@ -125,7 +126,7 @@ INCIDENT DECLARED:
   t=25: Mitigation executed by IC-designated engineer
   t=30: Verification: is service recovering?
   t=45: Resolution declared; CL posts resolution notification
-  
+
 POST-INCIDENT:
   Postmortem scheduled within 24h
   Preliminary timeline in 1h
@@ -140,6 +141,7 @@ POST-INCIDENT:
 At 14:32, checkout is failing for 80% of users. SEV-1 declared. You are IC.
 
 **Unstructured response (what usually happens):**
+
 - 6 engineers join the war room channel
 - Everyone starts looking at dashboards simultaneously
 - Alice posts: "DB connections spiking"
@@ -152,6 +154,7 @@ At 14:32, checkout is failing for 80% of users. SEV-1 declared. You are IC.
 - 45 minutes pass; chaos; eventually resolved by accident
 
 **ICS response:**
+
 - t=0: You (IC): "SEV-1 declared. Alice: CL. Bob: investigate payment service. Carol: investigate DB. Dave: standby."
 - t=2: Alice posts status page update: "Investigating checkout issues. ETA 30m."
 - t=5: Bob: "Payment service healthy — latency normal." Carol: "DB connection pool at 98% — hitting limit."
@@ -258,6 +261,7 @@ Runbooks updated; monitoring improved
 ### 💻 Code Example
 
 **Incident status bot skeleton (Slack-integrated):**
+
 ```python
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -335,26 +339,26 @@ print(incident.summary())
 
 ### ⚖️ Comparison Table
 
-| Aspect | With ICS | Without ICS |
-|---|---|---|
-| **Coordination** | Single IC maintains overview; directs SMEs | All engineers coordinate ad-hoc; chaos |
-| **Communication** | CL owns all external updates; consistent | Engineers field exec messages mid-debug |
-| **Decision authority** | IC makes calls; SMEs execute | Unclear; by committee; delayed |
-| **Debugging** | SMEs focus; no role bleed | Debuggers distracted by comms/decisions |
-| **Postmortem** | Structured; blameless; timeline preserved | Ad-hoc; blame-prone; timeline lost |
-| **MTTR (typical)** | 10–30 min improvement for SEV-1 | High variance; often 2–4× longer |
+| Aspect                 | With ICS                                   | Without ICS                             |
+| ---------------------- | ------------------------------------------ | --------------------------------------- |
+| **Coordination**       | Single IC maintains overview; directs SMEs | All engineers coordinate ad-hoc; chaos  |
+| **Communication**      | CL owns all external updates; consistent   | Engineers field exec messages mid-debug |
+| **Decision authority** | IC makes calls; SMEs execute               | Unclear; by committee; delayed          |
+| **Debugging**          | SMEs focus; no role bleed                  | Debuggers distracted by comms/decisions |
+| **Postmortem**         | Structured; blameless; timeline preserved  | Ad-hoc; blame-prone; timeline lost      |
+| **MTTR (typical)**     | 10–30 min improvement for SEV-1            | High variance; often 2–4× longer        |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "IC should be the most senior engineer" | IC should be the person best at managing, not necessarily the best debugger. A staff engineer as IC who cannot resist debugging is less effective than a senior engineer IC who manages well. |
-| "CL role is administrative/less important" | CL directly reduces MTTR by removing executive communication load from the IC and SMEs. In SEV-1 incidents, this is a high-value role. |
-| "Postmortems assign blame to find who broke it" | Blameless postmortems focus on system and process failures. Blaming individuals hides systemic causes and deters future incident reporting. |
-| "ICS is only for major incidents" | ICS principles (clear role, decision authority, communication) apply to any chaotic coordination situation — not just outages. |
-| "Runbooks are too rigid for complex incidents" | Runbooks handle known scenarios. For novel incidents, the IC still coordinates — they just don't have a runbook. Runbooks reduce MTTR for the 70% of incidents that are repeat scenarios. |
+| Misconception                                   | Reality                                                                                                                                                                                       |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "IC should be the most senior engineer"         | IC should be the person best at managing, not necessarily the best debugger. A staff engineer as IC who cannot resist debugging is less effective than a senior engineer IC who manages well. |
+| "CL role is administrative/less important"      | CL directly reduces MTTR by removing executive communication load from the IC and SMEs. In SEV-1 incidents, this is a high-value role.                                                        |
+| "Postmortems assign blame to find who broke it" | Blameless postmortems focus on system and process failures. Blaming individuals hides systemic causes and deters future incident reporting.                                                   |
+| "ICS is only for major incidents"               | ICS principles (clear role, decision authority, communication) apply to any chaotic coordination situation — not just outages.                                                                |
+| "Runbooks are too rigid for complex incidents"  | Runbooks handle known scenarios. For novel incidents, the IC still coordinates — they just don't have a runbook. Runbooks reduce MTTR for the 70% of incidents that are repeat scenarios.     |
 
 ---
 
@@ -367,6 +371,7 @@ print(incident.summary())
 **Root Cause:** The IC is the most technically capable person. The urge to fix the problem is stronger than the discipline to manage the response. The role is new and the team hasn't internalised it.
 
 **Fix:**
+
 ```
 1. PRACTICE ICS IN GAMEDAYS (before incidents):
    → Run quarterly gameday drills with full ICS
@@ -394,15 +399,18 @@ print(incident.summary())
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Blameless Culture` — postmortems require psychological safety to be effective
 - `Stakeholder Communication` — CL role requires clear, calm, timely external communication
 
 **Builds On This (learn these next):**
+
 - `Blameless Culture` — postmortem process is the primary blameless culture tool
 - `Risk Management` — incidents are triggered risks; risk register informs preparedness
 - `Observability & SRE` — detection and MTTD depend on monitoring and alerting quality
 
 **Alternatives / Comparisons:**
+
 - `Blameless Culture` — the postmortem is the cultural expression of blameless practice
 - `Risk Management` — risk mitigation reduces incident probability; incident command manages them when they occur
 

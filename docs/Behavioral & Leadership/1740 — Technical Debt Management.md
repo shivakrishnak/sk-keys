@@ -49,6 +49,7 @@ Ward Cunningham coined "technical debt" in 1992 as an analogy to financial debt:
 Technical debt is borrowing against future velocity; managing it is deciding how much to borrow, making interest payments when due, and never letting debt compound to the point where interest consumes all capacity.
 
 **One analogy:**
+
 > Technical debt is like a financial mortgage. Taking out a mortgage to buy a house is rational — it enables something you couldn't otherwise afford. But: (1) you must make interest payments or lose the house; (2) interest compounds — the longer you wait, the more you owe; (3) if the debt becomes too large relative to your income, you become insolvent. A well-managed codebase takes on debt deliberately, makes regular payments, and never lets total debt exceed manageable servicing capacity. An unmanaged codebase is the equivalent of maxing out credit cards — fast relief, catastrophic long-term cost.
 
 **One insight:**
@@ -120,14 +121,14 @@ Measuring interest:
 **SETUP:**
 Your team has 6 items on the technical debt backlog. You have budget for one quarter of debt reduction work (10 engineer-weeks). How do you choose?
 
-| Debt Item | Interest Rate (velocity lost/quarter) | Fix Cost | Severity |
-|---|---|---|---|
-| Monolith coupling in checkout | 4 weeks | 6 weeks | Critical |
-| No test coverage on auth service | 2 weeks | 3 weeks | High |
-| Deprecated logging library | 0.5 weeks | 1 week | Low |
-| Hard-coded config values | 1 week | 1.5 weeks | Medium |
-| Inconsistent error handling | 0.5 weeks | 2 weeks | Low |
-| Tech stack version lag (Node 14→20) | 0.5 weeks | 2 weeks | Medium (security) |
+| Debt Item                           | Interest Rate (velocity lost/quarter) | Fix Cost  | Severity          |
+| ----------------------------------- | ------------------------------------- | --------- | ----------------- |
+| Monolith coupling in checkout       | 4 weeks                               | 6 weeks   | Critical          |
+| No test coverage on auth service    | 2 weeks                               | 3 weeks   | High              |
+| Deprecated logging library          | 0.5 weeks                             | 1 week    | Low               |
+| Hard-coded config values            | 1 week                                | 1.5 weeks | Medium            |
+| Inconsistent error handling         | 0.5 weeks                             | 2 weeks   | Low               |
+| Tech stack version lag (Node 14→20) | 0.5 weeks                             | 2 weeks   | Medium (security) |
 
 **ANALYSIS:**
 Item 1 (monolith coupling): ROI = 4 weeks interest / 6 weeks fix = 0.67 — pays back in 1.5 quarters. HIGH VALUE.
@@ -231,19 +232,22 @@ Repeat: debt management is continuous
 ### 💻 Code Example
 
 **Technical debt register (template):**
+
 ```markdown
 # Technical Debt Register — Platform Team
+
 # Updated: 2024-03-15
 
-| ID | Description | Type | Area | Interest Rate | Fix Cost | ROI | Risk | Status |
-|---|---|---|---|---|---|---|---|---|
-| D-001 | Monolith coupling: checkout→orders | Structural | Checkout | 4w/Q | 6w | 0.67 | Critical | Q3 roadmap |
-| D-002 | No test coverage: auth service | Local | Auth | 2w/Q | 3w | 0.67 | High | Q3 sprint allocation |
-| D-003 | Node 14 (EOL — security risk) | Structural | All services | 0.5w/Q | 2w | 0.25 | High (security) | Q3 roadmap |
-| D-004 | Hard-coded config values | Local | Multiple | 1w/Q | 1.5w | 0.67 | Medium | Sprint; incremental |
-| D-005 | Inconsistent error handling | Local | Multiple | 0.5w/Q | 2w | 0.25 | Low | Backlog |
+| ID    | Description                        | Type       | Area         | Interest Rate | Fix Cost | ROI  | Risk            | Status               |
+| ----- | ---------------------------------- | ---------- | ------------ | ------------- | -------- | ---- | --------------- | -------------------- |
+| D-001 | Monolith coupling: checkout→orders | Structural | Checkout     | 4w/Q          | 6w       | 0.67 | Critical        | Q3 roadmap           |
+| D-002 | No test coverage: auth service     | Local      | Auth         | 2w/Q          | 3w       | 0.67 | High            | Q3 sprint allocation |
+| D-003 | Node 14 (EOL — security risk)      | Structural | All services | 0.5w/Q        | 2w       | 0.25 | High (security) | Q3 roadmap           |
+| D-004 | Hard-coded config values           | Local      | Multiple     | 1w/Q          | 1.5w     | 0.67 | Medium          | Sprint; incremental  |
+| D-005 | Inconsistent error handling        | Local      | Multiple     | 0.5w/Q        | 2w       | 0.25 | Low             | Backlog              |
 
 ## Key:
+
 Interest Rate = estimated velocity loss per quarter
 Fix Cost = engineer-weeks to resolve
 ROI = Interest / Fix Cost (higher = better investment)
@@ -253,25 +257,25 @@ ROI = Interest / Fix Cost (higher = better investment)
 
 ### ⚖️ Comparison Table
 
-| Debt Type | Fix Approach | Timeline | Risk if Ignored |
-|---|---|---|---|
-| **Local debt** (one component) | Incremental; boy scout rule; sprint allocation | Weeks | Team velocity degradation |
-| **Structural debt** (architectural) | Strategic; multi-quarter programme | Months | System reliability crisis |
-| **Security/compliance debt** | Priority fix regardless of ROI | Immediate to short-term | Business/legal risk |
-| **Performance debt** | Depends on user impact | Based on SLA breach risk | User experience degradation |
-| **Test coverage debt** | Incremental; require tests on new code | Ongoing | Deployment confidence issues |
+| Debt Type                           | Fix Approach                                   | Timeline                 | Risk if Ignored              |
+| ----------------------------------- | ---------------------------------------------- | ------------------------ | ---------------------------- |
+| **Local debt** (one component)      | Incremental; boy scout rule; sprint allocation | Weeks                    | Team velocity degradation    |
+| **Structural debt** (architectural) | Strategic; multi-quarter programme             | Months                   | System reliability crisis    |
+| **Security/compliance debt**        | Priority fix regardless of ROI                 | Immediate to short-term  | Business/legal risk          |
+| **Performance debt**                | Depends on user impact                         | Based on SLA breach risk | User experience degradation  |
+| **Test coverage debt**              | Incremental; require tests on new code         | Ongoing                  | Deployment confidence issues |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Technical debt must be eliminated" | Zero debt is neither possible nor desirable — the goal is managed debt at sustainable interest levels |
-| "Debt only exists in legacy code" | New code can accumulate debt immediately; deliberate debt in a startup's MVP is intentional and rational |
+| Misconception                              | Reality                                                                                                                              |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| "Technical debt must be eliminated"        | Zero debt is neither possible nor desirable — the goal is managed debt at sustainable interest levels                                |
+| "Debt only exists in legacy code"          | New code can accumulate debt immediately; deliberate debt in a startup's MVP is intentional and rational                             |
 | "Tech debt is an engineering problem only" | Debt has direct business impact (delivery velocity, reliability); it must be communicated to and understood by business stakeholders |
-| "Adding tests fixes all technical debt" | Tests address one type of debt (confidence); they don't fix coupling, performance, security, or architectural debt |
-| "Big refactoring is the solution" | Big-bang rewrites fail at a high rate; incremental debt reduction with strangler fig and targeted refactoring is more reliable |
+| "Adding tests fixes all technical debt"    | Tests address one type of debt (confidence); they don't fix coupling, performance, security, or architectural debt                   |
+| "Big refactoring is the solution"          | Big-bang rewrites fail at a high rate; incremental debt reduction with strangler fig and targeted refactoring is more reliable       |
 
 ---
 
@@ -284,6 +288,7 @@ ROI = Interest / Fix Cost (higher = better investment)
 **Root Cause:** Debt has never been made visible. It exists as a shared feeling, not a documented, quantified, prioritised list.
 
 **Fix:**
+
 ```
 Week 1: Developer survey — "What are the top 5 things
          that slow you down most?"
@@ -310,16 +315,19 @@ per quarter."
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Technical Roadmap` — debt management is planned and tracked via the technical roadmap
 - `Technical Leadership` — debt management is a core technical leadership responsibility
 - `Code Quality` — technical debt is the accumulated deficit of code quality decisions
 
 **Builds On This (learn these next):**
+
 - `Technical Roadmap` — strategic debt items become roadmap commitments
 - `Engineering Strategy` — debt management policy is a component of engineering strategy
 - `Prioritization (MoSCoW, RICE)` — ROI-based prioritisation frameworks apply to debt prioritisation
 
 **Alternatives / Comparisons:**
+
 - `Technical Roadmap` — debt management is tracked through the technical roadmap
 - `Prioritization (MoSCoW, RICE)` — the same prioritisation tools apply to debt as to features
 - `Engineering Strategy` — debt management is a policy dimension of broader engineering strategy

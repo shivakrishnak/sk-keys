@@ -40,11 +40,13 @@ The SBI (Situation-Behaviour-Impact) model was developed by the Center for Creat
 ### 📘 Textbook Definition
 
 **SBI Model (Situation-Behaviour-Impact):**
+
 - **Situation:** The specific context in which the behaviour occurred ("In yesterday's design review...")
 - **Behaviour:** The observable action — not interpretation or motive ("You interrupted Alice twice while she was explaining the caching approach...")
 - **Impact:** The consequence of that behaviour on others, the team, or the work ("...which meant the team didn't hear her full proposal, and she didn't feel comfortable raising it again after that")
 
 **Radical Candor (Kim Scott):** Two-dimensional model:
+
 - Axis 1: Care personally (high vs. low) — genuine investment in the person's wellbeing and growth
 - Axis 2: Challenge directly (high vs. low) — willingness to say hard things clearly
 - Quadrant: High care + high challenge = Radical Candor (ideal)
@@ -60,6 +62,7 @@ The SBI (Situation-Behaviour-Impact) model was developed by the Center for Creat
 Effective feedback is specific, timely, evidence-based, and focused on behaviour and impact — not on character — and is received with curiosity rather than defensiveness.
 
 **One analogy:**
+
 > Feedback is a GPS recalculation. The GPS doesn't say "you are a bad driver for taking the wrong exit." It says: "At Junction 5 you turned south instead of north; here is the revised route." It is specific (Junction 5), descriptive (you turned south), and immediately actionable (new route). It carries no judgment about character. And the driver doesn't argue with the GPS — they use the information to navigate. Effective feedback works the same way: it tells the person specifically where they diverged from the expected path and offers a corrected route. The recipient doesn't need to feel attacked; they need to use the information.
 
 **One insight:**
@@ -90,7 +93,7 @@ SBI / GOOD:
   Impact:     "...which left their concerns unresolved on the
                record, and I noticed they didn't raise further
                concerns for the rest of the meeting."
-  
+
   Optional extension: "What would have looked different?"
   "Is there something about the timeline concerns that felt
    already-resolved to you that I'm missing?"
@@ -119,7 +122,7 @@ SBI / GOOD:
 □ GROWTH-ORIENTED:
   Framed as "here is what will make you more effective"
   Not "here is everything you did wrong"
-  
+
 □ ONE AT A TIME (corrective):
   One feedback item per conversation
   A list of corrections is overwhelming; only one sticks
@@ -263,6 +266,7 @@ Continuous: feedback becomes part of regular cadence
 ### 💻 Code Example
 
 **SBI feedback constructor:**
+
 ```python
 from dataclasses import dataclass
 
@@ -319,25 +323,25 @@ else:
 
 ### ⚖️ Comparison Table
 
-| Model | Structure | Best For | Key Limitation |
-|---|---|---|---|
-| **SBI** | Situation-Behaviour-Impact | Specific, timely feedback | Requires observation of specific event |
-| **Radical Candor** | 2×2: Care + Challenge | Framework for feedback culture and intent | Describes attitude, not delivery mechanics |
-| **Start/Stop/Continue** | Three categories | Retrospective-style group feedback | Less specific than SBI; can be vague |
-| **Feedforward** | Suggestions for future (not past) | High-defensiveness situations | Doesn't address past behaviour directly |
-| **360 feedback** | Multi-rater; structured | Periodic development reviews | Delayed; aggregated; less actionable than real-time |
+| Model                   | Structure                         | Best For                                  | Key Limitation                                      |
+| ----------------------- | --------------------------------- | ----------------------------------------- | --------------------------------------------------- |
+| **SBI**                 | Situation-Behaviour-Impact        | Specific, timely feedback                 | Requires observation of specific event              |
+| **Radical Candor**      | 2×2: Care + Challenge             | Framework for feedback culture and intent | Describes attitude, not delivery mechanics          |
+| **Start/Stop/Continue** | Three categories                  | Retrospective-style group feedback        | Less specific than SBI; can be vague                |
+| **Feedforward**         | Suggestions for future (not past) | High-defensiveness situations             | Doesn't address past behaviour directly             |
+| **360 feedback**        | Multi-rater; structured           | Periodic development reviews              | Delayed; aggregated; less actionable than real-time |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Positive feedback doesn't need to be specific" | Vague positive feedback ("great work!") is not useful. Specific positive feedback ("The way you structured that RFC made the trade-offs immediately clear — it reduced the review cycle by half") reinforces the exact behaviour you want repeated. |
-| "Feedback sandwich (positive-corrective-positive) works" | Research shows the positive-corrective-positive structure causes recipients to focus on the positives and dismiss the corrective element. It dilutes the feedback. |
-| "Deliver feedback immediately after the event" | Immediately after a heated event, neither party has decompress time. Aim for 24–48 hours: close enough to be specific; far enough to be calm. |
-| "It's unkind to give corrective feedback" | It is unkind to withhold feedback that would help someone grow. Ruinous Empathy (high care, low challenge) feels kind but leaves the person without the information they need. |
-| "If feedback isn't delivered perfectly, it doesn't count" | Imperfectly delivered feedback (without SBI) can still carry useful information. The recipient's job is to extract signal from imperfect delivery. |
+| Misconception                                             | Reality                                                                                                                                                                                                                                             |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Positive feedback doesn't need to be specific"           | Vague positive feedback ("great work!") is not useful. Specific positive feedback ("The way you structured that RFC made the trade-offs immediately clear — it reduced the review cycle by half") reinforces the exact behaviour you want repeated. |
+| "Feedback sandwich (positive-corrective-positive) works"  | Research shows the positive-corrective-positive structure causes recipients to focus on the positives and dismiss the corrective element. It dilutes the feedback.                                                                                  |
+| "Deliver feedback immediately after the event"            | Immediately after a heated event, neither party has decompress time. Aim for 24–48 hours: close enough to be specific; far enough to be calm.                                                                                                       |
+| "It's unkind to give corrective feedback"                 | It is unkind to withhold feedback that would help someone grow. Ruinous Empathy (high care, low challenge) feels kind but leaves the person without the information they need.                                                                      |
+| "If feedback isn't delivered perfectly, it doesn't count" | Imperfectly delivered feedback (without SBI) can still carry useful information. The recipient's job is to extract signal from imperfect delivery.                                                                                                  |
 
 ---
 
@@ -350,6 +354,7 @@ else:
 **Root Cause:** The engineer has learned that agreeing quickly ends the discomfort of the feedback conversation. They are not processing the feedback; they are using agreement as an escape mechanism. You have not established accountability for change.
 
 **Fix:**
+
 ```
 STEP 1: CLOSE THE LOOP IN THE CONVERSATION:
   Don't just deliver feedback → accept agreement → end.
@@ -385,15 +390,18 @@ STEP 4: ESCALATE IF NEEDED:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Mentoring vs Coaching` — coaching is a sustained feedback relationship
 - `Psychological Safety` — feedback can only be heard when the recipient feels safe
 
 **Builds On This (learn these next):**
+
 - `Psychological Safety` — building a team culture where feedback is safe
 - `Blameless Culture` — applying feedback principles to post-mortems
 - `Conflict Resolution` — feedback is a key tool in addressing interpersonal conflict
 
 **Alternatives / Comparisons:**
+
 - `Conflict Resolution` — feedback is the proactive version; conflict resolution is the reactive version of the same dynamic
 - `Mentoring vs Coaching` — coaching is a structured ongoing feedback relationship; this entry covers specific feedback events
 

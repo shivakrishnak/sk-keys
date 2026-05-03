@@ -53,6 +53,7 @@ The distinction between mentoring and coaching emerged from the coaching psychol
 Mentoring gives answers from your experience; coaching unlocks the other person's own answers — use mentoring when they lack knowledge, coaching when they lack confidence or clarity.
 
 **One analogy:**
+
 > A swimming instructor who demonstrates the butterfly stroke and corrects your arm position is mentoring — they have knowledge you don't and they're transferring it. A swimming coach watching you in the Olympics is coaching — you already know how to swim; they ask "what felt different in that last 50 meters?" to help you access your own awareness. Most technical leaders are swim instructors; the best ones learn when to put on the coaching hat.
 
 **One insight:**
@@ -234,6 +235,7 @@ Adjust mode based on their development progress
 ### 💻 Code Example
 
 **Coaching conversation framework:**
+
 ```python
 GROW_PROMPTS = {
     "GOAL": [
@@ -274,27 +276,27 @@ def choose_mode(has_knowledge_gap: bool,
 
 ### ⚖️ Comparison Table
 
-| Dimension | Mentoring | Coaching |
-|---|---|---|
-| **Direction** | Directive (I advise you) | Non-directive (I help you discover) |
-| **Primary tool** | Experience sharing, advice | Questions, reflection |
-| **Leader speaks** | ~60–70% of time | ~30–40% of time |
-| **Best for** | Knowledge gaps, early career | Decision gaps, capable but stuck |
-| **Risk** | Creates dependency if overused | Frustrating if person lacks info |
-| **Outcome** | Person has your answer | Person has their own answer |
-| **Long-term** | Efficient for known situations | Builds independent judgment |
+| Dimension         | Mentoring                      | Coaching                            |
+| ----------------- | ------------------------------ | ----------------------------------- |
+| **Direction**     | Directive (I advise you)       | Non-directive (I help you discover) |
+| **Primary tool**  | Experience sharing, advice     | Questions, reflection               |
+| **Leader speaks** | ~60–70% of time                | ~30–40% of time                     |
+| **Best for**      | Knowledge gaps, early career   | Decision gaps, capable but stuck    |
+| **Risk**          | Creates dependency if overused | Frustrating if person lacks info    |
+| **Outcome**       | Person has your answer         | Person has their own answer         |
+| **Long-term**     | Efficient for known situations | Builds independent judgment         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Coaching means never giving advice" | Coaching means leading with questions; you can and should share your view when directly helpful or when asked |
-| "Mentoring is better for junior engineers" | Junior engineers need mentoring AND coaching — mentoring for knowledge, coaching for building judgment and ownership |
-| "Coaching is only for career conversations" | Coaching applies in technical conversations: "What do you think the root cause is?" before offering your diagnosis |
-| "You must pick one mode and stick with it" | The best development conversations move between modes fluidly: start with coaching, shift to mentoring when genuine knowledge gaps appear, return to coaching to own the solution |
-| "Coaching means asking endless questions" | Effective coaching is purposeful: 4–6 well-chosen GROW questions are more effective than 20 unfocused ones |
+| Misconception                               | Reality                                                                                                                                                                           |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Coaching means never giving advice"        | Coaching means leading with questions; you can and should share your view when directly helpful or when asked                                                                     |
+| "Mentoring is better for junior engineers"  | Junior engineers need mentoring AND coaching — mentoring for knowledge, coaching for building judgment and ownership                                                              |
+| "Coaching is only for career conversations" | Coaching applies in technical conversations: "What do you think the root cause is?" before offering your diagnosis                                                                |
+| "You must pick one mode and stick with it"  | The best development conversations move between modes fluidly: start with coaching, shift to mentoring when genuine knowledge gaps appear, return to coaching to own the solution |
+| "Coaching means asking endless questions"   | Effective coaching is purposeful: 4–6 well-chosen GROW questions are more effective than 20 unfocused ones                                                                        |
 
 ---
 
@@ -307,6 +309,7 @@ def choose_mode(has_knowledge_gap: bool,
 **Root Cause:** You have answered every question with advice. They have learned that your answers are available and reliable, so they stop developing their own. You have inadvertently trained dependency.
 
 **Diagnostic:**
+
 ```
 In your last 5 development conversations, count:
   How many times did you say "you should..."?
@@ -323,15 +326,18 @@ If your advice:question ratio is > 3:1, you are over-mentoring.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Situational Leadership` — mentoring vs coaching maps directly to the D-level diagnosis
 - `Feedback (Giving and Receiving)` — both mentoring and coaching involve structured feedback
 
 **Builds On This (learn these next):**
+
 - `Technical Leadership` — technical leaders must develop both mentoring and coaching capabilities
 - `Engineering Manager vs Tech Lead` — both roles require effective development conversations
 - `Psychological Safety` — coaching requires psychological safety; the coachee must feel safe to explore without judgment
 
 **Alternatives / Comparisons:**
+
 - `Situational Leadership` — the framework that tells you when to mentor (S1/S2) vs. coach (S3) vs. delegate (S4)
 - `Feedback (Giving and Receiving)` — specific technique for both mentoring and coaching conversations
 - `Psychological Safety` — the cultural prerequisite for effective coaching

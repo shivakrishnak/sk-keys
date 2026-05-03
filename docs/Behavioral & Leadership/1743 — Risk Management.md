@@ -44,6 +44,7 @@ Formal risk management frameworks trace to NASA and the US military (1960s–197
 **Risk Register:** A living document listing all identified risks with: description, probability (0–1 or L/M/H), impact (on scope, schedule, budget, quality), severity (probability × impact), response strategy, owner, and status.
 
 **Risk Response Strategies:**
+
 - **Mitigate:** Take action to reduce probability or impact (add automated testing to reduce defect risk)
 - **Accept:** Acknowledge the risk and monitor; prepare a contingency plan
 - **Avoid:** Change the plan to eliminate the risk entirely (use a well-known library rather than building bespoke)
@@ -59,6 +60,7 @@ Formal risk management frameworks trace to NASA and the US military (1960s–197
 Risk management makes the things that can go wrong visible, prioritised, and owned — before they go wrong — rather than after.
 
 **One analogy:**
+
 > Risk management is like pre-surgery planning at a hospital. Before the operation, the surgical team reviews: known patient conditions, drug interactions, equipment availability, potential complications. Each risk has a response: "if the patient's blood pressure drops below X, we administer Y." The risks are not eliminated — surgery is inherently risky — but each has been anticipated and prepared for. An unplanned complication during surgery that was on the known-risk list is managed calmly. A complication that was never surfaced triggers a crisis. Software risk management does the same: it is the pre-op checklist for your project.
 
 **One insight:**
@@ -92,7 +94,7 @@ RESPONSE DETAILS:
 
 ```
          Impact:   Low(1)   Med(2)   High(3)
-         
+
 High(3)    3        6        9      ← CRITICAL — must respond
 Med(2)     2        4        6      ← SIGNIFICANT — plan required
 Low(1)     1        2        3      ← MINOR — accept/monitor
@@ -240,6 +242,7 @@ Lessons learned fed into next project's risk checklist
 ### 💻 Code Example
 
 **Risk register + scoring in Python:**
+
 ```python
 from dataclasses import dataclass, field
 from enum import Enum
@@ -299,25 +302,25 @@ print_register([
 
 ### ⚖️ Comparison Table
 
-| Concept | Definition | When Applied |
-|---|---|---|
-| **Risk** | Uncertain future event; may or may not occur | Proactively, before it happens |
-| **Issue** | Problem that has already occurred | Reactively, during execution |
-| **Constraint** | Known, fixed limitation (budget, date) | Planning; cannot be "managed away" |
-| **Assumption** | Accepted-as-true for planning; may be wrong | Should be validated; unvalidated assumptions become risks |
-| **Dependency** | Required input from external source | Map and manage as risk if external/uncontrolled |
+| Concept        | Definition                                   | When Applied                                              |
+| -------------- | -------------------------------------------- | --------------------------------------------------------- |
+| **Risk**       | Uncertain future event; may or may not occur | Proactively, before it happens                            |
+| **Issue**      | Problem that has already occurred            | Reactively, during execution                              |
+| **Constraint** | Known, fixed limitation (budget, date)       | Planning; cannot be "managed away"                        |
+| **Assumption** | Accepted-as-true for planning; may be wrong  | Should be validated; unvalidated assumptions become risks |
+| **Dependency** | Required input from external source          | Map and manage as risk if external/uncontrolled           |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "If we don't talk about risks, they won't happen" | Unspoken risks have the same probability; they just don't have a mitigation plan. |
-| "Risk management means we can guarantee delivery" | Risk management reduces the probability and impact of surprises; it cannot eliminate uncertainty. |
-| "Only project managers do risk management" | Tech leads and engineers own technical risks; PM/EM own project risks. Both are necessary. |
-| "The risk register is for the auditors, not the team" | A risk register that isn't reviewed in standups/sprint reviews is not working. It must be a live working document. |
-| "Low probability means we don't need to plan for it" | Low probability × high impact = must accept actively, with a contingency plan. Fire extinguishers are for low-probability events. |
+| Misconception                                         | Reality                                                                                                                           |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| "If we don't talk about risks, they won't happen"     | Unspoken risks have the same probability; they just don't have a mitigation plan.                                                 |
+| "Risk management means we can guarantee delivery"     | Risk management reduces the probability and impact of surprises; it cannot eliminate uncertainty.                                 |
+| "Only project managers do risk management"            | Tech leads and engineers own technical risks; PM/EM own project risks. Both are necessary.                                        |
+| "The risk register is for the auditors, not the team" | A risk register that isn't reviewed in standups/sprint reviews is not working. It must be a live working document.                |
+| "Low probability means we don't need to plan for it"  | Low probability × high impact = must accept actively, with a contingency plan. Fire extinguishers are for low-probability events. |
 
 ---
 
@@ -330,6 +333,7 @@ print_register([
 **Root Cause:** The register was created as a compliance artefact, not as a working management tool. Risk review was not embedded in the sprint cadence. Nobody was accountable for keeping it current.
 
 **Fix:**
+
 ```
 1. EMBED IN CEREMONY:
    → Risk register review is last 5 minutes of sprint review
@@ -358,15 +362,18 @@ print_register([
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Technical Roadmap` — risks attach to roadmap initiatives; roadmap must account for risk buffers
 - `Stakeholder Communication` — risk escalation requires clear stakeholder communication
 
 **Builds On This (learn these next):**
+
 - `Incident Command` — risk materialisation triggers incident response
 - `Estimation Techniques` — PERT three-point estimation is a risk-aware estimation technique
 - `Technical Roadmap` — risk-adjusted roadmaps account for probability-weighted buffers
 
 **Alternatives / Comparisons:**
+
 - `Incident Command` — what happens when a risk triggers and becomes an incident
 - `Estimation Techniques` — estimation uncertainty is a form of risk (effort risk)
 - `Blameless Culture` — post-incident reviews should be risk-retrospect moments

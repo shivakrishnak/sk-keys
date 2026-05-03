@@ -55,6 +55,7 @@ The Thomas-Kilmann Conflict Mode Instrument (1974) provided a framework for cate
 Effective conflict resolution distinguishes the person from the problem, focuses on underlying interests rather than stated positions, and chooses the appropriate response style for the situation — turning disagreement into better outcomes rather than relationship damage.
 
 **One analogy:**
+
 > Unresolved conflict is like a silent memory leak. The process appears to run fine; the team ships work; standups are calm. But underneath, resentment accumulates — in code review comments, in passive agreement that doesn't convert to action, in engineers who stop raising disagreements because it hasn't been safe to disagree. Eventually the leak triggers an incident: a resignation, a public disagreement, a team split that requires EM intervention. Like a memory leak, the right fix is proactive detection and resolution — not waiting for the process to crash. Task conflict that surfaces early and resolves in 20 minutes is the proactive fix. Relationship conflict that surfaces 6 months later as a formal HR process is the crash.
 
 **One insight:**
@@ -124,7 +125,7 @@ If we negotiate positions: A pushes Kafka, B pushes SQS.
 Compromise: pick one; the other person is unsatisfied.
 
 Interest (why they want it):
-  A's interests: high throughput; replay capability; 
+  A's interests: high throughput; replay capability;
                  Kafka expertise already on team
   B's interests: operational simplicity; consistent AWS stack;
                  no new infrastructure to manage
@@ -157,6 +158,7 @@ Alice's interests: consistent policy enforcement; no per-service duplication; ce
 Bob's interests: service autonomy; no tight coupling to gateway; each team can configure their own limits
 
 Step 3: Options that address both:
+
 - Option A: Gateway enforces global rate limits; services enforce per-resource fine-grained limits
 - Option B: Shared rate-limiting library that each service includes; gateway enforces only global DDoS protection
 - Option C: Policy-as-code: rate limits defined centrally, enforced by gateway, but service teams can override for their service via config
@@ -253,6 +255,7 @@ Fix the structural cause; conflict doesn't recur
 ### 💻 Code Example
 
 **Conflict analysis worksheet:**
+
 ```python
 from dataclasses import dataclass, field
 
@@ -322,25 +325,25 @@ ConflictAnalysis(
 
 ### ⚖️ Comparison Table
 
-| TK Mode | Assertive | Cooperative | Best Used When |
-|---|---|---|---|
-| **Competing** | High | Low | Emergency; you're clearly right; protecting a principle |
-| **Collaborating** | High | High | Complex problem; relationship matters; both views needed |
-| **Compromising** | Medium | Medium | Equal power; time pressure; temporary solution |
-| **Accommodating** | Low | High | Their concern is more important; building goodwill |
-| **Avoiding** | Low | Low | Trivial issue; need to gather information; cool-down |
+| TK Mode           | Assertive | Cooperative | Best Used When                                           |
+| ----------------- | --------- | ----------- | -------------------------------------------------------- |
+| **Competing**     | High      | Low         | Emergency; you're clearly right; protecting a principle  |
+| **Collaborating** | High      | High        | Complex problem; relationship matters; both views needed |
+| **Compromising**  | Medium    | Medium      | Equal power; time pressure; temporary solution           |
+| **Accommodating** | Low       | High        | Their concern is more important; building goodwill       |
+| **Avoiding**      | Low       | Low         | Trivial issue; need to gather information; cool-down     |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Avoiding conflict is peaceful" | Avoided conflict accumulates into relationship damage or forces late-stage escalation with much higher cost. |
-| "Compromising is always fair" | Compromise often means both parties are partially satisfied — which may produce a suboptimal solution. Collaborating can produce a solution where both interests are fully addressed. |
+| Misconception                                                       | Reality                                                                                                                                                                                                            |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "Avoiding conflict is peaceful"                                     | Avoided conflict accumulates into relationship damage or forces late-stage escalation with much higher cost.                                                                                                       |
+| "Compromising is always fair"                                       | Compromise often means both parties are partially satisfied — which may produce a suboptimal solution. Collaborating can produce a solution where both interests are fully addressed.                              |
 | "Technical disagreements are objective — just evaluate the options" | Technical decisions involve values (simplicity vs. performance, consistency vs. availability). Two engineers can look at the same data and reach different conclusions because they weight the values differently. |
-| "Strong opinions, weakly held" | "Weakly held" is often not practised. Engineers with strong technical convictions frequently do not update their views when challenged. This is a competing mode problem, not a collaborating one. |
-| "Conflict resolution = HR process" | Most engineering conflicts should be resolved by the engineers themselves, with facilitation from the tech lead. EM/HR intervention is for relationship conflicts that have failed direct resolution. |
+| "Strong opinions, weakly held"                                      | "Weakly held" is often not practised. Engineers with strong technical convictions frequently do not update their views when challenged. This is a competing mode problem, not a collaborating one.                 |
+| "Conflict resolution = HR process"                                  | Most engineering conflicts should be resolved by the engineers themselves, with facilitation from the tech lead. EM/HR intervention is for relationship conflicts that have failed direct resolution.              |
 
 ---
 
@@ -353,6 +356,7 @@ ConflictAnalysis(
 **Root Cause:** The resolution was positional (picked a winner for this sprint) not principled (identified the interests and addressed them). The underlying structural ambiguity (ownership, authority, API boundary) was never addressed. The conflict will recur until the structure is fixed.
 
 **Fix:**
+
 ```
 1. NAME THE PATTERN:
    "This is the third sprint we've resolved this same conflict.
@@ -384,14 +388,17 @@ ConflictAnalysis(
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Feedback (Giving and Receiving)` — conflict resolution requires giving specific feedback about behaviour
 - `Psychological Safety` — conflict can only be surfaced early in a psychologically safe environment
 
 **Builds On This (learn these next):**
+
 - `Cross-Functional Collaboration` — cross-function conflicts are the most common and most complex
 - `Stakeholder Communication` — communicating conflict decisions across stakeholder groups
 
 **Alternatives / Comparisons:**
+
 - `Feedback (Giving and Receiving)` — feedback is the proactive, early intervention; conflict resolution is what happens when feedback is absent or inadequate
 - `Cross-Functional Collaboration` — cross-function collaboration failures often present as interpersonal conflict but have structural root causes
 

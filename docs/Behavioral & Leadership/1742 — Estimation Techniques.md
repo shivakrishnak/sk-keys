@@ -55,6 +55,7 @@ Story points emerged from XP (Extreme Programming, late 1990s) as a way to estim
 Estimation techniques are structured methods for making the uncertainty in software work visible — not for eliminating uncertainty, but for making it explicit so teams can plan around it.
 
 **One analogy:**
+
 > Estimating software work is like estimating how long it takes to read a book you've never seen. You might estimate by spine thickness (t-shirt sizing: it looks like an XL). You might compare to books you've read before (story points: it's about as complex as that 700-page thriller I read last year). You might ask three people and take the average of their guesses, weighted by their uncertainty (three-point). None of these methods gives you an exact answer — they all give you a range to plan around. The mistake is pretending you have an exact answer when you don't.
 
 **One insight:**
@@ -141,6 +142,7 @@ Alice: "I've read the OAuth service docs — the token refresh flow is not well 
 Diana: "This service requires an infrastructure change to enable service-to-service auth. That's a separate track. I don't think anyone has counted that."
 
 **The conversation reveals:**
+
 1. The OAuth service docs are unclear — this is risk (more buffer needed)
 2. There is an infrastructure dependency nobody scoped — this is a missing work item
 
@@ -227,6 +229,7 @@ Forecast delivery with velocity-based ranges
 ### 💻 Code Example
 
 **Three-point PERT estimation calculator:**
+
 ```python
 import math
 
@@ -269,25 +272,25 @@ print(f"95% range: {result['95_pct_range'][0]}–{result['95_pct_range'][1]} day
 
 ### ⚖️ Comparison Table
 
-| Technique | Scale | Best For | Key Weakness |
-|---|---|---|---|
-| **Story Points** | Relative (Fibonacci) | Sprint planning; velocity tracking | Meaningless cross-team; can be gamed |
-| **T-Shirt Sizing** | XS/S/M/L/XL | Roadmap / coarse planning | Too imprecise for sprint commitment |
-| **Three-Point / PERT** | Absolute (hours/days) | High-uncertainty tasks; dependencies | Requires discipline to set honest P |
-| **#NoEstimates** | Count / cycle time | Continuous flow; Kanban | Needs historical cycle time data |
-| **Planning Poker** | Story points | Team consensus; risk surfacing | Time-intensive; can become social pressure |
+| Technique              | Scale                 | Best For                             | Key Weakness                               |
+| ---------------------- | --------------------- | ------------------------------------ | ------------------------------------------ |
+| **Story Points**       | Relative (Fibonacci)  | Sprint planning; velocity tracking   | Meaningless cross-team; can be gamed       |
+| **T-Shirt Sizing**     | XS/S/M/L/XL           | Roadmap / coarse planning            | Too imprecise for sprint commitment        |
+| **Three-Point / PERT** | Absolute (hours/days) | High-uncertainty tasks; dependencies | Requires discipline to set honest P        |
+| **#NoEstimates**       | Count / cycle time    | Continuous flow; Kanban              | Needs historical cycle time data           |
+| **Planning Poker**     | Story points          | Team consensus; risk surfacing       | Time-intensive; can become social pressure |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Story points are a better unit of time" | Story points are not time — they are relative complexity. Velocity converts them to a time forecast. |
-| "We can estimate everything upfront precisely" | The cone of uncertainty is real. Early estimates can be 4× off. Build buffers; update estimates as scope is clarified. |
-| "A 1-point story is easy" | 1 point means "trivially simple relative to our reference story" — not zero risk. Even 1-point stories can explode. |
-| "Estimation accuracy means the team is good" | Estimate accuracy depends heavily on story clarity and stability. Unstable requirements make even good estimators inaccurate. |
-| "Three-point means pessimistic always wins" | Three-point weights the most likely case 4×. A realistic most-likely estimate prevents pessimism from dominating. |
+| Misconception                                  | Reality                                                                                                                       |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| "Story points are a better unit of time"       | Story points are not time — they are relative complexity. Velocity converts them to a time forecast.                          |
+| "We can estimate everything upfront precisely" | The cone of uncertainty is real. Early estimates can be 4× off. Build buffers; update estimates as scope is clarified.        |
+| "A 1-point story is easy"                      | 1 point means "trivially simple relative to our reference story" — not zero risk. Even 1-point stories can explode.           |
+| "Estimation accuracy means the team is good"   | Estimate accuracy depends heavily on story clarity and stability. Unstable requirements make even good estimators inaccurate. |
+| "Three-point means pessimistic always wins"    | Three-point weights the most likely case 4×. A realistic most-likely estimate prevents pessimism from dominating.             |
 
 ---
 
@@ -300,10 +303,11 @@ print(f"95% range: {result['95_pct_range'][0]}–{result['95_pct_range'][1]} day
 **Root Cause:** Engineers inflate story point estimates to hit velocity targets. Common causes: (a) velocity is used as a performance metric, incentivising inflation; (b) team learned that small estimates lead to scope-creep pressure; (c) estimates expanded to include everything (meetings, code review, etc.) rather than development effort only.
 
 **Fix:**
+
 ```
 1. Decouple velocity from performance measurement
    → Velocity is a forecasting tool, not a KPI
-   
+
 2. Track cycle time alongside story points:
    → If cycle time per point increases, inflation is occurring
 
@@ -320,15 +324,18 @@ print(f"95% range: {result['95_pct_range'][0]}–{result['95_pct_range'][1]} day
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Prioritization (MoSCoW, RICE)` — RICE requires Effort estimates; estimation feeds prioritisation
 - `Sprint Planning` — estimation is done during sprint planning
 
 **Builds On This (learn these next):**
+
 - `Sprint Planning` — uses story points and velocity directly
 - `Technical Roadmap` — uses t-shirt sizing and velocity forecasts for roadmap timelines
 - `Risk Management` — PERT three-point estimates are a key input to risk-based planning
 
 **Alternatives / Comparisons:**
+
 - `Risk Management` — PERT three-point estimation directly supports risk quantification
 - `Technical Roadmap` — roadmap forecasts depend on reliable velocity data
 

@@ -49,6 +49,7 @@ The **sliding window protocol** is a flow-control and error-control mechanism th
 The sliding window allows a sender to keep many segments in flight simultaneously — filling the network "pipe" to its bandwidth-delay product capacity — instead of the inefficient one-at-a-time stop-and-wait approach.
 
 **One analogy:**
+
 > Stop-and-wait is mailing letters one at a time: send a letter, wait for a reply, send next letter. If the post takes a week each way, you send one letter per two weeks. Sliding window is mailing 14 letters on day 1, then as each reply arrives (day 14 onwards), immediately sending another letter. The pipeline is full — 14 letters always in transit. The window (14) is the bandwidth-delay product: 1 letter/day × 14 days RTT.
 
 **One insight:**
@@ -59,6 +60,7 @@ The **bandwidth-delay product (BDP)** is the single most important number for un
 ### 🔩 First Principles Explanation
 
 **THE SENDER'S WINDOW:**
+
 ```
 Sequence numbers (bytes):
      ↓ sent & ACKed   ↓ sent, unACKed  ↓ can send  ↓ cannot send yet
@@ -66,7 +68,7 @@ Sequence numbers (bytes):
   0  │ 0...9999       │ 10000...19999   │20000...29999│ 30000+
 ─────┼────────────────┼─────────────────┼────────────┼──────────────────
      └──── discarded ─┘ ← WINDOW (20KB) →
-     
+
 Left edge (SND.UNA): 10000  — oldest unACKed byte
 Right edge (SND.NXT): 20000 — next byte to send
 Window limit: SND.UNA + Window = 10000 + 20000 = 30000
@@ -79,6 +81,7 @@ When ACK=15000 arrives:
 ```
 
 **BANDWIDTH-DELAY PRODUCT CALCULATION:**
+
 ```
 London → Sydney: 220ms RTT, 100 Mbps bandwidth
 BDP = 100,000,000 bps × 0.220 s = 22,000,000 bits = 2.75 MB
@@ -95,10 +98,12 @@ With 4MB window (tuned):
 
 **GO-BACK-N vs SELECTIVE REPEAT:**
 Two sliding window error recovery strategies:
+
 - **Go-Back-N**: on loss, retransmit the lost segment AND all subsequent segments. Simple but wasteful on lossy links.
 - **Selective Repeat (SACK)**: retransmit only the lost segment; receiver buffers out-of-order segments. Efficient. TCP uses this with **SACK (Selective Acknowledgement)** option (RFC 2018).
 
 **SACK (TCP Selective Acknowledgement):**
+
 ```
 Sender transmits: 1-1460, 1461-2920, 2921-4380, 4381-5840
 Packet 2921-4380 lost.
@@ -213,37 +218,37 @@ tcpdump -nn -r <pcap> | grep "wscale"
 └────────────────────────────────────────────────┘
 
  Time  Sender                    Receiver
- 
+
  t=0   [1][2][3][4]→ (send all 4)
- 
+
  t=50ms                          [1][2][3][4] received
                                  ← ACK=2 (received 1)
- 
+
  t=50ms [5]→ (window slides: ACK 1 received, send 5)
- 
+
  t=60ms                          ← ACK=3
  t=60ms [6]→
  t=70ms                          ← ACK=4
  t=70ms [7]→
  t=80ms                          ← ACK=5
  t=80ms [8]→
- 
+
  → Pipe always has 4 segments in flight
  → Throughput ≈ 4 × MSS / RTT (not 1 × MSS / RTT)
- 
+
  ════════════════════════════════════
- 
+
  SACK recovery when segment 3 is lost:
- 
+
  Sender: [1][2][3][4][5] sent
  Receiver: 1,2 received; 3 LOST; 4,5 received
- 
+
  ← ACK=3 SACK=[4,5] (cumulative=3, SACK says 4-5 OK)
  ← ACK=3 SACK=[4,5] (duplicate)
  ← ACK=3 SACK=[4,5] (triple dup ACK → fast retransmit!)
- 
+
  Sender: retransmit ONLY segment 3
- 
+
  ← ACK=6 (all received: 1,2,3(retransmit),4,5)
 ```
 
@@ -252,6 +257,7 @@ tcpdump -nn -r <pcap> | grep "wscale"
 ### 💻 Code Example
 
 **Example — BDP-optimal socket buffer configuration:**
+
 ```python
 import socket
 import os
@@ -263,7 +269,7 @@ def create_optimized_socket(
     rtt_ms: float = 100.0
 ) -> socket.socket:
     """Create a TCP socket with BDP-optimal buffer sizes.
-    
+
     Args:
         bandwidth_mbps: Expected link bandwidth in Mbps
         rtt_ms: Expected round-trip time in milliseconds
@@ -273,13 +279,13 @@ def create_optimized_socket(
     bdp_bytes = int((bandwidth_mbps * 1_000_000 / 8) * rtt_s)
     # Use 2× BDP to handle CWND growth above BDP
     buffer_size = max(bdp_bytes * 2, 256 * 1024)
-    
+
     print(f"RTT: {rtt_ms}ms, BW: {bandwidth_mbps}Mbps")
     print(f"BDP: {bdp_bytes / (1024*1024):.2f} MB")
     print(f"Socket buffer: {buffer_size / (1024*1024):.2f} MB")
-    
+
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    
+
     # Set buffers before connect() to affect the initial window
     # Note: setting SO_RCVBUF disables kernel autotuning for this socket
     # Only set if you specifically need to override autotuning
@@ -292,37 +298,37 @@ def create_optimized_socket(
         except OSError as e:
             # Kernel may cap at net.core.rmem_max
             print(f"Buffer set failed (check sysctl rmem_max): {e}")
-    
+
     sock.connect((host, port))
-    
+
     # Read actual buffer sizes (kernel may cap them)
     actual_rcv = sock.getsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF)
     actual_snd = sock.getsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF)
     print(f"Actual rcvbuf: {actual_rcv/(1024*1024):.2f} MB")
     print(f"Actual sndbuf: {actual_snd/(1024*1024):.2f} MB")
-    
+
     return sock
 
 def throughput_test(host: str, port: int, data_size_mb: int = 100):
     """Simple throughput test demonstrating window effects."""
     import time
-    
+
     sock = create_optimized_socket(
         host, port,
         bandwidth_mbps=1000,
         rtt_ms=100.0
     )
-    
+
     data = os.urandom(data_size_mb * 1024 * 1024)
-    
+
     start = time.perf_counter()
     sock.sendall(data)
     elapsed = time.perf_counter() - start
-    
+
     throughput_mbps = (data_size_mb * 8) / elapsed
     print(f"Sent {data_size_mb}MB in {elapsed:.2f}s: "
           f"{throughput_mbps:.1f} Mbps")
-    
+
     sock.close()
 ```
 
@@ -330,25 +336,25 @@ def throughput_test(host: str, port: int, data_size_mb: int = 100):
 
 ### ⚖️ Comparison Table
 
-| Protocol | Window Mechanism | HoL Blocking | Error Recovery |
-|---|---|---|---|
-| Stop-and-Wait | Window = 1 segment | Extreme (every packet) | Retransmit entire packet |
-| Go-Back-N | Window = N | Yes (retransmit from loss) | Retransmit loss + all after |
-| Selective Repeat | Window = N (SACK) | Within connection | Retransmit only lost |
-| TCP (with SACK) | min(rwnd, CWND) | Yes (stream-level) | SACK: retransmit only lost |
-| QUIC | Per-stream windows | No (stream-isolated) | SACK per stream |
+| Protocol         | Window Mechanism   | HoL Blocking               | Error Recovery              |
+| ---------------- | ------------------ | -------------------------- | --------------------------- |
+| Stop-and-Wait    | Window = 1 segment | Extreme (every packet)     | Retransmit entire packet    |
+| Go-Back-N        | Window = N         | Yes (retransmit from loss) | Retransmit loss + all after |
+| Selective Repeat | Window = N (SACK)  | Within connection          | Retransmit only lost        |
+| TCP (with SACK)  | min(rwnd, CWND)    | Yes (stream-level)         | SACK: retransmit only lost  |
+| QUIC             | Per-stream windows | No (stream-isolated)       | SACK per stream             |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| A larger window always means more throughput | Window > BDP means segments must queue at the bottleneck (bufferbloat). Optimal window = BDP. Larger window = higher latency without more throughput |
-| Setting SO_SNDBUF is sufficient for high throughput | Both SO_SNDBUF (sender) and SO_RCVBUF (receiver) must be large enough; the effective window is limited by min(sndbuf, rcvbuf, CWND). Also check the system-wide `net.core.rmem_max` |
-| TCP SACK is optional | SACK is negotiated in the handshake and is default-enabled on all modern OS. Without SACK, every loss causes retransmission of everything from the loss point — extremely inefficient on lossy links |
-| The window is fixed | The window is dynamic: rwnd changes every RTT based on receiver buffer, CWND changes based on congestion. The window can grow or shrink every round trip |
-| Stop-and-Wait is only a teaching concept | Many application-level protocols inadvertently implement stop-and-wait: sequential request/response without pipelining. HTTP/1.1 without pipelining, synchronous RPC calls, database queries without batching |
+| Misconception                                       | Reality                                                                                                                                                                                                       |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A larger window always means more throughput        | Window > BDP means segments must queue at the bottleneck (bufferbloat). Optimal window = BDP. Larger window = higher latency without more throughput                                                          |
+| Setting SO_SNDBUF is sufficient for high throughput | Both SO_SNDBUF (sender) and SO_RCVBUF (receiver) must be large enough; the effective window is limited by min(sndbuf, rcvbuf, CWND). Also check the system-wide `net.core.rmem_max`                           |
+| TCP SACK is optional                                | SACK is negotiated in the handshake and is default-enabled on all modern OS. Without SACK, every loss causes retransmission of everything from the loss point — extremely inefficient on lossy links          |
+| The window is fixed                                 | The window is dynamic: rwnd changes every RTT based on receiver buffer, CWND changes based on congestion. The window can grow or shrink every round trip                                                      |
+| Stop-and-Wait is only a teaching concept            | Many application-level protocols inadvertently implement stop-and-wait: sequential request/response without pipelining. HTTP/1.1 without pipelining, synchronous RPC calls, database queries without batching |
 
 ---
 
@@ -363,6 +369,7 @@ def throughput_test(host: str, port: int, data_size_mb: int = 100):
 Socket buffer smaller than BDP → window smaller than BDP → pipe underutilised.
 
 **Diagnostic Commands:**
+
 ```bash
 # Calculate expected throughput
 # BDP = 1Gbps * 0.1s = 12.5MB
@@ -395,15 +402,18 @@ Increase `net.ipv4.tcp_rmem` and `tcp_wmem` max values to at least 2× BDP; ensu
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `TCP` — the sliding window is a core TCP mechanism
 - `Flow Control` — the sliding window implements flow control (rwnd); understanding flow control is prerequisite
 
 **Builds On This (learn these next):**
+
 - `Congestion Control` — CWND is the congestion side of the window equation; min(rwnd, CWND) is the full picture
 - `Bandwidth vs Throughput` — BDP and window size directly determine achievable throughput
 - `Network Latency Optimization` — BDP-aware buffer tuning is one of the highest-impact optimisations for WAN transfers
 
 **Alternatives / Comparisons:**
+
 - `QUIC` — QUIC implements sliding windows per stream, eliminating HoL blocking; the logical next step after mastering TCP sliding windows
 
 ---

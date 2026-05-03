@@ -44,6 +44,7 @@ Amy Edmondson (Harvard Business School) coined the term in 1999, initially study
 **Team learning behaviour:** The practice of seeking feedback, sharing information, experimenting, discussing errors, and reflecting on results. Psychological safety enables team learning behaviour. Without it, teams default to performance behaviour (demonstrating competence, avoiding visible failure) which suppresses learning.
 
 **The four stages of psychological safety (Timothy Clark):**
+
 1. **Inclusion safety** — safe to be yourself; to belong without conditions
 2. **Learner safety** — safe to learn; ask questions; make mistakes as a learner
 3. **Contributor safety** — safe to contribute; to be a full team member
@@ -57,6 +58,7 @@ Amy Edmondson (Harvard Business School) coined the term in 1999, initially study
 Psychological safety means team members believe they can speak up — with ideas, questions, disagreements, or mistakes — without being penalised; without it, teams hide information and learn nothing.
 
 **One analogy:**
+
 > Psychological safety in a team is like the foundation of a building. You cannot see it from the outside. The building looks functional without it. But under load — under stress, during incidents, in critical design reviews — the absence of foundation causes collapse. Teams without psychological safety function fine on routine work; they collapse when they need to perform complex, novel, high-stakes work — precisely when the stakes demand the most from them. Most teams never identify the missing foundation because the collapse is attributed to other causes: "the engineer didn't speak up," "the team lacked initiative," "the design had flaws nobody caught." The actual cause was systemic: the environment made speaking up too dangerous.
 
 **One insight:**
@@ -81,7 +83,7 @@ Possible outputs of this calculation:
 When the expected value of speaking up is negative:
   Team member stays silent
   → The team loses the information they were about to share
-  
+
 When this calculation is made for every team member in every meeting:
   The team's information environment is severely degraded
   → Decisions are made with incomplete information
@@ -205,7 +207,7 @@ Better decisions, faster error correction, more learning
     ↓
 Team performance improves
     ↓
-[reinforcing cycle — more performance success 
+[reinforcing cycle — more performance success
  → more confidence → more risk-taking]
 ```
 
@@ -239,6 +241,7 @@ High performance sustained through learning cycle
 ### 💻 Code Example
 
 **Psychological safety survey analysis:**
+
 ```python
 from statistics import mean, stdev
 
@@ -294,24 +297,24 @@ print(f"Weakest item: {result['lowest_item']}")
 
 ### ⚖️ Comparison Table
 
-| Concept | Relationship to Psychological Safety |
-|---|---|
-| **Trust** | Interpersonal; one-to-one. PS is team-level; about the group, not just pairs. |
-| **Blameless Culture** | Cultural practice that creates and sustains PS. Blameless post-mortems signal that speaking up about mistakes is safe. |
-| **Comfort** | PS ≠ comfort. High-PS teams have hard conversations; they just happen openly. |
-| **Conflict avoidance** | PS should increase productive conflict (early disagreement surfaced in meetings), not decrease conflict. |
-| **Inclusion** | Inclusion is a prerequisite for PS (Clark's Stage 1: inclusion safety). |
+| Concept                | Relationship to Psychological Safety                                                                                   |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Trust**              | Interpersonal; one-to-one. PS is team-level; about the group, not just pairs.                                          |
+| **Blameless Culture**  | Cultural practice that creates and sustains PS. Blameless post-mortems signal that speaking up about mistakes is safe. |
+| **Comfort**            | PS ≠ comfort. High-PS teams have hard conversations; they just happen openly.                                          |
+| **Conflict avoidance** | PS should increase productive conflict (early disagreement surfaced in meetings), not decrease conflict.               |
+| **Inclusion**          | Inclusion is a prerequisite for PS (Clark's Stage 1: inclusion safety).                                                |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Psychological safety means being nice / no criticism" | PS enables direct critical feedback — it means the feedback is given without fear of personal attack, not that it is withheld. |
-| "High PS means everyone agrees" | High-PS teams disagree more openly and more frequently in meetings — that's the point. Disagreements surface early, before they become expensive. |
-| "PS is the team's responsibility equally" | The leader's behaviour is 70–80% of the PS environment. Individual team members cannot create PS without supportive leadership. |
-| "We have PS — I told the team it's safe to speak up" | Declaring PS doesn't create it. It is built through consistent behavioural evidence over months. One dismissive response to a concern can set back months of investment. |
+| Misconception                                            | Reality                                                                                                                                                                                                            |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "Psychological safety means being nice / no criticism"   | PS enables direct critical feedback — it means the feedback is given without fear of personal attack, not that it is withheld.                                                                                     |
+| "High PS means everyone agrees"                          | High-PS teams disagree more openly and more frequently in meetings — that's the point. Disagreements surface early, before they become expensive.                                                                  |
+| "PS is the team's responsibility equally"                | The leader's behaviour is 70–80% of the PS environment. Individual team members cannot create PS without supportive leadership.                                                                                    |
+| "We have PS — I told the team it's safe to speak up"     | Declaring PS doesn't create it. It is built through consistent behavioural evidence over months. One dismissive response to a concern can set back months of investment.                                           |
 | "PS can be measured by whether people speak in meetings" | People who are silenced develop indirect strategies: they speak in 1:1s, send Slack messages, or say nothing at all. Measurement requires a validated survey instrument, not observation of meeting participation. |
 
 ---
@@ -325,6 +328,7 @@ print(f"Weakest item: {result['lowest_item']}")
 **Root Cause:** The dominant voices (often senior engineers or the EM) have established a meeting dynamic where certain opinions are implicitly or explicitly not welcomed. The silenced engineers have run the interpersonal risk calculation and concluded: speaking up has negative expected value. The 3 dominant people may not know this is happening.
 
 **Fix:**
+
 ```
 1. STRUCTURED CONTRIBUTION (no-opt-out model):
    → "Before we decide: I want to hear one concern or
@@ -359,15 +363,18 @@ print(f"Weakest item: {result['lowest_item']}")
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Blameless Culture` — blameless culture is the primary structural support for PS
 - `Feedback (Giving and Receiving)` — PS enables honest feedback; honest feedback reinforces PS
 
 **Builds On This (learn these next):**
+
 - `Blameless Culture` — the post-mortem practice reinforced by PS
 - `Feedback (Giving and Receiving)` — high-PS teams give and receive direct, honest feedback
 - `Retrospective` — the retrospective is the primary team-level venue for exercising PS
 
 **Alternatives / Comparisons:**
+
 - `Mentoring vs Coaching` — coaching relationships require and build psychological safety
 - `Conflict Resolution` — conflict resolution is only possible when PS makes honest disagreement safe
 

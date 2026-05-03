@@ -41,6 +41,7 @@ Firewalls emerged in the late 1980s as the "perimeter defence" model: define a t
 ### 📘 Textbook Definition
 
 A **firewall** is a network security device (hardware or software) that monitors and controls incoming and outgoing network traffic based on predetermined security rules. Types:
+
 1. **Packet filter (stateless):** Inspects each packet independently; rules based on src/dst IP, port, protocol. Fast, simple, no session state.
 2. **Stateful inspection firewall:** Tracks TCP/UDP connection state. Automatically permits reply packets for established connections. More accurate; prevents spoofed return traffic.
 3. **Application-layer (Layer 7) / NGFW:** Inspects application protocols (HTTP, DNS, TLS SNI). Can block by app type, URL, user identity — not just IP:port.
@@ -54,6 +55,7 @@ A **firewall** is a network security device (hardware or software) that monitors
 A firewall is a gatekeeper that applies ALLOW/DENY rules to network traffic — blocking everything not explicitly permitted, protecting services from unauthorised access.
 
 **One analogy:**
+
 > A firewall is like a nightclub bouncer with a list. Default policy: nobody gets in. The list specifies: "allow anyone wearing a suit (port 443), allow VIP members with ID (specific IPs), block everyone else." Stateful: if you went inside (established connection), the bouncer lets you come back from the bathroom (return packets) without re-checking the list. NGFW: the bouncer can also check what you're carrying inside (application payload inspection).
 
 **One insight:**
@@ -64,6 +66,7 @@ The most important firewall rule is the **default policy**. "Default DENY" (whit
 ### 🔩 First Principles Explanation
 
 **IPTABLES ARCHITECTURE (Linux):**
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │  Linux iptables: Tables, Chains, Rules                   │
@@ -94,6 +97,7 @@ Default policies:
 ```
 
 **STATEFUL TRACKING:**
+
 ```
 # Stateful: allow established connections back
 iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
@@ -116,6 +120,7 @@ iptables -A INPUT -j DROP
 ```
 
 **CLOUD SECURITY GROUPS (AWS):**
+
 ```
 Security Group: stateful firewall at instance level
 
@@ -142,16 +147,19 @@ You're designing the network security for a 3-tier web app: load balancer, app s
 
 **FIREWALL RULE DESIGN:**
 
-*Load Balancer (public):*
+_Load Balancer (public):_
+
 - Inbound: 80, 443 from 0.0.0.0/0 (anyone)
 - Outbound: 8080 to app-server-security-group only
 
-*App Servers (private subnet):*
+_App Servers (private subnet):_
+
 - Inbound: 8080 from load-balancer-security-group only
 - No direct public internet access
 - Outbound: 5432 to db-security-group, 443 to internet (for API calls)
 
-*Database (private subnet):*
+_Database (private subnet):_
+
 - Inbound: 5432 from app-server-security-group ONLY
 - No inbound from internet, no inbound from load balancer
 - Outbound: None needed
@@ -275,20 +283,20 @@ def audit_security_group_rules(sg_id: str) -> List[Dict]:
     Returns list of risky rules (open to 0.0.0.0/0 on sensitive ports).
     """
     SENSITIVE_PORTS = {22, 3306, 5432, 6379, 27017, 9200, 2181}
-    
+
     result = subprocess.run(
         ["aws", "ec2", "describe-security-groups",
          "--group-ids", sg_id, "--output", "json"],
         capture_output=True, text=True
     )
     sg_data = json.loads(result.stdout)
-    
+
     risks = []
     for sg in sg_data.get("SecurityGroups", []):
         for rule in sg.get("IpPermissions", []):
             from_port = rule.get("FromPort", 0)
             to_port = rule.get("ToPort", 65535)
-            
+
             for ip_range in rule.get("IpRanges", []):
                 cidr = ip_range.get("CidrIp", "")
                 if cidr in ("0.0.0.0/0", "::/0"):
@@ -300,7 +308,7 @@ def audit_security_group_rules(sg_id: str) -> List[Dict]:
                                 "cidr": cidr,
                                 "risk": "CRITICAL: sensitive port open to internet"
                             })
-    
+
     return risks
 
 # Usage
@@ -314,25 +322,25 @@ for risk in risks:
 
 ### ⚖️ Comparison Table
 
-| Type | Stateless Packet Filter | Stateful Firewall | NGFW/WAF |
-|---|---|---|---|
-| Layer | L3-L4 | L3-L4 + state | L3-L7 |
-| Tracks connections | No | Yes | Yes |
-| Performance | Very fast | Fast | Slower (DPI) |
-| Return traffic | Explicit rules needed | Auto-allowed | Auto-allowed |
-| App awareness | No | No | Yes |
-| Use case | Router ACLs, NACLs | AWS SG, iptables | Palo Alto, CloudFlare WAF |
+| Type               | Stateless Packet Filter | Stateful Firewall | NGFW/WAF                  |
+| ------------------ | ----------------------- | ----------------- | ------------------------- |
+| Layer              | L3-L4                   | L3-L4 + state     | L3-L7                     |
+| Tracks connections | No                      | Yes               | Yes                       |
+| Performance        | Very fast               | Fast              | Slower (DPI)              |
+| Return traffic     | Explicit rules needed   | Auto-allowed      | Auto-allowed              |
+| App awareness      | No                      | No                | Yes                       |
+| Use case           | Router ACLs, NACLs      | AWS SG, iptables  | Palo Alto, CloudFlare WAF |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| A firewall means you're secure | A firewall is one layer. If port 443 is open (it must be), all HTTP-layer attacks (SQLi, XSS, auth bypass) pass through the firewall. Need WAF, input validation, auth at the application layer |
-| AWS Security Groups are stateless | Security Groups are STATEFUL. NACLs (Network ACLs, subnet level) are STATELESS and require explicit inbound AND outbound rules for each connection |
-| Firewalls slow down all traffic | Modern hardware firewalls and Linux `nftables` have negligible overhead for stateful inspection at speeds up to 100Gbps. Performance only degrades significantly with deep packet inspection (DPI) |
-| Default-deny outbound breaks nothing | Strict outbound rules DO break things: no DNS (port 53), no NTP (port 123), no OS package updates (port 443). Design outbound rules carefully, especially in Kubernetes/containers |
+| Misconception                        | Reality                                                                                                                                                                                            |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A firewall means you're secure       | A firewall is one layer. If port 443 is open (it must be), all HTTP-layer attacks (SQLi, XSS, auth bypass) pass through the firewall. Need WAF, input validation, auth at the application layer    |
+| AWS Security Groups are stateless    | Security Groups are STATEFUL. NACLs (Network ACLs, subnet level) are STATELESS and require explicit inbound AND outbound rules for each connection                                                 |
+| Firewalls slow down all traffic      | Modern hardware firewalls and Linux `nftables` have negligible overhead for stateful inspection at speeds up to 100Gbps. Performance only degrades significantly with deep packet inspection (DPI) |
+| Default-deny outbound breaks nothing | Strict outbound rules DO break things: no DNS (port 53), no NTP (port 123), no OS package updates (port 443). Design outbound rules carefully, especially in Kubernetes/containers                 |
 
 ---
 

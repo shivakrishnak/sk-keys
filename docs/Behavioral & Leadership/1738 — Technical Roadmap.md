@@ -49,6 +49,7 @@ Technical roadmaps formalised the practice of applying product roadmap thinking 
 A technical roadmap is the answer to "where is this system going in the next 12 months, and why?" — made concrete enough to plan against and communicate to stakeholders.
 
 **One analogy:**
+
 > A technical roadmap is like a renovation plan for a building you are already living in. You can't stop living in it (shipping features) while you renovate (platform work). You need a plan that says: this quarter we replace the plumbing (migrate to managed DB); next quarter we upgrade the electrical (move to async events); in 6 months we address the structural issues (consolidate service mesh). Without the plan, you respond reactively to leaks and outages. With it, you address root causes systematically.
 
 **One insight:**
@@ -228,16 +229,19 @@ Annual reset
 ### 💻 Code Example
 
 **Technical roadmap template (Markdown):**
+
 ```markdown
 # Platform Technical Roadmap — H2 2024
 
 ## Current State Summary
+
 - Monolithic application: deployment bottleneck
 - Infrastructure: manually managed; staging/prod drift
 - Observability: 3 overlapping tools; 30% service gaps
 - Developer experience: 45-min build time; fragile CI
 
 ## Target State (Dec 2024)
+
 - All services independently deployable
 - Infrastructure as Code; no manual configuration
 - Single observability stack; 100% coverage; MTTR < 30min
@@ -246,29 +250,34 @@ Annual reset
 ## Initiatives
 
 ### Q3 2024 (Committed)
-| Initiative | Owner | Size | Success Metric |
-|---|---|---|---|
-| IaC migration (Terraform) | Platform team | L (8w) | Zero config drift incidents |
-| Observability consolidation (Datadog) | Platform + SRE | M (4w) | 100% service coverage |
+
+| Initiative                            | Owner          | Size   | Success Metric              |
+| ------------------------------------- | -------------- | ------ | --------------------------- |
+| IaC migration (Terraform)             | Platform team  | L (8w) | Zero config drift incidents |
+| Observability consolidation (Datadog) | Platform + SRE | M (4w) | 100% service coverage       |
 
 ### Q4 2024 (Planned)
-| Initiative | Owner | Size | Success Metric |
-|---|---|---|---|
-| CI/CD standardisation | Platform team | L (8w) | All services on standard pipeline |
-| Build time optimisation | Engineering | M (4w) | < 10min P95 build time |
+
+| Initiative              | Owner         | Size   | Success Metric                    |
+| ----------------------- | ------------- | ------ | --------------------------------- |
+| CI/CD standardisation   | Platform team | L (8w) | All services on standard pipeline |
+| Build time optimisation | Engineering   | M (4w) | < 10min P95 build time            |
 
 ### H1 2025 (Directional)
+
 - Monolith decomposition: phase 1 (auth service extraction)
 - Service mesh introduction (Istio evaluation)
 - Platform developer portal (internal tooling)
 
 ## Risks
+
 - H3: observability consolidation may conflict with
   security team's Splunk requirement → spike needed in Q3W1
 - H4: monolith decomposition requires DB schema changes;
   data migration risk is HIGH; QA capacity required
 
 ## Dependencies
+
 - IaC migration requires Cloud team capacity in Q3W3
 - CI/CD standardisation requires DevSecOps review (SEC-12)
 ```
@@ -277,26 +286,26 @@ Annual reset
 
 ### ⚖️ Comparison Table
 
-| Dimension | Technical Roadmap | Product Roadmap | Sprint Plan |
-|---|---|---|---|
-| **Focus** | System technical evolution | User-facing features | Sprint deliverables |
-| **Time horizon** | 6–18 months | 3–12 months | 2 weeks |
-| **Audience** | Engineering + stakeholders | Product + business | Engineering team |
-| **Driver** | Technical health + biz enablement | User value + business goals | Committed capacity |
-| **Certainty** | Now=high, Later=directional | Now=medium, Later=vision | High (committed) |
-| **Owned by** | Tech Lead / Staff Engineer | Product Manager | Scrum Master / TL |
+| Dimension        | Technical Roadmap                 | Product Roadmap             | Sprint Plan         |
+| ---------------- | --------------------------------- | --------------------------- | ------------------- |
+| **Focus**        | System technical evolution        | User-facing features        | Sprint deliverables |
+| **Time horizon** | 6–18 months                       | 3–12 months                 | 2 weeks             |
+| **Audience**     | Engineering + stakeholders        | Product + business          | Engineering team    |
+| **Driver**       | Technical health + biz enablement | User value + business goals | Committed capacity  |
+| **Certainty**    | Now=high, Later=directional       | Now=medium, Later=vision    | High (committed)    |
+| **Owned by**     | Tech Lead / Staff Engineer        | Product Manager             | Scrum Master / TL   |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Technical roadmap = tech debt list" | A roadmap has prioritised initiatives with business rationale, timelines, and owners — not just a list of problems |
-| "The roadmap must be detailed 12 months out" | Quarters 3–4 should be directional; only current quarter needs sprint-level detail |
-| "Product team doesn't need to see the technical roadmap" | Product and engineering roadmaps must be aligned; technical work that enables product features needs cross-visibility |
-| "A roadmap is set once per year" | Roadmaps require quarterly refreshes; business direction and technical conditions change |
-| "Nobody reads technical roadmaps" | Nobody reads technical roadmaps that are poorly communicated; roadmaps with clear business rationale and stakeholder engagement are actively used |
+| Misconception                                            | Reality                                                                                                                                           |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Technical roadmap = tech debt list"                     | A roadmap has prioritised initiatives with business rationale, timelines, and owners — not just a list of problems                                |
+| "The roadmap must be detailed 12 months out"             | Quarters 3–4 should be directional; only current quarter needs sprint-level detail                                                                |
+| "Product team doesn't need to see the technical roadmap" | Product and engineering roadmaps must be aligned; technical work that enables product features needs cross-visibility                             |
+| "A roadmap is set once per year"                         | Roadmaps require quarterly refreshes; business direction and technical conditions change                                                          |
+| "Nobody reads technical roadmaps"                        | Nobody reads technical roadmaps that are poorly communicated; roadmaps with clear business rationale and stakeholder engagement are actively used |
 
 ---
 
@@ -309,6 +318,7 @@ Annual reset
 **Root Cause:** No process for quarterly refresh. Roadmap was created for a stakeholder presentation and then forgotten. It is aspirational documentation, not a live planning tool.
 
 **Diagnostic:**
+
 ```
 1. When was the roadmap last updated?
    → > 3 months ago = decay
@@ -327,16 +337,19 @@ Annual reset
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Technical Leadership` — the technical roadmap is the primary medium-term artifact of technical leadership
 - `Engineering Manager vs Tech Lead` — TL owns the technical roadmap
 - `Staff Engineer vs Principal Engineer` — Staff+ engineers define roadmaps across groups/orgs
 
 **Builds On This (learn these next):**
+
 - `Engineering Strategy` — the long-term, org-wide view that the technical roadmap executes against
 - `Technical Debt Management` — a key input to the technical roadmap
 - `Stakeholder Communication` — the roadmap is only effective when communicated well
 
 **Alternatives / Comparisons:**
+
 - `Engineering Strategy` — strategy is the "why" and "where"; roadmap is the "what" and "when"
 - `Technical Debt Management` — debt reduction is a class of roadmap initiative
 - `Prioritization (MoSCoW, RICE)` — the techniques used to prioritise roadmap initiatives

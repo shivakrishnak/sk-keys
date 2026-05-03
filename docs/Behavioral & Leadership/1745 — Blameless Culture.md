@@ -55,6 +55,7 @@ The "blameless post-mortem" concept was popularised by John Allspaw at Etsy in 2
 Blameless culture treats failures as system design problems, not personal failures — because the goal is to fix the system so the same failure cannot recur, not to punish the person who made a mistake the system made possible.
 
 **One analogy:**
+
 > Aviation learned this the hard way. In early commercial aviation, when a plane crashed, investigators looked for pilot error — and found it. But the accident rate didn't improve, because the systemic causes (poor instrument design, unclear procedures, cockpit hierarchy that prevented co-pilots from challenging captains) remained. When aviation shifted to systemic analysis — asking "what made this accident possible?" rather than "who caused this crash?" — safety improved dramatically. The Boeing 737 MAX crashes of 2018–2019 showed what happens when blame culture returns: engineers who raised concerns were sidelined; the systemic failure was concealed until two crashes occurred. Blameless post-mortems are aviation's black box analysis applied to software systems.
 
 **One insight:**
@@ -129,7 +130,7 @@ RECKLESS BEHAVIOUR:
   they didn't want to go through the approval process
   Context: risk was known; decision was deliberate
   Response: this warrants disciplinary consideration
-  
+
 NOTE: Most incidents are human error or at-risk behaviour,
 not reckless behaviour. Blame cultures treat all three
 categories identically (all = punishment).
@@ -146,18 +147,21 @@ An engineer (Bob) follows the runbook to restart a stuck database connection poo
 "Bob caused an outage by running the wrong script. Bob should have verified what the script did before running it."
 
 **Problems with this analysis:**
+
 1. The runbook said "run the restart script" — Bob followed the procedure
 2. The script bug was introduced 3 months ago — hundreds of people had run the correct version; Bob was the first to hit the new version
 3. The runbook had no step requiring pre-run verification of the script
 4. There was no automated test of the restart script
 
 **Blameless analysis:**
+
 1. System failure: the restart script had no automated test suite
 2. Process failure: the runbook did not include a step to verify script behaviour
 3. Process failure: the script change was not announced to on-call engineers
 4. Tool failure: the deployment system allowed a broken script to replace a working one without test validation
 
 **Action items:**
+
 - Add automated test for the restart script
 - Update runbook to include: "Verify script version: `md5sum restart.sh` should match X"
 - Require test validation in the script deployment pipeline
@@ -256,6 +260,7 @@ Organisation's incident rate decreases over time
 ### 💻 Code Example
 
 **Post-mortem document template (Markdown):**
+
 ```markdown
 # Post-Mortem: [Incident Title]
 
@@ -275,13 +280,13 @@ how was it resolved.]
 
 ## Timeline
 
-| Time (UTC) | Event |
-|---|---|
-| 14:32 | Alert: checkout error rate > 5% |
-| 14:34 | IC declared; CL assigned |
-| 14:38 | DB connection pool identified as cause |
-| 14:44 | Pool size increased; service recovering |
-| 14:50 | Incident resolved |
+| Time (UTC) | Event                                   |
+| ---------- | --------------------------------------- |
+| 14:32      | Alert: checkout error rate > 5%         |
+| 14:34      | IC declared; CL assigned                |
+| 14:38      | DB connection pool identified as cause  |
+| 14:44      | Pool size increased; service recovering |
+| 14:50      | Incident resolved                       |
 
 ---
 
@@ -307,40 +312,40 @@ These are system and process conditions — not individual actions.
 
 ## Action Items
 
-| Item | Owner | Due | Status |
-|---|---|---|---|
-| Add pool utilisation alert (> 80%) | Alice | YYYY-MM-DD | Open |
-| Add config schema validation to pipeline | Bob | YYYY-MM-DD | Open |
-| Update runbook with verification steps | Carol | YYYY-MM-DD | Open |
+| Item                                     | Owner | Due        | Status |
+| ---------------------------------------- | ----- | ---------- | ------ |
+| Add pool utilisation alert (> 80%)       | Alice | YYYY-MM-DD | Open   |
+| Add config schema validation to pipeline | Bob   | YYYY-MM-DD | Open   |
+| Update runbook with verification steps   | Carol | YYYY-MM-DD | Open   |
 
 ---
 
-*This post-mortem is blameless. It identifies system conditions,
-not individual fault. Questions → [facilitator].*
+_This post-mortem is blameless. It identifies system conditions,
+not individual fault. Questions → [facilitator]._
 ```
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Culture Type | Incident Response | Information Flow | System Learning |
-|---|---|---|---|
-| **Blame culture** | Find who caused it; punish | Suppressed; people hide mistakes | Near zero; same incidents recur |
-| **Just culture** | Classify error type; fix system for human error; coach for at-risk; discipline for reckless | Honest; safe to report | High; systemic causes addressed |
-| **No-accountability culture** | No response; no consequences ever | Open but undirected | Low; no action items; improvement theatre |
-| **Blameless culture** | Fix the system; no individual punishment for human error | Fully honest; near-misses reported | High; post-mortems produce completed action items |
+| Culture Type                  | Incident Response                                                                           | Information Flow                   | System Learning                                   |
+| ----------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------- | ------------------------------------------------- |
+| **Blame culture**             | Find who caused it; punish                                                                  | Suppressed; people hide mistakes   | Near zero; same incidents recur                   |
+| **Just culture**              | Classify error type; fix system for human error; coach for at-risk; discipline for reckless | Honest; safe to report             | High; systemic causes addressed                   |
+| **No-accountability culture** | No response; no consequences ever                                                           | Open but undirected                | Low; no action items; improvement theatre         |
+| **Blameless culture**         | Fix the system; no individual punishment for human error                                    | Fully honest; near-misses reported | High; post-mortems produce completed action items |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Blameless means no consequences ever" | Just culture distinguishes error from recklessness. Genuine reckless behaviour (knowingly ignoring known risks) is not protected by blameless culture. |
-| "Post-mortems are optional / low-priority" | Post-mortems that aren't completed destroy blameless culture credibility. If incidents happen without post-mortems, the signal is: "learning doesn't matter here." |
-| "You can declare blameless culture; it will self-sustain" | One instance of blame in a post-mortem context — even off the record — destroys the culture. It requires active, ongoing leadership vigilance. |
-| "Blameless means you can't discuss individual decisions" | You absolutely discuss decisions. The difference: "Alice made a bad decision" vs. "At t+8m, with the information Alice had, the decision to restart the service was reasonable. We need better tooling so the next engineer has more information." |
-| "Post-mortems are for SEV-1 only" | Near-misses (incidents that almost happened) are among the most valuable post-mortem subjects — they reveal systemic weaknesses before impact occurs. |
+| Misconception                                             | Reality                                                                                                                                                                                                                                            |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Blameless means no consequences ever"                    | Just culture distinguishes error from recklessness. Genuine reckless behaviour (knowingly ignoring known risks) is not protected by blameless culture.                                                                                             |
+| "Post-mortems are optional / low-priority"                | Post-mortems that aren't completed destroy blameless culture credibility. If incidents happen without post-mortems, the signal is: "learning doesn't matter here."                                                                                 |
+| "You can declare blameless culture; it will self-sustain" | One instance of blame in a post-mortem context — even off the record — destroys the culture. It requires active, ongoing leadership vigilance.                                                                                                     |
+| "Blameless means you can't discuss individual decisions"  | You absolutely discuss decisions. The difference: "Alice made a bad decision" vs. "At t+8m, with the information Alice had, the decision to restart the service was reasonable. We need better tooling so the next engineer has more information." |
+| "Post-mortems are for SEV-1 only"                         | Near-misses (incidents that almost happened) are among the most valuable post-mortem subjects — they reveal systemic weaknesses before impact occurs.                                                                                              |
 
 ---
 
@@ -353,6 +358,7 @@ not individual fault. Questions → [facilitator].*
 **Root Cause:** The post-mortem process is performative. At some point (explicitly or implicitly), blame occurred in a post-mortem context — and engineers learned that honest accounts are risky. They now produce sanitised post-mortems that protect individuals at the cost of systemic learning.
 
 **Fix:**
+
 ```
 DIAGNOSIS:
   → Are near-misses being reported? (If no: fear is present)
@@ -389,15 +395,18 @@ REPAIR:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Psychological Safety` — without psychological safety, post-mortems produce sanitised accounts
 - `Feedback (Giving and Receiving)` — honest post-mortems require a culture of constructive feedback
 
 **Builds On This (learn these next):**
+
 - `Incident Command` — post-mortem is the final phase of incident command
 - `Psychological Safety` — blameless culture and psychological safety are mutually reinforcing
 - `Retrospective` — blameless retrospectives apply the same principle to team process
 
 **Alternatives / Comparisons:**
+
 - `Psychological Safety` — the two concepts are deeply interrelated; blameless culture creates psychological safety; psychological safety enables blameless culture
 - `Retrospective` — applies blameless analysis to team process, not just incidents
 

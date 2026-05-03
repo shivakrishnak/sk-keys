@@ -47,6 +47,7 @@ A service is unreachable. Is it a DNS problem? A routing problem? A firewall? A 
 `ping` = "are you there? how long does it take?" (ICMP Echo). `traceroute` = "which routers are between me and you, and how long does each hop take?" (TTL manipulation).
 
 **One analogy:**
+
 > ICMP ping is like knocking on a door: "Anyone home?" The person inside says "Yes!" and you measure how long it took. Traceroute is like sending a letter that self-destructs at each post office (TTL exhaustion), with each post office sending you a postcard saying "your letter died here" — building a map of every postal stop between you and the destination.
 
 ---
@@ -54,6 +55,7 @@ A service is unreachable. Is it a DNS problem? A routing problem? A firewall? A 
 ### 🔩 First Principles Explanation
 
 **ICMP ECHO (PING):**
+
 ```
 ping google.com:
   1. DNS: resolve google.com → 142.250.x.x (if needed)
@@ -62,12 +64,12 @@ ping google.com:
      Identifier: 12345 (matches request/reply)
      Sequence: 1 (increments per packet)
      Data: timestamp + padding
-     
+
   3. Receive: ICMP Echo Reply from 142.250.x.x
      Type: 0, Code: 0
      Identifier: 12345 (matched)
      Sequence: 1 (matched)
-     
+
   4. RTT = time_received - time_sent
   5. Repeat (default: until Ctrl+C or -c N)
 
@@ -80,6 +82,7 @@ Output:
 ```
 
 **TRACEROUTE MECHANISM (TTL TRICK):**
+
 ```
 Goal: discover the path to 8.8.8.8
 
@@ -110,6 +113,7 @@ Three time values: traceroute sends 3 probes per TTL (for variance measurement)
 ```
 
 **ICMP ERROR MESSAGES:**
+
 ```
 Type 3 — Destination Unreachable (sub-codes):
   Code 0: Network Unreachable (no route to network)
@@ -242,7 +246,7 @@ TTL=6: Probe → ... → [8.8.8.8] → ICMP Echo Reply ← DESTINATION!
 
 Result:
  1  192.168.1.1   1.2ms (home router)
- 2  10.x.x.1      5.4ms (ISP router)  
+ 2  10.x.x.1      5.4ms (ISP router)
  3  72.x.x.1      8.1ms (ISP core)
  4  * * *          (firewall, ICMP blocked)
  5  209.x.x.1     12.3ms (Google edge)
@@ -278,7 +282,7 @@ def ping(host: str, count: int = 10) -> PingResult:
         capture_output=True, text=True, timeout=30
     )
     output = result.stdout + result.stderr
-    
+
     # Parse packet stats
     stats = re.search(
         r'(\d+) packets transmitted, (\d+) received,'
@@ -291,10 +295,10 @@ def ping(host: str, count: int = 10) -> PingResult:
         r'([\d.]+)/([\d.]+)/([\d.]+)/([\d.]+)',
         output
     )
-    
+
     if not stats:
         raise ValueError(f"Could not parse ping output for {host}")
-    
+
     return PingResult(
         host=host,
         packets_sent=int(stats.group(1)),
@@ -322,23 +326,23 @@ for host in hosts:
 
 ### ⚖️ Comparison Table
 
-| Tool | Protocol | Measures | Use case |
-|---|---|---|---|
-| ping | ICMP Echo | RTT, packet loss | Basic reachability test |
-| traceroute | UDP/ICMP/TCP + TTL | Per-hop RTT, path | Path diagnosis |
-| mtr | ICMP + TTL | RTT, loss per hop (continuous) | Best all-around diagnosis |
-| hping3 | TCP/UDP/ICMP | Custom probes | Advanced testing, ACL testing |
-| pathping (Windows) | ICMP + TTL | Per-hop statistics | Windows equivalent to MTR |
+| Tool               | Protocol           | Measures                       | Use case                      |
+| ------------------ | ------------------ | ------------------------------ | ----------------------------- |
+| ping               | ICMP Echo          | RTT, packet loss               | Basic reachability test       |
+| traceroute         | UDP/ICMP/TCP + TTL | Per-hop RTT, path              | Path diagnosis                |
+| mtr                | ICMP + TTL         | RTT, loss per hop (continuous) | Best all-around diagnosis     |
+| hping3             | TCP/UDP/ICMP       | Custom probes                  | Advanced testing, ACL testing |
+| pathping (Windows) | ICMP + TTL         | Per-hop statistics             | Windows equivalent to MTR     |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `* * *` means the hop is down | Often means the hop rate-limits ICMP or a firewall blocks ICMP Time Exceeded. If the destination is reachable, traffic is passing through `* * *` hops fine |
-| No ping reply = host is down | Firewalls often block ICMP. A host may be running a web server (reachable on port 443) while blocking all ICMP. Use `curl`, `nc`, or `nmap` for application-level testing |
-| traceroute shows real-time path | traceroute probes one hop at a time, sending multiple probes over seconds. The path may vary between probes (ECMP). For consistent results, use Paris traceroute |
+| Misconception                   | Reality                                                                                                                                                                   |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `* * *` means the hop is down   | Often means the hop rate-limits ICMP or a firewall blocks ICMP Time Exceeded. If the destination is reachable, traffic is passing through `* * *` hops fine               |
+| No ping reply = host is down    | Firewalls often block ICMP. A host may be running a web server (reachable on port 443) while blocking all ICMP. Use `curl`, `nc`, or `nmap` for application-level testing |
+| traceroute shows real-time path | traceroute probes one hop at a time, sending multiple probes over seconds. The path may vary between probes (ECMP). For consistent results, use Paris traceroute          |
 
 ---
 

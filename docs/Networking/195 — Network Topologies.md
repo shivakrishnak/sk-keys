@@ -47,6 +47,7 @@ A poorly chosen network topology creates bottlenecks (hub becomes a single point
 Topology = how nodes are connected. Star = central hub (single point of failure). Mesh = every node connected to many others (resilient, expensive). Spine-leaf = modern datacenter topology: predictable 2-hop latency between any two servers.
 
 **One analogy:**
+
 > Network topologies are like road systems. Star = one central roundabout, all roads lead to it (bottleneck if roundabout is closed). Mesh = every neighbourhood has roads to every other neighbourhood (resilient but expensive to build). Spine-leaf = a city grid: every block (leaf) connects to the same main avenues (spines) — any two blocks are always exactly 2 main avenues apart.
 
 ---
@@ -54,6 +55,7 @@ Topology = how nodes are connected. Star = central hub (single point of failure)
 ### 🔩 First Principles Explanation
 
 **CLASSICAL TOPOLOGIES:**
+
 ```
 Star (Hub-and-Spoke):
   All nodes connect to central switch/router
@@ -83,6 +85,7 @@ Bus:
 ```
 
 **SPINE-LEAF (MODERN DATACENTER):**
+
 ```
 Spine Layer: high-capacity switches, fully interconnected
 Leaf Layer:  access switches, each connected to ALL spine switches
@@ -107,6 +110,7 @@ vs Three-tier (access-aggregation-core):
 ```
 
 **CLOUD VPC TOPOLOGY:**
+
 ```
 Hub-and-Spoke (Transit Gateway):
   Shared services VPC (hub): DNS, Active Directory, NAT, monitoring
@@ -200,7 +204,7 @@ Server A → Leaf Switch 1 (ToR - Top of Rack)
   Leaf 1: destination IP not local, consult FIB
   ECMP: hash(src_ip, dst_ip, src_port, dst_port, proto) % 4_spines
   → Pick Spine 3 (hash result)
-  
+
 Leaf 1 → Spine 3
   Spine 3: destination is behind Leaf 5 (per FIB)
   → Forward to Leaf 5
@@ -227,36 +231,36 @@ class SpineLeafTopology:
     n_spines: int
     n_leaves: int
     servers_per_leaf: int
-    
+
     def __post_init__(self):
         self.spines = [f"spine-{i}" for i in range(1, self.n_spines + 1)]
         self.leaves = [f"leaf-{i}" for i in range(1, self.n_leaves + 1)]
         self.servers: Dict[str, List[str]] = {
-            leaf: [f"server-{leaf}-{j}" 
+            leaf: [f"server-{leaf}-{j}"
                    for j in range(1, self.servers_per_leaf + 1)]
             for leaf in self.leaves
         }
-    
+
     def path(self, src_server: str, dst_server: str) -> List[str]:
         """Calculate path between two servers (always 3 hops)."""
         src_leaf = next(
-            leaf for leaf, srvs in self.servers.items() 
+            leaf for leaf, srvs in self.servers.items()
             if src_server in srvs
         )
         dst_leaf = next(
-            leaf for leaf, srvs in self.servers.items() 
+            leaf for leaf, srvs in self.servers.items()
             if dst_server in srvs
         )
-        
+
         if src_leaf == dst_leaf:
             return [src_server, src_leaf, dst_server]  # 2 hops (same rack)
-        
+
         # ECMP: choose spine based on hash
         spine_idx = hash(f"{src_server}:{dst_server}") % self.n_spines
         spine = self.spines[spine_idx]
-        
+
         return [src_server, src_leaf, spine, dst_leaf, dst_server]
-    
+
     def stats(self) -> dict:
         n_servers = self.n_leaves * self.servers_per_leaf
         return {
@@ -280,23 +284,23 @@ print(f"Path: {' → '.join(path)} ({len(path)-1} hops)")
 
 ### ⚖️ Comparison Table
 
-| Topology | Fault Tolerance | Scalability | Latency Predictability | Use Case |
-|---|---|---|---|---|
-| Star | Low (hub = SPOF) | Limited by hub | High | Home/small office |
-| Full Mesh | Very high | Poor (N² links) | High | Internet backbone logic |
-| Spine-Leaf | High (multi-path) | Excellent | Very high (2 hops) | Modern datacenters |
-| Hub-Spoke VPC | Medium (hub can bottleneck) | Good | High | Cloud multi-VPC |
-| Three-tier (traditional DC) | Medium | Limited | Lower (spanning tree) | Legacy datacenters |
+| Topology                    | Fault Tolerance             | Scalability     | Latency Predictability | Use Case                |
+| --------------------------- | --------------------------- | --------------- | ---------------------- | ----------------------- |
+| Star                        | Low (hub = SPOF)            | Limited by hub  | High                   | Home/small office       |
+| Full Mesh                   | Very high                   | Poor (N² links) | High                   | Internet backbone logic |
+| Spine-Leaf                  | High (multi-path)           | Excellent       | Very high (2 hops)     | Modern datacenters      |
+| Hub-Spoke VPC               | Medium (hub can bottleneck) | Good            | High                   | Cloud multi-VPC         |
+| Three-tier (traditional DC) | Medium                      | Limited         | Lower (spanning tree)  | Legacy datacenters      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| More links = more complexity | Spine-leaf appears complex but simplifies operations: no spanning tree, deterministic hop count, simple ECMP. Traditional three-tier with spanning tree is operationally more complex |
-| Full-mesh VPC peering is scalable | VPC peering is not transitive — A↔B, B↔C doesn't allow A↔C. Managing N(N-1)/2 connections and route tables becomes impossible past 10 VPCs. Use Transit Gateway |
-| Star topology always means single point of failure | With redundant hub switches (active-active or HSRP/VRRP), star topologies can be made highly available. The design pattern matters more than the topology name |
+| Misconception                                      | Reality                                                                                                                                                                               |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| More links = more complexity                       | Spine-leaf appears complex but simplifies operations: no spanning tree, deterministic hop count, simple ECMP. Traditional three-tier with spanning tree is operationally more complex |
+| Full-mesh VPC peering is scalable                  | VPC peering is not transitive — A↔B, B↔C doesn't allow A↔C. Managing N(N-1)/2 connections and route tables becomes impossible past 10 VPCs. Use Transit Gateway                       |
+| Star topology always means single point of failure | With redundant hub switches (active-active or HSRP/VRRP), star topologies can be made highly available. The design pattern matters more than the topology name                        |
 
 ---
 

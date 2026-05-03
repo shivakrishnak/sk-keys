@@ -43,6 +43,7 @@ Without DHCP, every device joining a network needs a manually configured IP addr
 DHCP automatically assigns IP addresses and network configuration to devices — the four-step DORA dance (Discover, Offer, Request, ACK) happens in milliseconds when your laptop joins a network.
 
 **One analogy:**
+
 > DHCP is like a hotel reception desk. When you arrive (join the network), you announce your presence. The receptionist (DHCP server) assigns you a room number (IP address) and gives you the breakfast time (gateway, DNS). Your room is reserved for a limited time (lease). If you stay longer, you renew. When you check out (disconnect), the room becomes available for the next guest.
 
 ---
@@ -50,6 +51,7 @@ DHCP automatically assigns IP addresses and network configuration to devices —
 ### 🔩 First Principles Explanation
 
 **DORA FOUR-STEP PROCESS:**
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │  DHCP DORA Exchange                                     │
@@ -84,6 +86,7 @@ Client now has:
 ```
 
 **DHCP LEASE RENEWAL:**
+
 ```
 T=0:       IP assigned, lease = 86400s
 T=43200s:  (50% of lease) → DHCP Request to server (unicast)
@@ -93,6 +96,7 @@ T=86400s:  Lease expired → client must release IP and DORA again
 ```
 
 **STATIC DHCP ASSIGNMENT (RESERVATION):**
+
 ```
 DHCP server config (dnsmasq):
   # Always assign same IP to specific MAC address
@@ -107,6 +111,7 @@ DHCP server config (dnsmasq):
 ```
 
 **DHCP RELAY (cross-subnet):**
+
 ```
 Problem: DHCP uses broadcasts (255.255.255.255)
          Broadcasts don't cross router boundaries
@@ -200,19 +205,19 @@ curl -s -H "X-aws-ec2-metadata-token: $TOKEN" \
 Device powers on, no IP:
   1. DISCOVER: broadcast to 255.255.255.255:67
      All servers receive (multiple DHCP servers possible)
-     
+
   2. OFFER: each server offers an IP
      Client picks first (or preferred) offer
-     
+
   3. REQUEST: broadcast to signal chosen server
      Other servers see this and reclaim their offered IPs
-     
+
   4. ACK: server confirms, client configures IP stack
-     
+
   5. ARP probe: client ARPs its own IP to check for conflicts
      (RFC 5227 Conflict Detection)
      If collision: DHCP DECLINE → start over
-     
+
   6. IP configured: routing, DNS, gateway operational
 ```
 
@@ -240,19 +245,19 @@ def parse_dhclient_leases(leases_file: str) -> list[DhcpLease]:
     """Parse /var/lib/dhcp/dhclient.leases file."""
     content = Path(leases_file).read_text()
     leases = []
-    
+
     for lease_block in re.findall(r'lease \{([^}]+)\}', content, re.DOTALL):
         def extract(pattern: str) -> str:
             m = re.search(pattern, lease_block)
             return m.group(1).rstrip(';') if m else ""
-        
+
         ip = extract(r'fixed-address ([^;]+)')
         mask = extract(r'subnet-mask ([^;]+)')
         gw = extract(r'routers ([^;]+)')
         dns = extract(r'domain-name-servers ([^;]+)')
         iface = extract(r'interface "([^"]+)"')
         exp = extract(r'expire \d+ ([^;]+)')
-        
+
         if ip:
             leases.append(DhcpLease(
                 interface=iface, ip=ip, subnet_mask=mask,
@@ -260,7 +265,7 @@ def parse_dhclient_leases(leases_file: str) -> list[DhcpLease]:
                 dns_servers=[s.strip() for s in dns.split(',') if s.strip()],
                 expires=exp
             ))
-    
+
     return leases
 
 # Usage (Linux with active DHCP lease)
@@ -280,22 +285,22 @@ except FileNotFoundError:
 
 ### ⚖️ Comparison Table
 
-| Aspect | DHCP Dynamic | DHCP Reservation | Static IP |
-|---|---|---|---|
-| IP changes over time | Yes (on lease renewal) | No (same IP always) | No |
-| Configuration effort | Zero (auto) | Per-device MAC entry | Manual per device |
-| Use case | Laptops, phones | Printers, servers | Bare-metal, VMs |
-| DNS reliability | Requires dynamic DNS | Reliable (predictable) | Reliable |
+| Aspect               | DHCP Dynamic           | DHCP Reservation       | Static IP         |
+| -------------------- | ---------------------- | ---------------------- | ----------------- |
+| IP changes over time | Yes (on lease renewal) | No (same IP always)    | No                |
+| Configuration effort | Zero (auto)            | Per-device MAC entry   | Manual per device |
+| Use case             | Laptops, phones        | Printers, servers      | Bare-metal, VMs   |
+| DNS reliability      | Requires dynamic DNS   | Reliable (predictable) | Reliable          |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| DHCP assigns permanent IPs | IPs are leased for a time period. The same MAC usually gets the same IP (server caches the assignment), but it's not guaranteed without a reservation |
-| DHCP is only for home networks | AWS, Azure, GCP all use DHCP to assign IPs to VMs. Kubernetes uses DHCP-like protocols for pod IP assignment. Enterprise networks use DHCP for 1000s of devices |
-| Short lease time = more security | Shorter lease = more DHCP traffic + faster IP exhaustion during attacks. Security comes from DHCP snooping, not lease duration |
+| Misconception                    | Reality                                                                                                                                                         |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DHCP assigns permanent IPs       | IPs are leased for a time period. The same MAC usually gets the same IP (server caches the assignment), but it's not guaranteed without a reservation           |
+| DHCP is only for home networks   | AWS, Azure, GCP all use DHCP to assign IPs to VMs. Kubernetes uses DHCP-like protocols for pod IP assignment. Enterprise networks use DHCP for 1000s of devices |
+| Short lease time = more security | Shorter lease = more DHCP traffic + faster IP exhaustion during attacks. Security comes from DHCP snooping, not lease duration                                  |
 
 ---
 

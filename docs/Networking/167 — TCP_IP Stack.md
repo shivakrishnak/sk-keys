@@ -40,12 +40,12 @@ Vint Cerf and Bob Kahn designed TCP/IP in 1974 as the answer. The key innovation
 
 The **TCP/IP stack** (also called the **Internet protocol suite**) is the conceptual model and set of protocols used for the internet and most private networks. It defines four layers (in the DARPA model):
 
-| Layer | Name | Protocols | Function |
-|---|---|---|---|
-| 4 | Application | HTTP, SMTP, DNS, SSH, FTP | Application-level protocols |
-| 3 | Transport | TCP, UDP, SCTP | End-to-end communication, port addressing |
-| 2 | Internet | IP (IPv4/IPv6), ICMP, ARP | Logical addressing, routing between networks |
-| 1 | Network Access | Ethernet, Wi-Fi, PPP | Physical delivery on a single network segment |
+| Layer | Name           | Protocols                 | Function                                      |
+| ----- | -------------- | ------------------------- | --------------------------------------------- |
+| 4     | Application    | HTTP, SMTP, DNS, SSH, FTP | Application-level protocols                   |
+| 3     | Transport      | TCP, UDP, SCTP            | End-to-end communication, port addressing     |
+| 2     | Internet       | IP (IPv4/IPv6), ICMP, ARP | Logical addressing, routing between networks  |
+| 1     | Network Access | Ethernet, Wi-Fi, PPP      | Physical delivery on a single network segment |
 
 This maps loosely to OSI layers: TCP/IP Application ≈ OSI layers 5-7; Transport = layer 4; Internet = layer 3; Network Access = layers 1-2.
 
@@ -57,6 +57,7 @@ This maps loosely to OSI layers: TCP/IP Application ≈ OSI layers 5-7; Transpor
 TCP/IP is the actual protocol stack the internet uses: four layers that together take your HTTP request from browser to server and back.
 
 **One analogy:**
+
 > The TCP/IP stack is like the international postal system. Network Access layer: your local post office handles physical delivery in your neighbourhood. Internet layer: the postal routing system determines which cities and countries your package passes through (with each city potentially using different transport — truck, train, plane). Transport layer: you choose registered (TCP, with tracking and delivery confirmation) or standard (UDP, no tracking). Application layer: the content of your letter (HTTP request, email, DNS query).
 
 **One insight:**
@@ -67,6 +68,7 @@ The Internet layer (IP) is the "thin waist" of the hourglass design. Many applic
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. **End-to-end principle**: intelligence is at the edges (applications), not in the network core. Routers just route; they don't manage connections or guarantee delivery.
 2. **Best-effort delivery**: IP makes no guarantees — packets may be lost, reordered, or duplicated. Reliability is TCP's responsibility, not IP's.
 3. **Everything over IP**: any network technology can be the underlying carrier as long as it can carry IP packets.
@@ -97,12 +99,14 @@ Simplicity (4 layers vs OSI's 7) enables easier implementation. Best-effort IP e
 `curl http://93.184.216.34/` — trace the packet's journey.
 
 **On the sender (your laptop):**
+
 1. **Application layer**: curl creates HTTP GET request bytes.
 2. **Transport layer (TCP)**: kernel wraps in TCP segment. Source port: 52341 (random). Dest port: 80. Seq: 1.
 3. **Internet layer (IP)**: kernel wraps in IP packet. Source IP: 192.168.1.100 (your IP). Dest IP: 93.184.216.34.
 4. **Network Access (Ethernet)**: kernel wraps in Ethernet frame. Source MAC: your NIC. Dest MAC: your router's MAC (not the server's!).
 
 **At the first router (your home router):**
+
 - Receives Ethernet frame, strips it (Network Access layer done).
 - IP layer: checks routing table → forwards to ISP.
 - New Ethernet frame: source MAC = router's WAN interface, dest MAC = next hop router's MAC.
@@ -111,6 +115,7 @@ Simplicity (4 layers vs OSI's 7) enables easier implementation. Best-effort IP e
 **This repeats at every router** until the packet arrives at 93.184.216.34's server.
 
 **At the destination server:**
+
 - Network Access stripped → IP stripped → TCP processed → HTTP parsed → response sent back.
 
 **THE INSIGHT:**
@@ -143,6 +148,7 @@ The end-to-end principle (articulated by Saltzer, Reed, and Clark in 1984) is th
 ### ⚙️ How It Works (Mechanism)
 
 **Socket API — the application/kernel boundary:**
+
 ```python
 import socket
 
@@ -169,6 +175,7 @@ udp_sock.sendto(b"\x00\x01", ('8.8.8.8', 53))  # DNS query
 ```
 
 **Inspect the stack in action:**
+
 ```bash
 # Layer 2 (Network Access) — ARP table
 ip neigh show  # IP → MAC mapping
@@ -191,6 +198,7 @@ dig example.com             # DNS query
 ```
 
 **TCP/IP packet flow (simplified):**
+
 ```
 Application: send(sock, data)
       │
@@ -223,7 +231,7 @@ NIC Hardware:
 └──────────────────────────────────────────────────────┘
 
  BROWSER (192.168.1.100)        SERVER (93.184.216.34)
- 
+
  App: HTTP GET /                 App: Parse HTTP, send 200
    ↓ write to socket               ↑ read from socket
  Transport: TCP                  Transport: TCP
@@ -249,6 +257,7 @@ NIC Hardware:
 ### 💻 Code Example
 
 **Example — Inspect packet headers at each layer:**
+
 ```python
 #!/usr/bin/env python3
 """Inspect TCP/IP layers of an HTTP request."""
@@ -304,27 +313,27 @@ sock.close()
 
 ### ⚖️ Comparison Table
 
-| Aspect | TCP/IP Model | OSI Model |
-|---|---|---|
-| Layers | 4 | 7 |
-| Origin | DARPA/DoD practice | ISO standard |
-| Status | Actual internet | Reference model |
-| Session layer | Not separate | Layer 5 |
-| Presentation layer | Not separate | Layer 6 |
-| Application layer | Layers 5+6+7 combined | Layer 7 only |
-| Use | Implementation | Conceptual reference |
+| Aspect             | TCP/IP Model          | OSI Model            |
+| ------------------ | --------------------- | -------------------- |
+| Layers             | 4                     | 7                    |
+| Origin             | DARPA/DoD practice    | ISO standard         |
+| Status             | Actual internet       | Reference model      |
+| Session layer      | Not separate          | Layer 5              |
+| Presentation layer | Not separate          | Layer 6              |
+| Application layer  | Layers 5+6+7 combined | Layer 7 only         |
+| Use                | Implementation        | Conceptual reference |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| TCP/IP and OSI are equivalent | TCP/IP has 4 layers and is what the internet uses; OSI has 7 layers and is a reference model; they're related but not equivalent |
-| IP guarantees packet delivery | IP is best-effort; packets can be lost, duplicated, or reordered; TCP provides reliability on top of IP |
-| MAC addresses are used for internet routing | MAC addresses are local to a single network segment; IP addresses are used for routing; MACs change at every router hop |
-| TCP/IP is slow because of all the overhead | TCP/IP is designed for efficiency; modern NICs do TCP offloading in hardware; at 100Gbps+ speeds, the overhead is negligible |
-| IPv6 is a different protocol stack | IPv6 replaces IPv4 at the Internet layer only; TCP, UDP, HTTP, and all application protocols work unchanged over IPv6 |
+| Misconception                               | Reality                                                                                                                          |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| TCP/IP and OSI are equivalent               | TCP/IP has 4 layers and is what the internet uses; OSI has 7 layers and is a reference model; they're related but not equivalent |
+| IP guarantees packet delivery               | IP is best-effort; packets can be lost, duplicated, or reordered; TCP provides reliability on top of IP                          |
+| MAC addresses are used for internet routing | MAC addresses are local to a single network segment; IP addresses are used for routing; MACs change at every router hop          |
+| TCP/IP is slow because of all the overhead  | TCP/IP is designed for efficiency; modern NICs do TCP offloading in hardware; at 100Gbps+ speeds, the overhead is negligible     |
+| IPv6 is a different protocol stack          | IPv6 replaces IPv4 at the Internet layer only; TCP, UDP, HTTP, and all application protocols work unchanged over IPv6            |
 
 ---
 
@@ -336,6 +345,7 @@ sock.close()
 `ping server.example.com` works. `curl http://server.example.com` times out.
 
 **Diagnosis (OSI/TCP/IP layer by layer):**
+
 ```bash
 # L3 OK: ping works → IP routing is fine
 ping server.example.com
@@ -363,14 +373,17 @@ Most commonly: TCP port blocked (firewall), application not listening on `0.0.0.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `OSI Model` — the reference model that TCP/IP maps to; understanding OSI gives context for why TCP/IP has 4 layers
 
 **Builds On This (learn these next):**
+
 - `TCP` — the transport layer protocol that provides reliability
 - `UDP` — the alternative transport layer protocol for low-latency applications
 - `IP Addressing` — the Internet layer's addressing scheme
 
 **Alternatives / Comparisons:**
+
 - `OSI Model` — 7-layer reference model; conceptual framework that maps to TCP/IP
 - `QUIC` — modern transport protocol that combines aspects of TCP and TLS, implemented over UDP
 

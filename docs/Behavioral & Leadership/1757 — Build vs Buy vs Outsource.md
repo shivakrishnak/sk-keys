@@ -50,6 +50,7 @@ The build-or-buy question has existed as long as organisations have faced it. Th
 **Vendor lock-in:** The degree to which switching away from a vendor is expensive. High lock-in: proprietary data formats, deep API integration, vendor-specific features. Low lock-in: open standards, data portability, thin integration layer.
 
 **Core vs Context (Moore):**
+
 - **Core:** capabilities that directly differentiate you from competitors; customers would pay more for excellence here
 - **Context:** necessary capabilities that customers expect as a baseline but don't differentiate; commodity work
 
@@ -61,6 +62,7 @@ The build-or-buy question has existed as long as organisations have faced it. Th
 Build when the capability differentiates you from competitors; buy when it is commodity work that vendors do better and cheaper; outsource when you need temporary specialised skills without permanent headcount — and always calculate TCO honestly, including operational overhead and opportunity cost.
 
 **One analogy:**
+
 > A restaurant doesn't build its own ovens or make its own plates. Those are commodity inputs — industrial manufacturers produce them better and cheaper than any restaurant could. But the restaurant does develop its own recipes, train its own chefs, and create its own dining experience — because those are the differentiating capabilities that determine whether customers choose this restaurant over the one across the street. "Build vs Buy" is the same question: what is your oven (buy it), and what is your recipe (build it)? The mistake is spending chef time on oven manufacturing.
 
 **One insight:**
@@ -84,13 +86,13 @@ QUESTION: "If we were 10x better at this than any competitor,
            would that drive customer acquisition/retention?"
   Yes → core (strong bias toward Build)
   No  → context (strong bias toward Buy)
-  
+
 EXAMPLES:
-  Core (build): 
+  Core (build):
     Netflix: recommendation algorithm (their competitive moat)
     Shopify: checkout experience (core to merchant success)
     Stripe: payment routing and reliability (their product)
-    
+
   Context (buy):
     Netflix: email delivery → buy (SendGrid/Mailgun)
     Shopify: authentication → buy (Auth0 / Cognito)
@@ -137,7 +139,7 @@ STEP 4: VENDOR RISK ASSESSMENT
   Lock-in level:
     Low: open standards, data portability, thin integration
     High: proprietary APIs, vendor-specific data formats
-    
+
   Vendor stability:
     Is this a well-capitalised, mature vendor?
     What is the switching cost if the vendor is acquired/shut down?
@@ -148,7 +150,7 @@ STEP 5: TEAM CAPABILITY
   Do we have the skills to build and maintain this?
     No expertise → strong bias toward Buy
     Deep expertise → Build is more viable
-    
+
   Can we maintain it safely?
     Security-critical (auth, payments, encryption):
     Unless this is your core business, the maintenance
@@ -283,6 +285,7 @@ Ongoing: monitor TCO; reassess at major context change
 ### 💻 Code Example
 
 **Build vs Buy TCO calculator:**
+
 ```python
 from dataclasses import dataclass
 
@@ -357,26 +360,26 @@ compare_options(
 
 ### ⚖️ Comparison Table
 
-| | Build | Buy (SaaS) | Buy (OSS Self-Host) | Outsource |
-|---|---|---|---|---|
-| **Time to value** | Slowest | Fastest | Medium | Medium |
-| **Control** | Highest | Lowest | High | Medium |
-| **Maintenance** | Highest (internal) | None | Medium (ops burden) | Low (then high at handoff) |
-| **Cost** | High TCO | Predictable opex | Medium TCO | High (per project) |
-| **Vendor risk** | None | High | Low | Medium |
-| **Best for** | Core differentiators | Commodity capabilities | Between build/SaaS | Specialised, temporary |
+|                   | Build                | Buy (SaaS)             | Buy (OSS Self-Host) | Outsource                  |
+| ----------------- | -------------------- | ---------------------- | ------------------- | -------------------------- |
+| **Time to value** | Slowest              | Fastest                | Medium              | Medium                     |
+| **Control**       | Highest              | Lowest                 | High                | Medium                     |
+| **Maintenance**   | Highest (internal)   | None                   | Medium (ops burden) | Low (then high at handoff) |
+| **Cost**          | High TCO             | Predictable opex       | Medium TCO          | High (per project)         |
+| **Vendor risk**   | None                 | High                   | Low                 | Medium                     |
+| **Best for**      | Core differentiators | Commodity capabilities | Between build/SaaS  | Specialised, temporary     |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Building gives more control" | Building gives control in the short term and a maintenance burden forever. Vendor products often evolve faster than internal builds because they have dedicated teams. |
-| "Vendor costs are high compared to building" | Vendor costs are visible; build costs (maintenance, incidents, upgrades, opportunity cost) are mostly invisible until year 2. TCO analysis almost always favours buying commodity capabilities. |
-| "Open source is free" | Open-source software has no licensing cost but has operational cost (hosting, upgrades, security patches, oncall), integration cost, and the risk of abandoned projects. "Free" OSS has a real TCO. |
-| "Outsourcing is cheaper" | Outsourcing has high coordination overhead, quality risk, and a handoff cost that makes it expensive for ongoing capabilities. It's most cost-effective for well-scoped, time-limited projects with clear acceptance criteria. |
-| "We should own our core infrastructure" | "Core infrastructure" is often context, not core. Unless your competitive advantage is infrastructure, managed infrastructure (RDS vs self-hosted Postgres, EKS vs self-hosted Kubernetes) almost always has lower TCO. |
+| Misconception                                | Reality                                                                                                                                                                                                                        |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "Building gives more control"                | Building gives control in the short term and a maintenance burden forever. Vendor products often evolve faster than internal builds because they have dedicated teams.                                                         |
+| "Vendor costs are high compared to building" | Vendor costs are visible; build costs (maintenance, incidents, upgrades, opportunity cost) are mostly invisible until year 2. TCO analysis almost always favours buying commodity capabilities.                                |
+| "Open source is free"                        | Open-source software has no licensing cost but has operational cost (hosting, upgrades, security patches, oncall), integration cost, and the risk of abandoned projects. "Free" OSS has a real TCO.                            |
+| "Outsourcing is cheaper"                     | Outsourcing has high coordination overhead, quality risk, and a handoff cost that makes it expensive for ongoing capabilities. It's most cost-effective for well-scoped, time-limited projects with clear acceptance criteria. |
+| "We should own our core infrastructure"      | "Core infrastructure" is often context, not core. Unless your competitive advantage is infrastructure, managed infrastructure (RDS vs self-hosted Postgres, EKS vs self-hosted Kubernetes) almost always has lower TCO.        |
 
 ---
 
@@ -389,28 +392,29 @@ compare_options(
 **Root Cause:** No principled build-vs-buy framework. Each capability was built because an engineer had an afternoon, or because "we can build this ourselves," or because the team didn't evaluate vendor options. TCO was never calculated. Opportunity cost was never made visible.
 
 **Fix:**
+
 ```
 1. AUDIT EXISTING INTERNAL TOOLS:
    List every internal capability the team maintains
    For each: estimate annual maintenance hours × loaded cost
    For each: find best-in-class vendor; get pricing
    Calculate 3-year build TCO vs buy TCO
-   
+
 2. IDENTIFY QUICK WINS:
    Capabilities where buy TCO < build TCO by > 50%
    AND not core to competitive differentiation
    → These are candidates for replacement
-   
+
 3. MIGRATION PLAN (for top 3 quick wins):
    Integration effort; data migration; cutover plan
    Stop maintaining internal version after cutover
-   
+
 4. ADD BUILD-VS-BUY POLICY TO ENGINEERING STRATEGY:
    "Default: evaluate best-in-class vendor before building.
     Build only if: (a) core differentiator; (b) no vendor
     meets reliability requirements; (c) TCO analysis over
     3 years favours build."
-    
+
 5. RFC TEMPLATE INCLUDES:
    "What vendor/OSS options were evaluated?"
    "What is the 3-year TCO comparison?"
@@ -422,15 +426,18 @@ compare_options(
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Engineering Strategy` — the build-vs-buy decision should be a guiding policy in the engineering strategy
 - `Technical Roadmap` — build/buy decisions determine what goes on the roadmap
 
 **Builds On This (learn these next):**
+
 - `Engineering Strategy` — the build/buy/outsource policy belongs in the engineering strategy
 - `Technical Roadmap` — decisions feed directly into initiative prioritisation
 - `OKRs` — the opportunity cost of building vs buying affects which OKRs can be achieved
 
 **Alternatives / Comparisons:**
+
 - `Engineering Strategy` — strategy provides the context; build-vs-buy is one recurring decision type the strategy should resolve
 
 ---

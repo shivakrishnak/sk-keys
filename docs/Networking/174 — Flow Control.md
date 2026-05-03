@@ -49,6 +49,7 @@ TCP's receive window (rwnd) mechanism solves this: the receiver continuously adv
 TCP flow control is the receiver saying "I can only accept X more bytes right now" — the sender is not allowed to send more than the receiver can buffer, preventing receiver buffer overflow.
 
 **One analogy:**
+
 > Flow control is like a restaurant kitchen telling the waiter "we can only handle 5 orders at a time." Even if the dining room has 50 customers waiting, the waiter won't place more than 5 orders simultaneously. When the kitchen finishes an order (receiver processes data), it signals "one more order ready" (window update). The waiter places the next order. The kitchen is in control of the rate, not the waiter (sender). Congestion control is a separate mechanism — the restaurant's parking lot (network) can only hold so many cars, regardless of the kitchen's capacity.
 
 **One insight:**
@@ -62,6 +63,7 @@ Flow control and congestion control are frequently confused. They solve differen
 The 16-bit Window field in every TCP segment advertises the current rwnd. Maximum value: 65535 bytes without window scaling. With **TCP Window Scaling** (RFC 7323), the window size is multiplied by 2^scale_factor (negotiated in the SYN). Max scaled window: 65535 × 2^14 = ~1GB.
 
 **FLOW CONTROL ARITHMETIC:**
+
 ```
 Receiver's buffer:    [---- 64KB total ----]
 Currently occupied:   [=====32KB============]
@@ -75,6 +77,7 @@ Sender can send max 32KB of unacknowledged data.
 ```
 
 **ZERO WINDOW (Receiver buffer full):**
+
 ```
 Receiver buffer:  [==== FULL ====]
 Advertised rwnd:  0
@@ -95,6 +98,7 @@ This continues until receiver frees buffer space.
 
 **WINDOW UPDATE:**
 When receiver processes data and frees buffer:
+
 ```
 Receiver: processed 16KB of data
 Buffer free: was 0, now 16KB
@@ -104,6 +108,7 @@ Sender: resumes sending 16KB
 
 **SILLY WINDOW SYNDROME:**
 Receiver frees 1 byte, advertises rwnd=1. Sender sends 1 byte. Receiver frees 1 byte. ... Thousands of 1-byte TCP segments, each with 40-byte headers. Solution:
+
 - **Clark's algorithm (receiver-side)**: don't advertise small windows; wait until buffer is min(half_buffer, MSS) free before sending window update.
 - **Nagle's algorithm (sender-side)**: don't send small segments if previous data is unacknowledged; batch small writes. Disabled with `TCP_NODELAY`.
 
@@ -224,6 +229,7 @@ sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 4*1024*1024)
 ### 💻 Code Example
 
 **Example — Demonstrating receiver-side flow control:**
+
 ```python
 import socket
 import threading
@@ -237,10 +243,10 @@ def slow_receiver(port: int, process_delay_ms: int):
     server.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 64*1024)
     server.bind(('127.0.0.1', port))
     server.listen(1)
-    
+
     conn, addr = server.accept()
     print(f"Connection from {addr}")
-    
+
     received = 0
     while True:
         # Slow read: simulates slow application processing
@@ -248,13 +254,13 @@ def slow_receiver(port: int, process_delay_ms: int):
         if not chunk:
             break
         received += len(chunk)
-        
+
         # Simulate slow processing (filling the receive buffer)
         time.sleep(process_delay_ms / 1000)
-        
+
         if received % (1024*1024) == 0:
             print(f"Processed {received // (1024*1024)}MB")
-    
+
     print(f"Total received: {received} bytes")
     conn.close()
     server.close()
@@ -263,23 +269,23 @@ def fast_sender(host: str, port: int, total_bytes: int):
     """Send data as fast as possible; flow control will throttle us."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((host, port))
-    
+
     chunk = b'X' * 65536  # 64KB chunks
     sent = 0
     start = time.perf_counter()
-    
+
     while sent < total_bytes:
         to_send = min(len(chunk), total_bytes - sent)
         sock.sendall(chunk[:to_send])
         sent += to_send
-        
+
         # Print progress every 10MB
         if sent % (10*1024*1024) == 0:
             elapsed = time.perf_counter() - start
             rate_mbps = (sent / elapsed) / (1024*1024)
             print(f"Sent {sent // (1024*1024)}MB, "
                   f"rate: {rate_mbps:.1f} MB/s")
-    
+
     print(f"Total sent: {sent} bytes")
     sock.close()
 
@@ -291,26 +297,26 @@ def fast_sender(host: str, port: int, total_bytes: int):
 
 ### ⚖️ Comparison Table
 
-| Aspect | Flow Control (rwnd) | Congestion Control (CWND) |
-|---|---|---|
-| Protects | Receiver's buffer | Network (routers) |
-| Controlled by | Receiver | Sender |
-| Signal | Buffer space remaining | Packet loss / RTT increase |
-| When = 0 | Zero Window (receiver full) | N/A (CWND never zero) |
-| Tuning | Socket buffer size | CC algorithm |
-| Location | Per-connection | Per-connection |
+| Aspect        | Flow Control (rwnd)         | Congestion Control (CWND)  |
+| ------------- | --------------------------- | -------------------------- |
+| Protects      | Receiver's buffer           | Network (routers)          |
+| Controlled by | Receiver                    | Sender                     |
+| Signal        | Buffer space remaining      | Packet loss / RTT increase |
+| When = 0      | Zero Window (receiver full) | N/A (CWND never zero)      |
+| Tuning        | Socket buffer size          | CC algorithm               |
+| Location      | Per-connection              | Per-connection             |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Flow control and congestion control are the same | They are complementary and distinct: flow control = receiver buffer protection; congestion control = network protection. Both limit the sender simultaneously |
-| Setting a large SO_RCVBUF always helps | If the application reads slowly, a larger buffer just delays the Zero Window event — it doesn't increase throughput. Fix the application read path. Also: setting SO_RCVBUF disables kernel autotuning for that socket |
-| Zero Window means packet loss | Zero Window means the receiver's buffer is full. No data is lost — the sender simply pauses until the receiver frees space |
-| Flow control is only relevant for large transfers | Any connection where the receiver reads slowly (blocking I/O, slow processing) can hit Zero Window, including interactive protocols |
-| You need to implement flow control in your application | For TCP, flow control is fully automatic at the kernel level. Application-level flow control (backpressure in Kafka, reactive streams) is a separate, higher-level concept |
+| Misconception                                          | Reality                                                                                                                                                                                                                |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Flow control and congestion control are the same       | They are complementary and distinct: flow control = receiver buffer protection; congestion control = network protection. Both limit the sender simultaneously                                                          |
+| Setting a large SO_RCVBUF always helps                 | If the application reads slowly, a larger buffer just delays the Zero Window event — it doesn't increase throughput. Fix the application read path. Also: setting SO_RCVBUF disables kernel autotuning for that socket |
+| Zero Window means packet loss                          | Zero Window means the receiver's buffer is full. No data is lost — the sender simply pauses until the receiver frees space                                                                                             |
+| Flow control is only relevant for large transfers      | Any connection where the receiver reads slowly (blocking I/O, slow processing) can hit Zero Window, including interactive protocols                                                                                    |
+| You need to implement flow control in your application | For TCP, flow control is fully automatic at the kernel level. Application-level flow control (backpressure in Kafka, reactive streams) is a separate, higher-level concept                                             |
 
 ---
 
@@ -325,6 +331,7 @@ Application throughput far below expected. `ss -tn -o -i` shows low or zero `snd
 Receiver application reads the TCP socket slowly — possibly blocking on database calls, GC pauses, or slow processing — causing receive buffer to fill, rwnd to drop to 0, sender to stall.
 
 **Diagnostic Commands:**
+
 ```bash
 # Check send window on active connection (should be > 0)
 ss -tn -o -i | grep "snd_wnd"
@@ -351,14 +358,17 @@ Move socket reads to dedicated threads; use async I/O (asyncio, NIO); avoid bloc
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `TCP` — flow control is a core TCP mechanism; TCP basics are prerequisite
 
 **Builds On This (learn these next):**
+
 - `Sliding Window` — the sliding window is the mechanism that implements flow control; understanding flow control motivates the sliding window algorithm
 - `Congestion Control` — the complementary sender-side rate limiting mechanism
 - `Bandwidth vs Throughput` — flow control directly limits achieved throughput when the receiver is the bottleneck
 
 **Related:**
+
 - `Reactive Streams / Backpressure` — application-level flow control pattern (Kafka, RxJava, Project Reactor) inspired by TCP's flow control concept
 
 ---

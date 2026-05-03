@@ -57,6 +57,7 @@ Most technical interviews test: (1) algorithmic problem-solving under time press
 Technical interviews test a specific, preparable skill set — pattern recognition in algorithms, structured system design communication, and story-based behavioral articulation — and the return on preparation is higher than almost any other career investment.
 
 **One analogy:**
+
 > Preparing for a technical interview is like preparing for a music audition. The audition tests your ability to perform under pressure in a specific format (sight-reading + prepared piece + scales). Your day-to-day ability to write beautiful music is real, but it is tested through a different instrument. A composer who has never practised sight-reading will underperform their ability in a sight-reading audition. The preparation for the audition (practising the format, the specific patterns, the time constraints) is a distinct skill from the underlying musicianship. The audition is not a perfect test of musicianship — it is a test of "how well does this person perform in this format?" Preparation maximises your score on that specific test.
 
 **One insight:**
@@ -76,7 +77,7 @@ PHASE 1 — FOUNDATIONS (2 weeks):
     hash map, tree, graph, heap, trie
   Algorithms: sorting, searching, BFS, DFS, recursion
   Complexity: Big O time + space for all above
-  
+
 PHASE 2 — PATTERNS (2–3 weeks):
   LeetCode pattern catalogue:
     □ Two pointers
@@ -91,7 +92,7 @@ PHASE 2 — PATTERNS (2–3 weeks):
     □ Topological sort
     □ Interval merging
     □ Fast + slow pointers (cycle detection)
-    
+
   For each pattern: understand the template;
   practise 5–10 problems; time yourself
 
@@ -294,6 +295,7 @@ Debrief: what did you learn? What to improve?
 ### 💻 Code Example
 
 **Coding interview process template:**
+
 ```python
 def solve_problem(problem: str) -> None:
     """
@@ -307,29 +309,29 @@ def solve_problem(problem: str) -> None:
     # - What counts as valid input?
     # - Are there duplicates?
     clarifications = ask_clarifying_questions(problem)
-    
+
     # STEP 2: EXAMPLES (2 minutes)
     # Work through 2 examples to confirm understanding
     # "If input is [1,2,3], output should be X, correct?"
     examples = create_examples(clarifications)
-    
+
     # STEP 3: APPROACH (5–10 minutes)
     # Think out loud: what pattern does this look like?
     # - Brute force first: what's the naive approach?
     # - Optimise: what data structure reduces complexity?
     # "I think this is a sliding window problem because..."
     approach = design_approach(examples)
-    
+
     # STEP 4: CODE (20 minutes)
     # Write clean code with narration
     # Name variables clearly; handle edge cases explicitly
     solution = implement(approach)
-    
+
     # STEP 5: TEST (5 minutes)
     # Walk through with a small example, step by step
     # Test: empty input, single element, all same value
     verify(solution, examples)
-    
+
     # STEP 6: COMPLEXITY (2 minutes)
     # State time and space complexity
     # "This is O(n) time, O(k) space where k is window size"
@@ -352,23 +354,23 @@ PATTERNS = {
 
 ### ⚖️ Comparison Table
 
-| Track | Preparation time | Key resource | Common failure mode |
-|---|---|---|---|
-| **Coding** | 4–6 weeks | LeetCode + NeetCode patterns | Starting to code before understanding; not talking out loud |
-| **System Design** | 2–4 weeks | "System Design Interview" (Alex Xu) | Jumping to solution without requirements; no tradeoff discussion |
-| **Behavioral** | 1–2 weeks | Your story inventory + STAR method | Vague answers; saying "we" instead of "I"; no measurable result |
+| Track             | Preparation time | Key resource                        | Common failure mode                                              |
+| ----------------- | ---------------- | ----------------------------------- | ---------------------------------------------------------------- |
+| **Coding**        | 4–6 weeks        | LeetCode + NeetCode patterns        | Starting to code before understanding; not talking out loud      |
+| **System Design** | 2–4 weeks        | "System Design Interview" (Alex Xu) | Jumping to solution without requirements; no tradeoff discussion |
+| **Behavioral**    | 1–2 weeks        | Your story inventory + STAR method  | Vague answers; saying "we" instead of "I"; no measurable result  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Leetcode hard = better prepared" | Hard problems build skill but Easy and Medium reflect what most interviews test. Covering all patterns at Medium reliably > doing Hard sporadically. |
-| "Talking slows you down" | Talking (narrating your thought process) is what interviewers evaluate. Silent coders who get the right answer score lower than communicative coders with a partially correct answer. |
-| "Behavioral questions are easy" | Behavioral interviews are the most underprepped track and cause the most failed offers. "Tell me about yourself" answered poorly tanks otherwise-strong performances. |
-| "I'm too senior for LeetCode" | FAANG and most tech companies have standardised coding interviews regardless of seniority. The problems scale; the format doesn't. |
-| "One mock interview is enough" | The first mock interview reveals your real problems; it takes 3–5 mocks to actually fix them. One mock gives false confidence. |
+| Misconception                     | Reality                                                                                                                                                                               |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Leetcode hard = better prepared" | Hard problems build skill but Easy and Medium reflect what most interviews test. Covering all patterns at Medium reliably > doing Hard sporadically.                                  |
+| "Talking slows you down"          | Talking (narrating your thought process) is what interviewers evaluate. Silent coders who get the right answer score lower than communicative coders with a partially correct answer. |
+| "Behavioral questions are easy"   | Behavioral interviews are the most underprepped track and cause the most failed offers. "Tell me about yourself" answered poorly tanks otherwise-strong performances.                 |
+| "I'm too senior for LeetCode"     | FAANG and most tech companies have standardised coding interviews regardless of seniority. The problems scale; the format doesn't.                                                    |
+| "One mock interview is enough"    | The first mock interview reveals your real problems; it takes 3–5 mocks to actually fix them. One mock gives false confidence.                                                        |
 
 ---
 
@@ -381,6 +383,7 @@ PATTERNS = {
 **Why?** The interviewer couldn't evaluate the candidate's thought process. The interviewer doesn't know: Did they understand the problem? Did they consider alternatives? Do they understand the complexity? Can they explain why they made this design choice? The output is correct, but the signal is incomplete. "No hire" does not mean "can't code" — it means "can't demonstrate thinking in a collaborative setting."
 
 **Fix:**
+
 ```
 NARRATE EVERY STEP:
 
@@ -422,14 +425,17 @@ Could we improve? No — we need to visit every element."
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `STAR Method` — the structure for behavioral answers
 - `System Design Interview` — a major track within technical interview preparation
 
 **Builds On This (learn these next):**
+
 - `System Design Interview` — deep-dive into the system design track
 - `Behavioral Interview Patterns` — deep-dive into the behavioral track
 
 **Alternatives / Comparisons:**
+
 - `Behavioral Interview Patterns` — the behavioral-specific deep-dive
 - `System Design Interview` — the system design-specific deep-dive
 

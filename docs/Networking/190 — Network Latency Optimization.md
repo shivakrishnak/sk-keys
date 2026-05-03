@@ -46,6 +46,7 @@ A website takes 3 seconds to load for users in Tokyo despite being "fast" for us
 Latency optimisation: get the server closer (CDN), reduce handshake costs (HTTP/2, TLS 1.3, 0-RTT), compress payloads, and tune TCP settings — each layer multiplicatively improves performance.
 
 **One analogy:**
+
 > Optimising network latency is like optimising a bank visit. CDN = open a branch near you (reduce travel). Persistent connections = have a dedicated teller (no queue each time). TLS session resumption = the teller remembers you (skip ID check). HTTP/2 multiplexing = process multiple requests simultaneously at the counter. Compression = submit a form instead of explaining everything verbally.
 
 ---
@@ -53,6 +54,7 @@ Latency optimisation: get the server closer (CDN), reduce handshake costs (HTTP/
 ### 🔩 First Principles Explanation
 
 **LATENCY ANATOMY — TTFB BREAKDOWN:**
+
 ```
 User types URL → browser shows page:
 
@@ -78,7 +80,8 @@ HTTP/2 on same CDN (connection reused):
 
 **OPTIMISATION TECHNIQUES:**
 
-*1. CDN / Edge Proximity:*
+_1. CDN / Edge Proximity:_
+
 ```
 Without CDN (London server, Sydney user, 300ms RTT):
   All DNS + TCP + TLS at 300ms RTT → 1200ms+ overhead
@@ -89,7 +92,8 @@ With CDN (Sydney PoP, 5ms RTT to edge):
   Cache HIT: 5ms RTT total
 ```
 
-*2. Connection Reuse (HTTP Keep-Alive / HTTP/2):*
+_2. Connection Reuse (HTTP Keep-Alive / HTTP/2):_
+
 ```
 HTTP/1.0: new TCP connection per request
   3-way handshake + TLS (1-2 RTT) for EVERY request
@@ -106,7 +110,8 @@ HTTP/2: multiplexed streams on single connection
   10× improvement in connection overhead
 ```
 
-*3. TLS Optimisation:*
+_3. TLS Optimisation:_
+
 ```
 TLS 1.2: 2-RTT handshake (expensive)
 TLS 1.3: 1-RTT handshake (50% faster)
@@ -120,17 +125,18 @@ Session tickets / OCSP stapling:
     (client doesn't need separate OCSP lookup = -1 RTT)
 ```
 
-*4. Protocol Optimisation:*
+_4. Protocol Optimisation:_
+
 ```
 HTTP/1.1 Head-of-Line Blocking:
   Request 1 (large): must complete before Request 2 starts
-  
+
 HTTP/2 Multiplexing:
   All requests in parallel streams on one connection
   Request 1 and 2 both in-flight simultaneously
   Stream priority: critical CSS/JS first, images later
   Server push: server sends CSS before client asks for it
-  
+
 HTTP/3 / QUIC:
   UDP-based: eliminates TCP head-of-line blocking
   (TCP: one lost packet blocks all streams;
@@ -139,7 +145,8 @@ HTTP/3 / QUIC:
   Connection migration: maintains connection across IP changes (mobile)
 ```
 
-*5. Payload Reduction:*
+_5. Payload Reduction:_
+
 ```
 Gzip/Brotli compression:
   Typical HTML: 100 KB → 20 KB (80% reduction)
@@ -154,7 +161,8 @@ Content optimisation:
   DNS prefetch: <link rel="dns-prefetch"> (DNS only)
 ```
 
-*6. TCP/OS Tuning:*
+_6. TCP/OS Tuning:_
+
 ```bash
 # Enable TCP BBR (better throughput, lower latency)
 sysctl -w net.ipv4.tcp_congestion_control=bbr
@@ -182,6 +190,7 @@ sysctl -w net.ipv4.tcp_fastopen=3
 A web page has 20 resources. Without optimisation: serial loading with 100ms RTT. Each resource = 1 RTT = 100ms. Total: 2,000ms just in network time.
 
 With HTTP/2 + CDN:
+
 - All 20 resources in parallel: 1 × 100ms base RTT = 100ms (+ server processing)
 - CDN: RTT = 10ms → 10ms for all 20 resources in parallel
 - Total: ~60ms (10ms network + 50ms server processing)
@@ -193,6 +202,7 @@ Result: 2000ms → 60ms from these two changes alone (33× improvement).
 ### 🧠 Mental Model / Analogy
 
 > Network latency optimisation is like optimising a restaurant order:
+>
 > 1. Open a local branch (CDN) — no cross-city travel
 > 2. Pre-order online (TLS 0-RTT) — order taken before you arrive
 > 3. Order everything at once (HTTP/2 multiplexing) — not item by item
@@ -287,17 +297,17 @@ from typing import Optional
 def benchmark_endpoint(url: str, n: int = 10) -> dict:
     """Benchmark TTFB and download time for an endpoint."""
     latencies = []
-    
+
     for _ in range(n):
         req = urllib.request.Request(url)
         req.add_header("Accept-Encoding", "gzip, br")
-        
+
         start = time.perf_counter()
         with urllib.request.urlopen(req, timeout=10) as resp:
             ttfb = time.perf_counter() - start
             body = resp.read()  # download full response
         total = time.perf_counter() - start
-        
+
         latencies.append({
             "ttfb_ms": ttfb * 1000,
             "total_ms": total * 1000,
@@ -306,7 +316,7 @@ def benchmark_endpoint(url: str, n: int = 10) -> dict:
             "http_version": resp.headers.get("Via", ""),
         })
         time.sleep(0.1)
-    
+
     ttfbs = [l["ttfb_ms"] for l in latencies]
     return {
         "url": url,
@@ -334,25 +344,25 @@ for url in endpoints:
 
 ### ⚖️ Comparison Table
 
-| Technique | Latency Reduction | Complexity | When to Apply |
-|---|---|---|---|
-| CDN | 50-90% for static | Low | Always for static assets |
-| HTTP/2 | 50-80% for many resources | Low | Always (server config) |
-| TLS 1.3 | 1 RTT saved | Low | Always (upgrade config) |
-| QUIC/HTTP/3 | Lossy/mobile paths | Medium | Mobile-heavy traffic |
-| Brotli compression | 15-30% size reduction | Low | Always for text content |
-| TCP BBR | 10-30% throughput | Low | Always (Linux sysctl) |
-| 0-RTT | 1 RTT saved on reconnect | Medium | High-return-user traffic |
-| Edge compute | Eliminates origin RTT | High | Complex dynamic logic |
+| Technique          | Latency Reduction         | Complexity | When to Apply            |
+| ------------------ | ------------------------- | ---------- | ------------------------ |
+| CDN                | 50-90% for static         | Low        | Always for static assets |
+| HTTP/2             | 50-80% for many resources | Low        | Always (server config)   |
+| TLS 1.3            | 1 RTT saved               | Low        | Always (upgrade config)  |
+| QUIC/HTTP/3        | Lossy/mobile paths        | Medium     | Mobile-heavy traffic     |
+| Brotli compression | 15-30% size reduction     | Low        | Always for text content  |
+| TCP BBR            | 10-30% throughput         | Low        | Always (Linux sysctl)    |
+| 0-RTT              | 1 RTT saved on reconnect  | Medium     | High-return-user traffic |
+| Edge compute       | Eliminates origin RTT     | High       | Complex dynamic logic    |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| More bandwidth solves latency | Bandwidth and latency are orthogonal. A 10 Gbps link still has 100ms RTT to a distant server. Latency requires physical proximity or fewer round trips |
-| TLS adds significant overhead | TLS 1.3 adds ~1 RTT (first connection) or 0 RTT (session resume). CPU overhead is <5% on modern hardware. The handshake RTT is often larger than the crypto overhead |
+| Misconception                         | Reality                                                                                                                                                                                 |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| More bandwidth solves latency         | Bandwidth and latency are orthogonal. A 10 Gbps link still has 100ms RTT to a distant server. Latency requires physical proximity or fewer round trips                                  |
+| TLS adds significant overhead         | TLS 1.3 adds ~1 RTT (first connection) or 0 RTT (session resume). CPU overhead is <5% on modern hardware. The handshake RTT is often larger than the crypto overhead                    |
 | HTTP/2 is always faster than HTTP/1.1 | HTTP/2 improves multi-resource page loads. For single-resource APIs, HTTP/1.1 with keep-alive may perform comparably. HTTP/2's benefit is parallelism, not reduced per-request overhead |
 
 ---

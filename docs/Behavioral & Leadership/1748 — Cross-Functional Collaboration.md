@@ -42,6 +42,7 @@ The product-engineering-design "triad" model was popularised by Marty Cagan (SVP
 **Product-Engineering-Design Triad:** A cross-functional team unit where product management (what and why), engineering (how and feasibility), and design (user experience) work collaboratively from the start of an initiative, rather than handing off sequentially. The triad is jointly responsible for outcomes.
 
 **RACI Matrix:** Responsibility assignment matrix:
+
 - **R**esponsible: who does the work
 - **A**ccountable: who is ultimately answerable for the outcome (one person only)
 - **C**onsulted: who provides input before decisions are made
@@ -59,6 +60,7 @@ The product-engineering-design "triad" model was popularised by Marty Cagan (SVP
 Cross-functional collaboration works when teams align on outcomes (user problems solved) rather than outputs (features shipped) and use clear frameworks (RACI, DRI) to resolve the "who decides" ambiguity that creates bottlenecks and conflict.
 
 **One analogy:**
+
 > A cross-functional product team is like the crew of a ship. The navigator (product) plots the destination and route. The engineer (technical engineering) maintains the vessel and knows what speeds are sustainable. The helmsman (design) ensures the ship steers precisely. The purser (legal/finance) manages constraints on the journey. If each crew member works in isolation and hands off to the next, the ship runs aground: the navigator plots a route through shallow water the engineer could have warned about; the helmsman receives navigational charts they don't understand; the purser discovers a port entry restriction at the last moment. Effective cross-functional teams are the crew of a ship: each brings distinct expertise, but they navigate together, sharing information continuously rather than handing off sequentially.
 
 **One insight:**
@@ -83,13 +85,13 @@ WATERFALL (dysfunctional):
 
 TRIAD (functional):
   Product + Engineering + Design co-plan from week 1:
-  
+
   Product: "The user problem is: checkout abandonment at 40%"
   Engineering: "The payment service has a 3-second latency issue —
                that's the likely abandonment driver"
   Design: "We tested two checkout flows — the 1-page version
            had 60% lower abandonment in usability tests"
-  
+
   Shared conclusion: fix latency + ship 1-page checkout
   → All three functions contributed; no sequential handoffs
   → Legal + Security consulted during discovery (not post-design)
@@ -151,6 +153,7 @@ OUTCOME THINKING (right):
 An engineering team is building a new user onboarding flow. Historically, product writes an 8-page PRD, hands it to design for mocks, then to engineering to implement. The timeline is 12 weeks. Review the process using cross-functional collaboration principles.
 
 **Problems with the current model:**
+
 - Engineering discovers at week 6 that the PRD requires a new data model incompatible with the existing auth system — 3-week redesign
 - Design mocks an animated onboarding sequence that engineering estimates at 4 weeks — not in the plan
 - Legal review at week 10 reveals GDPR data collection requirements were missed — 2-week rework
@@ -158,6 +161,7 @@ An engineering team is building a new user onboarding flow. Historically, produc
 
 **Cross-functional model:**
 Week 0–1: Triad kickoff — PM, Engineering lead, Design lead + invited: Legal, Security, Data
+
 - PM: "Goal: reduce onboarding abandonment from 60% to 30%"
 - Engineering: "Two major constraints: existing auth model, 2-week lag for new data fields"
 - Design: "I have user research — animated onboarding performs 30% better in tests"
@@ -254,6 +258,7 @@ Cross-function retrospective; improve process
 ### 💻 Code Example
 
 **RACI table builder:**
+
 ```python
 from dataclasses import dataclass, field
 
@@ -309,25 +314,25 @@ print_raci([
 
 ### ⚖️ Comparison Table
 
-| Model | Structure | Decision Authority | Best For |
-|---|---|---|---|
-| **Triad** | PM + Eng + Design co-own | Shared; consensus or DRI | Product feature development |
-| **RACI** | Role matrix per decision | Accountable = single owner | Complex multi-stakeholder decisions |
-| **DRI** | One named owner per deliverable | DRI owns; others support | Apple-style fast decisions; avoids committee |
-| **Waterfall handoff** | Sequential; each function completes before next | Each function owns their phase | Works only for fully-specified, low-change work |
-| **Embedded functions** | Legal/Security embedded in team | Shared team authority | Reduces handoff friction; improves early consultation |
+| Model                  | Structure                                       | Decision Authority             | Best For                                              |
+| ---------------------- | ----------------------------------------------- | ------------------------------ | ----------------------------------------------------- |
+| **Triad**              | PM + Eng + Design co-own                        | Shared; consensus or DRI       | Product feature development                           |
+| **RACI**               | Role matrix per decision                        | Accountable = single owner     | Complex multi-stakeholder decisions                   |
+| **DRI**                | One named owner per deliverable                 | DRI owns; others support       | Apple-style fast decisions; avoids committee          |
+| **Waterfall handoff**  | Sequential; each function completes before next | Each function owns their phase | Works only for fully-specified, low-change work       |
+| **Embedded functions** | Legal/Security embedded in team                 | Shared team authority          | Reduces handoff friction; improves early consultation |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "More stakeholders = better decisions" | More stakeholders = more C in RACI = decision bottleneck. Consult selectively; inform broadly. |
-| "Engineering is responsible for technical decisions only" | Engineering co-owns outcome decisions; technical feasibility constraints should shape product scope, not just be a veto at implementation. |
-| "RACI is only for large organisations" | Even a 3-person team benefits from clarifying: who makes this call? Who needs to be consulted? It prevents unspoken assumptions. |
-| "Cross-functional means consensus on everything" | Not all decisions are cross-functional. Over-collaboration on low-stakes decisions is wasteful. Apply cross-functional processes to decisions at function boundaries. |
-| "The DRI model means nobody else matters" | DRI = accountability for the outcome; it doesn't mean the DRI makes all decisions alone. They actively consult and align; they just own the outcome if things go wrong. |
+| Misconception                                             | Reality                                                                                                                                                                 |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "More stakeholders = better decisions"                    | More stakeholders = more C in RACI = decision bottleneck. Consult selectively; inform broadly.                                                                          |
+| "Engineering is responsible for technical decisions only" | Engineering co-owns outcome decisions; technical feasibility constraints should shape product scope, not just be a veto at implementation.                              |
+| "RACI is only for large organisations"                    | Even a 3-person team benefits from clarifying: who makes this call? Who needs to be consulted? It prevents unspoken assumptions.                                        |
+| "Cross-functional means consensus on everything"          | Not all decisions are cross-functional. Over-collaboration on low-stakes decisions is wasteful. Apply cross-functional processes to decisions at function boundaries.   |
+| "The DRI model means nobody else matters"                 | DRI = accountability for the outcome; it doesn't mean the DRI makes all decisions alone. They actively consult and align; they just own the outcome if things go wrong. |
 
 ---
 
@@ -340,6 +345,7 @@ print_raci([
 **Root Cause:** The triad model has broken down. Engineering is being asked to execute rather than co-design. Product is managing requirements rather than managing outcomes. Design is producing deliverables rather than collaborating. Different metrics are driving different optimisations.
 
 **Fix:**
+
 ```
 1. ALIGN ON SHARED OUTCOME METRIC:
    → "What is the user problem we're solving this quarter?"
@@ -372,15 +378,18 @@ print_raci([
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Stakeholder Communication` — cross-functional collaboration requires clear, proactive communication
 - `Conflict Resolution` — misaligned incentives between functions create conflict; needs resolution skills
 
 **Builds On This (learn these next):**
+
 - `Technical Roadmap` — the roadmap is the output of cross-functional prioritisation
 - `Stakeholder Communication` — communicating decisions across functions requires clear, structured communication
 - `Engineering Strategy` — cross-functional partnerships are required for engineering strategy execution
 
 **Alternatives / Comparisons:**
+
 - `Conflict Resolution` — addresses the interpersonal layer of cross-function conflicts
 - `Technical Roadmap` — the roadmap requires cross-functional alignment to be credible
 

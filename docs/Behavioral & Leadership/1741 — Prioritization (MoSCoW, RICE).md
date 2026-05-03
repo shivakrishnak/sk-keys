@@ -51,6 +51,7 @@ MoSCoW (Dai Clegg, 1994) was developed for RAD (Rapid Application Development) t
 MoSCoW asks "do we need this?" RICE asks "is this worth the effort?" Together they help you decide what to build next based on value, not volume or politics.
 
 **One analogy:**
+
 > Prioritisation frameworks are like a hospital triage system. Without triage, patients are treated in arrival order — the first person with a bruise gets care before the last person with a heart attack. Triage imposes a rational ordering: severity (must treat) → significant benefit from early treatment (should treat) → manageable to wait (could treat). MoSCoW is the triage classification; RICE is the severity quantification. Both make the ordering rational rather than arbitrary.
 
 **One insight:**
@@ -159,6 +160,7 @@ Reach: 5,000/quarter, Impact: 1, Confidence: 50%, Effort: 8 engineer-weeks
 RICE = (5,000 × 1 × 0.50) / 8 = 313
 
 **RICE-BASED RANKING:**
+
 1. Initiative B: RICE 60,000 — do this first (20w × 15%)
 2. Initiative A: RICE 14,000 — do this (20w × 25%)
 3. Initiative C: RICE 313 — defer (low score; CEO request)
@@ -260,6 +262,7 @@ Update assumptions for next cycle
 ### 💻 Code Example
 
 **RICE scoring calculator:**
+
 ```python
 from dataclasses import dataclass
 
@@ -306,25 +309,25 @@ rank_initiatives([
 
 ### ⚖️ Comparison Table
 
-| Framework | Best For | Key Question | Weakness |
-|---|---|---|---|
-| **MoSCoW** | Release scoping; MVP definition | Must we have this to ship? | "Must Have" inflation; binary classification |
-| **RICE** | Comparing multiple initiatives | What has highest expected return? | Estimates can be gamed; scores appear precise but aren't |
-| **ICE** (Impact, Confidence, Ease) | Quick scoring; early-stage | Simpler than RICE; faster | No reach dimension; easier to game |
-| **Kano Model** | Feature categorisation | What delights vs. dissatisfies users? | Complex; requires user research |
-| **Opportunity Scoring** | Feature gaps | Where do users have unmet needs? | Requires survey data |
+| Framework                          | Best For                        | Key Question                          | Weakness                                                 |
+| ---------------------------------- | ------------------------------- | ------------------------------------- | -------------------------------------------------------- |
+| **MoSCoW**                         | Release scoping; MVP definition | Must we have this to ship?            | "Must Have" inflation; binary classification             |
+| **RICE**                           | Comparing multiple initiatives  | What has highest expected return?     | Estimates can be gamed; scores appear precise but aren't |
+| **ICE** (Impact, Confidence, Ease) | Quick scoring; early-stage      | Simpler than RICE; faster             | No reach dimension; easier to game                       |
+| **Kano Model**                     | Feature categorisation          | What delights vs. dissatisfies users? | Complex; requires user research                          |
+| **Opportunity Scoring**            | Feature gaps                    | Where do users have unmet needs?      | Requires survey data                                     |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "RICE scores are precise" | RICE uses rough estimates; precision beyond ±50% is false — use scores for relative ranking, not absolute value |
-| "MoSCoW Must = do it no matter what" | Must Have means "must have for this release to work" — if constraints change, Must Haves can be re-evaluated |
-| "The CEO's request overrides RICE" | Authority-based overrides are valid but should be explicit: "We are overriding the RICE ranking for strategic reasons: X." This makes the trade-off transparent. |
-| "Prioritisation is a PM task only" | Technical feasibility (effort) and technical risk (confidence) are engineering inputs that engineering must own |
-| "Once prioritised, the list is fixed" | Priorities change as new information arrives; the framework should be re-run when significant new information changes key assumptions |
+| Misconception                         | Reality                                                                                                                                                          |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "RICE scores are precise"             | RICE uses rough estimates; precision beyond ±50% is false — use scores for relative ranking, not absolute value                                                  |
+| "MoSCoW Must = do it no matter what"  | Must Have means "must have for this release to work" — if constraints change, Must Haves can be re-evaluated                                                     |
+| "The CEO's request overrides RICE"    | Authority-based overrides are valid but should be explicit: "We are overriding the RICE ranking for strategic reasons: X." This makes the trade-off transparent. |
+| "Prioritisation is a PM task only"    | Technical feasibility (effort) and technical risk (confidence) are engineering inputs that engineering must own                                                  |
+| "Once prioritised, the list is fixed" | Priorities change as new information arrives; the framework should be re-run when significant new information changes key assumptions                            |
 
 ---
 
@@ -337,6 +340,7 @@ rank_initiatives([
 **Root Cause:** The framework was applied after the decision was already made, not before. Stakeholders were not engaged in the scoring process, so they don't own the outputs.
 
 **Fix:**
+
 ```
 PROCESS CHANGE:
 1. Run scoring session WITH stakeholders, not just for them
@@ -349,7 +353,7 @@ PROCESS CHANGE:
    → If override stands despite updated score: document
       explicitly: "We are prioritising X above the RICE
       ranking for reason Y — accepted by [names]."
-   
+
 3. Retrospect on overrides: "We overrode RICE to choose X.
    Did X deliver the expected value? Was the override correct?"
 ```
@@ -359,15 +363,18 @@ PROCESS CHANGE:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Technical Roadmap` — prioritisation determines what goes on the roadmap
 - `Stakeholder Communication` — prioritisation decisions must be communicated with rationale
 
 **Builds On This (learn these next):**
+
 - `Technical Roadmap` — the roadmap is the output of prioritisation
 - `Technical Debt Management` — debt items need prioritisation using these frameworks
 - `Sprint Planning` — prioritisation is applied at sprint level as well as quarterly
 
 **Alternatives / Comparisons:**
+
 - `Estimation Techniques` — provides the Effort input to RICE scoring
 - `Technical Debt Management` — debt items are prioritised using MoSCoW/RICE alongside features
 - `Technical Roadmap` — the medium-term output that prioritisation feeds into

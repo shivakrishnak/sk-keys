@@ -49,6 +49,7 @@ Google prototyped QUIC (Quick UDP Internet Connections) in 2012. The insight: im
 QUIC is TCP + TLS built on top of UDP — it establishes a secure, reliable, multiplexed connection in 1 RTT (or 0 RTT for repeat visits), without head-of-line blocking between streams.
 
 **One analogy:**
+
 > TCP is a single-lane road: if one truck breaks down (packet loss), all traffic behind it stops until the truck is removed (retransmit). HTTP/2 over TCP added multiple lanes — but they all share one toll booth (TCP), so if the toll booth jams, all lanes stop. QUIC is a multi-lane road where each lane has its own separate toll booth: a blocked lane only delays cars in that lane. Plus, the road was built with the security checkpoints already installed (TLS integrated) — so your car clears the border in one pass instead of two.
 
 **One insight:**
@@ -62,6 +63,7 @@ QUIC's biggest win over TCP is that it moves the transport protocol from kernel 
 
 **1. Integrated TLS 1.3 (1-RTT handshake):**
 TCP requires a handshake before TLS can begin. QUIC combines them:
+
 ```
 TCP + TLS 1.3:          QUIC:
 Client → SYN            Client → Initial (ClientHello inside)
@@ -78,6 +80,7 @@ Client → Finished
 For connections to servers visited before, QUIC can send application data in the very first packet (0-RTT) using a pre-shared key from the previous session. Anti-replay protection applies (only idempotent requests safe to send 0-RTT).
 
 **3. Multiplexed streams without HoL blocking:**
+
 ```
 TCP with HTTP/2 streams (HoL blocking):
 Stream 1: [seg1] [seg2] [LOST] [seg4] [seg5]
@@ -95,6 +98,7 @@ Stream 2: [seg1] [seg2] [seg3] [seg4]
 TCP is identified by 4-tuple: (src-IP, src-port, dst-IP, dst-port). If the client changes network (WiFi → 4G → WiFi), the 4-tuple changes, and the TCP connection must be re-established (another 2 RTTs). QUIC uses a 64-bit Connection ID. If the IP address changes, the client sends the new address with the same Connection ID. The server recognises the Connection ID and continues the connection. No reconnection needed.
 
 **5. QUIC packet structure:**
+
 ```
 Long header (initial, handshake):
 ┌────────────────────────────────────┐
@@ -121,18 +125,21 @@ QUIC frames (inside encrypted payload):
 Load a webpage with 50 resources (JS, CSS, images) over a 4G network: 100ms RTT, 1% packet loss.
 
 **HTTP/1.1 (no multiplexing):**
+
 - Browser opens 6 TCP connections (browser limit)
 - Each connection: 2 RTTs TCP+TLS setup = 200ms before first byte
 - 50 resources / 6 connections = ~9 sequential round trips
 - Total: 200ms setup + 9 × 100ms = 1.1s minimum (ignoring transfer time)
 
 **HTTP/2 over TCP:**
+
 - 1 TCP connection (or a few), 50 multiplexed HTTP/2 streams
 - 2 RTT TCP+TLS setup = 200ms before first byte
 - 1% packet loss: each 50-resource window has ~0.5 packet losses → HoL blocks all 50 streams
 - Total: similar or worse than HTTP/1.1 on lossy networks
 
 **HTTP/3 over QUIC:**
+
 - 1 QUIC connection, 50 multiplexed QUIC streams
 - 1-RTT setup = 100ms before first byte (half of TCP+TLS)
 - 0-RTT for returning visitors = 0ms overhead
@@ -169,6 +176,7 @@ The core insight was "ossification" of TCP: TCP headers are unencrypted, so NATs
 ### ⚙️ How It Works (Mechanism)
 
 **Check QUIC/HTTP3 support:**
+
 ```bash
 # Test a server for HTTP/3 support
 curl -I --http3 https://cloudflare.com 2>/dev/null | head -5
@@ -196,6 +204,7 @@ curl -I https://www.google.com | grep alt-svc
 ```
 
 **QUIC in Python with aioquic:**
+
 ```python
 # Server-side QUIC with aioquic (simplified)
 # pip install aioquic
@@ -219,7 +228,7 @@ class EchoServerProtocol(QuicConnectionProtocol):
 async def main():
     config = QuicConfiguration(is_client=False)
     config.load_cert_chain("cert.pem", "key.pem")
-    
+
     await serve(
         host='0.0.0.0',
         port=4433,
@@ -234,7 +243,7 @@ from aioquic.asyncio import connect
 async def quic_client():
     config = QuicConfiguration(is_client=True)
     config.verify_mode = False  # For testing only
-    
+
     async with connect('localhost', 4433, configuration=config) as conn:
         # Open a QUIC stream
         stream_id = conn._quic.get_next_available_stream_id()
@@ -253,33 +262,33 @@ async def quic_client():
 
  Client                              Server
 
- Initial (ClientHello TLS 1.3) →     
+ Initial (ClientHello TLS 1.3) →
  [UDP, Destination ConnID = random]
                                   ← Initial (ServerHello)
                                   ← Handshake (cert+verify)
                                   ← 1-RTT (STREAM: ready)
  Handshake (Finished) →
- 1-RTT (HTTP GET /index.html) →   
+ 1-RTT (HTTP GET /index.html) →
                                   ← 1-RTT (HTTP response)
- 
+
  ══════════════════════════════════════
- 
+
   Second visit (0-RTT resumption):
- 
+
  Initial (ClientHello +
           0-RTT data: GET / ) →   ← 1-RTT (HTTP response)
- 
+
  [0 RTTs of overhead before data!]
- 
+
  ══════════════════════════════════════
- 
+
   Connection migration (WiFi → 4G):
- 
+
  Client IP changes from
  192.168.1.100 to 10.0.0.50
- 
+
  PATH_CHALLENGE (same ConnID) →   ← PATH_RESPONSE
- 
+
  [Connection continues, no reconnect]
 ```
 
@@ -288,6 +297,7 @@ async def quic_client():
 ### 💻 Code Example
 
 **Example — HTTP/3 client using httpx:**
+
 ```python
 import httpx
 import asyncio
@@ -301,18 +311,18 @@ async def http3_request():
         # First request: may use HTTP/2 (QUIC discovery via Alt-Svc)
         r1 = await client.get("https://cloudflare.com/")
         print(f"Protocol: {r1.http_version}")  # HTTP/2 or HTTP/3
-        
+
         # Second request to same host: uses HTTP/3
         r2 = await client.get("https://cloudflare.com/cdn-cgi/trace")
         print(f"Protocol: {r2.http_version}")  # HTTP/3
-        
+
         # QUIC features visible: lower latency on retried request
         import time
         t0 = time.monotonic()
         r3 = await client.get("https://cloudflare.com/")
         elapsed = time.monotonic() - t0
         print(f"0-RTT latency: {elapsed*1000:.1f}ms")
-        
+
         return r3
 
 asyncio.run(http3_request())
@@ -322,28 +332,28 @@ asyncio.run(http3_request())
 
 ### ⚖️ Comparison Table
 
-| Feature | TCP+TLS1.3 | QUIC (HTTP/3) |
-|---|---|---|
-| Connection setup | 2 RTTs | 1 RTT |
-| Resumption | 1 RTT (TLS session) | 0 RTT |
-| HoL blocking | Yes (TCP-level) | No (per-stream) |
-| Connection migration | No (IP change = reconnect) | Yes (Connection ID) |
-| Encryption | Optional | Mandatory |
-| Implementation location | OS kernel | User space (library) |
-| NAT traversal | Standard | Works (UDP) |
-| Middlebox support | Good | Sometimes firewalled (UDP 443) |
+| Feature                 | TCP+TLS1.3                 | QUIC (HTTP/3)                  |
+| ----------------------- | -------------------------- | ------------------------------ |
+| Connection setup        | 2 RTTs                     | 1 RTT                          |
+| Resumption              | 1 RTT (TLS session)        | 0 RTT                          |
+| HoL blocking            | Yes (TCP-level)            | No (per-stream)                |
+| Connection migration    | No (IP change = reconnect) | Yes (Connection ID)            |
+| Encryption              | Optional                   | Mandatory                      |
+| Implementation location | OS kernel                  | User space (library)           |
+| NAT traversal           | Standard                   | Works (UDP)                    |
+| Middlebox support       | Good                       | Sometimes firewalled (UDP 443) |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| QUIC is just HTTP/3 | QUIC is a general transport protocol; HTTP/3 is one application that runs over QUIC. QUIC can carry other protocols too (DNS-over-QUIC, SMB-over-QUIC) |
-| QUIC is faster everywhere | On reliable low-latency networks (LAN), QUIC and TCP+TLS1.3 perform similarly. QUIC's gains are most visible on high-latency or lossy links (mobile, satellite) |
-| UDP is blocked, so QUIC won't work | QUIC falls back to TCP+TLS for clients/networks that block UDP port 443; browsers implement this fallback automatically |
-| QUIC has no congestion control | QUIC has full congestion control (CUBIC by default); it's just more configurable than TCP since QUIC runs in user space |
-| 0-RTT is always safe | 0-RTT data is vulnerable to replay attacks; only idempotent requests (GET, HEAD) should be sent 0-RTT; POST/PUT with side effects should wait for 1-RTT |
+| Misconception                      | Reality                                                                                                                                                         |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| QUIC is just HTTP/3                | QUIC is a general transport protocol; HTTP/3 is one application that runs over QUIC. QUIC can carry other protocols too (DNS-over-QUIC, SMB-over-QUIC)          |
+| QUIC is faster everywhere          | On reliable low-latency networks (LAN), QUIC and TCP+TLS1.3 perform similarly. QUIC's gains are most visible on high-latency or lossy links (mobile, satellite) |
+| UDP is blocked, so QUIC won't work | QUIC falls back to TCP+TLS for clients/networks that block UDP port 443; browsers implement this fallback automatically                                         |
+| QUIC has no congestion control     | QUIC has full congestion control (CUBIC by default); it's just more configurable than TCP since QUIC runs in user space                                         |
+| 0-RTT is always safe               | 0-RTT data is vulnerable to replay attacks; only idempotent requests (GET, HEAD) should be sent 0-RTT; POST/PUT with side effects should wait for 1-RTT         |
 
 ---
 
@@ -355,6 +365,7 @@ asyncio.run(http3_request())
 HTTP/3 connections never established; browser always uses HTTP/2. Sites that should support HTTP/3 don't use it.
 
 **Diagnostic:**
+
 ```bash
 # Check if UDP port 443 is reachable
 nc -u -v cloudflare.com 443
@@ -382,16 +393,19 @@ Ensure UDP port 443 is allowed through firewalls; QUIC clients automatically fal
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `TCP` — QUIC re-implements TCP's reliability; understanding TCP is essential to understand what QUIC improves
 - `UDP` — QUIC runs over UDP; understanding UDP explains why QUIC chose it as a substrate
 - `TLS/SSL` — QUIC integrates TLS 1.3; understanding TLS explains the security model
 
 **Builds On This (learn these next):**
+
 - `HTTP/3` — the primary application protocol built on QUIC; HTTP/3 = HTTP/2 semantics + QUIC transport
 - `CDN` — CDNs like Cloudflare were early QUIC adopters; understanding CDNs + QUIC explains modern web performance
 - `Network Latency Optimization` — QUIC is one of the most important tools for reducing web latency
 
 **Alternatives / Comparisons:**
+
 - `TCP` — the established transport; lower middlebox issues but 2-RTT setup and HoL blocking
 - `WebTransport` — browser API for bidirectional streams over QUIC; alternative to WebSockets with QUIC's benefits
 

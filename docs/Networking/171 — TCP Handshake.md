@@ -48,6 +48,7 @@ The **TCP 3-way handshake** is the connection establishment process defined in R
 The TCP handshake is a three-step call-and-response (SYN, SYN-ACK, ACK) that establishes a connection by verifying both sides can communicate and synchronising their sequence numbers.
 
 **One analogy:**
+
 > "Can you hear me?" (SYN) — "Yes, I can hear you; can you hear me?" (SYN-ACK) — "Yes, I can hear you too." (ACK) → Conversation can begin. This is the minimum exchange that proves both parties can send and receive messages to each other before the actual conversation (data transfer) starts.
 
 **One insight:**
@@ -60,6 +61,7 @@ The 3-way handshake takes 1.5 RTTs. On a 100ms RTT link, that's 150ms before the
 **THE THREE STEPS IN DETAIL:**
 
 **Step 1: SYN (Client → Server)**
+
 ```
 TCP Header:
   Source Port: 54321 (ephemeral)
@@ -69,9 +71,11 @@ TCP Header:
   Flags: SYN=1
   Window: 65535
 ```
+
 Client transitions: `CLOSED → SYN_SENT`
 
 **Step 2: SYN-ACK (Server → Client)**
+
 ```
 TCP Header:
   Source Port: 443
@@ -81,9 +85,11 @@ TCP Header:
   Flags: SYN=1, ACK=1
   Window: 65535
 ```
+
 Server transitions: `LISTEN → SYN_RECEIVED`
 
 **Step 3: ACK (Client → Server)**
+
 ```
 TCP Header:
   Source Port: 54321
@@ -93,6 +99,7 @@ TCP Header:
   Flags: ACK=1
   Window: 65535
 ```
+
 Both sides transition: `→ ESTABLISHED`
 
 **WHY RANDOM ISNs?**
@@ -111,21 +118,25 @@ Measure the practical impact of TCP handshake latency on a web page load.
 **SCENARIO: 100ms RTT, webpage with 10 resources**
 
 **HTTP/1.1 (no connection reuse):**
+
 - 10 resources × 1.5 RTTs handshake = 15 RTTs = 1500ms
-- + actual data transfer time
+- - actual data transfer time
 - Just handshakes alone = 1.5 seconds wasted
 
 **HTTP/1.1 with Keep-Alive (connection reuse):**
+
 - 1 handshake (1.5 RTT = 150ms) for first resource
 - 9 subsequent resources: 0 handshake overhead (reuse connection)
 - Savings: 1350ms
 
 **HTTP/2 (one connection, multiplexed):**
+
 - 1 TCP handshake (1.5 RTT) + 1 TLS handshake (1 RTT) = 2.5 RTTs = 250ms
 - All 10 resources multiplexed: 0 additional handshake overhead
 - Savings: 14 RTTs compared to HTTP/1.1 without keep-alive
 
 **QUIC/HTTP3 (1-RTT):**
+
 - 1 QUIC handshake (1 RTT = 100ms)
 - 0-RTT on return visit (0ms)
 - All resources multiplexed with no HoL blocking
@@ -200,28 +211,28 @@ curl -o /dev/null -s -w \
 └────────────────────────────────────────────────┘
 
  Client                              Server
- 
+
  t=0ms:    SYN →
  [CLOSED → SYN_SENT]              [LISTEN → SYN_RECEIVED]
- 
+
  t=100ms:                         ← SYN-ACK
  [SYN_SENT → ESTABLISHED]
- 
+
  t=100ms:  ACK →                  [SYN_RECEIVED → ESTABLISHED]
            GET /index.html →      ← HTTP 200 OK + data
- 
+
  t=200ms:                         ← (more data)
- 
+
  [First byte received at 200ms = 2 RTTs after initiating]
  [Handshake consumed 1.5 RTTs = 150ms]
 
  ════════════════════════════════════
- 
+
  COMPARE: TCP connection reuse
- 
+
  t=0ms:    GET /second.html →    (reusing ESTABLISHED conn)
  t=100ms:                        ← HTTP 200 OK + data
- 
+
  [First byte at 100ms = 1 RTT — no handshake cost!]
  [Savings: 100ms (1 RTT) per request vs new connection]
 ```
@@ -231,6 +242,7 @@ curl -o /dev/null -s -w \
 ### 💻 Code Example
 
 **Example — Measuring TCP handshake time:**
+
 ```python
 import socket
 import time
@@ -241,17 +253,17 @@ def measure_tcp_connect(host: str, port: int) -> float:
     """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(10)
-    
+
     # Resolve DNS first (separate from TCP timing)
     addr_info = socket.getaddrinfo(host, port, socket.AF_INET,
                                     socket.SOCK_STREAM)[0]
     server_addr = addr_info[4]
-    
+
     start = time.perf_counter()
     # connect() blocks until 3-way handshake completes
     sock.connect(server_addr)
     elapsed_ms = (time.perf_counter() - start) * 1000
-    
+
     sock.close()
     return elapsed_ms
 
@@ -279,24 +291,24 @@ for host, port in targets:
 
 ### ⚖️ Comparison Table
 
-| Aspect | TCP Handshake | QUIC Handshake | TLS 1.3 (atop TCP) |
-|---|---|---|---|
-| RTTs | 1.5 RTTs | 1 RTT (first) | 1 RTT (TLS) atop TCP |
-| 0-RTT resumption | No | Yes | Yes (TLS 0-RTT) |
-| Security included | No (separate TLS) | Yes | Separate step |
-| SYN flood risk | Yes (mitigated by SYN cookies) | Less (UDP-based) | Same as TCP |
-| Connection ID | No (4-tuple) | Yes (migration) | No |
+| Aspect            | TCP Handshake                  | QUIC Handshake   | TLS 1.3 (atop TCP)   |
+| ----------------- | ------------------------------ | ---------------- | -------------------- |
+| RTTs              | 1.5 RTTs                       | 1 RTT (first)    | 1 RTT (TLS) atop TCP |
+| 0-RTT resumption  | No                             | Yes              | Yes (TLS 0-RTT)      |
+| Security included | No (separate TLS)              | Yes              | Separate step        |
+| SYN flood risk    | Yes (mitigated by SYN cookies) | Less (UDP-based) | Same as TCP          |
+| Connection ID     | No (4-tuple)                   | Yes (migration)  | No                   |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| The handshake takes 3 RTTs | The handshake takes 1.5 RTTs — SYN takes 0.5 RTT to arrive, SYN-ACK takes 0.5 RTT back (1 RTT total), ACK is sent but client doesn't wait for a response (0.5 RTT). Client can send data immediately after ACK |
-| The ACK in step 3 is the third "round trip" | The ACK (step 3) and first data bytes can be sent in the same packet (piggybacking); the server receives both together |
-| SYN cookies break TCP | SYN cookies are fully transparent — clients never know the server used them; they only limit some TCP options (e.g., window scaling) which is a minor trade-off |
-| A single TCP connection can be reused forever | TCP connections can be kept alive but servers often set a maximum idle timeout; HTTP/1.1 `Keep-Alive: timeout=65` sets 65s idle limit |
+| Misconception                                 | Reality                                                                                                                                                                                                        |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The handshake takes 3 RTTs                    | The handshake takes 1.5 RTTs — SYN takes 0.5 RTT to arrive, SYN-ACK takes 0.5 RTT back (1 RTT total), ACK is sent but client doesn't wait for a response (0.5 RTT). Client can send data immediately after ACK |
+| The ACK in step 3 is the third "round trip"   | The ACK (step 3) and first data bytes can be sent in the same packet (piggybacking); the server receives both together                                                                                         |
+| SYN cookies break TCP                         | SYN cookies are fully transparent — clients never know the server used them; they only limit some TCP options (e.g., window scaling) which is a minor trade-off                                                |
+| A single TCP connection can be reused forever | TCP connections can be kept alive but servers often set a maximum idle timeout; HTTP/1.1 `Keep-Alive: timeout=65` sets 65s idle limit                                                                          |
 
 ---
 
@@ -311,6 +323,7 @@ Application hangs on `connect()`. `ss -tn` shows connection stuck in `SYN_SENT` 
 Server not responding to SYN: server is down, network is dropping SYN packets, or firewall is blocking SYN-ACK responses.
 
 **Diagnostic Commands:**
+
 ```bash
 # Check for connections stuck in SYN_SENT
 ss -tn state syn-sent
@@ -341,15 +354,18 @@ sysctl -w net.core.somaxconn=4096
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `TCP` — the handshake is part of TCP's connection lifecycle; TCP basics are prerequisite
 - `TCP/IP Stack` — the handshake operates at Layer 4
 
 **Builds On This (learn these next):**
+
 - `TCP Teardown` — the complementary FIN process that closes connections
 - `TLS/SSL` — TLS handshake happens after the TCP handshake; together they add 2+ RTTs before data
 - `Congestion Control` — after the handshake, TCP starts Slow Start; understanding both explains initial connection performance
 
 **Alternatives / Comparisons:**
+
 - `QUIC` — combines transport + TLS handshake into 1 RTT; 0-RTT for resumed connections
 
 ---
