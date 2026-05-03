@@ -340,6 +340,7 @@ ORDER BY total_revenue DESC;
 ### 💻 Code Example
 
 **Example 1 — dbt star schema definition:**
+{% raw %}
 ```sql
 -- models/marts/fct_sales.sql
 {{
@@ -375,6 +376,7 @@ JOIN {{ ref('dim_product') }} p ON p.product_id    = oi.product_id
 JOIN {{ ref('dim_customer')}} c ON c.customer_id   = o.customer_id
 JOIN {{ ref('dim_store')   }} s ON s.store_id      = o.store_id
 ```
+{% endraw %}
 
 **Example 2 — SCD Type 2 dimension (customer loyalty tier):**
 ```sql

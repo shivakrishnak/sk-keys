@@ -23,11 +23,11 @@ tags:
 
 ⚡ TL;DR — `VarHandle` (Java 9+) is a type-safe, JDK-sanctioned replacement for `sun.misc.Unsafe` that provides CAS and fine-grained memory ordering operations on specific fields and array elements — enabling lock-free data structures with precise control over memory visibility without the undefined behaviour risks of `Unsafe`.
 
-| #0364 | Category: Java Concurrency | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Atomic Classes, CAS (Compare-And-Swap), Memory Ordering, Java Memory Model | |
-| **Used by:** | Lock-Free Data Structures, Low-Level Concurrency Libraries | |
-| **Related:** | Atomic Classes, Unsafe (sun.misc), StampedLock | |
+| #0364           | Category: Java Concurrency                                                 | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Atomic Classes, CAS (Compare-And-Swap), Memory Ordering, Java Memory Model |                 |
+| **Used by:**    | Lock-Free Data Structures, Low-Level Concurrency Libraries                 |                 |
+| **Related:**    | Atomic Classes, Unsafe (sun.misc), StampedLock                             |                 |
 
 ---
 
@@ -49,6 +49,7 @@ The JDK itself (java.util.concurrent internals — `ConcurrentHashMap`, `Abstrac
 **VarHandle:** A dynamically-typed reference (`java.lang.invoke.VarHandle`) to a variable — either an instance field, a static field, or an array element. It provides: (1) access modes that mirror the C++11 memory model (plain, opaque, acquire, release, volatile); (2) atomic compare-and-set/exchange/add operations; (3) type checking enforced by the JVM at lookup time, not at use time. Created via `MethodHandles.lookup().findVarHandle(Class, "fieldName", Class)`.
 
 **Access modes:** The memory ordering guarantee applied to a VarHandle operation:
+
 - `PLAIN` — no ordering guarantees (like a regular field access)
 - `OPAQUE` — single-variable atomicity, no cross-variable ordering
 - `ACQUIRE` — subsequent reads/writes see all operations prior to the release
@@ -63,6 +64,7 @@ The JDK itself (java.util.concurrent internals — `ConcurrentHashMap`, `Abstrac
 VarHandle is the safe, official version of `sun.misc.Unsafe` — it gives you CAS and memory-ordering control on any field, with type safety and JVM support.
 
 **One analogy:**
+
 > `sun.misc.Unsafe` is a master key that opens any lock in the building — powerful but dangerous; if used wrong, you corrupt the entire building. `VarHandle` is a properly-issued per-room key — you still get access to the specific room (field) you need, but the key is checked against the room's lock type at creation time. If the key doesn't match, it fails at key-issuance time, not when you're halfway through the door.
 
 **One insight:**
@@ -154,6 +156,7 @@ ARRAY.compareAndSet(arr, 3, 0, 42); // CAS arr[3] from 0 to 42
 Implement a lock-free SPSC (Single-Producer Single-Consumer) queue. Producer writes items and advances the write index. Consumer reads items and advances the read index. They never contend on the same index. But they need visibility of each other's writes.
 
 **WITH `volatile` for BOTH indices:**
+
 ```
 volatile int writeIndex; // full sequential consistency
 volatile int readIndex;  // full sequential consistency
@@ -164,6 +167,7 @@ volatile int readIndex;  // full sequential consistency
 ```
 
 **WITH VarHandle acquire/release:**
+
 ```java
 // Producer:
 WRITE_INDEX.setRelease(this, writeIdx); // lighter than volatile
@@ -185,6 +189,7 @@ Acquire/release semantics are precisely the right tool for producer-consumer han
 > Memory ordering is like a rule about when you're allowed to "publish" your work so others can see it. PLAIN = post on internal notes nobody reads. OPAQUE = post on your own board (visible to yourself). ACQUIRE/RELEASE = hand over a completed folder to a colleague — they see everything you put in before handing it over. VOLATILE = broadcast on the company-wide intercom — everyone hears simultaneously, in order.
 
 Explicit mapping:
+
 - "post on internal notes" → PLAIN (no visibility guarantees)
 - "post on your own board" → OPAQUE (stable for single variable)
 - "hand over a folder" → store-RELEASE; "colleague receives" → load-ACQUIRE
@@ -278,6 +283,7 @@ Lock-free linked list insert:
 ### 💻 Code Example
 
 **Example 1 — VarHandle for CAS on instance field:**
+
 ```java
 import java.lang.invoke.*;
 
@@ -317,6 +323,7 @@ public class LockFreeCounter {
 ```
 
 **Example 2 — Acquire/Release handoff pattern:**
+
 ```java
 // Single-producer, single-consumer flag
 public class Handoff {
@@ -351,6 +358,7 @@ public class Handoff {
 ```
 
 **Example 3 — Array element CAS:**
+
 ```java
 // CAS on array element (e.g., ConcurrentHashMap-style table)
 VarHandle TABLE = MethodHandles.arrayElementVarHandle(Object[].class);
@@ -370,13 +378,13 @@ Object existing = TABLE.getVolatile(table, index);
 
 ### ⚖️ Comparison Table
 
-| API | Type-safe | Supported | Memory ordering control | Access scope |
-|---|---|---|---|---|
-| **VarHandle** | Yes | Yes (Java 9+) | Full spectrum (Plain/Opaque/Acquire-Release/Volatile) | Any accessible field |
-| AtomicInteger/Long/Ref | Yes | Yes | Volatile only | Dedicated wrapper object |
-| sun.misc.Unsafe | No | No (internal) | Platform-specific | Any field (bypasses access) |
-| volatile field | Yes | Yes | Volatile only | Specific field (static) |
-| synchronized | Yes | Yes | Happens-before | Entire block |
+| API                    | Type-safe | Supported     | Memory ordering control                               | Access scope                |
+| ---------------------- | --------- | ------------- | ----------------------------------------------------- | --------------------------- |
+| **VarHandle**          | Yes       | Yes (Java 9+) | Full spectrum (Plain/Opaque/Acquire-Release/Volatile) | Any accessible field        |
+| AtomicInteger/Long/Ref | Yes       | Yes           | Volatile only                                         | Dedicated wrapper object    |
+| sun.misc.Unsafe        | No        | No (internal) | Platform-specific                                     | Any field (bypasses access) |
+| volatile field         | Yes       | Yes           | Volatile only                                         | Specific field (static)     |
+| synchronized           | Yes       | Yes           | Happens-before                                        | Entire block                |
 
 How to choose: use `AtomicInteger`/`AtomicLong`/`AtomicReference` for most application code. Use `VarHandle` when: (a) you cannot use wrapper objects (embedded field in existing class), (b) you need acquire/release instead of full volatile, or (c) you're writing a library/framework replacing `sun.misc.Unsafe` usage.
 
@@ -384,12 +392,12 @@ How to choose: use `AtomicInteger`/`AtomicLong`/`AtomicReference` for most appli
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "VarHandle replaces AtomicInteger for everyday code" | No. AtomicInteger and AtomicLong are the right choice for >95% of cases. VarHandle is for library authors and performance-critical code needing fine-grained control. |
+| Misconception                                                          | Reality                                                                                                                                                                |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "VarHandle replaces AtomicInteger for everyday code"                   | No. AtomicInteger and AtomicLong are the right choice for >95% of cases. VarHandle is for library authors and performance-critical code needing fine-grained control.  |
 | "getAcquire/setRelease are always faster than getVolatile/setVolatile" | On x86, they compile to the same instructions (x86's TSO memory model makes all loads acquire and all stores release). The benefit appears on ARM/POWER architectures. |
-| "VarHandle requires unsafe or privileged code" | VarHandle respects Java access control. You can only get a VarHandle for fields your code would normally be able to access (same module, same package, or public). |
-| "VarHandle operations are type-checked at each call" | Type checking happens AT LOOKUP TIME (when the VarHandle is created). Each individual `compareAndSet()` call checks only the signature, not full type — it's fast. |
+| "VarHandle requires unsafe or privileged code"                         | VarHandle respects Java access control. You can only get a VarHandle for fields your code would normally be able to access (same module, same package, or public).     |
+| "VarHandle operations are type-checked at each call"                   | Type checking happens AT LOOKUP TIME (when the VarHandle is created). Each individual `compareAndSet()` call checks only the signature, not full type — it's fast.     |
 
 ---
 
@@ -402,6 +410,7 @@ How to choose: use `AtomicInteger`/`AtomicLong`/`AtomicReference` for most appli
 **Root Cause:** The argument types passed to the VarHandle operation don't match the types declared at lookup time.
 
 **Example:**
+
 ```java
 // Looked up as: findVarHandle(Node.class, "value", int.class)
 // Call site: VH.compareAndSet(node, (long) 5, (long) 10) ← wrong: long vs int
@@ -421,6 +430,7 @@ How to choose: use `AtomicInteger`/`AtomicLong`/`AtomicReference` for most appli
 **Root Cause:** Using `setRelease` on writer but `get` (plain) instead of `getAcquire` on reader. The happens-before chain is broken — acquire/release must be paired to establish ordering.
 
 **Diagnostic:**
+
 ```java
 // BROKEN (no happens-before):
 READY.setRelease(this, 1);   // writer: store-release
@@ -440,17 +450,20 @@ int r = (int) READY.getAcquire(this); // reader: LOAD-ACQUIRE — paired!
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Atomic Classes` — the higher-level, simpler API; understand before VarHandle
 - `CAS (Compare-And-Swap)` — the hardware mechanism VarHandle exposes
 - `Memory Ordering` — the memory model concepts VarHandle access modes implement
 - `Java Memory Model` — the specification that defines what volatile, acquire/release mean
 
 **Builds On This (learn these next):**
+
 - `Lock-Free Data Structures` — what VarHandle enables: stacks, queues, skip lists
 - `Low-Level Concurrency Libraries` — Disruptor, Chronicle Map use VarHandle internally
 - `Unsafe (sun.misc)` — understand to appreciate why VarHandle was introduced
 
 **Alternatives / Comparisons:**
+
 - `Atomic Classes` — recommended for most use cases; simpler, safer
 - `Unsafe (sun.misc)` — predecessor; unsupported, dangerous; avoid in new code
 - `StampedLock` — different approach: optimistic read locking at field group level

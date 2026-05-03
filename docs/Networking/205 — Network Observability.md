@@ -46,6 +46,7 @@ Traditional APM (Application Performance Monitoring) tells you a service is slow
 Network Observability = know what's actually happening in your network. Which pods talk to which, where packets are dropped, what's causing latency — without relying on apps to instrument themselves.
 
 **One analogy:**
+
 > Network Observability is like having CCTV cameras AND traffic sensors on every road in a city, in real-time. You see every car (packet), every trip (flow), every traffic jam (congestion), and every accident (packet drop). The city was running before the cameras, but you had no way to know what was happening. Now you can route traffic around accidents and predict bottlenecks before they become incidents.
 
 ---
@@ -53,6 +54,7 @@ Network Observability = know what's actually happening in your network. Which po
 ### 🔩 First Principles Explanation
 
 **THE OBSERVABILITY LAYERS:**
+
 ```
 Layer 7 (Application): APM, distributed tracing
   What: HTTP requests, DB queries, gRPC calls
@@ -82,6 +84,7 @@ eBPF (cross-layer magic):
 ```
 
 **VPC FLOW LOGS (AWS):**
+
 ```
 AWS VPC Flow Log entry (default format):
 version account-id interface-id srcaddr dstaddr srcport dstport protocol packets bytes start end action log-status
@@ -110,6 +113,7 @@ Cost: ~$0.05/GB for VPC Flow Log data
 ```
 
 **CILIUM HUBBLE (eBPF-BASED KUBERNETES NETWORK OBSERVABILITY):**
+
 ```
 Architecture:
   Hubble agent: runs on each node, observes network via eBPF programs
@@ -127,18 +131,19 @@ What Hubble provides:
 Example Hubble CLI queries:
   # See all flows from order-service
   hubble observe --pod production/order-service-xxx --follow
-  
+
   # See all dropped flows (NetworkPolicy violations)
   hubble observe --verdict DROPPED --follow
-  
+
   # DNS query tracing
   hubble observe --type dns --follow
-  
+
   # HTTP flows to payment service
   hubble observe --http-method POST --pod production/payment-service
 ```
 
 **eBPF NETWORK TRACING:**
+
 ```
 eBPF = Extended Berkeley Packet Filter
   Programs run in kernel space (safe sandbox)
@@ -150,10 +155,10 @@ Key eBPF networking tools:
   bpftrace: write eBPF probes on the fly
     bpftrace -e 'kprobe:tcp_sendmsg { printf("%s\n", comm); }'
     → shows which process sent TCP data
-  
+
   tcptracer-bpf (Weave Scope): traces TCP connect/accept/close
   bcc tools: tcplife, tcpretrans, tcpconnect, tcpaccept
-  
+
   Cilium/Hubble: production-grade eBPF network observability
     Tracks every L3/L4/L7 flow with pod identity
     No tcpdump (too expensive in production), no iptables -j LOG
@@ -166,6 +171,7 @@ tcpretrans example:
 ```
 
 **NETWORK METRICS STACK:**
+
 ```
 Golden signals for network (RED + network-specific):
   Rate:     requests/sec per service pair (from flow data or APM)
@@ -186,7 +192,7 @@ Prometheus metrics (from node_exporter):
   node_netstat_TcpExt_TCPRetransFail  # retransmit failures
   node_netstat_Tcp_RetransSegs        # retransmit segments
   node_netstat_Tcp_CurrEstab          # current established connections
-  
+
   Alert: retransmit rate > 1% → packet loss issue
   Alert: DNS query latency p99 > 10ms → DNS resolver issue
 ```
@@ -297,7 +303,7 @@ SYMPTOM: checkout-service → payment-service calls failing 5% of the time
 3. kubectl get networkpolicies -n production
    → Found: "allow-checkout-to-payment" policy exists
    → But policy only allows port 8080; payment-service recently added port 8443
-   
+
 4. Verify with Hubble:
    hubble observe --pod production/payment-service -t policy-verdict
    → Ingress from checkout allowed on 8080, DENIED on 8443
@@ -328,7 +334,7 @@ def query_vpc_flow_logs(
 ) -> list[dict]:
     """Query VPC Flow Logs stored in S3 via Athena."""
     athena = boto3.client('athena', region_name='us-east-1')
-    
+
     # Build query
     conditions = [f"start > (to_unixtime(now()) - {hours_back * 3600})"]
     if source_ip:
@@ -337,9 +343,9 @@ def query_vpc_flow_logs(
         conditions.append(f"dstaddr = '{dest_ip}'")
     if action:
         conditions.append(f"action = '{action}'")
-    
+
     where_clause = " AND ".join(conditions)
-    
+
     query = f"""
     SELECT srcaddr, dstaddr, srcport, dstport, protocol,
            action, packets, bytes,
@@ -349,7 +355,7 @@ def query_vpc_flow_logs(
     ORDER BY packets DESC
     LIMIT 100
     """
-    
+
     # Start query execution
     response = athena.start_query_execution(
         QueryString=query,
@@ -358,7 +364,7 @@ def query_vpc_flow_logs(
         }
     )
     query_id = response['QueryExecutionId']
-    
+
     # Wait for completion
     for _ in range(30):
         status = athena.get_query_execution(QueryExecutionId=query_id)
@@ -366,10 +372,10 @@ def query_vpc_flow_logs(
         if state in ('SUCCEEDED', 'FAILED', 'CANCELLED'):
             break
         time.sleep(2)
-    
+
     if state != 'SUCCEEDED':
         raise RuntimeError(f"Query failed: {state}")
-    
+
     # Fetch results
     result = athena.get_query_results(QueryExecutionId=query_id)
     headers = [col['Label'] for col in result['ResultSet']['ResultSetMetadata']['ColumnInfo']]
@@ -380,7 +386,7 @@ def query_vpc_flow_logs(
     return rows
 
 # Find rejected traffic from a suspicious IP
-# flows = query_vpc_flow_logs("mydb", "vpc_flow_logs", 
+# flows = query_vpc_flow_logs("mydb", "vpc_flow_logs",
 #                             source_ip="203.0.113.1", action="REJECT")
 ```
 
@@ -388,24 +394,24 @@ def query_vpc_flow_logs(
 
 ### ⚖️ Comparison Table
 
-| Tool | Scope | Data Type | Overhead | Best For |
-|---|---|---|---|---|
-| VPC Flow Logs | AWS VPC | IP flows (L3/L4) | Low (async) | Cloud network audit, security |
-| Cilium Hubble | Kubernetes | L3/L4/L7 flows + DNS | Low (eBPF) | K8s pod connectivity debug |
-| tcpdump | Single host | Raw packets (L2-L7) | Medium-High | Deep protocol debugging |
-| Prometheus node_exporter | All hosts | Aggregated metrics | Low | Alerting on interface stats |
-| eBPF (bcc/bpftrace) | Single host | Kernel-level events | Low | Root cause analysis |
-| AWS Reachability Analyser | AWS | Path simulation | None | Verify connectivity design |
+| Tool                      | Scope       | Data Type            | Overhead    | Best For                      |
+| ------------------------- | ----------- | -------------------- | ----------- | ----------------------------- |
+| VPC Flow Logs             | AWS VPC     | IP flows (L3/L4)     | Low (async) | Cloud network audit, security |
+| Cilium Hubble             | Kubernetes  | L3/L4/L7 flows + DNS | Low (eBPF)  | K8s pod connectivity debug    |
+| tcpdump                   | Single host | Raw packets (L2-L7)  | Medium-High | Deep protocol debugging       |
+| Prometheus node_exporter  | All hosts   | Aggregated metrics   | Low         | Alerting on interface stats   |
+| eBPF (bcc/bpftrace)       | Single host | Kernel-level events  | Low         | Root cause analysis           |
+| AWS Reachability Analyser | AWS         | Path simulation      | None        | Verify connectivity design    |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| tcpdump is safe for production | tcpdump in promiscuous mode captures ALL traffic on the interface, including unrelated services. CPU and memory impact at high packet rates can be significant. In production: use eBPF-based tools (tcpretrans, Hubble) for production-safe continuous observation; use tcpdump only for short, targeted captures |
-| VPC Flow Logs show all traffic | VPC Flow Logs capture flows at the ENI level, with a 1-15 minute aggregation window. They do NOT show: blocked traffic before it reaches the ENI (e.g., Security Group blocks at the EC2 hypervisor level — actually they DO show these as REJECT). They do NOT show inter-pod traffic within a node (all on the same ENI) |
-| Network observability is only for network teams | In microservices architectures, network issues manifest as application errors. Service and platform engineers need network visibility to diagnose: DNS failures, connection pool exhaustion, NetworkPolicy misconfigurations, and cross-AZ latency — all of which look like "slow service" in APM |
+| Misconception                                   | Reality                                                                                                                                                                                                                                                                                                                    |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| tcpdump is safe for production                  | tcpdump in promiscuous mode captures ALL traffic on the interface, including unrelated services. CPU and memory impact at high packet rates can be significant. In production: use eBPF-based tools (tcpretrans, Hubble) for production-safe continuous observation; use tcpdump only for short, targeted captures         |
+| VPC Flow Logs show all traffic                  | VPC Flow Logs capture flows at the ENI level, with a 1-15 minute aggregation window. They do NOT show: blocked traffic before it reaches the ENI (e.g., Security Group blocks at the EC2 hypervisor level — actually they DO show these as REJECT). They do NOT show inter-pod traffic within a node (all on the same ENI) |
+| Network observability is only for network teams | In microservices architectures, network issues manifest as application errors. Service and platform engineers need network visibility to diagnose: DNS failures, connection pool exhaustion, NetworkPolicy misconfigurations, and cross-AZ latency — all of which look like "slow service" in APM                          |
 
 ---
 
@@ -435,7 +441,7 @@ hubble observe --type dns --namespace production --follow
 
 # Step 4: manual DNS test from affected pod
 kubectl exec -n production deploy/checkout-service -- \
-  for i in $(seq 1 100); do 
+  for i in $(seq 1 100); do
     time nslookup payment-service.production.svc.cluster.local 2>&1 | tail -1
   done
 # If some queries return in >100ms: DNS latency issue

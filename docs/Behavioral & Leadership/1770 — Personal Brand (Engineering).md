@@ -56,6 +56,7 @@ Without a personal brand, career advancement requires someone else to advocate f
 Personal brand is the engineering reputation you build intentionally — "known for X" — through visible work (writing, speaking, open source) that creates career optionality, accelerates promotions, and amplifies influence beyond your immediate team; the key is specificity (owning a specific expertise) not breadth (being generally good).
 
 **One analogy:**
+
 > Personal brand is like a credit score. Credit score: the financial system's record of your borrowing and repayment behaviour — it makes your trustworthiness visible to people who have never lent you money. Without it, every new lender must independently evaluate you. With it, your reputation precedes you and the evaluation happens faster, at lower cost. Personal brand is the professional equivalent: your writing, talks, and contributions create a record of your technical thinking and judgment. People who have never worked with you can evaluate your credibility through your public work. Without a personal brand, every new context requires starting from zero. With one, your reputation precedes you and opportunities scale beyond what your immediate network can provide.
 
 **One insight:**
@@ -106,20 +107,20 @@ STEP 1: IDENTIFY YOUR X
   What do you know deeply that other engineers at your level
   typically don't? What problems have you solved that were
   hard enough to be worth sharing?
-  
+
   GOOD X EXAMPLES:
     "Distributed systems resilience patterns"
     "DynamoDB data modelling for high-scale applications"
     "Migrating legacy systems without downtime"
     "Building platform teams from scratch"
     "Debugging production performance issues in JVM services"
-  
+
   BAD X EXAMPLES:
     "Software engineering" (too broad)
     "Backend development" (too broad)
     "TypeScript" (tool, not expertise)
     "Technical leadership" (too abstract)
-  
+
   TEST: Would 50 engineers in your field immediately recognise
         the value of someone being great at X?
         If yes: X is specific enough.
@@ -129,22 +130,22 @@ STEP 2: CREATE ARTEFACTS FOR X
   Conference talks: "How we solved [X problem]"
   Open source: library or tool that demonstrates X expertise
   Internal: RFC, design doc, presentation on X
-  
+
   PRINCIPLE: Give your expertise away for free.
              The knowledge you share creates trust.
              Trust is the currency of personal brand.
-  
+
 STEP 3: NETWORK IN X COMMUNITIES
   Follow and engage with others who write about X
   Speak at X-focused conferences or meetups
   Comment thoughtfully on others' X content
   Organise X discussions (internal guild, external Slack)
-  
+
 STEP 4: CONSISTENCY OVER VOLUME
   1 quality piece per month > 4 rushed pieces per month
   A blog with 20 high-quality posts > one with 200 thin posts
   Regular cadence builds audience; sporadic bursts don't
-  
+
 STEP 5: LET IT COMPOUND
   Personal brand builds slowly (6–18 months to first signs)
   then compounds rapidly (established brand creates more
@@ -169,20 +170,20 @@ HIGH-LEVERAGE INTERNAL BRAND BUILDING:
    Present at internal all-hands or engineering talks.
    30 minutes in front of 50 engineers creates more brand
    recognition than 6 months of excellent private work.
-   
+
 3. INCIDENT RETROSPECTIVE LEADERSHIP:
    Lead the postmortem for a significant incident.
    "Alice led the response to the payment outage and ran
    the retro" creates a memorable, credible data point.
-   
+
 4. CROSS-TEAM SPONSORSHIP:
    Help solve a hard problem for a team outside yours.
    They remember. Their manager remembers. Their VP hears about it.
    "Alice from team X helped us unblock our migration" spreads.
-   
+
 5. MENTORING AT SCALE:
    Write the guide/tutorial/runbook that many engineers use.
-   "Alice wrote the service migration guide" gives you 
+   "Alice wrote the service migration guide" gives you
    ongoing brand credit every time an engineer uses it.
 ```
 
@@ -197,7 +198,7 @@ BLOG / WRITING:
             Medium (distribution), Substack (newsletter).
   Content: specific lessons learned, technical deep dives,
            engineering decisions and their outcomes.
-  
+
 CONFERENCE TALKS:
   High credibility signal; hard to get started (requires
   submission + acceptance). Usually 45-minute commitment
@@ -205,19 +206,19 @@ CONFERENCE TALKS:
   First talk: local meetup or internal conference.
   Then: smaller national conferences in your domain.
   Then: KubeCon / re:Invent / QCon / Strange Loop etc.
-  
+
 OPEN SOURCE:
   Highest long-term leverage if the project has adoption.
   Hard to build from scratch (most projects get no users).
   Easier entry: meaningful contributions to existing projects
   (PRs, documentation, issue triage for popular OSS).
   "Core contributor to [popular project]" is a strong brand signal.
-  
+
 SOCIAL / PROFESSIONAL:
   Twitter/X: real-time technical discussion; fast feedback loop.
   LinkedIn: recruiting network; article distribution.
   GitHub: your work is your portfolio.
-  
+
   Rule: choose 1–2 channels and do them well.
         Don't spread across 5 channels and do none well.
 ```
@@ -230,18 +231,21 @@ SOCIAL / PROFESSIONAL:
 Engineer Alice has 8 years of experience. She is a strong senior engineer, respected internally. She wants to reach staff level and eventually find a role at a top-tier company.
 
 **Scenario A — No external brand:**
+
 - Promotion pace: depends on internal calibration; 1–2 cycles to staff
 - Job search: cold applications + referrals from ~15 former colleagues
 - Offer rate: 30% callback on cold applications; salary negotiation based on current comp
 - Leverage: limited; she is selling herself and hoping to be believed
 
 **Scenario B — External brand (technical blog, 2 conference talks, 1 popular OSS library):**
+
 - Promotion pace: manager has artefacts to point to; sponsor has easy talking points; faster promo cycle
 - Job search: 5 inbound LinkedIn messages from top-tier companies last month alone
 - Offer rate: 70%+ (they've already evaluated her work); salary negotiation from position of multiple competing offers
 - Leverage: high; she is being recruited, not applying
 
 **The delta at year 10:**
+
 - Salary: Scenario B engineers typically earn 20–40% more due to better negotiating position
 - Optionality: Scenario B engineers have 5x more unsolicited career opportunities
 - Time invested: 2–4 hours/week for 3 years = ~450 hours total
@@ -280,18 +284,18 @@ MONTHLY (2–4 hours):
   Write 1 technical piece (blog post, deep-dive, lessons learned)
   Engage with 2–3 others in your domain (comment thoughtfully,
   respond to questions on forums, tweet/reply to discussion)
-  
+
 QUARTERLY (4–8 hours):
   Speak at 1 venue (internal tech talk, external meetup, or
   prepare a conference submission)
   Review and update your GitHub/LinkedIn/personal site
-  
+
 ANNUALLY (full review):
   What is my "X"? Has it evolved?
   What artefacts exist? What's the reach?
   Am I known for X internally? Externally?
   What is the next level of ambition for the brand?
-  
+
 COMPOUNDING MECHANISM:
   Blog post published
     → Indexed by search engines (lasts forever)
@@ -334,36 +338,43 @@ Influence amplified: your recommendations carry more weight
 ### 💻 Code Example
 
 **Personal brand audit template:**
+
 ```markdown
 ## Personal Brand Audit — [Date]
 
 ### My "X" (what am I building a brand around?)
+
 Current: [specific expertise area]
-Test: Can a colleague complete "Alice is the go-to person for ___"?
+Test: Can a colleague complete "Alice is the go-to person for \_\_\_"?
 
 ### Internal Brand Artefacts
+
 - [ ] RFCs authored: [list]
 - [ ] Internal talks given: [list]
 - [ ] Cross-team projects led: [list]
 - [ ] Documentation I'm known for: [list]
 
 ### External Brand Artefacts
+
 - [ ] Blog posts published: [list with URLs + view counts]
 - [ ] Conference talks given: [list]
 - [ ] OSS contributions: [repos, PRs, stars]
 - [ ] Social presence: [Twitter followers, LinkedIn connections]
 
 ### Visibility Check
+
 - Is my name known outside my immediate team? YES / NO
 - Have I received inbound opportunities in the last 6 months? YES / NO
 - Can a senior engineer outside my team describe my expertise? YES / NO
 
 ### Brand Gaps
+
 - [ ] Need to write: [topic]
 - [ ] Should speak at: [venue]
 - [ ] Should contribute to: [project]
 
 ### 90-Day Plan
+
 - Write: [specific post topic] by [date]
 - Submit: [conference] talk proposal by [date]
 - Build: relationship with [specific engineer] through [specific means]
@@ -373,25 +384,25 @@ Test: Can a colleague complete "Alice is the go-to person for ___"?
 
 ### ⚖️ Comparison Table
 
-| Channel | Time investment | Reach | Longevity | Best for |
-|---|---|---|---|---|
-| **Blog post** | 3–8 hrs each | Low initial; compounds | Years (searchable) | Depth + discoverability |
-| **Conference talk** | 20–40 hrs | 100–2,000 per talk | Recorded; medium | Credibility + network |
-| **Open source** | Ongoing | Scales with adoption | Years | Demonstrated skill |
-| **Internal RFC/talk** | 2–8 hrs | 10–100 per org | Until you leave | Promotion + sponsors |
-| **Social media** | 30 min/day | High initial; fast decay | Days–weeks | Discourse + network |
+| Channel               | Time investment | Reach                    | Longevity          | Best for                |
+| --------------------- | --------------- | ------------------------ | ------------------ | ----------------------- |
+| **Blog post**         | 3–8 hrs each    | Low initial; compounds   | Years (searchable) | Depth + discoverability |
+| **Conference talk**   | 20–40 hrs       | 100–2,000 per talk       | Recorded; medium   | Credibility + network   |
+| **Open source**       | Ongoing         | Scales with adoption     | Years              | Demonstrated skill      |
+| **Internal RFC/talk** | 2–8 hrs         | 10–100 per org           | Until you leave    | Promotion + sponsors    |
+| **Social media**      | 30 min/day      | High initial; fast decay | Days–weeks         | Discourse + network     |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Personal brand = self-promotion" | The most effective personal brand is built by giving knowledge away, not by promoting yourself. Trust comes from generosity, not from claims. |
-| "I need a large following to have a personal brand" | A personal brand within your organisation of 500 people is enough to accelerate your promotion. You don't need internet fame — you need the right people to know your work. |
-| "Personal brand is only for extroverts" | Writing is the primary brand-building mechanism for most technical engineers — and it favours careful, precise thinkers over loud personalities. Introverts can build strong brands through writing and code, without performing extroversion. |
-| "I should build a brand for everything I do" | Specificity is the point. "Known for X" is 10× more valuable than "known for being generally good." Spreading too thin produces a weak, forgettable brand. |
-| "I need a personal site / fancy portfolio" | A strong GitHub profile and 5 high-quality blog posts are more valuable than a beautiful personal site with nothing in it. Substance first. |
+| Misconception                                       | Reality                                                                                                                                                                                                                                        |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Personal brand = self-promotion"                   | The most effective personal brand is built by giving knowledge away, not by promoting yourself. Trust comes from generosity, not from claims.                                                                                                  |
+| "I need a large following to have a personal brand" | A personal brand within your organisation of 500 people is enough to accelerate your promotion. You don't need internet fame — you need the right people to know your work.                                                                    |
+| "Personal brand is only for extroverts"             | Writing is the primary brand-building mechanism for most technical engineers — and it favours careful, precise thinkers over loud personalities. Introverts can build strong brands through writing and code, without performing extroversion. |
+| "I should build a brand for everything I do"        | Specificity is the point. "Known for X" is 10× more valuable than "known for being generally good." Spreading too thin produces a weak, forgettable brand.                                                                                     |
+| "I need a personal site / fancy portfolio"          | A strong GitHub profile and 5 high-quality blog posts are more valuable than a beautiful personal site with nothing in it. Substance first.                                                                                                    |
 
 ---
 
@@ -404,6 +415,7 @@ Test: Can a colleague complete "Alice is the go-to person for ___"?
 **Root Cause:** Mistaking visibility for brand. A brand is a reputation for specific expertise. Visibility alone — especially self-promotional visibility — builds awareness without credibility. Credibility requires demonstrated value, not claimed value.
 
 **Fix:**
+
 ```
 THE CREDIBILITY TEST FOR EVERY PIECE OF CONTENT:
 
@@ -412,7 +424,7 @@ Ask: "Would someone who has never heard of me
 
 IF YES: This is brand-building content.
         It demonstrates expertise and creates trust.
-        
+
 IF NO: This is self-promotion content.
         It creates awareness but not trust.
         Post sparingly.
@@ -427,12 +439,12 @@ CONTENT TYPES BY CREDIBILITY:
   NEUTRAL:
     - Sharing (with commentary) an article you found valuable
     - Engaging thoughtfully with others' technical content
-    
+
   LOW CREDIBILITY (if overused):
     - "Thrilled to announce [achievement]"
     - Generic "inspirational" professional posts
     - Posting without adding perspective
-    
+
 GOLDEN RATIO:
   For every 1 post about yourself (announcement, achievement):
   post 10 pieces of substantive technical content.
@@ -444,15 +456,18 @@ GOLDEN RATIO:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Career Laddering` — personal brand is a career advancement tool; understand the framework it operates within
 - `Writing for Engineers` — writing is the primary mechanism for building personal brand
 
 **Builds On This (learn these next):**
+
 - `Career Laddering` — apply personal brand to the promotion system
 - `Presentations for Technical Audiences` — conference talks are a major external brand channel
 - `Influence Without Authority` — personal brand is the foundation of influence beyond your direct authority
 
 **Alternatives / Comparisons:**
+
 - `Career Laddering` — internal recognition vs. external brand; both are needed; complementary
 - `Influence Without Authority` — brand is a source of influence; influence is the outcome of brand
 
