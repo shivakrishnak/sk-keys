@@ -339,6 +339,7 @@ GROUP BY dc.tier;
 ### 💻 Code Example
 
 **Example 1 — dbt SCD Type 2 snapshot:**
+{% raw %}
 ```yaml
 # snapshots/dim_customer_scd2.yml
 {% snapshot dim_customer_snapshot %}
@@ -360,6 +361,7 @@ SELECT
 FROM {{ source('crm', 'customers') }}
 {% endsnapshot %}
 ```
+{% endraw %}
 ```
 -- dbt generates:
 -- dbt_scd_id (hash of unique_key + dbt_updated_at)
