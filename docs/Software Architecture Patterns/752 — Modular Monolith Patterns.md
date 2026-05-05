@@ -26,11 +26,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #752 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Bounded Context, Layered Architecture, Domain Model, Monolith vs Microservices | |
-| **Used by:** | Medium-scale applications, Microservices migration, Teams choosing architecture | |
-| **Related:** | Microservices, Layered Architecture, Bounded Context, Vertical Slice Architecture | |
+| #752            | Category: Software Architecture Patterns                                          | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Bounded Context, Layered Architecture, Domain Model, Monolith vs Microservices    |                 |
+| **Used by:**    | Medium-scale applications, Microservices migration, Teams choosing architecture   |                 |
+| **Related:**    | Microservices, Layered Architecture, Bounded Context, Vertical Slice Architecture |                 |
 
 ---
 
@@ -59,6 +59,7 @@ A Modular Monolith is an architectural style where a single deployable applicati
 One deployable unit, but internally organized like microservices — strong module boundaries, public APIs between modules.
 
 **One analogy:**
+
 > An office building where departments have assigned floors and you must go through the reception desk to visit another department. You're all in the same building (monolith), but access between departments is controlled and formalized. You don't wander through Finance's open-plan area to get to Legal — you have a meeting through proper channels. The modules are the departments; the public module APIs are the reception desks.
 
 **One insight:**
@@ -130,6 +131,7 @@ A well-structured Modular Monolith is easier to extract into microservices than 
 ### 🧪 Thought Experiment
 
 **BEFORE MODULAR MONOLITH (spaghetti monolith):**
+
 ```java
 // OrderService directly imports from multiple modules
 import com.acme.inventory.InventoryRepository;
@@ -143,6 +145,7 @@ import com.acme.shipping.ShipmentStatus;
 ```
 
 **AFTER MODULAR MONOLITH:**
+
 ```java
 // Orders module only knows about its own domain
 // + the public API of other modules
@@ -173,6 +176,7 @@ Package your code by module (domain area), not by layer (controllers in one pack
 
 **Level 3 — Cross-module communication (mid-level):**
 Three options for cross-module communication:
+
 1. **Synchronous method call via interface**: `InventoryService.checkStock(productId)` — simple, direct, but creates synchronous dependency.
 2. **In-process event bus**: Orders publishes `OrderPlacedEvent` to Spring's `ApplicationEventPublisher`; Inventory listens. Decoupled but still in-process.
 3. **Shared database tables**: modules have their own schema namespaces; a view provides read access across modules. Simple but creates data coupling.
@@ -295,25 +299,25 @@ class ModuleConfiguration {
 
 ### ⚖️ Comparison Table
 
-| Aspect | Modular Monolith | Big Ball of Mud | Microservices |
-|---|---|---|---|
-| Deployment complexity | Low (1 deploy) | Low | High (N deploys) |
-| Module boundary enforcement | Explicit (ArchUnit/JPMS) | None | Physical (network) |
-| Team independence | Moderate | None | High |
-| Distributed systems complexity | None | None | High |
-| Good first choice | Yes | No | Rarely |
-| Microservices migration path | Clear | Very difficult | N/A |
+| Aspect                         | Modular Monolith         | Big Ball of Mud | Microservices      |
+| ------------------------------ | ------------------------ | --------------- | ------------------ |
+| Deployment complexity          | Low (1 deploy)           | Low             | High (N deploys)   |
+| Module boundary enforcement    | Explicit (ArchUnit/JPMS) | None            | Physical (network) |
+| Team independence              | Moderate                 | None            | High               |
+| Distributed systems complexity | None                     | None            | High               |
+| Good first choice              | Yes                      | No              | Rarely             |
+| Microservices migration path   | Clear                    | Very difficult  | N/A                |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Monolith = bad; microservices = good | Monolith is a deployment model; good/bad depends on team size, domain maturity, and organizational needs |
-| Modular Monolith is a compromise | Modular Monolith is often the optimal architecture for medium-scale teams — not a stepping stone |
-| Once you have a modular monolith, you need microservices | Many successful, large-scale applications are well-structured monoliths (Shopify ran as a monolith at enormous scale) |
-| Module boundaries need to be microservice-ready from day one | Start with clean module boundaries; decide on microservices extraction when there's a real operational need |
+| Misconception                                                | Reality                                                                                                               |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| Monolith = bad; microservices = good                         | Monolith is a deployment model; good/bad depends on team size, domain maturity, and organizational needs              |
+| Modular Monolith is a compromise                             | Modular Monolith is often the optimal architecture for medium-scale teams — not a stepping stone                      |
+| Once you have a modular monolith, you need microservices     | Many successful, large-scale applications are well-structured monoliths (Shopify ran as a monolith at enormous scale) |
+| Module boundaries need to be microservice-ready from day one | Start with clean module boundaries; decide on microservices extraction when there's a real operational need           |
 
 ---
 
@@ -332,10 +336,12 @@ class ModuleConfiguration {
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Bounded Context` — the domain concept that modules map to
 - `Layered Architecture` — contrasts with module-first organization
 
 **Related:**
+
 - `Microservices` — the architecture style modules can be extracted into
 - `Vertical Slice Architecture` — alternative module organization by feature
 

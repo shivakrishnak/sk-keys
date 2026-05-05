@@ -26,11 +26,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #755 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Observer Pattern, Event-Driven Architecture, Shared State | |
-| **Used by:** | AI/rule engines, Speech recognition, Compiler optimization, Complex event processing | |
-| **Related:** | Event-Driven Architecture, Observer Pattern, CQRS, Saga Pattern | |
+| #755            | Category: Software Architecture Patterns                                             | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Observer Pattern, Event-Driven Architecture, Shared State                            |                 |
+| **Used by:**    | AI/rule engines, Speech recognition, Compiler optimization, Complex event processing |                 |
+| **Related:**    | Event-Driven Architecture, Observer Pattern, CQRS, Saga Pattern                      |                 |
 
 ---
 
@@ -56,6 +56,7 @@ The Blackboard Pattern (or Blackboard Architecture) is an architectural style fo
 Specialists share a common workspace; each contributes what they know when relevant, building toward a solution collaboratively.
 
 **One analogy:**
+
 > A hospital trauma team working on a complex case. The blackboard (whiteboard in the room) shows all current patient vitals, test results, diagnoses, and treatments. Different specialists — cardiologist, neurologist, radiologist, pharmacist — each examine the board, recognize what falls in their domain, and write their findings or recommendations. No one is in charge of sequencing the specialists. Each acts when they see something they can contribute to. The solution (diagnosis and treatment plan) emerges from collaborative, overlapping expertise.
 
 **One insight:**
@@ -128,9 +129,10 @@ Blackboard inverts the control flow of traditional architectures. In a pipeline,
 ### 🧪 Thought Experiment
 
 **FRAUD DETECTION AS BLACKBOARD:**
+
 ```
 Blackboard state:
-  transaction: { amount: 5000, merchant: "Electronics", 
+  transaction: { amount: 5000, merchant: "Electronics",
                   country: "RO", customer: "john-smith" }
 
 Knowledge Source 1 — AmountAnalyzer:
@@ -155,6 +157,7 @@ Knowledge Source 4 — AggregateScorer:
 
 Controller: notices fraudScore ≥ threshold → complete
 ```
+
 No single specialist made the decision. The solution emerged from four independent assessments. Adding a new rule (e.g., BinAnalyzer for card BIN patterns) requires only a new Knowledge Source — no changes to existing specialists.
 
 ---
@@ -171,6 +174,7 @@ No single specialist made the decision. The solution emerged from four independe
 Multiple specialists share a whiteboard. Each writes what they know. Others read and add more. Over time, a complete solution appears on the board.
 
 **Level 2 — How to implement it (junior):**
+
 1. Define the Blackboard as a data structure (or shared database/document store).
 2. Implement Knowledge Sources as independent components, each with an `isEligible(BlackboardState): boolean` method and a `contribute(BlackboardState): void` method.
 3. Implement a Controller loop: check which KS are eligible, pick one (or all), invoke its `contribute()`, check if solution is complete.
@@ -341,23 +345,23 @@ public class FraudController {
 
 ### ⚖️ Comparison Table
 
-| Pattern | Coordination | Data flow | Use case |
-|---|---|---|---|
-| **Blackboard** | Shared state | Opportunistic, non-sequential | Complex multi-specialist problems |
-| Pipe and Filter | Sequential | Linear transformation | Data transformation chains |
-| Event-Driven | Events | Reactive, decoupled | Loosely coupled async systems |
-| Rule Engine | Fact matching | Pattern-driven | Business rules evaluation |
+| Pattern         | Coordination  | Data flow                     | Use case                          |
+| --------------- | ------------- | ----------------------------- | --------------------------------- |
+| **Blackboard**  | Shared state  | Opportunistic, non-sequential | Complex multi-specialist problems |
+| Pipe and Filter | Sequential    | Linear transformation         | Data transformation chains        |
+| Event-Driven    | Events        | Reactive, decoupled           | Loosely coupled async systems     |
+| Rule Engine     | Fact matching | Pattern-driven                | Business rules evaluation         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Blackboard = simple shared cache | Blackboard has structured state, activation conditions, and a Controller — much more than a cache |
-| Only for AI/expert systems | Applicable to any problem with multiple independent specialist contributors (fraud detection, complex event processing, code analysis) |
-| Blackboard is outdated | Modern LLM agent orchestration (AutoGPT, LangChain agents) is a form of Blackboard where the LLM is the Controller |
-| Non-deterministic = untestable | Deterministic test mode (fixed activation order) and audit logging make Blackboard testable |
+| Misconception                    | Reality                                                                                                                                |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Blackboard = simple shared cache | Blackboard has structured state, activation conditions, and a Controller — much more than a cache                                      |
+| Only for AI/expert systems       | Applicable to any problem with multiple independent specialist contributors (fraud detection, complex event processing, code analysis) |
+| Blackboard is outdated           | Modern LLM agent orchestration (AutoGPT, LangChain agents) is a form of Blackboard where the LLM is the Controller                     |
+| Non-deterministic = untestable   | Deterministic test mode (fixed activation order) and audit logging make Blackboard testable                                            |
 
 ---
 
@@ -376,10 +380,12 @@ public class FraudController {
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Observer Pattern` — KS watching the blackboard for trigger conditions
 - `Event-Driven Architecture` — blackboard changes as events
 
 **Related:**
+
 - `Rule Engine` — Drools Working Memory is a Blackboard implementation
 - `Multi-Agent Systems` — agents as Knowledge Sources in distributed Blackboard
 

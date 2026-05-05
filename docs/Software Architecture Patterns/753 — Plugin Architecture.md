@@ -26,11 +26,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #753 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Dependency Inversion Principle, Interface Segregation, Layered Architecture | |
-| **Used by:** | IDEs, CMS platforms, Build tools, Extensible applications | |
-| **Related:** | Hexagonal Architecture, Open-Closed Principle, Service Locator, Dependency Injection | |
+| #753            | Category: Software Architecture Patterns                                             | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Dependency Inversion Principle, Interface Segregation, Layered Architecture          |                 |
+| **Used by:**    | IDEs, CMS platforms, Build tools, Extensible applications                            |                 |
+| **Related:**    | Hexagonal Architecture, Open-Closed Principle, Service Locator, Dependency Injection |                 |
 
 ---
 
@@ -56,6 +56,7 @@ Plugin Architecture (also called the Microkernel Pattern in some formulations) i
 Stable core with defined extension points; plugins add capability by implementing those extension points — without touching the core.
 
 **One analogy:**
+
 > A power strip. The power strip has a defined socket interface. Any device that fits the plug format can use the power strip — the power strip doesn't need modification for each new device type. The device is the plugin. The power strip is the core. The socket specification is the plugin interface. The power strip knows nothing about what's plugged in — only that it provides power through the standardized interface.
 
 **One insight:**
@@ -147,6 +148,7 @@ Plugin Architecture solves the extension problem by inverting dependencies. Inst
 An application with a stable core and "slots" where you can plug in different capabilities. The core defines what a slot looks like; plugins fill the slots.
 
 **Level 2 — How to build one (junior):**
+
 1. Define the plugin interface (the extension point contract).
 2. Build core logic that uses the interface — never a specific implementation.
 3. Implement plugins that implement the interface.
@@ -281,23 +283,23 @@ public class StripePaymentProvider
 
 ### ⚖️ Comparison Table
 
-| Pattern | Extension mechanism | Coupling | Best for |
-|---|---|---|---|
-| **Plugin Architecture** | Interface + registry | Low | Multi-provider systems, extensible platforms |
-| Strategy Pattern | Interface + injection | Low | Swappable algorithms, single extension point |
-| Decorator Pattern | Wrapper chain | Medium | Layered behavior modification |
-| Template Method | Subclassing | High | Framework with fixed skeleton |
+| Pattern                 | Extension mechanism   | Coupling | Best for                                     |
+| ----------------------- | --------------------- | -------- | -------------------------------------------- |
+| **Plugin Architecture** | Interface + registry  | Low      | Multi-provider systems, extensible platforms |
+| Strategy Pattern        | Interface + injection | Low      | Swappable algorithms, single extension point |
+| Decorator Pattern       | Wrapper chain         | Medium   | Layered behavior modification                |
+| Template Method         | Subclassing           | High     | Framework with fixed skeleton                |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Plugin = untrusted third-party code | Plugins are often first-party implementations of your own defined interfaces |
-| Plugin Architecture = plugin framework (like OSGi) | Plugin Architecture is a design principle; OSGi is a specific implementation with classloader isolation |
-| Plugin interfaces must be stable forever | Interfaces can evolve with versioning and deprecation — same as any API |
-| Plugin Architecture only for big frameworks | Valuable for any system with multiple implementations of a concept (multiple payment providers, storage backends, notification channels) |
+| Misconception                                      | Reality                                                                                                                                  |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Plugin = untrusted third-party code                | Plugins are often first-party implementations of your own defined interfaces                                                             |
+| Plugin Architecture = plugin framework (like OSGi) | Plugin Architecture is a design principle; OSGi is a specific implementation with classloader isolation                                  |
+| Plugin interfaces must be stable forever           | Interfaces can evolve with versioning and deprecation — same as any API                                                                  |
+| Plugin Architecture only for big frameworks        | Valuable for any system with multiple implementations of a concept (multiple payment providers, storage backends, notification channels) |
 
 ---
 
@@ -316,10 +318,12 @@ public class StripePaymentProvider
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Dependency Inversion Principle` — the theoretical foundation (high-level modules should not depend on low-level modules; both depend on abstractions)
 - `Interface Segregation` — keeping plugin interfaces focused
 
 **Related:**
+
 - `Hexagonal Architecture` — adapters are plugins; same dependency inversion
 - `Open-Closed Principle` — Plugin Architecture is Open-Closed at system level
 

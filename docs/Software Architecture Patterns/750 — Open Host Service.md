@@ -27,11 +27,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #750 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Bounded Context, Context Map, Domain Model, API Design | |
-| **Used by:** | Public APIs, Microservices, Platform architectures, DDD | |
-| **Related:** | Bounded Context, Context Map, Published Language, Anti-Corruption Layer | |
+| #750            | Category: Software Architecture Patterns                                | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Bounded Context, Context Map, Domain Model, API Design                  |                 |
+| **Used by:**    | Public APIs, Microservices, Platform architectures, DDD                 |                 |
+| **Related:**    | Bounded Context, Context Map, Published Language, Anti-Corruption Layer |                 |
 
 ---
 
@@ -57,6 +57,7 @@ An Open Host Service, as defined by Eric Evans in "Domain-Driven Design," is a p
 A published, stable API that a service provides to multiple consumers — the service defines the interface, consumers adapt to it.
 
 **One analogy:**
+
 > A power outlet standard. The country's electrical authority defines the outlet standard (Open Host Service). All device manufacturers (consumers) build plugs that fit that standard — or buy adapters (ACL). The electrical authority doesn't customize outlets for every device brand. The standard is published, stable, and everyone integrates against it.
 
 **One insight:**
@@ -300,23 +301,23 @@ public record StockDepletedEvent(
 
 ### ⚖️ Comparison Table
 
-| Pattern | Direction | # Consumers | Stability | Effort |
-|---|---|---|---|---|
-| **Open Host Service** | Upstream publishes | Many | High (stable contract) | High (spec, versioning) |
-| Customer/Supplier | Bilateral negotiation | Few (1-3) | Medium (negotiated) | Medium |
-| Conformist | Downstream adopts | N/A | As upstream | Low |
-| Separate Ways | None | N/A | N/A | None |
+| Pattern               | Direction             | # Consumers | Stability              | Effort                  |
+| --------------------- | --------------------- | ----------- | ---------------------- | ----------------------- |
+| **Open Host Service** | Upstream publishes    | Many        | High (stable contract) | High (spec, versioning) |
+| Customer/Supplier     | Bilateral negotiation | Few (1-3)   | Medium (negotiated)    | Medium                  |
+| Conformist            | Downstream adopts     | N/A         | As upstream            | Low                     |
+| Separate Ways         | None                  | N/A         | N/A                    | None                    |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                          | Reality                                                                                                         |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | Every REST API is an Open Host Service | OHS requires a formal, documented, stable protocol — an ad-hoc internal API without these properties is not OHS |
-| OHS eliminates the need for ACLs | Consumers often still need ACLs to translate the OHS protocol into their own domain model |
-| OHS means you never change the API | OHS means you change it responsibly — with versioning, deprecation periods, and consumer communication |
-| Published Language is always JSON | Published Language is any agreed-upon schema — JSON, Avro, Protobuf, GraphQL schema |
+| OHS eliminates the need for ACLs       | Consumers often still need ACLs to translate the OHS protocol into their own domain model                       |
+| OHS means you never change the API     | OHS means you change it responsibly — with versioning, deprecation periods, and consumer communication          |
+| Published Language is always JSON      | Published Language is any agreed-upon schema — JSON, Avro, Protobuf, GraphQL schema                             |
 
 ---
 
@@ -345,13 +346,16 @@ public record StockDepletedEvent(
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Bounded Context` — the context providing the OHS
 - `Context Map` — shows OHS relationships on the map
 
 **Built With:**
+
 - `Published Language` — the schema/protocol the OHS uses
 
 **Consumer Patterns:**
+
 - `Anti-Corruption Layer` — consumers use ACL to translate OHS into their model
 - `Conformist` — consumers adopt the OHS model directly
 

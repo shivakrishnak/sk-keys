@@ -26,11 +26,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #754 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Pipeline Pattern, Functional Composition, Stream Processing | |
-| **Used by:** | ETL pipelines, Compilers, Image processing, Stream processing, Unix shell | |
-| **Related:** | Chain of Responsibility, Decorator Pattern, CQRS, Event Streaming | |
+| #754            | Category: Software Architecture Patterns                                  | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Pipeline Pattern, Functional Composition, Stream Processing               |                 |
+| **Used by:**    | ETL pipelines, Compilers, Image processing, Stream processing, Unix shell |                 |
+| **Related:**    | Chain of Responsibility, Decorator Pattern, CQRS, Event Streaming         |                 |
 
 ---
 
@@ -56,6 +56,7 @@ Pipe and Filter is an architectural pattern that structures a system as a series
 Data flows through independent transformation stages connected by channels — each stage reads, transforms, and writes; none know about each other.
 
 **One analogy:**
+
 > A water treatment plant. Raw water enters a series of treatment chambers: screening, coagulation, sedimentation, filtration, disinfection, pH adjustment. Each chamber (filter) does one thing. The water (data) flows between chambers through pipes. Each treatment stage is independent — you can add, remove, or replace a stage without redesigning the whole plant. The output of each stage is the input to the next.
 
 **One insight:**
@@ -127,6 +128,7 @@ Unix pipes are the most famous example: `cat log.txt | grep ERROR | cut -d' ' -f
 
 **COMPILER AS PIPE AND FILTER:**
 A compiler is a textbook Pipe and Filter system:
+
 ```
 Source Code
     → Lexer (tokenize: characters → tokens)
@@ -136,6 +138,7 @@ Source Code
     → Code Generator (optimized AST → bytecode/assembly)
     → Bytecode output
 ```
+
 Each pass is a filter. The intermediate representation is the pipe (data). Each pass can be tested independently. New optimization passes can be inserted without changing other passes. This is not a design coincidence — compiler writers have been using Pipe and Filter since the 1960s.
 
 ---
@@ -281,23 +284,23 @@ List<CsvRecord> results = rawLines.stream()
 
 ### ⚖️ Comparison Table
 
-| Pattern | Step awareness | Composability | State sharing | Best for |
-|---|---|---|---|---|
-| **Pipe and Filter** | None (blind) | High | None | Data transformation chains |
-| Chain of Responsibility | Next handler | Medium | None | Request handling, middleware |
-| Decorator | Wraps known type | Medium | Shared wrapped obj | Layered behaviour |
-| Strategy | Caller chooses | Low | None | Interchangeable algorithms |
+| Pattern                 | Step awareness   | Composability | State sharing      | Best for                     |
+| ----------------------- | ---------------- | ------------- | ------------------ | ---------------------------- |
+| **Pipe and Filter**     | None (blind)     | High          | None               | Data transformation chains   |
+| Chain of Responsibility | Next handler     | Medium        | None               | Request handling, middleware |
+| Decorator               | Wraps known type | Medium        | Shared wrapped obj | Layered behaviour            |
+| Strategy                | Caller chooses   | Low           | None               | Interchangeable algorithms   |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Pipe and Filter = sequential only | Filters can run in parallel (fan-out) or be pipelined (async stages) |
-| Filters must be stateless | Filters can have local state (e.g., deduplication cache) as long as state is isolated to the filter |
+| Misconception                                            | Reality                                                                                                             |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Pipe and Filter = sequential only                        | Filters can run in parallel (fan-out) or be pipelined (async stages)                                                |
+| Filters must be stateless                                | Filters can have local state (e.g., deduplication cache) as long as state is isolated to the filter                 |
 | Pipe and Filter = low throughput (sequential bottleneck) | Async pipelines with buffered pipes allow stages to run at their natural throughput; parallel filters scale further |
-| Only for batch processing | Used in real-time stream processing (Kafka Streams, Flink) — processes events as they arrive |
+| Only for batch processing                                | Used in real-time stream processing (Kafka Streams, Flink) — processes events as they arrive                        |
 
 ---
 
@@ -316,10 +319,12 @@ List<CsvRecord> results = rawLines.stream()
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Stream Processing` — the modern distributed form of Pipe and Filter
 - `Functional Composition` — theoretical basis (function composition)
 
 **Related:**
+
 - `Chain of Responsibility` — similar chain structure, but for handling requests with optional pass-through
 - `ETL Patterns` — Extract-Transform-Load is a named application of Pipe and Filter
 

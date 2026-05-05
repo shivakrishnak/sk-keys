@@ -27,11 +27,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #751 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Bounded Context, Open Host Service, Context Map, Domain Events | |
-| **Used by:** | API design, Microservices, Event-driven architectures, DDD | |
-| **Related:** | Open Host Service, Bounded Context, Context Map, Schema Registry, API Versioning | |
+| #751            | Category: Software Architecture Patterns                                         | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Bounded Context, Open Host Service, Context Map, Domain Events                   |                 |
+| **Used by:**    | API design, Microservices, Event-driven architectures, DDD                       |                 |
+| **Related:**    | Open Host Service, Bounded Context, Context Map, Schema Registry, API Versioning |                 |
 
 ---
 
@@ -57,6 +57,7 @@ A Published Language, as described by Eric Evans in "Domain-Driven Design," is a
 A documented exchange format at context boundaries — neither side's internal model, but a stable common language both can implement.
 
 **One analogy:**
+
 > International trade uses standardized shipping container specifications and Incoterms (trade term definitions). German and Japanese companies with completely different internal logistics processes can trade because they share these published standards. Neither company exposes their internal systems — they both implement the published standard at the boundary.
 
 **One insight:**
@@ -128,17 +129,22 @@ Published Language decouples the schema from the implementation. Two services ca
 
 **WITHOUT PUBLISHED LANGUAGE:**
 Order service sends to Billing service:
+
 ```json
 { "orderId": "abc-123", "amount": 99.99, "cur": "GBP" }
 ```
+
 Billing service expects:
+
 ```json
 { "order_id": "abc-123", "total": 99.99, "currency": "GBP" }
 ```
+
 Integration broken. Fix requires changing one service to match the other's format — creating coupling.
 
 **WITH PUBLISHED LANGUAGE:**
 Both teams agree on the Published Language schema:
+
 ```json
 {
   "orderId": "string (UUID)",
@@ -146,6 +152,7 @@ Both teams agree on the Published Language schema:
   "currency": "string (ISO 4217 code)"
 }
 ```
+
 Order service translates its internal `Order.id` and `Order.total` to this schema. Billing service translates this schema to its internal `Invoice.orderReference` and `Invoice.amount`. Both work independently. Neither knows the other's internal field names.
 
 ---
@@ -267,7 +274,8 @@ Many domains already have Published Languages: FHIR for healthcare data exchange
     {
       "name": "placedAt",
       "type": {
-        "type": "long", "logicalType": "timestamp-millis"
+        "type": "long",
+        "logicalType": "timestamp-millis"
       },
       "doc": "UTC timestamp when order was placed"
     }
@@ -313,23 +321,23 @@ public class OrderEventPublisher {
 
 ### ⚖️ Comparison Table
 
-| Approach | Documentation | Stability | Independence | Best For |
-|---|---|---|---|---|
-| **Published Language** | Formal schema | High (governed) | High | Multi-consumer integration |
-| Shared Kernel | Code (shared types) | High (coordinated) | Medium | Closely collaborating teams |
-| Ad-hoc JSON | None / informal | Low | Low | Small, stable integrations |
-| Direct RPC | Interface code | Medium | Low | Tight service coupling |
+| Approach               | Documentation       | Stability          | Independence | Best For                    |
+| ---------------------- | ------------------- | ------------------ | ------------ | --------------------------- |
+| **Published Language** | Formal schema       | High (governed)    | High         | Multi-consumer integration  |
+| Shared Kernel          | Code (shared types) | High (coordinated) | Medium       | Closely collaborating teams |
+| Ad-hoc JSON            | None / informal     | Low                | Low          | Small, stable integrations  |
+| Direct RPC             | Interface code      | Medium             | Low          | Tight service coupling      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Published Language = internal domain model exposed | PL is a translation target, not the internal model — each side may need to translate |
-| OpenAPI spec = Published Language | OpenAPI is a tool for expressing a PL; the PL is the business-meaningful schema, not just the technical spec |
-| Published Language never changes | It evolves, but responsibly — with versioning, backward compatibility, and deprecation windows |
-| Only needed for external APIs | Published Language is valuable for internal service-to-service communication too |
+| Misconception                                      | Reality                                                                                                      |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Published Language = internal domain model exposed | PL is a translation target, not the internal model — each side may need to translate                         |
+| OpenAPI spec = Published Language                  | OpenAPI is a tool for expressing a PL; the PL is the business-meaningful schema, not just the technical spec |
+| Published Language never changes                   | It evolves, but responsibly — with versioning, backward compatibility, and deprecation windows               |
+| Only needed for external APIs                      | Published Language is valuable for internal service-to-service communication too                             |
 
 ---
 
@@ -344,6 +352,7 @@ public class OrderEventPublisher {
 **Fix:** Use schema registry with compatibility enforcement. Confluent Schema Registry compatibility modes: BACKWARD (new schema can read old data), FORWARD (old schema can read new data), FULL (both).
 
 **Diagnostic:**
+
 ```bash
 # Check schema compatibility before publishing new schema
 curl -X POST \
@@ -359,10 +368,12 @@ curl -X POST \
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Open Host Service` — OHS publishes a language
 - `Bounded Context` — contexts use Published Language to communicate
 
 **Related:**
+
 - `Context Map` — shows Published Language relationships
 - `Schema Registry` — tool for managing Published Language schemas
 - `API Versioning` — the versioning practice for Published Languages
