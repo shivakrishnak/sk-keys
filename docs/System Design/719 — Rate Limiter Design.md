@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Rate limiter design turns a concept into a production system: where to enforce limits, which algorithm to use, how to store counters, and how to keep the system fast and correct under distributed traffic.
 
-| #719            | Category: System Design                           | Difficulty: ★★★ |
-| :-------------- | :----------------------------------------------- | :-------------- |
-| **Depends on:** | Rate Limiting (System), Token Bucket, Leaky Bucket |               |
-| **Used by:**    | API Gateways, Abuse Prevention, Multi-Tenant Platforms |          |
-| **Related:**    | Token Bucket, Leaky Bucket, Capacity Planning    |                 |
+| #719            | Category: System Design                                | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------- | :-------------- |
+| **Depends on:** | Rate Limiting (System), Token Bucket, Leaky Bucket     |                 |
+| **Used by:**    | API Gateways, Abuse Prevention, Multi-Tenant Platforms |                 |
+| **Related:**    | Token Bucket, Leaky Bucket, Capacity Planning          |                 |
 
 ---
 
@@ -118,21 +118,21 @@ def allow_request(redis, key, limit, window_seconds):
 
 ### ⚖️ Comparison Table
 
-| Design choice | Benefit | Cost |
-| --- | --- | --- |
-| Gateway enforcement | stop abuse early | extra edge dependency |
-| Local counters | low latency | inconsistent globally |
-| Central counters | stronger accuracy | network hop |
-| Token bucket | burst-friendly | more state math |
+| Design choice       | Benefit           | Cost                  |
+| ------------------- | ----------------- | --------------------- |
+| Gateway enforcement | stop abuse early  | extra edge dependency |
+| Local counters      | low latency       | inconsistent globally |
+| Central counters    | stronger accuracy | network hop           |
+| Token bucket        | burst-friendly    | more state math       |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
-| "Just use Redis and you are done" | You still need key design, eviction policy, HA, and failure behavior. |
-| "Limiter must be perfectly consistent" | Often approximate enforcement is acceptable and cheaper. |
+| Misconception                          | Reality                                                               |
+| -------------------------------------- | --------------------------------------------------------------------- |
+| "Just use Redis and you are done"      | You still need key design, eviction policy, HA, and failure behavior. |
+| "Limiter must be perfectly consistent" | Often approximate enforcement is acceptable and cheaper.              |
 
 ---
 

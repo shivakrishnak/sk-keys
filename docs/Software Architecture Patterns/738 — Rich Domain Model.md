@@ -26,11 +26,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #738 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Domain Model, Anemic Domain Model, Value Objects, Aggregate Root | |
-| **Used by:** | DDD, Clean Architecture, Hexagonal Architecture, Event Sourcing | |
-| **Related:** | Domain Model, Anemic Domain Model, Aggregate Root, Domain Events, Value Objects | |
+| #738            | Category: Software Architecture Patterns                                        | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Domain Model, Anemic Domain Model, Value Objects, Aggregate Root                |                 |
+| **Used by:**    | DDD, Clean Architecture, Hexagonal Architecture, Event Sourcing                 |                 |
+| **Related:**    | Domain Model, Anemic Domain Model, Aggregate Root, Domain Events, Value Objects |                 |
 
 ---
 
@@ -56,6 +56,7 @@ A Rich Domain Model is the concrete expression of the Domain Model pattern, wher
 Domain objects that refuse to be put into invalid states — they know their own rules.
 
 **One analogy:**
+
 > A vending machine is a rich domain model. It knows: it won't dispense if payment is insufficient; it won't accept a denomination it doesn't recognize; it will return change automatically; it tracks its own inventory and signals when items are sold out. The machine doesn't need an external service to validate every operation — the logic is built into the machine itself.
 
 **One insight:**
@@ -96,6 +97,7 @@ Rich domain model = objects that say "no" when asked to do something invalid, an
 ```
 
 **INVARIANT PROTECTION:**
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │              INVARIANT PROTECTION LEVELS                 │
@@ -128,6 +130,7 @@ Rich domain model = objects that say "no" when asked to do something invalid, an
 **Task:** Apply a 10% discount to an order if the customer is a premium member and the order total exceeds £100.
 
 **Anemic approach:**
+
 ```java
 // In OrderDiscountService (scattered rule):
 if (customer.getMembershipTier()
@@ -141,6 +144,7 @@ if (customer.getMembershipTier()
 ```
 
 **Rich domain approach:**
+
 ```java
 // In Order:
 public void applyPremiumDiscount(Customer customer) {
@@ -351,25 +355,25 @@ void approved_loan_raises_LoanApprovedEvent() {
 
 ### ⚖️ Comparison Table
 
-| Aspect | Rich Domain Model | Anemic Domain Model |
-|---|---|---|
-| Business logic location | In domain objects | In service classes |
-| Invariant enforcement | Object refuses invalid state | Service must check manually |
-| Testability | Test domain object directly | Test service with mocks |
-| Rule duplication risk | Low — one canonical place | High — same rule in multiple services |
-| ORM compatibility | Requires configuration | Easy — plain beans |
-| Design cost | High | Low |
+| Aspect                  | Rich Domain Model            | Anemic Domain Model                   |
+| ----------------------- | ---------------------------- | ------------------------------------- |
+| Business logic location | In domain objects            | In service classes                    |
+| Invariant enforcement   | Object refuses invalid state | Service must check manually           |
+| Testability             | Test domain object directly  | Test service with mocks               |
+| Rule duplication risk   | Low — one canonical place    | High — same rule in multiple services |
+| ORM compatibility       | Requires configuration       | Easy — plain beans                    |
+| Design cost             | High                         | Low                                   |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Rich domain model = bloated objects | Rich means behavior-rich, not responsibility-bloated — each class stays focused |
-| Requires DDD to implement | Rich models are a general OO principle; DDD provides useful vocabulary and patterns |
-| Hard to persist with JPA | JPA field access mode, protected setters, and Hibernate's constructor bypass mechanisms all support rich models |
-| Service layer disappears | Service layer coordinates use cases and infrastructure; domain layer owns business rules — both exist |
+| Misconception                       | Reality                                                                                                         |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Rich domain model = bloated objects | Rich means behavior-rich, not responsibility-bloated — each class stays focused                                 |
+| Requires DDD to implement           | Rich models are a general OO principle; DDD provides useful vocabulary and patterns                             |
+| Hard to persist with JPA            | JPA field access mode, protected setters, and Hibernate's constructor bypass mechanisms all support rich models |
+| Service layer disappears            | Service layer coordinates use cases and infrastructure; domain layer owns business rules — both exist           |
 
 ---
 
@@ -398,10 +402,12 @@ void approved_loan_raises_LoanApprovedEvent() {
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Domain Model` — the concept this implements
 - `Anemic Domain Model` — the anti-pattern this replaces
 
 **Builds On This:**
+
 - `Aggregate Root` — how to define consistency boundaries in a rich model
 - `Domain Events` — raised by rich model objects
 - `Value Objects` — used within rich domain models

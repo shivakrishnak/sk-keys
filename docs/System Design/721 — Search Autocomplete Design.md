@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Search autocomplete returns likely query completions while the user is still typing. The hard parts are low latency, relevance ranking, typo tolerance, and updating suggestions from fast-changing query trends.
 
-| #721            | Category: System Design               | Difficulty: ★★★ |
-| :-------------- | :----------------------------------- | :-------------- |
-| **Depends on:** | Trie, Ranking, Caching               |                 |
-| **Used by:**    | Search Products, E-Commerce, Typeahead UX |             |
-| **Related:**    | News Feed Design, Caching, Rate Limiter Design |          |
+| #721            | Category: System Design                        | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------- | :-------------- |
+| **Depends on:** | Trie, Ranking, Caching                         |                 |
+| **Used by:**    | Search Products, E-Commerce, Typeahead UX      |                 |
+| **Related:**    | News Feed Design, Caching, Rate Limiter Design |                 |
 
 ---
 
@@ -109,21 +109,21 @@ print(autocomplete("mic", queries))
 
 ### ⚖️ Comparison Table
 
-| Concern | Typical answer |
-| --- | --- |
-| Prefix lookup | trie / prefix index |
-| Ranking | frequency + recency |
-| Speed | cache hot prefixes |
+| Concern       | Typical answer                     |
+| ------------- | ---------------------------------- |
+| Prefix lookup | trie / prefix index                |
+| Ranking       | frequency + recency                |
+| Speed         | cache hot prefixes                 |
 | Trend updates | streaming counters + batch rebuild |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
-| "Trie alone solves autocomplete" | Retrieval is only half; ranking quality matters just as much. |
-| "Use full search engine query path" | Full-text ranking is often too heavy for every keystroke. |
+| Misconception                       | Reality                                                       |
+| ----------------------------------- | ------------------------------------------------------------- |
+| "Trie alone solves autocomplete"    | Retrieval is only half; ranking quality matters just as much. |
+| "Use full search engine query path" | Full-text ranking is often too heavy for every keystroke.     |
 
 ---
 

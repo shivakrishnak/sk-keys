@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — One node becomes the leader and coordinates writes or decisions. Other nodes follow by replicating the leader’s state. This simplifies consistency and ordering, but introduces failover and leader-election complexity.
 
-| #715            | Category: System Design                         | Difficulty: ★★★ |
-| :-------------- | :--------------------------------------------- | :-------------- |
-| **Depends on:** | Replication, Distributed Coordination, Failover |                 |
-| **Used by:**    | Databases, Consensus Systems, Replicated Services |               |
-| **Related:**    | Active-Passive, Distributed Locks, Write-Ahead Logging |            |
+| #715            | Category: System Design                                | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------- | :-------------- |
+| **Depends on:** | Replication, Distributed Coordination, Failover        |                 |
+| **Used by:**    | Databases, Consensus Systems, Replicated Services      |                 |
+| **Related:**    | Active-Passive, Distributed Locks, Write-Ahead Logging |                 |
 
 ---
 
@@ -134,19 +134,19 @@ follower.log = leader.log.copy()
 
 ### ⚖️ Comparison Table
 
-| Pattern | Write path | Complexity | Best fit |
-| --- | --- | --- | --- |
-| Leader-follower | Single leader | Medium | Ordered writes |
-| Active-active | Multiple writers | High | Regional write availability |
-| Shared-nothing sharding | Per-partition leader | High | Horizontal scale |
+| Pattern                 | Write path           | Complexity | Best fit                    |
+| ----------------------- | -------------------- | ---------- | --------------------------- |
+| Leader-follower         | Single leader        | Medium     | Ordered writes              |
+| Active-active           | Multiple writers     | High       | Regional write availability |
+| Shared-nothing sharding | Per-partition leader | High       | Horizontal scale            |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
-| "Followers are always identical" | Replication lag means followers may be stale. |
+| Misconception                       | Reality                                               |
+| ----------------------------------- | ----------------------------------------------------- |
+| "Followers are always identical"    | Replication lag means followers may be stale.         |
 | "Leader-follower means no downtime" | Leader failure still requires detection and failover. |
 
 ---

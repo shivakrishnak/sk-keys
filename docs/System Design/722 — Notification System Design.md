@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — A notification system accepts events, applies user preferences and channel rules, then delivers messages through email, SMS, push, or in-app channels. The hard parts are fan-out, deduplication, rate control, and delivery observability.
 
-| #722            | Category: System Design                    | Difficulty: ★★★ |
-| :-------------- | :---------------------------------------- | :-------------- |
-| **Depends on:** | Queues, Push vs Pull Architecture, Rate Limiting |              |
-| **Used by:**    | Product Messaging, Alerts, Engagement Systems |               |
-| **Related:**    | Fan-Out on Write vs Read, Polling vs Webhooks, Chat System Design | |
+| #722            | Category: System Design                                           | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Queues, Push vs Pull Architecture, Rate Limiting                  |                 |
+| **Used by:**    | Product Messaging, Alerts, Engagement Systems                     |                 |
+| **Related:**    | Fan-Out on Write vs Read, Polling vs Webhooks, Chat System Design |                 |
 
 ---
 
@@ -109,20 +109,20 @@ def build_notifications(event, user_prefs):
 
 ### ⚖️ Comparison Table
 
-| Concern | Common answer |
-| --- | --- |
-| Burst handling | queues |
-| User preference enforcement | policy layer |
-| Duplicate suppression | idempotency key / dedupe window |
-| Provider failure | retry + fallback channel |
+| Concern                     | Common answer                   |
+| --------------------------- | ------------------------------- |
+| Burst handling              | queues                          |
+| User preference enforcement | policy layer                    |
+| Duplicate suppression       | idempotency key / dedupe window |
+| Provider failure            | retry + fallback channel        |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
-| "Just send every event" | Unfiltered notification volume destroys product trust. |
+| Misconception                          | Reality                                                     |
+| -------------------------------------- | ----------------------------------------------------------- |
+| "Just send every event"                | Unfiltered notification volume destroys product trust.      |
 | "Delivery success equals user seen it" | Providers report accepted/delivered; attention is separate. |
 
 ---

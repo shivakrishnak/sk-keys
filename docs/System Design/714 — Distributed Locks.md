@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — A distributed lock ensures only one node in a cluster performs a critical action at a time. It is much harder than a local mutex because networks partition, clocks drift, and processes can die while holding the lock.
 
-| #714            | Category: System Design                               | Difficulty: ★★★ |
-| :-------------- | :--------------------------------------------------- | :-------------- |
-| **Depends on:** | Distributed Systems, Consensus, Failure Detection    |                 |
-| **Used by:**    | Leader Election, Job Scheduling, Critical Sections   |                 |
-| **Related:**    | Leader-Follower Pattern, Idempotency Key, Coordination Services |        |
+| #714            | Category: System Design                                         | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Distributed Systems, Consensus, Failure Detection               |                 |
+| **Used by:**    | Leader Election, Job Scheduling, Critical Sections              |                 |
+| **Related:**    | Leader-Follower Pattern, Idempotency Key, Coordination Services |                 |
 
 ---
 
@@ -134,21 +134,21 @@ class LeaseLock:
 
 ### ⚖️ Comparison Table
 
-| Approach | Exclusivity | Failure safety | Operational cost |
-| --- | --- | --- | --- |
-| Local mutex | Process-local only | High | Low |
-| Redis-style lease | Medium | Medium | Medium |
-| Consensus lock (ZooKeeper/etcd) | High | Higher | Higher |
-| No lock, idempotent design | Often enough | Often best | Medium |
+| Approach                        | Exclusivity        | Failure safety | Operational cost |
+| ------------------------------- | ------------------ | -------------- | ---------------- |
+| Local mutex                     | Process-local only | High           | Low              |
+| Redis-style lease               | Medium             | Medium         | Medium           |
+| Consensus lock (ZooKeeper/etcd) | High               | Higher         | Higher           |
+| No lock, idempotent design      | Often enough       | Often best     | Medium           |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
-| "A lock key in Redis is enough" | Not for correctness-critical workflows without lease and fencing design. |
-| "Lock acquired means work is safe" | Only if downstream actions can reject stale owners. |
+| Misconception                      | Reality                                                                  |
+| ---------------------------------- | ------------------------------------------------------------------------ |
+| "A lock key in Redis is enough"    | Not for correctness-critical workflows without lease and fencing design. |
+| "Lock acquired means work is safe" | Only if downstream actions can reject stale owners.                      |
 
 ---
 

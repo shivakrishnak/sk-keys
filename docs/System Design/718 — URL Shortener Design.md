@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — A URL shortener maps a long URL to a compact unique code and redirects requests quickly. The core design questions are code generation, collision avoidance, redirect latency, abuse prevention, and click analytics.
 
-| #718            | Category: System Design                | Difficulty: ★★☆ |
-| :-------------- | :------------------------------------ | :-------------- |
-| **Depends on:** | Hashing, Database Design, Caching     |                 |
-| **Used by:**    | Interview Design Problems, Redirect Services, Analytics |          |
-| **Related:**    | Rate Limiter Design, Caching, Capacity Planning |                 |
+| #718            | Category: System Design                                 | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------ | :-------------- |
+| **Depends on:** | Hashing, Database Design, Caching                       |                 |
+| **Used by:**    | Interview Design Problems, Redirect Services, Analytics |                 |
+| **Related:**    | Rate Limiter Design, Caching, Capacity Planning         |                 |
 
 ---
 
@@ -124,21 +124,21 @@ print(base62_encode(125))
 
 ### ⚖️ Comparison Table
 
-| Decision | Option | Trade-off |
-| --- | --- | --- |
-| Code generation | counter + Base62 | simple, predictable |
-| Code generation | random token | avoids guessability, collision checks |
-| Redirect type | 301 | cacheable permanent redirect |
-| Redirect type | 302 | flexible, non-permanent |
+| Decision        | Option           | Trade-off                             |
+| --------------- | ---------------- | ------------------------------------- |
+| Code generation | counter + Base62 | simple, predictable                   |
+| Code generation | random token     | avoids guessability, collision checks |
+| Redirect type   | 301              | cacheable permanent redirect          |
+| Redirect type   | 302              | flexible, non-permanent               |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
-| "This is just a hash map" | The real design includes abuse control, analytics, hot caching, and code lifecycle. |
-| "Analytics must happen synchronously" | They should usually be async off the redirect path. |
+| Misconception                         | Reality                                                                             |
+| ------------------------------------- | ----------------------------------------------------------------------------------- |
+| "This is just a hash map"             | The real design includes abuse control, analytics, hot caching, and code lifecycle. |
+| "Analytics must happen synchronously" | They should usually be async off the redirect path.                                 |
 
 ---
 

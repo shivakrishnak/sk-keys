@@ -26,18 +26,18 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #737 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Domain Model, Object-Oriented Design, Service Layer | |
-| **Used by:** | Transaction Script, Service Layer, CRUD-based architectures | |
-| **Related:** | Domain Model, Rich Domain Model, Transaction Script, Service Layer | |
+| #737            | Category: Software Architecture Patterns                           | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Domain Model, Object-Oriented Design, Service Layer                |                 |
+| **Used by:**    | Transaction Script, Service Layer, CRUD-based architectures        |                 |
+| **Related:**    | Domain Model, Rich Domain Model, Transaction Script, Service Layer |                 |
 
 ---
 
 ### 🔥 The Problem This Solves
 
 **THE ANTI-PATTERN CONTEXT:**
-This entry describes a pattern to *avoid*. It is named and documented as a known anti-pattern by Martin Fowler. Understanding what it is and why it emerges is essential for recognizing it in code you encounter — which you will, often.
+This entry describes a pattern to _avoid_. It is named and documented as a known anti-pattern by Martin Fowler. Understanding what it is and why it emerges is essential for recognizing it in code you encounter — which you will, often.
 
 **WHY IT EMERGES:**
 Developers trained in relational databases or procedural programming naturally model objects as data containers (tables in code) and write procedures that operate on them (stored procedures in Java). This looks like OO design but violates its core principle: encapsulation. The result is objects that are technically classes but philosophically structs.
@@ -59,6 +59,7 @@ An Anemic Domain Model, as identified and named by Martin Fowler in his 2003 bli
 Domain objects that are just data bags — all the logic is somewhere else in services.
 
 **One analogy:**
+
 > A bank account where the `Account` object is just a box holding a number. The rules about whether you can withdraw, how overdraft works, and what constitutes fraud all live in separate `AccountService`, `FraudService`, and `OverdraftService` classes. The account itself has no opinion about what can be done to it — any service can reach in and change any field directly.
 
 **One insight:**
@@ -129,6 +130,7 @@ An anemic model means "the domain model exists as a concept in the team's heads 
 A reported bug: "Sometimes orders are cancelled even after they've shipped."
 
 In an anemic model, you need to search across ALL service classes for every place that calls `order.setStatus(CANCELLED)`. You find four different places:
+
 1. `OrderService.cancel()` — has the status check
 2. `AdminService.forceCancel()` — skips the check (admin override)
 3. `RefundService.processRefund()` — accidentally sets status to CANCELLED
@@ -313,23 +315,23 @@ public class BankAccount {
 
 ### ⚖️ Comparison Table
 
-| Approach | Logic Location | Encapsulation | Rule Duplication Risk | Best For |
-|---|---|---|---|---|
-| **Anemic Domain Model** | Services | None | High | Simple CRUD, no business rules |
-| Rich Domain Model | Domain objects | High | Low | Complex business domains |
-| Transaction Script | Procedure methods | N/A | High | One-off batch operations |
-| Active Record | Object + some services | Partial | Moderate | Simple ORM patterns |
+| Approach                | Logic Location         | Encapsulation | Rule Duplication Risk | Best For                       |
+| ----------------------- | ---------------------- | ------------- | --------------------- | ------------------------------ |
+| **Anemic Domain Model** | Services               | None          | High                  | Simple CRUD, no business rules |
+| Rich Domain Model       | Domain objects         | High          | Low                   | Complex business domains       |
+| Transaction Script      | Procedure methods      | N/A           | High                  | One-off batch operations       |
+| Active Record           | Object + some services | Partial       | Moderate              | Simple ORM patterns            |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Anemic model is bad, always use rich model" | For simple CRUD, an anemic model is simpler and perfectly appropriate |
+| Misconception                                   | Reality                                                                                                                                                |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "Anemic model is bad, always use rich model"    | For simple CRUD, an anemic model is simpler and perfectly appropriate                                                                                  |
 | "Service layer proves you have an anemic model" | Services coordinate use cases and infrastructure — they're needed even with rich domain models. The problem is services containing business invariants |
-| "JPA forces anemic models" | JPA can work with rich domain models — use protected/package-private setters and constructor injection |
-| "Anemic models are easier to test" | Rich domain models are often easier to test — they're pure Java with no framework dependencies |
+| "JPA forces anemic models"                      | JPA can work with rich domain models — use protected/package-private setters and constructor injection                                                 |
+| "Anemic models are easier to test"              | Rich domain models are often easier to test — they're pure Java with no framework dependencies                                                         |
 
 ---
 
@@ -342,6 +344,7 @@ public class BankAccount {
 **Root Cause:** Anemic domain model — business logic lives in services, not domain objects. Multiple developers implement the same rule independently.
 
 **Diagnostic Check:**
+
 ```bash
 # Find all places that call setStatus on domain objects
 # If there are more than 1-2 callers, logic is scattered
@@ -356,12 +359,15 @@ grep -rn "\.setStatus\|\.setState\|\.setAmount" \
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Domain Model` — the rich alternative to the anemic model
 
 **Builds On This:**
+
 - `Rich Domain Model` — the solution that replaces the anemic model
 
 **Alternatives:**
+
 - `Transaction Script` — a legitimate alternative for simple domains
 - `Active Record` — partial middle ground
 

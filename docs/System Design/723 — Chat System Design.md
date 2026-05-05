@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — A chat system handles real-time message delivery, ordering, unread state, presence, and offline sync. The hard parts are connection scale, message fan-out, mobile intermittency, and maintaining a useful ordering model without over-promising global consistency.
 
-| #723            | Category: System Design                    | Difficulty: ★★★ |
-| :-------------- | :---------------------------------------- | :-------------- |
-| **Depends on:** | WebSockets, Message Queues, Notification System Design |            |
-| **Used by:**    | Messaging Apps, Collaboration Tools, Support Platforms |        |
-| **Related:**    | Notification System Design, Push vs Pull Architecture, Fan-Out on Write vs Read | |
+| #723            | Category: System Design                                                         | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | WebSockets, Message Queues, Notification System Design                          |                 |
+| **Used by:**    | Messaging Apps, Collaboration Tools, Support Platforms                          |                 |
+| **Related:**    | Notification System Design, Push vs Pull Architecture, Fan-Out on Write vs Read |                 |
 
 ---
 
@@ -112,21 +112,21 @@ class Conversation:
 
 ### ⚖️ Comparison Table
 
-| Concern | Common answer |
-| --- | --- |
-| Realtime delivery | WebSockets |
-| Offline reliability | durable message store |
-| Ordering | per conversation sequence |
-| Presence | ephemeral state store |
+| Concern             | Common answer             |
+| ------------------- | ------------------------- |
+| Realtime delivery   | WebSockets                |
+| Offline reliability | durable message store     |
+| Ordering            | per conversation sequence |
+| Presence            | ephemeral state store     |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
-| "WebSocket means no message loss" | Sockets drop. Storage and replay still matter. |
-| "Global ordering is required" | Conversation-local ordering is usually enough and cheaper. |
+| Misconception                     | Reality                                                    |
+| --------------------------------- | ---------------------------------------------------------- |
+| "WebSocket means no message loss" | Sockets drop. Storage and replay still matter.             |
+| "Global ordering is required"     | Conversation-local ordering is usually enough and cheaper. |
 
 ---
 

@@ -26,11 +26,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #743 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Domain Model, Rich Domain Model, Repository Pattern, Bounded Context | |
-| **Used by:** | DDD, Event Sourcing, CQRS, Domain Events | |
-| **Related:** | Domain Events, Value Objects, Entities, Bounded Context, Repository Pattern | |
+| #743            | Category: Software Architecture Patterns                                    | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Domain Model, Rich Domain Model, Repository Pattern, Bounded Context        |                 |
+| **Used by:**    | DDD, Event Sourcing, CQRS, Domain Events                                    |                 |
+| **Related:**    | Domain Events, Value Objects, Entities, Bounded Context, Repository Pattern |                 |
 
 ---
 
@@ -59,6 +59,7 @@ An Aggregate, in Domain-Driven Design as defined by Eric Evans, is a cluster of 
 The gatekeeper of a cluster of objects — all changes go through it, and it guarantees everything inside stays consistent.
 
 **One analogy:**
+
 > A company's CEO is the Aggregate Root of the company's executive structure. Externally, you communicate with the company through the CEO, not directly with the CFO or COO. The CEO ensures all decisions across executives are consistent. If the CFO commits the company to a £10M expense, the CEO ensures the rest of the executive team is informed and consistent commitments are made. You can't reach past the CEO to directly instruct the CTO without the CEO's awareness.
 
 **One insight:**
@@ -130,6 +131,7 @@ Order aggregate invariant: "The order's total price always equals the sum of all
 Can this invariant be broken?
 
 **Without Aggregate Root:**
+
 ```java
 // Direct access to OrderItem — bypasses Order:
 OrderItem item = orderItemRepo.findById(itemId);
@@ -140,6 +142,7 @@ orderItemRepo.save(item);
 ```
 
 **With Aggregate Root:**
+
 ```java
 // Only way to change an item is through Order:
 order.changeItemQuantity(itemId, 5);
@@ -353,23 +356,23 @@ class OrderItem {
 
 ### ⚖️ Comparison Table
 
-| Concept | Aggregate Root | Entity | Value Object |
-|---|---|---|---|
-| Identity | Yes — unique across system | Yes — unique within aggregate | No — equality by value |
-| Lifecycle | Independent, has own repo | Tied to aggregate root | Tied to entity or root |
-| External access | Directly | Only through root | Only through root |
-| Repository | Yes — one per root | No | No |
+| Concept         | Aggregate Root             | Entity                        | Value Object           |
+| --------------- | -------------------------- | ----------------------------- | ---------------------- |
+| Identity        | Yes — unique across system | Yes — unique within aggregate | No — equality by value |
+| Lifecycle       | Independent, has own repo  | Tied to aggregate root        | Tied to entity or root |
+| External access | Directly                   | Only through root             | Only through root      |
+| Repository      | Yes — one per root         | No                            | No                     |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Every entity is an aggregate root | Only top-level entities with their own identity and lifecycle are roots; internal entities are not |
-| Large aggregates are safer (more consistent) | Large aggregates cause concurrency issues; prefer small aggregates with eventual consistency |
-| Aggregates span multiple database tables | An aggregate CAN span tables, but must be loaded/saved as a unit |
-| You need a separate repo for each entity type | Only Aggregate Roots get repositories — internal entities are loaded/saved with their root |
+| Misconception                                 | Reality                                                                                            |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Every entity is an aggregate root             | Only top-level entities with their own identity and lifecycle are roots; internal entities are not |
+| Large aggregates are safer (more consistent)  | Large aggregates cause concurrency issues; prefer small aggregates with eventual consistency       |
+| Aggregates span multiple database tables      | An aggregate CAN span tables, but must be loaded/saved as a unit                                   |
+| You need a separate repo for each entity type | Only Aggregate Roots get repositories — internal entities are loaded/saved with their root         |
 
 ---
 
@@ -394,6 +397,7 @@ class OrderItem {
 **Fix:** Identify if the consistency requirement is truly immediate or can be eventual. If eventual is acceptable, use domain events. If truly immediate, reconsider whether the two roots belong in the same aggregate.
 
 **Diagnostic Check:**
+
 ```bash
 # Find service methods that modify multiple aggregate types
 grep -rn "@Transactional" src/main/java/ --include="*.java" \
@@ -406,15 +410,18 @@ grep -rn "@Transactional" src/main/java/ --include="*.java" \
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Domain Model` — aggregate root is a domain model pattern
 - `Rich Domain Model` — aggregate roots should be rich, not anemic
 
 **Builds On This:**
+
 - `Domain Events` — raised by aggregate roots for cross-aggregate coordination
 - `Repository Pattern` — one repository per aggregate root
 - `Event Sourcing` — stores aggregate state as sequence of events
 
 **Related Concepts:**
+
 - `Bounded Context` — aggregates exist within bounded contexts
 - `Value Objects` — used within aggregates for descriptive concepts
 - `Entities` — internal entities within the aggregate

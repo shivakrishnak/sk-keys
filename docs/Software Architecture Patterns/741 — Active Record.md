@@ -26,11 +26,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #741 | Category: Software Architecture Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | ORM, Domain Model, Repository Pattern, Transaction Script | |
-| **Used by:** | Rails, Django, Laravel, Simple CRUD applications | |
-| **Related:** | Domain Model, Repository Pattern, Data Mapper, Anemic Domain Model | |
+| #741            | Category: Software Architecture Patterns                           | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | ORM, Domain Model, Repository Pattern, Transaction Script          |                 |
+| **Used by:**    | Rails, Django, Laravel, Simple CRUD applications                   |                 |
+| **Related:**    | Domain Model, Repository Pattern, Data Mapper, Anemic Domain Model |                 |
 
 ---
 
@@ -56,6 +56,7 @@ Active Record, defined by Martin Fowler in "Patterns of Enterprise Application A
 A domain object that knows its own database row — it loads itself, saves itself, and deletes itself.
 
 **One analogy:**
+
 > A business card that knows how to file itself. When you receive a new card, it jumps into the appropriate folder (save). When you want someone's details, the folder slot hands you their card (find). When you want to remove a contact, the card removes itself from the folder (delete). The card IS the filing system entry — there's no separate filing clerk.
 
 **One insight:**
@@ -284,23 +285,23 @@ product.discontinue()                # UPDATE + business rule
 
 ### ⚖️ Comparison Table
 
-| Pattern | Persistence | Domain Logic | Coupling | Best For |
-|---|---|---|---|---|
-| **Active Record** | On the object | On the object | Tight (DB schema = domain) | Simple CRUD, rapid prototyping |
-| Data Mapper | Separate mapper | In domain object | Loose | Complex domains, testability |
-| Repository Pattern | Separate repo | In domain object | Loose | DDD, rich domain models |
-| Transaction Script | In service method | In service method | Medium | Simple operations |
+| Pattern            | Persistence       | Domain Logic      | Coupling                   | Best For                       |
+| ------------------ | ----------------- | ----------------- | -------------------------- | ------------------------------ |
+| **Active Record**  | On the object     | On the object     | Tight (DB schema = domain) | Simple CRUD, rapid prototyping |
+| Data Mapper        | Separate mapper   | In domain object  | Loose                      | Complex domains, testability   |
+| Repository Pattern | Separate repo     | In domain object  | Loose                      | DDD, rich domain models        |
+| Transaction Script | In service method | In service method | Medium                     | Simple operations              |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| JPA @Entity classes are Active Records | JPA entities are closer to Data Mapper — they have ORM annotations but persistence operations are in repositories |
-| Active Record is always an anti-pattern | Active Record is appropriate for data-centric applications with simple business rules |
-| Active Record can't have business logic | Active Record CAN include domain methods — the pattern doesn't prohibit behavior |
-| Active Record and Anemic Model are the same | Anemic model = no behavior; Active Record can have behavior — they're independent concepts |
+| Misconception                               | Reality                                                                                                           |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| JPA @Entity classes are Active Records      | JPA entities are closer to Data Mapper — they have ORM annotations but persistence operations are in repositories |
+| Active Record is always an anti-pattern     | Active Record is appropriate for data-centric applications with simple business rules                             |
+| Active Record can't have business logic     | Active Record CAN include domain methods — the pattern doesn't prohibit behavior                                  |
+| Active Record and Anemic Model are the same | Anemic model = no behavior; Active Record can have behavior — they're independent concepts                        |
 
 ---
 
@@ -329,14 +330,17 @@ product.discontinue()                # UPDATE + business rule
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `ORM` — Active Record is an ORM pattern
 - `Repository Pattern` — the alternative to Active Record for separating persistence
 
 **Builds On This:**
+
 - `Data Mapper` — the pattern that separates domain from persistence
 - `Rich Domain Model` — can coexist with Active Record if the object has behavior
 
 **Alternatives:**
+
 - `Repository Pattern` — separates persistence concerns from domain objects
 - `Data Mapper` — Fowler's term for the mapper between domain and persistence layers
 

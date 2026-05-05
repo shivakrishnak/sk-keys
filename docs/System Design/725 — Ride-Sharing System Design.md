@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Ride-sharing systems match riders and drivers in real time while tracking location, ETA, pricing, trip state, and payment. The hard parts are geo indexing, dispatch latency, surge logic, and correctness under rapid driver movement.
 
-| #725            | Category: System Design                      | Difficulty: ★★★ |
-| :-------------- | :------------------------------------------ | :-------------- |
-| **Depends on:** | Geo-Replication, Matching Systems, Real-Time Updates |             |
-| **Used by:**    | Mobility Platforms, Dispatch Systems, Real-Time Marketplaces |   |
-| **Related:**    | Chat System Design, Notification System Design, Capacity Planning | |
+| #725            | Category: System Design                                           | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Geo-Replication, Matching Systems, Real-Time Updates              |                 |
+| **Used by:**    | Mobility Platforms, Dispatch Systems, Real-Time Marketplaces      |                 |
+| **Related:**    | Chat System Design, Notification System Design, Capacity Planning |                 |
 
 ---
 
@@ -116,20 +116,20 @@ print(best)
 
 ### ⚖️ Comparison Table
 
-| Concern | Common answer |
-| --- | --- |
-| Nearby lookup | geo index / geohash |
-| Dispatch speed | in-memory candidate search |
-| State changes | trip state machine |
-| Rider/driver updates | sockets + push fallback |
+| Concern              | Common answer              |
+| -------------------- | -------------------------- |
+| Nearby lookup        | geo index / geohash        |
+| Dispatch speed       | in-memory candidate search |
+| State changes        | trip state machine         |
+| Rider/driver updates | sockets + push fallback    |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
-| "Nearest driver is always best" | Acceptance rate, traffic, and market balancing also matter. |
+| Misconception                                         | Reality                                                          |
+| ----------------------------------------------------- | ---------------------------------------------------------------- |
+| "Nearest driver is always best"                       | Acceptance rate, traffic, and market balancing also matter.      |
 | "Location data can be strongly consistent everywhere" | Fresh-enough local accuracy matters more than global perfection. |
 
 ---

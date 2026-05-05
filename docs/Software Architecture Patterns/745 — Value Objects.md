@@ -26,11 +26,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #745 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Domain Model, Rich Domain Model, Aggregate Root, Entities | |
-| **Used by:** | DDD, Clean Architecture, Functional Programming Patterns | |
-| **Related:** | Entities, Aggregate Root, Domain Model, Immutability, Type Safety | |
+| #745            | Category: Software Architecture Patterns                          | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Domain Model, Rich Domain Model, Aggregate Root, Entities         |                 |
+| **Used by:**    | DDD, Clean Architecture, Functional Programming Patterns          |                 |
+| **Related:**    | Entities, Aggregate Root, Domain Model, Immutability, Type Safety |                 |
 
 ---
 
@@ -56,6 +56,7 @@ A Value Object, as defined in Domain-Driven Design by Eric Evans, is a domain ob
 A domain concept whose identity IS its value — two £100 notes are interchangeable; a specific customer account is not.
 
 **One analogy:**
+
 > A £50 note. Two £50 notes are completely equal — it doesn't matter which specific physical note you have, only the value matters. You can exchange one for another without any concern. Compare to a passport: two passports are NOT equal just because they have the same name — each is a unique document with a specific identity. The £50 note is a Value Object; the passport is an Entity.
 
 **One insight:**
@@ -116,6 +117,7 @@ Value Objects eliminate an entire class of bugs by encoding business rules into 
 ### 🧪 Thought Experiment
 
 **THE TYPE SAFETY TEST:**
+
 ```java
 // WITHOUT Value Objects — all UUID references are interchangeable
 void transfer(UUID fromAccount,
@@ -143,6 +145,7 @@ gbpAmount.subtract(usdFee);  // throws CurrencyMismatchEx
 ```
 
 **THE IMMUTABILITY TEST:**
+
 ```java
 // Immutable Value Object — operations create new instances:
 Money price = Money.of(100, Currency.GBP);
@@ -167,6 +170,7 @@ When designing domain types: ask yourself "do I care which specific instance thi
 A type that represents a concept defined by its values. Two `Money` values with the same amount and currency are identical and interchangeable. No ID needed.
 
 **Level 2 — How to build it (junior):**
+
 1. Make all fields `final`. 2. No setters. 3. Override `equals()` and `hashCode()` to compare by all fields. 4. Validate invariants in the constructor (throw if invalid). 5. Any "modification" method returns a new instance. 6. Consider implementing as Java `record` (Java 16+).
 
 **Level 3 — Design decisions (mid-level):**
@@ -357,24 +361,24 @@ public record DateRange(LocalDate start, LocalDate end) {
 
 ### ⚖️ Comparison Table
 
-| Aspect | Value Object | Entity | Primitive (String/int/UUID) |
-|---|---|---|---|
-| Identity | None — equality by value | Has unique ID | None |
-| Mutability | Immutable | Mutable (state changes) | Mutable (primitive) |
-| Equality | All fields equal | ID equals | Reference/value equals |
-| Validation | In constructor | In operation methods | None — caller's responsibility |
-| Type safety | High — named types | High | Low — string is a string |
+| Aspect      | Value Object             | Entity                  | Primitive (String/int/UUID)    |
+| ----------- | ------------------------ | ----------------------- | ------------------------------ |
+| Identity    | None — equality by value | Has unique ID           | None                           |
+| Mutability  | Immutable                | Mutable (state changes) | Mutable (primitive)            |
+| Equality    | All fields equal         | ID equals               | Reference/value equals         |
+| Validation  | In constructor           | In operation methods    | None — caller's responsibility |
+| Type safety | High — named types       | High                    | Low — string is a string       |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Value Objects are just DTOs | DTOs transfer data; Value Objects are domain concepts with behavior and validation — fundamentally different |
-| Value Objects can't have behavior | Value Objects SHOULD have behavior — that's their power (Money.add, DateRange.overlaps) |
-| Primitive wrappers (OrderId) are overkill | Typed IDs prevent an entire class of runtime bugs; they have essentially zero performance cost |
-| Value Objects require deep copy to "change" | You don't change a Value Object — you create a new one. This is by design. |
+| Misconception                               | Reality                                                                                                      |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Value Objects are just DTOs                 | DTOs transfer data; Value Objects are domain concepts with behavior and validation — fundamentally different |
+| Value Objects can't have behavior           | Value Objects SHOULD have behavior — that's their power (Money.add, DateRange.overlaps)                      |
+| Primitive wrappers (OrderId) are overkill   | Typed IDs prevent an entire class of runtime bugs; they have essentially zero performance cost               |
+| Value Objects require deep copy to "change" | You don't change a Value Object — you create a new one. This is by design.                                   |
 
 ---
 
@@ -387,6 +391,7 @@ public record DateRange(LocalDate start, LocalDate end) {
 **Root Cause:** Failing to model domain concepts as Value Objects.
 
 **Diagnostic Check:**
+
 ```bash
 # Find methods with too many String/BigDecimal/UUID parameters
 # These are candidates for Value Object extraction
@@ -412,14 +417,17 @@ grep -rn "String\|BigDecimal\|UUID" \
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Domain Model` — Value Objects are building blocks of domain models
 - `Entities` — the contrast class to understand what Value Objects are not
 
 **Builds On This:**
+
 - `Aggregate Root` — uses Value Objects internally for typed attributes
 - `Domain Events` — should contain Value Objects, not primitives
 
 **Related Patterns:**
+
 - `Immutability` — the property that makes Value Objects safe and composable
 - `Type Safety` — what Value Objects provide at the domain level
 

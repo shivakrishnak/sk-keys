@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — An idempotency key lets clients safely retry a request without creating duplicate side effects. The server stores the first successful result for a unique key and returns the same outcome for repeated requests with that key.
 
-| #713            | Category: System Design                    | Difficulty: ★★★ |
-| :-------------- | :---------------------------------------- | :-------------- |
-| **Depends on:** | HTTP APIs, Retries, Distributed Systems   |                 |
-| **Used by:**    | Payment APIs, Order Creation, Webhooks    |                 |
-| **Related:**    | Idempotency, Polling vs Webhooks, Exactly-Once Semantics |        |
+| #713            | Category: System Design                                  | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------- | :-------------- |
+| **Depends on:** | HTTP APIs, Retries, Distributed Systems                  |                 |
+| **Used by:**    | Payment APIs, Order Creation, Webhooks                   |                 |
+| **Related:**    | Idempotency, Polling vs Webhooks, Exactly-Once Semantics |                 |
 
 ---
 
@@ -135,20 +135,20 @@ class IdempotencyStore:
 
 ### ⚖️ Comparison Table
 
-| Technique | Prevents duplicates | Handles ambiguous timeouts | Complexity |
-| --- | --- | --- | --- |
-| Client retry alone | No | No | Low |
-| Idempotency key | Yes | Yes | Medium |
-| Distributed transaction | Sometimes | Partially | High |
+| Technique               | Prevents duplicates | Handles ambiguous timeouts | Complexity |
+| ----------------------- | ------------------- | -------------------------- | ---------- |
+| Client retry alone      | No                  | No                         | Low        |
+| Idempotency key         | Yes                 | Yes                        | Medium     |
+| Distributed transaction | Sometimes           | Partially                  | High       |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
-| "POST cannot be safe to retry" | It can if the API supports idempotency keys. |
-| "Just use request body hash" | Different legitimate requests may share similar shapes; keys represent logical intent. |
+| Misconception                  | Reality                                                                                |
+| ------------------------------ | -------------------------------------------------------------------------------------- |
+| "POST cannot be safe to retry" | It can if the API supports idempotency keys.                                           |
+| "Just use request body hash"   | Different legitimate requests may share similar shapes; keys represent logical intent. |
 
 ---
 

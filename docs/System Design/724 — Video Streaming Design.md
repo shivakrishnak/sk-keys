@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Video streaming systems ingest, encode, store, and deliver media at different bitrates through CDNs. The hard parts are bandwidth cost, adaptive bitrate playback, startup latency, and scaling both live and on-demand delivery.
 
-| #724            | Category: System Design           | Difficulty: ★★★ |
-| :-------------- | :------------------------------- | :-------------- |
-| **Depends on:** | CDNs, Caching, Geo-Replication   |                 |
-| **Used by:**    | Media Platforms, Live Streaming, Video Delivery |        |
-| **Related:**    | Multi-Region Architecture, Capacity Planning, Notification System Design | |
+| #724            | Category: System Design                                                  | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | CDNs, Caching, Geo-Replication                                           |                 |
+| **Used by:**    | Media Platforms, Live Streaming, Video Delivery                          |                 |
+| **Related:**    | Multi-Region Architecture, Capacity Planning, Notification System Design |                 |
 
 ---
 
@@ -108,21 +108,21 @@ print(choose_bitrate(bitrates, measured_bandwidth=2_500_000))
 
 ### ⚖️ Comparison Table
 
-| Concern | Common answer |
-| --- | --- |
-| Startup latency | short segments + CDN edge |
-| Bandwidth variation | adaptive bitrate |
-| Origin protection | CDN caching |
-| Live scale | regional ingest + fanout |
+| Concern             | Common answer             |
+| ------------------- | ------------------------- |
+| Startup latency     | short segments + CDN edge |
+| Bandwidth variation | adaptive bitrate          |
+| Origin protection   | CDN caching               |
+| Live scale          | regional ingest + fanout  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
+| Misconception                     | Reality                                                                                |
+| --------------------------------- | -------------------------------------------------------------------------------------- |
 | "Bigger bitrate is always better" | Aggressive bitrate causes rebuffering, which users hate more than modest quality loss. |
-| "CDN solves everything" | Transcoding cost, live ingest, and manifest logic still matter. |
+| "CDN solves everything"           | Transcoding cost, live ingest, and manifest logic still matter.                        |
 
 ---
 

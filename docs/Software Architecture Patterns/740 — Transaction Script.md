@@ -25,11 +25,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #740 | Category: Software Architecture Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Service Layer, Database Transactions, Stored Procedures | |
-| **Used by:** | Simple CRUD APIs, ETL processes, Scripts, Legacy systems | |
-| **Related:** | Service Layer, Domain Model, Active Record, Anemic Domain Model | |
+| #740            | Category: Software Architecture Patterns                        | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Service Layer, Database Transactions, Stored Procedures         |                 |
+| **Used by:**    | Simple CRUD APIs, ETL processes, Scripts, Legacy systems        |                 |
+| **Related:**    | Service Layer, Domain Model, Active Record, Anemic Domain Model |                 |
 
 ---
 
@@ -55,6 +55,7 @@ Transaction Script, defined by Martin Fowler in "Patterns of Enterprise Applicat
 One method per business operation; each method does all the database work for that operation.
 
 **One analogy:**
+
 > A recipe card. You want to make pasta? There's one recipe card for pasta. It tells you everything — get the ingredients, boil water, cook pasta, drain, serve. It's completely self-contained and sequential. There's no abstract "food preparation framework" — it's a direct procedure. Transaction Script is the recipe card approach to business operations.
 
 **One insight:**
@@ -279,23 +280,23 @@ if (customer.creditBalance - 100 < order.total) { ... }
 
 ### ⚖️ Comparison Table
 
-| Pattern | Logic Location | Object Model | Complexity | Best For |
-|---|---|---|---|---|
-| **Transaction Script** | In procedures | None (or anemic) | Low | Simple CRUD, ETL, scripts |
-| Service Layer + Domain Model | Domain objects | Rich | High | Complex domains |
-| Active Record | In entity + procedure | Partial | Medium | Simple ORM CRUD |
-| Stored Procedures | In database | None | Low (app) / High (DB) | Database-driven logic |
+| Pattern                      | Logic Location        | Object Model     | Complexity            | Best For                  |
+| ---------------------------- | --------------------- | ---------------- | --------------------- | ------------------------- |
+| **Transaction Script**       | In procedures         | None (or anemic) | Low                   | Simple CRUD, ETL, scripts |
+| Service Layer + Domain Model | Domain objects        | Rich             | High                  | Complex domains           |
+| Active Record                | In entity + procedure | Partial          | Medium                | Simple ORM CRUD           |
+| Stored Procedures            | In database           | None             | Low (app) / High (DB) | Database-driven logic     |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Transaction Script is always wrong | It's appropriate for simple domains — wrong for complex ones |
-| You must choose one pattern for the whole system | Different services or modules can use different patterns |
-| Transaction Script = bad architecture | Transaction Script is a legitimate pattern; using it when domain complexity warrants a richer model is the mistake |
-| Moving to domain model requires full rewrite | Scripts can be incrementally refactored by extracting shared logic into domain objects |
+| Misconception                                    | Reality                                                                                                            |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| Transaction Script is always wrong               | It's appropriate for simple domains — wrong for complex ones                                                       |
+| You must choose one pattern for the whole system | Different services or modules can use different patterns                                                           |
+| Transaction Script = bad architecture            | Transaction Script is a legitimate pattern; using it when domain complexity warrants a richer model is the mistake |
+| Moving to domain model requires full rewrite     | Scripts can be incrementally refactored by extracting shared logic into domain objects                             |
 
 ---
 
@@ -308,6 +309,7 @@ if (customer.creditBalance - 100 < order.total) { ... }
 **Root Cause:** Transaction Script approach applied to a complex domain where shared rules are needed.
 
 **Diagnostic Check:**
+
 ```bash
 # Find duplicate patterns across service classes
 # Look for repeated SQL patterns or repeated conditionals
@@ -323,13 +325,16 @@ grep -rn "credit_limit\|insufficient_funds\|overdraft" \
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Service Layer` — the typical packaging structure for Transaction Scripts
 
 **Builds On This:**
+
 - `Domain Model` — the pattern to graduate to as domain complexity grows
 - `Repository Pattern` — commonly used with Transaction Script to abstract SQL
 
 **Alternatives:**
+
 - `Domain Model` — richer, appropriate for complex business rules
 - `Active Record` — middle ground: objects manage their own SQL
 

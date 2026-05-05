@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Write-Ahead Logging records intended changes in an append-only log before mutating the main data structure. If the system crashes midway, the log can be replayed to recover consistent state.
 
-| #716            | Category: System Design                          | Difficulty: ★★★ |
-| :-------------- | :---------------------------------------------- | :-------------- |
-| **Depends on:** | Storage Systems, Durability, Leader-Follower Pattern |             |
-| **Used by:**    | Databases, Message Queues, Recovery Systems     |                 |
-| **Related:**    | Leader-Follower Pattern, Event Sourcing, Append-Only Log |         |
+| #716            | Category: System Design                                  | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------- | :-------------- |
+| **Depends on:** | Storage Systems, Durability, Leader-Follower Pattern     |                 |
+| **Used by:**    | Databases, Message Queues, Recovery Systems              |                 |
+| **Related:**    | Leader-Follower Pattern, Event Sourcing, Append-Only Log |                 |
 
 ---
 
@@ -130,20 +130,20 @@ class WALStore:
 
 ### ⚖️ Comparison Table
 
-| Approach | Crash recovery | Write cost | Read complexity |
-| --- | --- | --- | --- |
-| WAL | Strong | Extra append/flush | Low |
-| Direct overwrite only | Weak | Lower initially | Risky after crash |
-| Full copy-on-write snapshot | Strong | Higher | Medium |
+| Approach                    | Crash recovery | Write cost         | Read complexity   |
+| --------------------------- | -------------- | ------------------ | ----------------- |
+| WAL                         | Strong         | Extra append/flush | Low               |
+| Direct overwrite only       | Weak           | Lower initially    | Risky after crash |
+| Full copy-on-write snapshot | Strong         | Higher             | Medium            |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
-| "WAL means data files are always up to date" | No. Data files may lag behind log position. |
-| "Appending to log is enough" | Durability requires correct flush ordering, not just append in memory. |
+| Misconception                                | Reality                                                                |
+| -------------------------------------------- | ---------------------------------------------------------------------- |
+| "WAL means data files are always up to date" | No. Data files may lag behind log position.                            |
+| "Appending to log is enough"                 | Durability requires correct flush ordering, not just append in memory. |
 
 ---
 

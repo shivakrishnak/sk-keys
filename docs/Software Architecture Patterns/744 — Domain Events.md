@@ -27,11 +27,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #744 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Aggregate Root, Domain Model, Event-Driven Architecture, Outbox Pattern | |
-| **Used by:** | CQRS, Event Sourcing, Saga Pattern, Microservices | |
-| **Related:** | Aggregate Root, Event Sourcing, Integration Events, Outbox Pattern, CQRS | |
+| #744            | Category: Software Architecture Patterns                                 | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Aggregate Root, Domain Model, Event-Driven Architecture, Outbox Pattern  |                 |
+| **Used by:**    | CQRS, Event Sourcing, Saga Pattern, Microservices                        |                 |
+| **Related:**    | Aggregate Root, Event Sourcing, Integration Events, Outbox Pattern, CQRS |                 |
 
 ---
 
@@ -59,6 +59,7 @@ A Domain Event, as described by Eric Evans in "Domain-Driven Design" and elabora
 Immutable records of significant things that happened — expressed in business language, used to decouple reactions.
 
 **One analogy:**
+
 > A newspaper publishes news events — "Prime Minister Resigned at 3pm Today." The newspaper doesn't know who will read it or what they'll do with the information. Some readers will vote differently. Some will invest differently. Some will write commentary. The newspaper (aggregate root) raises the event; the readers (other aggregates, services) react independently. Adding a new reader doesn't require the newspaper to change.
 
 **One insight:**
@@ -132,6 +133,7 @@ Scenario: Order is placed. Currently: warehouse gets a pick task, billing charge
 New requirement: When an order is placed, send the customer a confirmation email.
 
 **Without Domain Events (direct coupling):**
+
 ```java
 // OrderService.placeOrder() must change:
 public void placeOrder(PlaceOrderCommand cmd) {
@@ -144,6 +146,7 @@ public void placeOrder(PlaceOrderCommand cmd) {
 ```
 
 **With Domain Events (decoupled):**
+
 ```java
 // OrderService.placeOrder() unchanged:
 public void placeOrder(PlaceOrderCommand cmd) {
@@ -180,6 +183,7 @@ public class OrderConfirmationEmailHandler {
 Records of important things that happened in your business: "Order placed," "Payment received," "Account closed." Other parts of the system listen for these records and react.
 
 **Level 2 — How to use it (junior):**
+
 1. Name the event in past tense: `OrderShippedEvent`. 2. Create an immutable class with all relevant data. 3. In the aggregate root's operation method, add the event to a collection: `events.add(new OrderShippedEvent(...))`. 4. After the repository saves the aggregate, publish the events to an event bus. 5. Write event handlers that react to the events.
 
 **Level 3 — Transactional guarantees (mid-level):**
@@ -361,24 +365,24 @@ public class OrderApplicationService {
 
 ### ⚖️ Comparison Table
 
-| Aspect | Domain Events | Direct Method Calls | Integration Events |
-|---|---|---|---|
-| Coupling | Loose — publisher ignores consumers | Tight — caller knows callee | Loose — crosses service boundary |
-| Consistency | Eventual (for cross-aggregate) | Immediate | Eventual |
-| Transaction scope | Same tx or separate | Same tx (typically) | Separate service tx |
-| Discoverability | Events show what happened | Calls show what was done | Same as domain events |
-| Failure handling | At-least-once via Outbox | Rollback | Retry via message broker |
+| Aspect            | Domain Events                       | Direct Method Calls         | Integration Events               |
+| ----------------- | ----------------------------------- | --------------------------- | -------------------------------- |
+| Coupling          | Loose — publisher ignores consumers | Tight — caller knows callee | Loose — crosses service boundary |
+| Consistency       | Eventual (for cross-aggregate)      | Immediate                   | Eventual                         |
+| Transaction scope | Same tx or separate                 | Same tx (typically)         | Separate service tx              |
+| Discoverability   | Events show what happened           | Calls show what was done    | Same as domain events            |
+| Failure handling  | At-least-once via Outbox            | Rollback                    | Retry via message broker         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Domain Events are the same as integration events | Domain Events are in-process and can use rich types; Integration Events cross services and use simple schemas |
-| Raising an event = publishing it immediately | Events should be published AFTER the transaction commits — not during the operation |
-| Domain Events replace direct service calls always | For in-aggregate coordination, direct method calls are fine; domain events are for cross-aggregate or cross-context coordination |
-| Domain Events are just a pub/sub mechanism | Domain Events are a domain design concept — they should represent meaningful business occurrences, not just data change notifications |
+| Misconception                                     | Reality                                                                                                                               |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Domain Events are the same as integration events  | Domain Events are in-process and can use rich types; Integration Events cross services and use simple schemas                         |
+| Raising an event = publishing it immediately      | Events should be published AFTER the transaction commits — not during the operation                                                   |
+| Domain Events replace direct service calls always | For in-aggregate coordination, direct method calls are fine; domain events are for cross-aggregate or cross-context coordination      |
+| Domain Events are just a pub/sub mechanism        | Domain Events are a domain design concept — they should represent meaningful business occurrences, not just data change notifications |
 
 ---
 
@@ -409,15 +413,18 @@ public class OrderApplicationService {
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Aggregate Root` — the source of domain events
 - `Domain Model` — domain events express what happens in the domain model
 
 **Builds On This:**
+
 - `Event Sourcing` — stores aggregate state as a sequence of domain events
 - `Outbox Pattern` — guarantees reliable event publishing
 - `Saga Pattern` — orchestrates multi-step processes using domain events
 
 **Related:**
+
 - `CQRS` — command side raises domain events; read side projects them into query models
 - `Integration Events` — cross-service version of domain events
 

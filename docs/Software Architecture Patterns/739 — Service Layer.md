@@ -25,11 +25,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #739 | Category: Software Architecture Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Domain Model, Repository Pattern, Transaction Management | |
-| **Used by:** | Layered Architecture, Clean Architecture, MVC Pattern, REST APIs | |
-| **Related:** | Application Service, Domain Service, Facade Pattern, Transaction Script | |
+| #739            | Category: Software Architecture Patterns                                | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Domain Model, Repository Pattern, Transaction Management                |                 |
+| **Used by:**    | Layered Architecture, Clean Architecture, MVC Pattern, REST APIs        |                 |
+| **Related:**    | Application Service, Domain Service, Facade Pattern, Transaction Script |                 |
 
 ---
 
@@ -39,7 +39,7 @@ tags:
 Without a service layer, controllers directly call repositories and domain logic. A controller method loads an Order, checks if it can ship, calls inventory, sends an email, and commits the transaction — all mixed together. When the same operation is needed via a batch job, a CLI tool, and a REST API, the logic is duplicated in all three.
 
 **THE SOLUTION:**
-A Service Layer defines what the application *can do*, independent of how the operation is invoked. A `shipOrder(OrderId, ShippingDetails)` method works the same whether called from a controller, a message consumer, or a scheduled job. The operation lives once; the invocation mechanism is separate.
+A Service Layer defines what the application _can do_, independent of how the operation is invoked. A `shipOrder(OrderId, ShippingDetails)` method works the same whether called from a controller, a message consumer, or a scheduled job. The operation lives once; the invocation mechanism is separate.
 
 ---
 
@@ -55,6 +55,7 @@ The Service Layer pattern, described by Martin Fowler in "Patterns of Enterprise
 The "what can this application do" layer — each method is one use case, coordinating everything needed to fulfill it.
 
 **One analogy:**
+
 > A bank's teller window is a Service Layer. The teller accepts "deposit £100 into account 12345" (the operation). The teller then: verifies your ID (authorization), finds your account (repository), adds the funds (domain object), records the transaction (audit), and hands you a receipt (response). The teller doesn't implement the rules of banking — they coordinate the systems that do.
 
 **One insight:**
@@ -124,6 +125,7 @@ The service layer should be thin — it coordinates, it does not implement busin
 **SETUP:** An `OrderController` (REST) and an `OrderBatchJob` (scheduled) both need to ship orders. Without a service layer, both contain the shipping logic. When the shipping logic changes, both must be updated.
 
 With a service layer:
+
 ```java
 // Controller calls service
 @PostMapping("/{orderId}/ship")
@@ -299,23 +301,23 @@ public void shipOrder(UUID orderId, ShippingDetails details) {
 
 ### ⚖️ Comparison Table
 
-| Aspect | Service Layer | Transaction Script | Domain Service |
-|---|---|---|---|
-| Contains | Coordination logic | All business + infra logic | Cross-aggregate domain logic |
-| Business rules | Delegates to domain | Contains them | Contains cross-aggregate rules |
-| Transaction scope | Typically manages | Manages | Doesn't manage |
-| Best for | Layered DDD apps | Simple scripts | Stateless multi-aggregate operations |
+| Aspect            | Service Layer       | Transaction Script         | Domain Service                       |
+| ----------------- | ------------------- | -------------------------- | ------------------------------------ |
+| Contains          | Coordination logic  | All business + infra logic | Cross-aggregate domain logic         |
+| Business rules    | Delegates to domain | Contains them              | Contains cross-aggregate rules       |
+| Transaction scope | Typically manages   | Manages                    | Doesn't manage                       |
+| Best for          | Layered DDD apps    | Simple scripts             | Stateless multi-aggregate operations |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Service Layer = business logic | Service Layer coordinates; business logic lives in domain objects |
-| One service per table/entity | One service per domain concept or use case group, not per database table |
-| Service Layer replaces the domain layer | They are different layers with different responsibilities |
-| Thin service layer means no validation | Service layer validates input format; domain layer validates business rules |
+| Misconception                           | Reality                                                                     |
+| --------------------------------------- | --------------------------------------------------------------------------- |
+| Service Layer = business logic          | Service Layer coordinates; business logic lives in domain objects           |
+| One service per table/entity            | One service per domain concept or use case group, not per database table    |
+| Service Layer replaces the domain layer | They are different layers with different responsibilities                   |
+| Thin service layer means no validation  | Service layer validates input format; domain layer validates business rules |
 
 ---
 
@@ -344,14 +346,17 @@ public void shipOrder(UUID orderId, ShippingDetails details) {
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Domain Model` — what the service layer coordinates
 - `Repository Pattern` — how the service layer loads/saves domain objects
 
 **Builds On This:**
+
 - `CQRS Pattern` — splits service layer into command and query handlers
 - `Application Events` — service layer publishes these after operations
 
 **Alternatives:**
+
 - `Transaction Script` — simpler approach without a domain model
 - `Use Case Interactors` — Clean Architecture's name for service layer methods
 

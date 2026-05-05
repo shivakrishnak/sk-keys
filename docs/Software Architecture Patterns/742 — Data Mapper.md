@@ -26,11 +26,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #742 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Active Record, Domain Model, ORM, Repository Pattern | |
-| **Used by:** | Hibernate/JPA, Repository Pattern, Clean Architecture, DDD | |
-| **Related:** | Active Record, Repository Pattern, ORM, Domain Model, Unit of Work | |
+| #742            | Category: Software Architecture Patterns                           | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Active Record, Domain Model, ORM, Repository Pattern               |                 |
+| **Used by:**    | Hibernate/JPA, Repository Pattern, Clean Architecture, DDD         |                 |
+| **Related:**    | Active Record, Repository Pattern, ORM, Domain Model, Unit of Work |                 |
 
 ---
 
@@ -59,6 +59,7 @@ The Data Mapper pattern, defined by Martin Fowler in "Patterns of Enterprise App
 A translator layer between your domain model and your database — each side is ignorant of the other.
 
 **One analogy:**
+
 > An interpreter at a diplomatic meeting. The French diplomat speaks French; the Japanese diplomat speaks Japanese. Neither needs to learn the other's language — the interpreter translates. If the French diplomat changes their argument, the interpreter adapts the translation without the Japanese diplomat's representation changing. If the Japanese translation conventions change, the French diplomat is unaffected. The interpreter is the Data Mapper; the diplomats are the domain model and the database.
 
 **One insight:**
@@ -342,25 +343,25 @@ public class Order {
 
 ### ⚖️ Comparison Table
 
-| Aspect | Data Mapper | Active Record |
-|---|---|---|
-| Domain/DB coupling | Loose — mapper separates them | Tight — domain IS the row |
-| Testability | High — domain testable without DB | Low — save/find need DB |
-| Schema evolution | Independent of domain model | Coupled to domain model |
-| Complexity | Higher — mapper layer needed | Lower — all in one class |
-| ORM example | Hibernate/JPA | Rails ActiveRecord |
-| Best for | Complex domains, DDD, clean arch | Simple CRUD, rapid dev |
+| Aspect             | Data Mapper                       | Active Record             |
+| ------------------ | --------------------------------- | ------------------------- |
+| Domain/DB coupling | Loose — mapper separates them     | Tight — domain IS the row |
+| Testability        | High — domain testable without DB | Low — save/find need DB   |
+| Schema evolution   | Independent of domain model       | Coupled to domain model   |
+| Complexity         | Higher — mapper layer needed      | Lower — all in one class  |
+| ORM example        | Hibernate/JPA                     | Rails ActiveRecord        |
+| Best for           | Complex domains, DDD, clean arch  | Simple CRUD, rapid dev    |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| JPA @Entity classes ARE Active Records | JPA is Data Mapper — the mapping is in the Entity, but the persistence operations are in the EntityManager/Repository |
-| Data Mapper requires writing SQL manually | ORMs like Hibernate implement Data Mapper — you configure the mapping, the ORM generates SQL |
-| Data Mapper eliminates the impedance mismatch | It manages the mismatch; the structural differences between OO and relational models remain |
-| Data Mapper is always better than Active Record | For simple CRUD apps, Active Record is more productive and proportionate |
+| Misconception                                   | Reality                                                                                                               |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| JPA @Entity classes ARE Active Records          | JPA is Data Mapper — the mapping is in the Entity, but the persistence operations are in the EntityManager/Repository |
+| Data Mapper requires writing SQL manually       | ORMs like Hibernate implement Data Mapper — you configure the mapping, the ORM generates SQL                          |
+| Data Mapper eliminates the impedance mismatch   | It manages the mismatch; the structural differences between OO and relational models remain                           |
+| Data Mapper is always better than Active Record | For simple CRUD apps, Active Record is more productive and proportionate                                              |
 
 ---
 
@@ -373,6 +374,7 @@ public class Order {
 **Root Cause:** Lazy loading in the Data Mapper. Collection associations loaded on-demand for each entity individually.
 
 **Diagnostic Command:**
+
 ```bash
 # Enable SQL logging in Spring Boot to see query count
 # application.properties:
@@ -394,14 +396,17 @@ grep "select.*from.*order_items" app.log | wc -l
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Active Record` — the simpler alternative Data Mapper improves upon
 - `ORM` — the technology used to implement Data Mapper
 
 **Builds On This:**
+
 - `Repository Pattern` — the interface that sits in front of the Data Mapper
 - `Unit of Work` — coordinates Data Mapper dirty tracking and commits
 
 **Alternatives:**
+
 - `Active Record` — simpler, appropriate for data-centric apps
 
 ---

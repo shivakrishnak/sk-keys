@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — A news feed system collects content from many producers, ranks it for each user, and serves it with low latency at massive read volume. The hard parts are fan-out strategy, ranking freshness, storage growth, and celebrity skew.
 
-| #720            | Category: System Design                               | Difficulty: ★★★ |
-| :-------------- | :--------------------------------------------------- | :-------------- |
-| **Depends on:** | Fan-Out on Write vs Read, Caching, Ranking Systems   |                 |
-| **Used by:**    | Social Networks, Content Platforms, Activity Streams |                 |
-| **Related:**    | Fan-Out on Write vs Read, Read-Heavy vs Write-Heavy Design, Notification System Design | |
+| #720            | Category: System Design                                                                | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Fan-Out on Write vs Read, Caching, Ranking Systems                                     |                 |
+| **Used by:**    | Social Networks, Content Platforms, Activity Streams                                   |                 |
+| **Related:**    | Fan-Out on Write vs Read, Read-Heavy vs Write-Heavy Design, Notification System Design |                 |
 
 ---
 
@@ -119,22 +119,22 @@ print(top_feed_items(items, limit=2))
 
 ### ⚖️ Comparison Table
 
-| Concern | Common answer |
-| --- | --- |
-| Write amplification | hybrid fan-out |
-| Read latency | feed cache |
-| Personalization | ranking stage |
-| Pagination | cursor-based |
-| Viral publishers | fan-out on read |
+| Concern             | Common answer   |
+| ------------------- | --------------- |
+| Write amplification | hybrid fan-out  |
+| Read latency        | feed cache      |
+| Personalization     | ranking stage   |
+| Pagination          | cursor-based    |
+| Viral publishers    | fan-out on read |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
+| Misconception                           | Reality                                                         |
+| --------------------------------------- | --------------------------------------------------------------- |
 | "A feed is just SQL ORDER BY timestamp" | Real feeds require ranking, filtering, and large-scale caching. |
-| "One fan-out strategy fits all users" | Celebrity and normal-user workloads differ drastically. |
+| "One fan-out strategy fits all users"   | Celebrity and normal-user workloads differ drastically.         |
 
 ---
 

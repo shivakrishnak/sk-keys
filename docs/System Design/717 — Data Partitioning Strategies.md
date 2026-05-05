@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Data partitioning splits large datasets into smaller pieces so storage and query load can scale. The best strategy depends on how data is accessed: by range, hash, tenant, geography, or time.
 
-| #717            | Category: System Design                       | Difficulty: ★★★ |
-| :-------------- | :------------------------------------------- | :-------------- |
-| **Depends on:** | Sharding, Capacity Planning, Query Patterns  |                 |
-| **Used by:**    | Large Databases, Analytics Systems, Multi-Tenant Platforms |      |
-| **Related:**    | Sharding, Hot Shard, Geo-Partitioning        |                 |
+| #717            | Category: System Design                                    | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------- | :-------------- |
+| **Depends on:** | Sharding, Capacity Planning, Query Patterns                |                 |
+| **Used by:**    | Large Databases, Analytics Systems, Multi-Tenant Platforms |                 |
+| **Related:**    | Sharding, Hot Shard, Geo-Partitioning                      |                 |
 
 ---
 
@@ -121,22 +121,22 @@ def route_partition(user_id, strategy="hash"):
 
 ### ⚖️ Comparison Table
 
-| Strategy | Best for | Main risk |
-| --- | --- | --- |
-| Range | ordered queries | hotspot ranges |
-| Hash | even distribution | poor locality |
-| Time | logs, metrics | hot latest partition |
-| Tenant | isolation | large-tenant skew |
-| Geo | latency/compliance | cross-region joins |
+| Strategy | Best for           | Main risk            |
+| -------- | ------------------ | -------------------- |
+| Range    | ordered queries    | hotspot ranges       |
+| Hash     | even distribution  | poor locality        |
+| Time     | logs, metrics      | hot latest partition |
+| Tenant   | isolation          | large-tenant skew    |
+| Geo      | latency/compliance | cross-region joins   |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
-| "Hash partitioning solves everything" | It hurts range scans and time-ordered queries. |
-| "Partitioning is free" | Cross-partition joins, rebalancing, and routing add complexity. |
+| Misconception                         | Reality                                                         |
+| ------------------------------------- | --------------------------------------------------------------- |
+| "Hash partitioning solves everything" | It hurts range scans and time-ordered queries.                  |
+| "Partitioning is free"                | Cross-partition joins, rebalancing, and routing add complexity. |
 
 ---
 

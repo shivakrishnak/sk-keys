@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Push sends data proactively to consumers when events happen. Pull makes consumers ask for data when they need it. Push reduces latency but adds delivery complexity. Pull is simpler and more controllable but wastes requests and adds staleness.
 
-| #711            | Category: System Design                                          | Difficulty: ★★★ |
-| :-------------- | :--------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Distributed Systems, Messaging, Fan-Out on Write vs Read         |                 |
-| **Used by:**    | Feed Systems, Event Delivery, Integration Design                 |                 |
-| **Related:**    | Polling vs Webhooks, Fan-Out on Write vs Read, Event-Driven Architecture |           |
+| #711            | Category: System Design                                                  | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Distributed Systems, Messaging, Fan-Out on Write vs Read                 |                 |
+| **Used by:**    | Feed Systems, Event Delivery, Integration Design                         |                 |
+| **Related:**    | Polling vs Webhooks, Fan-Out on Write vs Read, Event-Driven Architecture |                 |
 
 ---
 
@@ -154,23 +154,23 @@ producer.push_update({"type": "order_created", "id": 123})
 
 ### ⚖️ Comparison Table
 
-| Aspect | Push | Pull |
-| --- | --- | --- |
-| Freshness | High | Depends on polling interval |
-| Producer complexity | Higher | Lower |
-| Consumer control | Lower | Higher |
-| Wasted traffic | Lower | Higher |
-| Backpressure handling | Required | Easier |
+| Aspect                | Push     | Pull                        |
+| --------------------- | -------- | --------------------------- |
+| Freshness             | High     | Depends on polling interval |
+| Producer complexity   | Higher   | Lower                       |
+| Consumer control      | Lower    | Higher                      |
+| Wasted traffic        | Lower    | Higher                      |
+| Backpressure handling | Required | Easier                      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
-| "Push is always better" | No. Push is harder to operate and debug. |
-| "Pull is always stale" | Not necessarily. Fast polling plus caching can be good enough. |
-| "You must choose one" | Many systems use push notification plus pull fetch. |
+| Misconception           | Reality                                                        |
+| ----------------------- | -------------------------------------------------------------- |
+| "Push is always better" | No. Push is harder to operate and debug.                       |
+| "Pull is always stale"  | Not necessarily. Fast polling plus caching can be good enough. |
+| "You must choose one"   | Many systems use push notification plus pull fetch.            |
 
 ---
 

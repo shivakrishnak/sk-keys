@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Polling repeatedly asks a server whether something changed. Webhooks let the server call you when it changes. Polling is simpler and safer for consumers. Webhooks are more efficient and lower latency, but need retries, signatures, and idempotency.
 
-| #712            | Category: System Design                           | Difficulty: ★★☆ |
-| :-------------- | :----------------------------------------------- | :-------------- |
-| **Depends on:** | Push vs Pull Architecture, HTTP APIs, Event Delivery |              |
-| **Used by:**    | SaaS Integrations, Notifications, Sync Systems   |                 |
-| **Related:**    | Push vs Pull Architecture, Idempotency Key, Retries |               |
+| #712            | Category: System Design                              | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------- | :-------------- |
+| **Depends on:** | Push vs Pull Architecture, HTTP APIs, Event Delivery |                 |
+| **Used by:**    | SaaS Integrations, Notifications, Sync Systems       |                 |
+| **Related:**    | Push vs Pull Architecture, Idempotency Key, Retries  |                 |
 
 ---
 
@@ -140,22 +140,22 @@ class PollingClient:
 
 ### ⚖️ Comparison Table
 
-| Aspect | Polling | Webhooks |
-| --- | --- | --- |
-| Latency | Interval-bound | Near real-time |
-| Empty work | High | Low |
-| Consumer control | High | Lower |
-| Delivery complexity | Lower | Higher |
-| Recovery | Easy to re-poll | Needs retry/dead-letter strategy |
+| Aspect              | Polling         | Webhooks                         |
+| ------------------- | --------------- | -------------------------------- |
+| Latency             | Interval-bound  | Near real-time                   |
+| Empty work          | High            | Low                              |
+| Consumer control    | High            | Lower                            |
+| Delivery complexity | Lower           | Higher                           |
+| Recovery            | Easy to re-poll | Needs retry/dead-letter strategy |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-| --- | --- |
+| Misconception                | Reality                                    |
+| ---------------------------- | ------------------------------------------ |
 | "Webhooks are always better" | No. They are harder to secure and operate. |
-| "Polling is primitive" | It is often the most robust fallback. |
+| "Polling is primitive"       | It is often the most robust fallback.      |
 
 ---
 
