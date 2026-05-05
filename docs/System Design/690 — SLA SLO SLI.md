@@ -1,402 +1,527 @@
-﻿---
+---
 layout: default
 title: "SLA / SLO / SLI"
 parent: "System Design"
 nav_order: 690
 permalink: /system-design/sla-slo-sli/
-number: "690"
+number: "0690"
 category: System Design
 difficulty: ★★☆
-depends_on: "Observability, Error Budget"
-used_by: "Error Budget, MTTR / MTBF"
-tags: #intermediate, #reliability, #observability, #architecture, #foundational
+depends_on: Monitoring, High Availability, System Design
+used_by: Production Systems, Operations, Service Reliability
+related: Error Budget, MTTR, Observability, Service Level Management
+tags:
+  - reliability
+  - operations
+  - sre
+  - intermediate
+  - service-management
 ---
 
 # 690 — SLA / SLO / SLI
 
-`#intermediate` `#reliability` `#observability` `#architecture` `#foundational`
+⚡ TL;DR — Three related but distinct commitments: SLA is a business contract promising uptime, SLO is the internal target we aim for (usually higher than SLA), and SLI is the measured actual performance—together they define expectations and guide reliability decisions.
 
-⚡ TL;DR — **SLI** measures reliability (what you observe), **SLO** is your internal target (what you commit to internally), **SLA** is a contractual promise (what you commit to customers with financial consequences for breach).
+| #690            | Category: System Design                        | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------- | :-------------- |
+| **Depends on:** | Monitoring, High Availability, Observability   |                 |
+| **Used by:**    | Production Operations, SRE, Service Management |                 |
+| **Related:**    | Error Budget, MTTR / MTBF, Observability       |                 |
 
-| #690            | Category: System Design     | Difficulty: ★★☆ |
-| :-------------- | :-------------------------- | :-------------- |
-| **Depends on:** | Observability, Error Budget |                 |
-| **Used by:**    | Error Budget, MTTR / MTBF   |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+Your API is "up" sometimes. Customers say it's broken. You say it's fine. No agreed definition of "working." Customer escalates. Both parties unhappy. No one knows: how fast should responses be? How often is downtime acceptable? What happens if you miss targets—are there consequences?
+
+**THE BREAKING POINT:**
+Without clear commitments and measurements, service reliability becomes a finger-pointing exercise. No accountability, no way to plan capacity, no basis for decisions.
+
+**THE INVENTION MOMENT:**
+"This is why SLA/SLO/SLI were created—define what 'reliable' means, commit to targets, and measure reality."
 
 ---
 
 ### 📘 Textbook Definition
 
-**Service Level Indicator (SLI)** is a quantitative measure of a service's behaviour from the user's perspective — a carefully defined metric that captures service performance. Common SLIs: availability (fraction of successful requests), latency (fraction of requests below a threshold), throughput (requests per second), error rate, durability. **Service Level Objective (SLO)** is an internal target value or range for an SLI, expressed as a percentage over a time window: "99.9% of requests should succeed in a rolling 28-day window." SLOs are internal commitments — engineering targets used to drive reliability work. **Service Level Agreement (SLA)** is a contractual commitment made to customers that specifies consequences (financial penalties, credits, remediation) if the service fails to meet defined targets. SLAs are typically set looser than SLOs — SLO breaches alert engineering before SLA breaches affect customers. Together, these three concepts form the foundation of SRE (Site Reliability Engineering).
+- **SLA (Service Level Agreement):** A contractual commitment between a service provider and customer, specifying minimum service availability/performance (e.g., "99.9% uptime") and consequences if missed (credits, penalties, termination).
+- **SLO (Service Level Objective):** An internal target set by the service team, usually more stringent than the SLA, providing a buffer. If you commit to 99.9% SLA, you might aim for 99.99% SLO internally.
+- **SLI (Service Level Indicator):** The actual measured metric that indicates service performance (e.g., percentage of successful requests, P99 latency). SLI is compared against SLO to determine if targets are being met.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-- **SLI**: what you actually measure — "99.95% of requests succeeded this month"
-- **SLO**: your internal goal — "we want 99.9% success rate"
-- **SLA**: your customer contract — "we promise 99.5%, we'll pay a credit if we miss it"
+**One line:**
+SLA = contract promise. SLO = our internal goal (harder than SLA). SLI = what we actually measure.
 
-SLI ≥ SLO > SLA (measurements exceed objectives; objectives exceed contracts)
+**One analogy:**
 
----
+> A pizza restaurant guarantees delivery in 30 minutes (SLA—promise to customer). Internally, staff targets 20 minutes (SLO—better than promise, gives buffer). Driver tracks actual time (SLI—what's measured). If actual > 30 min, customer gets refund. If consistently close to 30 min, staff know they need to optimize.
 
-### 🔵 Simple Definition (Elaborated)
-
-Think of it as three concentric circles of commitment. The outermost circle is the SLI — raw measurement, no judgment. The middle circle is the SLO — your internal engineering target (ambitious but achievable). The innermost circle is the SLA — the contractual floor you promise customers (conservative, well below your SLO). Engineering tries to maintain SLO. If SLO is breached, it's a reliability incident. If SLA is breached, it's a legal/financial problem. The gap between SLO and SLA is the buffer — early warning that prevents SLA breaches.
+**One insight:**
+SLO > SLA > SLI over time. If SLI frequently exceeds SLO, you're burning error budget. If consistently under SLO, you might be over-provisioning (wasting money).
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**Why this three-layer model exists:**
+**CORE INVARIANTS:**
 
-```
-THE RELIABILITY MEASUREMENT PROBLEM:
-  How do you know if your service is "reliable"?
-  "The service is up" → vague, binary, not useful.
-  "Users are happy" → unmeasurable, subjective.
+1. A service can't be 100% reliable (bugs exist, hardware fails, network breaks)
+2. Perfect reliability is infinitely expensive
+3. Customers have acceptable failure rates; we should define and measure them
+4. There's a business/reliability tradeoff
 
-  NEED: precise, measurable, actionable definitions.
+**DERIVED DESIGN:**
+Start with customer needs (SLA): "99% of requests must succeed, with <500ms latency." This is the contract. Internally, aim higher (SLO): "99.9% success, <100ms latency"—buffer to handle occasional issues without breaching SLA. Measure actual performance (SLI): "During Jan, 99.97% success, P99 latency = 120ms." Compare SLI to SLO. If tracking well, invest elsewhere. If approaching SLA, trigger incident response.
 
-SERVICE LEVEL INDICATOR (SLI) — the measurement:
+**THE TRADE-OFFS:**
+**Gain:** Clarity. Alignment between business and engineering. Data-driven decisions on reliability investment.
 
-  Definition: SLI = (good events) / (total events)
-
-  AVAILABILITY SLI:
-    SLI = (successful HTTP responses with status 2xx or 3xx)
-          / (total HTTP requests)
-    Measured over: rolling 28-day window
-    Example value: 0.99951 (99.951%)
-
-  LATENCY SLI (threshold-based):
-    SLI = (requests completed in < 200ms) / (total requests)
-    Example value: 0.9981 (99.81% of requests complete in < 200ms)
-
-    NOTE: Use percentile thresholds (P99, P95), not averages.
-    Average latency hides tail latency: 1% of users waiting 10 seconds
-    while average is 50ms — average says "great", P99 says "broken".
-
-  ERROR RATE SLI:
-    SLI = 1 - (5xx errors / total requests)
-    = 1 - error_rate
-
-  DURABILITY SLI (for storage systems):
-    SLI = (objects retrievable on demand) / (objects stored)
-
-SERVICE LEVEL OBJECTIVE (SLO) — the internal target:
-
-  SLO = target threshold for an SLI.
-  Example: "SLI_availability >= 99.9% over rolling 28 days"
-
-  SLO MUST BE:
-  - Specific: which SLI, what threshold, what time window
-  - Measurable: automated monitoring and alerting
-  - Achievable: based on architecture capability (not wishful)
-  - Time-bounded: rolling window (28 days) vs. calendar period
-
-  SETTING TIGHT vs. LOOSE SLOs:
-
-    TOO TIGHT (99.9999% = 31 seconds downtime/year):
-      Nearly impossible to achieve consistently.
-      Any incident → SLO breach → engineering distracted by alerts.
-      Leads to: alert fatigue, engineering burnout, risk aversion.
-
-    TOO LOOSE (90% = 36 days downtime/year):
-      Users are unhappy before SLO breach.
-      SLO breach is meaningless signal.
-
-    CORRECT: Set SLO just above where users would notice/complain.
-      Survey users: what's the minimum reliability you'd accept?
-      Analysis: what does current system actually achieve (SLI history)?
-      Set SLO: slightly ambitious vs. current SLI (drives improvement).
-
-ERROR BUDGET: SLO to actionable budget:
-
-  Error Budget = 1 - SLO
-  SLO = 99.9% → Error Budget = 0.1% = 43.2 minutes/month allowed downtime
-
-  Error Budget Consumed = 1 - current SLI
-  If SLI = 99.85% → consumed 0.15% (exceeded 0.1% budget → SLO breach)
-
-  Error Budget drives decisions:
-  - Budget remaining: can deploy new features (accepting risk of failures)
-  - Budget exhausted: freeze deployments, focus on reliability only
-
-SERVICE LEVEL AGREEMENT (SLA) — the contract:
-
-  SLA is ALWAYS set looser than SLO.
-  Example:
-    SLO: 99.9% (internal target)
-    SLA: 99.5% (customer commitment)
-    Buffer: 0.4% (safety margin)
-
-  Why looser?
-  - SLO breach: engineering alert → investigation starts before customers notice
-  - SLA breach: customers already impacted → legal/financial consequences
-
-  SLA PENALTIES (typical):
-    99.5% to 99.0%: 10% service credit
-    99.0% to 95.0%: 25% service credit
-    Below 95.0%: 50% service credit or right to terminate
-
-  AWS S3 SLA: 99.9% monthly uptime commitment.
-  (Note: S3 SLO is much higher — designed for 99.999999999% durability)
-
-  PRACTICAL NOTE: Many "SLAs" in informal conversations are actually SLOs.
-  When a team says "our SLA is 99.9%", they often mean their internal target.
-  True SLAs: signed contracts with customers, specific financial remedies.
-```
+**Cost:** SLAs may limit flexibility (can't experiment/deploy during incidents without risking SLA breach). Too-tight SLOs burn resources. Too-loose SLOs mask problems.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-WITHOUT SLI/SLO/SLA framework:
+**SETUP:**
+A payment API. Customer expects to pay bills without delays. Business promises 99.5% uptime (SLA). Engineering team targets 99.95% (SLO). A month has 2,592,000 seconds (~30 days).
 
-- Reliability debates: "Is this acceptable?" — subjective, politically charged
-- Engineering prioritisation: impossible to justify reliability work vs. features
-- Customer trust: no measurable promises → customers cannot evaluate fit for purpose
+**SLA:** 99.5% = 0.5% downtime allowed = 0.005 × 2,592,000 = 12,960 seconds = ~3.6 hours/month unplanned downtime allowed.
 
-WITH SLI/SLO/SLA framework:
-→ Objective measurement: "SLI is 99.85%, SLO is 99.9% → error budget exhausted"
-→ Decision framework: error budget remaining → ship features; exhausted → reliability sprint
-→ Customer accountability: contractual commitments with specific consequences
+**SLO:** 99.95% = 0.05% downtime = 0.0005 × 2,592,000 = 1,296 seconds = ~21 minutes/month.
+
+**SLI (Actual):**
+
+- Week 1: 99.97% success (good, well above SLO)
+- Week 2: 99.94% success (slightly below SLO but well above SLA)
+- Week 3: 99.92% success (approaching SLA boundary)
+- Week 4: 99.91% success (still above SLA, but trend is bad)
+
+**Month overall:** 99.93% success → above SLA (customer not due refund) but below SLO (team missed internal target, should investigate).
+
+**THE INSIGHT:**
+SLA is the floor (contract boundary). SLO is the target (operational boundary). SLI is reality. The delta between SLO and SLA is error budget—how much you can fail before customers complain.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> An airline's on-time performance system. The SLI is the actual measurement: "87.3% of flights this month departed within 15 minutes of schedule." The SLO is the airline's internal target: "we want to hit 90%." The SLA is the contract: "we guarantee 85% on-time performance in our service agreement with corporate clients, or we provide travel credits." The airline tries to beat its SLO (90%) so it never gets close to breaching its SLA (85%).
+> An airline promises 95% on-time arrivals (SLA—legal commitment). Internally, they target 98% (SLO—buffer for weather, mechanical issues). A dispatcher tracks actual arrival rates (SLI). If SLI drops below 95%, customers file complaints, lawsuits. If SLI is consistently 96–97%, airline is meeting SLA but might relax operations. If SLI is 99%+, airline might reduce crew/flights (cost saving, still profitable).
 
-"Flight on-time percentage" = SLI (the measured metric)
-"Internal 90% target" = SLO (engineering/ops target)
-"Contractual 85% guarantee" = SLA (customer-facing promise)
-"Travel credits on breach" = SLA penalty / service credit
+- "On-time arrival" → uptime / success rate
+- "Promise to customers (95%)" → SLA
+- "Internal target (98%)" → SLO
+- "Actual rate tracked" → SLI
+- "Buffer between promise and target" → error budget
+- "Consequences of missing SLA" → refunds, reputation damage
+
+**Where this analogy breaks down:** Software failures are more binary (up/down) than airline lateness (degrees of late). SLI can be multidimensional (latency AND availability), not just one metric.
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+The service promises customers it will work 99.9% of the time (SLA). Engineers aim for 99.95% to have buffer (SLO). Every month, they measure how often it actually worked (SLI). If it works less than 99.9%, customers get refunds.
+
+**Level 2 — How to use it (junior developer):**
+Your service has SLA = 99% uptime. SLO = 99.5%. Every day, check the SLI dashboard: what's the actual uptime? If SLI < 99% for the month, alert. If SLI consistently < 99.5%, investigate (why are we missing our target?). When deploying, check if it might breach SLA (don't deploy risky changes if you're already close to SLA limit).
+
+**Level 3 — How it works (mid-level engineer):**
+Define SLI metrics (e.g., successful_requests / total_requests, P99 latency < 200ms). Emit these metrics continuously (instrumentation). Aggregate into SLI calculation (daily, weekly, monthly). Set SLO thresholds (e.g., success rate > 99.5% for 30 days). Compare: if SLI >= SLO, good. If SLI < SLO but >= SLA, needs investigation. If SLI < SLA, incident (breach, notify customers, trigger response). Calculate error budget: SLA - actual_SLI. Budget is spent—deploy less frequently until it recovers.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+SLA/SLO/SLI emerged from SRE (Google). Before SRE, reliability was vague ("make it work"). After, it's quantified ("99.99% success rate, measured hourly"). The hierarchy (SLA > SLO > SLI) makes sense: business defines maximum acceptable failure (SLA), ops targets higher (SLO), and measures reality (SLI). Error budgets from SLA are then spent on deployments, experiments, and maintenance. This aligns engineering incentives with business goals: stay above SLA, aim for SLO, but don't over-invest beyond SLA.
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**Prometheus + Grafana SLO dashboard:**
+SLA/SLO/SLI operation:
 
-{% raw %}
-```yaml
-# prometheus rule: SLI calculation and SLO alerting
-
-groups:
-  - name: slo_rules
-    interval: 60s
-    rules:
-      # SLI: ratio of successful requests (2xx+3xx vs. total)
-      - record: job:sli_availability:ratio_rate5m
-        expr: |
-          sum(rate(http_requests_total{status=~"2..|3.."}[5m]))
-          /
-          sum(rate(http_requests_total[5m]))
-
-      # SLI: latency - fraction of requests completing in < 200ms
-      - record: job:sli_latency_p200ms:ratio_rate5m
-        expr: |
-          sum(rate(http_request_duration_seconds_bucket{le="0.2"}[5m]))
-          /
-          sum(rate(http_request_duration_seconds_count[5m]))
-
-      # Alert: SLO breach imminent (burn rate alert)
-      - alert: SLOBurnRateHigh
-        expr: |
-          job:sli_availability:ratio_rate5m < 0.999
-        for: 2m
-        labels:
-          severity: critical
-        annotations:
-          summary: "SLO breach: availability SLI below 99.9%"
-          description: "Current SLI: {{ $value | humanizePercentage }}"
-
-      # Error budget: remaining budget (rolling 28-day window)
-      - record: job:error_budget_remaining:ratio
-        expr: |
-          1 - (1 - avg_over_time(job:sli_availability:ratio_rate5m[28d]))
-          / (1 - 0.999)
-      # = 1.0: full budget remaining
-      # = 0.5: half budget consumed
-      # < 0.0: budget exceeded (SLO breached)
 ```
-{% endraw %}
+DEFINE (Start of Service):
+  SLA = 99.5% uptime (contractual promise)
+  SLO = 99.9% uptime (internal target, buffer)
+
+  SLI metrics to track:
+    - Successful requests / total requests
+    - P99 latency < 200ms
+    - Error rate < 0.5%
+
+  Error Budget = SLA - SLI = 0.5% = 12,960 seconds/month
+
+MEASURE (Continuous):
+  Every request:
+    - Is it successful? (yes/no)
+    - What's latency? (ms)
+    - Aggregate into SLI metrics
+
+  Hourly SLI calculation:
+    success_rate = successful_reqs / total_reqs
+    p99_latency = percentile(latencies, 99)
+    Report to dashboard
+
+  Monthly SLI aggregation:
+    monthly_success = avg of hourly SLI values
+    Compare to SLO: 99.9%?
+      ├─ YES: "On target"
+      └─ NO: "Below target, investigate"
+
+DECIDE (Ongoing):
+  If SLI >= SLO for consecutive periods:
+    "Reliability good, safe to deploy"
+    Go ahead with risky changes
+
+  If SLI < SLO but >= SLA:
+    "Missing our target but within contract"
+    Investigate, but not urgent
+
+  If SLI < SLA:
+    "BREACH! Customer refunds trigger"
+    Immediate incident response
+    "Don't deploy until SLI recovers above SLA"
+
+ERROR BUDGET CONSUMPTION:
+  Each second below SLI, error budget spent
+  Once budget exhausted, stop risky deployments
+  Wait for quiet period to recover budget
+```
+
+**In Happy Path:**
+SLI consistently > SLO. Team is well within error budget. Deploy confidently. Optimize features.
+
+**When Something Goes Wrong:**
+Critical bug deployed. Requests start failing. SLI drops to 97%. Below SLA (99.5% contract). ALERT. Customers calling. Refunds issued. Rollback deployed. SLI recovers to 99.8%. Investigation done. Post-mortem. Deploy testing improved.
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 🔄 The Complete Picture — End-to-End Flow
 
 ```
-Observability
-(metrics, traces, logs — data collection)
-        │
-        ▼ (define what to measure and target)
-SLI / SLO / SLA ◄──── (you are here)
-(measure → target → contract)
-        │
-        ├── Error Budget (SLO → budget → deployment decision gate)
-        ├── MTTR / MTBF (reliability metrics that feed SLI calculations)
-        └── Alerting (SLO burn rate → PagerDuty → on-call response)
+Service Request Arrives
+    ↓
+Handled (success or failure tracked)
+    ↓
+METRICS EMISSION (YOU ARE HERE)
+Request counted toward SLI
+    ↓
+Hourly Aggregation
+    Aggregate 3600 seconds of requests
+    ↓
+    Calculate: success_rate, latency_p99
+    → SLI_hourly
+
+Daily Aggregation
+    Aggregate 24 hourly SLI values
+    → SLI_daily
+
+Monthly Aggregation
+    Aggregate 30 daily SLI values
+    → SLI_monthly
+
+Decision Point:
+    SLI_monthly >= SLO? (99.9%)
+    ├─ YES: "On track"
+    └─ NO: "Miss target, why?"
+
+    SLI_monthly >= SLA? (99.5%)
+    ├─ YES: "Acceptable to customers"
+    └─ NO: "BREACH—refunds owed"
 ```
+
+**WHAT CHANGES AT SCALE:**
+At 10 req/s, SLI calculation is simple. At 1 million req/s, you need distributed metrics collection (push metrics to monitoring backend). At scale, even 0.1% error rate = 1000 failed requests/second. SLI becomes granular (per-endpoint, per-region, per-customer-tier).
 
 ---
 
 ### 💻 Code Example
 
-**SLO calculation and error budget tracking in Python:**
+SLA/SLO/SLI are operational, but implementation:
+
+**Example 1 — Prometheus Metrics for SLI:**
 
 ```python
-class SLOTracker:
-    def __init__(self, slo_target: float, window_days: int = 28):
-        """
-        slo_target: float like 0.999 for 99.9%
-        window_days: rolling window for SLO calculation
-        """
-        self.slo_target = slo_target
-        self.window_days = window_days
+from prometheus_client import Counter, Histogram, Gauge
 
-    def calculate_sli(self, good_requests: int, total_requests: int) -> float:
-        """SLI = good_requests / total_requests"""
-        if total_requests == 0:
-            return 1.0  # no traffic = 100% success rate
-        return good_requests / total_requests
+# Define metrics
+requests_total = Counter(
+    'api_requests_total',
+    'Total API requests',
+    ['endpoint', 'method', 'status']
+)
 
-    def error_budget_minutes(self) -> float:
-        """Total error budget in minutes for the window"""
-        total_minutes = self.window_days * 24 * 60
-        return total_minutes * (1 - self.slo_target)
+requests_success = Counter(
+    'api_requests_success',
+    'Successful API requests',
+    ['endpoint']
+)
 
-    def error_budget_consumed(self, current_sli: float) -> dict:
-        """How much error budget has been consumed?"""
-        budget_total = self.error_budget_minutes()
-        window_minutes = self.window_days * 24 * 60
-        minutes_failed = (1 - current_sli) * window_minutes
-        budget_remaining = budget_total - minutes_failed
+request_latency = Histogram(
+    'api_request_latency_seconds',
+    'API request latency',
+    ['endpoint'],
+    buckets=[0.01, 0.05, 0.1, 0.5, 1.0]
+)
 
-        return {
-            "slo_target": f"{self.slo_target * 100:.3f}%",
-            "current_sli": f"{current_sli * 100:.3f}%",
-            "slo_breach": current_sli < self.slo_target,
-            "budget_total_minutes": round(budget_total, 1),
-            "budget_consumed_minutes": round(minutes_failed, 1),
-            "budget_remaining_minutes": round(budget_remaining, 1),
-            "budget_remaining_pct": round(budget_remaining / budget_total * 100, 1)
-        }
-
-# Usage:
-tracker = SLOTracker(slo_target=0.999)  # 99.9% SLO
-result = tracker.error_budget_consumed(current_sli=0.9991)
-# {
-#   "slo_target": "99.900%",
-#   "current_sli": "99.910%",
-#   "slo_breach": False,
-#   "budget_total_minutes": 40.3,
-#   "budget_consumed_minutes": 36.3,
-#   "budget_remaining_minutes": 4.0,
-#   "budget_remaining_pct": 9.9  # 90% of budget consumed — warning!
-# }
+# In request handler:
+@app.route('/api/users/<user_id>')
+def get_user(user_id):
+    start = time.time()
+    try:
+        user = db.query(f"SELECT * FROM users WHERE id = {user_id}")
+        requests_total.labels(
+            endpoint='/users',
+            method='GET',
+            status='200'
+        ).inc()
+        requests_success.labels(endpoint='/users').inc()
+    except Exception as e:
+        requests_total.labels(
+            endpoint='/users',
+            method='GET',
+            status='500'
+        ).inc()
+    finally:
+        latency = time.time() - start
+        request_latency.labels(endpoint='/users').observe(latency)
 ```
+
+**Example 2 — Prometheus Query for SLI:**
+
+```promql
+# Calculate success rate (SLI)
+success_rate = rate(api_requests_success[5m]) / rate(api_requests_total[5m])
+
+# Calculate P99 latency (SLI)
+p99_latency = histogram_quantile(0.99, api_request_latency_seconds_bucket)
+
+# Alert if SLI < SLO (99.5%)
+alert: SloBreachWarning
+  if: success_rate < 0.995
+  for: 5m
+  annotations:
+    summary: "SLI below SLO ({{ $value | humanizePercentage }})"
+
+# Alert if SLI < SLA (99%)
+alert: SlaViolation
+  if: success_rate < 0.99
+  for: 1m
+  annotations:
+    summary: "CRITICAL: SLA Breach! ({{ $value | humanizePercentage }})"
+```
+
+**Example 3 — SLO Definition Document:**
+
+```yaml
+# Service: Payment API
+sla:
+  availability: "99.5%"
+  latency_p99: "500ms"
+  error_budget: "0.5%"
+
+slo:
+  availability: "99.9%"
+  latency_p99: "200ms"
+  error_budget: "0.1%"
+
+sli:
+  metrics:
+    - name: "success_rate"
+      calculation: "successful_requests / total_requests"
+      target: ">= 99.5% (SLA)"
+
+    - name: "latency_p99"
+      calculation: "percentile(request_latencies, 99)"
+      target: "<= 500ms (SLA)"
+
+  evaluation_window: "30 days (calendar month)"
+
+error_budget:
+  monthly_budget: "0.5% = ~21,600 seconds"
+  burn_rate:
+    - "< 0.5%/day": "OK, deploy anything"
+    - "0.5–1%/day": "Caution, no experimental deploys"
+    - "> 1%/day": "Freeze, rollback, fix critical issues only"
+```
+
+---
+
+### ⚖️ Comparison Table
+
+| Term    | Scope                 | Audience              | Consequence                           | Example                                       |
+| ------- | --------------------- | --------------------- | ------------------------------------- | --------------------------------------------- |
+| **SLA** | External, contractual | Customers             | Refunds, penalties, termination       | "99% uptime, $100/hour credit if breached"    |
+| **SLO** | Internal, operational | Engineering team      | Performance review, budget allocation | "99.5% uptime, don't deploy if trending down" |
+| **SLI** | Measured reality      | Operations, analytics | Trending data, alerting, debugging    | "99.73% uptime this month"                    |
+
+**How to choose:** Start with customer needs (SLA). Set SLO at 1–2 standard deviations better (buffer). Measure SLI continuously. Adjust SLO if consistently too loose or too tight.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                              | Reality                                                                                                                                                                                                                                                |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 100% SLO is the goal                                       | 100% is not achievable and attempting it is counterproductive: it means no deployments (risk of downtime), extreme conservatism, and eventual user disappointment anyway. Honest, achievable SLOs (99.9%, 99.5%) are better than dishonest 100% claims |
-| SLA and SLO are the same thing                             | SLO is an internal engineering target with no contractual commitment. SLA is a legal contract with financial consequences. SLA is always set looser than SLO — the gap is your safety buffer to prevent SLA breaches                                   |
-| Measuring availability as uptime/downtime is the right SLI | Binary uptime/downtime misses partial degradation. A server returning 500 errors 30% of the time is "up" by binary measure but failing users. Request success rate SLI captures this. Modern SRE: measure from the user's perspective                  |
-| SLOs should be set as high as possible to show ambition    | SLOs should be calibrated to what users actually need. Over-ambitious SLOs breach constantly → alert fatigue, engineering burnout. Calibrated SLOs breach rarely but meaningfully → each breach is a real signal                                       |
+| Misconception                    | Reality                                                                                             |
+| -------------------------------- | --------------------------------------------------------------------------------------------------- |
+| "SLA and SLO are the same thing" | No. SLA is contractual; SLO is internal target. SLA is the floor; SLO is the goal (higher).         |
+| "100% SLA is possible"           | No. Bugs, hardware failures, network partitions exist. 100% is infinitely expensive and impossible. |
+| "SLI is the same as SLA"         | No. SLI is measured actual performance; SLA is the contract. SLI should be compared to SLO/SLA.     |
+| "SLA is just uptime percentage"  | Incomplete. SLA includes latency, error rates, availability, and consequences for missing targets.  |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**Measuring SLI from the wrong vantage point:**
+**Failure Mode 1: SLA Breach (Unplanned)**
 
+**Symptom:**
+Database crashes. Service becomes unavailable. SLI drops to 98%. Below SLA (99.5%). Breach. Customers call. "Refunds!"
+
+**Root Cause:**
+Insufficient redundancy. Database is single point of failure. No failover. Outage exceeds SLA budget.
+
+**Diagnostic Command:**
+
+```bash
+# Check SLI trend
+curl https://monitoring/api/sli/daily | tail -30
+
+# Check when breach occurred
+curl https://monitoring/api/alerts | grep SLA | head -5
+
+# Identify root cause
+aws cloudtrail lookup-events | grep database | tail -10
 ```
-PROBLEM: measuring SLI from inside your service (server-side metrics)
 
-  Server-side:
-    http_requests_total{status="200"}: 9,990,000
-    http_requests_total{status="5xx"}: 10,000
-    Calculated SLI: 99.9% — looks great!
+**Fix:**
+Bad approach: Hope it doesn't happen again.
+Good approach: (1) Add database replicas with automatic failover. (2) Increase SLO testing (chaos engineering). (3) Implement circuit breakers to avoid cascading failures. (4) Create error budget policy: if breached, freeze deploys.
 
-  Client-side reality (Synthetic monitoring from outside):
-    30% of requests: timing out before server responds (TCP connection timeout)
-    These timeouts: never reach server → never counted in server-side metrics
-    Real user SLI: 70% (30% of requests failing)
+**Prevention:**
+Design for SLO/SLA targets from start. Include redundancy, failover, and monitoring. Test failure paths (chaos engineering). Maintain visibility into SLI trends.
 
-  Root cause: load balancer connectivity issue upstream of server metrics.
+---
 
-  SERVER-SIDE METRICS miss:
-  - DNS resolution failures
-  - Network-level drops before reaching server
-  - Load balancer timeouts
-  - CDN failures
+**Failure Mode 2: Burning Error Budget Too Fast**
 
-FIX: Multi-layer SLI measurement
+**Symptom:**
+Month started with 0.5% error budget (for 99.5% SLA). Week 1: burned 0.2%. Week 2: burned 0.15%. Trend: will breach SLA by week 3. Team must freeze deployments.
 
-  1. SYNTHETIC MONITORING (Blackbox SLI):
-     External probes (Datadog Synthetics, AWS CloudWatch Synthetics)
-     running from multiple regions every 60 seconds.
-     Measures the actual user-facing URL end-to-end.
-     This is the "true" SLI from user perspective.
+**Root Cause:**
+Multiple small issues accumulating. Bad deployment (10% error spike for 1 hour). Network blip (latency spiked 10x). Database slowness (cascaded). Error budget consumed faster than expected.
 
-  2. CLIENT-SIDE RUM (Real User Monitoring):
-     JavaScript snippet: window.performance.getEntriesByType("navigation")
-     Reports actual page load times per real user session.
-     Most representative signal of user experience.
+**Diagnostic Command:**
 
-  3. SERVER-SIDE METRICS: secondary signal for root cause analysis
-     Good for diagnosing WHERE the problem is (which endpoint, which service)
-     NOT for calculating the primary user-facing SLI
+```bash
+# Check burn rate
+burn_rate = (SLA - SLI) / remaining_days
 
-  Best practice:
-    Primary SLI source = Synthetic monitoring or client RUM
-    Debugging tool = server-side metrics + distributed traces
+# If burn_rate > safe_rate, alert
+if burn_rate > (error_budget / 30 days):
+    echo "ALERT: Burning error budget faster than linear"
 ```
+
+**Fix:**
+Bad approach: Ignore and hope it levels off.
+Good approach: (1) Implement SLO alerts—warn before SLA breach. (2) Freeze experimental deploys. (3) Increase monitoring—find root cause of errors. (4) Prioritize reliability fixes (not features) until budget recovers.
+
+**Prevention:**
+Track burn rate continuously. Set burn rate thresholds (e.g., if > 1%/day, escalate). Establish policy: if burn rate unsustainable, pause feature work, focus on reliability.
+
+---
+
+**Failure Mode 3: SLO Too Tight, Team Overwhelmed**
+
+**Symptom:**
+SLA = 99% but SLO = 99.99%. Team spends all time firefighting minor latency variations. Can't ship features. Low morale. Customers don't notice the difference between SLA and SLO.
+
+**Root Cause:**
+SLO set too ambitious. Gap between SLO and SLA is too small (almost no error budget buffer).
+
+**Diagnostic Command:**
+
+```bash
+# Check SLI vs SLO gap
+sli = (successful_requests_30days / total_requests_30days)
+slo = 0.9999
+gap = slo - sli
+
+if gap < 0.0005:
+    echo "SLO too tight"
+```
+
+**Fix:**
+Bad approach: Accept burnout and accept low velocity.
+Good approach: (1) Relax SLO closer to SLA (but keep buffer). (2) Focus team on meeting SLA, not SLO. (3) Use SLO-miss-triggered incidents, not SLA-miss-triggered.
+
+**Prevention:**
+Set SLO reasonable. Industry: SLA usually 99–99.5%, SLO 99.5–99.99%. Don't exceed 99.99% unless business critically requires it. Review SLO quarterly—if consistently exceeded, tighten SLA (increase value). If consistently missed, loosen SLO (reduce team burden).
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Error Budget` — derived from SLO: `error_budget = 1 - SLO`, drives deployment decisions
-- `Observability` — provides the metrics, traces, and logs that SLIs are calculated from
-- `MTTR / MTBF` — operational metrics that feed into availability SLI calculations
-- `Alerting / On-call` — SLO burn rate alerts trigger on-call response
-- `Capacity Planning` — SLO targets inform required capacity headroom
+**Prerequisites (understand these first):**
+
+- `Monitoring` — how SLI is measured
+- `High Availability` — infrastructure ensuring SLA/SLO
+- `System Design` — design decisions affecting SLA/SLO
+
+**Builds On This (learn these next):**
+
+- `Error Budget` — derived from SLA/SLO
+- `MTTR / MTBF` — metrics affecting SLA achievement
+- `Observability` — tools to track SLI and debug SLO misses
+
+**Alternatives / Comparisons:**
+
+- `Error Budget` — error budget derived from SLA/SLO
+- `Uptime` — simpler version of availability
+- `Service Reliability Engineering (SRE)` — discipline using SLA/SLO/SLI
 
 ---
 
 ### 📌 Quick Reference Card
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ SLI = measure | SLO = internal target     │
-│              │ SLA = customer contract (SLO buffer > SLA)│
-├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Defining reliability targets; error budget│
-│              │ decisions; customer-facing commitments    │
-├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Setting SLA = SLO (no buffer → SLA breach │
-│              │ on first incident); measuring from inside │
-├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Measure what users feel (SLI), target    │
-│              │  what you can achieve (SLO), promise what │
-│              │  you can guarantee (SLA)."                │
-├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Error Budget → Burn Rate Alerts           │
-│              │ → MTTR / MTBF                             │
-└──────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│ WHAT IT IS   │ SLA = contract; SLO = target;       │
+│              │ SLI = measured; together they       │
+│              │ define reliability expectations     │
+├──────────────┼────────────────────────────────────────┤
+│ PROBLEM IT   │ Without clear targets, no            │
+│ SOLVES       │ accountability; can't make           │
+│              │ data-driven reliability decisions   │
+├──────────────┼────────────────────────────────────────┤
+│ KEY INSIGHT  │ SLO > SLA > SLI; difference is       │
+│              │ error budget spent on deployments   │
+│              │ and experiments                     │
+├──────────────┼────────────────────────────────────────┤
+│ USE WHEN     │ Any production system; customer-     │
+│              │ facing; when refunds/penalties      │
+│              │ for downtime                        │
+├──────────────┼────────────────────────────────────────┤
+│ AVOID WHEN   │ Internal tools; early-stage         │
+│              │ products (undefined); prototypes    │
+├──────────────┼────────────────────────────────────────┤
+│ TRADE-OFF    │ [Alignment, data-driven] vs         │
+│              │ [constraints on deployment,         │
+│              │ tuning effort]                      │
+├──────────────┼────────────────────────────────────────┤
+│ ONE-LINER    │ "Promise, aim higher, measure       │
+│              │ reality."                           │
+├──────────────┼────────────────────────────────────────┤
+│ NEXT EXPLORE │ Error Budget → SRE → MTTR/MTBF      │
+└──────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** You are setting SLOs for a new payment processing API. The engineering team proposes: availability SLO 99.99%, latency SLO P99 < 100ms. The sales team has already committed to customers: "enterprise-grade, five nines availability." Identify three specific problems with the proposed SLOs and the sales promise. What process would you follow to set correct, calibrated SLOs, and what would you do about the already-made sales promise?
+**Q1.** Your service has SLA = 99.5% (monthly), SLO = 99.9%. Monday, you deploy a risky feature that could improve performance 10%. It has a 1% chance of causing 1-hour outage. Do you deploy? How does error budget inform the decision?
 
-**Q2.** A company's SLO is 99.9% availability over a rolling 28-day window. In the past 28 days, the following incidents occurred: Monday (Day 3): 12-minute outage; Wednesday (Day 10): 8-minute partial degradation (50% of requests failing); Friday (Day 22): 5-minute outage. Calculate: (a) total error budget in minutes for the window, (b) minutes consumed by each incident (note: partial degradation consumes partial budget), (c) remaining budget, and (d) whether the SLO was breached. Show your working.
+**Q2.** Your SLI is 99.92% this month—well above SLO (99.9%) and SLA (99.5%). But your P99 latency is 450ms, approaching your SLA limit of 500ms. Should you treat this as "all good" because uptime is fine, or as a warning sign?

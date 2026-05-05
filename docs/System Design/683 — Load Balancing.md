@@ -4,364 +4,531 @@ title: "Load Balancing"
 parent: "System Design"
 nav_order: 683
 permalink: /system-design/load-balancing/
-number: "683"
+number: "0683"
 category: System Design
 difficulty: ★★☆
-depends_on: "Horizontal Scaling"
-used_by: "Round Robin, Least Connections, Consistent Hashing, Sticky Sessions"
-tags: #intermediate, #distributed, #networking, #architecture, #reliability
+depends_on: Horizontal Scaling, Networking, HTTP & APIs
+used_by: Auto Scaling, High Availability, Distributed Systems
+related: Round Robin, Least Connections, Consistent Hashing
+tags:
+  - scaling
+  - distributed
+  - networking
+  - infrastructure
+  - intermediate
 ---
 
 # 683 — Load Balancing
 
-`#intermediate` `#distributed` `#networking` `#architecture` `#reliability`
+⚡ TL;DR — A system that distributes incoming traffic across multiple servers to prevent any single machine from becoming a bottleneck—essential for horizontal scaling and high availability.
 
-⚡ TL;DR — **Load Balancing** distributes incoming traffic across multiple backend servers to prevent any single server from becoming a bottleneck, enabling horizontal scaling and high availability.
+| #683            | Category: System Design                            | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------- | :-------------- |
+| **Depends on:** | Horizontal Scaling, Networking                     |                 |
+| **Used by:**    | Auto Scaling, High Availability, Microservices     |                 |
+| **Related:**    | Round Robin, Least Connections, Consistent Hashing |                 |
 
-| #683            | Category: System Design                                             | Difficulty: ★★☆ |
-| :-------------- | :------------------------------------------------------------------ | :-------------- |
-| **Depends on:** | Horizontal Scaling                                                  |                 |
-| **Used by:**    | Round Robin, Least Connections, Consistent Hashing, Sticky Sessions |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+You deployed your app to 10 servers. But clients don't know about all 10—they only know one IP address. Which server gets which request? If you tell all clients "connect to Server 1", then Server 1 becomes the bottleneck—it's handling all traffic while the other 9 servers sit idle. You haven't scaled at all.
+
+**THE BREAKING POINT:**
+Horizontal scaling requires a way to split traffic fairly across all machines. Without it, adding more servers is useless. One machine still gets all the requests.
+
+**THE INVENTION MOMENT:**
+"This is why load balancers were invented—to stand between clients and servers, distributing traffic intelligently so all servers share the work."
 
 ---
 
 ### 📘 Textbook Definition
 
-A **Load Balancer** is a network component (hardware appliance or software service) that distributes incoming client requests across a pool of backend servers according to a configured algorithm, with the goals of maximising throughput, minimising response latency, preventing server overload, and providing fault tolerance. Load balancers operate at different OSI layers: **Layer 4 (Transport)** load balancers distribute based on IP/TCP/UDP connection properties, forwarding packets without inspecting the payload (e.g., AWS NLB); **Layer 7 (Application)** load balancers inspect HTTP headers, URLs, cookies, and payload to make intelligent routing decisions (e.g., AWS ALB, nginx, HAProxy). Load balancers perform health checks on backends and remove unhealthy instances from rotation, providing fault tolerance. Modern cloud-native systems use software load balancers (kube-proxy, Envoy, nginx) extensively at multiple layers: edge (internet → cluster), service mesh (service → service), and database (application → read replicas).
+A load balancer is a system (hardware device or software) that sits between clients and a pool of backend servers, receiving incoming requests and forwarding them to an available server based on a scheduling algorithm. Load balancers enable horizontal scaling by distributing work across multiple machines, improving throughput and reducing latency. They also provide health checking (removing failed servers) and connection management (draining connections gracefully).
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-A load balancer is a traffic director: it receives all incoming requests and sends each one to a different server in a pool. Server A gets request 1, Server B gets request 2, Server C gets request 3, back to Server A. No single server gets all the traffic. If Server B dies, the load balancer stops sending it traffic.
+**One line:**
+A traffic cop that stands at an intersection and directs each car to the least-congested lane.
 
----
+**One analogy:**
 
-### 🔵 Simple Definition (Elaborated)
+> A restaurant has one phone line (the load balancer) that takes reservations. Instead of all callers hitting the same host station directly, they call one number, and a receptionist assigns them to available servers. The receptionist knows when servers are full and routes new calls to open ones. If a server crashes, the receptionist stops sending calls there.
 
-Without a load balancer: all 10,000 requests/second hit your one server — it maxes out at 3,000 req/s and returns errors. With a load balancer in front of three servers: each server gets ~3,333 req/s, within capacity. Server 2 fails health check → load balancer routes its share to servers 1 and 3 (each now at ~5,000 req/s). Still handling load without manual intervention. This is the foundation of horizontal scaling: the load balancer makes multiple servers look like one endpoint to clients.
+**One insight:**
+The load balancer itself can become a bottleneck if not designed carefully. That's why modern systems use highly optimized load balancers (NGINX, HAProxy, cloud LBs) and sometimes multiple load balancers in parallel.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**L4 vs L7 load balancing — what each can and cannot do:**
+**CORE INVARIANTS:**
 
-```
-LAYER 4 (TCP/UDP) LOAD BALANCING:
-  Operates at: IP addresses + TCP/UDP ports (no HTTP awareness)
-  Sees: source IP, dest IP, source port, dest port, TCP flags
-  Cannot see: HTTP headers, URL paths, cookies, request body
+1. Clients must connect to a single point (load balancer), not multiple servers
+2. Load balancer must intelligently choose which server handles each request (algorithm)
+3. Load balancer must remove failed servers from the pool (health checks)
+4. All servers must be stateless or have shared state (same database/cache)
 
-  How it works:
-    Client → TCP SYN to LB IP:443
-    LB: selects backend (e.g., round-robin by connection count)
-    LB: forwards entire TCP stream to selected backend
-    Connection: client ↔ backend (LB is transparent pass-through)
+**DERIVED DESIGN:**
+Clients send requests to the load balancer's IP/hostname. The LB receives the request, consults its algorithm (round-robin, least-connections, etc.), and picks a backend server. The LB forwards the request to that server. The server responds; the LB forwards the response back to the client. The client doesn't know which backend server handled it (transparent). If you add a new server, the LB includes it in the pool automatically. If a server crashes, health checks detect it and remove it.
 
-  Use cases:
-    - Non-HTTP protocols (MySQL, PostgreSQL, gRPC)
-    - Lowest latency (no packet inspection overhead)
-    - TLS passthrough (LB doesn't decrypt; backend holds certificate)
+**THE TRADE-OFFS:**
+**Gain:** Horizontal scaling is now possible. Traffic distributes fairly. One server failure doesn't bring down the system. You can add/remove servers without restarting.
 
-  Tools: AWS NLB, HAProxy TCP mode, iptables DNAT
-
-LAYER 7 (HTTP/HTTPS) LOAD BALANCING:
-  Operates at: HTTP request headers, method, URL, cookies, body
-  Can do: path-based routing, header-based routing, cookie affinity
-
-  How it works:
-    Client → TLS terminated at LB (LB has certificate)
-    LB: reads HTTP request fully
-    LB: routing decision based on URL/headers/cookies
-    LB: new HTTP connection to selected backend (not original client TCP)
-
-  Use cases:
-    - HTTP/HTTPS web traffic (most modern services)
-    - Path-based routing: /api/ → backend A, /static/ → CDN
-    - A/B testing (route 10% by header to canary backend)
-    - Session affinity (route by cookie to same backend)
-    - Request manipulation (add headers, rewrite URLs)
-
-  Tools: AWS ALB, nginx, HAProxy HTTP mode, Traefik, Envoy
-
-```
-
-**Health checks — how LB detects and removes unhealthy backends:**
-
-```
-PASSIVE HEALTH CHECK:
-  LB monitors actual request failures.
-  If backend returns 5xx or connection refused → mark unhealthy.
-  Cons: requires real traffic to detect failure → some user requests fail first.
-
-ACTIVE HEALTH CHECK (preferred):
-  LB sends periodic probe requests to backend health endpoint.
-  Backend: /actuator/health or /health/live → 200 if healthy, 503 if not.
-  LB: if 3 consecutive probes fail → remove backend from rotation.
-  LB: if 3 consecutive probes succeed → re-add backend.
-  Cons: extra traffic overhead (usually negligible: 1 req/5s per backend).
-
-  AWS ALB health check config:
-    Health check path: /actuator/health
-    Interval: 30 seconds
-    Healthy threshold: 2 (2 successes → re-add)
-    Unhealthy threshold: 3 (3 failures → remove)
-    Timeout: 5 seconds
-
-  Kubernetes readiness probe (same concept, pod-level):
-    readinessProbe:
-      httpGet:
-        path: /actuator/health/readiness
-        port: 8080
-      periodSeconds: 10
-      failureThreshold: 3
-      successThreshold: 1
-```
-
-**Comparing load balancing algorithms:**
-
-```
-ROUND ROBIN:
-  Backend 1 → Backend 2 → Backend 3 → Backend 1 → ...
-  Simple, even distribution assuming equal request cost.
-  Problem: if some requests take 10x longer, backends become uneven.
-
-WEIGHTED ROUND ROBIN:
-  Backend 1 (weight 3) → Backend 2 (weight 1) → ...
-  Backend 1 gets 3x more requests.
-  Use: heterogeneous servers (different capacities).
-
-LEAST CONNECTIONS:
-  Route to backend with fewest active connections.
-  Better for variable request duration (long + short requests mixed).
-
-LEAST RESPONSE TIME:
-  Route to backend with lowest average response time.
-  Best for latency-sensitive applications.
-
-IP HASH:
-  backend = hash(client_ip) % num_backends
-  Same client IP always → same backend (sticky without cookies).
-  Problem: if one backend fails, all its clients reassigned → cache miss storm.
-
-CONSISTENT HASHING:
-  client or request identifier → hash ring → backend
-  Minimises reshuffling when backends added/removed.
-  Use: cache proxies, distributed caching (memcached cluster).
-```
+**Cost:** The load balancer itself becomes infrastructure you must maintain. If it fails, all traffic stops (unless you have redundant LBs). There's added latency (extra network hop through LB). You need health checks, which add complexity.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-WITHOUT Load Balancing:
+**SETUP:**
+An API receives 1000 requests/second. You have 5 identical app servers. Without a load balancer, all requests go to Server 1 (by default—clients only know one IP). With a load balancer, traffic should distribute evenly: ~200 req/s to each server.
 
-- All traffic to one server: single point of failure, capacity ceiling
-- Server failure: complete outage
-- Cannot benefit from horizontal scaling (multiple servers) without a distributor
+**WHAT HAPPENS WITHOUT A LOAD BALANCER:**
+Server 1: 1000 req/s (100% CPU—maxed out, requests timeout)
+Servers 2–5: 0 req/s (idle, unused)
+Users see 50% of requests fail (timeouts). System is useless despite having 5x capacity. Horizontal scaling doesn't work.
 
-WITH Load Balancing:
-→ Multiple servers look like one endpoint to clients
-→ Horizontal scaling: add servers to pool, load automatically distributed
-→ Health checks: unhealthy servers removed from rotation automatically
-→ Zero-downtime deployments: drain server, update, re-add (rolling update)
+**WHAT HAPPENS WITH A LOAD BALANCER:**
+Load balancer: 1000 req/s arrives → Routes 200 to each server using round-robin
+Server 1: 200 req/s (20% CPU—healthy, fast responses)
+Server 2: 200 req/s (20% CPU—healthy, fast responses)
+... Servers 3–5: same
+All requests succeed. System is now using all available capacity. Response times are fast.
+
+**THE INSIGHT:**
+Without a load balancer, horizontal scaling is theater—you added servers that do nothing. With a load balancer, horizontal scaling works: adding servers adds capacity.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> A traffic officer at a busy intersection directing cars to different parking lots. When lot A fills up or breaks down, the officer stops sending cars there. The officer can be smart (send trucks to lot C with higher ceilings), basic (round-robin: car 1 to A, car 2 to B), or adaptive (send to whichever lot has the fewest cars waiting). Drivers don't know which lot they'll end up in — they just follow the officer's direction.
+> A bank has multiple tellers. Without a queuing system (load balancer), all customers would go to Teller 1 because they don't know about Tellers 2–5. Teller 1 would be swamped; others would be idle. With a queue (load balancer), customers take a number and the system routes them to the next available teller. All tellers stay busy. New tellers can be added to the queue without customers noticing.
 
-"Traffic officer" = load balancer
-"Cars" = requests
-"Parking lots" = backend server instances
-"Full/broken lot" = unhealthy backend (removed from rotation)
+- "One teller overwhelmed" → single server without load balancer
+- "Queue system routing customers" → load balancer
+- "Next available teller" → load balancing algorithm
+- "Teller is sick (not responding)" → health check removes failed server
+- "New teller added to system" → scale-up transparent to customers
+
+**Where this analogy breaks down:** Tellers handle customers sequentially; servers process requests in parallel. A server can handle 1000 requests/second simultaneously; a teller cannot.
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+A load balancer is a machine in the middle that receives traffic and sends it to different servers fairly. Like a toll booth that directs cars to different lanes, so one lane doesn't get all the traffic.
+
+**Level 2 — How to use it (junior developer):**
+Deploy your application to multiple identical servers. Configure them as a backend pool in your load balancer (AWS ELB, NGINX, HAProxy). Test that requests work from the load balancer's IP. Monitor that traffic distributes fairly. If response times are slow, add more servers to the backend pool.
+
+**Level 3 — How it works (mid-level engineer):**
+The load balancer receives an incoming request (TCP connection or HTTP request). It applies an algorithm (round-robin, least-connections, IP-hash) to pick a backend server from its pool. It establishes a new connection to that server, forwards the request, waits for the response, and sends it back to the client. It periodically health-checks each backend (HTTP GET /health) every 5 seconds; if a backend fails checks, it's marked as down and removed from the routing pool. Client IP is preserved or tunneled depending on configuration (to support logging on backends).
+
+**Level 4 — Why it was designed this way (senior/staff):**
+Early systems didn't have load balancers—they had one big server. As traffic grew, operators discovered they could split work across multiple servers if they had a router (LB). Modern load balancers are optimized for extreme throughput (NGINX handles millions of connections, AWS ELB is distributed cloud-native). The design decision is: single-point-of-failure risk vs. simplicity of scaling. Mitigated by running redundant LBs or cloud-managed LBs (highly available by default).
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**nginx as Layer 7 load balancer with path routing:**
+Load balancing happens in these steps:
 
-```nginx
-# nginx.conf: L7 load balancer with multiple backends
-upstream order_service {
-    # Least connections algorithm:
-    least_conn;
+1. **Client Connects:**
+   - Client sends request to load balancer's IP/hostname
+   - LB listens on port 80 (HTTP) or 443 (HTTPS)
 
-    server order-service-1:8080 weight=1;
-    server order-service-2:8080 weight=1;
-    server order-service-3:8080 weight=1;
+2. **Algorithm Chooses Server:**
+   - LB applies algorithm to select backend from pool
+   - Algorithm options: round-robin, least-connections, IP-hash, random, weighted
 
-    # Health check:
-    keepalive 32;  # keep 32 connections warm to each backend
-}
+3. **Connection Forwarding:**
+   - LB establishes connection to chosen backend
+   - LB forwards request headers and body
+   - LB waits for backend response
 
-upstream static_assets {
-    server cdn.example.com:443;
-}
+4. **Response Forwarding:**
+   - Backend processes request, sends response to LB
+   - LB forwards response to client
+   - Connection closes
 
-server {
-    listen 443 ssl;
-    ssl_certificate     /etc/nginx/certs/server.crt;
-    ssl_certificate_key /etc/nginx/certs/server.key;
+5. **Health Checking (Continuous):**
+   - LB periodically (every 5s) sends health check to each backend
+   - Typical health check: HTTP GET /health endpoint
+   - If backend responds with 200 OK: marked healthy
+   - If backend times out or returns 500: marked unhealthy, removed from pool
 
-    # Path-based routing (L7 capability):
-    location /api/ {
-        proxy_pass http://order_service;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Request-ID $request_id;
-        proxy_connect_timeout 2s;
-        proxy_read_timeout 30s;
-    }
-
-    location /static/ {
-        proxy_pass https://static_assets;
-    }
-}
 ```
+Clients              Load Balancer          Backend Pool
+  │                      │                 ┌─────────┐
+  ├─ Req 1 ──────────→ LB │ ─────────────→ │ Server1 │
+  │                   Algorithm:           │ (20%CP) │
+  ├─ Req 2 ──────────→ LB │ Round-Robin    └─────────┘
+  │                      │
+  ├─ Req 3 ──────────→ LB │ ─────────────→ ┌─────────┐
+  │                      │ ─────────────→ │ Server2 │
+  └─ Req 4 ──────────→ LB │                 │ (20%CP) │
+                         │ ◄───────────── └─────────┘
+                      Health check
+                    (every 5 seconds)
+```
+
+**In Happy Path:**
+Client 1 → LB picks Server 1 → Response fast → Client 1 satisfied
+Client 2 → LB picks Server 2 → Response fast → Client 2 satisfied
+Both servers share load equally.
+
+**When Something Goes Wrong:**
+Server 1 crashes → LB health check fails → Server 1 marked down → Client 3 arrives → LB picks Server 2 (only healthy option) → Response still succeeds. Downtime: 0 seconds.
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 🔄 The Complete Picture — End-to-End Flow
 
 ```
-Horizontal Scaling
-(multiple backend instances)
-        │
-        ▼
-Load Balancing  ◄──── (you are here)
-(distributes traffic across instances)
-        │
-  ┌─────┼──────────┬──────────────┐
-  ▼     ▼          ▼              ▼
-Round  Least     Consistent    Sticky
-Robin  Connections Hashing     Sessions
-(algorithms: how LB chooses a backend)
+Incoming Request
+    ↓
+LOAD BALANCER RECEIVES
+(YOU ARE HERE)
+    ↓
+Algorithm picks a backend server
+    ↓
+Request forwarded to backend
+    ↓
+Backend processes, returns response
+    ↓
+LB forwards response to client
+    ↓
+Client receives response
+
+PARALLEL: Health Checking
+    ↓
+Every 5 seconds: LB → Backend /health endpoint
+    ↓
+Is backend responding?
+    ├─ YES: Keep in pool
+    └─ NO: Remove from pool, log failure
+
+Scale-Up Path:
+    New server added to backend pool
+    ↓ (No client restart needed)
+    LB includes it in round-robin
+    ↓
+    Immediately starts receiving traffic
 ```
+
+**WHAT CHANGES AT SCALE:**
+At 1000 req/s with 10 servers, LB is simple—routes 100 req/s per server. At 1 million req/s, a single LB becomes the bottleneck. Solutions: (1) Use cloud-managed LB (AWS ELB is auto-scaled), (2) multiple LBs in active-active, (3) DNS round-robin across LBs, (4) anycast routing to distribute LB instances globally.
 
 ---
 
 ### 💻 Code Example
 
-**AWS ALB with path-based routing via Terraform:**
+Load balancers are operational/infrastructure, not code. But here's how they're configured:
 
-```hcl
-# ALB with path-based routing to different backend services:
-resource "aws_lb_listener_rule" "order_api" {
-  listener_arn = aws_lb_listener.https.arn
-  priority     = 100
+**Example 1 — NGINX Load Balancer Config:**
 
-  condition {
-    path_pattern { values = ["/api/orders*"] }
-  }
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.order_service.arn
-  }
+```nginx
+# /etc/nginx/nginx.conf
+upstream backend {
+    server app-server-1.internal:5000 weight=1;
+    server app-server-2.internal:5000 weight=1;
+    server app-server-3.internal:5000 weight=1;
+
+    # Health check
+    check interval=5000 rise=2 fall=5 timeout=2000 type=http;
+    check_http_send "GET /health HTTP/1.0\r\n\r\n";
+    check_http_expect_alive http_2xx;
 }
 
-resource "aws_lb_target_group" "order_service" {
-  name     = "order-service-tg"
-  port     = 8080
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
+server {
+    listen 80;
+    server_name api.example.com;
 
-  health_check {
-    path                = "/actuator/health"
-    interval            = 30
-    healthy_threshold   = 2
-    unhealthy_threshold = 3
-    timeout             = 5
-    matcher             = "200"
-  }
-
-  # Deregistration delay: give instances time to drain in-flight requests
-  deregistration_delay = 30
+    location / {
+        proxy_pass http://backend;  # Round-robin by default
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
 }
+```
+
+Requests to `api.example.com` are distributed round-robin across the 3 backends.
+
+**Example 2 — AWS ELB Health Check + Auto Scaling:**
+
+```python
+# Infrastructure-as-code: Terraform
+resource "aws_lb" "api" {
+    name = "api-load-balancer"
+    internal = false
+    load_balancer_type = "application"
+
+    # Health check configuration
+    health_check {
+        healthy_threshold = 2
+        unhealthy_threshold = 2
+        timeout = 3
+        interval = 30
+        path = "/health"
+        matcher = "200"
+    }
+}
+
+resource "aws_autoscaling_group" "api" {
+    name = "api-asg"
+    min_size = 3
+    max_size = 10
+    desired_capacity = 5
+
+    # Scale up when CPU > 70%
+    target_group_arns = [aws_lb_target_group.api.arn]
+}
+```
+
+Auto-scaling automatically adds/removes servers from the load balancer's pool.
+
+**Example 3 — Client-Side Health Check (detecting unhealthy LB):**
+
+```python
+import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
+# Retry logic: if LB is temporarily down, retry
+session = requests.Session()
+retry_strategy = Retry(
+    total=3,
+    backoff_factor=0.5,
+    status_forcelist=[500, 502, 503, 504]
+)
+adapter = HTTPAdapter(max_retries=retry_strategy)
+session.mount("http://", adapter)
+session.mount("https://", adapter)
+
+# If LB returns 502 (Bad Gateway), retry to different backend
+response = session.get("http://api.example.com/users")
+```
+
+---
+
+### ⚖️ Comparison Table
+
+| Load Balancer Type | Throughput                | Latency                   | Cost                  | HA Built-in                    | Best For                               |
+| ------------------ | ------------------------- | ------------------------- | --------------------- | ------------------------------ | -------------------------------------- |
+| **AWS ELB**        | Very high (cloud-managed) | Low (optimized)           | Medium (pay per hour) | Yes (multi-AZ)                 | Production, high-traffic systems       |
+| **NGINX**          | High (open-source)        | Very low (efficient)      | Low (free)            | No (must replicate manually)   | Startups, on-premise, fine control     |
+| **HAProxy**        | Very high (optimized)     | Very low                  | Low (free)            | No (must configure redundancy) | High-performance systems               |
+| **Layer 4 (TCP)**  | Very high                 | Very low                  | Medium                | Varies                         | Non-HTTP protocols, maximum throughput |
+| **Layer 7 (HTTP)** | Medium                    | Higher (inspects content) | Medium                | Varies                         | HTTP APIs, routing by path/hostname    |
+
+**How to choose:** Use cloud-managed LB (AWS ELB) for simplicity and HA. Use NGINX or HAProxy if you need fine control or low cost. Layer 4 (TCP) for maximum throughput; Layer 7 (HTTP) for routing intelligence.
+
+---
+
+### 🔁 Flow / Lifecycle
+
+Load balancing is continuous:
+
+```
+START: LB running, 3 backends healthy
+  ↓
+CONTINUOUS: Receive requests, route to backends
+  ├─ Request arrives → Apply algorithm → Pick backend → Forward
+  │
+  ├─ Every 5 seconds: Health check all backends
+  │ ├─ Backends 1, 2, 3 respond OK: Continue routing
+  │ └─ Backend 2 timeout: Mark down, remove from pool
+  │
+  ├─ New backend added to pool
+  │ ├─ Health check: new backend responds OK: Add to rotation
+  │
+  └─ Backend fails health check 5 times → Permanent removal
+       ↓
+    New server launched (auto-scaling)
+       ↓
+    Health check: new server OK
+       ↓
+    Added to pool
+       ↓
+    Immediately starts receiving traffic
 ```
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                                | Reality                                                                                                                                                                                                    |
-| ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Load balancers eliminate single points of failure completely | The load balancer itself can be a SPOF. Production systems run LBs in active-active or active-passive HA pairs. Cloud-managed LBs (AWS ALB/NLB) are inherently HA across multiple AZs                      |
-| More backends always means better performance                | Adding backends improves throughput, but if the bottleneck is the database (all backends share one DB), adding app servers just shifts the bottleneck. Profile to find the actual constraint               |
-| Round-robin ensures perfectly even distribution              | Round-robin distributes connections evenly, but if some requests take 100x longer than others (long-polling, file uploads), backends become very uneven. Least-connections handles this better             |
-| Load balancers work only at the network edge                 | Modern architectures use load balancing at multiple layers: edge LB (internet→cluster), service mesh (service→service), connection pooling (app→DB replicas), message partitioning (Kafka consumer groups) |
+| Misconception                                       | Reality                                                                                                             |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| "Load balancer eliminates single points of failure" | It IS a single point of failure. Redundant LBs are needed for true HA.                                              |
+| "All load balancers use the same algorithm"         | Different algorithms (round-robin, least-connections, IP-hash) produce different results. Choose based on workload. |
+| "Load balancer adds significant latency"            | Modern LBs add <1ms latency. Cloud LBs are optimized to microseconds. Negligible for most workloads.                |
+| "Load balancer knows about your application logic"  | Layer 4 LBs don't. Layer 7 (HTTP) LBs can route by path/header, but don't execute your code.                        |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**Deregistration delay too short — dropping in-flight requests:**
+**Failure Mode 1: Uneven Traffic Distribution**
 
+**Symptom:**
+5 servers behind load balancer. Server 1 CPU: 80%. Servers 2–5 CPU: 20%. Traffic is unbalanced.
+
+**Root Cause:**
+Load balancer algorithm is round-robin or random, but backends are heterogeneous (Server 1 older/weaker hardware). Or Server 1 has a long-running request holding a connection (sticky session).
+
+**Diagnostic Command:**
+
+```bash
+# Check LB algorithm
+grep "upstream backend" /etc/nginx/nginx.conf
+# If no specific algorithm: round-robin (default)
+
+# Check server specs
+aws ec2 describe-instances | grep InstanceType
+# If different types: heterogeneous hardware
+
+# Check response time per server
+tail -f /var/log/nginx/access.log | \
+  awk '{split($9, a, "."); print a[1], $10}' | \
+  sort | uniq -c
 ```
-PROBLEM:
-  AWS ALB: deregistration_delay = 5 seconds (AWS default: 300s, team reduced it)
-  Rolling deployment: instance deregistered from target group
-  ALB: 5 seconds later, stops routing new requests to instance
-  But: instance has 15-second requests in-flight (file upload, report generation)
-  Those 15-second requests: connection reset by ALB after 5 seconds → 502
 
-FIX:
-  deregistration_delay = 60  # >= max expected request duration
+**Fix:**
+Bad approach: Accept imbalance.
+Good approach: Switch to least-connections or latency-based algorithm. Ensure all servers are same spec. Or weight servers by capacity (high-spec gets 2x weight).
 
-  AND: application graceful shutdown drain timeout >= deregistration_delay:
-  server:
-    shutdown: graceful
-  spring:
-    lifecycle:
-      timeout-per-shutdown-phase: 55s  # slightly less than 60s ALB delay
+**Prevention:**
+Use least-connections algorithm (not round-robin). Keep all backend servers identical. Monitor CPU per server. Alert if any server > 30% more CPU than average.
 
-  SEQUENCE:
-    ALB: deregisters instance → waits 60s → cuts connection
-    App: receives SIGTERM → drains requests for 55s → exits
-    60s > 55s → app finishes draining before ALB cuts connection
-    Result: zero in-flight request drops
+---
+
+**Failure Mode 2: Health Check Flakiness**
+
+**Symptom:**
+Healthy servers are marked down and removed from pool. Requests bounce around. Recovery takes 5–10 minutes.
+
+**Root Cause:**
+Health check is too strict (short timeout, low threshold). One slow request or minor glitch causes server removal. Or backend app has startup lag (not responding to /health for 30 seconds after restart).
+
+**Diagnostic Command:**
+
+```bash
+# Simulate health check manually
+curl -v http://app-server-1.internal:5000/health
+# If slow or not present: server fails health check
+
+# Check LB health check config
+grep -A5 "health_check" /etc/nginx/nginx.conf
+# Check: timeout, interval, rise, fall thresholds
+
+# Check app startup logs
+tail -f /var/log/app.log | grep "health check"
 ```
+
+**Fix:**
+Bad approach: Ignore failures and hope they auto-recover.
+Good approach: (1) Increase health check timeout (5s instead of 3s). (2) Increase rise threshold (need 3 successful checks before adding back). (3) Lower fall threshold (2 failures before removing). (4) Make /health endpoint fast (< 10ms).
+
+**Prevention:**
+Health check configuration is operational. Tune based on app startup time. Implement /health endpoint that returns fast (no heavy DB queries). Log every health check result. Alert on sudden health check failures.
+
+---
+
+**Failure Mode 3: Load Balancer Itself Becomes Bottleneck**
+
+**Symptom:**
+Added 10 more servers. Traffic still doesn't increase proportionally. LB CPU is 100%.
+
+**Root Cause:**
+Load balancer is processing all requests and can't keep up. It's the new bottleneck instead of servers.
+
+**Diagnostic Command:**
+
+```bash
+# Check LB CPU
+ssh load-balancer
+top -b -n 1 | grep "Cpu(s)"
+
+# Check network throughput on LB
+iftop -i eth0
+# If close to 10 Gbps (max NIC): LB maxed out
+```
+
+**Fix:**
+Bad approach: Add more servers (doesn't help if LB is bottleneck).
+Good approach: (1) Use cloud-managed LB (AWS auto-scales). (2) Add multiple LBs in parallel, split traffic via DNS. (3) Use Layer 4 LB (faster than Layer 7). (4) Enable connection multiplexing/keep-alive to reuse connections.
+
+**Prevention:**
+Monitor LB CPU and network utilization. When LB CPU > 70%, scale LB capacity. Use cloud-native LBs that auto-scale. Performance test LB before production to know its limits.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Horizontal Scaling` — load balancing enables horizontal scaling by distributing across instances
-- `Round Robin` — the simplest load balancing algorithm
-- `Least Connections` — algorithm for variable-duration request workloads
-- `Consistent Hashing (Load Balancing)` — algorithm minimising redistribution on server changes
-- `Sticky Sessions` — session-based routing for stateful applications
-- `Auto Scaling` — adjusts backend pool size; load balancer routes to current pool
+**Prerequisites (understand these first):**
+
+- `Horizontal Scaling` — the use case that makes load balancers necessary
+- `Networking` — TCP/IP, ports, connections
+- `HTTP & APIs` — Layer 7 load balancing uses HTTP semantics
+
+**Builds On This (learn these next):**
+
+- `Round Robin` — one load balancing algorithm
+- `Least Connections` — alternative algorithm for uneven load
+- `Consistent Hashing` — advanced algorithm for distributed caches/databases
+
+**Alternatives / Comparisons:**
+
+- `DNS Round-Robin` — poor-man's load balancing using DNS; doesn't monitor health
+- `Sticky Sessions` — keeping one client's requests on same server (works with LB)
+- `Session Affinity` — similar to sticky sessions; LB aware
 
 ---
 
 ### 📌 Quick Reference Card
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Distribute requests across server pool.  │
-│              │ L4=TCP/UDP; L7=HTTP-aware routing        │
-├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Multiple backend instances; need HA;      │
-│              │ path/header-based routing required        │
-├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Single-instance, low-traffic internal     │
-│              │ services where LB adds unnecessary hops   │
-├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "The traffic officer making sure no one   │
-│              │  parking lot is ever full."               │
-├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Round Robin → Least Connections           │
-│              │ → Consistent Hashing                      │
-└──────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│ WHAT IT IS   │ A system that distributes traffic     │
+│              │ across multiple servers fairly        │
+├──────────────┼────────────────────────────────────────┤
+│ PROBLEM IT   │ Without LB, horizontal scaling is     │
+│ SOLVES       │ useless—traffic goes to one server    │
+├──────────────┼────────────────────────────────────────┤
+│ KEY INSIGHT  │ LB itself can become bottleneck if    │
+│              │ not designed for throughput you       │
+│              │ need; watch its metrics closely       │
+├──────────────┼────────────────────────────────────────┤
+│ USE WHEN     │ Scaling to multiple servers;          │
+│              │ need high availability; want to       │
+│              │ add/remove servers dynamically        │
+├──────────────┼────────────────────────────────────────┤
+│ AVOID WHEN   │ Workload fits on single machine;      │
+│              │ cost-sensitive and can tolerate       │
+│              │ downtime; static server pool (never   │
+│              │ changes)                              │
+├──────────────┼────────────────────────────────────────┤
+│ TRADE-OFF    │ [Fair traffic distribution] vs        │
+│              │ [added infrastructure, potential      │
+│              │ single point of failure]              │
+├──────────────┼────────────────────────────────────────┤
+│ ONE-LINER    │ "The traffic cop that ensures all     │
+│              │ servers get their fair share."        │
+├──────────────┼────────────────────────────────────────┤
+│ NEXT EXPLORE │ Round Robin → Least Connections →     │
+│              │ Consistent Hashing                    │
+└──────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** You are designing a load balancing strategy for a service that handles two types of requests: (a) fast API calls averaging 50ms, (b) slow report generation averaging 45 seconds. Both go to the same backend pool of 5 servers. Explain why round-robin fails for this workload mix. What algorithm would you use, how would you configure it, and would you consider separating the two request types into different backend pools?
+**Q1.** A load balancer distributes requests round-robin across 10 servers. One server becomes 10x slower (due to a memory leak). The load balancer still sends it 10% of traffic. What algorithm should you use instead, and why does it solve the problem?
 
-**Q2.** Your AWS ALB routes traffic to 3 backend instances across 3 Availability Zones. AZ-b's backend fails its health check. ALB immediately removes AZ-b's instance, routing all traffic to AZ-a and AZ-c instances (now at 150% of original load). AZ-a's instance struggles under the increased load and starts timing out. Describe the cascading failure mechanism (hint: this is the "thundering herd" / cascade failure pattern). What ALB and auto-scaling configuration prevents this failure cascade from occurring?
+**Q2.** Your load balancer is the single point of failure—if it crashes, all traffic stops. You want HA. Design a redundant load balancing setup. What happens if Primary LB crashes while a request is mid-flight?

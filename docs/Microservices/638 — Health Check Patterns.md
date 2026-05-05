@@ -1,55 +1,221 @@
-﻿---
+---
 layout: default
 title: "Health Check Patterns"
 parent: "Microservices"
 nav_order: 638
 permalink: /microservices/health-check-patterns/
-number: "638"
+number: "0638"
 category: Microservices
 difficulty: ★★☆
-depends_on: "Service Registry, Service Discovery"
-used_by: "Circuit Breaker (Microservices), Zero-Downtime Deployment, Graceful Shutdown (Microservices)"
-tags: #intermediate, #microservices, #reliability, #observability, #distributed
+depends_on: Service Registry, Service Discovery, HTTP & APIs
+used_by: Service Discovery, Circuit Breaker, Kubernetes
+related: Liveness Probe, Readiness Probe, Circuit Breaker
+tags:
+  - microservices
+  - observability
+  - distributed
+  - intermediate
+  - pattern
 ---
 
 # 638 — Health Check Patterns
 
-`#intermediate` `#microservices` `#reliability` `#observability` `#distributed`
+⚡ TL;DR — Health check patterns define how services report their current operational state, enabling registries, orchestrators, and load balancers to route traffic only to fully functional instances.
 
-⚡ TL;DR — **Health Check Patterns** are mechanisms that expose a service's operational status so that load balancers, orchestrators, and service registries can make routing decisions. Three patterns: **Liveness** (is the process alive?), **Readiness** (is it ready to serve traffic?), and **Startup** probes. Kubernetes and Spring Boot Actuator implement all three.
+| #638 | Category: Microservices | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Service Registry, Service Discovery, HTTP & APIs | |
+| **Used by:** | Service Discovery, Circuit Breaker, Kubernetes | |
+| **Related:** | Liveness Probe, Readiness Probe, Circuit Breaker | |
 
-| #638            | Category: Microservices                                                                      | Difficulty: ★★☆ |
-| :-------------- | :------------------------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Service Registry, Service Discovery                                                          |                 |
-| **Used by:**    | Circuit Breaker (Microservices), Zero-Downtime Deployment, Graceful Shutdown (Microservices) |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+A payment service pod is running and responding to health checks with HTTP 200. But 3 minutes ago its connection pool to the database was exhausted — every actual payment attempt fails with "could not acquire connection." The load balancer routes calls to this pod because it is "healthy." Every customer hitting this instance gets an error. The pod is alive but useless.
+
+**THE BREAKING POINT:**
+A process that is alive is not the same as a process that is ready to serve. Without rich health checks that verify actual dependencies — database, cache, message broker — infrastructure tools cannot distinguish "alive but broken" from "alive and functional."
+
+**THE INVENTION MOMENT:**
+This is exactly why structured health check patterns were developed — to provide infrastructure with accurate, actionable signals about each service instance's true ability to handle requests.
 
 ---
 
 ### 📘 Textbook Definition
 
-**Health Check Patterns** define standardised endpoints and protocols through which a service exposes its operational health, enabling external systems (load balancers, service registries, container orchestrators) to make routing and lifecycle decisions without application-level knowledge of internal service state. The core patterns are: **Liveness Check** — is the process alive and not in a deadlock/permanent failure state? If unhealthy: restart the container; **Readiness Check** — is the service ready to accept and process traffic? If unhealthy: remove from load balancing pool (do not restart); **Startup Check** — has a slow-starting service finished its initialisation phase? Prevents liveness checks from killing slow-starting containers. In Spring Boot, the Actuator provides `/actuator/health` with automatic component health indicators (database, messaging, cache). In Kubernetes, these map to `livenessProbe`, `readinessProbe`, and `startupProbe` in pod specs. The distinction between liveness and readiness is critical: a service that is alive but not ready (e.g., warming up cache) should not receive traffic but should NOT be restarted.
+**Health Check Patterns** define mechanisms by which a service exposes its current operational state to external observers (service registries, orchestrators, load balancers). The three primary patterns are: (1) **Liveness** — is the process alive and not deadlocked? (2) **Readiness** — is the process ready to accept and successfully handle requests? (3) **Startup** — has the process completed its initialization? Each pattern serves a different consumer: liveness drives restart decisions; readiness drives traffic routing; startup protects slow-starting services from premature traffic.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-Health checks are "are you okay?" questions asked of a service by its infrastructure. There are two important flavours: (1) Liveness: "Are you alive?" → if not, restart the process; (2) Readiness: "Can you handle requests right now?" → if not, stop sending traffic to you (but don't restart). A service can be alive but not ready (e.g., loading data).
+**One line:**
+Health checks are services saying "I'm alive," "I'm ready," or "I'm still starting up" — each signal means something different to the infrastructure.
 
----
+**One analogy:**
+> A restaurant has three states: "we're open" (liveness — the building exists), "we're seating customers" (readiness — kitchen is running and tables are available), and "we're still setting up" (startup — not ready yet, come back in 10 minutes). A health check system is the sign on the door that shows which state the restaurant is currently in.
 
-### 🔵 Simple Definition (Elaborated)
-
-OrderService starts up. For the first 10 seconds, it is loading 50,000 product rules into an in-memory cache. During this time: Liveness = UP (process is running, no deadlock), Readiness = DOWN (not ready to serve requests yet). Kubernetes sees Readiness DOWN → removes OrderService from the Endpoints → no requests are routed to it during startup. After 10 seconds, cache loaded → Readiness = UP → Kubernetes adds it back to Endpoints → traffic flows. Now the database goes down. OrderService is still running (Liveness = UP), but its database health indicator → Readiness = DOWN → Kubernetes stops routing to it but does NOT restart the container (restarting won't fix the database).
+**One insight:**
+The most common health check mistake is returning 200 for liveness and readiness from the same endpoint without checking dependencies. This produces a pod that "looks healthy" but fails every real request — the worst kind of failure because it is invisible to routing decisions.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**Spring Boot Actuator health endpoints:**
+**CORE INVARIANTS:**
+1. A running process is alive (liveness) but may not be functional (readiness).
+2. Readiness requires checking ALL dependencies that affect the service's ability to handle requests.
+3. Liveness and readiness require different responses to failure: liveness failure → restart; readiness failure → remove from routing.
 
+**DERIVED DESIGN:**
+Given Invariant 3, conflating liveness and readiness into one endpoint is dangerous. If the readiness check fails and Kubernetes interprets it as a liveness failure, it restarts the pod. But the pod may be temporarily unready (database overloaded) — a restart makes things worse, creating a pod restart cascade.
+
+**Health check types:**
+
+| Check Type | Question | Failure Action | Checks |
+|---|---|---|---|
+| Liveness | Is the process stuck/deadlocked? | Restart pod | Process thread, critical loop |
+| Readiness | Can this pod serve requests now? | Remove from traffic | DB, cache, downstream services |
+| Startup | Has initialization completed? | Block liveness/readiness | Migration, warmup, cache fill |
+
+**THE TRADE-OFFS:**
+**Gain:** Infrastructure can automatically route traffic to healthy instances and restart truly broken ones.
+**Cost:** Health check overhead (called every 5–30s per pod), risk of false positives causing unnecessary restarts, dependency checks can cascade failures (one slow DB makes all pods unready simultaneously).
+
+---
+
+### 🧪 Thought Experiment
+
+**SETUP:**
+A service has one health endpoint `/health` returning 200. Both liveness and readiness probes point to it. The database becomes temporarily overloaded.
+
+**WITHOUT SEPARATE PROBES:**
+DB is slow → readiness check fails → Kubernetes reads this as liveness failure (same endpoint!) → restarts pod → pod starts, hits DB during startup → DB still overloaded → startup fails → pod restarts again → pod restart loop begins → all pods restarting simultaneously → total service outage
+
+**WITH SEPARATE PROBES:**
+DB is slow → readiness check fails → Kubernetes removes pod from Service Endpoints (traffic stops routing to it) → pod is NOT restarted (liveness check passes because process is alive) → DB recovers → readiness check passes again → pod added back to Endpoints → traffic resumes — zero restarts, 30-second traffic pause per pod
+
+**THE INSIGHT:**
+The distinction between liveness and readiness prevents a temporary downstream problem from cascading into pod restart storms. Readiness says "pause traffic to me." Liveness says "I'm fundamentally broken — restart me."
+
+---
+
+### 🧠 Mental Model / Analogy
+
+> Think of a surgeon's status. Liveness: "Is the surgeon alive and not unconscious?" Readiness: "Is the surgeon scrubbed in, gowned, and standing at the operating table ready to cut?" Startup: "Is the surgeon still in the changing room getting ready?" Each status drives a different action: an unconscious surgeon (liveness failure) needs an ambulance. A surgeon who isn't ready yet (readiness failure) just needs the patient to wait.
+
+- "Surgeon alive" → process running, no deadlock
+- "Surgeon ready to operate" → all dependencies connected, warm cache loaded
+- "Surgeon in changing room" → startup phase (slow app initialization)
+- "Patient waits" → pod removed from load balancer routing
+
+Where this analogy breaks down: surgeons transition through these states once. Services move back and forth between ready and not-ready dynamically — a readiness failure during operation (DB spike) is temporary and expected.
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+Health checks are a service's way of telling the system whether it is working properly. The system uses these signals to decide: send traffic here, don't send traffic here, or restart this service.
+
+**Level 2 — How to use it (junior developer):**
+Spring Boot Actuator exposes `/actuator/health` automatically. Configure `management.health.db.enabled=true` to include database connectivity. In Kubernetes, point `livenessProbe` to a lightweight endpoint (just HTTP 200 if the process is up), point `readinessProbe` to the full health endpoint that checks DB and dependencies.
+
+**Level 3 — How it works (mid-level engineer):**
+Kubernetes polls each probe independently on a configurable interval. Liveness failure after `failureThreshold` consecutive checks → `kubelet` kills and restarts the container. Readiness failure → `kubelet` removes the pod IP from the Service's Endpoints slice → kube-proxy removes it from routing rules → no new traffic reaches the pod. Startup probe: Kubernetes won't run liveness or readiness until startup succeeds, preventing restart loops on slow-starting apps.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+Kubernetes adopted three separate probe types after observing failure patterns from simpler systems: Spring Actuator `UP/DOWN` was too coarse — a single `DOWN` triggered the wrong response depending on context. The three-probe design reflects operational reality: a service can be fundamentally alive (process running), temporarily unavailable (dependency down), or still initializing — three completely different conditions requiring three completely different responses. The Spring Boot 2.3+ actuator health groups (`liveness` and `readiness`) map directly to these Kubernetes concepts. The `startup` probe was added in Kubernetes 1.16 specifically to support JVM services that take 30–60 seconds to start but should not be killed by liveness probes during that window.
+
+---
+
+### ⚙️ How It Works (Mechanism)
+
+**Kubernetes probe configuration:**
+
+```yaml
+spec:
+  containers:
+  - name: payments-service
+    image: payments:1.0.0
+    startupProbe:
+      httpGet:
+        path: /actuator/health/liveness
+        port: 8080
+      failureThreshold: 30    # 30 × 10s = 5 min startup window
+      periodSeconds: 10
+    livenessProbe:
+      httpGet:
+        path: /actuator/health/liveness
+        port: 8080
+      initialDelaySeconds: 0  # startup probe guards this
+      periodSeconds: 10
+      failureThreshold: 3     # restart after 3 failures
+    readinessProbe:
+      httpGet:
+        path: /actuator/health/readiness
+        port: 8080
+      periodSeconds: 10
+      failureThreshold: 3     # remove from routing
+      successThreshold: 1     # back to routing after 1 success
 ```
-GET /actuator/health
-→ 200 OK (or 503 Service Unavailable)
+
+**Spring Boot Actuator health configuration:**
+
+```yaml
+# application.yml
+management:
+  endpoint:
+    health:
+      show-details: always
+      group:
+        liveness:          # maps to /actuator/health/liveness
+          include: livenessState  # only checks process state
+        readiness:         # maps to /actuator/health/readiness
+          include: >
+            readinessState,
+            db,            # database connectivity
+            redis,         # cache connectivity
+            rabbit         # message broker connectivity
+```
+
+**Custom health indicator:**
+
+```java
+@Component
+public class PaymentGatewayHealthIndicator
+    implements HealthIndicator {
+
+    private final PaymentGatewayClient gatewayClient;
+
+    @Override
+    public Health health() {
+        try {
+            // Check if payment gateway is reachable
+            GatewayStatus status = gatewayClient.ping();
+            if (status == GatewayStatus.OK) {
+                return Health.up()
+                    .withDetail("gateway", "reachable")
+                    .build();
+            }
+            return Health.down()
+                .withDetail("gateway", "degraded")
+                .build();
+        } catch (Exception e) {
+            return Health.down()
+                .withException(e)
+                .build();
+        }
+    }
+}
+```
+
+**Health response structure:**
+
+```json
+// GET /actuator/health → overall status
 {
   "status": "UP",
   "components": {
@@ -57,262 +223,210 @@ GET /actuator/health
       "status": "UP",
       "details": { "database": "PostgreSQL", "validationQuery": "isValid()" }
     },
-    "diskSpace": {
-      "status": "UP",
-      "details": { "total": 107374182400, "free": 80530137088, "threshold": 10485760 }
-    },
-    "redis": {
-      "status": "UP",
-      "details": { "version": "7.0.5" }
-    }
+    "redis": { "status": "UP" },
+    "paymentGateway": { "status": "UP", "details": { "gateway": "reachable" } }
   }
 }
-
-If ANY component is DOWN:
-→ Overall status = DOWN
-→ HTTP 503 returned
-
-KUBERNETES INTEGRATION:
-  livenessProbe: calls /actuator/health/liveness
-  readinessProbe: calls /actuator/health/readiness
-  → Spring Boot 2.3+: separate /liveness and /readiness groups
-```
-
-**Kubernetes probe types and responses:**
-
-```yaml
-# Kubernetes pod spec with all three probes:
-containers:
-  - name: order-service
-    image: order-service:1.0
-
-    startupProbe: # is the app done starting up?
-      httpGet:
-        path: /actuator/health/liveness
-        port: 8080
-      failureThreshold: 30 # allow 30 × 10s = 5 minutes to start
-      periodSeconds: 10
-      # During startup: liveness/readiness probes DISABLED
-      # After startupProbe succeeds: enable liveness + readiness probes
-
-    livenessProbe: # is the app alive (not deadlocked)?
-      httpGet:
-        path: /actuator/health/liveness
-        port: 8080
-      initialDelaySeconds: 0
-      periodSeconds: 10
-      failureThreshold: 3 # fail 3 consecutive times → RESTART container
-      # Action on failure: kill container → kubelet restarts it
-
-    readinessProbe: # is the app ready to serve traffic?
-      httpGet:
-        path: /actuator/health/readiness
-        port: 8080
-      initialDelaySeconds: 0
-      periodSeconds: 5
-      failureThreshold: 3 # fail 3 consecutive times → remove from Endpoints
-      # Action on failure: remove pod IP from Service Endpoints (no restart)
-      # Action on recovery: add pod IP back to Endpoints
-```
-
-**Spring Boot 2.3+ Liveness vs Readiness separation:**
-
-```java
-// Spring Boot 2.3+ adds explicit Liveness and Readiness health groups:
-
-// application.yml:
-// management.endpoint.health.probes.enabled=true
-// → Enables /actuator/health/liveness and /actuator/health/readiness
-
-// LIVENESS group - only "application is alive" indicators:
-// Does NOT include database, redis, messaging - those don't affect liveness
-// Includes: LivenessStateHealthIndicator
-//   - UP: normal operation
-//   - BROKEN: non-recoverable error (e.g., required startup data corrupt)
-
-// READINESS group - includes external dependencies:
-// Includes: ReadinessStateHealthIndicator + db + redis + messaging
-//   - UP: ready to accept traffic
-//   - REFUSING_TRAFFIC: not ready (startup incomplete, dependency down)
-
-// Manual control from application code:
-@Autowired ApplicationContext context;
-@Autowired ApplicationAvailability availability;
-
-// Signal that service is not ready (e.g., detected cache warming in progress):
-context.publishEvent(new AvailabilityChangeEvent<>(
-    this, ReadinessState.REFUSING_TRAFFIC));
-// Service removed from load balancer pool immediately
-
-// Signal ready again:
-context.publishEvent(new AvailabilityChangeEvent<>(
-    this, ReadinessState.ACCEPTING_TRAFFIC));
 ```
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🔄 The Complete Picture — End-to-End Flow
 
-WITHOUT Health Checks:
+**NORMAL FLOW:**
+Service starts → Startup probe polled → Startup probe passes → Liveness + Readiness probes begin → All green → Pod added to Service Endpoints ← YOU ARE HERE → Traffic routed to pod
 
-What breaks without it:
+**READINESS FAILURE PATH:**
+DB pool exhausted → Readiness probe returns `DOWN` → 3 consecutive failures → kube-proxy removes pod from routing → Traffic shifts to remaining healthy pods → DB pool recovers → Readiness probe returns `UP` → Pod added back to routing
 
-1. Load balancer sends traffic to a starting-up instance → requests fail during cold start.
-2. Container orchestrator cannot detect deadlocked processes → they run forever consuming resources.
-3. Service Registry keeps dead instances → other services call them, get timeouts.
-4. Rolling deployments send traffic to new instances before they are ready → errors during deployment.
-5. Database failure: restarting the service won't fix the database → restart loops.
+**LIVENESS FAILURE PATH:**
+Deadlock in thread pool → Process hangs → Liveness probe times out → 3 consecutive timeouts → kubelet kills and restarts container → Pod starts fresh, joins Endpoints → Traffic resumes
 
-WITH Health Checks:
-→ Starting instances are isolated from traffic until ready.
-→ Deadlocked processes are restarted automatically.
-→ Only healthy instances receive traffic.
-→ Zero-downtime deployments: new instances join load balancing only when ready.
-→ Database failure: service removed from load balancing, not restarted in a loop.
-
----
-
-### 🧠 Mental Model / Analogy
-
-> Liveness and Readiness checks are like two questions asked before letting a surgeon operate: (1) Liveness: "Is the surgeon conscious and responsive?" — if not, call an ambulance (restart). (2) Readiness: "Is the surgeon scrubbed, gowned, and ready to begin?" — if not, hold the patient in pre-op (don't send traffic), but don't fire the surgeon (no restart). A surgeon might be conscious but not ready (still scrubbing in). A surgeon who collapses mid-surgery needs an ambulance — regardless of readiness.
-
-- "Surgeon conscious" = process alive, not deadlocked → Liveness probe
-- "Scrubbed and gowned" = dependencies healthy, cache loaded → Readiness probe
-- "Call an ambulance" = container restart (kubelet) → Liveness failure
-- "Hold in pre-op" = remove from load balancer pool → Readiness failure
-
----
-
-### ⚙️ How It Works (Mechanism)
-
-**Custom health indicator for a circuit breaker:**
-
-```java
-@Component
-class CircuitBreakerHealthIndicator implements HealthIndicator {
-
-    @Autowired CircuitBreakerRegistry circuitBreakerRegistry;
-
-    @Override
-    public Health health() {
-        CircuitBreaker cb = circuitBreakerRegistry.circuitBreaker("payment-service");
-        CircuitBreaker.State state = cb.getState();
-
-        if (state == CircuitBreaker.State.OPEN) {
-            return Health.down()
-                .withDetail("circuit-breaker", "OPEN")
-                .withDetail("service", "payment-service")
-                .withDetail("action", "refusing traffic - payment service unreachable")
-                .build();
-        }
-        return Health.up()
-            .withDetail("circuit-breaker", state.name())
-            .build();
-    }
-}
-// When circuit breaker OPENS:
-// → /actuator/health/readiness → DOWN
-// → Kubernetes readiness probe fails → pod removed from Service Endpoints
-// → No new traffic routed to this instance while it cannot reach payment service
-```
-
----
-
-### 🔄 How It Connects (Mini-Map)
-
-```
-Service Registry
-(deregisters/evicts unhealthy instances)
-        │
-        ▼
-Health Check Patterns  ◄──── (you are here)
-(liveness, readiness, startup probes)
-        │
-        ├── Circuit Breaker → triggers readiness failure when downstream is unhealthy
-        ├── Zero-Downtime Deployment → readiness probe gates traffic to new instances
-        ├── Graceful Shutdown → readiness goes DOWN before shutdown to drain traffic
-        └── Observability → health check data feeds dashboards and alerting
-```
+**WHAT CHANGES AT SCALE:**
+At 100 pods, health check traffic becomes significant — 100 pods × 2 endpoints × every 10s = 20 probe requests/second to the service. Health endpoints must be cheap (no DB calls in liveness probe) and fast. At 1000 pods, a cascading dependency failure (central DB down) makes all pods simultaneously not-ready — the entire service vanishes from routing. Design readiness probes for dependency degradation: if DB is slow but not down, stay ready with reduced capacity.
 
 ---
 
 ### 💻 Code Example
 
-**Graceful shutdown using readiness probe:**
+**Example 1 — BAD: Single health endpoint for both liveness and readiness:**
+
+```yaml
+# BAD: same endpoint used for both — conflates two different signals
+livenessProbe:
+  httpGet:
+    path: /health   # same path!
+    port: 8080
+readinessProbe:
+  httpGet:
+    path: /health   # same path!
+    port: 8080
+# Problem: DB unavailability → readiness fails →
+# interpreted as liveness fail → restart cascade
+```
+
+**Example 2 — GOOD: Separate liveness and readiness:**
+
+```yaml
+# GOOD: separate concerns
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness  # checks only process state
+    port: 8080
+  periodSeconds: 10
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness # checks DB, cache, etc.
+    port: 8080
+  periodSeconds: 10
+  failureThreshold: 3
+```
+
+**Example 3 — Graceful degradation in readiness:**
 
 ```java
-// During graceful shutdown:
-// 1. SIGTERM received
-// 2. Spring sets ReadinessState to REFUSING_TRAFFIC
-//    → /actuator/health/readiness → DOWN
-//    → Kubernetes removes pod from Endpoints (no new traffic)
-// 3. In-flight requests complete (within graceful termination period)
-// 4. Application context shuts down
-// 5. Process exits
+@Component
+public class CacheHealthIndicator implements HealthIndicator {
 
-// application.yml configuration:
-// server.shutdown=graceful
-// spring.lifecycle.timeout-per-shutdown-phase=30s  ← wait 30s for in-flight requests
-// management.endpoint.health.probes.enabled=true
+    private final RedisTemplate<?,?> redis;
 
-// Kubernetes terminationGracePeriodSeconds: 60
-// (must be > spring.lifecycle.timeout-per-shutdown-phase + probe polling interval)
+    @Override
+    public Health health() {
+        try {
+            redis.opsForValue().get("health-check");
+            return Health.up().build();
+        } catch (RedisConnectionFailureException e) {
+            // Cache down: service can still function without cache
+            // DO NOT fail readiness — service is degraded, not broken
+            return Health.up()
+                .withDetail("cache", "degraded — operating without cache")
+                .withDetail("impact", "increased DB load")
+                .build();
+        }
+    }
+}
+// Cache failure → service still routes traffic (slower)
+// DB failure → service fails readiness (cannot process requests)
 ```
+
+---
+
+### ⚖️ Comparison Table
+
+| Probe Type | Checks | Failure Effect | Frequency |
+|---|---|---|---|
+| **Liveness** | Process alive, no deadlock | Pod restart | Every 10–30s |
+| **Readiness** | All dependencies reachable | Remove from routing | Every 5–10s |
+| **Startup** | Initialization complete | Block liveness/readiness | Every 5–10s during startup |
+| External health check (AWS ELB) | HTTP 200 response | Remove from target group | Every 30s |
+
+How to choose: always implement all three probes in Kubernetes environments; configure liveness conservatively (high failure threshold, long period) to avoid unnecessary restarts; tune readiness aggressively (fast failure, fast recovery) for smooth traffic management.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                                                 | Reality                                                                                                                                                                                                                                                 |
-| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Liveness and Readiness probes are just the same endpoint with different names | They must be separate and check different things. Liveness should ONLY check internal state (no external dependency checks) — adding DB checks to liveness causes restart loops when the database is temporarily unavailable                            |
-| Health checks eliminate the need for circuit breakers                         | Health probes operate on a polling interval (seconds). Circuit breakers operate on real-time call outcomes (milliseconds). An instance can be healthy per last probe check but experiencing a surge of errors. Both are needed                          |
-| A 200 OK from the health endpoint means the service is fully operational      | The HTTP status is binary (UP/DOWN). A service may be operating in degraded mode (some features unavailable) with status UP. Rich health detail fields in the response body provide granularity but most infrastructure only reads the HTTP status code |
-| StartupProbe is only needed for very slow JVM applications                    | Any service with a non-trivial startup sequence (loading ML models, database migrations, cache warming) benefits from startup probes. Without them, liveness probes fire before startup completes and kill the container in a restart loop              |
+| Misconception | Reality |
+|---|---|
+| A single `/health` endpoint is sufficient | You need separate liveness and readiness for correct Kubernetes behaviour; a combined endpoint maps the wrong response to the wrong action |
+| Liveness probe should check downstream dependencies | Liveness should check ONLY the process itself. Dependency failures should fail readiness (stop routing), not liveness (trigger restart) |
+| A DOWN health status always means the service is unusable | Some dependencies can be degraded without making the service completely unavailable. Design health indicators with levels: UP, DEGRADED (still routing), DOWN (stop routing) |
+| Health checks add significant overhead | A simple in-process check returning a cached status takes microseconds. Health probe calls every 10 seconds are negligible overhead |
+| Startup probes are optional | In JVM services with 30+ second startup times, startup probes are essential — without them, liveness probes trigger restart loops before the app finishes starting |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**Liveness probe includes external dependency → restart loop**
+**1. Pod Restart Loop from Misconfigured Liveness Probe**
 
+**Symptom:** Pods in `CrashLoopBackOff` state. Each successful start is followed by a restart within 2 minutes. Memory usage and CPU look normal.
+
+**Root Cause:** Liveness probe points to a readiness-style endpoint that checks the database. DB connection pool saturation during high traffic causes the liveness probe to fail, triggering unnecessary restarts.
+
+**Diagnostic:**
+```bash
+# Check restart count and reason
+kubectl get pods -l app=payments
+kubectl describe pod payments-xxx | grep -A20 "Last State"
+# Look for: Reason: OOMKilled vs health probe timeout
+kubectl logs payments-xxx --previous  # logs from crashed container
 ```
-SCENARIO:
-  livenessProbe calls /actuator/health (which includes database check)
-  Database goes down for maintenance (5 minutes)
-  → /actuator/health → DOWN
-  → livenessProbe fails 3 times → Kubernetes KILLS the container
-  → Container restarts → database still down → liveness fails again
-  → Container restart loop: CrashLoopBackOff
-  → Service completely unavailable for duration of DB maintenance
-  → AND restart loop adds extra connection pressure when DB comes back
 
-FIX:
-  Split liveness and readiness probes:
-  livenessProbe: /actuator/health/liveness   ← NO external deps
-  readinessProbe: /actuator/health/readiness ← includes DB, cache, etc.
+**Fix:** Change liveness probe to a truly lightweight endpoint that only confirms the JVM is alive (no DB calls). Move DB checks to the readiness probe.
 
-  management:
-    health:
-      livenessstate:
-        enabled: true      # only LivenessStateHealthIndicator
-      readinessstate:
-        enabled: true      # LivenessState + db + redis + messaging
+**Prevention:** Liveness probe endpoints must complete in <1 second and never call external dependencies.
 
-  During DB outage:
-  → Readiness DOWN → pod removed from load balancing (no traffic)
-  → Liveness UP  → pod stays alive (no restart)
-  → When DB recovers: Readiness UP → pod re-added to load balancing
+**2. Cascading Readiness Failure**
+
+**Symptom:** A spike in DB response time causes all pods simultaneously to fail readiness probes → all pods removed from routing → all traffic fails → no pods can serve requests.
+
+**Root Cause:** Readiness probe failures are all-or-nothing. When all instances fail simultaneously, there are zero healthy instances.
+
+**Diagnostic:**
+```bash
+# Check endpoint count (should not reach zero)
+watch kubectl get endpoints payments-service
+# Zero endpoints = total service unavailability
+
+# Check why probes are failing
+kubectl describe pod payments-xxx | grep -A10 "Readiness:"
 ```
+
+**Fix:** Implement Pod Disruption Budgets to prevent Kubernetes from removing all pods simultaneously. Use circuit breakers and connection pool health caps (rather than probe failures) to degrade gracefully under DB load.
+
+**Prevention:**
+```yaml
+# PodDisruptionBudget: ensure minimum availability
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: payments-pdb
+spec:
+  minAvailable: 2   # keep at least 2 pods in routing at all times
+  selector:
+    matchLabels:
+      app: payments
+```
+
+**3. Health Endpoint Never Updated**
+
+**Symptom:** Health endpoint returns 200/UP but requests consistently fail with 500. Health check is green, real traffic is red.
+
+**Root Cause:** Health endpoint returns hardcoded 200 without actually checking any dependencies.
+
+**Diagnostic:**
+```bash
+# Check health endpoint response vs application error rate
+curl http://payments:8080/actuator/health
+# Shows UP
+
+# But application error rate is high
+kubectl logs payments-xxx | grep "ERROR\|Exception" | \
+  tail -20
+```
+
+**Fix:** Implement real dependency checks in the readiness health indicator. Every dependency that can cause request failures must have a health indicator.
+
+**Prevention:** Test health checks against actual failures in staging. Disable a dependency deliberately and confirm the health endpoint reports DOWN.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Service Registry` — uses health check results to maintain accurate instance lists
-- `Zero-Downtime Deployment` — readiness probe gates traffic to new deployment instances
-- `Graceful Shutdown (Microservices)` — readiness probe transitions DOWN before shutdown
-- `Circuit Breaker (Microservices)` — can drive readiness probe DOWN when downstream fails
+**Prerequisites (understand these first):**
+- `Service Registry` — health checks feed the registry with instance status, determining which instances are included in discovery results
+- `Service Discovery` — health check status directly controls which instances are eligible for traffic routing
+
+**Builds On This (learn these next):**
+- `Circuit Breaker (Microservices)` — complements health checks by tracking call success rates at the client level, providing faster failure detection than probe polling
+- `Kubernetes` — the primary consumer of Kubernetes liveness, readiness, and startup probes in modern deployments
+- `Observability & SRE` — health check metrics (available instances, probe failure counts) are key SRE signals
+
+**Alternatives / Comparisons:**
+- `Circuit Breaker (Microservices)` — client-side health detection that complements server-side health checks; circuit breaker detects failures faster than probe polling intervals
 
 ---
 
@@ -320,19 +434,32 @@ FIX:
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ LIVENESS     │ Is process alive and not deadlocked?      │
-│ PROBE        │ FAIL → restart container                  │
-│              │ ONLY internal state checks               │
+│ WHAT IT IS   │ Three probe types that let infrastructure │
+│              │ know when to restart, route, or wait for  │
+│              │ a service instance                        │
 ├──────────────┼───────────────────────────────────────────┤
-│ READINESS    │ Is service ready to handle traffic?       │
-│ PROBE        │ FAIL → remove from load balancer pool    │
-│              │ Includes external dep checks (DB, cache) │
+│ PROBLEM IT   │ Running ≠ ready. Infrastructure needs     │
+│ SOLVES       │ accurate signals — not just "is the       │
+│              │ process alive?"                           │
 ├──────────────┼───────────────────────────────────────────┤
-│ STARTUP      │ Has service finished initialisation?      │
-│ PROBE        │ Disables liveness during slow startup     │
+│ KEY INSIGHT  │ Liveness failure → restart.               │
+│              │ Readiness failure → stop routing.         │
+│              │ Conflating them causes restart storms     │
 ├──────────────┼───────────────────────────────────────────┤
-│ SPRING BOOT  │ /actuator/health/liveness (2.3+)          │
-│ ENDPOINTS    │ /actuator/health/readiness (2.3+)         │
+│ USE WHEN     │ Always — every microservice running in    │
+│              │ Kubernetes needs all three probe types    │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Do not include slow external dependency   │
+│              │ checks in liveness probes                 │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ Accurate health signals vs complexity of  │
+│              │ maintaining accurate health indicators    │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Alive means the light is on. Ready means │
+│              │  the shop is actually open."              │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Circuit Breaker → Service Registry →      │
+│              │ Observability & SRE                       │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -340,6 +467,7 @@ FIX:
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** A microservice has a readiness probe that checks database connectivity. During a rolling deployment of 10 pods, the new pod version connects to the database and the readiness probe passes. However, the new version has a bug that causes 30% of requests to fail. The readiness probe returns UP, so Kubernetes routes traffic to the new pod. How would you design a more sophisticated readiness check that detects error rates (not just connectivity)? What is the risk of over-engineering readiness probes (making them too sensitive)?
+**Q1.** Your payments service has 10 pods. The readiness probe checks DB connectivity. During a scheduled DB maintenance window, DB becomes unavailable for 2 minutes. All 10 pods fail their readiness check simultaneously — all are removed from routing. New requests pile up at the load balancer with no healthy backend. Design a resilient health check strategy that maintains partial service availability during planned and unplanned dependency outages, including how to handle the case where the DB is slow (high latency) but not completely unreachable.
 
-**Q2.** Kubernetes `terminationGracePeriodSeconds` and Spring Boot's `server.shutdown=graceful` must be coordinated. Describe the exact shutdown sequence for a pod receiving SIGTERM: (a) how does the readiness probe transition to REFUSING_TRAFFIC; (b) what is the race condition between Kubernetes removing the pod from Endpoints vs the pod still being sent requests by existing connections in the load balancer; (c) why is adding a `preStop: sleep 5` hook in the pod spec often recommended as a workaround?
+**Q2.** A team discovers their service has a subtle memory leak — after 6 hours of production traffic, heap usage reaches 90% and GC pauses cause P99 to spike from 50ms to 2 seconds. The service does not crash, so liveness probes never fail. Design a liveness probe strategy that detects this degraded state and triggers a pod restart before it affects users, while avoiding false positives that would cause unnecessary restarts under normal high-traffic conditions.
+

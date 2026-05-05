@@ -4,352 +4,452 @@ title: "Anti-Corruption Layer"
 parent: "Microservices"
 nav_order: 633
 permalink: /microservices/anti-corruption-layer/
-number: "633"
+number: "0633"
 category: Microservices
 difficulty: ★★★
-depends_on: "Domain-Driven Design (DDD), Bounded Context, Service Decomposition"
-used_by: "Strangler Fig Pattern, Service Decomposition, Bounded Context"
-tags: #advanced, #architecture, #microservices, #pattern
+depends_on: Bounded Context, Domain-Driven Design, Service Decomposition
+used_by: Strangler Fig Pattern, Service Decomposition, Modular Monolith
+related: Strangler Fig Pattern, Bounded Context, Adapter Pattern
+tags:
+  - microservices
+  - architecture
+  - pattern
+  - deep-dive
+  - distributed
 ---
 
 # 633 — Anti-Corruption Layer
 
-`#advanced` `#architecture` `#microservices` `#pattern`
+⚡ TL;DR — An Anti-Corruption Layer is a translation boundary that shields your clean domain model from pollution by a poorly designed or legacy external system's model.
 
-⚡ TL;DR — An **Anti-Corruption Layer (ACL)** is a translation layer that protects a service's domain model from being "corrupted" by an external system's model. It translates between the external model and your internal model, so your domain remains clean even when integrating with messy legacy systems or third-party APIs.
+| #633 | Category: Microservices | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Bounded Context, Domain-Driven Design, Service Decomposition | |
+| **Used by:** | Strangler Fig Pattern, Service Decomposition, Modular Monolith | |
+| **Related:** | Strangler Fig Pattern, Bounded Context, Adapter Pattern | |
 
-| #633            | Category: Microservices                                            | Difficulty: ★★★ |
-| :-------------- | :----------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Domain-Driven Design (DDD), Bounded Context, Service Decomposition |                 |
-| **Used by:**    | Strangler Fig Pattern, Service Decomposition, Bounded Context      |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+A new microservice integrates with a 20-year-old ERP system. The ERP uses cryptic field names: `CUST_TYP_CD`, `ACCNT_BAL_AMT_01`, `SLS_REP_NM`. Your new service imports the ERP's Java client library, and to avoid rewriting the integration, developers use the ERP's naming conventions directly in the domain model. Over six months, your "clean" new service's codebase fills with `custTypCd` variables, `accntBalAmt01` fields, and logic that only makes sense in the ERP's context. The new service has become as hard to maintain as the legacy system it was meant to replace.
+
+**THE BREAKING POINT:**
+External system concepts have leaked into the new domain model. Renaming the ERP's fields requires changing core domain classes. New developers cannot understand the code without knowing the ERP internals. When the ERP is eventually replaced, the migration touches hundreds of files.
+
+**THE INVENTION MOMENT:**
+This is exactly why the Anti-Corruption Layer (ACL) pattern was created — to install a translation boundary between systems so each side can evolve in its own model, with an explicit, testable conversion layer in between.
 
 ---
 
 ### 📘 Textbook Definition
 
-An **Anti-Corruption Layer (ACL)** is a design pattern (introduced in Eric Evans's DDD) that isolates a Bounded Context from the model of an external system or upstream Bounded Context by providing a translation layer. Without an ACL, integrating with an external system requires importing its model into your domain — gradually "corrupting" your clean domain model with foreign concepts, naming conventions, and data structures. The ACL acts as a bidirectional translator: inbound — it transforms external DTOs/responses into your internal domain model; outbound — it transforms your domain commands into the format the external system expects. It is typically implemented as an Adapter (wrapping the external client), a Gateway (encapsulating all communication with an external system), or a Repository implementation (abstracting data access from an external source). The ACL is particularly valuable when: (1) integrating with a legacy system with a poor model, (2) integrating with a third-party SaaS API you cannot control, (3) a downstream context must not be forced to adopt an upstream context's model (Conformist would be the alternative).
+An **Anti-Corruption Layer (ACL)** is a boundary layer placed between two bounded contexts (or between a bounded context and an external system) that translates the models of each side into the other's language. The ACL lives in the downstream context (the one being protected) and contains adapters, translators, and facades. It presents the downstream context's clean domain model inward, while dealing with the upstream context's messy model at its outer edge. The "corruption" being prevented is the contamination of the local domain model by an external model's concepts, naming, and structure.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-An Anti-Corruption Layer is a protective wrapper around an external system. When your code needs data from a messy external API, the ACL translates that data into your clean internal format — your domain never knows about the external system's weird structure.
+**One line:**
+A translation layer that protects your clean code from inheriting the mess of a legacy or external system.
 
----
+**One analogy:**
+> An embassy in a foreign country is an Anti-Corruption Layer. Inside the embassy walls, everything follows your home country's laws, language, and processes. Outside the walls, the host country's rules apply. The embassy staff translate: they receive documents in the host language, translate them to home language internally, and respond in home language. The ambassador never has to think in the foreign system's language to do their job.
 
-### 🔵 Simple Definition (Elaborated)
-
-You are building an e-commerce platform and need to integrate with a legacy ERP system that was designed in the 1990s with cryptic field names: `CUST_NO`, `ORD_DT`, `ITM_CD`. If you use these names directly in your domain code, your codebase gradually looks like the ERP system — confusing, unmaintainable, and coupled to the ERP's design decisions. An ACL wraps the ERP integration: external code calls `ErpGateway.getCustomer("CUST-001")`, which internally calls `LEGACY_ERP_API(CUST_NO="CUST-001")` and translates the response into your domain object `Customer(id, name, email, address)`. Your domain is clean; only the ACL layer knows about `CUST_NO`.
+**One insight:**
+The ACL is not just an adapter class. It is an explicit architectural decision that says: "this external model is not worthy of existing inside our domain." The more different (or worse) the external model is from your model, the more valuable the ACL.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**ACL structure — the three roles:**
+**CORE INVARIANTS:**
+1. An external system's model should never be imported into the core domain model directly.
+2. The ACL is the only code that knows about the external system's types and naming conventions.
+3. The ACL exposes only your bounded context's domain model on its inward-facing surface.
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ YOUR DOMAIN (clean, uses Ubiquitous Language)                       │
-│                                                                     │
-│  OrderFulfilmentService.fulfil(Order order)                        │
-│    → needs: ShipmentQuote (YOUR model)                             │
-│    → needs: ShipmentId (YOUR model)                                │
-│                                                                     │
-│ ─ ─ ─ ─ ─ ─ ANTI-CORRUPTION LAYER ─ ─ ─ ─ ─ ─ ─ ─ ─ ─           │
-│                                                                     │
-│  FedExShippingGateway (ACL implementation)                         │
-│    getQuote(Order order) → translates to FedEx format              │
-│      → YOUR Order → FedEx CreateShipmentRequest                   │
-│    shipOrder(Order order) → calls FedEx API                        │
-│      → FedEx response → YOUR ShipmentId                           │
-│                                                                     │
-│ ─ ─ ─ ─ ─ ─ EXTERNAL SYSTEM ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─          │
-│                                                                     │
-│  FedEx REST API                                                     │
-│    POST /v1/rates/quotes                                            │
-│    requestBody: {shipper:{..}, recipient:{..}, packages:[..]}      │
-│    response: {shipmentId:"794...", totalNetCharge:{amount:..}}     │
-└─────────────────────────────────────────────────────────────────────┘
-```
+**DERIVED DESIGN:**
+The ACL consists of three layers:
 
-**Three ACL implementation roles:**
+- **Facade**: presents a clean interface to the domain (what the domain calls the external system)
+- **Adapter**: implements the facade against the external system's actual client API
+- **Translator**: converts external types/structures to domain types/structures
 
-```
-1. GATEWAY: encapsulates all communication with ONE external system
-   interface ShippingGateway {
-     ShipmentQuote getQuote(Order order);
-     ShipmentId ship(Order order);
-     ShipmentStatus track(ShipmentId id);
-   }
-   → Single interface for everything FedEx-related
-   → Swap FedEx for UPS: rewrite ShippingGateway, domain is untouched
+This three-part structure ensures that if the external system changes its API, only the Adapter changes — the Translator and Facade (and all domain code) are unaffected.
 
-2. TRANSLATOR: pure translation between models (no I/O)
-   class FedExOrderTranslator {
-     FedExShipmentRequest toFedExRequest(Order order) { ... }
-     ShipmentId fromFedExResponse(FedExShipmentResponse response) { ... }
-   }
-   → Separated from I/O for testability
+**Context Map relationship — Conformist vs ACL:**
+If the downstream context can afford to model itself after the upstream (e.g., using a well-designed third-party API), it is a "Conformist." If the upstream's model is poorly designed or legacy, the downstream installs an ACL to translate rather than conform.
 
-3. ADAPTER: wraps an external client, matches an internal interface
-   class StripePaymentAdapter implements PaymentGateway {
-     @Override
-     public PaymentResult authorise(PaymentRequest req) {
-       StripeChargeParams params = toStripeParams(req); // translate
-       StripeCharge charge = stripeClient.charges.create(params); // call Stripe
-       return fromStripeCharge(charge); // translate back
-     }
-   }
-```
-
-**ACL for a legacy system — full translation example:**
-
-```java
-// Legacy ERP returns this (the "external model"):
-// {
-//   "CUST_NO": "00123",
-//   "ORD_DT": "20240115",
-//   "ITM_CD": "PROD-456",
-//   "QTY": 3,
-//   "UNIT_PRC": "29.99",
-//   "DISC_PCT": "10",
-//   "SHIP_ADDR_LN1": "123 Main St",
-//   "SHIP_CITY": "Springfield",
-//   "SHIP_ST": "IL",
-//   "SHIP_ZIP": "62701"
-// }
-
-// ACL translates this into the domain model:
-@Component
-class LegacyErpOrderAdapter implements LegacyOrderPort {
-
-    @Autowired LegacyErpClient erpClient;
-
-    @Override
-    public LegacyOrderData getOrderData(OrderId orderId) {
-        ErpOrderRecord erp = erpClient.fetchOrder(orderId.value());
-
-        // All the ugly translation is HERE — never in the domain:
-        return new LegacyOrderData(
-            new CustomerId(erp.getCUST_NO()),
-            parseDate(erp.getORD_DT()),              // "20240115" → LocalDate
-            new ProductId(erp.getITM_CD()),
-            new Quantity(Integer.parseInt(erp.getQTY())),
-            Money.of(new BigDecimal(erp.getUNIT_PRC()), USD),
-            Percentage.of(new BigDecimal(erp.getDISC_PCT())),
-            Address.builder()
-                .streetLine1(erp.getSHIP_ADDR_LN1())
-                .city(erp.getSHIP_CITY())
-                .state(erp.getSHIP_ST())
-                .postalCode(erp.getSHIP_ZIP())
-                .build()
-        );
-    }
-}
-// The domain NEVER sees CUST_NO, ORD_DT, ITM_CD, DISC_PCT...
-```
+**THE TRADE-OFFS:**
+**Gain:** Domain model purity, external system isolation, testability (can mock the ACL facade), easier future replacement of external system.
+**Cost:** Additional code layer to maintain, translation logic can become complex, potential latency from transformation overhead.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-WITHOUT an Anti-Corruption Layer:
+**SETUP:**
+Your Payments bounded context must integrate with a legacy billing system that uses `PYMNT_STAT_CD = 1` to mean "paid" and `PYMNT_STAT_CD = 2` to mean "pending." It also uses a custom epoch timestamp in milliseconds since 1980.
 
-What breaks without it:
+**WITHOUT ACL:**
+Domain code directly calls the legacy client: `if (legacyBilling.getPymntStatCd() == 1)`. This code now exists in 15 places. The legacy system "upgrades" and changes `PYMNT_STAT_CD = 3` to also mean "paid" (for a new payment type). You must find and update all 15 places. One is missed. A payment is incorrectly marked as unpaid. Customer support receives 300 tickets.
 
-1. Domain model is polluted with external system's concepts — `CUST_NO` in your domain model.
-2. Changing the external API requires changes throughout your domain layer.
-3. Unit testing your domain requires mocking the external API's complex types.
-4. Two teams using the same external system develop independently but both accumulate coupling — each change in the external system requires coordinating two teams.
+**WITH ACL:**
+```
+LegacyBillingAcl.getPaymentStatus(orderId)
+  → calls legacy API, gets PYMNT_STAT_CD
+  → translates {1,3} → PAID, {2} → PENDING
+  → returns domain enum PaymentStatus.PAID
+```
+When legacy changes, only the ACL's translation logic changes. Domain code `if (status == PaymentStatus.PAID)` is unchanged. One file to update. Zero tickets.
 
-WITH an Anti-Corruption Layer:
-→ External system can change its model/API; only the ACL adapts — domain is unchanged.
-→ Swap from FedEx to DHL: implement a new `DhlShippingGateway`, keep `ShippingGateway` interface.
-→ Test the domain with a `MockShippingGateway` — no real HTTP calls, no FedEx test account.
-→ Legacy migration: as the legacy system is replaced, only the ACL changes.
+**THE INSIGHT:**
+An ACL turns an external system change from a domain-wide search-and-replace into a single-file update. The investment in the ACL pays back with every external system evolution.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> An ACL is like a language interpreter at a diplomatic conference. The ambassador (your domain) speaks only in your country's official language (Ubiquitous Language). The foreign delegation (external system) speaks in their language (the external model). The interpreter (ACL) translates in real-time — the ambassador never learns the foreign language, never adjusts their speech for the foreign delegation's dialect. If the foreign delegation changes their terminology, only the interpreter adapts. The conference (your domain) proceeds in your language throughout.
+> An ACL is like a customs office at a border crossing. Goods and people enter from the foreign country (external system). The customs office inspects them, re-labels them with domestic standards, and only releases items that meet domestic requirements. If the foreign country changes its labelling system, the customs rules change — but the domestic supply chain (your domain) is unaffected.
 
-"Ambassador speaking your language" = your domain model using Ubiquitous Language
-"Foreign delegation" = external system with its own model
-"Language interpreter" = Anti-Corruption Layer (translates both directions)
-"Interpreter adapts to dialect changes" = ACL updated when external API changes
-"Conference proceeds in your language" = domain stays clean regardless of external changes
+- "Customs office" → the ACL translation layer
+- "Foreign labelling system" → external system's model and naming conventions
+- "Domestic standards" → your bounded context's domain model
+- "Goods re-labelled for domestic use" → translation of external types to domain types
+
+Where this analogy breaks down: a customs office introduces real delay at the border. An in-process ACL has negligible overhead. The delay analogy applies only if the ACL involves an extra network call.
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+An Anti-Corruption Layer is a translator that sits between your clean new system and a messy old system. Your code talks to the translator in clean language; the translator deals with the old system's mess.
+
+**Level 2 — How to use it (junior developer):**
+Create a package or module named `acl` or `integration` in your service. Inside, create an interface that expresses what your domain needs in clean domain terms. Implement that interface using the external system's client. Convert external DTOs to domain objects inside the implementation. Never use the external system's types outside this package.
+
+**Level 3 — How it works (mid-level engineer):**
+The ACL has three responsibilities: (1) protocol adaptation (e.g., converting a SOAP call to a domain-friendly method call), (2) model translation (field renaming and type conversion), and (3) error translation (converting external error codes to domain exceptions). Each responsibility can be a separate class. The facade interface owned by the domain lets you swap implementations (e.g., stub for tests, ERP adapter for production) without the domain knowing.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+Evans introduced the ACL pattern in "Domain-Driven Design" (2003) specifically for legacy integration scenarios. The key observation was that legacy systems accumulate technical debt in their models over decades — their APIs are shaped by the database schema, not the business domain. Without an ACL, every new service that touches legacy becomes legacy-shaped over time. The ACL is the architectural seam that enables the Strangler Fig migration pattern: you can replace the legacy system incrementally, updating only the ACL adapter for each replaced component, while the domain remains stable throughout the migration.
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**ACL for the Strangler Fig migration pattern:**
+**ACL structure:**
 
 ```
-STRANGLER FIG + ACL:
-  Legacy monolith handles all requests.
-  New microservice is gradually built alongside.
-  Proxy routes some requests to new service, others to legacy.
+┌─────────────────────────────────────────────┐
+│          Your Bounded Context               │
+│                                             │
+│  ┌───────────────────┐                      │
+│  │   Domain Model    │                      │
+│  │  (clean language) │                      │
+│  └─────────┬─────────┘                      │
+│            │ calls                          │
+│  ┌─────────▼─────────┐                      │
+│  │  ACL Facade       │ ← domain interface   │
+│  │  (your language)  │                      │
+│  └─────────┬─────────┘                      │
+│            │ implemented by                 │
+│  ┌─────────▼─────────┐                      │
+│  │  ACL Adapter      │ ← translation code   │
+│  │  (knows both)     │                      │
+│  └─────────┬─────────┘                      │
+└────────────┼────────────────────────────────┘
+             │ calls external API
+┌────────────▼────────────────────────────────┐
+│       External / Legacy System              │
+│      (CUST_TYP_CD, ACCNT_BAL_AMT_01)        │
+└─────────────────────────────────────────────┘
+```
 
-  PHASE 1: New service reads from legacy via ACL
-    [New OrderService] → [ACL] → [Legacy Monolith API]
-    ACL translates legacy order format → new domain model
+**Full ACL implementation example:**
 
-  PHASE 2: New service writes to new DB, reads from both
-    [New OrderService] → writes to [New Orders DB]
-                      → reads via [ACL] → [Legacy DB] (for historical data)
+```java
+// 1. Domain-facing facade (lives in domain layer)
+//    — uses only domain types
+public interface CustomerRepository {
+    Customer findByEmail(Email email);
+    void save(Customer customer);
+}
 
-  PHASE 3: Legacy reads from new service via reverse ACL
-    [Legacy System] → [Reverse ACL] → [New OrderService API]
+// 2. ACL Adapter (lives in integration/acl package)
+//    — only class that knows about legacy client
+@Component
+public class LegacyCrmCustomerRepository
+    implements CustomerRepository {
 
-  PHASE 4: ACL removed, legacy decommissioned
-    [New OrderService] → [New Orders DB] (direct, no ACL)
+    private final LegacyCrmClient legacyClient;
+    private final CustomerTranslator translator;
+
+    @Override
+    public Customer findByEmail(Email email) {
+        // Call legacy system (cryptic names)
+        LegacyCrmRecord record =
+            legacyClient.findByCustEmail(email.value());
+        if (record == null) return null;
+        // Translate to domain model
+        return translator.toDomain(record);
+    }
+
+    @Override
+    public void save(Customer customer) {
+        LegacyCrmRecord record = translator.toLegacy(customer);
+        legacyClient.upsertCustRecord(record);
+    }
+}
+
+// 3. Translator (pure mapping logic — easy to test)
+@Component
+public class CustomerTranslator {
+    public Customer toDomain(LegacyCrmRecord r) {
+        return Customer.of(
+            CustomerId.of(r.getCUST_ID()),
+            r.getFIRST_NM() + " " + r.getLAST_NM(),
+            Email.of(r.getEMAIL_ADDR()),
+            CustomerType.fromCode(r.getCUST_TYP_CD())
+        );
+    }
+
+    public LegacyCrmRecord toLegacy(Customer c) {
+        LegacyCrmRecord r = new LegacyCrmRecord();
+        r.setCUST_ID(c.getId().value());
+        r.setFIRST_NM(c.getName().firstName());
+        r.setLAST_NM(c.getName().lastName());
+        r.setEMAIL_ADDR(c.getEmail().value());
+        r.setCUST_TYP_CD(c.getType().toCode());
+        return r;
+    }
+}
 ```
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 🔄 The Complete Picture — End-to-End Flow
 
-```
-Bounded Context
-(your clean domain)
-        │
-        ▼
-Anti-Corruption Layer  ◄──── (you are here)
-(translation between your model and external model)
-        │
-        ├── Strangler Fig Pattern → ACL enables incremental legacy migration
-        ├── Context Map → ACL is the "Customer with ACL" relationship type
-        └── Service Decomposition → ACL protects each new service from legacy model
-        │
-        ▼
-External System
-(legacy ERP, third-party API, upstream microservice)
-```
+**NORMAL FLOW:**
+Domain Service calls `customerRepository.findByEmail(email)` → ACL Facade receives call ← YOU ARE HERE → ACL Adapter calls legacy CRM → Legacy returns `LegacyCrmRecord` → Translator converts to `Customer` domain object → Domain Service receives clean `Customer` type → Business logic runs on clean domain object
+
+**FAILURE PATH:**
+Legacy CRM is unavailable → ACL Adapter receives HTTP 503 → ACL translates to domain exception `CustomerLookupUnavailableException` → Domain Service handles known exception → Fallback logic (cached customer or error response) → No legacy model types leak into the failure handling path
+
+**WHAT CHANGES AT SCALE:**
+At 10x call volume, the ACL's translation overhead (deserialisation + field mapping) becomes measurable. Introduce a caching layer within the ACL (e.g., cache translated domain objects by ID with a short TTL). At 100x, the legacy system itself becomes the bottleneck — the ACL's value increases because you can swap the legacy backend for a new system behind the facade without changing the domain.
 
 ---
 
 ### 💻 Code Example
 
-**ACL with interface + two implementations (production + mock):**
+**Example 1 — BAD: Legacy model leaking into domain:**
 
 ```java
-// The port (interface in your domain) — no external types:
-public interface PaymentGateway {
-    PaymentAuthorisation authorise(PaymentIntent intent);
-    PaymentRefund refund(PaymentAuthorisationId authorisationId, Money amount);
-    PaymentStatus getStatus(PaymentAuthorisationId id);
-}
+// BAD: domain service uses legacy types directly
+@Service
+public class OrderService {
+    @Autowired
+    private ErpOrderClient erpClient;  // legacy client
 
-// ACL implementation for Stripe (production):
-@Profile("!test")
-@Component
-class StripePaymentAdapter implements PaymentGateway {
-
-    @Autowired StripeClient stripe;  // Stripe's SDK client
-
-    @Override
-    public PaymentAuthorisation authorise(PaymentIntent intent) {
-        try {
-            PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                .setAmount(intent.amount().toCents())  // Stripe uses cents
-                .setCurrency(intent.amount().currency().getCode().toLowerCase())
-                .setPaymentMethod(intent.paymentMethodId().value())
-                .setConfirm(true)
-                .build();
-
-            com.stripe.model.PaymentIntent stripeIntent =
-                com.stripe.model.PaymentIntent.create(params);
-
-            return new PaymentAuthorisation(
-                new PaymentAuthorisationId(stripeIntent.getId()),
-                AuthorisationStatus.fromStripeStatus(stripeIntent.getStatus()),
-                intent.amount()
-            );
-        } catch (StripeException e) {
-            throw new PaymentGatewayException("Stripe authorisation failed", e);
-            // Domain gets PaymentGatewayException, not StripeException
-            // Stripe library is not exposed to domain layer
+    public void processOrder(String orderId) {
+        // CUST_TYP_CD is a legacy concept — NOT a domain concept
+        ErpOrderRecord raw = erpClient.getOrder(orderId);
+        if ("Y".equals(raw.getPREM_CUST_FLG())) {  // cryptic flag
+            // Legacy-shaped logic in our domain
+            applyPremiumDiscount(raw.getORDR_TOTL_AMT_BD());
         }
     }
 }
+```
 
-// ACL implementation for tests (no Stripe dependency):
-@Profile("test")
-@Component
-class InMemoryPaymentAdapter implements PaymentGateway {
-    private final Map<PaymentAuthorisationId, PaymentAuthorisation> authorisations
-        = new ConcurrentHashMap<>();
+**Example 2 — GOOD: Domain service uses ACL facade:**
 
-    @Override
-    public PaymentAuthorisation authorise(PaymentIntent intent) {
-        PaymentAuthorisation auth = new PaymentAuthorisation(
-            new PaymentAuthorisationId(UUID.randomUUID().toString()),
-            AuthorisationStatus.AUTHORISED, intent.amount()
-        );
-        authorisations.put(auth.id(), auth);
-        return auth;
+```java
+// GOOD: domain service uses clean domain types
+@Service
+public class OrderService {
+    private final OrderRepository orders; // domain facade
+
+    public void processOrder(OrderId orderId) {
+        Order order = orders.findById(orderId);
+        if (order.customer().isPremium()) {  // domain language
+            order.applyPremiumDiscount();    // domain method
+        }
+        orders.save(order);
     }
 }
+// Legacy knowledge is entirely inside the ACL implementation
+```
+
+**Example 3 — Testing the ACL translator in isolation:**
+
+```java
+@Test
+void translatesPremiumFlagToCustomerType() {
+    // Test the translation logic without a running legacy system
+    LegacyCrmRecord record = new LegacyCrmRecord();
+    record.setCUST_TYP_CD("PREM");
+    record.setFIRST_NM("Alice");
+    record.setLAST_NM("Smith");
+    record.setEMAIL_ADDR("alice@example.com");
+
+    Customer customer = translator.toDomain(record);
+
+    assertThat(customer.getType()).isEqualTo(PREMIUM);
+    assertThat(customer.getName()).isEqualTo("Alice Smith");
+}
+// Fast unit test — no network, no legacy system running
+```
+
+---
+
+### ⚖️ Comparison Table
+
+| Integration Approach | Model Protection | Maintainability | Complexity | Best For |
+|---|---|---|---|---|
+| **Anti-Corruption Layer** | Highest | Highest | Medium | Poorly designed or legacy external systems |
+| Conformist | None | Low | Low | Well-designed external API you can safely adopt |
+| Shared Kernel | Shared | Medium | Low | Closely related contexts with trusted upstream |
+| Direct Integration | None | Low | Very Low | AVOID — leads to model corruption |
+
+How to choose: use ACL when external system quality is low, the external API changes frequently, or you anticipate replacing the external system in the future. Use Conformist for high-quality, stable third-party APIs where adoption is a reasonable strategy.
+
+---
+
+### 🔁 Flow / Lifecycle
+
+```
+┌────────────────────────────────────────────────┐
+│   ACL in Strangler Fig Migration               │
+├────────────────────────────────────────────────┤
+│ Phase 1 — Legacy-only                          │
+│   New service → ACL → Legacy System (all)      │
+├────────────────────────────────────────────────┤
+│ Phase 2 — Partial migration                    │
+│   New service → ACL → New Module (partial)     │
+│                     → Legacy System (rest)     │
+├────────────────────────────────────────────────┤
+│ Phase 3 — Fully migrated                       │
+│   New service → ACL → New System (all)         │
+│   ← ACL facade is unchanged throughout →       │
+├────────────────────────────────────────────────┤
+│ Phase 4 — Legacy decommissioned                │
+│   New service → ACL → New System               │
+│   ACL adapter for legacy deleted               │
+│   Domain code untouched throughout             │
+└────────────────────────────────────────────────┘
 ```
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                                     | Reality                                                                                                                                                                                                                                                                                                        |
-| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| An ACL is only needed for legacy systems                          | ACLs are equally valuable for modern third-party APIs (Stripe, Salesforce, AWS services). Any external model you do not control should be wrapped with an ACL — external APIs change without your input and must not pollute your domain                                                                       |
-| An ACL is just a DTO mapper                                       | A DTO mapper only converts data structures. An ACL translates semantic meaning — it converts `DISC_PCT=10` into `Percentage.of(10)` (a domain Value Object), handles error translation, and enforces your domain's invariants on incoming data. It may also handle retry, circuit breaking, and fallback logic |
-| Every method in the external API needs a corresponding ACL method | The ACL exposes only what your domain needs from the external system. If FedEx has 50 API methods but you only need quoting and shipping, the `ShippingGateway` interface has 3 methods. This is the interface segregation principle applied to external integrations                                          |
-| The ACL is the same as a Facade                                   | A Facade simplifies an interface (fewer methods, simpler API). An ACL specifically translates between two distinct domain models. A Facade could exist within one domain; an ACL always bridges two distinct models                                                                                            |
+| Misconception | Reality |
+|---|---|
+| The ACL is just an Adapter pattern | The ACL is a strategic DDD decision about context boundaries; the Adapter is a GoF pattern that implements part of the ACL. The ACL is broader in scope and intent |
+| ACL is only for legacy systems | Any poorly designed external API justifies an ACL — including modern third-party SaaS APIs with unstable models |
+| The ACL adds significant latency | In-process translation adds microseconds. The value of model isolation far outweighs negligible transformation overhead |
+| Once built, the ACL never changes | The ACL Adapter changes whenever the external system changes. The Facade and Translator should change rarely |
+| You can skip the ACL if the external API is "good enough" | "Good enough today" becomes technical debt. A Conformist approach (no ACL) should be a deliberate choice, not a default |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**Exception leakage — external exceptions polluting the domain**
+**1. ACL Used but Domain Types Still Leak**
 
-```java
-// WRONG: external exception escapes the ACL boundary
-class ShippingGateway {
-    public ShipmentId ship(Order order) throws FedExApiException { // ← external type!
-        return fedExClient.ship(toFedExRequest(order));
-    }
-}
+**Symptom:** ACL package exists but other services still import `LegacyOrderRecord` directly "just for the ID field."
 
-// Domain must catch FedExApiException — now domain knows about FedEx:
-public void fulfil(Order order) {
-    try {
-        shippingGateway.ship(order);
-    } catch (FedExApiException e) {  // WRONG: domain depends on FedEx type
-        // ...
-    }
-}
+**Root Cause:** Partial ACL implementation — adapter was created but not enforced architecturally.
 
-// CORRECT: ACL translates exceptions too
-class FedExShippingAdapter implements ShippingGateway {
-    public ShipmentId ship(Order order) { // no checked external exception
-        try {
-            return toShipmentId(fedExClient.ship(toFedExRequest(order)));
-        } catch (FedExApiException e) {
-            // Translate to domain exception:
-            throw new ShippingServiceUnavailableException("Carrier unavailable", e);
-        }
-    }
-}
-// Domain catches ShippingServiceUnavailableException — no FedEx dependency
+**Diagnostic:**
+```bash
+# Check for direct imports of external client types outside the ACL
+grep -rn "import com.legacy\|import com.external" \
+  src/main/java --include="*.java" | \
+  grep -v "acl\|integration\|adapter"
+# Any result = ACL boundary violated
 ```
+
+**Fix:** Add an ArchUnit test that forbids imports of external client packages outside the ACL. Refactor violations.
+
+**Prevention:** Set up the ArchUnit rule on day one — run it in every build.
+
+**2. ACL Grows Logic — Becomes a Hidden Service**
+
+**Symptom:** The ACL adapter has grown to 3,000 lines with conditional business logic, caching decisions, and retry policies. It is no longer a translation layer.
+
+**Root Cause:** Developers added logic to the "convenient" ACL rather than the appropriate domain service. The ACL is closest to the external system so it "made sense" to add retry logic there.
+
+**Diagnostic:**
+```bash
+# Check size of ACL classes
+find src -path "*/acl/*.java" | \
+  xargs wc -l | sort -rn | head -10
+# Classes > 200 lines = probably contain business logic
+```
+
+**Fix:** Extract retry logic to an infrastructure concern (e.g., Resilience4j policy on the client). Move any business logic to the appropriate domain service. The translator should contain only field mapping.
+
+**Prevention:** Enforce a rule: ACL classes contain only protocol adaptation, field translation, and error mapping — no business logic, no caching, no retry beyond infrastructure-level policies.
+
+**3. ACL Not Tested — Silent Translation Bugs**
+
+**Symptom:** A legacy system status code `7` (a new status added six months ago) silently maps to `null` in the ACL. Orders in status 7 disappear from reports.
+
+**Root Cause:** The translator had no default case for unknown status codes and no exhaustive test coverage.
+
+**Diagnostic:**
+```bash
+# Check ACL translator test coverage
+./mvnw jacoco:report
+# Open target/site/jacoco/index.html
+# Check coverage for all ACL translator classes
+```
+
+**Fix:**
+```java
+// BAD: translator silently returns null for unknown codes
+public OrderStatus toStatus(int code) {
+    return switch (code) {
+        case 1 -> PENDING;
+        case 2 -> CONFIRMED;
+        default -> null;  // silent failure!
+    };
+}
+
+// GOOD: fail loudly for unknown codes
+public OrderStatus toStatus(int code) {
+    return switch (code) {
+        case 1 -> PENDING;
+        case 2 -> CONFIRMED;
+        case 3 -> SHIPPED;
+        default -> throw new AclTranslationException(
+            "Unknown order status code: " + code
+        );
+    };
+}
+```
+
+**Prevention:** Write exhaustive mapping tests for every value of every translated enum. Alert on `AclTranslationException` in production with a separate high-priority alert.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Domain-Driven Design (DDD)` — introduced the ACL as a Context Map relationship pattern
-- `Bounded Context` — the ACL protects a bounded context from external model contamination
-- `Strangler Fig Pattern` — uses ACL as the integration bridge during incremental migration
-- `Service Decomposition` — each new service extracted from a monolith uses ACL to interface with the old system
+**Prerequisites (understand these first):**
+- `Bounded Context` — the ACL lives at the boundary between two bounded contexts; you must understand what a context is before designing its protection
+- `Domain-Driven Design` — the ACL is a DDD strategic pattern; its purpose is to maintain model purity within a bounded context
+
+**Builds On This (learn these next):**
+- `Strangler Fig Pattern` — the ACL is the primary mechanism enabling the Strangler Fig migration: its stable facade allows the backend implementation to be swapped incrementally
+- `Adapter Pattern (Microservices)` — the GoF Adapter pattern is the structural implementation of one layer within the ACL
+
+**Alternatives / Comparisons:**
+- `Conformist` — a DDD integration pattern where the downstream context adopts the upstream model wholesale — appropriate only when the upstream model is high quality and stable
 
 ---
 
@@ -357,19 +457,30 @@ class FedExShippingAdapter implements ShippingGateway {
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ PURPOSE      │ Protect domain from external model        │
-│              │ corruption                                │
+│ WHAT IT IS   │ A translation boundary that shields your  │
+│              │ domain from external system model mess    │
 ├──────────────┼───────────────────────────────────────────┤
-│ IMPLEMENTS   │ Gateway (all comms with one external sys) │
-│ AS           │ Adapter (wraps external client)           │
-│              │ Translator (pure model conversion)        │
+│ PROBLEM IT   │ Legacy/external system models corrupting  │
+│ SOLVES       │ the clean bounded context model           │
 ├──────────────┼───────────────────────────────────────────┤
-│ EXPOSES      │ Port interface using your domain types    │
-│              │ (no external types in the interface)      │
+│ KEY INSIGHT  │ The ACL is the architectural seam that    │
+│              │ makes the external system replaceable —   │
+│              │ change the adapter, not the domain        │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "ACL = interpreter between your domain    │
-│              │  and the external world. Domain speaks    │
-│              │  your language; ACL handles the rest."   │
+│ USE WHEN     │ Integrating with poorly designed, legacy, │
+│              │ or third-party systems you cannot change  │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Upstream is a well-designed, stable API   │
+│              │ (Conformist is more appropriate)          │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ Model purity and replaceability vs extra  │
+│              │ translation code to maintain              │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Build a wall with a well-staffed         │
+│              │  customs window."                         │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Strangler Fig Pattern →                   │
+│              │ Adapter Pattern → Bounded Context         │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -377,6 +488,7 @@ class FedExShippingAdapter implements ShippingGateway {
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** The ACL pattern requires that no external types (DTOs from the external API, exceptions from the external SDK) cross the ACL boundary into the domain. In practice with Java, this requires careful control over `import` statements. Describe the architectural enforcement mechanism: how can ArchUnit tests verify that classes in the domain layer (`com.example.domain.*`) never import from the external adapter packages (`com.example.infrastructure.stripe.*`, `com.example.infrastructure.fedex.*`)? Write an example ArchUnit rule and explain what it catches.
+**Q1.** Your team implements an ACL between a new Payments bounded context and a legacy SAP billing system. The ACL works perfectly for 6 months. Then the business acquires a second company with a different SAP version. You now need the Payments context to talk to two different SAP systems simultaneously. What changes in your ACL's structure to support multiple upstream implementations, and how do you route calls to the correct implementation without the domain service knowing which SAP version it is talking to?
 
-**Q2.** An ACL translating from a third-party payment API (Stripe) must handle two categories of errors: transient errors (network timeout, temporary unavailability — should be retried) and permanent errors (invalid card, insufficient funds — should propagate immediately as domain exceptions). Describe how the ACL should classify these: given that Stripe returns HTTP 402 for card errors and HTTP 503 for service unavailability, how does the ACL map these to domain exceptions? And how does a Resilience4j `@CircuitBreaker` on the ACL method interact with transient vs permanent exceptions — should the circuit breaker count permanent errors (card decline) toward the failure threshold?
+**Q2.** An ACL translates between your domain's `CustomerStatus` enum (ACTIVE, SUSPENDED, CLOSED) and the legacy CRM's numeric status codes (1, 2, 3, 4, 5). The legacy system adds a new status code 6 meaning "temporarily frozen" — distinct from your SUSPENDED. You have two options: (A) map code 6 to SUSPENDED (losing fidelity), or (B) add a new FROZEN status to your domain model. What are the downstream implications of each choice across your API consumers, event subscribers, and downstream bounded contexts, and which would you choose in a system where payments are blocked for suspended accounts?
+

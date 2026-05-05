@@ -4,326 +4,486 @@ title: "Domain-Driven Design (DDD)"
 parent: "Microservices"
 nav_order: 629
 permalink: /microservices/domain-driven-design/
-number: "629"
+number: "0629"
 category: Microservices
 difficulty: ★★★
-depends_on: "Monolith vs Microservices, Service Decomposition"
-used_by: "Bounded Context, Aggregate, Ubiquitous Language, Anti-Corruption Layer, Event Sourcing in Microservices"
-tags: #advanced, #architecture, #microservices, #pattern, #deep-dive
+depends_on: Service Decomposition, Object-Oriented Programming, Software Architecture Patterns
+used_by: Bounded Context, Aggregate, Ubiquitous Language, Anti-Corruption Layer
+related: Event Sourcing, CQRS, Bounded Context
+tags:
+  - microservices
+  - architecture
+  - pattern
+  - deep-dive
+  - distributed
 ---
 
 # 629 — Domain-Driven Design (DDD)
 
-`#advanced` `#architecture` `#microservices` `#pattern` `#deep-dive`
+⚡ TL;DR — DDD is an approach to software design that models complex business domains directly in code, using a shared language between developers and domain experts to build software that reflects the actual business.
 
-⚡ TL;DR — **Domain-Driven Design (DDD)** is a software design approach where the model is shaped by the business domain. Its key tools are **Ubiquitous Language** (shared vocabulary), **Bounded Context** (service boundaries), and **Aggregates** (consistency boundaries within a domain). DDD is the primary intellectual foundation for microservices architecture.
+| #629 | Category: Microservices | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Service Decomposition, Object-Oriented Programming, Software Architecture Patterns | |
+| **Used by:** | Bounded Context, Aggregate, Ubiquitous Language, Anti-Corruption Layer | |
+| **Related:** | Event Sourcing, CQRS, Bounded Context | |
 
-| #629            | Category: Microservices                                                                                 | Difficulty: ★★★ |
-| :-------------- | :------------------------------------------------------------------------------------------------------ | :-------------- |
-| **Depends on:** | Monolith vs Microservices, Service Decomposition                                                        |                 |
-| **Used by:**    | Bounded Context, Aggregate, Ubiquitous Language, Anti-Corruption Layer, Event Sourcing in Microservices |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+A large insurance company has a software system built by developers who never spoke properly with the business experts. The developers called a concept a "Policy"; the underwriters call the same thing a "Cover." The claims team calls a "Policy" something entirely different — the settlement document. The codebase has a 500-line `Policy` class that tries to be all things. When the claims team asks for "the policy to be transferred," the development team builds the wrong thing because they modelled the word without understanding the context.
+
+**THE BREAKING POINT:**
+Business logic is scattered across the codebase in random utility classes. The database schema looks nothing like the business domain. Developers spend 60% of their time translating between business language and code language. Adding a simple feature takes weeks because no one fully understands what the code represents.
+
+**THE INVENTION MOMENT:**
+This is exactly why Eric Evans created Domain-Driven Design — to make the software model a first-class representation of the actual business domain, with a shared, unambiguous language that eliminates translation overhead.
 
 ---
 
 ### 📘 Textbook Definition
 
-**Domain-Driven Design (DDD)**, introduced by Eric Evans in _Domain-Driven Design: Tackling Complexity in the Heart of Software_ (2003), is a design philosophy that centres the software model on the business domain and its rules — not the database schema, not the UI, not technical infrastructure. DDD is divided into **Strategic Design** (the high-level system structure) and **Tactical Design** (the implementation patterns within a bounded context). **Strategic DDD** concepts: Ubiquitous Language (shared business vocabulary between developers and domain experts), Bounded Context (an explicit boundary within which a specific domain model applies), Context Map (the relationships between bounded contexts), and Subdomain classification (Core, Supporting, Generic). **Tactical DDD** concepts: Entities (objects with identity), Value Objects (objects defined by their attributes), Aggregates (clusters of entities/value objects with a root entity as the consistency boundary), Domain Events (something that happened in the domain), Repositories (abstractions for retrieving aggregates), Domain Services (business logic not belonging to a single entity), and Application Services (orchestration, transactions).
+**Domain-Driven Design (DDD)** is a software development approach introduced by Eric Evans in his 2003 book of the same name. It centres on three pillars: (1) a **Ubiquitous Language** — a shared vocabulary rigorously used by both domain experts and developers; (2) **strategic design** — decomposing the domain into Bounded Contexts that isolate different subdomains; and (3) **tactical design** — modelling domain concepts using building blocks (Entities, Value Objects, Aggregates, Domain Events, Repositories, Services, Factories). DDD is most valuable for complex domains with rich business logic.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-DDD says: model your software to match how the business thinks and talks. Use the same words as the business uses. Group related concepts together. Define clear boundaries between different parts of the business. Let the business rules drive the code structure — not the other way around.
+**One line:**
+DDD means making your code speak the same language as your business — not translating between the two.
 
----
+**One analogy:**
+> Imagine architects designing a hospital wing by interviewing surgeons, nurses, and administrators — and then drawing blueprints using the exact same terms the staff uses (not engineering jargon). The floor plan becomes immediately readable to the medical team who will work there. DDD applied to software produces code that a knowledgeable business person can read and recognise.
 
-### 🔵 Simple Definition (Elaborated)
-
-Traditional software design often starts from the database: design tables, then map them to code. DDD starts from the domain: talk to domain experts (the people who understand the business), discover their language and mental models, then build code that reflects those models directly. If the business calls something an "Order" that can be "Placed," "Confirmed," "Shipped," and "Delivered," the code should have an `Order` class with `place()`, `confirm()`, `ship()`, and `deliver()` methods — not a database table `ORDERS` with a `STATUS_CODE` column and a separate `OrderStatusUpdater` class. DDD's value is highest for complex domains where the business rules are intricate — it is overkill for simple CRUD applications.
+**One insight:**
+The most dangerous translation layer in software is the gap between what the business means and what the code represents. DDD collapses that gap by making the domain model the *language* of the codebase.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**DDD Building Blocks — a complete picture:**
+**CORE INVARIANTS:**
+1. Complex business domains contain multiple sub-languages — the same word means different things in different contexts. Models must be context-specific.
+2. Business rules are the intellectual core of a software system. Everything else is plumbing.
+3. Code that accurately reflects the domain is easier to change when the domain changes.
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ STRATEGIC DDD                                                       │
-│                                                                     │
-│  Domain: the sphere of knowledge the software operates in          │
-│  ├── Subdomain: a sub-area of the domain                           │
-│  │     ├── Core Domain: competitive advantage, highest complexity  │
-│  │     ├── Supporting Subdomain: needed, not differentiating       │
-│  │     └── Generic Subdomain: commodity (Auth, Email, Billing)     │
-│  │                                                                  │
-│  Bounded Context: explicit boundary where a model applies          │
-│  ├── Each BC has its own Ubiquitous Language                       │
-│  ├── Each BC has its own domain model (same word = different thing)│
-│  └── Context Map: relationships between BCs                        │
-│        Partnership, Shared Kernel, Customer/Supplier,              │
-│        Conformist, ACL, Open/Host Service, Published Language      │
-│                                                                     │
-│ TACTICAL DDD (within one Bounded Context)                          │
-│                                                                     │
-│  Entity: has unique identity (Order #123 persists over time)       │
-│  Value Object: no identity, defined by attributes (Money $10 USD)  │
-│  Aggregate: cluster of entities/VOs, one Aggregate Root            │
-│  │           transactions and invariants within the root boundary  │
-│  Domain Event: "OrderPlaced", "PaymentProcessed" — fact that happened│
-│  Repository: interface to load/save Aggregates (not DB tables)     │
-│  Domain Service: logic spanning multiple aggregates                │
-│  Application Service: orchestration, transaction boundary, no DL   │
-└─────────────────────────────────────────────────────────────────────┘
-```
+**DERIVED DESIGN:**
+Given Invariant 1, no single unified model of the entire business can be correct — it would have to resolve all ambiguities by degrading precision. DDD's answer is Bounded Contexts: each context has its own model and its own ubiquitous language, valid within that context only.
 
-**The "same word, different context" problem — why Bounded Contexts matter:**
+Given Invariant 2, domain logic belongs in domain objects, not in service classes or database queries. An `Order` entity should enforce its own invariants (e.g., "a confirmed order cannot have a quantity of zero"), not delegate them to an `OrderValidator` utility class.
 
-```
-Word: "Customer"
+**DDD BUILD-ING BLOCKS:**
 
-In OrderContext:
-  Customer = {orderId, shippingAddress, billingAddress, orderHistory}
-  → Cares about: what did this customer buy? where to ship?
+| Building Block | Purpose | Example |
+|---|---|---|
+| Entity | Has identity, mutable state | `Order` with `orderId` |
+| Value Object | No identity, immutable, describes attribute | `Money(100, USD)` |
+| Aggregate | Cluster of entities/VOs with single root | `Order` + `OrderLines` |
+| Domain Event | Something that happened in the domain | `OrderPlaced`, `PaymentFailed` |
+| Repository | Persistence abstraction for aggregates | `OrderRepository` |
+| Domain Service | Stateless operation spanning multiple objects | `PricingService` |
+| Factory | Creates complex objects/aggregates | `OrderFactory` |
 
-In MarketingContext:
-  Customer = {emailAddress, preferences, campaignHistory, segments}
-  → Cares about: what offers to send? what did they click?
-
-In SupportContext:
-  Customer = {ticketHistory, contactInfo, accountStatus, agentNotes}
-  → Cares about: what issues has this customer raised?
-
-WRONG: one shared "Customer" entity with all these fields (God Object)
-  → Every context is coupled to every other context's concerns
-  → OrderContext must load marketing data and support data for every order
-  → Every addition to Customer affects all three contexts
-
-RIGHT: separate Customer concept per Bounded Context
-  → Customer IDs are shared (same person)
-  → Models are separate (independent evolution)
-  → Cross-context data exchange via Context Map integration patterns
-```
-
-**Tactical DDD — Aggregate design:**
-
-```java
-// Aggregate Root: Order — all access to order items goes through Order
-// Invariant enforced: total quantity never exceeds stock limit
-public class Order {  // Aggregate Root
-    private OrderId id;
-    private CustomerId customerId;
-    private OrderStatus status;
-    private List<OrderItem> items;      // entities within the aggregate
-    private Money totalAmount;          // value object
-
-    // Only the aggregate root can modify its children
-    public void addItem(ProductId productId, Quantity qty, Money price) {
-        if (status != OrderStatus.DRAFT) throw new InvalidOrderStateException();
-        // Invariant: max 50 items per order
-        if (items.size() >= 50) throw new OrderItemLimitExceededException();
-        items.add(new OrderItem(productId, qty, price));
-        recalculateTotalAmount();
-        registerEvent(new OrderItemAddedEvent(this.id, productId, qty));
-    }
-
-    public void place() {
-        if (items.isEmpty()) throw new EmptyOrderException();
-        this.status = OrderStatus.PLACED;
-        registerEvent(new OrderPlacedEvent(this.id, this.customerId, this.totalAmount));
-    }
-    // No setters on items — only business method calls
-}
-
-// Value Object: Money — no identity, defined by value
-public record Money(BigDecimal amount, Currency currency) {
-    public Money add(Money other) {
-        if (!this.currency.equals(other.currency)) throw new CurrencyMismatchException();
-        return new Money(this.amount.add(other.amount), this.currency);
-    }
-}
-
-// Repository: loads/saves entire Aggregate, not individual parts
-public interface OrderRepository {
-    Optional<Order> findById(OrderId id);
-    void save(Order order); // saves the aggregate root AND all child entities
-}
-// NO: OrderItemRepository — never access aggregate children directly from outside
-```
+**THE TRADE-OFFS:**
+**Gain:** Code that accurately models business intent, easier to maintain as business rules evolve, natural microservices boundaries via Bounded Contexts.
+**Cost:** Steep learning curve, high upfront design investment, overkill for simple CRUD applications.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-WITHOUT DDD:
+**SETUP:**
+An e-commerce company has "Product" in two teams' vocabularies. The Catalog team's "Product" has SKU, description, images, and categories. The Inventory team's "Product" has stock levels, warehouse locations, and reorder thresholds.
 
-What breaks without it:
+**WHAT HAPPENS WITHOUT DDD:**
+One shared `Product` class is created with 40 fields, satisfying neither team perfectly. Catalog changes break inventory logic. A "product" database table has nullable columns that only make sense in one context. Searches for `product.stockLevel` appear in Catalog controllers (wrong model used in wrong context).
 
-1. Software model diverges from business model — developers and business experts speak different languages, leading to mistranslation, misunderstandings, and incorrect implementations.
-2. Anemic domain model: entities have only getters/setters; all business logic is in service/procedure classes — business rules are scattered and invisible.
-3. No shared language means every requirements meeting requires translation — increasing bugs from misunderstanding.
-4. Without Bounded Contexts, one domain concept ("Customer," "Product," "Account") grows to satisfy all contexts simultaneously — becoming a bloated, tightly-coupled God Object.
+**WHAT HAPPENS WITH DDD:**
+Two separate bounded contexts are defined:
+- **Catalog Context** has `CatalogProduct` (SKU, description, images)
+- **Inventory Context** has `InventoryItem` (SKU, quantity, warehouse)
 
-WITH DDD:
-→ Code reads like the business speaks — onboarding is faster, bugs from misunderstanding are fewer.
-→ Business rules are encapsulated in domain objects — a bug in pricing logic is in the `PricingPolicy` class, not hidden in a transaction script.
-→ Bounded Contexts define service boundaries cleanly — the primary intellectual tool for microservices decomposition.
-→ Aggregates define transactional boundaries — one `@Transactional` per aggregate root operation.
+Each has its own `ProductId` (or they share just the SKU as a correlation ID). Each team uses their model freely without worrying about the other. When the Inventory team adds a "hazardous materials" flag, it does not pollute the Catalog model.
+
+**THE INSIGHT:**
+A single unified model of a complex domain is almost always the wrong model for everyone. Explicit context boundaries with explicit translations between them are cleaner than a bloated universal model.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> DDD is like hiring a translation expert who learns to speak fluent "business language" and builds a living dictionary of that language directly into the code. When a business rule changes — "orders over $1000 get free shipping" — the change is in `ShippingPolicy.calculateCost(order)`, not scattered across 10 service classes. The dictionary (Ubiquitous Language) is the contract: if the business says "An order is confirmed when payment is authorised," the code should have `order.confirm()` that calls `paymentService.authorise()`. No translation layer, no interpretation errors.
+> DDD is like a hospital with specialist departments. The word "patient" in Cardiology means one thing (a person's cardiac history). In Billing, "patient" means another thing (a billing account number and insurance details). The hospital doesn't create one mega-Patient record — it has a Cardiology record, a Billing record, and they share only a Patient ID to correlate. Each department has its own precise language.
 
-"Translation expert" = the DDD practitioner bridging business and technical
-"Living dictionary" = Ubiquitous Language (business terms as code names)
-"Business rule in one place" = tactical DDD (Aggregate with business logic methods)
-"Dictionary is the contract" = if business language changes, code changes to match
+- "Hospital department" → Bounded Context
+- "Department's definition of 'patient'" → context-specific domain model
+- "Shared Patient ID" → shared identifier or Context Map
+- "Doctor's precise medical language" → Ubiquitous Language within the department
+
+Where this analogy breaks down: unlike hospital departments that coordinate through paperwork, DDD contexts coordinate through domain events or explicit Anti-Corruption Layers — the integration is explicit and code-enforced.
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+DDD is a way of writing software where the code uses the same words and concepts that the business uses — so developers and business experts can understand each other directly without a translator in the middle.
+
+**Level 2 — How to use it (junior developer):**
+Identify the business language for your feature. Use those exact terms as class names and method names. Keep business rules inside domain objects (not service layers). Use Value Objects for concepts that are defined by their value (e.g., Money, Address). Use Entities for things identified by an ID.
+
+**Level 3 — How it works (mid-level engineer):**
+Strategic DDD: map the domain using Event Storming workshops. Identify where the same word means different things — those are context boundaries. Define a Context Map showing how bounded contexts relate (Conformist, Customer-Supplier, Anti-Corruption Layer, Open Host Service). Tactical DDD: implement each context using Aggregates as the core consistency boundary. An Aggregate Root controls all mutations to the aggregate. External code only holds references to Aggregate Roots, never to internal entities directly.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+Evans designed DDD after observing that most software failures are knowledge problems, not technical problems. The key insight from the book: "The heart of software is its ability to solve domain-related problems for its users." The technical patterns (Aggregate, Repository) exist to enforce invariants and manage complexity — but the *strategic* patterns (Bounded Context, Ubiquitous Language) are the most undervalued and most impactful. Without strategic DDD, tactical DDD is just OOP with new names. The Aggregate pattern exists because transactions should not span multiple aggregates — keeping aggregates small (ideally 1–3 entities) prevents lock contention and enables eventual consistency.
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**Event Storming — discovering domain events and aggregates:**
+**Strategic Design — Finding Bounded Contexts:**
 
 ```
-Event Storming Workshop (Big Picture):
-  1. Write all DOMAIN EVENTS on orange stickies:
-     [OrderPlaced] [PaymentProcessed] [ItemShipped] [OrderCancelled]
-     [InventoryReserved] [CustomerRegistered] [ReviewSubmitted]
+┌─────────────────────────────────────────────┐
+│     DDD Strategic Design Process            │
+├─────────────────────────────────────────────┤
+│ 1. Event Storming workshop                  │
+│    — domain experts + devs at a whiteboard  │
+│    — orange: Domain Event (past tense)      │
+│    — purple: Command (intent)               │
+│    — yellow: Actor (who)                    │
+│    — blue: Policy (if X then Y)             │
+├─────────────────────────────────────────────┤
+│ 2. Identify linguistic boundaries           │
+│    — where does the same word mean          │
+│      different things?                      │
+│    — those are Bounded Context borders      │
+├─────────────────────────────────────────────┤
+│ 3. Draw Context Map                         │
+│    — how do contexts integrate?             │
+│    — Upstream/Downstream relationships      │
+│    — Integration patterns: ACL, OHS, CF     │
+└─────────────────────────────────────────────┘
+```
 
-  2. Identify COMMANDS (what triggers each event) on blue stickies:
-     [PlaceOrder] → [OrderPlaced]
-     [ProcessPayment] → [PaymentProcessed]
+**Tactical Design — Aggregate Pattern:**
 
-  3. Identify AGGREGATES (what processes the command) on yellow stickies:
-     [PlaceOrder] → Order → [OrderPlaced]
-     [ProcessPayment] → Payment → [PaymentProcessed]
+```java
+// Aggregate Root: Order controls all modifications
+public class Order {  // Aggregate Root
+    private final OrderId id;
+    private OrderStatus status;
+    private final List<OrderLine> lines; // internal entity
+    private Money total;
 
-  4. Draw BOUNDARIES around clusters of events/aggregates:
-     → Order context: Order, OrderItem, OrderPlaced, OrderCancelled
-     → Payment context: Payment, PaymentProcessed, PaymentFailed
-     → Inventory context: Stock, InventoryReserved, InventoryReleased
+    // All mutations via methods — enforces invariants
+    public void addLine(ProductId productId, int qty, Money price) {
+        if (status != OrderStatus.DRAFT) {
+            throw new OrderException("Cannot add to confirmed order");
+        }
+        lines.add(new OrderLine(productId, qty, price));
+        recalculateTotal();
+    }
 
-  5. Identify POLICY (when event X, do command Y):
-     When [PaymentProcessed] → [ReserveInventory]
-     → This is the integration between Payment and Inventory contexts
+    public void confirm() {
+        if (lines.isEmpty()) {
+            throw new OrderException("Cannot confirm empty order");
+        }
+        this.status = OrderStatus.CONFIRMED;
+        // Publish domain event
+        registerEvent(new OrderConfirmedEvent(this.id, this.total));
+    }
+    // External code never manipulates OrderLine directly
+}
+```
 
-  Outputs: domain model, aggregate boundaries, context map, event flow
+**Repository pattern (persistence abstraction):**
+
+```java
+// Repository: hides persistence from the domain model
+public interface OrderRepository {
+    Order findById(OrderId id);
+    void save(Order order);
+}
+
+// Implementation can be JPA, JDBC, or in-memory for tests
+@Repository
+public class JpaOrderRepository implements OrderRepository {
+    private final OrderJpaRepository jpaRepo;
+
+    public Order findById(OrderId id) {
+        return jpaRepo.findById(id.value())
+            .map(OrderMapper::toDomain)
+            .orElseThrow(() -> new OrderNotFoundException(id));
+    }
+}
 ```
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 🔄 The Complete Picture — End-to-End Flow
 
-```
-Domain-Driven Design (DDD)  ◄──── (you are here)
-(the design philosophy)
-        │
-        ├── Ubiquitous Language → shared vocabulary, code reflects business terms
-        ├── Bounded Context     → service boundary definition
-        ├── Aggregate           → transactional consistency boundary within a service
-        ├── Anti-Corruption Layer → context map integration pattern
-        ├── Domain Events       → basis for Event-Driven Microservices and Event Sourcing
-        └── Service Decomposition → DDD subdomains guide microservices splitting
-```
+**NORMAL FLOW:**
+HTTP Request → Application Service (orchestrates) → Load Aggregate via Repository ← YOU ARE HERE → Invoke domain method (business rule enforced) → Aggregate emits Domain Event → Repository saves Aggregate → Event published to message bus → Other Bounded Contexts react
+
+**FAILURE PATH:**
+Aggregate invariant violated (e.g., adding line to confirmed order) → Domain Exception thrown → Application Service rolls back transaction → Error response returned → No event published → Domain stays consistent
+
+**WHAT CHANGES AT SCALE:**
+At high write volume, large aggregates (many entities per aggregate root) become contention hotspots — a single `Order` being modified by concurrent updates holds DB row locks. DDD's prescription is to keep aggregates small, use eventual consistency between aggregates, and use Domain Events to coordinate cross-aggregate workflows. At 1000x scale, the Value Object immutability pattern enables aggressive caching since Value Objects never change.
 
 ---
 
 ### 💻 Code Example
 
-**Domain Service — business logic spanning multiple aggregates:**
+**Example 1 — BAD: Anemic domain model (domain logic leaked to service):**
 
 ```java
-// Domain Service: logic that doesn't belong to a single aggregate
-// "Can this customer place an order?" spans Customer and Order aggregates
-@DomainService  // not a Spring @Service — a domain concept
-class OrderEligibilityService {
+// BAD: Order is just a data bag — no behaviour
+public class Order {
+    public Long id;
+    public String status;
+    public List<OrderLine> lines;
+    public BigDecimal total;
+    // No methods — pure data
+}
 
-    private final CustomerRepository customerRepo;
-    private final OrderRepository orderRepo;
-
-    public boolean isEligibleToOrder(CustomerId customerId, Money orderTotal) {
-        Customer customer = customerRepo.findById(customerId)
-            .orElseThrow(() -> new CustomerNotFoundException(customerId));
-
-        // Business rule: suspended customers cannot order
-        if (customer.isSuspended()) return false;
-
-        // Business rule: customers with 3+ unpaid orders cannot place new orders
-        long unpaidOrders = orderRepo.countUnpaidByCustomer(customerId);
-        if (unpaidOrders >= 3) return false;
-
-        // Business rule: new customers (< 30 days) cannot order > $5000
-        if (customer.isNew() && orderTotal.isGreaterThan(Money.of(5000, USD))) return false;
-
-        return true;
+// BAD: All logic in service — violates DDD
+@Service
+public class OrderService {
+    // Business rule "only draft orders can be added to"
+    // is scattered across multiple services
+    public void addLine(Long orderId, OrderLine line) {
+        Order o = repo.findById(orderId);
+        if (!"DRAFT".equals(o.status)) { // rule in wrong place
+            throw new RuntimeException("Not draft");
+        }
+        o.lines.add(line); // direct field access
+        o.total = recalculate(o.lines);
+        repo.save(o);
     }
 }
+```
+
+**Example 2 — GOOD: Rich domain model (rules inside aggregate):**
+
+```java
+// GOOD: business rules live inside the Aggregate
+public class Order {
+    private final OrderId id;
+    private OrderStatus status = OrderStatus.DRAFT;
+    private final List<OrderLine> lines = new ArrayList<>();
+
+    public void addLine(ProductId product, Quantity qty, Money price) {
+        // Invariant enforced here — not in service layer
+        if (!status.isDraft()) {
+            throw new OrderException(
+                "Can only add lines to draft orders"
+            );
+        }
+        lines.add(new OrderLine(product, qty, price));
+    }
+
+    public Money getTotal() {
+        return lines.stream()
+            .map(OrderLine::lineTotal)
+            .reduce(Money.ZERO, Money::add);
+    }
+}
+```
+
+**Example 3 — Value Object (immutable, equality by value):**
+
+```java
+// Value Object: no ID, immutable, equality by attributes
+public final class Money {
+    private final BigDecimal amount;
+    private final Currency currency;
+
+    public Money(BigDecimal amount, Currency currency) {
+        Objects.requireNonNull(amount);
+        Objects.requireNonNull(currency);
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Negative money");
+        }
+        this.amount = amount;
+        this.currency = currency;
+    }
+
+    public Money add(Money other) {
+        if (!currency.equals(other.currency)) {
+            throw new CurrencyMismatch();
+        }
+        return new Money(amount.add(other.amount), currency);
+    }
+
+    @Override
+    public boolean equals(Object o) { /* compare by value */ }
+}
+```
+
+**Example 4 — Domain Event for cross-context communication:**
+
+```java
+// Domain Event: immutable record of something that happened
+public record OrderPlacedEvent(
+    OrderId orderId,
+    CustomerId customerId,
+    Money total,
+    Instant occurredAt
+) implements DomainEvent {}
+
+// Consumer in Notifications Bounded Context
+@EventHandler
+public class SendOrderConfirmationHandler {
+    public void handle(OrderPlacedEvent event) {
+        emailService.sendConfirmation(
+            event.customerId(), event.orderId()
+        );
+    }
+}
+```
+
+---
+
+### ⚖️ Comparison Table
+
+| Approach | Complexity | Domain Fidelity | Team Scalability | Best For |
+|---|---|---|---|---|
+| **DDD (Strategic + Tactical)** | High | Very High | High | Complex domains, many teams |
+| DDD (Tactical Only) | Medium | High | Medium | Clear domain, small team |
+| Transaction Script | Low | Low | Low | Simple CRUD, small domain |
+| Active Record | Low-Medium | Medium | Medium | Moderate complexity, rapid dev |
+| CQRS + Event Sourcing | Very High | Highest | High | Audit-heavy, complex write/read needs |
+
+How to choose: apply full DDD when business logic is genuinely complex, the domain has multiple subdomains with distinct languages, and teams need explicit boundaries. Do not apply DDD to CRUD-heavy applications — the investment exceeds the return.
+
+---
+
+### 🔁 Flow / Lifecycle
+
+```
+┌────────────────────────────────────────────────┐
+│    Command Handling in a DDD Application       │
+├────────────────────────────────────────────────┤
+│ 1. HTTP Request → Command DTO created          │
+│ 2. Application Service receives command        │
+│ 3. Load Aggregate from Repository              │
+│ 4. Call domain method on Aggregate Root        │
+│    — invariants checked                        │
+│    — state mutated                             │
+│    — domain events registered                  │
+│ 5. Repository saves Aggregate                  │
+│ 6. Domain events published                     │
+│ 7. HTTP Response returned                      │
+│                                                │
+│ On Error at step 4:                            │
+│ — Domain Exception raised                      │
+│ — No save, no event                            │
+│ — 400/422 returned                             │
+└────────────────────────────────────────────────┘
 ```
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                                             | Reality                                                                                                                                                                                                                                                       |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DDD is about technical patterns (Repositories, Aggregates, Value Objects) | The tactical patterns are tools; the strategic patterns (Bounded Contexts, Ubiquitous Language, Context Maps) are the heart of DDD. Applying tactical patterns without strategic design produces over-engineered CRUD applications                            |
-| DDD always produces complex code — it's overkill for simple apps          | DDD's value scales with domain complexity. For a simple invoice CRUD app, DDD is overkill. For a complex trading system or insurance platform with hundreds of business rules, DDD pays enormous dividends. Apply where the domain is complex                 |
-| DDD and microservices are the same thing                                  | DDD predates microservices by a decade. DDD is a design philosophy; microservices are a deployment architecture. DDD Bounded Contexts are the primary tool for finding microservices boundaries, but DDD can be applied within a monolith just as effectively |
-| Ubiquitous Language means business people write code                      | Ubiquitous Language means developers adopt the business's vocabulary and use it in code — class names, method names, package names. Business people do not write code; they verify that the code's terminology matches their mental model                     |
+| Misconception | Reality |
+|---|---|
+| DDD means using Aggregates, Entities, and Value Objects | That is tactical DDD. Strategic DDD (Bounded Contexts, Ubiquitous Language, Context Maps) is more important and frequently skipped |
+| DDD is suitable for all applications | DDD is overkill for simple CRUD apps; its value scales with domain complexity — apply it where business logic is genuinely rich |
+| One Bounded Context = One Microservice | Often true but not required. A context could span multiple services, or one service could host multiple contexts temporarily |
+| Aggregates should be large to capture all related data | Aggregates should be as small as possible — only entities that must change together in a single transaction |
+| DDD is about patterns and code structure | DDD is primarily about knowledge crunching with domain experts — the patterns are just implementation tools for capturing that knowledge |
+| A Repository is just a DAO | A Repository is part of the domain model and returns fully-loaded domain objects (not DTOs or ORM entities). A DAO is an infrastructure concern |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**Anemic Domain Model — the most common DDD failure**
+**1. Anemic Domain Model**
 
-```java
-// WRONG: Anemic Domain Model (DDD anti-pattern)
-// Entity has no behaviour — just data
-public class Order {
-    private Long id;
-    private String status;
-    private List<OrderItem> items;
-    // getters and setters ONLY — no business logic
-}
+**Symptom:** Domain classes are pure data holders (getters/setters only). All business logic is in `*Service` classes that are 1000+ lines long and reference each other circularly.
 
-// All logic scattered in service layer
-public class OrderService {
-    public void placeOrder(Order order) {
-        if (order.getStatus().equals("DRAFT") && !order.getItems().isEmpty()) {
-            order.setStatus("PLACED"); // mutating state directly
-            // validation, domain events, invariants all in service class
-        }
-    }
-}
-// Problems: - Order cannot protect its own invariants
-//           - Business rules scatter across many service classes
-//           - Testing requires setting up large service objects
+**Root Cause:** Developers used to transaction-script (scripted logic in service layers) failed to move business rules into domain objects. The classes look like they follow DDD naming but are shells.
 
-// CORRECT: Rich Domain Model
-public class Order {
-    public void place() {
-        // Order protects its own invariants
-        if (status != OrderStatus.DRAFT) throw new InvalidOrderStateException();
-        if (items.isEmpty()) throw new EmptyOrderException();
-        this.status = OrderStatus.PLACED;
-        registerEvent(new OrderPlacedEvent(this.id));
-    }
-}
+**Diagnostic:**
+```bash
+# Check average method count per domain class
+find src/main -name "*.java" | xargs grep -l "class.*Entity\|class.*Aggregate" | \
+  xargs grep -c "public void\|public.*get\|public.*set" | \
+  awk -F: '{if ($2 < 3) print $1 " may be anemic"}'
 ```
+
+**Fix:**
+```java
+// BAD: rule in service
+if (order.getStatus().equals("CANCELLED")) {
+    throw new IllegalStateException();
+}
+order.setStatus("CONFIRMED");
+
+// GOOD: rule in aggregate
+order.confirm(); // Order.confirm() checks its own invariants
+```
+
+**Prevention:** Do not create setters on domain aggregates — expose only intent-revealing methods that enforce invariants.
+
+**2. Bounded Context Bleed**
+
+**Symptom:** The `Order` entity in the Orders context has a `customerEmailAddress` field just to send notifications — data that belongs to the Customers context.
+
+**Root Cause:** Developers reached across bounded context boundaries to avoid an API call, bringing in concepts that belong to another context.
+
+**Diagnostic:**
+```bash
+# Find cross-context field references
+grep -rn "Customer\." src/orders/ --include="*.java" | \
+  grep -v "CustomerId"  # CustomerId is shared key; other fields are violations
+```
+
+**Fix:** Remove the cross-context field. Add a Domain Event (`OrderPlaced`) with only the Order's own data. Let the Notifications context subscribe and look up customer contact details from its own context.
+
+**Prevention:** Strictly define what data each bounded context owns; use shared identifiers (Customer ID) rather than shared entities.
+
+**3. Large Aggregates Causing Lock Contention**
+
+**Symptom:** High `update` latency on Orders during peak; database deadlocks visible in slow query logs.
+
+**Root Cause:** The `Order` aggregate includes `Product` inventory data, `Customer` preferences, and `Discount` rules — locking all this data for every order update.
+
+**Diagnostic:**
+```bash
+# PostgreSQL: find long-running locks
+SELECT pid, query, wait_event_type, wait_event
+FROM pg_stat_activity
+WHERE wait_event_type = 'Lock'
+  AND state = 'active';
+```
+
+**Fix:** Split the oversized aggregate. `Order` should contain only items directly owned by the order. Reference `Product` by ID only (not embed its entity). Use Domain Events for cross-aggregate coordination.
+
+**Prevention:** Keep aggregates to 3–5 entities maximum; never embed entities from another aggregate (use IDs only).
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Bounded Context` — the strategic DDD concept that defines service boundaries
-- `Aggregate` — the tactical DDD concept that defines transaction boundaries
-- `Ubiquitous Language` — the shared vocabulary between developers and domain experts
-- `Anti-Corruption Layer` — the context map pattern for protecting a domain from external models
-- `Event Sourcing in Microservices` — an advanced tactical DDD pattern using domain events as the source of truth
+**Prerequisites (understand these first):**
+- `Service Decomposition` — DDD's bounded contexts are the most rigorous framework for service decomposition decisions
+- `Object-Oriented Programming` — tactical DDD building blocks are OOP concepts applied with explicit domain intent
+- `Software Architecture Patterns` — DDD adds domain-layer structure to standard architecture layers
+
+**Builds On This (learn these next):**
+- `Bounded Context` — the key strategic DDD concept that defines context isolation and maps to service boundaries
+- `Aggregate` — the tactical DDD pattern that manages consistency boundaries within a bounded context
+- `Event Sourcing in Microservices` — naturally complements DDD by storing domain events as the source of truth
+
+**Alternatives / Comparisons:**
+- `Transaction Script` — simpler alternative for CRUD-heavy domains with little business logic
+- `CQRS in Microservices` — a complementary pattern often applied with DDD to separate read and write models
 
 ---
 
@@ -331,17 +491,32 @@ public class Order {
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ STRATEGIC    │ Ubiquitous Language, Bounded Context,     │
-│ DDD          │ Context Map, Subdomain classification     │
+│ WHAT IT IS   │ A design approach where code models the   │
+│              │ business domain using shared language and  │
+│              │ explicit context boundaries               │
 ├──────────────┼───────────────────────────────────────────┤
-│ TACTICAL     │ Entity, Value Object, Aggregate,          │
-│ DDD          │ Domain Event, Repository, Domain Service  │
+│ PROBLEM IT   │ Code that doesn't reflect the business    │
+│ SOLVES       │ becomes unmaintainable as the domain grows│
 ├──────────────┼───────────────────────────────────────────┤
-│ APPLY WHEN   │ Complex domain with intricate rules       │
-│ SKIP WHEN    │ Simple CRUD with no business rules        │
+│ KEY INSIGHT  │ Strategic DDD (Bounded Contexts) matters  │
+│              │ more than tactical DDD (Aggregates).      │
+│              │ Most teams skip the important part        │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Model the code to match how the          │
-│              │  business thinks and speaks."            │
+│ USE WHEN     │ Domain is complex with rich business logic │
+│              │ and multiple subdomains with distinct      │
+│              │ vocabularies                              │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ CRUD app, simple domain, small team with  │
+│              │ no domain experts to collaborate with     │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ High domain fidelity vs steep learning    │
+│              │ curve and upfront design cost             │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Make the code speak the language of      │
+│              │  the business — not the other way round." │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Bounded Context → Aggregate →             │
+│              │ Ubiquitous Language                       │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -349,6 +524,7 @@ public class Order {
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** Eric Evans distinguishes between the Domain Layer and Application Layer in DDD's layered architecture. The Domain Layer contains Aggregates, Value Objects, Domain Events, and Domain Services — and should have NO dependency on infrastructure (no Spring annotations, no JPA annotations, no database). The Application Layer orchestrates domain objects and manages transactions. Describe the architectural tension: in practice, JPA requires annotations (`@Entity`, `@Id`, `@Column`) on domain objects — this is an infrastructure concern in the domain layer. Describe the hexagonal architecture solution (Ports and Adapters) and how it resolves this tension: what is the "Port" (interface) and what is the "Adapter" (JPA implementation)?
+**Q1.** You are designing a healthcare platform with three teams: Clinical (manages patient care plans), Billing (manages insurance claims), and Scheduling (manages appointments). The word "patient" appears in all three teams' code and means something slightly different in each. Design the Bounded Context strategy: what fields does each context's "patient" model contain, how do they share identity, and what happens when a patient's demographic data changes — who is the source of truth and how do the other contexts learn about the change?
 
-**Q2.** An Aggregate's consistency boundary means a transaction should not span multiple aggregate roots. Given a checkout flow that must atomically: (1) mark the Order as confirmed, (2) process payment, and (3) reserve inventory — all three are separate aggregates. Describe the two approaches to handling this: (a) Saga pattern with compensating transactions and (b) process manager / choreography. For approach (a), what are the compensating transactions for each step if step 3 fails? And what is the "eventually consistent" window during which a customer could see an inconsistent state (order confirmed but inventory not yet reserved)?
+**Q2.** A DDD practitioner insists that Aggregates should never span more than one database transaction and all cross-aggregate coordination should use eventual consistency via Domain Events. A senior developer pushes back: "Eventual consistency means we might charge a customer for an order we then can't fulfil." Trace the exact sequence of events in both the consistent and eventual-consistent models for this scenario, and identify the precise conditions under which eventual consistency is safe and when it is not.
+

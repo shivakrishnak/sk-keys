@@ -4,395 +4,446 @@ title: "Hexagonal Architecture"
 parent: "Software Architecture Patterns"
 nav_order: 727
 permalink: /software-architecture/hexagonal-architecture/
-number: "727"
+number: "0727"
 category: Software Architecture Patterns
 difficulty: ★★★
-depends_on: "Layered Architecture, Dependency Inversion Principle, Ports and Adapters"
-used_by: "Domain-Driven Design applications, Clean Code projects, Spring Boot, Quarkus"
-tags: #advanced, #architecture, #ddd, #ports-and-adapters, #dependency-inversion
+depends_on: Layered Architecture, Dependency Inversion Principle, Ports and Adapters, Domain Model
+used_by: Clean Architecture, Onion Architecture, Microservices, Domain-Driven Design
+related: Clean Architecture, Onion Architecture, Ports and Adapters, Layered Architecture
+tags:
+  - architecture
+  - pattern
+  - deep-dive
+  - advanced
+  - first-principles
 ---
 
 # 727 — Hexagonal Architecture
 
-`#advanced` `#architecture` `#ddd` `#ports-and-adapters` `#dependency-inversion`
+⚡ TL;DR — Hexagonal Architecture isolates your domain from all external systems by routing every interaction through defined ports and adapters.
 
-⚡ TL;DR — **Hexagonal architecture** (Ports and Adapters) puts the **domain at the center**, with all external concerns (HTTP, DB, MQ) as **adapters** plugged in through **ports (interfaces)** — so the domain never depends on infrastructure; infrastructure depends on domain.
+---
 
-| #727            | Category: Software Architecture Patterns                                     | Difficulty: ★★★ |
-| :-------------- | :--------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Layered Architecture, Dependency Inversion Principle, Ports and Adapters     |                 |
-| **Used by:**    | Domain-Driven Design applications, Clean Code projects, Spring Boot, Quarkus |                 |
+### 📊 Entry Metadata
+
+| #727            | Category: Software Architecture Patterns                                               | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Layered Architecture, Dependency Inversion Principle, Ports and Adapters, Domain Model |                 |
+| **Used by:**    | Clean Architecture, Onion Architecture, Microservices, Domain-Driven Design            |                 |
+| **Related:**    | Clean Architecture, Onion Architecture, Ports and Adapters, Layered Architecture       |                 |
+
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+Your application's business logic is inextricably coupled to a specific database vendor, a specific HTTP framework, a specific message broker. You want to test whether a payment rule correctly rejects insufficient funds — but to run that test you must start a PostgreSQL instance, spin up a Spring context, and mock seventeen HTTP endpoints. A single business rule test takes 8 seconds. The full suite takes 45 minutes.
+
+**THE BREAKING POINT:**
+A new requirement arrives: the system must now accept commands via a Kafka topic in addition to HTTP. But every piece of business logic has `@RestController` annotations woven through it. Kafka means rewriting half the application. The "business logic" and the "transport layer" are the same code.
+
+**THE INVENTION MOMENT:**
+This is exactly why Hexagonal Architecture was created — to draw an absolute boundary around the domain so that it is completely unaware of how it is called or how it stores data. The domain is the application. Everything else is a plug-in.
 
 ---
 
 ### 📘 Textbook Definition
 
-**Hexagonal architecture**, coined by Alistair Cockburn (2005), also known as **Ports and Adapters**, is an architectural pattern that isolates the application's core domain from all external dependencies (frameworks, databases, UIs, message queues) by using **ports** (interfaces defined by the domain) and **adapters** (implementations that connect external systems to those interfaces). The central insight: **the domain defines what it needs (ports); external systems adapt to meet those needs (adapters)**. Direction of dependency: always inward toward the domain — the domain depends on nothing outside itself. The hexagon shape (6 sides): each side is a port. **Primary ports** (driving ports): how the outside world drives the application (HTTP, CLI, tests). **Secondary ports** (driven ports): how the application talks to external services (database, email, cache). Benefits: (1) technology-agnostic domain (no framework imports). (2) Fully testable domain without infrastructure. (3) Swap adapters freely (PostgreSQL → MongoDB: change adapter, not domain). Closely related to **Clean Architecture** (Robert Martin) and **Onion Architecture** (Jeffrey Palermo) — all enforce the same dependency rule.
+Hexagonal Architecture (coined by Alistair Cockburn in 2005, also called Ports and Adapters) is an architectural pattern that places the application domain at the centre and enforces that all communication with the outside world — databases, UIs, message queues, external APIs — passes through explicitly defined interfaces called Ports. Concrete implementations of those interfaces are called Adapters. The domain defines Ports as abstract interfaces; Adapters implement them. This inversion ensures the domain has zero dependencies on infrastructure.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-A laptop with USB ports: you can plug in a keyboard, mouse, or printer via the USB port. The laptop's CPU (domain) doesn't care what's plugged in — it just knows the port interface. The keyboard, mouse, and printer are adapters that speak the USB protocol (port). You can swap a wired keyboard for a wireless one without changing the laptop. Hexagonal architecture: the domain is the laptop's CPU. Ports: USB interfaces defined by the domain. Adapters: the specific keyboards, databases, REST APIs that plug into those ports.
+**One line:**
+Your business logic talks to the world only through plug-socket interfaces it defines itself.
 
----
+**One analogy:**
 
-### 🔵 Simple Definition (Elaborated)
+> A laptop has a hexagonal ring of standard ports: USB-C, HDMI, headphone jack. The laptop's internals don't care whether you plug in a Dell monitor or an LG monitor — as long as the plug fits the port. Hexagonal Architecture makes your domain the laptop, and every external system (database, HTTP, Kafka) a peripheral that must fit your port.
 
-In a traditional layered architecture: Service calls Repository directly. The Service layer knows about JPA, SQL, Hibernate. To test the Service: need a database. In hexagonal architecture: Service calls an interface (port). The concrete JPA implementation (adapter) is injected at runtime. Testing: inject a mock/in-memory adapter. No real database needed. Swap PostgreSQL for DynamoDB: write a new adapter implementing the same port interface. Domain unchanged. Frameworks (Spring, Quarkus): details — the domain doesn't import them. This is the Dependency Inversion Principle applied at architectural scale.
+**One insight:**
+The radical shift is that the domain defines the interface — not the infrastructure. The database adapter must conform to the `UserRepository` interface the domain declares. This inverts the traditional dependency: previously the domain depended on the database; now the database depends on the domain's contract.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**Ports, adapters, dependency direction, and Spring implementation:**
+**CORE INVARIANTS:**
+
+1. The domain contains all business rules and has zero imports from infrastructure (no `javax.persistence`, no `org.springframework.web`).
+2. Ports are interfaces defined by the domain expressing what it needs (driven ports: "I need to load users") or what it offers (driving ports: "I offer a method to process orders").
+3. Adapters are concrete implementations that translate between the domain's language and the external system's language.
+
+**DERIVED DESIGN:**
+Given these invariants, the architecture has two sides:
+
+- **Driving side (left):** Things that drive the application — HTTP controllers, CLI commands, test harnesses. They call the domain through driving ports.
+- **Driven side (right):** Things the application drives — databases, email services, message queues. The domain calls them through driven ports, and adapters implement those ports.
 
 ```
-HEXAGONAL ARCHITECTURE STRUCTURE:
-
-                   ┌─────────────────────────┐
-    HTTP Adapter   │                         │   JPA Adapter
-  (REST Controller)│      APPLICATION        │  (Implements UserRepository Port)
-         │         │       DOMAIN            │         ▲
-         │         │                         │         │
-         ▼         │  - Domain Entities      │         │
-  ┌──────────┐     │  - Domain Services      │   ┌──────────┐
-  │ Driving  │──►  │  - Ports (interfaces)   │──►│ Driven   │
-  │ Adapter  │     │    defined BY domain    │   │ Adapter  │
-  └──────────┘     │                         │   └──────────┘
-                   │  No framework imports   │
-    CLI Adapter    │  No DB imports          │   Email Adapter
-  (Command line)   └─────────────────────────┘  (Implements EmailPort)
-
-DEPENDENCY DIRECTION:
-
-  WRONG (layered — domain depends on infrastructure):
-    UserService → UserRepository (JPA implementation)
-    UserService imports: javax.persistence, org.springframework.data.jpa
-    Problem: can't test UserService without a database.
-
-  RIGHT (hexagonal — infrastructure depends on domain):
-    UserService → UserRepositoryPort (interface, defined in domain package)
-    JpaUserRepository implements UserRepositoryPort (in infrastructure package)
-
-    Domain package imports: nothing external (only Java stdlib + domain classes)
-    Infrastructure package imports: JPA, Spring, etc.
-
-PORTS (defined in domain):
-
-  // Driven port (secondary — domain drives external system):
-  // Lives in: domain/ports/out/ package
-  public interface UserRepositoryPort {
-      Optional<User> findById(UserId id);
-      User save(User user);
-      List<User> findByEmail(Email email);
-  }
-
-  // Driven port (secondary — outgoing notification):
-  public interface EmailNotificationPort {
-      void sendWelcomeEmail(Email email, UserName name);
-  }
-
-  // Driving port (primary — external world drives the application):
-  // Lives in: domain/ports/in/ package
-  public interface RegisterUserUseCase {
-      User register(RegisterUserCommand command);
-  }
-
-ADAPTERS (in infrastructure package):
-
-  // Driven adapter: JPA implementation of UserRepositoryPort
-  // Lives in: infrastructure/adapters/out/persistence/
-  @Repository
-  public class JpaUserRepositoryAdapter implements UserRepositoryPort {
-      private final SpringDataUserRepository jpaRepo;
-
-      @Override
-      public Optional<User> findById(UserId id) {
-          return jpaRepo.findById(id.value()).map(UserMapper::toDomain);
-          // Note: toDomain() maps JPA entity to domain entity. Domain entity is clean.
-      }
-
-      @Override
-      public User save(User user) {
-          UserJpaEntity entity = UserMapper.toJpaEntity(user);
-          return UserMapper.toDomain(jpaRepo.save(entity));
-      }
-  }
-
-  // Driving adapter: REST controller
-  // Lives in: infrastructure/adapters/in/web/
-  @RestController
-  @RequestMapping("/api/users")
-  public class UserRestAdapter {
-      private final RegisterUserUseCase registerUserUseCase;  // Driving port.
-
-      @PostMapping("/register")
-      public ResponseEntity<UserResponse> register(@RequestBody RegisterRequest request) {
-          RegisterUserCommand command = new RegisterUserCommand(request.email(), request.name());
-          User user = registerUserUseCase.register(command);  // Calls domain through port.
-          return ResponseEntity.status(201).body(UserResponse.from(user));
-      }
-  }
-
-DOMAIN SERVICE (pure domain — no infrastructure):
-
-  // Lives in: domain/services/ or domain/usecases/
-  @Service  // Spring annotation is optional here — domain is framework-agnostic
-  public class UserDomainService implements RegisterUserUseCase {
-      private final UserRepositoryPort userRepository;   // Port (interface).
-      private final EmailNotificationPort emailService;  // Port (interface).
-
-      public User register(RegisterUserCommand command) {
-          // Pure domain logic. No JPA, no HTTP, no Spring:
-          if (userRepository.findByEmail(command.email()).isPresent()) {
-              throw new UserAlreadyExistsException(command.email());
-          }
-          User user = User.create(command.email(), command.name());  // Domain factory.
-          User saved = userRepository.save(user);  // Calls port (adapter injected at runtime).
-          emailService.sendWelcomeEmail(saved.email(), saved.name());  // Calls port.
-          return saved;
-      }
-  }
-
-PACKAGE STRUCTURE:
-
-  src/main/java/
-  ├── domain/                    ← PURE DOMAIN (no external imports)
-  │   ├── entities/
-  │   │   ├── User.java
-  │   │   └── UserId.java
-  │   ├── ports/
-  │   │   ├── in/                ← Driving ports (use cases)
-  │   │   │   └── RegisterUserUseCase.java
-  │   │   └── out/               ← Driven ports (infrastructure)
-  │   │       ├── UserRepositoryPort.java
-  │   │       └── EmailNotificationPort.java
-  │   └── services/
-  │       └── UserDomainService.java
-  └── infrastructure/            ← ADAPTERS (imports frameworks freely)
-      ├── adapters/
-      │   ├── in/
-      │   │   └── web/
-      │   │       └── UserRestAdapter.java
-      │   └── out/
-      │       ├── persistence/
-      │       │   ├── JpaUserRepositoryAdapter.java
-      │       │   └── UserJpaEntity.java
-      │       └── email/
-      │           └── SendgridEmailAdapter.java
-      └── config/
-          └── BeanConfig.java    ← Spring wiring: inject adapters into domain services.
-
-TESTING ADVANTAGE:
-
-  // Unit test for domain service — NO database, NO HTTP:
-  @Test
-  void shouldRejectDuplicateEmailRegistration() {
-      // Use mocks/stubs instead of real adapters:
-      UserRepositoryPort repo = mock(UserRepositoryPort.class);
-      when(repo.findByEmail(email)).thenReturn(Optional.of(existingUser));
-
-      UserDomainService service = new UserDomainService(repo, mock(EmailNotificationPort.class));
-
-      assertThrows(UserAlreadyExistsException.class,
-          () -> service.register(new RegisterUserCommand(email, name)));
-      // Test runs in milliseconds. No Spring context. No database.
-  }
+┌───────────────────────────────────────────────────┐
+│  HEXAGONAL ARCHITECTURE OVERVIEW                  │
+├───────────────────────────────────────────────────┤
+│                                                   │
+│  Driving Side        Domain         Driven Side   │
+│  (Callers)           (Core)         (Called)      │
+│                                                   │
+│  HTTP Adapter  ──→ [Port] ──→ Domain ──→ [Port]   │
+│  Kafka Adapter ──→ [Port]    Logic  ──→ [Port] ──→ DB Adapter    │
+│  CLI Adapter   ──→ [Port]           ──→ [Port] ──→ Email Adapter │
+│  Test Harness  ──→ [Port]                         │
+│                                                   │
+└───────────────────────────────────────────────────┘
 ```
+
+**THE TRADE-OFFS:**
+**Gain:** The domain is independently testable (no infrastructure needed), deployable with any delivery mechanism (HTTP, Kafka, CLI), and swappable infrastructure (change the DB without touching domain).
+**Cost:** More code. Every interaction requires a port interface and at least one adapter. Simple CRUD applications pay a high complexity tax for minimal benefit. The pattern shines when there are multiple delivery mechanisms or when domain logic is rich enough to justify isolation.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-WITHOUT hexagonal architecture:
+**SETUP:**
+You are building an order processing system. The rule is: orders above €5,000 require manager approval. You need to test this rule.
 
-- Domain logic coupled to JPA: can't test without database
-- Change from MySQL to DynamoDB: affects domain service code
-- Add a Kafka consumer alongside HTTP API: must duplicate domain logic
+**WHAT HAPPENS WITHOUT HEXAGONAL ARCHITECTURE:**
+The `OrderService` directly calls `orderRepository.save(order)` (JPA) and `httpClient.post("/notifications/manager")` (REST). To test the approval rule, you must: start a PostgreSQL container, configure JPA mappings, start the notification service (or mock it via WireMock), set up an HTTP test server. The test code runs for 12 seconds. When the notification service changes its API contract, your business rule test breaks.
 
-WITH hexagonal architecture:
-→ Domain tested in isolation: inject mock adapters, no infrastructure required
-→ Multiple delivery mechanisms: REST, CLI, Kafka — all use same domain through ports
-→ Swap database adapter: domain unchanged; only swap adapter implementation
+**WHAT HAPPENS WITH HEXAGONAL ARCHITECTURE:**
+The domain defines `OrderRepository` and `NotificationPort` as interfaces. The test provides in-memory implementations: `InMemoryOrderRepository` (a HashMap) and `RecordingNotificationPort` (records what was called). The test runs in 4 milliseconds, has zero external dependencies, and survives any change to the database or notification service. The same domain code, unchanged, runs in production connected to real JPA and real HTTP adapters.
+
+**THE INSIGHT:**
+Testability is not a quality bolt-on — it is the direct consequence of correct dependency direction. When the domain defines its own contracts, tests become the simplest possible adapter.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> A USB hub: the hub (domain) defines the USB port standard. Any device (keyboard, mouse, hard drive) that speaks USB (adapts to the port) can plug in. The hub doesn't care what's plugged in — it just knows the interface. Crucially: the hub defines the port standard; devices adapt to the hub's standard. The hub doesn't adapt to each device. This is the inversion: domain defines the contract; external systems adapt to meet it.
+> Think of a universal power supply. The device's core circuitry doesn't care whether it receives 110V US power or 220V European power — it just needs a stable 5V DC input. Adapters (the plug converters) translate external voltage to the device's internal contract.
 
-"USB hub" = Application domain
-"USB port standard" = Port interfaces defined by the domain
-"Keyboard/mouse/hard drive" = Adapters (REST controller, JPA repository, email sender)
-"Adapting to USB standard" = Implementing the port interfaces
+- "Device circuitry" → Domain (business rules)
+- "5V DC input requirement" → Port interface
+- "110V/220V plug converter" → Adapter (HTTP, Kafka, CLI)
+- "Power socket" → External system (database, message broker, external API)
+- "Universal standard plug" → Defined port contract
+
+Where this analogy breaks down: Power adapters are passive; in Hexagonal Architecture, driving adapters actively call the domain, not merely convert signals. The analogy holds better for driven adapters (database, external services).
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+Hexagonal Architecture keeps your application's business rules in a protected core. Anything that talks to the outside world — the website, the database, the email service — connects through defined plug-sockets. The core only knows about its own plug-sockets, not about what's plugged into them.
+
+**Level 2 — How to use it (junior developer):**
+Define your domain logic in plain classes with no framework imports. Create interface definitions (Ports) for everything the domain needs to do with the outside world. Create Adapter classes that implement those interfaces using real infrastructure (JPA, REST clients). Wire everything together in a configuration layer. The domain package should have zero transitive dependencies on Spring, JPA, or any vendor library.
+
+**Level 3 — How it works (mid-level engineer):**
+Ports come in two flavours. Primary (driving) ports are interfaces the domain exposes to callers — for example, `OrderApplicationService` with a `processOrder(command)` method. Secondary (driven) ports are interfaces the domain calls for infrastructure — `OrderRepository`, `PaymentGateway`. Dependency injection (Spring's `@Autowired`, or explicit constructor injection) binds the correct adapter to each port at startup. The domain never uses `new ConcreteAdapter()`. The configuration layer owns all wiring decisions.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+Cockburn's original insight was that the "inside" and "outside" are symmetric — both use the same pattern. This symmetry means you can flip the application: use it from tests as easily as from HTTP. The hexagon shape was illustrative, not structural — it represents "many equivalent sides." The real constraint is the dependency rule: domain code may not reference infrastructure packages, enforced statically via ArchUnit or module-system rules. At scale, this architecture enables teams to evolve delivery mechanisms (REST → gRPC → event-driven) without touching domain logic — a critical capability in microservices migrations.
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-```
-REQUEST FLOW (hexagonal):
+**Dependency wiring at startup:**
 
-  1. HTTP request → UserRestAdapter (driving adapter)
-  2. Adapter calls: registerUserUseCase.register(command) [driving port]
-  3. UserDomainService.register() — PURE domain logic, no infrastructure
-  4. Service calls: userRepository.save(user) [driven port]
-  5. JpaUserRepositoryAdapter.save(user) — JPA implements the port
-  6. Response: JPA entity → domain entity → DTO → JSON (each layer converts cleanly)
+1. The application configuration creates a concrete `JpaUserRepository` and a concrete `SmtpEmailAdapter`.
+2. It injects these into the domain service via constructor: `new UserDomainService(jpaRepo, smtpAdapter)`.
+3. The domain service holds references to `UserRepository` (interface) and `EmailPort` (interface) — it never sees the concrete classes.
+
+**Request processing flow:**
+
+```
+┌──────────────────────────────────────────────────────┐
+│           HEXAGONAL ARCHITECTURE — REQUEST           │
+├──────────────────────────────────────────────────────┤
+│                                                      │
+│  HTTP Request                                        │
+│      ↓                                               │
+│  ┌─────────────────────────────────────────────┐     │
+│  │ HTTP Adapter (Spring @Controller)           │     │
+│  │ Maps HTTP → Command object                  │     │
+│  └────────────────────┬────────────────────────┘     │
+│                       ↓ calls driving port           │
+│  ┌─────────────────────────────────────────────┐     │
+│  │      DOMAIN (NO FRAMEWORK IMPORTS)          │     │
+│  │  OrderApplicationService.process(cmd)       │     │
+│  │  → validates → applies rules → calls ports  │     │
+│  └────────┬───────────────────┬────────────────┘     │
+│           ↓ calls driven port  ↓ calls driven port   │
+│  ┌────────────────┐  ┌────────────────────────────┐  │
+│  │ DB Adapter     │  │ Notification Adapter       │  │
+│  │ (JPA/Mongo)    │  │ (SMTP/Slack/PushNotify)    │  │
+│  └────────────────┘  └────────────────────────────┘  │
+│                                                      │
+└──────────────────────────────────────────────────────┘
+```
+
+**Port definition (domain owns this):**
+
+```java
+// Domain package — no framework imports
+public interface OrderRepository {
+    Order findById(OrderId id);
+    void save(Order order);
+}
+
+public interface NotificationPort {
+    void notifyManager(ManagerNotification notification);
+}
+```
+
+**Adapter implementation (infrastructure owns this):**
+
+```java
+// Infrastructure package — implements domain port
+@Repository
+public class JpaOrderRepository
+        implements OrderRepository {
+    // JPA annotations here — domain never sees them
+    @PersistenceContext
+    private EntityManager em;
+
+    @Override
+    public Order findById(OrderId id) {
+        // maps JPA entity to domain Order object
+    }
+}
 ```
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 🔄 The Complete Picture — End-to-End Flow
+
+**NORMAL FLOW:**
 
 ```
-Dependency Inversion Principle (high-level modules don't depend on low-level)
-        │
-        ▼ (applied architecturally)
-Hexagonal Architecture ◄──── (you are here)
-(domain defines ports; adapters implement ports; domain at center)
-        │
-        ├── Clean Architecture: same dependency rule, different naming (entities/use cases/adapters)
-        ├── Onion Architecture: concentric rings with domain at center
-        └── Layered Architecture: traditional alternative (domain depends on infrastructure)
+HTTP POST /orders
+  → HTTP Adapter (parse DTO, map to Command)
+  → OrderApplicationService.placeOrder(cmd)  ← YOU ARE HERE
+  → Order domain object (apply business rules)
+  → OrderRepository.save(order) [via driven port]
+  → JpaOrderRepository [adapter] → PostgreSQL
+  → NotificationPort.notify() [via driven port]
+  → EmailAdapter [adapter] → SMTP server
+  → HTTP 201 Created
 ```
+
+**FAILURE PATH:**
+
+```
+JpaOrderRepository throws DataAccessException
+  → domain receives RepositoryException (translated)
+  → OrderApplicationService propagates
+  → HTTP Adapter maps to HTTP 503
+  → Client receives error
+Domain never saw SQLException — infrastructure detail hidden
+```
+
+**WHAT CHANGES AT SCALE:**
+At scale, driven adapters become bottlenecks while the domain stays stable. You can introduce a caching adapter that wraps the DB adapter without the domain knowing — the domain still calls `OrderRepository` but gets cached results. At very high scale, you can run the domain in multiple processes simultaneously, each with its own adapter set, because the domain is stateless and pure.
 
 ---
 
 ### 💻 Code Example
 
+**Example 1 — Wrong: domain importing JPA (coupling):**
+
 ```java
-// See the full code example in the First Principles section above.
-// Key summary of the pattern:
+// BAD — domain is coupled to JPA
+import javax.persistence.EntityManager; // VIOLATION!
 
-// 1. Port (domain defines the interface):
-public interface PaymentGatewayPort {
-    PaymentResult charge(CreditCard card, Money amount);
-}
-
-// 2. Adapter (infrastructure implements the port):
-public class StripePaymentAdapter implements PaymentGatewayPort {
-    private final StripeClient stripe;  // External library — only here, not in domain.
-
-    @Override
-    public PaymentResult charge(CreditCard card, Money amount) {
-        StripeCharge charge = stripe.charge(card.number(), amount.cents());
-        return PaymentResult.from(charge.status());
-    }
-}
-
-// 3. Alternative adapter (swap infrastructure, domain unchanged):
-public class PayPalPaymentAdapter implements PaymentGatewayPort {
-    @Override
-    public PaymentResult charge(CreditCard card, Money amount) {
-        // PayPal-specific implementation. Domain is completely unaffected.
-    }
-}
-
-// 4. Domain service (knows nothing about Stripe or PayPal):
 public class OrderService {
-    private final PaymentGatewayPort paymentGateway;  // Port, not Stripe or PayPal.
+    @Autowired
+    private EntityManager em; // direct infrastructure dep
 
-    public Order checkout(Cart cart, CreditCard card) {
-        PaymentResult result = paymentGateway.charge(card, cart.total());
-        if (!result.isSuccessful()) throw new PaymentFailedException();
-        return Order.create(cart);
+    public void placeOrder(OrderRequest req) {
+        // SQL/JPA in business logic — untestable
+        em.persist(new OrderEntity(req));
     }
 }
 ```
+
+**Example 2 — Right: domain with ports:**
+
+```java
+// Domain — zero infrastructure imports
+public class OrderApplicationService {
+    private final OrderRepository orderRepo;  // port
+    private final PaymentGateway paymentGw;   // port
+
+    // Constructor injection — framework-free
+    public OrderApplicationService(
+            OrderRepository orderRepo,
+            PaymentGateway paymentGw) {
+        this.orderRepo = orderRepo;
+        this.paymentGw = paymentGw;
+    }
+
+    public OrderId placeOrder(PlaceOrderCommand cmd) {
+        Order order = Order.create(
+            cmd.customerId(),
+            cmd.items()
+        );
+        PaymentResult result =
+            paymentGw.charge(order.total());
+        order.confirmPayment(result);
+        orderRepo.save(order);
+        return order.id();
+    }
+}
+```
+
+**Example 3 — Production pattern: in-memory adapter for tests:**
+
+```java
+// Test adapter — no database needed
+class InMemoryOrderRepository
+        implements OrderRepository {
+    private final Map<OrderId, Order> store =
+        new HashMap<>();
+
+    @Override
+    public void save(Order order) {
+        store.put(order.id(), order);
+    }
+
+    @Override
+    public Order findById(OrderId id) {
+        return store.get(id);
+    }
+}
+
+// Test runs at microsecond speed, no DB required
+class OrderApplicationServiceTest {
+    @Test
+    void highValueOrderRequiresApproval() {
+        var repo = new InMemoryOrderRepository();
+        var payment = new RecordingPaymentGateway();
+        var service = new OrderApplicationService(
+            repo, payment
+        );
+        service.placeOrder(highValueCommand());
+        assertThat(repo.findById(...).status())
+            .isEqualTo(PENDING_APPROVAL);
+    }
+}
+```
+
+---
+
+### ⚖️ Comparison Table
+
+| Pattern                     | Domain isolation | Complexity | Testability | Best For                                        |
+| --------------------------- | ---------------- | ---------- | ----------- | ----------------------------------------------- |
+| **Hexagonal Architecture**  | Total            | High       | Excellent   | Rich domain + multiple delivery mechanisms      |
+| Layered Architecture        | Partial          | Low        | Good        | CRUD apps, team organised by technical role     |
+| Clean Architecture          | Total            | Very High  | Excellent   | Enterprise systems requiring explicit use-cases |
+| Vertical Slice Architecture | Per-slice        | Medium     | Good        | Feature-team organisations                      |
+
+**How to choose:** Use Hexagonal Architecture when your domain logic is rich, when you need multiple delivery mechanisms (HTTP + Kafka + CLI), or when infrastructure changes are likely. Avoid it for simple CRUD systems where the overhead of port/adapter wiring outweighs the benefit.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                                              | Reality                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Hexagonal architecture means the domain package has no Spring annotations  | Spring annotations (@Service, @Component) in the domain are acceptable if the team treats them as metadata. The real rule: domain should NOT import JPA entities, StripeClient, HttpServletRequest, etc. Spring's core annotations (@Service) are often considered acceptable; Spring Data JPA repositories are not. The test is: can you instantiate and test your domain service with `new DomainService(mockPort)` without Spring? |
-| Hexagonal architecture eliminates all integration testing                  | Hexagonal architecture eliminates the need for infrastructure in UNIT tests of domain logic. But you still need integration tests: does the JPA adapter actually produce the right SQL? Does the Stripe adapter handle failures correctly? Hexagonal: makes unit testing easy; still need integration tests for adapters. Net result: fewer slow integration tests (domain fully covered by fast unit tests)                          |
-| Creating a port for every external dependency is always the right approach | For small services or early-stage projects: creating ports and adapters for every dependency is over-engineering. A direct JPA repository with `@Repository` in a small service is fine. Hexagonal architecture is most valuable: when the domain is complex, when multiple delivery mechanisms exist (REST + Kafka + CLI), or when the database is likely to change. Match architectural complexity to problem complexity            |
+| Misconception                                | Reality                                                                                                    |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Hexagonal means exactly 6 sides              | The hexagon is symbolic — it means "many equivalent interaction points," not literally 6                   |
+| Ports are the same as interfaces             | All ports are interfaces but not all interfaces are ports — a port represents a boundary-crossing contract |
+| Adapters live inside the domain              | Adapters are always outside the domain; they import infrastructure libraries the domain must not see       |
+| Hexagonal architecture prevents using Spring | Spring is used in adapters and configuration — just not in the domain core                                 |
+| You need hexagonal for all microservices     | Only services with rich domain logic benefit; pure data-passing services don't need the overhead           |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**Domain entity and JPA entity conflation — the most common hexagonal architecture mistake:**
+**Domain contamination (infrastructure leaking in)**
 
+**Symptom:** Domain service classes have `@Entity`, `@Transactional`, or `import org.springframework` in their imports. Tests require Spring context startup.
+
+**Root Cause:** Developer adds convenience annotations to domain classes to avoid writing adapters, gradually eroding the boundary.
+
+**Diagnostic Command / Tool:**
+
+```bash
+# Check domain package for infrastructure imports
+grep -rn "import org.springframework\|import javax.persistence\
+\|import jakarta.persistence" \
+  src/main/java/com/example/domain/
 ```
-BAD: Using JPA entity as domain entity (directly in domain package):
 
-  // WRONG: JPA annotations inside domain entity.
-  @Entity
-  @Table(name = "users")
-  public class User {  // This is in domain/entities/User.java
-      @Id @GeneratedValue
-      private Long id;
+**Fix:** Move all framework annotations to adapter and configuration classes.
 
-      @Column(name = "email")
-      private String email;
+**Prevention:** Use ArchUnit to enforce import rules: `noClasses().that().resideInPackage("..domain..").should().dependOnClassesThat().resideInPackage("org.springframework..")`.
 
-      // JPA requires no-args constructor. Domain entity: should be immutable.
-      public User() {}  // JPA-required. Breaks domain encapsulation.
-  }
+---
 
-  PROBLEMS:
-    - Domain entity is coupled to JPA (imports javax.persistence).
-    - JPA requires mutable public no-args constructor → violates domain encapsulation.
-    - JPA annotations are persistence concerns, not domain concerns.
-    - Can't use the domain entity without the JPA runtime (Hibernate on classpath).
-    - "Anemic domain model" emerges because JPA entities can't have complex constructors.
+**Missing port translation (leaking domain objects)**
 
-FIX: Separate domain entity from JPA entity. Map between them in the adapter:
+**Symptom:** Database schema changes break domain objects directly. A column rename causes domain tests to fail.
 
-  // DOMAIN entity (pure, no JPA):
-  // domain/entities/User.java
-  public final class User {
-      private final UserId id;
-      private final Email email;
-      private final UserName name;
+**Root Cause:** Adapter uses domain objects as JPA entities directly, merging the domain model and persistence model into one class.
 
-      public static User create(Email email, UserName name) {
-          return new User(UserId.generate(), email, name);  // Factory method. No public constructor.
-      }
-      // Getters only. Immutable. No JPA annotations. No framework imports.
-  }
+**Diagnostic Command / Tool:**
 
-  // JPA ENTITY (infrastructure concern, in adapter package):
-  // infrastructure/adapters/out/persistence/UserJpaEntity.java
-  @Entity
-  @Table(name = "users")
-  public class UserJpaEntity {
-      @Id Long id;
-      String email;
-      String name;
-      public UserJpaEntity() {}  // JPA-required. Fine here — this is infrastructure.
-  }
-
-  // MAPPER (in adapter — converts between domain and JPA):
-  public class UserMapper {
-      public static User toDomain(UserJpaEntity entity) {
-          return new User(UserId.of(entity.id), Email.of(entity.email), UserName.of(entity.name));
-      }
-      public static UserJpaEntity toJpaEntity(User user) {
-          UserJpaEntity e = new UserJpaEntity();
-          e.id = user.id().value();
-          e.email = user.email().value();
-          e.name = user.name().value();
-          return e;
-      }
-  }
-  // Extra effort: writing the mapper. Payoff: clean domain, testable, JPA-independent.
+```bash
+# Find @Entity in domain package
+grep -rn "@Entity" src/main/java/com/example/domain/
 ```
+
+**Fix:** Separate domain objects (`Order`) from persistence entities (`OrderEntity`). The adapter translates between them.
+
+**Prevention:** Enforce that no `@Entity` annotation appears in domain packages via ArchUnit or package structure reviews.
+
+---
+
+**Port proliferation (over-engineering)**
+
+**Symptom:** Every single method has its own interface. There are 47 port interfaces for 47 methods. Configuration code is larger than domain code.
+
+**Root Cause:** Misapplication of the pattern — ports should represent logical boundaries (e.g., `OrderRepository`), not individual method signatures.
+
+**Diagnostic Command / Tool:**
+
+```bash
+# Count interfaces in domain vs adapters
+find . -name "*.java" -path "*/domain/*" \
+  | xargs grep -l "interface" | wc -l
+```
+
+**Fix:** Merge related single-method interfaces into cohesive port definitions.
+
+**Prevention:** Define ports around roles, not methods: "What role does this external collaborator play for the domain?"
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Clean Architecture` — same dependency rule, different layers: entities → use cases → adapters → frameworks
-- `Ports and Adapters` — the synonymous alternative name for hexagonal architecture
-- `Onion Architecture` — similar: concentric rings with domain at center
-- `Layered Architecture` — traditional alternative: domain depends on infrastructure (inverted)
-- `Dependency Inversion Principle` — the core SOLID principle underlying hexagonal architecture
+**Prerequisites (understand these first):**
+
+- `Dependency Inversion Principle` — the SOLID principle that underpins port direction
+- `Layered Architecture` — the simpler predecessor that Hexagonal Architecture evolved from
+- `Domain Model` — the rich business objects that live at the centre of the hexagon
+
+**Builds On This (learn these next):**
+
+- `Clean Architecture` — applies similar isolation with explicit use-case ring
+- `Onion Architecture` — another concentric ring variant with the same dependency rule
+- `Domain-Driven Design` — the design methodology most naturally paired with hexagonal architecture
+
+**Alternatives / Comparisons:**
+
+- `Ports and Adapters` — the original name for Hexagonal Architecture (they are the same)
+- `Layered Architecture` — simpler; allows infrastructure to influence domain design
+- `Vertical Slice Architecture` — organises by feature rather than by domain/infrastructure boundary
 
 ---
 
@@ -400,24 +451,28 @@ FIX: Separate domain entity from JPA entity. Map between them in the adapter:
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Domain at center. Ports = interfaces the │
-│              │ domain defines. Adapters = infrastructure│
-│              │ plugged into ports. Domain depends on    │
-│              │ nothing external.                        │
+│ WHAT IT IS   │ Domain at centre; all external I/O via    │
+│              │ defined port interfaces + adapters        │
 ├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Complex domain; multiple delivery        │
-│              │ mechanisms (REST+Kafka+CLI); DDD;        │
-│              │ need to test domain without infra        │
+│ PROBLEM IT   │ Business logic coupled to framework,      │
+│ SOLVES       │ database, and transport — untestable      │
 ├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Simple CRUD service; early-stage project;│
-│              │ overhead outweighs benefit               │
+│ KEY INSIGHT  │ The domain defines its contracts; infra   │
+│              │ conforms to them — dependency inverted    │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "USB hub: hub defines the port standard; │
-│              │  devices adapt to plug in. Domain        │
-│              │  defines; infrastructure adapts."        │
+│ USE WHEN     │ Rich domain logic + multiple delivery     │
+│              │ mechanisms + infrastructure may change    │
 ├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Clean Architecture → Onion Architecture →│
-│              │ DDD → Repository Pattern → DIP           │
+│ AVOID WHEN   │ Simple CRUD, single delivery mechanism,   │
+│              │ no complex business rules                 │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ Total domain isolation vs higher upfront  │
+│              │ wiring and abstraction overhead           │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "The domain defines the plug shape;       │
+│              │  the world must fit it"                   │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Ports & Adapters → Clean Arch → DDD      │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -425,6 +480,6 @@ FIX: Separate domain entity from JPA entity. Map between them in the adapter:
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** You have a hexagonal architecture application with a `UserRepositoryPort` interface. Currently: one adapter (JpaUserRepositoryAdapter for PostgreSQL). New requirement: some user data must be cached in Redis for performance; user authentication data must stay in PostgreSQL for consistency. Design: do you create a new `CacheUserRepositoryPort` or modify the existing port? Where does the cache-aside logic live? In the adapter? The domain service? A separate "caching adapter" that wraps the JPA adapter?
+**Q1.** You have a Hexagonal Architecture application with a driving port `OrderApplicationService`. A new requirement arrives: the same `placeOrder` logic must be callable from an HTTP endpoint AND from a Kafka consumer AND from a scheduled batch job. How does Hexagonal Architecture handle this requirement? What is the exact relationship between the three adapters, and how much domain code must change?
 
-**Q2.** A team argument: "Hexagonal architecture adds too many files — ports, adapters, mappers, domain entities, JPA entities. For our 30-endpoint CRUD API, layered architecture is simpler." Evaluate this argument. What threshold of complexity justifies hexagonal over layered? Give 3 concrete signals in your codebase that indicate you've outgrown layered architecture and should migrate toward hexagonal.
+**Q2.** A colleague argues: "Hexagonal Architecture is just dependency injection with extra marketing." At what precise technical point does Hexagonal Architecture provide something that dependency injection alone cannot guarantee? Be specific: what can break with DI that cannot break with proper hexagonal discipline?

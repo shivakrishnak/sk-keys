@@ -4,285 +4,395 @@ title: "Strangler Fig Pattern"
 parent: "Microservices"
 nav_order: 634
 permalink: /microservices/strangler-fig-pattern/
-number: "634"
+number: "0634"
 category: Microservices
 difficulty: ★★★
-depends_on: "Monolith vs Microservices, Anti-Corruption Layer, Service Decomposition"
-used_by: "Service Decomposition, Modular Monolith"
-tags: #advanced, #architecture, #microservices, #pattern
+depends_on: Anti-Corruption Layer, Service Decomposition, Modular Monolith
+used_by: Service Decomposition, Bounded Context, Canary Deployment
+related: Anti-Corruption Layer, Modular Monolith, Blue-Green Deployment
+tags:
+  - microservices
+  - architecture
+  - pattern
+  - deep-dive
+  - distributed
 ---
 
 # 634 — Strangler Fig Pattern
 
-`#advanced` `#architecture` `#microservices` `#pattern`
+⚡ TL;DR — The Strangler Fig Pattern migrates a legacy system to a new architecture by incrementally routing requests to new services while the old system continues running, until the legacy is fully replaced.
 
-⚡ TL;DR — The **Strangler Fig Pattern** is an incremental migration strategy: new microservices are built alongside an existing monolith, gradually taking over functionality piece by piece via a proxy/façade. The monolith is "strangled" until it can be decommissioned without a big-bang rewrite.
+| #634 | Category: Microservices | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Anti-Corruption Layer, Service Decomposition, Modular Monolith | |
+| **Used by:** | Service Decomposition, Bounded Context, Canary Deployment | |
+| **Related:** | Anti-Corruption Layer, Modular Monolith, Blue-Green Deployment | |
 
-| #634            | Category: Microservices                                                 | Difficulty: ★★★ |
-| :-------------- | :---------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Monolith vs Microservices, Anti-Corruption Layer, Service Decomposition |                 |
-| **Used by:**    | Service Decomposition, Modular Monolith                                 |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+A large e-commerce company runs a 15-year-old PHP monolith handling $50M/month in transactions. Management wants to migrate to microservices. The conventional approach: build the complete new system in parallel over 18 months, then switch over in a "big bang" cutover during a maintenance window. The engineering team spends 18 months building. The cutover night arrives. Half the integrations don't work as expected. Payment processing breaks. The team rolls back at 3am. The new system is never deployed. The monolith continues for another decade.
+
+**THE BREAKING POINT:**
+"Big bang" rewrites almost always fail. The old system accumulated 15 years of undocumented edge cases, bug fixes, and business rules. The new system, built in isolation, misses them all. There is no safe way to test a complete rewrite under production load without actually using it in production.
+
+**THE INVENTION MOMENT:**
+This is exactly why the Strangler Fig Pattern was created — to incrementally route production traffic from the old system to the new system, one feature at a time, so the migration is continuously tested in production and can be reversed at any step.
 
 ---
 
 ### 📘 Textbook Definition
 
-The **Strangler Fig Pattern** (Martin Fowler, 2004) is a software migration technique for incrementally replacing a legacy system by building the new system alongside the old one, gradually routing functionality from the old to the new, until the old system can be decommissioned. Named after the Strangler Fig tree that grows around a host tree and eventually replaces it. The pattern requires a **Façade** (typically an API Gateway, reverse proxy, or feature flag mechanism) that intercepts all requests and routes them either to the legacy system or to the new services based on which functionality has been migrated. Migration proceeds in small, reversible steps: identify a well-bounded piece of functionality → extract it as a new service → test the new service in parallel → route traffic to the new service → remove the functionality from the legacy system → repeat. An Anti-Corruption Layer bridges the data and model differences between the legacy system and the new service during the transition period.
+The **Strangler Fig Pattern** (named by Martin Fowler after the strangler fig tree that grows around and eventually replaces its host) is an application modernisation technique in which a new system is built around the edges of an existing system. A routing layer (proxy or API gateway) intercepts requests: initially all traffic goes to the legacy system; gradually, specific request types are routed to new services as they are built and validated. The legacy system is progressively "strangled" until it handles no more traffic and can be decommissioned.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-The Strangler Fig Pattern means: instead of rewriting everything at once, you build the new system piece by piece next to the old one. A proxy decides which parts go to the new system and which still go to the old one. When everything is migrated, you shut down the old system.
+**One line:**
+Replace an old system piece by piece while it's still running — never stop-and-replace all at once.
 
----
+**One analogy:**
+> A strangler fig tree seeds in the canopy of a host tree, grows roots down, and eventually wraps around the host's trunk. The host tree lives on until the fig has grown strong enough to support the canopy alone — then the host quietly dies inside. Your new microservices are the fig. The legacy monolith is the host. The process takes time but the forest never stops growing.
 
-### 🔵 Simple Definition (Elaborated)
-
-Rewriting an entire monolith at once (the "big bang" rewrite) is extremely risky: it takes months or years, the new system has no production track record, and teams must maintain two systems in parallel anyway. The Strangler Fig approach reduces risk by making migration incremental: extract the "Customer Profile" feature as a new service this month, redirect all Customer Profile requests to the new service, confirm it works in production, then move on to the next feature. At every step, you can roll back by redirecting traffic back to the old system. The monolith shrinks gradually until it handles nothing and can be switched off.
+**One insight:**
+The strangler pattern makes the migration continuously verifiable. Each new service handles real production traffic from day one. Bugs are caught incrementally. There is no "big bang" risk because you can always send traffic back to the legacy for any individual feature that breaks.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**The four phases of Strangler Fig migration:**
+**CORE INVARIANTS:**
+1. At every point during the migration, the system serves production traffic — there is no downtime window.
+2. Each extraction reduces the scope of the legacy system. The legacy never grows during the migration.
+3. Any individual extraction can be reversed (rolled back) without affecting other extracted services.
 
-```
-PHASE 1: FAÇADE INSTALLATION
-  All traffic still goes to monolith.
-  Install a proxy/API Gateway in front of the monolith.
-  No behaviour change — this is purely infrastructure.
+**DERIVED DESIGN:**
+Given Invariant 1 and 3, a routing layer must sit in front of both old and new systems. This router can direct each type of request to either system independently. The router is the implementation mechanism: typically an API Gateway, an nginx proxy with routing rules, or an application-level feature flag.
 
-  [Client] → [Proxy (pass-through)] → [Monolith]
-  Risk: minimal. Roll-back: remove proxy.
+A standard migration sequence for one feature:
+1. Build the new service (dark mode — 0% traffic)
+2. Route a small percentage of traffic to the new service (shadow mode or canary)
+3. Monitor new service behaviour vs legacy behaviour
+4. If matching: increase percentage to 100%
+5. Remove legacy code path for that feature
+6. Repeat for the next feature
 
-PHASE 2: NEW SERVICE CREATION (SHADOW MODE)
-  Build the new service alongside the monolith.
-  Optionally: shadow traffic (send duplicate requests to new service, discard response).
-  Compare new service output with monolith output to verify correctness.
-
-  [Client] → [Proxy] → [Monolith] (response served to client)
-                   ↘ → [New Service] (shadow: response discarded, just for testing)
-
-PHASE 3: TRAFFIC MIGRATION
-  Route a subset of traffic to the new service.
-  Canary: 1% → new service, 99% → monolith.
-  Monitor error rates, latency, correctness.
-  Gradually increase: 10% → 50% → 100%.
-
-  [Client] → [Proxy] → 99% → [Monolith]
-                   → 1%  → [New Service]
-
-PHASE 4: MONOLITH DECOMMISSION (for this feature)
-  100% traffic routed to new service.
-  Remove corresponding code from monolith (don't leave dead code).
-  Proxy routing rule updated/removed.
-  Repeat for next feature.
-
-  [Client] → [Proxy] → [New Service]  (monolith feature removed)
-```
-
-**Data migration during Strangler Fig:**
-
-```
-THE DATA PROBLEM:
-  Monolith and new service need access to the SAME data during transition.
-  You cannot do a one-time data migration if the monolith is still writing.
-
-APPROACH 1: NEW SERVICE READS FROM MONOLITH DATABASE (via ACL)
-  New service doesn't have its own DB yet.
-  It reads from (and writes to) the monolith's DB via an Anti-Corruption Layer.
-  Risk: new service is still coupled to legacy schema.
-  When migration complete: extract the data to new service's DB, add sync.
-
-APPROACH 2: DUAL WRITE (both old and new service write to both DBs)
-  During migration: monolith writes to legacy DB + new service's DB.
-  New service reads from its own DB.
-  After migration: monolith stops writing to new DB; new service is sole writer.
-  Risk: dual write consistency, data drift.
-
-APPROACH 3: EVENT-DRIVEN SYNC (CDC)
-  Change Data Capture (Debezium) captures all writes from monolith DB.
-  Publishes events to Kafka.
-  New service consumes and syncs its own DB.
-  Eventually consistent during transition.
-
-  [Monolith] → [Legacy DB] → [Debezium CDC] → [Kafka] → [New Service] → [New DB]
-```
+**THE TRADE-OFFS:**
+**Gain:** Production-validated migration, reversible at every step, legacy continues providing value throughout, no downtime.
+**Cost:** Dual system maintenance during migration (must maintain both old and new code), data synchronisation complexity, migration takes longer than a rewrite, routing layer is a single point of failure.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-WITHOUT Strangler Fig (big bang rewrite):
+**SETUP:**
+You have a monolith serving product catalog and checkout. You want to extract the catalog into a microservice. You have no downtime budget.
 
-What breaks without it:
+**WITHOUT STRANGLER FIG:**
+Build new catalog service. Schedule a 4am maintenance window. Redirect all traffic to new service. Hope it works. It doesn't. Customers see blank product pages during promotion. Emergency rollback at 5am. Six months of work discarded.
 
-1. High risk: the entire system is replaced at once — one mistake affects all functionality.
-2. Long development cycle with no production feedback — new system is built for months without real-world validation.
-3. Teams must maintain both old and new systems with no incremental progress.
-4. The new system cannot leverage lessons from running the old system in production.
+**WITH STRANGLER FIG:**
+1. Deploy new Catalog service alongside monolith (no traffic yet).
+2. Add routing rule at API Gateway: `GET /products/**` → 5% to new Catalog service.
+3. Monitor: new service has correct response rate, correct latency.
+4. Ramp to 50%, 90%, 100% over two weeks.
+5. Remove `GET /products/**` handler from the monolith.
+6. Next: start extracting Checkout.
 
-WITH Strangler Fig:
-→ Incremental risk: each extraction is small, reversible, and validated in production.
-→ New services have production track record before the monolith is fully replaced.
-→ Business can continue using the working monolith while migration proceeds.
-→ Priority: extract the pieces that need independent scaling first (e.g., checkout during peak season).
+At every step: a one-config rollback returns all traffic to the monolith.
+
+**THE INSIGHT:**
+The Strangler Fig pattern turns a high-risk big-bang migration into a series of low-risk incremental experiments. Each step is production-tested and independently reversible.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> The Strangler Fig tree (Ficus aurea) sends roots down from its branches, wrapping around a host tree. Over decades, the fig's roots thicken and merge, gradually replacing the host tree's structure. When the host tree eventually dies, the fig has grown its own full structure and stands independently. The host tree is gone, but you never had a moment where neither the old nor the new tree was providing support. Software migration via Strangler Fig mirrors this: new services wrap the legacy system, gradually taking over functionality. The legacy system continues operating throughout — there is no "dark period" where nothing works.
+> Imagine renewing the plumbing in a house while people are still living in it. You don't cut off all water supply, install new pipes over three months, then reconnect. Instead, you run new pipes alongside old pipes, redirect one tap at a time, test each tap, then eventually cap the old pipes. The Strangler Fig Pattern is exactly this pipe-by-pipe approach for software systems.
 
-"Host tree" = legacy monolith (provides all functionality today)
-"Strangler fig roots" = new microservices being built alongside
-"Fig wrapping around host" = proxy routing some traffic to new services
-"Host tree dying" = monolith features being decommissioned one by one
-"Fig standing independently" = fully migrated microservices architecture, monolith gone
+- "Living in the house" → zero-downtime production system
+- "Old pipes" → legacy monolith handling requests
+- "New pipes" → new microservices
+- "Redirecting one tap at a time" → routing one API endpoint/feature to the new service
+- "Capping old pipes" → removing the legacy implementation after successful migration
+
+Where this analogy breaks down: plumbing is purely sequential (one pipe at a time). The Strangler Fig can extract multiple features in parallel, as long as they don't share data or have tightly coupled dependencies.
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+The Strangler Fig Pattern is a way to replace an old computer system with a new one, one piece at a time, while both systems run simultaneously, until the old one is no longer needed and can be switched off.
+
+**Level 2 — How to use it (junior developer):**
+Start by identifying the feature with the fewest dependencies in the legacy system. Build a new service for it. Deploy a proxy or gateway that routes `0%` of traffic for that feature to the new service. Gradually increase the percentage while monitoring for errors. When 100% of traffic uses the new service without errors, delete the legacy code for that feature. Repeat.
+
+**Level 3 — How it works (mid-level engineer):**
+The routing layer is typically an API Gateway (Kong, AWS API Gateway, Nginx, Spring Cloud Gateway) with weighted routing rules. For each migrated endpoint: `route /api/products/* 10% → new-catalog-service, 90% → legacy-monolith`. Request logging in both systems enables comparison. Anti-Corruption Layers translate between the new service's clean domain model and the legacy data format. Data synchronisation during migration: write to both systems (dual write) or use change data capture (CDC) from the legacy database to the new service's database.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+Fowler coined the pattern in 2004 and named it after his observation of strangler fig trees in Australia. The deeper insight is that all successful large-scale system migrations happen incrementally — Amazon's migration from monolith to microservices took over a decade, service by service. The pattern's power comes from continuous production testing: you learn far more about the new system's behaviour under real traffic than under load tests. The hardest part in practice is not the routing — it is the data model migration. The new service needs its own database, but the legacy database is the system of record. Change Data Capture (Debezium) or event-sourcing from the legacy system solves this without dual writes.
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**Feature flag routing — code-level Strangler Fig:**
+**Migration stages:**
+
+```
+┌──────────────────────────────────────────────┐
+│    Strangler Fig — Migration Stages          │
+├──────────────────────────────────────────────┤
+│ Stage 1: New service deployed (0% traffic)   │
+│                                              │
+│  Client → Gateway → 100% → [Monolith]        │
+│                        0% → [New Service]    │
+├──────────────────────────────────────────────┤
+│ Stage 2: Canary (5-10% traffic)              │
+│                                              │
+│  Client → Gateway → 90% → [Monolith]         │
+│                       10% → [New Service]    │
+│  Monitor: errors, latency, business metrics  │
+├──────────────────────────────────────────────┤
+│ Stage 3: Full migration (100% traffic)       │
+│                                              │
+│  Client → Gateway → 0% → [Monolith]          │
+│                    100% → [New Service]      │
+│  Monolith code path still exists (rollback)  │
+├──────────────────────────────────────────────┤
+│ Stage 4: Legacy code deleted                 │
+│                                              │
+│  Client → Gateway → 100% → [New Service]     │
+│  Monolith no longer handles this feature     │
+└──────────────────────────────────────────────┘
+```
+
+**API Gateway routing rule (Spring Cloud Gateway):**
+
+```yaml
+# Route catalog requests: 95% legacy, 5% new service
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: catalog-canary
+          uri: http://new-catalog-service
+          predicates:
+            - Path=/api/products/**
+            - Weight=catalog-group, 5
+        - id: catalog-legacy
+          uri: http://legacy-monolith
+          predicates:
+            - Path=/api/products/**
+            - Weight=catalog-group, 95
+```
+
+**Data synchronisation with dual write:**
 
 ```java
-// At the Facade/Proxy level (or at the application level):
-@RestController
-class OrderController {
+// During migration: write to both systems
+@Service
+public class ProductService {
+    private final NewCatalogRepository newRepo;
+    private final LegacyCatalogClient legacyClient;
 
-    @Autowired OldOrderService oldOrderService;       // monolith service
-    @Autowired NewOrderService newOrderService;       // new microservice client
-    @Autowired FeatureFlagService featureFlags;
-
-    @PostMapping("/api/orders")
-    public OrderResponse createOrder(@RequestBody CreateOrderRequest req) {
-        if (featureFlags.isEnabled("new-order-service", req.getCustomerId())) {
-            // Route to new microservice (gradually increasing %):
-            return newOrderService.createOrder(req);
-        } else {
-            // Route to legacy monolith service:
-            return oldOrderService.createOrder(req);
+    @Transactional
+    public void createProduct(CreateProductCommand cmd) {
+        // Write to new system first (authoritative)
+        Product product = newRepo.save(Product.from(cmd));
+        // Sync to legacy (until legacy receives no reads)
+        try {
+            legacyClient.createProduct(
+                LegacyProductDto.from(product)
+            );
+        } catch (Exception e) {
+            // Log but do not fail — legacy is secondary
+            log.warn("Legacy sync failed for {}", product.getId());
         }
     }
 }
-// Feature flag allows:
-// - 1% of customers routed to new service (canary)
-// - Specific test customers always routed to new service
-// - Instant rollback: disable flag if new service has issues
 ```
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 🔄 The Complete Picture — End-to-End Flow
 
-```
-Monolith vs Microservices
-        │
-        ▼
-Strangler Fig Pattern  ◄──── (you are here)
-(incremental monolith → microservices migration)
-        │
-        ├── Anti-Corruption Layer → bridges data/model between old and new
-        ├── Feature Flags         → controls traffic routing during migration
-        ├── Canary Deployment     → validates new service with subset of traffic
-        ├── API Gateway           → the Façade that routes old vs new traffic
-        └── Service Decomposition → identifies which capabilities to extract first
-```
+**NORMAL FLOW:**
+Client Request → API Gateway / Proxy ← YOU ARE HERE → Routing Rule (% split) → New Service (% A) or Legacy Monolith (% B) → Response → Client
+
+**FAILURE PATH:**
+New service returns errors above threshold → Circuit breaker in gateway trips → 100% traffic reverts to legacy monolith → Alert fires → Team investigates → Fix deployed → Circuit breaker resets → Traffic ramps back up to new service
+
+**WHAT CHANGES AT SCALE:**
+At 10x traffic, maintaining dual-write synchronisation to legacy becomes a performance bottleneck — the legacy system was never designed for the new write volume. Solution: switch to change data capture (Debezium reading the legacy WAL) rather than dual writes. At 1000x, the monolith itself may not handle the load — use the Strangler Fig to extract the hottest features first, regardless of migration order preferences.
 
 ---
 
 ### 💻 Code Example
 
-**Nginx proxy routing — Strangler Fig at the network layer:**
+**Example 1 — Feature flag routing within a monolith (initial step):**
 
-```nginx
-# Nginx proxy: routes /api/orders/... to new service, everything else to monolith
-
-upstream monolith {
-    server monolith:8080;
-}
-
-upstream order_service {
-    server order-service:8081;
-}
-
-server {
-    listen 80;
-
-    # Migrated: Order API now handled by new service
-    location /api/orders {
-        proxy_pass http://order_service;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
+```java
+// Before external routing: use feature flag to select
+// new-style or legacy path within the monolith
+@GetMapping("/products/{id}")
+public ProductResponse getProduct(@PathVariable String id) {
+    if (featureFlags.isEnabled("new-catalog-service", userId())) {
+        // New path — calls new catalog service internally
+        return newCatalogService.getProduct(id);
     }
-
-    # Migrated: Customer API now handled by new service
-    location /api/customers {
-        proxy_pass http://customer_service;
-    }
-
-    # Not yet migrated: everything else still goes to monolith
-    location / {
-        proxy_pass http://monolith;
-    }
+    // Legacy path
+    return legacyCatalogService.getProduct(id);
 }
-# As each service is extracted:
-# 1. Add the new service upstream block
-# 2. Add the new location block
-# 3. When 100% stable: remove the monolith from the Nginx config for that path
 ```
+
+**Example 2 — Anti-corruption layer during migration:**
+
+```java
+// ACL translates legacy product to new domain types
+// Enables new service to read legacy data during transition
+@Component
+public class LegacyCatalogAcl {
+    public CatalogProduct translate(LegacyProductRecord r) {
+        return CatalogProduct.builder()
+            .id(ProductId.of(r.getPROD_ID()))
+            .name(r.getPROD_NM())
+            .price(Money.of(r.getPRICE_AMT(), "USD"))
+            .category(Category.fromCode(r.getCATEGORY_CD()))
+            .build();
+    }
+}
+```
+
+**Example 3 — Verify new and legacy return identical responses:**
+
+```java
+// Shadow mode test: call both, compare, alert on difference
+@Component
+public class ShadowModeProductController {
+    public ProductResponse getProduct(String id) {
+        ProductResponse legacy = legacyClient.getProduct(id);
+        try {
+            ProductResponse newSvc = newCatalogClient.getProduct(id);
+            if (!newSvc.equals(legacy)) {
+                metrics.increment("shadow.response.mismatch",
+                    "product", id);
+            }
+        } catch (Exception e) {
+            metrics.increment("shadow.call.error");
+        }
+        return legacy; // legacy is authoritative during shadow
+    }
+}
+```
+
+---
+
+### ⚖️ Comparison Table
+
+| Migration Strategy | Risk | Downtime | Duration | Reversibility |
+|---|---|---|---|---|
+| **Strangler Fig** | Low | None | Long | High at each step |
+| Big Bang Rewrite | Very High | Yes (cutover) | Medium | None |
+| Modular Monolith Refactor | Low | None | Medium | High |
+| Parallel Run | Low | None | Long | High |
+| Database-first Migration | Medium | None | Long | Medium |
+
+How to choose: always prefer Strangler Fig over big-bang rewrite for production systems; use big-bang only when the legacy system cannot safely run alongside the new system (rare).
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                                   | Reality                                                                                                                                                                                                                                                                                                    |
-| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The Strangler Fig Pattern requires a microservices architecture | The new system can also be a modular monolith, a different monolith, or any other architecture. The pattern is about incremental replacement, not about the destination architecture                                                                                                                       |
-| The migration is done when the monolith is turned off           | The migration is done for each extracted feature when 100% of traffic is routed to the new service and the feature is removed from the monolith. The monolith is not turned off until ALL features are migrated — which could take years                                                                   |
-| You must extract features from the monolith in a specific order | Extract based on business priority and technical feasibility. Start with features that are: (1) independently useful, (2) have stable, well-defined APIs, and (3) have the most to gain from independent scaling or deployment                                                                             |
-| The Strangler Fig is always the right migration strategy        | For very small monoliths (<50KLOC), a careful big-bang rewrite with thorough testing may be faster. For systems with no existing API surface (batch jobs, background workers), different migration patterns apply. Strangler Fig works best for request-response systems with an identifiable Façade point |
+| Misconception | Reality |
+|---|---|
+| Strangler Fig means you always end up with microservices | The pattern is about incremental migration — you could end up with a single new well-designed monolith replacing the legacy one |
+| Data migration is straightforward with this pattern | Data migration is the hardest part — dual writes, CDC, and schema evolution require careful planning and are typically the migration bottleneck |
+| You must extract features in dependency order | You can extract independent features in any order; you only need to respect dependency order when extracting tightly coupled features |
+| The routing layer adds significant latency | A well-configured proxy or gateway adds 0.5–2ms — negligible compared to the latency of the services themselves |
+| Once a feature is in the new service, the legacy code can be deleted immediately | Wait at least 1-2 weeks with 100% traffic to the new service before deleting legacy code; rollback windows should be respected |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**Data consistency during dual-write phase**
+**1. Data Inconsistency Between Legacy and New Service**
 
+**Symptom:** A product shows different prices in legacy and new service. Customers using the new route see a lower price that isn't valid.
+
+**Root Cause:** Dual write was implemented, but write failures to the legacy system were silently swallowed. The two systems diverged.
+
+**Diagnostic:**
+```bash
+# Compare counts between legacy DB and new service DB
+psql legacy_db -c "SELECT COUNT(*) FROM products"
+psql new_catalog_db -c "SELECT COUNT(*) FROM products"
+# Spot check individual records
+curl http://legacy/products/123
+curl http://new-catalog/products/123
 ```
-SYMPTOM: Customer profile updated in new CustomerService,
-         but monolith's checkout page still shows old data
-         because it reads from the legacy DB (not yet migrated).
 
-ROOT CAUSE: dual-write setup where both services update data independently.
+**Fix:** Implement a reconciliation job that periodically compares key fields between systems and alerts on divergence. If diverged: reprocess CDC events to bring new system back in sync.
 
-SCENARIO:
-  User updates email: [New CustomerService] → writes to new_customers.email
-  Checkout reads:     [Monolith]           → reads from legacy.CUST_EMAIL (old)
-  User gets checkout confirmation to old email!
+**Prevention:** Make legacy the system of record during dual write; treat failures to sync the new system as non-fatal but alertable; run daily reconciliation jobs.
 
-MITIGATION STRATEGIES:
-  1. Sync legacy DB from new service (new = source of truth, CDC back to legacy)
-  2. Monolith reads customer data via new CustomerService API (ACL)
-  3. New service reads from legacy DB during transition (ACL, not ideal)
-  4. Tight migration timeline: minimize the dual-write window
+**2. Routing Layer as Single Point of Failure**
 
-KEY PRINCIPLE: Define ONE source of truth per data entity, per migration phase.
-  During transition: old = truth (new service reads from old)
-  After cutover: new = truth (old system reads from new via ACL or is decommissioned)
+**Symptom:** API Gateway crashes. All traffic — both legacy and new service — is unavailable simultaneously.
+
+**Root Cause:** The routing layer was not built with high availability. A single gateway process without multiple replicas.
+
+**Diagnostic:**
+```bash
+# Check gateway process health
+kubectl get pods -n gateway
+# Check for single-replica deployment
+kubectl describe deployment api-gateway -n gateway | grep Replicas
 ```
+
+**Fix:** Deploy the gateway with minimum 3 replicas across multiple availability zones. Use a Kubernetes PodDisruptionBudget to prevent all replicas being updated simultaneously.
+
+**Prevention:** The routing layer is critical infrastructure — design it for higher availability than the services it routes to.
+
+**3. Migration Stalls — Legacy Never Gets Smaller**
+
+**Symptom:** Strangler Fig started 18 months ago. Three services have been extracted. The monolith still has 90% of the original code. The team is adding features to both old and new pathways.
+
+**Root Cause:** Migration was not treated as a first-class engineering priority. Features continue to be added to the legacy path alongside extraction work.
+
+**Diagnostic:**
+```bash
+# Track migration progress
+git log --oneline --since="1 year ago" -- legacy-monolith/ | wc -l
+git log --oneline --since="1 year ago" -- services/ | wc -l
+# High legacy commit count = migration not prioritised
+```
+
+**Fix:** Implement a "feature freeze" on the legacy system — no new development in the monolith, only bug fixes. All new features go in new services. Set a concrete decommission date for the monolith with executive commitment.
+
+**Prevention:** Make migration progress a tracked OKR. Assign 20–30% of team velocity explicitly to migration work in every sprint.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Monolith vs Microservices` — the Strangler Fig bridges the gap between the two architectures
-- `Anti-Corruption Layer` — translates between the legacy system's model and the new service's model during migration
-- `Feature Flags (Microservices)` — enables controlled traffic routing between old and new systems
-- `Canary Deployment` — validates new services with a subset of production traffic during migration
-- `Service Decomposition` — identifies what to extract and in what order
+**Prerequisites (understand these first):**
+- `Anti-Corruption Layer` — the ACL is the translation mechanism that allows new services to read legacy data without adopting the legacy model
+- `Service Decomposition` — determines which features to extract first and how to define the new service boundaries
+- `API Gateway (Microservices)` — the routing layer that enables traffic splitting between legacy and new services
+
+**Builds On This (learn these next):**
+- `Canary Deployment (Microservices)` — the gradual traffic shifting used within each Strangler Fig extraction step
+- `Database per Service` — the data isolation pattern that accompanies successful service extraction
+- `Feature Flags (Microservices)` — an alternative routing mechanism for Strangler Fig within a monolith before external routing
+
+**Alternatives / Comparisons:**
+- `Big Bang Rewrite` — the alternative rejected by the Strangler Fig pattern: complete replacement in one step — high risk, no rollback
+- `Modular Monolith` — an intermediate step where the monolith is restructured internally before service extraction begins
 
 ---
 
@@ -290,19 +400,30 @@ KEY PRINCIPLE: Define ONE source of truth per data entity, per migration phase.
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ PHASES       │ 1. Install Facade (proxy)                 │
-│              │ 2. Build new service (shadow mode)        │
-│              │ 3. Route 1% → 100% to new service        │
-│              │ 4. Remove feature from monolith           │
-│              │ Repeat per feature                        │
+│ WHAT IT IS   │ Incremental legacy-to-microservices       │
+│              │ migration using traffic routing to grow   │
+│              │ new services while legacy shrinks         │
 ├──────────────┼───────────────────────────────────────────┤
-│ ROUTING      │ API Gateway, Nginx, Feature Flags         │
+│ PROBLEM IT   │ Big-bang rewrites fail — too much risk,   │
+│ SOLVES       │ too many untested edge cases, no rollback │
 ├──────────────┼───────────────────────────────────────────┤
-│ DATA         │ ACL reads from legacy DB, CDC sync,       │
-│              │ or dual-write with one source of truth    │
+│ KEY INSIGHT  │ Every extraction step is tested in        │
+│              │ production. Failures are small and        │
+│              │ reversible, not catastrophic              │
 ├──────────────┼───────────────────────────────────────────┤
-│ VS BIG-BANG  │ Lower risk, reversible, prod-validated    │
-│              │ each step                                 │
+│ USE WHEN     │ Migrating a running production legacy     │
+│              │ system that cannot be taken offline       │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Greenfield system with no legacy — just   │
+│              │ build the new architecture directly       │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ Low risk + reversibility vs dual system   │
+│              │ maintenance cost during migration         │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Never replace — grow around."            │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Canary Deployment → Feature Flags →       │
+│              │ Database per Service                      │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -310,6 +431,7 @@ KEY PRINCIPLE: Define ONE source of truth per data entity, per migration phase.
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** The Strangler Fig requires a "Façade" that intercepts all traffic. In a web application, this is typically an API Gateway or reverse proxy. But what about background jobs, scheduled tasks, and batch processes in the monolith? Describe the migration strategy for a nightly batch job (e.g., "generate invoices for all orders placed today") that is being extracted to a new `InvoicingService`. There is no HTTP Façade for batch jobs — how do you handle the transition? Describe the "parallel run" approach where both the old and new batch jobs run simultaneously and their outputs are compared before the old one is disabled.
+**Q1.** You are extracting the "Orders" service from a monolith using the Strangler Fig pattern. The Orders feature reads customer data from the monolith's `customers` table. Your new Orders service has its own database, but needs customer information. You have three options: (A) call the monolith's `/customers` API, (B) dual-write customer data to the new Orders DB, (C) use Change Data Capture from the monolith's DB. Walk through the failure scenarios for each approach under high load, and identify which is safest for zero-downtime migration.
 
-**Q2.** During the Strangler Fig migration, there is a period when the same data entity (e.g., "Customer") is being written to by both the monolith and the new CustomerService — dual writes. Describe Change Data Capture (Debezium) as the synchronisation mechanism: what is the "transaction outbox pattern" that prevents data loss during the sync? If the monolith writes to the legacy DB and Debezium publishes events to Kafka, but the Kafka consumer (new service) is temporarily down, what happens to the events — are they lost or replayed? And what is the acceptable lag for sync in a near-real-time profile update scenario?
+**Q2.** Six months into a Strangler Fig migration, your team discovers that the newly extracted Inventory service has a subtle difference in low-stock calculation logic compared to the monolith. Both are in production handling real traffic. Shadow mode tests reveal the difference affects 0.3% of requests. Describe the exact steps to diagnose which implementation matches the actual business requirement, safely align both systems, and prevent similar divergence in the remaining migration steps.
+

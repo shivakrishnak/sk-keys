@@ -4,374 +4,587 @@ title: "Redundancy / Failover"
 parent: "System Design"
 nav_order: 694
 permalink: /system-design/redundancy-failover/
-number: "694"
+number: "0694"
 category: System Design
 difficulty: ★★☆
-depends_on: "RTO / RPO, Active-Passive"
-used_by: "Active-Active, Disaster Recovery"
-tags: #intermediate, #reliability, #distributed, #architecture, #foundational
+depends_on: High Availability, Load Balancing, Monitoring
+used_by: Infrastructure Design, Reliability Engineering
+related: Active-Active, Active-Passive, Disaster Recovery
+tags:
+  - high-availability
+  - infrastructure
+  - reliability
+  - intermediate
+  - fault-tolerance
 ---
 
 # 694 — Redundancy / Failover
 
-`#intermediate` `#reliability` `#distributed` `#architecture` `#foundational`
+⚡ TL;DR — Redundancy means having backup systems ready; failover means automatically switching to the backup when primary fails. Together they eliminate single points of failure and enable high availability.
 
-⚡ TL;DR — **Redundancy** eliminates single points of failure by duplicating critical components; **Failover** is the automatic or manual process of switching to a redundant system when the primary fails.
+| #694            | Category: System Design                          | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------- | :-------------- |
+| **Depends on:** | High Availability, Load Balancing, Monitoring    |                 |
+| **Used by:**    | Infrastructure Design, Reliability Engineering   |                 |
+| **Related:**    | Active-Active, Active-Passive, Disaster Recovery |                 |
 
-| #694            | Category: System Design          | Difficulty: ★★☆ |
-| :-------------- | :------------------------------- | :-------------- |
-| **Depends on:** | RTO / RPO, Active-Passive        |                 |
-| **Used by:**    | Active-Active, Disaster Recovery |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+Single server running the app. Server crashes. App down. Customers can't access service. No backup. Revenue lost.
+
+**THE BREAKING POINT:**
+Any single point of failure will eventually fail (hardware breaks, software bugs, operator mistakes). Business can't tolerate single points of failure.
+
+**THE INVENTION MOMENT:**
+"Have a backup ready. If primary fails, automatically switch to backup. Instant recovery, no manual intervention."
 
 ---
 
 ### 📘 Textbook Definition
 
-**Redundancy** is the practice of duplicating critical components, services, or resources so that a backup is available when the primary fails. Redundancy eliminates single points of failure (SPOFs) — any component whose failure causes the entire system to fail. Redundancy types: **hardware redundancy** (RAID, dual PSUs, redundant network paths), **software redundancy** (multiple service replicas), **geographic redundancy** (multi-region), and **data redundancy** (replication, backups). **Failover** is the process of automatically or manually switching from a failed primary component to a redundant standby. **Automatic failover** (e.g., RDS Multi-AZ, Kubernetes liveness probes, keepalived) detects failure and switches within seconds. **Manual failover** requires human intervention, increasing RTO. The goal of redundancy + failover combined is: achieving high availability by ensuring that no single failure event causes a user-visible outage.
+- **Redundancy:** Having multiple copies of critical components (servers, databases, network connections) so that if one fails, others continue operating.
+- **Failover:** Automatic (or manual) process of switching traffic/workload from a failed primary component to a redundant backup component, typically triggered by monitoring alerts or health checks.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-Redundancy = having a spare. Failover = using the spare when the primary breaks. A plane with two engines: the second engine is redundancy. If engine 1 fails, the plane flies on engine 2 — that's failover. The combination ensures the plane reaches its destination even with one engine failure.
+**One line:**
+Redundancy = have backup. Failover = automatically use backup if primary fails.
 
----
+**One analogy:**
 
-### 🔵 Simple Definition (Elaborated)
+> A car has one steering wheel (primary). If it jams, the car is stuck. Better design: electric power steering (primary) + mechanical backup steering (redundant). If electric fails, driver can still steer mechanically (failover). Car keeps working.
 
-A single-server database is a SPOF: if it crashes, the whole system is down. Add a standby replica (redundancy): the replica mirrors all data. When the primary crashes, an automated health check detects the failure and promotes the replica to primary (failover). Users may see a brief pause (seconds to minutes) but the service resumes. Without redundancy: MTTR = time to provision new hardware + restore backup (hours). With redundancy + auto failover: MTTR = seconds.
+**One insight:**
+Redundancy without automatic failover (manual fix) = long downtime. Failover without redundancy = doesn't help. Both are required.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**Single Points of Failure (SPOFs) and how redundancy eliminates them:**
+**CORE INVARIANTS:**
 
-```
-IDENTIFYING SPOFS — trace every critical path:
+1. All components fail eventually (hardware wear, software bugs, operator mistakes)
+2. Failure is not a question of "if" but "when"
+3. Business criticality determines redundancy required
+4. Automatic failover faster than manual recovery
 
-  User → DNS → Load Balancer → App Server → Database → Storage
+**DERIVED DESIGN:**
+For each critical component:
 
-  Each arrow is a potential SPOF:
+- Identify: Is it a single point of failure?
+- If yes, add redundancy: replicate the component
+- Add monitoring: detect failures quickly
+- Add automatic failover: switch to backup without manual intervention
+- Test: ensure failover works as designed
 
-  1. DNS: single DNS provider → all names unresolvable if provider fails
-     FIX: multiple DNS providers (Route53 + Cloudflare), NS record redundancy
+**THE TRADE-OFFS:**
+**Gain:** No single point of failure. System continues even if component fails. Improved availability.
 
-  2. Load Balancer: single instance → no traffic routing if LB fails
-     FIX: Active-passive LB pair (keepalived VIP), or cloud-managed LB (inherently redundant)
-
-  3. App Server: single instance → one crash = full outage
-     FIX: Multiple instances behind LB + health checks → auto-replacement
-
-  4. Database: single instance → most common SPOF in architectures
-     FIX: Multi-AZ (RDS), Sentinel/Cluster (Redis), replica set (MongoDB)
-
-  5. Storage: single disk → RAID for local; S3 (11-9s durability) for cloud
-     FIX: RAID 1/5/6, cloud object storage with cross-region replication
-
-AVAILABILITY FROM REDUNDANCY:
-
-  Single component: availability = A
-  Two components (active-passive): availability ≈ 1 - (1-A)^2
-
-  Example: each component = 99% available
-  Single:          99.00%
-  Two (A-P):       1 - (0.01)^2 = 99.99%
-  Three:           1 - (0.01)^3 = 99.9999%
-
-  Important caveat: the FAILOVER mechanism itself must be reliable.
-  If failover logic has a bug or requires manual intervention (slow MTTR),
-  the theoretical availability gain is not realised.
-
-FAILOVER TYPES:
-
-  AUTOMATIC FAILOVER (preferred):
-    Health check detects failure → redirects traffic → no human needed.
-
-    Kubernetes: liveness probe fails → kubelet restarts pod
-      livenessProbe:
-        httpGet:
-          path: /actuator/health/liveness
-          port: 8080
-        failureThreshold: 3
-        periodSeconds: 10
-    → Pod replaced within 30 seconds of failure
-
-    RDS Multi-AZ: primary fails → standby promoted automatically
-    → DNS endpoint updated → application reconnects in ~90 seconds
-
-    keepalived (Linux VRRP): LB1 fails → LB2 takes over Virtual IP
-    → No DNS change needed (VIP stays the same)
-    → Failover: <1 second
-
-  MANUAL FAILOVER (degraded option):
-    Human detects failure, executes runbook, promotes standby.
-    RTO: 30 minutes to hours (human response time + execution)
-    When to use: when automatic failover risks data corruption/split-brain
-    Example: database with async replication — auto-promote may lose data
-
-  GRACEFUL vs. FORCED FAILOVER:
-    GRACEFUL: primary drains connections, replication confirmed,
-              then promotion. Data consistent. Takes longer.
-    FORCED: immediate promotion regardless of replication lag.
-            Faster but may lose in-flight transactions (RPO trade-off).
-
-FAILOVER TESTING:
-
-  Chaos engineering: deliberately trigger failovers in production.
-  Netflix Chaos Monkey: terminates random EC2 instances.
-  AWS Fault Injection Simulator (FIS): controlled failure injection.
-
-  Without testing:
-  - Failover scripts have bugs (discovered during actual outage)
-  - Operators unfamiliar with failover procedure (slow manual execution)
-  - Hidden dependencies not covered by redundancy (discovered mid-crisis)
-```
+**Cost:** 2x infrastructure (extra servers, storage, bandwidth). Complexity (monitoring, failover logic, split-brain scenarios). Testing burden.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-WITHOUT Redundancy + Failover:
+**SETUP:**
+A web application requires 99.9% availability (SLA).
 
-- Single component failure = complete system outage
-- MTTR = time to detect + provision replacement + restore data
-- Every component is a ticking time bomb (hardware fails, software crashes)
+**Scenario A (No Redundancy):**
 
-WITH Redundancy + Failover:
-→ Single component failure handled automatically, invisibly to users
-→ MTTR: seconds (auto failover) vs. hours (manual recovery)
-→ Maintenance: rolling updates without downtime (take one component down, failover handles traffic)
+- Single web server: 99% uptime (small failure rate)
+- System uptime = 99% (SLA not met, business fails)
+
+**Scenario B (Database Redundancy Only):**
+
+- Web servers: 1 (no redundancy), 99% uptime
+- Database: 3-instance cluster, 99.9% uptime
+- System uptime = min(99%, 99.9%) = 99% (web server is bottleneck)
+- SLA not met
+
+**Scenario C (Both Redundant with Failover):**
+
+- Web servers: 3 instances with load balancer, 99.99% combined uptime
+- Database: 3-instance cluster, 99.9% uptime
+- Automatic failover if any instance fails (< 1 second)
+- System uptime ≈ 99.95% (SLA met)
+
+**THE INSIGHT:**
+Redundancy of one component doesn't guarantee SLA if other components aren't redundant. Weakest link determines system availability. Must address all critical paths.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> Redundancy and failover in electrical power. A hospital has a generator (redundancy) that activates automatically when the main power fails (failover). The generator sits idle while mains power works — pure cost, no benefit on a good day. But when mains power fails (SPOF), the generator kicks in within seconds. The hospital stays operational. Without the generator (no redundancy), power failure = lights out + equipment shutdown. The cost of the generator is justified by the criticality of hospital operations.
+> An airplane has 4 engines. Each engine has 99.5% reliability in flight. If any engine fails, the other 3 can still keep the plane flying (failover to remaining engines, auto-balancing thrust).
 
-"Main power" = primary system component
-"Generator" = redundant standby component
-"Automatic generator activation" = auto failover
-"Transfer switch" = failover detection and switching mechanism
+- Engines 1-4 → redundant system components
+- "Fails" → component failure (hardware, software)
+- "Other 3 can compensate" → automatic failover
+- "Auto-balancing" → load rebalancing across remaining components
+
+**Where analogy breaks down:** Airplanes have hard limits (can fly on min 2 engines). Software systems can be more flexible (scale down gracefully rather than requiring minimum capacity).
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+Have backup systems ready. If primary fails, automatically use backup. Service doesn't go down.
+
+**Level 2 — How to use it (junior developer):**
+For web tier: use load balancer with 3+ servers. If one fails, load balancer removes it automatically (healthcheck). For database: use replication to standby instance. If primary fails, promote standby to primary (automatic failover).
+
+**Level 3 — How it works (mid-level engineer):**
+Implement health checks: every 10 sec, check if component responding. If not, mark as failed. Load balancer routes around failed instance. For stateful components (databases), use replication + monitoring to detect failure + automatic promotion of standby.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+Redundancy emerged from reliability engineering: eliminate single points of failure. Failover (vs. manual recovery) reduces downtime by orders of magnitude (minutes to seconds). Automatic failover requires: robust health detection (avoid false positives), fast rerouting (pre-configured standby), and idempotency (failover multiple times without corruption).
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**HAProxy health checks + automatic backend failover:**
+Redundancy and failover mechanism:
 
 ```
-HAProxy configuration — automatic failover between primary and replica:
+IDENTIFY CRITICAL COMPONENTS:
+  ├─ Web servers (stateless, easy to replicate)
+  ├─ Databases (stateful, requires replication)
+  ├─ Message queues (stateful, requires replication)
+  └─ Load balancers (need redundancy too!)
 
-frontend db_proxy
-    bind *:5432
-    default_backend postgres_pool
+ADD REDUNDANCY:
+  Web Servers:
+    [WEB-1] ──┐
+    [WEB-2] ──┼─ Load Balancer ── Clients
+    [WEB-3] ──┘
 
-backend postgres_pool
-    balance first           # send all to first available server
-    option tcp-check        # TCP health check
-    tcp-check connect
+  If WEB-1 fails, traffic automatically routes to WEB-2 and WEB-3.
 
-    # Primary (normal target)
-    server pg-primary 10.0.1.1:5432 check inter 5s fall 2 rise 3
-    # pg-primary:
-    #   check: health check enabled
-    #   inter 5s: check every 5 seconds
-    #   fall 2: mark DOWN after 2 consecutive failures (10s to detect failure)
-    #   rise 3: mark UP after 3 consecutive successes (15s to return traffic)
+  Databases:
+    [PRIMARY] ──(replication)── [REPLICA]
 
-    # Standby (only used if primary DOWN)
-    server pg-standby 10.0.1.2:5432 backup check inter 5s fall 2 rise 3
-    # backup: only receives traffic when all non-backup servers are DOWN
+    If PRIMARY fails:
+      1. Detect failure (replication lag detection, heartbeat)
+      2. Promote REPLICA to PRIMARY
+      3. Update connection strings (failover)
 
-# Failover flow:
-# T+00: pg-primary health check fails (2nd consecutive failure)
-# T+10: pg-primary marked DOWN by HAProxy
-# T+10: pg-standby (backup) starts receiving traffic
-# T+00 to T+10: 10 seconds of failed/dropped connections
-# T+10+: all connections to pg-standby (note: standby may be read-only replica)
-#        application must handle reconnection; standby may need manual promotion
+HEALTH CHECKING (Continuous):
+  Every 10 seconds:
+    ├─ Load Balancer pings each web server: "Are you alive?"
+    ├─ Monitors check database replication lag
+    ├─ Checks check message queue depth
+    └─ All send heartbeat to monitoring system
+
+FAILURE DETECTION:
+  Component misses 3 health checks:
+    → Marked as "unhealthy"
+    → Removed from rotation (no new traffic)
+    → Failover triggered
+    → Alert sent to on-call engineer
+
+AUTOMATIC FAILOVER:
+  Web tier:
+    Load Balancer removes failed instance from pool
+    (No action needed, automatic)
+
+  Database tier:
+    Monitoring detects primary down
+    → Promote replica to primary (automatic)
+    → Update connection strings (application reconnects automatically)
+    → Alert team to investigate root cause
+
+GRACEFUL DEGRADATION:
+  If 1 of 3 web servers fails:
+    - System still operating at 66% capacity
+    - Latency increases slightly (fewer servers handling load)
+    - SLA still met (3-server design was SLA-driven)
+
+  If 2 of 3 web servers fail:
+    - System at 33% capacity
+    - Still serving traffic
+    - Alert escalated: "Critical degradation"
+
+RECOVERY:
+  Failed component repaired or replaced
+  → Brought back online
+  → Health checks pass
+  → Automatically reintegrated into rotation
+  → Load rebalanced
+```
+
+**Failover Timeline Example:**
+
+```
+14:30:00 - Primary database disk fails
+14:30:05 - Monitoring detects replication lag > threshold
+14:30:10 - Automatic failover triggered, replica promoted to primary
+14:30:12 - Connection strings updated (app reconnects)
+14:30:15 - Service restored (failover complete, ~15 seconds downtime)
+14:35:00 - On-call engineer notified and investigating
+15:00:00 - Root cause identified, disk replaced
+15:15:00 - New replica spun up, replication starts
 ```
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 🔄 The Complete Picture — End-to-End Flow
 
 ```
-Single Point of Failure (SPOF)
-(any component whose failure = system failure)
-        │
-        ▼ (eliminate via duplication)
-Redundancy ◄──── (you are here — the "having a spare" part)
-        │
-        ▼ (automated switching to spare)
-Failover ◄──── (you are here — the "using the spare" part)
-        │
-        ├── Active-Passive (one standby, one primary)
-        ├── Active-Active (both actively serving)
-        └── Disaster Recovery (cross-region failover)
+Load Balancer
+    ↓
+Health Check Timer (every 10s)
+    ├─ Ping WEB-1 → ALIVE
+    ├─ Ping WEB-2 → ALIVE
+    └─ Ping WEB-3 → NO RESPONSE
+    ↓
+WEB-3 marked UNHEALTHY
+    ↓
+Next request from client
+    ├─ Load Balancer sends to WEB-1 or WEB-2
+    └─ WEB-3 not in rotation
+    ↓
+Alert Sent to Monitoring
+    ├─ Team notified (on-call paged)
+    └─ Incident logged
+
+Meanwhile:
+WEB-3 repaired by ops team
+    ↓
+Health Check: WEB-3 now responding
+    ↓
+WEB-3 marked HEALTHY
+    ↓
+Next request:
+    ├─ Load Balancer includes WEB-3 again
+    └─ Traffic rebalanced (3 servers now)
 ```
 
 ---
 
 ### 💻 Code Example
 
-**AWS Route53 health check + DNS failover:**
+Implementing redundancy and failover:
+
+**Example 1 — Load Balancer Health Checks (Nginx):**
+
+```nginx
+upstream app_servers {
+    # Define redundant servers
+    server app1.internal:8080 max_fails=3 fail_timeout=10s;
+    server app2.internal:8080 max_fails=3 fail_timeout=10s;
+    server app3.internal:8080 max_fails=3 fail_timeout=10s;
+
+    # Health check configuration
+    # Nginx checks each server every 10 seconds
+    # If 3 consecutive checks fail, mark unhealthy
+    # Remove from rotation until it recovers
+}
+
+server {
+    listen 80;
+    location / {
+        proxy_pass http://app_servers;
+        # Automatic failover: if app1 fails, redirect to app2/app3
+    }
+}
+```
+
+**Example 2 — Database Failover (PostgreSQL):**
+
+```bash
+#!/bin/bash
+# Automated database failover script
+
+PRIMARY_HOST="db1.internal"
+REPLICA_HOST="db2.internal"
+VIP="db-virtual.internal"  # Virtual IP for applications
+
+check_primary() {
+    # Check if primary is responding
+    if ! pg_isready -h "$PRIMARY_HOST" -p 5432 -q; then
+        return 1  # Primary down
+    fi
+    return 0  # Primary up
+}
+
+failover_to_replica() {
+    echo "Primary down. Failover to replica..."
+
+    # 1. Promote replica to primary
+    ssh "$REPLICA_HOST" "sudo -u postgres pg_ctl promote"
+
+    # 2. Update virtual IP to point to new primary
+    ssh "$REPLICA_HOST" "sudo ip addr add $VIP/32 dev eth0"
+
+    # 3. Update connection strings (apps auto-reconnect to VIP)
+    echo "Failover complete. Apps reconnecting to $VIP..."
+
+    # 4. Alert ops team
+    echo "Failover event: $PRIMARY_HOST → $REPLICA_HOST" | mail -s "DB Failover" ops@company.com
+}
+
+# Main loop
+while true; do
+    if ! check_primary; then
+        echo "Primary database down. Initiating failover..."
+        failover_to_replica
+        break  # Failover complete
+    fi
+    sleep 10  # Check every 10 seconds
+done
+```
+
+**Example 3 — Health Check Endpoint (Python Flask):**
 
 ```python
-import boto3
+from flask import Flask, jsonify
+import subprocess
+import time
 
-route53 = boto3.client('route53')
+app = Flask(__name__)
 
-# 1. Create health check for primary endpoint:
-health_check = route53.create_health_check(
-    CallerReference='primary-health-check-001',
-    HealthCheckConfig={
-        'IPAddress': '10.0.1.100',
-        'Port': 443,
-        'Type': 'HTTPS',
-        'ResourcePath': '/actuator/health',
-        'RequestInterval': 10,   # check every 10 seconds
-        'FailureThreshold': 3,   # failover after 3 failures (30 seconds)
-        'FullyQualifiedDomainName': 'api.primary.example.com',
+@app.route('/health', methods=['GET'])
+def health_check():
+    """
+    Health check endpoint for load balancer.
+    Load balancer calls this every 10 seconds.
+    Returns 200 if healthy, 5xx if unhealthy.
+    """
+    checks = {
+        'database': check_database(),
+        'disk_space': check_disk_space(),
+        'memory': check_memory(),
+        'services': check_services()
     }
-)
-health_check_id = health_check['HealthCheck']['Id']
 
-# 2. Primary DNS record (active while healthy):
-route53.change_resource_record_sets(
-    HostedZoneId='ZXXX',
-    ChangeBatch={'Changes': [{
-        'Action': 'CREATE',
-        'ResourceRecordSet': {
-            'Name': 'api.example.com',
-            'Type': 'A',
-            'SetIdentifier': 'primary',
-            'Failover': 'PRIMARY',              # this is the PRIMARY record
-            'TTL': 60,
-            'ResourceRecords': [{'Value': '10.0.1.100'}],
-            'HealthCheckId': health_check_id    # failover if unhealthy
-        }
-    }]}
-)
+    overall_healthy = all(checks.values())
 
-# 3. Secondary (DR) DNS record (used only if primary health check fails):
-route53.change_resource_record_sets(
-    HostedZoneId='ZXXX',
-    ChangeBatch={'Changes': [{
-        'Action': 'CREATE',
-        'ResourceRecordSet': {
-            'Name': 'api.example.com',
-            'Type': 'A',
-            'SetIdentifier': 'secondary',
-            'Failover': 'SECONDARY',            # only used if primary unhealthy
-            'TTL': 60,
-            'ResourceRecords': [{'Value': '10.0.2.100'}],
-        }
-    }]}
-)
-# Failover: primary health check fails → Route53 returns secondary IP
-# With TTL=60: clients get new IP within 60 seconds
+    if overall_healthy:
+        return jsonify({'status': 'healthy', 'checks': checks}), 200
+    else:
+        return jsonify({'status': 'unhealthy', 'checks': checks}), 503
+
+def check_database():
+    try:
+        # Try to connect to database
+        result = subprocess.run(
+            ['psql', '-U', 'app', '-d', 'mydb', '-c', 'SELECT 1'],
+            timeout=5,
+            capture_output=True
+        )
+        return result.returncode == 0
+    except:
+        return False
+
+def check_disk_space():
+    try:
+        # Check if disk usage > 90%
+        result = subprocess.run(['df', '/'], capture_output=True, text=True)
+        lines = result.stdout.split('\n')
+        usage = int(lines[1].split()[4].rstrip('%'))
+        return usage < 90
+    except:
+        return False
+
+def check_memory():
+    try:
+        # Check if available memory > 10%
+        result = subprocess.run(['free'], capture_output=True, text=True)
+        lines = result.stdout.split('\n')
+        mem_info = lines[1].split()
+        used = int(mem_info[2])
+        total = int(mem_info[1])
+        usage_pct = (used / total) * 100
+        return usage_pct < 90
+    except:
+        return False
+
+def check_services():
+    try:
+        # Check if critical services are running
+        result = subprocess.run(['systemctl', 'is-active', 'app-service'], capture_output=True)
+        return result.returncode == 0
+    except:
+        return False
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8000)
 ```
+
+---
+
+### ⚖️ Comparison Table
+
+| Aspect            | Redundancy                | Failover                                     | Combined                               |
+| ----------------- | ------------------------- | -------------------------------------------- | -------------------------------------- |
+| **Definition**    | Having backups ready      | Automatically switching                      | Prevents single points of failure      |
+| **Without**       | One failure = system down | Downtime = manual recovery                   | Not viable for critical systems        |
+| **Cost**          | 2-3x infrastructure       | Monitoring + automation                      | Higher upfront, lower operational cost |
+| **Recovery Time** | N/A                       | Seconds (auto) vs. hours (manual)            | Automatic wins for SLA                 |
+| **Example**       | 3 web servers vs. 1       | Load balancer detects failure, routes around | 99.9% uptime achievable                |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                   | Reality                                                                                                                                                                                                                                                                                                                                                                        |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Redundancy eliminates all downtime              | Redundancy eliminates downtime from single component failures, not all downtime. Common failure modes NOT solved by N+1 redundancy: software bugs (affect all instances simultaneously), misconfigured deployments (affect all instances), shared infrastructure failure (network, DNS, cloud region), correlated failures (all instances on same hardware rack)               |
-| Active-passive wastes the standby resource      | Active-passive standby isn't entirely idle: it runs health checks, receives replication, handles monitoring. For databases, the standby actively receives replication writes. For compute, standbys can serve read traffic (read replicas). The "waste" is in unused write capacity — which is the accepted cost of fast failover                                              |
-| Automatic failover is always safer than manual  | For databases with async replication, automatic failover can cause split-brain or data loss. If both primary and standby believe they're primary simultaneously: two databases accepting writes → data divergence → corruption. Manual failover with careful sequencing prevents this. AWS RDS Multi-AZ uses synchronous replication specifically to enable safe auto-failover |
-| Redundancy at the component level is sufficient | System-level availability requires redundancy at EVERY layer. A redundant database does not help if the load balancer is a SPOF. The weakest redundancy link determines system availability. Systematic SPOF analysis is essential                                                                                                                                             |
+| Misconception                                | Reality                                                                                                |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| "Redundancy guarantees no downtime"          | No. If failover fails or is slow, downtime still occurs. Must test failover constantly.                |
+| "We only need redundancy for critical paths" | Correct, but "critical" might be more than you think. Load balancer itself is critical—must redundant. |
+| "Manual failover is acceptable"              | For non-critical systems, maybe. For SLA-driven systems, automatic is required (manual is too slow).   |
+| "More redundancy = infinite availability"    | No. More redundancy = more complexity = more failure modes. Diminishing returns exist.                 |
+| "Redundancy = identical copies"              | Not always. Warm standby or cold backup also "redundant." Depends on RTO requirements.                 |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**Split-brain: both primary and standby believe they're primary:**
+**Failure Mode 1: Failover Doesn't Trigger (Silent Failure)**
 
+**Symptom:**
+Primary server fails. Monitoring doesn't alert. Failover doesn't trigger. Service down. Customers angry.
+
+**Root Cause:**
+Health check endpoint broken or misconfigured. Load balancer misconfiguration (health check disabled). Network partition between load balancer and primary (LB can't reach primary, but doesn't know why).
+
+**Diagnostic Command:**
+
+```bash
+# Test health check manually
+curl http://primary-server:8000/health
+# If 503 or timeout, primary is down (failover should trigger)
+
+# Check load balancer config
+nginx -T | grep -A 20 "upstream app_servers"
+
+# Check health check settings
+# Should show: max_fails, fail_timeout configured
 ```
-PROBLEM: Network partition causes split-brain
 
-  Scenario: Primary DB and Standby DB connected via network.
-  Network partition at T=0: Primary and Standby can't communicate.
+**Fix:**
+Bad approach: "Assume health checks work."
+Good approach: (1) Test health checks regularly. (2) Verify load balancer can reach all backends. (3) Add alerting: if health checks failing > 3 times, escalate. (4) Implement circuit breaker: if unreachable, assume down (don't wait for timeout).
 
-  Without fencing mechanism:
-  T=0:  Network partition. Primary still accepting writes.
-  T=30: Standby: "Primary is unreachable!" → promotes itself to primary.
-  T=30: Now TWO primaries: old Primary + new Primary.
-  T=30-T=60: Application writes to new Primary (via health check redirect).
-             Old Primary still accepting writes from some clients (no DNS update yet).
-  T=60: Network restored. Two databases with diverged data.
-        Which is authoritative? Data loss + corruption inevitable.
+**Prevention:**
+Regular chaos tests: kill primary server, verify failover triggers within < 15 seconds. Include load balancer in tests.
 
-  SPLIT-BRAIN CONSEQUENCES:
-  - Double writes: order placed twice (financial impact)
-  - Conflicting updates: same record updated differently in both primaries
-  - Undefined merge: which version is correct?
+---
 
-FIX 1: STONITH (Shoot The Other Node In The Head)
-  Fencing: before standby promotes, send STONITH signal to primary.
-  STONITH: sends IPMI/BMC power-off command to primary hardware.
-  Primary: hard-powered-off → definitively cannot accept more writes.
-  Standby: now safe to promote (only one primary).
+**Failure Mode 2: Split-Brain (Both Primary and Backup Accepting Traffic)**
 
-  Cloud equivalent: terminate the primary EC2 instance via API before promotion.
+**Symptom:**
+Network partition between primary and backup. Both think they're primary. Both accepting writes. Data corruption (conflicting updates).
 
-FIX 2: Quorum-based consensus (Raft, Paxos)
-  Promotion requires acknowledgement from MAJORITY of nodes.
-  With 3 nodes: need 2/3 agreement to promote.
-  Network partition: partitioned side with 1 node cannot achieve quorum.
-  Cannot promote → no split-brain.
+**Root Cause:**
+Failover triggered on replica side (thinks primary is dead). But primary is still alive (network issue, not server failure). Now both are accepting writes.
 
-  etcd, Consul, ZooKeeper, Raft-based DBs (CockroachDB, TiDB) use this.
+**Diagnostic Command:**
 
-FIX 3: Synchronous replication + epoch fencing
-  PostgreSQL synchronous_standby_names:
-    Write committed only when standby confirms receipt.
-    On partition: primary BLOCKS (cannot commit) → cannot diverge.
-    Standby: promotes safely (has all committed data).
-    Trade-off: primary blocks on partition → availability reduced during partition.
+```bash
+# Check which nodes think they're primary
+curl http://primary-candidate-1:8000/status | jq '.is_primary'
+curl http://primary-candidate-2:8000/status | jq '.is_primary'
+
+# If both return true: SPLIT BRAIN
 ```
+
+**Fix:**
+Bad approach: Try to merge data (impossible, conflicting updates).
+Good approach: (1) Have quorum-based voting (3+ nodes decide who's primary, not just 2). (2) Use heartbeat from multiple paths. (3) Implement "fencing": if node can't talk to quorum, self-isolate (stop serving traffic). (4) Never promote backup if can't confirm primary is truly down.
+
+**Prevention:**
+Design failover logic to avoid split-brain: require majority vote (3+ nodes). Test network partitions during chaos engineering.
+
+---
+
+**Failure Mode 3: Failover Cascades (One Failure Causes Many)**
+
+**Symptom:**
+Primary database fails. Failover to replica. But during failover, connection floods trigger cascade failure in application tier. Then entire system down (worse than original failure).
+
+**Root Cause:**
+Failover logic not graceful. Applications reconnect all at once (thundering herd). Connection pool overwhelmed. Cascade failure.
+
+**Diagnostic Command:**
+
+```bash
+# Monitor during failover event
+watch -n 1 'curl http://app-lb/status | jq .connections'
+
+# If connections spike to > max_pool, cascade detected
+```
+
+**Fix:**
+Bad approach: "It's rare, don't worry."
+Good approach: (1) Use circuit breakers on application side. (2) Implement exponential backoff for reconnects (spread them out). (3) Warm up connection pool gradually during failover. (4) Load-shedding: drop low-priority traffic if cascade detected.
+
+**Prevention:**
+Test failover under load. Simulate cascade scenarios. Implement rate limiting on reconnects.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Active-Passive` — the simplest redundancy pattern: one active, one standby
-- `Active-Active` — both instances serve traffic; more complex but more efficient
-- `Disaster Recovery` — cross-region redundancy and failover at the largest scale
-- `RTO / RPO` — failover speed directly determines RTO achieved
-- `Load Balancing` — distributes traffic and can reroute around failed instances
+**Prerequisites (understand these first):**
+
+- `High Availability` — overall discipline; redundancy/failover are tactics
+- `Monitoring` — detects failures, triggers failover
+- `Load Balancing` — distributes traffic across redundant servers
+
+**Builds On This (learn these next):**
+
+- `Active-Active` — both systems serving simultaneously (vs. active-passive failover)
+- `Disaster Recovery` — failover for data center-level disasters
+- `Chaos Engineering` — testing failover scenarios
+
+**Alternatives / Comparisons:**
+
+- `Replication` — mechanism enabling failover
+- `Circuit Breakers` — prevent cascade failures during failover
 
 ---
 
 ### 📌 Quick Reference Card
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Redundancy: eliminate SPOFs by duplicating│
-│              │ Failover: auto-switch to spare on failure  │
-├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Any component whose failure causes outage;│
-│              │ high-availability requirements            │
-├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Auto-failover with async replication:     │
-│              │ split-brain risk — use manual or fencing  │
-├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "A hospital generator: idle cost every    │
-│              │  day; priceless value when power fails."  │
-├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Active-Passive → Active-Active            │
-│              │ → Disaster Recovery                       │
-└──────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│ WHAT IT IS   │ Redundancy = backup systems ready;   │
+│              │ Failover = automatically switch      │
+│              │ if primary fails                      │
+├──────────────┼────────────────────────────────────────┤
+│ PROBLEM IT   │ Single point of failure = system      │
+│ SOLVES       │ down if that component fails          │
+├──────────────┼────────────────────────────────────────┤
+│ KEY INSIGHT  │ Redundancy alone doesn't help;        │
+│              │ must have automatic failover to       │
+│              │ achieve high availability              │
+├──────────────┼────────────────────────────────────────┤
+│ USE WHEN     │ Production systems; SLA requirements;  │
+│              │ business criticality                  │
+├──────────────┼────────────────────────────────────────┤
+│ AVOID WHEN   │ Non-critical systems; cost sensitive  │
+├──────────────┼────────────────────────────────────────┤
+│ TRADE-OFF    │ [High availability, resilience] vs    │
+│              │ [cost, complexity, testing burden]    │
+├──────────────┼────────────────────────────────────────┤
+│ ONE-LINER    │ "Have backup, automatically use if    │
+│              │ primary fails."                       │
+├──────────────┼────────────────────────────────────────┤
+│ NEXT EXPLORE │ Active-Active → Disaster Recovery →  │
+│              │ Chaos Engineering                     │
+└──────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** You're designing a database failover system for a PostgreSQL cluster. Two options: (A) synchronous replication with automatic failover (RPO=0, write latency +50ms for replication acknowledgement, auto-promotes on primary failure), (B) asynchronous replication with manual failover (RPO=seconds, no write latency overhead, manual promotion requiring engineer on-call). Your application is a real-time bidding system (RTB) that processes 50,000 bids per second with P99 latency SLO of 10ms. Which option fits your requirements and why? Are there hybrid approaches?
+**Q1.** Your system has 3 redundant web servers with automatic failover. If one fails, the remaining 2 can't handle 100% of traffic (latency increases 50%). Is this acceptable design? Why or why not?
 
-**Q2.** A three-tier web application (load balancer → app servers → database) has the following individual component availabilities: LB=99.99%, App Server (single)=99.5%, Database (single)=99.9%. Calculate: (a) overall availability with no redundancy, (b) availability with 3 app servers (any one can fail), (c) availability with DB Multi-AZ (standby = 99.9% available, failover detection = 99.9% reliable). Which component provides the most improvement per dollar if each redundant component costs the same to operate?
+**Q2.** During a failover event, your database replica is promoted to primary, but the old primary (now down) is still listed in DNS. Apps start connecting to both. How would you prevent split-brain scenarios?

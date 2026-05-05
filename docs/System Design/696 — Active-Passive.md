@@ -4,364 +4,477 @@ title: "Active-Passive"
 parent: "System Design"
 nav_order: 696
 permalink: /system-design/active-passive/
-number: "696"
+number: "0696"
 category: System Design
 difficulty: ★★☆
-depends_on: "Redundancy / Failover, RTO / RPO"
-used_by: "Disaster Recovery"
-tags: #intermediate, #reliability, #distributed, #architecture, #pattern
+depends_on: Redundancy, High Availability, Monitoring
+used_by: HA Architecture, Failover Systems
+related: Active-Active, Redundancy, Failover
+tags:
+  - high-availability
+  - reliability
+  - intermediate
+  - failover
+  - architecture
 ---
 
 # 696 — Active-Passive
 
-`#intermediate` `#reliability` `#distributed` `#architecture` `#pattern`
+⚡ TL;DR — Primary system handles all traffic; backup (passive) remains idle and ready to take over if primary fails. Simple and safe, but wastes backup capacity and requires failover delay.
 
-⚡ TL;DR — **Active-Passive** keeps one primary node handling all traffic while a standby replica sits ready; on primary failure, the passive node is promoted, trading some switchover time (~seconds to minutes) for architectural simplicity.
+| #696            | Category: System Design                   | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------- | :-------------- |
+| **Depends on:** | Redundancy, High Availability, Monitoring |                 |
+| **Used by:**    | HA Architecture, Failover Systems         |                 |
+| **Related:**    | Active-Active, Redundancy, Failover       |                 |
 
-| #696            | Category: System Design          | Difficulty: ★★☆ |
-| :-------------- | :------------------------------- | :-------------- |
-| **Depends on:** | Redundancy / Failover, RTO / RPO |                 |
-| **Used by:**    | Disaster Recovery                |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+Single server handles all traffic. If it fails, service down. No backup. Customers angry. SLA breached.
+
+**THE BREAKING POINT:**
+Business needs redundancy but complexity of active-active too high. Need simple HA: keep backup ready, switch if needed.
+
+**THE INVENTION MOMENT:**
+"One system actively serving. One system passively waiting. If active fails, promote passive. Simple, safe, proven."
 
 ---
 
 ### 📘 Textbook Definition
 
-**Active-Passive** (also called primary-standby, master-slave, or primary-replica) is a high-availability pattern where one primary (active) node handles all read and write requests, while one or more passive (standby) nodes replicate data from the primary and remain ready to take over if the primary fails. The passive node does not serve traffic under normal conditions. When the primary fails — detected by health checks, heartbeats, or monitoring — an automatic or manual **failover** promotes the passive node to primary, redirects traffic (via DNS change, floating IP, or load balancer reconfiguration), and the system resumes. Active-Passive is simpler than Active-Active because there is always a single authoritative source for writes, eliminating the conflict-resolution challenges of multi-master systems. The cost: some standby capacity is idle, and there is a brief failover window (seconds to minutes) during which traffic is disrupted.
+**Active-Passive:** Primary system actively serves all traffic. Secondary (passive) system remains standby, ready to take over. When primary fails, traffic is switched to secondary (failover). Secondary then becomes the new primary until original recovers.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-Active-Passive: one server works (active), one server waits on standby (passive). If the active server fails, the passive one takes over. Simpler than Active-Active but with a short switchover delay and wasted standby capacity. Like a driver and a co-pilot: the co-pilot isn't driving but can take over immediately if the driver is incapacitated.
+**One line:**
+One system active. One system waiting. If active dies, switch to waiting one.
 
----
+**One analogy:**
 
-### 🔵 Simple Definition (Elaborated)
+> A restaurant has 1 chef working, 1 chef on break. If working chef gets sick, bring break chef back. Simple.
 
-Primary database server handles all reads and writes. It continuously replicates changes to a standby server (passive). The standby accepts no user requests — it just stays in sync. When the primary fails, a health check detects it within 10-30 seconds. Failover begins: promote standby to primary, update DNS or VIP, application reconnects. Total time: 30-120 seconds. Users see a brief error during this window. Then normal operation resumes. Advantage: no conflict resolution needed — there's always one primary. Disadvantage: standby is "wasted" capacity and there's a switchover delay.
+**One insight:**
+Simple and safe, but 50% of servers are idle (wasteful capacity).
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**Active-Passive mechanics — detection, promotion, re-routing:**
+**CORE INVARIANTS:**
 
-```
-NORMAL OPERATION:
-  Client → Load Balancer → Primary (Active)
-                               │
-                        Replication (sync or async)
-                               │
-                            Standby (Passive)
-                            [no client traffic]
+1. One system fully active, one fully passive
+2. Data must replicate from active to passive (async is fine)
+3. Passive must be ready to take over quickly
+4. Simple data consistency (only one writer)
 
-FAILURE DETECTION:
-  Method 1: Health check polling (LB or external monitor)
-    Health checker: pings primary every 5s
-    Primary fails: 2 consecutive failures → marked DOWN (10s detection)
+**DERIVED DESIGN:**
 
-  Method 2: Heartbeat (standby watches primary)
-    Standby: sends heartbeat to primary every 1s
-    No response for 3s → declares primary dead → initiates failover
+- Active: handles all requests, writes all data
+- Passive: receives replication from active, does not accept requests
+- Monitoring: checks if active is healthy
+- Failover: if active fails, promote passive to active, update DNS/load balancer
+- Recovery: if old active comes back, it becomes new passive (not re-promoted without verification)
 
-  Method 3: Agent-based (monitoring daemon on primary)
-    Agent detects local failure → sends signal to orchestrator
-    Fastest detection (sub-second) but adds complexity
+**THE TRADE-OFFS:**
+**Gain:** Simple. Data consistency easy (only one writer). Predictable. Low complexity.
 
-FAILOVER SEQUENCE:
-  T+00s: Primary failure detected by health checker
-  T+10s: Primary marked as failed (after N consecutive failures)
-  T+11s: Failover initiated:
-    1. FENCING: ensure primary is truly dead (STONITH or terminate EC2)
-    2. PROMOTION: standby becomes read-write primary
-    3. TRAFFIC REDIRECT:
-       DNS: update A record to standby IP (TTL=60 → propagates in 60s)
-       OR
-       Floating IP / VIP: reassign IP to standby (instant, no DNS needed)
-       OR
-       Load Balancer: remove primary, add standby to pool (instant)
-    4. VERIFICATION: health check confirms standby accepting requests
-  T+30-90s: Service restored at standby
-
-  Total RTO: 30-90 seconds (automated) or 15-30 minutes (manual)
-
-SYNCHRONOUS vs. ASYNCHRONOUS REPLICATION effect on RPO:
-
-  SYNCHRONOUS (RPO = 0):
-    Primary: write committed only after standby confirms receipt.
-    Standby always has all committed data.
-    Failover: no data loss.
-    Cost: each write waits for network RTT to standby.
-    Typical: +1-5ms for same-AZ, +50ms for cross-region.
-
-  ASYNCHRONOUS (RPO = seconds to minutes):
-    Primary: write committed immediately.
-    Replication: happens in background.
-    Lag at failure time: 0-N seconds of uncommitted writes.
-    Failover: up to N seconds of data loss.
-    Cost: no write latency overhead.
-
-    Example: PostgreSQL with streaming replication
-    pg_stat_replication: shows lag
-    In synchronous mode: synchronous_standby_names = 'standby1'
-    In async mode: lag can be monitored but not bounded
-
-ACTIVE-PASSIVE FOR COMPUTE (stateless app servers):
-  Primary: all traffic
-  Standby: identical instance, running but not in LB pool
-  Failover: LB health check removes primary, adds standby
-  Data: no replication needed (stateless — state in shared DB)
-  RTO: < 10 seconds (LB health check cycle)
-
-  Note: for stateless services, Active-Active is usually preferred
-  (wastes no capacity, no failover delay). Active-Passive for compute
-  is only common in very specific legacy or compliance scenarios.
-
-ACTIVE-PASSIVE FOR DATABASES (stateful — most common use case):
-  PostgreSQL: primary + streaming replica
-  MySQL: primary + replica (semi-sync or async)
-  Redis: master + replica with Sentinel for auto-failover
-  RDS: Multi-AZ (AWS manages promotion automatically)
-```
+**Cost:** 50% capacity wasted. Failover delay (5-15 seconds). Passive has no real-time experience (might have bugs when promoted).
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-WITHOUT Active-Passive (single node):
+**SETUP:**
+E-commerce site. Active in us-east, passive in us-west.
 
-- Any hardware/software failure = complete downtime (full SPOF)
-- MTTR: hours to provision replacement + restore backup
+**Normal:**
 
-WITH Active-Passive:
-→ Single node failure handled with brief switchover (30-90s) instead of hours
-→ Simple: always one authoritative primary — no conflict resolution
-→ Data safety with synchronous replication: zero data loss on failover
+- Active: 10K requests/sec, fully utilized
+- Passive: idle, receiving replication (minimal CPU)
+- Both have replicas of inventory database
+
+**Active Fails:**
+
+- Detection: 5 seconds (monitoring alert)
+- Failover: 10 seconds (DNS update, route traffic)
+- Total failover: ~15 seconds
+- Passive starts receiving traffic
+- But passive now at 100% CPU (not idle anymore)
+
+**Passive Overwhelmed:**
+
+- Passive designed for idle ops, not peak load
+- If active was at capacity, passive also at capacity (bad)
+- Response time increases, some requests timeout
+- Should have sized passive to handle full load (but that defeats cost savings)
+
+**THE INSIGHT:**
+Active-passive works if: (1) load not at capacity, or (2) passive is also fully sized (then why not active-active?). Tradeoff: cost vs. performance during failover.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> A spacecraft with a primary computer and a backup computer. The primary handles all navigation and control. The backup receives copies of all state updates but executes no commands. If the primary fails, mission control (or automatic detection) switches control to the backup. The backup is identical and current. A brief window of manual switching or detection. Then the backup takes over seamlessly. Simpler than two computers trying to steer simultaneously (Active-Active for spacecraft would cause chaos).
+> Office has 1 employee at desk, 1 employee in break room. If desk employee quits, break room employee takes over. Works well: continuity maintained. But break room employee might not be as productive (out of practice). And having 50% of payroll in break room is wasteful.
 
-"Primary computer" = active node
-"Backup computer" = passive standby
-"Mission control switching" = failover orchestration (DNS, VIP, LB)
-"State update copies" = replication from primary to standby
+- "Desk employee" → active system
+- "Break room employee" → passive system
+- "Quits" → component failure
+- "Not as productive" → passive hasn't been processing requests, rusty
+- "Wasteful" → unused capacity
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+One server handling all traffic. Another server sitting idle, ready to take over if first fails.
+
+**Level 2 — How to use it (junior developer):**
+Configure primary and secondary databases. Primary handles all writes. Secondary receives replicated data. If primary fails, promote secondary to primary. Application connects to secondary (now primary). Requires <15 second failover time.
+
+**Level 3 — How it works (mid-level engineer):**
+Primary and secondary databases connected via replication (async, master-slave). Monitoring checks primary health. If primary fails (replication lag > threshold, heartbeat missing), trigger failover: promote secondary to primary (stop accepting replication, start accepting writes). Update connection strings. Notify team. Monitor new primary stability before bringing original primary back.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+Active-passive is traditional high-availability pattern. Simpler than active-active (no data consistency nightmare). Works well for: (1) read-heavy systems (replicas can handle reads while passive waits), (2) low-frequency writes (async replication sufficient), (3) systems where failover delay acceptable (RTO > 10 sec). Modern alternatives: active-active (if data consistency solved), multi-region active-passive (reduce latency while keeping simplicity).
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**PostgreSQL streaming replication + Patroni auto-failover:**
-
-```yaml
-# Patroni: distributed HA for PostgreSQL (Active-Passive with auto-failover)
-# Uses etcd/Consul/ZooKeeper for distributed consensus (prevent split-brain)
-
-scope: postgres-cluster
-namespace: /service/
-name: node1 # change per node (node1, node2, node3)
-
-etcd:
-  hosts: 10.0.0.1:2379,10.0.0.2:2379,10.0.0.3:2379
-
-bootstrap:
-  dcs:
-    ttl: 30 # leader lock TTL: 30 seconds
-    loop_wait: 10 # check every 10 seconds
-    retry_timeout: 10
-    maximum_lag_on_failover: 1048576 # 1MB max replication lag for failover
-
-  postgresql:
-    parameters:
-      synchronous_commit: "on" # synchronous replication (RPO=0)
-      synchronous_standby_names: "*" # wait for any one standby
-
-postgresql:
-  listen: 0.0.0.0:5432
-  connect_address: 10.0.1.1:5432
-  data_dir: /data/postgres
-  authentication:
-    replication:
-      username: replicator
-      password: secretpass
-
-# FAILOVER FLOW (Patroni):
-# 1. Primary loses etcd lock (TTL expires after 30s of no heartbeat)
-# 2. Replica with most up-to-date WAL is elected as new primary
-# 3. Patroni promotes it (pg_ctl promote)
-# 4. Other replicas reconfigure to follow new primary
-# 5. HAProxy detects change via Patroni REST API (health endpoint)
-#    GET /primary → 200 if node is primary, 503 if not
-# 6. HAProxy routes writes only to node responding 200 on /primary
-#    HAProxy routes reads to all nodes responding 200 on /replica
-```
-
----
-
-### 🔄 How It Connects (Mini-Map)
+Active-passive architecture:
 
 ```
-Redundancy / Failover
-(the general concept)
-        │
-        ├── Active-Passive ◄──── (you are here)
-        │   + Simple: single authoritative primary
-        │   + Synchronous replication → RPO=0
-        │   - Standby capacity idle
-        │   - Failover time: 30-90 seconds
-        │
-        └── Active-Active
-            + All nodes serving traffic
-            + Zero failover delay
-            - Complex conflict resolution for databases
+SETUP:
+  [ACTIVE] ──(replication)──→ [PASSIVE]
+           ← (heartbeat check) ←
+
+  Load Balancer / DNS:
+    Points to ACTIVE only
+
+  Monitoring:
+    Checks ACTIVE health every 10 sec
+
+NORMAL OPERATIONS:
+  Client Request
+    → Load Balancer → ACTIVE
+    → ACTIVE processes, writes to database
+    → Data replicated to PASSIVE (async, slight lag)
+    → ACTIVE sends response
+
+  PASSIVE:
+    - Receives replication stream
+    - Applies updates to local database
+    - Does NOT serve requests
+    - Idle, low CPU usage
+
+ACTIVE FAILS (Hardware Crash):
+  Time 0:00 - ACTIVE crashes
+  Time 0:05 - Monitoring detects (heartbeat missing)
+  Time 0:10 - Failover triggered:
+    1. PASSIVE promoted to ACTIVE (stop replication, start accepting writes)
+    2. DNS updated (or load balancer updated) to point to PASSIVE
+  Time 0:15 - New ACTIVE (formerly PASSIVE) receives first request
+
+  Downtime: 15 seconds
+  Data Loss: Potentially 5-10 sec of writes (replication lag at time of failure)
+
+RECOVERY:
+  ACTIVE recovered (server rebooted)
+    → Old ACTIVE tries to resume as MASTER
+    → But NEW ACTIVE (formerly PASSIVE) already master
+    → Conflict! Need to resolve.
+
+  Option 1: Old active becomes new passive
+    - Stop old active
+    - Wipe old active database
+    - Resynchronize from new active (now primary)
+    - Start old active in passive mode
+
+  Option 2: Manual intervention
+    - Team decides which should be primary
+    - Promote chosen one, demote other
+    - Avoid split-brain
+
+SPLIT-BRAIN PREVENTION:
+  - Only one system can be PRIMARY
+  - If PRIMARY goes down, only PASSIVE can be promoted
+  - PASSIVE can be promoted ONLY if confirms PRIMARY truly down (not network lag)
+  - Fencing: OLD PRIMARY, if comes back up, self-isolates if can't become PRIMARY again
+```
+
+**Failover Timeline:**
+
+```
+14:30:00 - Active database process killed
+14:30:05 - Monitoring detects "no heartbeat"
+14:30:10 - Failover approval (automatic or manual)
+14:30:12 - Passive promoted: replication stopped, starts accepting writes
+14:30:13 - DNS/LB updated to point to passive
+14:30:15 - First client request hits new active
+14:30:20 - Service recovered (mostly transparent to users)
 ```
 
 ---
 
 ### 💻 Code Example
 
-**Redis Sentinel: Active-Passive with automatic failover:**
+**Example 1 — PostgreSQL Primary-Replica Setup:**
 
+```bash
+#!/bin/bash
+# Setup active-passive PostgreSQL
+
+# PRIMARY (Active)
+# postgresql.conf
+wal_level = replica
+max_wal_senders = 3
+wal_keep_segments = 64
+
+# pg_hba.conf - allow replication connection
+host replication replication 10.0.0.2/32 trust
+
+# Start primary
+sudo systemctl start postgresql
+
+# SECONDARY (Passive)
+# Start replication from primary
+pg_basebackup -h 10.0.0.1 -D /var/lib/postgresql/14/main -U replication -v -P -W
+# recovery.conf
+standby_mode = 'on'
+primary_conninfo = 'host=10.0.0.1 port=5432 user=replication password=xxxx'
+
+# Start passive (readonly mode)
+sudo systemctl start postgresql
+
+# Monitoring - Check replication lag
+watch -n 1 'psql -c "SELECT slot_name, restart_lsn, restart_lsn IS NULL as unused FROM pg_replication_slots;"'
+
+# FAILOVER - Promote passive to primary
+# On PASSIVE:
+sudo -u postgres /usr/lib/postgresql/14/bin/pg_ctl promote -D /var/lib/postgresql/14/main
+
+# Update DNS / Load Balancer to point to new primary
+# ...
 ```
-# Redis Sentinel: 1 master + 2 replicas + 3 Sentinel monitors
 
-# redis-master.conf:
-port 6379
-bind 0.0.0.0
-requirepass yourpassword
+**Example 2 — Monitoring Replication Lag:**
 
-# redis-replica.conf (replica 1 and 2):
-port 6379
-bind 0.0.0.0
-replicaof 10.0.1.1 6379           # replicate from master
-masterauth yourpassword
-requirepass yourpassword
-replica-read-only yes              # replicas: read-only (passive)
+```python
+import psycopg2
+import time
 
-# sentinel.conf (run on 3 separate nodes for quorum):
-sentinel monitor mymaster 10.0.1.1 6379 2   # quorum: 2 sentinels must agree
-sentinel auth-pass mymaster yourpassword
-sentinel down-after-milliseconds mymaster 5000   # fail after 5s no response
-sentinel failover-timeout mymaster 10000         # RTO target: 10 seconds
-sentinel parallel-syncs mymaster 1              # 1 replica syncs at a time
+def check_replication_lag(primary_host, secondary_host):
+    """Check if replication lag exceeds threshold"""
 
-# FAILOVER FLOW:
-# 1. Master unresponsive for 5,000ms
-# 2. Sentinel marks master as subjectively DOWN (S_DOWN)
-# 3. 2 Sentinels agree → objectively DOWN (O_DOWN) — quorum prevents split-brain
-# 4. Sentinel leader elected (among sentinels)
-# 5. Leader promotes replica with least replication lag to new master
-# 6. Other replicas reconfigure to follow new master
-# 7. Application (Jedis/Lettuce): discovers new master via Sentinel API
-#    JedisSentinelPool: subscribes to Sentinel events → automatic reconnect
+    try:
+        # Connect to primary
+        conn_primary = psycopg2.connect(f"host={primary_host}")
+        cur_primary = conn_primary.cursor()
+        cur_primary.execute("SELECT pg_current_wal_lsn();")
+        primary_lsn = cur_primary.fetchone()[0]
+
+        # Connect to secondary
+        conn_secondary = psycopg2.connect(f"host={secondary_host}")
+        cur_secondary = conn_secondary.cursor()
+        cur_secondary.execute("SELECT pg_last_wal_replay_lsn();")
+        secondary_lsn = cur_secondary.fetchone()[0]
+
+        # Calculate lag (bytes behind)
+        lag = int(primary_lsn.split('/')[0], 16) - int(secondary_lsn.split('/')[0], 16)
+        lag_mb = lag / (1024 * 1024)
+
+        print(f"Replication lag: {lag_mb:.2f} MB")
+
+        # Alert if lag > 100 MB (replication falling behind)
+        if lag_mb > 100:
+            print("ALERT: Replication lag exceeding threshold, trigger failover?")
+            return False
+
+        return True
+
+    except Exception as e:
+        print(f"Error checking replication: {e}")
+        # If can't connect to primary, assume it's down
+        print("Primary unreachable, trigger failover")
+        return False
+
+# Monitor continuously
+while True:
+    is_healthy = check_replication_lag("10.0.0.1", "10.0.0.2")
+    if not is_healthy:
+        print("Initiating failover...")
+        # trigger_failover()
+        break
+    time.sleep(10)  # Check every 10 seconds
 ```
+
+**Example 3 — Failover Automation (Bash Script):**
+
+```bash
+#!/bin/bash
+# Automated failover script
+
+PRIMARY="10.0.0.1"
+SECONDARY="10.0.0.2"
+FAILOVER_THRESHOLD_SEC=30
+
+echo "Starting active-passive failover monitor..."
+
+while true; do
+    # Check if primary is responding
+    if ! ping -c 1 -W 5 "$PRIMARY" > /dev/null 2>&1; then
+        echo "[$(date)] Primary is not responding!"
+        sleep 5
+
+        # Confirm with second check
+        if ! ping -c 1 -W 5 "$PRIMARY" > /dev/null 2>&1; then
+            echo "[$(date)] PRIMARY CONFIRMED DOWN - INITIATING FAILOVER"
+
+            # Promote secondary to primary
+            ssh "postgres@$SECONDARY" "sudo -u postgres pg_ctl promote -D /var/lib/postgresql/14/main"
+
+            # Update DNS (using AWS Route53 as example)
+            aws route53 change-resource-record-sets \
+              --hosted-zone-id Z1234567890ABC \
+              --change-batch '{
+                "Changes": [{
+                  "Action": "UPSERT",
+                  "ResourceRecordSet": {
+                    "Name": "db.internal",
+                    "Type": "A",
+                    "TTL": 300,
+                    "ResourceRecords": [{"Value": "'$SECONDARY'"}]
+                  }
+                }]
+              }'
+
+            # Alert team
+            echo "Failover completed. New primary: $SECONDARY" | mail -s "DB Failover Alert" ops@company.com
+
+            # Exit monitoring (can restart when primary recovered)
+            break
+        fi
+    fi
+
+    sleep 10  # Check every 10 seconds
+done
+```
+
+---
+
+### ⚖️ Comparison Table
+
+| Aspect                   | Active-Passive                | Active-Active                |
+| ------------------------ | ----------------------------- | ---------------------------- |
+| **Failover Time**        | 10-15 seconds                 | Immediate (0 seconds)        |
+| **Capacity Utilization** | 50% (passive idle)            | 100% (both active)           |
+| **Data Consistency**     | Simple (one writer)           | Complex (multi-master)       |
+| **Complexity**           | Low                           | High                         |
+| **Cost**                 | Lower (passive doing nothing) | Higher (both at capacity)    |
+| **Data Loss Risk**       | Low (replication can lag)     | Varies (depends on strategy) |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                                  | Reality                                                                                                                                                                                                                                                                                                                  |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Active-Passive wastes 50% of resources                         | Passive nodes aren't fully idle: they handle replication processing, can serve read traffic (read replicas), run monitoring and health checks, and may handle reporting queries. Database read replicas in Active-Passive are common: writes to primary, reads distributed across replicas                               |
-| Active-Passive provides the same availability as Active-Active | Active-Active: no failover delay, node failure is absorbed instantly. Active-Passive: 30-90 second failover window. For many applications this difference is acceptable; for zero-tolerance latency, Active-Active is needed                                                                                             |
-| You should always use synchronous replication for zero RPO     | Synchronous replication adds write latency equal to the network RTT to the standby. For same-AZ: 1-2ms (usually acceptable). For cross-region: 50-200ms (often unacceptable for write-heavy apps). Asynchronous replication accepts a small RPO (seconds) in exchange for no write latency overhead                      |
-| Active-Passive is outdated — everyone uses Active-Active now   | Active-Passive remains the default pattern for most databases in production (RDS Multi-AZ, Redis Sentinel, PostgreSQL with Patroni). Active-Active for databases is significantly harder to operate correctly and is only needed when the simpler approach's failover time or single-region availability is insufficient |
+| Misconception                                                         | Reality                                                                                                                     |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| "Active-passive has zero downtime"                                    | No. Failover still takes 10-15 sec. Only active-active has near-zero.                                                       |
+| "Passive server is completely idle"                                   | Mostly. It's applying replication, but no user traffic.                                                                     |
+| "If passive is fully sized for full load, why not use active-active?" | Good point. If passive sized for 100%, then yes, consider active-active. But then complexity increases.                     |
+| "Data loss is impossible in active-passive"                           | No. Async replication can lose data (writes in flight when active fails). For zero loss, use sync replication (but slower). |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**Promoting stale standby → data loss beyond RPO:**
+**Failure Mode 1: Replication Lag Too High**
 
+**Symptom:**
+Replication lag = 500 MB. Primary fails. Secondary promoted. 500 MB of writes lost (transactions not replicated).
+
+**Root Cause:**
+Async replication with network lag. Writes queued on primary waiting to replicate.
+
+**Diagnostic Command:**
+
+```bash
+# Check replication lag
+psql -c "SELECT slot_name, restart_lsn FROM pg_replication_slots;" -h primary
 ```
-PROBLEM: Async replication + forced failover → unexpected data loss
 
-  Deployment: PostgreSQL primary (us-east-1a) + async replica (us-east-1b)
-  Replication mode: asynchronous (no write latency overhead)
-  Typical lag: 50ms-500ms (acceptable RPO)
+**Fix:**
+Either: (1) Use sync replication (slower but no data loss), or (2) Accept potential data loss and restore from backups.
 
-  Scenario: primary server OS panic at T=0.
-  Primary: last committed write at T=-30ms.
-  Replica lag at time of failure: 2 MINUTES (backlog due to heavy write load)
+---
 
-  Failover initiated at T+10s (detection time).
-  Standby state: 2 minutes behind primary at time of failure.
-  Forced promotion: standby becomes primary with 2-minute-old data.
+**Failure Mode 2: Split-Brain (Both Think They're Primary)**
 
-  Data loss: 2 minutes of transactions (RPO violation if target was 30s).
+**Symptom:**
+Primary goes down. Passive promoted. But network recovers and old primary comes back online. Both now accepting writes. Data corruption.
 
-  Why did lag reach 2 minutes?
-  - Heavy batch job running: 50,000 writes/second
-  - Replication slot: standby couldn't keep up with WAL generation
-  - Monitoring: replication lag metric existed but no alert set!
+**Root Cause:**
+Insufficient fencing. Old primary not self-isolating when it comes back.
 
-FIX 1: Monitor and alert on replication lag
-  PostgreSQL: pg_stat_replication.replay_lag
-  Alert: replay_lag > 30s (target RPO threshold) → PagerDuty
+**Diagnostic Command:**
 
-  # Prometheus PostgreSQL exporter:
-  pg_replication_lag > 30   # alert if replica > 30 seconds behind
-
-FIX 2: Replication slot + pg_replication_slots monitoring
-  Replication slot: prevents WAL from being deleted until replica consumes it.
-  Risk: disk space exhaustion if replica is very far behind.
-  Alert: pg_replication_slots.active = false (disconnected replica)
-         pg_replication_slots.lag_bytes > 5GB (getting dangerous)
-
-FIX 3: Synchronous replication for RPO-critical systems
-  synchronous_commit = on
-  synchronous_standby_names = 'replica1'
-  → Writes only committed when replica confirms
-  → Lag: guaranteed 0 (at cost of +1-2ms write latency per write)
-  → On replica disconnect: primary blocks writes (availability trade-off)
-
-  COMPROMISE: synchronous_commit = remote_write
-  → Primary waits for replica to receive WAL (not execute it)
-  → Slightly weaker consistency guarantee, but prevents data loss
-  → Slightly less write latency overhead than full synchronous
+```bash
+# Check if both are primary
+ssh primary "psql -c 'SHOW standby_mode;'"  # Should show OFF
+ssh passive "psql -c 'SHOW standby_mode;'"  # Should show OFF (after promotion)
 ```
+
+**Fix:**
+Implement fencing: if old primary comes back and detects it's not the current primary, self-isolate (stop serving requests until manual intervention).
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Active-Active` — the more complex alternative; all nodes serve traffic
-- `Redundancy / Failover` — the parent concept; Active-Passive is an implementation
-- `RTO / RPO` — Active-Passive achieves RTO=30-90s; RPO depends on replication mode
-- `Disaster Recovery` — cross-region Active-Passive is the most common DR pattern
-- `Load Balancing` — redirects traffic to promoted standby after failover
+**Prerequisites:**
+
+- `Redundancy`, `High Availability`, `Replication`
+
+**Builds On This:**
+
+- `Active-Active`, `Disaster Recovery`, `Monitoring`
 
 ---
 
 ### 📌 Quick Reference Card
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ One active node, one passive standby:     │
-│              │ simple, consistent, brief failover window │
-├──────────────┼───────────────────────────────────────────┤
-│ USE WHEN     │ Database HA; simple, correct behaviour    │
-│              │ more important than zero failover time    │
-├──────────────┼───────────────────────────────────────────┤
-│ AVOID WHEN   │ Zero-failover-time required; passive      │
-│              │ capacity waste is unacceptable            │
-├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Driver and co-pilot: one steers,         │
-│              │  one is ready — no confusion over         │
-│              │  who has the wheel."                      │
-├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Active-Active → Geo-Replication           │
-│              │ → Disaster Recovery                       │
-└──────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│ WHAT IT IS   │ One active, one passive. Fail to      │
+│              │ passive when active fails.            │
+├──────────────┼────────────────────────────────────────┤
+│ PROBLEM IT   │ Need HA without active-active          │
+│ SOLVES       │ complexity                            │
+├──────────────┼────────────────────────────────────────┤
+│ KEY INSIGHT  │ Simple, but wastes 50% capacity       │
+│              │ and has failover delay                │
+├──────────────┼────────────────────────────────────────┤
+│ USE WHEN     │ Traditional HA; low failover latency  │
+│              │ acceptable; simple data consistency   │
+├──────────────┼────────────────────────────────────────┤
+│ AVOID WHEN   │ Need zero failover delay; high        │
+│              │ capacity utilization critical        │
+├──────────────┼────────────────────────────────────────┤
+│ ONE-LINER    │ "Simple: one works, one waits."      │
+└──────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** You have a PostgreSQL Active-Passive cluster (synchronous replication). Primary is in us-east-1a, standby in us-east-1b. The AZ-to-AZ network becomes congested: write latency spikes from 5ms to 500ms (synchronous replication waits for standby ACK). Your application P99 write latency SLO is 100ms. What do you do? Evaluate three options: (a) switch to asynchronous replication (what RPO does this accept?), (b) set `synchronous_commit = remote_write` (what's the difference?), (c) accept the latency spike until network resolves. What monitoring would you have in place to detect this scenario?
+**Q1.** Primary fails. Replication lag was 50MB. How much data is lost? How do you recover it?
 
-**Q2.** A critical financial ledger system uses Active-Passive with asynchronous replication. The primary crashes. Before initiating failover, you must decide: force-promote the standby immediately (possible data loss) or wait for primary recovery (RTO increases). The last known replication lag was 45 seconds. The business team says: "Transactions in the last 45 seconds represent $200,000 in payments." Design a decision framework with specific criteria for when to force-promote vs. attempt primary recovery, including how to handle the $200,000 in potentially lost transactions if you do force-promote.
+**Q2.** After failover, passive is now primary. Old primary comes back online. How do you prevent it from accepting writes and corrupting data?

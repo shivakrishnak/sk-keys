@@ -1,354 +1,453 @@
-﻿---
+---
 layout: default
 title: "Aggregate"
 parent: "Microservices"
 nav_order: 631
 permalink: /microservices/aggregate/
-number: "631"
+number: "0631"
 category: Microservices
 difficulty: ★★★
-depends_on: "Domain-Driven Design (DDD), Bounded Context, Ubiquitous Language"
-used_by: "Saga Pattern (Microservices), Event Sourcing in Microservices, CQRS in Microservices"
-tags: #advanced, #architecture, #microservices, #pattern, #deep-dive
+depends_on: Domain-Driven Design, Bounded Context, Object-Oriented Programming
+used_by: Event Sourcing in Microservices, CQRS in Microservices, Saga Pattern
+related: Bounded Context, Domain Events, Repository Pattern
+tags:
+  - microservices
+  - architecture
+  - pattern
+  - deep-dive
+  - distributed
 ---
 
 # 631 — Aggregate
 
-`#advanced` `#architecture` `#microservices` `#pattern` `#deep-dive`
+⚡ TL;DR — An Aggregate is a DDD tactical pattern that groups related domain objects under a single root entity, ensuring all business invariants are enforced atomically within one transaction boundary.
 
-⚡ TL;DR — An **Aggregate** is a cluster of domain objects (entities + value objects) treated as a single unit for data changes. The **Aggregate Root** is the only entry point — external code can only modify the cluster through the root. One transaction = one aggregate.
+| #631 | Category: Microservices | Difficulty: ★★★ |
+|:---|:---|:---|
+| **Depends on:** | Domain-Driven Design, Bounded Context, Object-Oriented Programming | |
+| **Used by:** | Event Sourcing in Microservices, CQRS in Microservices, Saga Pattern | |
+| **Related:** | Bounded Context, Domain Events, Repository Pattern | |
 
-| #631            | Category: Microservices                                                              | Difficulty: ★★★ |
-| :-------------- | :----------------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Domain-Driven Design (DDD), Bounded Context, Ubiquitous Language                     |                 |
-| **Used by:**    | Saga Pattern (Microservices), Event Sourcing in Microservices, CQRS in Microservices |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+An e-commerce application allows concurrent order modifications. One service thread processes "add item to order," another processes "apply discount to order." Both read the order at the same time, both modify it, both save it. The last write wins — either the item is added without the discount, or the discount is applied without the new item. A third thread meanwhile confirms the order without noticing it is in an inconsistent state. Business rules like "a confirmed order must have at least one item" are scattered across 12 service methods, enforced inconsistently.
+
+**THE BREAKING POINT:**
+You cannot trust the database holds valid business data. Rules are enforced by convention, not by design. Every new developer must know all 12 enforcement points. An invariant is violated when someone misses one.
+
+**THE INVENTION MOMENT:**
+This is exactly why the Aggregate pattern was created — to define a consistency boundary around related objects so that all invariants are enforced by the aggregate root before any change is persisted.
 
 ---
 
 ### 📘 Textbook Definition
 
-An **Aggregate** is a cluster of associated domain objects (Entities and Value Objects) that are treated as a single unit for the purpose of data changes. The cluster has a single **Aggregate Root** — the entity through which all external access must flow. The Aggregate Root is responsible for enforcing all invariants (business rules) for the entire cluster. The aggregate boundary defines the transactional consistency boundary: when you load an aggregate and perform an operation, all changes within the aggregate are committed atomically in a single database transaction. The Aggregate Root has a global identity (used from outside); other entities within the aggregate have local identities (valid only within the aggregate). Key Aggregate design rules: (1) external objects may hold a reference only to the Aggregate Root, not to internal entities; (2) each transaction should modify only ONE aggregate; (3) changes to other aggregates happen asynchronously via Domain Events; (4) aggregates should be as small as possible while still maintaining consistency.
+An **Aggregate** is a cluster of domain objects — one **Aggregate Root** (an Entity with a globally unique ID) plus zero or more subordinate Entities and Value Objects — that is treated as a single unit for the purposes of data changes. All modifications to the aggregate are made exclusively through the Aggregate Root, which enforces all business invariants. An aggregate is the unit of transactional consistency: all changes to the aggregate are committed atomically. Aggregates reference other aggregates only by their Root ID, never by direct object reference.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-An Aggregate is a group of related objects that must stay consistent together. The Aggregate Root is the "manager" — all changes go through it. One transaction changes one aggregate. If changing one aggregate requires changing another, you use events.
+**One line:**
+An aggregate is a cluster of related objects managed as one unit, with one boss in charge of all changes.
 
----
+**One analogy:**
+> Think of a corporate department. The department head (Aggregate Root) controls all changes to the team. You cannot reassign someone from the department without going through the head. You cannot change the team's budget without the head approving it. External departments only know the department head's name (ID) — they don't talk directly to individual team members.
 
-### 🔵 Simple Definition (Elaborated)
-
-An Order contains OrderItems. You cannot have an OrderItem without an Order — they are a cluster. The Order is the Aggregate Root: to add an item, you call `order.addItem(...)`, not `item.setOrderId(orderId)`. The Order validates the invariant ("no more than 50 items"), updates its total, and fires an event. No external code ever modifies an OrderItem directly. This design ensures that the Order's business rules are always enforced — you cannot corrupt the order's state by bypassing the root. And because one transaction = one aggregate, all the complexity of "partial save failures" is eliminated within a single aggregate's operations.
+**One insight:**
+The Aggregate Root is not just a container — it is the guardian of business rules. Any method on the root that changes state is an opportunity to check invariants. If a change would violate a rule, the root throws a domain exception before persisting anything.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**Aggregate design rules with examples:**
+**CORE INVARIANTS:**
+1. External code may hold only a reference to the Aggregate Root — never to internal entities directly.
+2. All mutations to the aggregate go through the Root's methods — the Root enforces invariants before accepting any change.
+3. An aggregate is one transaction: all changes within it commit or roll back together. Changes across aggregates use eventual consistency.
 
-```
-RULE 1: Only the Aggregate Root has global identity
-  ✓ Order has ID (external code can reference it)
-  ✗ OrderItem has "local" ID (only meaningful within the Order aggregate)
-    → external code never holds a reference to OrderItem directly
+**DERIVED DESIGN:**
+Given Invariant 1, if `Order` is the Aggregate Root and `OrderLine` is an internal entity, no class outside the aggregate ever holds an `OrderLine` reference. External classes reference `Order` and call methods on it to modify lines. This prevents bypassing the Root's rules.
 
-RULE 2: External objects reference the Aggregate Root only
-  ✓ PaymentService holds an OrderId reference
-  ✗ PaymentService holds an OrderItemId reference
-    → if external code can reference internals, the aggregate boundary leaks
+Given Invariant 3, a transaction never spans multiple aggregates — if it did, aggregate size would be unpredictable and locking scope undefined. Cross-aggregate coordination uses Domain Events: `Order.confirm()` publishes `OrderConfirmed`; the Inventory aggregate subscribes and decrements stock as a separate transaction.
 
-RULE 3: One transaction per Aggregate (DDD rule)
-  ✓ order.addItem(product, qty) → one transaction, saves Order aggregate
-  ✗ Within one transaction: modify Order AND modify Inventory
-    → Breaks aggregate isolation, creates multi-aggregate transaction
-    → Instead: order.addItem() fires OrderItemAdded event
-               InventoryService handles event asynchronously → separate transaction
+**Designing aggregate boundaries — key questions:**
+- Must A and B change together in the same transaction? → Same aggregate
+- Can A and B change independently, with eventual consistency tolerated? → Different aggregates
+- If they were separate aggregates, what is the worst case if they are temporarily inconsistent?
 
-RULE 4: Changes to other aggregates via Domain Events
-  order.place() → fires OrderPlacedEvent → InventoryService.reserve()
-  If inventory reservation fails → compensating event → OrderCancelledEvent
-  (Saga pattern)
-
-RULE 5: Aggregates should be small (Single Aggregate Principle)
-  BAD: one huge Order aggregate containing Customer, Payment, Shipment
-    → Any change to any sub-concept requires loading the entire aggregate
-    → High contention (one lock covers too much)
-  GOOD: Order aggregate contains only order-specific data
-    → PaymentId (reference to Payment aggregate, not the Payment itself)
-    → ShipmentId (reference to Shipment aggregate)
-```
-
-**Aggregate boundary — what belongs inside vs outside:**
-
-```java
-// Order Aggregate:
-//   ROOT:    Order (id, customerId, status, totalAmount, createdAt)
-//   INSIDE:  OrderItem (productId, quantity, unitPrice, lineTotal)
-//            OrderAddress (street, city, postal, country)  ← value object
-//   OUTSIDE: Customer (separate aggregate, referenced by CustomerId only)
-//            Product  (separate aggregate, referenced by ProductId only)
-//            Payment  (separate aggregate, referenced by PaymentId only)
-
-// WHY OrderItem is inside:
-// - Cannot exist without Order (no independent identity)
-// - Order invariants depend on items (total amount calculation, max items)
-// - Always loaded together with Order (not lazy-loaded independently)
-// - Changed only through Order methods
-
-// WHY Customer is outside:
-// - Has independent existence and lifecycle
-// - Order only needs CustomerId to associate, not the full Customer
-// - Customer changes (address update) don't trigger Order revalidation
-```
-
-**The single aggregate transaction rule in practice:**
-
-```java
-@Service
-class OrderApplicationService {
-
-    @Autowired OrderRepository orderRepo;
-    @Autowired ApplicationEventPublisher eventPublisher;
-
-    @Transactional  // ONE transaction, ONE aggregate
-    public void addItemToOrder(AddItemCommand cmd) {
-        // Load the SINGLE aggregate we're modifying
-        Order order = orderRepo.findById(cmd.orderId())
-            .orElseThrow(() -> new OrderNotFoundException(cmd.orderId()));
-
-        // All changes are within this one aggregate
-        order.addItem(cmd.productId(), cmd.quantity(), cmd.unitPrice());
-
-        // Save the one aggregate atomically
-        orderRepo.save(order);
-
-        // Domain events are published AFTER commit (via @TransactionalEventListener)
-        order.getDomainEvents().forEach(eventPublisher::publishEvent);
-
-        // Inventory is NOT modified here!
-        // InventoryService will handle the domain event in its own transaction
-    }
-}
-```
+**THE TRADE-OFFS:**
+**Gain:** Centralized invariant enforcement, clear consistency boundary, testable domain logic (unit-test the root without a database).
+**Cost:** Eventual consistency between aggregates, potential performance overhead from loading entire aggregate to modify one property, design complexity for boundary identification.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-WITHOUT Aggregate design:
+**SETUP:**
+An `Order` with `OrderLines`. Rules: (1) a confirmed order cannot be modified; (2) an order with no lines cannot be confirmed.
 
-What breaks without it:
+**WHAT HAPPENS WITHOUT AGGREGATE:**
+`OrderService.addLine()` checks rule (1). `OrderService.confirm()` checks rule (2). A developer writes `OrderAdminService.forceAddLine()` and skips rule (1). Six months later: confirmed orders have lines mysteriously added via the admin service. Production incident.
 
-1. No single place enforces business invariants — any code can corrupt an Order by directly modifying OrderItems.
-2. Transaction scope is unclear — developers accidentally span multiple "aggregate-like" objects in one transaction, creating long locks and contention.
-3. "Lazy loading hell" — loading an object triggers loading its entire graph (Order → Items → Products → ProductImages).
-4. Distributed systems race conditions — two concurrent requests modify the same "domain cluster" inconsistently.
+**WHAT HAPPENS WITH AGGREGATE:**
+```
+Order.addLine()    → checks: status == DRAFT? Yes → adds line
+Order.confirm()    → checks: lines.size() > 0? Yes → confirms
+Order.addLine()    → checks: status == DRAFT? No → throws OrderException
+                             (admin service tries to use forceAdd but
+                              there is no such method on the root — 
+                              the only way is through addLine())
+```
+Rules cannot be bypassed because they live inside the only mutation entry point.
 
-WITH Aggregates:
-→ Invariants are enforced in one place (the Aggregate Root) — cannot be bypassed.
-→ Transaction scope is explicit — one aggregate per transaction.
-→ Optimistic locking on the Aggregate Root prevents lost updates (version field).
-→ Aggregate boundary defines what must be consistent NOW vs what can be eventually consistent.
+**THE INSIGHT:**
+Business rules enforced by design are unbreakable. Business rules enforced by convention are broken by every developer under time pressure.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> An Aggregate is like a filing cabinet with a single point of access — a lock and a key holder (the Aggregate Root). All files in the cabinet (entities/value objects) can only be accessed by giving the key holder a request ("add this document," "remove this folder"). The key holder checks the rules ("this cabinet only holds invoices for 2024"), makes the change, and ensures consistency. External staff never directly rummage in the cabinet — they always ask the key holder. And you never lock two cabinets at the same time for one operation — if changes are needed in both, you leave a note in one cabinet and handle the other one separately.
+> An Aggregate is like a bank vault with a vault manager. Anyone who wants to access the contents must go through the manager. The manager checks your authorisation, checks the current vault state, and either grants access (completing the business rule) or refuses. Nobody slides money in through a side ventilation shaft. The vault manager is always in control.
 
-"Filing cabinet" = Aggregate cluster
-"Lock and key holder" = Aggregate Root
-"Files in the cabinet" = Entities and Value Objects within the aggregate
-"Checking rules" = invariant enforcement
-"Never lock two cabinets at once" = one transaction per aggregate
-- "Leave a note for the other cabinet" = Domain Event → async update of other aggregate
+- "Vault manager" → Aggregate Root (the entry point for all mutations)
+- "Vault contents" → internal Entities and Value Objects
+- "Authorisation check" → business invariant enforcement in domain methods
+- "Side ventilation shaft" → direct access to internal entities, bypassing root
+
+Where this analogy breaks down: a bank vault stores physical objects; an aggregate stores domain state that can be queried by external code (read-only) without going through the root. The invariant is only on mutations, not reads.
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+An aggregate is a group of related things managed by one leader. Only the leader can approve changes. This guarantees rules are always checked before anything changes.
+
+**Level 2 — How to use it (junior developer):**
+Identify which entities must change together to maintain a business rule. Make one entity the "root." Put all methods that change state on the root. Mark internal entities as package-private or non-public. Use a Repository to load and save only the root aggregate.
+
+**Level 3 — How it works (mid-level engineer):**
+When a command arrives, the application service loads the aggregate root via a Repository. The aggregate root's method enforces invariants and mutates state. Domain events are collected (not yet published). The Repository saves the aggregate (one DB transaction). Post-save, domain events are published. Subscribers (other aggregates) react in separate transactions. This is idempotent — replay is safe if events are tracked by version.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+Evans' key insight was that database transactions are a design smell when used as a business rule enforcement mechanism. A 3-table transaction that says "order, orderline, and inventory must all change or all fail" encodes business logic in infrastructure. Aggregates pushes consistency decisions up to the domain layer. The rule "keep aggregates small" (ideally 2–5 objects) was validated empirically: large aggregates cause lock contention, slow load times, and merge conflicts. Vernon's "Implementing DDD" recommends starting with one entity per aggregate and only expanding when invariants require it.
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**Optimistic locking on Aggregate Root:**
+**Aggregate lifecycle:**
+
+```
+┌───────────────────────────────────────────────┐
+│            Aggregate Lifecycle                │
+├───────────────────────────────────────────────┤
+│ 1. Command arrives (e.g., ConfirmOrder)        │
+│ 2. App Service loads Aggregate from Repo       │
+│    (SELECT * WHERE aggregate_id = ?)          │
+│ 3. App Service calls root method               │
+│    order.confirm()                            │
+│ 4. Root enforces invariants                    │
+│    — lines.size() > 0? → ok                   │
+│    — status == DRAFT? → ok                    │
+│ 5. Root mutates state: status = CONFIRMED      │
+│ 6. Root registers DomainEvent: OrderConfirmed  │
+│ 7. Repository saves aggregate (UPDATE SQL)    │
+│ 8. App Service publishes registered events     │
+│ 9. Response: success                          │
+│                                               │
+│ On invariant violation at step 4:             │
+│ — DomainException thrown                      │
+│ — No save, no event                           │
+│ — Caller gets 422 Unprocessable Entity        │
+└───────────────────────────────────────────────┘
+```
+
+**Aggregate version field for optimistic locking:**
 
 ```java
 @Entity
-@Table(name = "orders")
-public class Order {
+public class Order {  // Aggregate Root
     @Id
-    private Long id;
+    private UUID id;
 
-    @Version  // JPA optimistic locking — version is incremented on every save
-    private Long version;
+    @Version  // JPA optimistic lock version
+    private Long version;  // prevents lost updates
 
     private OrderStatus status;
-    // ...
+    @OneToMany(cascade = ALL, orphanRemoval = true)
+    private List<OrderLine> lines = new ArrayList<>();
 
-    // If two transactions load Order(id=1, version=3) and both try to save:
-    // T1 saves: version 3 → 4 (success)
-    // T2 saves: version 3 → 4 (FAIL! version 3 already updated to 4 by T1)
-    // → T2 gets OptimisticLockException → retry or return conflict error
-    // → No lost updates within the aggregate
+    public void addLine(ProductId productId, int qty, Money price) {
+        requireState(status == OrderStatus.DRAFT,
+            "Cannot add to non-draft order");
+        lines.add(new OrderLine(productId, qty, price));
+    }
+
+    public void confirm() {
+        requireState(!lines.isEmpty(),
+            "Cannot confirm order with no lines");
+        this.status = OrderStatus.CONFIRMED;
+        registerEvent(new OrderConfirmedEvent(id, getTotal()));
+    }
+
+    private void requireState(boolean condition, String msg) {
+        if (!condition) throw new OrderInvariantViolation(msg);
+    }
 }
 ```
 
-**Aggregate design — too large vs too small:**
+**Cross-aggregate communication via events (no direct reference):**
 
-```
-TOO LARGE (anti-pattern):
-  CustomerAggregate: Customer + ALL Addresses + ALL Orders + ALL Payments
-  → Loading customer = loading all orders (could be thousands of records)
-  → Editing customer name = locking entire order history
-  → High contention: any order change locks the customer aggregate
-
-TOO SMALL (anti-pattern):
-  Order aggregate has no OrderItems — items are separate entities
-  → Adding an item is a separate aggregate operation
-  → Cannot enforce "order total < credit limit" within one aggregate
-  → Order and Item can get out of sync (Order total wrong)
-
-JUST RIGHT:
-  Order + OrderItems (always loaded together, business rules span both)
-  Customer + ContactDetails (small, changes together)
-  Payment + PaymentAttempts (payment history is part of payment aggregate)
+```java
+// Inventory Aggregate subscribes to OrderConfirmedEvent
+// from Orders Aggregate — SEPARATE transaction
+@TransactionalEventListener
+public void on(OrderConfirmedEvent event) {
+    for (OrderItemDto item : event.items()) {
+        // Loads Inventory aggregate separately
+        StockAggregate stock = stockRepo
+            .findByProduct(item.productId());
+        stock.reserve(item.quantity()); // own invariants enforced
+        stockRepo.save(stock);
+    }
+}
+// If this fails: compensating event (stock not reserved)
+// handled by Saga pattern
 ```
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 🔄 The Complete Picture — End-to-End Flow
 
-```
-Domain-Driven Design (DDD)
-Bounded Context
-        │
-        ▼
-Aggregate  ◄──── (you are here)
-(transactional consistency boundary: root + entities + value objects)
-        │
-        ├── Domain Events → cross-aggregate changes via async events
-        ├── Saga Pattern  → orchestrating changes across multiple aggregates
-        ├── Event Sourcing → storing domain events instead of current state
-        └── CQRS          → separate read model from aggregate write model
-```
+**NORMAL FLOW:**
+HTTP POST /orders/{id}/confirm → Application Service → Load Order Aggregate ← YOU ARE HERE → `order.confirm()` validates invariants → State updated → OrderConfirmedEvent registered → Repository saves (atomic DB transaction) → Event published to message bus → Inventory Aggregate reserves stock (separate transaction)
+
+**FAILURE PATH:**
+`order.confirm()` finds `lines.isEmpty()` → `OrderInvariantViolation` thrown → Application Service catches → 422 returned → No database write → No event published → Idempotent: retry is safe
+
+**WHAT CHANGES AT SCALE:**
+At 10,000 concurrent order confirms, the `@Version` optimistic lock means many concurrent requests for the same aggregate will fail with `OptimisticLockException` (version mismatch). Solution: reduce aggregate size (fewer fields to lock), use commands per aggregate that naturally don't conflict, or accept the retry cost. At 100x, aggregates written to in hot paths (e.g., a popular product's inventory) become bottlenecks — partition by product ID to spread write load.
 
 ---
 
 ### 💻 Code Example
 
-**Complete Aggregate with invariants, domain events, and optimistic locking:**
+**Example 1 — Complete Order Aggregate with invariants:**
 
 ```java
-@Entity
-@Table(name = "orders")
-public class Order extends AbstractAggregateRoot<Order> {
-
-    @Id @GeneratedValue
-    private Long id;
-
-    @Version
-    private Long version; // optimistic locking
-
-    @Enumerated(EnumType.STRING)
+public class Order {
+    private final OrderId id;
     private OrderStatus status = OrderStatus.DRAFT;
+    private final List<OrderLine> lines = new ArrayList<>();
+    private final List<DomainEvent> events = new ArrayList<>();
 
-    @OneToMany(cascade = ALL, orphanRemoval = true, fetch = LAZY)
-    @JoinColumn(name = "order_id")
-    private List<OrderItem> items = new ArrayList<>();
+    public OrderId getId() { return id; }
 
-    @Embedded
-    private Money totalAmount = Money.ZERO;
-
-    // Aggregate Root methods enforce invariants:
-
-    public void addItem(ProductId productId, int quantity, Money unitPrice) {
-        requireStatus(OrderStatus.DRAFT);
-        if (items.size() >= 50) throw new OrderItemLimitExceededException(id);
-
-        items.add(new OrderItem(productId, quantity, unitPrice));
-        recalculateTotalAmount();
-        // Domain event registered for publishing after commit:
-        registerEvent(new OrderItemAddedEvent(id, productId, quantity));
+    // Only mutation method — enforces invariant
+    public void addLine(ProductId product, int qty, Money price) {
+        if (status != OrderStatus.DRAFT) {
+            throw new OrderException(
+                "Lines can only be added to DRAFT orders"
+            );
+        }
+        if (qty <= 0) {
+            throw new OrderException("Quantity must be positive");
+        }
+        lines.add(new OrderLine(product, qty, price));
     }
 
-    public void place() {
-        requireStatus(OrderStatus.DRAFT);
-        if (items.isEmpty()) throw new EmptyOrderException(id);
-        this.status = OrderStatus.PLACED;
-        registerEvent(new OrderPlacedEvent(id, totalAmount));
+    public void confirm() {
+        if (lines.isEmpty()) {
+            throw new OrderException(
+                "Cannot confirm an order with no lines"
+            );
+        }
+        this.status = OrderStatus.CONFIRMED;
+        events.add(new OrderConfirmedEvent(id, getTotal()));
     }
 
-    public void cancel(CancellationReason reason) {
-        if (status == OrderStatus.SHIPPED) throw new CannotCancelShippedOrderException(id);
-        this.status = OrderStatus.CANCELLED;
-        registerEvent(new OrderCancelledEvent(id, reason));
-    }
-
-    private void requireStatus(OrderStatus required) {
-        if (this.status != required)
-            throw new InvalidOrderStateException(id, required, this.status);
-    }
-
-    private void recalculateTotalAmount() {
-        this.totalAmount = items.stream()
-            .map(OrderItem::getLineTotal)
+    public Money getTotal() {
+        return lines.stream()
+            .map(OrderLine::lineTotal)
             .reduce(Money.ZERO, Money::add);
+    }
+
+    // Repository calls this to get events to publish
+    public List<DomainEvent> pullDomainEvents() {
+        List<DomainEvent> fired = List.copyOf(events);
+        events.clear();
+        return fired;
     }
 }
 ```
+
+**Example 2 — Repository and Application Service:**
+
+```java
+// Repository: persistence abstraction
+public interface OrderRepository {
+    Order findById(OrderId id);
+    void save(Order order);
+}
+
+// Application Service: orchestrates, does not contain domain logic
+@Service
+@Transactional
+public class OrderApplicationService {
+    private final OrderRepository orders;
+    private final ApplicationEventPublisher events;
+
+    public void confirmOrder(UUID orderId) {
+        Order order = orders.findById(OrderId.of(orderId));
+        order.confirm();           // business rule enforced in root
+        orders.save(order);        // one transaction
+        // After commit: publish collected domain events
+        order.pullDomainEvents().forEach(events::publishEvent);
+    }
+}
+```
+
+**Example 3 — Unit testing the aggregate (no Spring, no DB):**
+
+```java
+@Test
+void cannotConfirmEmptyOrder() {
+    Order order = new Order(OrderId.generate());
+    // No lines added
+
+    assertThrows(OrderException.class, order::confirm);
+}
+
+@Test
+void confirmedOrderCannotAddLines() {
+    Order order = new Order(OrderId.generate());
+    order.addLine(ProductId.of("p1"), 2, Money.of(10, USD));
+    order.confirm();
+
+    assertThrows(OrderException.class,
+        () -> order.addLine(ProductId.of("p2"), 1, Money.of(5, USD))
+    );
+}
+// Pure unit test — no DB, no Spring context, runs in <1ms
+```
+
+---
+
+### ⚖️ Comparison Table
+
+| Consistency Model | Scope | Latency | Use When |
+|---|---|---|---|
+| **Aggregate (single transaction)** | Within aggregate | Low | Invariants MUST be enforced atomically |
+| Saga Pattern | Cross-aggregate/service | Medium-High | Distributed workflow with compensation |
+| Two-Phase Commit (2PC) | Cross-DB | Very High | Legacy systems; avoid in microservices |
+| Eventual Consistency only | Cross-service | Low-Medium | Invariants can tolerate temporary inconsistency |
+
+How to choose: use aggregate-level consistency for the core business invariants of each domain concept; use eventual consistency via events for coordination across aggregates and services.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                                           | Reality                                                                                                                                                                                                                                                                                      |
-| ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| An Aggregate is the same as a JPA Entity                                | An Aggregate is a domain design concept — it may be mapped to JPA entities, but the mapping is incidental. The Aggregate design (boundary, invariants, identity) should be driven by domain rules, not by database normalization or JPA convenience                                          |
-| All entities within one Aggregate must be in the same database table    | Aggregates map to potentially multiple tables (Order table + OrderItems table). What matters is that all tables are written in the same transaction and never accessed from outside via direct SQL                                                                                           |
-| Large aggregates are safer because they include more in one transaction | Large aggregates increase lock contention (many concurrent requests contend for the same lock), increase load time (large object graph), and increase optimistic locking conflicts. Small aggregates with Domain Events are the correct approach for consistency across aggregate boundaries |
-| Aggregates can have bidirectional references                            | Aggregates should have one-directional references from root to children. Children should NOT hold a reference back to the root (only the root's ID, if needed). Bidirectional references create circular loading and loading the entire graph unintentionally                                |
+| Misconception | Reality |
+|---|---|
+| Aggregates can be as large as needed | Large aggregates cause DB lock contention, slow load times, and merge conflicts. Keep them to 3–5 objects max |
+| The Aggregate Root is just the parent entity | The Root is the sole entry point for mutations — it actively enforces every invariant on every state change |
+| External code can hold references to internal entities if it doesn't modify them | Rule: external code never holds internal entity references. Pass IDs or DTOs across the aggregate boundary |
+| Aggregates solve distributed transaction problems | Aggregates only solve intra-aggregate consistency. Cross-aggregate and cross-service consistency requires Saga Pattern or other distributed patterns |
+| A Repository is just a DAO or data access layer | A Repository loads and persists the complete aggregate as a single unit — it is conceptually part of the domain model, not the infrastructure |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**Cross-aggregate transaction — the most common DDD rule violation**
+**1. Oversized Aggregate Causing Contention**
 
-```java
-// WRONG: modifying two aggregates in one transaction
-@Transactional
-public void placeOrder(PlaceOrderCommand cmd) {
-    Order order = orderRepo.findById(cmd.orderId()).orElseThrow();
-    order.place(); // modifies Order aggregate
-    orderRepo.save(order);
+**Symptom:** High DB lock wait times on the `orders` table; `OptimisticLockException` flood in logs at peak hours; order confirmation throughput drops from 5000/sec to 200/sec.
 
-    // VIOLATION: second aggregate in same transaction
-    Inventory inventory = inventoryRepo.findByProduct(cmd.productId()).orElseThrow();
-    inventory.reserve(cmd.quantity()); // modifies Inventory aggregate
-    inventoryRepo.save(inventory);
-    // If inventory.reserve() throws, order.place() is rolled back
-    // But what if inventory is slow? Long-held locks on Order table
-    // What if they're in different services/DBs? Transaction fails entirely
-}
+**Root Cause:** The `Order` aggregate includes invoice history, customer preferences, and product details — all loaded and version-locked for every order modification.
 
-// CORRECT: one aggregate per transaction, events for the other
-@Transactional
-public void placeOrder(PlaceOrderCommand cmd) {
-    Order order = orderRepo.findById(cmd.orderId()).orElseThrow();
-    order.place(); // fires OrderPlacedEvent inside
-    orderRepo.save(order);
-    // OrderPlacedEvent published after commit
-    // InventoryService handles it in its own transaction — eventually consistent
-}
+**Diagnostic:**
+```bash
+# PostgreSQL: find contended tables
+SELECT relname, n_deadlocks, n_lock_timeouts
+FROM pg_stat_user_tables
+WHERE relname = 'orders';
+
+# Check JPA optimistic lock failures
+grep "OptimisticLockException\|StaleObjectStateException" \
+  application.log | wc -l
 ```
+
+**Fix:** Extract product details (reference by ID), customer preferences (separate aggregate or value object), and invoice history (separate aggregate). The Order aggregate should contain only what must change in the same transaction as an order.
+
+**Prevention:** Apply the single-responsibility principle to aggregates; if modifying field A and field B never happen in the same command, they don't belong in the same aggregate.
+
+**2. Business Rules Scattered Outside the Aggregate**
+
+**Symptom:** A bug causes orders with zero-price items to be confirmed. Post-mortem shows the validation existed in the controller but not in the aggregate — a new API endpoint bypassed the controller.
+
+**Root Cause:** Invariants encoded in service or controller layer are bypassed by any call that doesn't go through that layer.
+
+**Diagnostic:**
+```bash
+# Find validation logic outside aggregate roots
+grep -rn "order.getStatus()\|if.*CONFIRMED\|if.*DRAFT" \
+  src/main/java --include="*.java" | \
+  grep -v "domain\|aggregate"  # should be zero results
+```
+
+**Fix:** Move every invariant check into the aggregate root methods. Delete all duplicate validation in services, controllers, and validators.
+
+**Prevention:** Domain rule: if you can express a rule as "the aggregate is invalid if...", it belongs in the aggregate root.
+
+**3. Missing Optimistic Locking on Aggregate Root**
+
+**Symptom:** Concurrent requests to add items to the same order result in lost updates — two threads read version 5, both write version 6, one overwrites the other.
+
+**Root Cause:** No `@Version` or equivalent optimistic-lock field on the aggregate root table row.
+
+**Diagnostic:**
+```bash
+# Check if version column exists on aggregate table
+psql -c "\d orders" | grep version
+# Missing 'version' column = no optimistic lock
+```
+
+**Fix:**
+```java
+// Add @Version to aggregate root entity
+@Entity
+public class Order {
+    @Version
+    private Long version;  // JPA will throw on stale writes
+}
+// Now concurrent writes throw OptimisticLockException
+// — handle with retry at application service level
+```
+
+**Prevention:** Always add a `version` column to every aggregate root table from day one.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Domain-Driven Design (DDD)` — the methodology that defines Aggregate as a tactical pattern
-- `Bounded Context` — the context within which an Aggregate's model applies
-- `Saga Pattern (Microservices)` — coordinates changes across multiple aggregates via events
-- `Event Sourcing in Microservices` — stores the sequence of Domain Events on an Aggregate as its state
-- `CQRS in Microservices` — separates Aggregate write model from read models
+**Prerequisites (understand these first):**
+- `Domain-Driven Design` — the overarching framework within which the Aggregate pattern is defined
+- `Bounded Context` — the strategic boundary within which aggregates are defined and owned
+- `Value Objects` — immutable domain objects that compose aggregates alongside entities
+
+**Builds On This (learn these next):**
+- `Event Sourcing in Microservices` — stores aggregate state as a sequence of domain events instead of current state
+- `CQRS in Microservices` — separates the aggregate's write model from optimised read models
+- `Saga Pattern` — coordinates workflows that span multiple aggregates via events and compensations
+
+**Alternatives / Comparisons:**
+- `Transaction Script` — locates all logic in service methods rather than domain objects; simpler but doesn't scale with domain complexity
 
 ---
 
@@ -356,18 +455,30 @@ public void placeOrder(PlaceOrderCommand cmd) {
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ CLUSTER      │ Aggregate Root + Entities + Value Objects │
-│ ACCESS       │ Only via Aggregate Root (no direct access  │
-│              │ to internal entities from outside)        │
+│ WHAT IT IS   │ A cluster of related objects with one     │
+│              │ Root entity that enforces all invariants  │
 ├──────────────┼───────────────────────────────────────────┤
-│ TRANSACTION  │ One aggregate per transaction              │
-│ RULE         │ Cross-aggregate = Domain Events (async)   │
+│ PROBLEM IT   │ Business rules scattered across services  │
+│ SOLVES       │ which are bypassed and violated           │
 ├──────────────┼───────────────────────────────────────────┤
-│ INVARIANTS   │ Enforced only by Aggregate Root           │
-│              │ External code cannot bypass them          │
+│ KEY INSIGHT  │ Rules enforced by design cannot be        │
+│              │ bypassed. Rules enforced by convention    │
+│              │ will be bypassed under pressure           │
 ├──────────────┼───────────────────────────────────────────┤
-│ LOCKING      │ @Version on Aggregate Root                │
-│              │ → optimistic concurrency                  │
+│ USE WHEN     │ Multiple related entities must change     │
+│              │ together and invariants must hold at all  │
+│              │ times                                     │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Simple CRUD — the aggregate is overkill   │
+│              │ when there are no real business invariants│
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ Invariant safety vs eventual consistency  │
+│              │ complexity for cross-aggregate workflows  │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "One boss, one transaction, no exceptions."│
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Saga Pattern → Event Sourcing →           │
+│              │ CQRS in Microservices                     │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -375,6 +486,7 @@ public void placeOrder(PlaceOrderCommand cmd) {
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** The "one transaction per aggregate" rule means cross-aggregate operations are eventually consistent. This creates a window where the system is in a partially applied state (Order is PLACED but Inventory is not yet reserved). Describe the user-visible implications of this window: can the customer see an order as "Placed" while simultaneously being told "out of stock"? Describe the compensating flow: what Domain Events need to fire if inventory reservation fails, and how does the Order aggregate transition back to a consistent state? What is the user-facing message during the eventual consistency window?
+**Q1.** You have a social network where a `Post` aggregate contains `Comments`. The rule is: a post with more than 1000 comments locks down and allows no more comments. With 10,000 concurrent users commenting on a viral post, what concurrency problems arise with the aggregate's optimistic locking strategy? How would you redesign the aggregate boundary (perhaps making `Comment` its own aggregate) while still enforcing the 1000-comment rule?
 
-**Q2.** Aggregate Root optimistic locking (`@Version`) protects against lost updates within one aggregate. But what about "business-level optimistic locking"? In a ticketing system, 500 users simultaneously try to book the last ticket (one Ticket aggregate). Describe the behaviour: 499 of them will receive `OptimisticLockException` when Hibernate detects version conflicts. How should the application layer handle this exception (retry strategy? immediately return "sold out"?)? And for the aggregate that represents a "seat pool" (many tickets sold from one aggregate), explain the "aggregate contention hotspot" problem and the patterns that address it (Concurrent Aggregate, Sharding by seat block).
+**Q2.** Your `Order` aggregate emits `OrderConfirmed` events consumed by `Inventory`, `Billing`, and `Notifications` aggregates in separate transactions. A network failure means the event is delivered to Inventory but never reaches Billing. The order is confirmed, inventory reserved, but the customer is never invoiced. Trace the complete failure scenario and design the idempotency and compensation strategy that makes this resilient to exactly this kind of partial failure.
+

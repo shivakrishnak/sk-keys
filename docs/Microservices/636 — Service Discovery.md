@@ -4,250 +4,332 @@ title: "Service Discovery"
 parent: "Microservices"
 nav_order: 636
 permalink: /microservices/service-discovery/
-number: "636"
+number: "0636"
 category: Microservices
 difficulty: ★★☆
-depends_on: "Service Registry, Monolith vs Microservices"
-used_by: "Client-Side vs Server-Side Discovery, API Gateway (Microservices), Health Check Patterns"
-tags: #intermediate, #microservices, #networking, #distributed
+depends_on: Service Registry, Networking, Health Check Patterns
+used_by: Client-Side vs Server-Side Discovery, API Gateway, Load Balancing
+related: Service Registry, Load Balancing, Client-Side vs Server-Side Discovery
+tags:
+  - microservices
+  - networking
+  - distributed
+  - intermediate
+  - pattern
 ---
 
 # 636 — Service Discovery
 
-`#intermediate` `#microservices` `#networking` `#distributed`
+⚡ TL;DR — Service Discovery is the mechanism by which microservices dynamically locate each other's network addresses at runtime, using a live service registry instead of hardcoded configuration.
 
-⚡ TL;DR — **Service Discovery** is the mechanism by which microservices locate each other at runtime. The Service Registry stores instance locations; discovery is the act of querying it. Two patterns: **client-side** (client queries registry, picks instance) or **server-side** (load balancer queries registry, routes request).
+| #636 | Category: Microservices | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Service Registry, Networking, Health Check Patterns | |
+| **Used by:** | Client-Side vs Server-Side Discovery, API Gateway, Load Balancing | |
+| **Related:** | Service Registry, Load Balancing, Client-Side vs Server-Side Discovery | |
 
-| #636            | Category: Microservices                                                                  | Difficulty: ★★☆ |
-| :-------------- | :--------------------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Service Registry, Monolith vs Microservices                                              |                 |
-| **Used by:**    | Client-Side vs Server-Side Discovery, API Gateway (Microservices), Health Check Patterns |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+Your order service config file lists `payments.host=10.0.2.5` and `inventory.host=10.0.3.8`. On Monday, a deployment rolls out a new payments image. Kubernetes terminates the old pod and starts a new one at `10.0.2.17`. Nobody updated the config. The order service calls `10.0.2.5`, gets connection refused, and every order attempt fails until someone notices, updates the config, and redeploys. On Tuesday this happens again with the inventory service.
+
+**THE BREAKING POINT:**
+In a containerised microservices system, IP addresses change constantly — on every deployment, pod restart, auto-scale event, or failure recovery. Manually maintaining IP-based configuration isn't a management problem, it's architecturally impossible at scale.
+
+**THE INVENTION MOMENT:**
+This is exactly why Service Discovery was introduced — to make service-to-service communication self-healing by having clients dynamically look up the current location of any service at runtime.
 
 ---
 
 ### 📘 Textbook Definition
 
-**Service Discovery** is the automated process by which a service locates other services in a dynamic environment where instances are constantly being created, destroyed, and moved. In contrast to traditional environments where service addresses are configured statically, service discovery dynamically resolves service names to current network addresses. It relies on a **Service Registry** as the source of truth. Service discovery operates in two modes: **Client-Side Discovery** — the client (caller) queries the registry directly, receives a list of available instances, applies a load-balancing strategy (round-robin, random, least-connections), and makes the call directly; **Server-Side Discovery** — the client sends the request to a load balancer or API Gateway, which queries the registry and routes the request to an instance. Spring Cloud provides client-side discovery via `@LoadBalanced` RestTemplate / OpenFeign + Spring Cloud LoadBalancer. Kubernetes provides server-side discovery via CoreDNS + kube-proxy transparently.
+**Service Discovery** is the process by which a service client determines the network location of a service instance to call. It involves querying a Service Registry — a database of currently available, healthy service instances — and selecting an appropriate instance. Service Discovery eliminates hardcoded host/port configuration by replacing static addresses with dynamic lookups that reflect the current system state. It is distinct from the Service Registry: the registry is the database; discovery is the process of using it.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-Service Discovery answers: "where is ServiceB right now?" Instead of a hardcoded IP address, the calling service looks up the current address at runtime. The Service Registry provides the answer. Discovery is the lookup process; the Registry is the database.
+**One line:**
+Service discovery is asking "where is Service X right now?" and getting the current, live answer.
 
----
+**One analogy:**
+> Imagine calling a taxi company that dispatches dynamically. You don't call a specific car's phone number. You call dispatch (service registry), and they tell you which available taxi is nearest right now. If that taxi breaks down, dispatch assigns another — you don't need to know. Service discovery is the dispatch layer for microservices.
 
-### 🔵 Simple Definition (Elaborated)
-
-In a Kubernetes cluster, `OrderService` needs to call `InventoryService`. Instead of knowing the IP, `OrderService` sends an HTTP request to the hostname `inventory-service`. Kubernetes' internal DNS (CoreDNS) resolves this to a virtual IP, and kube-proxy routes the request to one of the healthy `InventoryService` pods. No application code changes if `InventoryService` scales from 3 to 10 pods — discovery is fully automatic. This is server-side discovery. In Spring Cloud with Eureka, the client itself queries Eureka for `inventory-service` instances and picks one — that is client-side discovery. Both achieve the same goal through different mechanisms.
+**One insight:**
+Service discovery is the difference between a static phone book (hardcoded config) and a live dispatch system (dynamic registry lookup). The value is proportional to how often instances change — which in Kubernetes is continuously.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**Client-Side vs Server-Side Discovery — the key difference:**
+**CORE INVARIANTS:**
+1. A client needs a host:port pair to make a network call.
+2. In dynamic environments, this pair changes and clients must adapt without redeployment.
+3. Discovery must not add unbounded latency — registry lookups must be fast (sub-millisecond from cache).
 
-```
-CLIENT-SIDE DISCOVERY:
-  [ServiceA] → query ServiceRegistry → [10.0.1.1, 10.0.1.2]
-  [ServiceA] → picks 10.0.1.1 (round-robin)
-  [ServiceA] → HTTP call to 10.0.1.1:8080/api/resource
+**DERIVED DESIGN:**
+Given Invariant 2 and 3, pure on-demand registry queries per call are too slow (~5ms round trip). The solution: client-side caching of registry data with a short TTL (30s–60s), combined with background refresh. This gives sub-millisecond lookups from cache while staying within one TTL window of registry accuracy.
 
-  Components:
-    - Client must embed registry client library (Eureka client, Consul client)
-    - Client must embed load balancing logic (Spring Cloud LoadBalancer)
-    - Client caches registry data (refreshed every 30s)
+**Discovery patterns:**
 
-  Pros: client controls load balancing strategy
-  Cons: registry library must be in every service, language-specific
+**Client-Side Discovery:** The client itself queries the registry, picks an instance, and calls it directly. The client is aware of discovery (e.g., Eureka + Ribbon in Spring Cloud).
 
-SERVER-SIDE DISCOVERY:
-  [ServiceA] → HTTP call to load-balancer/inventory-service
-  [LoadBalancer] → query ServiceRegistry → [10.0.1.1, 10.0.1.2]
-  [LoadBalancer] → routes to 10.0.1.1:8080/api/resource
+**Server-Side Discovery:** A router or load balancer queries the registry on behalf of the client. The client just calls a stable address (e.g., Kubernetes Service, nginx, AWS ALB). The client is unaware of discovery.
 
-  Components:
-    - Client sends to a well-known endpoint (LB address or DNS name)
-    - Load balancer handles registry query and routing
-    - Client needs no registry library
-
-  Pros: language-agnostic, client is simple, centralized control
-  Cons: load balancer is a required dependency, added hop latency
-
-KUBERNETES (server-side discovery built-in):
-  [ServiceA] → http://inventory-service:8080/api/resource
-  [CoreDNS] → resolves "inventory-service" → ClusterIP 10.96.0.10
-  [kube-proxy iptables] → routes ClusterIP → pod IP 10.244.0.5
-  No registry library needed in application code
-```
-
-**Service discovery caching — the staleness trade-off:**
-
-```
-CLIENT-SIDE (Eureka):
-  Client fetches registry every 30s (default)
-  → Between refreshes, registry data may be stale
-  → A crashed instance may be in cache for up to 30s after eviction from Eureka
-  → Always combine with circuit breaker to handle stale entries
-
-SERVER-SIDE (Kubernetes):
-  CoreDNS TTL: 5–30 seconds (configurable)
-  kube-proxy updates iptables rules as soon as Endpoints resource changes
-  → Near-real-time: pod removed → Endpoints updated within seconds
-  → DNS TTL may still serve old IP for up to TTL seconds
-  → JVM DNS caching (networkaddress.cache.ttl) can further delay updates!
-
-JVM DNS CACHING FIX:
-  # In your JVM startup flags or java.security file:
-  networkaddress.cache.ttl=5       # cache DNS for 5 seconds (not forever)
-  networkaddress.cache.negative.ttl=0
-```
+**THE TRADE-OFFS:**
+**Gain:** Self-healing service communication, auto-scale compatible, no config updates needed on deployment.
+**Cost:** DNS/registry propagation lag means brief windows of stale data after changes; discovery layer is a new operational concern.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-WITHOUT Service Discovery:
+**SETUP:**
+The payments service has 3 instances: A, B, C. Instance B crashes. An auto-scaler starts instance D at a new IP.
 
-What breaks without it:
+**WITHOUT SERVICE DISCOVERY:**
+Order service config: `[A, B, C]`. B is gone, D doesn't exist in config. 33% of calls fail (those routed to B). D receives zero traffic even though it is healthy. Manual config update + redeployment required.
 
-1. Service B's IP changes on every deployment/restart — Service A has wrong config.
-2. New Service B instances added by auto-scaling are unknown to Service A.
-3. Failed Service B instances remain in Service A's configuration, causing timeouts.
-4. Blue-green deployments require manual config changes in all calling services.
+**WITH SERVICE DISCOVERY:**
+Registry detects B's health check failure → B deregistered (within 15s). D starts → self-registers with registry. Order service's discovery client refreshes registry (within 30s). New instance list: `[A, C, D]`. Traffic distributes evenly. Zero manual intervention required.
 
-WITH Service Discovery:
-→ Service A always calls the current, healthy instances of Service B.
-→ Auto-scaling and deployments are transparent — no configuration changes needed.
-→ Load balancing is automatic across all available instances.
-→ Health-based routing: only healthy instances are returned from the registry.
+**THE INSIGHT:**
+Service discovery makes service communication resilient to infrastructure churn by automating the propagation of instance-level changes to all consumers.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> Service Discovery is like a taxi dispatch system. A passenger (calling service) doesn't know individual taxi locations — they call dispatch (Service Registry) and say "I need a taxi at location X." Dispatch checks current taxi availability (registry) and assigns the nearest available driver (load balancing). If a taxi breaks down (instance crashes), dispatch removes it from the available pool (eviction). The passenger never needs to know any specific taxi's phone number — dispatch handles all the routing.
+> Service discovery is the DNS of microservices — but live. Standard DNS maps hostnames to IPs and caches for minutes. Service discovery maps service names to healthy instance addresses and refreshes in seconds. It is DNS with awareness of health, load, and metadata.
 
-"Taxi dispatch" = Service Registry + discovery mechanism
-"Passenger calling dispatch" = client service querying the registry
-"Taxi availability" = registered, healthy service instances
-"Nearest available" = load balancing strategy
-"Broken down taxi removed" = unhealthy instance evicted from registry
+- "DNS lookup" → registry query for service address
+- "DNS cache TTL" → client-side registry cache TTL (shorter: 30s vs 300s)
+- "DNS record" → service registry entry with IP + port + health status
+- "NXDOMAIN (name not found)" → no healthy instances available in registry
+
+Where this analogy breaks down: DNS is passive — it doesn't check whether the destination is healthy. Service discovery actively health-checks instances and removes unhealthy ones immediately.
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+Service discovery is the automated system that lets microservices find each other. Instead of memorising each other's addresses, services ask a central directory "where is the payments service?" and get the answer in real time.
+
+**Level 2 — How to use it (junior developer):**
+In Spring Cloud + Eureka: add `@EnableEurekaClient`, configure `eureka.client.service-url`. Use `@FeignClient(name = "payments-service")` with the logical name. Spring's discovery client resolves the name to a real IP before each call. No IP addresses needed in your code or configuration.
+
+**Level 3 — How it works (mid-level engineer):**
+The Discovery Client queries the registry on startup and refreshes its cache on a background thread (Eureka: every 30 seconds). When the Feign client makes a call, it asks the load balancer (Ribbon / Spring Cloud LoadBalancer) for an instance. The load balancer selects from the cached list using a strategy (round-robin by default). If a call fails, the failed instance is flagged and retried on another instance.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+The two competing discovery patterns — client-side and server-side — reflect a fundamental architectural trade-off. Client-side discovery gives the client more control and reduces infrastructure requirements (no smart proxy needed), but couples the client to the discovery technology. Server-side discovery keeps clients dumb (they just call a stable VIP) but requires a smart load balancer aware of the registry. Kubernetes chose server-side discovery via kube-proxy and kube-dns, abstracting discovery entirely from the application. This is now the dominant pattern in containerised environments — your app code literally never calls a discovery API; the platform handles it transparently.
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**Spring Cloud + Feign client (client-side discovery):**
+**Client-side discovery flow:**
 
-```java
-// Feign client with client-side discovery via Spring Cloud LoadBalancer:
-@FeignClient(name = "inventory-service") // name = service registered in Eureka
-interface InventoryClient {
-    @GetMapping("/api/inventory/{productId}")
-    InventoryResponse getInventory(@PathVariable Long productId);
-}
-// Spring resolves "inventory-service" via Spring Cloud LoadBalancer:
-// 1. LoadBalancer queries Eureka for "inventory-service" instances
-// 2. Applies round-robin across available instances
-// 3. Makes HTTP call to selected instance
-// No IP addresses in code anywhere
+```
+┌──────────────────────────────────────────────┐
+│        Client-Side Discovery Flow            │
+├──────────────────────────────────────────────┤
+│ 1. Order Service needs to call Payments       │
+│ 2. Feign Client → asks DiscoveryClient        │
+│ 3. DiscoveryClient checks local cache         │
+│    Cache hit: returns [A:8080, C:8081, D:8082]│
+│    Cache miss: queries Eureka → updates cache │
+│ 4. LoadBalancer selects instance (round-robin)│
+│    → selects A:8080                          │
+│ 5. HTTP call to http://A:8080/payments        │
+│ 6. Success → caller gets response            │
+│                                              │
+│    On failure (connection refused):           │
+│ 7. Retry on next instance (C:8081)            │
+│ 8. Mark A:8080 as suspect in local stats     │
+└──────────────────────────────────────────────┘
+```
+
+**Kubernetes server-side discovery:**
+
+```
+┌──────────────────────────────────────────────┐
+│      Kubernetes Service Discovery            │
+├──────────────────────────────────────────────┤
+│ 1. Order Service calls payments-service:8080 │
+│    (DNS name — no IP knowledge needed)       │
+│ 2. kube-dns resolves to ClusterIP (10.0.0.5) │
+│ 3. kube-proxy intercepts packet              │
+│ 4. kube-proxy consults Endpoints API         │
+│    (Endpoints = live healthy pod IPs)        │
+│ 5. iptables/IPVS rule routes to a pod IP     │
+│ 6. Request reaches healthy pod               │
+│ App code never touches a discovery API       │
+└──────────────────────────────────────────────┘
 ```
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 🔄 The Complete Picture — End-to-End Flow
 
-```
-Service Registry
-(the database of service instances)
-        │
-        ▼
-Service Discovery  ◄──── (you are here)
-(the process of querying the registry)
-        │
-        ├── Client-Side vs Server-Side Discovery
-        ├── API Gateway → server-side discovery for incoming traffic
-        ├── Health Check Patterns → only healthy instances served by discovery
-        └── Circuit Breaker → handles stale discovery data (dead instances)
-```
+**NORMAL FLOW:**
+Order Service startup → Discovery Client registers with Eureka → Fetches registry data into local cache → Order placed → Feign call to `payments-service` ← YOU ARE HERE → Load balancer picks instance from cache → HTTP call to selected instance → Response
+
+**FAILURE PATH:**
+Selected instance has crashed since last cache refresh → Call fails → Retry on next instance (from same cached list) → Success → Background thread refreshes cache → Crashed instance removed from next refresh
+
+**WHAT CHANGES AT SCALE:**
+At 1000 service instances, each client maintaining a full registry cache is expensive (memory and network). Solutions: filtered registry subscriptions (subscribe only to services you call) and regional registries (only replicate within the same availability zone). At 10,000 instances, the gossip-based propagation in Consul/Eureka introduces a few seconds of lag — this is acceptable in most systems but requires circuit breakers to handle the stale-cache window.
 
 ---
 
 ### 💻 Code Example
 
-**Manual service discovery + load balancing (illustrative):**
+**Example 1 — Client-side discovery with Spring Cloud LoadBalancer:**
 
 ```java
-@Service
-class InventoryServiceClient {
-
-    @Autowired DiscoveryClient discoveryClient;
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final Random random = new Random();
-
-    public InventoryResponse getInventory(Long productId) {
-        List<ServiceInstance> instances =
-            discoveryClient.getInstances("inventory-service");
-
-        if (instances.isEmpty()) {
-            throw new ServiceUnavailableException("inventory-service has no available instances");
-        }
-
-        // Simple random load balancing:
-        ServiceInstance instance = instances.get(random.nextInt(instances.size()));
-        String url = "http://" + instance.getHost() + ":" + instance.getPort()
-            + "/api/inventory/" + productId;
-
-        return restTemplate.getForObject(url, InventoryResponse.class);
+@Configuration
+public class ServiceConfig {
+    @Bean
+    @LoadBalanced
+    public WebClient.Builder loadBalancedWebClientBuilder() {
+        return WebClient.builder();
     }
 }
-// Better: use @LoadBalanced RestTemplate or @FeignClient which do this automatically
+
+@Service
+public class OrderService {
+    private final WebClient.Builder webClient;
+
+    public PaymentResult processPayment(Order order) {
+        // "payments-service" resolved to live IP by discovery
+        return webClient.build()
+            .post()
+            .uri("http://payments-service/payments")
+            .bodyValue(order)
+            .retrieve()
+            .bodyToMono(PaymentResult.class)
+            .block();
+    }
+}
 ```
+
+**Example 2 — Feign client with discovery (Spring Cloud):**
+
+```java
+// Feign resolves "inventory-service" via Eureka automatically
+@FeignClient(
+    name = "inventory-service",
+    fallback = InventoryServiceFallback.class
+)
+public interface InventoryClient {
+    @GetMapping("/inventory/{productId}")
+    InventoryStatus getStatus(@PathVariable String productId);
+}
+
+@Component
+public class InventoryServiceFallback implements InventoryClient {
+    @Override
+    public InventoryStatus getStatus(String productId) {
+        return InventoryStatus.unknown(); // graceful fallback
+    }
+}
+```
+
+**Example 3 — Query Eureka registry directly (diagnostic):**
+
+```bash
+# List all registered instances of payments-service
+curl -s http://eureka:8761/eureka/apps/PAYMENTS-SERVICE \
+  -H "Accept: application/json" | \
+  python3 -m json.tool | \
+  grep -E "hostName|port|status"
+```
+
+---
+
+### ⚖️ Comparison Table
+
+| Discovery Approach | Client Complexity | Infrastructure | Portability | Best For |
+|---|---|---|---|---|
+| **Client-Side (Eureka/Ribbon)** | High | Low | Medium | Spring Cloud environments |
+| Server-Side (Kubernetes Service) | None | Medium | High | K8s-native apps |
+| Server-Side (AWS ALB/ECS) | None | Low (managed) | Low | AWS-native deployments |
+| DNS SRV Records | Low | Low | High | Multi-cloud or bare metal |
+
+How to choose: use Kubernetes Service (server-side) if running on K8s — it requires zero application code changes. Use client-side discovery (Eureka) only for non-K8s environments or when you need fine-grained client-side routing logic.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                                | Reality                                                                                                                                                                                             |
-| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Service Discovery and Service Registry are the same thing    | The Registry is the database; Discovery is the process of querying it. Like the difference between a phone book (registry) and looking up a number (discovery)                                      |
-| Service discovery eliminates the need for circuit breakers   | Discovery provides addresses; it does not guarantee those addresses are responsive. Stale registry entries and instances under extreme load still need circuit breakers to prevent cascade failures |
-| Kubernetes replaces the need to understand service discovery | Kubernetes abstracts the mechanism, but developers need to understand DNS resolution, connection pooling, and the JVM DNS cache to debug discovery-related production issues                        |
+| Misconception | Reality |
+|---|---|
+| Service Discovery and Service Registry are the same thing | The registry is the database; discovery is the process of querying it. A system cannot do discovery without a registry, but they are distinct concerns |
+| Kubernetes eliminates the need for service discovery | Kubernetes has built-in server-side service discovery — it doesn't eliminate the need, it fulfills it transparently |
+| Service discovery ensures calls always succeed | Discovery finds healthy instances per the last registry sync, but instances can crash between the registry update and the actual call — circuit breakers are still required |
+| Client-side discovery is always faster than server-side | Client-side: sub-millisecond cache lookup. Server-side: one extra network hop through a proxy. At high call rates, the proxy hop is measurable but usually acceptable |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**JVM DNS caching causing discovery misses**
+**1. Discovery Cache Staleness After Instance Crash**
 
-```java
-// PROBLEM: JVM caches DNS resolutions by default
-// In some JVMs, successful DNS resolutions are cached FOREVER (ttl=-1)
-// Consequence: if a Kubernetes Service's ClusterIP changes (rare but possible),
-//              or if you rely on DNS-based load balancing (multiple A records),
-//              JVM never re-resolves — always uses cached (possibly stale) IP
+**Symptom:** For 30–60 seconds after a service instance crashes, some clients continue routing calls to the dead instance, receiving connection timeouts.
 
-// FIX: set networkaddress.cache.ttl to a short value at startup:
-static {
-    java.security.Security.setProperty("networkaddress.cache.ttl", "5");
-    java.security.Security.setProperty("networkaddress.cache.negative.ttl", "0");
-}
-// OR in JVM flags: -Dnetworkaddress.cache.ttl=5
+**Root Cause:** Client-side TTL has not expired. Cached instance list still includes the crashed pod.
 
-// Also verify: Feign/OkHttp/HttpClient connection pools hold connections
-// to specific IPs — even with DNS refresh, existing pool connections
-// still go to the old IP until the pool connection expires
+**Diagnostic:**
+```bash
+# Check Eureka heartbeat timeout on the crashed instance
+curl -s http://eureka:8761/eureka/apps/PAYMENTS-SERVICE | \
+  grep -A3 "lastRenewalTimestamp"
+# If timestamp > 90s ago: instance should have been evicted
 ```
+
+**Fix:** Add a circuit breaker (Resilience4J) at the call site. When calls to a specific instance fail, the circuit breaker stops routing to it immediately — before the registry refreshes.
+
+**Prevention:** Combine short registry TTL (30s), active health probes, and client-side circuit breakers for a defence-in-depth approach.
+
+**2. All Instances Return 503 — Registry Not Updated**
+
+**Symptom:** All calls to a service fail even though pods are running. `kubectl get pods` shows all replicas as `Running`.
+
+**Root Cause:** Pods are running but failing their readiness probe — Kubernetes has not added them to the Service Endpoints (the K8s service discovery layer).
+
+**Diagnostic:**
+```bash
+# Check service endpoints — empty = no healthy pods registered
+kubectl get endpoints payments-service -n production
+# NAME               ENDPOINTS
+# payments-service   <none>  ← problem: no ready pods
+
+# Check pod readiness
+kubectl describe pod payments-service-xxx | grep -A5 "Readiness"
+```
+
+**Fix:** Fix the readiness probe configuration. The probe must accurately reflect when the pod is ready to serve traffic (database connection established, warm-up complete).
+
+**Prevention:** Always configure both `livenessProbe` and `readinessProbe` in K8s deployments. Readiness gates service discovery inclusion.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Service Registry` — the database that Service Discovery queries
-- `Client-Side vs Server-Side Discovery` — the two patterns for implementing service discovery
-- `Health Check Patterns` — ensure registry only returns healthy instances to discovery queries
-- `API Gateway (Microservices)` — implements server-side discovery for external clients
+**Prerequisites (understand these first):**
+- `Service Registry` — the database that service discovery queries; understanding the registry is prerequisite to understanding how discovery works
+- `Health Check Patterns` — registries rely on health checks to decide which instances to include in discovery results
+
+**Builds On This (learn these next):**
+- `Client-Side vs Server-Side Discovery` — the two architectural approaches to implementing service discovery, each with different trade-offs
+- `Load Balancing` — how a client distributes calls across the instances returned by discovery
+
+**Alternatives / Comparisons:**
+- `API Gateway (Microservices)` — performs server-side discovery on behalf of external clients; internal service-to-service discovery uses a different mechanism
 
 ---
 
@@ -255,15 +337,32 @@ static {
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ CLIENT-SIDE  │ Client queries registry → picks instance  │
-│              │ Spring Cloud Eureka + LoadBalancer/Feign  │
+│ WHAT IT IS   │ The process of dynamically resolving a    │
+│              │ service name to a live, healthy instance  │
+│              │ address at runtime                        │
 ├──────────────┼───────────────────────────────────────────┤
-│ SERVER-SIDE  │ Client → LB → LB queries registry        │
-│              │ Kubernetes: CoreDNS + kube-proxy          │
-│              │ API Gateway + Consul/Eureka               │
+│ PROBLEM IT   │ Dynamic IP addresses in containerised     │
+│ SOLVES       │ environments break static configuration   │
 ├──────────────┼───────────────────────────────────────────┤
-│ STALENESS    │ Cache TTL: 30s (Eureka), 5-30s (K8s DNS) │
-│              │ JVM DNS cache: set ttl=5 to avoid issues  │
+│ KEY INSIGHT  │ Discovery adds a brief staleness window   │
+│              │ (TTL) — circuit breakers are the safety   │
+│              │ net for the gap between crash and cache   │
+│              │ refresh                                   │
+├──────────────┼───────────────────────────────────────────┤
+│ USE WHEN     │ Service instances have dynamic addresses  │
+│              │ (containers, VMs, auto-scaling groups)    │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Services have stable, predictable DNS     │
+│              │ names (Kubernetes handles this natively)  │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ Self-healing communication vs staleness   │
+│              │ window and discovery infrastructure cost  │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Ask first, then call — never assume the  │
+│              │  address is still valid."                 │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Client-Side vs Server-Side Discovery →    │
+│              │ Health Check Patterns → Load Balancing    │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -271,6 +370,7 @@ static {
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** Client-side service discovery with Eureka caches registry data for 30 seconds by default. During this 30-second window, a crashed service instance may still appear in the client's cache. Describe the full failure handling stack: (a) client picks stale instance → connection refused; (b) Spring Cloud LoadBalancer's retry mechanism — how does it pick a different instance on retry; (c) how Resilience4j circuit breaker interacts with this — does the circuit breaker open on the first failure or after N failures? What is the recommended retry + circuit breaker combination?
+**Q1.** Your payments service has 10 instances. During a rolling deployment, 5 instances are running the old version and 5 are running the new version simultaneously. The new version has a different response structure for payment failures. Service discovery routes calls to both old and new instances. What specific problems does this create for the calling service, and what contract versioning strategy prevents these problems during rolling deployments?
 
-**Q2.** In Kubernetes, `Service` resources use label selectors to route traffic to pods. Describe the exact sequence from a pod crash to that pod being removed from service discovery: (a) kubelet detects container exit; (b) pod transitions to `Failed` state; (c) Endpoints controller removes pod IP from `Endpoints` resource; (d) kube-proxy updates iptables rules; (e) new connections stop being routed to crashed pod. What is the typical end-to-end latency for this sequence, and during this window, how many requests may hit the crashed pod?
+**Q2.** At 3am, your on-call alert fires: "Order service has 40% error rate." You check the service registry and it shows all 3 payments service instances as healthy. But calls to payments are failing. What are the 5 most likely root causes (beyond the registry's knowledge), in order of likelihood, and what specific diagnostic commands would you run to identify which is the actual cause?
+
