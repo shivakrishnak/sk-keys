@@ -1,10 +1,10 @@
 ---
 layout: default
-title: "Recursion vs Iteration Trade-offs"
+title: "Recursion vs Iteration Trade-offs - V2"
 parent: "Data Structures & Algorithms"
-nav_order: 90
-permalink: /dsa/recursion-vs-iteration-trade-offs/
-number: "0090"
+nav_order: 9090
+permalink: /dsa/recursion-vs-iteration-trade-offs-v2/
+number: "9090"
 category: Data Structures & Algorithms
 difficulty: ★★☆
 depends_on: Call Stack, Big O Notation, Stack (Data Structure)
@@ -18,7 +18,7 @@ tags:
   - tradeoff
 ---
 
-# 0090 — Recursion vs Iteration Trade-offs
+# 9090 — Recursion vs Iteration Trade-offs - V2
 
 ⚡ TL;DR — Recursion expresses solutions as self-referential subproblems (elegant but stack-bound), while iteration loops explicitly (verbose but O(1) stack); the choice is never aesthetic — it is a decision about readability, stack depth, and performance.
 
