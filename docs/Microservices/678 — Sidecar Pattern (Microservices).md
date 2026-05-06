@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — The sidecar pattern deploys an auxiliary container alongside the main application container in the same Kubernetes pod, sharing its network namespace and lifecycle — to provide cross-cutting concerns (logging, metrics, TLS, service discovery) without modifying application code.
 
-| #678 | Category: Microservices | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Service Mesh (Microservices), Cross-Cutting Concerns, Kubernetes | |
-| **Used by:** | Cross-Cutting Concerns, Ambassador Pattern, Service Mesh (Microservices) | |
-| **Related:** | Ambassador Pattern, Adapter Pattern (Microservices), Cross-Cutting Concerns | |
+| #678            | Category: Microservices                                                     | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Service Mesh (Microservices), Cross-Cutting Concerns, Kubernetes            |                 |
+| **Used by:**    | Cross-Cutting Concerns, Ambassador Pattern, Service Mesh (Microservices)    |                 |
+| **Related:**    | Ambassador Pattern, Adapter Pattern (Microservices), Cross-Cutting Concerns |                 |
 
 ---
 
@@ -55,6 +55,7 @@ The **sidecar pattern** is a container design pattern where an auxiliary contain
 An auxiliary container in the same pod that handles infrastructure concerns so the app doesn't have to.
 
 **One analogy:**
+
 > A motorcycle sidecar. The main motorcycle (application) does the driving. The sidecar attached to it carries the luggage (cross-cutting concerns: TLS, metrics, logging). The motorcycle doesn't need to know what's in the sidecar or carry it internally. The sidecar is attached alongside — not inside — the motorcycle. It can be swapped out or upgraded without modifying the motorcycle.
 
 **One insight:**
@@ -66,6 +67,7 @@ The sidecar pattern implements the single responsibility principle at the contai
 
 **WHY SAME POD (NOT SEPARATE SERVICE)?**
 The sidecar must share:
+
 - **Network namespace**: sidecar can intercept all traffic to/from the app on `localhost`; no separate IP address needed
 - **Lifecycle**: sidecar starts before and stops after the app (using init containers and termination ordering)
 - **Volumes**: sidecar can read log files written by the app to a shared emptyDir volume
@@ -74,16 +76,17 @@ If the sidecar were a separate pod, it would need service discovery, separate ne
 
 **SIDECAR USE CASES:**
 
-| Use Case | Sidecar Role | Example |
-|---|---|---|
-| **Service Mesh Proxy** | Intercept all inbound/outbound traffic; enforce mTLS, retries, circuit breaking | Envoy (Istio), Linkerd proxy |
-| **Log Forwarding** | Read log files from shared volume; forward to log aggregation | Fluentd, Filebeat, Logstash |
-| **Metrics Collection** | Expose metrics endpoint; scrape and push to Prometheus | Prometheus exporter sidecars |
-| **Secret Injection** | Write secrets from Vault into shared volume or env | Vault Agent |
-| **Protocol Adapter** | Translate between protocols (e.g., HTTP to gRPC) | Envoy as HTTP→gRPC bridge |
-| **Certificate Renewal** | Renew TLS certs and restart app | cert-manager sidecar |
+| Use Case                | Sidecar Role                                                                    | Example                      |
+| ----------------------- | ------------------------------------------------------------------------------- | ---------------------------- |
+| **Service Mesh Proxy**  | Intercept all inbound/outbound traffic; enforce mTLS, retries, circuit breaking | Envoy (Istio), Linkerd proxy |
+| **Log Forwarding**      | Read log files from shared volume; forward to log aggregation                   | Fluentd, Filebeat, Logstash  |
+| **Metrics Collection**  | Expose metrics endpoint; scrape and push to Prometheus                          | Prometheus exporter sidecars |
+| **Secret Injection**    | Write secrets from Vault into shared volume or env                              | Vault Agent                  |
+| **Protocol Adapter**    | Translate between protocols (e.g., HTTP to gRPC)                                | Envoy as HTTP→gRPC bridge    |
+| **Certificate Renewal** | Renew TLS certs and restart app                                                 | cert-manager sidecar         |
 
 **HOW ISTIO INJECTS SIDECAR AUTOMATICALLY:**
+
 ```
 Without manual sidecar definition:
   kubectl label namespace default istio-injection=enabled
@@ -110,6 +113,7 @@ You have 20 microservices. You need to add distributed tracing (Jaeger) to all o
 
 **WITHOUT SIDECAR:**
 Approach: add Jaeger library to each service.
+
 - Java: add opentelemetry-java-sdk; instrument code with spans; 3 days per service
 - Python: add opentelemetry-python; different API; 2 days per service
 - Node.js: add opentelemetry-js; different setup; 2 days per service
@@ -118,6 +122,7 @@ Approach: add Jaeger library to each service.
 - Future upgrade: repeat for all 20 services
 
 **WITH SIDECAR (OpenTelemetry Collector Sidecar):**
+
 - Add OpenTelemetry Collector sidecar to pod spec template (1 change in Helm chart)
 - Each service sends OTLP spans to `localhost:4317` (simple)
 - Java auto-instrumentation agent: no code change at all
@@ -198,6 +203,7 @@ iptables rules (set by init container):
 ### 💻 Code Example
 
 **Fluentd log forwarding sidecar:**
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -207,36 +213,37 @@ spec:
   template:
     spec:
       volumes:
-      - name: log-storage
-        emptyDir: {}   # shared volume between app and sidecar
+        - name: log-storage
+          emptyDir: {} # shared volume between app and sidecar
 
       containers:
-      # Main application container
-      - name: order-service
-        image: order-service:v2
-        volumeMounts:
-        - name: log-storage
-          mountPath: /logs   # app writes logs here
+        # Main application container
+        - name: order-service
+          image: order-service:v2
+          volumeMounts:
+            - name: log-storage
+              mountPath: /logs # app writes logs here
 
-      # Sidecar: Fluentd log forwarder
-      - name: fluentd-sidecar
-        image: fluent/fluentd:v1.14
-        volumeMounts:
-        - name: log-storage
-          mountPath: /logs   # sidecar reads logs from here
-        env:
-        - name: ELASTICSEARCH_HOST
-          value: elasticsearch.logging.svc.cluster.local
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "50m"
-          limits:
-            memory: "128Mi"
-            cpu: "100m"
+        # Sidecar: Fluentd log forwarder
+        - name: fluentd-sidecar
+          image: fluent/fluentd:v1.14
+          volumeMounts:
+            - name: log-storage
+              mountPath: /logs # sidecar reads logs from here
+          env:
+            - name: ELASTICSEARCH_HOST
+              value: elasticsearch.logging.svc.cluster.local
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
 ```
 
 **Vault Agent sidecar (secret injection):**
+
 ```yaml
 # Pod annotation triggers Vault Agent sidecar injection
 metadata:
@@ -249,42 +256,44 @@ metadata:
       export DATABASE_URL="{{ .Data.data.url }}"
       export DATABASE_PASSWORD="{{ .Data.data.password }}"
       {{- end -}}
+
 # Vault Agent sidecar auto-injected; writes secrets to shared volume
 # App reads secrets from shared volume (not from Vault directly)
 ```
 
 **Kubernetes 1.29+ native sidecar (init container with restartPolicy):**
+
 ```yaml
 initContainers:
-- name: istio-proxy  # runs as sidecar (survives init phase)
-  image: istio/proxyv2:1.20
-  restartPolicy: Always  # ← native sidecar in K8s 1.29+
-  # Starts before app containers; stays running alongside them
-  # Stops after app containers (guaranteed ordering)
+  - name: istio-proxy # runs as sidecar (survives init phase)
+    image: istio/proxyv2:1.20
+    restartPolicy: Always # ← native sidecar in K8s 1.29+
+    # Starts before app containers; stays running alongside them
+    # Stops after app containers (guaranteed ordering)
 ```
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Approach | Language-Agnostic | Independently Upgradeable | Code Change Required | Overhead |
-|---|---|---|---|---|
-| **Sidecar** | Yes | Yes | None | Per-pod container |
-| Library | No | No (all services) | Yes (all services) | None extra |
-| Service Mesh (control plane only) | Yes | Yes | None | Per-pod + control plane |
-| API Gateway (edge only) | Yes (edge) | Yes | None (edge) | Edge only |
+| Approach                          | Language-Agnostic | Independently Upgradeable | Code Change Required | Overhead                |
+| --------------------------------- | ----------------- | ------------------------- | -------------------- | ----------------------- |
+| **Sidecar**                       | Yes               | Yes                       | None                 | Per-pod container       |
+| Library                           | No                | No (all services)         | Yes (all services)   | None extra              |
+| Service Mesh (control plane only) | Yes               | Yes                       | None                 | Per-pod + control plane |
+| API Gateway (edge only)           | Yes (edge)        | Yes                       | None (edge)          | Edge only               |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Sidecar = service mesh | Service mesh is one use case; sidecars also handle logging, secrets, metrics |
-| Sidecar adds no overhead | Each sidecar container uses CPU + RAM; Envoy ~50MB RAM per pod; significant at scale |
-| Sidecar startup is guaranteed before app | Without Kubernetes 1.29+ native sidecar support, startup ordering is not guaranteed |
-| Application can't see sidecar | Application can communicate with sidecar on localhost; they share the network namespace |
-| Sidecar pattern is only for Kubernetes | Can be used in any container orchestration system or even VM deployments with agent processes |
+| Misconception                            | Reality                                                                                       |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Sidecar = service mesh                   | Service mesh is one use case; sidecars also handle logging, secrets, metrics                  |
+| Sidecar adds no overhead                 | Each sidecar container uses CPU + RAM; Envoy ~50MB RAM per pod; significant at scale          |
+| Sidecar startup is guaranteed before app | Without Kubernetes 1.29+ native sidecar support, startup ordering is not guaranteed           |
+| Application can't see sidecar            | Application can communicate with sidecar on localhost; they share the network namespace       |
+| Sidecar pattern is only for Kubernetes   | Can be used in any container orchestration system or even VM deployments with agent processes |
 
 ---
 
@@ -297,13 +306,19 @@ initContainers:
 **Root Cause:** Application starts and makes outbound calls before Envoy has established its connection to the control plane.
 
 **Fix (K8s < 1.29):**
+
 ```yaml
 containers:
-- name: order-service
-  # Wait for Envoy to be ready before starting app
-  command: ["/bin/sh", "-c", 
-    "until curl -sf localhost:15021/healthz/ready; do sleep 1; done; exec java -jar app.jar"]
+  - name: order-service
+    # Wait for Envoy to be ready before starting app
+    command:
+      [
+        "/bin/sh",
+        "-c",
+        "until curl -sf localhost:15021/healthz/ready; do sleep 1; done; exec java -jar app.jar",
+      ]
 ```
+
 **Fix (K8s 1.29+):** Use native sidecar with `restartPolicy: Always` in initContainers — guaranteed to start before app containers.
 
 ---

@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — API versioning strategy defines how a service signals and manages breaking API changes — URI versioning (`/v2/`), header versioning (`Accept-Version: v2`), media type versioning, or semantic versioning — allowing old consumers to continue working while new consumers use updated interfaces.
 
-| #676 | Category: Microservices | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Backward Compatibility, Service Contract, API Gateway | |
-| **Used by:** | Backward Compatibility, Service Contract, Zero-Downtime Deployment | |
-| **Related:** | Backward Compatibility, Service Contract, Consumer-Driven Contract Testing | |
+| #676            | Category: Microservices                                                    | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Backward Compatibility, Service Contract, API Gateway                      |                 |
+| **Used by:**    | Backward Compatibility, Service Contract, Zero-Downtime Deployment         |                 |
+| **Related:**    | Backward Compatibility, Service Contract, Consumer-Driven Contract Testing |                 |
 
 ---
 
@@ -55,6 +55,7 @@ An **API versioning strategy** is the mechanism by which a service signals and m
 Signal which version of the API you're using so old and new consumers can coexist.
 
 **One analogy:**
+
 > Software versioning is like building codes. When a new building code (API v2) is released, existing buildings (consumers) don't need to be torn down and rebuilt immediately. New buildings must comply with the new code. Existing buildings are grandfathered under the old code (v1 served). After a sunset period, the old code version is retired — existing buildings must comply or be demolished (consumers must migrate or be decommissioned).
 
 **One insight:**
@@ -67,43 +68,52 @@ Versioning is the admission that you will need to make breaking changes, and the
 **VERSIONING MECHANISMS:**
 
 **1. URI Path Versioning (most common):**
+
 ```
 GET /api/v1/orders
 GET /api/v2/orders
 ```
+
 - Pros: explicit, easy to see in logs/metrics, easy to proxy/route in API gateway
 - Cons: "URI should identify resource, not version of resource" (REST purists); multiple URIs for same resource
 - Best for: public APIs; large breaking changes; long co-existence periods
 
 **2. Header Versioning:**
+
 ```
 GET /api/orders
 Accept-Version: v2
 # or
 X-API-Version: 2
 ```
+
 - Pros: clean URIs; cacheable per-version
 - Cons: less visible; requires custom header support in clients; harder to test in browser
 - Best for: internal APIs where headers are controlled; minor version distinctions
 
 **3. Media Type Versioning (Content Negotiation):**
+
 ```
 GET /api/orders
 Accept: application/vnd.mycompany.order.v2+json
 ```
+
 - Pros: RESTful; leverages HTTP content negotiation
 - Cons: verbose; complex to implement and maintain; clients must know media types
 - Best for: technically pure REST APIs; rarely used in practice
 
 **4. Query Parameter Versioning:**
+
 ```
 GET /api/orders?version=2
 ```
+
 - Pros: simple; visible in URLs
 - Cons: not RESTful; version in cache key; often considered a shortcut
 - Best for: prototyping; not recommended for production APIs
 
 **SEMANTIC VERSIONING (SemVer) for API contracts:**
+
 ```
 MAJOR.MINOR.PATCH
   MAJOR: breaking change (increment forces consumers to update)
@@ -117,6 +127,7 @@ Examples:
 ```
 
 **THE VERSIONING LIFECYCLE:**
+
 ```
 1. v1 released: serves all consumers
 
@@ -195,7 +206,7 @@ Event versioning (Kafka, EventBridge) is harder than HTTP API versioning because
 API Gateway:
   /api/v1/payments → Payment Service v1 handler
   /api/v2/payments → Payment Service v2 handler
-  
+
   Metrics emitted per request:
     api_calls{version="v1", consumer="order-service"} ++
     api_calls{version="v2", consumer="checkout-service"} ++
@@ -221,6 +232,7 @@ Sunset enforcement:
 ### 💻 Code Example
 
 **Spring Boot URI versioning:**
+
 ```java
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -253,6 +265,7 @@ public class PaymentControllerV2 {
 ```
 
 **API Gateway route config (Nginx/Ingress):**
+
 ```yaml
 # Route v1 to old handler; v2 to new handler (same service)
 - path: /api/v1/
@@ -274,6 +287,7 @@ public class PaymentControllerV2 {
 ```
 
 **Kafka event schema versioning with header:**
+
 ```java
 // Producer: embed version in header
 ProducerRecord<String, byte[]> record = new ProducerRecord<>(
@@ -298,24 +312,24 @@ public void consume(ConsumerRecord<String, byte[]> record) {
 
 ### ⚖️ Comparison Table
 
-| Strategy | Visibility | REST Purity | Caching | Client Complexity |
-|---|---|---|---|---|
-| **URI Path** (`/v2/`) | High | Low | Easy | Low |
-| **Header** (`X-API-Version`) | Low | High | Medium | Medium |
-| **Media Type** (`Accept: vnd.+json`) | Low | Very High | Easy | High |
-| **Query Param** (`?v=2`) | High | Low | Medium | Low |
-| **No versioning** | N/A | N/A | N/A | None (until break) |
+| Strategy                             | Visibility | REST Purity | Caching | Client Complexity  |
+| ------------------------------------ | ---------- | ----------- | ------- | ------------------ |
+| **URI Path** (`/v2/`)                | High       | Low         | Easy    | Low                |
+| **Header** (`X-API-Version`)         | Low        | High        | Medium  | Medium             |
+| **Media Type** (`Accept: vnd.+json`) | Low        | Very High   | Easy    | High               |
+| **Query Param** (`?v=2`)             | High       | Low         | Medium  | Low                |
+| **No versioning**                    | N/A        | N/A         | N/A     | None (until break) |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Versioning means you can always make breaking changes | Versioning manages breaking changes; minimising them is still the goal |
-| Header versioning is more RESTful | There's no consensus; URI versioning is more practical for most teams |
-| Version 1 can stay forever | Zombie versions accumulate cost; active lifecycle management is required |
-| Versioning solves all compatibility problems | Database migrations, event schema evolution, and inter-service protocol changes need separate strategies |
+| Misconception                                         | Reality                                                                                                  |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Versioning means you can always make breaking changes | Versioning manages breaking changes; minimising them is still the goal                                   |
+| Header versioning is more RESTful                     | There's no consensus; URI versioning is more practical for most teams                                    |
+| Version 1 can stay forever                            | Zombie versions accumulate cost; active lifecycle management is required                                 |
+| Versioning solves all compatibility problems          | Database migrations, event schema evolution, and inter-service protocol changes need separate strategies |
 
 ---
 

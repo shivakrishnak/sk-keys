@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — The adapter pattern in microservices wraps an existing service with a new interface — translating between incompatible protocols, data formats, or API shapes — enabling integration without modifying the legacy service or requiring all consumers to understand its idiosyncrasies.
 
-| #680 | Category: Microservices | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Sidecar Pattern (Microservices), Ambassador Pattern, Service Contract | |
-| **Used by:** | Ambassador Pattern, Sidecar Pattern (Microservices), Backward Compatibility | |
-| **Related:** | Ambassador Pattern, Sidecar Pattern (Microservices), Backward Compatibility | |
+| #680            | Category: Microservices                                                     | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Sidecar Pattern (Microservices), Ambassador Pattern, Service Contract       |                 |
+| **Used by:**    | Ambassador Pattern, Sidecar Pattern (Microservices), Backward Compatibility |                 |
+| **Related:**    | Ambassador Pattern, Sidecar Pattern (Microservices), Backward Compatibility |                 |
 
 ---
 
@@ -55,6 +55,7 @@ The **adapter pattern** (in microservices, also called the "strangler fig" adapt
 A translator service that converts your clean API calls into whatever the legacy system needs — so you never expose legacy complexity to consumers.
 
 **One analogy:**
+
 > A power outlet adapter. Your laptop has a USB-C charger (modern interface). The hotel room in France has a Type E socket (legacy interface). The adapter translates between the two. You don't modify your laptop charger (consumer); you don't re-wire the hotel's electrical system (legacy service). The adapter is a small, contained translation layer between them.
 
 **One insight:**
@@ -67,6 +68,7 @@ The adapter is a containment strategy for complexity. Legacy systems have ugly i
 **ADAPTER PATTERNS IN MICROSERVICES — THREE FORMS:**
 
 **Form 1: Protocol Adapter (Service Wrapper)**
+
 ```
 Consumer (REST/JSON) → Adapter Service → Legacy (SOAP/XML)
 
@@ -81,6 +83,7 @@ Consumer receives: clean JSON
 ```
 
 **Form 2: Sidecar Adapter (In-Pod Translation)**
+
 ```
 App calls → Adapter sidecar (localhost) → External service
 
@@ -91,6 +94,7 @@ Adapter sidecar: translates HTTP/1.1 to gRPC locally
 ```
 
 **Form 3: Anti-Corruption Layer (Domain Boundary)**
+
 ```
 New Service (clean domain model) → ACL → Legacy Service (old domain)
 
@@ -102,15 +106,15 @@ The ACL translates not just protocol but also:
 
 **WHAT THE ADAPTER HANDLES:**
 
-| Concern | Adapter Role |
-|---|---|
-| **Protocol** | REST↔SOAP, HTTP↔gRPC, REST↔MQ |
-| **Format** | JSON↔XML, flat↔nested, arrays↔maps |
-| **Authentication** | OAuth↔HMAC↔API key |
-| **Error codes** | Legacy codes → HTTP status + domain errors |
-| **Field names** | Legacy names → canonical domain names |
-| **Units/types** | Cents (int) → Dollars (decimal); epoch (long) → ISO8601 |
-| **Versioning** | Legacy v1 → consumer v2 (field migration) |
+| Concern            | Adapter Role                                            |
+| ------------------ | ------------------------------------------------------- |
+| **Protocol**       | REST↔SOAP, HTTP↔gRPC, REST↔MQ                           |
+| **Format**         | JSON↔XML, flat↔nested, arrays↔maps                      |
+| **Authentication** | OAuth↔HMAC↔API key                                      |
+| **Error codes**    | Legacy codes → HTTP status + domain errors              |
+| **Field names**    | Legacy names → canonical domain names                   |
+| **Units/types**    | Cents (int) → Dollars (decimal); epoch (long) → ISO8601 |
+| **Versioning**     | Legacy v1 → consumer v2 (field migration)               |
 
 **THE ANTI-CORRUPTION LAYER (Eric Evans, DDD):**
 The ACL is the adapter's domain-model version. It prevents legacy domain concepts from leaking into the new service's domain model. Without ACL: `Customer.legacyStatus = "CUST_STAT_CD_03"` pollutes the new domain. With ACL: new domain has `Customer.status = CustomerStatus.ACTIVE`; the ACL translates `CUST_STAT_CD_03` → `ACTIVE` at the boundary.
@@ -125,6 +129,7 @@ The ACL is the adapter's domain-model version. It prevents legacy domain concept
 
 **SETUP:**
 Legacy Payment Service returns this XML:
+
 ```xml
 <PMTRSLT>
   <RSLT_CD>00</RSLT_CD>
@@ -138,6 +143,7 @@ Each consumer parses this XML, maps `RSLT_CD` values (`00=success, 01=insufficie
 
 **WITH ADAPTER:**
 Adapter parses legacy XML internally. Adapter emits clean JSON:
+
 ```json
 {
   "paymentId": "12345",
@@ -145,6 +151,7 @@ Adapter parses legacy XML internally. Adapter emits clean JSON:
   "processedAt": "2024-01-15T14:30:22Z"
 }
 ```
+
 All five consumers get the same clean response. When `PROC_DT2` is added: adapter absorbs the change. Zero consumer updates required.
 
 **THE LESSON:**
@@ -217,6 +224,7 @@ Order Service:
 ### 💻 Code Example
 
 **Spring Boot payment adapter service:**
+
 ```java
 @RestController
 @RequestMapping("/v1/payments")
@@ -276,44 +284,45 @@ public class PaymentTranslator {
 ```
 
 **Sidecar adapter for protocol translation (gRPC↔REST):**
+
 ```yaml
 # Envoy sidecar as adapter: app speaks REST, upstream requires gRPC
 spec:
   containers:
-  - name: order-service
-    env:
-    - name: INVENTORY_URL
-      value: "http://localhost:9000"  # local adapter port
-  
-  - name: grpc-adapter
-    image: envoyproxy/envoy:v1.28
-    # Configured: listener :9000 → transcodes REST to gRPC
-    # Uses: envoy.filters.http.grpc_json_transcoder
-    # App calls REST → Envoy transcodes to gRPC → Inventory Service
+    - name: order-service
+      env:
+        - name: INVENTORY_URL
+          value: "http://localhost:9000" # local adapter port
+
+    - name: grpc-adapter
+      image: envoyproxy/envoy:v1.28
+      # Configured: listener :9000 → transcodes REST to gRPC
+      # Uses: envoy.filters.http.grpc_json_transcoder
+      # App calls REST → Envoy transcodes to gRPC → Inventory Service
 ```
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Pattern | Purpose | Location | Direction | Scope |
-|---|---|---|---|---|
-| **Adapter** | Protocol/format translation | Service or sidecar | Any | Integration boundary |
-| **Ambassador** | Outbound connection management | Sidecar | Outbound only | Any upstream |
-| **Sidecar** | Cross-cutting concern | Co-located container | Any | Pod-level |
-| **API Gateway** | Inbound routing/auth | Edge | Inbound | Fleet-wide |
-| **Anti-Corruption Layer** | Domain model protection | Code layer | Any | Bounded context boundary |
+| Pattern                   | Purpose                        | Location             | Direction     | Scope                    |
+| ------------------------- | ------------------------------ | -------------------- | ------------- | ------------------------ |
+| **Adapter**               | Protocol/format translation    | Service or sidecar   | Any           | Integration boundary     |
+| **Ambassador**            | Outbound connection management | Sidecar              | Outbound only | Any upstream             |
+| **Sidecar**               | Cross-cutting concern          | Co-located container | Any           | Pod-level                |
+| **API Gateway**           | Inbound routing/auth           | Edge                 | Inbound       | Fleet-wide               |
+| **Anti-Corruption Layer** | Domain model protection        | Code layer           | Any           | Bounded context boundary |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Adapter = ambassador | Ambassador handles connection management (retries, TLS); adapter handles protocol/format translation; often combined, but distinct concerns |
-| Adapter is only for legacy systems | Adapters are also useful for external third-party APIs, between microservices with incompatible domain models, and during API version migration |
-| Adapter creates a single point of failure | Adapter is a service; deploy with multiple replicas and circuit breakers; failure is contained to the integration point |
-| Anti-corruption layer must be a separate service | ACL can be implemented as a translation layer in code within a service; doesn't require a separate deployment |
+| Misconception                                    | Reality                                                                                                                                         |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Adapter = ambassador                             | Ambassador handles connection management (retries, TLS); adapter handles protocol/format translation; often combined, but distinct concerns     |
+| Adapter is only for legacy systems               | Adapters are also useful for external third-party APIs, between microservices with incompatible domain models, and during API version migration |
+| Adapter creates a single point of failure        | Adapter is a service; deploy with multiple replicas and circuit breakers; failure is contained to the integration point                         |
+| Anti-corruption layer must be a separate service | ACL can be implemented as a translation layer in code within a service; doesn't require a separate deployment                                   |
 
 ---
 
@@ -336,6 +345,7 @@ spec:
 **Root Cause:** Legacy system added a new field; adapter doesn't map it; field is silently dropped.
 
 **Prevention:**
+
 ```java
 // Log warning on unmapped fields
 @JsonIgnoreProperties  // DON'T use this blindly

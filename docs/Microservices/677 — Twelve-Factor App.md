@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — The Twelve-Factor App is a methodology for building modern software-as-a-service applications — 12 principles covering codebase, dependencies, configuration, services, builds, processes, ports, concurrency, disposability, parity, logging, and admin tasks — that enable portability, scalability, and maintainability.
 
-| #677 | Category: Microservices | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Configuration Management, CI-CD, Containers | |
-| **Used by:** | Microservices Architecture, Zero-Downtime Deployment, Graceful Shutdown (Microservices) | |
-| **Related:** | Sidecar Pattern (Microservices), Configuration Management, Health Check (Microservices) | |
+| #677            | Category: Microservices                                                                 | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Configuration Management, CI-CD, Containers                                             |                 |
+| **Used by:**    | Microservices Architecture, Zero-Downtime Deployment, Graceful Shutdown (Microservices) |                 |
+| **Related:**    | Sidecar Pattern (Microservices), Configuration Management, Health Check (Microservices) |                 |
 
 ---
 
@@ -55,6 +55,7 @@ The **Twelve-Factor App** methodology, published by Adam Wiggins (Heroku co-foun
 12 rules for building apps that deploy anywhere, scale easily, and don't accumulate operational debt.
 
 **One analogy:**
+
 > IKEA furniture assembly instructions. All IKEA furniture (12-factor apps) follows the same assembly conventions: the same tools work on all pieces; all instructions are in the box (self-contained dependencies); the furniture can be assembled in any room (any environment). Non-IKEA furniture might need special tools that aren't included, might only fit in specific rooms (environment-dependent), and the assembly process might vary unpredictably.
 
 **One insight:**
@@ -66,20 +67,20 @@ The 12 factors are a checklist for "does this application play well with cloud i
 
 **THE 12 FACTORS:**
 
-| # | Factor | Principle | Violation Example |
-|---|---|---|---|
-| 1 | **Codebase** | One repo, multiple deploys | Different code branches per environment |
-| 2 | **Dependencies** | Explicitly declare all dependencies | `npm install` without `package.json`; assumes system tools |
-| 3 | **Config** | Store config in environment, not code | Hardcoded DB URLs; environment-specific config files in repo |
-| 4 | **Backing services** | Treat external services as attached resources | Hardcoded IP for database; no way to swap test vs prod DB |
-| 5 | **Build/Release/Run** | Strict separation of build, release, run | Build step modifies production files; code changed in prod |
-| 6 | **Processes** | Execute as stateless, share-nothing processes | Session data in application memory; sticky sessions required |
-| 7 | **Port binding** | Export services via port binding | Requires Apache module; app is not standalone executable |
-| 8 | **Concurrency** | Scale out via process model | Can only scale vertically (bigger machine) |
-| 9 | **Disposability** | Maximize robustness with fast startup/graceful shutdown | Slow startup (minutes); crashes on SIGTERM |
-| 10 | **Dev/Prod parity** | Keep environments similar | Uses SQLite in dev, PostgreSQL in prod; different OS |
-| 11 | **Logs** | Treat logs as event streams | Logs to files; log rotation scripts; no log aggregation |
-| 12 | **Admin processes** | Run admin tasks as one-off processes | DB migrations run differently than the app; manual SSH steps |
+| #   | Factor                | Principle                                               | Violation Example                                            |
+| --- | --------------------- | ------------------------------------------------------- | ------------------------------------------------------------ |
+| 1   | **Codebase**          | One repo, multiple deploys                              | Different code branches per environment                      |
+| 2   | **Dependencies**      | Explicitly declare all dependencies                     | `npm install` without `package.json`; assumes system tools   |
+| 3   | **Config**            | Store config in environment, not code                   | Hardcoded DB URLs; environment-specific config files in repo |
+| 4   | **Backing services**  | Treat external services as attached resources           | Hardcoded IP for database; no way to swap test vs prod DB    |
+| 5   | **Build/Release/Run** | Strict separation of build, release, run                | Build step modifies production files; code changed in prod   |
+| 6   | **Processes**         | Execute as stateless, share-nothing processes           | Session data in application memory; sticky sessions required |
+| 7   | **Port binding**      | Export services via port binding                        | Requires Apache module; app is not standalone executable     |
+| 8   | **Concurrency**       | Scale out via process model                             | Can only scale vertically (bigger machine)                   |
+| 9   | **Disposability**     | Maximize robustness with fast startup/graceful shutdown | Slow startup (minutes); crashes on SIGTERM                   |
+| 10  | **Dev/Prod parity**   | Keep environments similar                               | Uses SQLite in dev, PostgreSQL in prod; different OS         |
+| 11  | **Logs**              | Treat logs as event streams                             | Logs to files; log rotation scripts; no log aggregation      |
+| 12  | **Admin processes**   | Run admin tasks as one-off processes                    | DB migrations run differently than the app; manual SSH steps |
 
 **DEEP DIVE — THE MOST IMPACTFUL FACTORS:**
 
@@ -113,16 +114,19 @@ Why: stdout is collected by the container runtime (Docker, Kubernetes) and route
 
 **SETUP:**
 You need to scale your Order Service from 3 pods to 10 pods in 30 seconds (sudden traffic spike). Each pod currently:
+
 - Stores sessions in JVM memory
 - Writes logs to `/logs/order-service.log`
 - Takes 2 minutes to start (loading full product catalog into memory)
 
 **WHAT HAPPENS:**
+
 - Sessions in memory: new pods have no session data → users lose cart/login state on new pods → degraded experience
 - File logs: 10 pods × separate log files → logs scattered across 10 pods → no unified view
 - 2-minute startup: by the time new pods are ready (2 min × 10 pods = but parallel, so 2 minutes), the traffic spike has already peaked and passed
 
 **THE 12-FACTOR FIX:**
+
 - Sessions in Redis: any pod can retrieve any session → no sticky sessions needed → scale freely
 - Logs to stdout: Kubernetes aggregates all stdout → unified log stream in ELK → trivial with log correlation ID
 - Fast startup (< 15 seconds): lazy load catalog from DB; warm up asynchronously after accepting traffic
@@ -170,20 +174,20 @@ The original 12 factors (2011) were written for Heroku-style PaaS deployment. Fo
 Factor III — Config:
   Source: env var DATABASE_URL from Kubernetes Secret
   Container: System.getenv("DATABASE_URL")
-  
+
 Factor VI — Stateless processes:
   Sessions → Redis (external state store)
   Multiple replicas can serve same user
-  
+
 Factor VII — Port binding:
   App embeds Tomcat on port 8080
   Container exposes port 8080
   Kubernetes Service routes to port 8080
-  
+
 Factor IX — Disposability:
   Spring Boot: server.shutdown=graceful
   K8s: terminationGracePeriodSeconds: 60
-  
+
 Factor XI — Logs:
   logback: <appender class="ConsoleAppender"> → stdout
   K8s: kubectl logs / Fluentd → ELK
@@ -198,15 +202,16 @@ Factor VIII — Concurrency (scale out):
 ### 💻 Code Example
 
 **Factor III — Config from environment (Spring Boot):**
+
 ```yaml
 # application.yml — uses env vars for all external config
 spring:
   datasource:
-    url: ${DATABASE_URL}               # from env
-    username: ${DATABASE_USERNAME}     # from Kubernetes Secret
-    password: ${DATABASE_PASSWORD}     # from Kubernetes Secret
+    url: ${DATABASE_URL} # from env
+    username: ${DATABASE_USERNAME} # from Kubernetes Secret
+    password: ${DATABASE_PASSWORD} # from Kubernetes Secret
   redis:
-    host: ${REDIS_HOST:localhost}      # default for local dev
+    host: ${REDIS_HOST:localhost} # default for local dev
     port: ${REDIS_PORT:6379}
 
 server:
@@ -214,6 +219,7 @@ server:
 ```
 
 **Factor XI — Logs to stdout (logback-spring.xml):**
+
 ```xml
 <configuration>
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -221,7 +227,7 @@ server:
       <!-- JSON structured logging to stdout -->
     </encoder>
   </appender>
-  
+
   <root level="INFO">
     <appender-ref ref="STDOUT" />
     <!-- No file appender — stdout only -->
@@ -230,6 +236,7 @@ server:
 ```
 
 **Factor VI — Stateless session (Spring Session + Redis):**
+
 ```xml
 <!-- pom.xml -->
 <dependency>
@@ -237,56 +244,58 @@ server:
   <artifactId>spring-session-data-redis</artifactId>
 </dependency>
 ```
+
 ```yaml
 # application.yml
 spring:
   session:
-    store-type: redis  # sessions in Redis, not JVM memory
+    store-type: redis # sessions in Redis, not JVM memory
 ```
 
 **Kubernetes — config from ConfigMap + Secret:**
+
 ```yaml
 spec:
   containers:
-  - name: order-service
-    env:
-    - name: DATABASE_URL
-      valueFrom:
-        secretKeyRef:
-          name: order-db-secret
-          key: url
-    - name: REDIS_HOST
-      valueFrom:
-        configMapKeyRef:
-          name: order-config
-          key: redis.host
-    - name: SERVER_PORT
-      value: "8080"
+    - name: order-service
+      env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: order-db-secret
+              key: url
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: order-config
+              key: redis.host
+        - name: SERVER_PORT
+          value: "8080"
 ```
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Factor | Anti-Pattern | 12-Factor Practice |
-|---|---|---|
-| **III Config** | `String url = "jdbc:prod:5432"` | `System.getenv("DATABASE_URL")` |
-| **VI Processes** | Session in JVM memory | Session in Redis |
-| **IX Disposability** | 3-minute startup | <15 second startup + graceful shutdown |
-| **XI Logs** | Write to `/var/log/app.log` | Write to stdout; let platform aggregate |
-| **X Dev/Prod Parity** | SQLite in dev, Postgres in prod | Same DB engine in all environments |
+| Factor                | Anti-Pattern                    | 12-Factor Practice                      |
+| --------------------- | ------------------------------- | --------------------------------------- |
+| **III Config**        | `String url = "jdbc:prod:5432"` | `System.getenv("DATABASE_URL")`         |
+| **VI Processes**      | Session in JVM memory           | Session in Redis                        |
+| **IX Disposability**  | 3-minute startup                | <15 second startup + graceful shutdown  |
+| **XI Logs**           | Write to `/var/log/app.log`     | Write to stdout; let platform aggregate |
+| **X Dev/Prod Parity** | SQLite in dev, Postgres in prod | Same DB engine in all environments      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| 12-factor is only for Heroku | The principles are universal cloud-native practices; Heroku invented them, Kubernetes validates them |
-| Stateless means no state | Stateless processes means no *local in-process* state; state is stored externally (DB, Redis, S3) |
-| Logs to stdout means no log management | stdout is the *output interface*; the platform (Fluentd, CloudWatch, Datadog) handles collection, indexing, retention |
-| 12-factor is a checklist you follow once | It's a design philosophy that affects every feature added; revisit with new components |
-| Storing config in env vars is always safe | Env vars can leak in process listings; prefer mounted secrets (Kubernetes Secret as volume) for sensitive values |
+| Misconception                             | Reality                                                                                                               |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| 12-factor is only for Heroku              | The principles are universal cloud-native practices; Heroku invented them, Kubernetes validates them                  |
+| Stateless means no state                  | Stateless processes means no _local in-process_ state; state is stored externally (DB, Redis, S3)                     |
+| Logs to stdout means no log management    | stdout is the _output interface_; the platform (Fluentd, CloudWatch, Datadog) handles collection, indexing, retention |
+| 12-factor is a checklist you follow once  | It's a design philosophy that affects every feature added; revisit with new components                                |
+| Storing config in env vars is always safe | Env vars can leak in process listings; prefer mounted secrets (Kubernetes Secret as volume) for sensitive values      |
 
 ---
 
@@ -299,6 +308,7 @@ spec:
 **Root Cause:** Sessions stored in JVM memory (violates Factor VI); pod restart = session loss.
 
 **Fix:**
+
 ```yaml
 # application.yml
 spring.session.store-type: redis

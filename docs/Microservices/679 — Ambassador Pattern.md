@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — The ambassador pattern deploys a proxy container alongside the main service that handles outbound communication on the service's behalf — providing connection management, retry logic, monitoring, and protocol translation for calls the service makes to external or downstream services.
 
-| #679 | Category: Microservices | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Sidecar Pattern (Microservices), API Gateway, Cross-Cutting Concerns | |
-| **Used by:** | Cross-Cutting Concerns, Sidecar Pattern (Microservices), Service Mesh (Microservices) | |
-| **Related:** | Sidecar Pattern (Microservices), Adapter Pattern (Microservices), API Gateway | |
+| #679            | Category: Microservices                                                               | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Sidecar Pattern (Microservices), API Gateway, Cross-Cutting Concerns                  |                 |
+| **Used by:**    | Cross-Cutting Concerns, Sidecar Pattern (Microservices), Service Mesh (Microservices) |                 |
+| **Related:**    | Sidecar Pattern (Microservices), Adapter Pattern (Microservices), API Gateway         |                 |
 
 ---
 
@@ -55,6 +55,7 @@ The **ambassador pattern** is a structural microservices pattern where an out-of
 A local proxy that handles all outbound calls for the service — so the service makes simple localhost calls.
 
 **One analogy:**
+
 > A diplomatic ambassador. A country (the service) doesn't directly negotiate with every foreign nation (downstream service). It sends its ambassador — a representative who speaks the language, knows the protocols, handles negotiations, and reports back. The country interacts with its own ambassador in its own language; the ambassador handles all the complex diplomatic details. If the ambassador is replaced, the country's internal operations don't change.
 
 **One insight:**
@@ -65,6 +66,7 @@ The ambassador pattern is the outbound counterpart to a load balancer or API gat
 ### 🔩 First Principles Explanation
 
 **SIDECAR vs AMBASSADOR — THE SPECIALISATION:**
+
 ```
 Sidecar (general):
   - Co-located container in same pod
@@ -81,19 +83,20 @@ Ambassador (specific):
 
 **AMBASSADOR RESPONSIBILITIES:**
 
-| Concern | Implementation in Ambassador |
-|---|---|
-| **Connection pooling** | Maintain pool of connections to downstream; reuse |
-| **Retry + backoff** | On transient failures: retry 3× with exp. backoff |
-| **Circuit breaker** | Track failure rate; open circuit if threshold exceeded |
-| **Load balancing** | Round-robin, least-connections across upstream instances |
-| **mTLS** | Establish mutual TLS to upstream; app sends plain HTTP locally |
-| **Observability** | Emit metrics, trace spans for every upstream call |
-| **Protocol translation** | App speaks HTTP/1.1; ambassador translates to gRPC/HTTP2 |
-| **Rate limiting** | Enforce per-upstream call limits |
-| **Timeouts** | Enforce timeout policy per upstream service |
+| Concern                  | Implementation in Ambassador                                   |
+| ------------------------ | -------------------------------------------------------------- |
+| **Connection pooling**   | Maintain pool of connections to downstream; reuse              |
+| **Retry + backoff**      | On transient failures: retry 3× with exp. backoff              |
+| **Circuit breaker**      | Track failure rate; open circuit if threshold exceeded         |
+| **Load balancing**       | Round-robin, least-connections across upstream instances       |
+| **mTLS**                 | Establish mutual TLS to upstream; app sends plain HTTP locally |
+| **Observability**        | Emit metrics, trace spans for every upstream call              |
+| **Protocol translation** | App speaks HTTP/1.1; ambassador translates to gRPC/HTTP2       |
+| **Rate limiting**        | Enforce per-upstream call limits                               |
+| **Timeouts**             | Enforce timeout policy per upstream service                    |
 
 **THE REQUEST FLOW:**
+
 ```
 Application:
   fetch("http://localhost:8081/v1/payments")  ← local call, plain HTTP
@@ -211,117 +214,119 @@ Order Service Pod:
 ### 💻 Code Example
 
 **Envoy ambassador configuration (envoy.yaml):**
+
 ```yaml
 static_resources:
   listeners:
-  - name: payment_service_listener
-    address:
-      socket_address: {address: 127.0.0.1, port_value: 10001}
-    filter_chains:
-    - filters:
-      - name: envoy.filters.network.http_connection_manager
-        typed_config:
-          "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-          stat_prefix: payment_service
-          route_config:
-            virtual_hosts:
-            - name: payment_service
-              domains: ["*"]
-              routes:
-              - match: {prefix: "/"}
-                route:
-                  cluster: payment_service
-                  retry_policy:
-                    retry_on: "5xx,connect-failure,reset"
-                    num_retries: 3
-                    per_try_timeout: 5s
-                    retry_back_off:
-                      base_interval: 100ms
-                      max_interval: 2s
+    - name: payment_service_listener
+      address:
+        socket_address: { address: 127.0.0.1, port_value: 10001 }
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                stat_prefix: payment_service
+                route_config:
+                  virtual_hosts:
+                    - name: payment_service
+                      domains: ["*"]
+                      routes:
+                        - match: { prefix: "/" }
+                          route:
+                            cluster: payment_service
+                            retry_policy:
+                              retry_on: "5xx,connect-failure,reset"
+                              num_retries: 3
+                              per_try_timeout: 5s
+                              retry_back_off:
+                                base_interval: 100ms
+                                max_interval: 2s
 
   clusters:
-  - name: payment_service
-    connect_timeout: 5s
-    circuit_breakers:
-      thresholds:
-      - max_connections: 100
-        max_pending_requests: 50
-        max_retries: 10
-    load_assignment:
-      cluster_name: payment_service
-      endpoints:
-      - lb_endpoints:
-        - endpoint:
-            address:
-              socket_address:
-                address: payment-service
-                port_value: 8080
-    transport_socket:
-      name: envoy.transport_sockets.tls
-      typed_config:
-        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-        common_tls_context:
-          tls_certificates:
-          - certificate_chain: {filename: /certs/client.crt}
-            private_key: {filename: /certs/client.key}
+    - name: payment_service
+      connect_timeout: 5s
+      circuit_breakers:
+        thresholds:
+          - max_connections: 100
+            max_pending_requests: 50
+            max_retries: 10
+      load_assignment:
+        cluster_name: payment_service
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: payment-service
+                      port_value: 8080
+      transport_socket:
+        name: envoy.transport_sockets.tls
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+          common_tls_context:
+            tls_certificates:
+              - certificate_chain: { filename: /certs/client.crt }
+                private_key: { filename: /certs/client.key }
 ```
 
 **Kubernetes pod with ambassador sidecar:**
+
 ```yaml
 spec:
   containers:
-  - name: order-service
-    image: order-service:v2
-    env:
-    # App calls ambassador on localhost instead of payment-service directly
-    - name: PAYMENT_SERVICE_URL
-      value: "http://localhost:10001"
-    - name: INVENTORY_SERVICE_URL
-      value: "http://localhost:10002"
+    - name: order-service
+      image: order-service:v2
+      env:
+        # App calls ambassador on localhost instead of payment-service directly
+        - name: PAYMENT_SERVICE_URL
+          value: "http://localhost:10001"
+        - name: INVENTORY_SERVICE_URL
+          value: "http://localhost:10002"
 
-  - name: ambassador
-    image: envoyproxy/envoy:v1.28
-    args: ["-c", "/config/envoy.yaml"]
-    ports:
-    - containerPort: 10001  # payment service listener
-    - containerPort: 10002  # inventory service listener
-    volumeMounts:
-    - name: envoy-config
-      mountPath: /config
-    - name: tls-certs
-      mountPath: /certs
+    - name: ambassador
+      image: envoyproxy/envoy:v1.28
+      args: ["-c", "/config/envoy.yaml"]
+      ports:
+        - containerPort: 10001 # payment service listener
+        - containerPort: 10002 # inventory service listener
+      volumeMounts:
+        - name: envoy-config
+          mountPath: /config
+        - name: tls-certs
+          mountPath: /certs
 
   volumes:
-  - name: envoy-config
-    configMap:
-      name: envoy-ambassador-config
-  - name: tls-certs
-    secret:
-      secretName: order-service-tls
+    - name: envoy-config
+      configMap:
+        name: envoy-ambassador-config
+    - name: tls-certs
+      secret:
+        secretName: order-service-tls
 ```
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Approach | Location | Handles | Language-Agnostic | Independently Upgraded |
-|---|---|---|---|---|
-| **Ambassador** | Sidecar (outbound) | Outbound only | Yes | Yes |
-| **Sidecar (general)** | Sidecar (any) | Any concern | Yes | Yes |
-| **Service Mesh** | Sidecar (both) | Inbound + outbound | Yes | Yes (centrally) |
-| **API Gateway** | Edge | Inbound only | Yes | Yes |
-| **Library (Resilience4j)** | In-process | Outbound | No (per language) | No (per service deploy) |
+| Approach                   | Location           | Handles            | Language-Agnostic | Independently Upgraded  |
+| -------------------------- | ------------------ | ------------------ | ----------------- | ----------------------- |
+| **Ambassador**             | Sidecar (outbound) | Outbound only      | Yes               | Yes                     |
+| **Sidecar (general)**      | Sidecar (any)      | Any concern        | Yes               | Yes                     |
+| **Service Mesh**           | Sidecar (both)     | Inbound + outbound | Yes               | Yes (centrally)         |
+| **API Gateway**            | Edge               | Inbound only       | Yes               | Yes                     |
+| **Library (Resilience4j)** | In-process         | Outbound           | No (per language) | No (per service deploy) |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Ambassador = service mesh | Ambassador is the outbound proxy pattern; service mesh uses the same mechanism but adds a centralised control plane managing all ambassadors |
-| Ambassador only for Kubernetes | Can be used in any environment with sidecar-like co-deployment (Docker Compose, VMs with agents) |
-| Ambassador eliminates all retry bugs | Retries without backoff/jitter/budget can amplify failures; ambassador must be correctly configured |
-| Ambassador adds too much latency for critical paths | localhost proxy overhead is typically 1–5ms; acceptable for most use cases; can be bypassed for ultra-latency-sensitive paths |
+| Misconception                                       | Reality                                                                                                                                      |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ambassador = service mesh                           | Ambassador is the outbound proxy pattern; service mesh uses the same mechanism but adds a centralised control plane managing all ambassadors |
+| Ambassador only for Kubernetes                      | Can be used in any environment with sidecar-like co-deployment (Docker Compose, VMs with agents)                                             |
+| Ambassador eliminates all retry bugs                | Retries without backoff/jitter/budget can amplify failures; ambassador must be correctly configured                                          |
+| Ambassador adds too much latency for critical paths | localhost proxy overhead is typically 1–5ms; acceptable for most use cases; can be bypassed for ultra-latency-sensitive paths                |
 
 ---
 
@@ -334,10 +339,15 @@ spec:
 **Root Cause:** Startup ordering not guaranteed; application starts before ambassador listener is up.
 
 **Fix:**
+
 ```yaml
 # Application startup command waits for ambassador listener
-command: ["/bin/sh", "-c",
-  "until curl -sf http://localhost:10001/ready; do sleep 1; done; exec java -jar app.jar"]
+command:
+  [
+    "/bin/sh",
+    "-c",
+    "until curl -sf http://localhost:10001/ready; do sleep 1; done; exec java -jar app.jar",
+  ]
 # Or: use K8s 1.29+ native sidecar for guaranteed ordering
 ```
 
