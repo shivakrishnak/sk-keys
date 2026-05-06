@@ -11,7 +11,7 @@ permalink: /microservices/
 
 Service decomposition, DDD, discovery, resilience patterns, CQRS, event sourcing, and deployment strategies.
 
-**Keywords:** 626–680 (55 terms)
+**Keywords:** 626–2284 (60 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -70,3 +70,8 @@ Service decomposition, DDD, discovery, resilience patterns, CQRS, event sourcing
 | 678 | Sidecar Pattern (Microservices) | ★★★ |
 | 679 | Ambassador Pattern | ★★★ |
 | 680 | Adapter Pattern (Microservices) | ★★★ |
+| 2280 | Monolith to Microservices Migration | ★★★ |
+| 2281 | On-Premises to Cloud Migration | ★★★ |
+| 2282 | Technology Migration Strategy | ★★★ |
+| 2283 | Re-platforming vs Re-architecting | ★★★ |
+| 2284 | Proof of Concept (POC) in Architecture | ★★★ |

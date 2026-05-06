@@ -11,7 +11,7 @@ permalink: /testing/
 
 Unit, integration, contract, E2E, TDD, BDD, mocking, test pyramid, performance testing, and test tooling.
 
-**Keywords:** 1131–1175 (45 terms)
+**Keywords:** 1131–2258 (54 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -60,3 +60,12 @@ Unit, integration, contract, E2E, TDD, BDD, mocking, test pyramid, performance t
 | 1173 | Gatling / k6 (Load Testing) | ★★★ |
 | 1174 | SonarQube Quality Gate | ★★★ |
 | 1175 | Test Reporting | ★★☆ |
+| 2250 | JUnit 5 Parameterized Tests | ★★☆ |
+| 2251 | Karate Framework (API Testing) | ★★★ |
+| 2252 | Cucumber (BDD Testing) | ★★★ |
+| 2253 | Cypress (E2E Testing) | ★★☆ |
+| 2254 | Jest (JavaScript Testing) | ★★☆ |
+| 2255 | Playwright (E2E Testing) | ★★☆ |
+| 2256 | API Contract Testing (Pact / Karate) | ★★★ |
+| 2257 | Performance Testing (JMeter, Gatling) | ★★★ |
+| 2258 | SonarQube Quality Gate | ★★★ |

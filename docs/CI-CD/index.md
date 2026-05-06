@@ -11,7 +11,7 @@ permalink: /ci-cd/
 
 Continuous integration, delivery, deployment pipelines, GitOps, IaC, DORA metrics, and progressive delivery.
 
-**Keywords:** 991–1030 (40 terms)
+**Keywords:** 991–2247 (66 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -55,3 +55,29 @@ Continuous integration, delivery, deployment pipelines, GitOps, IaC, DORA metric
 | 1028 | Progressive Delivery | ★★★ |
 | 1029 | Canary Analysis | ★★★ |
 | 1030 | Rollback Strategy | ★★★ |
+| 2215 | Harness (Deployment Tool) | ★★★ |
+| 2216 | Environment Promotion Strategy | ★★★ |
+| 2217 | Artifact Versioning Strategy | ★★★ |
+| 2218 | Policy as Code | ★★★ |
+| 2219 | Open Policy Agent (OPA) | ★★★ |
+| 2220 | Sentinel (Terraform Policy) | ★★★ |
+| 2221 | Terraform Cloud / Enterprise | ★★★ |
+| 2222 | Crossplane | ★★★ |
+| 2230 | Terraform Overview | ★★☆ |
+| 2231 | Terraform Provider | ★★☆ |
+| 2232 | Terraform Resource | ★★☆ |
+| 2233 | Terraform State | ★★★ |
+| 2234 | Terraform State Backend | ★★★ |
+| 2235 | Terraform Remote State | ★★★ |
+| 2236 | Terraform Workspace | ★★★ |
+| 2237 | Terraform Module | ★★★ |
+| 2238 | Terraform Reusable Module Pattern | ★★★ |
+| 2239 | Terraform Plan / Apply / Destroy | ★★☆ |
+| 2240 | Terraform Import | ★★★ |
+| 2241 | Terraform Drift Detection | ★★★ |
+| 2242 | Terraform Variable / Output / Local | ★★☆ |
+| 2243 | Terraform Data Source | ★★★ |
+| 2244 | Terraform Lifecycle Rules | ★★★ |
+| 2245 | Terraform Sentinel Policy | ★★★ |
+| 2246 | Terragrunt | ★★★ |
+| 2247 | Terraform Testing (Terratest) | ★★★ |

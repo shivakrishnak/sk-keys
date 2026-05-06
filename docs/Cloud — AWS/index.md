@@ -11,7 +11,7 @@ permalink: /cloud-aws/
 
 AWS global infrastructure, core services (EC2, S3, RDS, Lambda, EKS), IaC, security, and cost optimization.
 
-**Keywords:** 916–955 (40 terms)
+**Keywords:** 916–2208 (59 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -55,3 +55,22 @@ AWS global infrastructure, core services (EC2, S3, RDS, Lambda, EKS), IaC, secur
 | 953 | Well-Architected Framework | ★★★ |
 | 954 | Spot Instances / Reserved Instances | ★★★ |
 | 955 | AWS Service Limits | ★★★ |
+| 2190 | AWS CloudFront | ★★☆ |
+| 2191 | Lambda@Edge | ★★★ |
+| 2192 | AWS Step Functions | ★★★ |
+| 2193 | AWS SQS | ★★☆ |
+| 2194 | AWS SNS | ★★☆ |
+| 2195 | AWS Kinesis | ★★★ |
+| 2196 | AWS Parameter Store | ★★★ |
+| 2197 | AWS Secrets Manager | ★★★ |
+| 2198 | AWS KMS (Key Management Service) | ★★★ |
+| 2199 | AWS PrivateLink | ★★★ |
+| 2200 | AWS Shield | ★★★ |
+| 2201 | AWS Control Tower | ★★★ |
+| 2202 | AWS CDK (Cloud Development Kit) | ★★★ |
+| 2203 | AWS CloudFormation | ★★★ |
+| 2204 | AWS WAF | ★★★ |
+| 2205 | AWS ECS / Fargate | ★★★ |
+| 2206 | AWS VPC Architecture Deep Dive | ★★★ |
+| 2207 | AWS Cost Tagging Strategy | ★★★ |
+| 2208 | AWS Well-Architected Review | ★★★ |

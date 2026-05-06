@@ -11,7 +11,7 @@ permalink: /big-data-streaming/
 
 Distributed computing, MapReduce, Spark, Kafka, Flink, stream processing patterns, and messaging architectures.
 
-**Keywords:** 531–570 (40 terms)
+**Keywords:** 531–2353 (44 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -55,3 +55,7 @@ Distributed computing, MapReduce, Spark, Kafka, Flink, stream processing pattern
 | 568 | Transactional Outbox | ★★★ |
 | 569 | Event-Driven Architecture | ★★★ |
 | 570 | Change Data Capture (CDC) | ★★★ |
+| 2350 | Kafka AVRO Integration | ★★★ |
+| 2351 | Kafka Schema Registry Usage | ★★★ |
+| 2352 | AWS Kinesis vs Kafka | ★★★ |
+| 2353 | AWS SNS + SQS Fan-Out Pattern | ★★★ |

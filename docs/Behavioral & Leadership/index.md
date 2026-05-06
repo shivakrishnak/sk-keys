@@ -11,7 +11,7 @@ permalink: /leadership/
 
 Technical leadership, staff engineering, stakeholder communication, agile practices, and career development.
 
-**Keywords:** 1731–1770 (40 terms)
+**Keywords:** 1731–2330 (51 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -55,3 +55,14 @@ Technical leadership, staff engineering, stakeholder communication, agile practi
 | 1768 | Presentations for Technical Audiences | ★★★ |
 | 1769 | Career Laddering | ★★★ |
 | 1770 | Personal Brand (Engineering) | ★★★ |
+| 2320 | Root Cause Analysis (RCA) | ★★☆ |
+| 2321 | Bug Triage Process | ★★☆ |
+| 2322 | Stakeholder Management | ★★☆ |
+| 2323 | Technology Evangelism | ★★★ |
+| 2324 | POC to Production Strategy | ★★★ |
+| 2325 | Compliance-Oriented SDLC | ★★★ |
+| 2326 | Financial Services Domain Knowledge | ★★★ |
+| 2327 | Regulated Domain Engineering | ★★★ |
+| 2328 | Backlog Management (JIRA, VersionOne) | ★★☆ |
+| 2329 | Confluence / Documentation Tooling | ★☆☆ |
+| 2330 | Engineering Standards Enforcement | ★★★ |

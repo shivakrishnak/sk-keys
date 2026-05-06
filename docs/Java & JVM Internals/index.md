@@ -11,7 +11,7 @@ permalink: /java/
 
 JVM architecture, memory model, garbage collection algorithms, JIT compilation, GraalVM, and JVM tuning.
 
-**Keywords:** 261–310 (50 terms)
+**Keywords:** 261–2114 (65 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -65,3 +65,18 @@ JVM architecture, memory model, garbage collection algorithms, JIT compilation, 
 | 308 | Card Table | ★★★ |
 | 309 | Write Barrier | ★★★ |
 | 310 | Remembered Set | ★★★ |
+| 2100 | Java EE / J2EE Overview | ★☆☆ |
+| 2101 | JSP (Java Server Pages) | ★★☆ |
+| 2102 | Java Servlet | ★★☆ |
+| 2103 | Java Collections Deep Dive (List, Map, Set) | ★★☆ |
+| 2104 | Java Exception Hierarchy (Checked vs Unchecked) | ★★☆ |
+| 2105 | Java Keywords (static, final, volatile, synchronized, transient) | ★★☆ |
+| 2106 | Java File I/O and Serialization | ★★☆ |
+| 2107 | Java Abstract Classes vs Interfaces | ★★☆ |
+| 2108 | Java Access Modifiers | ★☆☆ |
+| 2109 | Java Constructors Deep Dive | ★★☆ |
+| 2110 | Java Memory Management (Stack vs Heap Practical) | ★★☆ |
+| 2111 | Java 8 to Java 17 Migration Guide | ★★★ |
+| 2112 | Java 17 Features (Records, Sealed, Pattern Matching) | ★★☆ |
+| 2113 | Java Profiling (YourKit, JFR) | ★★★ |
+| 2114 | Java Performance Tuning | ★★★ |

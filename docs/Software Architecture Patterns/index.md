@@ -11,7 +11,7 @@ permalink: /software-architecture/
 
 Layered, hexagonal, clean, CQRS, event sourcing, DDD patterns, SOLID, and coupling/cohesion principles.
 
-**Keywords:** 726–765 (40 terms)
+**Keywords:** 726–2306 (47 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -55,3 +55,10 @@ Layered, hexagonal, clean, CQRS, event sourcing, DDD patterns, SOLID, and coupli
 | 763 | Cohesion | ★★☆ |
 | 764 | Coupling | ★★☆ |
 | 765 | Connascence | ★★★ |
+| 2300 | Architecture Decision Record (ADR) | ★★★ |
+| 2301 | Technology Roadmap | ★★★ |
+| 2302 | Architecture Review | ★★★ |
+| 2303 | Proof of Concept (POC) | ★★★ |
+| 2304 | Enterprise Application Architecture | ★★★ |
+| 2305 | Loose Coupling of Frontend Modules | ★★★ |
+| 2306 | Micro-Frontend Architecture | ★★★ |

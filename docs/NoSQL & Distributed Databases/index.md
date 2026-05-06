@@ -11,7 +11,7 @@ permalink: /nosql/
 
 Document stores, key-value, column-family, graph DBs, vector databases, and distributed data patterns.
 
-**Keywords:** 451–475 (25 terms)
+**Keywords:** 451–2170 (36 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -40,3 +40,14 @@ Document stores, key-value, column-family, graph DBs, vector databases, and dist
 | 473 | Change Data Capture (CDC) | ★★★ |
 | 474 | Database Proxy (PgBouncer) | ★★★ |
 | 475 | Data Locality | ★★★ |
+| 2160 | MongoDB Document Schema Design | ★★★ |
+| 2161 | MongoDB Normalization vs Denormalization | ★★★ |
+| 2162 | MongoDB Aggregation Pipeline | ★★★ |
+| 2163 | MongoDB Indexing Strategies | ★★★ |
+| 2164 | MongoDB Schema Evolution | ★★★ |
+| 2165 | OpenSearch / Elasticsearch | ★★★ |
+| 2166 | Snowflake (Cloud Data Warehouse) | ★★★ |
+| 2167 | Snowflake Architecture (Virtual Warehouse, Storage) | ★★★ |
+| 2168 | ElastiCache | ★★★ |
+| 2169 | DynamoDB Data Modeling Patterns | ★★★ |
+| 2170 | DynamoDB Single-Table Design | ★★★ |

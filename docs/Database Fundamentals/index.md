@@ -11,7 +11,7 @@ permalink: /databases/
 
 ACID, transaction isolation, indexing, locking, replication, sharding, and schema evolution.
 
-**Keywords:** 411–450 (40 terms)
+**Keywords:** 411–2150 (51 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -55,3 +55,14 @@ ACID, transaction isolation, indexing, locking, replication, sharding, and schem
 | 448 | Database Sharding | ★★★ |
 | 449 | Database Migration | ★★☆ |
 | 450 | Schema Evolution | ★★★ |
+| 2140 | Oracle Database | ★★☆ |
+| 2141 | PL/SQL | ★★★ |
+| 2142 | Complex SQL Queries (Joins, Subqueries, CTEs) | ★★★ |
+| 2143 | Query Optimization | ★★★ |
+| 2144 | Liquibase | ★★★ |
+| 2145 | Flyway | ★★★ |
+| 2146 | Database Change Management | ★★★ |
+| 2147 | Schema Design Best Practices | ★★★ |
+| 2148 | Data Integrity Constraints | ★★☆ |
+| 2149 | PostgreSQL Specific Features | ★★★ |
+| 2150 | MySQL Specific Features | ★★★ |

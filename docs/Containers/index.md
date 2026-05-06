@@ -11,7 +11,7 @@ permalink: /containers/
 
 Docker images, layers, multi-stage builds, container security, OCI standards, and container runtime internals.
 
-**Keywords:** 821–855 (35 terms)
+**Keywords:** 821–2311 (37 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -50,3 +50,5 @@ Docker images, layers, multi-stage builds, container security, OCI standards, an
 | 853 | Docker Secrets | ★★★ |
 | 854 | Image Provenance / SBOM | ★★★ |
 | 855 | Container Runtime Interface (CRI) | ★★★ |
+| 2310 | Red Hat OpenShift | ★★★ |
+| 2311 | OpenShift vs Kubernetes | ★★★ |

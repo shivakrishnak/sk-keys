@@ -11,7 +11,7 @@ permalink: /data-fundamentals/
 
 Data formats, storage models, data lake/warehouse/lakehouse architectures, modeling, and governance.
 
-**Keywords:** 496–530 (35 terms)
+**Keywords:** 496–2342 (38 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -50,3 +50,6 @@ Data formats, storage models, data lake/warehouse/lakehouse architectures, model
 | 528 | Master Data Management | ★★★ |
 | 529 | OLTP vs OLAP | ★★☆ |
 | 530 | ETL vs ELT | ★★☆ |
+| 2340 | AVRO Schema | ★★★ |
+| 2341 | Schema Registry (Confluent) | ★★★ |
+| 2342 | Object Storage Patterns | ★★★ |

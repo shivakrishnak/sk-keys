@@ -11,7 +11,7 @@ permalink: /http-apis/
 
 HTTP versions, REST, GraphQL, gRPC, WebSocket, API security, authentication, and API design best practices.
 
-**Keywords:** 206–260 (55 terms)
+**Keywords:** 206–2292 (58 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -70,3 +70,6 @@ HTTP versions, REST, GraphQL, gRPC, WebSocket, API security, authentication, and
 | 258 | API Deprecation Strategy | ★★★ |
 | 259 | API Observability | ★★★ |
 | 260 | API Security Best Practices | ★★★ |
+| 2290 | Apigee (API Management Platform) | ★★★ |
+| 2291 | API Management Platform | ★★★ |
+| 2292 | API Gateway Patterns | ★★★ |

@@ -11,7 +11,7 @@ permalink: /react/
 
 React hooks, fiber architecture, reconciliation, Server Components, SSR, state management, and performance.
 
-**Keywords:** 1421–1480 (60 terms)
+**Keywords:** 1421–2186 (67 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -75,3 +75,10 @@ React hooks, fiber architecture, reconciliation, Server Components, SSR, state m
 | 1478 | Micro-Frontend with React | ★★★ |
 | 1479 | Module Federation (React) | ★★★ |
 | 1480 | Islands Architecture | ★★★ |
+| 2180 | React Accessibility (a11y) | ★★★ |
+| 2181 | React Performance Profiling (Browser DevTools) | ★★★ |
+| 2182 | ESLint (React) | ★★☆ |
+| 2183 | Prettier | ★☆☆ |
+| 2184 | Apollo Client | ★★★ |
+| 2185 | Apollo Federation | ★★★ |
+| 2186 | GraphQL with React | ★★★ |

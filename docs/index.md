@@ -8,7 +8,7 @@ permalink: /
 
 # 📚 Technical Dictionary
 
-A comprehensive software engineering dictionary — **1,770 keywords** across **43 categories**, organized in learning-dependency order from foundations to specialized domains.
+A comprehensive software engineering dictionary — **2,231 keywords** across **48 categories**, organized in learning-dependency order from foundations to specialized domains.
 
 ---
 
@@ -28,13 +28,13 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 | # | Category | Keywords | Range |
 |---|---|---|---|
 | 5 | [Networking](./Networking/) | 40 | 166–205 |
-| 6 | [HTTP & APIs](./HTTP%20&%20APIs/) | 55 | 206–260 |
+| 6 | [HTTP & APIs](./HTTP%20&%20APIs/) | 58 | 206–2292 |
 
 ### 🔵 Tier 3 — Java & JVM
 
 | # | Category | Keywords | Range |
 |---|---|---|---|
-| 7 | [Java & JVM Internals](./Java%20&%20JVM%20Internals/) | 50 | 261–310 |
+| 7 | [Java & JVM Internals](./Java%20&%20JVM%20Internals/) | 65 | 261–2114 |
 | 8 | [Java Language](./Java%20Language/) | 20 | 311–330 |
 | 9 | [Java Concurrency](./Java%20Concurrency/) | 40 | 331–370 |
 
@@ -42,22 +42,22 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 
 | # | Category | Keywords | Range |
 |---|---|---|---|
-| 10 | [Spring Core](./Spring%20Core/) | 40 | 371–410 |
+| 10 | [Spring Core](./Spring%20Core/) | 53 | 371–2132 |
 
 ### 🔵 Tier 5 — Databases
 
 | # | Category | Keywords | Range |
 |---|---|---|---|
-| 11 | [Database Fundamentals](./Database%20Fundamentals/) | 40 | 411–450 |
-| 12 | [NoSQL & Distributed Databases](./NoSQL%20&%20Distributed%20Databases/) | 25 | 451–475 |
+| 11 | [Database Fundamentals](./Database%20Fundamentals/) | 51 | 411–2150 |
+| 12 | [NoSQL & Distributed Databases](./NoSQL%20&%20Distributed%20Databases/) | 36 | 451–2170 |
 | 13 | [Caching](./Caching/) | 20 | 476–495 |
 
 ### 🔵 Tier 6 — Data Engineering & Big Data
 
 | # | Category | Keywords | Range |
 |---|---|---|---|
-| 14 | [Data Fundamentals](./Data%20Fundamentals/) | 35 | 496–530 |
-| 15 | [Big Data & Streaming](./Big%20Data%20&%20Streaming/) | 40 | 531–570 |
+| 14 | [Data Fundamentals](./Data%20Fundamentals/) | 38 | 496–2342 |
+| 15 | [Big Data & Streaming](./Big%20Data%20&%20Streaming/) | 44 | 531–2353 |
 
 ### 🔵 Tier 7 — Distributed Systems
 
@@ -69,14 +69,14 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 
 | # | Category | Keywords | Range |
 |---|---|---|---|
-| 17 | [Microservices](./Microservices/) | 55 | 626–680 |
+| 17 | [Microservices](./Microservices/) | 60 | 626–2284 |
 
 ### 🔵 Tier 9 — System & Software Architecture
 
 | # | Category | Keywords | Range |
 |---|---|---|---|
 | 18 | [System Design](./System%20Design/) | 45 | 681–725 |
-| 19 | [Software Architecture Patterns](./Software%20Architecture%20Patterns/) | 40 | 726–765 |
+| 19 | [Software Architecture Patterns](./Software%20Architecture%20Patterns/) | 47 | 726–2306 |
 
 ### 🔵 Tier 10 — Design Patterns
 
@@ -88,11 +88,11 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 
 | # | Category | Keywords | Range |
 |---|---|---|---|
-| 21 | [Containers](./Containers/) | 35 | 821–855 |
+| 21 | [Containers](./Containers/) | 37 | 821–2311 |
 | 22 | [Kubernetes](./Kubernetes/) | 60 | 856–915 |
-| 23 | [Cloud — AWS](./Cloud%20—%20AWS/) | 40 | 916–955 |
+| 23 | [Cloud — AWS](./Cloud%20—%20AWS/) | 59 | 916–2208 |
 | 24 | [Cloud — Azure](./Cloud%20—%20Azure/) | 35 | 956–990 |
-| 25 | [CI/CD](./CI-CD/) | 40 | 991–1030 |
+| 25 | [CI/CD](./CI-CD/) | 66 | 991–2247 |
 | 26 | [Git & Branching Strategy](./Git%20&%20Branching%20Strategy/) | 35 | 1031–1065 |
 | 27 | [Maven & Build Tools (Java)](./Maven%20&%20Build%20Tools%20(Java)/) | 30 | 1066–1095 |
 
@@ -101,8 +101,8 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 | # | Category | Keywords | Range |
 |---|---|---|---|
 | 28 | [Code Quality](./Code%20Quality/) | 35 | 1096–1130 |
-| 29 | [Testing](./Testing/) | 45 | 1131–1175 |
-| 30 | [Observability & SRE](./Observability%20&%20SRE/) | 35 | 1176–1210 |
+| 29 | [Testing](./Testing/) | 54 | 1131–2258 |
+| 30 | [Observability & SRE](./Observability%20&%20SRE/) | 41 | 1176–2270 |
 
 ### 🔵 Tier 13 — Frontend
 
@@ -112,7 +112,7 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 | 32 | [CSS](./CSS/) | 50 | 1241–1290 |
 | 33 | [JavaScript](./JavaScript/) | 80 | 1291–1370 |
 | 34 | [TypeScript](./TypeScript/) | 50 | 1371–1420 |
-| 35 | [React](./React/) | 60 | 1421–1480 |
+| 35 | [React](./React/) | 67 | 1421–2186 |
 | 36 | [Node.js](./Node.js/) | 30 | 1481–1510 |
 | 37 | [npm & Package Management](./npm%20&%20Package%20Management/) | 20 | 1511–1530 |
 | 38 | [Webpack & Build Tools](./Webpack%20&%20Build%20Tools/) | 50 | 1531–1580 |
@@ -130,7 +130,37 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 | # | Category | Keywords | Range |
 |---|---|---|---|
 | 42 | [Platform & Modern SWE](./Platform%20&%20Modern%20SWE/) | 30 | 1701–1730 |
-| 43 | [Behavioral & Leadership](./Behavioral%20&%20Leadership/) | 40 | 1731–1770 |
+| 43 | [Behavioral & Leadership](./Behavioral%20&%20Leadership/) | 51 | 1731–2330 |
+
+### 🔵 Tier 16 — Security
+
+| # | Category | Keywords | Range |
+|---|---|---|---|
+| 44 | [Security](./Security/) | 112 | 1771–1882 |
+
+### 🔵 Tier 17 — Async & Background Processing
+
+| # | Category | Keywords | Range |
+|---|---|---|---|
+| 45 | [Async & Background Processing](./Async%20&%20Background%20Processing/) | 78 | 1883–1960 |
+
+### 🔵 Tier 18 — Document Generation
+
+| # | Category | Keywords | Range |
+|---|---|---|---|
+| 46 | [Document Generation & Output Management](./Document%20Generation%20&%20Output%20Management/) | 21 | 2400–2420 |
+
+### 🔵 Tier 19 — Domain — Financial Services
+
+| # | Category | Keywords | Range |
+|---|---|---|---|
+| 47 | [Financial Services Engineering](./Financial%20Services%20Engineering/) | 30 | 2441–2470 |
+
+### 🔵 Tier 20 — Frontend — Angular
+
+| # | Category | Keywords | Range |
+|---|---|---|---|
+| 48 | [Angular](./Angular/) | 30 | 2471–2500 |
 
 ---
 
@@ -138,8 +168,8 @@ A comprehensive software engineering dictionary — **1,770 keywords** across **
 
 | Stat | Value |
 |---|---|
-| Total keywords | 1,770 |
-| Total categories | 43 |
+| Total keywords | 2,231 |
+| Total categories | 48 |
 | Difficulty ★☆☆ | Foundational |
 | Difficulty ★★☆ | Intermediate |
 | Difficulty ★★★ | Deep-dive |

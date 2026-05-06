@@ -11,7 +11,7 @@ permalink: /spring/
 
 Spring IoC/DI, AOP, MVC, data access, transactions, Boot auto-configuration, and reactive programming.
 
-**Keywords:** 371–410 (40 terms)
+**Keywords:** 371–2132 (53 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -55,3 +55,16 @@ Spring IoC/DI, AOP, MVC, data access, transactions, Boot auto-configuration, and
 | 408 | Spring Data JPA | ★★☆ |
 | 409 | Spring Cloud | ★★★ |
 | 410 | Spring Boot Testing | ★★☆ |
+| 2120 | Spring Batch | ★★★ |
+| 2121 | Spring Batch Job / Step / Tasklet | ★★★ |
+| 2122 | Spring Batch ItemReader / ItemProcessor / ItemWriter | ★★★ |
+| 2123 | Spring Batch Chunk Processing | ★★★ |
+| 2124 | Spring Cloud Overview | ★★★ |
+| 2125 | Spring Cloud Config | ★★★ |
+| 2126 | Spring Cloud Gateway | ★★★ |
+| 2127 | Spring Cloud Service Discovery (Eureka) | ★★★ |
+| 2128 | Spring Cloud Load Balancer | ★★★ |
+| 2129 | Spring Cloud Circuit Breaker | ★★★ |
+| 2130 | Micronaut Framework | ★★★ |
+| 2131 | Micronaut vs Spring Boot | ★★★ |
+| 2132 | Quarkus Framework | ★★★ |

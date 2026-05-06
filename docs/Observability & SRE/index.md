@@ -11,7 +11,7 @@ permalink: /observability/
 
 Logging, metrics, distributed tracing, OpenTelemetry, Prometheus, Grafana, alerting, and SRE principles.
 
-**Keywords:** 1176–1210 (35 terms)
+**Keywords:** 1176–2270 (41 terms)
 
 | # | Keyword | Difficulty |
 |---|---|---|
@@ -50,3 +50,9 @@ Logging, metrics, distributed tracing, OpenTelemetry, Prometheus, Grafana, alert
 | 1208 | Post-Mortem / Blameless Culture | ★★★ |
 | 1209 | Chaos Engineering | ★★★ |
 | 1210 | SRE Principles | ★★★ |
+| 2265 | AppDynamics | ★★★ |
+| 2266 | AWS CloudWatch Alarms | ★★★ |
+| 2267 | AWS CloudWatch Dashboards | ★★★ |
+| 2268 | AWS CloudWatch Log Insights | ★★★ |
+| 2269 | AWS X-Ray (Distributed Tracing) | ★★★ |
+| 2270 | Actionable Alerting Patterns | ★★★ |
