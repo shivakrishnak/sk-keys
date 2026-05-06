@@ -26,11 +26,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #765 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Coupling, Cohesion, Object-Oriented Design | |
-| **Used by:** | Advanced code review, Refactoring, Architecture analysis | |
-| **Related:** | Coupling, Cohesion, Law of Demeter, Tell Don't Ask, SOLID Principles | |
+| #765            | Category: Software Architecture Patterns                             | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Coupling, Cohesion, Object-Oriented Design                           |                 |
+| **Used by:**    | Advanced code review, Refactoring, Architecture analysis             |                 |
+| **Related:**    | Coupling, Cohesion, Law of Demeter, Tell Don't Ask, SOLID Principles |                 |
 
 ---
 
@@ -56,6 +56,7 @@ Connascence was introduced by Meilir Page-Jones in "What Every Programmer Should
 A formal taxonomy for coupling — two components are connascent if changing one requires changing the other; different types of connascence have different severity and different fixes.
 
 **One analogy:**
+
 > Connascence is like a medical diagnostic code system. "Patient is sick" (informal) is like saying "code is coupled." A precise diagnosis — "J18.9 Community-acquired pneumonia, unspecified" — identifies exactly what's wrong, severity, and treatment. Connascence types are like diagnostic codes for coupling: each identifies a specific kind of dependency, its severity, and the standard treatment (refactoring) to reduce it.
 
 **One insight:**
@@ -325,26 +326,26 @@ class ChecksumService {
 
 ### ⚖️ Comparison Table
 
-| Connascence type | Example | Severity | Fix direction |
-|---|---|---|---|
-| CoN (Name) | Both call `calculateTax()` | Lowest | Accept; consistent naming |
-| CoT (Type) | Both use `BigDecimal` | Low | Accept; common types |
-| CoM (Meaning) | Magic string `"PENDING"` | Medium | Named constant / enum |
-| CoPos (Position) | Positional args | Medium | Parameter object |
-| CoA (Algorithm) | Same algo in 2 places | High | Extract to shared impl |
-| CoTi (Timing) | Race conditions | High | Transactions / locking |
-| CoId (Identity) | Same object instance | Highest | Redesign boundary |
+| Connascence type | Example                    | Severity | Fix direction             |
+| ---------------- | -------------------------- | -------- | ------------------------- |
+| CoN (Name)       | Both call `calculateTax()` | Lowest   | Accept; consistent naming |
+| CoT (Type)       | Both use `BigDecimal`      | Low      | Accept; common types      |
+| CoM (Meaning)    | Magic string `"PENDING"`   | Medium   | Named constant / enum     |
+| CoPos (Position) | Positional args            | Medium   | Parameter object          |
+| CoA (Algorithm)  | Same algo in 2 places      | High     | Extract to shared impl    |
+| CoTi (Timing)    | Race conditions            | High     | Transactions / locking    |
+| CoId (Identity)  | Same object instance       | Highest  | Redesign boundary         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Connascence = coupling (same thing) | Connascence is a more precise taxonomy of coupling types, not just "coupling" |
-| CoN is bad (they share a name!) | CoN is the WEAKEST connascence — it's acceptable and unavoidable in good OO code |
-| All connascence must be eliminated | Some connascence is necessary and appropriate; the goal is to minimize strength and degree, not eliminate all connascence |
-| Connascence only applies to OOP | Connascence applies to any structured code; it's particularly useful for module and service boundary analysis |
+| Misconception                       | Reality                                                                                                                   |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Connascence = coupling (same thing) | Connascence is a more precise taxonomy of coupling types, not just "coupling"                                             |
+| CoN is bad (they share a name!)     | CoN is the WEAKEST connascence — it's acceptable and unavoidable in good OO code                                          |
+| All connascence must be eliminated  | Some connascence is necessary and appropriate; the goal is to minimize strength and degree, not eliminate all connascence |
+| Connascence only applies to OOP     | Connascence applies to any structured code; it's particularly useful for module and service boundary analysis             |
 
 ---
 
@@ -363,10 +364,12 @@ class ChecksumService {
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Coupling` — connascence is a formal, precise extension of coupling analysis
 - `Cohesion` — connascence analysis always accompanies cohesion analysis
 
 **Related:**
+
 - `Law of Demeter` — LoD violations create specific connascence patterns (CoPos, CoN across objects)
 - `Tell Don't Ask` — applying TDA reduces connascence between caller and object internals
 

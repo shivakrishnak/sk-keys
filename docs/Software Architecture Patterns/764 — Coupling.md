@@ -26,11 +26,11 @@ tags:
 
 ### 📊 Entry Metadata
 
-| #764 | Category: Software Architecture Patterns | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Oriented Design, Module Design, Cohesion | |
-| **Used by:** | API design, Module design, Microservice design, Code review | |
-| **Related:** | Cohesion, Connascence, Law of Demeter, Dependency Inversion Principle | |
+| #764            | Category: Software Architecture Patterns                              | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Design, Module Design, Cohesion                       |                 |
+| **Used by:**    | API design, Module design, Microservice design, Code review           |                 |
+| **Related:**    | Cohesion, Connascence, Law of Demeter, Dependency Inversion Principle |                 |
 
 ---
 
@@ -56,6 +56,7 @@ Coupling is a measure of the degree of interdependence between software modules.
 How much does changing module A force changes in module B? Low coupling means: very little; changing A doesn't affect B.
 
 **One analogy:**
+
 > Power outlets and devices are loosely coupled: a toaster, lamp, and laptop all use the same standard socket interface. The outlet doesn't know about the toaster's heating coils. The toaster doesn't know about the outlet's wiring. You can replace the toaster without changing the outlet, and vice versa. The interface (the socket standard) is the decoupling mechanism. Tightly coupled equivalent: soldering the toaster directly into the wall. Changing the toaster requires re-wiring the wall.
 
 **One insight:**
@@ -138,9 +139,10 @@ Coupling is the enemy of change. The more tightly two modules are coupled, the m
 ### 🧪 Thought Experiment
 
 **CONTROL COUPLING EXAMPLE:**
+
 ```java
 // Control coupling: caller controls B's behavior via flag
-public void processPayment(Payment payment, 
+public void processPayment(Payment payment,
                             boolean isRefund) {
     if (isRefund) {
         // completely different code path
@@ -150,9 +152,11 @@ public void processPayment(Payment payment,
     }
 }
 ```
+
 The caller must know about the internal behavior distinction. Fix: two methods — `chargeCard(payment)` and `refund(payment)`. Callers choose the right method; no flag needed. Removes control coupling.
 
 **STAMP COUPLING EXAMPLE:**
+
 ```java
 // Stamp coupling: passing full Order when only ID is needed
 public ShippingQuote calculateShipping(Order order) {
@@ -160,6 +164,7 @@ public ShippingQuote calculateShipping(Order order) {
     // But must import and depend on the full Order class
 }
 ```
+
 Fix: `calculateShipping(Address destination, Weight weight)` — pass only the data needed. Removes the dependency on the `Order` class entirely.
 
 ---
@@ -300,25 +305,25 @@ public class OrderService {
 
 ### ⚖️ Comparison Table
 
-| Coupling type | Where it appears | Severity | Fix |
-|---|---|---|---|
-| Content | Direct field access | Critical | Encapsulate; use methods |
-| Common | Global state | High | Dependency injection |
-| Control | Boolean flag params | Medium | Separate methods |
-| Stamp | Large object passing | Medium | Pass only needed data |
-| Data | Primitive passing | Low (acceptable) | Accept |
-| Message | Event-based | Very low (ideal) | Prefer for async |
+| Coupling type | Where it appears     | Severity         | Fix                      |
+| ------------- | -------------------- | ---------------- | ------------------------ |
+| Content       | Direct field access  | Critical         | Encapsulate; use methods |
+| Common        | Global state         | High             | Dependency injection     |
+| Control       | Boolean flag params  | Medium           | Separate methods         |
+| Stamp         | Large object passing | Medium           | Pass only needed data    |
+| Data          | Primitive passing    | Low (acceptable) | Accept                   |
+| Message       | Event-based          | Very low (ideal) | Prefer for async         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| All coupling is bad | Some coupling is unavoidable and acceptable; the goal is necessary coupling, not zero coupling |
-| Low coupling = microservices | Microservices physically separate modules but don't automatically reduce logical coupling; distributed monoliths have high coupling despite physical separation |
-| Loose coupling = many indirection layers | Unnecessary indirection adds complexity without reducing coupling; only add abstraction when it reduces real coupling |
-| Coupling is only about imports | Temporal coupling, data coupling, and deployment coupling are equally important in distributed systems |
+| Misconception                            | Reality                                                                                                                                                         |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| All coupling is bad                      | Some coupling is unavoidable and acceptable; the goal is necessary coupling, not zero coupling                                                                  |
+| Low coupling = microservices             | Microservices physically separate modules but don't automatically reduce logical coupling; distributed monoliths have high coupling despite physical separation |
+| Loose coupling = many indirection layers | Unnecessary indirection adds complexity without reducing coupling; only add abstraction when it reduces real coupling                                           |
+| Coupling is only about imports           | Temporal coupling, data coupling, and deployment coupling are equally important in distributed systems                                                          |
 
 ---
 
@@ -337,10 +342,12 @@ public class OrderService {
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Cohesion` — always analyzed alongside coupling; high cohesion + low coupling = good design
 - `Encapsulation` — the mechanism that enforces coupling boundaries
 
 **Related:**
+
 - `Dependency Inversion Principle` — the mechanism for achieving low coupling
 - `Connascence` — more precise formal framework for coupling analysis
 
