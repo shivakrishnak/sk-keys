@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — @Autowired tells Spring to resolve and inject a dependency by type automatically, eliminating manual bean lookup and wiring code.
 
-| #380            | Category: Spring Core                                    | Difficulty: ★★☆ |
-| :-------------- | :------------------------------------------------------- | :-------------- |
-| **Depends on:** | DI, BeanFactory, Bean, BeanPostProcessor                 |                 |
-| **Used by:**    | All Spring Beans, Spring MVC Controllers, Spring Services |               |
-| **Related:**    | @Qualifier, @Primary, @Inject, Constructor Injection     |                 |
+| #380            | Category: Spring Core                                     | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------- | :-------------- |
+| **Depends on:** | DI, BeanFactory, Bean, BeanPostProcessor                  |                 |
+| **Used by:**    | All Spring Beans, Spring MVC Controllers, Spring Services |                 |
+| **Related:**    | @Qualifier, @Primary, @Inject, Constructor Injection      |                 |
 
 ---
 
@@ -55,10 +55,11 @@ XML-based wiring doesn't fail at compile time — it fails at startup when Sprin
 @Autowired means "Spring: find the right object and inject it here."
 
 **One analogy:**
+
 > @Autowired is like ordering room service and checking "automatic substitution allowed." The hotel (Spring) finds the closest match for what you ordered — if you asked for "a vegetable," it sends broccoli (the registered bean of that type). You don't specify the brand; you specify the category, and the hotel fills the order from whatever it has.
 
 **One insight:**
-`@Autowired` resolves dependencies by *type*, not by name. This is its superpower (no spelling errors, rename-safe) and its weakness (ambiguous when two beans of the same type exist). The `@Qualifier` annotation adds name-based disambiguation on top of type matching.
+`@Autowired` resolves dependencies by _type_, not by name. This is its superpower (no spelling errors, rename-safe) and its weakness (ambiguous when two beans of the same type exist). The `@Qualifier` annotation adds name-based disambiguation on top of type matching.
 
 ---
 
@@ -74,6 +75,7 @@ XML-based wiring doesn't fail at compile time — it fails at startup when Sprin
 The annotation approach moves wiring information into the code, co-locating declaration with usage. The `AutowiredAnnotationBeanPostProcessor` processes the annotation reflectively: it finds annotated elements, resolves dependencies from the context, and injects them via `ReflectionUtils.makeAccessible()` for fields or direct constructor invocation.
 
 **Resolution algorithm (in order):**
+
 ```
 1. Find all beans of the required type
 2. If exactly 1: inject it
@@ -98,15 +100,18 @@ The annotation approach moves wiring information into the code, co-locating decl
 You have `OrderService` needing `PaymentProcessor` and `InventoryService`. The old approach: XML wiring. The new approach: `@Autowired`.
 
 **WHAT HAPPENS WITHOUT @Autowired (XML approach):**
+
 ```xml
 <bean id="orderService" class="com.example.OrderService">
     <property name="paymentProcessor" ref="stripeProcessor"/>
     <property name="inventoryService" ref="inventoryServiceImpl"/>
 </bean>
 ```
+
 Adding a third dependency → edit XML in a different file. Rename `stripeProcessor` to `stripePaymentProcessor` → XML breaks at runtime, not compile time. 50 services × 3 deps = 150 XML entries to maintain.
 
 **WHAT HAPPENS WITH @Autowired:**
+
 ```java
 @Service
 public class OrderService {
@@ -118,6 +123,7 @@ public class OrderService {
     }
 }
 ```
+
 Adding a third dependency → add constructor parameter. Rename a bean's class → compiler detects broken references. Zero separate configuration file. The constructor signature IS the wiring specification.
 
 **THE INSIGHT:**
@@ -186,6 +192,7 @@ During doCreateBean():
 ```
 
 **Disambiguation algorithm:**
+
 ```
 Required type: UserRepository
 Candidates found: [jdbcUserRepository, jpaUserRepository]
@@ -208,6 +215,7 @@ Throw: NoUniqueBeanDefinitionException
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 Bean component scan → UserService detected
     ↓
@@ -230,6 +238,7 @@ All beans that @Autowire UserService get the same instance
 ```
 
 **FAILURE PATH:**
+
 ```
 @Autowired UserRepository repo
 Two candidates: jdbcUserRepository, jpaUserRepository
@@ -249,6 +258,7 @@ Context refresh fails → application exits
 ### 💻 Code Example
 
 **Example 1 — Constructor injection (recommended):**
+
 ```java
 @Service
 public class OrderService {
@@ -267,6 +277,7 @@ public class OrderService {
 ```
 
 **Example 2 — Optional dependency:**
+
 ```java
 @Service
 public class MetricsService {
@@ -287,6 +298,7 @@ public class MetricsService {
 ```
 
 **Example 3 — Disambiguating with @Qualifier:**
+
 ```java
 public interface NotificationChannel {
     void send(String message, String recipient);
@@ -315,6 +327,7 @@ public class AlertService {
 ```
 
 **Example 4 — Collection injection (all beans of a type):**
+
 ```java
 @Service
 public class HealthCheckService {
@@ -339,12 +352,12 @@ public class HealthCheckService {
 
 ### ⚖️ Comparison Table
 
-| Injection Style | Testability | Immutability | Required | Coupling |
-|---|---|---|---|---|
-| **Constructor @Autowired** | Excellent (plain new) | Yes (final) | Yes by default | Low |
-| Field @Autowired | Poor (needs context) | No | Yes by default | Medium |
-| Setter @Autowired | Good | No | Optional | Low |
-| @Inject (JSR-330) | Same as @Autowired | Same as target | Yes | None (standard) |
+| Injection Style            | Testability           | Immutability   | Required       | Coupling        |
+| -------------------------- | --------------------- | -------------- | -------------- | --------------- |
+| **Constructor @Autowired** | Excellent (plain new) | Yes (final)    | Yes by default | Low             |
+| Field @Autowired           | Poor (needs context)  | No             | Yes by default | Medium          |
+| Setter @Autowired          | Good                  | No             | Optional       | Low             |
+| @Inject (JSR-330)          | Same as @Autowired    | Same as target | Yes            | None (standard) |
 
 **How to choose:** Constructor injection for all mandatory dependencies. Setter injection for optional, reconfigurable dependencies. Avoid field injection in production code. Use `@Inject` if Spring framework coupling is a concern.
 
@@ -352,13 +365,13 @@ public class HealthCheckService {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| @Autowired is always required | required=false or Optional<T> parameter make it optional. A missing optional dependency results in null or empty Optional, not a startup failure. |
-| @Autowired injects by bean name | @Autowired resolves by type first. Name-based resolution only occurs as a fallback when type resolution is ambiguous. |
+| Misconception                            | Reality                                                                                                                                                    |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| @Autowired is always required            | required=false or Optional<T> parameter make it optional. A missing optional dependency results in null or empty Optional, not a startup failure.          |
+| @Autowired injects by bean name          | @Autowired resolves by type first. Name-based resolution only occurs as a fallback when type resolution is ambiguous.                                      |
 | You need @Autowired on every constructor | Since Spring 4.3, a single constructor is implicitly autowired. @Autowired is only needed for multiple constructors (to indicate which Spring should use). |
-| @Autowired and @Inject are identical | Functionally similar. @Inject doesn't have a required=false option. @Autowired is Spring-specific; @Inject is JSR-330 (portable). |
-| Field @Autowired is fine in tests | Field injection requires Spring context to inject. Unit tests without Spring context get null fields. Constructor injection works with plain new. |
+| @Autowired and @Inject are identical     | Functionally similar. @Inject doesn't have a required=false option. @Autowired is Spring-specific; @Inject is JSR-330 (portable).                          |
+| Field @Autowired is fine in tests        | Field injection requires Spring context to inject. Unit tests without Spring context get null fields. Constructor injection works with plain new.          |
 
 ---
 
@@ -373,16 +386,18 @@ public class HealthCheckService {
 Two beans satisfy the same `@Autowired` type. Spring's disambiguation failed.
 
 **Diagnostic Command / Tool:**
+
 ```bash
 # List all beans of a given type
 curl -s http://localhost:8080/actuator/beans | \
-  jq '.contexts[].beans | 
-      to_entries[] | 
-      select(.value.type | test("NotificationChannel")) | 
+  jq '.contexts[].beans |
+      to_entries[] |
+      select(.value.type | test("NotificationChannel")) |
       .key'
 ```
 
 **Fix:**
+
 ```java
 // Option 1: @Primary on the default implementation
 @Primary
@@ -408,6 +423,7 @@ private NotificationChannel fallbackChannel;
 Field injection requires `AutowiredAnnotationBeanPostProcessor` to inject values. In a plain unit test (`new UserService()`), no Spring context runs — fields are never injected.
 
 **Diagnostic Command / Tool:**
+
 ```java
 // Detect field injection at code review
 // Any @Autowired on a non-constructor element in a non-test class
@@ -415,6 +431,7 @@ Field injection requires `AutowiredAnnotationBeanPostProcessor` to inject values
 ```
 
 **Fix:**
+
 ```java
 // BAD: field injection — null in unit tests
 @Service
@@ -451,16 +468,19 @@ class UserServiceTest {
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `DI (Dependency Injection)` — @Autowired is the annotation that enables DI in Spring
 - `Bean` — @Autowired resolves beans; must understand what a bean is
 - `BeanPostProcessor` — AutowiredAnnotationBeanPostProcessor implements @Autowired processing
 
 **Builds On This (learn these next):**
+
 - `@Qualifier / @Primary` — the disambiguation tools when @Autowired finds multiple candidates
 - `@Configuration / @Bean` — how to create beans that @Autowired can inject
 - `Circular Dependency` — what happens when @Autowired creates a dependency cycle
 
 **Alternatives / Comparisons:**
+
 - `@Inject (JSR-330)` — the standard Java alternative to @Autowired; no required=false option
 - `@Resource (JSR-250)` — name-based injection alternative; resolves by bean name, not type
 
