@@ -4,350 +4,403 @@ title: "Bean"
 parent: "Spring Core"
 nav_order: 375
 permalink: /spring/bean/
-number: "375"
+number: "0375"
 category: Spring Core
 difficulty: ★☆☆
-depends_on: IoC (Inversion of Control), DI (Dependency Injection)
-used_by: Bean Lifecycle, Bean Scope, ApplicationContext, BeanFactory
-tags: #foundational, #spring, #architecture
+depends_on: IoC, DI, BeanFactory
+used_by: Bean Lifecycle, Bean Scope, BeanPostProcessor, ApplicationContext
+related: Component, Service, Repository, BeanDefinition
+tags:
+  - spring
+  - springboot
+  - foundational
+  - architecture
 ---
 
 # 375 — Bean
 
-`#foundational` `#spring` `#architecture`
+⚡ TL;DR — A bean is any object whose lifecycle — creation, wiring, and destruction — is managed by Spring's IoC container.
 
-⚡ TL;DR — A **bean** is any object whose lifecycle — instantiation, dependency wiring, and destruction — is managed by the Spring IoC container.
+| #375            | Category: Spring Core                                             | Difficulty: ★☆☆ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | IoC, DI, BeanFactory                                              |                 |
+| **Used by:**    | Bean Lifecycle, Bean Scope, BeanPostProcessor, ApplicationContext |                 |
+| **Related:**    | Component, Service, Repository, BeanDefinition                    |                 |
 
-| #375            | Category: Spring Core                                 | Difficulty: ★☆☆ |
-| :-------------- | :---------------------------------------------------- | :-------------- |
-| **Depends on:** | IoC (Inversion of Control), DI (Dependency Injection) |                 |
-| **Used by:**    | Bean Lifecycle, Bean Scope, ApplicationContext        |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+In a plain Java application, you create objects with `new`. Objects have no guaranteed lifecycle: they're created somewhere in a call chain, used, and eventually garbage collected. There's no central registry. You can't ask "is there a `UserRepository` somewhere?" You can't guarantee that two parts of the app share the _same_ instance of a service. You can't hook into an object's initialization or destruction. Every object is on its own.
+
+**THE BREAKING POINT:**
+Shared infrastructure objects (database connections, HTTP clients, thread pools) should exist exactly once per application. But `new` creates new instances every time. Without a managed lifecycle, connection pools leak, thread pools multiply, initialization logic runs multiple times, and cleanup on shutdown never happens. Applications grow unpredictable as each part of the codebase creates its own versions of shared resources.
+
+**THE INVENTION MOMENT:**
+"This is exactly why the Bean concept was created."
 
 ---
 
 ### 📘 Textbook Definition
 
-In Spring, a **bean** is an object that is instantiated, assembled, and managed by the Spring IoC container. A class becomes a bean by being registered with the container — either via stereotype annotations (`@Component`, `@Service`, `@Repository`, `@Controller`), explicit `@Bean` methods in a `@Configuration` class, or XML bean definitions. The container stores a _bean definition_ (metadata describing class, scope, dependencies, and lifecycle callbacks) for each bean and uses it to create bean instances. The container manages the full lifecycle: instantiation → dependency injection → `BeanPostProcessor` processing → `@PostConstruct` initialisation → ready state → `@PreDestroy` cleanup → destruction. Beans are distinct from plain Java objects: they are container-aware, scoped, and wired.
+A **bean** in Spring is an object that is instantiated, assembled, and managed by the Spring IoC container. Beans are defined through stereotype annotations (`@Component`, `@Service`, `@Repository`, `@Controller`), `@Bean` factory methods inside `@Configuration` classes, or (historically) XML `<bean>` declarations. The container stores metadata about each bean in a `BeanDefinition`, which specifies the class, scope, dependencies, initialization method, and destruction method. The container creates beans, injects their dependencies, calls lifecycle callbacks, and destroys them when the application shuts down.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-A bean is any Java object that Spring creates and manages for you. You register it once; Spring creates it, wires it, and destroys it when done.
+**One line:**
+A bean is a Spring-managed object: Spring creates it, wires it, and cleans it up.
 
----
+**One analogy:**
 
-### 🔵 Simple Definition (Elaborated)
+> A bean is like a government-issued ID card holder. The government (Spring) issues the ID (registers the bean), knows exactly who holds one (singleton registry), can revoke them (destroy callbacks), and ensures everyone needing the same person gets the same ID holder — not a copy. Objects without Spring management are like people without IDs: untracked and unverifiable.
 
-A regular Java object is created with `new MyClass()` and lives as long as a variable holds a reference to it. A Spring bean is different: you declare it (with an annotation or configuration), and Spring takes responsibility for creating it at the right time, injecting its dependencies, running any initialisation code, keeping it alive as long as needed (based on scope), and running cleanup code when it is no longer needed. The advantage is that you declare the entire graph of objects and their relationships once; Spring handles construction order, lifecycle, and teardown. Any `@Service`, `@Repository`, `@Controller`, `@Component`, or `@Bean` method result is a bean.
+**One insight:**
+The difference between a bean and a plain object is _management_. A plain object doesn't know who created it, how long it should live, or when it should be destroyed. A bean has a complete lifecycle managed externally — creation, dependency wiring, initialization, use, and destruction. This external management is what makes Spring's AOP, transactions, and event systems work.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**What makes an object a bean — three registration paths:**
+**CORE INVARIANTS:**
 
-```java
-// PATH 1: Stereotype annotation (most common in Spring Boot)
-@Service           // tells Spring: "manage this class as a bean"
-class OrderService {
-    private final PaymentGateway gateway; // dependency — also a bean
-    OrderService(PaymentGateway gateway) { this.gateway = gateway; }
-}
+1. A bean is registered with the container before it can be injected — you can't inject what Spring doesn't know about.
+2. Singleton beans are created once and shared; the same object reference is returned to every consumer.
+3. Bean metadata (the `BeanDefinition`) is separate from the bean instance — the recipe is stored independently of the cooked dish.
 
-// PATH 2: Explicit @Bean method in a @Configuration class
-@Configuration
-class InfraConfig {
-    @Bean
-    DataSource dataSource() {          // Spring manages the returned object
-        HikariConfig cfg = new HikariConfig();
-        cfg.setJdbcUrl(System.getenv("DB_URL"));
-        return new HikariDataSource(cfg); // THIS object becomes a bean
-    }
-}
+**DERIVED DESIGN:**
+For a bean to be manageable, Spring needs:
 
-// PATH 3: XML bean definition (legacy)
-// <bean id="orderService" class="com.example.OrderService">
-//   <constructor-arg ref="paymentGateway"/>
-// </bean>
-```
+- _Discovery:_ How to find the class (annotation scanning, explicit registration)
+- _Description:_ How to create it (constructor, factory method), its scope, its lifecycle callbacks
+- _Storage:_ Where to keep the instance (singleton cache) or the factory (prototype)
 
-**BeanDefinition — the blueprint Spring stores:**
+The `BeanDefinition` stores all description. The `BeanDefinitionRegistry` (inside `ApplicationContext`) stores all definitions. The singleton cache stores all instances.
 
-```
-BeanDefinition for OrderService:
-  beanClass:        com.example.OrderService
-  scope:            singleton (default)
-  lazyInit:         false (default)
-  constructorArgs:  [ref: paymentGateway]
-  propertyValues:   {}
-  initMethod:       null (or @PostConstruct method name)
-  destroyMethod:    null (or @PreDestroy method name)
-  autowireMode:     CONSTRUCTOR
-```
+**THE TRADE-OFFS:**
 
-Spring stores bean definitions, not instances. Instances are created from definitions according to scope rules.
+**Gain:** Shared instances, managed lifecycle, AOP proxy wrapping, dependency injection, and lifecycle callbacks — all free for any class registered as a bean.
 
-**Beans are NOT just any Java object — key distinctions:**
-
-```java
-// NOT a bean — created with new, unmanaged
-List<String> names = new ArrayList<>();   // not a bean
-String result = "hello";                  // not a bean
-LocalDate today = LocalDate.now();        // not a bean (value object)
-
-// IS a bean — managed by Spring
-@Service OrderService service   // bean: scoped, wired, lifecycle-managed
-@Repository UserRepo repo       // bean
-@Bean HikariDataSource ds       // bean: Spring manages its connection pool lifecycle
-```
-
-DI only works between beans. `OrderService` can inject `PaymentGateway` only if both are beans. A plain `new ArrayList<>()` cannot be injected via Spring.
+**Cost:** Spring must know about the class before it can manage it. Beans created outside Spring (with `new`) are invisible to the container. A bean's `this` reference inside methods bypasses Spring's proxy — calling `this.method()` skips `@Transactional` and `@Cacheable`. Understanding this "self-invocation" trap is essential.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-WITHOUT the Bean concept:
+**SETUP:**
+Your application has a `DatabasePool` that opens 20 connections to a PostgreSQL database. You need exactly one pool per application.
 
-What breaks without it:
+**WHAT HAPPENS WITHOUT beans (plain `new`):**
 
-1. No unified lifecycle management — every class constructs and destroys its own collaborators, leading to resource leaks (unclosed connections, uncleaned thread pools).
-2. No single source of truth for singleton instances — multiple callers create multiple objects, leading to inconsistent state.
-3. No central configuration for cross-cutting concerns — AOP, transactions, security, and caching cannot be applied without a container-managed object graph.
-4. No testability via injection — classes create their own dependencies, preventing mock substitution.
+1. `UserRepository` creates `new DatabasePool()` — 20 connections opened.
+2. `OrderRepository` creates `new DatabasePool()` — 20 more connections.
+3. `ProductRepository` creates `new DatabasePool()` — 20 more.
+4. With 10 repositories, you have 200 open connections.
+5. PostgreSQL's default limit is 100. Database refuses connections.
+6. The application crashes under normal load.
 
-WITH Beans:
-→ Spring manages singleton lifecycle — one instance, shared safely.
-→ `@PreDestroy` hooks ensure resources (connections, executors) are closed on shutdown.
-→ AOP proxies wrap beans transparently — `@Transactional` and `@Cacheable` work without code changes.
-→ Beans are replaceable by profile, condition, or test mock.
+**WHAT HAPPENS WITH a singleton bean:**
+
+1. Spring creates `DatabasePool` exactly once (singleton scope).
+2. `UserRepository`, `OrderRepository`, `ProductRepository` all receive the _same_ `DatabasePool` instance via DI.
+3. 20 connections total, shared across all repositories.
+4. On shutdown, Spring calls `@PreDestroy` on the pool, closing all 20 connections cleanly.
+
+**THE INSIGHT:**
+Singleton beans enforce shared-instance semantics without the developer writing a singleton pattern. Spring's container _is_ the singleton registry — and it manages cleanup that manual singletons usually forget.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> Think of a staffing agency roster. The agency (Spring) maintains a list of vetted professionals (beans). When you need a professional (declare a dependency), you don't hire and train them yourself — the agency provides someone from the roster, already cleared and equipped. The agency manages their contract (lifecycle), replaces them when they leave (destruction), and ensures only one person fills each unique role at a time (singleton scope). You interact with the professional, not the hiring process.
+> Beans are like registered businesses. When a business registers with the government (Spring), it gets a unique registration number (bean name), operates under known rules (scope, lifecycle), pays taxes on creation and dissolution (@PostConstruct / @PreDestroy), and is listed in public records (the bean registry). You can look up any registered business. Unregistered businesses (plain objects created with `new`) are invisible to the system.
 
-"Staffing agency roster" = the Spring bean registry (ApplicationContext)
-"Vetted professional" = a Spring bean (instantiated, wired, ready)
-"Hiring and training yourself" = calling `new ConcreteClass()` manually
-"Singleton role" = default singleton scope (one instance per context)
-"Contract management" = Spring bean lifecycle (init, destroy callbacks)
+- "Government registry" → Spring's `BeanDefinitionRegistry`
+- "Business registration" → `@Component` / `@Bean` declaration
+- "Single location of a franchise" → singleton scope (one instance)
+- "New franchise location" → prototype scope (new instance per request)
+- "Business closing procedures" → `@PreDestroy` / `DisposableBean`
+
+**Where this analogy breaks down:** Unlike a government registry that's passive, Spring's container actively _creates_ the businesses it registers, injects their resources, and monitors their health — it's much more hands-on than passive registration.
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+A bean is any object that Spring knows about and takes care of. You tell Spring "here's a class" and Spring creates an object from it, gives it everything it needs, and cleans it up when your app shuts down.
+
+**Level 2 — How to use it (junior developer):**
+Add `@Component` (or `@Service`, `@Repository`, `@Controller`) to any class. Spring will find it during component scan and register it as a bean. To create beans from third-party classes (that you can't annotate), use `@Bean` factory methods inside a `@Configuration` class. Inject beans into each other via constructor injection and `@Autowired`.
+
+**Level 3 — How it works (mid-level engineer):**
+`ClassPathScanningCandidateComponentProvider` scans classpath for annotated classes. For each, it creates a `ScannedGenericBeanDefinition` (a subtype of `BeanDefinition`) and registers it in the `BeanDefinitionRegistry`. During context refresh, `DefaultListableBeanFactory.preInstantiateSingletons()` iterates all registered singletons and creates them via `AbstractBeanFactory.doGetBean()`. The instance is stored in `singletonObjects` (a `ConcurrentHashMap`).
+
+**Level 4 — Why it was designed this way (senior/staff):**
+The `BeanDefinition` abstraction was deliberately separated from the instantiation mechanism. This allows `BeanFactoryPostProcessors` like `PropertySourcesPlaceholderConfigurer` to modify bean definitions (e.g., resolve `${db.url}` placeholders) _before_ any instances are created. If definitions and instances were tightly coupled, late-binding property resolution would be impossible. The separation also enables lazy initialization, prototype scoping, and the three-level cache for circular dependency handling — none of which would work if Spring created instances at registration time.
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**How Spring finds beans — component scan:**
-
-```
-┌──────────────────────────────────────────────┐
-│  @ComponentScan("com.example")               │
-│                                              │
-│  Spring scans classpath under base package:  │
-│    @Component → registers as bean            │
-│    @Service   → @Component alias             │
-│    @Repository→ @Component + exception trans │
-│    @Controller→ @Component + web handler     │
-│    @Bean method in @Configuration → bean     │
-│                                              │
-│  Each found class → BeanDefinition added     │
-│  to DefaultListableBeanFactory registry      │
-└──────────────────────────────────────────────┘
-```
-
-**Bean naming conventions:**
+**Three ways to define a bean:**
 
 ```java
-// Default name: lowercase first letter of class name
-@Service
-class OrderService {}   // bean name: "orderService"
+// Method 1: Component scan (most common)
+@Service                    // stereotype annotation
+public class UserService { ... }
+// Spring finds this via ClassPathScanningCandidateComponentProvider
 
-@Component("myCustomName")
-class Processor {}      // bean name: "myCustomName"
+// Method 2: @Bean factory method (for third-party classes)
+@Configuration
+public class InfraConfig {
+    @Bean                   // returns a managed bean
+    public DataSource dataSource() {
+        HikariDataSource ds = new HikariDataSource();
+        ds.setJdbcUrl("jdbc:postgresql://localhost/app");
+        return ds;
+    }
+}
 
-@Bean
-DataSource primaryDataSource() {}  // bean name: "primaryDataSource"
+// Method 3: Programmatic registration
+GenericApplicationContext ctx = new GenericApplicationContext();
+ctx.registerBean(UserService.class);
+ctx.refresh();
+```
 
-// Access by name or type:
-OrderService svc = ctx.getBean("orderService", OrderService.class);
-OrderService svc = ctx.getBean(OrderService.class); // by type (preferred)
+**Bean lifecycle summary (detailed in Bean Lifecycle entry):**
+
+```
+BeanDefinition registered
+    ↓
+BeanFactoryPostProcessors run (modify definitions)
+    ↓
+Bean instantiated (constructor or factory method)
+    ↓
+Dependencies injected
+    ↓
+BeanPostProcessors run (before init)
+    ↓
+@PostConstruct / afterPropertiesSet() called
+    ↓
+BeanPostProcessors run (after init)
+    ↓
+Bean ready for use
+    ↓
+[application runs...]
+    ↓
+@PreDestroy / destroy() called on shutdown
 ```
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 🔄 The Complete Picture — End-to-End Flow
+
+**NORMAL FLOW:**
 
 ```
-IoC (Inversion of Control)
-(principle: container manages object lifecycle)
-        │
-        ▼
-Bean  ◄──── (you are here)
-(an object managed by the container)
-        │
-        ├──────────────────────────────────────┐
-        ▼                                      ▼
-Bean Lifecycle                         Bean Scope
-(instantiation → init → destroy)       (singleton, prototype, request...)
-        │                                      │
-        ▼                                      ▼
-BeanPostProcessor                      ApplicationContext
-(intercepts bean creation)             (holds and exposes all beans)
+@SpringBootApplication triggers component scan
+    ↓
+All @Component classes detected → BeanDefinitions created
+    ↓
+@Configuration classes processed → @Bean methods detected
+    ↓
+All definitions registered in BeanDefinitionRegistry
+    ↓
+ApplicationContext.refresh() instantiates singletons
+   ← YOU ARE HERE (each class becomes a managed bean)
+    ↓
+Dependencies injected, lifecycle callbacks called
+    ↓
+Application serves requests using beans
+    ↓
+JVM shutdown → Spring destroys beans (@PreDestroy)
 ```
+
+**FAILURE PATH:**
+
+```
+Bean instantiation fails (exception in constructor)
+    ↓
+BeanCreationException wraps the original exception
+    ↓
+Context refresh fails → Application exits
+    ↓
+Stack trace shows which bean failed and why
+```
+
+**WHAT CHANGES AT SCALE:**
+The number of beans directly affects startup time. Each bean requires reflection-based instantiation, potential proxy wrapping (AOP), and `BeanPostProcessor` passes. A 1,000-bean application may take 15 seconds to start; a 10,000-bean application (some large enterprise apps) may take 2+ minutes. GraalVM native compilation eliminates this startup cost by pre-computing all bean instantiation at build time.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1 — The three common bean declaration styles:**
+**Example 1 — Stereotype annotations (most common):**
 
 ```java
-// Style 1: @Component family (component scan)
-@Service   // semantic alias for @Component in service layer
+// @Service is @Component with semantic meaning for layering
+@Service
 public class ProductService {
     private final ProductRepository repo;
-    ProductService(ProductRepository repo) { this.repo = repo; }
-}
 
-@Repository  // @Component + persistence exception translation
-public class JpaProductRepository implements ProductRepository { ... }
+    public ProductService(ProductRepository repo) {
+        this.repo = repo;
+    }
 
-// Style 2: @Bean method (full control over construction)
-@Configuration
-public class SecurityConfig {
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12); // full control of constructor args
+    public List<Product> findAll() {
+        return repo.findAll();
     }
 }
 
-// Style 3: @Bean with dependencies (explicit wiring)
+// @Repository triggers persistence exception translation
+@Repository
+public class JpaProductRepository implements ProductRepository {
+    // Spring wraps SQLException in DataAccessException
+}
+```
+
+**Example 2 — @Bean for third-party libraries:**
+
+```java
 @Configuration
-public class AppConfig {
+public class HttpClientConfig {
+
     @Bean
-    public UserService userService(UserRepository repo,
-                                   PasswordEncoder encoder) {
-        return new UserService(repo, encoder); // Spring injects repo and encoder
+    @ConditionalOnMissingBean  // only create if no other bean exists
+    public RestTemplate restTemplate() {
+        RestTemplate template = new RestTemplate();
+        template.setConnectTimeout(Duration.ofSeconds(5));
+        return template;
+    }
+
+    @Bean("slowClient")     // named bean for disambiguation
+    public RestTemplate slowRestTemplate() {
+        RestTemplate template = new RestTemplate();
+        template.setConnectTimeout(Duration.ofSeconds(30));
+        return template;
     }
 }
 ```
 
-**Example 2 — Lifecycle callbacks:**
+**Example 3 — Lifecycle callbacks:**
 
 ```java
 @Component
-public class ConnectionPool {
-    private HikariDataSource dataSource;
+public class ConnectionManager {
+    private Connection connection;
 
-    @PostConstruct          // called after injection is complete
-    void initialize() {
-        dataSource = new HikariDataSource(buildConfig());
-        log.info("Connection pool started with {} connections",
-                 dataSource.getMaximumPoolSize());
+    @PostConstruct          // runs after injection, before use
+    public void connect() {
+        connection = createConnection();
+        log.info("Connection established");
     }
 
-    @PreDestroy             // called before the bean is destroyed
-    void shutdown() {
-        if (dataSource != null) dataSource.close();
-        log.info("Connection pool closed");
+    @PreDestroy             // runs before Spring removes the bean
+    public void disconnect() {
+        connection.close();
+        log.info("Connection closed");
     }
 }
 ```
 
-**Example 3 — Conditional bean registration:**
+---
 
-```java
-// Bean only registered if property is set
-@Bean
-@ConditionalOnProperty(name = "feature.audit.enabled", havingValue = "true")
-AuditService auditService(AuditRepository repo) {
-    return new AuditService(repo);
-}
-// If property is false/absent: bean does not exist in context
-// Injecting AuditService where it is optional requires @Autowired(required=false)
-```
+### ⚖️ Comparison Table
+
+| Registration Method           | Use Case                    | Bean Name              | Third-party Classes |
+| ----------------------------- | --------------------------- | ---------------------- | ------------------- |
+| `@Component` / stereotypes    | Your own classes            | Class name (camelCase) | No                  |
+| **`@Bean` in @Configuration** | Any class, explicit control | Method name            | Yes                 |
+| `registerBean()` programmatic | Dynamic registration        | Specified              | Yes                 |
+| XML `<bean>`                  | Legacy codebases            | Specified              | Yes                 |
+
+**How to choose:** Use stereotype annotations for your own service, repository, and controller classes. Use `@Bean` factory methods for third-party library objects (datasources, HTTP clients, schedulers) or when you need fine-grained control over instantiation.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                             | Reality                                                                                                                                                                                                     |
-| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Every Java object in a Spring application is a bean       | Only objects registered with and managed by the Spring container are beans. DTOs, request/response objects, value objects, and ad-hoc `new` instances are not beans                                         |
-| `@Service` and `@Component` behave differently at runtime | Both are component-scan markers that result in the same bean registration. `@Service` is a semantic convention for service-layer classes; there is no runtime difference                                    |
-| Beans are always singletons                               | Singleton is the default scope; other scopes exist: prototype (new instance per request), request, session, and application. Prototype beans have no `@PreDestroy` callback                                 |
-| You can only have one bean per type                       | You can have multiple beans of the same type. Spring resolves injection by type and uses `@Qualifier` or `@Primary` to disambiguate. Listing all beans of a type: `ctx.getBeansOfType(SomeInterface.class)` |
+| Misconception                                             | Reality                                                                                                                                                                                                         |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| All objects in a Spring app are beans                     | Only objects explicitly registered with the container are beans. Plain objects created with `new` are not beans and get no Spring features.                                                                     |
+| @Component and @Service are different at runtime          | Functionally identical. @Service, @Repository, @Controller are all meta-annotated with @Component. The difference is semantic and tooling-visible, not behavioral (except @Repository's exception translation). |
+| Calling this.method() inside a bean uses the Spring proxy | self-invocation bypasses the proxy. @Transactional, @Cacheable, and @Async on this.method() are ignored when called as this.method().                                                                           |
+| Beans are always singletons                               | Beans default to singleton scope, but can be prototype (new instance each time), request-scoped, session-scoped, or custom scoped.                                                                              |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**Singleton bean holding mutable request-scoped state — thread safety bug**
+**Self-invocation proxy bypass (@Transactional ignored)**
+
+**Symptom:**
+A `@Transactional` method is called but no transaction is started. Database changes are not rolled back on exception.
+
+**Root Cause:**
+Inside a bean, calling `this.anotherMethod()` bypasses Spring's proxy. The `@Transactional` interceptor lives in the proxy, not in `this`. The call goes directly to the method, skipping the interceptor.
+
+**Diagnostic Command / Tool:**
+
+```bash
+# Enable transaction debug logging
+logging.level.org.springframework.transaction=DEBUG
+# Missing "Creating new transaction" log means the proxy was bypassed
+grep "Creating new transaction" app.log
+```
+
+**Fix:**
 
 ```java
-// BAD: singleton service stores per-request state in a field
-@Service  // singleton — one instance shared across ALL threads
-class OrderService {
-    private Order currentOrder; // SHARED mutable field — race condition!
-
-    void process(Order order) {
-        this.currentOrder = order; // Thread A sets it
-        validate();                // Thread B overwrites it between these lines
-        save(this.currentOrder);   // Thread A saves Thread B's order
+// BAD: self-invocation
+@Service
+public class OrderService {
+    @Transactional
+    public void processOrder(Order order) {
+        this.validateOrder(order);  // self-invocation
+        save(order);
     }
+
+    @Transactional  // ignored! called via 'this', not proxy
+    public void validateOrder(Order order) { ... }
 }
 
-// GOOD: keep all per-request state in local variables or method parameters
+// GOOD: inject self, or restructure to use a separate bean
 @Service
-class OrderService {
-    void process(Order order) {
-        Order validated = validate(order);  // local — thread-safe
-        save(validated);
+public class OrderService {
+    private final OrderValidator validator;  // separate bean
+
+    public void processOrder(Order order) {
+        validator.validateOrder(order);  // goes through proxy
+        save(order);
     }
 }
 ```
 
----
-
-**Using `@Autowired(required = false)` on a critical dependency — silent null**
-
-```java
-// BAD: optional injection on a non-optional dependency
-@Service
-class PaymentService {
-    @Autowired(required = false) // "optional" but actually required
-    private PaymentGateway gateway;
-
-    void charge(Order order) {
-        gateway.charge(order); // NullPointerException if no bean found
-        // No error at startup — only fails at first charge attempt
-    }
-}
-
-// GOOD: required dependencies must fail fast at startup
-@Service
-class PaymentService {
-    private final PaymentGateway gateway; // constructor — fails at context load
-
-    PaymentService(PaymentGateway gateway) {
-        this.gateway = Objects.requireNonNull(gateway);
-    }
-}
-```
+**Prevention:** Never call `this.method()` expecting Spring proxy behavior. Extract methods that need separate proxy interception into separate beans.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `IoC (Inversion of Control)` — the principle that makes beans container-managed
+**Prerequisites (understand these first):**
+
+- `IoC (Inversion of Control)` — beans are the objects whose lifecycle is inverted to the container
 - `DI (Dependency Injection)` — the mechanism by which beans receive their dependencies
-- `Bean Lifecycle` — the sequence of phases each bean passes through in the container
-- `Bean Scope` — defines how many instances are created (singleton, prototype, request, session)
-- `ApplicationContext` — the container that stores and manages all beans
-- `@Component / @Service / @Repository` — stereotype annotations that register a class as a bean
-- `BeanDefinition` — the metadata blueprint the container uses to create bean instances
+- `BeanFactory` — the container that creates and stores beans
+
+**Builds On This (learn these next):**
+
+- `Bean Lifecycle` — the complete lifecycle every bean goes through from definition to destruction
+- `Bean Scope` — singleton, prototype, request, session — scope determines how many instances exist
+- `BeanPostProcessor` — the extension point that runs after bean creation to add AOP, transactions, etc.
+
+**Alternatives / Comparisons:**
+
+- `CDI Bean (Jakarta EE)` — the Java EE equivalent; different annotations but similar lifecycle model
+- `Plain POJO` — a Java object not managed by Spring; no lifecycle callbacks, no DI, no AOP
 
 ---
 
@@ -355,20 +408,30 @@ class PaymentService {
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Any object whose lifecycle Spring manages:│
-│              │ create, wire, init, use, destroy          │
+│ WHAT IT IS   │ Any object whose lifecycle Spring manages  │
+│              │ — creation, wiring, initialization,        │
+│              │ use, and destruction                       │
 ├──────────────┼───────────────────────────────────────────┤
-│ REGISTER     │ @Component/@Service/@Repository/@Bean     │
-│              │ or XML — must be in a scanned package     │
+│ PROBLEM IT   │ Objects multiplied without control;        │
+│ SOLVES       │ shared resources created N times           │
 ├──────────────┼───────────────────────────────────────────┤
-│ DEFAULT SCOPE│ Singleton — one instance per context      │
-│              │ Prototype — new instance per request      │
+│ KEY INSIGHT  │ self-invocation (this.method()) bypasses   │
+│              │ all Spring proxy features                  │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "A bean is a Java object on Spring's      │
-│              │ payroll — Spring hires, trains, and fires."│
+│ USE WHEN     │ Any service, repository, controller, or    │
+│              │ infrastructure object in a Spring app      │
 ├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ Bean Lifecycle → Bean Scope →             │
-│              │ BeanPostProcessor → @Autowired            │
+│ AVOID WHEN   │ Value objects, DTOs, data classes that     │
+│              │ don't need lifecycle management            │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ Managed lifecycle + DI vs coupling to      │
+│              │ Spring container and proxy limitations     │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "If Spring doesn't know it, it can't       │
+│              │  manage it."                               │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Bean Scope → Bean Lifecycle →              │
+│              │ BeanPostProcessor                          │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -376,6 +439,6 @@ class PaymentService {
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** A Spring Boot service has 200 singleton beans. Each singleton is instantiated once at startup and reused for every request. One of these beans — `ReportService` — does an expensive computation in its `@PostConstruct` method (loading a 10 MB lookup table into memory). The lookup table changes every 6 hours from a database refresh. Describe at least three strategies to handle this "initialise once but needs periodic refresh" requirement within the Spring bean model, explain the thread-safety concern for each, and identify which strategy Spring's `@Scheduled` + `@RefreshScope` (Spring Cloud) addresses and why `@RefreshScope` must destroy and recreate the bean rather than just updating a field.
+**Q1.** Spring beans are, by default, singletons — shared across all threads in the application. A singleton `UserService` holds no mutable state and is safe. But a singleton bean that holds mutable instance state (e.g., a counter, a list of pending items) is a concurrency disaster. Where exactly does Spring's singleton guarantee end and your thread-safety responsibility begin?
 
-**Q2.** When Spring detects a `@Bean` method annotated with `@Scope("prototype")` inside a singleton `@Configuration` class, calling the `@Bean` method multiple times from within the same `@Configuration` class does NOT create multiple instances in standard Spring. Explain the mechanism Spring uses (CGLIB subclassing of `@Configuration` classes) that makes `@Bean` method calls idempotent for singletons, describe what happens at the bytecode level when the CGLIB proxy intercepts a `@Bean` method call, and explain why `@Scope("prototype")` beans require a different mechanism (`ObjectFactory<T>`, `@Lookup`, or scoped proxy) when injected into a singleton bean.
+**Q2.** Spring's proxy wrapping enables @Transactional and @Cacheable to work. But if you serialize a bean and deserialize it, the deserialized object is a plain instance — no proxy. If your application stores beans in a distributed cache (e.g., Redis) and retrieves them later, what happens to Spring's proxy features? How should you design Spring beans to avoid this category of error?

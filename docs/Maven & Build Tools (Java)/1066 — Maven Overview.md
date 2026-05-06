@@ -21,11 +21,11 @@ tags:
 
 ⚡ TL;DR — Maven is a Java build tool that automates compiling, testing, packaging, and deploying code using a convention-over-configuration model driven by a single XML descriptor: `pom.xml`.
 
-| #1066 | Category: Maven & Build Tools (Java) | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Java Language, JDK | |
-| **Used by:** | Maven Lifecycle, Maven Goals, Maven Phases, Maven Plugins, Maven Dependencies | |
-| **Related:** | Gradle vs Maven, Maven Wrapper (mvnw), Maven Multi-Module Project | |
+| #1066           | Category: Maven & Build Tools (Java)                                          | Difficulty: ★☆☆ |
+| :-------------- | :---------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Java Language, JDK                                                            |                 |
+| **Used by:**    | Maven Lifecycle, Maven Goals, Maven Phases, Maven Plugins, Maven Dependencies |                 |
+| **Related:**    | Gradle vs Maven, Maven Wrapper (mvnw), Maven Multi-Module Project             |                 |
 
 ---
 
@@ -54,6 +54,7 @@ Maven was created at Apache to bring conventions and repeatability to Java build
 Maven automates every Java build step — compile, test, package — so you never do it manually again.
 
 **One analogy:**
+
 > Maven is like a standardised recipe card for building any Java project. Every project uses the same card layout (directory structure), the same cooking steps (lifecycle phases), and orders the same ingredients from the same supermarket (central repository). Hand the card to any developer; they follow the same steps, get the same result.
 
 **One insight:**
@@ -64,6 +65,7 @@ Maven's power comes from its conventions. Because every Maven project puts sourc
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. **Convention over configuration** — Maven assumes a standard directory layout; you only configure deviations.
 2. **Declarative** — `pom.xml` declares WHAT the project is and WHAT it depends on; Maven decides HOW to build it.
 3. **Reproducibility** — same `pom.xml` + same repository → same output on any machine at any time.
@@ -71,6 +73,7 @@ Maven's power comes from its conventions. Because every Maven project puts sourc
 **DERIVED DESIGN:**
 
 The standard Maven directory structure:
+
 ```
 my-project/
 ├── pom.xml              ← project descriptor
@@ -168,6 +171,7 @@ Maven's convention-over-configuration philosophy was a direct reaction to Ant's 
 ```
 
 **Dependency resolution flow:**
+
 ```
 ┌─────────────────────────────────────────────────────┐
 │           Dependency Resolution                     │
@@ -198,6 +202,7 @@ Maven's convention-over-configuration philosophy was a direct reaction to Ant's 
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 Developer edits .java
   → runs: mvn package
@@ -211,6 +216,7 @@ Developer edits .java
 ```
 
 **FAILURE PATH:**
+
 ```
 Dependency not in local cache AND remote repo unreachable
   → BUILD FAILURE: Could not resolve artifact
@@ -225,6 +231,7 @@ In multi-module projects (dozens of modules), Maven builds them in dependency or
 ### 💻 Code Example
 
 **Example 1 — Minimal pom.xml:**
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -265,6 +272,7 @@ In multi-module projects (dozens of modules), Maven builds them in dependency or
 ```
 
 **Example 2 — Common Maven commands:**
+
 ```bash
 # Compile source code
 mvn compile
@@ -295,12 +303,12 @@ mvn clean install -T 4
 
 ### ⚖️ Comparison Table
 
-| Tool | Language | Config Style | Flexibility | Ecosystem | Best For |
-|---|---|---|---|---|---|
-| **Maven** | Java | XML (pom.xml) | Convention-heavy | Very large (Maven Central) | Standard Java/Jakarta EE projects |
-| Gradle | Java/Kotlin | Groovy/Kotlin DSL | Fully programmable | Large (Maven-compatible) | Android, custom build logic |
-| Ant | Java | XML (build.xml) | Fully manual | Limited | Legacy projects |
-| Bazel | Multi-lang | Starlark | Hermetic, scalable | Google-centric | Monorepos at scale |
+| Tool      | Language    | Config Style      | Flexibility        | Ecosystem                  | Best For                          |
+| --------- | ----------- | ----------------- | ------------------ | -------------------------- | --------------------------------- |
+| **Maven** | Java        | XML (pom.xml)     | Convention-heavy   | Very large (Maven Central) | Standard Java/Jakarta EE projects |
+| Gradle    | Java/Kotlin | Groovy/Kotlin DSL | Fully programmable | Large (Maven-compatible)   | Android, custom build logic       |
+| Ant       | Java        | XML (build.xml)   | Fully manual       | Limited                    | Legacy projects                   |
+| Bazel     | Multi-lang  | Starlark          | Hermetic, scalable | Google-centric             | Monorepos at scale                |
 
 **How to choose:** Use Maven for standard Java projects where convention is acceptable and ecosystem compatibility matters most. Choose Gradle when you need programmatic build logic or work on Android.
 
@@ -308,12 +316,12 @@ mvn clean install -T 4
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Maven downloads all of the internet on first use | Maven only downloads declared dependencies and their transitives — and caches them permanently in `~/.m2/repository` |
-| `mvn clean install` is the correct default command | `clean` deletes incremental state; use `mvn install` for iterative builds; only `clean` when debugging |
-| Maven is outdated because Gradle exists | Maven remains the dominant build tool for enterprise Java and Spring Boot projects; both are actively used |
-| You must use Maven Central | You can add any remote repository; most enterprises use Nexus or Artifactory as a proxy |
+| Misconception                                      | Reality                                                                                                              |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Maven downloads all of the internet on first use   | Maven only downloads declared dependencies and their transitives — and caches them permanently in `~/.m2/repository` |
+| `mvn clean install` is the correct default command | `clean` deletes incremental state; use `mvn install` for iterative builds; only `clean` when debugging               |
+| Maven is outdated because Gradle exists            | Maven remains the dominant build tool for enterprise Java and Spring Boot projects; both are actively used           |
+| You must use Maven Central                         | You can add any remote repository; most enterprises use Nexus or Artifactory as a proxy                              |
 
 ---
 
@@ -324,6 +332,7 @@ mvn clean install -T 4
 **Root Cause:** No network access to Maven Central, or repository URL misconfigured.
 
 **Fix:**
+
 ```bash
 # Check repository config
 mvn help:effective-settings
@@ -342,6 +351,7 @@ mvn install -o
 **Root Cause:** Version conflict, or dependency not found in any configured repository.
 
 **Fix:**
+
 ```bash
 # Show full dependency tree to identify conflicts
 mvn dependency:tree

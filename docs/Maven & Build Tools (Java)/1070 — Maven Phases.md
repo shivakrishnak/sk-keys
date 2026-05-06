@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — A Maven phase is a named step in the build lifecycle (like `compile`, `test`, `package`); phases define the sequence, while goals do the actual work — understanding which is which is key to controlling Maven builds.
 
-| #1070 | Category: Maven & Build Tools (Java) | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Maven Overview, pom.xml, Maven Lifecycle, Maven Goals | |
-| **Used by:** | Maven Plugins, Build Performance Optimization, Maven Profiles | |
-| **Related:** | Maven Goals, Maven Lifecycle, Maven Plugins | |
+| #1070           | Category: Maven & Build Tools (Java)                          | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Maven Overview, pom.xml, Maven Lifecycle, Maven Goals         |                 |
+| **Used by:**    | Maven Plugins, Build Performance Optimization, Maven Profiles |                 |
+| **Related:**    | Maven Goals, Maven Lifecycle, Maven Plugins                   |                 |
 
 ---
 
@@ -55,6 +55,7 @@ A **Maven phase** is a named stage in one of Maven's three built-in build lifecy
 A phase is a checkpoint in the build sequence — the "when," not the "what."
 
 **One analogy:**
+
 > Maven phases are like train stations on a fixed route. The lifecycle is the rail line from "validate" station to "deploy" station. Trains (goals) are assigned to specific stations. When you ask Maven to go to the "package" station, the train stops at every station along the way, picking up and dropping off work (goals) as it goes.
 
 **One insight:**
@@ -65,6 +66,7 @@ The named-phase model is what makes Maven extensible without being chaotic. Plug
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Phases within a lifecycle are totally ordered (phase 1 always before phase 2, always before phase 3...).
 2. Phases are execution containers, not executors — they contain zero or more bound goals.
 3. Phases exist in three separate lifecycles; running a phase in one does not trigger phases in another.
@@ -118,6 +120,7 @@ You want to: (1) generate Java source files from a Protobuf schema before compil
 Without named phases, you'd have to hack around the lifecycle or use a complex configuration.
 
 **WITH NAMED PHASES:**
+
 ```
 (1) Bind protobuf-maven-plugin to 'generate-sources'
     → runs before compile, generated sources are on classpath
@@ -185,6 +188,7 @@ The large number of phases (23 in the default lifecycle) was a deliberate design
 ```
 
 **Phase-goal binding in pom.xml:**
+
 ```xml
 <build>
   <plugins>
@@ -228,6 +232,7 @@ The large number of phases (23 in the default lifecycle) was a deliberate design
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW (integration test scenario):**
+
 ```
 mvn verify
   → validate (POM OK)
@@ -246,6 +251,7 @@ mvn verify
 ```
 
 **FAILURE PATH:**
+
 ```
 integration-test phase: IT fails
   → post-integration-test STILL runs (docker:stop runs)
@@ -261,16 +267,16 @@ In CI pipelines, the full lifecycle (`mvn verify`) runs on every PR. Heavy integ
 
 ### ⚖️ Comparison Table
 
-| Phase | Purpose | Default Goal Bound | When to Add Custom Goals |
-|---|---|---|---|
-| `generate-sources` | Source code generation | None | Code generators (protobuf, jOOQ, OpenAPI) |
-| `compile` | Compile main sources | compiler:compile | Never (override plugin config instead) |
-| `test-compile` | Compile test sources | compiler:testCompile | Test code generators |
-| `test` | Unit test execution | surefire:test | Coverage tools (JaCoCo) |
-| `pre-integration-test` | Pre-IT setup | None | Start Docker, mock servers |
-| `integration-test` | IT execution | None | failsafe:integration-test |
-| `post-integration-test` | Post-IT teardown | None | Stop Docker, cleanup |
-| `verify` | Quality gates | None | Coverage thresholds, failsafe result check |
+| Phase                   | Purpose                | Default Goal Bound   | When to Add Custom Goals                   |
+| ----------------------- | ---------------------- | -------------------- | ------------------------------------------ |
+| `generate-sources`      | Source code generation | None                 | Code generators (protobuf, jOOQ, OpenAPI)  |
+| `compile`               | Compile main sources   | compiler:compile     | Never (override plugin config instead)     |
+| `test-compile`          | Compile test sources   | compiler:testCompile | Test code generators                       |
+| `test`                  | Unit test execution    | surefire:test        | Coverage tools (JaCoCo)                    |
+| `pre-integration-test`  | Pre-IT setup           | None                 | Start Docker, mock servers                 |
+| `integration-test`      | IT execution           | None                 | failsafe:integration-test                  |
+| `post-integration-test` | Post-IT teardown       | None                 | Stop Docker, cleanup                       |
+| `verify`                | Quality gates          | None                 | Coverage thresholds, failsafe result check |
 
 **How to choose:** Bind setup/teardown operations to `pre-`/`post-` phases that surround the main execution phase. Use `verify` for quality gate enforcement (coverage minimums, static analysis failures).
 
@@ -278,12 +284,12 @@ In CI pipelines, the full lifecycle (`mvn verify`) runs on every PR. Heavy integ
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Phases and goals are the same thing | Phases are ordered checkpoints; goals are executable tasks bound to phases — fundamentally different |
-| `clean` is a phase of the default lifecycle | `clean` is its own lifecycle; `mvn clean package` runs two separate lifecycles in sequence |
-| Skipping a phase means skipping all subsequent phases | `-DskipTests` skips test execution but the `test` phase still executes — it's just empty |
-| All 23 phases are useful | Most projects only interact with 6-8; the others are extension points for advanced scenarios |
+| Misconception                                         | Reality                                                                                              |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Phases and goals are the same thing                   | Phases are ordered checkpoints; goals are executable tasks bound to phases — fundamentally different |
+| `clean` is a phase of the default lifecycle           | `clean` is its own lifecycle; `mvn clean package` runs two separate lifecycles in sequence           |
+| Skipping a phase means skipping all subsequent phases | `-DskipTests` skips test execution but the `test` phase still executes — it's just empty             |
+| All 23 phases are useful                              | Most projects only interact with 6-8; the others are extension points for advanced scenarios         |
 
 ---
 

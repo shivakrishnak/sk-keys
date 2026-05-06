@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Maven plugins are JAR packages that provide the executable goals behind every Maven build operation — without plugins, Maven's lifecycle is a skeleton with no muscle; plugins are what actually compile, test, and package your code.
 
-| #1071 | Category: Maven & Build Tools (Java) | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Maven Overview, pom.xml, Maven Lifecycle, Maven Goals, Maven Phases | |
-| **Used by:** | Maven Profiles, Maven Multi-Module Project, Build Performance Optimization | |
-| **Related:** | Maven Goals, Maven Phases, Maven BOM (Bill of Materials) | |
+| #1071           | Category: Maven & Build Tools (Java)                                       | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Maven Overview, pom.xml, Maven Lifecycle, Maven Goals, Maven Phases        |                 |
+| **Used by:**    | Maven Profiles, Maven Multi-Module Project, Build Performance Optimization |                 |
+| **Related:**    | Maven Goals, Maven Phases, Maven BOM (Bill of Materials)                   |                 |
 
 ---
 
@@ -55,6 +55,7 @@ A **Maven plugin** is a JAR artifact containing one or more Mojos (Maven plain O
 Plugins are the engines that power Maven — they contain the code that actually compiles, tests, packages, and deploys your project.
 
 **One analogy:**
+
 > Maven Core is the electrical grid; plugins are the appliances. The grid delivers power (lifecycle orchestration, dependency resolution) to every socket. But to get work done — cook, heat, light — you plug in appliances (plugins). The grid doesn't cook your food; the microwave does. Maven doesn't compile your code; the compiler plugin does.
 
 **One insight:**
@@ -65,26 +66,28 @@ Even Maven's built-in operations (compile, test, package) are implemented as plu
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Every goal in Maven is provided by a plugin — there are no built-in goals in Maven Core.
 2. A plugin is identified by GAV coordinates (groupId:artifactId:version), just like a dependency.
 3. Plugin configuration in `pom.xml` is type-safe — parameters match fields in the Mojo class.
 
 **ESSENTIAL BUILT-IN PLUGINS:**
 
-| Plugin | Artifact ID | Key Goal | Default Phase |
-|---|---|---|---|
-| Compiler | maven-compiler-plugin | compile, testCompile | compile, test-compile |
-| Surefire | maven-surefire-plugin | test | test |
-| Failsafe | maven-failsafe-plugin | integration-test, verify | integration-test, verify |
-| JAR | maven-jar-plugin | jar | package |
-| WAR | maven-war-plugin | war | package |
-| Install | maven-install-plugin | install | install |
-| Deploy | maven-deploy-plugin | deploy | deploy |
-| Clean | maven-clean-plugin | clean | clean |
-| Resources | maven-resources-plugin | resources | process-resources |
-| Shade | maven-shade-plugin | shade | package |
+| Plugin    | Artifact ID            | Key Goal                 | Default Phase            |
+| --------- | ---------------------- | ------------------------ | ------------------------ |
+| Compiler  | maven-compiler-plugin  | compile, testCompile     | compile, test-compile    |
+| Surefire  | maven-surefire-plugin  | test                     | test                     |
+| Failsafe  | maven-failsafe-plugin  | integration-test, verify | integration-test, verify |
+| JAR       | maven-jar-plugin       | jar                      | package                  |
+| WAR       | maven-war-plugin       | war                      | package                  |
+| Install   | maven-install-plugin   | install                  | install                  |
+| Deploy    | maven-deploy-plugin    | deploy                   | deploy                   |
+| Clean     | maven-clean-plugin     | clean                    | clean                    |
+| Resources | maven-resources-plugin | resources                | process-resources        |
+| Shade     | maven-shade-plugin     | shade                    | package                  |
 
 **WRITING A PLUGIN (simplified):**
+
 ```java
 @Mojo(name = "greet", defaultPhase = LifecyclePhase.VALIDATE)
 public class GreetMojo extends AbstractMojo {
@@ -116,6 +119,7 @@ Your company builds gRPC services. Every `.proto` file must be compiled to Java 
 You'd have to run `protoc` manually before running Maven, creating a two-step build process. CI pipelines break because they only know to run `mvn package`. New developers don't know about the manual `protoc` step.
 
 **WITH THE PROTOBUF MAVEN PLUGIN:**
+
 ```xml
 <plugin>
   <groupId>io.grpc</groupId>
@@ -124,6 +128,7 @@ You'd have to run `protoc` manually before running Maven, creating a two-step bu
   <!-- bound to generate-sources phase -->
 </plugin>
 ```
+
 Now `mvn package` automatically: generates Java from `.proto` → compiles Java → tests → packages. One command. Zero manual steps. CI and developers use the same process.
 
 **THE INSIGHT:**
@@ -199,6 +204,7 @@ The ClassRealm isolation for plugin classloading was a hard-won design decision 
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW (standard jar build):**
+
 ```
 mvn package
   → compile phase
@@ -217,6 +223,7 @@ mvn package
 ```
 
 **FAILURE PATH:**
+
 ```
 PLUGIN: maven-compiler-plugin throws MojoExecutionException
   → "Compilation failure: cannot find symbol"
@@ -233,6 +240,7 @@ In CI environments, plugin JARs are cached in the Maven local repository (often 
 ### 💻 Code Example
 
 **Example 1 — Configuring the compiler plugin:**
+
 ```xml
 <build>
   <plugins>
@@ -252,6 +260,7 @@ In CI environments, plugin JARs are cached in the Maven local repository (often 
 ```
 
 **Example 2 — Shade plugin for fat JARs:**
+
 ```xml
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>
@@ -276,6 +285,7 @@ In CI environments, plugin JARs are cached in the Maven local repository (often 
 ```
 
 **Example 3 — Locking plugin versions in pluginManagement:**
+
 ```xml
 <!-- In parent pom.xml: governance without activation -->
 <build>
@@ -300,27 +310,27 @@ In CI environments, plugin JARs are cached in the Maven local repository (often 
 
 ### ⚖️ Comparison Table
 
-| Plugin | Purpose | Phase | Notable Config |
-|---|---|---|---|
-| maven-compiler-plugin | Compile Java sources | compile, test-compile | `<release>17</release>` |
-| maven-surefire-plugin | Unit tests | test | `<forkCount>`, `<parallel>` |
-| maven-failsafe-plugin | Integration tests | integration-test, verify | Guaranteed teardown |
-| maven-jar-plugin | Create executable JAR | package | `<mainClass>` in MANIFEST |
-| maven-shade-plugin | Fat/uber JAR | package | Merges all deps into one JAR |
-| maven-assembly-plugin | Custom distribution archive | package | Custom file sets |
-| maven-enforcer-plugin | Enforce build rules | validate / verify | Java version, dep convergence |
-| maven-release-plugin | Automate releases | N/A (direct invocation) | Version bumping, tagging |
+| Plugin                | Purpose                     | Phase                    | Notable Config                |
+| --------------------- | --------------------------- | ------------------------ | ----------------------------- |
+| maven-compiler-plugin | Compile Java sources        | compile, test-compile    | `<release>17</release>`       |
+| maven-surefire-plugin | Unit tests                  | test                     | `<forkCount>`, `<parallel>`   |
+| maven-failsafe-plugin | Integration tests           | integration-test, verify | Guaranteed teardown           |
+| maven-jar-plugin      | Create executable JAR       | package                  | `<mainClass>` in MANIFEST     |
+| maven-shade-plugin    | Fat/uber JAR                | package                  | Merges all deps into one JAR  |
+| maven-assembly-plugin | Custom distribution archive | package                  | Custom file sets              |
+| maven-enforcer-plugin | Enforce build rules         | validate / verify        | Java version, dep convergence |
+| maven-release-plugin  | Automate releases           | N/A (direct invocation)  | Version bumping, tagging      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Maven Core compiles Java | `maven-compiler-plugin` compiles Java — Maven Core only orchestrates the lifecycle |
-| Plugin deps end up in your app's classpath | Plugin dependencies are loaded in an isolated ClassRealm; they never appear on the project's compile/runtime classpath |
-| You must always specify plugin version | Maven will use a default version from its internal metadata, but this is non-reproducible — always pin versions in `<pluginManagement>` |
-| `<pluginManagement>` activates plugins | It only governs versions; the plugin must also be declared in `<plugins>` to actually run |
+| Misconception                              | Reality                                                                                                                                 |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Maven Core compiles Java                   | `maven-compiler-plugin` compiles Java — Maven Core only orchestrates the lifecycle                                                      |
+| Plugin deps end up in your app's classpath | Plugin dependencies are loaded in an isolated ClassRealm; they never appear on the project's compile/runtime classpath                  |
+| You must always specify plugin version     | Maven will use a default version from its internal metadata, but this is non-reproducible — always pin versions in `<pluginManagement>` |
+| `<pluginManagement>` activates plugins     | It only governs versions; the plugin must also be declared in `<plugins>` to actually run                                               |
 
 ---
 

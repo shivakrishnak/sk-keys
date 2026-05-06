@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Dependency exclusion surgically removes an unwanted transitive dependency from a specific dependency path in the Maven graph — the escape hatch when a library pulls in a conflicting or forbidden transitive you cannot otherwise eliminate.
 
-| #1075 | Category: Maven & Build Tools (Java) | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Transitive Dependencies, Maven Dependencies, Dependency Scope | |
-| **Used by:** | Dependency Convergence, Maven BOM (Bill of Materials), Build Performance Optimization | |
-| **Related:** | Dependency Convergence, Transitive Dependencies, Maven BOM (Bill of Materials) | |
+| #1075           | Category: Maven & Build Tools (Java)                                                  | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Transitive Dependencies, Maven Dependencies, Dependency Scope                         |                 |
+| **Used by:**    | Dependency Convergence, Maven BOM (Bill of Materials), Build Performance Optimization |                 |
+| **Related:**    | Dependency Convergence, Transitive Dependencies, Maven BOM (Bill of Materials)        |                 |
 
 ---
 
@@ -55,6 +55,7 @@ Sometimes two transitive dependencies are fundamentally incompatible and cannot 
 Exclusions cut specific branches from your dependency tree — when you need to remove a transitive dependency that you can't get rid of any other way.
 
 **One analogy:**
+
 > Dependency exclusion is like telling a catering company: "Send us three chefs, but NOT the sommelier — we already have wine service." You still get the chefs (the direct dep and its other transitives), but the specific person you can't accommodate is removed from the party. If another part of the event also requested the sommelier independently, he shows up anyway via that path.
 
 **One insight:**
@@ -65,6 +66,7 @@ Exclusions are path-specific, not global. This is the most misunderstood aspect:
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. An exclusion removes a specific artifact from one dependency's transitive subtree.
 2. If the excluded artifact is reachable via another path, it still appears — exclusions are path-scoped.
 3. Exclusions do not affect the dependency graph of downstream consumers of your project.
@@ -128,6 +130,7 @@ Your project uses SLF4J + Logback for logging. You add a legacy library that was
 Both `commons-logging` and `slf4j-jcl` (your SLF4J → JCL bridge, for interop) are on the classpath. At runtime, `commons-logging` initialises itself by looking for a `Log4j` implementation. It doesn't find Logback. All logging from the legacy library goes to stderr instead of your configured Logback appender. Your log aggregation misses 30% of messages.
 
 **WHAT HAPPENS WITH EXCLUSION:**
+
 ```xml
 <dependency>
   <groupId>com.example</groupId>
@@ -141,6 +144,7 @@ Both `commons-logging` and `slf4j-jcl` (your SLF4J → JCL bridge, for interop) 
   </exclusions>
 </dependency>
 ```
+
 `commons-logging` is removed from the classpath (assuming it doesn't arrive via any other path). SLF4J's JCL bridge handles all JCL calls, routing legacy library log output through Logback. 100% of log messages reach your aggregator.
 
 **THE INSIGHT:**
@@ -202,6 +206,7 @@ The path-scoped nature of exclusions was a deliberate design choice: global excl
 ```
 
 **Wildcard exclusion:**
+
 ```xml
 <!-- Remove ALL transitive deps from this dep's subtree -->
 <!-- Use case: large SDK that includes everything; you only
@@ -224,6 +229,7 @@ The path-scoped nature of exclusions was a deliberate design choice: global excl
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW (fixing a logging conflict):**
+
 ```
 Problem: SLF4J + Logback setup, but legacy-lib brings commons-logging
 
@@ -249,6 +255,7 @@ Step 5: Build and test
 ```
 
 **FAILURE PATH:**
+
 ```
 Exclusion added but commons-logging still appears
   → Another direct dependency also brings it in
@@ -266,6 +273,7 @@ In large multi-module projects, exclusions in parent POM's `<dependencyManagemen
 ### 💻 Code Example
 
 **Example 1 — The classic SLF4J logging cleanup:**
+
 ```xml
 <!-- Problem: old library brings in commons-logging AND log4j 1.x -->
 <!-- Solution: exclude both, add SLF4J bridges instead -->
@@ -305,6 +313,7 @@ In large multi-module projects, exclusions in parent POM's `<dependencyManagemen
 ```
 
 **Example 2 — Security vulnerability remediation:**
+
 ```xml
 <!-- CVE fix: old-library pulls in vulnerable log4j-core 2.14.1 -->
 <!-- Exclude and force the patched version -->
@@ -330,6 +339,7 @@ In large multi-module projects, exclusions in parent POM's `<dependencyManagemen
 ```
 
 **Example 3 — Diagnosing before excluding:**
+
 ```bash
 # Step 1: Find what's bringing in the unwanted dep
 mvn dependency:tree -Dverbose \
@@ -347,13 +357,13 @@ mvn dependency:tree -Dincludes=commons-logging:commons-logging
 
 ### ⚖️ Comparison Table
 
-| Strategy | Mechanism | Scope | Use When |
-|---|---|---|---|
-| **Dependency Exclusion** | `<exclusions>` on specific dep | Path-specific | Specific path brings in conflicting lib |
-| Version override | Direct `<dependency>` declaration | Global (nearest-wins) | Want specific version, don't need to remove |
-| `<dependencyManagement>` | Version governance | Global | Align versions across modules |
-| BOM import | Import curated version set | Global | Framework-wide alignment |
-| SLF4J bridges | Replace impl at class level | Global | Logging unification (better than exclusion) |
+| Strategy                 | Mechanism                         | Scope                 | Use When                                    |
+| ------------------------ | --------------------------------- | --------------------- | ------------------------------------------- |
+| **Dependency Exclusion** | `<exclusions>` on specific dep    | Path-specific         | Specific path brings in conflicting lib     |
+| Version override         | Direct `<dependency>` declaration | Global (nearest-wins) | Want specific version, don't need to remove |
+| `<dependencyManagement>` | Version governance                | Global                | Align versions across modules               |
+| BOM import               | Import curated version set        | Global                | Framework-wide alignment                    |
+| SLF4J bridges            | Replace impl at class level       | Global                | Logging unification (better than exclusion) |
 
 **How to choose:** Try version alignment via `<dependencyManagement>` first. Use exclusions only when the conflict cannot be resolved by version alignment alone (e.g., fundamentally incompatible APIs or security requirements to remove an artifact entirely).
 
@@ -361,12 +371,12 @@ mvn dependency:tree -Dincludes=commons-logging:commons-logging
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Exclusions apply globally across all dependency paths | Exclusions are path-specific: they only remove the artifact from the transitive subtree of the dependency they're declared on |
-| Excluding an artifact also excludes its transitives globally | Only excludes the artifact and its subtree from the specific declared path — other paths are unaffected |
-| You should use exclusions to manage version conflicts | Exclusions remove artifacts; they don't select alternative versions. Use `<dependencyManagement>` for version alignment |
-| Wildcard `*` exclusions are safe | Wildcard exclusions remove ALL transitives; this can break the library at runtime if it genuinely needed them |
+| Misconception                                                | Reality                                                                                                                       |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| Exclusions apply globally across all dependency paths        | Exclusions are path-specific: they only remove the artifact from the transitive subtree of the dependency they're declared on |
+| Excluding an artifact also excludes its transitives globally | Only excludes the artifact and its subtree from the specific declared path — other paths are unaffected                       |
+| You should use exclusions to manage version conflicts        | Exclusions remove artifacts; they don't select alternative versions. Use `<dependencyManagement>` for version alignment       |
+| Wildcard `*` exclusions are safe                             | Wildcard exclusions remove ALL transitives; this can break the library at runtime if it genuinely needed them                 |
 
 ---
 
@@ -377,6 +387,7 @@ mvn dependency:tree -Dincludes=commons-logging:commons-logging
 **Root Cause:** Artifact is also pulled in via a different transitive path not covered by the exclusion.
 
 **Diagnosis:**
+
 ```bash
 mvn dependency:tree -Dverbose \
   -Dincludes=<excluded-groupId>:<excluded-artifactId>

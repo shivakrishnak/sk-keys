@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — A Maven goal is a specific unit of work performed by a plugin (e.g., `compiler:compile`, `surefire:test`); it is the actual executable action behind every Maven build phase.
 
-| #1069 | Category: Maven & Build Tools (Java) | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Maven Overview, pom.xml, Maven Lifecycle | |
-| **Used by:** | Maven Phases, Maven Plugins, Build Performance Optimization | |
-| **Related:** | Maven Phases, Maven Plugins, Maven Lifecycle | |
+| #1069           | Category: Maven & Build Tools (Java)                        | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------- | :-------------- |
+| **Depends on:** | Maven Overview, pom.xml, Maven Lifecycle                    |                 |
+| **Used by:**    | Maven Phases, Maven Plugins, Build Performance Optimization |                 |
+| **Related:**    | Maven Phases, Maven Plugins, Maven Lifecycle                |                 |
 
 ---
 
@@ -55,6 +55,7 @@ A **Maven goal** is a specific task or unit of work provided by a Maven plugin, 
 A goal is what actually runs when Maven builds — it's the specific action a plugin performs at a given phase.
 
 **One analogy:**
+
 > Maven phases are like chapter headings in a textbook ("Chapter 3: Testing"). Maven goals are the actual content of each chapter. The chapter heading tells you where you are in the sequence; the content is what you actually learn. Without content (goals), chapters are just empty titles.
 
 **One insight:**
@@ -65,11 +66,13 @@ The key distinction: `mvn compile` executes the `compile` phase (which triggers 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Every goal belongs to exactly one plugin.
 2. A goal can be bound to a lifecycle phase (lifecycle-bound goal) or run standalone (direct goal invocation).
 3. Goals bound to the same phase execute in POM declaration order.
 
 **GOAL SYNTAX:**
+
 ```
 mvn [phase]            → runs lifecycle up to and including phase
 mvn [plugin]:[goal]    → runs a specific goal directly (no lifecycle)
@@ -78,16 +81,17 @@ mvn [phase] [plugin]:[goal]  → runs lifecycle to phase, then goal
 
 **DEFAULT BINDINGS (jar packaging):**
 
-| Phase | Bound Goal | Plugin |
-|---|---|---|
-| `compile` | `compiler:compile` | maven-compiler-plugin |
+| Phase          | Bound Goal             | Plugin                |
+| -------------- | ---------------------- | --------------------- |
+| `compile`      | `compiler:compile`     | maven-compiler-plugin |
 | `test-compile` | `compiler:testCompile` | maven-compiler-plugin |
-| `test` | `surefire:test` | maven-surefire-plugin |
-| `package` | `jar:jar` | maven-jar-plugin |
-| `install` | `install:install` | maven-install-plugin |
-| `deploy` | `deploy:deploy` | maven-deploy-plugin |
+| `test`         | `surefire:test`        | maven-surefire-plugin |
+| `package`      | `jar:jar`              | maven-jar-plugin      |
+| `install`      | `install:install`      | maven-install-plugin  |
+| `deploy`       | `deploy:deploy`        | maven-deploy-plugin   |
 
 **STANDALONE GOALS (no lifecycle binding needed):**
+
 ```bash
 mvn dependency:tree          # show dependency tree
 mvn dependency:analyze       # find unused/undeclared deps
@@ -113,9 +117,11 @@ You want to run only the static analysis plugin (Checkstyle) without compiling o
 You'd have to run `mvn verify` or another phase that triggers Checkstyle, which also triggers compilation and testing. A 30-second style check becomes a 5-minute full build.
 
 **WHAT HAPPENS WITH DIRECT GOAL INVOCATION:**
+
 ```bash
 mvn checkstyle:check
 ```
+
 This runs Checkstyle's `check` goal directly, without triggering any lifecycle phase. It scans sources, reports violations, and exits in seconds — no compilation, no testing.
 
 **THE INSIGHT:**
@@ -184,6 +190,7 @@ The Mojo pattern (each goal is a Java class implementing `Mojo.execute()`) makes
 ```
 
 **Goal execution order when multiple goals bound to same phase:**
+
 ```xml
 <!-- Both goals run at 'generate-sources' phase -->
 <plugins>
@@ -218,6 +225,7 @@ The Mojo pattern (each goal is a Java class implementing `Mojo.execute()`) makes
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 mvn package
   → phase: validate (no default goals for jar)
@@ -235,6 +243,7 @@ mvn package
 ```
 
 **FAILURE PATH:**
+
 ```
 GOAL: compiler:compile fails (compilation error)
   → Maven reports error with file + line number
@@ -250,6 +259,7 @@ In large multi-module builds, each module's goals execute in isolation. Goals li
 ### 💻 Code Example
 
 **Example 1 — Useful standalone goals:**
+
 ```bash
 # Show all transitive dependencies as a tree
 mvn dependency:tree
@@ -274,6 +284,7 @@ mvn versions:display-plugin-updates
 ```
 
 **Example 2 — Binding a goal to a custom phase in pom.xml:**
+
 ```xml
 <build>
   <plugins>
@@ -306,13 +317,13 @@ mvn versions:display-plugin-updates
 
 ### ⚖️ Comparison Table
 
-| Invocation | What Runs | Lifecycle Triggered? | Use Case |
-|---|---|---|---|
-| `mvn compile` | All phases up to `compile`, including bound goals | Yes | Normal compilation |
-| `mvn compiler:compile` | Only the `compiler:compile` goal | No | Ad-hoc compilation |
-| `mvn dependency:tree` | Only the `dependency:tree` goal | No | Dependency inspection |
-| `mvn clean package` | `clean` lifecycle + `default` up to `package` | Yes (both) | Clean build |
-| `mvn -pl module test` | `test` phase for one module only | Yes (single module) | Module-scoped test |
+| Invocation             | What Runs                                         | Lifecycle Triggered? | Use Case              |
+| ---------------------- | ------------------------------------------------- | -------------------- | --------------------- |
+| `mvn compile`          | All phases up to `compile`, including bound goals | Yes                  | Normal compilation    |
+| `mvn compiler:compile` | Only the `compiler:compile` goal                  | No                   | Ad-hoc compilation    |
+| `mvn dependency:tree`  | Only the `dependency:tree` goal                   | No                   | Dependency inspection |
+| `mvn clean package`    | `clean` lifecycle + `default` up to `package`     | Yes (both)           | Clean build           |
+| `mvn -pl module test`  | `test` phase for one module only                  | Yes (single module)  | Module-scoped test    |
 
 **How to choose:** Use lifecycle phase invocation (`mvn package`) for normal builds. Use direct goal invocation (`mvn dependency:tree`) for inspection, analysis, and reporting tasks that should not trigger a full build.
 
@@ -320,12 +331,12 @@ mvn versions:display-plugin-updates
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `mvn compile` runs the `compiler:compile` goal directly | It runs the lifecycle up to the `compile` phase, which triggers the bound goal — subtle but different |
-| Goals always require a lifecycle phase | Many goals (like `dependency:tree`, `help:effective-pom`) are designed for standalone invocation with no phase binding |
-| You can only run one goal at a time | You can run multiple: `mvn clean compiler:compile dependency:tree` |
-| All phases have a goal bound by default | Many intermediate phases (`generate-sources`, `process-resources`) have no default bindings unless you add plugins |
+| Misconception                                           | Reality                                                                                                                |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `mvn compile` runs the `compiler:compile` goal directly | It runs the lifecycle up to the `compile` phase, which triggers the bound goal — subtle but different                  |
+| Goals always require a lifecycle phase                  | Many goals (like `dependency:tree`, `help:effective-pom`) are designed for standalone invocation with no phase binding |
+| You can only run one goal at a time                     | You can run multiple: `mvn clean compiler:compile dependency:tree`                                                     |
+| All phases have a goal bound by default                 | Many intermediate phases (`generate-sources`, `process-resources`) have no default bindings unless you add plugins     |
 
 ---
 

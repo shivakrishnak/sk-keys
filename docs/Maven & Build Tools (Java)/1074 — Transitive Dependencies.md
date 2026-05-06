@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Transitive dependencies are the dependencies of your dependencies — Maven resolves them automatically, but they can introduce version conflicts, unexpected libraries, and security vulnerabilities that you didn't explicitly choose.
 
-| #1074 | Category: Maven & Build Tools (Java) | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Maven Dependencies, Dependency Scope, pom.xml | |
-| **Used by:** | Dependency Exclusion, Dependency Convergence, Maven BOM (Bill of Materials) | |
-| **Related:** | Dependency Exclusion, Dependency Convergence, Maven BOM (Bill of Materials) | |
+| #1074           | Category: Maven & Build Tools (Java)                                        | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Maven Dependencies, Dependency Scope, pom.xml                               |                 |
+| **Used by:**    | Dependency Exclusion, Dependency Convergence, Maven BOM (Bill of Materials) |                 |
+| **Related:**    | Dependency Exclusion, Dependency Convergence, Maven BOM (Bill of Materials) |                 |
 
 ---
 
@@ -55,6 +55,7 @@ Maven's transitive dependency resolution was created to automate the dependency 
 Your library depends on other libraries, which depend on other libraries — Maven automatically discovers and includes the entire chain.
 
 **One analogy:**
+
 > Transitive dependencies are like inheriting family friends. You invite Alice to your party (direct dependency). Alice is always with Bob (Alice's direct dependency → your transitive). Bob can't go anywhere without Carol (Carol becomes another transitive). You invited one person; three showed up. You didn't choose Bob and Carol, but here they are — with all their own opinions about how things should work.
 
 **One insight:**
@@ -65,6 +66,7 @@ The real danger of transitive dependencies isn't the extra JARs — it's the ver
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Every artifact published to Maven Central includes a POM describing its own `<dependencies>`.
 2. Maven recursively follows these POM chains to build the complete dependency graph.
 3. Only `compile` and `runtime`-scoped transitive dependencies propagate; `test` and `provided` do not.
@@ -107,13 +109,13 @@ At runtime: NoSuchMethodError if B uses a 32.0.0-only method
 **SCOPE PROPAGATION RULES:**
 
 | Library A scope | Library B scope in A | Effective scope in your project |
-|---|---|---|
-| compile | compile | compile |
-| compile | runtime | runtime |
-| compile | provided | **NOT propagated** |
-| compile | test | **NOT propagated** |
-| runtime | compile | runtime |
-| provided | compile | **NOT propagated** |
+| --------------- | -------------------- | ------------------------------- |
+| compile         | compile              | compile                         |
+| compile         | runtime              | runtime                         |
+| compile         | provided             | **NOT propagated**              |
+| compile         | test                 | **NOT propagated**              |
+| runtime         | compile              | runtime                         |
+| provided        | compile              | **NOT propagated**              |
 
 **THE TRADE-OFFS:**
 
@@ -129,6 +131,7 @@ At runtime: NoSuchMethodError if B uses a 32.0.0-only method
 In December 2021, a critical vulnerability (Log4Shell, CVE-2021-44228) was discovered in `log4j-core`. Millions of Java applications were affected. Most developers had never heard of log4j-core — it was a transitive dependency.
 
 **THE TRANSITIVE CHAIN:**
+
 ```
 Developer's pom.xml:
   spring-boot-starter-web (directly declared)
@@ -216,6 +219,7 @@ Maven's nearest-wins conflict resolution is a deterministic algorithm with a kno
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 mvn package
   → Dependency resolution phase
@@ -231,6 +235,7 @@ mvn package
 ```
 
 **FAILURE PATH:**
+
 ```
 Transitive version conflict not caught:
   → Library A compiled against guava 32 (uses new method)
@@ -248,6 +253,7 @@ Enterprise applications with 1000+ transitive dependencies use Maven BOMs to gov
 ### 💻 Code Example
 
 **Example 1 — Inspecting the dependency tree:**
+
 ```bash
 # Show full transitive tree (can be hundreds of lines)
 mvn dependency:tree
@@ -266,6 +272,7 @@ mvn dependency:tree -DoutputFile=deps.txt
 ```
 
 **Example 2 — Detecting and auditing:**
+
 ```bash
 # Find unused declared deps + used undeclared deps
 mvn dependency:analyze
@@ -279,6 +286,7 @@ mvn dependency:resolve
 ```
 
 **Example 3 — Forcing a transitive version:**
+
 ```xml
 <dependencies>
   <!-- Force guava version even though we don't use it directly -->
@@ -305,24 +313,24 @@ mvn dependency:resolve
 
 ### ⚖️ Comparison Table
 
-| Strategy | Mechanism | Best For |
-|---|---|---|
-| Nearest-wins (default) | Maven auto-selects by tree depth | Simple projects with few conflicts |
-| Direct declaration override | Add dep at depth 1 to force version | Fixing a specific conflict |
-| `<dependencyManagement>` | Govern version without importing | Multi-module version alignment |
-| BOM import | Import entire curated version set | Framework-wide version alignment (Spring BOM) |
-| Exclusion | Remove specific transitive dep | Removing an unwanted/conflicting transitive |
+| Strategy                    | Mechanism                           | Best For                                      |
+| --------------------------- | ----------------------------------- | --------------------------------------------- |
+| Nearest-wins (default)      | Maven auto-selects by tree depth    | Simple projects with few conflicts            |
+| Direct declaration override | Add dep at depth 1 to force version | Fixing a specific conflict                    |
+| `<dependencyManagement>`    | Govern version without importing    | Multi-module version alignment                |
+| BOM import                  | Import entire curated version set   | Framework-wide version alignment (Spring BOM) |
+| Exclusion                   | Remove specific transitive dep      | Removing an unwanted/conflicting transitive   |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Maven picks the newest version in a conflict | Maven uses nearest-wins — the version closest to the project root wins, regardless of version number |
-| `test` scoped deps of my deps appear transitively | `test` and `provided` scoped transitives are NOT propagated — they stop at the declaring project |
+| Misconception                                                         | Reality                                                                                                  |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Maven picks the newest version in a conflict                          | Maven uses nearest-wins — the version closest to the project root wins, regardless of version number     |
+| `test` scoped deps of my deps appear transitively                     | `test` and `provided` scoped transitives are NOT propagated — they stop at the declaring project         |
 | Transitive deps are safe because they were published to Maven Central | Central doesn't vet for security; transitive deps regularly contain CVEs (Log4Shell, Spring4Shell, etc.) |
-| `mvn dependency:analyze` finds all transitive issues | It only finds unused/undeclared compile-time issues; it doesn't detect runtime-only transitive conflicts |
+| `mvn dependency:analyze` finds all transitive issues                  | It only finds unused/undeclared compile-time issues; it doesn't detect runtime-only transitive conflicts |
 
 ---
 
@@ -333,6 +341,7 @@ mvn dependency:resolve
 **Root Cause:** Transitive version conflict — wrong version of a library was selected by nearest-wins.
 
 **Diagnosis:**
+
 ```bash
 mvn dependency:tree -Dverbose -Dincludes=<affected-groupId>:<artifactId>
 # Find the "(omitted for conflict with X.Y.Z)" line
@@ -348,6 +357,7 @@ mvn dependency:tree -Dverbose -Dincludes=<affected-groupId>:<artifactId>
 **Root Cause:** Library is a transitive dependency you didn't declare.
 
 **Diagnosis:**
+
 ```bash
 mvn dependency:tree -Dincludes=<vulnerable-groupId>:<artifactId>
 # Trace which direct dependency introduced it

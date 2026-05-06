@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Maven's build lifecycle is an ordered sequence of phases (validate → compile → test → package → install → deploy) that every build follows automatically — run any phase and all prior phases execute first.
 
-| #1068 | Category: Maven & Build Tools (Java) | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Maven Overview, pom.xml, Maven Plugins | |
-| **Used by:** | Maven Goals, Maven Phases, Build Performance Optimization | |
-| **Related:** | Maven Goals, Maven Phases, Maven Plugins | |
+| #1068           | Category: Maven & Build Tools (Java)                      | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------- | :-------------- |
+| **Depends on:** | Maven Overview, pom.xml, Maven Plugins                    |                 |
+| **Used by:**    | Maven Goals, Maven Phases, Build Performance Optimization |                 |
+| **Related:**    | Maven Goals, Maven Phases, Maven Plugins                  |                 |
 
 ---
 
@@ -55,6 +55,7 @@ The **Maven Build Lifecycle** is a well-defined sequence of named phases that de
 Run any Maven phase and everything before it runs automatically — the lifecycle is a guaranteed build sequence.
 
 **One analogy:**
+
 > Maven's lifecycle is like a car production line. To reach the "paint" station, the car must have already passed through "frame assembly," "engine install," and "wiring." You can't run "paint" on a car that hasn't been assembled. Maven ensures the same: you can't package uncompiled code.
 
 **One insight:**
@@ -65,6 +66,7 @@ The lifecycle's value is in what it prevents, not just what it does. You cannot 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Phases execute in a fixed, immutable order within each lifecycle.
 2. Running phase N automatically triggers phases 1 through N−1.
 3. Phases are empty by default — work is performed by plugin goals bound to phases.
@@ -108,6 +110,7 @@ The lifecycle's value is in what it prevents, not just what it does. You cannot 
 
 **DERIVED DESIGN:**
 Phases are bound to plugin goals by Maven's default bindings for each packaging type (`jar`, `war`, `pom`). For `jar` packaging:
+
 - `compile` → `maven-compiler-plugin:compile`
 - `test` → `maven-surefire-plugin:test`
 - `package` → `maven-jar-plugin:jar`
@@ -208,6 +211,7 @@ The separation of lifecycle phases from plugin goals was a key design decision. 
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 Developer: mvn deploy
   → validate (project structure OK)
@@ -221,6 +225,7 @@ Developer: mvn deploy
 ```
 
 **FAILURE PATH:**
+
 ```
 test phase: surefire reports failures
   → "BUILD FAILURE" — Tests run: 120, Failures: 2, Errors: 1
@@ -238,6 +243,7 @@ In multi-module projects, the lifecycle runs once per module in dependency order
 ### 💻 Code Example
 
 **Example 1 — Common lifecycle commands:**
+
 ```bash
 # Run all phases up to and including 'compile'
 mvn compile
@@ -265,6 +271,7 @@ mvn package -Dmaven.test.skip=true
 ```
 
 **Example 2 — Binding a custom goal to a lifecycle phase:**
+
 ```xml
 <build>
   <plugins>
@@ -290,14 +297,14 @@ mvn package -Dmaven.test.skip=true
 
 ### ⚖️ Comparison Table
 
-| Phase | What Runs | Output | Common Failure |
-|---|---|---|---|
-| validate | POM structure check | Nothing (or fail) | Invalid pom.xml |
-| compile | `javac` on src/main/java | target/classes/ | Compilation error |
-| test | Surefire runs *Test classes | test reports | Test failure |
-| package | jar/war plugin | target/*.jar | Missing Main-Class |
-| install | Copy to ~/.m2 | Local repo entry | Disk full |
-| deploy | Upload to remote repo | Remote repo entry | Auth failure |
+| Phase    | What Runs                    | Output            | Common Failure     |
+| -------- | ---------------------------- | ----------------- | ------------------ |
+| validate | POM structure check          | Nothing (or fail) | Invalid pom.xml    |
+| compile  | `javac` on src/main/java     | target/classes/   | Compilation error  |
+| test     | Surefire runs \*Test classes | test reports      | Test failure       |
+| package  | jar/war plugin               | target/\*.jar     | Missing Main-Class |
+| install  | Copy to ~/.m2                | Local repo entry  | Disk full          |
+| deploy   | Upload to remote repo        | Remote repo entry | Auth failure       |
 
 **How to choose which phase to run:** Use `package` for local development and CI validation. Use `install` when other local modules depend on this one. Use `deploy` only from CI pipelines (never from developer machines for release artifacts).
 
@@ -305,12 +312,12 @@ mvn package -Dmaven.test.skip=true
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `mvn deploy` pushes to production | `deploy` pushes the artifact to a Maven repository (Nexus/Artifactory), not to a production server |
-| You can run phases out of order | Maven always executes phases in order from the beginning of the lifecycle |
-| `clean` is part of the default lifecycle | `clean` is a separate lifecycle; `mvn clean package` runs two lifecycles in sequence |
-| Skipping tests is always safe | `-DskipTests` skips execution only; `-Dmaven.test.skip=true` also skips compilation — the latter can hide compilation errors in test code |
+| Misconception                            | Reality                                                                                                                                   |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `mvn deploy` pushes to production        | `deploy` pushes the artifact to a Maven repository (Nexus/Artifactory), not to a production server                                        |
+| You can run phases out of order          | Maven always executes phases in order from the beginning of the lifecycle                                                                 |
+| `clean` is part of the default lifecycle | `clean` is a separate lifecycle; `mvn clean package` runs two lifecycles in sequence                                                      |
+| Skipping tests is always safe            | `-DskipTests` skips execution only; `-Dmaven.test.skip=true` also skips compilation — the latter can hide compilation errors in test code |
 
 ---
 
@@ -321,6 +328,7 @@ mvn package -Dmaven.test.skip=true
 **Root Cause:** Tests fail but output is verbose and scrolls past; only the summary matters.
 
 **Fix:**
+
 ```bash
 # Show test output inline
 mvn test -Dsurefire.useFile=false

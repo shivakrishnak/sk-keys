@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Maven dependencies are external libraries your project declares it needs; Maven automatically downloads them, resolves their transitive dependencies, and adds them to the correct classpath for compilation and runtime.
 
-| #1072 | Category: Maven & Build Tools (Java) | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Maven Overview, pom.xml | |
-| **Used by:** | Dependency Scope, Transitive Dependencies, Dependency Exclusion, Dependency Convergence, Maven BOM | |
-| **Related:** | Dependency Scope, Transitive Dependencies, Maven Repository | |
+| #1072           | Category: Maven & Build Tools (Java)                                                               | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Maven Overview, pom.xml                                                                            |                 |
+| **Used by:**    | Dependency Scope, Transitive Dependencies, Dependency Exclusion, Dependency Convergence, Maven BOM |                 |
+| **Related:**    | Dependency Scope, Transitive Dependencies, Maven Repository                                        |                 |
 
 ---
 
@@ -55,6 +55,7 @@ A **Maven dependency** is a reference declared in `pom.xml` to an external artif
 Declare what your project needs and Maven automatically downloads it, including everything that it needs.
 
 **One analogy:**
+
 > Maven dependencies are like a grocery delivery order. You write a list of what you need: "milk, eggs, flour." The delivery service (Maven) figures out that flour comes in a bag that requires a shelf, eggs come in a carton — all the "dependencies of your ingredients" are handled automatically. You don't go to the store; the ingredients arrive at your door.
 
 **One insight:**
@@ -65,6 +66,7 @@ The transitive resolution is both Maven's greatest strength (you don't have to k
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Every dependency is uniquely identified by groupId:artifactId:version (GAV coordinates).
 2. Maven resolves the full transitive dependency graph — all deps of deps, recursively.
 3. Version conflicts (same artifact, different versions) are resolved by nearest-wins: the version closest to the root of the dependency tree wins.
@@ -103,6 +105,7 @@ The transitive resolution is both Maven's greatest strength (you don't have to k
 ```
 
 **TRANSITIVE RESOLUTION EXAMPLE:**
+
 ```
 Your project depends on spring-context 6.1.2
   spring-context depends on spring-core 6.1.2
@@ -114,6 +117,7 @@ You only declared spring-context.
 ```
 
 **NEAREST-WINS CONFLICT RESOLUTION:**
+
 ```
 Your project
 ├── Library A → guava 32.0
@@ -145,6 +149,7 @@ Your project declares one dependency: `spring-boot-starter-web`. You run `mvn de
 1 dependency.
 
 **WHAT MAVEN RESOLVED (approximately):**
+
 ```
 spring-boot-starter-web (your declaration)
 ├── spring-boot-starter (transitively resolved)
@@ -240,6 +245,7 @@ Nearest-wins was chosen over "highest version wins" for a reason: "highest versi
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 Developer adds <dependency> to pom.xml  ← YOU ARE HERE
   → Maven resolves GAV coordinates
@@ -252,6 +258,7 @@ Developer adds <dependency> to pom.xml  ← YOU ARE HERE
 ```
 
 **FAILURE PATH:**
+
 ```
 Dependency not found in any repository
   → BUILD FAILURE: "Could not resolve artifact"
@@ -268,6 +275,7 @@ Large enterprise applications have 500-1000+ transitive dependencies. Version co
 ### 💻 Code Example
 
 **Example 1 — Common dependency declarations:**
+
 ```xml
 <dependencies>
 
@@ -306,6 +314,7 @@ Large enterprise applications have 500-1000+ transitive dependencies. Version co
 ```
 
 **Example 2 — Diagnosing the dependency tree:**
+
 ```bash
 # Show full dependency tree
 mvn dependency:tree
@@ -321,6 +330,7 @@ mvn dependency:analyze
 ```
 
 **Example 3 — Forcing a version (overriding nearest-wins):**
+
 ```xml
 <dependencies>
   <!-- Force guava to 32.1.3 regardless of what transitives want -->
@@ -344,24 +354,24 @@ mvn dependency:analyze
 
 ### ⚖️ Comparison Table
 
-| Dependency Type | Scope | Compile? | Runtime? | Test? | Bundled in JAR? |
-|---|---|---|---|---|---|
-| Regular library | compile (default) | ✓ | ✓ | ✓ | ✓ |
-| Test library | test | ✗ | ✗ | ✓ | ✗ |
-| Container-provided | provided | ✓ | ✗ | ✓ | ✗ |
-| Runtime-only (JDBC driver) | runtime | ✗ | ✓ | ✓ | ✓ |
-| System classpath | system | ✓ | ✓ | ✓ | ✗ (avoid) |
+| Dependency Type            | Scope             | Compile? | Runtime? | Test? | Bundled in JAR? |
+| -------------------------- | ----------------- | -------- | -------- | ----- | --------------- |
+| Regular library            | compile (default) | ✓        | ✓        | ✓     | ✓               |
+| Test library               | test              | ✗        | ✗        | ✓     | ✗               |
+| Container-provided         | provided          | ✓        | ✗        | ✓     | ✗               |
+| Runtime-only (JDBC driver) | runtime           | ✗        | ✓        | ✓     | ✓               |
+| System classpath           | system            | ✓        | ✓        | ✓     | ✗ (avoid)       |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| All declared dependencies are included in the final JAR | Only `compile` and `runtime` scope deps are bundled; `test` and `provided` are excluded |
-| The highest version of a conflicting dep always wins | Nearest-wins: the version closest to the root of the dependency tree wins, regardless of version number |
-| Transitive dependencies are fully trustworthy | Transitive deps can introduce vulnerabilities (Log4Shell was a transitive dep); always audit with `mvn dependency:tree` |
-| Adding a dependency is always safe | Every new dependency adds transitive deps, potential version conflicts, and security exposure surface area |
+| Misconception                                           | Reality                                                                                                                 |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| All declared dependencies are included in the final JAR | Only `compile` and `runtime` scope deps are bundled; `test` and `provided` are excluded                                 |
+| The highest version of a conflicting dep always wins    | Nearest-wins: the version closest to the root of the dependency tree wins, regardless of version number                 |
+| Transitive dependencies are fully trustworthy           | Transitive deps can introduce vulnerabilities (Log4Shell was a transitive dep); always audit with `mvn dependency:tree` |
+| Adding a dependency is always safe                      | Every new dependency adds transitive deps, potential version conflicts, and security exposure surface area              |
 
 ---
 
@@ -372,6 +382,7 @@ mvn dependency:analyze
 **Root Cause:** A transitive dependency was resolved to a version missing a method that another library expects.
 
 **Diagnosis:**
+
 ```bash
 mvn dependency:tree -Dverbose -Dincludes=com.example:problematic-lib
 # Look for "omitted for conflict with X.Y.Z" entries

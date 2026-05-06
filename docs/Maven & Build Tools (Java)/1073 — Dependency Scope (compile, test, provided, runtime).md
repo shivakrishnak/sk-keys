@@ -22,11 +22,11 @@ tags:
 
 ⚡ TL;DR — Dependency scope controls exactly when a library is available (compile time, test time, runtime) and whether it ends up bundled in your final artifact — getting scope wrong produces either a bloated JAR or a runtime `ClassNotFoundException`.
 
-| #1073 | Category: Maven & Build Tools (Java) | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Maven Dependencies, pom.xml, Maven Overview | |
-| **Used by:** | Transitive Dependencies, Dependency Exclusion, Dependency Convergence | |
-| **Related:** | Transitive Dependencies, Maven Dependencies, Maven Repository | |
+| #1073           | Category: Maven & Build Tools (Java)                                  | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Maven Dependencies, pom.xml, Maven Overview                           |                 |
+| **Used by:**    | Transitive Dependencies, Dependency Exclusion, Dependency Convergence |                 |
+| **Related:**    | Transitive Dependencies, Maven Dependencies, Maven Repository         |                 |
 
 ---
 
@@ -55,6 +55,7 @@ Dependency scope was introduced to give developers precise control over when a d
 Scope tells Maven when a library is needed and whether to include it in the deployable artifact.
 
 **One analogy:**
+
 > Scope is like dress code for libraries. `compile` = formal wear (everywhere, always). `test` = gym clothes (only in the testing room, left at the gym). `provided` = uniform (wear it in the office to compile, but the company provides the actual uniform — don't bring your own to production). `runtime` = safety boots (not needed to design the building, but required when you're actually on-site running it).
 
 **One insight:**
@@ -65,6 +66,7 @@ The `provided` scope is the most misunderstood. It means: "I need this to compil
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Maven maintains three distinct classpaths: compile, test, and runtime.
 2. Scope determines which classpaths include the dependency.
 3. Scope affects transitive propagation: downstream projects inherit `compile`-scoped deps; they don't inherit `test` or `provided`.
@@ -153,7 +155,7 @@ Your WAR doesn't contain the Servlet API JAR. Tomcat provides the one and only `
 > Dependency scope is like packing for a trip. `compile` = pack it in your suitcase, use it everywhere. `test` = bring practice gear to the rehearsal room but leave it at the hotel — don't take it on stage. `provided` = wear the theatre costume during rehearsals, but don't bring your own to the venue — they have the official one. `runtime` = the props department handles it during the actual show; you don't need it in rehearsal.
 
 - "Pack it everywhere" → compile scope
-- "Rehearsal room only" → test scope  
+- "Rehearsal room only" → test scope
 - "Theatre provides the official costume" → provided scope
 - "Props department during the show" → runtime scope
 
@@ -208,19 +210,20 @@ The `provided` scope was introduced specifically for J2EE/Jakarta EE development
 When project A → B (scope X) → C (scope Y), C appears in A's classpath with this effective scope:
 
 | A→B scope | B→C scope | Effective scope of C in A |
-|---|---|---|
-| compile | compile | compile |
-| compile | runtime | runtime |
-| compile | provided | NOT propagated |
-| compile | test | NOT propagated |
-| provided | compile | provided |
-| runtime | compile | runtime |
+| --------- | --------- | ------------------------- |
+| compile   | compile   | compile                   |
+| compile   | runtime   | runtime                   |
+| compile   | provided  | NOT propagated            |
+| compile   | test      | NOT propagated            |
+| provided  | compile   | provided                  |
+| runtime   | compile   | runtime                   |
 
 ---
 
 ### 🔄 The Complete Picture — End-to-End Flow
 
 **NORMAL FLOW (Spring Boot WAR on Tomcat):**
+
 ```
 pom.xml declares:
   spring-boot-starter-web (compile)  ← YOU ARE HERE
@@ -241,6 +244,7 @@ Tomcat deploys WAR:
 ```
 
 **FAILURE PATH:**
+
 ```
 jakarta.servlet-api declared as compile (wrong scope)
   → bundled in WEB-INF/lib/
@@ -257,6 +261,7 @@ In microservices deployed as fat JARs (Spring Boot executable JAR), all dependen
 ### 💻 Code Example
 
 **Example 1 — Correct scope assignment for common libraries:**
+
 ```xml
 <dependencies>
 
@@ -302,6 +307,7 @@ In microservices deployed as fat JARs (Spring Boot executable JAR), all dependen
 ```
 
 **Example 2 — Verify what ends up in the WAR:**
+
 ```bash
 # List contents of the WAR's WEB-INF/lib/
 unzip -l target/my-app.war | grep WEB-INF/lib/
@@ -315,23 +321,23 @@ unzip -l target/my-app.war | grep WEB-INF/lib/
 
 ### ⚖️ Comparison Table
 
-| Scope | Typical Libraries | Bundled? | Transitive? | Key Question |
-|---|---|---|---|---|
-| compile | Spring, Jackson, Guava | ✓ | ✓ | "My app needs this to run" |
-| test | JUnit, Mockito, AssertJ | ✗ | ✗ | "I only need this to test" |
-| provided | Servlet API, EJB API | ✗ | ✗ | "Container provides this" |
-| runtime | JDBC drivers, SLF4J impl | ✓ | ✓ | "Loaded dynamically at runtime" |
+| Scope    | Typical Libraries        | Bundled? | Transitive? | Key Question                    |
+| -------- | ------------------------ | -------- | ----------- | ------------------------------- |
+| compile  | Spring, Jackson, Guava   | ✓        | ✓           | "My app needs this to run"      |
+| test     | JUnit, Mockito, AssertJ  | ✗        | ✗           | "I only need this to test"      |
+| provided | Servlet API, EJB API     | ✗        | ✗           | "Container provides this"       |
+| runtime  | JDBC drivers, SLF4J impl | ✓        | ✓           | "Loaded dynamically at runtime" |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `provided` means the library is not available during tests | `provided` deps ARE on the test classpath — tests can compile and run code that uses them |
-| `runtime` deps can't be used in source code | They can, but compile will fail — this enforces the pattern of coding to interfaces (`java.sql.DataSource`) not implementations |
-| Default scope is `runtime` | Default scope is `compile` — the most permissive option |
-| `test` scope dependencies are still in the final WAR | `test` scope deps are never in the final artifact — they're development-only |
+| Misconception                                              | Reality                                                                                                                         |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `provided` means the library is not available during tests | `provided` deps ARE on the test classpath — tests can compile and run code that uses them                                       |
+| `runtime` deps can't be used in source code                | They can, but compile will fail — this enforces the pattern of coding to interfaces (`java.sql.DataSource`) not implementations |
+| Default scope is `runtime`                                 | Default scope is `compile` — the most permissive option                                                                         |
+| `test` scope dependencies are still in the final WAR       | `test` scope deps are never in the final artifact — they're development-only                                                    |
 
 ---
 

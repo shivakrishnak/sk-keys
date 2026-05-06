@@ -3,327 +3,434 @@ layout: default
 title: "IoC (Inversion of Control)"
 parent: "Spring Core"
 nav_order: 371
-permalink: /spring/ioc/
-number: "371"
+permalink: /spring/ioc-inversion-of-control/
+number: "0371"
 category: Spring Core
 difficulty: ★☆☆
-depends_on: Object-Oriented Programming (OOP), Design Patterns, Dependency Injection
-used_by: DI (Dependency Injection), ApplicationContext, BeanFactory, Spring Framework
-tags: #foundational, #spring, #architecture, #pattern
+depends_on: Object-Oriented Programming, Design Patterns
+used_by: DI, ApplicationContext, BeanFactory, Spring Core
+related: Dependency Injection, Service Locator, Factory Pattern
+tags:
+  - spring
+  - springboot
+  - pattern
+  - foundational
+  - architecture
 ---
 
 # 371 — IoC (Inversion of Control)
 
-`#foundational` `#spring` `#architecture` `#pattern`
+⚡ TL;DR — IoC flips who creates your dependencies: instead of your code constructing collaborators, a container constructs them and hands them to you.
 
-⚡ TL;DR — IoC inverts the flow of control: instead of a class creating its own dependencies, an external container creates them and injects them — removing tight coupling from application code.
+| #371            | Category: Spring Core                                  | Difficulty: ★☆☆ |
+| :-------------- | :----------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Oriented Programming, Design Patterns           |                 |
+| **Used by:**    | DI, ApplicationContext, BeanFactory, Spring Core       |                 |
+| **Related:**    | Dependency Injection, Service Locator, Factory Pattern |                 |
 
-| #371            | Category: Spring Core                                           | Difficulty: ★☆☆ |
-| :-------------- | :-------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Object-Oriented Programming (OOP), Design Patterns              |                 |
-| **Used by:**    | DI (Dependency Injection), ApplicationContext, Spring Framework |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+Imagine writing a `UserService` that needs a `UserRepository`. Without IoC, `UserService` creates its own repository: `this.repo = new JdbcUserRepository(dataSource)`. Now every class that needs a repository must know which concrete implementation to instantiate, which datasource to use, and how to configure the connection. Changing from JDBC to JPA means editing every class that creates a repository. Writing unit tests means either wiring up a real database or stubbing the constructor — neither is clean.
+
+**THE BREAKING POINT:**
+As the codebase grows, object creation logic spreads across the entire system. A mid-tier class creates infrastructure objects. Business logic knows about database drivers. Tests become integration tests by accident. Adding a constructor parameter to `JdbcUserRepository` forces changes in every caller. The codebase becomes a tightly-coupled web where changing one implementation detail breaks dozens of files.
+
+**THE INVENTION MOMENT:**
+"This is exactly why IoC was created."
 
 ---
 
 ### 📘 Textbook Definition
 
-**Inversion of Control** (IoC) is a design principle in which the creation, configuration, and lifecycle management of objects is delegated to an external entity — typically a framework or container — rather than being controlled by the objects themselves. The principle inverts the traditional flow: normally a class creates its dependencies (`new OrderRepository()`); with IoC the container creates dependencies and pushes them into the class. IoC is an umbrella principle; _Dependency Injection_ is the most common concrete implementation. In Spring, the IoC container (`ApplicationContext` / `BeanFactory`) is the external entity responsible for instantiating beans, wiring their dependencies, and managing their lifecycle.
+**Inversion of Control** (IoC) is a software design principle in which the flow of program execution and the responsibility for object creation are delegated to a framework or container, rather than being controlled by application code. Instead of application objects creating their own dependencies, the IoC container constructs those dependencies and injects them. The "inversion" refers to the reversal of the dependency-creation direction: traditionally code calls libraries; with IoC, the framework calls application code. Dependency Injection is the most common implementation of IoC in Java.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-Instead of a class creating what it needs, you let Spring create it and hand it over. The class no longer controls how its dependencies come to life — Spring does.
+**One line:**
+You describe what you need; the framework decides how to build it.
 
----
+**One analogy:**
 
-### 🔵 Simple Definition (Elaborated)
+> Think of a hotel room. You don't bring your own towels or bed — the hotel provides them. You didn't create those amenities; they were prepared for you before you arrived. IoC is the hotel: it takes care of creating everything you need and delivers it to your room.
 
-In traditional code, a class is in full control: `OrderService` does `new PaymentGateway()` and `new OrderRepository()` inside its constructor. It is tightly coupled — you cannot swap `PaymentGateway` for a mock in tests without changing `OrderService`. IoC flips this: Spring reads the application configuration, creates all the objects, and hands them to whoever needs them. `OrderService` declares "I need a `PaymentGateway`" — Spring creates one and gives it to `OrderService`. `OrderService` no longer knows or cares how `PaymentGateway` was constructed. This decoupling is why Spring-managed code is easily testable and configurable without source changes.
+**One insight:**
+The power of IoC isn't laziness — it's _separation of concerns_. When your `UserService` doesn't know HOW its repository is created, you can swap JDBC for JPA, add a caching proxy, or inject a mock in tests — all without touching `UserService`. The class that uses a dependency is decoupled from the class that creates it.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**The problem: direct instantiation creates rigid, untestable coupling.**
+**CORE INVARIANTS:**
 
-```java
-// WITHOUT IoC — tight coupling
-class OrderService {
-    // OrderService CONTROLS the creation of its dependencies
-    private final PaymentGateway gateway   = new StripeGateway();     // hardcoded
-    private final OrderRepository repo     = new JpaOrderRepository(); // hardcoded
-    private final EmailSender sender       = new SmtpEmailSender();    // hardcoded
+1. Application code should declare what it _needs_, not _how to build_ what it needs.
+2. Object creation and wiring is the container's responsibility — it is not scattered across business logic.
+3. The direction of control is reversed: the framework controls when and how objects are instantiated.
 
-    void placeOrder(Order order) {
-        gateway.charge(order);
-        repo.save(order);
-        sender.sendConfirmation(order);
-    }
-}
-```
+**DERIVED DESIGN:**
+Given these invariants, the container must have:
 
-Problems:
+- A _registry_ of available components (the bean definitions)
+- A _resolver_ that matches declarations to implementations
+- An _injector_ that delivers resolved dependencies at the right time
 
-1. **Untestable** — a unit test for `placeOrder` hits the real Stripe API, real database, and real SMTP server. There is no way to inject fakes.
-2. **Unconfigurable** — changing to a `PayPalGateway` requires modifying `OrderService` source code.
-3. **Not reusable** — every environment (dev, test, prod) uses the same hardcoded implementations.
+Spring's `ApplicationContext` is exactly this: a registry + resolver + injector. Bean definitions describe what exists. Dependency declarations describe what is needed. The context matches and delivers.
 
-**The IoC solution — invert who does the constructing:**
+**THE TRADE-OFFS:**
 
-```java
-// WITH IoC — control inverted to the container
-class OrderService {
-    // OrderService DECLARES what it needs; it does NOT create it
-    private final PaymentGateway  gateway;
-    private final OrderRepository repo;
-    private final EmailSender     sender;
+**Gain:** Loose coupling. Classes depend on abstractions, not concrete implementations. Easy swapping of implementations, easy mocking in tests.
 
-    // The container calls this constructor with ready-made objects
-    OrderService(PaymentGateway gateway, OrderRepository repo,
-                 EmailSender sender) {
-        this.gateway = gateway;
-        this.repo    = repo;
-        this.sender  = sender;
-    }
-}
-// Spring configuration declares which implementations to use:
-// PaymentGateway → StripeGateway (prod) or FakeGateway (test)
-```
+**Cost:** Magic. New developers see `@Autowired UserRepository repo` without a `new` keyword and don't know where `repo` comes from. Configuration errors (missing beans, ambiguous beans) become runtime errors rather than compile errors. Framework lock-in: your code assumes Spring's lifecycle.
 
-`OrderService` is now a passive recipient. The container has control over what gets instantiated.
-
-**The Hollywood Principle — "Don't call us, we'll call you":**
-
-IoC is sometimes summarised as the Hollywood Principle. A class does not call `new` to create collaborators; it waits for the container to call its constructor or setter with the collaborators ready-made.
+Could we do this differently? Yes — the Service Locator pattern also inverts control, but instead of injecting dependencies, the class asks a registry for them. This is inferior because the class still knows about the registry, coupling it to infrastructure.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-WITHOUT IoC:
+**SETUP:**
+You have `OrderService` that uses `PaymentGateway`. Without IoC, `OrderService`'s constructor calls `new StripeGateway(apiKey)`. Your tests run against real Stripe.
 
-What breaks without it:
+**WHAT HAPPENS WITHOUT IoC:**
 
-1. Unit tests must use real infrastructure (database, payment API, email server) because there is no way to substitute fakes.
-2. Changing a dependency implementation requires editing every class that instantiates it.
-3. Object graph construction (A needs B needs C needs D) is duplicated wherever A is created.
-4. Configuration (connection strings, timeouts) is hardcoded in constructors rather than externalised.
+1. `OrderService` is constructed.
+2. Inside its constructor: `this.gateway = new StripeGateway(System.getenv("STRIPE_KEY"))`.
+3. In a unit test, `new OrderService()` immediately tries to read the env variable.
+4. If the variable is absent, it throws or returns null.
+5. Your test is now an integration test that requires real credentials.
+6. You can't test `OrderService`'s logic without a live payment network.
 
-WITH IoC:
-→ Dependencies are interfaces; implementations are swapped per environment without code changes.
-→ Unit tests inject mocks/stubs in place of real implementations — no infrastructure required.
-→ The container constructs the entire object graph from configuration — no manual wiring.
-→ Cross-cutting concerns (logging, security, transactions) are added by the container without touching business classes.
+**WHAT HAPPENS WITH IoC:**
+
+1. `OrderService` declares: `private final PaymentGateway gateway;` with `@Autowired` constructor.
+2. In production, Spring injects `StripeGateway`.
+3. In a test, you inject a `FakePaymentGateway` with `@MockBean`.
+4. `OrderService` runs identically in both environments.
+5. The test verifies business logic; the payment network is irrelevant.
+
+**THE INSIGHT:**
+IoC doesn't just make code cleaner — it makes every component independently testable by removing the hardcoded coupling between a class and its collaborators.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> Think of a staffing agency vs. direct hire. In direct hire (no IoC), a company goes out and recruits each employee itself — it is tightly coupled to the hiring process. If it needs a Java developer, it posts the job, interviews, and hires. With a staffing agency (IoC), the company says "I need a Java developer" and the agency provides one. The company does not know or care how the agency found the developer — it just receives a ready-to-work person. Swapping the developer (swapping an implementation) is the agency's problem, not the company's.
+> Think of a staffing agency. A company (your class) tells the agency "I need a Java developer with Spring experience." The agency (IoC container) finds the right person and sends them to you. The company never interviews candidates, never posts job ads — it just specifies requirements, and the agency handles fulfillment.
 
-"Company declaring a role" = class declaring a dependency type (interface)
-"Staffing agency" = Spring IoC container
-"Ready-to-work developer" = instantiated and configured bean
-"Company going out to hire directly" = class calling `new ConcreteImpl()`
+- "Company's job requirements" → constructor or field declarations with `@Autowired`
+- "Staffing agency" → Spring IoC container (`ApplicationContext`)
+- "Candidate pool" → registered beans (classes annotated with `@Component`, `@Service`, etc.)
+- "Developer placed at company" → injected dependency
+
+**Where this analogy breaks down:** Unlike a staffing agency, the IoC container can create objects from scratch on demand, can create multiple instances, and can manage their entire lifecycle — creation, initialization, and destruction.
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+IoC means the framework creates the objects your program needs and hands them to you. Your code asks for things without worrying about how they're built. It's like ordering room service instead of cooking.
+
+**Level 2 — How to use it (junior developer):**
+In Spring, you annotate classes with `@Component`, `@Service`, or `@Repository`. To receive a dependency, you declare it in a constructor and annotate with `@Autowired`. Spring's container scans your classpath, finds annotated classes, wires them together, and delivers the assembled object graph to your `main` method.
+
+**Level 3 — How it works (mid-level engineer):**
+Spring's `ClassPathScanningCandidateComponentProvider` scans classpath for annotated classes and creates `BeanDefinition` objects for each. The `DefaultListableBeanFactory` stores these definitions. When a bean is requested (or at context refresh for singletons), the factory uses `AutowiredAnnotationBeanPostProcessor` to resolve `@Autowired` fields by type, injecting resolved dependencies through reflection before handing the fully-initialized bean to callers.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+IoC was popularized by Rod Johnson in "Expert One-on-One J2EE Design and Development" (2002) as a reaction to EJB's heavyweight, deployment-descriptor-driven container. The core design decision — declare in code rather than XML by default — shifted in Spring 2.5 when annotation-based configuration was introduced. This was a deliberate choice to make bean discovery implicit and reduce boilerplate. The cost of this decision surfaces when two beans satisfy the same type: you need `@Qualifier` or `@Primary` to disambiguate, turning a compile-time concern into a runtime one.
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**IoC container flow in Spring:**
+Spring implements IoC through a two-phase process: **bean definition registration** and **bean instantiation**.
+
+**Phase 1 — Bean Discovery:**
+
+```
+Classpath scanning
+    ↓
+Find classes with @Component / @Service / @Repository / @Controller
+    ↓
+Create BeanDefinition for each:
+  - class name
+  - scope (singleton/prototype)
+  - dependencies (from constructor/field analysis)
+    ↓
+Register in BeanDefinitionRegistry
+```
+
+**Phase 2 — Context Refresh (singleton beans):**
+
+```
+ApplicationContext.refresh()
+    ↓
+Iterate all singleton BeanDefinitions
+    ↓
+For each bean:
+  1. Resolve constructor arguments (recurse for each dependency)
+  2. Instantiate via constructor
+  3. Post-process (BeanPostProcessors run)
+  4. Store in singleton cache
+    ↓
+Application ready to serve requests
+```
+
+**Dependency Resolution:**
+When Bean A depends on Bean B, Spring resolves B before constructing A. If B depends on C, Spring resolves C first. This is recursive depth-first resolution. Circular dependencies (A→B→A) cause a `BeanCurrentlyInCreationException` for constructor injection, but are handled for field injection via a three-level singleton cache.
+
+**The Three-Level Cache (circular dependency handling):**
 
 ```
 ┌──────────────────────────────────────────────┐
-│         Spring IoC Container                 │
-│                                              │
-│  1. Read configuration                       │
-│     (@ComponentScan, @Configuration,         │
-│      XML, auto-config)                       │
-│           ↓                                  │
-│  2. Build BeanDefinition registry            │
-│     (class, scope, dependencies)            │
-│           ↓                                  │
-│  3. Instantiate beans in dependency order    │
-│     (PaymentGateway before OrderService)    │
-│           ↓                                  │
-│  4. Inject dependencies                      │
-│     (constructor / setter / field)           │
-│           ↓                                  │
-│  5. Run BeanPostProcessors                   │
-│     (AOP proxies, @Autowired wiring)        │
-│           ↓                                  │
-│  6. Call @PostConstruct / afterPropertiesSet │
-│           ↓                                  │
-│  7. Beans ready — ApplicationContext starts  │
+│ Level 1: singletonObjects                    │
+│   Fully initialized, ready-to-use beans      │
+├──────────────────────────────────────────────┤
+│ Level 2: earlySingletonObjects               │
+│   Partially initialized beans (post-         │
+│   processed but not yet fully wired)         │
+├──────────────────────────────────────────────┤
+│ Level 3: singletonFactories                  │
+│   Factories that can produce an early        │
+│   reference to a bean being created          │
 └──────────────────────────────────────────────┘
 ```
 
-**Concrete IoC in Spring Boot:**
-
-```java
-// 1. Declare the dependency via an interface (not a concrete class)
-@Service
-class OrderService {
-    private final PaymentGateway gateway;
-
-    // Constructor injection — Spring calls this
-    OrderService(PaymentGateway gateway) {
-        this.gateway = gateway;
-    }
-}
-
-// 2. Spring finds StripeGateway implementing PaymentGateway via @ComponentScan
-@Component
-class StripeGateway implements PaymentGateway { ... }
-
-// 3. Spring instantiates StripeGateway, then calls:
-//    new OrderService(stripeGatewayInstance)
-// OrderService never called 'new StripeGateway()' itself
-```
+This is why field injection can survive circular dependencies while constructor injection cannot: constructor injection requires the full object before construction can complete, while field injection injects after construction via a partially-initialized early reference.
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 🔄 The Complete Picture — End-to-End Flow
+
+**NORMAL FLOW:**
 
 ```
-Object-Oriented Programming
-(classes and interfaces)
-        │
-        ▼
-IoC (Inversion of Control)  ◄──── (you are here)
-        │  ← concrete implementation →
-        ▼
-DI (Dependency Injection)
-        │
-        ├───────────────────────────────────┐
-        ▼                                   ▼
-ApplicationContext                  BeanFactory
-(Spring's IoC container)           (base container)
-        │
-        ▼
-Bean Lifecycle / Bean Scope
+main() calls SpringApplication.run()
+    ↓
+ApplicationContext created
+    ↓
+Component scan → BeanDefinitions registered
+    ↓
+Context refresh → Beans instantiated + wired
+   ← YOU ARE HERE (IoC container resolves all dependencies)
+    ↓
+ApplicationReadyEvent published
+    ↓
+Application serves requests (beans already available)
 ```
+
+**FAILURE PATH:**
+
+```
+IoC container fails to resolve dependency
+    ↓
+NoSuchBeanDefinitionException or
+UnsatisfiedDependencyException thrown
+    ↓
+Context refresh aborted → Application fails to start
+    ↓
+No traffic served (fail-fast: better than silent misconfiguration)
+```
+
+**WHAT CHANGES AT SCALE:**
+At scale, IoC itself is not a bottleneck — bean wiring happens once at startup. What scales poorly is startup time with hundreds of beans; this is why Spring Boot's `spring.main.lazy-initialization=true` exists. In serverless or short-lived container environments, slow context startup caused by IoC overhead is a real cost that lazy initialization or GraalVM native compilation (AOT) mitigates.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1 — Before and after IoC:**
+**Example 1 — Tight coupling WITHOUT IoC (the problem):**
 
 ```java
-// BEFORE IoC: tight coupling, untestable
-class ReportService {
-    private final DataSource ds = new HikariDataSource(config); // new!
-    void generateReport() { /* uses ds */ }
+// BAD: UserService creates its own dependency
+public class UserService {
+    private final UserRepository repo;
+
+    public UserService() {
+        // Hardcoded: can't swap implementations
+        // Can't test without a real database
+        this.repo = new JdbcUserRepository(
+            DriverManager.getConnection("jdbc:...")
+        );
+    }
 }
-// To test: needs a real database. Cannot be unit-tested.
+```
 
-// AFTER IoC: Spring injects DataSource
+**Example 2 — IoC with Spring (the solution):**
+
+```java
+// GOOD: Spring injects the dependency
 @Service
-class ReportService {
-    private final DataSource ds;          // declared, not created
+public class UserService {
 
-    ReportService(DataSource ds) {        // Spring provides it
-        this.ds = ds;
+    private final UserRepository repo;
+
+    // Spring resolves UserRepository from its registry
+    @Autowired
+    public UserService(UserRepository repo) {
+        this.repo = repo;
     }
 
-    void generateReport() { /* uses ds */ }
+    public User findById(long id) {
+        return repo.findById(id);
+    }
 }
-// To test: inject DataSource mock → no database needed
+
+@Repository
+public class JdbcUserRepository implements UserRepository {
+    // Spring wires DataSource here automatically
+    @Autowired
+    private DataSource dataSource;
+    // ...
+}
 ```
 
-**Example 2 — Swapping implementations without touching business code:**
+**Example 3 — Swapping implementations via IoC (power of decoupling):**
 
 ```java
-// Production: real gateway provided by Spring (auto-detected @Component)
-@Component
-@Profile("prod")
-class StripeGateway implements PaymentGateway { ... }
+// In tests: inject a mock without changing UserService
+@SpringBootTest
+class UserServiceTest {
 
-// Test: fake gateway registered only in test context
-@Component
-@Profile("test")
-class FakePaymentGateway implements PaymentGateway {
-    public void charge(Order o) { /* no-op */ }
+    @MockBean
+    UserRepository mockRepo; // Spring replaces real bean
+
+    @Autowired
+    UserService userService; // gets the mock injected
+
+    @Test
+    void findByIdDelegatesToRepository() {
+        when(mockRepo.findById(1L)).thenReturn(new User(1L, "Alice"));
+        User result = userService.findById(1L);
+        assertEquals("Alice", result.getName());
+    }
 }
-
-// OrderService is identical in both profiles — IoC makes it transparent
 ```
+
+---
+
+### ⚖️ Comparison Table
+
+| Approach            | Who Creates Objects       | Testability | Coupling |
+| ------------------- | ------------------------- | ----------- | -------- |
+| **IoC (Spring)**    | Container                 | Excellent   | Loose    |
+| Manual construction | Application code          | Poor        | Tight    |
+| Service Locator     | Application asks registry | Moderate    | Moderate |
+| Factory Pattern     | Factory class             | Good        | Moderate |
+
+**How to choose:** Use IoC (Spring) for any production application; the testability and maintainability gains far outweigh the learning curve. Use manual construction only in code that runs outside a Spring context (utilities, lambdas without context).
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                   | Reality                                                                                                                                                              |
-| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| IoC and DI are the same thing   | IoC is the principle; DI is the most common implementation of it. Service Locator is another form of IoC that does NOT use DI                                        |
-| IoC requires Spring             | IoC is a language-agnostic design principle. Angular uses IoC, Guice uses IoC, CDI uses IoC. Spring is one implementation                                            |
-| IoC means you never use `new`   | You use `new` for value objects, DTOs, and simple local variables. IoC applies to service-layer dependencies that need to be swappable and managed                   |
-| IoC always improves performance | The container adds startup overhead for reflection, proxy creation, and graph wiring. The benefit is developer productivity and testability — not runtime throughput |
+| Misconception                                    | Reality                                                                                                                 |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| IoC and DI are the same thing                    | IoC is the principle; DI is one implementation of IoC. Service Locator is another IoC implementation.                   |
+| IoC means you lose control over your application | You lose control over object _creation_, gaining control over object _behavior_ — a worthwhile trade.                   |
+| @Autowired is required for IoC to work           | Since Spring 4.3, a single-constructor class is auto-wired without @Autowired.                                          |
+| IoC containers are slow                          | Bean wiring happens once at startup. At request time, IoC has zero overhead — beans are already in the singleton cache. |
+| Circular dependencies are impossible with IoC    | Spring handles field-injection circular deps via its three-level cache; constructor-injection circular deps still fail. |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**Bypassing IoC with `new` inside a Spring bean — proxy bypass**
+**NoSuchBeanDefinitionException**
+
+**Symptom:**
+`NoSuchBeanDefinitionException: No qualifying bean of type 'com.example.UserRepository'`
+Application fails to start.
+
+**Root Cause:**
+Spring cannot find a bean of the required type in its registry. The class is either not annotated with a stereotype annotation, not in a scanned package, or the wrong profile is active.
+
+**Diagnostic Command / Tool:**
+
+```bash
+# Enable bean definition logging
+logging.level.org.springframework.beans.factory=DEBUG
+# Look for lines: "Creating shared instance of singleton bean"
+# Or use Spring Boot Actuator:
+curl http://localhost:8080/actuator/beans | jq '.contexts[].beans | keys'
+```
+
+**Fix:**
 
 ```java
-// BAD: creating a Spring-managed class with 'new' bypasses Spring
-@Service
-class OrderService {
-    void processOrder(Order order) {
-        // AuditService has @Transactional — but this bypasses the Spring proxy!
-        AuditService audit = new AuditService(); // NOT the Spring-managed bean
-        audit.record(order); // @Transactional on audit.record() does NOTHING
-    }
-}
+// BAD: missing stereotype annotation
+public class UserRepository { ... }
 
-// GOOD: inject the Spring-managed bean so the proxy is used
-@Service
-class OrderService {
-    private final AuditService auditService; // injected by Spring
-    OrderService(AuditService auditService) { this.auditService = auditService; }
-
-    void processOrder(Order order) {
-        auditService.record(order); // uses the Spring proxy — @Transactional works
-    }
-}
+// GOOD: annotated so Spring discovers it
+@Repository
+public class UserRepository { ... }
 ```
+
+**Prevention:**
+Use `@ComponentScan` explicitly and keep your package structure consistent. Run context startup tests (`@SpringBootTest`) in CI to catch missing beans early.
 
 ---
 
-**Slow startup due to unnecessary eager bean initialisation**
+**UnsatisfiedDependencyException (ambiguous beans)**
+
+**Symptom:**
+`UnsatisfiedDependencyException: expected single matching bean but found 2: jdbcRepo, jpaRepo`
+
+**Root Cause:**
+Two beans satisfy the same interface. Spring can't decide which to inject.
+
+**Diagnostic Command / Tool:**
+
+```bash
+# List all beans of a type via Actuator
+curl http://localhost:8080/actuator/beans | \
+  jq '.contexts[].beans | to_entries[] |
+      select(.value.type | contains("UserRepository"))'
+```
+
+**Fix:**
 
 ```java
-// BAD: heavyweight bean with long init eagerly created at startup
-@Component
-class ReportCacheWarmer {
-    @PostConstruct
-    void warmUp() {
-        // Queries 10 million rows — runs on every startup including tests!
-        reportRepository.findAll().forEach(cache::put);
-    }
-}
+// Option 1: mark the preferred bean
+@Repository
+@Primary
+public class JpaUserRepository implements UserRepository { ... }
 
-// GOOD: make it lazy or conditional
-@Component
-@Lazy                        // initialised on first use, not at startup
-@ConditionalOnProperty(name = "cache.warm-up.enabled", havingValue = "true")
-class ReportCacheWarmer { ... }
+// Option 2: qualify at injection point
+@Autowired
+@Qualifier("jdbcRepo")
+private UserRepository repo;
 ```
+
+**Prevention:**
+Design interfaces to have exactly one production implementation. Use `@Primary` for production defaults; `@Qualifier` for tests or feature flags.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `DI (Dependency Injection)` — the primary concrete mechanism implementing the IoC principle in Spring
-- `ApplicationContext` — Spring's full-featured IoC container that manages the bean lifecycle
-- `BeanFactory` — the base Spring IoC container; `ApplicationContext` extends it
-- `Bean` — any object whose lifecycle is managed by the Spring IoC container
-- `Bean Lifecycle` — the sequence of phases a bean passes through inside the IoC container
-- `@Autowired` — Spring's annotation that triggers IoC-driven dependency injection
-- `CGLIB Proxy` — the proxy mechanism Spring uses to add cross-cutting concerns via IoC-managed beans
+**Prerequisites (understand these first):**
+
+- `Object-Oriented Programming` — IoC is meaningless without classes and interfaces to invert control of
+- `Interface (Java)` — IoC's power comes from injecting interface types, not concrete implementations
+- `Design Patterns` — IoC is the framework-level expression of the Dependency Inversion Principle
+
+**Builds On This (learn these next):**
+
+- `DI (Dependency Injection)` — the primary mechanism Spring uses to implement IoC
+- `ApplicationContext` — the concrete Spring container that implements IoC
+- `Bean` — the objects managed by the IoC container
+- `BeanFactory` — the low-level IoC container interface
+
+**Alternatives / Comparisons:**
+
+- `Service Locator` — another IoC implementation where code pulls dependencies from a registry rather than receiving them
+- `Factory Pattern` — manual object creation pattern that IoC replaces in most cases
 
 ---
 
@@ -331,20 +438,28 @@ class ReportCacheWarmer { ... }
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ External container controls creation and  │
-│              │ wiring of objects — not the objects       │
+│ WHAT IT IS   │ A principle: the container creates and    │
+│              │ wires your objects, not your code         │
 ├──────────────┼───────────────────────────────────────────┤
-│ PRINCIPLE    │ Hollywood: "Don't call us, we'll call you"│
-│              │ Declare needs; container fulfils them     │
+│ PROBLEM IT   │ Object creation spread across business    │
+│ SOLVES       │ logic, causing tight coupling             │
 ├──────────────┼───────────────────────────────────────────┤
-│ BENEFIT      │ Loose coupling → testable, configurable,  │
-│              │ swappable implementations                 │
+│ KEY INSIGHT  │ Inverting who creates dependencies makes  │
+│              │ every class independently testable        │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Let Spring build the engine; you just    │
-│              │ describe which parts you need."           │
+│ USE WHEN     │ Building any multi-class application that │
+│              │ must be testable and maintainable         │
 ├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ DI (Dependency Injection) → Bean →        │
-│              │ ApplicationContext → Bean Lifecycle        │
+│ AVOID WHEN   │ Simple scripts, utilities, or code        │
+│              │ outside a Spring context                  │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ Loose coupling vs "magic" — new devs      │
+│              │ don't see where objects come from         │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Tell the framework what you need;        │
+│              │  it handles the how."                     │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ DI → ApplicationContext → Bean Lifecycle  │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -352,6 +467,6 @@ class ReportCacheWarmer { ... }
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** A team migrates from a Service Locator pattern (where classes call `ServiceRegistry.get(PaymentGateway.class)` to retrieve dependencies) to constructor-based IoC/DI. Both patterns achieve loose coupling from concrete implementations. Identify three specific differences in testability, error detection timing, and dependency graph visibility between the two approaches — and explain why the Spring community strongly prefers IoC/DI over Service Locator despite both achieving decoupling.
+**Q1.** Spring's IoC container fails fast: if a bean is missing, the _entire application_ refuses to start. Some frameworks use lazy resolution — the application starts, and missing beans are discovered only when first accessed. What are the exact trade-offs of each approach? Under what production scenario is Spring's fail-fast approach a liability rather than a virtue?
 
-**Q2.** A Spring Boot application has 500 beans. Startup takes 45 seconds in a Kubernetes pod. The liveness probe fails because the pod takes too long to become ready, causing rolling deployment failures. Without disabling IoC, describe at least three Spring-specific techniques to reduce startup time, explaining which part of the IoC container initialisation each technique addresses and what trade-off each introduces at runtime.
+**Q2.** IoC decouples object creation from object use — but it doesn't decouple an object from its _interface contract_. If `UserService` calls `repo.findById(id)`, it is still coupled to that method signature. How does this limit IoC's testability benefits in practice, and what additional pattern addresses this residual coupling?

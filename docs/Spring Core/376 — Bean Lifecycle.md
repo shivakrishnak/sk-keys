@@ -4,383 +4,459 @@ title: "Bean Lifecycle"
 parent: "Spring Core"
 nav_order: 376
 permalink: /spring/bean-lifecycle/
-number: "376"
+number: "0376"
 category: Spring Core
 difficulty: ★★☆
-depends_on: Bean, ApplicationContext, BeanPostProcessor, DI (Dependency Injection)
-used_by: BeanPostProcessor, BeanFactoryPostProcessor, @Transactional, AOP
-tags: #intermediate, #spring, #internals, #deep-dive
+depends_on: Bean, BeanFactory, ApplicationContext, DI
+used_by: BeanPostProcessor, BeanFactoryPostProcessor, AOP, Spring Security
+related: BeanPostProcessor, InitializingBean, DisposableBean, SmartLifecycle
+tags:
+  - spring
+  - springboot
+  - internals
+  - intermediate
+  - architecture
 ---
 
 # 376 — Bean Lifecycle
 
-`#intermediate` `#spring` `#internals` `#deep-dive`
+⚡ TL;DR — Bean Lifecycle is the precise sequence of events from bean definition to destruction that Spring orchestrates, giving you hooks to run code at each stage.
 
-⚡ TL;DR — The Bean Lifecycle is the sequence of phases a Spring bean passes through — from instantiation and dependency injection, through initialisation callbacks, to active use and final destruction.
+| #376            | Category: Spring Core                                               | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Bean, BeanFactory, ApplicationContext, DI                           |                 |
+| **Used by:**    | BeanPostProcessor, BeanFactoryPostProcessor, AOP, Spring Security   |                 |
+| **Related:**    | BeanPostProcessor, InitializingBean, DisposableBean, SmartLifecycle |                 |
 
-| #376            | Category: Spring Core                                                  | Difficulty: ★★☆ |
-| :-------------- | :--------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Bean, ApplicationContext, BeanPostProcessor, DI (Dependency Injection) |                 |
-| **Used by:**    | BeanPostProcessor, BeanFactoryPostProcessor, @Transactional, AOP       |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+A `DatabaseConnectionPool` bean needs to open connections after Spring injects the `DataSource` configuration, and close those connections cleanly when the application shuts down. Without lifecycle hooks, you either run setup code in the constructor (before `DataSource` is injected — it's null) or call `init()` manually after Spring starts (requiring coordination you can't guarantee). On shutdown, the JVM exits without closing connections, leaving the database with orphaned sessions. This repeats for every resource that needs orderly initialization and cleanup.
+
+**THE BREAKING POINT:**
+Infrastructure beans need post-construction initialization that runs _after_ all dependencies are injected. Constructors can't do this — dependencies are null at construction time for field-injected beans. Shutdown hooks need to know about application-managed resources. Without a formal lifecycle, every team invents their own convention, startup order becomes fragile, and resource leaks on shutdown are common.
+
+**THE INVENTION MOMENT:**
+"This is exactly why the Spring Bean Lifecycle was formalized."
 
 ---
 
 ### 📘 Textbook Definition
 
-The **Bean Lifecycle** in Spring is the ordered sequence of phases that every bean passes through from the moment the container creates it to the moment the container destroys it. The sequence is: (1) _instantiation_ — the bean class is instantiated via its constructor; (2) _property population_ — dependencies are injected via constructor, setter, or field; (3) _BeanNameAware / BeanFactoryAware / ApplicationContextAware_ callbacks; (4) `BeanPostProcessor.postProcessBeforeInitialization()`; (5) `@PostConstruct` / `InitializingBean.afterPropertiesSet()` / custom `init-method`; (6) `BeanPostProcessor.postProcessAfterInitialization()` — where AOP proxies are created; (7) bean is ready for use; (8) `@PreDestroy` / `DisposableBean.destroy()` / custom `destroy-method` — on container shutdown. Understanding this lifecycle is essential for writing `BeanPostProcessor` extensions, debugging AOP proxy creation, and managing resources correctly.
+The **Spring Bean Lifecycle** is the complete sequence of phases a bean passes through from definition registration to destruction. It comprises: BeanDefinition registration, `BeanFactoryPostProcessor` processing (modifying definitions), bean instantiation, dependency injection, `BeanPostProcessor` before-initialization processing, initialization callbacks (`@PostConstruct`, `InitializingBean.afterPropertiesSet()`, custom init method), `BeanPostProcessor` after-initialization processing (when AOP proxies are created), normal usage, and finally destruction callbacks (`@PreDestroy`, `DisposableBean.destroy()`, custom destroy method) triggered by context close.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-The bean lifecycle is the set of steps Spring follows from "create this object" to "destroy this object" — you can plug in your own code at several of these steps.
+**One line:**
+Bean Lifecycle is Spring's birth-to-death choreography for every object it manages.
 
----
+**One analogy:**
 
-### 🔵 Simple Definition (Elaborated)
+> A bean's lifecycle is like an employee's journey at a company: hired (instantiated), given their tools and desk (dependencies injected), trained (init callbacks), productive for years (normal usage), and eventually given an offboarding checklist to complete before leaving (destroy callbacks). Spring is the HR department managing every stage.
 
-When Spring starts, it does not just call `new MyService()` and move on. It follows a precise pipeline: create the object, inject its dependencies, call any setup methods you declared (`@PostConstruct`), then wrap it in a proxy if needed (for `@Transactional` or `@Cacheable`). From that point the bean is "live" and handles requests. On shutdown, Spring calls your cleanup method (`@PreDestroy`) before destroying the bean. The reason this matters in practice: `@PostConstruct` lets you run setup code after all dependencies are injected (safe place to call injected dependencies), `@PreDestroy` lets you release resources (close connections, shut down thread pools), and knowing when the AOP proxy is created (after `@PostConstruct`) explains why calling `this.transactionalMethod()` from within a bean bypasses the transaction.
+**One insight:**
+The lifecycle exists to solve a sequencing problem: dependencies must be fully injected before initialization code runs, and initialization must complete before the bean is handed to callers. The `BeanPostProcessor` hooks at before/after initialization are how all of Spring's AOP, transaction management, caching, and security annotations get applied — they intercept every bean during this phase.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**The complete lifecycle, phase by phase:**
+**CORE INVARIANTS:**
 
-```
-Phase 1: Instantiation
-  Spring calls the constructor (chosen by DI rules).
-  Dependencies are not yet available.
-  Do NOT access injected dependencies here.
+1. Initialization callbacks run _after_ all dependencies are injected — never before.
+2. Destruction callbacks run during an orderly shutdown — not on garbage collection (singletons are never GC'd while the context is alive).
+3. `BeanPostProcessor` runs around every initialization — this is how cross-cutting concerns (AOP) are applied without changing the bean itself.
 
-Phase 2: Dependency Injection (Property Population)
-  Constructor injection: happens in Phase 1.
-  Setter / field injection: happens here, after construction.
+**DERIVED DESIGN:**
+The lifecycle has two non-obvious phases that most developers miss:
 
-Phase 3: Aware Interface Callbacks
-  BeanNameAware.setBeanName(name)
-  BeanFactoryAware.setBeanFactory(factory)
-  ApplicationContextAware.setApplicationContext(ctx)
-  Use these to give a bean access to container metadata.
+**Phase between injection and init:** `BeanPostProcessor.postProcessBeforeInitialization()` runs here. This is where `@PostConstruct` is processed by `CommonAnnotationBeanPostProcessor`.
 
-Phase 4: BeanPostProcessor.postProcessBeforeInitialization()
-  All registered BeanPostProcessors run BEFORE the init method.
-  Example: @PostConstruct processing by
-    CommonAnnotationBeanPostProcessor.
+**Phase after init:** `BeanPostProcessor.postProcessAfterInitialization()` runs here. This is where Spring replaces the raw bean with an AOP proxy (e.g., for `@Transactional`). The proxy is what gets stored in the singleton cache — not the original object.
 
-Phase 5: Initialisation
-  @PostConstruct method  (preferred modern approach)
-  InitializingBean.afterPropertiesSet()  (Spring interface)
-  init-method in @Bean(initMethod="init")  (XML/config)
-  At this point, all dependencies are injected and verified.
-  SAFE to call injected services here.
+This ordering explains why `@Transactional` works: Spring waits until the bean is fully initialized before wrapping it in a proxy, ensuring the proxy wraps a fully functional object.
 
-Phase 6: BeanPostProcessor.postProcessAfterInitialization()
-  AOP proxy is created HERE by AnnotationAwareAspectJAutoProxyCreator.
-  @Transactional, @Cacheable, @Async wrappers are applied here.
-  The object in the application context AFTER this step is the PROXY,
-  not the original bean instance.
+**THE TRADE-OFFS:**
 
-Phase 7: Bean is Ready (Active)
-  Bean handles application requests for the duration of its scope.
+**Gain:** Guaranteed sequencing of setup and teardown. All Spring features (AOP, transactions, security) are applied uniformly via lifecycle hooks.
 
-Phase 8: Destruction (on context close / @PreDestroy)
-  @PreDestroy method  (preferred)
-  DisposableBean.destroy()  (Spring interface)
-  destroy-method in @Bean(destroyMethod="close")
-  NOTE: prototype beans do NOT receive destruction callbacks.
-```
-
-**Why `@PostConstruct` is the right place for initialisation code:**
-
-```java
-@Service
-class CacheWarmer {
-    private final ProductRepository repo; // injected dependency
-
-    CacheWarmer(ProductRepository repo) {
-        this.repo = repo;
-        // DO NOT call repo here — Phase 1, repo not yet injected via field/setter
-        // (For constructor injection it IS available here, but @PostConstruct
-        //  is still preferred for clarity and interface parity)
-    }
-
-    @PostConstruct  // Phase 5 — all deps injected, safe to use them
-    void warmCache() {
-        repo.findTopProducts().forEach(cache::put); // safe
-        log.info("Cache warmed with {} products", cache.size());
-    }
-
-    @PreDestroy     // Phase 8 — cleanup before bean destroyed
-    void clearCache() {
-        cache.clear();
-    }
-}
-```
+**Cost:** The lifecycle is complex — missing a detail (like the proxy replacement in `postProcessAfterInitialization`) causes subtle bugs like self-invocation bypass. The `Aware` interfaces (`ApplicationContextAware`, `BeanNameAware`) add coupling to Spring's internals.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-WITHOUT Bean Lifecycle:
+**SETUP:**
+A `CacheManager` bean needs to pre-warm a local cache by reading from the database. The database URL is injected via `@Value`. The cache must be warm before the application starts serving traffic.
 
-What breaks without it:
+**WHAT HAPPENS WITHOUT lifecycle hooks:**
+Approach 1 — In the constructor: `@Value` hasn't been processed yet. `dbUrl` is null. `NullPointerException` in constructor. Application fails to start.
+Approach 2 — In a `@Bean` method body: works for `@Bean` factory methods, but `@Value` fields aren't available in factory methods without an extra parameter.
+Approach 3 — Manual `cacheManager.warmUp()` in `main()`: fragile — you must know to call it, and it runs before Spring has fully started other beans.
 
-1. No safe point to run initialisation code after all dependencies are injected — `@PostConstruct` does not exist.
-2. No hook to release resources (connections, threads) on shutdown — resource leaks on application stop.
-3. No mechanism for AOP proxy creation after initialisation — `@Transactional` cannot wrap the real bean.
-4. No way for beans to receive their Spring-assigned name or the containing context reference — prevents self-registration patterns.
+**WHAT HAPPENS WITH `@PostConstruct`:**
 
-WITH Bean Lifecycle:
-→ `@PostConstruct` provides a guaranteed safe initialisation point: all dependencies are set, all proxy wrappers not yet applied.
-→ `@PreDestroy` enables clean shutdown: thread pools, connections, and caches are released properly.
-→ `BeanPostProcessor` hooks enable AOP proxy creation, annotation processing, and framework-level bean transformation.
-→ Lifecycle events (`ApplicationReadyEvent`, `ContextClosedEvent`) allow services to react to container state changes.
+1. Spring injects `@Value("${db.url}") String dbUrl` into the field.
+2. Spring calls `warmUpCache()` annotated with `@PostConstruct`.
+3. `dbUrl` is fully resolved. Query runs. Cache is warm.
+4. Spring proceeds to mark the bean as ready.
+5. First HTTP request hits a warm cache — no cold-start latency.
+
+**THE INSIGHT:**
+`@PostConstruct` is the correct place for any initialization that depends on injected values. It runs after injection, before the bean is used — exactly the window needed.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> Think of hiring and onboarding a new employee. The lifecycle mirrors the process: recruitment (instantiation), orientation and providing equipment (dependency injection), introduction to the team (Aware callbacks), HR check-in before first day (BeanPostProcessor before init), first day training (PostConstruct), passing them through the building's badge system (BeanPostProcessor after init — proxy wrapping), working life (active ready state), and finally an exit interview and return of equipment (PreDestroy). You cannot do first-day training before they have their equipment — similarly, `@PostConstruct` is guaranteed to run after all dependencies are available.
+> A bean's lifecycle is an assembly line. The chassis (instance) starts bare, then station by station: the engine (dependencies) is installed, then safety systems (AOP proxy) are added, then a quality check (init callbacks) runs. Only after passing all stations does the car (bean) roll off the line ready for customers. On end-of-life, the car goes through a disposal process (destroy callbacks) before being recycled.
 
-"Providing equipment (laptop, badge)" = dependency injection
-"First-day training" = @PostConstruct initialisation
-"Badge system wrapping access" = AOP proxy created in postProcessAfterInitialization
-"Exit interview and equipment return" = @PreDestroy cleanup
+- "Bare chassis enters the line" → bean instantiation
+- "Parts installed" → dependency injection
+- "Safety system added" → BeanPostProcessor wrapping (AOP)
+- "Quality check" → @PostConstruct / afterPropertiesSet()
+- "Car ready for customers" → bean stored in singleton cache, available for injection
+- "Disposal process" → @PreDestroy / destroy()
+
+**Where this analogy breaks down:** Unlike an assembly line, Spring's lifecycle has bidirectional communication — beans can query the container during init (via `Aware` interfaces), and containers can query beans (via `SmartLifecycle.isRunning()`).
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+Spring manages every bean's life. It creates beans, sets them up, lets them work, and cleans them up when the app stops. You can plug code into the "setup" and "cleanup" stages using `@PostConstruct` and `@PreDestroy`.
+
+**Level 2 — How to use it (junior developer):**
+Use `@PostConstruct` on a method that needs to run after injection (cache warming, validation, connection setup). Use `@PreDestroy` on a method that runs on shutdown (closing connections, flushing buffers). Both annotations are from `jakarta.annotation` — no Spring import needed, making your beans portable.
+
+**Level 3 — How it works (mid-level engineer):**
+The lifecycle is orchestrated in `AbstractAutowireCapableBeanFactory.doCreateBean()`. After `populateBean()` (injection), it calls `initializeBean()` which runs: (1) `Aware` interface callbacks, (2) `BeanPostProcessor.postProcessBeforeInitialization()` — where `@PostConstruct` is processed, (3) `afterPropertiesSet()` / custom init method, (4) `BeanPostProcessor.postProcessAfterInitialization()` — where AOP proxies are created. The result of step 4 (potentially a proxy) is stored in the singleton cache.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+The two-phase BeanPostProcessor hooks (before and after init) solve a fundamental ordering problem: AOP proxies must wrap a _fully initialized_ bean. If the proxy were created before init, the init callbacks would run on the proxy, not the real object — which would break for constructors, reflection-based injection, and `Aware` callbacks. The post-init hook guarantees the proxy wraps a fully ready bean. This is also why `@Async` beans can cause circular dependency issues: the proxy is created after init, but another bean may have cached a reference to the pre-proxy instance during init.
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**The full lifecycle as a diagram:**
+**Complete Bean Lifecycle Sequence:**
 
 ```
-┌──────────────────────────────────────────────┐
-│  Spring Bean Lifecycle                       │
-│                                              │
-│  1. constructor()           ← instantiate   │
-│           ↓                                  │
-│  2. setter injection        ← wire deps     │
-│           ↓                                  │
-│  3. *Aware callbacks        ← meta access   │
-│           ↓                                  │
-│  4. BPP.postProcessBefore() ← pre-init hook │
-│           ↓                                  │
-│  5. @PostConstruct / init() ← user init     │
-│           ↓                                  │
-│  6. BPP.postProcessAfter()  ← AOP proxy ✦  │
-│           ↓                                  │
-│  7. [ BEAN IS READY / IN USE ]              │
-│           ↓                                  │
-│  8. @PreDestroy / destroy() ← user cleanup  │
-│           ↓                                  │
-│  9. GC                      ← gone          │
-│                                              │
-│  ✦ The proxy replaces the bean in context   │
-└──────────────────────────────────────────────┘
-```
-
-**The self-invocation trap — why internal `@Transactional` calls fail:**
-
-```java
-@Service
-class OrderService {
-    // In the ApplicationContext, this reference points to the AOP PROXY,
-    // not the raw OrderService instance.
-
-    public void placeOrder(Order order) {
-        // 'this' refers to the RAW bean — bypasses the proxy!
-        this.processPayment(order); // @Transactional on processPayment IGNORED
-    }
-
-    @Transactional  // only works when called through the proxy
-    public void processPayment(Order order) { ... }
-}
-// Fix: inject self, or extract processPayment to a separate bean
+┌──────────────────────────────────────────────────────────┐
+│         PHASE 1: DEFINITION (before instantiation)      │
+├──────────────────────────────────────────────────────────┤
+│ 1. BeanDefinition registered (component scan / @Bean)   │
+│ 2. BeanFactoryPostProcessor.postProcessBeanFactory()    │
+│    - PropertySourcesPlaceholderConfigurer resolves       │
+│      ${placeholders} in bean definitions                 │
+│    - @ConfigurationClassPostProcessor processes          │
+│      @Configuration classes                             │
+└──────────────────────────────────────────────────────────┘
+                          ↓
+┌──────────────────────────────────────────────────────────┐
+│         PHASE 2: INSTANTIATION & INJECTION               │
+├──────────────────────────────────────────────────────────┤
+│ 3. Bean instantiated (constructor called)               │
+│ 4. BeanNameAware.setBeanName() [if implemented]         │
+│ 5. BeanFactoryAware.setBeanFactory() [if implemented]   │
+│ 6. ApplicationContextAware.setApplicationContext()      │
+│ 7. Dependencies injected (@Autowired fields/setters)    │
+└──────────────────────────────────────────────────────────┘
+                          ↓
+┌──────────────────────────────────────────────────────────┐
+│         PHASE 3: INITIALIZATION                          │
+├──────────────────────────────────────────────────────────┤
+│ 8. BeanPostProcessor.postProcessBeforeInitialization()  │
+│    - @PostConstruct methods run here                    │
+│    - (via CommonAnnotationBeanPostProcessor)             │
+│ 9. InitializingBean.afterPropertiesSet() [if impl]      │
+│ 10. Custom init-method [if declared]                    │
+│ 11. BeanPostProcessor.postProcessAfterInitialization()  │
+│     - AOP proxy created here (replaces raw bean)        │
+│     - @Transactional, @Async proxies wrapped here       │
+└──────────────────────────────────────────────────────────┘
+                          ↓
+┌──────────────────────────────────────────────────────────┐
+│         PHASE 4: USE                                     │
+├──────────────────────────────────────────────────────────┤
+│ 12. Bean stored in singleton cache                      │
+│ 13. Injected into dependent beans                       │
+│ 14. Application serves requests                         │
+└──────────────────────────────────────────────────────────┘
+                          ↓
+┌──────────────────────────────────────────────────────────┐
+│         PHASE 5: DESTRUCTION                             │
+├──────────────────────────────────────────────────────────┤
+│ 15. context.close() or JVM shutdown hook triggered      │
+│ 16. @PreDestroy methods called                          │
+│     (via DestructionAwareBeanPostProcessor)              │
+│ 17. DisposableBean.destroy() [if implemented]           │
+│ 18. Custom destroy-method [if declared]                 │
+└──────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 🔄 The Complete Picture — End-to-End Flow
+
+**NORMAL FLOW:**
 
 ```
-Bean (object registered with the container)
-        │
-        ▼
-Bean Lifecycle  ◄──── (you are here)
-        │
-        ├──────────────────────────────────────────┐
-        ▼                                          ▼
-BeanPostProcessor                       BeanFactoryPostProcessor
-(phases 4 and 6 — instance hooks)       (pre-lifecycle — definition hooks)
-        │                                          │
-        ▼                                          ▼
-AOP Proxy creation                      @ConfigurationProperties binding
-(@Transactional, @Cacheable, @Async)    (property injection into beans)
-        │
-        ▼
-@PostConstruct / @PreDestroy
-(user lifecycle callbacks)
+@SpringBootApplication
+    ↓
+Component scan → BeanDefinitions registered
+    ↓
+BeanFactoryPostProcessors run (resolve properties)
+    ↓
+BeanPostProcessors registered
+    ↓
+Singleton beans instantiated → injected → initialized
+   ← YOU ARE HERE (each bean goes through full lifecycle)
+    ↓
+AOP proxies replace raw beans in cache
+    ↓
+ApplicationReadyEvent fired → app serves traffic
+    ↓
+[shutdown]
+    ↓
+@PreDestroy callbacks → DisposableBean.destroy()
+    ↓
+Context closed, JVM exits
 ```
+
+**FAILURE PATH:**
+
+```
+@PostConstruct method throws exception
+    ↓
+BeanCreationException wraps the exception
+    ↓
+initializeBean() fails → doCreateBean() fails
+    ↓
+preInstantiateSingletons() aborts
+    ↓
+ApplicationContext.refresh() throws
+    ↓
+Application fails to start
+```
+
+**WHAT CHANGES AT SCALE:**
+With hundreds of beans, the cumulative time of all `@PostConstruct` methods determines startup time. One slow `@PostConstruct` (20s database migration) blocks the entire startup sequence, as `preInstantiateSingletons()` is synchronous. Use `ApplicationReadyEvent` for non-critical initialization to parallelize startup.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1 — All lifecycle hooks in one class:**
-
-```java
-@Component("orderProcessor")
-class OrderProcessor implements BeanNameAware,
-                                InitializingBean,
-                                DisposableBean {
-    private final OrderRepository repo;
-    private String beanName;
-
-    // Phase 1+2: constructor injection
-    OrderProcessor(OrderRepository repo) { this.repo = repo; }
-
-    // Phase 3: Aware callback
-    @Override
-    public void setBeanName(String name) { this.beanName = name; }
-
-    // Phase 5a: @PostConstruct (processed by CommonAnnotationBPP)
-    @PostConstruct
-    void postConstruct() {
-        log.info("[{}] @PostConstruct — all deps injected", beanName);
-    }
-
-    // Phase 5b: InitializingBean (runs after @PostConstruct)
-    @Override
-    public void afterPropertiesSet() {
-        log.info("[{}] afterPropertiesSet", beanName);
-    }
-
-    // Phase 8a: @PreDestroy
-    @PreDestroy
-    void preDestroy() {
-        log.info("[{}] @PreDestroy — preparing for shutdown", beanName);
-    }
-
-    // Phase 8b: DisposableBean.destroy (runs after @PreDestroy)
-    @Override
-    public void destroy() {
-        log.info("[{}] destroy()", beanName);
-    }
-}
-// Log output at startup: @PostConstruct → afterPropertiesSet
-// Log output at shutdown: @PreDestroy → destroy()
-```
-
-**Example 2 — Resource management via @PostConstruct / @PreDestroy:**
+**Example 1 — @PostConstruct and @PreDestroy:**
 
 ```java
 @Component
-class ManagedScheduler {
-    private ScheduledExecutorService executor;
+public class ReportCache {
+    private final ReportRepository repo;
+    private Map<String, Report> cache;
 
-    @PostConstruct
-    void start() {
-        executor = Executors.newScheduledThreadPool(4);
-        executor.scheduleAtFixedRate(this::checkHealth, 0, 30, SECONDS);
-        log.info("Health checker started");
+    public ReportCache(ReportRepository repo) {
+        this.repo = repo;
     }
 
-    @PreDestroy
-    void stop() {
-        executor.shutdown();
-        try {
-            if (!executor.awaitTermination(10, SECONDS))
-                executor.shutdownNow();
-        } catch (InterruptedException e) {
-            executor.shutdownNow();
-            Thread.currentThread().interrupt();
-        }
-        log.info("Health checker stopped");
+    @PostConstruct  // runs AFTER injection, BEFORE bean is used
+    public void warmUp() {
+        // repo is injected here — safe to use
+        cache = repo.findAllActive()
+            .stream()
+            .collect(Collectors.toMap(Report::getId, r -> r));
+        log.info("Cache warmed: {} reports", cache.size());
+    }
+
+    @PreDestroy     // runs during context close
+    public void flushPendingWrites() {
+        repo.saveAll(cache.values());
+        log.info("Cache flushed to database");
     }
 }
 ```
+
+**Example 2 — Initialization order: wrong vs right:**
+
+```java
+// BAD: field injection + constructor init
+@Component
+public class ServiceConfig {
+    @Autowired
+    private ConfigRepository repo;  // null during construction!
+
+    public ServiceConfig() {
+        String config = repo.find("key");  // NullPointerException
+    }
+}
+
+// GOOD: @PostConstruct for post-injection init
+@Component
+public class ServiceConfig {
+    private final ConfigRepository repo;
+    private String config;
+
+    public ServiceConfig(ConfigRepository repo) {
+        this.repo = repo;  // injected; not null
+    }
+
+    @PostConstruct
+    public void loadConfig() {
+        config = repo.find("key");  // repo is available
+    }
+}
+```
+
+**Example 3 — SmartLifecycle for ordered startup/shutdown:**
+
+```java
+@Component
+public class KafkaConsumerManager implements SmartLifecycle {
+    private volatile boolean running = false;
+
+    @Override
+    public void start() {
+        // Called after ALL beans are initialized
+        startConsumers();
+        running = true;
+    }
+
+    @Override
+    public void stop() {
+        stopConsumers();
+        running = false;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return running;
+    }
+
+    @Override
+    public int getPhase() {
+        return 100;  // higher = starts later, stops first
+    }
+}
+```
+
+---
+
+### ⚖️ Comparison Table
+
+| Hook                                    | When It Runs                  | Interface Required | Spring Dependency |
+| --------------------------------------- | ----------------------------- | ------------------ | ----------------- |
+| `@PostConstruct`                        | After injection, before use   | No                 | JSR-250 only      |
+| `InitializingBean.afterPropertiesSet()` | Same as @PostConstruct        | Spring interface   | Yes               |
+| Custom `init-method`                    | Same as @PostConstruct        | No                 | Config only       |
+| `@PreDestroy`                           | Context close, before destroy | No                 | JSR-250 only      |
+| `DisposableBean.destroy()`              | Same as @PreDestroy           | Spring interface   | Yes               |
+| `SmartLifecycle.start()/stop()`         | After/before all beans ready  | Spring interface   | Yes               |
+
+**How to choose:** Prefer `@PostConstruct` and `@PreDestroy` for most cases — no Spring interface coupling. Use `SmartLifecycle` for ordered startup (e.g., start consuming Kafka only after all services are ready).
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                                                      | Reality                                                                                                                                                                                              |
-| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@PostConstruct` runs before dependency injection                                  | `@PostConstruct` runs AFTER all dependencies are injected — that is its guarantee and purpose. The constructor runs at Phase 1; `@PostConstruct` at Phase 5                                          |
-| AOP proxy is applied before `@PostConstruct`                                       | AOP proxies are created by `BeanPostProcessor.postProcessAfterInitialization()` — Phase 6, AFTER `@PostConstruct`. This means `this` inside `@PostConstruct` is always the raw bean, never the proxy |
-| Prototype beans have the same lifecycle as singleton beans                         | Prototype beans receive Phases 1–6 (instantiation through post-processing) but NOT Phase 8 (destruction). Spring does not track prototype instances; `@PreDestroy` is never called for them          |
-| `InitializingBean.afterPropertiesSet()` and `@PostConstruct` run in the same phase | Both run in Phase 5, but `@PostConstruct` runs first (processed by `CommonAnnotationBeanPostProcessor` in Phase 4/5), then `afterPropertiesSet()` runs                                               |
+| Misconception                                            | Reality                                                                                                                                                             |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| @PostConstruct runs at bean creation (in constructor)    | It runs after construction AND after injection. The constructor runs first, then injection, then @PostConstruct.                                                    |
+| @PreDestroy is called when the bean is garbage collected | @PreDestroy is called during context.close(), not on GC. Singleton beans are never GC'd while the context is alive.                                                 |
+| BeanPostProcessor hooks are only for Spring internal use | They are the primary extension point for all frameworks built on Spring. Your own BeanPostProcessors are valid and powerful.                                        |
+| The AOP proxy is created during bean instantiation       | The AOP proxy is created by BeanPostProcessor.postProcessAfterInitialization() — AFTER initialization. The singleton cache stores the proxy, not the original bean. |
+| Prototype beans have a full lifecycle                    | Prototype beans are created and injected, but Spring does NOT call @PreDestroy on them — the caller is responsible for cleanup.                                     |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**Calling `@Transactional` method via `this` — transaction silently skipped**
+**@PostConstruct fails silently in tests**
 
-```java
-// BAD: self-invocation bypasses the AOP proxy
-@Service
-class InvoiceService {
-    public void generateMonthlyInvoices() {
-        for (Account acc : accounts) {
-            this.generateInvoice(acc); // 'this' = raw bean, not proxy
-        }                             // @Transactional IGNORED!
+**Symptom:**
+`@PostConstruct` method throws an exception in tests, but no failure is observed. Or conversely, `@PostConstruct` validation fails to run in a `@WebMvcTest` slice.
+
+**Root Cause:**
+Test slices (`@WebMvcTest`, `@DataJpaTest`) only load specific bean slices. Beans not included in the slice don't have their lifecycle run. `@PostConstruct` methods on beans outside the slice are not called.
+
+**Diagnostic Command / Tool:**
+
+```bash
+# Check which beans are loaded in a test
+@SpringBootTest
+class LifecycleDebugTest {
+    @Autowired ApplicationContext ctx;
+
+    @Test
+    void printBeans() {
+        Arrays.stream(ctx.getBeanDefinitionNames())
+              .sorted()
+              .forEach(System.out::println);
     }
-
-    @Transactional
-    public void generateInvoice(Account acc) {
-        // No transaction wrapping — DB operations not atomic
-    }
-}
-
-// GOOD option A: inject self via @Autowired (Spring injects the proxy)
-@Autowired @Lazy InvoiceService self;
-self.generateInvoice(acc); // uses proxy — @Transactional works
-
-// GOOD option B: extract to a separate @Transactional bean
-@Service
-class InvoiceGenerator {
-    @Transactional
-    public void generateInvoice(Account acc) { ... }
 }
 ```
+
+**Fix:**
+Use `@SpringBootTest` for tests that need the full lifecycle. Use `@ContextConfiguration(classes = SpecificConfig.class)` for narrower lifecycle tests.
+
+**Prevention:** Be explicit about which beans need full lifecycle in tests vs. which can be mocked.
 
 ---
 
-**@PreDestroy not called for prototype beans — resource leak**
+**Prototype bean @PreDestroy not called**
+
+**Symptom:**
+`@PreDestroy` on a prototype-scoped bean never executes. Resources (file handles, connections) are leaked.
+
+**Root Cause:**
+Spring intentionally does not call `@PreDestroy` on prototype beans. The container hands off the prototype and forgets about it — lifecycle management becomes the caller's responsibility.
+
+**Diagnostic Command / Tool:**
 
 ```java
-// BAD: expecting @PreDestroy on a prototype bean
-@Component
-@Scope("prototype")
-class ExpensiveResource {
-    private Connection conn;
-
-    @PostConstruct void open()  { conn = db.acquire(); }
-    @PreDestroy    void close() { conn.close(); } // NEVER called by Spring!
-}
-// Connections leak — Spring creates prototype beans on demand
-// but does NOT track them for destruction
-
-// GOOD: manage prototype resource lifecycle explicitly
-// Use a try-with-resources pattern, or use @Scope("singleton")
-// for shared resources, or implement DisposableBean and call
-// ctx.close() on the specific prototype instance manually
+// Verify scope at runtime
+ConfigurableListableBeanFactory factory =
+    (ConfigurableListableBeanFactory) context.getAutowireCapableBeanFactory();
+BeanDefinition def = factory.getBeanDefinition("myPrototypeBean");
+System.out.println("Scope: " + def.getScope()); // "prototype"
 ```
+
+**Fix:**
+
+```java
+// Implement DisposableBean and call explicitly, or use try-with-resources pattern
+// OR: switch to singleton scope with thread-safe state management
+// OR: use @Scope(proxyMode = TARGET_CLASS) for request-scoped beans
+//     where Spring manages lifecycle via the proxy
+```
+
+**Prevention:** Avoid `@PreDestroy` on prototype beans — it will never run. Use explicit lifecycle management or switch to a scoped proxy.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Bean` — the object whose lifecycle this describes
-- `BeanPostProcessor` — the extension point at phases 4 and 6 of the lifecycle
-- `BeanFactoryPostProcessor` — runs before any beans are instantiated; modifies bean definitions
-- `@PostConstruct` — the preferred initialisation callback (Phase 5)
-- `@PreDestroy` — the preferred cleanup callback (Phase 8)
-- `ApplicationContext` — the container that drives the lifecycle sequence
-- `AOP (Aspect-Oriented Programming)` — proxies created at Phase 6; explains self-invocation limitation
-- `Bean Scope` — determines how many times the lifecycle runs (once for singleton; per-use for prototype)
+**Prerequisites (understand these first):**
+
+- `Bean` — the object going through the lifecycle
+- `BeanFactory` — the container orchestrating the lifecycle
+- `ApplicationContext` — the full context that triggers the lifecycle phases
+- `DI (Dependency Injection)` — injection happens mid-lifecycle, between instantiation and init
+
+**Builds On This (learn these next):**
+
+- `BeanPostProcessor` — the hook that runs around init phases; how AOP works
+- `BeanFactoryPostProcessor` — the hook that modifies bean definitions before instantiation
+- `AOP` — implemented by wrapping beans with proxies during postProcessAfterInitialization
+
+**Alternatives / Comparisons:**
+
+- `@Lazy` — defers the entire lifecycle to first use, not to startup
+- `SmartLifecycle` — an extended lifecycle interface for beans that need ordered start/stop
 
 ---
 
@@ -388,21 +464,29 @@ class ExpensiveResource {
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ PHASES       │ construct → inject → Aware → BPP.before  │
-│              │ → PostConstruct → BPP.after(proxy) → USE │
-│              │ → PreDestroy → destroy                   │
+│ WHAT IT IS   │ The ordered sequence: define → create →   │
+│              │ inject → init → use → destroy             │
 ├──────────────┼───────────────────────────────────────────┤
-│ SAFE INIT    │ @PostConstruct: all deps present,         │
-│              │ called before AOP proxy is applied        │
+│ PROBLEM IT   │ No guaranteed order for setup/teardown    │
+│ SOLVES       │ relative to dependency injection          │
 ├──────────────┼───────────────────────────────────────────┤
-│ PROXY TRAP   │ AOP proxy created AFTER @PostConstruct    │
-│              │ → 'this.method()' bypasses transactions   │
+│ KEY INSIGHT  │ AOP proxies are created AFTER init        │
+│              │ (@postProcessAfterInit) — the proxy, not  │
+│              │ the bean, lives in the singleton cache     │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "Bean lifecycle = hire → onboard →        │
-│              │ badge-activate → work → exit interview."  │
+│ USE WHEN     │ Post-injection resource setup:            │
+│              │ @PostConstruct; shutdown cleanup: @PreDestroy│
 ├──────────────┼───────────────────────────────────────────┤
-│ NEXT EXPLORE │ BeanPostProcessor → BeanFactoryPostProc →│
-│              │ AOP → @Transactional → CGLIB Proxy        │
+│ AVOID WHEN   │ Never put init logic in constructors when │
+│              │ using field/setter injection              │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ Guaranteed ordering vs lifecycle complexity│
+│              │ (easy to get phase wrong)                 │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Create → inject → init → use → destroy   │
+│              │  — in that exact order, guaranteed."      │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ BeanPostProcessor → AOP → @Transactional  │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -410,6 +494,6 @@ class ExpensiveResource {
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** A bean implements `ApplicationContextAware` and stores a reference to the `ApplicationContext` in a static field during Phase 3 of the lifecycle. Another bean, created earlier in the same context refresh, tries to call `AppContextHolder.getContext().getBean(SomeService.class)` during its own `@PostConstruct`. Describe the exact ordering problem this creates, explain whether the static reference is guaranteed to be set when the second bean's `@PostConstruct` runs, and identify a safer alternative to the `ApplicationContextAware` static holder pattern for this use case.
+**Q1.** `@PostConstruct` on a `@Transactional`-annotated service runs before the AOP proxy is created (AOP proxy is created in `postProcessAfterInitialization`, which runs AFTER `@PostConstruct`). So if `@PostConstruct` calls a `@Transactional` method on `this`, is there a transaction? Trace the exact lifecycle state at that moment and explain the consequence.
 
-**Q2.** Spring's `SmartLifecycle` interface extends `Lifecycle` and adds `getPhase()` and `isAutoStartup()` methods. Multiple `SmartLifecycle` beans can be started and stopped in phase order. Describe a concrete production scenario where ordering the startup and shutdown of `SmartLifecycle` beans is critical (e.g., a Kafka consumer starting before a database connection pool is ready would fail), explain how Spring determines startup vs shutdown order from the `getPhase()` return value, and identify the relationship between `SmartLifecycle` phases and the `ApplicationReadyEvent` timing.
+**Q2.** Spring calls `@PreDestroy` in reverse-dependency order during shutdown: beans that depend on others are destroyed first. But if your `@PreDestroy` method itself uses another bean that has already been destroyed, what happens? How does Spring attempt to prevent this, and where does that protection break down?

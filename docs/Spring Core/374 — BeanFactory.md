@@ -3,308 +3,404 @@ layout: default
 title: "BeanFactory"
 parent: "Spring Core"
 nav_order: 374
-permalink: /spring/bean-factory/
-number: "374"
+permalink: /spring/beanfactory/
+number: "0374"
 category: Spring Core
 difficulty: ★★☆
-depends_on: IoC (Inversion of Control), DI (Dependency Injection), Bean
-used_by: ApplicationContext, Spring Core Internals
-tags: #intermediate, #spring, #internals, #deep-dive
+depends_on: IoC, DI, Bean
+used_by: ApplicationContext, Bean Lifecycle, BeanPostProcessor
+related: ApplicationContext, DefaultListableBeanFactory, ListableBeanFactory
+tags:
+  - spring
+  - internals
+  - intermediate
+  - architecture
 ---
 
 # 374 — BeanFactory
 
-`#intermediate` `#spring` `#internals` `#deep-dive`
+⚡ TL;DR — BeanFactory is Spring's foundational container interface: it creates beans on demand, resolves dependencies, and is the root of the entire Spring container hierarchy.
 
-⚡ TL;DR — `BeanFactory` is the root interface of Spring's IoC container, providing basic bean instantiation and retrieval with lazy initialisation — `ApplicationContext` extends it with enterprise features needed in production.
+| #374            | Category: Spring Core                                               | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | IoC, DI, Bean                                                       |                 |
+| **Used by:**    | ApplicationContext, Bean Lifecycle, BeanPostProcessor               |                 |
+| **Related:**    | ApplicationContext, DefaultListableBeanFactory, ListableBeanFactory |                 |
 
-| #374            | Category: Spring Core                                       | Difficulty: ★★☆ |
-| :-------------- | :---------------------------------------------------------- | :-------------- |
-| **Depends on:** | IoC (Inversion of Control), DI (Dependency Injection), Bean |                 |
-| **Used by:**    | ApplicationContext, Spring Core Internals                   |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+Before Spring, J2EE applications used heavyweight EJB containers that required deployment descriptors, specific class hierarchies, and deployment to an application server just to test a single business class. Getting an object required navigating JNDI lookups, which required a running server. Developers ran integration tests against live servers, cycles were slow, and the cognitive overhead of EJB configuration was immense.
+
+**THE BREAKING POINT:**
+Lightweight applications and unit tests had no path to a managed object container. Developers either accepted the EJB overhead or wrote their own manual wiring code. There was no middle ground: a programmable, lightweight container that could be embedded in tests, CLI tools, and batch jobs without a full application server.
+
+**THE INVENTION MOMENT:**
+"This is exactly why BeanFactory was created."
 
 ---
 
 ### 📘 Textbook Definition
 
-`BeanFactory` is the root interface in Spring's bean container hierarchy, defining the contract for an IoC container that manages bean definitions and produces bean instances. It provides core operations: `getBean(name)`, `getBean(type)`, `containsBean(name)`, `isSingleton(name)`, `isPrototype(name)`, and `getType(name)`. The primary implementation is `DefaultListableBeanFactory`, which implements both `BeanFactory` and `BeanDefinitionRegistry`. Unlike `ApplicationContext`, `BeanFactory` initialises beans lazily (on first `getBean()` call), does NOT automatically detect and register `BeanPostProcessor` or `BeanFactoryPostProcessor` implementations, does NOT publish application events, and does NOT integrate with Spring's `Environment` abstraction. It is rarely used directly in application code; its importance is as the underlying implementation that `ApplicationContext` delegates to.
+**BeanFactory** is the root interface of Spring's IoC container hierarchy, defined in `org.springframework.beans.factory`. It provides the contract for accessing and managing beans: `getBean(String name)`, `getBean(Class<T> type)`, `containsBean(String name)`, `isSingleton(String name)`, and `getType(String name)`. `BeanFactory` implementations are responsible for creating beans, resolving dependencies, and managing the singleton cache. The most commonly used implementation is `DefaultListableBeanFactory`, which also implements `BeanDefinitionRegistry` for bean registration. `ApplicationContext` extends `BeanFactory` (via `HierarchicalBeanFactory` and `ListableBeanFactory`) and adds enterprise features on top.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-`BeanFactory` is the most basic Spring container — it knows how to create beans and give them to you when asked, but it doesn't automatically wire everything up the way `ApplicationContext` does.
+**One line:**
+BeanFactory is the minimal Spring contract: give me an object by name or type, create it if needed.
 
----
+**One analogy:**
 
-### 🔵 Simple Definition (Elaborated)
+> BeanFactory is like a vending machine. You push a button (request a bean by name or type), and the machine dispenses the item (creates or retrieves the object). The machine knows what it contains (bean definitions) and fulfills requests. ApplicationContext is a vending machine with a loyalty program, music, and event notifications — more features, same core dispensing mechanism.
 
-Think of `BeanFactory` as the engine inside Spring's container. It holds all the bean definitions (descriptions of how to create each bean), creates beans on demand, and injects their declared dependencies. `ApplicationContext` is built on top of `BeanFactory` and adds the full suite of Spring features: auto-registration of post-processors, event publication, property resolution, and AOP. In application development you almost always work with `ApplicationContext` (or Spring Boot's auto-configured version of it). `BeanFactory` knowledge matters when: debugging Spring internals, writing framework-level code (like custom Spring extensions), or understanding why certain features (like `@Autowired`) require an `ApplicationContext` rather than a raw `BeanFactory`.
+**One insight:**
+BeanFactory distinguishes between _bean definitions_ (recipes) and _bean instances_ (cooked dishes). Storing a definition is cheap; creating an instance may be expensive. For singletons, the instance is created once and cached. For prototypes, each `getBean()` call creates a new instance. This recipe-vs-instance separation is the core design that makes Spring flexible.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**What BeanFactory does — and what it deliberately omits:**
+**CORE INVARIANTS:**
 
-```java
-// BeanFactory in its minimal form:
-DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
+1. BeanFactory stores _bean definitions_ (metadata) not _bean instances_ — instances are created lazily or eagerly based on scope.
+2. Singletons are cached after first creation; every `getBean()` for the same singleton returns the same object.
+3. The factory is responsible for dependency resolution: if Bean A needs Bean B, the factory creates B before completing A.
 
-// Manually register a bean definition
-factory.registerBeanDefinition("orderService",
-    BeanDefinitionBuilder
-        .rootBeanDefinition(OrderService.class)
-        .addConstructorArgReference("paymentGateway")
-        .getBeanDefinition()
-);
+**DERIVED DESIGN:**
+The factory pattern fits naturally: a factory knows how to build objects from a recipe. BeanFactory's recipe is `BeanDefinition` — it stores the class, scope, constructor arguments, property values, and initialization method names. When `getBean()` is called, the factory reads the definition and produces the instance.
 
-factory.registerBeanDefinition("paymentGateway",
-    BeanDefinitionBuilder
-        .rootBeanDefinition(StripeGateway.class)
-        .getBeanDefinition()
-);
+The hierarchy (`HierarchicalBeanFactory`) allows parent-child context relationships: a child factory can look up beans from its parent, enabling modular architectures where common beans live in a parent context and module-specific beans live in child contexts.
 
-// Bean is NOT yet created — lazy
-OrderService svc = factory.getBean(OrderService.class); // created NOW
+**THE TRADE-OFFS:**
 
-// IMPORTANT: @Autowired does NOT work without manually adding the processor:
-factory.addBeanPostProcessor(
-    new AutowiredAnnotationBeanPostProcessor() // must be added manually!
-);
-// ApplicationContext does this automatically; BeanFactory does NOT
-```
+**Gain:** Minimal API, no dependency on enterprise features. Can be used in constrained environments (embedded, CLI, batch). Easy to test implementations.
 
-**The lazy vs eager distinction:**
-
-```
-BeanFactory behaviour:
-  startup:    parse bean definitions only — zero beans instantiated
-  getBean():  instantiate bean + its dependency graph on first call
-  → startup is fast; misconfiguration discovered only at first use
-
-ApplicationContext behaviour:
-  startup:    instantiate ALL singleton beans during refresh()
-  → startup is slower; misconfiguration discovered immediately
-  → appropriate for production: fail fast, not fail later
-```
-
-**DefaultListableBeanFactory — the real workhorse:**
-
-```
-BeanFactory (interface)
-    └─ HierarchicalBeanFactory (interface)
-          └─ ConfigurableBeanFactory (interface)
-                └─ ConfigurableListableBeanFactory (interface)
-                      └─ DefaultListableBeanFactory (class) ← the real impl
-                            ↑
-                   ApplicationContext delegates to this
-```
-
-`ApplicationContext` implementations hold a `DefaultListableBeanFactory` internally and delegate all bean operations to it while adding the enterprise feature layer on top.
+**Cost:** No event system, no AOP auto-proxy, no i18n, no environment abstraction. Beans declared in a `BeanFactory` do not receive `@Autowired` processing unless `AutowiredAnnotationBeanPostProcessor` is explicitly registered. BeanFactory does not auto-register `BeanPostProcessors` — you must do it manually.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-WITHOUT BeanFactory (no separation of container contract from implementation):
+**SETUP:**
+You need a `BeanFactory` in a unit test to verify that a specific configuration class correctly wires two beans together. You don't want to start a full Spring Boot context (takes 5 seconds), you just need the factory.
 
-What breaks without it:
+**WHAT HAPPENS WITHOUT BeanFactory abstraction:**
+You'd need to run a full `@SpringBootTest` with the Tomcat server, all auto-configurations, and all beans loading. A test that should take 50ms takes 5 seconds. Your CI pipeline runs 200 such tests — that's 1,000 seconds of pure container startup.
 
-1. No stable API for IoC containers — different Spring modules could not rely on a common interface.
-2. Custom bean containers (test doubles, embedded containers, Spring extensions) have no base contract to implement.
-3. The `ApplicationContext` implementation would be a monolith — no separation between core container and enterprise features.
+**WHAT HAPPENS WITH BeanFactory (minimal context):**
 
-WITH BeanFactory:
-→ Clear separation of concerns: `BeanFactory` = core container contract; `ApplicationContext` = enterprise enrichment.
-→ Lightweight containers (resource-constrained environments, unit tests) can use `DefaultListableBeanFactory` without the overhead of a full `ApplicationContext`.
-→ Spring framework internals use `ConfigurableListableBeanFactory` directly for fine-grained container manipulation (e.g., in `BeanFactoryPostProcessor`).
+```java
+AnnotationConfigApplicationContext ctx =
+    new AnnotationConfigApplicationContext(MyConfig.class);
+MyService service = ctx.getBean(MyService.class);
+// Only beans in MyConfig are loaded — milliseconds, not seconds
+```
+
+You get exactly the beans from `MyConfig`, nothing else. No Tomcat, no auto-configuration, no 30 other Spring Boot modules.
+
+**THE INSIGHT:**
+The BeanFactory abstraction enables contextual isolation: you can test exactly the slice of beans you care about without the entire application. This is why Spring tests with `@ContextConfiguration` are far faster than `@SpringBootTest`.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> Think of `BeanFactory` as a kitchen pantry with a recipe book. The pantry has all the ingredients (bean definitions) and a recipe book (bean metadata). When you ask for a dish (getBean), the pantry prepares it for you. `ApplicationContext` is the full restaurant: it has the pantry, plus trained waitstaff (BeanPostProcessors), an announcement system (events), a calendar (lifecycle callbacks), and menus pre-printed at startup (eager singleton initialisation). The pantry is always there inside the restaurant — the restaurant is just a much richer environment built around it.
+> BeanFactory is a recipe book + kitchen. The recipe book (BeanDefinitionRegistry) contains instructions for every dish (bean class, dependencies, scope). The kitchen (factory methods) executes those instructions on demand. Ordering the same dish twice gives you either the same plate (singleton) or a freshly cooked plate (prototype), depending on the recipe.
 
-"Pantry with recipe book" = BeanFactory (definitions + lazy creation)
-"Preparing a dish on request" = lazy bean instantiation
-"Full restaurant with all staff" = ApplicationContext
-"Trained waitstaff" = auto-registered BeanPostProcessors
-"Pre-printed menus (eager init)" = singleton beans created at context refresh
+- "Recipe book" → `BeanDefinitionRegistry` / stored `BeanDefinition` objects
+- "Recipe entry" → `BeanDefinition` (class, scope, constructor args, init method)
+- "Kitchen executing a recipe" → `BeanFactory.getBean()` → instantiation + DI
+- "Singleton cache" → plate delivered once, then kept under the heat lamp for reuse
+- "Prototype scope" → cook a fresh plate every time it's ordered
+
+**Where this analogy breaks down:** Unlike a kitchen, BeanFactory can create beans that have other beans as ingredients — and it resolves those ingredients recursively, potentially creating a chain of 20 objects to satisfy one `getBean()` call.
+
+---
+
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+BeanFactory is the basic Spring container. You register your classes with it and ask for them by name or type. It creates them (resolving their dependencies) and remembers them for next time if they're singletons.
+
+**Level 2 — How to use it (junior developer):**
+You rarely use `BeanFactory` directly in Spring Boot — `ApplicationContext` (which extends `BeanFactory`) is always available. When writing tests that need only a subset of beans, use `AnnotationConfigApplicationContext` instead of `@SpringBootTest`. For programmatic bean lookup, inject `BeanFactory` and call `getBean(MyService.class)` — though constructor injection is always preferred.
+
+**Level 3 — How it works (mid-level engineer):**
+`DefaultListableBeanFactory` is Spring's primary implementation. It stores `BeanDefinition` objects in a `ConcurrentHashMap<String, BeanDefinition>`. On `getBean()`, it resolves the definition, checks the singleton cache (`singletonObjects` map), and instantiates via `BeanDefinitionValueResolver` if not cached. Constructor arguments are resolved recursively. After construction, `BeanPostProcessor` chain runs (if registered). For singletons, the result is added to `singletonObjects`.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+BeanFactory was designed as an interface rather than an abstract class to allow multiple implementations — XML-based, annotation-based, programmatic. The extension interfaces (`ListableBeanFactory`, `HierarchicalBeanFactory`, `AutowireCapableBeanFactory`) follow the Interface Segregation Principle: callers that only need to list beans don't need to see the autowiring API. This design predates Java 8 default methods, which is why there are so many granular interfaces rather than one fat interface with default implementations.
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**BeanFactory getBean() flow:**
+**BeanFactory Interface Hierarchy:**
 
 ```
-┌──────────────────────────────────────────────┐
-│  BeanFactory.getBean(OrderService.class)     │
-│                                              │
-│  1. Look up BeanDefinition for OrderService  │
-│  2. Check if singleton instance exists       │
-│     → YES: return cached instance            │
-│     → NO: proceed to create                 │
-│  3. Resolve dependencies (DI):               │
-│     find PaymentGateway bean definition      │
-│     recursively create PaymentGateway        │
-│  4. Instantiate: call constructor with deps  │
-│  5. Apply BeanPostProcessor (if registered)  │
-│  6. Store singleton in singleton cache       │
-│  7. Return instance                          │
-└──────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│  BeanFactory                                     │
+│  getBean(), containsBean(), isSingleton()...     │
+└────────────────────┬─────────────────────────────┘
+                     │
+         ┌───────────┼────────────┐
+         ↓           ↓            ↓
+ListableBeanFactory  HierarchicalBeanFactory
+(list beans by type) (parent-child contexts)
+         │           │
+         └─────┬─────┘
+               ↓
+   AutowireCapableBeanFactory
+   (createBean, autowire, applyBeanPostProcessors)
+               │
+               ↓
+   ConfigurableListableBeanFactory
+   (freeze config, preInstantiate singletons)
+               │
+               ↓
+   DefaultListableBeanFactory  ← concrete implementation
 ```
 
-**BeanDefinition — what BeanFactory stores:**
+**getBean() Flow:**
+
+```
+getBean("userService")
+    ↓
+Check singletonObjects cache — if found: return it
+    ↓
+Not cached → get BeanDefinition for "userService"
+    ↓
+Resolve constructor params (recurse for each dependency)
+    ↓
+Instantiate via reflection: constructor.newInstance(args)
+    ↓
+Apply BeanPostProcessors (if registered):
+  - AutowiredAnnotationBeanPostProcessor (@Autowired fields)
+  - CommonAnnotationBeanPostProcessor (@PostConstruct)
+    ↓
+Add to singletonObjects cache
+    ↓
+Return instance
+```
+
+**BeanDefinition:**
 
 ```java
-// BeanDefinition holds the blueprint for creating a bean:
-BeanDefinition def = new RootBeanDefinition(OrderService.class);
-def.setScope(BeanDefinition.SCOPE_SINGLETON);  // or "prototype"
-def.setLazyInit(false);
-def.setConstructorArgumentValues(...);
-def.setPropertyValues(...);
-def.setInitMethodName("init");    // @PostConstruct equivalent
-def.setDestroyMethodName("close");// @PreDestroy equivalent
-
-// ApplicationContext wraps this in a richer BeanDefinitionHolder
-// and processes it through BeanFactoryPostProcessors before use
+// What BeanFactory stores per bean
+BeanDefinition {
+    beanClassName: "com.example.UserService"
+    scope: "singleton"  // or "prototype"
+    constructorArgumentValues: [UserRepository.class]
+    propertyValues: []
+    initMethodName: "init"  // @PostConstruct equiv
+    destroyMethodName: "destroy"
+    lazyInit: false
+    primary: false
+}
 ```
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 🔄 The Complete Picture — End-to-End Flow
+
+**NORMAL FLOW:**
 
 ```
-BeanFactory (interface)  ◄──── (you are here)
-        │  ← extended by →
-        ▼
-ApplicationContext
-(adds events, post-processors, properties, AOP)
-        │  ← delegates bean ops back to →
-        ▼
-DefaultListableBeanFactory
-(the real impl: BeanFactory + BeanDefinitionRegistry)
-        │
-        ├──────────────────────────────────┐
-        ▼                                  ▼
-BeanFactoryPostProcessor          BeanPostProcessor
-(modifies definitions pre-init)   (modifies instances post-init)
+BeanDefinitions registered (via XML, annotations, @Bean)
+    ↓
+ApplicationContext.refresh() called
+    ↓
+BeanFactoryPostProcessors run (modify definitions)
+    ↓
+BeanPostProcessors registered
+    ↓
+DefaultListableBeanFactory.preInstantiateSingletons()
+   ← YOU ARE HERE (BeanFactory creates all singletons)
+    ↓
+Each singleton resolved, created, post-processed, cached
+    ↓
+Beans available for injection and direct lookup
 ```
+
+**FAILURE PATH:**
+
+```
+BeanFactory cannot resolve a dependency
+    ↓
+NoSuchBeanDefinitionException or circular dep error
+    ↓
+preInstantiateSingletons() aborts
+    ↓
+ApplicationContext.refresh() throws
+    ↓
+Application exits
+```
+
+**WHAT CHANGES AT SCALE:**
+The singleton cache (`singletonObjects` as `ConcurrentHashMap`) is read-only after startup — zero contention at scale. The bottleneck is _startup time_ during `preInstantiateSingletons()`, not runtime `getBean()` calls. At 1,000+ beans, startup dominates; the cache lookup is O(1) for billions of requests.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1 — Using BeanFactory directly (framework / test use):**
+**Example 1 — Using BeanFactory in isolation (test/CLI scenario):**
 
 ```java
-// Create a standalone BeanFactory (no ApplicationContext overhead)
-DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
+// Lightweight context — no auto-configuration
+AnnotationConfigApplicationContext ctx =
+    new AnnotationConfigApplicationContext();
 
-// Load bean definitions from XML
-XmlBeanDefinitionReader reader =
-    new XmlBeanDefinitionReader(factory);
-reader.loadBeanDefinitions("classpath:beans.xml");
+// Register only the beans we need
+ctx.register(UserServiceConfig.class);
+ctx.refresh();
 
-// Manually register BeanPostProcessors (ApplicationContext does this auto)
-factory.addBeanPostProcessor(
-    new AutowiredAnnotationBeanPostProcessor());
+// Retrieve beans
+UserService userService = ctx.getBean(UserService.class);
+userService.findById(1L);
 
-// Beans are NOT yet created — only definitions loaded
-OrderService svc = factory.getBean(OrderService.class);
-// Created on first getBean() call — lazy
+ctx.close();  // triggers @PreDestroy
 ```
 
-**Example 2 — Accessing BeanFactory inside a BeanFactoryPostProcessor:**
+**Example 2 — Programmatic BeanFactory access (avoid in production):**
 
 ```java
-// BeanFactoryPostProcessor receives ConfigurableListableBeanFactory
-// (the BeanFactory interface with modification capabilities)
 @Component
-class DatabaseUrlOverridePostProcessor
-    implements BeanFactoryPostProcessor {
+public class PluginRegistry {
+
+    private final BeanFactory beanFactory;
+
+    public PluginRegistry(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
+
+    // Use only when bean type is dynamic (runtime strategy selection)
+    public Plugin getPlugin(String pluginName) {
+        // Service Locator pattern — use only when DI is impossible
+        return beanFactory.getBean(pluginName, Plugin.class);
+    }
+}
+```
+
+**Example 3 — BeanDefinition programmatic registration:**
+
+```java
+@Configuration
+public class DynamicBeanConfig
+        implements BeanDefinitionRegistryPostProcessor {
+
+    @Override
+    public void postProcessBeanDefinitionRegistry(
+            BeanDefinitionRegistry registry) {
+
+        // Register a bean at configuration time
+        RootBeanDefinition def = new RootBeanDefinition(
+            FeatureService.class);
+        def.setScope(BeanDefinition.SCOPE_SINGLETON);
+        registry.registerBeanDefinition("featureService", def);
+    }
 
     @Override
     public void postProcessBeanFactory(
             ConfigurableListableBeanFactory beanFactory) {
-
-        // Access and modify bean definitions BEFORE beans are instantiated
-        BeanDefinition ds =
-            beanFactory.getBeanDefinition("dataSource");
-        MutablePropertyValues props = ds.getPropertyValues();
-        props.addPropertyValue("url", System.getenv("DATABASE_URL"));
-        // The DataSource bean will be created with the overridden URL
+        // Post-process existing definitions if needed
     }
 }
 ```
+
+---
+
+### ⚖️ Comparison Table
+
+| Container           | Lazy Init             | Events | AOP Auto-proxy | BeanPostProcessor Auto-reg | Use Case             |
+| ------------------- | --------------------- | ------ | -------------- | -------------------------- | -------------------- |
+| **BeanFactory**     | Yes (always lazy)     | No     | No             | No                         | Constrained/embedded |
+| ApplicationContext  | No (eager by default) | Yes    | Yes            | Yes                        | Production apps      |
+| ListableBeanFactory | Yes                   | No     | No             | No                         | Testing slices       |
+
+**How to choose:** Use `ApplicationContext` for all production applications — the richer features are worth the startup cost. Use `BeanFactory` directly only in resource-constrained environments (IoT, Android, embedded) where the enterprise features of `ApplicationContext` are not available.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                                          | Reality                                                                                                                                                                                                                               |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `BeanFactory` is deprecated and should never be used   | `BeanFactory` is the core interface; `ApplicationContext` extends it. The interface is actively used by all Spring internals. What is discouraged is using `BeanFactory` directly in application code instead of `ApplicationContext` |
-| `BeanFactory` performs eager initialisation by default | `BeanFactory` (via `DefaultListableBeanFactory`) is lazy: beans are created on first `getBean()`. `ApplicationContext` overrides this by calling `preInstantiateSingletons()` during `refresh()` to eagerly init all singletons       |
-| `@Autowired` works with a raw `BeanFactory`            | `@Autowired` is processed by `AutowiredAnnotationBeanPostProcessor`. With a raw `BeanFactory`, this processor must be manually registered. `ApplicationContext` registers it automatically                                            |
-| `BeanFactory` and `FactoryBean` are related concepts   | They are distinct: `BeanFactory` is the IoC container interface. `FactoryBean` is a special bean type that produces other beans (a factory managed by the container). The names are unfortunately similar                             |
+| Misconception                                          | Reality                                                                                                                                                                      |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BeanFactory and ApplicationContext are interchangeable | ApplicationContext has 10+ additional capabilities. Injecting BeanFactory gives a read-only reference; ApplicationContext gives access to events, environment, and more.     |
+| BeanFactory is deprecated                              | BeanFactory is alive and is the root interface. ApplicationContext _extends_ it — it's not a replacement, it's a superset.                                                   |
+| BeanFactory is lazy by default                         | DefaultListableBeanFactory doesn't call preInstantiateSingletons until refresh() completes. ApplicationContext calls it during refresh, making singletons eager by default.  |
+| Direct BeanFactory usage is always an anti-pattern     | It's acceptable for dynamic plugin systems, test utilities, and programmatic bean registration. The anti-pattern is using getBean() _instead of_ DI for normal dependencies. |
 
 ---
 
-### 🔥 Pitfalls in Production
+### 🚨 Failure Modes & Diagnosis
 
-**Using raw BeanFactory without registering BeanPostProcessors — silent injection failure**
+**BeanCurrentlyInCreationException**
 
-```java
-// BAD: raw factory without BeanPostProcessor registration
-DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
-factory.registerBeanDefinition("orderService", def);
-OrderService svc = factory.getBean(OrderService.class);
-// svc.paymentGateway is NULL — @Autowired was never processed
-// No error thrown — silent failure
+**Symptom:**
+`BeanCurrentlyInCreationException: Error creating bean with name 'A': Requested bean is currently in creation`
 
-// GOOD: either use ApplicationContext, OR register the processor manually
-factory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
-// Only use raw BeanFactory when ApplicationContext overhead is genuinely unacceptable
-// (e.g., extremely resource-constrained embedded systems, custom test scenarios)
+**Root Cause:**
+Constructor-injection circular dependency. Bean A's constructor requires Bean B, and B's constructor requires A. BeanFactory cannot complete either construction.
+
+**Diagnostic Command / Tool:**
+
+```bash
+# Spring prints a clear cycle in the error:
+# "The dependencies of some of the beans in the application context
+#  form a cycle: A -> B -> A"
+# Check startup logs for this pattern
+grep "The dependencies.*form a cycle" app.log
 ```
 
----
-
-**Mutating BeanFactory post-initialisation — race conditions in lazy resolution**
+**Fix:**
 
 ```java
-// BAD: registering new bean definitions after context has started
-// (bypasses post-processing and can cause inconsistent state)
-@Component
-class DynamicBeanRegistrar implements CommandLineRunner {
-    @Autowired
-    ConfigurableListableBeanFactory factory;
-
-    public void run(String... args) {
-        factory.registerBeanDefinition("dynamicService", def);
-        // AOP proxies will NOT be created for this bean
-        // @Transactional will NOT work on dynamicService
-    }
+// BAD: constructor circular dependency
+@Component class A {
+    A(B b) { ... }
+}
+@Component class B {
+    B(A a) { ... }
 }
 
-// GOOD: use ApplicationContext's registerBean() or prototype scope
-// for runtime bean creation; or use FactoryBean for dynamic instances
+// OPTION 1: Break the cycle with @Lazy
+@Component class A {
+    A(@Lazy B b) { ... }  // B injected as proxy, resolved on first use
+}
+
+// OPTION 2: Redesign — extract shared functionality to a new C
+@Component class C { /* shared logic */ }
+@Component class A { A(C c) { ... } }
+@Component class B { B(C c) { ... } }
 ```
+
+**Prevention:** Circular dependencies are a design smell. Two classes that depend on each other often share a responsibility that belongs in a third class.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `ApplicationContext` — extends `BeanFactory` with enterprise features; the container you use in practice
-- `Bean` — the objects whose lifecycle `BeanFactory` manages
-- `Bean Lifecycle` — the phases a bean goes through inside the `BeanFactory`
-- `BeanFactoryPostProcessor` — receives the `ConfigurableListableBeanFactory` to modify bean definitions
-- `BeanPostProcessor` — processes bean instances after they are created by the `BeanFactory`
-- `IoC (Inversion of Control)` — the principle that `BeanFactory` implements
-- `FactoryBean` — a special Spring interface; a bean that is itself a factory for other objects
+**Prerequisites (understand these first):**
+
+- `IoC (Inversion of Control)` — BeanFactory is the concrete implementation of IoC in Spring
+- `Bean` — the objects BeanFactory creates and manages
+- `DI (Dependency Injection)` — BeanFactory implements DI by resolving and injecting constructor/field dependencies
+
+**Builds On This (learn these next):**
+
+- `ApplicationContext` — the full-featured container extending BeanFactory
+- `BeanDefinition` — the recipe BeanFactory uses to create beans
+- `BeanPostProcessor` — the extension mechanism that runs after bean creation
+- `BeanFactoryPostProcessor` — the extension mechanism that modifies bean definitions before creation
+
+**Alternatives / Comparisons:**
+
+- `ApplicationContext` — the superset; use this in all production code
+- `CDI (Contexts and Dependency Injection)` — the Java EE/Jakarta EE alternative to Spring's BeanFactory
 
 ---
 
@@ -312,20 +408,30 @@ class DynamicBeanRegistrar implements CommandLineRunner {
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ KEY IDEA     │ Root IoC container interface: getBean,    │
-│              │ lazy init, no auto post-processor wiring  │
+│ WHAT IT IS   │ Spring's root container interface —       │
+│              │ creates, caches, and resolves beans       │
 ├──────────────┼───────────────────────────────────────────┤
-│ VS CONTEXT   │ BeanFactory: lazy, minimal, no auto-reg   │
-│              │ ApplicationContext: eager, full-featured  │
+│ PROBLEM IT   │ Heavyweight EJB containers with no        │
+│ SOLVES       │ lightweight embedded alternative          │
 ├──────────────┼───────────────────────────────────────────┤
-│ REAL IMPL    │ DefaultListableBeanFactory — used          │
-│              │ internally by all ApplicationContexts     │
+│ KEY INSIGHT  │ Stores definitions (cheap) separately     │
+│              │ from instances (expensive) — singleton    │
+│              │ cache makes repeated lookups free         │
 ├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "BeanFactory is the engine; Application-  │
-│              │ Context is the finished car."             │
+│ USE WHEN     │ Constrained environments, test slices,    │
+│              │ dynamic plugin registration               │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Production Spring Boot apps — use         │
+│              │ ApplicationContext instead                │
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ Lightweight + flexible vs no events,      │
+│              │ AOP, or i18n support                      │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "The recipe book and kitchen — minus      │
+│              │ the dining room."                         │
 ├──────────────┼───────────────────────────────────────────┤
 │ NEXT EXPLORE │ ApplicationContext → Bean Lifecycle →     │
-│              │ BeanPostProcessor → BeanFactoryPostProc.  │
+│              │ BeanPostProcessor                         │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -333,6 +439,6 @@ class DynamicBeanRegistrar implements CommandLineRunner {
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** A performance engineer measures Spring Boot application startup time and finds that `finishBeanFactoryInitialization()` — the step where all singletons are eagerly instantiated — accounts for 80% of startup time. They propose replacing `ApplicationContext` with a raw `DefaultListableBeanFactory` to get lazy initialisation, claiming it will reduce startup from 30 seconds to 2 seconds. Identify at least four Spring features that silently stop working with a raw `BeanFactory`, explain the runtime consequences of each failure, and propose an alternative approach that achieves fast startup without sacrificing these features.
+**Q1.** `BeanFactory` uses a singleton cache: every `getBean()` call for a singleton returns the same instance. But what happens when two threads call `getBean()` simultaneously for a bean that hasn't been created yet? Trace the exact synchronization mechanism Spring uses to prevent duplicate creation, and explain why the three-level cache (singletonObjects, earlySingletonObjects, singletonFactories) is necessary rather than a simple synchronized block.
 
-**Q2.** `FactoryBean<T>` is a Spring interface where implementing it makes the bean itself act as a factory: `getBean("myFactory")` returns the object produced by `FactoryBean.getObject()`, and `getBean("&myFactory")` returns the `FactoryBean` instance itself. Explain when you would choose `FactoryBean` over a `@Bean` factory method in a `@Configuration` class, describe the `&` prefix convention and which Spring internals use it, and identify a specific scenario from the Spring ecosystem (e.g., `SqlSessionFactoryBean`, `ProxyFactoryBean`) where `FactoryBean` solves a problem that `@Bean` methods cannot.
+**Q2.** Spring's parent-child `BeanFactory` hierarchy lets child contexts look up beans from parent contexts, but not the reverse. What problem does this directional lookup solve, and when would you actually use parent-child contexts in production? What breaks if you try to inject a child-context bean into a parent-context bean?
