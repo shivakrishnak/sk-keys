@@ -88,7 +88,7 @@ tags:
 ### Content Structure — 20 Required Sections (in order)
 
 | #    | Section Header                                       | Status                                   |
-| ---- | ---------------------------------------------------- |------------------------------------------|
+| ---- | ---------------------------------------------------- | ---------------------------------------- |
 | 5.1  | `# NNNN — KEYWORD NAME`                              | Required                                 |
 | 5.2  | `⚡ TL;DR —` one sentence, max 25 words              | Required                                 |
 | 5.3  | Metadata table (Depends on / Used by / Related rows) | Required                                 |
@@ -167,8 +167,6 @@ Exactly 3 questions using different types (A=System Interaction · B=Scale · C=
 ### v1 Detection (for upgrades)
 
 A file is **v1** (needs upgrade) if ANY of the following are missing:
-
-**Frontmatter:** `layout` · `title` · `parent` · `nav_order` · `permalink`
 
 **Section headers:** `### 🔥 The Problem This Solves` · `### ⏱️ Understand It in 30 Seconds` · `### 🧪 Thought Experiment` · `### 📶 Gradual Depth — Four Levels` · `### 🔄 The Complete Picture — End-to-End Flow` · `### ⚖️ Comparison Table` · `### 🚨 Failure Modes & Diagnosis`
 

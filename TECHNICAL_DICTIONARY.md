@@ -265,63 +265,66 @@ Organized in learning-dependency order:
 
 #### 🔗 HTTP & APIs (206–260)
 
-| #   | Keyword                                      | Difficulty |
-| --- | -------------------------------------------- | ---------- |
-| 206 | HTTP/1.1                                     | ★☆☆        |
-| 207 | HTTP/2                                       | ★★☆        |
-| 208 | HTTP/3                                       | ★★★        |
-| 209 | HTTP Methods (GET, POST, PUT, PATCH, DELETE) | ★☆☆        |
-| 210 | HTTP Status Codes                            | ★☆☆        |
-| 211 | HTTP Headers                                 | ★★☆        |
-| 212 | Keep-Alive / Connection Pooling              | ★★☆        |
-| 213 | REST                                         | ★☆☆        |
-| 214 | RESTful Constraints                          | ★★☆        |
-| 215 | HATEOAS                                      | ★★★        |
-| 216 | Idempotency in HTTP                          | ★★☆        |
-| 217 | GraphQL                                      | ★★☆        |
-| 218 | GraphQL Schema                               | ★★☆        |
-| 219 | GraphQL Resolvers                            | ★★☆        |
-| 220 | GraphQL N+1 Problem                          | ★★★        |
-| 221 | GraphQL Subscriptions                        | ★★★        |
-| 222 | gRPC                                         | ★★☆        |
-| 223 | Protocol Buffers                             | ★★☆        |
-| 224 | gRPC Streaming                               | ★★★        |
-| 225 | SOAP                                         | ★★☆        |
-| 226 | WSDL                                         | ★★☆        |
-| 227 | WebSocket                                    | ★★☆        |
-| 228 | Server-Sent Events (SSE)                     | ★★☆        |
-| 229 | Long Polling                                 | ★★☆        |
-| 230 | Webhook                                      | ★★☆        |
-| 231 | API Gateway                                  | ★★☆        |
-| 232 | API Versioning                               | ★★☆        |
-| 233 | API Rate Limiting                            | ★★☆        |
-| 234 | API Authentication                           | ★★☆        |
-| 235 | OAuth2                                       | ★★☆        |
-| 236 | JWT                                          | ★★☆        |
-| 237 | OIDC                                         | ★★★        |
-| 238 | API Keys                                     | ★☆☆        |
-| 239 | HMAC                                         | ★★★        |
-| 240 | CORS                                         | ★★☆        |
-| 241 | XSS                                          | ★★☆        |
-| 242 | CSRF                                         | ★★☆        |
-| 243 | SQL Injection                                | ★★☆        |
-| 244 | SSRF                                         | ★★★        |
-| 245 | Content Negotiation                          | ★★☆        |
-| 246 | OpenAPI / Swagger                            | ★★☆        |
-| 247 | API Contract Testing                         | ★★★        |
-| 248 | API Mocking                                  | ★★☆        |
-| 249 | API Backward Compatibility                   | ★★★        |
-| 250 | BFF (Backend for Frontend)                   | ★★★        |
-| 251 | API Caching                                  | ★★☆        |
-| 252 | ETag / Cache-Control                         | ★★★        |
-| 253 | Pagination (Cursor, Offset, Keyset)          | ★★☆        |
-| 254 | API Throttling                               | ★★☆        |
-| 255 | API Documentation                            | ★☆☆        |
-| 256 | API Design Best Practices                    | ★★☆        |
-| 257 | Hypermedia                                   | ★★★        |
-| 258 | API Deprecation Strategy                     | ★★★        |
-| 259 | API Observability                            | ★★★        |
-| 260 | API Security Best Practices                  | ★★★        |
+| #    | Keyword                                      | Difficulty |
+| ---- | -------------------------------------------- | ---------- |
+| 206  | HTTP/1.1                                     | ★☆☆        |
+| 207  | HTTP/2                                       | ★★☆        |
+| 208  | HTTP/3                                       | ★★★        |
+| 209  | HTTP Methods (GET, POST, PUT, PATCH, DELETE) | ★☆☆        |
+| 210  | HTTP Status Codes                            | ★☆☆        |
+| 211  | HTTP Headers                                 | ★★☆        |
+| 212  | Keep-Alive / Connection Pooling              | ★★☆        |
+| 213  | REST                                         | ★☆☆        |
+| 214  | RESTful Constraints                          | ★★☆        |
+| 215  | HATEOAS                                      | ★★★        |
+| 216  | Idempotency in HTTP                          | ★★☆        |
+| 217  | GraphQL                                      | ★★☆        |
+| 218  | GraphQL Schema                               | ★★☆        |
+| 219  | GraphQL Resolvers                            | ★★☆        |
+| 220  | GraphQL N+1 Problem                          | ★★★        |
+| 221  | GraphQL Subscriptions                        | ★★★        |
+| 222  | gRPC                                         | ★★☆        |
+| 223  | Protocol Buffers                             | ★★☆        |
+| 224  | gRPC Streaming                               | ★★★        |
+| 225  | SOAP                                         | ★★☆        |
+| 226  | WSDL                                         | ★★☆        |
+| 227  | WebSocket                                    | ★★☆        |
+| 228  | Server-Sent Events (SSE)                     | ★★☆        |
+| 229  | Long Polling                                 | ★★☆        |
+| 230  | Webhook                                      | ★★☆        |
+| 231  | API Gateway                                  | ★★☆        |
+| 232  | API Versioning                               | ★★☆        |
+| 233  | API Rate Limiting                            | ★★☆        |
+| 234  | API Authentication                           | ★★☆        |
+| 235  | OAuth2                                       | ★★☆        |
+| 236  | JWT                                          | ★★☆        |
+| 237  | OIDC                                         | ★★★        |
+| 238  | API Keys                                     | ★☆☆        |
+| 239  | HMAC                                         | ★★★        |
+| 240  | CORS                                         | ★★☆        |
+| 241  | XSS                                          | ★★☆        |
+| 242  | CSRF                                         | ★★☆        |
+| 243  | SQL Injection                                | ★★☆        |
+| 244  | SSRF                                         | ★★★        |
+| 245  | Content Negotiation                          | ★★☆        |
+| 246  | OpenAPI / Swagger                            | ★★☆        |
+| 247  | API Contract Testing                         | ★★★        |
+| 248  | API Mocking                                  | ★★☆        |
+| 249  | API Backward Compatibility                   | ★★★        |
+| 250  | BFF (Backend for Frontend)                   | ★★★        |
+| 251  | API Caching                                  | ★★☆        |
+| 252  | ETag / Cache-Control                         | ★★★        |
+| 253  | Pagination (Cursor, Offset, Keyset)          | ★★☆        |
+| 254  | API Throttling                               | ★★☆        |
+| 255  | API Documentation                            | ★☆☆        |
+| 256  | API Design Best Practices                    | ★★☆        |
+| 257  | Hypermedia                                   | ★★★        |
+| 258  | API Deprecation Strategy                     | ★★★        |
+| 259  | API Observability                            | ★★★        |
+| 260  | API Security Best Practices                  | ★★★        |
+| 2290 | Apigee (API Management Platform)             | ★★★        |
+| 2291 | API Management Platform                      | ★★★        |
+| 2292 | API Gateway Patterns                         | ★★★        |
 
 ---
 
@@ -331,58 +334,73 @@ Organized in learning-dependency order:
 
 #### ☕ Java & JVM Internals (261–310)
 
-| #   | Keyword                                       | Difficulty |
-| --- | --------------------------------------------- | ---------- |
-| 261 | JVM                                           | ★☆☆        |
-| 262 | JRE                                           | ★☆☆        |
-| 263 | JDK                                           | ★☆☆        |
-| 264 | Bytecode                                      | ★★☆        |
-| 265 | Class Loader                                  | ★★☆        |
-| 266 | Stack Memory                                  | ★★☆        |
-| 267 | Heap Memory                                   | ★★☆        |
-| 268 | Metaspace                                     | ★★☆        |
-| 269 | Stack Frame                                   | ★★★        |
-| 270 | Operand Stack                                 | ★★★        |
-| 271 | Local Variable Table                          | ★★★        |
-| 272 | Object Header                                 | ★★★        |
-| 273 | Escape Analysis                               | ★★★        |
-| 274 | Memory Barrier                                | ★★★        |
-| 275 | Happens-Before                                | ★★★        |
-| 276 | GC Roots                                      | ★★★        |
-| 277 | Reference Types (Strong, Soft, Weak, Phantom) | ★★★        |
-| 278 | Young Generation                              | ★★☆        |
-| 279 | Eden Space                                    | ★★☆        |
-| 280 | Survivor Space                                | ★★☆        |
-| 281 | Old Generation                                | ★★☆        |
-| 282 | Minor GC                                      | ★★☆        |
-| 283 | Major GC                                      | ★★★        |
-| 284 | Full GC                                       | ★★★        |
-| 285 | Stop-The-World (STW)                          | ★★★        |
-| 286 | Serial GC                                     | ★★☆        |
-| 287 | Parallel GC                                   | ★★☆        |
-| 288 | CMS (Concurrent Mark Sweep)                   | ★★★        |
-| 289 | G1GC                                          | ★★★        |
-| 290 | ZGC                                           | ★★★        |
-| 291 | Shenandoah GC                                 | ★★★        |
-| 292 | GC Tuning                                     | ★★★        |
-| 293 | GC Logs                                       | ★★☆        |
-| 294 | GC Pause                                      | ★★★        |
-| 295 | Throughput vs Latency (GC)                    | ★★★        |
-| 296 | Finalization                                  | ★★★        |
-| 297 | JIT Compiler                                  | ★★★        |
-| 298 | C1 / C2 Compiler                              | ★★★        |
-| 299 | Tiered Compilation                            | ★★★        |
-| 300 | Method Inlining                               | ★★★        |
-| 301 | Deoptimization                                | ★★★        |
-| 302 | OSR (On-Stack Replacement)                    | ★★★        |
-| 303 | AOT (Ahead-of-Time Compilation)               | ★★★        |
-| 304 | GraalVM                                       | ★★★        |
-| 305 | Native Image                                  | ★★★        |
-| 306 | TLAB (Thread Local Allocation Buffer)         | ★★★        |
-| 307 | Safepoint                                     | ★★★        |
-| 308 | Card Table                                    | ★★★        |
-| 309 | Write Barrier                                 | ★★★        |
-| 310 | Remembered Set                                | ★★★        |
+| #    | Keyword                                                          | Difficulty |
+| ---- | ---------------------------------------------------------------- | ---------- |
+| 261  | JVM                                                              | ★☆☆        |
+| 262  | JRE                                                              | ★☆☆        |
+| 263  | JDK                                                              | ★☆☆        |
+| 264  | Bytecode                                                         | ★★☆        |
+| 265  | Class Loader                                                     | ★★☆        |
+| 266  | Stack Memory                                                     | ★★☆        |
+| 267  | Heap Memory                                                      | ★★☆        |
+| 268  | Metaspace                                                        | ★★☆        |
+| 269  | Stack Frame                                                      | ★★★        |
+| 270  | Operand Stack                                                    | ★★★        |
+| 271  | Local Variable Table                                             | ★★★        |
+| 272  | Object Header                                                    | ★★★        |
+| 273  | Escape Analysis                                                  | ★★★        |
+| 274  | Memory Barrier                                                   | ★★★        |
+| 275  | Happens-Before                                                   | ★★★        |
+| 276  | GC Roots                                                         | ★★★        |
+| 277  | Reference Types (Strong, Soft, Weak, Phantom)                    | ★★★        |
+| 278  | Young Generation                                                 | ★★☆        |
+| 279  | Eden Space                                                       | ★★☆        |
+| 280  | Survivor Space                                                   | ★★☆        |
+| 281  | Old Generation                                                   | ★★☆        |
+| 282  | Minor GC                                                         | ★★☆        |
+| 283  | Major GC                                                         | ★★★        |
+| 284  | Full GC                                                          | ★★★        |
+| 285  | Stop-The-World (STW)                                             | ★★★        |
+| 286  | Serial GC                                                        | ★★☆        |
+| 287  | Parallel GC                                                      | ★★☆        |
+| 288  | CMS (Concurrent Mark Sweep)                                      | ★★★        |
+| 289  | G1GC                                                             | ★★★        |
+| 290  | ZGC                                                              | ★★★        |
+| 291  | Shenandoah GC                                                    | ★★★        |
+| 292  | GC Tuning                                                        | ★★★        |
+| 293  | GC Logs                                                          | ★★☆        |
+| 294  | GC Pause                                                         | ★★★        |
+| 295  | Throughput vs Latency (GC)                                       | ★★★        |
+| 296  | Finalization                                                     | ★★★        |
+| 297  | JIT Compiler                                                     | ★★★        |
+| 298  | C1 / C2 Compiler                                                 | ★★★        |
+| 299  | Tiered Compilation                                               | ★★★        |
+| 300  | Method Inlining                                                  | ★★★        |
+| 301  | Deoptimization                                                   | ★★★        |
+| 302  | OSR (On-Stack Replacement)                                       | ★★★        |
+| 303  | AOT (Ahead-of-Time Compilation)                                  | ★★★        |
+| 304  | GraalVM                                                          | ★★★        |
+| 305  | Native Image                                                     | ★★★        |
+| 306  | TLAB (Thread Local Allocation Buffer)                            | ★★★        |
+| 307  | Safepoint                                                        | ★★★        |
+| 308  | Card Table                                                       | ★★★        |
+| 309  | Write Barrier                                                    | ★★★        |
+| 310  | Remembered Set                                                   | ★★★        |
+| 2100 | Java EE / J2EE Overview                                          | ★☆☆        |
+| 2101 | JSP (Java Server Pages)                                          | ★★☆        |
+| 2102 | Java Servlet                                                     | ★★☆        |
+| 2103 | Java Collections Deep Dive (List, Map, Set)                      | ★★☆        |
+| 2104 | Java Exception Hierarchy (Checked vs Unchecked)                  | ★★☆        |
+| 2105 | Java Keywords (static, final, volatile, synchronized, transient) | ★★☆        |
+| 2106 | Java File I/O and Serialization                                  | ★★☆        |
+| 2107 | Java Abstract Classes vs Interfaces                              | ★★☆        |
+| 2108 | Java Access Modifiers                                            | ★☆☆        |
+| 2109 | Java Constructors Deep Dive                                      | ★★☆        |
+| 2110 | Java Memory Management (Stack vs Heap Practical)                 | ★★☆        |
+| 2111 | Java 8 to Java 17 Migration Guide                                | ★★★        |
+| 2112 | Java 17 Features (Records, Sealed, Pattern Matching)             | ★★☆        |
+| 2113 | Java Profiling (YourKit, JFR)                                    | ★★★        |
+| 2114 | Java Performance Tuning                                          | ★★★        |
 
 ---
 
@@ -466,48 +484,61 @@ Organized in learning-dependency order:
 
 #### 🌱 Spring Core (371–410)
 
-| #   | Keyword                           | Difficulty |
-| --- | --------------------------------- | ---------- | --- |
-| 371 | IoC (Inversion of Control)        | ★☆☆        |
-| 372 | DI (Dependency Injection)         | ★☆☆        |
-| 373 | ApplicationContext                | ★★☆        |
-| 374 | BeanFactory                       | ★★☆        |
-| 375 | Bean                              | ★☆☆        |
-| 376 | Bean Lifecycle                    | ★★☆        |
-| 377 | Bean Scope                        | ★★☆        |
-| 378 | BeanPostProcessor                 | ★★★        |
-| 379 | BeanFactoryPostProcessor          | ★★★        |
-| 380 | @Autowired                        | ★★☆        |
-| 381 | @Qualifier / @Primary             | ★★☆        |
-| 382 | @Configuration / @Bean            | ★★☆        |
-| 383 | Circular Dependency               | ★★★        |
-| 384 | CGLIB Proxy                       | ★★★        |
-| 385 | JDK Dynamic Proxy                 | ★★★        |
-| 386 | AOP (Aspect-Oriented Programming) | ★★☆        |
-| 387 | Aspect                            | ★★☆        |
-| 388 | Advice                            | ★★☆        |
-| 389 | Pointcut                          | ★★☆        |
-| 390 | JoinPoint                         | ★★☆        |
-| 391 | Weaving                           | ★★★        |
-| 392 | DispatcherServlet                 | ★★☆        |
-| 393 | HandlerMapping                    | ★★★        |
-| 394 | Filter vs Interceptor             | ★★☆        |
-| 395 | @Transactional                    | ★★☆        |
-| 396 | Transaction Propagation           | ★★★        |
-| 397 | Transaction Isolation Levels      | ★★★        |
-| 398 | N+1 Problem                       | ★★★        |
-| 399 | Lazy vs Eager Loading             | ★★☆        |
-| 400 | HikariCP                          | ★★☆        |
-| 401 | Auto-Configuration                | ★★★        |
-| 402 | Spring Boot Actuator              | ★★☆        |
-| 403 | Spring Boot Startup Lifecycle     | ★★★        |
-| 404 | WebFlux / Reactive                | ★★★        |
-| 405 | Mono / Flux                       | ★★★        |
-| 406 | Backpressure (Spring)             | ★★★        |
-| 407 | Spring Security                   | ★★★        |
-| 408 | Spring Data JPA                   | ★★☆        |
-| 409 | Spring Cloud                      | ★★★        |
-| 410 | Spring Boot Testing               | ★★☆        | --- |
+| #    | Keyword                                              | Difficulty |
+| ---- | ---------------------------------------------------- | ---------- | --- |
+| 371  | IoC (Inversion of Control)                           | ★☆☆        |
+| 372  | DI (Dependency Injection)                            | ★☆☆        |
+| 373  | ApplicationContext                                   | ★★☆        |
+| 374  | BeanFactory                                          | ★★☆        |
+| 375  | Bean                                                 | ★☆☆        |
+| 376  | Bean Lifecycle                                       | ★★☆        |
+| 377  | Bean Scope                                           | ★★☆        |
+| 378  | BeanPostProcessor                                    | ★★★        |
+| 379  | BeanFactoryPostProcessor                             | ★★★        |
+| 380  | @Autowired                                           | ★★☆        |
+| 381  | @Qualifier / @Primary                                | ★★☆        |
+| 382  | @Configuration / @Bean                               | ★★☆        |
+| 383  | Circular Dependency                                  | ★★★        |
+| 384  | CGLIB Proxy                                          | ★★★        |
+| 385  | JDK Dynamic Proxy                                    | ★★★        |
+| 386  | AOP (Aspect-Oriented Programming)                    | ★★☆        |
+| 387  | Aspect                                               | ★★☆        |
+| 388  | Advice                                               | ★★☆        |
+| 389  | Pointcut                                             | ★★☆        |
+| 390  | JoinPoint                                            | ★★☆        |
+| 391  | Weaving                                              | ★★★        |
+| 392  | DispatcherServlet                                    | ★★☆        |
+| 393  | HandlerMapping                                       | ★★★        |
+| 394  | Filter vs Interceptor                                | ★★☆        |
+| 395  | @Transactional                                       | ★★☆        |
+| 396  | Transaction Propagation                              | ★★★        |
+| 397  | Transaction Isolation Levels                         | ★★★        |
+| 398  | N+1 Problem                                          | ★★★        |
+| 399  | Lazy vs Eager Loading                                | ★★☆        |
+| 400  | HikariCP                                             | ★★☆        |
+| 401  | Auto-Configuration                                   | ★★★        |
+| 402  | Spring Boot Actuator                                 | ★★☆        |
+| 403  | Spring Boot Startup Lifecycle                        | ★★★        |
+| 404  | WebFlux / Reactive                                   | ★★★        |
+| 405  | Mono / Flux                                          | ★★★        |
+| 406  | Backpressure (Spring)                                | ★★★        |
+| 407  | Spring Security                                      | ★★★        |
+| 408  | Spring Data JPA                                      | ★★☆        |
+| 409  | Spring Cloud                                         | ★★★        |
+| 410  | Spring Boot Testing                                  | ★★☆        | --- |
+| 2120 | Spring Batch                                         | ★★★        |
+| 2121 | Spring Batch Job / Step / Tasklet                    | ★★★        |
+| 2122 | Spring Batch ItemReader / ItemProcessor / ItemWriter | ★★★        |
+| 2123 | Spring Batch Chunk Processing                        | ★★★        |
+| 2124 | Spring Cloud Overview                                | ★★★        |
+| 2125 | Spring Cloud Config                                  | ★★★        |
+| 2126 | Spring Cloud Gateway                                 | ★★★        |
+| 2127 | Spring Cloud Service Discovery (Eureka)              | ★★★        |
+| 2128 | Spring Cloud Load Balancer                           | ★★★        |
+| 2129 | Spring Cloud Circuit Breaker                         | ★★★        |
+| 2130 | Micronaut Framework                                  | ★★★        |
+| 2131 | Micronaut vs Spring Boot                             | ★★★        |
+| 2132 | Quarkus Framework                                    | ★★★        |
 
 ### 🔵 TIER 5 — Databases
 
@@ -515,80 +546,102 @@ Organized in learning-dependency order:
 
 #### 🗄️ Database Fundamentals (411–450)
 
-| #   | Keyword                                         | Difficulty |
-| --- | ----------------------------------------------- | ---------- |
-| 411 | ACID                                            | ★☆☆        |
-| 412 | Atomicity                                       | ★☆☆        |
-| 413 | Consistency (DB)                                | ★☆☆        |
-| 414 | Isolation                                       | ★★☆        |
-| 415 | Durability                                      | ★★☆        |
-| 416 | Transaction                                     | ★☆☆        |
-| 417 | Commit / Rollback / Savepoint                   | ★☆☆        |
-| 418 | Isolation Levels                                | ★★☆        |
-| 419 | Dirty Read                                      | ★★☆        |
-| 420 | Non-Repeatable Read                             | ★★☆        |
-| 421 | Phantom Read                                    | ★★☆        |
-| 422 | MVCC                                            | ★★★        |
-| 423 | WAL (Write-Ahead Log)                           | ★★★        |
-| 424 | Redo Log / Undo Log                             | ★★★        |
-| 425 | B-Tree                                          | ★★☆        |
-| 426 | B+ Tree                                         | ★★★        |
-| 427 | LSM Tree                                        | ★★★        |
-| 428 | Index Types (B-Tree, Hash, Composite, Covering) | ★★☆        |
-| 429 | Query Planner / Execution Plan                  | ★★★        |
-| 430 | EXPLAIN                                         | ★★☆        |
-| 431 | Normalization                                   | ★★☆        |
-| 432 | Denormalization                                 | ★★☆        |
-| 433 | Foreign Key / Referential Integrity             | ★★☆        |
-| 434 | Locking (Row, Table, Gap, Next-Key)             | ★★★        |
-| 435 | Deadlock Detection (DB)                         | ★★★        |
-| 436 | Connection Pooling (DB)                         | ★★☆        |
-| 437 | Prepared Statements                             | ★★☆        |
-| 438 | Read Replica                                    | ★★☆        |
-| 439 | Write Amplification                             | ★★★        |
-| 440 | Partitioning (DB)                               | ★★★        |
-| 441 | Materialized View                               | ★★★        |
-| 442 | Stored Procedure / Trigger                      | ★★☆        |
-| 443 | ORM Patterns                                    | ★★☆        |
-| 444 | Optimistic vs Pessimistic Locking               | ★★★        |
-| 445 | Database Replication                            | ★★★        |
-| 446 | Master-Slave Replication                        | ★★☆        |
-| 447 | Multi-Master Replication                        | ★★★        |
-| 448 | Database Sharding                               | ★★★        |
-| 449 | Database Migration                              | ★★☆        |
-| 450 | Schema Evolution                                | ★★★        |
+| #    | Keyword                                         | Difficulty |
+| ---- | ----------------------------------------------- | ---------- |
+| 411  | ACID                                            | ★☆☆        |
+| 412  | Atomicity                                       | ★☆☆        |
+| 413  | Consistency (DB)                                | ★☆☆        |
+| 414  | Isolation                                       | ★★☆        |
+| 415  | Durability                                      | ★★☆        |
+| 416  | Transaction                                     | ★☆☆        |
+| 417  | Commit / Rollback / Savepoint                   | ★☆☆        |
+| 418  | Isolation Levels                                | ★★☆        |
+| 419  | Dirty Read                                      | ★★☆        |
+| 420  | Non-Repeatable Read                             | ★★☆        |
+| 421  | Phantom Read                                    | ★★☆        |
+| 422  | MVCC                                            | ★★★        |
+| 423  | WAL (Write-Ahead Log)                           | ★★★        |
+| 424  | Redo Log / Undo Log                             | ★★★        |
+| 425  | B-Tree                                          | ★★☆        |
+| 426  | B+ Tree                                         | ★★★        |
+| 427  | LSM Tree                                        | ★★★        |
+| 428  | Index Types (B-Tree, Hash, Composite, Covering) | ★★☆        |
+| 429  | Query Planner / Execution Plan                  | ★★★        |
+| 430  | EXPLAIN                                         | ★★☆        |
+| 431  | Normalization                                   | ★★☆        |
+| 432  | Denormalization                                 | ★★☆        |
+| 433  | Foreign Key / Referential Integrity             | ★★☆        |
+| 434  | Locking (Row, Table, Gap, Next-Key)             | ★★★        |
+| 435  | Deadlock Detection (DB)                         | ★★★        |
+| 436  | Connection Pooling (DB)                         | ★★☆        |
+| 437  | Prepared Statements                             | ★★☆        |
+| 438  | Read Replica                                    | ★★☆        |
+| 439  | Write Amplification                             | ★★★        |
+| 440  | Partitioning (DB)                               | ★★★        |
+| 441  | Materialized View                               | ★★★        |
+| 442  | Stored Procedure / Trigger                      | ★★☆        |
+| 443  | ORM Patterns                                    | ★★☆        |
+| 444  | Optimistic vs Pessimistic Locking               | ★★★        |
+| 445  | Database Replication                            | ★★★        |
+| 446  | Master-Slave Replication                        | ★★☆        |
+| 447  | Multi-Master Replication                        | ★★★        |
+| 448  | Database Sharding                               | ★★★        |
+| 449  | Database Migration                              | ★★☆        |
+| 450  | Schema Evolution                                | ★★★        |
+| 2140 | Oracle Database                                 | ★★☆        |
+| 2141 | PL/SQL                                          | ★★★        |
+| 2142 | Complex SQL Queries (Joins, Subqueries, CTEs)   | ★★★        |
+| 2143 | Query Optimization                              | ★★★        |
+| 2144 | Liquibase                                       | ★★★        |
+| 2145 | Flyway                                          | ★★★        |
+| 2146 | Database Change Management                      | ★★★        |
+| 2147 | Schema Design Best Practices                    | ★★★        |
+| 2148 | Data Integrity Constraints                      | ★★☆        |
+| 2149 | PostgreSQL Specific Features                    | ★★★        |
+| 2150 | MySQL Specific Features                         | ★★★        |
 
 ---
 
 #### 🗄️ NoSQL & Distributed Databases (451–475)
 
-| #   | Keyword                       | Difficulty |
-| --- | ----------------------------- | ---------- |
-| 451 | Document Store                | ★★☆        |
-| 452 | Key-Value Store               | ★★☆        |
-| 453 | Column Family                 | ★★★        |
-| 454 | Graph DB                      | ★★★        |
-| 455 | Time-Series DB                | ★★★        |
-| 456 | Search Engine (Elasticsearch) | ★★★        |
-| 457 | Eventual Consistency in NoSQL | ★★★        |
-| 458 | CRDTs                         | ★★★        |
-| 459 | Vector Database               | ★★★        |
-| 460 | NewSQL                        | ★★★        |
-| 461 | MongoDB Patterns              | ★★☆        |
-| 462 | Redis Data Structures         | ★★☆        |
-| 463 | Redis Persistence             | ★★★        |
-| 464 | Cassandra Data Modeling       | ★★★        |
-| 465 | DynamoDB Patterns             | ★★★        |
-| 466 | Hot Partition Problem         | ★★★        |
-| 467 | Wide Column vs Document       | ★★★        |
-| 468 | Polyglot Persistence          | ★★★        |
-| 469 | CAP Theorem (DB)              | ★★★        |
-| 470 | Distributed Transactions      | ★★★        |
-| 471 | Two-Phase Commit (2PC)        | ★★★        |
-| 472 | Saga Pattern (DB)             | ★★★        |
-| 473 | Change Data Capture (CDC)     | ★★★        |
-| 474 | Database Proxy (PgBouncer)    | ★★★        |
-| 475 | Data Locality                 | ★★★        |
+| #    | Keyword                                             | Difficulty |
+| ---- | --------------------------------------------------- | ---------- |
+| 451  | Document Store                                      | ★★☆        |
+| 452  | Key-Value Store                                     | ★★☆        |
+| 453  | Column Family                                       | ★★★        |
+| 454  | Graph DB                                            | ★★★        |
+| 455  | Time-Series DB                                      | ★★★        |
+| 456  | Search Engine (Elasticsearch)                       | ★★★        |
+| 457  | Eventual Consistency in NoSQL                       | ★★★        |
+| 458  | CRDTs                                               | ★★★        |
+| 459  | Vector Database                                     | ★★★        |
+| 460  | NewSQL                                              | ★★★        |
+| 461  | MongoDB Patterns                                    | ★★☆        |
+| 462  | Redis Data Structures                               | ★★☆        |
+| 463  | Redis Persistence                                   | ★★★        |
+| 464  | Cassandra Data Modeling                             | ★★★        |
+| 465  | DynamoDB Patterns                                   | ★★★        |
+| 466  | Hot Partition Problem                               | ★★★        |
+| 467  | Wide Column vs Document                             | ★★★        |
+| 468  | Polyglot Persistence                                | ★★★        |
+| 469  | CAP Theorem (DB)                                    | ★★★        |
+| 470  | Distributed Transactions                            | ★★★        |
+| 471  | Two-Phase Commit (2PC)                              | ★★★        |
+| 472  | Saga Pattern (DB)                                   | ★★★        |
+| 473  | Change Data Capture (CDC)                           | ★★★        |
+| 474  | Database Proxy (PgBouncer)                          | ★★★        |
+| 475  | Data Locality                                       | ★★★        |
+| 2160 | MongoDB Document Schema Design                      | ★★★        |
+| 2161 | MongoDB Normalization vs Denormalization            | ★★★        |
+| 2162 | MongoDB Aggregation Pipeline                        | ★★★        |
+| 2163 | MongoDB Indexing Strategies                         | ★★★        |
+| 2164 | MongoDB Schema Evolution                            | ★★★        |
+| 2165 | OpenSearch / Elasticsearch                          | ★★★        |
+| 2166 | Snowflake (Cloud Data Warehouse)                    | ★★★        |
+| 2167 | Snowflake Architecture (Virtual Warehouse, Storage) | ★★★        |
+| 2168 | ElastiCache                                         | ★★★        |
+| 2169 | DynamoDB Data Modeling Patterns                     | ★★★        |
+| 2170 | DynamoDB Single-Table Design                        | ★★★        |
 
 ---
 
@@ -625,90 +678,97 @@ Organized in learning-dependency order:
 
 #### 📊 Data Fundamentals (496–530)
 
-| #   | Keyword                                          | Difficulty |
-| --- | ------------------------------------------------ | ---------- |
-| 496 | Data Types (Primitive, Complex, Semi-Structured) | ★☆☆        |
-| 497 | Structured vs Unstructured Data                  | ★☆☆        |
-| 498 | Semi-Structured Data                             | ★☆☆        |
-| 499 | Data Formats (JSON, XML, YAML, CSV)              | ★☆☆        |
-| 500 | Binary Formats (Avro, Parquet, ORC, Protobuf)    | ★★☆        |
-| 501 | Columnar vs Row Storage                          | ★★☆        |
-| 502 | Avro                                             | ★★☆        |
-| 503 | Parquet                                          | ★★☆        |
-| 504 | ORC                                              | ★★☆        |
-| 505 | Delta Lake                                       | ★★★        |
-| 506 | Apache Iceberg                                   | ★★★        |
-| 507 | Hudi                                             | ★★★        |
-| 508 | Data Compression (gzip, snappy, zstd, lz4)       | ★★☆        |
-| 509 | Serialization Formats                            | ★★☆        |
-| 510 | Schema Registry                                  | ★★★        |
-| 511 | Schema Evolution (Data)                          | ★★★        |
-| 512 | Data Modeling                                    | ★★☆        |
-| 513 | Star Schema                                      | ★★☆        |
-| 514 | Snowflake Schema                                 | ★★☆        |
-| 515 | Data Vault                                       | ★★★        |
-| 516 | Dimensional Modeling                             | ★★☆        |
-| 517 | Fact Table vs Dimension Table                    | ★★☆        |
-| 518 | SCD (Slowly Changing Dimension)                  | ★★★        |
-| 519 | Data Lake                                        | ★★☆        |
-| 520 | Data Warehouse                                   | ★★☆        |
-| 521 | Data Lakehouse                                   | ★★★        |
-| 522 | Data Mesh                                        | ★★★        |
-| 523 | Data Fabric                                      | ★★★        |
-| 524 | Data Lineage                                     | ★★★        |
-| 525 | Data Catalog                                     | ★★★        |
-| 526 | Data Quality                                     | ★★★        |
-| 527 | Data Governance                                  | ★★★        |
-| 528 | Master Data Management                           | ★★★        |
-| 529 | OLTP vs OLAP                                     | ★★☆        |
-| 530 | ETL vs ELT                                       | ★★☆        |
+| #    | Keyword                                          | Difficulty |
+| ---- | ------------------------------------------------ | ---------- |
+| 496  | Data Types (Primitive, Complex, Semi-Structured) | ★☆☆        |
+| 497  | Structured vs Unstructured Data                  | ★☆☆        |
+| 498  | Semi-Structured Data                             | ★☆☆        |
+| 499  | Data Formats (JSON, XML, YAML, CSV)              | ★☆☆        |
+| 500  | Binary Formats (Avro, Parquet, ORC, Protobuf)    | ★★☆        |
+| 501  | Columnar vs Row Storage                          | ★★☆        |
+| 502  | Avro                                             | ★★☆        |
+| 503  | Parquet                                          | ★★☆        |
+| 504  | ORC                                              | ★★☆        |
+| 505  | Delta Lake                                       | ★★★        |
+| 506  | Apache Iceberg                                   | ★★★        |
+| 507  | Hudi                                             | ★★★        |
+| 508  | Data Compression (gzip, snappy, zstd, lz4)       | ★★☆        |
+| 509  | Serialization Formats                            | ★★☆        |
+| 510  | Schema Registry                                  | ★★★        |
+| 511  | Schema Evolution (Data)                          | ★★★        |
+| 512  | Data Modeling                                    | ★★☆        |
+| 513  | Star Schema                                      | ★★☆        |
+| 514  | Snowflake Schema                                 | ★★☆        |
+| 515  | Data Vault                                       | ★★★        |
+| 516  | Dimensional Modeling                             | ★★☆        |
+| 517  | Fact Table vs Dimension Table                    | ★★☆        |
+| 518  | SCD (Slowly Changing Dimension)                  | ★★★        |
+| 519  | Data Lake                                        | ★★☆        |
+| 520  | Data Warehouse                                   | ★★☆        |
+| 521  | Data Lakehouse                                   | ★★★        |
+| 522  | Data Mesh                                        | ★★★        |
+| 523  | Data Fabric                                      | ★★★        |
+| 524  | Data Lineage                                     | ★★★        |
+| 525  | Data Catalog                                     | ★★★        |
+| 526  | Data Quality                                     | ★★★        |
+| 527  | Data Governance                                  | ★★★        |
+| 528  | Master Data Management                           | ★★★        |
+| 529  | OLTP vs OLAP                                     | ★★☆        |
+| 530  | ETL vs ELT                                       | ★★☆        |
+| 2340 | AVRO Schema                                      | ★★★        |
+| 2341 | Schema Registry (Confluent)                      | ★★★        |
+| 2342 | Object Storage Patterns                          | ★★★        |
 
 ---
 
 #### 📊 Big Data & Streaming (531–570)
 
-| #   | Keyword                                | Difficulty |
-| --- | -------------------------------------- | ---------- |
-| 531 | Distributed Computing                  | ★★☆        |
-| 532 | MapReduce                              | ★★☆        |
-| 533 | Apache Hadoop                          | ★★☆        |
-| 534 | HDFS                                   | ★★★        |
-| 535 | Apache Spark                           | ★★★        |
-| 536 | Spark RDD                              | ★★★        |
-| 537 | Spark DataFrame / Dataset              | ★★★        |
-| 538 | Spark Streaming                        | ★★★        |
-| 539 | Apache Flink                           | ★★★        |
-| 540 | Apache Kafka                           | ★★☆        |
-| 541 | Kafka Topic / Partition / Offset       | ★★☆        |
-| 542 | Consumer Group                         | ★★☆        |
-| 543 | ISR (In-Sync Replicas)                 | ★★★        |
-| 544 | Log Compaction                         | ★★★        |
-| 545 | Exactly-Once Semantics                 | ★★★        |
-| 546 | Kafka Streams                          | ★★★        |
-| 547 | KSQL                                   | ★★★        |
-| 548 | Consumer Lag                           | ★★★        |
-| 549 | Idempotent Producer                    | ★★★        |
-| 550 | Transactional Producer                 | ★★★        |
-| 551 | Dead Letter Queue (DLQ)                | ★★☆        |
-| 552 | Fan-Out Pattern                        | ★★☆        |
-| 553 | Message Ordering                       | ★★★        |
-| 554 | Windowing (Tumbling, Sliding, Session) | ★★★        |
-| 555 | Watermark                              | ★★★        |
-| 556 | Event Time vs Processing Time          | ★★★        |
-| 557 | Lambda Architecture                    | ★★★        |
-| 558 | Kappa Architecture                     | ★★★        |
-| 559 | Batch vs Stream Processing             | ★★☆        |
-| 560 | Backpressure (Streaming)               | ★★★        |
-| 561 | Apache Beam                            | ★★★        |
-| 562 | Pulsar                                 | ★★★        |
-| 563 | RabbitMQ                               | ★★☆        |
-| 564 | Message Broker vs Event Bus            | ★★☆        |
-| 565 | Point-to-Point vs Pub-Sub              | ★★☆        |
-| 566 | Competing Consumers                    | ★★☆        |
-| 567 | Outbox Pattern                         | ★★★        |
-| 568 | Transactional Outbox                   | ★★★        |
-| 569 | Event-Driven Architecture              | ★★★        |
-| 570 | Change Data Capture (CDC)              | ★★★        |
+| #    | Keyword                                | Difficulty |
+| ---- | -------------------------------------- | ---------- |
+| 531  | Distributed Computing                  | ★★☆        |
+| 532  | MapReduce                              | ★★☆        |
+| 533  | Apache Hadoop                          | ★★☆        |
+| 534  | HDFS                                   | ★★★        |
+| 535  | Apache Spark                           | ★★★        |
+| 536  | Spark RDD                              | ★★★        |
+| 537  | Spark DataFrame / Dataset              | ★★★        |
+| 538  | Spark Streaming                        | ★★★        |
+| 539  | Apache Flink                           | ★★★        |
+| 540  | Apache Kafka                           | ★★☆        |
+| 541  | Kafka Topic / Partition / Offset       | ★★☆        |
+| 542  | Consumer Group                         | ★★☆        |
+| 543  | ISR (In-Sync Replicas)                 | ★★★        |
+| 544  | Log Compaction                         | ★★★        |
+| 545  | Exactly-Once Semantics                 | ★★★        |
+| 546  | Kafka Streams                          | ★★★        |
+| 547  | KSQL                                   | ★★★        |
+| 548  | Consumer Lag                           | ★★★        |
+| 549  | Idempotent Producer                    | ★★★        |
+| 550  | Transactional Producer                 | ★★★        |
+| 551  | Dead Letter Queue (DLQ)                | ★★☆        |
+| 552  | Fan-Out Pattern                        | ★★☆        |
+| 553  | Message Ordering                       | ★★★        |
+| 554  | Windowing (Tumbling, Sliding, Session) | ★★★        |
+| 555  | Watermark                              | ★★★        |
+| 556  | Event Time vs Processing Time          | ★★★        |
+| 557  | Lambda Architecture                    | ★★★        |
+| 558  | Kappa Architecture                     | ★★★        |
+| 559  | Batch vs Stream Processing             | ★★☆        |
+| 560  | Backpressure (Streaming)               | ★★★        |
+| 561  | Apache Beam                            | ★★★        |
+| 562  | Pulsar                                 | ★★★        |
+| 563  | RabbitMQ                               | ★★☆        |
+| 564  | Message Broker vs Event Bus            | ★★☆        |
+| 565  | Point-to-Point vs Pub-Sub              | ★★☆        |
+| 566  | Competing Consumers                    | ★★☆        |
+| 567  | Outbox Pattern                         | ★★★        |
+| 568  | Transactional Outbox                   | ★★★        |
+| 569  | Event-Driven Architecture              | ★★★        |
+| 570  | Change Data Capture (CDC)              | ★★★        |
+| 2350 | Kafka AVRO Integration                 | ★★★        |
+| 2351 | Kafka Schema Registry Usage            | ★★★        |
+| 2352 | AWS Kinesis vs Kafka                   | ★★★        |
+| 2353 | AWS SNS + SQS Fan-Out Pattern          | ★★★        |
 
 ---
 
@@ -782,63 +842,68 @@ Organized in learning-dependency order:
 
 #### 🔧 Microservices (626–680)
 
-| #   | Keyword                              | Difficulty |
-| --- | ------------------------------------ | ---------- |
-| 626 | Monolith vs Microservices            | ★☆☆        |
-| 627 | Modular Monolith                     | ★★☆        |
-| 628 | Service Decomposition                | ★★☆        |
-| 629 | Domain-Driven Design (DDD)           | ★★★        |
-| 630 | Bounded Context                      | ★★★        |
-| 631 | Aggregate                            | ★★★        |
-| 632 | Ubiquitous Language                  | ★★★        |
-| 633 | Anti-Corruption Layer                | ★★★        |
-| 634 | Strangler Fig Pattern                | ★★★        |
-| 635 | Service Registry                     | ★★☆        |
-| 636 | Service Discovery                    | ★★☆        |
-| 637 | Client-Side vs Server-Side Discovery | ★★★        |
-| 638 | Health Check Patterns                | ★★☆        |
-| 639 | Inter-Service Communication          | ★★☆        |
-| 640 | Synchronous vs Async Communication   | ★★☆        |
-| 641 | API Gateway (Microservices)          | ★★☆        |
-| 642 | Backend for Frontend (BFF)           | ★★★        |
-| 643 | Service Mesh (Microservices)         | ★★★        |
-| 644 | Istio                                | ★★★        |
-| 645 | Envoy Proxy                          | ★★★        |
-| 646 | Resilience4j                         | ★★★        |
-| 647 | Circuit Breaker (Microservices)      | ★★★        |
-| 648 | Bulkhead Pattern                     | ★★★        |
-| 649 | Rate Limiting (Microservices)        | ★★☆        |
-| 650 | Timeout Strategy                     | ★★☆        |
-| 651 | Retry Strategy                       | ★★☆        |
-| 652 | Fallback Strategy                    | ★★☆        |
-| 653 | Saga Pattern (Microservices)         | ★★★        |
-| 654 | Distributed Transaction              | ★★★        |
-| 655 | Event-Driven Microservices           | ★★★        |
-| 656 | Eventual Consistency (Microservices) | ★★★        |
-| 657 | Data Isolation per Service           | ★★★        |
-| 658 | CQRS in Microservices                | ★★★        |
-| 659 | Event Sourcing in Microservices      | ★★★        |
-| 660 | Shared Database Anti-Pattern         | ★★★        |
-| 661 | Database per Service                 | ★★★        |
-| 662 | Consumer-Driven Contract Testing     | ★★★        |
-| 663 | Pact (Contract Testing)              | ★★★        |
-| 664 | Cross-Cutting Concerns               | ★★★        |
-| 665 | Distributed Logging                  | ★★★        |
-| 666 | Correlation ID (Microservices)       | ★★☆        |
-| 667 | OpenTelemetry (Microservices)        | ★★★        |
-| 668 | Chaos Engineering                    | ★★★        |
-| 669 | Canary Deployment (Microservices)    | ★★★        |
-| 670 | Blue-Green Deployment                | ★★☆        |
-| 671 | Feature Flags (Microservices)        | ★★☆        |
-| 672 | Graceful Shutdown (Microservices)    | ★★★        |
-| 673 | Zero-Downtime Deployment             | ★★★        |
-| 674 | Service Contract                     | ★★★        |
-| 675 | Backward Compatibility               | ★★★        |
-| 676 | Versioning Strategy                  | ★★★        |
-| 677 | Twelve-Factor App                    | ★★☆        |
-| 678 | Sidecar Pattern (Microservices)      | ★★★        |
-| 679 | Ambassador Pattern                   | ★★★        |
-| 680 | Adapter Pattern (Microservices)      | ★★★        |
+| #    | Keyword                                | Difficulty |
+| ---- | -------------------------------------- | ---------- |
+| 626  | Monolith vs Microservices              | ★☆☆        |
+| 627  | Modular Monolith                       | ★★☆        |
+| 628  | Service Decomposition                  | ★★☆        |
+| 629  | Domain-Driven Design (DDD)             | ★★★        |
+| 630  | Bounded Context                        | ★★★        |
+| 631  | Aggregate                              | ★★★        |
+| 632  | Ubiquitous Language                    | ★★★        |
+| 633  | Anti-Corruption Layer                  | ★★★        |
+| 634  | Strangler Fig Pattern                  | ★★★        |
+| 635  | Service Registry                       | ★★☆        |
+| 636  | Service Discovery                      | ★★☆        |
+| 637  | Client-Side vs Server-Side Discovery   | ★★★        |
+| 638  | Health Check Patterns                  | ★★☆        |
+| 639  | Inter-Service Communication            | ★★☆        |
+| 640  | Synchronous vs Async Communication     | ★★☆        |
+| 641  | API Gateway (Microservices)            | ★★☆        |
+| 642  | Backend for Frontend (BFF)             | ★★★        |
+| 643  | Service Mesh (Microservices)           | ★★★        |
+| 644  | Istio                                  | ★★★        |
+| 645  | Envoy Proxy                            | ★★★        |
+| 646  | Resilience4j                           | ★★★        |
+| 647  | Circuit Breaker (Microservices)        | ★★★        |
+| 648  | Bulkhead Pattern                       | ★★★        |
+| 649  | Rate Limiting (Microservices)          | ★★☆        |
+| 650  | Timeout Strategy                       | ★★☆        |
+| 651  | Retry Strategy                         | ★★☆        |
+| 652  | Fallback Strategy                      | ★★☆        |
+| 653  | Saga Pattern (Microservices)           | ★★★        |
+| 654  | Distributed Transaction                | ★★★        |
+| 655  | Event-Driven Microservices             | ★★★        |
+| 656  | Eventual Consistency (Microservices)   | ★★★        |
+| 657  | Data Isolation per Service             | ★★★        |
+| 658  | CQRS in Microservices                  | ★★★        |
+| 659  | Event Sourcing in Microservices        | ★★★        |
+| 660  | Shared Database Anti-Pattern           | ★★★        |
+| 661  | Database per Service                   | ★★★        |
+| 662  | Consumer-Driven Contract Testing       | ★★★        |
+| 663  | Pact (Contract Testing)                | ★★★        |
+| 664  | Cross-Cutting Concerns                 | ★★★        |
+| 665  | Distributed Logging                    | ★★★        |
+| 666  | Correlation ID (Microservices)         | ★★☆        |
+| 667  | OpenTelemetry (Microservices)          | ★★★        |
+| 668  | Chaos Engineering                      | ★★★        |
+| 669  | Canary Deployment (Microservices)      | ★★★        |
+| 670  | Blue-Green Deployment                  | ★★☆        |
+| 671  | Feature Flags (Microservices)          | ★★☆        |
+| 672  | Graceful Shutdown (Microservices)      | ★★★        |
+| 673  | Zero-Downtime Deployment               | ★★★        |
+| 674  | Service Contract                       | ★★★        |
+| 675  | Backward Compatibility                 | ★★★        |
+| 676  | Versioning Strategy                    | ★★★        |
+| 677  | Twelve-Factor App                      | ★★☆        |
+| 678  | Sidecar Pattern (Microservices)        | ★★★        |
+| 679  | Ambassador Pattern                     | ★★★        |
+| 680  | Adapter Pattern (Microservices)        | ★★★        |
+| 2280 | Monolith to Microservices Migration    | ★★★        |
+| 2281 | On-Premises to Cloud Migration         | ★★★        |
+| 2282 | Technology Migration Strategy          | ★★★        |
+| 2283 | Re-platforming vs Re-architecting      | ★★★        |
+| 2284 | Proof of Concept (POC) in Architecture | ★★★        |
 
 ---
 
@@ -900,48 +965,55 @@ Organized in learning-dependency order:
 
 #### 🏗️ Software Architecture Patterns (726–765)
 
-| #   | Keyword                        | Difficulty |
-| --- | ------------------------------ | ---------- |
-| 726 | Layered Architecture           | ★☆☆        |
-| 727 | Hexagonal Architecture         | ★★★        |
-| 728 | Clean Architecture             | ★★★        |
-| 729 | Onion Architecture             | ★★★        |
-| 730 | Vertical Slice Architecture    | ★★★        |
-| 731 | CQRS Pattern                   | ★★★        |
-| 732 | Event Sourcing Pattern         | ★★★        |
-| 733 | Ports and Adapters             | ★★★        |
-| 734 | Repository Pattern             | ★★☆        |
-| 735 | Unit of Work Pattern           | ★★★        |
-| 736 | Domain Model                   | ★★★        |
-| 737 | Anemic Domain Model            | ★★★        |
-| 738 | Rich Domain Model              | ★★★        |
-| 739 | Service Layer                  | ★★☆        |
-| 740 | Transaction Script             | ★★☆        |
-| 741 | Active Record                  | ★★☆        |
-| 742 | Data Mapper                    | ★★★        |
-| 743 | Aggregate Root                 | ★★★        |
-| 744 | Domain Events                  | ★★★        |
-| 745 | Value Objects                  | ★★★        |
-| 746 | Entities                       | ★★☆        |
-| 747 | Anti-Corruption Layer          | ★★★        |
-| 748 | Context Map                    | ★★★        |
-| 749 | Shared Kernel                  | ★★★        |
-| 750 | Open Host Service              | ★★★        |
-| 751 | Published Language             | ★★★        |
-| 752 | Modular Monolith Patterns      | ★★★        |
-| 753 | Plugin Architecture            | ★★★        |
-| 754 | Pipe and Filter                | ★★★        |
-| 755 | Blackboard Pattern             | ★★★        |
-| 756 | SOLID Principles               | ★★☆        |
-| 757 | DRY                            | ★☆☆        |
-| 758 | KISS                           | ★☆☆        |
-| 759 | YAGNI                          | ★★☆        |
-| 760 | Law of Demeter                 | ★★☆        |
-| 761 | Tell Don't Ask                 | ★★☆        |
-| 762 | Command-Query Separation (CQS) | ★★★        |
-| 763 | Cohesion                       | ★★☆        |
-| 764 | Coupling                       | ★★☆        |
-| 765 | Connascence                    | ★★★        |
+| #    | Keyword                             | Difficulty |
+| ---- | ----------------------------------- | ---------- |
+| 726  | Layered Architecture                | ★☆☆        |
+| 727  | Hexagonal Architecture              | ★★★        |
+| 728  | Clean Architecture                  | ★★★        |
+| 729  | Onion Architecture                  | ★★★        |
+| 730  | Vertical Slice Architecture         | ★★★        |
+| 731  | CQRS Pattern                        | ★★★        |
+| 732  | Event Sourcing Pattern              | ★★★        |
+| 733  | Ports and Adapters                  | ★★★        |
+| 734  | Repository Pattern                  | ★★☆        |
+| 735  | Unit of Work Pattern                | ★★★        |
+| 736  | Domain Model                        | ★★★        |
+| 737  | Anemic Domain Model                 | ★★★        |
+| 738  | Rich Domain Model                   | ★★★        |
+| 739  | Service Layer                       | ★★☆        |
+| 740  | Transaction Script                  | ★★☆        |
+| 741  | Active Record                       | ★★☆        |
+| 742  | Data Mapper                         | ★★★        |
+| 743  | Aggregate Root                      | ★★★        |
+| 744  | Domain Events                       | ★★★        |
+| 745  | Value Objects                       | ★★★        |
+| 746  | Entities                            | ★★☆        |
+| 747  | Anti-Corruption Layer               | ★★★        |
+| 748  | Context Map                         | ★★★        |
+| 749  | Shared Kernel                       | ★★★        |
+| 750  | Open Host Service                   | ★★★        |
+| 751  | Published Language                  | ★★★        |
+| 752  | Modular Monolith Patterns           | ★★★        |
+| 753  | Plugin Architecture                 | ★★★        |
+| 754  | Pipe and Filter                     | ★★★        |
+| 755  | Blackboard Pattern                  | ★★★        |
+| 756  | SOLID Principles                    | ★★☆        |
+| 757  | DRY                                 | ★☆☆        |
+| 758  | KISS                                | ★☆☆        |
+| 759  | YAGNI                               | ★★☆        |
+| 760  | Law of Demeter                      | ★★☆        |
+| 761  | Tell Don't Ask                      | ★★☆        |
+| 762  | Command-Query Separation (CQS)      | ★★★        |
+| 763  | Cohesion                            | ★★☆        |
+| 764  | Coupling                            | ★★☆        |
+| 765  | Connascence                         | ★★★        |
+| 2300 | Architecture Decision Record (ADR)  | ★★★        |
+| 2301 | Technology Roadmap                  | ★★★        |
+| 2302 | Architecture Review                 | ★★★        |
+| 2303 | Proof of Concept (POC)              | ★★★        |
+| 2304 | Enterprise Application Architecture | ★★★        |
+| 2305 | Loose Coupling of Frontend Modules  | ★★★        |
+| 2306 | Micro-Frontend Architecture         | ★★★        |
 
 ---
 
@@ -1015,43 +1087,45 @@ Organized in learning-dependency order:
 
 #### 🐳 Containers (821–855)
 
-| #   | Keyword                           | Difficulty |
-| --- | --------------------------------- | ---------- |
-| 821 | Container                         | ★☆☆        |
-| 822 | Docker                            | ★☆☆        |
-| 823 | Docker Image                      | ★☆☆        |
-| 824 | Docker Layer                      | ★★☆        |
-| 825 | Dockerfile                        | ★☆☆        |
-| 826 | Docker Build Context              | ★★☆        |
-| 827 | Multi-Stage Build                 | ★★☆        |
-| 828 | Docker Compose                    | ★★☆        |
-| 829 | Container Registry                | ★★☆        |
-| 830 | Linux Namespaces                  | ★★★        |
-| 831 | Cgroups                           | ★★★        |
-| 832 | Container Networking              | ★★★        |
-| 833 | Volume Mounts                     | ★★☆        |
-| 834 | Container Security                | ★★★        |
-| 835 | Distroless Images                 | ★★★        |
-| 836 | Image Scanning                    | ★★★        |
-| 837 | OCI Standard                      | ★★★        |
-| 838 | containerd                        | ★★★        |
-| 839 | Container Orchestration           | ★★☆        |
-| 840 | Docker vs VM                      | ★☆☆        |
-| 841 | Ephemeral Container               | ★★★        |
-| 842 | Init Container                    | ★★★        |
-| 843 | Sidecar Container                 | ★★★        |
-| 844 | Container Resource Limits         | ★★☆        |
-| 845 | Container Health Check            | ★★☆        |
-| 846 | Image Tag Strategy                | ★★☆        |
-| 847 | Docker BuildKit                   | ★★★        |
-| 848 | Podman                            | ★★★        |
-| 849 | Buildah                           | ★★★        |
-| 850 | Slim / Minimal Images             | ★★★        |
-| 851 | Docker Networking Modes           | ★★★        |
-| 852 | Container Logging                 | ★★☆        |
-| 853 | Docker Secrets                    | ★★★        |
-| 854 | Image Provenance / SBOM           | ★★★        |
-| 855 | Container Runtime Interface (CRI) | ★★★        |
+| #    | Keyword                           | Difficulty |
+| ---- | --------------------------------- | ---------- |
+| 821  | Container                         | ★☆☆        |
+| 822  | Docker                            | ★☆☆        |
+| 823  | Docker Image                      | ★☆☆        |
+| 824  | Docker Layer                      | ★★☆        |
+| 825  | Dockerfile                        | ★☆☆        |
+| 826  | Docker Build Context              | ★★☆        |
+| 827  | Multi-Stage Build                 | ★★☆        |
+| 828  | Docker Compose                    | ★★☆        |
+| 829  | Container Registry                | ★★☆        |
+| 830  | Linux Namespaces                  | ★★★        |
+| 831  | Cgroups                           | ★★★        |
+| 832  | Container Networking              | ★★★        |
+| 833  | Volume Mounts                     | ★★☆        |
+| 834  | Container Security                | ★★★        |
+| 835  | Distroless Images                 | ★★★        |
+| 836  | Image Scanning                    | ★★★        |
+| 837  | OCI Standard                      | ★★★        |
+| 838  | containerd                        | ★★★        |
+| 839  | Container Orchestration           | ★★☆        |
+| 840  | Docker vs VM                      | ★☆☆        |
+| 841  | Ephemeral Container               | ★★★        |
+| 842  | Init Container                    | ★★★        |
+| 843  | Sidecar Container                 | ★★★        |
+| 844  | Container Resource Limits         | ★★☆        |
+| 845  | Container Health Check            | ★★☆        |
+| 846  | Image Tag Strategy                | ★★☆        |
+| 847  | Docker BuildKit                   | ★★★        |
+| 848  | Podman                            | ★★★        |
+| 849  | Buildah                           | ★★★        |
+| 850  | Slim / Minimal Images             | ★★★        |
+| 851  | Docker Networking Modes           | ★★★        |
+| 852  | Container Logging                 | ★★☆        |
+| 853  | Docker Secrets                    | ★★★        |
+| 854  | Image Provenance / SBOM           | ★★★        |
+| 855  | Container Runtime Interface (CRI) | ★★★        |
+| 2310 | Red Hat OpenShift                 | ★★★        |
+| 2311 | OpenShift vs Kubernetes           | ★★★        |
 
 ---
 
@@ -1124,48 +1198,67 @@ Organized in learning-dependency order:
 
 #### ☁️ Cloud — AWS (916–955)
 
-| #   | Keyword                              | Difficulty |
-| --- | ------------------------------------ | ---------- |
-| 916 | AWS Global Infrastructure            | ★☆☆        |
-| 917 | Region / AZ / Edge Location          | ★☆☆        |
-| 918 | IAM (Identity and Access Management) | ★★☆        |
-| 919 | IAM Roles / Policies                 | ★★☆        |
-| 920 | VPC                                  | ★★☆        |
-| 921 | Subnets (Public / Private)           | ★★☆        |
-| 922 | Security Groups                      | ★★☆        |
-| 923 | NACLs                                | ★★★        |
-| 924 | Internet Gateway / NAT Gateway       | ★★☆        |
-| 925 | VPC Peering                          | ★★★        |
-| 926 | Transit Gateway                      | ★★★        |
-| 927 | Route 53                             | ★★☆        |
-| 928 | EC2                                  | ★☆☆        |
-| 929 | EC2 Instance Types                   | ★★☆        |
-| 930 | Auto Scaling Groups                  | ★★☆        |
-| 931 | ELB / ALB / NLB                      | ★★☆        |
-| 932 | S3                                   | ★☆☆        |
-| 933 | S3 Storage Classes                   | ★★☆        |
-| 934 | S3 Lifecycle Policies                | ★★★        |
-| 935 | EBS / EFS                            | ★★☆        |
-| 936 | RDS                                  | ★★☆        |
-| 937 | Aurora                               | ★★★        |
-| 938 | DynamoDB                             | ★★★        |
-| 939 | ElastiCache                          | ★★☆        |
-| 940 | SQS                                  | ★★☆        |
-| 941 | SNS                                  | ★★☆        |
-| 942 | Kinesis                              | ★★★        |
-| 943 | Lambda                               | ★★☆        |
-| 944 | API Gateway (AWS)                    | ★★☆        |
-| 945 | ECS / Fargate                        | ★★☆        |
-| 946 | EKS                                  | ★★★        |
-| 947 | CloudFormation                       | ★★★        |
-| 948 | CDK                                  | ★★★        |
-| 949 | CloudWatch                           | ★★☆        |
-| 950 | X-Ray                                | ★★★        |
-| 951 | AWS Cost Optimization                | ★★★        |
-| 952 | AWS Security Best Practices          | ★★★        |
-| 953 | Well-Architected Framework           | ★★★        |
-| 954 | Spot Instances / Reserved Instances  | ★★★        |
-| 955 | AWS Service Limits                   | ★★★        |
+| #    | Keyword                              | Difficulty |
+| ---- | ------------------------------------ | ---------- |
+| 916  | AWS Global Infrastructure            | ★☆☆        |
+| 917  | Region / AZ / Edge Location          | ★☆☆        |
+| 918  | IAM (Identity and Access Management) | ★★☆        |
+| 919  | IAM Roles / Policies                 | ★★☆        |
+| 920  | VPC                                  | ★★☆        |
+| 921  | Subnets (Public / Private)           | ★★☆        |
+| 922  | Security Groups                      | ★★☆        |
+| 923  | NACLs                                | ★★★        |
+| 924  | Internet Gateway / NAT Gateway       | ★★☆        |
+| 925  | VPC Peering                          | ★★★        |
+| 926  | Transit Gateway                      | ★★★        |
+| 927  | Route 53                             | ★★☆        |
+| 928  | EC2                                  | ★☆☆        |
+| 929  | EC2 Instance Types                   | ★★☆        |
+| 930  | Auto Scaling Groups                  | ★★☆        |
+| 931  | ELB / ALB / NLB                      | ★★☆        |
+| 932  | S3                                   | ★☆☆        |
+| 933  | S3 Storage Classes                   | ★★☆        |
+| 934  | S3 Lifecycle Policies                | ★★★        |
+| 935  | EBS / EFS                            | ★★☆        |
+| 936  | RDS                                  | ★★☆        |
+| 937  | Aurora                               | ★★★        |
+| 938  | DynamoDB                             | ★★★        |
+| 939  | ElastiCache                          | ★★☆        |
+| 940  | SQS                                  | ★★☆        |
+| 941  | SNS                                  | ★★☆        |
+| 942  | Kinesis                              | ★★★        |
+| 943  | Lambda                               | ★★☆        |
+| 944  | API Gateway (AWS)                    | ★★☆        |
+| 945  | ECS / Fargate                        | ★★☆        |
+| 946  | EKS                                  | ★★★        |
+| 947  | CloudFormation                       | ★★★        |
+| 948  | CDK                                  | ★★★        |
+| 949  | CloudWatch                           | ★★☆        |
+| 950  | X-Ray                                | ★★★        |
+| 951  | AWS Cost Optimization                | ★★★        |
+| 952  | AWS Security Best Practices          | ★★★        |
+| 953  | Well-Architected Framework           | ★★★        |
+| 954  | Spot Instances / Reserved Instances  | ★★★        |
+| 955  | AWS Service Limits                   | ★★★        |
+| 2190 | AWS CloudFront                       | ★★☆        |
+| 2191 | Lambda@Edge                          | ★★★        |
+| 2192 | AWS Step Functions                   | ★★★        |
+| 2193 | AWS SQS                              | ★★☆        |
+| 2194 | AWS SNS                              | ★★☆        |
+| 2195 | AWS Kinesis                          | ★★★        |
+| 2196 | AWS Parameter Store                  | ★★★        |
+| 2197 | AWS Secrets Manager                  | ★★★        |
+| 2198 | AWS KMS (Key Management Service)     | ★★★        |
+| 2199 | AWS PrivateLink                      | ★★★        |
+| 2200 | AWS Shield                           | ★★★        |
+| 2201 | AWS Control Tower                    | ★★★        |
+| 2202 | AWS CDK (Cloud Development Kit)      | ★★★        |
+| 2203 | AWS CloudFormation                   | ★★★        |
+| 2204 | AWS WAF                              | ★★★        |
+| 2205 | AWS ECS / Fargate                    | ★★★        |
+| 2206 | AWS VPC Architecture Deep Dive       | ★★★        |
+| 2207 | AWS Cost Tagging Strategy            | ★★★        |
+| 2208 | AWS Well-Architected Review          | ★★★        |
 
 ---
 
@@ -1255,6 +1348,32 @@ Organized in learning-dependency order:
 | 1028 | Progressive Delivery                | ★★★        |
 | 1029 | Canary Analysis                     | ★★★        |
 | 1030 | Rollback Strategy                   | ★★★        |
+| 2215 | Harness (Deployment Tool)           | ★★★        |
+| 2216 | Environment Promotion Strategy      | ★★★        |
+| 2217 | Artifact Versioning Strategy        | ★★★        |
+| 2218 | Policy as Code                      | ★★★        |
+| 2219 | Open Policy Agent (OPA)             | ★★★        |
+| 2220 | Sentinel (Terraform Policy)         | ★★★        |
+| 2221 | Terraform Cloud / Enterprise        | ★★★        |
+| 2222 | Crossplane                          | ★★★        |
+| 2230 | Terraform Overview                  | ★★☆        |
+| 2231 | Terraform Provider                  | ★★☆        |
+| 2232 | Terraform Resource                  | ★★☆        |
+| 2233 | Terraform State                     | ★★★        |
+| 2234 | Terraform State Backend             | ★★★        |
+| 2235 | Terraform Remote State              | ★★★        |
+| 2236 | Terraform Workspace                 | ★★★        |
+| 2237 | Terraform Module                    | ★★★        |
+| 2238 | Terraform Reusable Module Pattern   | ★★★        |
+| 2239 | Terraform Plan / Apply / Destroy    | ★★☆        |
+| 2240 | Terraform Import                    | ★★★        |
+| 2241 | Terraform Drift Detection           | ★★★        |
+| 2242 | Terraform Variable / Output / Local | ★★☆        |
+| 2243 | Terraform Data Source               | ★★★        |
+| 2244 | Terraform Lifecycle Rules           | ★★★        |
+| 2245 | Terraform Sentinel Policy           | ★★★        |
+| 2246 | Terragrunt                          | ★★★        |
+| 2247 | Terraform Testing (Terratest)       | ★★★        |
 
 ---
 
@@ -1383,53 +1502,62 @@ Organized in learning-dependency order:
 
 #### 🧪 Testing (1131–1175)
 
-| #    | Keyword                     | Difficulty |
-| ---- | --------------------------- | ---------- |
-| 1131 | Unit Test                   | ★☆☆        |
-| 1132 | Integration Test            | ★★☆        |
-| 1133 | Contract Test               | ★★★        |
-| 1134 | E2E Test                    | ★★☆        |
-| 1135 | Smoke Test                  | ★☆☆        |
-| 1136 | Regression Test             | ★★☆        |
-| 1137 | Performance Test            | ★★☆        |
-| 1138 | Load Test                   | ★★☆        |
-| 1139 | Stress Test                 | ★★★        |
-| 1140 | Chaos Test                  | ★★★        |
-| 1141 | Security Test (SAST/DAST)   | ★★★        |
-| 1142 | TDD                         | ★★☆        |
-| 1143 | BDD                         | ★★☆        |
-| 1144 | Mocking                     | ★★☆        |
-| 1145 | Stubbing                    | ★★☆        |
-| 1146 | Faking                      | ★★☆        |
-| 1147 | Spying                      | ★★★        |
-| 1148 | Test Pyramid                | ★★☆        |
-| 1149 | Test Diamond                | ★★★        |
-| 1150 | Test Isolation              | ★★☆        |
-| 1151 | Test Fixtures               | ★★☆        |
-| 1152 | Property-Based Testing      | ★★★        |
-| 1153 | Snapshot Testing            | ★★☆        |
-| 1154 | Testcontainers              | ★★★        |
-| 1155 | WireMock                    | ★★★        |
-| 1156 | JUnit 5                     | ★★☆        |
-| 1157 | Mockito                     | ★★☆        |
-| 1158 | AssertJ                     | ★★☆        |
-| 1159 | Pact (Contract Testing)     | ★★★        |
-| 1160 | Test Data Management        | ★★★        |
-| 1161 | Test Environments           | ★★☆        |
-| 1162 | Flaky Tests                 | ★★★        |
-| 1163 | Test Parallelization        | ★★★        |
-| 1164 | Approval Testing            | ★★★        |
-| 1165 | A/B Testing                 | ★★★        |
-| 1166 | Test-Driven Infrastructure  | ★★★        |
-| 1167 | Golden Path Testing         | ★★★        |
-| 1168 | Test Coverage Targets       | ★★☆        |
-| 1169 | Penetration Testing         | ★★★        |
-| 1170 | API Testing                 | ★★☆        |
-| 1171 | Postman / REST Assured      | ★★☆        |
-| 1172 | Selenium / Playwright       | ★★☆        |
-| 1173 | Gatling / k6 (Load Testing) | ★★★        |
-| 1174 | SonarQube Quality Gate      | ★★★        |
-| 1175 | Test Reporting              | ★★☆        |
+| #    | Keyword                               | Difficulty |
+| ---- | ------------------------------------- | ---------- |
+| 1131 | Unit Test                             | ★☆☆        |
+| 1132 | Integration Test                      | ★★☆        |
+| 1133 | Contract Test                         | ★★★        |
+| 1134 | E2E Test                              | ★★☆        |
+| 1135 | Smoke Test                            | ★☆☆        |
+| 1136 | Regression Test                       | ★★☆        |
+| 1137 | Performance Test                      | ★★☆        |
+| 1138 | Load Test                             | ★★☆        |
+| 1139 | Stress Test                           | ★★★        |
+| 1140 | Chaos Test                            | ★★★        |
+| 1141 | Security Test (SAST/DAST)             | ★★★        |
+| 1142 | TDD                                   | ★★☆        |
+| 1143 | BDD                                   | ★★☆        |
+| 1144 | Mocking                               | ★★☆        |
+| 1145 | Stubbing                              | ★★☆        |
+| 1146 | Faking                                | ★★☆        |
+| 1147 | Spying                                | ★★★        |
+| 1148 | Test Pyramid                          | ★★☆        |
+| 1149 | Test Diamond                          | ★★★        |
+| 1150 | Test Isolation                        | ★★☆        |
+| 1151 | Test Fixtures                         | ★★☆        |
+| 1152 | Property-Based Testing                | ★★★        |
+| 1153 | Snapshot Testing                      | ★★☆        |
+| 1154 | Testcontainers                        | ★★★        |
+| 1155 | WireMock                              | ★★★        |
+| 1156 | JUnit 5                               | ★★☆        |
+| 1157 | Mockito                               | ★★☆        |
+| 1158 | AssertJ                               | ★★☆        |
+| 1159 | Pact (Contract Testing)               | ★★★        |
+| 1160 | Test Data Management                  | ★★★        |
+| 1161 | Test Environments                     | ★★☆        |
+| 1162 | Flaky Tests                           | ★★★        |
+| 1163 | Test Parallelization                  | ★★★        |
+| 1164 | Approval Testing                      | ★★★        |
+| 1165 | A/B Testing                           | ★★★        |
+| 1166 | Test-Driven Infrastructure            | ★★★        |
+| 1167 | Golden Path Testing                   | ★★★        |
+| 1168 | Test Coverage Targets                 | ★★☆        |
+| 1169 | Penetration Testing                   | ★★★        |
+| 1170 | API Testing                           | ★★☆        |
+| 1171 | Postman / REST Assured                | ★★☆        |
+| 1172 | Selenium / Playwright                 | ★★☆        |
+| 1173 | Gatling / k6 (Load Testing)           | ★★★        |
+| 1174 | SonarQube Quality Gate                | ★★★        |
+| 1175 | Test Reporting                        | ★★☆        |
+| 2250 | JUnit 5 Parameterized Tests           | ★★☆        |
+| 2251 | Karate Framework (API Testing)        | ★★★        |
+| 2252 | Cucumber (BDD Testing)                | ★★★        |
+| 2253 | Cypress (E2E Testing)                 | ★★☆        |
+| 2254 | Jest (JavaScript Testing)             | ★★☆        |
+| 2255 | Playwright (E2E Testing)              | ★★☆        |
+| 2256 | API Contract Testing (Pact / Karate)  | ★★★        |
+| 2257 | Performance Testing (JMeter, Gatling) | ★★★        |
+| 2258 | SonarQube Quality Gate                | ★★★        |
 
 ---
 
@@ -1472,6 +1600,12 @@ Organized in learning-dependency order:
 | 1208 | Post-Mortem / Blameless Culture | ★★★        |
 | 1209 | Chaos Engineering               | ★★★        |
 | 1210 | SRE Principles                  | ★★★        | --- |
+| 2265 | AppDynamics                     | ★★★        |
+| 2266 | AWS CloudWatch Alarms           | ★★★        |
+| 2267 | AWS CloudWatch Dashboards       | ★★★        |
+| 2268 | AWS CloudWatch Log Insights     | ★★★        |
+| 2269 | AWS X-Ray (Distributed Tracing) | ★★★        |
+| 2270 | Actionable Alerting Patterns    | ★★★        |
 
 ### 🔵 TIER 13 — Frontend
 
@@ -1715,68 +1849,75 @@ Organized in learning-dependency order:
 
 #### ⚛️ React (1421–1480)
 
-| #    | Keyword                     | Difficulty |
-| ---- | --------------------------- | ---------- |
-| 1421 | JSX                         | ★☆☆        |
-| 1422 | Component                   | ★☆☆        |
-| 1423 | Props                       | ★☆☆        |
-| 1424 | State                       | ★☆☆        |
-| 1425 | Controlled vs Uncontrolled  | ★★☆        |
-| 1426 | useState                    | ★★☆        |
-| 1427 | useEffect                   | ★★☆        |
-| 1428 | useRef                      | ★★☆        |
-| 1429 | useContext                  | ★★☆        |
-| 1430 | useReducer                  | ★★☆        |
-| 1431 | useMemo                     | ★★★        |
-| 1432 | useCallback                 | ★★★        |
-| 1433 | useLayoutEffect             | ★★★        |
-| 1434 | useTransition               | ★★★        |
-| 1435 | useDeferredValue            | ★★★        |
-| 1436 | Custom Hooks                | ★★★        |
-| 1437 | Context API                 | ★★☆        |
-| 1438 | React.memo                  | ★★★        |
-| 1439 | Virtual DOM                 | ★★☆        |
-| 1440 | Reconciliation              | ★★★        |
-| 1441 | Diffing Algorithm           | ★★★        |
-| 1442 | Fiber Architecture          | ★★★        |
-| 1443 | Concurrent Mode             | ★★★        |
-| 1444 | Suspense                    | ★★★        |
-| 1445 | React.lazy                  | ★★☆        |
-| 1446 | Error Boundaries            | ★★★        |
-| 1447 | Portals                     | ★★★        |
-| 1448 | Keys in Lists               | ★★☆        |
-| 1449 | Lifting State Up            | ★★☆        |
-| 1450 | Prop Drilling               | ★★☆        |
-| 1451 | Render Props                | ★★★        |
-| 1452 | Higher-Order Components     | ★★★        |
-| 1453 | Compound Components         | ★★★        |
-| 1454 | Forwarding Refs             | ★★★        |
-| 1455 | Server Components (RSC)     | ★★★        |
-| 1456 | Server Actions              | ★★★        |
-| 1457 | Hydration                   | ★★★        |
-| 1458 | SSR                         | ★★★        |
-| 1459 | SSG                         | ★★★        |
-| 1460 | ISR                         | ★★★        |
-| 1461 | Streaming SSR               | ★★★        |
-| 1462 | Next.js App Router          | ★★★        |
-| 1463 | React Query                 | ★★★        |
-| 1464 | Zustand                     | ★★☆        |
-| 1465 | Redux Toolkit               | ★★★        |
-| 1466 | React Performance           | ★★★        |
-| 1467 | React 19 Features           | ★★★        |
-| 1468 | use() Hook                  | ★★★        |
-| 1469 | Code Splitting (React)      | ★★★        |
-| 1470 | Storybook                   | ★★☆        |
-| 1471 | React Testing Library       | ★★☆        |
-| 1472 | React Router                | ★★☆        |
-| 1473 | Client-Side Routing         | ★★☆        |
-| 1474 | Atomic State (Jotai/Recoil) | ★★★        |
-| 1475 | React Hook Form             | ★★☆        |
-| 1476 | Accessibility in React      | ★★★        |
-| 1477 | React DevTools Profiler     | ★★★        |
-| 1478 | Micro-Frontend with React   | ★★★        |
-| 1479 | Module Federation (React)   | ★★★        |
-| 1480 | Islands Architecture        | ★★★        |
+| #    | Keyword                                        | Difficulty |
+| ---- | ---------------------------------------------- | ---------- |
+| 1421 | JSX                                            | ★☆☆        |
+| 1422 | Component                                      | ★☆☆        |
+| 1423 | Props                                          | ★☆☆        |
+| 1424 | State                                          | ★☆☆        |
+| 1425 | Controlled vs Uncontrolled                     | ★★☆        |
+| 1426 | useState                                       | ★★☆        |
+| 1427 | useEffect                                      | ★★☆        |
+| 1428 | useRef                                         | ★★☆        |
+| 1429 | useContext                                     | ★★☆        |
+| 1430 | useReducer                                     | ★★☆        |
+| 1431 | useMemo                                        | ★★★        |
+| 1432 | useCallback                                    | ★★★        |
+| 1433 | useLayoutEffect                                | ★★★        |
+| 1434 | useTransition                                  | ★★★        |
+| 1435 | useDeferredValue                               | ★★★        |
+| 1436 | Custom Hooks                                   | ★★★        |
+| 1437 | Context API                                    | ★★☆        |
+| 1438 | React.memo                                     | ★★★        |
+| 1439 | Virtual DOM                                    | ★★☆        |
+| 1440 | Reconciliation                                 | ★★★        |
+| 1441 | Diffing Algorithm                              | ★★★        |
+| 1442 | Fiber Architecture                             | ★★★        |
+| 1443 | Concurrent Mode                                | ★★★        |
+| 1444 | Suspense                                       | ★★★        |
+| 1445 | React.lazy                                     | ★★☆        |
+| 1446 | Error Boundaries                               | ★★★        |
+| 1447 | Portals                                        | ★★★        |
+| 1448 | Keys in Lists                                  | ★★☆        |
+| 1449 | Lifting State Up                               | ★★☆        |
+| 1450 | Prop Drilling                                  | ★★☆        |
+| 1451 | Render Props                                   | ★★★        |
+| 1452 | Higher-Order Components                        | ★★★        |
+| 1453 | Compound Components                            | ★★★        |
+| 1454 | Forwarding Refs                                | ★★★        |
+| 1455 | Server Components (RSC)                        | ★★★        |
+| 1456 | Server Actions                                 | ★★★        |
+| 1457 | Hydration                                      | ★★★        |
+| 1458 | SSR                                            | ★★★        |
+| 1459 | SSG                                            | ★★★        |
+| 1460 | ISR                                            | ★★★        |
+| 1461 | Streaming SSR                                  | ★★★        |
+| 1462 | Next.js App Router                             | ★★★        |
+| 1463 | React Query                                    | ★★★        |
+| 1464 | Zustand                                        | ★★☆        |
+| 1465 | Redux Toolkit                                  | ★★★        |
+| 1466 | React Performance                              | ★★★        |
+| 1467 | React 19 Features                              | ★★★        |
+| 1468 | use() Hook                                     | ★★★        |
+| 1469 | Code Splitting (React)                         | ★★★        |
+| 1470 | Storybook                                      | ★★☆        |
+| 1471 | React Testing Library                          | ★★☆        |
+| 1472 | React Router                                   | ★★☆        |
+| 1473 | Client-Side Routing                            | ★★☆        |
+| 1474 | Atomic State (Jotai/Recoil)                    | ★★★        |
+| 1475 | React Hook Form                                | ★★☆        |
+| 1476 | Accessibility in React                         | ★★★        |
+| 1477 | React DevTools Profiler                        | ★★★        |
+| 1478 | Micro-Frontend with React                      | ★★★        |
+| 1479 | Module Federation (React)                      | ★★★        |
+| 1480 | Islands Architecture                           | ★★★        |
+| 2180 | React Accessibility (a11y)                     | ★★★        |
+| 2181 | React Performance Profiling (Browser DevTools) | ★★★        |
+| 2182 | ESLint (React)                                 | ★★☆        |
+| 2183 | Prettier                                       | ★☆☆        |
+| 2184 | Apollo Client                                  | ★★★        |
+| 2185 | Apollo Federation                              | ★★★        |
+| 2186 | GraphQL with React                             | ★★★        |
 
 ---
 
@@ -2131,6 +2272,17 @@ Organized in learning-dependency order:
 | 1768 | Presentations for Technical Audiences    | ★★★        |
 | 1769 | Career Laddering                         | ★★★        |
 | 1770 | Personal Brand (Engineering)             | ★★★        |
+| 2320 | Root Cause Analysis (RCA)                | ★★☆        |
+| 2321 | Bug Triage Process                       | ★★☆        |
+| 2322 | Stakeholder Management                   | ★★☆        |
+| 2323 | Technology Evangelism                    | ★★★        |
+| 2324 | POC to Production Strategy               | ★★★        |
+| 2325 | Compliance-Oriented SDLC                 | ★★★        |
+| 2326 | Financial Services Domain Knowledge      | ★★★        |
+| 2327 | Regulated Domain Engineering             | ★★★        |
+| 2328 | Backlog Management (JIRA, VersionOne)    | ★★☆        |
+| 2329 | Confluence / Documentation Tooling       | ★☆☆        |
+| 2330 | Engineering Standards Enforcement        | ★★★        |
 
 ---
 
@@ -2430,53 +2582,170 @@ Organized in learning-dependency order:
 
 ---
 
+### 🔵 TIER 18 — Document Generation & Output Management
+
+---
+
+#### 📄 Document Generation & Output Management (2400–2420)
+
+| #    | Keyword                                      | Difficulty |
+| ---- | -------------------------------------------- | ---------- |
+| 2400 | Document Generation Overview                 | ★☆☆        |
+| 2401 | Data-Driven Document Generation              | ★★☆        |
+| 2402 | PDF Generation                               | ★★☆        |
+| 2403 | Apache PDFBox                                | ★★★        |
+| 2404 | iText (Java PDF Library)                     | ★★★        |
+| 2405 | Template-Based Document Generation           | ★★★        |
+| 2406 | Template Versioning                          | ★★★        |
+| 2407 | Document Output Validation                   | ★★★        |
+| 2408 | Localization in Documents                    | ★★★        |
+| 2409 | Formatting Standards in Documents            | ★★★        |
+| 2410 | Statement / Notice / Letter Generation       | ★★☆        |
+| 2411 | OpenText Exstream Overview                   | ★★★        |
+| 2412 | OpenText Exstream Template Design            | ★★★        |
+| 2413 | OpenText Exstream Data Mapping               | ★★★        |
+| 2414 | OpenText Exstream Output Generation          | ★★★        |
+| 2415 | Customer Communication Management (CCM)      | ★★★        |
+| 2416 | ReportLab (Python PDF)                       | ★★★        |
+| 2417 | WeasyPrint (Python PDF)                      | ★★★        |
+| 2418 | FPDF (Python PDF)                            | ★★★        |
+| 2419 | Document Schema Design                       | ★★★        |
+| 2420 | Backward Compatibility in Document Templates | ★★★        |
+
+---
+
+### 🔵 TIER 19 — Domain — Financial Services Engineering
+
+---
+
+#### 🏦 Financial Services Engineering (2441–2470)
+
+| #    | Keyword                                     | Difficulty |
+| ---- | ------------------------------------------- | ---------- |
+| 2441 | Portfolio Management Systems                | ★★★        |
+| 2442 | Trading Systems                             | ★★★        |
+| 2443 | Order Management System (OMS)               | ★★★        |
+| 2444 | Execution Management System (EMS)           | ★★★        |
+| 2445 | Post-Trade Processing                       | ★★★        |
+| 2446 | IBOR (Investment Book of Record)            | ★★★        |
+| 2447 | ABOR (Accounting Book of Record)            | ★★★        |
+| 2448 | Wealth Management Platforms                 | ★★★        |
+| 2449 | Compliance Monitoring Systems               | ★★★        |
+| 2450 | Regulatory Reporting                        | ★★★        |
+| 2451 | Financial Data Reconciliation               | ★★★        |
+| 2452 | High-Frequency Trading (HFT) Concepts       | ★★★        |
+| 2453 | Low-Latency Systems in Finance              | ★★★        |
+| 2454 | FIX Protocol                                | ★★★        |
+| 2455 | Market Data Feed                            | ★★★        |
+| 2456 | Settlement and Clearing                     | ★★★        |
+| 2457 | T+1 / T+2 Settlement                        | ★★★        |
+| 2458 | Risk Management Systems                     | ★★★        |
+| 2459 | Financial Compliance (MiFID II, Dodd-Frank) | ★★★        |
+| 2460 | SOX Compliance in Engineering               | ★★★        |
+| 2461 | PCI-DSS Compliance                          | ★★★        |
+| 2462 | Data Lineage in Financial Systems           | ★★★        |
+| 2463 | Audit Trail Design                          | ★★★        |
+| 2464 | Event Sourcing in Financial Systems         | ★★★        |
+| 2465 | Idempotency in Financial Transactions       | ★★★        |
+| 2466 | Distributed Ledger Concepts                 | ★★★        |
+| 2467 | Financial Grade API (FAPI)                  | ★★★        |
+| 2468 | SWIFT Messaging                             | ★★★        |
+| 2469 | ISO 20022                                   | ★★★        |
+| 2470 | Transaction Integrity Patterns              | ★★★        |
+
+---
+
+### 🔵 TIER 20 — Frontend — Angular
+
+---
+
+#### 🅰️ Angular (2471–2500)
+
+| #    | Keyword                                              | Difficulty |
+| ---- | ---------------------------------------------------- | ---------- |
+| 2471 | Angular Overview                                     | ★☆☆        |
+| 2472 | Angular Architecture (Modules, Components, Services) | ★★☆        |
+| 2473 | Angular Component                                    | ★★☆        |
+| 2474 | Angular Template                                     | ★★☆        |
+| 2475 | Angular Directive                                    | ★★★        |
+| 2476 | Angular Pipe                                         | ★★☆        |
+| 2477 | Angular Service                                      | ★★☆        |
+| 2478 | Angular Dependency Injection                         | ★★★        |
+| 2479 | Angular Module (NgModule)                            | ★★☆        |
+| 2480 | Angular Routing                                      | ★★☆        |
+| 2481 | Angular Lazy Loading                                 | ★★★        |
+| 2482 | Angular Forms (Template-Driven vs Reactive)          | ★★★        |
+| 2483 | Angular RxJS Integration                             | ★★★        |
+| 2484 | Angular HttpClient                                   | ★★☆        |
+| 2485 | Angular Guards                                       | ★★★        |
+| 2486 | Angular Interceptors                                 | ★★★        |
+| 2487 | Angular State Management (NgRx)                      | ★★★        |
+| 2488 | Angular Change Detection                             | ★★★        |
+| 2489 | Angular OnPush Strategy                              | ★★★        |
+| 2490 | Angular Universal (SSR)                              | ★★★        |
+| 2491 | Angular Testing (Karma, Jasmine)                     | ★★★        |
+| 2492 | Angular CLI                                          | ★★☆        |
+| 2493 | Angular Standalone Components                        | ★★★        |
+| 2494 | Angular Signals                                      | ★★★        |
+| 2495 | Angular vs React vs Vue Comparison                   | ★★★        |
+| 2496 | Angular Performance Optimization                     | ★★★        |
+| 2497 | Angular Security Best Practices                      | ★★★        |
+| 2498 | Angular Material                                     | ★★☆        |
+| 2499 | Angular Workspace / Monorepo                         | ★★★        |
+| 2500 | Angular Micro-Frontend                               | ★★★        |
+
+---
+
 ## 📊 Final Complete Category Summary
 
-| #         | Category                       | Range        | Count    |
-| --------- | ------------------------------ | ------------ | -------- |
-| 1         | CS Fundamentals — Paradigms    | 001–030      | 30       |
-| 2         | Data Structures & Algorithms   | 031–090      | 60       |
-| 3         | Operating Systems              | 091–125      | 35       |
-| 4         | Linux                          | 126–165      | 40       |
-| 5         | Networking                     | 166–205      | 40       |
-| 6         | HTTP & APIs                    | 206–260      | 55       |
-| 7         | Java & JVM Internals           | 261–310      | 50       |
-| 8         | Java Language                  | 311–330      | 20       |
-| 9         | Java Concurrency               | 331–370      | 40       |
-| 10        | Spring Core                    | 371–410      | 40       |
-| 11        | Database Fundamentals          | 411–450      | 40       |
-| 12        | NoSQL & Distributed Databases  | 451–475      | 25       |
-| 13        | Caching                        | 476–495      | 20       |
-| 14        | Data Fundamentals              | 496–530      | 35       |
-| 15        | Big Data & Streaming           | 531–570      | 40       |
-| 16        | Distributed Systems            | 571–625      | 55       |
-| 17        | Microservices                  | 626–680      | 55       |
-| 18        | System Design                  | 681–725      | 45       |
-| 19        | Software Architecture Patterns | 726–765      | 40       |
-| 20        | Design Patterns                | 766–820      | 55       |
-| 21        | Containers                     | 821–855      | 35       |
-| 22        | Kubernetes                     | 856–915      | 60       |
-| 23        | Cloud — AWS                    | 916–955      | 40       |
-| 24        | Cloud — Azure                  | 956–990      | 35       |
-| 25        | CI/CD                          | 991–1030     | 40       |
-| 26        | Git & Branching Strategy       | 1031–1065    | 35       |
-| 27        | Maven & Build Tools (Java)     | 1066–1095    | 30       |
-| 28        | Code Quality                   | 1096–1130    | 35       |
-| 29        | Testing                        | 1131–1175    | 45       |
-| 30        | Observability & SRE            | 1176–1210    | 35       |
-| 31        | HTML                           | 1211–1240    | 30       |
-| 32        | CSS                            | 1241–1290    | 50       |
-| 33        | JavaScript                     | 1291–1370    | 80       |
-| 34        | TypeScript                     | 1371–1420    | 50       |
-| 35        | React                          | 1421–1480    | 60       |
-| 36        | Node.js                        | 1481–1510    | 30       |
-| 37        | npm & Package Management       | 1511–1530    | 20       |
-| 38        | Webpack & Build Tools          | 1531–1580    | 50       |
-| 39        | AI Foundations                 | 1581–1620    | 40       |
-| 40        | LLMs & Prompt Engineering      | 1621–1660    | 40       |
-| 41        | RAG & Agents & LLMOps          | 1661–1700    | 40       |
-| 42        | Platform & Modern SWE          | 1701–1730    | 30       |
-| 43        | Behavioral & Leadership        | 1731–1770    | 40       |
-| 44        | Security                       | 1771–1882    | 112      |
-| 45        | Async & Background Processing  | 1883–1960    | 78       |
-| **TOTAL** |                                | **001–1960** | **1960** |
+| #         | Category                                | Range        | Count    |
+| --------- | --------------------------------------- | ------------ | -------- |
+| 1         | CS Fundamentals — Paradigms             | 001–030      | 30       |
+| 2         | Data Structures & Algorithms            | 031–090      | 60       |
+| 3         | Operating Systems                       | 091–125      | 35       |
+| 4         | Linux                                   | 126–165      | 40       |
+| 5         | Networking                              | 166–205      | 40       |
+| 6         | HTTP & APIs                             | 206–260      | 55       |
+| 7         | Java & JVM Internals                    | 261–310      | 50       |
+| 8         | Java Language                           | 311–330      | 20       |
+| 9         | Java Concurrency                        | 331–370      | 40       |
+| 10        | Spring Core                             | 371–410      | 40       |
+| 11        | Database Fundamentals                   | 411–450      | 40       |
+| 12        | NoSQL & Distributed Databases           | 451–475      | 25       |
+| 13        | Caching                                 | 476–495      | 20       |
+| 14        | Data Fundamentals                       | 496–530      | 35       |
+| 15        | Big Data & Streaming                    | 531–570      | 40       |
+| 16        | Distributed Systems                     | 571–625      | 55       |
+| 17        | Microservices                           | 626–680      | 55       |
+| 18        | System Design                           | 681–725      | 45       |
+| 19        | Software Architecture Patterns          | 726–765      | 40       |
+| 20        | Design Patterns                         | 766–820      | 55       |
+| 21        | Containers                              | 821–855      | 35       |
+| 22        | Kubernetes                              | 856–915      | 60       |
+| 23        | Cloud — AWS                             | 916–955      | 40       |
+| 24        | Cloud — Azure                           | 956–990      | 35       |
+| 25        | CI/CD                                   | 991–1030     | 40       |
+| 26        | Git & Branching Strategy                | 1031–1065    | 35       |
+| 27        | Maven & Build Tools (Java)              | 1066–1095    | 30       |
+| 28        | Code Quality                            | 1096–1130    | 35       |
+| 29        | Testing                                 | 1131–1175    | 45       |
+| 30        | Observability & SRE                     | 1176–1210    | 35       |
+| 31        | HTML                                    | 1211–1240    | 30       |
+| 32        | CSS                                     | 1241–1290    | 50       |
+| 33        | JavaScript                              | 1291–1370    | 80       |
+| 34        | TypeScript                              | 1371–1420    | 50       |
+| 35        | React                                   | 1421–1480    | 60       |
+| 36        | Node.js                                 | 1481–1510    | 30       |
+| 37        | npm & Package Management                | 1511–1530    | 20       |
+| 38        | Webpack & Build Tools                   | 1531–1580    | 50       |
+| 39        | AI Foundations                          | 1581–1620    | 40       |
+| 40        | LLMs & Prompt Engineering               | 1621–1660    | 40       |
+| 41        | RAG & Agents & LLMOps                   | 1661–1700    | 40       |
+| 42        | Platform & Modern SWE                   | 1701–1730    | 30       |
+| 43        | Behavioral & Leadership                 | 1731–1770    | 40       |
+| 44        | Security                                | 1771–1882    | 112      |
+| 45        | Async & Background Processing           | 1883–1960    | 78       |
+| 46        | Document Generation & Output Management | 2400–2420    | 21       |
+| 47        | Financial Services Engineering          | 2441–2470    | 30       |
+| 48        | Angular                                 | 2471–2500    | 30       |
+| **TOTAL** |                                         | **001–2500** | **2231** |
