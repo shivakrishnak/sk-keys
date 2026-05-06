@@ -7,237 +7,215 @@ permalink: /maven-build/maven-phases/
 number: "1070"
 category: Maven & Build Tools (Java)
 difficulty: ★★☆
-depends_on: "Maven Lifecycle, Maven Goals"
-used_by: "Maven Plugins, pom.xml, CI-CD pipelines"
-tags: #maven, #phases, #lifecycle, #build-stages, #ordered-execution
+depends_on: Maven Overview, pom.xml, Maven Lifecycle (validate, compile, test, package, install, deploy), Maven Goals
+used_by: Maven Plugins, Build Performance Optimization, Maven Profiles
+related: Maven Goals, Maven Lifecycle (validate, compile, test, package, install, deploy), Maven Plugins
+tags:
+  - maven
+  - build-tools
+  - java
+  - intermediate
+  - build
 ---
 
 # 1070 — Maven Phases
 
-`#maven` `#phases` `#lifecycle` `#build-stages` `#ordered-execution`
+⚡ TL;DR — A Maven phase is a named step in the build lifecycle (like `compile`, `test`, `package`); phases define the sequence, while goals do the actual work — understanding which is which is key to controlling Maven builds.
 
-⚡ TL;DR — **Maven phases** are the individual ordered steps within a lifecycle. The default lifecycle has 23 phases; the most important: `validate`, `compile`, `test`, `package`, `verify`, `install`, `deploy`. Phases themselves do nothing — they're hooks where plugin goals are bound. Running a phase executes all goals bound to all preceding phases in order. Phases answer the question "WHEN in the build sequence should this happen?"
+| #1070 | Category: Maven & Build Tools (Java) | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Maven Overview, pom.xml, Maven Lifecycle, Maven Goals | |
+| **Used by:** | Maven Plugins, Build Performance Optimization, Maven Profiles | |
+| **Related:** | Maven Goals, Maven Lifecycle, Maven Plugins | |
 
-| #1070           | Category: Maven & Build Tools (Java)    | Difficulty: ★★☆ |
-| :-------------- | :-------------------------------------- | :-------------- |
-| **Depends on:** | Maven Lifecycle, Maven Goals            |                 |
-| **Used by:**    | Maven Plugins, pom.xml, CI-CD pipelines |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+Goals provide execution units; lifecycles provide overall sequencing. But without named phases as extension points, you'd have no way to insert custom steps into the build at the right moment. "Run my code generator before compilation" — where exactly? "Spin up a database before integration tests" — when? Without named phases, there's no standardised answer.
+
+**THE BREAKING POINT:**
+Build tool users need to plug in at precise points in the build sequence — before compilation, after testing, before deployment. Without named extension points, every plugin would need to hardcode its position, creating fragile ordering dependencies and making it impossible to reason about what runs when.
+
+**THE INVENTION MOMENT:**
+Maven phases are named anchors in the lifecycle sequence. They serve as universal extension points: any plugin can bind its goal to `generate-sources`, `pre-integration-test`, or `verify` by name. The name is stable even if the plugin changes. This is why Maven phases exist as a distinct concept: they are the "where" of build extensibility.
 
 ---
 
 ### 📘 Textbook Definition
 
-**Maven phase**: a named step in a Maven build lifecycle, representing a stage in the project's build process. Phases are ordered and sequential within a lifecycle — invoking any phase automatically invokes all preceding phases. Phases have no inherent behavior: they function as ordered slots to which plugin goals bind. Built-in bindings are provided for standard packaging types (`jar`, `war`, `pom`); additional bindings can be declared in the POM. The default lifecycle's 23 phases, in order: `validate`, `initialize`, `generate-sources`, `process-sources`, `generate-resources`, `process-resources`, `compile`, `process-classes`, `generate-test-sources`, `process-test-sources`, `generate-test-resources`, `process-test-resources`, `test-compile`, `process-test-classes`, `test`, `prepare-package`, `package`, `pre-integration-test`, `integration-test`, `post-integration-test`, `verify`, `install`, `deploy`. Phases between the "main" phases (e.g., `prepare-package` between `test` and `package`) exist as extension points — plugin authors can bind goals there without disrupting the primary flow. The `clean` lifecycle has 3 phases: `pre-clean`, `clean`, `post-clean`. The `site` lifecycle has 4: `pre-site`, `site`, `post-site`, `site-deploy`.
+A **Maven phase** is a named stage in one of Maven's three built-in build lifecycles (default, clean, site). Phases are ordered checkpoints that collectively form the lifecycle sequence. Individually, phases perform no work; they are defined as ordered named milestones to which plugin goals can be bound. When Maven is asked to execute a phase, it executes all phases that precede it in the same lifecycle, then the target phase itself, triggering any goals bound to each phase in order. The default lifecycle contains 23 phases; the key ones developers interact with are: validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-Think of phases as a numbered checklist: 1-validate, 2-compile, 7-test, 10-package, etc. When you say "run step 10 (package)," Maven automatically runs steps 1 through 10 in order. You can't package without compiling first. You can't compile without validating first. Phases ensure the right things happen in the right order, every time.
+**One line:**
+A phase is a checkpoint in the build sequence — the "when," not the "what."
 
----
+**One analogy:**
+> Maven phases are like train stations on a fixed route. The lifecycle is the rail line from "validate" station to "deploy" station. Trains (goals) are assigned to specific stations. When you ask Maven to go to the "package" station, the train stops at every station along the way, picking up and dropping off work (goals) as it goes.
 
-### 🔵 Simple Definition (Elaborated)
-
-Phases vs goals: phases are the "when" (ordered position in the build), goals are the "what" (the actual task). A phase is meaningless without goals bound to it. The `process-classes` phase (phase 8) exists but has no default goals bound — it's available for plugins that need to manipulate bytecode after compilation (e.g., AspectJ weaving, JPA entity enhancement). The phase exists to reserve a position in the build order; plugins use it when needed.
-
-The `pre-integration-test` / `integration-test` / `post-integration-test` trio is designed for: start test infrastructure (DB, server) → run integration tests → shut down infrastructure. The failsafe plugin runs tests in `integration-test` and ALWAYS runs the post-integration-test phase (to shut down) even if tests fail, then reports failure in `verify`. This prevents leaked resources (running containers/servers) even when tests fail.
+**One insight:**
+The named-phase model is what makes Maven extensible without being chaotic. Plugin authors know exactly which phase to bind to: need to run before compilation? → `generate-sources`. Need to run integration tests? → `integration-test`. The vocabulary of phases is shared across the entire Maven ecosystem.
 
 ---
 
 ### 🔩 First Principles Explanation
 
+**CORE INVARIANTS:**
+1. Phases within a lifecycle are totally ordered (phase 1 always before phase 2, always before phase 3...).
+2. Phases are execution containers, not executors — they contain zero or more bound goals.
+3. Phases exist in three separate lifecycles; running a phase in one does not trigger phases in another.
+
+**ALL DEFAULT LIFECYCLE PHASES IN ORDER:**
+
 ```
-DEFAULT LIFECYCLE: 23 PHASES WITH PURPOSE
-
-  Phase                    Purpose / What binds here
-  ──────────────────────────────────────────────────────────────────────
-  1.  validate             Check POM is valid; all info available
-      ↓
-  2.  initialize           Set properties; create directories
-      ↓
-  3.  generate-sources     Generate source code (JAXB, Thrift, Protobuf,
-                           annotation processing initial pass)
-      ↓
-  4.  process-sources      Filter/process source files
-      ↓
-  5.  generate-resources   Generate resource files
-      ↓
-  6.  process-resources ★  Copy + filter src/main/resources → target/classes
-                           (maven-resources-plugin:resources)
-      ↓
-  7.  compile ★            Compile src/main/java → target/classes
-                           (maven-compiler-plugin:compile)
-      ↓
-  8.  process-classes      Post-process .class files (AspectJ, JPA enhancement,
-                           bytecode instrumentation)
-      ↓
-  9.  generate-test-sources Generate test source code
-      ↓
-  10. process-test-sources  Filter/process test source files
-      ↓
-  11. generate-test-resources Generate test resources
-      ↓
-  12. process-test-resources Copy src/test/resources → target/test-classes
-                             (maven-resources-plugin:testResources)
-      ↓
-  13. test-compile ★        Compile src/test/java → target/test-classes
-                            (maven-compiler-plugin:testCompile)
-      ↓
-  14. process-test-classes  Post-process test .class files
-      ↓
-  15. test ★               Run unit tests; fail immediately on failure
-                           (maven-surefire-plugin:test)
-      ↓
-  16. prepare-package       Pre-packaging steps (e.g., shade plugin preparation)
-      ↓
-  17. package ★            Create distributable format (JAR/WAR/EAR)
-                           (maven-jar-plugin:jar)
-                           (spring-boot-maven-plugin:repackage runs here too)
-      ↓
-  18. pre-integration-test  Start test infrastructure (DBs, app servers,
-                            Testcontainers, WireMock)
-      ↓
-  19. integration-test ★    Run integration tests
-                            (maven-failsafe-plugin:integration-test)
-      ↓
-  20. post-integration-test Shut down test infrastructure (ALWAYS runs,
-                            even if integration tests fail)
-      ↓
-  21. verify ★             Check quality gates: coverage thresholds,
-                           code style, security scans, integration test results
-                           (failsafe:verify, jacoco:check, checkstyle:check)
-      ↓
-  22. install ★            Install to ~/.m2/repository
-                           (maven-install-plugin:install)
-      ↓
-  23. deploy ★             Upload to remote repo (Nexus/Artifactory)
-                           (maven-deploy-plugin:deploy)
-
-  ★ = phases where meaningful work happens by default
-
-PHASES WITH NO DEFAULT BINDINGS (extension points):
-
-  initialize        → set custom properties
-  generate-sources  → code generators (JAXB, OpenAPI, Protobuf)
-  process-classes   → bytecode weaving (AspectJ)
-  prepare-package   → pre-packaging manipulation
-  pre-integration-test → start infrastructure
-  post-integration-test → stop infrastructure
-
-  These exist because plugin authors needed a standard slot BEFORE or AFTER
-  the main phases without disrupting the build order.
-
-PRACTICAL PHASE SELECTION:
-
-  LOCAL DEVELOPMENT:
-  mvn compile          ← just check it compiles (fastest)
-  mvn test             ← compile + unit tests
-  mvn package          ← compile + test + JAR (most common local build)
-
-  CI PIPELINE:
-  mvn clean verify     ← full: unit tests + integration tests + quality gates
-  mvn clean package -DskipTests ← fast build without tests (emergency)
-
-  PUBLISHING:
-  mvn clean deploy     ← full build + upload to artifact repo
-
-  BETWEEN BUILDS:
-  mvn clean            ← delete target/ (no lifecycle phase skipping occurs)
-
-  CUSTOM PHASE IN pom.xml:
-  <!-- Bind Checkstyle to validate phase (fail early on style violations): -->
-  <execution>
-    <phase>validate</phase>
-    <goals><goal>check</goal></goals>
-  </execution>
-  <!-- vs binding to verify (after tests, before install): -->
-  <execution>
-    <phase>verify</phase>
-    <goals><goal>check</goal></goals>
-  </execution>
-  <!-- Trade-off: validate = fast fail but before compile;
-                  verify = full picture but runs longer -->
+ 1. validate
+ 2. initialize
+ 3. generate-sources     ← bind code generators here
+ 4. process-sources
+ 5. generate-resources
+ 6. process-resources
+ 7. compile              ← javac runs here (default binding)
+ 8. process-classes
+ 9. generate-test-sources
+10. process-test-sources
+11. generate-test-resources
+12. process-test-resources
+13. test-compile
+14. process-test-classes
+15. test                 ← surefire runs here (default binding)
+16. prepare-package
+17. package              ← jar/war plugin runs here
+18. pre-integration-test ← start test containers here
+19. integration-test     ← failsafe runs here
+20. post-integration-test← stop test containers here
+21. verify               ← enforce quality gates
+22. install              ← copy to local .m2
+23. deploy               ← push to remote repository
 ```
+
+**PRACTICAL PHASE SELECTION:**
+
+Most developers only use 6-8 phases in practice. The others exist as extension points for advanced scenarios (code generation, integration testing, coverage enforcement).
+
+**THE TRADE-OFFS:**
+
+**Gain:** Universal vocabulary for build extensibility; any plugin author can express "run before X" or "run after Y" without knowing what other plugins exist.
+
+**Cost:** 23 phases is too many for most projects — most are empty. The phase names are sometimes confusing (`prepare-package` vs `package`). The lifecycle is rigid: you cannot add a new phase between `test` and `package` without changing Maven itself.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-The 23-phase design accommodates the full diversity of Java project needs: simple JARs need only a handful of phases; complex projects with code generation, bytecode weaving, multiple test types, and deployment need all of them. The phases between the "main" phases are extension points — they let plugin authors insert behavior in the right place without disrupting the sequence. Without this fine granularity, plugin ordering would be non-deterministic or require complex configuration to specify "run after compile but before test."
+**SETUP:**
+You want to: (1) generate Java source files from a Protobuf schema before compilation; (2) start a Docker database before integration tests; (3) stop the Docker database after integration tests.
+
+**WHICH PHASES TO USE:**
+Without named phases, you'd have to hack around the lifecycle or use a complex configuration.
+
+**WITH NAMED PHASES:**
+```
+(1) Bind protobuf-maven-plugin to 'generate-sources'
+    → runs before compile, generated sources are on classpath
+(2) Bind docker-maven-plugin:start to 'pre-integration-test'
+    → database is running before failsafe integration tests
+(3) Bind docker-maven-plugin:stop to 'post-integration-test'
+    → database stops even if tests fail
+```
+
+**THE INSIGHT:**
+Named phases are a contract between Maven and the ecosystem: "if you need to run before compilation, bind to `generate-sources`; I guarantee it runs before `compile`." Every plugin respects this contract, and every build is predictable because of it.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> **Phases are like railway stations on a fixed route**: the train (build) always stops at each station in order. Passengers (plugin goals) board at specific stations. The `compile` station has the "compiler" passenger who does their job (compiles code) and stays on. The `test` station has the "tester" passenger. At `package`, the "packager" creates the JAR. You can board the train at any station (invoke any phase), and the train will stop at every station before it in sequence. Some stations are empty (no passengers = no plugin bound) — the train still stops there briefly (the phase is visited) but nothing happens.
+> Maven phases are like chapters in a story that must be told in order. The chapters are named ("The Setup", "The Confrontation", "The Resolution"), and authors (plugin developers) contribute content to specific chapters. You can't read "The Resolution" without reading "The Setup" first — Maven enforces this.
+
+- "Chapter" → lifecycle phase (compile, test, package)
+- "Story must be told in order" → phases always execute sequentially
+- "Author contributes to a chapter" → plugin goal bound to a phase
+- "Can't skip chapters" → Maven always runs all prior phases
+
+**Where this analogy breaks down:** You can skip test execution with `-DskipTests`, but you cannot remove the `test` phase itself from the sequence — it will just have no goals bound to it when skipping is active.
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 📶 Gradual Depth — Four Levels
 
-```
-Lifecycle defines the order; phases are the individual steps
-        │
-        ▼
-Maven Phases ◄── (you are here)
-(ordered slots; goals bind here; running a phase runs all prior phases)
-        │
-        ├── Maven Lifecycle: the lifecycle contains the ordered phases
-        ├── Maven Goals: goals bind to phases to do actual work
-        ├── Maven Plugins: provide goals that bind to phases
-        └── pom.xml: <execution><phase> configures additional bindings
-```
+**Level 1 — What it is (anyone can understand):**
+A Maven phase is a step in the build process. When you run `mvn package`, Maven runs all steps leading up to "package" — compile, test, etc. — in order. You can't run package without compile running first.
+
+**Level 2 — How to use it (junior developer):**
+The phases you'll use most: `compile` (just compile), `test` (compile + test), `package` (compile + test + create JAR), `install` (everything + put JAR in local repo), `deploy` (everything + push to remote). Combine with `clean` for a fresh build: `mvn clean package`.
+
+**Level 3 — How it works (mid-level engineer):**
+The 23 phases of the default lifecycle exist so plugins can bind at precise points. Most are empty by default. Key extension phases: `generate-sources` (code generation before compilation), `pre-integration-test` / `post-integration-test` (start/stop external resources), `verify` (enforce quality gates). The clean lifecycle is separate: `clean` deletes `target/`; `pre-clean` and `post-clean` are hooks before and after.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+The large number of phases (23 in the default lifecycle) was a deliberate design choice to provide fine-grained extension points without requiring plugins to know about each other. The `pre-integration-test`/`integration-test`/`post-integration-test` triplet was specifically designed to allow setup → test → teardown patterns that are guaranteed to execute in order even on failure (with the right plugin configuration). The limitation: new phases cannot be added without changing Maven core, which is why the lifecycle has remained largely static since Maven 2.
 
 ---
 
-### 💻 Code Example
+### ⚙️ How It Works (Mechanism)
 
+```
+┌──────────────────────────────────────────────────────┐
+│  Phase execution — how Maven processes each phase    │
+├──────────────────────────────────────────────────────┤
+│                                                      │
+│  Maven walks the lifecycle from phase 1 onwards:    │
+│                                                      │
+│  For each phase up to and including target phase:   │
+│    1. Collect all goals bound to this phase          │
+│       (default bindings + pom.xml declarations)      │
+│    2. Order goals by POM declaration order           │
+│    3. Execute each goal in order                     │
+│    4. If any goal fails → STOP, report failure       │
+│    5. If all goals succeed → proceed to next phase   │
+│                                                      │
+│  After target phase reached and completed:           │
+│    Build SUCCESS                                     │
+│                                                      │
+└──────────────────────────────────────────────────────┘
+```
+
+**Phase-goal binding in pom.xml:**
 ```xml
-<!-- Using phases strategically in a CI-optimized pom.xml -->
 <build>
   <plugins>
-    <!-- Checkstyle: bind to validate for fast fail on style violations -->
+    <!-- Start DB before integration tests -->
     <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-checkstyle-plugin</artifactId>
-      <version>3.3.0</version>
+      <groupId>io.fabric8</groupId>
+      <artifactId>docker-maven-plugin</artifactId>
       <executions>
         <execution>
-          <id>validate-style</id>
-          <phase>validate</phase>
-          <goals><goal>check</goal></goals>
+          <id>start-postgres</id>
+          <phase>pre-integration-test</phase>
+          <goals><goal>start</goal></goals>
+        </execution>
+        <execution>
+          <id>stop-postgres</id>
+          <phase>post-integration-test</phase>
+          <goals><goal>stop</goal></goals>
         </execution>
       </executions>
     </plugin>
 
-    <!-- Failsafe: run integration tests in integration-test phase -->
-    <!-- Stops infrastructure in post-integration-test EVEN IF tests fail -->
+    <!-- Run integration tests -->
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-failsafe-plugin</artifactId>
       <executions>
         <execution>
           <goals>
-            <goal>integration-test</goal>   <!-- phase: integration-test -->
-            <goal>verify</goal>             <!-- phase: verify (report failures) -->
+            <goal>integration-test</goal>  <!-- → integration-test phase -->
+            <goal>verify</goal>            <!-- → verify phase -->
           </goals>
-        </execution>
-      </executions>
-    </plugin>
-
-    <!-- Spring Boot: bind start/stop to pre/post-integration-test phases -->
-    <plugin>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-maven-plugin</artifactId>
-      <executions>
-        <execution>
-          <id>pre-integration-test</id>
-          <goals><goal>start</goal></goals>    <!-- start app server -->
-        </execution>
-        <execution>
-          <id>post-integration-test</id>
-          <goals><goal>stop</goal></goals>     <!-- stop app server -->
         </execution>
       </executions>
     </plugin>
@@ -247,23 +225,93 @@ Maven Phases ◄── (you are here)
 
 ---
 
+### 🔄 The Complete Picture — End-to-End Flow
+
+**NORMAL FLOW (integration test scenario):**
+```
+mvn verify
+  → validate (POM OK)
+  → compile (sources compiled)
+  → test (unit tests pass)
+  → package (JAR created)
+  → pre-integration-test  ← YOU ARE HERE
+      → docker:start (PostgreSQL started on port 5432)
+  → integration-test
+      → failsafe:integration-test (ITs run against live DB)
+  → post-integration-test
+      → docker:stop (PostgreSQL stopped)
+  → verify
+      → failsafe:verify (check IT results, fail if any failed)
+  → Build SUCCESS
+```
+
+**FAILURE PATH:**
+```
+integration-test phase: IT fails
+  → post-integration-test STILL runs (docker:stop runs)
+  → verify phase: failsafe:verify detects IT failure
+  → BUILD FAILURE reported at verify phase
+  → Database is always stopped (no leaked containers)
+```
+
+**WHAT CHANGES AT SCALE:**
+In CI pipelines, the full lifecycle (`mvn verify`) runs on every PR. Heavy integration tests are often split to a separate CI job that runs `mvn -Pintegration-test verify` to avoid slowing the main build pipeline.
+
+---
+
+### ⚖️ Comparison Table
+
+| Phase | Purpose | Default Goal Bound | When to Add Custom Goals |
+|---|---|---|---|
+| `generate-sources` | Source code generation | None | Code generators (protobuf, jOOQ, OpenAPI) |
+| `compile` | Compile main sources | compiler:compile | Never (override plugin config instead) |
+| `test-compile` | Compile test sources | compiler:testCompile | Test code generators |
+| `test` | Unit test execution | surefire:test | Coverage tools (JaCoCo) |
+| `pre-integration-test` | Pre-IT setup | None | Start Docker, mock servers |
+| `integration-test` | IT execution | None | failsafe:integration-test |
+| `post-integration-test` | Post-IT teardown | None | Stop Docker, cleanup |
+| `verify` | Quality gates | None | Coverage thresholds, failsafe result check |
+
+**How to choose:** Bind setup/teardown operations to `pre-`/`post-` phases that surround the main execution phase. Use `verify` for quality gate enforcement (coverage minimums, static analysis failures).
+
+---
+
 ### ⚠️ Common Misconceptions
 
-| Misconception                                               | Reality                                                                                                                                                                                                                                                                                                                                         |
-| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Phases are the same as goals                                | Phases are ordering slots in a lifecycle; goals are the tasks that do work. A phase can have zero, one, or multiple goals bound to it. The same goal can be bound to different phases in different executions.                                                                                                                                  |
-| You can invoke multiple phases independently in one command | `mvn compile test` does NOT run compile then test independently. Maven processes them as: run lifecycle up to `compile`, then run lifecycle up to `test`. Since `test` includes `compile`, the result is just running up to `test`. `mvn compile test` = `mvn test`. To run specific goals independently: `mvn compiler:compile surefire:test`. |
-| The 23 phases all run for every project                     | Only phases with bound goals "do" anything. Most projects only see meaningful work in ~8 phases. The others are visited (phase is evaluated) but pass through instantly because no goals are bound.                                                                                                                                             |
+| Misconception | Reality |
+|---|---|
+| Phases and goals are the same thing | Phases are ordered checkpoints; goals are executable tasks bound to phases — fundamentally different |
+| `clean` is a phase of the default lifecycle | `clean` is its own lifecycle; `mvn clean package` runs two separate lifecycles in sequence |
+| Skipping a phase means skipping all subsequent phases | `-DskipTests` skips test execution but the `test` phase still executes — it's just empty |
+| All 23 phases are useful | Most projects only interact with 6-8; the others are extension points for advanced scenarios |
+
+---
+
+### 🚨 Failure Modes & Diagnosis
+
+**Custom goal runs at wrong point in build**
+
+**Root Cause:** Goal bound to wrong phase — runs too late (after compilation) when it should run in `generate-sources`.
+
+**Fix:** Check current phase binding: `mvn help:describe -Dplugin=myplugin -Dgoal=mygoal`. Change `<phase>` in pom.xml. Validate with `mvn -X` to see phase execution debug output.
+
+---
+
+**Integration tests fail but cleanup doesn't run**
+
+**Root Cause:** Using `maven-surefire-plugin` for integration tests (bound to `test` phase) instead of `maven-failsafe-plugin`; when tests fail, lifecycle stops before `post-integration-test`.
+
+**Fix:** Use `maven-failsafe-plugin` — its `integration-test` goal always runs (even on failure) and `verify` is where failures are reported, ensuring `post-integration-test` always executes.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Maven Lifecycle` — the three lifecycles (default, clean, site) containing phases
-- `Maven Goals` — the tasks that bind to phases and do actual work
-- `Maven Plugins` — provide the goals that bind to phases
-- `pom.xml` — configures additional goal-to-phase bindings via `<execution>`
-- `Maven Lifecycle` — running a phase invokes all preceding phases
+**Prerequisites:** `Maven Overview`, `pom.xml`, `Maven Lifecycle`, `Maven Goals`
+
+**Builds On This:** `Maven Plugins`, `Build Performance Optimization`, `Maven Profiles`
+
+**Related Patterns:** `Maven Goals`, `Maven Lifecycle`, `Maven Plugins`
 
 ---
 
@@ -271,17 +319,16 @@ Maven Phases ◄── (you are here)
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ KEY PHASES (default lifecycle):                         │
-│ validate → compile → test → package                     │
-│         → verify → install → deploy                     │
-│                                                         │
-│ FOR CI: mvn clean verify (unit + integration + quality) │
-│ FOR DEV: mvn clean package (compile + unit tests + jar) │
-│ FOR PUBLISH: mvn clean deploy                           │
-│                                                         │
-│ EXTENSION POINTS (empty by default, plugins hook here): │
-│ generate-sources | process-classes | prepare-package    │
-│ pre-integration-test | post-integration-test            │
+│ MOST USED │ validate, compile, test, package,            │
+│           │ install, deploy                              │
+├───────────┼──────────────────────────────────────────────│
+│ CODE GEN  │ bind to generate-sources                     │
+├───────────┼──────────────────────────────────────────────│
+│ IT TESTS  │ pre-IT → integration-test → post-IT → verify │
+├───────────┼──────────────────────────────────────────────│
+│ DEBUG     │ mvn -X (show phase/goal execution order)     │
+├───────────┼──────────────────────────────────────────────│
+│ DESCRIBE  │ mvn help:describe -Dplugin=X -Dgoal=Y        │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -289,6 +336,6 @@ Maven Phases ◄── (you are here)
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** The `process-classes` phase (after `compile`) exists for bytecode weaving — tools like AspectJ and Hibernate's JPA bytecode enhancer modify `.class` files in-place after the Java compiler runs. This is how compile-time AOP works (vs load-time weaving with a Java agent). Compare: compile-time weaving (AspectJ plugin binding to `process-classes`) vs load-time weaving (JVM agent via `-javaagent:aspectjweaver.jar`). What are the build-time vs runtime trade-offs? What debugging challenges arise with each?
+**Q1.** You need to generate Java source code from an OpenAPI spec before `javac` compiles the project. Which phase should you bind the generator to, and why would binding it to the `compile` phase be a problem?
 
-**Q2.** Large Maven multi-module projects can have slow builds because Maven processes modules sequentially by default. `mvn -T 4 clean package` enables 4-thread parallel builds for independent modules. However, Maven's sequential lifecycle phases within a single module cannot be parallelized (compile must complete before test). Gradle's task graph (vs Maven's linear phase model) enables more fine-grained parallelism. What are the specific scenarios where Maven's lifecycle model is a build performance bottleneck, and how do tools like Gradle's build cache and configuration cache specifically address these?
+**Q2.** Your integration tests start a Docker container in `pre-integration-test`, run tests in `integration-test`, and stop the container in `post-integration-test`. An IT fails. Will the `post-integration-test` phase (container stop) still run? What would happen if you had used the `maven-surefire-plugin` instead of `maven-failsafe-plugin` for the integration tests?

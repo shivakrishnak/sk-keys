@@ -24,11 +24,11 @@ tags:
 
 ⚡ TL;DR — OWASP Dependency Check scans your project's dependencies against the National Vulnerability Database (NVD) and fails the build (or reports) if any dependency has a known CVE above a configurable severity threshold — shifting vulnerability detection left into the build pipeline.
 
-| #1093 | Category: Maven & Build Tools (Java) | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Maven Plugins, Dependency Convergence, Maven Enforcer Plugin | |
-| **Used by:** | Build Reproducibility, Build Performance Optimization | |
-| **Related:** | Maven Enforcer Plugin, Build Reproducibility, SNAPSHOT vs RELEASE | |
+| #1093           | Category: Maven & Build Tools (Java)                              | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Maven Plugins, Dependency Convergence, Maven Enforcer Plugin      |                 |
+| **Used by:**    | Build Reproducibility, Build Performance Optimization             |                 |
+| **Related:**    | Maven Enforcer Plugin, Build Reproducibility, SNAPSHOT vs RELEASE |                 |
 
 ---
 
@@ -57,16 +57,18 @@ OWASP Dependency Check (and similar tools: Snyk, GitHub Dependabot, Trivy) autom
 OWASP Dependency Check = automated CVE scanner for your JAR dependencies, integrated into the Maven build.
 
 **One analogy:**
+
 > Like a metal detector at the airport — every dependency that enters your project passes through the scanner. Known dangerous items (CVEs) trigger an alarm and stop the build. Without it, you hand-check every bag manually (or don't check at all).
 
 **One insight:**
-Dependency Check fails builds on *known* vulnerabilities. Unknown vulnerabilities (0-days) are not covered — the tool is a floor, not a ceiling. But catching known CVEs in CI is dramatically better than not scanning at all.
+Dependency Check fails builds on _known_ vulnerabilities. Unknown vulnerabilities (0-days) are not covered — the tool is a floor, not a ceiling. But catching known CVEs in CI is dramatically better than not scanning at all.
 
 ---
 
 ### 🔩 First Principles Explanation
 
 **HOW IT WORKS:**
+
 ```
 1. COLLECT: Enumerate all project dependencies (direct + transitive JARs)
 2. IDENTIFY: Match each JAR to a CPE (Common Platform Enumeration) identifier
@@ -79,6 +81,7 @@ Dependency Check fails builds on *known* vulnerabilities. Unknown vulnerabilitie
 ```
 
 **CVSS SCORE GUIDE:**
+
 ```
 0.0 - 3.9  : Low
 4.0 - 6.9  : Medium
@@ -89,6 +92,7 @@ Recommended build failure threshold: >= 7.0 (High+)
 ```
 
 **PLUGIN CONFIGURATION:**
+
 ```xml
 <plugin>
   <groupId>org.owasp</groupId>
@@ -134,9 +138,10 @@ Your build starts failing with:
   Published: 2023-10-10 | HTTP/2 Rapid Reset Attack
 ```
 
-Netty is a transitive dependency of Spring Boot. You can't upgrade Spring Boot immediately (feature freeze). 
+Netty is a transitive dependency of Spring Boot. You can't upgrade Spring Boot immediately (feature freeze).
 
 **OPTIONS:**
+
 1. **Suppress** with justification: create `owasp-suppressions.xml` with a time-bounded suppression and track the upgrade as a JIRA ticket
 2. **Override Netty version**: add `<dependencyManagement>` to pin to the fixed Netty version (compatible with your Spring Boot version if available)
 3. **Lower threshold**: raise `failBuildOnCVSS` to `8.0` to allow this 7.5 through (risky; hides other vulnerabilities)
@@ -192,6 +197,7 @@ ls target/dependency-check-report.html
 ### 💻 Code Example
 
 **Suppression file for accepted risks:**
+
 ```xml
 <!-- owasp-suppressions.xml -->
 <?xml version="1.0" encoding="UTF-8"?>
@@ -216,6 +222,7 @@ ls target/dependency-check-report.html
 ```
 
 **Binding to CI-only verification:**
+
 ```xml
 <!-- Only run Dependency Check on CI (not every local build) -->
 <profile>
@@ -248,24 +255,24 @@ ls target/dependency-check-report.html
 
 ### ⚖️ Comparison Table
 
-| Tool | Type | Integration | Transitive | Exploit Intelligence |
-|---|---|---|---|---|
-| OWASP Dependency Check | SCA (NVD) | Maven/Gradle/CLI | Yes | No |
-| Snyk | SCA + Remediation | Maven/Gradle/GitHub | Yes | Yes |
-| GitHub Dependabot | SCA + PR automation | GitHub-native | Yes | Partial |
-| Nexus Lifecycle (IQ) | Enterprise SCA + Policy | Nexus integration | Yes | Yes |
-| Trivy | Universal SCA | CLI/CI | Yes | Yes |
+| Tool                   | Type                    | Integration         | Transitive | Exploit Intelligence |
+| ---------------------- | ----------------------- | ------------------- | ---------- | -------------------- |
+| OWASP Dependency Check | SCA (NVD)               | Maven/Gradle/CLI    | Yes        | No                   |
+| Snyk                   | SCA + Remediation       | Maven/Gradle/GitHub | Yes        | Yes                  |
+| GitHub Dependabot      | SCA + PR automation     | GitHub-native       | Yes        | Partial              |
+| Nexus Lifecycle (IQ)   | Enterprise SCA + Policy | Nexus integration   | Yes        | Yes                  |
+| Trivy                  | Universal SCA           | CLI/CI              | Yes        | Yes                  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| A passing Dependency Check means no vulnerabilities | It means no *known* vulnerabilities matching your *current* NVD database snapshot |
-| High CVE = your app is exploitable | Depends on whether the vulnerable code path is reachable in your application |
-| Suppression = ignoring security | A documented, time-bounded suppression with tracking is responsible risk management |
-| NVD database is always current | Default update is 4h; NVD itself may lag CVE publication by hours to days |
+| Misconception                                       | Reality                                                                             |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| A passing Dependency Check means no vulnerabilities | It means no _known_ vulnerabilities matching your _current_ NVD database snapshot   |
+| High CVE = your app is exploitable                  | Depends on whether the vulnerable code path is reachable in your application        |
+| Suppression = ignoring security                     | A documented, time-bounded suppression with tracking is responsible risk management |
+| NVD database is always current                      | Default update is 4h; NVD itself may lag CVE publication by hours to days           |
 
 ---
 
@@ -275,7 +282,8 @@ ls target/dependency-check-report.html
 
 **Root Cause:** Full NVD data feed downloaded on first run or when stale.
 
-**Fix:** 
+**Fix:**
+
 - Use NVD API key (`<nvdApiKey>`) for faster incremental updates
 - Run `dependency-check:update-only` in a scheduled CI job (separate from PR builds)
 - Use a shared NVD data directory cached between builds

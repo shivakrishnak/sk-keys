@@ -23,11 +23,11 @@ tags:
 
 ⚡ TL;DR — A binary distribution is a pre-compiled, ready-to-run package (JAR, WAR, ZIP with scripts). A source distribution contains the original source code for recipients to compile themselves. Maven publishes both via the maven-source-plugin; understanding the distinction matters for open-source publishing, reproducibility verification, and legal compliance.
 
-| #1094 | Category: Maven & Build Tools (Java) | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Maven Lifecycle, Maven Release Plugin, pom.xml | |
-| **Used by:** | Build Reproducibility, OWASP Dependency Check, Maven Release Plugin | |
-| **Related:** | Maven Release Plugin, Build Reproducibility, Maven Repository (local, central, remote) | |
+| #1094           | Category: Maven & Build Tools (Java)                                                   | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Maven Lifecycle, Maven Release Plugin, pom.xml                                         |                 |
+| **Used by:**    | Build Reproducibility, OWASP Dependency Check, Maven Release Plugin                    |                 |
+| **Related:**    | Maven Release Plugin, Build Reproducibility, Maven Repository (local, central, remote) |                 |
 
 ---
 
@@ -56,6 +56,7 @@ In Maven's artifact model, a **binary distribution** is the compiled output of a
 Binary JAR = compiled `.class` files (run); source JAR = `.java` files (debug, verify, comply); javadoc JAR = API docs.
 
 **One analogy:**
+
 > A published book (binary), the manuscript (source), and the reading guide (javadoc). The book is what readers use; the manuscript is for translators, editors, and verifiers; the reading guide helps navigate the content. All three are distributed together for a complete publication.
 
 **One insight:**
@@ -66,6 +67,7 @@ Source JARs are not just for open-source libraries. Internal enterprise librarie
 ### 🔩 First Principles Explanation
 
 **MAVEN ARTIFACT CLASSIFIERS:**
+
 ```
 my-lib-1.0.0.jar              ← main artifact (compiled binary)
 my-lib-1.0.0-sources.jar      ← source JAR (classifier: sources)
@@ -75,6 +77,7 @@ my-lib-1.0.0.jar.sha1         ← checksum for integrity
 ```
 
 **WHAT EACH CONTAINS:**
+
 ```
 Binary JAR (no classifier):
   com/example/MyClass.class
@@ -97,6 +100,7 @@ Javadoc JAR (-javadoc):
 When a developer adds `my-lib:1.0.0` as a Maven dependency, IntelliJ IDEA automatically detects `my-lib-1.0.0-sources.jar` in the repository and attaches it. Pressing Ctrl+Click on a library class opens the actual source file. Without a source JAR, the IDE shows decompiled bytecode — functional but imprecise and missing comments.
 
 **GENERATING SOURCES AND JAVADOC:**
+
 ```xml
 <!-- maven-source-plugin: creates -sources.jar -->
 <plugin>
@@ -160,7 +164,7 @@ Source JAR publishing is a developer experience feature, not just an open-source
 
 ### 📶 Gradual Depth — Four Levels
 
-**Level 1:** When you publish a library, you publish a JAR (compiled code). You *should also* publish a sources JAR (original `.java` files) so others can debug into your library. Maven provides `maven-source-plugin` for this.
+**Level 1:** When you publish a library, you publish a JAR (compiled code). You _should also_ publish a sources JAR (original `.java` files) so others can debug into your library. Maven provides `maven-source-plugin` for this.
 
 **Level 2:** Classifiers differentiate artifact types in Maven's coordinate system: `groupId:artifactId:version:classifier:type`. The sources JAR classifier is `sources`; javadoc is `javadoc`. IDEs and the Maven dependency plugin use these conventions automatically.
 
@@ -203,6 +207,7 @@ mvn deploy
 ### 💻 Code Example
 
 **Release profile that activates sources + javadoc for release builds only:**
+
 ```xml
 <profiles>
   <profile>
@@ -267,24 +272,24 @@ mvn deploy
 
 ### ⚖️ Comparison Table
 
-| Artifact | Classifier | Contains | Purpose |
-|---|---|---|---|
-| `lib-1.0.jar` | (none) | `.class` files, resources | Run the library |
-| `lib-1.0-sources.jar` | `sources` | `.java` source files | Debug, verify, inspect |
-| `lib-1.0-javadoc.jar` | `javadoc` | HTML API documentation | Browse API docs in IDE |
-| `lib-1.0.pom` | N/A | Project metadata, dependencies | Dependency resolution |
-| `lib-1.0-tests.jar` | `tests` | Test `.class` files | Reuse test utilities |
+| Artifact              | Classifier | Contains                       | Purpose                |
+| --------------------- | ---------- | ------------------------------ | ---------------------- |
+| `lib-1.0.jar`         | (none)     | `.class` files, resources      | Run the library        |
+| `lib-1.0-sources.jar` | `sources`  | `.java` source files           | Debug, verify, inspect |
+| `lib-1.0-javadoc.jar` | `javadoc`  | HTML API documentation         | Browse API docs in IDE |
+| `lib-1.0.pom`         | N/A        | Project metadata, dependencies | Dependency resolution  |
+| `lib-1.0-tests.jar`   | `tests`    | Test `.class` files            | Reuse test utilities   |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Source JARs are only for open-source projects | Internal libraries benefit equally — enables IDE debugging across teams |
-| `maven-source-plugin` runs at `package` automatically | Must be explicitly configured in `<executions>` |
-| Javadoc JARs are optional | Required by Maven Central; highly recommended for any shared library |
-| Source JAR = full source distribution | Source JAR contains `src/main/java` contents; a full source distribution includes build scripts, test sources, etc. |
+| Misconception                                         | Reality                                                                                                             |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Source JARs are only for open-source projects         | Internal libraries benefit equally — enables IDE debugging across teams                                             |
+| `maven-source-plugin` runs at `package` automatically | Must be explicitly configured in `<executions>`                                                                     |
+| Javadoc JARs are optional                             | Required by Maven Central; highly recommended for any shared library                                                |
+| Source JAR = full source distribution                 | Source JAR contains `src/main/java` contents; a full source distribution includes build scripts, test sources, etc. |
 
 ---
 

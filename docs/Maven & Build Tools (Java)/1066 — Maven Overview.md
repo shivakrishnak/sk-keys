@@ -7,235 +7,358 @@ permalink: /maven-build/maven-overview/
 number: "1066"
 category: Maven & Build Tools (Java)
 difficulty: ★☆☆
-depends_on: "JDK, Java Language"
-used_by: "pom.xml, Maven Lifecycle, Maven Dependencies, CI-CD pipelines"
-tags: #maven, #build-tools, #java, #dependency-management, #project-management
+depends_on: Java Language, JDK
+used_by: Maven Lifecycle (validate, compile, test, package, install, deploy), Maven Goals, Maven Phases, Maven Plugins, Maven Dependencies
+related: Gradle vs Maven, Maven Wrapper (mvnw), Maven Multi-Module Project
+tags:
+  - maven
+  - build-tools
+  - java
+  - foundational
 ---
 
 # 1066 — Maven Overview
 
-`#maven` `#build-tools` `#java` `#dependency-management` `#project-management`
+⚡ TL;DR — Maven is a Java build tool that automates compiling, testing, packaging, and deploying code using a convention-over-configuration model driven by a single XML descriptor: `pom.xml`.
 
-⚡ TL;DR — **Apache Maven** is the dominant build and dependency management tool for Java projects. It defines a standard project structure, a lifecycle (compile → test → package → deploy), and declarative dependency management via `pom.xml`. Maven resolves dependencies from Maven Central (or private Nexus/Artifactory), downloads them to `~/.m2/repository`, and wires them into the build classpath automatically. Contrast with Gradle (Groovy/Kotlin DSL, more flexible but complex).
+| #1066 | Category: Maven & Build Tools (Java) | Difficulty: ★☆☆ |
+|:---|:---|:---|
+| **Depends on:** | Java Language, JDK | |
+| **Used by:** | Maven Lifecycle, Maven Goals, Maven Phases, Maven Plugins, Maven Dependencies | |
+| **Related:** | Gradle vs Maven, Maven Wrapper (mvnw), Maven Multi-Module Project | |
 
-| #1066           | Category: Maven & Build Tools (Java)                          | Difficulty: ★☆☆ |
-| :-------------- | :------------------------------------------------------------ | :-------------- |
-| **Depends on:** | JDK, Java Language                                            |                 |
-| **Used by:**    | pom.xml, Maven Lifecycle, Maven Dependencies, CI-CD pipelines |                 |
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+Before Maven, Java developers managed builds manually: hand-written Ant scripts with hundreds of lines of XML, `javac` commands compiled manually, JAR files downloaded from random websites, classpath entries typed by hand, and "it works on my machine" being a common refrain. Every project had its own unique build structure. Onboarding a new developer meant a day of environment setup. Tests were run manually, if at all.
+
+**THE BREAKING POINT:**
+As Java projects grew — from one class to hundreds of classes across multiple packages, with dozens of third-party dependencies — manual build management became impossible. Ant scripts ballooned, dependency versions drifted across developer machines, and no standard structure existed for where source files, tests, and resources should live.
+
+**THE INVENTION MOMENT:**
+Maven was created at Apache to bring conventions and repeatability to Java builds. The core insight: if every project follows the same directory layout and declares its dependencies and metadata in a standard file (`pom.xml`), then the same lifecycle commands (`mvn compile`, `mvn test`, `mvn package`) work identically on every project. This is why Maven was invented.
 
 ---
 
 ### 📘 Textbook Definition
 
-**Apache Maven**: an open-source build automation and project management tool for Java (and JVM) projects, maintained by the Apache Software Foundation. Core concepts: (1) **Project Object Model (POM)**: the `pom.xml` file declares project metadata, dependencies, plugins, and build configuration; (2) **Convention over Configuration**: Maven defines a standard directory layout (`src/main/java`, `src/test/java`, `target/`) — projects following conventions require minimal configuration; (3) **Build Lifecycle**: ordered phases (validate → compile → test → package → verify → install → deploy) — executing a phase runs all preceding phases; (4) **Dependency Management**: Maven resolves transitive dependencies from configured repositories (Maven Central by default), downloads to local repository (`~/.m2/repository`), and makes them available on the compile/runtime/test classpath; (5) **Plugin architecture**: all build actions (compile, test, package) are performed by plugins bound to lifecycle phases. Maven coordinates (`groupId:artifactId:version`, or GAV) uniquely identify every artifact. Maven is the standard for enterprise Java: Spring Boot, Jakarta EE, and most Java libraries publish to Maven Central.
+**Apache Maven** is a software project management and build automation tool that uses a Project Object Model (POM), stored in `pom.xml`, to describe a project's build, reporting, and documentation. Maven enforces a standard project directory layout and defines a fixed build lifecycle (validate → compile → test → package → verify → install → deploy) through which projects are built. Maven resolves dependencies automatically by downloading artifacts from remote repositories (central, custom) into a local cache (`.m2/repository`), ensuring reproducible builds across all developer and CI environments.
 
 ---
 
-### 🟢 Simple Definition (Easy)
+### ⏱️ Understand It in 30 Seconds
 
-Before Maven: manually download every `.jar` (Spring, Hibernate, Jackson), add them to your project, figure out their transitive dependencies, do it again for each new machine. Maven: you declare `<dependency>spring-boot:3.1.0</dependency>` in `pom.xml`. Maven downloads it + all its dependencies. `mvn package` compiles + tests + creates a JAR. Standard directory structure means everyone knows where `src` is. No more "it works on my machine" for builds.
+**One line:**
+Maven automates every Java build step — compile, test, package — so you never do it manually again.
 
----
+**One analogy:**
+> Maven is like a standardised recipe card for building any Java project. Every project uses the same card layout (directory structure), the same cooking steps (lifecycle phases), and orders the same ingredients from the same supermarket (central repository). Hand the card to any developer; they follow the same steps, get the same result.
 
-### 🔵 Simple Definition (Elaborated)
-
-Maven solves three problems:
-
-1. **Dependency hell**: manually managing 50 JAR files, their transitive dependencies, and version conflicts. Maven: declare direct dependencies → Maven resolves the full dependency tree automatically.
-2. **Build inconsistency**: each developer had a different build script. Maven: standard lifecycle → `mvn package` means the same thing everywhere.
-3. **Project structure chaos**: every project had different layouts. Maven: convention → `src/main/java` for source, `src/test/java` for tests, `target/` for output. IDE support, plugins, and CI systems all know this layout.
-
-Maven vs Gradle: Maven is XML-based (verbose but explicit), lifecycle-driven, and rigid but predictable. Gradle is Groovy/Kotlin DSL (concise), task-graph-based, and flexible but has steeper learning curve. Gradle is faster for large multi-module projects (incremental builds, build cache). Maven dominates in enterprise Java; Gradle dominates in Android.
+**One insight:**
+Maven's power comes from its conventions. Because every Maven project puts sources in `src/main/java`, tests in `src/test/java`, and resources in `src/main/resources`, every plugin, IDE, and CI system knows where to look — without configuration. Convention eliminates the need to describe the obvious.
 
 ---
 
 ### 🔩 First Principles Explanation
 
+**CORE INVARIANTS:**
+1. **Convention over configuration** — Maven assumes a standard directory layout; you only configure deviations.
+2. **Declarative** — `pom.xml` declares WHAT the project is and WHAT it depends on; Maven decides HOW to build it.
+3. **Reproducibility** — same `pom.xml` + same repository → same output on any machine at any time.
+
+**DERIVED DESIGN:**
+
+The standard Maven directory structure:
 ```
-MAVEN STANDARD DIRECTORY LAYOUT:
-
-  myproject/
-  ├── pom.xml                    ← project descriptor
-  ├── src/
-  │   ├── main/
-  │   │   ├── java/              ← application source code
-  │   │   │   └── com/example/App.java
-  │   │   └── resources/         ← application resources (properties, XMLs)
-  │   │       └── application.properties
-  │   └── test/
-  │       ├── java/              ← test source code
-  │       │   └── com/example/AppTest.java
-  │       └── resources/         ← test resources
-  └── target/                    ← all generated output (add to .gitignore)
-      ├── classes/               ← compiled .class files
-      ├── test-classes/          ← compiled test .class files
-      ├── surefire-reports/      ← test results
-      ├── myproject-1.0.0.jar    ← packaged artifact
-      └── myproject-1.0.0.jar.original
-
-MAVEN COORDINATES (GAV):
-
-  groupId:artifactId:version
-  org.springframework.boot:spring-boot-starter-web:3.1.0
-  ├── groupId:    org.springframework.boot  (organization/group)
-  ├── artifactId: spring-boot-starter-web   (project/module name)
-  └── version:    3.1.0                     (version)
-
-  + optional:
-  ├── packaging: jar | war | pom | ear (default: jar)
-  └── classifier: sources | javadoc | tests (optional label)
-
-  Stored in local repo: ~/.m2/repository/org/springframework/boot/
-                                       spring-boot-starter-web/3.1.0/
-                                       spring-boot-starter-web-3.1.0.jar
-                                       spring-boot-starter-web-3.1.0.pom
-
-MAVEN ARCHITECTURE:
-
-  pom.xml → Maven → Plugin execution
-
-  Maven resolves plugins (also from Maven Central):
-  - maven-compiler-plugin: compiles Java source
-  - maven-surefire-plugin: runs JUnit/TestNG tests
-  - maven-jar-plugin: packages .class files into JAR
-  - maven-install-plugin: installs to ~/.m2
-  - maven-deploy-plugin: deploys to remote repository
-  - spring-boot-maven-plugin: creates executable fat JAR
-
-  Each plugin has goals; goals are bound to lifecycle phases
-
-COMMON COMMANDS:
-
-  mvn validate         ← check project is correct; all info available
-  mvn compile          ← compile src/main/java → target/classes
-  mvn test             ← compile + run tests (src/test/java)
-  mvn package          ← compile + test + package → target/*.jar
-  mvn verify           ← package + integration tests + quality checks
-  mvn install          ← verify + install to ~/.m2/repository
-  mvn deploy           ← install + upload to remote repository
-  mvn clean            ← delete target/ directory
-  mvn clean package    ← clean then package (most common in CI)
-  mvn clean package -DskipTests  ← skip tests (faster CI)
-  mvn dependency:tree  ← show full dependency tree
-  mvn dependency:resolve ← download all dependencies
-  mvn versions:display-dependency-updates  ← show available updates
-
-MULTI-MODULE PROJECTS:
-
-  parent/
-  ├── pom.xml              ← parent POM: manages versions + common config
-  ├── api/
-  │   └── pom.xml          ← child module
-  ├── service/
-  │   └── pom.xml          ← child module (depends on api)
-  └── web/
-      └── pom.xml          ← child module (depends on service)
-
-  mvn clean package from parent: builds all modules in dependency order
+my-project/
+├── pom.xml              ← project descriptor
+├── src/
+│   ├── main/
+│   │   ├── java/        ← production source files
+│   │   └── resources/   ← non-Java resources (config, etc.)
+│   └── test/
+│       ├── java/        ← test source files
+│       └── resources/   ← test resources
+└── target/              ← all generated output (gitignored)
 ```
+
+Every Maven build follows the same lifecycle. Running `mvn package` automatically runs all prior phases: validate → compile → test → package. You don't specify how to compile Java — Maven knows. You only specify what's unique to your project: its coordinates (groupId, artifactId, version), its dependencies, and any plugin customisations.
+
+**THE TRADE-OFFS:**
+
+**Gain:** Zero-configuration builds; IDE and CI tool compatibility; automatic dependency management; standardised project structure across all Java projects.
+
+**Cost:** Opinionated — unconventional project structures require significant configuration to override. XML-based `pom.xml` is verbose compared to Gradle's Kotlin/Groovy DSL. Build logic is expressed as plugin configuration, not general-purpose code, which limits flexibility.
 
 ---
 
-### ❓ Why Does This Exist (Why Before What)
+### 🧪 Thought Experiment
 
-Before Maven (pre-2004), Java build tools were Ant (imperative XML scripts — you wrote every build step manually, no dependency management) or manual. Maven introduced declarative build description: describe WHAT your project is, not HOW to build it. The conventions (standard directories, lifecycle) enabled the ecosystem: IDEs like IntelliJ IDEA auto-detect Maven projects, CI tools know how to run `mvn package`, and plugins are reusable across all Maven projects without project-specific configuration.
+**SETUP:**
+Two developers, Alice and Bob, both join a Java project on the same day. Alice's project uses Maven; Bob's uses a custom Ant script written by someone who left the company.
+
+**WHAT HAPPENS WITHOUT MAVEN (Bob's project):**
+Bob reads the Ant `build.xml`. It references absolute paths from the previous developer's machine. The classpath is hard-coded. The JAR downloads link to URLs that no longer work. Bob spends 2 days debugging the build before writing a single line of code.
+
+**WHAT HAPPENS WITH MAVEN (Alice's project):**
+Alice runs `mvn compile`. Maven reads `pom.xml`, downloads the declared dependencies from Maven Central, compiles the source files. Done in 3 minutes. On day one, Alice is writing code.
+
+**THE INSIGHT:**
+The value of a build tool isn't just automation — it's shared, transferable knowledge encoded in conventions. Maven's conventions mean every Maven project is immediately familiar to every Java developer who has used Maven before.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> **Maven is like a franchise franchise system for Java builds**: every McDonald's (Maven project) has the same kitchen layout (directory structure), the same menu items made the same way (lifecycle phases), and sources ingredients from the same supplier network (Maven Central). You don't need to explain to a new employee where the fryer is — convention means they already know. The franchise owner (Maven) coordinates suppliers (dependency management) and ensures every location (machine) produces consistent results.
+> Maven is like a professional kitchen with a standard layout. Every station (sink, stove, prep area) is always in the same place; every cook knows where everything is without asking.
+
+- "Standard kitchen layout" → Maven's standard directory structure (`src/main/java`, `src/test/java`, etc.)
+- "Recipe" → `pom.xml` — what dishes to make and what ingredients are needed
+- "Ingredient order from supplier" → Maven dependency resolution from repositories
+- "Cooking steps" → build lifecycle phases (compile, test, package, install, deploy)
+- "The finished dish" → the JAR/WAR artifact in `target/`
+
+**Where this analogy breaks down:** A kitchen produces different dishes each service; Maven always produces the same artifact from the same recipe — reproducibility is a design goal, not a limitation.
 
 ---
 
-### 🔄 How It Connects (Mini-Map)
+### 📶 Gradual Depth — Four Levels
+
+**Level 1 — What it is (anyone can understand):**
+Maven is a tool that automatically compiles your Java code, runs your tests, and bundles everything into a deployable file. You describe your project once in `pom.xml` and then a single command (`mvn package`) does all the work.
+
+**Level 2 — How to use it (junior developer):**
+Create a `pom.xml` with your project's coordinates (groupId, artifactId, version) and list your dependencies. Run `mvn compile` to compile, `mvn test` to run tests, `mvn package` to create a JAR/WAR. Maven downloads all declared dependencies automatically into `~/.m2/repository`. The `target/` folder contains all build outputs.
+
+**Level 3 — How it works (mid-level engineer):**
+Maven's build lifecycle is a sequence of named phases. Each phase is bound to plugin goals — for example, the `compile` phase is bound to `maven-compiler-plugin:compile`. Plugins are the actual execution engines; the lifecycle is just an ordered trigger. When you run `mvn package`, Maven executes all phases up to and including `package` in order, calling each phase's bound goals. Dependency resolution uses a depth-first traversal of the dependency graph, downloading artifacts and their checksums from configured repositories.
+
+**Level 4 — Why it was designed this way (senior/staff):**
+Maven's convention-over-configuration philosophy was a direct reaction to Ant's "blank-page" approach, which led to every project having unique, incompatible build scripts. By encoding conventions into Maven Core (not plugins), the conventions become load-bearing — IDEs, CI servers, static analysis tools, and documentation generators can all rely on the standard layout without per-project configuration. The trade-off is rigidity: Maven's conventions are hard to escape. Gradle was created partly to address this, allowing programmable build logic while keeping Maven's dependency model.
+
+---
+
+### ⚙️ How It Works (Mechanism)
+
+**Maven's execution model:**
 
 ```
-Need to build Java projects consistently with managed dependencies
-        │
-        ▼
-Maven Overview ◄── (you are here)
-(build + dependency management tool)
-        │
-        ├── pom.xml: the project descriptor Maven reads
-        ├── Maven Lifecycle: the ordered build phases Maven executes
-        ├── Maven Plugins: how Maven performs each build step
-        ├── Maven Dependencies: how Maven resolves and downloads JARs
-        └── CI-CD Pipeline: CI runs mvn clean package to build/test
+┌─────────────────────────────────────────────────────┐
+│              mvn package — execution flow           │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  pom.xml ──► Maven Core ──► Lifecycle Engine        │
+│                               │                     │
+│               ┌───────────────▼───────────────┐     │
+│               │ validate                       │     │
+│               │ initialize                     │     │
+│               │ generate-sources               │     │
+│               │ compile  ◄── compiler-plugin   │     │
+│               │ test-compile                   │     │
+│               │ test     ◄── surefire-plugin   │     │
+│               │ package  ◄── jar-plugin        │     │
+│               └───────────────────────────────┘     │
+│                               │                     │
+│               ┌───────────────▼───────────────┐     │
+│               │ target/my-app-1.0.jar (output) │     │
+│               └───────────────────────────────┘     │
+└─────────────────────────────────────────────────────┘
 ```
+
+**Dependency resolution flow:**
+```
+┌─────────────────────────────────────────────────────┐
+│           Dependency Resolution                     │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  pom.xml declares dependency                        │
+│       │                                             │
+│       ▼                                             │
+│  Check ~/.m2/repository (local cache)               │
+│       │ not found                                   │
+│       ▼                                             │
+│  Check remote repositories                          │
+│  (Maven Central / Nexus / Artifactory)              │
+│       │                                             │
+│       ▼                                             │
+│  Download artifact.jar + artifact.jar.sha1          │
+│       │                                             │
+│       ▼                                             │
+│  Verify checksum → store in local cache             │
+│       │                                             │
+│       ▼                                             │
+│  Add to project classpath                           │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+### 🔄 The Complete Picture — End-to-End Flow
+
+**NORMAL FLOW:**
+```
+Developer edits .java
+  → runs: mvn package
+  → Maven reads pom.xml  ← YOU ARE HERE
+  → resolves dependencies (local cache → remote repo)
+  → compiles src/main/java → target/classes/
+  → compiles src/test/java → target/test-classes/
+  → runs tests (surefire)
+  → packages target/app-1.0.jar
+  → artifact ready for deployment
+```
+
+**FAILURE PATH:**
+```
+Dependency not in local cache AND remote repo unreachable
+  → BUILD FAILURE: Could not resolve artifact
+  → Fix: check network / repository config / use -o for offline mode
+```
+
+**WHAT CHANGES AT SCALE:**
+In multi-module projects (dozens of modules), Maven builds them in dependency order, parallelisable with `-T 4`. At scale, a local Nexus/Artifactory proxy eliminates repeated downloads from Maven Central, dramatically speeding up CI cold starts.
 
 ---
 
 ### 💻 Code Example
 
+**Example 1 — Minimal pom.xml:**
 ```xml
-<!-- Minimal Spring Boot Maven project pom.xml -->
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+           http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Inherit Spring Boot defaults -->
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0</version>
-    </parent>
-
-    <!-- Project coordinates (GAV) -->
+    <!-- Project identity (the "coordinates") -->
     <groupId>com.example</groupId>
-    <artifactId>my-api</artifactId>
+    <artifactId>my-app</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
+        <!-- Compile-time dependency -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>32.1.3-jre</version>
         </dependency>
+
+        <!-- Test-only dependency -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>
 ```
+
+**Example 2 — Common Maven commands:**
+```bash
+# Compile source code
+mvn compile
+
+# Run tests
+mvn test
+
+# Package into JAR (compiles + tests + packages)
+mvn package
+
+# Install JAR to local .m2 repository (for use by other local projects)
+mvn install
+
+# Clean all generated files in target/
+mvn clean
+
+# Clean + package in one command (most common CI invocation)
+mvn clean package
+
+# Skip tests (use with care)
+mvn clean package -DskipTests
+
+# Build with 4 parallel threads (multi-module projects)
+mvn clean install -T 4
+```
+
+---
+
+### ⚖️ Comparison Table
+
+| Tool | Language | Config Style | Flexibility | Ecosystem | Best For |
+|---|---|---|---|---|---|
+| **Maven** | Java | XML (pom.xml) | Convention-heavy | Very large (Maven Central) | Standard Java/Jakarta EE projects |
+| Gradle | Java/Kotlin | Groovy/Kotlin DSL | Fully programmable | Large (Maven-compatible) | Android, custom build logic |
+| Ant | Java | XML (build.xml) | Fully manual | Limited | Legacy projects |
+| Bazel | Multi-lang | Starlark | Hermetic, scalable | Google-centric | Monorepos at scale |
+
+**How to choose:** Use Maven for standard Java projects where convention is acceptable and ecosystem compatibility matters most. Choose Gradle when you need programmatic build logic or work on Android.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                               | Reality                                                                                                                                                                                                                                                                   |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Maven downloads dependencies on every build | Maven downloads each dependency version ONCE to `~/.m2/repository` (the local cache). Subsequent builds use the local cache — no network required. Only new or updated dependencies require a download. In CI, the `.m2` directory is typically cached between runs.      |
-| `mvn package` runs all tests                | Yes — `package` phase includes the `test` phase. To skip tests: `mvn package -DskipTests`. To compile tests but not run: `mvn package -Dmaven.test.skip=false -DskipTests=true`.                                                                                          |
-| Maven is being replaced by Gradle           | Both coexist. Maven is still the majority in enterprise Java (Spring ecosystem, Jakarta EE). Gradle dominates Android and Kotlin projects. Many shops use Maven for backend Java and Gradle for Android/Kotlin. Migration is possible but non-trivial for large projects. |
+| Misconception | Reality |
+|---|---|
+| Maven downloads all of the internet on first use | Maven only downloads declared dependencies and their transitives — and caches them permanently in `~/.m2/repository` |
+| `mvn clean install` is the correct default command | `clean` deletes incremental state; use `mvn install` for iterative builds; only `clean` when debugging |
+| Maven is outdated because Gradle exists | Maven remains the dominant build tool for enterprise Java and Spring Boot projects; both are actively used |
+| You must use Maven Central | You can add any remote repository; most enterprises use Nexus or Artifactory as a proxy |
+
+---
+
+### 🚨 Failure Modes & Diagnosis
+
+**"Could not resolve artifact" on first build**
+
+**Root Cause:** No network access to Maven Central, or repository URL misconfigured.
+
+**Fix:**
+```bash
+# Check repository config
+mvn help:effective-settings
+
+# Force update of snapshots / check for corrupted metadata
+mvn clean install -U
+
+# Use offline mode (all deps must be in local cache)
+mvn install -o
+```
+
+---
+
+**"BUILD FAILURE" after adding a dependency**
+
+**Root Cause:** Version conflict, or dependency not found in any configured repository.
+
+**Fix:**
+```bash
+# Show full dependency tree to identify conflicts
+mvn dependency:tree
+
+# Check effective POM (what Maven actually uses)
+mvn help:effective-pom
+```
 
 ---
 
 ### 🔗 Related Keywords
 
-- `pom.xml` — the Maven project descriptor that Maven reads
-- `Maven Lifecycle` — the ordered phases Maven executes
-- `Maven Dependencies` — how Maven resolves and caches JARs
-- `Maven Plugins` — how Maven performs each build action
-- `JDK` — Maven requires a JDK to compile Java source
+**Prerequisites:** `Java Language`, `JDK`
+
+**Builds On This:** `pom.xml`, `Maven Lifecycle`, `Maven Goals`, `Maven Phases`, `Maven Plugins`, `Maven Dependencies`
+
+**Related Patterns:** `Gradle vs Maven`, `Maven Wrapper (mvnw)`, `Maven Multi-Module Project`
 
 ---
 
@@ -243,19 +366,17 @@ Maven Overview ◄── (you are here)
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ COORDINATES: groupId:artifactId:version (GAV)           │
-│ LOCAL CACHE: ~/.m2/repository                           │
-│ COMMANDS:                                               │
-│   mvn clean package      → full build + test           │
-│   mvn clean package -DskipTests → build only           │
-│   mvn dependency:tree    → show dep tree               │
-│   mvn install            → build + add to local cache  │
-├──────────────────────────────────────────────────────────┤
-│ STANDARD DIRS:                                          │
-│   src/main/java      → source code                     │
-│   src/test/java      → tests                           │
-│   src/main/resources → config files                    │
-│   target/            → all output (gitignore this)     │
+│ COORDINATES │ groupId:artifactId:version                 │
+├─────────────┼──────────────────────────────────────────  │
+│ CONFIG FILE │ pom.xml                                    │
+├─────────────┼──────────────────────────────────────────  │
+│ LOCAL CACHE │ ~/.m2/repository/                          │
+├─────────────┼──────────────────────────────────────────  │
+│ OUTPUT DIR  │ target/                                    │
+├─────────────┼──────────────────────────────────────────  │
+│ KEY CMDS    │ mvn compile / test / package / install     │
+├─────────────┼──────────────────────────────────────────  │
+│ CLEAN BUILD │ mvn clean package                          │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -263,6 +384,6 @@ Maven Overview ◄── (you are here)
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** Maven SNAPSHOT versions (e.g., `1.0.0-SNAPSHOT`) are special: they're not immutable — the same `1.0.0-SNAPSHOT` can be re-deployed with different content. Maven re-downloads SNAPSHOTs periodically (daily by default) even if cached. In a microservices environment where Team A's service depends on Team B's `api:1.0.0-SNAPSHOT`, what problems can SNAPSHOTs cause in CI? When should you use SNAPSHOT vs a release version? How do SNAPSHOTs interact with reproducible builds?
+**Q1.** You clone a Java project and run `mvn package`. The build fails with "Cannot access central (https://repo.maven.apache.org/maven2)". List three distinct causes and the diagnostic command or fix for each.
 
-**Q2.** `mvn install` installs to the local `~/.m2/repository`. In a multi-developer team, each developer has their own local repo. When multiple CI agents build in parallel, they each have a local repo too (or share one). What problems arise with shared Maven local repos in CI (concurrent writes, partial downloads, corrupted cache)? How do enterprise CI systems (GitHub Actions cache, Artifactory, Nexus) solve this?
+**Q2.** A colleague says "just always run `mvn clean package` so you're guaranteed a fresh build." What is the concrete cost of always running `clean`, and when is it genuinely necessary vs wasteful?

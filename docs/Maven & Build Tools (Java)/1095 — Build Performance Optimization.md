@@ -24,10 +24,10 @@ tags:
 
 ⚡ TL;DR — Build performance optimisation reduces the time between a code change and a verified build through four levers: parallel execution, incremental builds, caching (local and remote), and hermetic toolchain pinning — applied across both Maven and Gradle, and across local development and CI environments.
 
-| #1095 | Category: Maven & Build Tools (Java) | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Gradle Incremental Build, Gradle Build Cache, Maven Multi-Module Project, Maven Wrapper (mvnw) | |
-| **Related:** | Gradle Incremental Build, Gradle Build Cache, Maven Multi-Module Project | |
+| #1095           | Category: Maven & Build Tools (Java)                                                           | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Gradle Incremental Build, Gradle Build Cache, Maven Multi-Module Project, Maven Wrapper (mvnw) |                 |
+| **Related:**    | Gradle Incremental Build, Gradle Build Cache, Maven Multi-Module Project                       |                 |
 
 ---
 
@@ -56,6 +56,7 @@ No single technique transforms build performance — it requires applying a casc
 Don't redo what hasn't changed; do what can be done in parallel; reuse what others have already built.
 
 **One analogy:**
+
 > Assembling IKEA furniture. Slow approach: one person, sequential steps, rebuilding a step if a screw was dropped. Fast approach: two people working on independent sections in parallel, reusing subassemblies that are already complete, sharing a finished section that a neighbour assembled identically. Same result, fraction of the time.
 
 **One insight:**
@@ -68,6 +69,7 @@ The biggest wins are usually ordering-dependent: (1) enable parallelism first (b
 **THE FOUR LEVERS:**
 
 **LEVER 1: PARALLEL EXECUTION**
+
 ```
 Sequential (default Maven):
 module-A [===20s===] → module-B [===20s===] → module-C [===20s===]  = 60s
@@ -80,6 +82,7 @@ module-C [===20s===]
 ```
 
 **LEVER 2: INCREMENTAL BUILD**
+
 ```
 Before incremental: 50 source files changed → compile 500 files (all)
 After incremental:  50 source files changed → compile 50 + affected = 60–80 files
@@ -87,6 +90,7 @@ Benefit: proportional to percentage unchanged
 ```
 
 **LEVER 3: BUILD CACHE**
+
 ```
 CI Build 1: compileJava → 30s → store output in cache (key: SHA of inputs)
 CI Build 2 (same inputs):  → lookup cache → restore output  = 0.5s
@@ -94,6 +98,7 @@ Developer (same inputs): → lookup remote cache → restore  = 1–2s download
 ```
 
 **LEVER 4: CONFIGURATION / TOOLCHAIN**
+
 ```
 Gradle configuration cache: skip recomputing task graph = -5s per build
 JDK toolchain: auto-provision correct JDK = consistent builds, no JAVA_HOME issues
@@ -101,6 +106,7 @@ Wrapper: no Maven/Gradle download on CI = -30s first run
 ```
 
 **MAVEN-SPECIFIC OPTIMISATIONS:**
+
 ```bash
 # Parallel module builds (N threads, or C = CPU cores)
 mvn clean install -T 4    # 4 threads
@@ -127,6 +133,7 @@ mvn install -pl $(git diff --name-only HEAD~1 | grep pom.xml | sed 's|/pom.xml||
 ```
 
 **GRADLE-SPECIFIC OPTIMISATIONS:**
+
 ```bash
 # Parallel project execution
 ./gradlew build --parallel
@@ -158,6 +165,7 @@ org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m
 A large Spring Boot microservices monorepo has 20 modules. Full CI build: 45 minutes. Most developers change only 1–3 modules per PR.
 
 **OPTIMISATION SEQUENCE:**
+
 1. Enable `--parallel` in Gradle → independent modules build simultaneously → 20 min (-55%)
 2. Enable `--build-cache` with remote cache → most modules get FROM-CACHE → 5 min (-75%)
 3. Enable `--configuration-cache` → task graph reuse → 3 min (-33%)
@@ -230,6 +238,7 @@ org.gradle.configuration-cache=true
 ### 💻 Code Example
 
 **`gradle.properties` for a high-performance Gradle build:**
+
 ```properties
 # Core performance settings
 org.gradle.daemon=true
@@ -246,6 +255,7 @@ org.gradle.workers.max=4
 ```
 
 **GitHub Actions optimised workflow:**
+
 ```yaml
 name: Build
 on: [push, pull_request]
@@ -257,8 +267,8 @@ jobs:
 
       - uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: "17"
+          distribution: "temurin"
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -279,27 +289,27 @@ jobs:
 
 ### ⚖️ Comparison Table
 
-| Technique | Maven | Gradle | Impact Area |
-|---|---|---|---|
-| Parallel module builds | `-T 4` / `-T 2C` | `--parallel` | Multi-module CI builds |
-| Skip tests | `-DskipTests` | `-x test` | Fast iteration / deployment |
-| Incremental compilation | Limited (surefire) | Built-in | Single-module dev loop |
-| Local build cache | No | `--build-cache` | CI cold starts |
-| Remote build cache | No | Gradle Enterprise | Team-wide cache sharing |
-| Config cache | No | `--configuration-cache` | Repeated builds |
-| Offline mode | `-o` | `--offline` | Air-gapped / network-free builds |
-| Partial builds | `-pl module -am` | `./gradlew :module:task` | Changed-only rebuilds |
+| Technique               | Maven              | Gradle                   | Impact Area                      |
+| ----------------------- | ------------------ | ------------------------ | -------------------------------- |
+| Parallel module builds  | `-T 4` / `-T 2C`   | `--parallel`             | Multi-module CI builds           |
+| Skip tests              | `-DskipTests`      | `-x test`                | Fast iteration / deployment      |
+| Incremental compilation | Limited (surefire) | Built-in                 | Single-module dev loop           |
+| Local build cache       | No                 | `--build-cache`          | CI cold starts                   |
+| Remote build cache      | No                 | Gradle Enterprise        | Team-wide cache sharing          |
+| Config cache            | No                 | `--configuration-cache`  | Repeated builds                  |
+| Offline mode            | `-o`               | `--offline`              | Air-gapped / network-free builds |
+| Partial builds          | `-pl module -am`   | `./gradlew :module:task` | Changed-only rebuilds            |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| `mvn clean install` is always correct | `clean` destroys incremental state — only use when debugging, not by default |
-| Parallel builds are always faster | Memory-bound builds may be slower with parallelism (GC pressure, OOM) |
-| Build cache requires Gradle Enterprise | Local build cache is free; only remote build cache needs infrastructure |
-| Build time = compilation time | Test execution, plugin execution, and I/O often dominate over compilation |
+| Misconception                          | Reality                                                                      |
+| -------------------------------------- | ---------------------------------------------------------------------------- |
+| `mvn clean install` is always correct  | `clean` destroys incremental state — only use when debugging, not by default |
+| Parallel builds are always faster      | Memory-bound builds may be slower with parallelism (GC pressure, OOM)        |
+| Build cache requires Gradle Enterprise | Local build cache is free; only remote build cache needs infrastructure      |
+| Build time = compilation time          | Test execution, plugin execution, and I/O often dominate over compilation    |
 
 ---
 
