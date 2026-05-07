@@ -4,7 +4,7 @@ title: "Event-Driven Programming"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 6
 permalink: /cs-fundamentals/event-driven-programming/
-number: "0006"
+number: "CSF-006"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Imperative Programming, Functions, Asynchronous Programming
@@ -19,7 +19,7 @@ tags:
   - nodejs
 ---
 
-# 006 — Event-Driven Programming
+# CSF-006 — Event-Driven Programming
 
 ⚡ TL;DR — Event-driven programming structures code around reacting to events — things that happen — rather than executing a fixed top-to-bottom sequence.
 

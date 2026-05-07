@@ -4,7 +4,7 @@ title: "Metaprogramming"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 9
 permalink: /cs-fundamentals/metaprogramming/
-number: "0009"
+number: "CSF-009"
 category: CS Fundamentals — Paradigms
 difficulty: ★★★
 depends_on: Object-Oriented Programming, Type Systems, Reflection
@@ -18,7 +18,7 @@ tags:
   - internals
 ---
 
-# 009 — Metaprogramming
+# CSF-009 — Metaprogramming
 
 ⚡ TL;DR — Metaprogramming is code that writes or modifies other code — programs that treat programs as data, enabling automation of repetitive boilerplate.
 

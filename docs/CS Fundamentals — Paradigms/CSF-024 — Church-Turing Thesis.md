@@ -4,7 +4,7 @@ title: "Church-Turing Thesis"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 24
 permalink: /cs-fundamentals/church-turing-thesis/
-number: "0024"
+number: "CSF-024"
 category: CS Fundamentals — Paradigms
 difficulty: ★★★
 depends_on: Turing Completeness, Lambda Calculus
@@ -16,7 +16,7 @@ tags:
   - mental-model
 ---
 
-# 024 — Church-Turing Thesis
+# CSF-024 — Church-Turing Thesis
 
 ⚡ TL;DR — The Church-Turing Thesis states that any effectively computable function can be computed by a Turing machine — defining the absolute limits of what any computer can ever compute.
 

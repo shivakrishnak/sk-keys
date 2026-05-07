@@ -4,7 +4,7 @@ title: "Strong vs Weak Typing"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 11
 permalink: /cs-fundamentals/strong-vs-weak-typing/
-number: "0011"
+number: "CSF-011"
 category: CS Fundamentals — Paradigms
 difficulty: ★☆☆
 depends_on: Type Systems (Static vs Dynamic)
@@ -17,7 +17,7 @@ tags:
   - first-principles
 ---
 
-# 011 — Strong vs Weak Typing
+# CSF-011 — Strong vs Weak Typing
 
 ⚡ TL;DR — Strong typing means the language refuses to silently coerce values between incompatible types; weak typing means it will try anyway.
 

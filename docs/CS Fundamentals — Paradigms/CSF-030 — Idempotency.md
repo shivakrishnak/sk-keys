@@ -4,7 +4,7 @@ title: "Idempotency"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 30
 permalink: /cs-fundamentals/idempotency/
-number: "0030"
+number: "CSF-030"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Side Effects, Referential Transparency
@@ -18,7 +18,7 @@ tags:
   - mental-model
 ---
 
-# 030 — Idempotency
+# CSF-030 — Idempotency
 
 ⚡ TL;DR — An operation is idempotent if applying it multiple times produces the same result as applying it once — making retries and deduplication safe.
 

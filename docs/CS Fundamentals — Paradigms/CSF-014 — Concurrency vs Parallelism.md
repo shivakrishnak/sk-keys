@@ -4,7 +4,7 @@ title: "Concurrency vs Parallelism"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 14
 permalink: /cs-fundamentals/concurrency-vs-parallelism/
-number: "0014"
+number: "CSF-014"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Operating Systems, Synchronous vs Asynchronous
@@ -18,7 +18,7 @@ tags:
   - tradeoff
 ---
 
-# 014 — Concurrency vs Parallelism
+# CSF-014 — Concurrency vs Parallelism
 
 ⚡ TL;DR — Concurrency is about _dealing with_ multiple things at once (structure); parallelism is about _doing_ multiple things at once (execution).
 

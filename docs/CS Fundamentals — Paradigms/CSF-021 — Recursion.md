@@ -4,7 +4,7 @@ title: "Recursion"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 21
 permalink: /cs-fundamentals/recursion/
-number: "0021"
+number: "CSF-021"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Functional Programming, Memory Management Models
@@ -18,7 +18,7 @@ tags:
   - memory
 ---
 
-# 021 — Recursion
+# CSF-021 — Recursion
 
 ⚡ TL;DR — Recursion is a function calling itself with a smaller version of the same problem until reaching a base case that stops the chain.
 

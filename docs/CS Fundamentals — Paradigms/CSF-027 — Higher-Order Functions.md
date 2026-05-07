@@ -4,7 +4,7 @@ title: "Higher-Order Functions"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 27
 permalink: /cs-fundamentals/higher-order-functions/
-number: "0027"
+number: "CSF-027"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: First-Class Functions, Functional Programming
@@ -17,7 +17,7 @@ tags:
   - mental-model
 ---
 
-# 027 — Higher-Order Functions
+# CSF-027 — Higher-Order Functions
 
 ⚡ TL;DR — Higher-order functions are functions that take other functions as arguments, return functions as results, or both — enabling composable, reusable abstractions over behaviour.
 

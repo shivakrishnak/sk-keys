@@ -4,7 +4,7 @@ title: "Encapsulation"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 17
 permalink: /cs-fundamentals/encapsulation/
-number: "0017"
+number: "CSF-017"
 category: CS Fundamentals — Paradigms
 difficulty: ★☆☆
 depends_on: Abstraction, Object-Oriented Programming (OOP)
@@ -17,7 +17,7 @@ tags:
   - pattern
 ---
 
-# 017 — Encapsulation
+# CSF-017 — Encapsulation
 
 ⚡ TL;DR — Encapsulation bundles data and the methods that operate on it together, while controlling which parts are accessible from outside.
 

@@ -4,7 +4,7 @@ title: "Imperative Programming"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 1
 permalink: /cs-fundamentals/imperative-programming/
-number: "0001"
+number: "CSF-001"
 category: CS Fundamentals — Paradigms
 difficulty: ★☆☆
 depends_on: Variables, Control Flow, Functions
@@ -17,7 +17,7 @@ tags:
   - first-principles
 ---
 
-# 001 — Imperative Programming
+# CSF-001 — Imperative Programming
 
 ⚡ TL;DR — Imperative programming means telling the computer HOW to do something, step by step, like a precise recipe.
 

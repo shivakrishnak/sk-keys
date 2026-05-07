@@ -4,7 +4,7 @@ title: "Declarative Programming"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 2
 permalink: /cs-fundamentals/declarative-programming/
-number: "0002"
+number: "CSF-002"
 category: CS Fundamentals — Paradigms
 difficulty: ★☆☆
 depends_on: Imperative Programming, Functions
@@ -17,7 +17,7 @@ tags:
   - first-principles
 ---
 
-# 002 — Declarative Programming
+# CSF-002 — Declarative Programming
 
 ⚡ TL;DR — Declarative programming means telling the computer WHAT you want, not HOW to get it — you describe the goal, the system figures out the steps.
 

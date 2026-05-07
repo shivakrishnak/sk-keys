@@ -4,7 +4,7 @@ title: "First-Class Functions"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 26
 permalink: /cs-fundamentals/first-class-functions/
-number: "0026"
+number: "CSF-026"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Functional Programming, Lambda Calculus
@@ -17,7 +17,7 @@ tags:
   - mental-model
 ---
 
-# 026 — First-Class Functions
+# CSF-026 — First-Class Functions
 
 ⚡ TL;DR — First-class functions means functions are values: they can be assigned to variables, passed as arguments, returned from other functions, and stored in data structures.
 

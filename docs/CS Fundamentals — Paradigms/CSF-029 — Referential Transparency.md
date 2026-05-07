@@ -4,7 +4,7 @@ title: "Referential Transparency"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 29
 permalink: /cs-fundamentals/referential-transparency/
-number: "0029"
+number: "CSF-029"
 category: CS Fundamentals — Paradigms
 difficulty: ★★★
 depends_on: Side Effects, Functional Programming, Higher-Order Functions
@@ -17,7 +17,7 @@ tags:
   - correctness
 ---
 
-# 029 — Referential Transparency
+# CSF-029 — Referential Transparency
 
 ⚡ TL;DR — An expression is referentially transparent if it can be replaced by its value without changing the program's behaviour — the defining property of pure functions.
 

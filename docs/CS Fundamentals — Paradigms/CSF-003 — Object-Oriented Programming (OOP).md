@@ -4,7 +4,7 @@ title: "Object-Oriented Programming (OOP)"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 3
 permalink: /cs-fundamentals/object-oriented-programming/
-number: "0003"
+number: "CSF-003"
 category: CS Fundamentals — Paradigms
 difficulty: ★☆☆
 depends_on: Imperative Programming, Functions, Variables
@@ -18,7 +18,7 @@ tags:
   - architecture
 ---
 
-# 003 — Object-Oriented Programming (OOP)
+# CSF-003 — Object-Oriented Programming (OOP)
 
 ⚡ TL;DR — OOP organises code into objects that combine state and behaviour, modelling real-world entities so software mirrors the problem domain.
 

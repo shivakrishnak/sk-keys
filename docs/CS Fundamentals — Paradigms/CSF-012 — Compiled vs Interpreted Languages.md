@@ -4,7 +4,7 @@ title: "Compiled vs Interpreted Languages"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 12
 permalink: /cs-fundamentals/compiled-vs-interpreted-languages/
-number: "0012"
+number: "CSF-012"
 category: CS Fundamentals — Paradigms
 difficulty: ★☆☆
 depends_on: Type Systems (Static vs Dynamic), Memory Management Models
@@ -17,7 +17,7 @@ tags:
   - first-principles
 ---
 
-# 012 — Compiled vs Interpreted Languages
+# CSF-012 — Compiled vs Interpreted Languages
 
 ⚡ TL;DR — Compiled languages translate source code to machine instructions before execution; interpreted languages translate and run code line-by-line at runtime.
 

@@ -4,7 +4,7 @@ title: "Tail Recursion"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 22
 permalink: /cs-fundamentals/tail-recursion/
-number: "0022"
+number: "CSF-022"
 category: CS Fundamentals — Paradigms
 difficulty: ★★★
 depends_on: Recursion, Memory Management Models, Compiled vs Interpreted Languages
@@ -18,7 +18,7 @@ tags:
   - first-principles
 ---
 
-# 022 — Tail Recursion
+# CSF-022 — Tail Recursion
 
 ⚡ TL;DR — Tail recursion is recursion where the recursive call is the last operation, enabling compilers to reuse the stack frame instead of creating a new one.
 

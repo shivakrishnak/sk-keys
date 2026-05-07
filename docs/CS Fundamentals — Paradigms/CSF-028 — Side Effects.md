@@ -4,7 +4,7 @@ title: "Side Effects"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 28
 permalink: /cs-fundamentals/side-effects/
-number: "0028"
+number: "CSF-028"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Functional Programming, Higher-Order Functions
@@ -17,7 +17,7 @@ tags:
   - correctness
 ---
 
-# 028 — Side Effects
+# CSF-028 — Side Effects
 
 ⚡ TL;DR — A side effect is any observable change a function makes to the world beyond returning a value — writing to a file, modifying state, logging, calling a network API.
 

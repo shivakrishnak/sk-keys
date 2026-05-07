@@ -4,7 +4,7 @@ title: "Turing Completeness"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 23
 permalink: /cs-fundamentals/turing-completeness/
-number: "0023"
+number: "CSF-023"
 category: CS Fundamentals — Paradigms
 difficulty: ★★★
 depends_on: Compiled vs Interpreted Languages, Concurrency vs Parallelism, Memory Management Models
@@ -17,7 +17,7 @@ tags:
   - mental-model
 ---
 
-# 023 — Turing Completeness
+# CSF-023 — Turing Completeness
 
 ⚡ TL;DR — A system is Turing complete if it can simulate any computation that a Turing machine can perform — meaning it can compute anything that is computable.
 

@@ -4,7 +4,7 @@ title: "Reactive Programming"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 7
 permalink: /cs-fundamentals/reactive-programming/
-number: "0007"
+number: "CSF-007"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Event-Driven Programming, Functional Programming, Asynchronous Programming
@@ -19,7 +19,7 @@ tags:
   - streaming
 ---
 
-# 007 — Reactive Programming
+# CSF-007 — Reactive Programming
 
 ⚡ TL;DR — Reactive programming treats data as streams of events that you compose and transform with functional operators, automatically propagating changes through the pipeline.
 

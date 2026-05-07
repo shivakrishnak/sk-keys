@@ -4,7 +4,7 @@ title: "Functional Programming"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 4
 permalink: /cs-fundamentals/functional-programming/
-number: "0004"
+number: "CSF-004"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Declarative Programming, First-Class Functions, Higher-Order Functions
@@ -18,7 +18,7 @@ tags:
   - concurrency
 ---
 
-# 004 — Functional Programming
+# CSF-004 — Functional Programming
 
 ⚡ TL;DR — Functional programming treats computation as the evaluation of mathematical functions, eliminating shared mutable state to make programs correct by construction.
 

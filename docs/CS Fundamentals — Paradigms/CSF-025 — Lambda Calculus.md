@@ -4,7 +4,7 @@ title: "Lambda Calculus"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 25
 permalink: /cs-fundamentals/lambda-calculus/
-number: "0025"
+number: "CSF-025"
 category: CS Fundamentals — Paradigms
 difficulty: ★★★
 depends_on: Functional Programming, Church-Turing Thesis, First-Class Functions
@@ -17,7 +17,7 @@ tags:
   - functional
 ---
 
-# 025 — Lambda Calculus
+# CSF-025 — Lambda Calculus
 
 ⚡ TL;DR — Lambda calculus is a minimal formal system for expressing computation using only anonymous functions, function application, and variable substitution — the mathematical foundation of functional programming.
 

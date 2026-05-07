@@ -4,7 +4,7 @@ title: "Synchronous vs Asynchronous"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 15
 permalink: /cs-fundamentals/synchronous-vs-asynchronous/
-number: "0015"
+number: "CSF-015"
 category: CS Fundamentals — Paradigms
 difficulty: ★☆☆
 depends_on: Concurrency vs Parallelism
@@ -17,7 +17,7 @@ tags:
   - concurrency
 ---
 
-# 015 — Synchronous vs Asynchronous
+# CSF-015 — Synchronous vs Asynchronous
 
 ⚡ TL;DR — Synchronous code waits for each operation to complete before continuing; asynchronous code initiates an operation and moves on, continuing when the result arrives.
 

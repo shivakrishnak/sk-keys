@@ -4,7 +4,7 @@ title: "Abstraction"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 16
 permalink: /cs-fundamentals/abstraction/
-number: "0016"
+number: "CSF-016"
 category: CS Fundamentals — Paradigms
 difficulty: ★☆☆
 depends_on: Imperative Programming, Object-Oriented Programming (OOP)
@@ -17,7 +17,7 @@ tags:
   - pattern
 ---
 
-# 016 — Abstraction
+# CSF-016 — Abstraction
 
 ⚡ TL;DR — Abstraction hides complexity behind a simple interface, letting you use something without knowing how it works internally.
 

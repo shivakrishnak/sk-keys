@@ -4,7 +4,7 @@ title: "Polymorphism"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 18
 permalink: /cs-fundamentals/polymorphism/
-number: "0018"
+number: "CSF-018"
 category: CS Fundamentals — Paradigms
 difficulty: ★☆☆
 depends_on: Abstraction, Encapsulation, Inheritance
@@ -17,7 +17,7 @@ tags:
   - pattern
 ---
 
-# 018 — Polymorphism
+# CSF-018 — Polymorphism
 
 ⚡ TL;DR — Polymorphism lets you write code that works with many different types through a shared interface, without knowing the concrete type at compile time.
 

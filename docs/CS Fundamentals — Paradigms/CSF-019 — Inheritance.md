@@ -4,7 +4,7 @@ title: "Inheritance"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 19
 permalink: /cs-fundamentals/inheritance/
-number: "0019"
+number: "CSF-019"
 category: CS Fundamentals — Paradigms
 difficulty: ★☆☆
 depends_on: Object-Oriented Programming (OOP), Abstraction, Encapsulation
@@ -18,7 +18,7 @@ tags:
   - tradeoff
 ---
 
-# 019 — Inheritance
+# CSF-019 — Inheritance
 
 ⚡ TL;DR — Inheritance lets a class acquire the fields and methods of a parent class, enabling code reuse and establishing "is-a" relationships between types.
 

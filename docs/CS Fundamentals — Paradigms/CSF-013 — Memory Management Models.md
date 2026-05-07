@@ -4,7 +4,7 @@ title: "Memory Management Models"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 13
 permalink: /cs-fundamentals/memory-management-models/
-number: "0013"
+number: "CSF-013"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Compiled vs Interpreted Languages, Type Systems (Static vs Dynamic)
@@ -18,7 +18,7 @@ tags:
   - first-principles
 ---
 
-# 013 — Memory Management Models
+# CSF-013 — Memory Management Models
 
 ⚡ TL;DR — Memory management models define who is responsible for allocating and freeing memory: the programmer, a runtime garbage collector, or a compiler-enforced ownership system.
 

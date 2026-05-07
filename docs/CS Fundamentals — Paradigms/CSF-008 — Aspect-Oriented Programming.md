@@ -4,7 +4,7 @@ title: "Aspect-Oriented Programming"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 8
 permalink: /cs-fundamentals/aspect-oriented-programming/
-number: "0008"
+number: "CSF-008"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Object-Oriented Programming, Procedural Programming, Design Patterns
@@ -18,7 +18,7 @@ tags:
   - architecture
 ---
 
-# 008 — Aspect-Oriented Programming
+# CSF-008 — Aspect-Oriented Programming
 
 ⚡ TL;DR — AOP lets you inject cross-cutting concerns (logging, security, transactions) into code without modifying the original methods — keeping core logic clean.
 

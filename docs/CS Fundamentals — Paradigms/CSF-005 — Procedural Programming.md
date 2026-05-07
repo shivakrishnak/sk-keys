@@ -4,7 +4,7 @@ title: "Procedural Programming"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 5
 permalink: /cs-fundamentals/procedural-programming/
-number: "0005"
+number: "CSF-005"
 category: CS Fundamentals — Paradigms
 difficulty: ★☆☆
 depends_on: Imperative Programming, Functions, Variables
@@ -17,7 +17,7 @@ tags:
   - first-principles
 ---
 
-# 005 — Procedural Programming
+# CSF-005 — Procedural Programming
 
 ⚡ TL;DR — Procedural programming organises imperative code into named, reusable procedures (functions), making programs maintainable by breaking them into callable steps.
 

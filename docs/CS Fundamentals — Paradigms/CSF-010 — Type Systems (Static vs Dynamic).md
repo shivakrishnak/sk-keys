@@ -4,7 +4,7 @@ title: "Type Systems (Static vs Dynamic)"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 10
 permalink: /cs-fundamentals/type-systems/
-number: "0010"
+number: "CSF-010"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Variables, Functions, Compiled vs Interpreted Languages
@@ -19,7 +19,7 @@ tags:
   - first-principles
 ---
 
-# 010 — Type Systems (Static vs Dynamic)
+# CSF-010 — Type Systems (Static vs Dynamic)
 
 ⚡ TL;DR — A type system defines what kinds of data exist and when type errors are caught: statically at compile time (Java, TypeScript) or dynamically at runtime (Python, JavaScript).
 

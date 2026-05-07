@@ -4,7 +4,7 @@ title: "Composition over Inheritance"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 20
 permalink: /cs-fundamentals/composition-over-inheritance/
-number: "0020"
+number: "CSF-020"
 category: CS Fundamentals — Paradigms
 difficulty: ★★☆
 depends_on: Inheritance, Encapsulation, Polymorphism
@@ -19,7 +19,7 @@ tags:
   - bestpractice
 ---
 
-# 020 — Composition over Inheritance
+# CSF-020 — Composition over Inheritance
 
 ⚡ TL;DR — Compose objects from smaller, focused behaviours rather than building deep inheritance hierarchies — it produces more flexible, maintainable code.
 
