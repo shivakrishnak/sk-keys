@@ -1,4 +1,4 @@
-# 🎯 Technical Dictionary Generator — Master Prompt v2.1 + ID System v3.0
+﻿# 🎯 Technical Dictionary Generator — Master Prompt v2.1 + ID System v3.0
 
 > **This is the authoritative generation spec** for every keyword entry in this dictionary.
 > Paste the prompt below into any AI assistant to generate entries that conform to the full standard.
@@ -332,7 +332,10 @@ difficulty: [★☆☆ | ★★☆ | ★★★]
 depends_on: [CODE]-[NNN], [CODE]-[NNN]
 used_by: [CODE]-[NNN], [CODE]-[NNN]
 related: [CODE]-[NNN], [CODE]-[NNN]
-tags: #tag1, #tag2, #tag3
+tags:
+  - tag1
+  - tag2
+  - tag3
 status: [draft | in-progress | complete]
 version: 1
 ---
@@ -393,10 +396,15 @@ related:
   - Maximum 5 entries
 
 tags:
-  - # prefixed, comma-separated on ONE line
+  - YAML array items (one per line, using "-")
+  - No # prefix
   - 3–6 tags per entry
   - From approved taxonomy only (see Section 4)
-  - Example: #java, #jvm, #performance, #deep-dive
+  - Example:
+    - java
+    - jvm
+    - performance
+    - deep-dive
 
 status:
   - draft        → keyword exists, entry not yet written
@@ -421,7 +429,11 @@ difficulty: ★★★
 depends_on: JVM-001, JVM-004, JVM-005
 used_by: JVM-037, JVM-038, JVM-039
 related: JVM-037, JVM-040, AIF-015
-tags: #java, #jvm, #performance, #deep-dive
+tags:
+  - java
+  - jvm
+  - performance
+  - deep-dive
 status: complete
 version: 1
 ---
@@ -1608,7 +1620,7 @@ FRONTMATTER:
   ☐ depends_on: full IDs ([CODE]-[NNN]), not keyword names
   ☐ used_by: full IDs, not keyword names
   ☐ related: full IDs, not keyword names
-  ☐ tags: YAML array items, no # prefix, from taxonomy (Section 4)
+  ☐ tags: YAML array format (- tag1), no # prefix, from taxonomy (Section 4)
   ☐ status: one of draft / in-progress / complete
   ☐ version: integer, starts at 1
 
@@ -2011,7 +2023,7 @@ Front matter (use exact values for the chosen category):
     - tag1
     - tag2
     - tag3
-    
+
 Category folder → parent title → permalink slug mapping:
   ┌─────────────────────────────────────┬──────────────────────────────────────┬────────────────────────┐
   │ Folder Name                         │ parent: value                        │ permalink prefix       │

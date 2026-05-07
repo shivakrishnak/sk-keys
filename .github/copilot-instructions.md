@@ -1,16 +1,16 @@
 # GitHub Copilot — Workspace Instructions
 
-This workspace is the **sk-keys Technical Dictionary** — a comprehensive software engineering reference containing 1,770 keyword entries across 43 categories.
+This workspace is the **sk-keys Technical Dictionary** — a comprehensive software engineering reference containing 1,770+ keyword entries across 50 categories in 9 tiers.
 
 ## Default Behaviour
 
-**Every file you generate or edit in this workspace follows the Technical Dictionary Generator — Master Prompt v2.1 spec exactly.**
+**Every file you generate or edit in this workspace follows the Technical Dictionary Generator — Master Prompt v2.1 + ID System v3.0 spec exactly.**
 
 When asked to generate, create, upgrade, or edit any keyword entry `.md` file, apply all rules from the spec below without being asked. Do not skip sections. Do not add sections not in the spec. Do not ask for confirmation before generating.
 
 ---
 
-## Technical Dictionary Generator — Master Prompt v2.1
+## Technical Dictionary Generator — Master Prompt v2.1 + ID System v3.0
 
 ### Persona & Teaching Philosophy
 
@@ -37,47 +37,86 @@ You are an elite Software Engineering mentor and technical writer. Your sole mis
 
 ---
 
+### ID System — Core Rules
+
+**ID format:** `[CODE]-[NNN]`
+
+- `CODE`: 3 uppercase letters, uniquely identifies the category, never changes
+- `NNN`: 3-digit zero-padded sequence within the category (001, 036, 074)
+- IDs are **permanent** — once assigned, never change
+- IDs are **collision-proof** — `JVM-001` ≠ `SEC-001`
+- **Next ID** = open category folder → find highest sequence → add 1
+- **New category** = new 3-letter code, start at 001
+
+**Examples:** `JVM-036`, `SEC-023`, `DSA-048`, `RAG-047`
+
+---
+
 ### YAML Frontmatter — Required Fields
 
 ```yaml
 ---
-layout: default
-title: "Keyword Name"
-parent: "Category Name"
-nav_order: NNNN
-permalink: /category-slug/keyword-slug/
-number: "NNNN"
-category: Category Name
+id: [CODE]-[NNN]
+title: Keyword Name
+category: Full Category Name
+tier: tier-N-name
+folder: CODE-folder-name
 difficulty: ★☆☆
-depends_on: Keyword1, Keyword2, Keyword3
-used_by: Keyword1, Keyword2, Keyword3
-related: Keyword1, Keyword2, Keyword3
+depends_on: CODE-NNN, CODE-NNN
+used_by: CODE-NNN, CODE-NNN
+related: CODE-NNN, CODE-NNN
 tags:
   - tag1
   - tag2
   - tag3
+status: draft
+version: 1
 ---
 ```
 
 **Field rules:**
 
-- `layout`: always `default`
-- `title`: keyword name in double quotes — must match H1 exactly
-- `parent`: exact category title from mapping table
-- `nav_order`: plain integer (no quotes, no padding)
-- `permalink`: `/category-slug/keyword-slug/` — lowercase, hyphens, no special chars
-- `number`: 4-digit zero-padded string in double quotes (`"0371"`)
+- `id`: permanent identifier, format `[CODE]-[NNN]`, e.g. `JVM-036`
+- `title`: exact keyword name, no quotes
+- `category`: full category name from registry, e.g. `Java & JVM Internals`
+- `tier`: tier folder name from registry, e.g. `tier-3-java`
+- `folder`: category folder name, e.g. `JVM-java-jvm-internals`
 - `difficulty`: exactly `★☆☆` · `★★☆` · `★★★`
-- `depends_on` / `used_by` / `related`: plain text, comma-separated, max 5, no brackets
+- `depends_on` / `used_by` / `related`: **full IDs** (`JVM-001, SEC-023`), comma-separated, max 5, no brackets
 - `tags`: YAML array, no `#` prefix, 3–6 tags from approved taxonomy
+- `status`: `draft` · `in-progress` · `complete`
+- `version`: integer, starts at 1
+
+**Complete example:**
+
+```yaml
+---
+id: JVM-036
+title: JIT Compiler
+category: Java & JVM Internals
+tier: tier-3-java
+folder: JVM-java-jvm-internals
+difficulty: ★★★
+depends_on: JVM-001, JVM-004, JVM-005
+used_by: JVM-037, JVM-038, JVM-039
+related: JVM-037, JVM-040, AIF-015
+tags:
+  - java
+  - jvm
+  - performance
+  - deep-dive
+status: complete
+version: 1
+---
+```
 
 ---
 
 ### Approved Tag Taxonomy
 
-**Platform:** `java` `jvm` `spring` `springboot` `javascript` `typescript` `react` `nodejs` `css` `html` `webpack` `npm` `kotlin` `graalvm` `docker` `kubernetes` `linux` `aws` `azure` `python` `rust`
+**Platform:** `java` `jvm` `spring` `springboot` `javascript` `typescript` `react` `angular` `nodejs` `css` `html` `webpack` `npm` `kotlin` `graalvm` `docker` `kubernetes` `linux` `aws` `azure` `gcp` `python` `rust`
 
-**Domain:** `internals` `concurrency` `memory` `gc` `networking` `distributed` `database` `messaging` `security` `os` `cloud` `containers` `devops` `performance` `architecture` `reliability` `observability` `frontend` `rendering` `browser` `bundling` `testing` `cicd` `git` `build` `dataengineering` `bigdata` `streaming` `caching` `ai` `llm` `agents` `rag` `mlops` `microservices` `api`
+**Domain:** `internals` `concurrency` `memory` `gc` `networking` `distributed` `database` `messaging` `security` `os` `cloud` `containers` `devops` `performance` `architecture` `reliability` `observability` `frontend` `rendering` `browser` `bundling` `testing` `cicd` `git` `build` `dataengineering` `bigdata` `streaming` `caching` `ai` `llm` `agents` `rag` `mlops` `microservices` `api` `iac` `terraform` `async` `finance` `documents`
 
 **Concept type:** `pattern` `algorithm` `datastructure` `protocol` `deep-dive` `foundational` `intermediate` `advanced` `mental-model` `tradeoff` `antipattern` `bestpractice`
 
@@ -89,7 +128,7 @@ tags:
 
 | #    | Section Header                                       | Status                                    |
 | ---- | ---------------------------------------------------- | ----------------------------------------- |
-| 5.1  | `# NNNN — KEYWORD NAME`                              | Required                                  |
+| 5.1  | `# [CODE]-[NNN] — KEYWORD NAME`                      | Required                                  |
 | 5.2  | `⚡ TL;DR —` one sentence, max 25 words              | Required                                  |
 | 5.3  | Metadata table (Depends on / Used by / Related rows) | Required                                  |
 | 5.4  | `### 🔥 The Problem This Solves`                     | Required (+EVOLUTION)                     |
@@ -175,87 +214,142 @@ Exactly 3 questions using different types (A=System Interaction · B=Scale · C=
 
 ---
 
-### v1 Detection (for upgrades)
+### Version Detection
 
 A file is **v1** (needs upgrade) if ANY of the following are missing:
 
 **Section headers:** `### 🔥 The Problem This Solves` · `### ⏱️ Understand It in 30 Seconds` · `### 🧪 Thought Experiment` · `### 📶 Gradual Depth — Four Levels` · `### 🔄 The Complete Picture — End-to-End Flow` · `### ⚖️ Comparison Table` · `### 🚨 Failure Modes & Diagnosis`
 
-A file is **v2** only if ALL above fields and headers are present.
+A file is **v2** only if ALL above sections are present.
 
 A file is **v2.1** if it ALSO has: `### 💎 Transferable Wisdom` + `### 💡 The Surprising Truth` + `**EVOLUTION:**` in Problem section + 3 questions with `*Hint:*` in Think section.
 
+A file is **v3.0** if it ALSO has the new YAML frontmatter with `id:` field (format `CODE-NNN`) and `status:` field, and `depends_on` / `used_by` / `related` use full IDs (`JVM-001`) not keyword names.
+
 ---
 
-### Category → Parent Title → Permalink Slug Mapping
+### Category Code Registry
 
-| Folder                         | parent: value                  | permalink prefix        |
-| ------------------------------ | ------------------------------ | ----------------------- |
-| CS Fundamentals — Paradigms    | CS Fundamentals — Paradigms    | /cs-fundamentals/       |
-| Data Structures & Algorithms   | Data Structures & Algorithms   | /dsa/                   |
-| Operating Systems              | Operating Systems              | /operating-systems/     |
-| Linux                          | Linux                          | /linux/                 |
-| Networking                     | Networking                     | /networking/            |
-| HTTP & APIs                    | HTTP & APIs                    | /http-apis/             |
-| Java & JVM Internals           | Java & JVM Internals           | /java/                  |
-| Java Language                  | Java Language                  | /java-language/         |
-| Java Concurrency               | Java Concurrency               | /java-concurrency/      |
-| Spring Core                    | Spring Core                    | /spring/                |
-| Database Fundamentals          | Database Fundamentals          | /databases/             |
-| NoSQL & Distributed Databases  | NoSQL & Distributed Databases  | /nosql/                 |
-| Caching                        | Caching                        | /caching/               |
-| Data Fundamentals              | Data Fundamentals              | /data-fundamentals/     |
-| Big Data & Streaming           | Big Data & Streaming           | /big-data-streaming/    |
-| Distributed Systems            | Distributed Systems            | /distributed-systems/   |
-| Microservices                  | Microservices                  | /microservices/         |
-| System Design                  | System Design                  | /system-design/         |
-| Software Architecture Patterns | Software Architecture Patterns | /software-architecture/ |
-| Design Patterns                | Design Patterns                | /design-patterns/       |
-| Containers                     | Containers                     | /containers/            |
-| Kubernetes                     | Kubernetes                     | /kubernetes/            |
-| Cloud — AWS                    | Cloud — AWS                    | /cloud-aws/             |
-| Cloud — Azure                  | Cloud — Azure                  | /cloud-azure/           |
-| CI-CD                          | CI/CD                          | /ci-cd/                 |
-| Git & Branching Strategy       | Git & Branching Strategy       | /git/                   |
-| Maven & Build Tools (Java)     | Maven & Build Tools (Java)     | /maven-build/           |
-| Code Quality                   | Code Quality                   | /code-quality/          |
-| Testing                        | Testing                        | /testing/               |
-| Observability & SRE            | Observability & SRE            | /observability/         |
-| HTML                           | HTML                           | /html/                  |
-| CSS                            | CSS                            | /css/                   |
-| JavaScript                     | JavaScript                     | /javascript/            |
-| TypeScript                     | TypeScript                     | /typescript/            |
-| React                          | React                          | /react/                 |
-| Node.js                        | Node.js                        | /nodejs/                |
-| npm & Package Management       | npm & Package Management       | /npm/                   |
-| Webpack & Build Tools          | Webpack & Build Tools          | /webpack-build/         |
-| AI Foundations                 | AI Foundations                 | /ai-foundations/        |
-| LLMs & Prompt Engineering      | LLMs & Prompt Engineering      | /llms/                  |
-| RAG & Agents & LLMOps          | RAG & Agents & LLMOps          | /rag-agents/            |
-| Platform & Modern SWE          | Platform & Modern SWE          | /platform-engineering/  |
-| Behavioral & Leadership        | Behavioral & Leadership        | /leadership/            |
+| Code | Category Name                  | Tier                            | Folder                    |
+| ---- | ------------------------------ | ------------------------------- | ------------------------- |
+| CSF  | CS Fundamentals — Paradigms    | tier-1-foundations              | CSF-cs-fundamentals       |
+| DSA  | Data Structures & Algorithms   | tier-1-foundations              | DSA-data-structures       |
+| OSY  | Operating Systems              | tier-1-foundations              | OSY-operating-systems     |
+| LNX  | Linux                          | tier-1-foundations              | LNX-linux                 |
+| NET  | Networking                     | tier-2-networking-security      | NET-networking            |
+| API  | HTTP & APIs                    | tier-2-networking-security      | API-http-apis             |
+| SEC  | Security                       | tier-2-networking-security      | SEC-security              |
+| JVM  | Java & JVM Internals           | tier-3-java                     | JVM-java-jvm-internals    |
+| JLG  | Java Language                  | tier-3-java                     | JLG-java-language         |
+| JCC  | Java Concurrency               | tier-3-java                     | JCC-java-concurrency      |
+| SPR  | Spring Core                    | tier-3-java                     | SPR-spring-core           |
+| DBF  | Database Fundamentals          | tier-4-data                     | DBF-database-fundamentals |
+| NDB  | NoSQL & Distributed Databases  | tier-4-data                     | NDB-nosql-distributed     |
+| CCH  | Caching                        | tier-4-data                     | CCH-caching               |
+| DAT  | Data Fundamentals              | tier-4-data                     | DAT-data-fundamentals     |
+| BIG  | Big Data & Streaming           | tier-4-data                     | BIG-bigdata-streaming     |
+| DST  | Distributed Systems            | tier-5-distributed-architecture | DST-distributed-systems   |
+| MSV  | Microservices                  | tier-5-distributed-architecture | MSV-microservices         |
+| SYD  | System Design                  | tier-5-distributed-architecture | SYD-system-design         |
+| SAP  | Software Architecture Patterns | tier-5-distributed-architecture | SAP-software-architecture |
+| DPT  | Design Patterns                | tier-5-distributed-architecture | DPT-design-patterns       |
+| CTR  | Containers                     | tier-6-infrastructure-devops    | CTR-containers            |
+| K8S  | Kubernetes                     | tier-6-infrastructure-devops    | K8S-kubernetes            |
+| AWS  | Cloud — AWS                    | tier-6-infrastructure-devops    | AWS-cloud-aws             |
+| AZR  | Cloud — Azure                  | tier-6-infrastructure-devops    | AZR-cloud-azure           |
+| CCD  | CI/CD                          | tier-6-infrastructure-devops    | CCD-cicd                  |
+| GIT  | Git & Branching Strategy       | tier-6-infrastructure-devops    | GIT-git-branching         |
+| MVN  | Maven & Build Tools            | tier-6-infrastructure-devops    | MVN-maven-build           |
+| CDQ  | Code Quality                   | tier-6-infrastructure-devops    | CDQ-code-quality          |
+| TST  | Testing                        | tier-6-infrastructure-devops    | TST-testing               |
+| OBS  | Observability & SRE            | tier-6-infrastructure-devops    | OBS-observability-sre     |
+| IAC  | Infrastructure as Code         | tier-6-infrastructure-devops    | IAC-infrastructure-code   |
+| HTM  | HTML                           | tier-7-frontend                 | HTM-html                  |
+| CSS  | CSS                            | tier-7-frontend                 | CSS-css                   |
+| JSC  | JavaScript                     | tier-7-frontend                 | JSC-javascript            |
+| TSC  | TypeScript                     | tier-7-frontend                 | TSC-typescript            |
+| RCT  | React                          | tier-7-frontend                 | RCT-react                 |
+| ANG  | Angular                        | tier-7-frontend                 | ANG-angular               |
+| NDJ  | Node.js                        | tier-7-frontend                 | NDJ-nodejs                |
+| NPM  | npm & Package Management       | tier-7-frontend                 | NPM-npm-packages          |
+| WBP  | Webpack & Build Tools          | tier-7-frontend                 | WBP-webpack-build         |
+| AIF  | AI Foundations                 | tier-8-artificial-intelligence  | AIF-ai-foundations        |
+| LLM  | LLMs & Prompt Engineering      | tier-8-artificial-intelligence  | LLM-llms-prompt-eng       |
+| RAG  | RAG & Agents & LLMOps          | tier-8-artificial-intelligence  | RAG-rag-agents-llmops     |
+| AIP  | AI Product Engineering         | tier-8-artificial-intelligence  | AIP-ai-product            |
+| ASY  | Async & Background Processing  | tier-9-professional-domain      | ASY-async-background      |
+| DGN  | Document Generation            | tier-9-professional-domain      | DGN-document-generation   |
+| FIN  | Financial Services Domain      | tier-9-professional-domain      | FIN-financial-domain      |
+| PLT  | Platform & Modern SWE          | tier-9-professional-domain      | PLT-platform-swe          |
+| BHV  | Behavioral & Leadership        | tier-9-professional-domain      | BHV-behavioral-leadership |
+
+**To add a new category:** Choose a unique 3-letter code not in this table → add a row → create folder `/tier-N-name/CODE-folder-name/` → first entry is `[CODE]-001`.
 
 ---
 
 ### File Naming Convention
 
 ```
-<NNNN> — <Keyword Name>.md
+[CODE]-[NNN] — Keyword Name.md
 
 Examples:
-  0371 — IoC (Inversion of Control).md
-  1293 — Event Loop.md
-  0261 — JVM.md
+  JVM-036 — JIT Compiler.md
+  SEC-023 — CSRF.md
+  DSA-048 — Dynamic Programming.md
+  CSF-001 — Imperative Programming.md
 ```
 
-Special characters in names: `@` and `/` characters → use as-is in filename if the OS allows, otherwise replace with double-space.
+**Wikilinks in entry body:** `[[JVM-036 — JIT Compiler]]` — always full filename (ID + keyword name), never ID alone.
+
+---
+
+### Generation Invocation
+
+**Single entry:**
+
+```
+Generate dictionary entry:
+  ID:         JVM-036
+  Keyword:    JIT Compiler
+  Category:   Java & JVM Internals
+  Tier:       tier-3-java
+  Folder:     JVM-java-jvm-internals
+  Difficulty: ★★★
+
+Follow Master Prompt v2.1 and ID System v3.0 exactly.
+```
+
+**Batch:**
+
+```
+Generate dictionary entries JVM-036 through JVM-040:
+  JVM-036 | JIT Compiler       | ★★★
+  JVM-037 | C1 / C2 Compiler   | ★★★
+  JVM-038 | Tiered Compilation  | ★★★
+  JVM-039 | Method Inlining     | ★★★
+  JVM-040 | Deoptimization      | ★★★
+
+Category: Java & JVM Internals | Tier: tier-3-java | Folder: JVM-java-jvm-internals
+Follow Master Prompt v2.1 and ID System v3.0 exactly.
+```
+
+**Continue from last:**
+
+```
+Continue dictionary generation for category: JVM
+Last generated: JVM-035
+Next batch: JVM-036 through JVM-040
+Follow Master Prompt v2.1 and ID System v3.0 exactly.
+```
+
+---
 
 ### Git Workflow
 
 ```bash
 git add docs/
-git commit -m "feat: add <Category> <NNNN>–<NNNN> — batch <N>"
+git commit -m "feat: add <CODE>-<NNN>–<CODE>-<NNN> <Category> — batch <N>"
 # Do NOT git push
 ```
 
-Upgrade commits: `"upgrade: v1→v2 keywords NNNN–NNNN — batch N"`
+Upgrade commits: `"upgrade: v2.1→v3.0 <CODE>-<NNN>–<CODE>-<NNN> — batch N"`
