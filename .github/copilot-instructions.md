@@ -347,7 +347,7 @@ Follow Master Prompt v3.0 exactly.
 ### Git Workflow
 
 ```bash
-git add docs/
+git add dictionary/
 git commit -m "feat: add <CODE>-<NNN>–<CODE>-<NNN> <Category> — batch <N>"
 # Do NOT git push
 ```

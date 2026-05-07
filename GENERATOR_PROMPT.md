@@ -175,13 +175,21 @@ FILE NAMING CONVENTION
     LLM-035 — LLM-as-Judge Pattern.md
 
   WIKILINK FORMAT (in entry body):
-    [[JVM-036 — JIT Compiler]]      ← always full filename
+    [[JVM-036 — JIT Compiler]]      ← always full filename (no path)
     [[SEC-023 — CSRF]]
     Always include full ID + keyword name — never ID alone.
+    Never include folder path in wikilinks — filename only.
 
 ─────────────────────────────────────────────────────────────────────────
 FOLDER STRUCTURE
 ─────────────────────────────────────────────────────────────────────────
+
+  File path pattern:
+    dictionary/<tier-folder>/<CODE-folder>/CODE-NNN — Keyword Name.md
+
+  Example:
+    dictionary/tier-3-java/JVM-java-jvm-internals/JVM-036 — JIT Compiler.md
+    dictionary/tier-2-networking-security/SEC-security/SEC-023 — CSRF.md
 
   /dictionary/
   ├── /tier-1-foundations/
@@ -1944,7 +1952,7 @@ After all 10 files are created, run this in your terminal:
 
 ```powershell
 # Stage all new keyword files
-git add docs/
+git add dictionary/
 
 # Show what was added
 git status
@@ -2079,8 +2087,8 @@ Do not push to remote.
 
 STEP 6 — COMMIT:
 After all files are created, run:
-  git add docs/<Category Folder>/
-  git commit -m "feat: add [YOUR CATEGORY] keywords NNN–MMM"
+  git add dictionary/<tier-folder>/<CODE-folder>/
+  git commit -m "feat: add [YOUR CATEGORY] keywords CODE-NNN–CODE-NNN"
 
 STEP 7 — REPORT:
 Print:
@@ -2171,13 +2179,13 @@ LOOP (repeat automatically — no confirmation needed between batches):
        All 20 content sections required.
        File must be 100% self-contained.
 
-    d. WRITE to: docs/<correct Category Folder>/<NNNN> — <Keyword Name>.md
-       If the category folder doesn't exist yet, create it with an index.md first.
+    d. WRITE to: dictionary/<tier-folder>/<CODE-folder>/CODE-NNN — Keyword Name.md
+       If the category folder doesn't exist yet, create it inside the correct tier folder.
 
   STEP 4 — COMMIT THE BATCH:
     After all 10 files are created:
-      git add docs/
-      git commit -m "feat: add keywords NNNN–NNNN — <Category or mixed> batch N"
+      git add dictionary/
+      git commit -m "feat: add keywords CODE-NNN–CODE-NNN — <Category> batch N"
     Do NOT run git push.
 
   STEP 5 — LOOP:
@@ -2340,8 +2348,8 @@ LOOP (repeat automatically, no confirmation needed):
 
   STEP 4 — COMMIT THE BATCH:
     After all 10 files are rewritten:
-      git add docs/
-      git commit -m "upgrade: v1→v2 keywords NNNN–NNNN — <Category or mixed> batch <N>"
+      git add dictionary/
+      git commit -m "upgrade: v1→v2 keywords CODE-NNN–CODE-NNN — <Category> batch <N>"
     Do NOT run git push.
 
   STEP 5 — LOOP:
