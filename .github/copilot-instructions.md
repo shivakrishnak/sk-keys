@@ -4,13 +4,13 @@ This workspace is the **sk-keys Technical Dictionary** — a comprehensive softw
 
 ## Default Behaviour
 
-**Every file you generate or edit in this workspace follows the Technical Dictionary Generator — Master Prompt v2.0 spec exactly.**
+**Every file you generate or edit in this workspace follows the Technical Dictionary Generator — Master Prompt v2.1 spec exactly.**
 
 When asked to generate, create, upgrade, or edit any keyword entry `.md` file, apply all rules from the spec below without being asked. Do not skip sections. Do not add sections not in the spec. Do not ask for confirmation before generating.
 
 ---
 
-## Technical Dictionary Generator — Master Prompt v2.0
+## Technical Dictionary Generator — Master Prompt v2.1
 
 ### Persona & Teaching Philosophy
 
@@ -85,30 +85,31 @@ tags:
 
 ---
 
-### Content Structure — 20 Required Sections (in order)
+### Content Structure — 22 Required Sections (in order)
 
-| #    | Section Header                                       | Status                                   |
-| ---- | ---------------------------------------------------- | ---------------------------------------- |
-| 5.1  | `# NNNN — KEYWORD NAME`                              | Required                                 |
-| 5.2  | `⚡ TL;DR —` one sentence, max 25 words              | Required                                 |
-| 5.3  | Metadata table (Depends on / Used by / Related rows) | Required                                 |
-| 5.4  | `### 🔥 The Problem This Solves`                     | Required                                 |
-| 5.5  | `### 📘 Textbook Definition`                         | Required                                 |
-| 5.6  | `### ⏱️ Understand It in 30 Seconds`                 | Required                                 |
-| 5.7  | `### 🔩 First Principles Explanation`                | Required                                 |
-| 5.8  | `### 🧪 Thought Experiment`                          | Required                                 |
-| 5.9  | `### 🧠 Mental Model / Analogy`                      | Required                                 |
-| 5.10 | `### 📶 Gradual Depth — Four Levels`                 | Required                                 |
-| 5.11 | `### ⚙️ How It Works (Mechanism)`                    | Required                                 |
-| 5.12 | `### 🔄 The Complete Picture — End-to-End Flow`      | Required                                 |
-| 5.13 | `### 💻 Code Example`                                | Required if programmatic                 |
-| 5.14 | `### ⚖️ Comparison Table`                            | Required if alternatives exist           |
-| 5.15 | `### 🔁 Flow / Lifecycle`                            | Conditional (multi-phase lifecycle only) |
-| 5.16 | `### ⚠️ Common Misconceptions`                       | Required (min 4 rows)                    |
-| 5.17 | `### 🚨 Failure Modes & Diagnosis`                   | Required (min 3 modes)                   |
-| 5.18 | `### 🔗 Related Keywords`                            | Required (3 categories)                  |
-| 5.19 | `### 📌 Quick Reference Card`                        | Required (8-row ASCII box)               |
-| 5.20 | `### 🧠 Think About This Before We Continue`         | Required (exactly 3 questions)           |
+| #    | Section Header                                       | Status                                    |
+| ---- | ---------------------------------------------------- | ----------------------------------------- |
+| 5.1  | `# NNNN — KEYWORD NAME`                              | Required                                  |
+| 5.2  | `⚡ TL;DR —` one sentence, max 25 words              | Required                                  |
+| 5.3  | Metadata table (Depends on / Used by / Related rows) | Required                                  |
+| 5.4  | `### 🔥 The Problem This Solves`                     | Required (+EVOLUTION)                     |
+| 5.5  | `### 📘 Textbook Definition`                         | Required                                  |
+| 5.6  | `### ⏱️ Understand It in 30 Seconds`                 | Required                                  |
+| 5.7  | `### 🔩 First Principles Explanation`                | Required (+Essential/Accidental)          |
+| 5.8  | `### 🧪 Thought Experiment`                          | Required                                  |
+| 5.9  | `### 🧠 Mental Model / Analogy`                      | Required                                  |
+| 5.10 | `### 📶 Gradual Depth — Four Levels`                 | Required (+Expert Cues)                   |
+| 5.11 | `### ⚙️ How It Works (Mechanism)`                    | Required (+Concurrency if applicable)     |
+| 5.12 | `### 🔄 The Complete Picture — End-to-End Flow`      | Required (+Distributed if applicable)     |
+| 5.13 | `### 💻 Code Example`                                | Required if programmatic (+Testing)       |
+| 5.14 | `### ⚖️ Comparison Table`                            | Required if alternatives exist            |
+| 5.15 | `### 🔁 Flow / Lifecycle`                            | Conditional (multi-phase lifecycle only)  |
+| 5.16 | `### ⚠️ Common Misconceptions`                       | Required (min 4 rows)                     |
+| 5.17 | `### 🚨 Failure Modes & Diagnosis`                   | Required (min 3 modes, +Security)         |
+| 5.18 | `### 🔗 Related Keywords`                            | Required (3 categories)                   |
+| 5.19 | `### 📌 Quick Reference Card`                        | Required (8-row + Remember 3 + Interview) |
+| 5.20 | `### 💎 Transferable Wisdom`                         | Required (principle + 3 applications)     |
+| 5.21 | `### 🧠 Think About This Before We Continue`         | Required (exactly 3 questions)            |
 
 **Section spacing rule:** Every `###` heading MUST be preceded by `---` horizontal rule with one blank line before and after both the `---` and the `###`.
 
@@ -117,13 +118,13 @@ tags:
 ### Key Section Rules
 
 **5.4 The Problem This Solves:**
-Structure: `**WORLD WITHOUT IT:**` → `**THE BREAKING POINT:**` → `**THE INVENTION MOMENT:**`
+Structure: `**WORLD WITHOUT IT:**` → `**THE BREAKING POINT:**` → `**THE INVENTION MOMENT:**` → `**EVOLUTION:**`
 
 **5.6 Understand It in 30 Seconds:**
 Exactly 3 parts: `**One line:**` (≤15 words) · `**One analogy:**` (blockquote) · `**One insight:**`
 
 **5.7 First Principles:**
-Structure: `**CORE INVARIANTS:**` (numbered list) → `**DERIVED DESIGN:**` → `**THE TRADE-OFFS:**` (`**Gain:**` / `**Cost:**`)
+Structure: `**CORE INVARIANTS:**` (numbered list) → `**DERIVED DESIGN:**` → `**THE TRADE-OFFS:**` (`**Gain:**` / `**Cost:**`) → `**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**` (`**Essential:**` / `**Accidental:**`)
 
 **5.8 Thought Experiment:**
 Structure: `**SETUP:**` → `**WHAT HAPPENS WITHOUT [KEYWORD]:**` → `**WHAT HAPPENS WITH [KEYWORD]:**` → `**THE INSIGHT:**`
@@ -132,21 +133,27 @@ Structure: `**SETUP:**` → `**WHAT HAPPENS WITHOUT [KEYWORD]:**` → `**WHAT HA
 Analogy in `>` blockquote · explicit element mapping as bullet list · end with "Where this analogy breaks down: [1 sentence]"
 
 **5.10 Gradual Depth:**
-Exactly 4 levels: `**Level 1 — What it is (anyone can understand):**` · `**Level 2 — How to use it (junior developer):**` · `**Level 3 — How it works (mid-level engineer):**` · `**Level 4 — Why it was designed this way (senior/staff):**`
+Exactly 4 levels: `**Level 1 — What it is (anyone can understand):**` · `**Level 2 — How to use it (junior developer):**` · `**Level 3 — How it works (mid-level engineer):**` · `**Level 4 — Why it was designed this way (senior/staff):**` + Expert Thinking Cues
 
 **5.12 Complete Picture:**
-Structure: `**NORMAL FLOW:**` (ASCII diagram with `← YOU ARE HERE`) · `**FAILURE PATH:**` · `**WHAT CHANGES AT SCALE:**`
+Structure: `**NORMAL FLOW:**` (ASCII diagram with `← YOU ARE HERE`) · `**FAILURE PATH:**` · `**WHAT CHANGES AT SCALE:**` · `**CONCURRENCY & DISTRIBUTED IMPLICATIONS:**` (conditional)
+
+**5.13 Code Example:**
+BAD then GOOD patterns · labelled examples · conditional `**How to test / verify correctness:**` at end
 
 **5.17 Failure Modes:**
-Each mode: `**Symptom:**` · `**Root Cause:**` · `**Diagnostic:**` (real command in code block) · `**Fix:**` (BAD then GOOD) · `**Prevention:**`
+Each mode: `**Symptom:**` · `**Root Cause:**` · `**Diagnostic:**` (real command in code block) · `**Fix:**` (BAD then GOOD) · `**Prevention:**` · At least one security failure mode if attack surface exists
 
 **5.18 Related Keywords:**
 Three categories: `**Prerequisites (understand these first):**` · `**Builds On This (learn these next):**` · `**Alternatives / Comparisons:**`
 
 **5.19 Quick Reference Card:**
-8-row ASCII box: `WHAT IT IS` · `PROBLEM IT SOLVES` · `KEY INSIGHT` · `USE WHEN` · `AVOID WHEN` · `TRADE-OFF` · `ONE-LINER` · `NEXT EXPLORE`
+8-row ASCII box: `WHAT IT IS` · `PROBLEM IT SOLVES` · `KEY INSIGHT` · `USE WHEN` · `AVOID WHEN` · `TRADE-OFF` · `ONE-LINER` · `NEXT EXPLORE` · Then: `**If you remember only 3 things:**` + `**Interview one-liner:**`
 
-**5.20 Think About This:**
+**5.20 Transferable Wisdom:**
+Structure: `**Reusable Engineering Principle:**` (1–2 sentences) · `**Where else this pattern appears:**` (3 bullet points)
+
+**5.21 Think About This:**
 Exactly 3 questions using different types (A=System Interaction · B=Scale · C=Design Trade-off · D=Root Cause · E=First Principles · F=Comparison). Must NOT be answerable from the entry alone.
 
 ---
@@ -171,6 +178,8 @@ A file is **v1** (needs upgrade) if ANY of the following are missing:
 **Section headers:** `### 🔥 The Problem This Solves` · `### ⏱️ Understand It in 30 Seconds` · `### 🧪 Thought Experiment` · `### 📶 Gradual Depth — Four Levels` · `### 🔄 The Complete Picture — End-to-End Flow` · `### ⚖️ Comparison Table` · `### 🚨 Failure Modes & Diagnosis`
 
 A file is **v2** only if ALL above fields and headers are present.
+
+A file is **v2.1** if it ALSO has: `### 💎 Transferable Wisdom` + `**EVOLUTION:**` in Problem section + 3 questions in Think section.
 
 ---
 

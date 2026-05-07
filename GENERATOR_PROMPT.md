@@ -1,4 +1,4 @@
-# 🎯 Technical Dictionary Generator — Master Prompt v2.0
+﻿# 🎯 Technical Dictionary Generator — Master Prompt v2.1
 
 > **This is the authoritative generation spec** for every keyword entry in this dictionary.
 > Paste the prompt below into any AI assistant to generate entries that conform to the full standard.
@@ -7,7 +7,7 @@
 
 ````
 ═══════════════════════════════════════════════════════════════════════════
-TECHNICAL DICTIONARY GENERATOR — MASTER PROMPT v2.0
+TECHNICAL DICTIONARY GENERATOR — MASTER PROMPT v2.1
 ═══════════════════════════════════════════════════════════════════════════
 
 You are an elite Software Engineering mentor and technical writer.
@@ -395,6 +395,13 @@ Structure:
   **THE INVENTION MOMENT:**
   "This is exactly why [KEYWORD] was created."
 
+  **EVOLUTION:**
+  [2–3 sentences: what came before this concept → when/why it
+   emerged → where it is heading next. Gives temporal context.
+   Example: "Before GC, C programmers manually freed memory...
+   In 1959, John McCarthy introduced GC in Lisp...
+   Modern GCs now use concurrent, generational approaches."]
+
 ─────────────────────────────────────────────────────────────────────────
 5.5  TEXTBOOK DEFINITION  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
@@ -467,6 +474,14 @@ Content rules:
     (What you give up to get this — every design has a cost)
     **Gain:** [what you get]
     **Cost:** [what you sacrifice]
+
+    **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+    (Separate what's inherently hard from what's hard only
+     because of implementation choices — Rich Hickey's lens)
+    **Essential:** [What's fundamentally hard about this problem
+      — complexity that NO implementation can avoid]
+    **Accidental:** [What's hard only because of current tooling,
+      legacy decisions, or ecosystem constraints — could be simpler]
 
   - Use short code blocks or ASCII diagrams where needed
   - Ask and answer: "Could we do this differently?"
@@ -563,6 +578,12 @@ Content rules:
    considered and rejected. What makes this design elegant or flawed.
    Edge cases that expose the design's limits.]
 
+  **EXPERT THINKING CUES (weave into Level 4):**
+  - What do experts notice that beginners miss?
+  - What heuristic does a staff engineer use to decide?
+  - What red flag signals misuse of this concept?
+  - What's the decision framework for choosing this over alternatives?
+
 ─────────────────────────────────────────────────────────────────────────
 5.11  HOW IT WORKS — MECHANISM  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
@@ -592,6 +613,13 @@ Content rules:
     ★★★: 500 words
   - Always distinguish: "what happens in happy path" vs
     "what happens when something goes wrong"
+  - CONDITIONAL — if concept is used in multi-threaded or
+    distributed context, include:
+
+    **CONCURRENCY / THREAD-SAFETY BEHAVIOR:**
+    [Is it thread-safe? What synchronization is needed?
+     What happens under concurrent access without protection?
+     What's the memory visibility guarantee?]
 
 ─────────────────────────────────────────────────────────────────────────
 5.12  THE COMPLETE PICTURE — END-TO-END FLOW  [REQUIRED — NEW SECTION]
@@ -624,6 +652,13 @@ Content rules:
     **WHAT CHANGES AT SCALE:**
     [How behaviour shifts under production load]
 
+    **CONCURRENCY & DISTRIBUTED IMPLICATIONS:**
+    [CONDITIONAL — include if concept operates in concurrent or
+     distributed environments. 2–3 sentences on:
+     — How does this behave under concurrent access?
+     — What ordering/consistency guarantees exist?
+     — What network partition behaviour is expected?]
+
 ─────────────────────────────────────────────────────────────────────────
 5.13  CODE EXAMPLE  [REQUIRED if programmatic interface exists]
 ─────────────────────────────────────────────────────────────────────────
@@ -644,6 +679,12 @@ Content rules:
     ★☆☆: 1–2 examples
     ★★☆: 2–4 examples (include production pattern)
     ★★★: 3–5 examples (include diagnostic/tuning patterns)
+  - CONDITIONAL — if concept is testable, add after the last example:
+
+    **How to test / verify correctness:**
+    [1–3 sentences: the testing strategy. Unit test approach?
+     Integration test needed? Property-based test suitable?
+     What assertion proves this works correctly?]
 
 ─────────────────────────────────────────────────────────────────────────
 5.14  COMPARISON TABLE  [REQUIRED for concepts with alternatives]
@@ -745,6 +786,10 @@ Content rules:
     failures, security vulnerabilities, performance degradation
   - The Diagnostic Command is MANDATORY — no exceptions
   - Real commands only: jcmd, jstat, kubectl, docker stats, etc.
+  - SECURITY REQUIREMENT: If the concept has ANY attack surface
+    (user input, network exposure, auth, data storage, crypto),
+    at least ONE failure mode MUST address a security vulnerability.
+    Show the exploit vector, not just the bug.
 
 ─────────────────────────────────────────────────────────────────────────
 5.18  RELATED KEYWORDS  [REQUIRED]
@@ -807,8 +852,46 @@ Content rules:
   - Added "TRADE-OFF" row — always show the cost
   - Total box width: exactly 60 characters (including borders)
 
+  After the ASCII box, include:
+
+  **If you remember only 3 things:**
+  1. [The single most important insight — sticky, memorable]
+  2. [The key trade-off or constraint to never forget]
+  3. [The production gotcha that bites everyone once]
+
+  **Interview one-liner:**
+  "[How to explain this concept in ≤30 seconds during a
+    technical interview — crisp, confident, shows depth]"
+
 ─────────────────────────────────────────────────────────────────────────
-5.20  THINK ABOUT THIS  [REQUIRED]
+5.20  TRANSFERABLE WISDOM  [REQUIRED — NEW SECTION]
+─────────────────────────────────────────────────────────────────────────
+
+Section header:
+  ### 💎 Transferable Wisdom
+
+PURPOSE: Extract the reusable engineering principle that
+transcends this specific keyword. This is the meta-lesson —
+the pattern that applies to 10 other concepts the reader
+will encounter. Charlie Munger's "mental model lattice."
+
+Content rules:
+  - EXACTLY 2 parts:
+
+  **Reusable Engineering Principle:**
+  [1–2 sentences: the general principle this concept exemplifies.
+   Must apply BEYOND this keyword to other domains.
+   Example from "Circuit Breaker": "Fail fast to preserve
+   system capacity — applies to queues, timeouts, rate limiting,
+   and even human decision-making under uncertainty."]
+
+  **Where else this pattern appears:**
+  - [Domain/concept 1] — [how same principle manifests]
+  - [Domain/concept 2] — [how same principle manifests]
+  - [Domain/concept 3] — [how same principle manifests]
+
+─────────────────────────────────────────────────────────────────────────
+5.21  THINK ABOUT THIS  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
@@ -817,8 +900,8 @@ Section header:
 
 Content rules:
   - ALWAYS last section, preceded by horizontal rule ---
-  - EXACTLY 2 questions
-  - Question types (use DIFFERENT types for Q1 and Q2):
+  - EXACTLY 3 questions
+  - Question types (use DIFFERENT types for Q1, Q2, and Q3):
     TYPE A — System Interaction:
       "What happens when X meets Y under condition Z?"
     TYPE B — Scale Thought Experiment:
@@ -838,6 +921,7 @@ Content rules:
   - Format:
     **Q1.** [Question — 2–4 sentences, specific scenario]
     **Q2.** [Question — 2–4 sentences, different angle and type]
+    **Q3.** [Question — 2–4 sentences, yet another type]
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 6: FORMATTING RULES — UNIVERSAL
@@ -1005,6 +1089,9 @@ tags:
 **THE INVENTION MOMENT:**
 "This is exactly why [KEYWORD] was created."
 
+**EVOLUTION:**
+[2–3 sentences: predecessor → current form → where heading.]
+
 ---
 
 ### 📘 Textbook Definition
@@ -1038,6 +1125,10 @@ tags:
 **THE TRADE-OFFS:**
 **Gain:** [what you get]
 **Cost:** [what you sacrifice]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [What no implementation can avoid]
+**Accidental:** [What’s hard only due to current tooling/ecosystem]
 
 ---
 
@@ -1107,6 +1198,9 @@ Where this analogy breaks down: [1 sentence.]
 ### 💻 Code Example
 [REQUIRED if programmatic. SKIP for pure theory.]
 [BAD then GOOD. Labelled examples. Annotated. Max 70 chars/line.]
+
+**How to test / verify correctness:**
+[1–3 sentences: testing strategy for this concept.]
 
 ---
 
@@ -1202,6 +1296,26 @@ Fix:
 │ NEXT EXPLORE │ Keyword1 → Keyword2 → Keyword3            │
 └──────────────────────────────────────────────────────────┘
 
+**If you remember only 3 things:**
+1. [Most important insight]
+2. [Key trade-off or constraint]
+3. [Production gotcha]
+
+**Interview one-liner:**
+"[30-second explanation showing depth]"
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+[1–2 sentences: the general principle beyond this keyword.]
+
+**Where else this pattern appears:**
+- [Domain 1] — [how same principle manifests]
+- [Domain 2] — [how same principle manifests]
+- [Domain 3] — [how same principle manifests]
+
 ---
 ### 🧠 Think About This Before We Continue
 
@@ -1210,6 +1324,9 @@ Fix:
 
 **Q2.** [TYPE Y question — different type than Q1.
         2–4 sentences. Different angle. Deeper challenge.]
+
+**Q3.** [TYPE Z question — different type than Q1 and Q2.
+        2–4 sentences. Yet another angle.]
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 9: INVOCATION — HOW TO USE THIS PROMPT
@@ -1222,7 +1339,7 @@ SINGLE ENTRY:
   Category: [CATEGORY NAME]
   Difficulty: [★☆☆ | ★★☆ | ★★★]
 
-  Follow the Technical Dictionary Generator prompt v2.0 exactly.
+  Follow the Technical Dictionary Generator prompt v2.1 exactly.
   Use the complete skeleton from Section 8.
   Do not skip any required section.
   Do not add sections not in the spec.
@@ -1237,7 +1354,7 @@ BATCH OF 5:
   - [KEYWORD 4] (NNNN) — [difficulty]
   - [KEYWORD 5] (NNNN) — [difficulty]
 
-  Follow Technical Dictionary Generator v2.0 exactly.
+  Follow Technical Dictionary Generator v2.1 exactly.
   Each entry is a separate markdown file.
   Sequential numbering.
   Each entry fully self-contained.
@@ -1246,7 +1363,7 @@ CONTINUE FROM LAST:
 
   Continue dictionary generation from entry NNNN.
   Next: [KEYWORD 1] through [KEYWORD 5].
-  Follow Technical Dictionary Generator v2.0 exactly.
+  Follow Technical Dictionary Generator v2.1 exactly.
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 10: SELF-VALIDATION CHECKLIST
@@ -1268,39 +1385,48 @@ FRONTMATTER:
   ☐ related: plain text, no brackets, max 5
   ☐ tags: YAML array items, no # prefix, from taxonomy (Section 4)
 
-STRUCTURE (20 sections check):
+STRUCTURE (22 sections check):
   ☐ 5.1  Title line with keyword name
   ☐ 5.2  TL;DR — one sentence, max 25 words
   ☐ 5.3  Metadata table with Related row
-  ☐ 5.4  The Problem This Solves (NEW)
+  ☐ 5.4  The Problem This Solves + EVOLUTION sub-label (UPGRADED)
   ☐ 5.5  Textbook Definition
-  ☐ 5.6  Understand It in 30 Seconds (NEW)
-  ☐ 5.7  First Principles — invariants + derived + trade-offs (UPGRADED)
-  ☐ 5.8  Thought Experiment (NEW)
-  ☐ 5.9  Mental Model / Analogy — with breakdown note (UPGRADED)
-  ☐ 5.10 Gradual Depth — four levels (NEW)
-  ☐ 5.11 How It Works — mechanism
-  ☐ 5.12 The Complete Picture — E2E flow (NEW)
-  ☐ 5.13 Code Example (if programmatic)
-  ☐ 5.14 Comparison Table (if alternatives exist) (NEW)
+  ☐ 5.6  Understand It in 30 Seconds
+  ☐ 5.7  First Principles — invariants + trade-offs + essential/accidental (UPGRADED)
+  ☐ 5.8  Thought Experiment
+  ☐ 5.9  Mental Model / Analogy — with breakdown note
+  ☐ 5.10 Gradual Depth — four levels + expert thinking cues (UPGRADED)
+  ☐ 5.11 How It Works — mechanism + concurrency behavior (UPGRADED)
+  ☐ 5.12 The Complete Picture — E2E + distributed implications (UPGRADED)
+  ☐ 5.13 Code Example + testing strategy (if programmatic) (UPGRADED)
+  ☐ 5.14 Comparison Table (if alternatives exist)
   ☐ 5.15 Flow / Lifecycle (if applicable)
   ☐ 5.16 Common Misconceptions — min 4 rows
-  ☐ 5.17 Failure Modes & Diagnosis — min 3, with diagnostics (UPGRADED)
-  ☐ 5.18 Related Keywords — 3 categories (UPGRADED)
-  ☐ 5.19 Quick Reference Card — 8-row format (UPGRADED)
-  ☐ 5.20 Think About This — exactly 2 different-type questions
+  ☐ 5.17 Failure Modes & Diagnosis — min 3, with security mode (UPGRADED)
+  ☐ 5.18 Related Keywords — 3 categories
+  ☐ 5.19 Quick Reference Card — 8-row + "remember 3" + interview (UPGRADED)
+  ☐ 5.20 Transferable Wisdom (NEW)
+  ☐ 5.21 Think About This — exactly 3 different-type questions (UPGRADED)
 
 CONTENT QUALITY:
   ☐ Reader can understand fully without external lookup
   ☐ WHY comes before WHAT in every explanation
   ☐ Every failure mode has a real diagnostic command
+  ☐ At least one failure mode addresses security (if attack surface exists)
   ☐ Thought experiment uses concrete numbers/steps
   ☐ Analogy includes "where it breaks down" note
   ☐ Gradual depth — all 4 levels present and escalating
+  ☐ Level 4 includes expert thinking cues
   ☐ End-to-end flow shows failure path AND scale behaviour
+  ☐ Essential vs accidental complexity distinguished in First Principles
+  ☐ Historical evolution included in Problem section
   ☐ Comparison table has "Best For" + "How to choose" note
   ☐ Related Keywords uses 3-category structure
-  ☐ Quick Reference Card has all 8 rows
+  ☐ Quick Reference Card has all 8 rows + "remember 3" + interview
+  ☐ Transferable Wisdom extracts reusable principle + 3 applications
+  ☐ Testing/verification strategy stated (if concept is testable)
+  ☐ Concurrency behavior noted (if applicable)
+  ☐ Think About This has exactly 3 questions, all different types
 
 FORMATTING:
   ☐ No ASCII diagram exceeds 59 characters wide
@@ -1331,8 +1457,45 @@ TEACHING PRINCIPLES (Section 1):
   ☐ P12: Knowledge systematised via tables, flows, lists
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 11: CHANGE LOG — v1 → v2
+SECTION 11: CHANGE LOG — v1 → v2 → v2.1
 ═══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────────────────────────────────
+v2.1 CHANGES (from v2.0)
+─────────────────────────────────────────────────────────────────────────
+
+NEW SECTIONS ADDED:
+  5.20  Transferable Wisdom
+        (reusable engineering principle + cross-domain applications)
+
+UPGRADED SECTIONS:
+  5.4   The Problem This Solves — added **EVOLUTION:** sub-label
+        (historical context: predecessor → current → future direction)
+  5.7   First Principles — added **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+        (Rich Hickey’s lens: what’s inherently hard vs implementation-hard)
+  5.10  Gradual Depth — Level 4 now includes EXPERT THINKING CUES
+        (what experts notice, heuristics, red flags, decision frameworks)
+  5.11  How It Works — added conditional CONCURRENCY / THREAD-SAFETY
+        (thread-safety, synchronization needs, memory visibility)
+  5.12  Complete Picture — added CONCURRENCY & DISTRIBUTED IMPLICATIONS
+        (concurrent access, ordering guarantees, partition behavior)
+  5.13  Code Example — added conditional **How to test / verify:**
+        (testing strategy, assertion approach, verification method)
+  5.17  Failure Modes — added SECURITY REQUIREMENT
+        (at least one security failure mode if attack surface exists)
+  5.19  Quick Reference Card — added **If you remember only 3 things:**
+        + **Interview one-liner:** after the ASCII box
+  5.21  Think About This — 2 questions → 3 questions
+        (three different question types required)
+
+OTHER CHANGES:
+  - Section count: 20 → 22 (21 content sections + conditional §5.15)
+  - Checklist expanded with 8 new quality checks
+  - Category list: updated to match 48-category master list
+
+─────────────────────────────────────────────────────────────────────────
+v2.0 CHANGES (from v1)
+─────────────────────────────────────────────────────────────────────────
 
 NEW SECTIONS ADDED:
   5.4   The Problem This Solves
@@ -1363,7 +1526,7 @@ OTHER CHANGES:
   - Category list: updated to match 43-category master list
 
 ═══════════════════════════════════════════════════════════════════════════
-END OF PROMPT v2.0
+END OF PROMPT v2.1
 ═══════════════════════════════════════════════════════════════════════════
 ```
 
@@ -1381,7 +1544,7 @@ Number: 1293
 Category: JavaScript
 Difficulty: ★★★
 
-Follow the Technical Dictionary Generator prompt v2.0 exactly.
+Follow the Technical Dictionary Generator prompt v2.1 exactly.
 ```
 
 **For batch generation:**
@@ -1394,7 +1557,7 @@ Generate dictionary entries for keywords 1291–1295:
 - Task Queue (Macrotask) (1294)
 - Microtask Queue (1295)
 
-Follow the Technical Dictionary Generator prompt v2.0 exactly.
+Follow the Technical Dictionary Generator prompt v2.1 exactly.
 Generate each as a separate markdown file.
 ```
 
@@ -1403,7 +1566,7 @@ Generate each as a separate markdown file.
 ```
 Continue dictionary generation from entry [NNNN].
 Next batch: [KEYWORD 1] through [KEYWORD 5].
-Follow the Technical Dictionary Generator prompt v2.0 exactly.
+Follow the Technical Dictionary Generator prompt v2.1 exactly.
 ```
 
 ---
@@ -1431,7 +1594,7 @@ Then ask: "Shall I generate these 10 entries now?"
 
 STEP 3 — GENERATE ALL 10 ENTRIES:
 For each of the 10 keywords, generate a complete entry following the
-Technical Dictionary Generator spec (GENERATOR_PROMPT.md v2.0) exactly.
+Technical Dictionary Generator spec (GENERATOR_PROMPT.md v2.1) exactly.
 
 Output each entry as a separate markdown file:
   File path: docs/<Category Folder>/<NNN> — <Keyword Name>.md
@@ -1500,7 +1663,7 @@ Create each file in its correct docs/<Category Folder>/ directory.
 Do not skip any of the 10 entries.
 Do not push to remote.
 
-Follow GENERATOR_PROMPT.md v2.0 spec exactly for every entry.
+Follow GENERATOR_PROMPT.md v2.1 spec exactly for every entry.
 ```
 
 ---
@@ -1568,7 +1731,7 @@ Print the batch you will generate:
 Then ask: "Shall I generate these now?"
 
 STEP 4 — GENERATE ALL ENTRIES IN THE BATCH:
-For each keyword, generate a complete entry following GENERATOR_PROMPT.md v2.0 spec.
+For each keyword, generate a complete entry following GENERATOR_PROMPT.md v2.1 spec.
 
 File path: docs/<Category Folder>/<NNN> — <Keyword Name>.md
 
@@ -1686,7 +1849,7 @@ continuously until every missing keyword entry has been created. No confirmation
 
 ```
 You are an automated keyword generation agent for the sk-keys Technical Dictionary.
-Your job: generate every missing keyword entry using the v2.0 spec, 10 files at a time,
+Your job: generate every missing keyword entry using the v2.1 spec, 10 files at a time,
 committing after each batch, rolling continuously until all entries exist.
 
 ═══════════════════════════════════════════════════════════════════════
@@ -1731,7 +1894,7 @@ LOOP (repeat automatically — no confirmation needed between batches):
          - related    → up to 5 lateral / alternative concepts
          - tags       → 3–6 tags from approved taxonomy (Section 4)
 
-    c. GENERATE the complete file using GENERATOR_PROMPT.md v2.0 spec.
+    c. GENERATE the complete file using GENERATOR_PROMPT.md v2.1 spec.
        All 20 content sections required.
        File must be 100% self-contained.
 
@@ -1813,7 +1976,7 @@ RULES
 - Commit message format: "feat: add keywords NNNN–NNNN — batch N"
 - Do NOT git push
 - Do NOT pause or ask for confirmation between batches — keep rolling
-- Follow GENERATOR_PROMPT.md v2.0 spec exactly for every single entry
+- Follow GENERATOR_PROMPT.md v2.1 spec exactly for every single entry
 - If a category folder doesn't exist, create it with an appropriate index.md
 ```
 
@@ -1826,7 +1989,7 @@ No confirmation prompts — it keeps going until every file is upgraded.
 
 ```
 You are an automated upgrade agent for the sk-keys Technical Dictionary.
-Your job: upgrade every v1 keyword entry to the v2.0 spec, 10 files at a time,
+Your job: upgrade every v1 keyword entry to the v2.1 spec, 10 files at a time,
 committing after each batch, rolling continuously until all files are done.
 
 ═══════════════════════════════════════════════════════════════════════
@@ -1895,7 +2058,7 @@ LOOP (repeat automatically, no confirmation needed):
          - number     → zero-padded 4-digit string in double quotes
          - tags       → keep existing tags if valid, else derive from content
 
-    c. REGENERATE the file completely using GENERATOR_PROMPT.md v2.0 spec.
+    c. REGENERATE the file completely using GENERATOR_PROMPT.md v2.1 spec.
        Do NOT patch the old file. Fully rewrite it from scratch.
        Preserve: keyword number, name, category, difficulty.
        Generate fresh: all 20 content sections per v2 spec.
@@ -1915,7 +2078,7 @@ LOOP (repeat automatically, no confirmation needed):
     Keep looping until 0 v1 files remain.
 
   WHEN ALL FILES ARE DONE, print:
-    "✅ All keyword files upgraded to v2.0.
+    "✅ All keyword files upgraded to v2.1.
      Total upgraded: [N] files across [X] batches.
      Run 'git log --oneline' to see all upgrade commits."
 
@@ -1978,6 +2141,6 @@ RULES
 - Commit message format: "upgrade: v1→v2 keywords NNNN–NNNN — batch N"
 - Do NOT git push
 - Do NOT pause between batches — keep rolling
-- Follow GENERATOR_PROMPT.md v2.0 spec exactly for every single entry
+- Follow GENERATOR_PROMPT.md v2.1 spec exactly for every single entry
 ```
 ````
