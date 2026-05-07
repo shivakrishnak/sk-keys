@@ -891,7 +891,35 @@ Content rules:
   - [Domain/concept 3] — [how same principle manifests]
 
 ─────────────────────────────────────────────────────────────────────────
-5.21  THINK ABOUT THIS  [REQUIRED]
+5.21  THE SURPRISING TRUTH  [REQUIRED — NEW SECTION]
+─────────────────────────────────────────────────────────────────────────
+
+Section header:
+  ### 💡 The Surprising Truth
+
+PURPOSE: One perspective-shifting, counterintuitive, or jaw-dropping
+fact that makes this concept permanently memorable. NOT a summary —
+it reveals something the reader probably did NOT expect or never
+considered from this angle.
+
+Content rules:
+  - EXACTLY ONE surprising truth — do not pad with multiple facts
+  - Must be genuinely counterintuitive OR reveal a perspective the
+    reader would not naturally arrive at
+  - Must be factually accurate and specific — not vague wonder
+  - 2–4 sentences, plain prose
+  - Test: would a senior engineer think "I didn’t know that" OR
+    "I knew it but never saw it that way"? If yes: publish it.
+  - Good sources of surprising truths:
+    * A counterintuitive performance property (slower IS faster)
+    * A scale fact that breaks common intuition
+    * An unexpected origin, inventor, or historical accident
+    * A design decision that was almost completely different
+    * A connection to an unrelated field (biology, economics, physics)
+    * What happens at extreme scale that nobody mentions in tutorials
+
+─────────────────────────────────────────────────────────────────────────
+5.22  THINK ABOUT THIS  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
@@ -918,10 +946,22 @@ Content rules:
        that makes X correct and Y wrong — or vice versa?"
   - Questions must NOT be answerable from entry content alone
   - Questions must require connecting to OTHER concepts
+  - Each question MUST be followed by a *Hint:* line
+    The hint points WHERE to look — NOT the answer
+    Examples of good hints:
+      *Hint: Think about how the OS scheduler interacts with
+       thread state at the CPU cache level.*
+      *Hint: Consider what network partition behaviour implies
+       for the consistency model you chose.*
   - Format:
     **Q1.** [Question — 2–4 sentences, specific scenario]
+    *Hint: [Direction — WHERE to look, not the answer.]*
+
     **Q2.** [Question — 2–4 sentences, different angle and type]
+    *Hint: [Direction — different area than Q1 hint.]*
+
     **Q3.** [Question — 2–4 sentences, yet another type]
+    *Hint: [Direction — different area than Q1 and Q2 hints.]*
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 6: FORMATTING RULES — UNIVERSAL
@@ -1317,16 +1357,28 @@ Fix:
 - [Domain 3] — [how same principle manifests]
 
 ---
+
+### 💡 The Surprising Truth
+
+[2–4 sentences. One counterintuitive, jaw-dropping fact that
+ makes this concept permanently memorable. Something the reader
+ would not naturally arrive at on their own.]
+
+---
 ### 🧠 Think About This Before We Continue
 
 **Q1.** [TYPE X question — system interaction or scale scenario.
         2–4 sentences. Specific. Not answerable from this entry alone.]
+*Hint: [WHERE to look — not the answer. e.g., "Consider how the
+ OS scheduler interacts with..."]*
 
 **Q2.** [TYPE Y question — different type than Q1.
         2–4 sentences. Different angle. Deeper challenge.]
+*Hint: [Different direction than Q1 hint.]*
 
 **Q3.** [TYPE Z question — different type than Q1 and Q2.
         2–4 sentences. Yet another angle.]
+*Hint: [Different direction than Q1 and Q2 hints.]*
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 9: INVOCATION — HOW TO USE THIS PROMPT
@@ -1385,7 +1437,7 @@ FRONTMATTER:
   ☐ related: plain text, no brackets, max 5
   ☐ tags: YAML array items, no # prefix, from taxonomy (Section 4)
 
-STRUCTURE (22 sections check):
+STRUCTURE (23 sections check):
   ☐ 5.1  Title line with keyword name
   ☐ 5.2  TL;DR — one sentence, max 25 words
   ☐ 5.3  Metadata table with Related row
@@ -1405,8 +1457,9 @@ STRUCTURE (22 sections check):
   ☐ 5.17 Failure Modes & Diagnosis — min 3, with security mode (UPGRADED)
   ☐ 5.18 Related Keywords — 3 categories
   ☐ 5.19 Quick Reference Card — 8-row + "remember 3" + interview (UPGRADED)
-  ☐ 5.20 Transferable Wisdom (NEW)
-  ☐ 5.21 Think About This — exactly 3 different-type questions (UPGRADED)
+  ☐ 5.20 Transferable Wisdom
+  ☐ 5.21 The Surprising Truth — one counterintuitive fact (NEW)
+  ☐ 5.22 Think About This — 3 questions each with hint (UPGRADED)
 
 CONTENT QUALITY:
   ☐ Reader can understand fully without external lookup
@@ -1424,9 +1477,11 @@ CONTENT QUALITY:
   ☐ Related Keywords uses 3-category structure
   ☐ Quick Reference Card has all 8 rows + "remember 3" + interview
   ☐ Transferable Wisdom extracts reusable principle + 3 applications
+  ☐ Surprising Truth is genuinely counterintuitive and specific
   ☐ Testing/verification strategy stated (if concept is testable)
   ☐ Concurrency behavior noted (if applicable)
   ☐ Think About This has exactly 3 questions, all different types
+  ☐ Each question is followed by a *Hint:* direction pointer
 
 FORMATTING:
   ☐ No ASCII diagram exceeds 59 characters wide
@@ -1465,8 +1520,9 @@ v2.1 CHANGES (from v2.0)
 ─────────────────────────────────────────────────────────────────────────
 
 NEW SECTIONS ADDED:
-  5.20  Transferable Wisdom
-        (reusable engineering principle + cross-domain applications)
+  5.21  The Surprising Truth
+        (one counterintuitive, jaw-dropping fact that makes the
+         concept permanently memorable from an unexpected angle)
 
 UPGRADED SECTIONS:
   5.4   The Problem This Solves — added **EVOLUTION:** sub-label
@@ -1485,12 +1541,13 @@ UPGRADED SECTIONS:
         (at least one security failure mode if attack surface exists)
   5.19  Quick Reference Card — added **If you remember only 3 things:**
         + **Interview one-liner:** after the ASCII box
-  5.21  Think About This — 2 questions → 3 questions
-        (three different question types required)
+  5.20  Transferable Wisdom (new in this batch)
+  5.22  Think About This — 2 questions → 3 questions with *Hint:* per Q
+        (three different question types + direction hint per question)
 
 OTHER CHANGES:
-  - Section count: 20 → 22 (21 content sections + conditional §5.15)
-  - Checklist expanded with 8 new quality checks
+  - Section count: 20 → 23 (22 content sections + conditional §5.15)
+  - Checklist expanded with 10 new quality checks
   - Category list: updated to match 48-category master list
 
 ─────────────────────────────────────────────────────────────────────────

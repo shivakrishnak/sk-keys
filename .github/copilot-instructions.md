@@ -85,7 +85,7 @@ tags:
 
 ---
 
-### Content Structure — 22 Required Sections (in order)
+### Content Structure — 23 Required Sections (in order)
 
 | #    | Section Header                                       | Status                                    |
 | ---- | ---------------------------------------------------- | ----------------------------------------- |
@@ -109,7 +109,8 @@ tags:
 | 5.18 | `### 🔗 Related Keywords`                            | Required (3 categories)                   |
 | 5.19 | `### 📌 Quick Reference Card`                        | Required (8-row + Remember 3 + Interview) |
 | 5.20 | `### 💎 Transferable Wisdom`                         | Required (principle + 3 applications)     |
-| 5.21 | `### 🧠 Think About This Before We Continue`         | Required (exactly 3 questions)            |
+| 5.21 | `### 💡 The Surprising Truth`                        | Required (1 counterintuitive fact)        |
+| 5.22 | `### 🧠 Think About This Before We Continue`         | Required (3 questions + hint per Q)       |
 
 **Section spacing rule:** Every `###` heading MUST be preceded by `---` horizontal rule with one blank line before and after both the `---` and the `###`.
 
@@ -153,8 +154,11 @@ Three categories: `**Prerequisites (understand these first):**` · `**Builds On 
 **5.20 Transferable Wisdom:**
 Structure: `**Reusable Engineering Principle:**` (1–2 sentences) · `**Where else this pattern appears:**` (3 bullet points)
 
-**5.21 Think About This:**
-Exactly 3 questions using different types (A=System Interaction · B=Scale · C=Design Trade-off · D=Root Cause · E=First Principles · F=Comparison). Must NOT be answerable from the entry alone.
+**5.21 The Surprising Truth:**
+Exactly ONE counterintuitive or perspective-shifting fact (2–4 sentences). Must be specific, factually accurate, and reveal something the reader would not naturally arrive at.
+
+**5.22 Think About This:**
+Exactly 3 questions using different types (A=System Interaction · B=Scale · C=Design Trade-off · D=Root Cause · E=First Principles · F=Comparison). Each question is followed by a `*Hint:*` line pointing WHERE to look (not the answer). Must NOT be answerable from the entry alone.
 
 ---
 
@@ -179,7 +183,7 @@ A file is **v1** (needs upgrade) if ANY of the following are missing:
 
 A file is **v2** only if ALL above fields and headers are present.
 
-A file is **v2.1** if it ALSO has: `### 💎 Transferable Wisdom` + `**EVOLUTION:**` in Problem section + 3 questions in Think section.
+A file is **v2.1** if it ALSO has: `### 💎 Transferable Wisdom` + `### 💡 The Surprising Truth` + `**EVOLUTION:**` in Problem section + 3 questions with `*Hint:*` in Think section.
 
 ---
 
