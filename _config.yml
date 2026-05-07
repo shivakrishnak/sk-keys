@@ -9,8 +9,7 @@ plugins:
 exclude:
   - README.md
   - Update-MarkdownFrontmatter.ps1
-  - Gemfile
-  - Gemfile.lock
+  - tmp/
 
 url: https://shivakrishnak.github.io
 baseurl: /sk-keys
