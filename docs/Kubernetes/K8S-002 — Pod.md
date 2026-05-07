@@ -1,0 +1,213 @@
+---
+layout: default
+title: "Pod"
+parent: "Kubernetes"
+nav_order: 2
+permalink: /kubernetes/pod/
+number: "K8S-002"
+category: "Kubernetes"
+difficulty: "★☆☆"
+depends_on: ["Kubernetes Architecture", "Containers"]
+used_by:
+  ["Deployment", "ReplicaSet", "StatefulSet", "DaemonSet", "Job / CronJob"]
+related:
+  ["Container", "Namespace (K8s)", "ConfigMap", "Secret", "Service (K8s)"]
+tags: [kubernetes, pod, container, k8s, workload]
+---
+
+# Pod
+
+## ⚡ TL;DR
+
+A Pod is the **smallest deployable unit** in Kubernetes — a wrapper around one or more containers that share the same network namespace and storage volumes. Think: containers in a Pod can talk via `localhost`.
+
+---
+
+## 🔥 Problem This Solves
+
+Containers need to share a network identity (IP), storage, and lifecycle. A Pod provides a co-located, co-scheduled execution environment for tightly coupled containers.
+
+---
+
+## 📘 Textbook Definition
+
+A Pod is a group of one or more containers with shared storage and network resources, and a specification for how to run the containers. Pods are ephemeral — they are created, killed, and replaced.
+
+---
+
+## ⏱️ 30 Seconds
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-app
+spec:
+  containers:
+    - name: app
+      image: my-app:1.0
+      ports:
+        - containerPort: 8080
+      resources:
+        requests:
+          memory: "256Mi"
+          cpu: "250m"
+        limits:
+          memory: "512Mi"
+          cpu: "500m"
+    - name: sidecar
+      image: log-forwarder:1.0
+```
+
+---
+
+## 🔩 First Principles
+
+- **Shared network**: all containers in a Pod share one IP and port space — communicate via `localhost`
+- **Shared storage**: volumes mounted in a Pod are accessible by all containers
+- **Ephemeral**: Pods are mortal — they don't self-heal (Deployments/ReplicaSets do that)
+- **Atomic scheduling**: all containers in a Pod land on the same node
+
+---
+
+## 🧪 Thought Experiment
+
+Why not just run containers directly? Because tightly coupled processes (app + sidecar proxy + log agent) need to share a network and filesystem without extra routing. A Pod provides this colocation without requiring them to be a single monolithic container.
+
+---
+
+## 🧠 Mental Model / Analogy
+
+A Pod is like a **shipping container** that holds multiple items (containers) sharing the same "address" (IP). Items inside can hand things to each other directly; items outside must use the container's address.
+
+---
+
+## 📶 Gradual Depth
+
+**Level 1 — Beginner**: A Pod runs your containers. It's the smallest thing Kubernetes knows how to schedule.
+
+**Level 2 — Practitioner**: Pods have a lifecycle: Pending → Running → Succeeded/Failed. They have an IP on the cluster network. Containers share that IP. Init containers run before main containers.
+
+**Level 3 — Advanced**: Pod spec includes `initContainers`, `volumes`, `env`, `envFrom`, `securityContext`, `readinessProbe`, `livenessProbe`. Pods are assigned a `serviceAccountName` for API access.
+
+**Level 4 — Expert**: Pod sandbox created by container runtime (pause container holds network namespace). `pause` container never dies while Pod lives. Ephemeral containers can be injected for live debugging. Pod QoS class (Guaranteed/Burstable/BestEffort) determined by resource requests/limits.
+
+---
+
+## ⚙️ How It Works
+
+### Pod Lifecycle Phases
+
+```
+Pending   → Pod accepted; containers not yet running (scheduling or image pull)
+Running   → At least one container is running
+Succeeded → All containers exited 0
+Failed    → At least one container exited non-0
+Unknown   → Node unreachable
+```
+
+### Container Types in a Pod
+
+| Type                     | Purpose                                                    |
+| ------------------------ | ---------------------------------------------------------- |
+| **init containers**      | Run to completion before app containers start; setup tasks |
+| **app containers**       | Primary workload containers                                |
+| **sidecar containers**   | Support roles (logging, proxying, secret injection)        |
+| **ephemeral containers** | Injected for debugging live Pods                           |
+
+### Pod Networking
+
+```
+Pod IP assigned by CNI plugin (Calico/Cilium/Flannel)
+All containers share:  eth0 interface, localhost, port space
+Containers communicate: localhost:PORT
+Inter-Pod:             PodIP:PORT or Service DNS
+```
+
+---
+
+## 🔄 E2E Flow: Pod Creation
+
+```
+kubectl apply → API Server persists PodSpec → Scheduler assigns node
+→ kubelet on node:
+    1. Pull images (via CRI/containerd)
+    2. Create pause container (network namespace)
+    3. Run init containers (sequential)
+    4. Run app containers (parallel)
+    5. Run probes (readiness, liveness)
+→ Pod status = Running → Endpoint added to Services
+```
+
+---
+
+## ⚖️ Comparison Table
+
+|                | Single Container Pod | Multi-Container Pod   |
+| -------------- | -------------------- | --------------------- |
+| **Use case**   | Typical microservice | App + sidecar pattern |
+| **Networking** | Pod IP               | Shared Pod IP         |
+| **Complexity** | Simple               | Coordinated startup   |
+| **Example**    | Spring Boot app      | App + Envoy proxy     |
+
+---
+
+## ⚠️ Common Misconceptions
+
+| Misconception             | Reality                                                         |
+| ------------------------- | --------------------------------------------------------------- |
+| "Pods are durable"        | Pods are ephemeral — use Deployments for durability             |
+| "Restart = new Pod"       | By default, container restarts in the **same Pod** with same IP |
+| "One Pod = one container" | Pods can have multiple containers sharing network/storage       |
+| "Pods scale themselves"   | ReplicaSets/Deployments manage scaling, not Pods directly       |
+
+---
+
+## 🚨 Failure Modes
+
+| Failure              | Symptom                        | Fix                                                |
+| -------------------- | ------------------------------ | -------------------------------------------------- |
+| `ImagePullBackOff`   | Pod stuck Pending              | Fix image name/tag/registry credentials            |
+| `CrashLoopBackOff`   | Container exits repeatedly     | Check logs: `kubectl logs <pod>`                   |
+| `OOMKilled`          | Container killed               | Increase memory limits                             |
+| `Evicted`            | Node out of resources          | Set proper resource requests; PodDisruptionBudgets |
+| Liveness probe fails | Container repeatedly restarted | Fix probe path, thresholds, or app health          |
+
+---
+
+## 🔗 Related Keywords
+
+- [Deployment](/kubernetes/deployment/) — manages ReplicaSets of Pods
+- [Kubernetes Architecture](/kubernetes/kubernetes-architecture/) — where Pods fit in
+- [ConfigMap](/kubernetes/configmap/) — inject config into Pods
+- [Secret](/kubernetes/secret/) — inject secrets into Pods
+- [Resource Requests / Limits](/kubernetes/resource-requests-limits/) — CPU/memory bounds
+
+---
+
+## 📌 Quick Reference Card
+
+```bash
+# Run a Pod
+kubectl run nginx --image=nginx --port=80
+
+# Get Pod info
+kubectl get pods -o wide
+kubectl describe pod <name>
+kubectl logs <pod> -c <container>
+
+# Debug
+kubectl exec -it <pod> -- /bin/sh
+kubectl debug <pod> -it --image=busybox
+
+# Delete
+kubectl delete pod <name>
+
+# Pod restartPolicy: Always | OnFailure | Never
+```
+
+---
+
+## 🧠 Think About This
+
+If a Pod's container crashes, Kubernetes restarts it (per restartPolicy). But if the entire **node** crashes, Kubernetes must create a **new Pod** (new IP, new identity) on a different node. This is why stateful apps need StatefulSets with PersistentVolumeClaims — to survive Pod replacement with stable storage.

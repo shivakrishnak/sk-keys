@@ -1,0 +1,353 @@
+---
+layout: default
+title: "IIFE"
+parent: "JavaScript"
+nav_order: 21
+permalink: /javascript/iife/
+number: "JSC-021"
+category: JavaScript
+difficulty: ★☆☆
+depends_on: Scope, Closure, var / let / const, Functions
+used_by: Module Pattern, Polyfills, Namespace isolation, UMD modules
+tags: #javascript, #foundational, #browser, #pattern
+---
+
+# JSC-021 — IIFE
+
+`#javascript` `#foundational` `#browser` `#pattern`
+
+⚡ TL;DR — A function expression invoked immediately upon definition, creating an isolated scope to encapsulate variables without polluting the surrounding scope.
+
+| #1364 | category: JavaScript
+|:---|:---|:---|
+| **Depends on:** | Scope, Closure, var / let / const, Functions | |
+| **Used by:** | Module Pattern, Polyfills, Namespace isolation, UMD modules | |
+
+---
+
+### 📘 Textbook Definition
+
+An **Immediately Invoked Function Expression (IIFE)** is a function expression that is defined and invoked in a single statement by wrapping the function in parentheses (making it an expression) and immediately appending a call operator `()`. The IIFE creates a new function scope, isolating any declared variables from the surrounding scope. IIFEs were the primary mechanism for scope isolation and the module pattern in pre-ES6 JavaScript, when `let`, `const`, and native ES modules did not exist. Modern code uses block scoping and ES modules instead, but IIFEs remain prevalent in legacy codebases and as a pattern in library bundlers.
+
+---
+
+### 🟢 Simple Definition (Easy)
+
+An IIFE is a function that runs itself immediately when it's defined. Its main job: create a private scope so that its variables don't leak into the surrounding code.
+
+---
+
+### 🔵 Simple Definition (Elaborated)
+
+Before ES6's `let` and `const`, every `var` you declared at the top of a script became a global variable, polluting the page for all other scripts. The IIFE pattern solved this by wrapping code in a function — creating a private scope — and immediately running it. The function body runs once, its variables stay private, and then the function is gone. IIFEs were the foundation of the JavaScript module pattern: they could return an object exposing a public API while keeping implementation details private.
+
+---
+
+### 🔩 First Principles Explanation
+
+**The problem: var and global scope pollution:**
+
+Before ES6, every library that loaded on a page competed for global variable names:
+
+```javascript
+// jQuery:         window.$ = ...
+// Underscore:     window._ = ...
+// YourLibrary:    window.myVar = ...
+// AnotherLib:     window.myVar = ... ← overwrites yours!
+```
+
+**Constraint: functions create scope, but named functions pollute too:**
+
+```javascript
+function setup() { var x = 1; } // creates scope
+setup(); // but 'setup' itself is now a global!
+```
+
+**Insight: function expressions + immediate invocation:**
+
+```javascript
+// 1. Wrap in () to make it an expression (not declaration)
+// 2. Add () to invoke immediately
+
+(function() {
+  var x = 1; // private to IIFE
+  // setup runs, x is private, function name is gone
+})();
+// x doesn't exist here — contains scope
+```
+
+**Why the outer parentheses are needed:**
+
+```javascript
+// SyntaxError — function keyword at start of line
+// is a declaration, declarations can't be called:
+function() {}(); // ← error
+
+// Fix — wrap to make it an expression:
+(function() {})(); // ← valid
+// Or: !function() {}(); + variants
+```
+
+---
+
+### ❓ Why Does This Exist (Why Before What)
+
+**WITHOUT IIFE (pre-ES6 global pollution):**
+
+```
+Without IIFE:
+
+  Every script on a page shares the global scope
+  Script A var counter = 0;
+  Script B var counter = 0;  // overwrites A's counter
+  Script C var counter = 0;  // overwrites again
+
+  Large libraries like jQuery would:
+  1. Create dozens of helper variables
+  2. They all become window properties
+  3. Name collision with user code is common
+```
+
+**WITH IIFE:**
+
+```
+→ All library internals are private
+→ Only the public API is exported
+→ No global pollution from helpers
+→ Predictable, isolated initialisation
+→ Multiple versions of same library
+  can coexist on same page
+```
+
+---
+
+### 🧠 Mental Model / Analogy
+
+> An IIFE is like a **pop-up booth at a market**. The booth is set up, does its business (executes its code), and then disappears — leaving nothing behind except what it handed to customers (return value). The booth's internal supplies and equipment (variables) are packed away when it closes. Other booths at the market never knew those supplies existed.
+
+"Pop-up booth" = IIFE function
+"Sets up and disappears" = function runs once, then is gone
+"Internal supplies" = private variables in IIFE scope
+"What it handed to customers" = IIFE return value (public API)
+"Other booths never knowing" = global scope not polluted
+
+---
+
+### ⚙️ How It Works (Mechanism)
+
+**IIFE variants:**
+
+```javascript
+// Classic form
+(function() { /* code */ })();
+
+// Arrow function IIFE (ES6+)
+(() => { /* code */ })();
+
+// Named IIFE (name only visible inside)
+(function setup() { /* code */ })();
+
+// IIFE with invocation inside outer parens
+(function() { /* code */ }());
+// Both forms are equivalent — style preference
+
+// Passing arguments to IIFE
+(function(global, doc) {
+  // use 'global' and 'doc' instead of window/document
+  // enables minification: global → g
+})(window, document);
+```
+
+**IIFE as module pattern:**
+
+```javascript
+const Counter = (function() {
+  // Private state
+  let count = 0;
+
+  // Public API (the returned object)
+  return {
+    increment() { return ++count; },
+    decrement() { return --count; },
+    value()     { return count; },
+  };
+})();
+
+Counter.increment(); // 1
+Counter.increment(); // 2
+Counter.value();     // 2
+// count is inaccessible from outside — private
+```
+
+**IIFE in UMD (Universal Module Definition) format:**
+
+```javascript
+// UMD — works in AMD, CommonJS, and browser global
+(function(root, factory) {
+  if (typeof module === 'object' && module.exports) {
+    module.exports = factory();        // CommonJS
+  } else if (typeof define === 'function' && define.amd) {
+    define(factory);                   // AMD
+  } else {
+    root.MyLib = factory();            // browser global
+  }
+})(typeof globalThis !== 'undefined' ? globalThis : this,
+  function() {
+    return { version: '1.0.0' };
+  });
+```
+
+---
+
+### 🔄 How It Connects (Mini-Map)
+
+```
+The GLOBAL SCOPE pollution problem
+(var + multiple scripts)
+        ↓
+  IIFE  ← you are here
+  (function expression + immediate invocation)
+        ↓
+  Creates isolated function scope
+  Runs once, variables stay private
+        ↓
+  Returns public API → becomes the
+  Module Pattern (pre-ES6)
+        ↓
+  Superseded in ES6+ by:
+  block scope (let/const)
+  ES Modules (import/export)
+  still used in: UMD, polyfills, bundler output
+```
+
+---
+
+### 💻 Code Example
+
+**Example 1 — Basic IIFE for isolation:**
+
+```javascript
+// Without IIFE: var pollutes global
+var message = 'hello';
+// window.message = 'hello' — polluted!
+
+// With IIFE: message is private
+(function() {
+  var message = 'hello';
+  console.log(message); // 'hello'
+})();
+// message is undefined here — clean!
+```
+
+**Example 2 — IIFE for initialisation with return value:**
+
+```javascript
+const config = (function() {
+  const env = process?.env?.NODE_ENV ?? 'development';
+  const isProd = env === 'production';
+
+  return Object.freeze({
+    apiUrl:  isProd ? 'https://api.prod.com' : 'http://localhost:3000',
+    debug:   !isProd,
+    version: '2.1.0',
+  });
+})();
+
+// config is immutable, env details private
+config.debug;  // true in dev, false in prod
+config.apiUrl; // correct URL for current environment
+```
+
+---
+
+### ⚠️ Common Misconceptions
+
+| Misconception | Reality |
+|---|---|
+| IIFE is an outdated pattern with no modern use | IIFEs still appear in UMD bundles, polyfill wrappers, and in situations where a block scope and const aren't quite enough (e.g., needing a return value from initialisation code) |
+| IIFE prevents all variable leakage | IIFE prevents var leakage to the enclosing scope. Explicit assignments to undeclared variables (accidental globals) still leak: `x = 1` without `var/let/const` |
+| The outer parentheses are just style | The outer parentheses are syntactically required to make the function a function expression rather than a statement. Without them, `function(){}()` is a SyntaxError |
+
+---
+
+### 🔥 Pitfalls in Production
+
+**1. Forgetting semicolon before IIFE — ASI failure**
+
+```javascript
+// BAD: if the previous line has no semicolon
+const a = 1
+(function() { /* ... */ })()
+// Parsed as: const a = 1(function(){...})()
+// → TypeError: 1 is not a function
+
+// GOOD: always add semicolon before IIFE
+const a = 1;
+(function() { /* ... */ })();
+// OR: prefix IIFE with ; as defensive habit
+;(function() { /* ... */ })();
+```
+
+**2. IIFE capturing stale values without argument passing**
+
+```javascript
+// BAD: var captured by reference — all print same
+for (var i = 0; i < 3; i++) {
+  setTimeout(function() {
+    console.log(i); // 3 3 3
+  }, 0);
+}
+
+// GOOD: IIFE captures value at each iteration
+for (var i = 0; i < 3; i++) {
+  (function(capturedI) {
+    setTimeout(function() {
+      console.log(capturedI); // 0 1 2
+    }, 0);
+  })(i);
+}
+// ES6 alternative: use let instead of IIFE
+```
+
+---
+
+### 🔗 Related Keywords
+
+- `Scope` — IIFEs create a function scope; the entire point is scope isolation
+- `Closure` — IIFE body functions return closures over the private state
+- `Module Pattern` — the design pattern built on IIFEs that predates ES modules
+- `var / let / const` — `let`/`const` with block scope largely replace the need for IIFEs
+- `Modules (ESM)` — native module system that supersedes IIFEs for code organisation
+- `Hoisting` — IIFE scope is needed pre-ES6 specifically because var is hoisted to function scope
+
+---
+
+### 📌 Quick Reference Card
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ KEY IDEA     │ Function expression invoked immediately;  │
+│              │ creates isolated scope, runs once, gone   │
+├──────────────┼───────────────────────────────────────────┤
+│ USE WHEN     │ Initialisation with private state (pre    │
+│              │ ESM); UMD wrappers; complex init needing  │
+│              │ a return value inline                     │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ Modern ES module code — use import/export │
+│              │ and block scope with let/const instead    │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Run once, leave clean —                  │
+│              │  a scope bubble that pops immediately."   │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Module Pattern → ES Modules → Closure     │
+└──────────────────────────────────────────────────────────┘
+```
+
+---
+
+### 🧠 Think About This Before We Continue
+
+**Q1.** Webpack bundles output IIFEs around your module code even in 2026, though ES modules are natively supported. Explain the specific reason Webpack wraps each module in an IIFE in its legacy bundle output — what global variable collision it prevents, what variable it passes in as an argument to the IIFE, and why this is not needed (but sometimes still generated) in ES module output (`type: "module"`).
+
+**Q2.** An IIFE returns a frozen configuration object, but a colleague notices the object's nested properties are still mutable. Explain why `Object.freeze` only provides shallow immutability, how this specifically interacts with the "private variables via closure" model of IIFEs, and describe the pattern to achieve deep immutability for a nested config object returned from an IIFE without third-party libraries.
+
