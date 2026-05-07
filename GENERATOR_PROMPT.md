@@ -1,4 +1,4 @@
-﻿# 🎯 Technical Dictionary Generator — Master Prompt v2.1
+# 🎯 Technical Dictionary Generator — Master Prompt v2.1 + ID System v3.0
 
 > **This is the authoritative generation spec** for every keyword entry in this dictionary.
 > Paste the prompt below into any AI assistant to generate entries that conform to the full standard.
@@ -7,7 +7,7 @@
 
 ````
 ═══════════════════════════════════════════════════════════════════════════
-TECHNICAL DICTIONARY GENERATOR — MASTER PROMPT v2.1
+TECHNICAL DICTIONARY GENERATOR — MASTER PROMPT v2.1 + ID SYSTEM v3.0
 ═══════════════════════════════════════════════════════════════════════════
 
 You are an elite Software Engineering mentor and technical writer.
@@ -122,128 +122,252 @@ PRINCIPLE 12: SYSTEMATISED KNOWLEDGE
   Structure is memory. Well-structured knowledge is retrievable.
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 2: FILE FORMAT — OBSIDIAN MARKDOWN
+SECTION 2: ID SYSTEM, FILE FORMAT & FOLDER STRUCTURE
 ═══════════════════════════════════════════════════════════════════════════
 
 Each keyword is a SINGLE MARKDOWN FILE.
 Every entry must be 100% self-contained — no "see entry X for details."
 
-File naming convention:
-  NNN — Keyword Name.md
-  Examples:
-    261 — JVM.md
-    036 — JIT Compiler.md
-    1293 — Event Loop.md
+─────────────────────────────────────────────────────────────────────────
+ID FORMAT
+─────────────────────────────────────────────────────────────────────────
 
-The file begins with YAML frontmatter, then content.
-No other file structure is permitted.
+  [CATEGORY_CODE]-[SEQUENCE]
+
+  CATEGORY_CODE:
+    - 3 uppercase letters, uniquely identifies the category
+    - Never changes once assigned
+    - See Category Code Registry below
+
+  SEQUENCE:
+    - 3-digit zero-padded integer (e.g. 001, 036, 074)
+    - Unique WITHIN a category only
+    - Starts at 001 for every category
+    - Extends to 4 digits (0001) if category exceeds 999 entries
+
+  EXAMPLES:
+    JVM-001   ← Java & JVM Internals, entry 1
+    JVM-036   ← Java & JVM Internals, entry 36
+    SEC-001   ← Security, entry 1
+    DSA-074   ← Data Structures & Algorithms, entry 74
+
+  CORE RULES:
+    - IDs are PERMANENT — once assigned, never change
+    - IDs are collision-proof — JVM-001 ≠ SEC-001
+    - NEXT ID = open folder → find highest sequence → add 1
+    - NEW CATEGORY = new 3-letter code, start at 001
+    - Prefix uniqueness enforced ONCE at category creation
+
+─────────────────────────────────────────────────────────────────────────
+FILE NAMING CONVENTION
+─────────────────────────────────────────────────────────────────────────
+
+  [ID] — [Keyword Name].md
+
+  Separator: space + em dash + space ( — )
+  Extension: .md always
+
+  EXAMPLES:
+    JVM-001 — JVM.md
+    JVM-036 — JIT Compiler.md
+    SEC-023 — CSRF.md
+    DSA-048 — Dynamic Programming.md
+    LLM-035 — LLM-as-Judge Pattern.md
+
+  WIKILINK FORMAT (in entry body):
+    [[JVM-036 — JIT Compiler]]      ← always full filename
+    [[SEC-023 — CSRF]]
+    Always include full ID + keyword name — never ID alone.
+
+─────────────────────────────────────────────────────────────────────────
+FOLDER STRUCTURE
+─────────────────────────────────────────────────────────────────────────
+
+  /dictionary/
+  ├── /tier-1-foundations/
+  │     ├── /CSF-cs-fundamentals/
+  │     ├── /DSA-data-structures/
+  │     ├── /OSY-operating-systems/
+  │     └── /LNX-linux/
+  ├── /tier-2-networking-security/
+  │     ├── /NET-networking/
+  │     ├── /API-http-apis/
+  │     └── /SEC-security/
+  ├── /tier-3-java/
+  │     ├── /JVM-java-jvm-internals/
+  │     ├── /JLG-java-language/
+  │     ├── /JCC-java-concurrency/
+  │     └── /SPR-spring-core/
+  ├── /tier-4-data/
+  │     ├── /DBF-database-fundamentals/
+  │     ├── /NDB-nosql-distributed/
+  │     ├── /CCH-caching/
+  │     ├── /DAT-data-fundamentals/
+  │     └── /BIG-bigdata-streaming/
+  ├── /tier-5-distributed-architecture/
+  │     ├── /DST-distributed-systems/
+  │     ├── /MSV-microservices/
+  │     ├── /SYD-system-design/
+  │     ├── /SAP-software-architecture/
+  │     └── /DPT-design-patterns/
+  ├── /tier-6-infrastructure-devops/
+  │     ├── /CTR-containers/
+  │     ├── /K8S-kubernetes/
+  │     ├── /AWS-cloud-aws/
+  │     ├── /AZR-cloud-azure/
+  │     ├── /CCD-cicd/
+  │     ├── /GIT-git-branching/
+  │     ├── /MVN-maven-build/
+  │     ├── /CDQ-code-quality/
+  │     ├── /TST-testing/
+  │     ├── /OBS-observability-sre/
+  │     └── /IAC-infrastructure-code/
+  ├── /tier-7-frontend/
+  │     ├── /HTM-html/
+  │     ├── /CSS-css/
+  │     ├── /JSC-javascript/
+  │     ├── /TSC-typescript/
+  │     ├── /RCT-react/
+  │     ├── /ANG-angular/
+  │     ├── /NDJ-nodejs/
+  │     ├── /NPM-npm-packages/
+  │     └── /WBP-webpack-build/
+  ├── /tier-8-artificial-intelligence/
+  │     ├── /AIF-ai-foundations/
+  │     ├── /LLM-llms-prompt-eng/
+  │     ├── /RAG-rag-agents-llmops/
+  │     └── /AIP-ai-product/
+  └── /tier-9-professional-domain/
+        ├── /ASY-async-background/
+        ├── /DGN-document-generation/
+        ├── /FIN-financial-domain/
+        ├── /PLT-platform-swe/
+        └── /BHV-behavioral-leadership/
+
+  Folder naming rules:
+    Tier folders:     tier-[N]-[descriptive-name]
+    Category folders: [CODE]-[descriptive-name]
+    Folder names NEVER change after creation.
+    The CODE in the folder = the ID prefix — they must match.
+
+─────────────────────────────────────────────────────────────────────────
+CATEGORY CODE REGISTRY
+─────────────────────────────────────────────────────────────────────────
+
+  CODE | Category Name                     | Tier
+  ─────┼───────────────────────────────────┼──────────────────────────────
+  CSF  | CS Fundamentals — Paradigms       | tier-1-foundations
+  DSA  | Data Structures & Algorithms      | tier-1-foundations
+  OSY  | Operating Systems                 | tier-1-foundations
+  LNX  | Linux                             | tier-1-foundations
+  NET  | Networking                        | tier-2-networking-security
+  API  | HTTP & APIs                       | tier-2-networking-security
+  SEC  | Security                          | tier-2-networking-security
+  JVM  | Java & JVM Internals              | tier-3-java
+  JLG  | Java Language                     | tier-3-java
+  JCC  | Java Concurrency                  | tier-3-java
+  SPR  | Spring Core                       | tier-3-java
+  DBF  | Database Fundamentals             | tier-4-data
+  NDB  | NoSQL & Distributed Databases     | tier-4-data
+  CCH  | Caching                           | tier-4-data
+  DAT  | Data Fundamentals                 | tier-4-data
+  BIG  | Big Data & Streaming              | tier-4-data
+  DST  | Distributed Systems               | tier-5-distributed-architecture
+  MSV  | Microservices                     | tier-5-distributed-architecture
+  SYD  | System Design                     | tier-5-distributed-architecture
+  SAP  | Software Architecture Patterns    | tier-5-distributed-architecture
+  DPT  | Design Patterns                   | tier-5-distributed-architecture
+  CTR  | Containers                        | tier-6-infrastructure-devops
+  K8S  | Kubernetes                        | tier-6-infrastructure-devops
+  AWS  | Cloud — AWS                       | tier-6-infrastructure-devops
+  AZR  | Cloud — Azure                     | tier-6-infrastructure-devops
+  CCD  | CI/CD                             | tier-6-infrastructure-devops
+  GIT  | Git & Branching Strategy          | tier-6-infrastructure-devops
+  MVN  | Maven & Build Tools               | tier-6-infrastructure-devops
+  CDQ  | Code Quality                      | tier-6-infrastructure-devops
+  TST  | Testing                           | tier-6-infrastructure-devops
+  OBS  | Observability & SRE               | tier-6-infrastructure-devops
+  IAC  | Infrastructure as Code            | tier-6-infrastructure-devops
+  HTM  | HTML                              | tier-7-frontend
+  CSS  | CSS                               | tier-7-frontend
+  JSC  | JavaScript                        | tier-7-frontend
+  TSC  | TypeScript                        | tier-7-frontend
+  RCT  | React                             | tier-7-frontend
+  ANG  | Angular                           | tier-7-frontend
+  NDJ  | Node.js                           | tier-7-frontend
+  NPM  | npm & Package Management          | tier-7-frontend
+  WBP  | Webpack & Build Tools             | tier-7-frontend
+  AIF  | AI Foundations                    | tier-8-artificial-intelligence
+  LLM  | LLMs & Prompt Engineering         | tier-8-artificial-intelligence
+  RAG  | RAG & Agents & LLMOps             | tier-8-artificial-intelligence
+  AIP  | AI Product Engineering            | tier-8-artificial-intelligence
+  ASY  | Async & Background Processing     | tier-9-professional-domain
+  DGN  | Document Generation               | tier-9-professional-domain
+  FIN  | Financial Services Domain         | tier-9-professional-domain
+  PLT  | Platform & Modern SWE             | tier-9-professional-domain
+  BHV  | Behavioral & Leadership           | tier-9-professional-domain
+
+  TOTAL: 50 categories across 9 tiers
+
+  TO ADD A NEW CATEGORY:
+    1. Choose a unique 3-letter code not in this list
+    2. Add to the correct tier section in this registry
+    3. Create the folder: /tier-N-name/CODE-descriptive-name/
+    4. First entry = [CODE]-001
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 3: YAML FRONTMATTER — EXACT FORMAT
 ═══════════════════════════════════════════════════════════════════════════
 
-Every file MUST begin with this EXACT structure.
+Every entry file MUST begin with this EXACT frontmatter.
 No extra fields. No missing fields. No deviations.
 
 ---
-layout: default
-title: "Keyword Name"
-parent: "Category Name"
-nav_order: NNNN
-permalink: /category-slug/keyword-slug/
-number: "NNNN"
-category: Category Name
-difficulty: ★☆☆
-depends_on: Keyword1, Keyword2, Keyword3
-used_by: Keyword1, Keyword2, Keyword3
-related: Keyword1, Keyword2, Keyword3
-tags:
-  - tag1
-  - tag2
-  - tag3
+id: [CODE]-[NNN]
+title: [Exact Keyword Name]
+category: [Full Category Name]
+tier: [tier-N-name]
+folder: [CODE-folder-name]
+difficulty: [★☆☆ | ★★☆ | ★★★]
+depends_on: [CODE]-[NNN], [CODE]-[NNN]
+used_by: [CODE]-[NNN], [CODE]-[NNN]
+related: [CODE]-[NNN], [CODE]-[NNN]
+tags: #tag1, #tag2, #tag3
+status: [draft | in-progress | complete]
+version: 1
 ---
 
 FIELD RULES:
 
-layout:
-  - Always: default
-  - Fixed value — never change
+id:
+  - The permanent identifier — format: [CODE]-[NNN]
+  - CODE: 3-letter category code from Section 2 registry
+  - NNN: zero-padded sequence within category (001, 036, 074)
+  - Never changes after assignment
+  - Example: JVM-036, SEC-023, DSA-048
 
 title:
-  - The keyword name in double quotes
-  - Must match the H1 title line exactly
-  - Example: "Event Loop", "Vertical Scaling", "JVM"
-
-parent:
-  - The exact category title that matches the category folder's index.md
-  - Must come from the category → parent mapping table (see batch workflow)
-  - Example: "System Design", "Java & JVM Internals", "Testing"
-
-nav_order:
-  - The global keyword number as a plain integer (no quotes, no padding)
-  - Used by Just the Docs for sidebar ordering
-  - Example: 681, 261, 1293
-
-permalink:
-  - Derived from: /<category-slug>/<keyword-slug>/
-  - category-slug: lowercase, hyphens, no special chars
-  - keyword-slug: lowercase version of the keyword name
-    (spaces → hyphens, remove parentheses, ampersands → and)
-  - Example: /system-design/vertical-scaling/
-             /java/jvm/
-             /testing/unit-test/
-  - Use the category slug from the mapping table in the batch workflow
-
-number:
-  - Four-digit zero-padded integer, in double quotes
-  - Example: "0001", "0261", "1293"
+  - Exact keyword name from master keyword list
+  - Matches the filename keyword portion exactly
+  - NO quotes required
+  - Example: JIT Compiler, CSRF, Dynamic Programming
 
 category:
-  - Exact category name from master list (no quotes)
-  - Valid values:
-    CS Fundamentals — Paradigms |
-    Data Structures & Algorithms |
-    Operating Systems |
-    Linux |
-    Networking |
-    HTTP & APIs |
-    Java & JVM Internals |
-    Java Language |
-    Java Concurrency |
-    Spring Core |
-    Database Fundamentals |
-    NoSQL & Distributed Databases |
-    Caching |
-    Data Fundamentals |
-    Big Data & Streaming |
-    Distributed Systems |
-    Microservices |
-    System Design |
-    Software Architecture Patterns |
-    Design Patterns |
-    Containers |
-    Kubernetes |
-    Cloud — AWS |
-    Cloud — Azure |
-    CI/CD |
-    Git & Branching Strategy |
-    Maven & Build Tools |
-    Code Quality |
-    Testing |
-    Observability & SRE |
-    HTML |
-    CSS |
-    JavaScript |
-    TypeScript |
-    React |
-    Node.js |
-    npm & Package Management |
-    Webpack & Build Tools |
-    AI Foundations |
-    LLMs & Prompt Engineering |
-    RAG & Agents & LLMOps |
-    Platform & Modern SWE |
-    Behavioral & Leadership
+  - Full human-readable category name
+  - Must match exactly the name in Section 2 registry
+  - Example: Java & JVM Internals, Security, Data Structures & Algorithms
+
+tier:
+  - The tier folder name this entry lives in
+  - From Section 2 registry column "Tier"
+  - Example: tier-3-java, tier-2-networking-security
+  - Used for filtering entries by tier
+
+folder:
+  - The category folder name (CODE + descriptive suffix)
+  - From Section 2 registry column "Folder"
+  - Example: JVM-java-jvm-internals, SEC-security
+  - Used for filtering entries by category
 
 difficulty:
   - EXACTLY one of three values:
@@ -252,35 +376,55 @@ difficulty:
     ★★★  →  Deep-dive
 
 depends_on:
-  - Concepts reader MUST know BEFORE this entry
-  - Comma-separated plain text
-  - NO brackets, NO wiki links
-  - Maximum 5
+  - IDs of entries that MUST be understood first
+  - Comma-separated full IDs: JVM-001, DSA-048
+  - NO brackets, NO wiki syntax, NO keyword names
+  - Cross-category references are explicit: JVM-001, SEC-023
+  - Maximum 5 entries
 
 used_by:
-  - Concepts that BUILD ON this concept
-  - Comma-separated plain text
-  - NO brackets, NO wiki links
-  - Maximum 5
+  - IDs of entries that BUILD ON this entry
+  - Same format as depends_on
+  - Maximum 5 entries
 
 related:
-  - Sibling concepts at same level (alternatives, comparisons)
-  - Captures lateral connections
-  - Comma-separated plain text
-  - NO brackets, NO wiki links
-  - Maximum 5
+  - IDs of sibling / alternative / comparison entries
+  - Same format as depends_on
+  - Maximum 5 entries
 
 tags:
-  - Each tag without # prefix
-  - Listed as YAML array items (one per line, using "-")
-  - Choose from approved tag taxonomy (see Section 4)
+  - # prefixed, comma-separated on ONE line
   - 3–6 tags per entry
-  - Example:
-    - java
-    - jvm
-    - memory
-    - internals
-    - deep-dive
+  - From approved taxonomy only (see Section 4)
+  - Example: #java, #jvm, #performance, #deep-dive
+
+status:
+  - draft        → keyword exists, entry not yet written
+  - in-progress  → entry partially written
+  - complete     → entry fully written and reviewed
+
+version:
+  - Integer, starts at 1
+  - Increment when entry is substantially revised
+
+─────────────────────────────────────────────────────────────────────────
+COMPLETE EXAMPLE — CORRECT FRONTMATTER:
+─────────────────────────────────────────────────────────────────────────
+
+---
+id: JVM-036
+title: JIT Compiler
+category: Java & JVM Internals
+tier: tier-3-java
+folder: JVM-java-jvm-internals
+difficulty: ★★★
+depends_on: JVM-001, JVM-004, JVM-005
+used_by: JVM-037, JVM-038, JVM-039
+related: JVM-037, JVM-040, AIF-015
+tags: #java, #jvm, #performance, #deep-dive
+status: complete
+version: 1
+---
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 4: APPROVED TAG TAXONOMY
@@ -288,8 +432,9 @@ SECTION 4: APPROVED TAG TAXONOMY
 
 Platform / Runtime:
   #java #jvm #spring #springboot #javascript #typescript
-  #react #nodejs #css #html #webpack #npm #kotlin #graalvm
-  #docker #kubernetes #linux #aws #azure #python #rust
+  #react #angular #nodejs #css #html #webpack #npm #kotlin
+  #graalvm #docker #kubernetes #linux #aws #azure #gcp
+  #python #rust
 
 Domain:
   #internals #concurrency #memory #gc #networking #distributed
@@ -298,6 +443,7 @@ Domain:
   #frontend #rendering #browser #bundling #testing #cicd
   #git #build #dataengineering #bigdata #streaming #caching
   #ai #llm #agents #rag #mlops #microservices #api
+  #iac #terraform #async #finance #documents
 
 Concept type:
   #pattern #algorithm #datastructure #protocol #deep-dive
@@ -322,7 +468,7 @@ Do not add sections not listed. Do not skip required sections.
 ─────────────────────────────────────────────────────────────────────────
 
 Format:
-  # NNN — KEYWORD NAME
+  # [CODE]-[NNN] — KEYWORD NAME
 
 ─────────────────────────────────────────────────────────────────────────
 5.2  TL;DR  [REQUIRED]
@@ -1090,24 +1236,24 @@ SECTION 8: COMPLETE ENTRY SKELETON — COPY EXACTLY
 ═══════════════════════════════════════════════════════════════════════════
 
 ---
-layout: default
-title: "Keyword Name"
-parent: "Category Name"
-nav_order: NNNN
-permalink: /category-slug/keyword-slug/
-number: "NNNN"
-category: Category Name
+id: [CODE]-[NNN]
+title: [Keyword Name]
+category: [Full Category Name]
+tier: [tier-N-name]
+folder: [CODE-folder-name]
 difficulty: [★☆☆ | ★★☆ | ★★★]
-depends_on: Keyword1, Keyword2
-used_by: Keyword1, Keyword2
-related: Keyword1, Keyword2
+depends_on: [CODE]-[NNN], [CODE]-[NNN]
+used_by: [CODE]-[NNN], [CODE]-[NNN]
+related: [CODE]-[NNN], [CODE]-[NNN]
+status: draft
+version: 1
 tags:
   - tag1
   - tag2
   - tag3
 ---
 
-# NNNN — KEYWORD NAME
+# [CODE]-[NNN] — KEYWORD NAME
 
 ⚡ TL;DR — [One sentence. Max 25 words. Essence + WHY.]
 
@@ -1386,12 +1532,16 @@ SECTION 9: INVOCATION — HOW TO USE THIS PROMPT
 
 SINGLE ENTRY:
 
-  Generate dictionary entry for keyword: [KEYWORD NAME]
-  Number: [NNNN]
-  Category: [CATEGORY NAME]
-  Difficulty: [★☆☆ | ★★☆ | ★★★]
+  Generate dictionary entry:
+    ID:         [CODE]-[NNN]
+    Keyword:    [Exact Keyword Name]
+    Category:   [Full Category Name]
+    Tier:       [tier-N-name]
+    Folder:     [CODE-folder-name]
+    Difficulty: [★☆☆ | ★★☆ | ★★★]
 
-  Follow the Technical Dictionary Generator prompt v2.1 exactly.
+  Follow Master Prompt v2.1 (content rules) exactly.
+  Follow ID System v3.0 (ID/file/folder rules) exactly.
   Use the complete skeleton from Section 8.
   Do not skip any required section.
   Do not add sections not in the spec.
@@ -1399,23 +1549,44 @@ SINGLE ENTRY:
 
 BATCH OF 5:
 
-  Generate dictionary entries for keywords NNNN–NNNN:
-  - [KEYWORD 1] (NNNN) — [difficulty]
-  - [KEYWORD 2] (NNNN) — [difficulty]
-  - [KEYWORD 3] (NNNN) — [difficulty]
-  - [KEYWORD 4] (NNNN) — [difficulty]
-  - [KEYWORD 5] (NNNN) — [difficulty]
+  Generate dictionary entries [CODE]-[NNN] through [CODE]-[NNN]:
 
-  Follow Technical Dictionary Generator v2.1 exactly.
+    [CODE]-[NNN] | [Keyword 1] | [★difficulty]
+    [CODE]-[NNN] | [Keyword 2] | [★difficulty]
+    [CODE]-[NNN] | [Keyword 3] | [★difficulty]
+    [CODE]-[NNN] | [Keyword 4] | [★difficulty]
+    [CODE]-[NNN] | [Keyword 5] | [★difficulty]
+
+  Category:   [Full Category Name]
+  Tier:       [tier-N-name]
+  Folder:     [CODE-folder-name]
+
+  Follow Master Prompt v2.1 (content) exactly.
+  Follow ID System v3.0 (IDs/files/folders) exactly.
   Each entry is a separate markdown file.
-  Sequential numbering.
+  Sequential IDs — no gaps.
   Each entry fully self-contained.
 
 CONTINUE FROM LAST:
 
-  Continue dictionary generation from entry NNNN.
-  Next: [KEYWORD 1] through [KEYWORD 5].
-  Follow Technical Dictionary Generator v2.1 exactly.
+  Continue dictionary generation for category: [CODE]
+  Last generated: [CODE]-[NNN]
+  Next batch: [CODE]-[NNN] through [CODE]-[NNN]
+
+  Confirm next ID = last + 1.
+  Follow Master Prompt v2.1 and ID System v3.0 exactly.
+
+CROSS-CATEGORY BATCH:
+
+  Generate the following dictionary entries:
+
+    [CODE]-[NNN] | [Keyword 1] | [Category 1] | [★difficulty]
+    [CODE]-[NNN] | [Keyword 2] | [Category 2] | [★difficulty]
+    [CODE]-[NNN] | [Keyword 3] | [Category 3] | [★difficulty]
+
+  Each entry goes in its own category folder.
+  Cross-category depends_on uses full IDs: JVM-001, SEC-023.
+  Follow Master Prompt v2.1 and ID System v3.0 exactly.
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 10: SELF-VALIDATION CHECKLIST
@@ -1424,18 +1595,22 @@ SECTION 10: SELF-VALIDATION CHECKLIST
 Run this before outputting any entry:
 
 FRONTMATTER:
-  ☐ layout: always "default"
-  ☐ title: keyword name in double quotes, matches H1 title
-  ☐ parent: exact category title from mapping table
-  ☐ nav_order: plain integer matching the keyword number
-  ☐ permalink: /category-slug/keyword-slug/ (lowercase, hyphenated)
-  ☐ number: 4-digit padded in double quotes, matches filename
-  ☐ category: from approved list (Section 3), no quotes
-  ☐ difficulty: exactly one of three star values
-  ☐ depends_on: plain text, no brackets, max 5
-  ☐ used_by: plain text, no brackets, max 5
-  ☐ related: plain text, no brackets, max 5
+  ☐ All 12 fields present: id, title, category, tier, folder,
+    difficulty, depends_on, used_by, related, tags, status, version
+  ☐ id: format [CODE]-[NNN] exactly — matches filename
+  ☐ id: CODE is in Section 2 Category Code Registry
+  ☐ id: NNN is correct next sequential number for this category
+  ☐ title: exact keyword name — matches filename keyword portion
+  ☐ category: matches Section 2 registry name exactly
+  ☐ tier: correct tier folder name for this category
+  ☐ folder: correct category folder name ([CODE]-descriptive)
+  ☐ difficulty: exactly one of ★☆☆ ★★☆ ★★★
+  ☐ depends_on: full IDs ([CODE]-[NNN]), not keyword names
+  ☐ used_by: full IDs, not keyword names
+  ☐ related: full IDs, not keyword names
   ☐ tags: YAML array items, no # prefix, from taxonomy (Section 4)
+  ☐ status: one of draft / in-progress / complete
+  ☐ version: integer, starts at 1
 
 STRUCTURE (23 sections check):
   ☐ 5.1  Title line with keyword name
@@ -1512,8 +1687,33 @@ TEACHING PRINCIPLES (Section 1):
   ☐ P12: Knowledge systematised via tables, flows, lists
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 11: CHANGE LOG — v1 → v2 → v2.1
+SECTION 11: CHANGE LOG — v1 → v2 → v2.1 → v3.0
 ═══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────────────────────────────────
+ID SYSTEM v3.0 CHANGES (from embedded numeric IDs)
+─────────────────────────────────────────────────────────────────────────
+
+SECTION 2: FILE FORMAT  →  ID SYSTEM, FILE FORMAT & FOLDER STRUCTURE
+  - ID format changed: NNNN (global) → [CODE]-[NNN] (category-scoped)
+  - IDs are PERMANENT and collision-proof by design
+  - Category Code Registry added (50 categories, 9 tiers)
+  - Folder structure: /tier-N-name/CODE-folder-name/ hierarchy
+  - Wikilink format: [[CODE-NNN — Keyword Name]] full filename always
+
+SECTION 3: YAML FRONTMATTER  →  replaced Jekyll fields with:
+  Removed: layout, parent, nav_order, permalink, number
+  Added:   id, tier, folder, status, version
+  Changed: depends_on / used_by / related now use full IDs (JVM-001)
+           not keyword names; tags now # prefixed on one line
+
+SECTION 4: TAG TAXONOMY  →  added #angular, #gcp, #iac, #terraform,
+  #async, #finance, #documents
+
+SECTION 9: INVOCATION  →  updated all commands to new ID format
+  Added CROSS-CATEGORY BATCH command template
+
+SECTION 10: CHECKLIST  →  frontmatter validation updated to new fields
 
 ─────────────────────────────────────────────────────────────────────────
 v2.1 CHANGES (from v2.0)
@@ -1583,7 +1783,7 @@ OTHER CHANGES:
   - Category list: updated to match 43-category master list
 
 ═══════════════════════════════════════════════════════════════════════════
-END OF PROMPT v2.1
+END OF PROMPT v2.1 + ID SYSTEM v3.0
 ═══════════════════════════════════════════════════════════════════════════
 ```
 
@@ -1657,18 +1857,21 @@ Output each entry as a separate markdown file:
   File path: docs/<Category Folder>/<NNN> — <Keyword Name>.md
 
 Front matter rules:
-  - layout: default
-  - title: "<Keyword Name>"
-  - parent: "<Category Title>"         ← must match category folder's index.md title exactly
-  - nav_order: <NNNN>                  ← the global keyword number (integer, 4-digit)
-  - permalink: /<category-slug>/<keyword-slug>/
-  - number: "<NNNN>"
-  - category: <Category Title>
-  - difficulty: ★☆☆ | ★★☆ | ★★★
-  - depends_on: Keyword1, Keyword2
-  - used_by: Keyword1, Keyword2
-  - related: Keyword1, Keyword2
-  - tags: #tag1, #tag2, #tag3
+  - id: <CODE>-<NNN>
+  - title: <Keyword Name>
+  - category: <Full Category Name>
+  - tier: <tier-N-name>
+  - folder: <CODE-folder-name>
+  - difficulty: â˜…â˜†â˜† | â˜…â˜…â˜† | â˜…â˜…â˜…
+  - depends_on: CODE-NNN, CODE-NNN
+  - used_by: CODE-NNN, CODE-NNN
+  - related: CODE-NNN, CODE-NNN
+  - status: draft
+  - version: 1
+  - tags:
+    - tag1
+    - tag2
+    - tag3
 
 Category folder name and title mapping reference (docs/ folder):
   CS Fundamentals — Paradigms    | parent: "CS Fundamentals — Paradigms"    | /cs-fundamentals/
@@ -1720,7 +1923,7 @@ Create each file in its correct docs/<Category Folder>/ directory.
 Do not skip any of the 10 entries.
 Do not push to remote.
 
-Follow GENERATOR_PROMPT.md v2.1 spec exactly for every entry.
+Follow GENERATOR_PROMPT.md v2.1 (content) and ID System v3.0 (IDs/files) exactly.
 ```
 
 ---
@@ -1793,19 +1996,22 @@ For each keyword, generate a complete entry following GENERATOR_PROMPT.md v2.1 s
 File path: docs/<Category Folder>/<NNN> — <Keyword Name>.md
 
 Front matter (use exact values for the chosen category):
-  layout: default
-  title: "<Keyword Name>"
-  parent: "<Category Title>"         ← exact title from mapping table below
-  nav_order: <NNNN>                  ← global keyword number (integer, 4-digit)
-  permalink: /<category-slug>/<keyword-slug>/
-  number: "<NNNN>"
-  category: <Category Title>
-  difficulty: ★☆☆ | ★★☆ | ★★★
-  depends_on: Keyword1, Keyword2
-  used_by: Keyword1, Keyword2
-  related: Keyword1, Keyword2
-  tags: #tag1, #tag2, #tag3
-
+  id: <CODE>-<NNN>
+  title: <Keyword Name>
+  category: <Full Category Name>
+  tier: <tier-N-name>
+  folder: <CODE-folder-name>
+  difficulty: â˜…â˜†â˜† | â˜…â˜…â˜† | â˜…â˜…â˜…
+  depends_on: CODE-NNN, CODE-NNN
+  used_by: CODE-NNN, CODE-NNN
+  related: CODE-NNN, CODE-NNN
+  status: draft
+  version: 1
+  tags:
+    - tag1
+    - tag2
+    - tag3
+    
 Category folder → parent title → permalink slug mapping:
   ┌─────────────────────────────────────┬──────────────────────────────────────┬────────────────────────┐
   │ Folder Name                         │ parent: value                        │ permalink prefix       │
