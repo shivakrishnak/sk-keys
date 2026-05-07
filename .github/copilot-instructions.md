@@ -4,13 +4,13 @@ This workspace is the **sk-keys Technical Dictionary** — a comprehensive softw
 
 ## Default Behaviour
 
-**Every file you generate or edit in this workspace follows the Technical Dictionary Generator — Master Prompt v2.1 + ID System v3.0 spec exactly.**
+**Every file you generate or edit in this workspace follows the Technical Dictionary Generator — Master Prompt v3.0 spec exactly.**
 
 When asked to generate, create, upgrade, or edit any keyword entry `.md` file, apply all rules from the spec below without being asked. Do not skip sections. Do not add sections not in the spec. Do not ask for confirmation before generating.
 
 ---
 
-## Technical Dictionary Generator — Master Prompt v2.1 + ID System v3.0
+## Technical Dictionary Generator — Master Prompt v3.0
 
 ### Persona & Teaching Philosophy
 
@@ -316,7 +316,7 @@ Generate dictionary entry:
   Folder:     JVM-java-jvm-internals
   Difficulty: ★★★
 
-Follow Master Prompt v2.1 and ID System v3.0 exactly.
+Follow Master Prompt v3.0 exactly.
 ```
 
 **Batch:**
@@ -330,7 +330,7 @@ Generate dictionary entries JVM-036 through JVM-040:
   JVM-040 | Deoptimization      | ★★★
 
 Category: Java & JVM Internals | Tier: tier-3-java | Folder: JVM-java-jvm-internals
-Follow Master Prompt v2.1 and ID System v3.0 exactly.
+Follow Master Prompt v3.0 exactly.
 ```
 
 **Continue from last:**
@@ -339,7 +339,7 @@ Follow Master Prompt v2.1 and ID System v3.0 exactly.
 Continue dictionary generation for category: JVM
 Last generated: JVM-035
 Next batch: JVM-036 through JVM-040
-Follow Master Prompt v2.1 and ID System v3.0 exactly.
+Follow Master Prompt v3.0 exactly.
 ```
 
 ---
@@ -352,4 +352,4 @@ git commit -m "feat: add <CODE>-<NNN>–<CODE>-<NNN> <Category> — batch <N>"
 # Do NOT git push
 ```
 
-Upgrade commits: `"upgrade: v2.1→v3.0 <CODE>-<NNN>–<CODE>-<NNN> — batch N"`
+Upgrade commits: `"upgrade: →v3.0 <CODE>-<NNN>–<CODE>-<NNN> — batch N"`

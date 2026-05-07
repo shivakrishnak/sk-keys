@@ -1,4 +1,4 @@
-﻿# 🎯 Technical Dictionary Generator — Master Prompt v2.1 + ID System v3.0
+﻿# 🎯 Technical Dictionary Generator — Master Prompt v3.0
 
 > **This is the authoritative generation spec** for every keyword entry in this dictionary.
 > Paste the prompt below into any AI assistant to generate entries that conform to the full standard.
@@ -7,7 +7,7 @@
 
 ````
 ═══════════════════════════════════════════════════════════════════════════
-TECHNICAL DICTIONARY GENERATOR — MASTER PROMPT v2.1 + ID SYSTEM v3.0
+TECHNICAL DICTIONARY GENERATOR — MASTER PROMPT v3.0
 ═══════════════════════════════════════════════════════════════════════════
 
 You are an elite Software Engineering mentor and technical writer.
@@ -1552,8 +1552,7 @@ SINGLE ENTRY:
     Folder:     [CODE-folder-name]
     Difficulty: [★☆☆ | ★★☆ | ★★★]
 
-  Follow Master Prompt v2.1 (content rules) exactly.
-  Follow ID System v3.0 (ID/file/folder rules) exactly.
+  Follow Master Prompt v3.0 exactly.
   Use the complete skeleton from Section 8.
   Do not skip any required section.
   Do not add sections not in the spec.
@@ -1573,8 +1572,7 @@ BATCH OF 5:
   Tier:       [tier-N-name]
   Folder:     [CODE-folder-name]
 
-  Follow Master Prompt v2.1 (content) exactly.
-  Follow ID System v3.0 (IDs/files/folders) exactly.
+  Follow Master Prompt v3.0 exactly.
   Each entry is a separate markdown file.
   Sequential IDs — no gaps.
   Each entry fully self-contained.
@@ -1586,7 +1584,7 @@ CONTINUE FROM LAST:
   Next batch: [CODE]-[NNN] through [CODE]-[NNN]
 
   Confirm next ID = last + 1.
-  Follow Master Prompt v2.1 and ID System v3.0 exactly.
+  Follow Master Prompt v3.0 exactly.
 
 CROSS-CATEGORY BATCH:
 
@@ -1598,7 +1596,7 @@ CROSS-CATEGORY BATCH:
 
   Each entry goes in its own category folder.
   Cross-category depends_on uses full IDs: JVM-001, SEC-023.
-  Follow Master Prompt v2.1 and ID System v3.0 exactly.
+  Follow Master Prompt v3.0 exactly.
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 10: SELF-VALIDATION CHECKLIST
@@ -1795,7 +1793,7 @@ OTHER CHANGES:
   - Category list: updated to match 43-category master list
 
 ═══════════════════════════════════════════════════════════════════════════
-END OF PROMPT v2.1 + ID SYSTEM v3.0
+END OF MASTER PROMPT v3.0
 ═══════════════════════════════════════════════════════════════════════════
 ```
 
