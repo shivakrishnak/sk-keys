@@ -3,7 +3,7 @@ layout: default
 title: "Deadlock Detection (Java)"
 parent: "Java Concurrency"
 nav_order: 47
-permalink: /java-concurrency/deadlock-detection-java/
+permalink: /java-concurrency/jcc-047-deadlock-detection/
 number: "JCC-047"
 category: Java Concurrency
 difficulty: ★★★

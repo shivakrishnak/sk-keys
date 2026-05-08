@@ -3,7 +3,7 @@ layout: default
 title: "Fencing / Epoch"
 parent: "Distributed Systems"
 nav_order: 26
-permalink: /distributed-systems/fencing-epoch/
+permalink: /distributed-systems/dst-026-fencing-epoch/
 number: "DST-026"
 category: Distributed Systems
 difficulty: ★★★

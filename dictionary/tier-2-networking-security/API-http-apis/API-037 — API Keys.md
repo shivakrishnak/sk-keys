@@ -3,7 +3,7 @@ layout: default
 title: "API Keys"
 parent: "HTTP & APIs"
 nav_order: 37
-permalink: /http-apis/api-keys/
+permalink: /http-apis/api-037-api-keys/
 number: "API-037"
 category: HTTP & APIs
 difficulty: ★☆☆

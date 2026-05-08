@@ -3,7 +3,7 @@ layout: default
 title: "Atomic Classes"
 parent: "Java Concurrency"
 nav_order: 42
-permalink: /java-concurrency/atomic-classes/
+permalink: /java-concurrency/jcc-042-atomic-classes/
 number: "JCC-042"
 category: Java Concurrency
 difficulty: ★★★

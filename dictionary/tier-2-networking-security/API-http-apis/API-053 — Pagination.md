@@ -3,7 +3,7 @@ layout: default
 title: "Pagination"
 parent: "HTTP & APIs"
 nav_order: 53
-permalink: /http-apis/pagination/
+permalink: /http-apis/api-053-pagination/
 number: "API-053"
 category: HTTP & APIs
 difficulty: ★☆☆

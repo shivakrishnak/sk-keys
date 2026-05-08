@@ -3,7 +3,7 @@ layout: default
 title: "VarHandle"
 parent: "Java Concurrency"
 nav_order: 43
-permalink: /java-concurrency/varhandle/
+permalink: /java-concurrency/jcc-043-varhandle/
 number: "JCC-043"
 category: Java Concurrency
 difficulty: ★★★

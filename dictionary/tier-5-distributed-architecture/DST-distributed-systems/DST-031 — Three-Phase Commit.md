@@ -3,7 +3,7 @@ layout: default
 title: "Three-Phase Commit (3PC)"
 parent: "Distributed Systems"
 nav_order: 31
-permalink: /distributed-systems/three-phase-commit/
+permalink: /distributed-systems/dst-031-three-phase-commit/
 number: "DST-031"
 category: Distributed Systems
 difficulty: ★★★

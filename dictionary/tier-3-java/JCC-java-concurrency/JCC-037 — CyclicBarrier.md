@@ -3,7 +3,7 @@ layout: default
 title: "CyclicBarrier"
 parent: "Java Concurrency"
 nav_order: 37
-permalink: /java-concurrency/cyclicbarrier/
+permalink: /java-concurrency/jcc-037-cyclicbarrier/
 number: "JCC-037"
 category: Java Concurrency
 difficulty: ★★★

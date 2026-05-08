@@ -3,7 +3,7 @@ layout: default
 title: "ConcurrentHashMap"
 parent: "Java Concurrency"
 nav_order: 40
-permalink: /java-concurrency/concurrenthashmap/
+permalink: /java-concurrency/jcc-040-concurrenthashmap/
 number: "JCC-040"
 category: Java Concurrency
 difficulty: ★★★

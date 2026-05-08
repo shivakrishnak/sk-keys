@@ -3,7 +3,7 @@ layout: default
 title: "G1GC"
 parent: "Java & JVM Internals"
 nav_order: 30
-permalink: /java/g1gc/
+permalink: /java/jvm-030-g1gc/
 number: "JVM-030"
 category: Java & JVM Internals
 difficulty: ★★★

@@ -3,7 +3,7 @@ layout: default
 title: "SonarQube Quality Gate"
 parent: "Testing"
 nav_order: 54
-permalink: /testing/sonarqube-quality-gate/
+permalink: /testing/tst-054-sonarqube-quality-gate/
 number: "TST-054"
 category: Testing
 difficulty: ★★★

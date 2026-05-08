@@ -3,7 +3,7 @@ layout: default
 title: "Total Order / Partial Order"
 parent: "Distributed Systems"
 nav_order: 15
-permalink: /distributed-systems/total-order-partial-order/
+permalink: /distributed-systems/dst-015-total-order-partial-order/
 number: "DST-015"
 category: Distributed Systems
 difficulty: ★★★

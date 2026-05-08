@@ -3,7 +3,7 @@ layout: default
 title: "BlockingQueue"
 parent: "Java Concurrency"
 nav_order: 39
-permalink: /java-concurrency/blockingqueue/
+permalink: /java-concurrency/jcc-039-blockingqueue/
 number: "JCC-039"
 category: Java Concurrency
 difficulty: ★★☆

@@ -3,7 +3,7 @@ layout: default
 title: "Thread Dump Analysis"
 parent: "Java Concurrency"
 nav_order: 46
-permalink: /java-concurrency/thread-dump-analysis/
+permalink: /java-concurrency/jcc-046-thread-dump-analysis/
 number: "JCC-046"
 category: Java Concurrency
 difficulty: ★★★

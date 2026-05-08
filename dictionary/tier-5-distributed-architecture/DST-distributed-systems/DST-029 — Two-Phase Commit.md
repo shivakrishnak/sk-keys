@@ -3,7 +3,7 @@ layout: default
 title: "Two-Phase Commit (2PC)"
 parent: "Distributed Systems"
 nav_order: 29
-permalink: /distributed-systems/two-phase-commit/
+permalink: /distributed-systems/dst-029-two-phase-commit/
 number: "DST-029"
 category: Distributed Systems
 difficulty: ★★★

@@ -3,7 +3,7 @@ layout: default
 title: "CopyOnWriteArrayList"
 parent: "Java Concurrency"
 nav_order: 41
-permalink: /java-concurrency/copyonwritearraylist/
+permalink: /java-concurrency/jcc-041-copyonwritearraylist/
 number: "JCC-041"
 category: Java Concurrency
 difficulty: ★★★

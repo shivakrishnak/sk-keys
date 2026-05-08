@@ -3,7 +3,7 @@ layout: default
 title: "Phaser"
 parent: "Java Concurrency"
 nav_order: 38
-permalink: /java-concurrency/phaser/
+permalink: /java-concurrency/jcc-038-phaser/
 number: "JCC-038"
 category: Java Concurrency
 difficulty: ★★★
