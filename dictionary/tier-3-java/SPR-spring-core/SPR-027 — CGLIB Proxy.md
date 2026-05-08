@@ -8,7 +8,7 @@ number: "SPR-027"
 category: Spring Core
 difficulty: ★★★
 depends_on: Bean, "@Configuration / @Bean", AOP, Bean Lifecycle, Circular Dependency
-used_by: "@Configuration", "@Transactional", "@Cacheable", AOP, "@Lazy"
+used_by: "@Configuration, @Transactional, @Cacheable, AOP, @Lazy"
 related: JDK Dynamic Proxy, Aspect, Weaving, Proxy Pattern, ByteBuddy
 tags:
   - spring

@@ -9,7 +9,7 @@ category: Spring Core
 difficulty: ★★☆
 depends_on: DI, BeanFactory, Bean, BeanPostProcessor
 used_by: All Spring Beans, Spring MVC Controllers, Spring Services
-related: "@Qualifier", "@Primary", "@Inject", Constructor Injection
+related: "@Qualifier, @Primary, @Inject, Constructor Injection"
 tags:
   - spring
   - springboot

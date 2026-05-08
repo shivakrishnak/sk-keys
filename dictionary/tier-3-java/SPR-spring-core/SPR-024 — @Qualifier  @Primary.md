@@ -7,9 +7,9 @@ permalink: /spring/qualifier-primary/
 number: "SPR-024"
 category: Spring Core
 difficulty: ★★☆
-depends_on: "@Autowired", Bean, DI, BeanFactory
+depends_on: "@Autowired, Bean, DI, BeanFactory"
 used_by: Any Spring Service with Multiple Implementations, Feature Flags
-related: "@Autowired", "@Conditional", "@Profile", Named
+related: "@Autowired, @Conditional, @Profile, Named"
 tags:
   - spring
   - springboot

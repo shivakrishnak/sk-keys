@@ -8,7 +8,7 @@ number: "SPR-030"
 category: Spring Core
 difficulty: ★★☆
 depends_on: AOP, CGLIB Proxy, JDK Dynamic Proxy, Bean
-used_by: "@Transactional", "@Cacheable", "@Async", Spring Security, Custom AOP
+used_by: "@Transactional, @Cacheable, @Async, Spring Security, Custom AOP"
 related: Advice, Pointcut, JoinPoint, Weaving, "@Aspect"
 tags:
   - spring

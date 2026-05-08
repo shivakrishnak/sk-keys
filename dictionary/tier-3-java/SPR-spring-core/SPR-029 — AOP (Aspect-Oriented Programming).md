@@ -8,7 +8,7 @@ number: "SPR-029"
 category: Spring Core
 difficulty: ★★☆
 depends_on: Bean, CGLIB Proxy, JDK Dynamic Proxy, BeanPostProcessor
-used_by: "@Transactional", "@Cacheable", "@Async", Security, Logging, Tracing
+used_by: "@Transactional, @Cacheable, @Async, Security, Logging, Tracing"
 related: Aspect, Advice, Pointcut, JoinPoint, Weaving, AspectJ
 tags:
   - spring

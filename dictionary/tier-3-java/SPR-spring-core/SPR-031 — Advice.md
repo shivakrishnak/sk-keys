@@ -8,7 +8,7 @@ number: "SPR-031"
 category: Spring Core
 difficulty: ★★☆
 depends_on: AOP, Aspect, Pointcut, JoinPoint, CGLIB Proxy
-used_by: "@Transactional", "@Cacheable", Logging, Security, Retry
+used_by: "@Transactional, @Cacheable, Logging, Security, Retry"
 related: Aspect, Pointcut, JoinPoint, ProceedingJoinPoint, "@Around"
 tags:
   - spring

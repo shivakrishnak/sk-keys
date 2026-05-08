@@ -8,7 +8,7 @@ number: "SPR-028"
 category: Spring Core
 difficulty: ★★★
 depends_on: Bean, AOP, CGLIB Proxy, Bean Lifecycle
-used_by: "@Transactional", AOP, Spring Data Repository Interfaces
+used_by: "@Transactional, AOP, Spring Data Repository Interfaces"
 related: CGLIB Proxy, Aspect, Weaving, InvocationHandler, Proxy Pattern
 tags:
   - spring

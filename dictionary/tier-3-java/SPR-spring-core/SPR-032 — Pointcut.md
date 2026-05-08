@@ -8,7 +8,7 @@ number: "SPR-032"
 category: Spring Core
 difficulty: ★★☆
 depends_on: AOP, Aspect, Advice, JoinPoint
-used_by: "@Transactional", "@Cacheable", "@Async", Custom Aspects
+used_by: "@Transactional, @Cacheable, @Async, Custom Aspects"
 related: Aspect, Advice, JoinPoint, AspectJ Expression Language, "@Pointcut"
 tags:
   - spring

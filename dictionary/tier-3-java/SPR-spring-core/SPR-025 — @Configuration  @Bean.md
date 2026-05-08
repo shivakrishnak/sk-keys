@@ -9,7 +9,7 @@ category: Spring Core
 difficulty: ★★☆
 depends_on: IoC, DI, ApplicationContext, Bean, BeanFactory
 used_by: Spring Configuration Classes, @SpringBootApplication, Auto-Configuration
-related: "@Component", "@ComponentScan", "@Import", "@Conditional", BeanDefinition
+related: "@Component, @ComponentScan, @Import, @Conditional, BeanDefinition"
 tags:
   - spring
   - springboot

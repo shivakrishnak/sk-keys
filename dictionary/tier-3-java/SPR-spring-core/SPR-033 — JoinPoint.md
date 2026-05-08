@@ -8,7 +8,7 @@ number: "SPR-033"
 category: Spring Core
 difficulty: ★★☆
 depends_on: AOP, Aspect, Advice, Pointcut
-used_by: "@Before", "@After", "@Around", "@AfterReturning", "@AfterThrowing"
+used_by: "@Before, @After, @Around, @AfterReturning, @AfterThrowing"
 related: Advice, Pointcut, ProceedingJoinPoint, MethodSignature, "@Aspect"
 tags:
   - spring
