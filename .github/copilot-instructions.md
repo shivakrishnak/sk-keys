@@ -384,7 +384,22 @@ One-sentence description of what this category covers.
 
 **Must NOT appear** in category index.md: `grand_parent` · `id` · `difficulty` · `tags` · `depends_on` · `used_by` · `related`
 
-**Correct example:**
+---
+
+**Keyword table rules — the `| ID | Keyword | Difficulty |` table:**
+
+> ⚠️ The keyword table must always reflect **all** actual entry files in the folder, built from their real frontmatter. Manual edits or stale tables cause missing or broken nav links.
+
+| Rule | Detail |
+|---|---|
+| **CODE-NNN IDs only** | Every ID in the table must use `CODE-NNN` format (e.g. `DGN-001`, `JVM-036`). Never use old plain numeric IDs (`2400`, `371`). Old numeric IDs are permanently retired. |
+| **Match entry frontmatter** | Every `ID` must match the `id:` field in the corresponding entry `.md` file. Source of truth = entry file, not the table. |
+| **Include ALL entries** | The table must list every `.md` file in the folder (excluding `index.md`). Count in `**Keywords:** CODE-001–CODE-NNN (N terms)` must equal the actual file count. |
+| **Titles match entries** | Keyword title must match the `title:` value in the entry's frontmatter exactly (or a shortened display form). |
+| **Keywords line format** | Always `**Keywords:** CODE-001–CODE-NNN (N terms)` — real range, real count. |
+| **When to update** | After adding, removing, or renaming any entry in the folder. Rebuild from entry frontmatter — never edit manually row by row. |
+
+**Common mistakes that break the nav:**
 
 ```yaml
 ---
@@ -407,6 +422,10 @@ permalink: /jvm/
 | `title: "Cloud -- AWS"` (double hyphen) vs entries `parent: "Cloud - AWS"` | Same — entries orphaned | Normalise to single hyphen everywhere |
 | Missing `has_children: true` | Category shows in nav but entries don't nest | Add the field |
 | Adding `grand_parent:` to index.md | Category page itself breaks hierarchy | Remove it — only for leaf entries |
+| Old numeric IDs in table (`2400`, `371`) | Broken links — IDs don't match any file | Rebuild table from entry file `id:` frontmatter fields |
+| Table missing entries | Nav links absent for those entries | Include every `.md` file in the folder except `index.md` |
+
+**Correct example:**
 
 ---
 

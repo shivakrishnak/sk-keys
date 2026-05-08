@@ -325,6 +325,37 @@ permalink: /[category-slug]/
     - difficulty    (only for keyword entries)
     - tags          (only for keyword entries)
 
+  KEYWORD TABLE RULES (the | ID | Keyword | Difficulty | table):
+
+    ⚠️  The keyword table is the SINGLE SOURCE OF TRUTH for what the
+        site displays. Violations cause stale, inaccurate, or missing nav.
+
+    1. IDs MUST use CODE-NNN format (e.g. DGN-001, JVM-036).
+       NEVER use old plain numeric IDs (e.g. 2400, 1234, 371).
+       Old numeric IDs were a legacy artifact and are permanently retired.
+
+    2. Every ID in the table MUST match the id: field in the
+       corresponding entry .md file. No invented or guessed IDs.
+       Source of truth = the entry file frontmatter, not the table.
+
+    3. The table MUST include ALL entry files in the folder.
+       Missing entries = missing nav links. Count must match actual files.
+
+    4. Keyword titles in the table MUST match the title: value in each
+       entry's frontmatter exactly (or a shortened display version).
+       Do not invent titles that don't match the entry file.
+
+    5. The **Keywords:** line MUST reflect the real range and count:
+         **Keywords:** CODE-001–CODE-NNN (N terms)
+       Where N = actual number of entry files in the folder.
+
+    6. WHEN TO UPDATE the keyword table:
+       - Every time a new entry file is added to the folder
+       - Every time an existing entry's id: or title: changes
+       - After any bulk rename or reorganisation of entries
+       Run the rebuild to extract id/title/difficulty directly from
+       each entry file's frontmatter — never edit the table manually.
+
   EXAMPLE (correct):
 
 ---
