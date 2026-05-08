@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Maven Profiles"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /maven-build/maven-profiles/

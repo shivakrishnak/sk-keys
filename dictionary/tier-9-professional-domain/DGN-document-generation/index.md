@@ -1,13 +1,13 @@
 ---
 layout: default
-title: "Document Generation & Output Management"
+title: "Document Generation"
 parent: "Technical Dictionary"
 nav_order: 46
 has_children: true
 permalink: /document-generation/
 ---
 
-# Document Generation & Output Management
+# Document Generation
 
 PDF generation, template-based document systems, OpenText Exstream, Customer Communication Management (CCM), and localization in enterprise document output.
 

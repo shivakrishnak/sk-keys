@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Transitive Dependencies"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /maven-build/transitive-dependencies/

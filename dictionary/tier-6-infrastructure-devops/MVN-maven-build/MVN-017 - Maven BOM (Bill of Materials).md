@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Maven BOM (Bill of Materials)"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /maven-build/maven-bom-bill-of-materials/

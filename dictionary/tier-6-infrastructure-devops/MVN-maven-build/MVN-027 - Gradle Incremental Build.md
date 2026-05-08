@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Gradle Incremental Build"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /maven-build/gradle-incremental-build/

@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Gradle Build Script"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /maven-build/gradle-build-script/

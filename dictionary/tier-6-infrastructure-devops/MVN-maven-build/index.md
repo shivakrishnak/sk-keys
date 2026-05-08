@@ -1,13 +1,13 @@
 ﻿---
 layout: default
-title: "Maven & Build Tools (Java)"
+title: "Maven & Build Tools"
 parent: "Technical Dictionary"
 nav_order: 27
 has_children: true
 permalink: /maven-build/
 ---
 
-# Maven & Build Tools (Java)
+# Maven & Build Tools
 
 Maven lifecycle, Gradle, dependency management, BOM, profiles, multi-module builds, and build optimization.
 

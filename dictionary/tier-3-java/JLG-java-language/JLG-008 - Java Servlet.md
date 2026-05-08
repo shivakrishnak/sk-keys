@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Java Servlet"
-parent: "Java & JVM Internals"
+parent: "Java Language"
 grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /java/java-servlet/

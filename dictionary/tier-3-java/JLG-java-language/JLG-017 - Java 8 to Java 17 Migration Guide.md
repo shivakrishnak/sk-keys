@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Java 8 to Java 17 Migration Guide"
-parent: "Java & JVM Internals"
+parent: "Java Language"
 grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /java/java-8-to-java-17-migration/

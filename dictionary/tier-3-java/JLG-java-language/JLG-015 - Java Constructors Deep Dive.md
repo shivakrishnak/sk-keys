@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Java Constructors Deep Dive"
-parent: "Java & JVM Internals"
+parent: "Java Language"
 grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /java/java-constructors-deep-dive/

@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Java File IO and Serialization"
-parent: "Java & JVM Internals"
+parent: "Java Language"
 grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /java/java-file-io-serialization/

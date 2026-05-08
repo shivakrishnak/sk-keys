@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Java EE  J2EE Overview"
-parent: "Java & JVM Internals"
+parent: "Java Language"
 grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /java/java-ee-j2ee-overview/

@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Maven Plugins"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /maven-build/maven-plugins/

@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Source vs Binary Distribution"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /maven-build/source-vs-binary-distribution/

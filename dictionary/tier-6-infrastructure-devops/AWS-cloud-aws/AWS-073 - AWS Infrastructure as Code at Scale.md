@@ -16,7 +16,7 @@ tags:
 status: draft
 version: 1
 layout: default
-parent: "Cloud -- AWS"
+parent: "Cloud - AWS"
 grand_parent: "Technical Dictionary"
 nav_order: 73
 permalink: /aws/aws-infrastructure-as-code-at-scale/

@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Maven Enforcer Plugin"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /maven-build/maven-enforcer-plugin/

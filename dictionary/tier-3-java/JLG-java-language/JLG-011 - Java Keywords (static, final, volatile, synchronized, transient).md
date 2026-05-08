@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Java Keywords (static, final, volatile, synchronized, transient)"
-parent: "Java & JVM Internals"
+parent: "Java Language"
 grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /java/java-keywords/

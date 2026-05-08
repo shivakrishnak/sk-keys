@@ -16,7 +16,7 @@ tags:
 status: draft
 version: 1
 layout: default
-parent: "Cloud -- AWS"
+parent: "Cloud - AWS"
 grand_parent: "Technical Dictionary"
 nav_order: 66
 permalink: /aws/aws-architecture-strategy-multi-az-multi-region/

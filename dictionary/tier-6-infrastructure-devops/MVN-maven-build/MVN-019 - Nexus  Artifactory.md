@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Nexus  Artifactory"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /maven-build/nexus-artifactory/

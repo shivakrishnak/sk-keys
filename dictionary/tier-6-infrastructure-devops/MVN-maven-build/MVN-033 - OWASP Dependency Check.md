@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "OWASP Dependency Check"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /maven-build/owasp-dependency-check/

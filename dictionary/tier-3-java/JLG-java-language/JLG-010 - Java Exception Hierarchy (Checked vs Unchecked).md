@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Java Exception Hierarchy (Checked vs Unchecked)"
-parent: "Java & JVM Internals"
+parent: "Java Language"
 grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /java/java-exception-hierarchy/

@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Dependency Convergence"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /maven-build/dependency-convergence/

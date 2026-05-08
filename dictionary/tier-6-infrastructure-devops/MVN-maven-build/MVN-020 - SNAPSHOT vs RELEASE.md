@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "SNAPSHOT vs RELEASE"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /maven-build/snapshot-vs-release/

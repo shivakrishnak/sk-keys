@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Maven Lifecycle (validate, compile, test, package, install, deploy)"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /maven-build/maven-lifecycle/

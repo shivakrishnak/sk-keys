@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Maven Multi-Module Project"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /maven-build/maven-multi-module-project/

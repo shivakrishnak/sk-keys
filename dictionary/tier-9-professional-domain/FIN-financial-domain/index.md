@@ -1,13 +1,13 @@
 ---
 layout: default
-title: "Financial Services Engineering"
+title: "Financial Services Domain"
 parent: "Technical Dictionary"
 nav_order: 47
 has_children: true
 permalink: /financial-services/
 ---
 
-# Financial Services Engineering
+# Financial Services Domain
 
 Portfolio and trading systems, OMS/EMS, post-trade processing, IBOR/ABOR, regulatory compliance (MiFID II, SOX, PCI-DSS), low-latency design, FIX protocol, and financial-grade API patterns.
 

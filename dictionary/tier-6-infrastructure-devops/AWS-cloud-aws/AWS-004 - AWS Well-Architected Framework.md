@@ -15,7 +15,7 @@ tags:
 status: draft
 version: 1
 layout: default
-parent: "Cloud -- AWS"
+parent: "Cloud - AWS"
 grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /aws/aws-well-architected-framework/

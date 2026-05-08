@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Gradle Tasks"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /maven-build/gradle-tasks/

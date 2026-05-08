@@ -16,7 +16,7 @@ tags:
 status: draft
 version: 1
 layout: default
-parent: "Cloud -- AWS"
+parent: "Cloud - AWS"
 grand_parent: "Technical Dictionary"
 nav_order: 75
 permalink: /aws/cloud-trade-off-framing/

@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Dependency Scope (compile, test, provided, runtime)"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /maven-build/dependency-scope/

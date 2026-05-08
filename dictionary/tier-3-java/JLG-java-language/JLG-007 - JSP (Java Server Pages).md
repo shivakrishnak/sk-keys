@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "JSP (Java Server Pages)"
-parent: "Java & JVM Internals"
+parent: "Java Language"
 grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /java/jsp-java-server-pages/

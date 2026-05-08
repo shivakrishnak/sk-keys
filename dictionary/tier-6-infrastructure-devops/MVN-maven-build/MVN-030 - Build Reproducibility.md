@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Build Reproducibility"
-parent: "Maven & Build Tools (Java)"
+parent: "Maven & Build Tools"
 grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /maven-build/build-reproducibility/

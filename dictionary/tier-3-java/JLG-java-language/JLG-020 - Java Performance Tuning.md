@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Java Performance Tuning"
-parent: "Java & JVM Internals"
+parent: "Java Language"
 grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /java/java-performance-tuning/

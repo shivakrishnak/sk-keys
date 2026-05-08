@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Java 17 Features (Records, Sealed, Pattern Matching)"
-parent: "Java & JVM Internals"
+parent: "Java Language"
 grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /java/java-17-features/

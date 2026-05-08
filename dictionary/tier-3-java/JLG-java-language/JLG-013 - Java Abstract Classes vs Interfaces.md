@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Java Abstract Classes vs Interfaces"
-parent: "Java & JVM Internals"
+parent: "Java Language"
 grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /java/java-abstract-classes-vs-interfaces/

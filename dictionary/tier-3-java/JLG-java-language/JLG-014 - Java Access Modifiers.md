@@ -1,7 +1,7 @@
 ﻿---
 layout: default
 title: "Java Access Modifiers"
-parent: "Java & JVM Internals"
+parent: "Java Language"
 grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /java/java-access-modifiers/

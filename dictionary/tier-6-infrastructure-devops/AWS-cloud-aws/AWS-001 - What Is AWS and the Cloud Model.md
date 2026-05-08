@@ -15,7 +15,7 @@ tags:
 status: draft
 version: 1
 layout: default
-parent: "Cloud -- AWS"
+parent: "Cloud - AWS"
 grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /aws/what-is-aws-and-the-cloud-model/
