@@ -55,3 +55,38 @@ aux_links_new_tab: true
 color_scheme: light
 back_to_top: true
 back_to_top_text: "Back to top"
+
+# ── Copy button on every code block ────────────────────────
+enable_copy_code_button: true
+
+# ── Mermaid diagrams (renders ```mermaid fenced blocks) ────
+mermaid:
+  version: "10.9.0"
+
+# ── Markdown renderer: GitHub Flavored Markdown ────────────
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: "highlight"
+    block:
+      line_numbers: false
+
+# ── Resilient builds — warn on Liquid errors, don't fail ───
+liquid:
+  error_mode: warn
+  strict_filters: false
+
+# ── Compress HTML output ────────────────────────────────────
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  blanklines: false
+
+# ── Compress CSS ────────────────────────────────────────────
+sass:
+  style: compressed
+
+# ── Footer ─────────────────────────────────────────────────
+footer_content: "sk-keys · 1,400+ entries · 50 categories · 9 tiers"
