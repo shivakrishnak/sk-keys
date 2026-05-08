@@ -4,7 +4,7 @@ title: "Trade-off Navigation: Latency vs Correctness"
 category: Data Structures & Algorithms
 tier: tier-1-foundations
 folder: DSA-data-structures
-difficulty: ???
+difficulty: ★★★
 depends_on:
 used_by:
 related:
@@ -22,6 +22,6 @@ nav_order: 79
 permalink: /dsa/trade-off-navigation-latency-vs-correctness/
 ---
 
-# DSA-079 � Trade-off Navigation: Latency vs Correctness
+# DSA-079 - Trade-off Navigation: Latency vs Correctness
 
 > Entry stub. Generate full content using Master Prompt v3.0.

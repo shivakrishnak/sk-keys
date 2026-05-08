@@ -4,7 +4,7 @@ title: "Web Performance Metrics (CWV: LCP, FID, CLS)"
 category: HTML
 tier: tier-7-frontend
 folder: HTM-html
-difficulty: ???
+difficulty: ★★★
 depends_on:
 used_by:
 related:
@@ -22,6 +22,6 @@ nav_order: 33
 permalink: /htm/web-performance-metrics-cwv-lcp-fid-cls/
 ---
 
-# HTM-033 � Web Performance Metrics (CWV: LCP, FID, CLS)
+# HTM-033 - Web Performance Metrics (CWV: LCP, FID, CLS)
 
 > Entry stub. Generate full content using Master Prompt v3.0.
