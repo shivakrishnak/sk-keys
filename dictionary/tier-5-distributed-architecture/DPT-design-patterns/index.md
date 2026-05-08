@@ -11,62 +11,79 @@ permalink: /design-patterns/
 
 GoF creational, structural, behavioral patterns, concurrency patterns, and common anti-patterns.
 
-**Keywords:** 766–820 (55 terms)
+**Keywords:** DPT-001–DPT-072 (72 terms)
 
-| # | Keyword | Difficulty |
-|---|---|---|
-| 766 | Singleton | ★☆☆ |
-| 767 | Factory Method | ★★☆ |
-| 768 | Abstract Factory | ★★☆ |
-| 769 | Builder | ★★☆ |
-| 770 | Prototype | ★★☆ |
-| 771 | Object Pool | ★★★ |
-| 772 | Adapter | ★★☆ |
-| 773 | Bridge | ★★★ |
-| 774 | Composite | ★★☆ |
-| 775 | Decorator | ★★☆ |
-| 776 | Facade | ★★☆ |
-| 777 | Flyweight | ★★★ |
-| 778 | Proxy | ★★☆ |
-| 779 | Chain of Responsibility | ★★☆ |
-| 780 | Command | ★★☆ |
-| 781 | Interpreter | ★★★ |
-| 782 | Iterator | ★★☆ |
-| 783 | Mediator | ★★★ |
-| 784 | Memento | ★★★ |
-| 785 | Observer | ★★☆ |
-| 786 | State | ★★☆ |
-| 787 | Strategy | ★★☆ |
-| 788 | Template Method | ★★☆ |
-| 789 | Visitor | ★★★ |
-| 790 | Null Object | ★★☆ |
-| 791 | Double-Checked Locking | ★★★ |
-| 792 | Producer-Consumer | ★★☆ |
-| 793 | Thread Pool Pattern | ★★★ |
-| 794 | Scheduler Pattern | ★★★ |
-| 795 | Read-Write Lock Pattern | ★★★ |
-| 796 | Active Object Pattern | ★★★ |
-| 797 | Event Bus Pattern | ★★★ |
-| 798 | Service Locator | ★★☆ |
-| 799 | Dependency Injection Pattern | ★★☆ |
-| 800 | Specification Pattern | ★★★ |
-| 801 | Decorator vs Proxy vs Adapter | ★★★ |
-| 802 | Anti-Patterns Overview | ★★☆ |
-| 803 | God Object Anti-Pattern | ★★☆ |
-| 804 | Spaghetti Code | ★☆☆ |
-| 805 | Golden Hammer Anti-Pattern | ★★☆ |
-| 806 | Cargo Cult Programming | ★★☆ |
-| 807 | Premature Optimization | ★★☆ |
-| 808 | Magic Numbers Anti-Pattern | ★☆☆ |
-| 809 | Lava Flow Anti-Pattern | ★★☆ |
-| 810 | Copy-Paste Programming | ★☆☆ |
-| 811 | Boat Anchor Anti-Pattern | ★★☆ |
-| 812 | CQRS Pattern | ★★★ |
-| 813 | Outbox Pattern | ★★★ |
-| 814 | Saga Pattern | ★★★ |
-| 815 | Strangler Fig | ★★★ |
-| 816 | Bulkhead Pattern | ★★★ |
-| 817 | Circuit Breaker Pattern | ★★★ |
-| 818 | Sidecar Pattern | ★★★ |
-| 819 | Ambassador Pattern | ★★★ |
-| 820 | Retry Pattern | ★★☆ |
+| ID | Keyword | Difficulty |
+|----|---------|------------|
+| DPT-001 | What Are Design Patterns and Why They Exist | ★☆☆ |
+| DPT-002 | The Gang of Four -- Origin and Philosophy | ★☆☆ |
+| DPT-003 | Pattern vs Anti-Pattern vs Idiom | ★☆☆ |
+| DPT-004 | How to Recognize When a Pattern Applies | ★☆☆ |
+| DPT-005 | The Design Patterns Ecosystem Map | ★☆☆ |
+| DPT-006 | Singleton | ★☆☆ |
+| DPT-007 | Factory Method | ★★☆ |
+| DPT-008 | Abstract Factory | ★★☆ |
+| DPT-009 | Builder | ★★☆ |
+| DPT-010 | Prototype | ★★☆ |
+| DPT-011 | Object Pool | ★★★ |
+| DPT-012 | Adapter | ★★☆ |
+| DPT-013 | Bridge | ★★★ |
+| DPT-014 | Composite | ★★☆ |
+| DPT-015 | Decorator | ★★☆ |
+| DPT-016 | Facade | ★★☆ |
+| DPT-017 | Flyweight | ★★★ |
+| DPT-018 | Proxy | ★★☆ |
+| DPT-019 | Chain of Responsibility | ★★☆ |
+| DPT-020 | Command | ★★☆ |
+| DPT-021 | Interpreter | ★★★ |
+| DPT-022 | Iterator | ★★☆ |
+| DPT-023 | Mediator | ★★★ |
+| DPT-024 | Memento | ★★★ |
+| DPT-025 | Observer | ★★☆ |
+| DPT-026 | State | ★★☆ |
+| DPT-027 | Strategy | ★★☆ |
+| DPT-028 | Template Method | ★★☆ |
+| DPT-029 | Visitor | ★★★ |
+| DPT-030 | Null Object | ★★☆ |
+| DPT-031 | Double-Checked Locking | ★★★ |
+| DPT-032 | Producer-Consumer | ★★☆ |
+| DPT-033 | Thread Pool Pattern | ★★★ |
+| DPT-034 | Scheduler Pattern | ★★★ |
+| DPT-035 | Read-Write Lock Pattern | ★★★ |
+| DPT-036 | Active Object Pattern | ★★★ |
+| DPT-037 | Event Bus Pattern | ★★★ |
+| DPT-038 | Service Locator | ★★☆ |
+| DPT-039 | Dependency Injection Pattern | ★★☆ |
+| DPT-040 | Specification Pattern | ★★★ |
+| DPT-041 | Decorator vs Proxy vs Adapter | ★★★ |
+| DPT-042 | Anti-Patterns Overview | ★★☆ |
+| DPT-043 | God Object Anti-Pattern | ★★☆ |
+| DPT-044 | Spaghetti Code | ★☆☆ |
+| DPT-045 | Golden Hammer Anti-Pattern | ★★☆ |
+| DPT-046 | Cargo Cult Programming | ★★☆ |
+| DPT-047 | Premature Optimization | ★★☆ |
+| DPT-048 | Magic Numbers Anti-Pattern | ★☆☆ |
+| DPT-049 | Lava Flow Anti-Pattern | ★★☆ |
+| DPT-050 | Copy-Paste Programming | ★☆☆ |
+| DPT-051 | Boat Anchor Anti-Pattern | ★★☆ |
+| DPT-052 | CQRS Pattern | ★★★ |
+| DPT-053 | Outbox Pattern | ★★★ |
+| DPT-054 | Saga Pattern | ★★★ |
+| DPT-055 | Strangler Fig | ★★★ |
+| DPT-056 | Bulkhead Pattern | ★★★ |
+| DPT-057 | Circuit Breaker Pattern | ★★★ |
+| DPT-058 | Sidecar Pattern | ★★★ |
+| DPT-059 | Ambassador Pattern | ★★★ |
+| DPT-060 | Retry Pattern | ★★☆ |
+| DPT-061 | Pattern Selection Framework | ★★★ |
+| DPT-062 | Pattern Evolution in Modern Languages | ★★★ |
+| DPT-063 | Anti-Pattern Recognition and Refactoring | ★★★ |
+| DPT-064 | Pattern-Driven Architecture Design | ★★★ |
+| DPT-065 | Patterns in Distributed Systems | ★★★ |
+| DPT-066 | Pattern Language Theory (Christopher Alexander) | ★★★ |
+| DPT-067 | Formal Pattern Specification | ★★★ |
+| DPT-068 | Pattern Mining and Discovery Research | ★★★ |
+| DPT-069 | Meta-Pattern Design | ★★★ |
+| DPT-070 | Pattern-Recognition Mental Model | ★★★ |
+| DPT-071 | Pattern Trade-off Framing | ★★★ |
+| DPT-072 | Over-Engineering Risk Thinking | ★★★ |

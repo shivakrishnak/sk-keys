@@ -11,57 +11,52 @@ permalink: /css/
 
 CSS cascade, specificity, Flexbox, Grid, animations, preprocessors, CSS architecture, and modern CSS features.
 
-**Keywords:** 1241–1290 (50 terms)
+**Keywords:** CSS-001–CSS-045 (45 terms)
 
-| # | Keyword | Difficulty |
-|---|---|---|
-| 1241 | CSS Specificity | ★★☆ |
-| 1242 | CSS Cascade | ★★☆ |
-| 1243 | CSS Inheritance | ★★☆ |
-| 1244 | Box Model | ★☆☆ |
-| 1245 | Box Sizing | ★★☆ |
-| 1246 | Display Property | ★☆☆ |
-| 1247 | Position | ★★☆ |
-| 1248 | Flexbox | ★★☆ |
-| 1249 | CSS Grid | ★★☆ |
-| 1250 | CSS Variables | ★★☆ |
-| 1251 | Pseudo-classes | ★★☆ |
-| 1252 | Pseudo-elements | ★★☆ |
-| 1253 | Media Queries | ★★☆ |
-| 1254 | Responsive Design | ★★☆ |
-| 1255 | Mobile-First Design | ★★☆ |
-| 1256 | CSS Units | ★★☆ |
-| 1257 | Stacking Context / z-index | ★★★ |
-| 1258 | CSS Transitions | ★★☆ |
-| 1259 | CSS Animations | ★★☆ |
-| 1260 | CSS Transform | ★★☆ |
-| 1261 | BEM | ★★☆ |
-| 1262 | CSS Modules | ★★☆ |
-| 1263 | CSS-in-JS | ★★★ |
-| 1264 | Tailwind CSS | ★★☆ |
-| 1265 | SASS / SCSS | ★★☆ |
-| 1266 | Container Queries | ★★★ |
-| 1267 | CSS Layers (@layer) | ★★★ |
-| 1268 | CSS Nesting | ★★★ |
-| 1269 | :has() Selector | ★★★ |
-| 1270 | CSS Subgrid | ★★★ |
-| 1271 | CSS Clamp / min / max | ★★★ |
-| 1272 | Scroll Snap | ★★★ |
-| 1273 | View Transitions API | ★★★ |
-| 1274 | CSS Performance | ★★★ |
-| 1275 | Critical CSS | ★★★ |
-| 1276 | Dark Mode | ★★☆ |
-| 1277 | Reduced Motion | ★★★ |
-| 1278 | CSS Houdini | ★★★ |
-| 1279 | Anchor Positioning | ★★★ |
-| 1280 | Logical Properties | ★★★ |
-| 1281 | PostCSS | ★★★ |
-| 1282 | CSS Reset vs Normalize | ★★☆ |
-| 1283 | Font Loading Strategy | ★★★ |
-| 1284 | will-change | ★★★ |
-| 1285 | CSS Containment | ★★★ |
-| 1286 | Print Styles | ★★☆ |
-| 1287 | CSS Custom Properties Advanced | ★★★ |
-| 1288 | Accessibility in CSS | ★★★ |
-| 1289 | CSS Architecture Strategies | ★★★ |
-| 1290 | Atomic CSS | ★★★ |
+| ID | Keyword | Difficulty |
+|----|---------|------------|
+| CSS-001 | What Is CSS and the Cascade Mental Model | ★☆☆ |
+| CSS-002 | The Box Model -- Everything in CSS Is a Box | ★☆☆ |
+| CSS-003 | CSS vs HTML vs JavaScript -- Roles | ★☆☆ |
+| CSS-004 | The CSS Ecosystem Map (Preprocessors, Frameworks) | ★☆☆ |
+| CSS-005 | CSS in Production -- What to Expect | ★☆☆ |
+| CSS-006 | CSS Selectors (Class, ID, Attribute, Pseudo) | ★☆☆ |
+| CSS-007 | CSS Specificity and Inheritance | ★☆☆ |
+| CSS-008 | CSS Cascade -- Order of Application | ★☆☆ |
+| CSS-009 | CSS Units (px, em, rem, %, vw, vh) | ★☆☆ |
+| CSS-010 | CSS Colors and Typography | ★☆☆ |
+| CSS-011 | CSS Display (block, inline, inline-block, none) | ★☆☆ |
+| CSS-012 | CSS Position (static, relative, absolute, fixed, sticky) | ★☆☆ |
+| CSS-013 | CSS Flexbox | ★☆☆ |
+| CSS-014 | CSS Grid | ★★☆ |
+| CSS-015 | CSS Custom Properties (Variables) | ★★☆ |
+| CSS-016 | CSS Media Queries and Responsive Design | ★★☆ |
+| CSS-017 | CSS Animations and Transitions | ★★☆ |
+| CSS-018 | CSS Pseudo-Classes and Pseudo-Elements | ★★☆ |
+| CSS-019 | CSS Z-Index and Stacking Context | ★★☆ |
+| CSS-020 | Sass / SCSS Preprocessor | ★★☆ |
+| CSS-021 | CSS BEM Naming Convention | ★★☆ |
+| CSS-022 | CSS Modules | ★★☆ |
+| CSS-023 | Tailwind CSS (Utility-First) | ★★☆ |
+| CSS-024 | CSS-in-JS (Styled-Components, Emotion) | ★★☆ |
+| CSS-025 | CSS Container Queries | ★★☆ |
+| CSS-026 | CSS Logical Properties | ★★☆ |
+| CSS-027 | CSS Scroll Snap | ★★☆ |
+| CSS-028 | CSS Clipping and Masking | ★★☆ |
+| CSS-029 | CSS Transforms and Perspective | ★★☆ |
+| CSS-030 | CSS Subgrid | ★★☆ |
+| CSS-031 | CSS Houdini (Paint, Layout Worklets) | ★★☆ |
+| CSS-032 | CSS Performance (Reflow, Repaint, Compositing) | ★★★ |
+| CSS-033 | CSS Cascade Layers (@layer) | ★★★ |
+| CSS-034 | CSS Nesting (Native) | ★★★ |
+| CSS-035 | CSS Paint API | ★★★ |
+| CSS-036 | CSS Architecture at Scale (Tokens, Design Systems) | ★★★ |
+| CSS-037 | CSS Framework Selection Strategy | ★★★ |
+| CSS-038 | Design Token Architecture | ★★★ |
+| CSS-039 | CSS Theming Strategy (Dark Mode, Multi-Brand) | ★★★ |
+| CSS-040 | Browser Layout Engine Internals | ★★★ |
+| CSS-041 | CSS Specification Design Philosophy | ★★★ |
+| CSS-042 | CSS Performance Research | ★★★ |
+| CSS-043 | CSS Architecture Trade-off Framing | ★★★ |
+| CSS-044 | Cascade Mental Model (Specificity Wars) | ★★★ |
+| CSS-045 | CSS Naming Strategy Thinking | ★★★ |

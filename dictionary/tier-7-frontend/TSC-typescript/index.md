@@ -11,57 +11,52 @@ permalink: /typescript/
 
 TypeScript type system, generics, utility types, mapped types, conditional types, and compiler internals.
 
-**Keywords:** 1371–1420 (50 terms)
+**Keywords:** TSC-001–TSC-045 (45 terms)
 
-| # | Keyword | Difficulty |
-|---|---|---|
-| 1371 | TypeScript vs JavaScript | ★☆☆ |
-| 1372 | Static Typing | ★☆☆ |
-| 1373 | Type Inference | ★★☆ |
-| 1374 | Type Annotation | ★☆☆ |
-| 1375 | Primitive Types | ★☆☆ |
-| 1376 | any / unknown / never | ★★☆ |
-| 1377 | Union Types | ★★☆ |
-| 1378 | Intersection Types | ★★☆ |
-| 1379 | Literal Types | ★★☆ |
-| 1380 | Type Alias | ★★☆ |
-| 1381 | Interface | ★★☆ |
-| 1382 | Type Alias vs Interface | ★★★ |
-| 1383 | Optional / Readonly | ★★☆ |
-| 1384 | Generics (TS) | ★★★ |
-| 1385 | Generic Constraints | ★★★ |
-| 1386 | Utility Types | ★★★ |
-| 1387 | Mapped Types | ★★★ |
-| 1388 | Conditional Types | ★★★ |
-| 1389 | infer Keyword | ★★★ |
-| 1390 | Template Literal Types | ★★★ |
-| 1391 | Discriminated Union | ★★★ |
-| 1392 | Type Narrowing | ★★★ |
-| 1393 | Type Guard | ★★★ |
-| 1394 | satisfies Operator | ★★★ |
-| 1395 | Enum | ★★☆ |
-| 1396 | Declaration Files (.d.ts) | ★★★ |
-| 1397 | tsconfig.json | ★★☆ |
-| 1398 | strict Mode | ★★☆ |
-| 1399 | Structural Typing | ★★★ |
-| 1400 | Excess Property Checking | ★★★ |
-| 1401 | Index Signatures | ★★★ |
-| 1402 | Function Overloading (TS) | ★★★ |
-| 1403 | Decorators (TS) | ★★★ |
-| 1404 | Abstract Classes | ★★★ |
-| 1405 | keyof / typeof | ★★★ |
-| 1406 | ReturnType / Parameters | ★★★ |
-| 1407 | Awaited Utility Type | ★★★ |
-| 1408 | Variance (TS) | ★★★ |
-| 1409 | Declaration Merging | ★★★ |
-| 1410 | Module Augmentation | ★★★ |
-| 1411 | TS Compiler Pipeline | ★★★ |
-| 1412 | Type-Level Programming | ★★★ |
-| 1413 | Branded Types | ★★★ |
-| 1414 | Opaque Types | ★★★ |
-| 1415 | Type Assertions | ★★☆ |
-| 1416 | Non-null Assertion | ★★☆ |
-| 1417 | Project References | ★★★ |
-| 1418 | Monorepo TypeScript Setup | ★★★ |
-| 1419 | TypeScript Performance | ★★★ |
-| 1420 | Type Compatibility Rules | ★★★ |
+| ID | Keyword | Difficulty |
+|----|---------|------------|
+| TSC-001 | What Is TypeScript and Why It Matters | ★☆☆ |
+| TSC-002 | The TypeScript Mental Model (Structural Typing) | ★☆☆ |
+| TSC-003 | TypeScript vs JavaScript -- The Trade-off | ★☆☆ |
+| TSC-004 | The TypeScript Ecosystem Map (tsc, ts-node, vite) | ★☆☆ |
+| TSC-005 | TypeScript in Production -- What to Expect | ★☆☆ |
+| TSC-006 | TypeScript Basic Types (string, number, boolean, any, unknown) | ★☆☆ |
+| TSC-007 | TypeScript Interfaces and Type Aliases | ★☆☆ |
+| TSC-008 | TypeScript Functions (Parameter Types, Return Types, Overloads) | ★☆☆ |
+| TSC-009 | TypeScript Classes and Access Modifiers | ★☆☆ |
+| TSC-010 | TypeScript Enums | ★☆☆ |
+| TSC-011 | TypeScript Arrays and Tuples | ★☆☆ |
+| TSC-012 | tsconfig.json Configuration | ★☆☆ |
+| TSC-013 | TypeScript Union and Intersection Types | ★★☆ |
+| TSC-014 | TypeScript Type Narrowing and Type Guards | ★★☆ |
+| TSC-015 | TypeScript Generics | ★★☆ |
+| TSC-016 | TypeScript Utility Types (Partial, Required, Pick, Omit, Record) | ★★☆ |
+| TSC-017 | TypeScript Modules and Namespaces | ★★☆ |
+| TSC-018 | TypeScript Decorators | ★★☆ |
+| TSC-019 | TypeScript Declaration Files (.d.ts) | ★★☆ |
+| TSC-020 | TypeScript Strict Mode | ★★☆ |
+| TSC-021 | TypeScript with React (JSX, Component Typing) | ★★☆ |
+| TSC-022 | TypeScript Mapped Types | ★★☆ |
+| TSC-023 | TypeScript Conditional Types | ★★☆ |
+| TSC-024 | TypeScript Template Literal Types | ★★☆ |
+| TSC-025 | TypeScript Infer Keyword | ★★☆ |
+| TSC-026 | TypeScript Discriminated Unions | ★★☆ |
+| TSC-027 | TypeScript Module Augmentation | ★★☆ |
+| TSC-028 | TypeScript Project References | ★★☆ |
+| TSC-029 | TypeScript Path Aliases | ★★☆ |
+| TSC-030 | TypeScript with Node.js (Backend Typing) | ★★☆ |
+| TSC-031 | TypeScript Compiler API | ★★★ |
+| TSC-032 | TypeScript Type-Level Programming | ★★★ |
+| TSC-033 | TypeScript ESM vs CJS Modules | ★★★ |
+| TSC-034 | TypeScript Performance (Compilation Speed) | ★★★ |
+| TSC-035 | TypeScript Migration Strategy (JS to TS) | ★★★ |
+| TSC-036 | TypeScript Architecture Strategy (Strict Typing, Shared Types) | ★★★ |
+| TSC-037 | TypeScript Monorepo Strategy (Type Sharing) | ★★★ |
+| TSC-038 | TypeScript Security Strategy (Zod, Runtime Validation) | ★★★ |
+| TSC-039 | TypeScript Type System Internals | ★★★ |
+| TSC-040 | TypeScript Specification Design Philosophy | ★★★ |
+| TSC-041 | TypeScript Checker Architecture Research | ★★★ |
+| TSC-042 | TypeScript Trade-off Framing (Type Safety vs Productivity) | ★★★ |
+| TSC-043 | Structural vs Nominal Typing Mental Model | ★★★ |
+| TSC-044 | TypeScript Migration Mindset | ★★★ |
+| TSC-045 | Type-First Design Thinking | ★★★ |

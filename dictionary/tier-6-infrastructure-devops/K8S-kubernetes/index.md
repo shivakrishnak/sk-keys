@@ -11,67 +11,84 @@ permalink: /kubernetes/
 
 K8s architecture, workloads, networking, storage, autoscaling, security, GitOps, and multi-cluster operations.
 
-**Keywords:** 856–915 (60 terms)
+**Keywords:** K8S-001–K8S-077 (77 terms)
 
-| # | Keyword | Difficulty |
-|---|---|---|
-| 856 | Kubernetes Architecture | ★☆☆ |
-| 857 | Pod | ★☆☆ |
-| 858 | Node | ★☆☆ |
-| 859 | Cluster | ★☆☆ |
-| 860 | Namespace (K8s) | ★☆☆ |
-| 861 | Deployment | ★★☆ |
-| 862 | ReplicaSet | ★★☆ |
-| 863 | StatefulSet | ★★☆ |
-| 864 | DaemonSet | ★★☆ |
-| 865 | Job / CronJob | ★★☆ |
-| 866 | Service (K8s) | ★★☆ |
-| 867 | ClusterIP / NodePort / LoadBalancer | ★★☆ |
-| 868 | Ingress | ★★☆ |
-| 869 | Ingress Controller | ★★★ |
-| 870 | ConfigMap | ★★☆ |
-| 871 | Secret | ★★☆ |
-| 872 | HPA (Horizontal Pod Autoscaler) | ★★☆ |
-| 873 | VPA (Vertical Pod Autoscaler) | ★★★ |
-| 874 | Cluster Autoscaler | ★★★ |
-| 875 | KEDA | ★★★ |
-| 876 | PersistentVolume / PVC | ★★☆ |
-| 877 | StorageClass | ★★★ |
-| 878 | kube-proxy | ★★★ |
-| 879 | CoreDNS | ★★★ |
-| 880 | etcd | ★★★ |
-| 881 | API Server | ★★★ |
-| 882 | Scheduler (K8s) | ★★★ |
-| 883 | Controller Manager | ★★★ |
-| 884 | kubelet | ★★★ |
-| 885 | kubeadm | ★★☆ |
-| 886 | kubectl | ★★☆ |
-| 887 | Helm | ★★☆ |
-| 888 | Helm Chart | ★★☆ |
-| 889 | Kustomize | ★★★ |
-| 890 | Operators | ★★★ |
-| 891 | CRD (Custom Resource Definition) | ★★★ |
-| 892 | Admission Controllers | ★★★ |
-| 893 | RBAC (K8s) | ★★★ |
-| 894 | Network Policy | ★★★ |
-| 895 | Pod Security Standards | ★★★ |
-| 896 | Resource Requests / Limits | ★★☆ |
-| 897 | QoS Classes | ★★★ |
-| 898 | Node Affinity / Anti-Affinity | ★★★ |
-| 899 | Taints and Tolerations | ★★★ |
-| 900 | Pod Disruption Budget | ★★★ |
-| 901 | Rolling Update Strategy | ★★☆ |
-| 902 | Readiness vs Liveness vs Startup Probe | ★★☆ |
-| 903 | Service Account | ★★★ |
-| 904 | Kubernetes Secrets Management | ★★★ |
-| 905 | GitOps with Kubernetes | ★★★ |
-| 906 | ArgoCD | ★★★ |
-| 907 | FluxCD | ★★★ |
-| 908 | Kubernetes Networking (CNI) | ★★★ |
-| 909 | Calico / Cilium | ★★★ |
-| 910 | Kubernetes Observability | ★★★ |
-| 911 | K8s Multi-Cluster | ★★★ |
-| 912 | Service Mesh on K8s | ★★★ |
-| 913 | K8s Cost Optimization | ★★★ |
-| 914 | K8s Security Hardening | ★★★ |
-| 915 | K8s Upgrade Strategy | ★★★ |
+| ID | Keyword | Difficulty |
+|----|---------|------------|
+| K8S-001 | What Is Kubernetes and Why It Exists | ★☆☆ |
+| K8S-002 | The Kubernetes Mental Model (Desired State) | ★☆☆ |
+| K8S-003 | Kubernetes vs Docker Swarm vs Mesos | ★☆☆ |
+| K8S-004 | The Kubernetes Ecosystem Map | ★☆☆ |
+| K8S-005 | Kubernetes in Production -- What to Expect | ★☆☆ |
+| K8S-006 | Kubernetes Architecture | "★☆☆" |
+| K8S-007 | Pod | "★☆☆" |
+| K8S-008 | Node | "★☆☆" |
+| K8S-009 | Cluster | "★☆☆" |
+| K8S-010 | Namespace (K8s) | "★☆☆" |
+| K8S-011 | Deployment | "★★☆" |
+| K8S-012 | ReplicaSet | "★★☆" |
+| K8S-013 | StatefulSet | "★★☆" |
+| K8S-014 | DaemonSet | "★★☆" |
+| K8S-015 | Job  CronJob | "★★☆" |
+| K8S-016 | Service (K8s) | "★★☆" |
+| K8S-017 | ClusterIP  NodePort  LoadBalancer | "★★☆" |
+| K8S-018 | Ingress | "★★☆" |
+| K8S-019 | Ingress Controller | "★★★" |
+| K8S-020 | ConfigMap | "★★☆" |
+| K8S-021 | Secret | "★★☆" |
+| K8S-022 | HPA (Horizontal Pod Autoscaler) | "★★☆" |
+| K8S-023 | VPA (Vertical Pod Autoscaler) | "★★★" |
+| K8S-024 | Cluster Autoscaler | "★★★" |
+| K8S-025 | KEDA | "★★★" |
+| K8S-026 | PersistentVolume  PVC | "★★☆" |
+| K8S-027 | StorageClass | "★★★" |
+| K8S-028 | kube-proxy | "★★★" |
+| K8S-029 | CoreDNS | "★★★" |
+| K8S-030 | etcd | "★★★" |
+| K8S-031 | API Server | "★★★" |
+| K8S-032 | Scheduler (K8s) | "★★★" |
+| K8S-033 | Controller Manager | "★★★" |
+| K8S-034 | kubelet | "★★★" |
+| K8S-035 | kubeadm | "★★☆" |
+| K8S-036 | kubectl | "★★☆" |
+| K8S-037 | Helm | "★★☆" |
+| K8S-038 | Helm Chart | "★★☆" |
+| K8S-039 | Kustomize | "★★★" |
+| K8S-040 | Operators | "★★★" |
+| K8S-041 | CRD (Custom Resource Definition) | "★★★" |
+| K8S-042 | Admission Controllers | "★★★" |
+| K8S-043 | RBAC (K8s) | "★★★" |
+| K8S-044 | Network Policy | "★★★" |
+| K8S-045 | Pod Security Standards | "★★★" |
+| K8S-046 | Resource Requests  Limits | "★★☆" |
+| K8S-047 | QoS Classes | "★★★" |
+| K8S-048 | Node Affinity  Anti-Affinity | "★★★" |
+| K8S-049 | Taints and Tolerations | "★★★" |
+| K8S-050 | Pod Disruption Budget | "★★★" |
+| K8S-051 | Rolling Update Strategy | "★★☆" |
+| K8S-052 | Readiness vs Liveness vs Startup Probe | "★★☆" |
+| K8S-053 | Service Account | "★★★" |
+| K8S-054 | Kubernetes Secrets Management | "★★★" |
+| K8S-055 | GitOps with Kubernetes | "★★★" |
+| K8S-056 | ArgoCD | "★★★" |
+| K8S-057 | FluxCD | "★★★" |
+| K8S-058 | Kubernetes Networking (CNI) | "★★★" |
+| K8S-059 | Calico  Cilium | "★★★" |
+| K8S-060 | Kubernetes Observability | "★★★" |
+| K8S-061 | K8s Multi-Cluster | "★★★" |
+| K8S-062 | Service Mesh on K8s | "★★★" |
+| K8S-063 | K8s Cost Optimization | "★★★" |
+| K8S-064 | K8s Security Hardening | "★★★" |
+| K8S-065 | K8s Upgrade Strategy | "★★★" |
+| K8S-066 | Kubernetes Cluster Architecture Strategy | ★★★ |
+| K8S-067 | Kubernetes Multi-Cluster Strategy | ★★★ |
+| K8S-068 | Kubernetes Cost Optimization Strategy | ★★★ |
+| K8S-069 | Kubernetes Security Architecture | ★★★ |
+| K8S-070 | Platform Engineering with Kubernetes | ★★★ |
+| K8S-071 | Kubernetes Controller and Operator Design | ★★★ |
+| K8S-072 | etcd and Consensus in Kubernetes | ★★★ |
+| K8S-073 | Kubernetes Scheduler Algorithm Design | ★★★ |
+| K8S-074 | Kubernetes API Extension Points | ★★★ |
+| K8S-075 | Kubernetes Trade-off Framing | ★★★ |
+| K8S-076 | Cluster Design Mental Model | ★★★ |
+| K8S-077 | Kubernetes Necessity Assessment | ★★★ |

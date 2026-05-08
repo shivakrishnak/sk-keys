@@ -11,52 +11,69 @@ permalink: /system-design/
 
 Scaling, load balancing, rate limiting, distributed locks, sharding, and classic system design problems.
 
-**Keywords:** 681–725 (45 terms)
+**Keywords:** SYD-001–SYD-062 (62 terms)
 
-| # | Keyword | Difficulty |
-|---|---|---|
-| 681 | Vertical Scaling | ★☆☆ |
-| 682 | Horizontal Scaling | ★☆☆ |
-| 683 | Load Balancing | ★★☆ |
-| 684 | Round Robin | ★☆☆ |
-| 685 | Least Connections | ★★☆ |
-| 686 | Consistent Hashing (Load Balancing) | ★★★ |
-| 687 | Sticky Sessions | ★★☆ |
-| 688 | Session Affinity | ★★☆ |
-| 689 | Auto Scaling | ★★☆ |
-| 690 | SLA / SLO / SLI | ★★☆ |
-| 691 | Error Budget | ★★★ |
-| 692 | MTTR / MTBF | ★★☆ |
-| 693 | RTO / RPO | ★★★ |
-| 694 | Redundancy / Failover | ★★☆ |
-| 695 | Active-Active | ★★★ |
-| 696 | Active-Passive | ★★☆ |
-| 697 | Disaster Recovery | ★★★ |
-| 698 | Geo-Replication | ★★★ |
-| 699 | Multi-Region Architecture | ★★★ |
-| 700 | Thundering Herd (System) | ★★★ |
-| 701 | Back-of-Envelope Estimation | ★★☆ |
-| 702 | Capacity Planning | ★★★ |
-| 703 | Rate Limiting (System) | ★★☆ |
-| 704 | Token Bucket | ★★★ |
-| 705 | Leaky Bucket | ★★★ |
-| 706 | Sharding (System) | ★★★ |
-| 707 | Hot Shard | ★★★ |
-| 708 | Read-Heavy vs Write-Heavy Design | ★★★ |
-| 709 | Denormalization for Scale | ★★★ |
-| 710 | Fan-Out on Write vs Read | ★★★ |
-| 711 | Push vs Pull Architecture | ★★★ |
-| 712 | Polling vs Webhooks | ★★☆ |
-| 713 | Idempotency Key | ★★★ |
-| 714 | Distributed Locks | ★★★ |
-| 715 | Leader-Follower Pattern | ★★★ |
-| 716 | Write-Ahead Logging (System) | ★★★ |
-| 717 | Data Partitioning Strategies | ★★★ |
-| 718 | URL Shortener Design | ★★☆ |
-| 719 | Rate Limiter Design | ★★★ |
-| 720 | News Feed Design | ★★★ |
-| 721 | Search Autocomplete Design | ★★★ |
-| 722 | Notification System Design | ★★★ |
-| 723 | Chat System Design | ★★★ |
-| 724 | Video Streaming Design | ★★★ |
-| 725 | Ride-Sharing System Design | ★★★ |
+| ID | Keyword | Difficulty |
+|----|---------|------------|
+| SYD-001 | What Is System Design | ★☆☆ |
+| SYD-002 | The System Design Interview Mental Model | ★☆☆ |
+| SYD-003 | How to Approach Any System Design Problem | ★☆☆ |
+| SYD-004 | Estimation and Back-of-Envelope Thinking | ★☆☆ |
+| SYD-005 | The System Design Ecosystem Map | ★☆☆ |
+| SYD-006 | Vertical Scaling | ★☆☆ |
+| SYD-007 | Horizontal Scaling | ★☆☆ |
+| SYD-008 | Load Balancing | ★★☆ |
+| SYD-009 | Round Robin | ★☆☆ |
+| SYD-010 | Least Connections | ★★☆ |
+| SYD-011 | Consistent Hashing (Load Balancing) | ★★★ |
+| SYD-012 | Sticky Sessions | ★★☆ |
+| SYD-013 | Session Affinity | ★★☆ |
+| SYD-014 | Auto Scaling | ★★☆ |
+| SYD-015 | SLA SLO SLI | ★★☆ |
+| SYD-016 | Error Budget | ★★★ |
+| SYD-017 | MTTR MTBF | ★★☆ |
+| SYD-018 | RTO RPO | ★★★ |
+| SYD-019 | Redundancy Failover | ★★☆ |
+| SYD-020 | Active-Active | ★★★ |
+| SYD-021 | Active-Passive | ★★☆ |
+| SYD-022 | Disaster Recovery | ★★★ |
+| SYD-023 | Geo-Replication | ★★★ |
+| SYD-024 | Multi-Region Architecture | ★★★ |
+| SYD-025 | Thundering Herd | ★★★ |
+| SYD-026 | Back-of-Envelope Estimation | ★★☆ |
+| SYD-027 | Capacity Planning | ★★★ |
+| SYD-028 | Rate Limiting (System) | ★★☆ |
+| SYD-029 | Token Bucket | ★★★ |
+| SYD-030 | Leaky Bucket | ★★★ |
+| SYD-031 | Sharding (System) | ★★★ |
+| SYD-032 | Hot Shard | ★★★ |
+| SYD-033 | Read-Heavy vs Write-Heavy Design | ★★★ |
+| SYD-034 | Denormalization for Scale | ★★★ |
+| SYD-035 | Fan-Out on Write vs Read | ★★★ |
+| SYD-036 | Push vs Pull Architecture | ★★★ |
+| SYD-037 | Polling vs Webhooks | ★★☆ |
+| SYD-038 | Idempotency Key | ★★★ |
+| SYD-039 | Distributed Locks | ★★★ |
+| SYD-040 | Leader-Follower Pattern | ★★★ |
+| SYD-041 | Write-Ahead Logging (System) | ★★★ |
+| SYD-042 | Data Partitioning Strategies | ★★★ |
+| SYD-043 | URL Shortener Design | ★★☆ |
+| SYD-044 | Rate Limiter Design | ★★★ |
+| SYD-045 | News Feed Design | ★★★ |
+| SYD-046 | Search Autocomplete Design | ★★★ |
+| SYD-047 | Notification System Design | ★★★ |
+| SYD-048 | Chat System Design | ★★★ |
+| SYD-049 | Video Streaming Design | ★★★ |
+| SYD-050 | Ride-Sharing System Design | ★★★ |
+| SYD-051 | System Design at Hyperscale | ★★★ |
+| SYD-052 | Multi-Region Architecture Strategy | ★★★ |
+| SYD-053 | Cost-Performance Trade-off Architecture | ★★★ |
+| SYD-054 | System Evolution Strategy | ★★★ |
+| SYD-055 | Platform Architecture Design | ★★★ |
+| SYD-056 | Emergent Architecture Patterns | ★★★ |
+| SYD-057 | Theoretical Foundations of Scalable Systems | ★★★ |
+| SYD-058 | Formal Capacity Planning Models | ★★★ |
+| SYD-059 | System Design Research and Case Studies | ★★★ |
+| SYD-060 | Constraint-First System Design Thinking | ★★★ |
+| SYD-061 | Scale Estimation Mental Model | ★★★ |
+| SYD-062 | Trade-off Navigation Framework | ★★★ |

@@ -11,54 +11,71 @@ permalink: /software-architecture/
 
 Layered, hexagonal, clean, CQRS, event sourcing, DDD patterns, SOLID, and coupling/cohesion principles.
 
-**Keywords:** 726–2306 (47 terms)
+**Keywords:** SAP-001–SAP-064 (64 terms)
 
-| # | Keyword | Difficulty |
-|---|---|---|
-| 726 | Layered Architecture | ★☆☆ |
-| 727 | Hexagonal Architecture | ★★★ |
-| 728 | Clean Architecture | ★★★ |
-| 729 | Onion Architecture | ★★★ |
-| 730 | Vertical Slice Architecture | ★★★ |
-| 731 | CQRS Pattern | ★★★ |
-| 732 | Event Sourcing Pattern | ★★★ |
-| 733 | Ports and Adapters | ★★★ |
-| 734 | Repository Pattern | ★★☆ |
-| 735 | Unit of Work Pattern | ★★★ |
-| 736 | Domain Model | ★★★ |
-| 737 | Anemic Domain Model | ★★★ |
-| 738 | Rich Domain Model | ★★★ |
-| 739 | Service Layer | ★★☆ |
-| 740 | Transaction Script | ★★☆ |
-| 741 | Active Record | ★★☆ |
-| 742 | Data Mapper | ★★★ |
-| 743 | Aggregate Root | ★★★ |
-| 744 | Domain Events | ★★★ |
-| 745 | Value Objects | ★★★ |
-| 746 | Entities | ★★☆ |
-| 747 | Anti-Corruption Layer | ★★★ |
-| 748 | Context Map | ★★★ |
-| 749 | Shared Kernel | ★★★ |
-| 750 | Open Host Service | ★★★ |
-| 751 | Published Language | ★★★ |
-| 752 | Modular Monolith Patterns | ★★★ |
-| 753 | Plugin Architecture | ★★★ |
-| 754 | Pipe and Filter | ★★★ |
-| 755 | Blackboard Pattern | ★★★ |
-| 756 | SOLID Principles | ★★☆ |
-| 757 | DRY | ★☆☆ |
-| 758 | KISS | ★☆☆ |
-| 759 | YAGNI | ★★☆ |
-| 760 | Law of Demeter | ★★☆ |
-| 761 | Tell Don't Ask | ★★☆ |
-| 762 | Command-Query Separation (CQS) | ★★★ |
-| 763 | Cohesion | ★★☆ |
-| 764 | Coupling | ★★☆ |
-| 765 | Connascence | ★★★ |
-| 2300 | Architecture Decision Record (ADR) | ★★★ |
-| 2301 | Technology Roadmap | ★★★ |
-| 2302 | Architecture Review | ★★★ |
-| 2303 | Proof of Concept (POC) | ★★★ |
-| 2304 | Enterprise Application Architecture | ★★★ |
-| 2305 | Loose Coupling of Frontend Modules | ★★★ |
-| 2306 | Micro-Frontend Architecture | ★★★ |
+| ID | Keyword | Difficulty |
+|----|---------|------------|
+| SAP-001 | What Is Software Architecture | ★☆☆ |
+| SAP-002 | Why Architecture Decisions Matter | ★☆☆ |
+| SAP-003 | The Architecture Landscape -- Styles and Patterns | ★☆☆ |
+| SAP-004 | Architecture vs Design vs Implementation | ★☆☆ |
+| SAP-005 | The Software Architecture Ecosystem Map | ★☆☆ |
+| SAP-006 | Architecture Decision Record (ADR) | ★★★ |
+| SAP-007 | Technology Roadmap | ★★★ |
+| SAP-008 | Architecture Review | ★★★ |
+| SAP-009 | Proof of Concept (POC) | ★★★ |
+| SAP-010 | Enterprise Application Architecture | ★★★ |
+| SAP-011 | Loose Coupling of Frontend Modules | ★★★ |
+| SAP-012 | Micro-Frontend Architecture | ★★★ |
+| SAP-013 | Layered Architecture | ★☆☆ |
+| SAP-014 | Hexagonal Architecture | ★★★ |
+| SAP-015 | Clean Architecture | ★★★ |
+| SAP-016 | Onion Architecture | ★★★ |
+| SAP-017 | Vertical Slice Architecture | ★★★ |
+| SAP-018 | CQRS Pattern | ★★★ |
+| SAP-019 | Event Sourcing Pattern | ★★★ |
+| SAP-020 | Ports and Adapters | ★★★ |
+| SAP-021 | Repository Pattern | ★★☆ |
+| SAP-022 | Unit of Work Pattern | ★★★ |
+| SAP-023 | Domain Model | ★★★ |
+| SAP-024 | Anemic Domain Model | ★★★ |
+| SAP-025 | Rich Domain Model | ★★★ |
+| SAP-026 | Service Layer | ★★☆ |
+| SAP-027 | Transaction Script | ★★☆ |
+| SAP-028 | Active Record | ★★☆ |
+| SAP-029 | Data Mapper | ★★★ |
+| SAP-030 | Aggregate Root | ★★★ |
+| SAP-031 | Domain Events | ★★★ |
+| SAP-032 | Value Objects | ★★★ |
+| SAP-033 | Entities | ★★☆ |
+| SAP-034 | Anti-Corruption Layer | ★★★ |
+| SAP-035 | Context Map | ★★★ |
+| SAP-036 | Shared Kernel | ★★★ |
+| SAP-037 | Open Host Service | ★★★ |
+| SAP-038 | Published Language | ★★★ |
+| SAP-039 | Modular Monolith Patterns | ★★★ |
+| SAP-040 | Plugin Architecture | ★★★ |
+| SAP-041 | Pipe and Filter | ★★★ |
+| SAP-042 | Blackboard Pattern | ★★★ |
+| SAP-043 | SOLID Principles | ★★☆ |
+| SAP-044 | DRY (Don't Repeat Yourself) | ★☆☆ |
+| SAP-045 | KISS (Keep It Simple, Stupid) | ★☆☆ |
+| SAP-046 | YAGNI (You Aren't Gonna Need It) | ★★☆ |
+| SAP-047 | Law of Demeter | ★★☆ |
+| SAP-048 | Tell Don't Ask | ★★☆ |
+| SAP-049 | Command-Query Separation (CQS) | ★★★ |
+| SAP-050 | Cohesion | ★★☆ |
+| SAP-051 | Coupling | ★★☆ |
+| SAP-052 | Connascence | ★★★ |
+| SAP-053 | Architecture Decision Records (ADR) Strategy | ★★★ |
+| SAP-054 | Architecture Review Process Design | ★★★ |
+| SAP-055 | Legacy Modernization Strategy | ★★★ |
+| SAP-056 | Architecture Fitness Functions | ★★★ |
+| SAP-057 | Architecture Governance at Scale | ★★★ |
+| SAP-058 | Formal Architecture Specification (C4, ADL, UML) | ★★★ |
+| SAP-059 | Architecture Theory and Research | ★★★ |
+| SAP-060 | Software Architecture Pattern Research | ★★★ |
+| SAP-061 | Evolutionary Architecture Design | ★★★ |
+| SAP-062 | Architecture Trade-off Framing | ★★★ |
+| SAP-063 | Architecture Necessity Assessment | ★★★ |
+| SAP-064 | Technical Debt Mental Model | ★★★ |

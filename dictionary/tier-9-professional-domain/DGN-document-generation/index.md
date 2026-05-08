@@ -11,28 +11,42 @@ permalink: /document-generation/
 
 PDF generation, template-based document systems, OpenText Exstream, Customer Communication Management (CCM), and localization in enterprise document output.
 
-**Keywords:** 2400–2420 (21 terms)
+**Keywords:** DGN-001–DGN-035 (35 terms)
 
-| # | Keyword | Difficulty |
-|---|---|---|
-| 2400 | Document Generation Overview | ★☆☆ |
-| 2401 | Data-Driven Document Generation | ★★☆ |
-| 2402 | PDF Generation | ★★☆ |
-| 2403 | Apache PDFBox | ★★★ |
-| 2404 | iText (Java PDF Library) | ★★★ |
-| 2405 | Template-Based Document Generation | ★★★ |
-| 2406 | Template Versioning | ★★★ |
-| 2407 | Document Output Validation | ★★★ |
-| 2408 | Localization in Documents | ★★★ |
-| 2409 | Formatting Standards in Documents | ★★★ |
-| 2410 | Statement / Notice / Letter Generation | ★★☆ |
-| 2411 | OpenText Exstream Overview | ★★★ |
-| 2412 | OpenText Exstream Template Design | ★★★ |
-| 2413 | OpenText Exstream Data Mapping | ★★★ |
-| 2414 | OpenText Exstream Output Generation | ★★★ |
-| 2415 | Customer Communication Management (CCM) | ★★★ |
-| 2416 | ReportLab (Python PDF) | ★★★ |
-| 2417 | WeasyPrint (Python PDF) | ★★★ |
-| 2418 | FPDF (Python PDF) | ★★★ |
-| 2419 | Document Schema Design | ★★★ |
-| 2420 | Backward Compatibility in Document Templates | ★★★ |
+| ID      | Keyword                                                          | Difficulty |
+|---------|------------------------------------------------------------------|------------|
+| DGN-001 | What Is Document Generation and Why It Matters                   | ★☆☆        |
+| DGN-002 | The Document Generation Mental Model (Template + Data + Renderer)| ★☆☆        |
+| DGN-003 | Document Formats Ecosystem Map (PDF, Word, Excel, HTML)          | ★☆☆        |
+| DGN-004 | Document Generation vs Document Editing - The Difference         | ★☆☆        |
+| DGN-005 | Document Generation in Production - What to Expect               | ★☆☆        |
+| DGN-006 | PDF Generation Fundamentals (iText, Apache PDFBox, WeasyPrint)   | ★☆☆        |
+| DGN-007 | HTML-to-PDF Conversion (Puppeteer, WeasyPrint, Prince)           | ★☆☆        |
+| DGN-008 | Word Document Generation (docx4j, python-docx, OpenXML)          | ★☆☆        |
+| DGN-009 | Excel Generation (Apache POI, OpenPyXL, ExcelJS)                 | ★☆☆        |
+| DGN-010 | Template Engines (Thymeleaf, Jinja2, Handlebars, FreeMarker)     | ★☆☆        |
+| DGN-011 | CSV and Data Export Generation                                   | ★☆☆        |
+| DGN-012 | PDF Form Filling (AcroForms, iText)                              | ★★☆        |
+| DGN-013 | Digital Signatures in Documents (PKCS#7, PAdES)                  | ★★☆        |
+| DGN-014 | Document Versioning and Audit Trail                              | ★★☆        |
+| DGN-015 | Barcode and QR Code Generation                                   | ★★☆        |
+| DGN-016 | Chart and Graph Generation in Documents                          | ★★☆        |
+| DGN-017 | Mail Merge Pattern                                               | ★★☆        |
+| DGN-018 | Document Storage and Retrieval (S3, CDN, Signed URLs)            | ★★☆        |
+| DGN-019 | Async Document Generation (Queue-Based)                          | ★★☆        |
+| DGN-020 | Document Generation Performance (Caching, Pooling)               | ★★☆        |
+| DGN-021 | PDF Accessibility (Tagged PDF, Section 508)                      | ★★☆        |
+| DGN-022 | PDF/A Standard (Archiving)                                       | ★★☆        |
+| DGN-023 | Document Security (Encryption, Password Protection)              | ★★☆        |
+| DGN-024 | Multi-Language and Unicode in Documents                          | ★★☆        |
+| DGN-025 | LLM-Assisted Document Generation                                 | ★★☆        |
+| DGN-026 | Document Generation at Scale (Bulk, Batch, Streaming)            | ★★★        |
+| DGN-027 | PDF Internals (Cross-Reference Table, Object Streams)            | ★★★        |
+| DGN-028 | OOXML (Office Open XML) Internals                                | ★★★        |
+| DGN-029 | Document Generation Architecture Strategy                        | ★★★        |
+| DGN-030 | Document Template Management Strategy                            | ★★★        |
+| DGN-031 | Document Generation Library Selection Framework                  | ★★★        |
+| DGN-032 | PDF Format Research (PDF 2.0, PDF/UA)                            | ★★★        |
+| DGN-033 | Document Rendering Algorithm Research                            | ★★★        |
+| DGN-034 | Document Generation Trade-off Framing                            | ★★★        |
+| DGN-035 | Template vs Code-Driven Generation Thinking                      | ★★★        |

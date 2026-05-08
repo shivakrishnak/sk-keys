@@ -11,44 +11,61 @@ permalink: /containers/
 
 Docker images, layers, multi-stage builds, container security, OCI standards, and container runtime internals.
 
-**Keywords:** 821–2311 (37 terms)
+**Keywords:** CTR-001–CTR-054 (54 terms)
 
-| # | Keyword | Difficulty |
-|---|---|---|
-| 821 | Container | ★☆☆ |
-| 822 | Docker | ★☆☆ |
-| 823 | Docker Image | ★☆☆ |
-| 824 | Docker Layer | ★★☆ |
-| 825 | Dockerfile | ★☆☆ |
-| 826 | Docker Build Context | ★★☆ |
-| 827 | Multi-Stage Build | ★★☆ |
-| 828 | Docker Compose | ★★☆ |
-| 829 | Container Registry | ★★☆ |
-| 830 | Linux Namespaces | ★★★ |
-| 831 | Cgroups | ★★★ |
-| 832 | Container Networking | ★★★ |
-| 833 | Volume Mounts | ★★☆ |
-| 834 | Container Security | ★★★ |
-| 835 | Distroless Images | ★★★ |
-| 836 | Image Scanning | ★★★ |
-| 837 | OCI Standard | ★★★ |
-| 838 | containerd | ★★★ |
-| 839 | Container Orchestration | ★★☆ |
-| 840 | Docker vs VM | ★☆☆ |
-| 841 | Ephemeral Container | ★★★ |
-| 842 | Init Container | ★★★ |
-| 843 | Sidecar Container | ★★★ |
-| 844 | Container Resource Limits | ★★☆ |
-| 845 | Container Health Check | ★★☆ |
-| 846 | Image Tag Strategy | ★★☆ |
-| 847 | Docker BuildKit | ★★★ |
-| 848 | Podman | ★★★ |
-| 849 | Buildah | ★★★ |
-| 850 | Slim / Minimal Images | ★★★ |
-| 851 | Docker Networking Modes | ★★★ |
-| 852 | Container Logging | ★★☆ |
-| 853 | Docker Secrets | ★★★ |
-| 854 | Image Provenance / SBOM | ★★★ |
-| 855 | Container Runtime Interface (CRI) | ★★★ |
-| 2310 | Red Hat OpenShift | ★★★ |
-| 2311 | OpenShift vs Kubernetes | ★★★ |
+| ID | Keyword | Difficulty |
+|----|---------|------------|
+| CTR-001 | What Is Containerization and Why It Matters | ★☆☆ |
+| CTR-002 | VMs vs Containers -- A Mental Model | ★☆☆ |
+| CTR-003 | The Container Ecosystem Map | ★☆☆ |
+| CTR-004 | Why Docker Changed Everything | ★☆☆ |
+| CTR-005 | Containers in Production -- What to Expect | ★☆☆ |
+| CTR-006 | Red Hat OpenShift | ★★★ |
+| CTR-007 | OpenShift vs Kubernetes | ★★★ |
+| CTR-008 | Container | ★☆☆ |
+| CTR-009 | Docker | ★☆☆ |
+| CTR-010 | Docker Image | ★☆☆ |
+| CTR-011 | Docker Layer | ★★☆ |
+| CTR-012 | Dockerfile | ★☆☆ |
+| CTR-013 | Docker Build Context | ★★☆ |
+| CTR-014 | Multi-Stage Build | ★★☆ |
+| CTR-015 | Docker Compose | ★★☆ |
+| CTR-016 | Container Registry | ★★☆ |
+| CTR-017 | Linux Namespaces | ★★★ |
+| CTR-018 | Cgroups | ★★★ |
+| CTR-019 | Container Networking | ★★★ |
+| CTR-020 | Volume Mounts | ★★☆ |
+| CTR-021 | Container Security | ★★★ |
+| CTR-022 | Distroless Images | ★★★ |
+| CTR-023 | Image Scanning | ★★★ |
+| CTR-024 | OCI Standard | ★★★ |
+| CTR-025 | containerd | ★★★ |
+| CTR-026 | Container Orchestration | ★★☆ |
+| CTR-027 | Docker vs VM | ★☆☆ |
+| CTR-028 | Ephemeral Container | ★★★ |
+| CTR-029 | Init Container | ★★★ |
+| CTR-030 | Sidecar Container | ★★★ |
+| CTR-031 | Container Resource Limits | ★★☆ |
+| CTR-032 | Container Health Check | ★★☆ |
+| CTR-033 | Image Tag Strategy | ★★☆ |
+| CTR-034 | Docker BuildKit | ★★★ |
+| CTR-035 | Podman | ★★★ |
+| CTR-036 | Buildah | ★★★ |
+| CTR-037 | Slim  Minimal Images | ★★★ |
+| CTR-038 | Docker Networking Modes | ★★★ |
+| CTR-039 | Container Logging | ★★☆ |
+| CTR-040 | Docker Secrets | ★★★ |
+| CTR-041 | Image Provenance  SBOM | ★★★ |
+| CTR-042 | Container Runtime Interface (CRI) | ★★★ |
+| CTR-043 | Container Platform Strategy | ★★★ |
+| CTR-044 | Container Security Architecture | ★★★ |
+| CTR-045 | Container Image Strategy at Scale | ★★★ |
+| CTR-046 | Containerization Migration Strategy | ★★★ |
+| CTR-047 | Multi-Runtime Container Strategy (containerd, CRI-O) | ★★★ |
+| CTR-048 | Container Runtime Internals (runc, containerd) | ★★★ |
+| CTR-049 | Linux Namespace and Cgroup Architecture | ★★★ |
+| CTR-050 | Container Image Format Design (OCI) | ★★★ |
+| CTR-051 | Container Security Research (Rootless, gVisor) | ★★★ |
+| CTR-052 | Container Trade-off Framing | ★★★ |
+| CTR-053 | Containerization Necessity Assessment | ★★★ |
+| CTR-054 | Container Security Mental Model | ★★★ |

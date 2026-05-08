@@ -11,58 +11,74 @@ permalink: /databases/
 
 ACID, transaction isolation, indexing, locking, replication, sharding, and schema evolution.
 
-**Keywords:** 411–2150 (51 terms)
+**Keywords:** DBF-001–DBF-067 (67 terms)
 
-| # | Keyword | Difficulty |
-|---|---|---|
-| 411 | ACID | ★☆☆ |
-| 412 | Atomicity | ★☆☆ |
-| 413 | Consistency (DB) | ★☆☆ |
-| 414 | Isolation | ★★☆ |
-| 415 | Durability | ★★☆ |
-| 416 | Transaction | ★☆☆ |
-| 417 | Commit / Rollback / Savepoint | ★☆☆ |
-| 418 | Isolation Levels | ★★☆ |
-| 419 | Dirty Read | ★★☆ |
-| 420 | Non-Repeatable Read | ★★☆ |
-| 421 | Phantom Read | ★★☆ |
-| 422 | MVCC | ★★★ |
-| 423 | WAL (Write-Ahead Log) | ★★★ |
-| 424 | Redo Log / Undo Log | ★★★ |
-| 425 | B-Tree | ★★☆ |
-| 426 | B+ Tree | ★★★ |
-| 427 | LSM Tree | ★★★ |
-| 428 | Index Types (B-Tree, Hash, Composite, Covering) | ★★☆ |
-| 429 | Query Planner / Execution Plan | ★★★ |
-| 430 | EXPLAIN | ★★☆ |
-| 431 | Normalization | ★★☆ |
-| 432 | Denormalization | ★★☆ |
-| 433 | Foreign Key / Referential Integrity | ★★☆ |
-| 434 | Locking (Row, Table, Gap, Next-Key) | ★★★ |
-| 435 | Deadlock Detection (DB) | ★★★ |
-| 436 | Connection Pooling (DB) | ★★☆ |
-| 437 | Prepared Statements | ★★☆ |
-| 438 | Read Replica | ★★☆ |
-| 439 | Write Amplification | ★★★ |
-| 440 | Partitioning (DB) | ★★★ |
-| 441 | Materialized View | ★★★ |
-| 442 | Stored Procedure / Trigger | ★★☆ |
-| 443 | ORM Patterns | ★★☆ |
-| 444 | Optimistic vs Pessimistic Locking | ★★★ |
-| 445 | Database Replication | ★★★ |
-| 446 | Master-Slave Replication | ★★☆ |
-| 447 | Multi-Master Replication | ★★★ |
-| 448 | Database Sharding | ★★★ |
-| 449 | Database Migration | ★★☆ |
-| 450 | Schema Evolution | ★★★ |
-| 2140 | Oracle Database | ★★☆ |
-| 2141 | PL/SQL | ★★★ |
-| 2142 | Complex SQL Queries (Joins, Subqueries, CTEs) | ★★★ |
-| 2143 | Query Optimization | ★★★ |
-| 2144 | Liquibase | ★★★ |
-| 2145 | Flyway | ★★★ |
-| 2146 | Database Change Management | ★★★ |
-| 2147 | Schema Design Best Practices | ★★★ |
-| 2148 | Data Integrity Constraints | ★★☆ |
-| 2149 | PostgreSQL Specific Features | ★★★ |
-| 2150 | MySQL Specific Features | ★★★ |
+| ID | Keyword | Difficulty |
+|----|---------|------------|
+| DBF-001 | What Is a Database and Why It Exists | ★☆☆ |
+| DBF-002 | The Database Landscape -- A Map | ★☆☆ |
+| DBF-003 | How Data Gets Stored and Retrieved | ★☆☆ |
+| DBF-004 | RDBMS vs NoSQL -- When to Choose | ★☆☆ |
+| DBF-005 | The SQL Ecosystem Map | ★☆☆ |
+| DBF-006 | Oracle Database | ★★☆ |
+| DBF-007 | Complex SQL Queries (Joins, Subqueries, CTEs) | ★★★ |
+| DBF-008 | Query Optimization | ★★★ |
+| DBF-009 | Liquibase | ★★★ |
+| DBF-010 | Flyway | ★★★ |
+| DBF-011 | Database Change Management | ★★★ |
+| DBF-012 | Schema Design Best Practices | ★★★ |
+| DBF-013 | Data Integrity Constraints | ★★☆ |
+| DBF-014 | PostgreSQL Specific Features | ★★★ |
+| DBF-015 | MySQL Specific Features | ★★★ |
+| DBF-016 | ACID | ★☆☆ |
+| DBF-017 | Atomicity | ★☆☆ |
+| DBF-018 | Consistency (DB) | ★☆☆ |
+| DBF-019 | Isolation | ★★☆ |
+| DBF-020 | Durability | ★★☆ |
+| DBF-021 | Transaction | ★☆☆ |
+| DBF-022 | Commit  Rollback  Savepoint | ★☆☆ |
+| DBF-023 | Isolation Levels | ★★☆ |
+| DBF-024 | Dirty Read | ★★☆ |
+| DBF-025 | Non-Repeatable Read | ★★☆ |
+| DBF-026 | Phantom Read | ★★☆ |
+| DBF-027 | MVCC | ★★★ |
+| DBF-028 | WAL (Write-Ahead Log) | ★★★ |
+| DBF-029 | Redo Log  Undo Log | ★★★ |
+| DBF-030 | B-Tree | ★★☆ |
+| DBF-031 | B+ Tree | ★★★ |
+| DBF-032 | LSM Tree | ★★★ |
+| DBF-033 | Index Types (B-Tree, Hash, Composite, Covering) | ★★☆ |
+| DBF-034 | Query Planner  Execution Plan | ★★★ |
+| DBF-035 | EXPLAIN | ★★☆ |
+| DBF-036 | Normalization | ★★☆ |
+| DBF-037 | Denormalization | ★★☆ |
+| DBF-038 | Foreign Key  Referential Integrity | ★★☆ |
+| DBF-039 | Locking (Row, Table, Gap, Next-Key) | ★★★ |
+| DBF-040 | Deadlock Detection (DB) | ★★★ |
+| DBF-041 | Connection Pooling (DB) | ★★☆ |
+| DBF-042 | Prepared Statements | ★★☆ |
+| DBF-043 | Read Replica | ★★☆ |
+| DBF-044 | Write Amplification | ★★★ |
+| DBF-045 | Partitioning (DB) | ★★★ |
+| DBF-046 | Materialized View | ★★★ |
+| DBF-047 | Stored Procedure  Trigger | ★★☆ |
+| DBF-048 | ORM Patterns | ★★☆ |
+| DBF-049 | Optimistic vs Pessimistic Locking | ★★★ |
+| DBF-050 | Database Replication | ★★★ |
+| DBF-051 | Master-Slave Replication | ★★☆ |
+| DBF-052 | Multi-Master Replication | ★★★ |
+| DBF-053 | Database Sharding | ★★★ |
+| DBF-054 | Database Migration | ★★☆ |
+| DBF-055 | Schema Evolution | ★★★ |
+| DBF-056 | Database Selection Framework | ★★★ |
+| DBF-057 | Database Architecture at Scale | ★★★ |
+| DBF-058 | Multi-Database Strategy (Polyglot Persistence) | ★★★ |
+| DBF-059 | Database Migration Strategy | ★★★ |
+| DBF-060 | Database Observability Strategy | ★★★ |
+| DBF-061 | RDBMS Engine Internals (InnoDB, PostgreSQL) | ★★★ |
+| DBF-062 | Transaction Protocol Design (2PC, MVCC) | ★★★ |
+| DBF-063 | Query Optimizer Design | ★★★ |
+| DBF-064 | Storage Engine Architecture | ★★★ |
+| DBF-065 | ACID Trade-off Framing | ★★★ |
+| DBF-066 | Database Selection Mental Model | ★★★ |
+| DBF-067 | Query Performance Intuition | ★★★ |

@@ -11,43 +11,60 @@ permalink: /nosql/
 
 Document stores, key-value, column-family, graph DBs, vector databases, and distributed data patterns.
 
-**Keywords:** 451–2170 (36 terms)
+**Keywords:** NDB-001–NDB-053 (53 terms)
 
-| # | Keyword | Difficulty |
-|---|---|---|
-| 451 | Document Store | ★★☆ |
-| 452 | Key-Value Store | ★★☆ |
-| 453 | Column Family | ★★★ |
-| 454 | Graph DB | ★★★ |
-| 455 | Time-Series DB | ★★★ |
-| 456 | Search Engine (Elasticsearch) | ★★★ |
-| 457 | Eventual Consistency in NoSQL | ★★★ |
-| 458 | CRDTs | ★★★ |
-| 459 | Vector Database | ★★★ |
-| 460 | NewSQL | ★★★ |
-| 461 | MongoDB Patterns | ★★☆ |
-| 462 | Redis Data Structures | ★★☆ |
-| 463 | Redis Persistence | ★★★ |
-| 464 | Cassandra Data Modeling | ★★★ |
-| 465 | DynamoDB Patterns | ★★★ |
-| 466 | Hot Partition Problem | ★★★ |
-| 467 | Wide Column vs Document | ★★★ |
-| 468 | Polyglot Persistence | ★★★ |
-| 469 | CAP Theorem (DB) | ★★★ |
-| 470 | Distributed Transactions | ★★★ |
-| 471 | Two-Phase Commit (2PC) | ★★★ |
-| 472 | Saga Pattern (DB) | ★★★ |
-| 473 | Change Data Capture (CDC) | ★★★ |
-| 474 | Database Proxy (PgBouncer) | ★★★ |
-| 475 | Data Locality | ★★★ |
-| 2160 | MongoDB Document Schema Design | ★★★ |
-| 2161 | MongoDB Normalization vs Denormalization | ★★★ |
-| 2162 | MongoDB Aggregation Pipeline | ★★★ |
-| 2163 | MongoDB Indexing Strategies | ★★★ |
-| 2164 | MongoDB Schema Evolution | ★★★ |
-| 2165 | OpenSearch / Elasticsearch | ★★★ |
-| 2166 | Snowflake (Cloud Data Warehouse) | ★★★ |
-| 2167 | Snowflake Architecture (Virtual Warehouse, Storage) | ★★★ |
-| 2168 | ElastiCache | ★★★ |
-| 2169 | DynamoDB Data Modeling Patterns | ★★★ |
-| 2170 | DynamoDB Single-Table Design | ★★★ |
+| ID | Keyword | Difficulty |
+|----|---------|------------|
+| NDB-001 | Why NoSQL Was Invented | ★☆☆ |
+| NDB-002 | The NoSQL Landscape -- A Map | ★☆☆ |
+| NDB-003 | SQL vs NoSQL -- When to Choose What | ★☆☆ |
+| NDB-004 | The CAP Theorem in Plain English | ★☆☆ |
+| NDB-005 | NoSQL in Production -- What to Expect | ★☆☆ |
+| NDB-006 | MongoDB Document Schema Design | ★★★ |
+| NDB-007 | MongoDB Normalization vs Denormalization | ★★★ |
+| NDB-008 | MongoDB Aggregation Pipeline | ★★★ |
+| NDB-009 | MongoDB Indexing Strategies | ★★★ |
+| NDB-010 | MongoDB Schema Evolution | ★★★ |
+| NDB-011 | OpenSearch  Elasticsearch | ★★★ |
+| NDB-012 | Snowflake (Cloud Data Warehouse) | ★★★ |
+| NDB-013 | Snowflake Architecture (Virtual Warehouse, Storage) | ★★★ |
+| NDB-014 | ElastiCache | ★★★ |
+| NDB-015 | DynamoDB Data Modeling Patterns | ★★★ |
+| NDB-016 | DynamoDB Single-Table Design | ★★★ |
+| NDB-017 | Document Store | ★★☆ |
+| NDB-018 | Key-Value Store | ★★☆ |
+| NDB-019 | Column Family | ★★★ |
+| NDB-020 | Graph DB | ★★★ |
+| NDB-021 | Time-Series DB | ★★★ |
+| NDB-022 | Search Engine (Elasticsearch) | ★★★ |
+| NDB-023 | Eventual Consistency in NoSQL | ★★★ |
+| NDB-024 | CRDTs | ★★★ |
+| NDB-025 | Vector Database | ★★★ |
+| NDB-026 | NewSQL | ★★★ |
+| NDB-027 | MongoDB Patterns | ★★☆ |
+| NDB-028 | Redis Data Structures | ★★☆ |
+| NDB-029 | Redis Persistence | ★★★ |
+| NDB-030 | Cassandra Data Modeling | ★★★ |
+| NDB-031 | DynamoDB Patterns | ★★★ |
+| NDB-032 | Hot Partition Problem | ★★★ |
+| NDB-033 | Wide Column vs Document | ★★★ |
+| NDB-034 | Polyglot Persistence | ★★★ |
+| NDB-035 | CAP Theorem (DB) | ★★★ |
+| NDB-036 | Distributed Transactions | ★★★ |
+| NDB-037 | Two-Phase Commit (2PC) | ★★★ |
+| NDB-038 | Saga Pattern (DB) | ★★★ |
+| NDB-039 | Change Data Capture (CDC) | ★★★ |
+| NDB-040 | Database Proxy (PgBouncer) | ★★★ |
+| NDB-041 | Data Locality | ★★★ |
+| NDB-042 | Multi-Model Database Strategy | ★★★ |
+| NDB-043 | NoSQL Migration Strategy (SQL to NoSQL) | ★★★ |
+| NDB-044 | Global Distribution Database Design | ★★★ |
+| NDB-045 | Event Store Architecture | ★★★ |
+| NDB-046 | NoSQL Selection Framework | ★★★ |
+| NDB-047 | Distributed Database Internals (Consensus, Paxos) | ★★★ |
+| NDB-048 | Multi-Version Concurrency Control at Scale | ★★★ |
+| NDB-049 | Global Distributed Transactions Research | ★★★ |
+| NDB-050 | NoSQL Engine Architecture | ★★★ |
+| NDB-051 | Consistency Trade-off Framing | ★★★ |
+| NDB-052 | NoSQL Selection Mental Model | ★★★ |
+| NDB-053 | Distributed State Design Thinking | ★★★ |

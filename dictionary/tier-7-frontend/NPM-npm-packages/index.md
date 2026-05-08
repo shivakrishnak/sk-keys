@@ -11,27 +11,42 @@ permalink: /npm/
 
 npm, pnpm, yarn, semantic versioning, lock files, monorepo tooling, and package security.
 
-**Keywords:** 1511–1530 (20 terms)
+**Keywords:** NPM-001–NPM-035 (35 terms)
 
-| # | Keyword | Difficulty |
-|---|---|---|
-| 1511 | package.json | ★☆☆ |
-| 1512 | Semantic Versioning | ★★☆ |
-| 1513 | dependencies vs devDependencies | ★★☆ |
-| 1514 | Lock Files | ★★☆ |
-| 1515 | npm workspaces | ★★★ |
-| 1516 | pnpm | ★★★ |
-| 1517 | yarn | ★★☆ |
-| 1518 | Phantom Dependencies | ★★★ |
-| 1519 | Dependency Hell | ★★★ |
-| 1520 | npm audit | ★★☆ |
-| 1521 | Monorepo Tooling (Turborepo, Nx) | ★★★ |
-| 1522 | Changesets | ★★★ |
-| 1523 | Private Registry | ★★★ |
-| 1524 | npm Lifecycle Scripts | ★★★ |
-| 1525 | overrides / resolutions | ★★★ |
-| 1526 | Maven BOM equivalent in npm | ★★★ |
-| 1527 | npm Provenance | ★★★ |
-| 1528 | Hoisting (npm) | ★★★ |
-| 1529 | Scoped Packages | ★★☆ |
-| 1530 | .npmrc Configuration | ★★★ |
+| ID | Keyword | Difficulty |
+|----|---------|------------|
+| NPM-001 | What Is npm and Package Management | ★☆☆ |
+| NPM-002 | The npm Mental Model (Registry, packages, node_modules) | ★☆☆ |
+| NPM-003 | npm vs yarn vs pnpm -- Trade-offs | ★☆☆ |
+| NPM-004 | The Package Management Ecosystem Map | ★☆☆ |
+| NPM-005 | Package Management in Production -- What to Expect | ★☆☆ |
+| NPM-006 | package.json -- Structure and Fields | ★☆☆ |
+| NPM-007 | package-lock.json and Lockfiles | ★☆☆ |
+| NPM-008 | npm install / ci / update | ★☆☆ |
+| NPM-009 | npm Scripts | ★☆☆ |
+| NPM-010 | npm publish and the Registry | ★☆☆ |
+| NPM-011 | Semantic Versioning in npm (^, ~, exact) | ★☆☆ |
+| NPM-012 | Dependencies vs devDependencies vs peerDependencies | ★☆☆ |
+| NPM-013 | yarn Workspaces | ★★☆ |
+| NPM-014 | pnpm Workspaces | ★★☆ |
+| NPM-015 | npm link and Local Development | ★★☆ |
+| NPM-016 | npx -- Execute Without Install | ★★☆ |
+| NPM-017 | Private npm Registry (Nexus, Verdaccio, GitHub Packages) | ★★☆ |
+| NPM-018 | npm Audit and Security | ★★☆ |
+| NPM-019 | Dependency Resolution Algorithm | ★★☆ |
+| NPM-020 | node_modules Hoisting and Phantom Dependencies | ★★☆ |
+| NPM-021 | npm Supply Chain Security (SBOMs, Signed Packages) | ★★☆ |
+| NPM-022 | Monorepo Package Management Strategy | ★★☆ |
+| NPM-023 | Publishing a Library to npm (Best Practices) | ★★☆ |
+| NPM-024 | npm Workspaces | ★★☆ |
+| NPM-025 | pnpm Content-Addressable Store Internals | ★★★ |
+| NPM-026 | npm Registry Protocol | ★★★ |
+| NPM-027 | Dependency Graph Cycles and Resolution | ★★★ |
+| NPM-028 | npm Package Manager Selection Strategy | ★★★ |
+| NPM-029 | Monorepo vs Polyrepo Package Strategy | ★★★ |
+| NPM-030 | Dependency Security Strategy | ★★★ |
+| NPM-031 | Package Registry Design Research | ★★★ |
+| NPM-032 | JavaScript Module System Internals | ★★★ |
+| NPM-033 | Package Management Trade-off Framing | ★★★ |
+| NPM-034 | Dependency Hell Mental Model | ★★★ |
+| NPM-035 | Supply Chain Security Thinking | ★★★ |
