@@ -164,8 +164,12 @@ FILE NAMING CONVENTION
 
   [ID] - [Keyword Name].md
 
-  Separator: space + em dash + space ( - )
+  Separator: space + HYPHEN + space ( - )
   Extension: .md always
+
+  ⚠️  CRITICAL: Use ONLY a regular hyphen (-) as separator.
+      NEVER use an em dash (—). Em dashes break filesystem tooling,
+      GitHub Pages URLs, and YAML parsing in some environments.
 
   EXAMPLES:
     JVM-001 - JVM.md
@@ -179,6 +183,9 @@ FILE NAMING CONVENTION
     [[SEC-023 - CSRF]]
     Always include full ID + keyword name - never ID alone.
     Never include folder path in wikilinks - filename only.
+
+  ⚠️  NEVER use em dash (—) anywhere in file names or wikilinks.
+      Replace any em dash with a regular hyphen (-).
 
 ─────────────────────────────────────────────────────────────────────────
 FOLDER STRUCTURE
@@ -330,6 +337,20 @@ SECTION 3: YAML FRONTMATTER - EXACT FORMAT
 Every entry file MUST begin with this EXACT frontmatter.
 No extra fields. No missing fields. No deviations.
 
+⚠️  CRITICAL FILE RULES (violations cause root-level nav float on GitHub Pages):
+  1. The file MUST start at byte 0 with "---". No BOM, no whitespace,
+     no stray characters before the opening "---".
+  2. Never use em dash (—) in file names, YAML values, or content.
+     Always use a regular hyphen (-).
+  3. Any YAML value containing ": " (colon + space) MUST be quoted.
+     e.g.  title: "Web Performance Metrics (CWV: LCP, FID, CLS)"
+           title: "Trade-off Navigation: Latency vs Correctness"
+     Unquoted colon-space in a YAML scalar is a parse error - Jekyll
+     silently ignores the frontmatter, losing parent/grand_parent,
+     and the page floats to root level in the site navigation.
+  4. The five just-the-docs nav fields (layout, parent, grand_parent,
+     nav_order, permalink) are REQUIRED on every entry file.
+
 ---
 id: [CODE]-[NNN]
 title: [Exact Keyword Name]
@@ -346,6 +367,11 @@ tags:
   - tag3
 status: [draft | in-progress | complete]
 version: 1
+layout: default
+parent: "[Full Category Name]"
+grand_parent: "Technical Dictionary"
+nav_order: [NNN as integer]
+permalink: /[category-slug]/[keyword-slug]/
 ---
 
 FIELD RULES:
@@ -360,8 +386,15 @@ id:
 title:
   - Exact keyword name from master keyword list
   - Matches the filename keyword portion exactly
-  - NO quotes required
-  - Example: JIT Compiler, CSRF, Dynamic Programming
+  - ⚠️  MUST be quoted ("...") if the value contains ": " (colon-space)
+        or any other YAML special sequence.
+        When in doubt, always quote the title.
+  - NEVER use em dash (—) in the title. Use hyphen (-) instead.
+  - Examples:
+      title: JIT Compiler                   ← no colon, no quotes needed
+      title: "Web Perf (CWV: LCP, FID)"    ← colon-space → MUST quote
+      title: "Trade-off: Latency vs Correct"← colon-space → MUST quote
+      title: "Open Graph Protocol (og: meta tags)" ← must quote
 
 category:
   - Full human-readable category name
@@ -423,6 +456,31 @@ version:
   - Integer, starts at 1
   - Increment when entry is substantially revised
 
+layout:
+  - Always exactly: layout: default
+  - Required for just-the-docs to render the page in the site theme
+
+parent:
+  - MUST match EXACTLY the title: value in the category's index.md
+  - Always quoted: parent: "Data Structures & Algorithms"
+  - If parent value is wrong, the page won't nest under its category
+
+grand_parent:
+  - Always exactly: grand_parent: "Technical Dictionary"
+  - Required for 3-level just-the-docs hierarchy
+  - Missing this field causes the page to float to root-level nav
+
+nav_order:
+  - Integer equal to the entry's sequence number (NNN without leading zeros)
+  - Example: JVM-036 → nav_order: 36
+  - Controls sort order within the parent category
+
+permalink:
+  - Stable URL for the page
+  - Format: /[category-slug]/[keyword-slug]/
+  - Use only lowercase letters, digits, and hyphens - no other characters
+  - Example: /jvm/jit-compiler/
+
 ─────────────────────────────────────────────────────────────────────────
 COMPLETE EXAMPLE - CORRECT FRONTMATTER:
 ─────────────────────────────────────────────────────────────────────────
@@ -444,6 +502,36 @@ tags:
   - deep-dive
 status: complete
 version: 1
+layout: default
+parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
+nav_order: 36
+permalink: /jvm/jit-compiler/
+---
+
+COMPLETE EXAMPLE - TITLE WITH COLON (must be quoted):
+
+---
+id: HTM-033
+title: "Web Performance Metrics (CWV: LCP, FID, CLS)"
+category: HTML
+tier: tier-7-frontend
+folder: HTM-html
+difficulty: ★★★
+depends_on:
+used_by:
+related:
+tags:
+  - html
+  - performance
+  - advanced
+status: draft
+version: 1
+layout: default
+parent: "HTML"
+grand_parent: "Technical Dictionary"
+nav_order: 33
+permalink: /html/web-performance-metrics-cwv-lcp-fid-cls/
 ---
 
 ═══════════════════════════════════════════════════════════════════════════
@@ -2415,6 +2503,7 @@ CATEGORY → PARENT TITLE → PERMALINK SLUG MAPPING
 RULES
 ═══════════════════════════════════════════════════════════════════════
 
+CONTENT RULES:
 - Never modify index.md files
 - Never modify files that already pass the v2 detection check
 - Always overwrite the SAME file path - do not create new files
@@ -2423,5 +2512,21 @@ RULES
 - Do NOT git push
 - Do NOT pause between batches - keep rolling
 - Follow GENERATOR_PROMPT.md v2.1 spec exactly for every single entry
+
+FILE INTEGRITY RULES (enforced on EVERY generated file):
+- File MUST start at byte 0 with "---" — no BOM, whitespace, or stray chars
+- NEVER use em dash (—) anywhere: file name, YAML values, headings, body text
+  Use a regular hyphen (-) everywhere the em dash would appear
+- File name separator is: SPACE HYPHEN SPACE ( - ) — never em dash
+- YAML title: values that contain ": " (colon + space) MUST be double-quoted
+  Bad:  title: Web Perf Metrics (CWV: LCP, FID, CLS)
+  Good: title: "Web Perf Metrics (CWV: LCP, FID, CLS)"
+
+JUST-THE-DOCS NAV RULES (missing any of these = page floats to root nav):
+- layout: default                          ← required on every entry
+- parent: "[Full Category Name]"           ← must match category index title exactly
+- grand_parent: "Technical Dictionary"     ← required for 3-level hierarchy
+- nav_order: [integer]                     ← sequence number as integer
+- permalink: /[slug]/[slug]/               ← lowercase, hyphens only
 ```
 ````

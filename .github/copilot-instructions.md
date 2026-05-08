@@ -54,6 +54,13 @@ You are an elite Software Engineering mentor and technical writer. Your sole mis
 
 ### YAML Frontmatter - Required Fields
 
+> ⚠️ **Critical generation rules — violations cause pages to float to root-level nav on GitHub Pages:**
+> 1. File MUST start at byte 0 with `---`. No BOM, no whitespace before it.
+> 2. NEVER use em dash (`—`) anywhere. Use regular hyphen (`-`) everywhere.
+> 3. Any YAML value containing `: ` (colon + space) **MUST be double-quoted**.
+>    `title: "Web Performance Metrics (CWV: LCP, FID, CLS)"` — NOT unquoted.
+> 4. The five just-the-docs fields (`layout`, `parent`, `grand_parent`, `nav_order`, `permalink`) are **required** on every entry.
+
 ```yaml
 ---
 id: [CODE]-[NNN]
@@ -71,13 +78,18 @@ tags:
   - tag3
 status: draft
 version: 1
+layout: default
+parent: "Full Category Name"
+grand_parent: "Technical Dictionary"
+nav_order: NNN
+permalink: /category-slug/keyword-slug/
 ---
 ```
 
 **Field rules:**
 
 - `id`: permanent identifier, format `[CODE]-[NNN]`, e.g. `JVM-036`
-- `title`: exact keyword name, no quotes
+- `title`: exact keyword name. **Must be double-quoted if the value contains `: ` (colon + space)**. When in doubt, always quote it. Never use em dash (`—`) — use hyphen (`-`).
 - `category`: full category name from registry, e.g. `Java & JVM Internals`
 - `tier`: tier folder name from registry, e.g. `tier-3-java`
 - `folder`: category folder name, e.g. `JVM-java-jvm-internals`
@@ -86,6 +98,11 @@ version: 1
 - `tags`: YAML array, no `#` prefix, 3–6 tags from approved taxonomy
 - `status`: `draft` · `in-progress` · `complete`
 - `version`: integer, starts at 1
+- `layout`: always `default` — required for just-the-docs rendering
+- `parent`: must match **exactly** the `title:` in the category's `index.md`, always double-quoted
+- `grand_parent`: always exactly `"Technical Dictionary"` — required for 3-level nav hierarchy
+- `nav_order`: the entry's sequence number as a plain integer (e.g. `36` for `JVM-036`)
+- `permalink`: lowercase, hyphens-only slug, e.g. `/jvm/jit-compiler/`
 
 **Complete example:**
 
@@ -107,6 +124,38 @@ tags:
   - deep-dive
 status: complete
 version: 1
+layout: default
+parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
+nav_order: 36
+permalink: /jvm/jit-compiler/
+---
+```
+
+**Example with colon in title (must quote):**
+
+```yaml
+---
+id: HTM-033
+title: "Web Performance Metrics (CWV: LCP, FID, CLS)"
+category: HTML
+tier: tier-7-frontend
+folder: HTM-html
+difficulty: ★★★
+depends_on:
+used_by:
+related:
+tags:
+  - html
+  - performance
+  - advanced
+status: draft
+version: 1
+layout: default
+parent: "HTML"
+grand_parent: "Technical Dictionary"
+nav_order: 33
+permalink: /html/web-performance-metrics-cwv-lcp-fid-cls/
 ---
 ```
 
@@ -300,6 +349,10 @@ Examples:
   DSA-048 - Dynamic Programming.md
   CSF-001 - Imperative Programming.md
 ```
+
+> ⚠️ **Separator is SPACE + HYPHEN + SPACE ( ` - ` ) — NEVER em dash (`—`).**
+> Em dashes break GitHub Pages URL routing, YAML parsing in some contexts,
+> and filesystem tools. Every em dash in file names or content must be a hyphen.
 
 **Wikilinks in entry body:** `[[JVM-036 - JIT Compiler]]` - always full filename (ID + keyword name), never ID alone.
 
