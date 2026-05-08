@@ -1,0 +1,26 @@
+---
+id: PLT-021
+title: Trunk-Based Development at Scale
+category: Platform & Modern SWE
+tier: tier-9-professional-domain
+folder: PLT-platform-swe
+difficulty: ★★☆
+depends_on:
+used_by:
+related:
+tags:
+  - plt
+  - intermediate
+  - deep-dive
+  - tradeoff
+status: draft
+version: 1
+layout: default
+parent: "Platform & Modern SWE"
+nav_order: 21
+permalink: /plt/trunk-based-development-at-scale/
+---
+
+# PLT-021 — Trunk-Based Development at Scale
+
+> Entry stub. Generate full content using Master Prompt v3.0.
