@@ -1,4 +1,6 @@
-# 🎯 Category Keyword Generator — Master Prompt v2.0
+import pathlib
+
+content = r"""# 🎯 Category Keyword Generator — Master Prompt v2.0
 
 ---
 
@@ -1515,3 +1517,9 @@ Identify undocumented version migrations,
 deprecated features, and breaking change keywords.
 Output: gap list + suggested IDs.
 ```
+"""
+
+out = pathlib.Path(r"c:\ASK\MyWorkspace\sk-keys\KEYWORD_GENERATOR_PROMPT.md")
+out.write_text(content, encoding="utf-8")
+lines = len(content.splitlines())
+print(f"Written {lines} lines to {out}")
