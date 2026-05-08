@@ -1,0 +1,26 @@
+---
+id: IAC-044
+title: IaC Language Design Research
+category: Infrastructure as Code
+tier: tier-6-infrastructure-devops
+folder: IAC-infrastructure-code
+difficulty: ★★★
+depends_on:
+used_by:
+related:
+tags:
+  - iac
+  - advanced
+  - deep-dive
+  - first-principles
+status: draft
+version: 1
+layout: default
+parent: "Infrastructure as Code"
+nav_order: 44
+permalink: /iac/iac-language-design-research/
+---
+
+# IAC-044 — IaC Language Design Research
+
+> Entry stub. Generate full content using Master Prompt v3.0.

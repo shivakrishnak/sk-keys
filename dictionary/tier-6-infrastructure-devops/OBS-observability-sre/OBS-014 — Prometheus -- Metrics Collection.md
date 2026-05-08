@@ -1,0 +1,25 @@
+---
+id: OBS-014
+title: Prometheus -- Metrics Collection
+category: Observability & SRE
+tier: tier-6-infrastructure-devops
+folder: OBS-observability-sre
+difficulty: ★★☆
+depends_on:
+used_by:
+related:
+tags:
+  - obs
+  - intermediate
+  - pattern
+status: draft
+version: 1
+layout: default
+parent: "Observability & SRE"
+nav_order: 14
+permalink: /obs/prometheus----metrics-collection/
+---
+
+# OBS-014 — Prometheus -- Metrics Collection
+
+> Entry stub. Generate full content using Master Prompt v3.0.

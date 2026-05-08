@@ -1,0 +1,283 @@
+---
+layout: default
+title: "SNS"
+parent: "Cloud — AWS"
+nav_order: 50
+permalink: /cloud-aws/sns/
+id: AWS-050
+category: "Cloud — AWS"
+difficulty: "★★☆"
+depends_on: ["SQS", "Lambda", "AWS Global Infrastructure"]
+used_by: ["CloudWatch"]
+related: ["SQS", "Lambda", "Kinesis", "CloudWatch"]
+tags: [aws, sns, pub-sub, notification, fan-out, messaging, cloud]
+---
+
+# SNS
+
+## ⚡ TL;DR
+
+**SNS (Simple Notification Service)** is a managed publish/subscribe messaging service. Publishers send one message to a **topic**; SNS fans out to all subscribers (SQS queues, Lambda functions, HTTP endpoints, email, SMS, mobile push). Key pattern: **SNS fan-out + SQS queues** — decouple downstream services while ensuring delivery. No message persistence; if subscriber is offline, message is lost (unless routed through SQS).
+
+---
+
+## 🔥 Problem This Solves
+
+Order placed → need to notify: inventory service, payment service, notification service, analytics service. Without SNS: order service calls each service directly (tight coupling). With SNS: order service publishes to topic, each service subscribes independently. Adding new subscribers doesn't require order service changes.
+
+---
+
+## 📘 Textbook Definition
+
+Amazon SNS is a managed pub/sub messaging service that enables message-based communication between distributed systems. A publisher sends a message to an SNS topic; SNS delivers to all subscribers in parallel. Supported delivery protocols: SQS, Lambda, HTTP/HTTPS, email, email-JSON, SMS, mobile push (APNs, FCM).
+
+---
+
+## ⏱️ 30 Seconds
+
+```
+Topic:       named channel for messages
+Publisher:   sends message to topic
+Subscriber:  receives messages from topic
+
+Delivery protocols:
+  SQS:    fan-out to queues (durable, at-least-once)
+  Lambda: direct invocation (up to 3 retries)
+  HTTP:   webhook delivery (with retries)
+  Email:  human notification
+  SMS:    mobile text messages
+
+FIFO Topics:
+  Ordered delivery to FIFO SQS queues
+  MessageGroupId for ordering
+  3000 msg/sec throughput
+
+Message filtering:
+  Subscription filter policies: subscribers receive only matching messages
+  Filter by message attributes (JSON)
+```
+
+---
+
+## 🔩 First Principles
+
+- **Push model**: SNS pushes to subscribers (unlike SQS pull); if Lambda/HTTP subscriber fails, limited retries
+- **No persistence**: SNS is ephemeral; messages not stored; failed deliveries = lost (use SQS for durability)
+- **Fan-out**: one Publish → many subscribers receive independently; each subscriber gets own copy
+- **Message filtering**: each subscriber can specify a filter policy; SNS only delivers matching messages
+- **SNS + SQS fan-out pattern**: SNS topic → multiple SQS queues → consumers; combines fanout + durability + independent scaling
+
+---
+
+## 🧪 Thought Experiment
+
+Image upload triggers: thumbnail generation, virus scan, CDN invalidation, analytics event. With SNS: upload service publishes `ImageUploaded` event to SNS topic. Four SQS subscriptions → four independent microservices process at their own pace. Add new processing step? Just add a new SQS subscription. Remove one? Unsubscribe. Zero changes to upload service.
+
+---
+
+## 🧠 Mental Model / Analogy
+
+SNS is a **public address system**: one announcement (Publish) goes out over the PA (topic) and everyone who's tuned in (subscribers) hears it simultaneously. It's real-time broadcast — if you're not listening when the announcement is made, you miss it (no retention). SQS subscription = recording the announcement on a voicemail (durable queue) so you can listen later.
+
+---
+
+## 📶 Gradual Depth
+
+**Level 1 — Beginner**: Create SNS topic. Subscribe SQS queues and Lambda functions. Publish message. All subscribers receive copy.
+
+**Level 2 — Practitioner**: SNS + SQS fan-out pattern (most common architecture). Message filtering: inventory-service only receives `ORDER_CREATED` events; notification service receives `ORDER_SHIPPED`. Message attributes: key-value metadata on messages for filtering.
+
+**Level 3 — Advanced**: SNS FIFO: ordered, exactly-once delivery to FIFO SQS subscribers. SNS message archiving (via SQS or Kinesis Firehose subscription). Dead-letter queues on SNS subscriptions: failed deliveries go to DLQ. Cross-account SNS subscriptions: SNS topic in one account → SQS in another.
+
+**Level 4 — Expert**: SNS message size: standard 256KB; for larger, use SNS Extended Library (payload in S3). SNS delivery policy: customize retry behavior (backoff, max retries) per subscription. SNS access policy: control who can publish (resource-based policy). CloudWatch alarms → SNS notifications: monitoring integration. EventBridge vs SNS: EventBridge has more routing power (pattern matching, schema registry, 100+ AWS service sources); SNS better for simple fan-out to SQS/Lambda.
+
+---
+
+## ⚙️ How It Works
+
+### SNS Fan-Out Pattern (Terraform)
+
+```hcl
+# SNS Topic
+resource "aws_sns_topic" "orders" {
+  name              = "orders-events"
+  kms_master_key_id = aws_kms_key.sns.id
+
+  # Allow CloudWatch to publish (for alarm notifications)
+  # Handled via topic policy
+}
+
+# Topic policy: allow specific sources to publish
+resource "aws_sns_topic_policy" "orders" {
+  arn = aws_sns_topic.orders.arn
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect    = "Allow"
+        Principal = { AWS = aws_iam_role.order_service.arn }
+        Action    = "SNS:Publish"
+        Resource  = aws_sns_topic.orders.arn
+      },
+      {
+        Effect    = "Allow"
+        Principal = { Service = "cloudwatch.amazonaws.com" }
+        Action    = "SNS:Publish"
+        Resource  = aws_sns_topic.orders.arn
+      }
+    ]
+  })
+}
+
+# SQS Subscription 1: Inventory service (filter: ORDER_CREATED only)
+resource "aws_sns_topic_subscription" "inventory" {
+  topic_arn = aws_sns_topic.orders.arn
+  protocol  = "sqs"
+  endpoint  = aws_sqs_queue.inventory.arn
+
+  # Message filter policy
+  filter_policy = jsonencode({
+    eventType = ["ORDER_CREATED", "ORDER_CANCELLED"]
+  })
+
+  # Use raw message delivery (no SNS envelope wrapper)
+  raw_message_delivery = true
+}
+
+# SQS Subscription 2: Notification service (all events)
+resource "aws_sns_topic_subscription" "notifications" {
+  topic_arn = aws_sns_topic.orders.arn
+  protocol  = "sqs"
+  endpoint  = aws_sqs_queue.notifications.arn
+
+  raw_message_delivery = true
+
+  # DLQ for failed deliveries from this subscription
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.sns_dlq.arn
+  })
+}
+
+# Lambda Subscription: real-time analytics
+resource "aws_sns_topic_subscription" "analytics" {
+  topic_arn = aws_sns_topic.orders.arn
+  protocol  = "lambda"
+  endpoint  = aws_lambda_function.analytics.arn
+}
+
+# Grant SNS permission to invoke Lambda
+resource "aws_lambda_permission" "sns" {
+  statement_id  = "AllowSNSInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.analytics.function_name
+  principal     = "sns.amazonaws.com"
+  source_arn    = aws_sns_topic.orders.arn
+}
+```
+
+### SNS Publisher (Java Spring Boot)
+
+```java
+@Service
+public class OrderEventPublisher {
+
+    private final SnsTemplate snsTemplate;   // Spring Cloud AWS
+
+    @Value("${aws.sns.orders-topic-arn}")
+    private String ordersTopicArn;
+
+    // Publish with message attributes (for filtering)
+    public void publishOrderCreated(Order order) {
+        OrderEvent event = OrderEvent.builder()
+            .eventType("ORDER_CREATED")
+            .orderId(order.getId())
+            .userId(order.getUserId())
+            .amount(order.getAmount())
+            .timestamp(Instant.now().toString())
+            .build();
+
+        // Spring Cloud AWS auto-adds message attributes from SnsNotificationMessage
+        snsTemplate.sendNotification(ordersTopicArn, event, "ORDER_CREATED");
+    }
+
+    // Manual publish with attributes for fine-grained filtering
+    public void publishWithAttributes(Order order, String eventType) {
+        snsTemplate.send(ordersTopicArn, MessageBuilder
+            .withPayload(order)
+            .setHeader("eventType", eventType)
+            .setHeader("region", "us-east-1")
+            .build());
+    }
+}
+```
+
+---
+
+## ⚖️ Comparison Table: SNS vs SQS vs EventBridge
+
+|               | SNS                   | SQS             | EventBridge               |
+| ------------- | --------------------- | --------------- | ------------------------- |
+| **Pattern**   | Pub/Sub               | Queue           | Event Bus                 |
+| **Push/Pull** | Push                  | Pull            | Push                      |
+| **Retention** | None                  | 14 days         | None                      |
+| **Fan-out**   | ✅ (native)           | ❌ (1 consumer) | ✅                        |
+| **Filtering** | Attribute-based       | ❌              | Pattern matching          |
+| **Sources**   | AWS SDK + services    | SDK             | 100+ AWS services         |
+| **Use case**  | Fan-out to SQS/Lambda | Task queue      | Event-driven architecture |
+
+---
+
+## ⚠️ Common Misconceptions
+
+| Misconception                          | Reality                                                                       |
+| -------------------------------------- | ----------------------------------------------------------------------------- |
+| "SNS stores messages like SQS"         | SNS delivers and discards; for durability, always subscribe SQS queue         |
+| "SNS FIFO is available everywhere"     | SNS FIFO only delivers to FIFO SQS queues (not Lambda, email, HTTP)           |
+| "All subscribers receive all messages" | With filter policies, subscribers only receive matching messages              |
+| "SNS and SQS are redundant"            | Complementary: use SNS fan-out → SQS for durable, independent consumer queues |
+
+---
+
+## 🔗 Related Keywords
+
+- [SQS](/cloud-aws/sqs/) — durable queue, works with SNS fan-out pattern
+- [Lambda](/cloud-aws/lambda/) — direct SNS subscriber for serverless processing
+- [CloudWatch](/cloud-aws/cloudwatch/) — alarm notifications via SNS
+
+---
+
+## 📌 Quick Reference Card
+
+```bash
+# Create SNS topic
+aws sns create-topic --name my-topic
+
+# Subscribe SQS to SNS
+aws sns subscribe \
+  --topic-arn arn:aws:sns:us-east-1:123:my-topic \
+  --protocol sqs \
+  --notification-endpoint arn:aws:sqs:us-east-1:123:my-queue
+
+# Subscribe email
+aws sns subscribe \
+  --topic-arn arn:aws:sns:us-east-1:123:my-topic \
+  --protocol email \
+  --notification-endpoint user@example.com
+
+# Publish message
+aws sns publish \
+  --topic-arn arn:aws:sns:us-east-1:123:my-topic \
+  --message '{"orderId":"123","eventType":"ORDER_CREATED"}' \
+  --message-attributes '{"eventType":{"DataType":"String","StringValue":"ORDER_CREATED"}}'
+
+# List subscriptions
+aws sns list-subscriptions-by-topic \
+  --topic-arn arn:aws:sns:us-east-1:123:my-topic
+```
+
+---
+
+## 🧠 Think About This
+
+The SNS fan-out to SQS pattern is one of the most important AWS architectural patterns. Instead of having the order service know about inventory, notifications, and analytics services (tight coupling), the order service publishes to one SNS topic (loose coupling). Each downstream service owns its SQS subscription. The order service never needs to change when you add a new downstream consumer. The SQS layer adds durability (SNS has no retention — if Lambda is throttled, the event is lost), independent scaling (each service scales based on its own queue depth), and fault isolation (inventory service slowness doesn't affect notification service). This combination of SNS + SQS is more reliable and flexible than direct service-to-service calls for event-driven architectures.

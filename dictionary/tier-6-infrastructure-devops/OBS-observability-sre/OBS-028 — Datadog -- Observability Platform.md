@@ -1,0 +1,26 @@
+---
+id: OBS-028
+title: Datadog -- Observability Platform
+category: Observability & SRE
+tier: tier-6-infrastructure-devops
+folder: OBS-observability-sre
+difficulty: ★★☆
+depends_on:
+used_by:
+related:
+tags:
+  - obs
+  - intermediate
+  - deep-dive
+  - tradeoff
+status: draft
+version: 1
+layout: default
+parent: "Observability & SRE"
+nav_order: 28
+permalink: /obs/datadog----observability-platform/
+---
+
+# OBS-028 — Datadog -- Observability Platform
+
+> Entry stub. Generate full content using Master Prompt v3.0.
