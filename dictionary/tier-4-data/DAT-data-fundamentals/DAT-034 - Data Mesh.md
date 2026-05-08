@@ -1,22 +1,26 @@
-﻿ ,mknnjlio0988//*--
-layout: default
-title: "Data Mesh"
-parent: "Data Fundamentals"
-grand_parent: "Technical Dictionary"
-nav_order: 34
-permalink: /data-fundamentals/data-mesh/
+﻿---
 id: DAT-034
+title: "Data Mesh"
 category: Data Fundamentals
+tier: tier-4-data
+folder: DAT-data-fundamentals
 difficulty: ★★★
-depends_on: Data Lake, Data Lakehouse, Data Governance, Data Catalog, Microservices
-used_by: Data Governance, Data Lineage, Data Quality, Data Catalog
-related: Data Fabric, Data Lakehouse, Data Governance, Data Lake, Microservices
+depends_on: DAT-001, DAT-010, DAT-020
+used_by:
+related:
 tags:
   - dataengineering
   - architecture
   - advanced
   - tradeoff
   - distributed
+status: draft
+version: 1
+layout: default
+parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
+nav_order: 34
+permalink: /data-fundamentals/data-mesh/
 ---
 
 # DAT-034 - Data Mesh

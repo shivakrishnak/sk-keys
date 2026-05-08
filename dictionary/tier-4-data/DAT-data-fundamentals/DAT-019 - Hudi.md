@@ -1,4 +1,4 @@
-﻿hhnmmnmmjjjjjjj  ws---
+﻿---
 layout: default
 title: "Hudi"
 parent: "Data Fundamentals"
@@ -7,6 +7,8 @@ nav_order: 19
 permalink: /data-fundamentals/hudi/
 id: DAT-019
 category: Data Fundamentals
+tier: tier-4-data
+folder: DAT-data-fundamentals
 difficulty: ★★★
 depends_on: Parquet, ORC, Delta Lake, Apache Kafka, Apache Spark
 used_by: Data Lakehouse, Data Mesh, Streaming Analytics
@@ -17,6 +19,8 @@ tags:
   - streaming
   - bigdata
   - database
+status: draft
+version: 1
 ---
 
 # DAT-019 - Hudi
