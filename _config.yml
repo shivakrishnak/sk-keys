@@ -22,14 +22,14 @@ exclude:
 url: https://shivakrishnak.github.io
 baseurl: /sk-keys
 
-# Search disabled — 1300+ dense pages make the Lunr index too large
-search_enabled: false
-
+search_enabled: true
 heading_anchors: true
 nav_sort: case_insensitive
 
-# Collapsed nav by default — reduces initial render time
-nav_fold: true
+# Enable table of contents sidebar
+toc:
+  min_header_level: 2
+  max_header_level: 5
 
 aux_links:
   Repository: https://github.com/shivakrishnak/sk-keys
