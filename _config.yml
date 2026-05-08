@@ -1,13 +1,19 @@
 title: Dictionary
 description: comprehensive, categorized keyword list — covering every layer of the stack a senior/staff engineer should deeply know.
+url: https://shivakrishnak.github.io
+baseurl: /sk-keys
+permalink: pretty
 
+# Theme
 remote_theme: just-the-docs/just-the-docs
 
+# Plugins — jekyll-seo-tag and jekyll-include-cache are required by just-the-docs
 plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag
   - jekyll-include-cache
 
+# Exclude non-page files from Jekyll build
 exclude:
   - README.md
   - Update-MarkdownFrontmatter.ps1
@@ -17,26 +23,35 @@ exclude:
   - Prompt.md
   - upgrade_b1a.py
   - upgrade_batch1.ps1
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
   - tmp/
 
-url: https://shivakrishnak.github.io
-baseurl: /sk-keys
+# Search — disabled: 1,362 pages produce a ~25MB Lunr index
+# Re-enable once content is stable and index size is acceptable
+search_enabled: false
+search:
+  heading_level: 2
+  previews: 3
+  preview_words_before: 5
+  preview_words_after: 10
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+  button: true
+  focus_shortcut_key: 'k'
 
-search_enabled: true
+# Navigation
 heading_anchors: true
 nav_sort: case_insensitive
+nav_fold: true
 
-# Enable table of contents sidebar
-toc:
-  min_header_level: 2
-  max_header_level: 5
-
+# Links
 aux_links:
   Repository: https://github.com/shivakrishnak/sk-keys
-
 aux_links_new_tab: true
 
+# Appearance
 color_scheme: light
-
 back_to_top: true
 back_to_top_text: "Back to top"
