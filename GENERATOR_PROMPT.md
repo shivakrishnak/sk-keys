@@ -266,6 +266,88 @@ FOLDER STRUCTURE
     The CODE in the folder = the ID prefix - they must match.
 
 ─────────────────────────────────────────────────────────────────────────
+CATEGORY index.md - EXACT FORMAT (required for every category folder)
+─────────────────────────────────────────────────────────────────────────
+
+  Every category folder MUST contain an index.md with this EXACT format.
+  This file controls the category node in the site navigation.
+
+  ⚠️  CRITICAL RULES for category index.md:
+    1. title: value MUST exactly match the Category Name in the registry.
+       Every keyword entry in that folder uses this exact string as its
+       parent: value. A mismatch causes ALL entries to break out of the
+       category and float to root level in the nav.
+    2. parent: MUST be exactly "Technical Dictionary" (matches the root
+       dictionary/index.md title). Always double-quoted.
+    3. has_children: true is required so just-the-docs renders the
+       expand/collapse arrow and shows the entries underneath.
+    4. Never add grand_parent: to a category index.md - that field is
+       only for leaf entry files (the 3rd level).
+    5. nav_order must be unique across all categories at this level.
+
+  TEMPLATE:
+
+---
+layout: default
+title: "Full Category Name"
+parent: "Technical Dictionary"
+nav_order: [N]
+has_children: true
+permalink: /[category-slug]/
+---
+
+# Full Category Name
+
+[One sentence description of what this category covers.]
+
+**Keywords:** [CODE]-001–[CODE]-NNN (N terms)
+
+| ID | Keyword | Difficulty |
+|----|---------|------------|
+| [CODE]-001 | First Keyword | ★☆☆ |
+
+  FIELD RULES:
+
+  layout:    always "default"
+  title:     MUST match category registry name exactly and be double-quoted.
+             This is the value all entries in this folder use for parent:.
+  parent:    always exactly "Technical Dictionary" (double-quoted).
+             Must match dictionary/index.md title: exactly.
+  nav_order: unique integer — controls position in the site sidebar.
+             Use consecutive integers. Check existing categories first.
+  has_children: always true for category pages.
+  permalink: /[slug]/ — lowercase, hyphens only, no special characters.
+             Must be unique across ALL categories in the site.
+
+  WHAT MUST NOT APPEAR in category index.md:
+    - grand_parent  (only for leaf entries, not categories)
+    - id            (only for keyword entries)
+    - difficulty    (only for keyword entries)
+    - tags          (only for keyword entries)
+
+  EXAMPLE (correct):
+
+---
+layout: default
+title: "Java & JVM Internals"
+parent: "Technical Dictionary"
+nav_order: 8
+has_children: true
+permalink: /jvm/
+---
+
+# Java & JVM Internals
+
+JVM architecture, class loading, GC algorithms, JIT compilation,
+memory model, and performance tuning.
+
+**Keywords:** JVM-001–JVM-060 (60 terms)
+
+| ID      | Keyword         | Difficulty |
+|---------|-----------------|------------|
+| JVM-001 | JVM Architecture | ★☆☆       |
+
+─────────────────────────────────────────────────────────────────────────
 CATEGORY CODE REGISTRY
 ─────────────────────────────────────────────────────────────────────────
 

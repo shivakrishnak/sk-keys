@@ -338,6 +338,78 @@ A file is **v3.0** if it ALSO has the new YAML frontmatter with `id:` field (for
 
 ---
 
+### Category index.md - Required Format
+
+Every category folder **must** contain an `index.md`. This file is the nav node that all keyword entries nest under.
+
+> ⚠️ **Critical rules — any violation causes ALL entries in the category to float to root-level nav:**
+> 1. `title:` **must exactly match** the Category Name from the registry table above (column 2). Every keyword entry in the folder uses this exact string as its `parent:` value. One character difference breaks every entry.
+> 2. `parent:` must always be exactly `"Technical Dictionary"` — matches the root `dictionary/index.md` title.
+> 3. `has_children: true` is required — without it just-the-docs won't show the expand arrow or child entries.
+> 4. **Never add** `grand_parent:` to a category index.md — that field is only for leaf keyword entries (3rd level).
+
+**Template:**
+
+```yaml
+---
+layout: default
+title: "Full Category Name"
+parent: "Technical Dictionary"
+nav_order: N
+has_children: true
+permalink: /category-slug/
+---
+
+# Full Category Name
+
+One-sentence description of what this category covers.
+
+**Keywords:** CODE-001–CODE-NNN (N terms)
+
+| ID | Keyword | Difficulty |
+|----|---------|------------|
+| CODE-001 | First Keyword | ★☆☆ |
+```
+
+**Field rules:**
+
+| Field | Rule |
+|---|---|
+| `layout` | Always `default` |
+| `title` | Must match the Category Name in the registry **exactly**, always double-quoted. This is what all entry `parent:` fields must match. |
+| `parent` | Always `"Technical Dictionary"` — never any other value |
+| `nav_order` | Unique integer across all categories. Check existing nav_orders first. |
+| `has_children` | Always `true` |
+| `permalink` | Lowercase, hyphens only, unique across the site e.g. `/jvm/` |
+
+**Must NOT appear** in category index.md: `grand_parent` · `id` · `difficulty` · `tags` · `depends_on` · `used_by` · `related`
+
+**Correct example:**
+
+```yaml
+---
+layout: default
+title: "Java & JVM Internals"
+parent: "Technical Dictionary"
+nav_order: 8
+has_children: true
+permalink: /jvm/
+---
+
+# Java & JVM Internals
+```
+
+**Common mistakes that break the nav:**
+
+| Mistake | Effect | Fix |
+|---|---|---|
+| `title: "Java Language"` in index but entries have `parent: "Java & JVM Internals"` | All entries float to root level | Make title and entry parent: values identical |
+| `title: "Cloud -- AWS"` (double hyphen) vs entries `parent: "Cloud - AWS"` | Same — entries orphaned | Normalise to single hyphen everywhere |
+| Missing `has_children: true` | Category shows in nav but entries don't nest | Add the field |
+| Adding `grand_parent:` to index.md | Category page itself breaks hierarchy | Remove it — only for leaf entries |
+
+---
+
 ### File Naming Convention
 
 ```
