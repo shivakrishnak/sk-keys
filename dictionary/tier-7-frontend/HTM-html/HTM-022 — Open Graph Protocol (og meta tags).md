@@ -1,10 +1,10 @@
-﻿---
+---
 id: HTM-022
-title: Open Graph Protocol (og: meta tags)
+title: "Open Graph Protocol (og: meta tags)"
 category: HTML
 tier: tier-7-frontend
 folder: HTM-html
-difficulty: ★★☆
+difficulty: ???
 depends_on:
 used_by:
 related:
@@ -21,6 +21,6 @@ nav_order: 22
 permalink: /htm/open-graph-protocol-og-meta-tags/
 ---
 
-# HTM-022 — Open Graph Protocol (og: meta tags)
+# HTM-022 � Open Graph Protocol (og: meta tags)
 
 > Entry stub. Generate full content using Master Prompt v3.0.
