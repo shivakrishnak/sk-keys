@@ -11,19 +11,25 @@ plugins:
 exclude:
   - README.md
   - Update-MarkdownFrontmatter.ps1
+  - GENERATOR_PROMPT.md
+  - SINGLE_CATEGORY_GENERATOR_PROMPT.md
+  - TECHNICAL_DICTIONARY.md
+  - Prompt.md
+  - upgrade_b1a.py
+  - upgrade_batch1.ps1
   - tmp/
 
 url: https://shivakrishnak.github.io
 baseurl: /sk-keys
 
-search_enabled: true
+# Search disabled — 1300+ dense pages make the Lunr index too large
+search_enabled: false
+
 heading_anchors: true
 nav_sort: case_insensitive
 
-# Enable table of contents sidebar
-toc:
-  min_header_level: 2
-  max_header_level: 5
+# Collapsed nav by default — reduces initial render time
+nav_fold: true
 
 aux_links:
   Repository: https://github.com/shivakrishnak/sk-keys
