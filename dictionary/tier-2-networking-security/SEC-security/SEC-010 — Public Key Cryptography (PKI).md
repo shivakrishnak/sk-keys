@@ -1,0 +1,25 @@
+---
+id: SEC-010
+title: Public Key Cryptography (PKI)
+category: Security
+tier: tier-2-networking-security
+folder: SEC-security
+difficulty: ★☆☆
+depends_on:
+used_by:
+related:
+tags:
+  - sec
+  - foundational
+  - first-principles
+status: draft
+version: 1
+layout: default
+parent: "Security"
+nav_order: 10
+permalink: /sec/public-key-cryptography-pki/
+---
+
+# SEC-010 — Public Key Cryptography (PKI)
+
+> Entry stub. Generate full content using Master Prompt v3.0.

@@ -1,0 +1,26 @@
+---
+id: SEC-062
+title: Zero Trust Architecture Design
+category: Security
+tier: tier-2-networking-security
+folder: SEC-security
+difficulty: ★★★
+depends_on:
+used_by:
+related:
+tags:
+  - sec
+  - advanced
+  - architecture
+  - bestpractice
+status: draft
+version: 1
+layout: default
+parent: "Security"
+nav_order: 62
+permalink: /sec/zero-trust-architecture-design/
+---
+
+# SEC-062 — Zero Trust Architecture Design
+
+> Entry stub. Generate full content using Master Prompt v3.0.

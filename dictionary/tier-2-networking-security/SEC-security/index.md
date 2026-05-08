@@ -9,121 +9,165 @@ permalink: /security/
 
 # Security
 
-CIA triad, authentication & authorization, cryptography, common vulnerabilities (OWASP Top 10), attack types, defensive practices, and security testing.
+CIA triad, authentication & authorization, cryptography, common vulnerabilities (OWASP Top 10), attack types, defensive practices, security testing, and creator-level cryptography theory.
 
-**Keywords:** 1771–1882 (112 terms)
+**Keywords:** SEC-001–SEC-156 (156 terms · 112 original + 44 gap-fill)
 
-| # | Keyword | Difficulty |
-|---|---|---|
-| 1771 | CIA Triad (Confidentiality, Integrity, Availability) | ★☆☆ |
-| 1772 | Authentication vs Authorization | ★☆☆ |
-| 1773 | Identification, Authentication, Authorization, Accounting (IAAA) | ★★☆ |
-| 1774 | Principle of Least Privilege | ★☆☆ |
-| 1775 | Defense in Depth | ★★☆ |
-| 1776 | Security by Design | ★★☆ |
-| 1777 | Secure SDLC | ★★☆ |
-| 1778 | Threat Modeling | ★★☆ |
-| 1779 | STRIDE (Spoofing, Tampering, Repudiation, Info Disclosure, DoS, EoP) | ★★★ |
-| 1780 | Attack Surface | ★★☆ |
-| 1781 | Zero Trust Security Model | ★★★ |
-| 1782 | Security Misconfiguration | ★★☆ |
-| 1783 | Session-Based Authentication | ★★☆ |
-| 1784 | Token-Based Authentication | ★★☆ |
-| 1785 | Access Token | ★★☆ |
-| 1786 | Refresh Token | ★★☆ |
-| 1787 | HttpOnly Cookie | ★★☆ |
-| 1788 | Secure Cookie Flag | ★★☆ |
-| 1789 | SameSite Cookie | ★★★ |
-| 1790 | JWT Anatomy (Header, Payload, Signature) | ★★☆ |
-| 1791 | JWT Verification Without DB Lookup | ★★★ |
-| 1792 | JWT Security Vulnerabilities | ★★★ |
-| 1793 | JWT Algorithm Confusion Attack | ★★★ |
-| 1794 | OAuth 2.0 Authorization Code Flow | ★★★ |
-| 1795 | OAuth 2.0 Client Credentials Flow | ★★★ |
-| 1796 | OAuth 2.0 PKCE | ★★★ |
-| 1797 | OAuth 2.0 Implicit Flow (deprecated) | ★★★ |
-| 1798 | OpenID Connect (OIDC) | ★★★ |
-| 1799 | SAML (Security Assertion Markup Language) | ★★★ |
-| 1800 | SSO (Single Sign-On) | ★★☆ |
-| 1801 | MFA / 2FA | ★★☆ |
-| 1802 | TOTP (Time-Based One-Time Password) | ★★★ |
-| 1803 | Passkeys / WebAuthn | ★★★ |
-| 1804 | RBAC (Role-Based Access Control) | ★★☆ |
-| 1805 | ABAC (Attribute-Based Access Control) | ★★★ |
-| 1806 | ACL (Access Control List) | ★★☆ |
-| 1807 | Hashing (Bcrypt, Argon2, SHA-256) | ★★☆ |
-| 1808 | Encryption (AES, RSA) | ★★☆ |
-| 1809 | Encoding (Base64) | ★☆☆ |
-| 1810 | Hashing vs Encryption vs Encoding | ★★☆ |
-| 1811 | Symmetric vs Asymmetric Encryption | ★★☆ |
-| 1812 | Public Key / Private Key | ★★☆ |
-| 1813 | PKI (Public Key Infrastructure) | ★★★ |
-| 1814 | Digital Signature | ★★★ |
-| 1815 | Certificate Authority (CA) | ★★☆ |
-| 1816 | TLS Certificate Lifecycle | ★★★ |
-| 1817 | Certificate Pinning | ★★★ |
-| 1818 | Key Management | ★★★ |
-| 1819 | Hardware Security Module (HSM) | ★★★ |
-| 1820 | Key Rotation | ★★★ |
-| 1821 | Envelope Encryption | ★★★ |
-| 1822 | Password Storage Best Practices | ★★☆ |
-| 1823 | Salt (Cryptographic) | ★★☆ |
-| 1824 | Rainbow Table Attack | ★★★ |
-| 1825 | OWASP Top 10 | ★★☆ |
-| 1826 | XSS (Cross-Site Scripting) | ★★☆ |
-| 1827 | Stored XSS | ★★★ |
-| 1828 | Reflected XSS | ★★★ |
-| 1829 | DOM-Based XSS | ★★★ |
-| 1830 | CSRF (Cross-Site Request Forgery) | ★★☆ |
-| 1831 | Anti-CSRF Token | ★★★ |
-| 1832 | SQL Injection | ★★☆ |
-| 1833 | Parameterized Queries | ★★☆ |
-| 1834 | NoSQL Injection | ★★★ |
-| 1835 | SSRF (Server-Side Request Forgery) | ★★★ |
-| 1836 | Command Injection | ★★★ |
-| 1837 | Path Traversal | ★★★ |
-| 1838 | XXE (XML External Entity) | ★★★ |
-| 1839 | Insecure Deserialization | ★★★ |
-| 1840 | Broken Access Control | ★★☆ |
-| 1841 | Security Misconfiguration | ★★☆ |
-| 1842 | Cryptographic Failures | ★★★ |
-| 1843 | Vulnerable and Outdated Components | ★★☆ |
-| 1844 | Brute-Force Attack | ★★☆ |
-| 1845 | Credential Stuffing | ★★★ |
-| 1846 | Timing Attack | ★★★ |
-| 1847 | Replay Attack | ★★★ |
-| 1848 | Man-in-the-Middle Attack | ★★☆ |
-| 1849 | DDoS Attack | ★★☆ |
-| 1850 | Phishing | ★☆☆ |
-| 1851 | Social Engineering | ★★☆ |
-| 1852 | Supply Chain Attack | ★★★ |
-| 1853 | Prompt Injection (AI Security) | ★★★ |
-| 1854 | Input Sanitization vs Escaping | ★★☆ |
-| 1855 | Content Security Policy (CSP) | ★★★ |
-| 1856 | Security Headers (HSTS, X-Frame-Options) | ★★★ |
-| 1857 | Secrets Management | ★★☆ |
-| 1858 | Environment Variables for Secrets | ★☆☆ |
-| 1859 | .env File Pattern | ★☆☆ |
-| 1860 | Vault (HashiCorp) | ★★★ |
-| 1861 | API Key Security | ★★☆ |
-| 1862 | Rate Limiting for Security | ★★☆ |
-| 1863 | Brute-Force Prevention | ★★☆ |
-| 1864 | Account Lockout Policy | ★★★ |
-| 1865 | DDoS Protection | ★★★ |
-| 1866 | WAF (Web Application Firewall) | ★★★ |
-| 1867 | Penetration Testing | ★★★ |
-| 1868 | Red Team / Blue Team | ★★★ |
-| 1869 | SAST (Static Application Security Testing) | ★★☆ |
-| 1870 | DAST (Dynamic Application Security Testing) | ★★★ |
-| 1871 | SCA (Software Composition Analysis) | ★★★ |
-| 1872 | SBOM (Software Bill of Materials) | ★★★ |
-| 1873 | CVE (Common Vulnerabilities and Exposures) | ★★☆ |
-| 1874 | CVSS Score | ★★★ |
-| 1875 | Security Audit | ★★★ |
-| 1876 | SIEM (Security Information and Event Management) | ★★★ |
-| 1877 | Security Logging and Monitoring | ★★★ |
-| 1878 | Incident Response | ★★★ |
-| 1879 | RASP (Runtime Application Self-Protection) | ★★★ |
-| 1880 | Dependency Scanning | ★★☆ |
-| 1881 | Container Security Scanning | ★★★ |
-| 1882 | Secret Scanning (in Git) | ★★★ |
+| ID      | Keyword                                                                    | Difficulty |
+|---------|----------------------------------------------------------------------------|------------|
+| SEC-001 | CIA Triad (Confidentiality, Integrity, Availability)                       | ★☆☆        |
+| SEC-002 | Authentication vs Authorization                                            | ★☆☆        |
+| SEC-003 | Identification, Authentication, Authorization, Accounting (IAAA)           | ★★☆        |
+| SEC-004 | Principle of Least Privilege                                               | ★☆☆        |
+| SEC-005 | Defense in Depth                                                           | ★★☆        |
+| SEC-006 | Security by Design                                                         | ★★☆        |
+| SEC-007 | Secure SDLC                                                                | ★★☆        |
+| SEC-008 | Threat Modeling                                                            | ★★☆        |
+| SEC-009 | STRIDE (Spoofing, Tampering, Repudiation, Info Disclosure, DoS, EoP)       | ★★★        |
+| SEC-010 | Attack Surface                                                             | ★★☆        |
+| SEC-011 | Zero Trust Security Model                                                  | ★★★        |
+| SEC-012 | Security Misconfiguration                                                  | ★★☆        |
+| SEC-013 | Session-Based Authentication                                               | ★★☆        |
+| SEC-014 | Token-Based Authentication                                                 | ★★☆        |
+| SEC-015 | Access Token                                                               | ★★☆        |
+| SEC-016 | Refresh Token                                                              | ★★☆        |
+| SEC-017 | HttpOnly Cookie                                                            | ★★☆        |
+| SEC-018 | Secure Cookie Flag                                                         | ★★☆        |
+| SEC-019 | SameSite Cookie                                                            | ★★★        |
+| SEC-020 | JWT Anatomy (Header, Payload, Signature)                                   | ★★☆        |
+| SEC-021 | JWT Verification Without DB Lookup                                         | ★★★        |
+| SEC-022 | JWT Security Vulnerabilities                                               | ★★★        |
+| SEC-023 | JWT Algorithm Confusion Attack                                             | ★★★        |
+| SEC-024 | OAuth 2.0 Authorization Code Flow                                          | ★★★        |
+| SEC-025 | OAuth 2.0 Client Credentials Flow                                          | ★★★        |
+| SEC-026 | OAuth 2.0 PKCE                                                             | ★★★        |
+| SEC-027 | OAuth 2.0 Implicit Flow (deprecated)                                       | ★★★        |
+| SEC-028 | OpenID Connect (OIDC)                                                      | ★★★        |
+| SEC-029 | SAML (Security Assertion Markup Language)                                  | ★★★        |
+| SEC-030 | SSO (Single Sign-On)                                                       | ★★☆        |
+| SEC-031 | MFA / 2FA                                                                  | ★★☆        |
+| SEC-032 | TOTP (Time-Based One-Time Password)                                        | ★★★        |
+| SEC-033 | Passkeys / WebAuthn                                                        | ★★★        |
+| SEC-034 | RBAC (Role-Based Access Control)                                           | ★★☆        |
+| SEC-035 | ABAC (Attribute-Based Access Control)                                      | ★★★        |
+| SEC-036 | ACL (Access Control List)                                                  | ★★☆        |
+| SEC-037 | Hashing (Bcrypt, Argon2, SHA-256)                                          | ★★☆        |
+| SEC-038 | Encryption (AES, RSA)                                                      | ★★☆        |
+| SEC-039 | Encoding (Base64)                                                          | ★☆☆        |
+| SEC-040 | Hashing vs Encryption vs Encoding                                          | ★★☆        |
+| SEC-041 | Symmetric vs Asymmetric Encryption                                         | ★★☆        |
+| SEC-042 | Public Key / Private Key                                                   | ★★☆        |
+| SEC-043 | PKI (Public Key Infrastructure)                                            | ★★★        |
+| SEC-044 | Digital Signature                                                          | ★★★        |
+| SEC-045 | Certificate Authority (CA)                                                 | ★★☆        |
+| SEC-046 | TLS Certificate Lifecycle                                                  | ★★★        |
+| SEC-047 | Certificate Pinning                                                        | ★★★        |
+| SEC-048 | Key Management                                                             | ★★★        |
+| SEC-049 | Hardware Security Module (HSM)                                             | ★★★        |
+| SEC-050 | Key Rotation                                                               | ★★★        |
+| SEC-051 | Envelope Encryption                                                        | ★★★        |
+| SEC-052 | Password Storage Best Practices                                            | ★★☆        |
+| SEC-053 | Salt (Cryptographic)                                                       | ★★☆        |
+| SEC-054 | Rainbow Table Attack                                                       | ★★★        |
+| SEC-055 | OWASP Top 10                                                               | ★★☆        |
+| SEC-056 | XSS (Cross-Site Scripting)                                                 | ★★☆        |
+| SEC-057 | Stored XSS                                                                 | ★★★        |
+| SEC-058 | Reflected XSS                                                              | ★★★        |
+| SEC-059 | DOM-Based XSS                                                              | ★★★        |
+| SEC-060 | CSRF (Cross-Site Request Forgery)                                          | ★★☆        |
+| SEC-061 | Anti-CSRF Token                                                            | ★★★        |
+| SEC-062 | SQL Injection                                                              | ★★☆        |
+| SEC-063 | Parameterized Queries                                                      | ★★☆        |
+| SEC-064 | NoSQL Injection                                                            | ★★★        |
+| SEC-065 | SSRF (Server-Side Request Forgery)                                         | ★★★        |
+| SEC-066 | Command Injection                                                          | ★★★        |
+| SEC-067 | Path Traversal                                                             | ★★★        |
+| SEC-068 | XXE (XML External Entity)                                                  | ★★★        |
+| SEC-069 | Insecure Deserialization                                                   | ★★★        |
+| SEC-070 | Broken Access Control                                                      | ★★☆        |
+| SEC-071 | OWASP A05 — Security Misconfiguration (Deep)                               | ★★★        |
+| SEC-072 | Cryptographic Failures                                                     | ★★★        |
+| SEC-073 | Vulnerable and Outdated Components                                         | ★★☆        |
+| SEC-074 | Brute-Force Attack                                                         | ★★☆        |
+| SEC-075 | Credential Stuffing                                                        | ★★★        |
+| SEC-076 | Timing Attack                                                              | ★★★        |
+| SEC-077 | Replay Attack                                                              | ★★★        |
+| SEC-078 | Man-in-the-Middle Attack                                                   | ★★☆        |
+| SEC-079 | DDoS Attack                                                                | ★★☆        |
+| SEC-080 | Phishing                                                                   | ★☆☆        |
+| SEC-081 | Social Engineering                                                         | ★★☆        |
+| SEC-082 | Supply Chain Attack                                                        | ★★★        |
+| SEC-083 | Prompt Injection (AI Security)                                             | ★★★        |
+| SEC-084 | Input Sanitization vs Escaping                                             | ★★☆        |
+| SEC-085 | Content Security Policy (CSP)                                              | ★★★        |
+| SEC-086 | Security Headers (HSTS, X-Frame-Options)                                   | ★★★        |
+| SEC-087 | Secrets Management                                                         | ★★☆        |
+| SEC-088 | Environment Variables for Secrets                                          | ★☆☆        |
+| SEC-089 | .env File Pattern                                                          | ★☆☆        |
+| SEC-090 | Vault (HashiCorp)                                                          | ★★★        |
+| SEC-091 | API Key Security                                                           | ★★☆        |
+| SEC-092 | Rate Limiting for Security                                                 | ★★☆        |
+| SEC-093 | Brute-Force Prevention                                                     | ★★☆        |
+| SEC-094 | Account Lockout Policy                                                     | ★★★        |
+| SEC-095 | DDoS Protection                                                            | ★★★        |
+| SEC-096 | WAF (Web Application Firewall)                                             | ★★★        |
+| SEC-097 | Penetration Testing                                                        | ★★★        |
+| SEC-098 | Red Team / Blue Team                                                       | ★★★        |
+| SEC-099 | SAST (Static Application Security Testing)                                 | ★★☆        |
+| SEC-100 | DAST (Dynamic Application Security Testing)                                | ★★★        |
+| SEC-101 | SCA (Software Composition Analysis)                                        | ★★★        |
+| SEC-102 | SBOM (Software Bill of Materials)                                          | ★★★        |
+| SEC-103 | CVE (Common Vulnerabilities and Exposures)                                 | ★★☆        |
+| SEC-104 | CVSS Score                                                                 | ★★★        |
+| SEC-105 | Security Audit                                                             | ★★★        |
+| SEC-106 | SIEM (Security Information and Event Management)                           | ★★★        |
+| SEC-107 | Security Logging and Monitoring                                            | ★★★        |
+| SEC-108 | Incident Response                                                          | ★★★        |
+| SEC-109 | RASP (Runtime Application Self-Protection)                                 | ★★★        |
+| SEC-110 | Dependency Scanning                                                        | ★★☆        |
+| SEC-111 | Container Security Scanning                                                | ★★★        |
+| SEC-112 | Secret Scanning (in Git)                                                   | ★★★        |
+| SEC-113 | Threat vs Vulnerability vs Risk                                            | ★☆☆        |
+| SEC-114 | Malware Overview                                                           | ★☆☆        |
+| SEC-115 | Firewall (Conceptual)                                                      | ★☆☆        |
+| SEC-116 | HTTPS Overview (Conceptual)                                                | ★☆☆        |
+| SEC-117 | Nonrepudiation                                                             | ★☆☆        |
+| SEC-118 | Security vs Privacy                                                        | ★☆☆        |
+| SEC-119 | Password Security Basics                                                   | ★☆☆        |
+| SEC-120 | What is a Security Vulnerability                                           | ★☆☆        |
+| SEC-121 | Security Policy (Conceptual)                                               | ★☆☆        |
+| SEC-122 | CORS Security Implications                                                 | ★★☆        |
+| SEC-123 | Insecure Direct Object Reference (IDOR)                                    | ★★☆        |
+| SEC-124 | Clickjacking                                                               | ★★☆        |
+| SEC-125 | Open Redirect                                                              | ★★☆        |
+| SEC-126 | Session Hijacking / Token Theft                                            | ★★☆        |
+| SEC-127 | OWASP API Security Top 10                                                  | ★★☆        |
+| SEC-128 | CIS Benchmarks (Security Hardening)                                        | ★★☆        |
+| SEC-129 | mTLS (Mutual TLS)                                                          | ★★★        |
+| SEC-130 | Memory Safety Vulnerabilities                                              | ★★★        |
+| SEC-131 | Side-Channel Attack (Deep)                                                 | ★★★        |
+| SEC-132 | Container Security Hardening                                               | ★★★        |
+| SEC-133 | Network Segmentation Security                                              | ★★★        |
+| SEC-134 | Compliance-Driven Security (PCI-DSS, SOX, GDPR)                           | ★★★        |
+| SEC-135 | OWASP LLM Top 10                                                           | ★★★        |
+| SEC-136 | Agent Permission Model                                                     | ★★★        |
+| SEC-137 | Zero-Day Vulnerability                                                     | ★★★        |
+| SEC-138 | Threat Intelligence (MITRE ATT&CK)                                         | ★★★        |
+| SEC-139 | Defense in Depth Architecture                                              | ★★★        |
+| SEC-140 | Security Architecture Review                                               | ★★★        |
+| SEC-141 | Digital Forensics (Basics)                                                 | ★★★        |
+| SEC-142 | Exploit Development (Conceptual)                                           | ★★★        |
+| SEC-143 | Cryptographic Primitive Design                                             | 🔬          |
+| SEC-144 | Formal Security Proofs                                                     | 🔬          |
+| SEC-145 | Provable Security (Reduction Theory)                                       | 🔬          |
+| SEC-146 | Elliptic Curve Cryptography (Theory)                                       | 🔬          |
+| SEC-147 | Post-Quantum Cryptography                                                  | 🔬          |
+| SEC-148 | Secure Multiparty Computation                                              | 🔬          |
+| SEC-149 | Zero-Knowledge Proofs                                                      | 🔬          |
+| SEC-150 | Homomorphic Encryption                                                     | 🔬          |
+| SEC-151 | TLS Protocol Design Rationale                                              | 🔬          |
+| SEC-152 | OAuth 2.0 Specification Design Rationale                                   | 🔬          |
+| SEC-153 | Capability-Based Security Model                                            | 🔬          |
+| SEC-154 | Security Protocol Verification (BAN Logic)                                 | 🔬          |
+| SEC-155 | Threat Modeling Formal Methods                                             | 🔬          |
+| SEC-156 | Applied Cryptography Research                                              | 🔬          |

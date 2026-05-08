@@ -1,0 +1,26 @@
+---
+id: SEC-048
+title: Supply Chain Attacks (SolarWinds, XZ Utils)
+category: Security
+tier: tier-2-networking-security
+folder: SEC-security
+difficulty: ★★★
+depends_on:
+used_by:
+related:
+tags:
+  - sec
+  - advanced
+  - production
+  - deep-dive
+status: draft
+version: 1
+layout: default
+parent: "Security"
+nav_order: 48
+permalink: /sec/supply-chain-attacks-solarwinds-xz-utils/
+---
+
+# SEC-048 — Supply Chain Attacks (SolarWinds, XZ Utils)
+
+> Entry stub. Generate full content using Master Prompt v3.0.
