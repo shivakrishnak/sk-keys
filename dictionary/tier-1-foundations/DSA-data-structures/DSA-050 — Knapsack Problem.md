@@ -4,7 +4,7 @@ title: "Knapsack Problem"
 parent: "Data Structures & Algorithms"
 nav_order: 50
 permalink: /dsa/knapsack-problem/
-number: "DSA-050"
+id: DSA-050
 category: Data Structures & Algorithms
 difficulty: ★★★
 depends_on: Dynamic Programming, Recursion, Backtracking

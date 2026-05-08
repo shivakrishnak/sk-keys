@@ -1,0 +1,26 @@
+---
+id: DSA-076
+title: Choosing Data Structures at System Scale
+category: Data Structures & Algorithms
+tier: tier-1-foundations
+folder: DSA-data-structures
+difficulty: ★★★
+depends_on:
+used_by:
+related:
+tags:
+  - dsa
+  - advanced
+  - architecture
+  - bestpractice
+status: draft
+version: 1
+layout: default
+parent: "Data Structures & Algorithms"
+nav_order: 76
+permalink: /dsa/choosing-data-structures-at-system-scale/
+---
+
+# DSA-076 — Choosing Data Structures at System Scale
+
+> Entry stub. Generate full content using Master Prompt v3.0.

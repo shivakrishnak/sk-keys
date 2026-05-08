@@ -4,7 +4,7 @@ title: "Longest Common Subsequence"
 parent: "Data Structures & Algorithms"
 nav_order: 49
 permalink: /dsa/longest-common-subsequence/
-number: "DSA-049"
+id: DSA-049
 category: Data Structures & Algorithms
 difficulty: ★★★
 depends_on: Dynamic Programming, Memoization, Tabulation (Bottom-Up DP)

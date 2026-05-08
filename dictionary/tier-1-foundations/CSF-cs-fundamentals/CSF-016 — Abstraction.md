@@ -4,7 +4,7 @@ title: "Abstraction"
 parent: "CS Fundamentals — Paradigms"
 nav_order: 16
 permalink: /cs-fundamentals/abstraction/
-number: "CSF-016"
+id: CSF-016
 category: CS Fundamentals — Paradigms
 difficulty: ★☆☆
 depends_on: Imperative Programming, Object-Oriented Programming (OOP)
