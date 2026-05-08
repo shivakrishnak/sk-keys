@@ -68,7 +68,7 @@ HTTP versions, REST, GraphQL, gRPC, WebSocket, API security, authentication, API
 | API-049 | BFF (Backend for Frontend)                       | ★★★        |
 | API-050 | API Caching                                      | ★★☆        |
 | API-051 | ETag / Cache-Control                             | ★★★        |
-| API-052 | Pagination (Cursor, Offset, Keyset — Deep Dive)  | ★★★        |
+| API-052 | Pagination (Cursor, Offset, Keyset - Deep Dive)  | ★★★        |
 | API-053 | Pagination (Basics)                              | ★★☆        |
 | API-054 | API Throttling                                   | ★★☆        |
 | API-055 | API Documentation                                | ★☆☆        |

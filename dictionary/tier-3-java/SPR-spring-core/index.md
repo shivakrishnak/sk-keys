@@ -14,7 +14,7 @@ Spring IoC/DI, AOP, MVC, transactions, data access, reactive programming, Spring
 **Keywords:** SPR-001–SPR-082 (82 terms · 53 original + 29 gap-fill)
 
 > ⚠️ **Malformed IDs fixed:** Original entries `2120–2132` → `SPR-001–SPR-013`. Original entries `371–410` → `SPR-014–SPR-053`. All now use `SPR-NNN` format.
-> ⚠️ **Note:** `SPR-005` (Spring Cloud Overview) and `SPR-052` (Spring Cloud) overlap — `SPR-005` is the Spring Cloud sub-system overview; `SPR-052` covers the broader Cloud integration entry.
+> ⚠️ **Note:** `SPR-005` (Spring Cloud Overview) and `SPR-052` (Spring Cloud) overlap - `SPR-005` is the Spring Cloud sub-system overview; `SPR-052` covers the broader Cloud integration entry.
 
 | ID      | Keyword                                               | Difficulty |
 |---------|-------------------------------------------------------|------------|

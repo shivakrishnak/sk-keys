@@ -1,15 +1,15 @@
-# 🎯 Category Keyword Generator — Master Prompt v2.0
+﻿# 🎯 Category Keyword Generator - Master Prompt v2.0
 
 ---
 
 ```
 ═══════════════════════════════════════════════════════════════════════════
-CATEGORY KEYWORD GENERATOR — MASTER PROMPT v2.0
+CATEGORY KEYWORD GENERATOR - MASTER PROMPT v2.0
 ═══════════════════════════════════════════════════════════════════════════
 
 WHAT'S NEW IN v2.0  (upgraded from v1.0):
-  + 7 knowledge levels  (was 5) — added L0 Orientation + L4.5 Architect
-  + Fixed L2/L3 difficulty marker collision — now use Level column
+  + 7 knowledge levels  (was 5) - added L0 Orientation + L4.5 Architect
+  + Fixed L2/L3 difficulty marker collision - now use Level column
   + 6 knowledge dimensions in Rule 5  (was 3)
   + 7 new mandatory rules  (Rules 10–16)
   + Sub-topic clustering within levels  (Section 3.3)
@@ -21,7 +21,7 @@ WHAT'S NEW IN v2.0  (upgraded from v1.0):
 
 PURPOSE:
   Generate a complete, exhaustive keyword list for a given category
-  covering ALL levels of knowledge — from absolute beginner who has
+  covering ALL levels of knowledge - from absolute beginner who has
   never heard of the domain, all the way to the creator who designs
   the technology itself.
 
@@ -31,24 +31,24 @@ PURPOSE:
   dictionary entry generation (Master Prompt v3.0).
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 1: KNOWLEDGE LEVEL FRAMEWORK — 7 LEVELS
+SECTION 1: KNOWLEDGE LEVEL FRAMEWORK - 7 LEVELS
 ═══════════════════════════════════════════════════════════════════════════
 
 Every category must be covered across SEVEN levels plus a META layer.
 Each level has a precise identity, need profile, and test question.
 
 LEVEL OVERVIEW:
-  L0   🌱    Orientation      — Domain context before any concept
-  L1   ★☆☆   Foundational     — Core vocabulary and building blocks
-  L2   ★★☆   Working          — Correct usage in real projects
-  L3   ★★☆+  Intermediate     — Design decisions and trade-offs
-  L4   ★★★   Expert           — Production ownership and diagnosis
-  L4.5 🔥    Architect        — System-level innovation and governance
-  L5   🔬    Creator          — Theory, specification, and invention
-  META 🧠    Meta-Skills      — Transferable god-level thinking patterns
+  L0   🌱    Orientation      - Domain context before any concept
+  L1   ★☆☆   Foundational     - Core vocabulary and building blocks
+  L2   ★★☆   Working          - Correct usage in real projects
+  L3   ★★☆+  Intermediate     - Design decisions and trade-offs
+  L4   ★★★   Expert           - Production ownership and diagnosis
+  L4.5 🔥    Architect        - System-level innovation and governance
+  L5   🔬    Creator          - Theory, specification, and invention
+  META 🧠    Meta-Skills      - Transferable god-level thinking patterns
 
 ─────────────────────────────────────────────────────────────────────────
-LEVEL 0 — ORIENTATION  🌱
+LEVEL 0 - ORIENTATION  🌱
 ─────────────────────────────────────────────────────────────────────────
 
   WHO:
@@ -63,7 +63,7 @@ LEVEL 0 — ORIENTATION  🌱
     What CATEGORY of problem does this technology solve?
     Where does it fit in the software engineering landscape?
     What existed before this? What does it replace or improve?
-    Why was it invented — what pain broke the world?
+    Why was it invented - what pain broke the world?
     Who uses it, in what contexts, at what scale?
     What is the rough mental map of the ecosystem?
 
@@ -95,7 +95,7 @@ LEVEL 0 — ORIENTATION  🌱
   EXPECTED KEYWORD COUNT: 5–10
 
 ─────────────────────────────────────────────────────────────────────────
-LEVEL 1 — FOUNDATIONAL  ★☆☆
+LEVEL 1 - FOUNDATIONAL  ★☆☆
 ─────────────────────────────────────────────────────────────────────────
 
   WHO:
@@ -119,7 +119,7 @@ LEVEL 1 — FOUNDATIONAL  ★☆☆
 
   CHARACTERISTICS OF FOUNDATIONAL KEYWORDS:
     - Definitions of core concepts
-    - The "what" — not yet the "how"
+    - The "what" - not yet the "how"
     - Building blocks the rest depends on
     - Vocabulary the ecosystem uses universally
     - Concepts that appear in every beginner tutorial
@@ -135,7 +135,7 @@ LEVEL 1 — FOUNDATIONAL  ★☆☆
   EXPECTED KEYWORD COUNT: 15–25
 
 ─────────────────────────────────────────────────────────────────────────
-LEVEL 2 — WORKING  ★★☆
+LEVEL 2 - WORKING  ★★☆
 ─────────────────────────────────────────────────────────────────────────
 
   WHO:
@@ -174,13 +174,13 @@ LEVEL 2 — WORKING  ★★☆
   EXPECTED KEYWORD COUNT: 20–35
 
 ─────────────────────────────────────────────────────────────────────────
-LEVEL 3 — INTERMEDIATE  ★★☆+
+LEVEL 3 - INTERMEDIATE  ★★☆+
 ─────────────────────────────────────────────────────────────────────────
 
   NOTE ON DIFFICULTY MARKER:
     In the output table, L3 keywords use ★★☆+ to distinguish
     from L2 ★★☆. In the dictionary entry YAML `difficulty`
-    field, both L2 and L3 map to ★★☆ — the Level column
+    field, both L2 and L3 map to ★★☆ - the Level column
     in the output table is the disambiguator.
 
   WHO:
@@ -223,7 +223,7 @@ LEVEL 3 — INTERMEDIATE  ★★☆+
   EXPECTED KEYWORD COUNT: 25–40
 
 ─────────────────────────────────────────────────────────────────────────
-LEVEL 4 — EXPERT  ★★★
+LEVEL 4 - EXPERT  ★★★
 ─────────────────────────────────────────────────────────────────────────
 
   WHO:
@@ -270,14 +270,14 @@ LEVEL 4 — EXPERT  ★★★
   EXPECTED KEYWORD COUNT: 25–40
 
 ─────────────────────────────────────────────────────────────────────────
-LEVEL 4.5 — ARCHITECT / INNOVATOR  🔥
+LEVEL 4.5 - ARCHITECT / INNOVATOR  🔥
 ─────────────────────────────────────────────────────────────────────────
 
   NEW IN v2.0
 
   WHO:
     The engineer who doesn't just USE the technology
-    at expert level — they DESIGN SYSTEMS around it
+    at expert level - they DESIGN SYSTEMS around it
     at organisational or fleet scale.
 
     This is the person who:
@@ -338,7 +338,7 @@ LEVEL 4.5 — ARCHITECT / INNOVATOR  🔥
   EXPECTED KEYWORD COUNT: 10–20
 
 ─────────────────────────────────────────────────────────────────────────
-LEVEL 5 — CREATOR / DESIGNER  🔬
+LEVEL 5 - CREATOR / DESIGNER  🔬
 ─────────────────────────────────────────────────────────────────────────
 
   WHO:
@@ -395,7 +395,7 @@ META-SKILLS LAYER  🧠  (Appended after L5)
   NEW IN v2.0
 
   WHO:
-    Not a standard keyword level — a supplementary
+    Not a standard keyword level - a supplementary
     layer appended after L5. Captures the THINKING
     PATTERNS that emerge from deep mastery of the domain.
 
@@ -427,7 +427,7 @@ META-SKILLS LAYER  🧠  (Appended after L5)
                  "Latency vs Throughput Trade-off Framing"
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 2: KEYWORD GENERATION RULES — 16 RULES
+SECTION 2: KEYWORD GENERATION RULES - 16 RULES
 ═══════════════════════════════════════════════════════════════════════════
 
 ─────────────────────────────────────────────────────────────────────────
@@ -448,9 +448,9 @@ RULE 2: KEYWORDS MUST BE ATOMIC
 ─────────────────────────────────────────────────────────────────────────
 
   Each keyword = one concept.
-  Not "authentication and authorisation" — split it.
-  Not "GET, POST, PUT methods" — one per line.
-  Not "Spring Boot configuration and tuning" — split it.
+  Not "authentication and authorisation" - split it.
+  Not "GET, POST, PUT methods" - one per line.
+  Not "Spring Boot configuration and tuning" - split it.
 
   Exception: tightly coupled pairs always taught together:
     "Encoding vs Encryption vs Hashing"
@@ -467,14 +467,14 @@ RULE 3: DIFFICULTY AND LEVEL COLUMNS ARE BOTH REQUIRED
   star-collision that existed in v1.0.
 
   LEVEL COLUMN (generator-internal, always shown):
-    L0    — Orientation
-    L1    — Foundational
-    L2    — Working
-    L3    — Intermediate
-    L4    — Expert
-    L4.5  — Architect
-    L5    — Creator
-    META  — Meta-Skills
+    L0    - Orientation
+    L1    - Foundational
+    L2    - Working
+    L3    - Intermediate
+    L4    - Expert
+    L4.5  - Architect
+    L5    - Creator
+    META  - Meta-Skills
 
   DIFFICULTY COLUMN (maps to dictionary entry field):
     L0          →  🌱
@@ -508,31 +508,31 @@ RULE 5: INCLUDE ALL SIX KNOWLEDGE DIMENSIONS  [EXPANDED v2.0]
 
   For each level, ensure coverage of ALL six:
 
-  DIMENSION 1 — CONCEPTUAL:
+  DIMENSION 1 - CONCEPTUAL:
     What things are and why they exist.
     Example: "What is a GC Root?"
 
-  DIMENSION 2 — PROCEDURAL:
-    How to do things — steps, patterns, tools.
+  DIMENSION 2 - PROCEDURAL:
+    How to do things - steps, patterns, tools.
     Example: "How to read GC logs"
 
-  DIMENSION 3 — SITUATIONAL:
+  DIMENSION 3 - SITUATIONAL:
     When to use what, and why not to use it.
     Example: "When to use ZGC vs G1GC"
 
-  DIMENSION 4 — DIAGNOSTIC:  [NEW v2.0]
+  DIMENSION 4 - DIAGNOSTIC:  [NEW v2.0]
     How to troubleshoot, investigate, measure.
     Example: "Reading a GC Pause Histogram"
     Example: "Analysing a JWT Validation Failure"
     Mandatory at L3+. Recommended at L2.
 
-  DIMENSION 5 — EVALUATIVE:  [NEW v2.0]
+  DIMENSION 5 - EVALUATIVE:  [NEW v2.0]
     How to compare, assess quality, choose options.
     Example: "Security Posture Self-Assessment"
     Example: "Choosing Between Redis Data Structures"
     Mandatory at L3+.
 
-  DIMENSION 6 — HISTORICAL:  [NEW v2.0]
+  DIMENSION 6 - HISTORICAL:  [NEW v2.0]
     What came before, why things evolved, turning points.
     Example: "The Heartbleed Vulnerability (2014)"
     Example: "Why Callbacks Led to Promises"
@@ -632,7 +632,7 @@ RULE 12: LANDMARK INCIDENTS MANDATORY AT L4+  [NEW v2.0]
     "Left-Pad npm Incident (2016)"
 
   Landmark incidents are tagged with 🔴 in the output table.
-  They MUST be factually accurate — verify the year and context.
+  They MUST be factually accurate - verify the year and context.
 
 ─────────────────────────────────────────────────────────────────────────
 RULE 13: EVOLUTION & MIGRATION KEYWORDS MANDATORY AT L3+  [NEW v2.0]
@@ -714,12 +714,12 @@ RULE 16: CROSS-CUTTING LENSES MANDATORY AT L3+  [NEW v2.0]
     "[Technology] at Scale"
     Tagged with ⚡ in the output table.
 
-  Note: The Security lens is covered by Rule 7 — do not
+  Note: The Security lens is covered by Rule 7 - do not
   double-count. These three lenses are IN ADDITION to
   security keywords required by Rule 7.
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 3: OUTPUT FORMAT — 9 COMPONENTS
+SECTION 3: OUTPUT FORMAT - 9 COMPONENTS
 ═══════════════════════════════════════════════════════════════════════════
 
 ─────────────────────────────────────────────────────────────────────────
@@ -745,7 +745,7 @@ SECTION 3: OUTPUT FORMAT — 9 COMPONENTS
   Each level section uses this exact structure:
 
   ────────────────────────────────────────────────────
-  LEVEL [N] — [LEVEL NAME]  [MARKER]
+  LEVEL [N] - [LEVEL NAME]  [MARKER]
   [N] keywords
   ────────────────────────────────────────────────────
 
@@ -757,7 +757,7 @@ SECTION 3: OUTPUT FORMAT — 9 COMPONENTS
   | [CODE]-004| [Keyword Name]             | L3   | ★★☆   | ⚠️    |
   | [CODE]-005| [Keyword Name]             | L4   | ★★★   | 🔴    |
 
-  TAGS COLUMN — use one or more symbols per row:
+  TAGS COLUMN - use one or more symbols per row:
     🎯  ivw   = High-frequency interview topic
     ⚠️  anti  = Anti-pattern keyword (Rule 10)
     🔧  tool  = Tooling keyword (Rule 11)
@@ -801,7 +801,7 @@ SECTION 3: OUTPUT FORMAT — 9 COMPONENTS
   After each level's keyword table, output:
 
   ┌───────────────────────────────────────────────────────┐
-  │ MILESTONE — Level [N] Complete                        │
+  │ MILESTONE - Level [N] Complete                        │
   │                                                       │
   │ You can now:                                          │
   │  ✓ [concrete deliverable 1]                           │
@@ -816,7 +816,7 @@ SECTION 3: OUTPUT FORMAT — 9 COMPONENTS
   Example for Security L2 Milestone:
 
   ┌───────────────────────────────────────────────────────┐
-  │ MILESTONE — Level 2 Complete                          │
+  │ MILESTONE - Level 2 Complete                          │
   │                                                       │
   │ You can now:                                          │
   │  ✓ Implement JWT-based auth in a REST API             │
@@ -884,13 +884,13 @@ SECTION 3: OUTPUT FORMAT — 9 COMPONENTS
   [Categories to study AFTER this one]
 
   ENTRY POINT FOR NEW LEARNERS:
-  Start at [CODE]-001 — [First L0 Keyword Name]
+  Start at [CODE]-001 - [First L0 Keyword Name]
 
   JUMP IN FOR PRACTITIONERS:
-  Start at [CODE]-[NNN] — [First L3 Keyword Name]
+  Start at [CODE]-[NNN] - [First L3 Keyword Name]
 
   FAST TRACK FOR EXPERTS:
-  Start at [CODE]-[NNN] — [First L4 Keyword Name]
+  Start at [CODE]-[NNN] - [First L4 Keyword Name]
 
 ─────────────────────────────────────────────────────────────────────────
 3.7 CROSS-CATEGORY DEPENDENCIES
@@ -913,7 +913,7 @@ SECTION 3: OUTPUT FORMAT — 9 COMPONENTS
 ─────────────────────────────────────────────────────────────────────────
 
   ════════════════════════════════════════════════════════
-  CONFUSION PAIRS — COMMONLY CONFLATED CONCEPTS
+  CONFUSION PAIRS - COMMONLY CONFLATED CONCEPTS
   ════════════════════════════════════════════════════════
 
   List all concept pairs in this category that are
@@ -934,7 +934,7 @@ SECTION 3: OUTPUT FORMAT — 9 COMPONENTS
   After L5, add:
 
   ════════════════════════════════════════════════════════
-  META-SKILLS — GOD-LEVEL THINKING PATTERNS
+  META-SKILLS - GOD-LEVEL THINKING PATTERNS
   ════════════════════════════════════════════════════════
 
   | ID        | Meta-Skill                            | Transfers To          |
@@ -952,12 +952,12 @@ SECTION 3: OUTPUT FORMAT — 9 COMPONENTS
     Networking:  "Packet-Level Debugging" → Any Protocol
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 4: QUALITY CHECKS — 10 CHECKS
+SECTION 4: QUALITY CHECKS - 10 CHECKS
 ═══════════════════════════════════════════════════════════════════════════
 
 Before finalising output, run ALL 10 checks:
 
-CHECK 1 — COMPLETENESS:
+CHECK 1 - COMPLETENESS:
   ☐ L0: Does list give a newcomer domain context
         and the big picture before any concepts?
   ☐ L1: Does list cover all vocabulary a beginner
@@ -974,14 +974,14 @@ CHECK 1 — COMPLETENESS:
         to redesign or extend the technology?
   ☐ META: Are 3–5 transferable thinking patterns captured?
 
-CHECK 2 — BALANCE:
+CHECK 2 - BALANCE:
   ☐ No level is significantly shorter than the guidelines
     in Section 6
   ☐ All 6 knowledge dimensions covered at each level
     (Conceptual, Procedural, Situational,
      Diagnostic, Evaluative, Historical)
 
-CHECK 3 — MANDATORY COVERAGE (L3+):
+CHECK 3 - MANDATORY COVERAGE (L3+):
   ☐ At least 2 diagnostic keywords per level (Rule 6)
   ☐ At least 2 failure mode keywords per level (Rule 6)
   ☐ At least 1 tuning keyword per level (Rule 6)
@@ -995,7 +995,7 @@ CHECK 3 — MANDATORY COVERAGE (L3+):
   ☐ Observability lens keyword present at L3+ (Rule 16)
   ☐ Performance lens keyword present at L3+ (Rule 16)
 
-CHECK 4 — ATOMICITY:
+CHECK 4 - ATOMICITY:
   ☐ Each keyword is a single concept
   ☐ No keyword is a category (too broad)
   ☐ No keyword is a trivial sub-concept
@@ -1003,40 +1003,40 @@ CHECK 4 — ATOMICITY:
   ☐ Synonyms handled correctly per Rule 14:
     one keyword with aliases in parentheses
 
-CHECK 5 — ID INTEGRITY:
+CHECK 5 - ID INTEGRITY:
   ☐ IDs are sequential, no gaps
   ☐ Code matches category from registry
   ☐ Starts at correct number
     (001 if new, continues if extending)
 
-CHECK 6 — LEARNING ORDER:
+CHECK 6 - LEARNING ORDER:
   ☐ L0 keywords require NO prior tech knowledge
   ☐ L1 keywords do not require L2+ knowledge
   ☐ L2 keywords do not require L3+ knowledge
   ☐ Each level is learnable without skipping ahead
 
-CHECK 7 — RECENCY:
+CHECK 7 - RECENCY:
   ☐ No keyword is for a technology that is
     officially deprecated or dead
     (mark it historical if it must be included:
-     "[Name] (Historical — deprecated YYYY)")
+     "[Name] (Historical - deprecated YYYY)")
   ☐ Migration keywords reflect current best practice
   ☐ Compliance keywords reflect current regulations
   ☐ Landmark incidents are factually accurate (verify years)
 
-CHECK 8 — REDUNDANCY:
+CHECK 8 - REDUNDANCY:
   ☐ No keyword is better placed in another category
   ☐ Cross-category dependencies in Section 3.7
     are complete and accurate
 
-CHECK 9 — PRACTICAL vs THEORETICAL BALANCE:
+CHECK 9 - PRACTICAL vs THEORETICAL BALANCE:
   ☐ L0–L2: At least 70% practical keywords
     (real things you do or use, not pure theory)
   ☐ L4–L5: At least 30% theoretical keywords
     (internals, algorithms, research)
   ☐ L3: Roughly equal practical and theoretical
 
-CHECK 10 — CONFUSION PAIRS:
+CHECK 10 - CONFUSION PAIRS:
   ☐ All concept pairs practitioners commonly confuse
     are listed in Section 3.8
   ☐ Each pair has a clear one-line key difference
@@ -1044,11 +1044,11 @@ CHECK 10 — CONFUSION PAIRS:
     as keywords somewhere in the list
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 5: INVOCATION — HOW TO USE THIS PROMPT
+SECTION 5: INVOCATION - HOW TO USE THIS PROMPT
 ═══════════════════════════════════════════════════════════════════════════
 
 ─────────────────────────────────────────────────────────────────────────
-NEW CATEGORY — ALL LEVELS:
+NEW CATEGORY - ALL LEVELS:
 ─────────────────────────────────────────────────────────────────────────
 
   Generate complete keyword list for category:
@@ -1060,14 +1060,14 @@ NEW CATEGORY — ALL LEVELS:
     Starting ID: [CODE]-001
 
   Cover ALL levels:
-    L0   — Orientation   (🌱)
-    L1   — Foundational  (★☆☆)
-    L2   — Working       (★★☆)
-    L3   — Intermediate  (★★☆+)
-    L4   — Expert        (★★★)
-    L4.5 — Architect     (🔥)
-    L5   — Creator       (🔬)
-    META — Meta-Skills   (🧠)
+    L0   - Orientation   (🌱)
+    L1   - Foundational  (★☆☆)
+    L2   - Working       (★★☆)
+    L3   - Intermediate  (★★☆+)
+    L4   - Expert        (★★★)
+    L4.5 - Architect     (🔥)
+    L5   - Creator       (🔬)
+    META - Meta-Skills   (🧠)
 
   Follow Category Keyword Generator v2.0 exactly.
   Apply all 16 rules from Section 2.
@@ -1075,7 +1075,7 @@ NEW CATEGORY — ALL LEVELS:
   Run all 10 quality checks from Section 4.
 
 ─────────────────────────────────────────────────────────────────────────
-EXTEND EXISTING CATEGORY — ADD MISSING LEVELS:
+EXTEND EXISTING CATEGORY - ADD MISSING LEVELS:
 ─────────────────────────────────────────────────────────────────────────
 
   Extend keyword list for category:
@@ -1107,7 +1107,7 @@ SINGLE LEVEL GENERATION:
   Follow Category Keyword Generator v2.0 exactly.
 
 ─────────────────────────────────────────────────────────────────────────
-GAP ANALYSIS — FIND MISSING KEYWORDS:
+GAP ANALYSIS - FIND MISSING KEYWORDS:
 ─────────────────────────────────────────────────────────────────────────
 
   Analyse existing keyword list for category:
@@ -1154,7 +1154,7 @@ V1 → V2 UPGRADE:  [NEW INVOCATION]
   Output: full upgraded v2.0 keyword list.
 
 ─────────────────────────────────────────────────────────────────────────
-MIGRATION AUDIT — EVOLUTION/VERSIONING GAPS:  [NEW INVOCATION]
+MIGRATION AUDIT - EVOLUTION/VERSIONING GAPS:  [NEW INVOCATION]
 ─────────────────────────────────────────────────────────────────────────
 
   Audit existing keyword list for:
@@ -1289,7 +1289,7 @@ EXAMPLE OUTPUT (L0 full, L1 partial, L3 partial cluster, Confusion Pairs,
   ════════════════════════════════════════════════════════
 
   ────────────────────────────────────────────────────────
-  LEVEL 0 — ORIENTATION  🌱
+  LEVEL 0 - ORIENTATION  🌱
   8 keywords
   ────────────────────────────────────────────────────────
 
@@ -1305,7 +1305,7 @@ EXAMPLE OUTPUT (L0 full, L1 partial, L3 partial cluster, Confusion Pairs,
   | SEC-008 | Secure by Default vs Secure by Choice| L0 | 🌱   |      |
 
   ┌───────────────────────────────────────────────────────┐
-  │ MILESTONE — Level 0 Complete                          │
+  │ MILESTONE - Level 0 Complete                          │
   │                                                       │
   │ You can now:                                          │
   │  ✓ Explain why security matters to a non-technical    │
@@ -1322,7 +1322,7 @@ EXAMPLE OUTPUT (L0 full, L1 partial, L3 partial cluster, Confusion Pairs,
   └───────────────────────────────────────────────────────┘
 
   ────────────────────────────────────────────────────────
-  LEVEL 1 — FOUNDATIONAL  ★☆☆
+  LEVEL 1 - FOUNDATIONAL  ★☆☆
   18 keywords
   ────────────────────────────────────────────────────────
 
@@ -1369,7 +1369,7 @@ EXAMPLE OUTPUT (L0 full, L1 partial, L3 partial cluster, Confusion Pairs,
   | SEC-076 | OAuth 2.0 vs SAML Migration        | L3  | ★★☆   | 🔄    |
 
   ════════════════════════════════════════════════════════
-  CONFUSION PAIRS — COMMONLY CONFLATED CONCEPTS
+  CONFUSION PAIRS - COMMONLY CONFLATED CONCEPTS
   ════════════════════════════════════════════════════════
 
   | Concept A           | Concept B          | Level | Key Difference               |
@@ -1384,7 +1384,7 @@ EXAMPLE OUTPUT (L0 full, L1 partial, L3 partial cluster, Confusion Pairs,
   | Zero Trust (concept)| Zero Trust (arch)  | L1/L4 | Principle vs Implementation  |
 
   ════════════════════════════════════════════════════════
-  META-SKILLS — GOD-LEVEL THINKING PATTERNS
+  META-SKILLS - GOD-LEVEL THINKING PATTERNS
   ════════════════════════════════════════════════════════
 
   | ID      | Meta-Skill                            | Transfers To            |
@@ -1429,26 +1429,26 @@ EXAMPLE OUTPUT (L0 full, L1 partial, L3 partial cluster, Confusion Pairs,
   ════════════════════════════════════════════════════════
 
   PREREQUISITE CATEGORIES:
-    NET (Networking) — TCP/IP, TLS basics
-    API (HTTP & APIs) — HTTP, cookies, headers
+    NET (Networking) - TCP/IP, TLS basics
+    API (HTTP & APIs) - HTTP, cookies, headers
 
   PARALLEL CATEGORIES:
-    API (HTTP & APIs) — security and API design
-    CSF (CS Fundamentals) — cryptography foundations
+    API (HTTP & APIs) - security and API design
+    CSF (CS Fundamentals) - cryptography foundations
 
   NEXT CATEGORIES:
-    MSV (Microservices) — distributed security
-    K8S (Kubernetes) — container and cluster security
-    AWS (Cloud) — IAM and secrets management
+    MSV (Microservices) - distributed security
+    K8S (Kubernetes) - container and cluster security
+    AWS (Cloud) - IAM and secrets management
 
   ENTRY POINT FOR NEW LEARNERS:
-    Start at SEC-001 — The Security Problem in Software
+    Start at SEC-001 - The Security Problem in Software
 
   JUMP IN FOR PRACTITIONERS:
-    Start at SEC-049 — [First L3 Keyword Name]
+    Start at SEC-049 - [First L3 Keyword Name]
 
   FAST TRACK FOR EXPERTS:
-    Start at SEC-084 — [First L4 Keyword Name]
+    Start at SEC-084 - [First L4 Keyword Name]
 
 ═══════════════════════════════════════════════════════════════════════════
 END OF CATEGORY KEYWORD GENERATOR PROMPT v2.0

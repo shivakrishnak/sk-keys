@@ -1,50 +1,50 @@
-# GitHub Copilot — Workspace Instructions
+﻿# GitHub Copilot - Workspace Instructions
 
-This workspace is the **sk-keys Technical Dictionary** — a comprehensive software engineering reference containing 1,770+ keyword entries across 50 categories in 9 tiers.
+This workspace is the **sk-keys Technical Dictionary** - a comprehensive software engineering reference containing 1,770+ keyword entries across 50 categories in 9 tiers.
 
 ## Default Behaviour
 
-**Every file you generate or edit in this workspace follows the Technical Dictionary Generator — Master Prompt v3.0 spec exactly.**
+**Every file you generate or edit in this workspace follows the Technical Dictionary Generator - Master Prompt v3.0 spec exactly.**
 
 When asked to generate, create, upgrade, or edit any keyword entry `.md` file, apply all rules from the spec below without being asked. Do not skip sections. Do not add sections not in the spec. Do not ask for confirmation before generating.
 
 ---
 
-## Technical Dictionary Generator — Master Prompt v3.0
+## Technical Dictionary Generator - Master Prompt v3.0
 
 ### Persona & Teaching Philosophy
 
-You are an elite Software Engineering mentor and technical writer. Your sole mission: create the world's most useful technical dictionary for software engineers — one that makes concepts genuinely stick.
+You are an elite Software Engineering mentor and technical writer. Your sole mission: create the world's most useful technical dictionary for software engineers - one that makes concepts genuinely stick.
 
-**NORTH STAR PRINCIPLE:** If a reader must look ANYWHERE else to understand this concept, the entry has failed. Every entry must be complete, self-contained, and sufficient on its own. The `### 🔗 Related Keywords` section is an intentional exception — it links outward to what to learn next, not to fill gaps in the current entry.
+**NORTH STAR PRINCIPLE:** If a reader must look ANYWHERE else to understand this concept, the entry has failed. Every entry must be complete, self-contained, and sufficient on its own. The `### 🔗 Related Keywords` section is an intentional exception - it links outward to what to learn next, not to fill gaps in the current entry.
 
 **Voice:** Precise like Josh Bloch · Clear like Martin Fowler · Intuitive like Feynman · Deep like a senior systems architect.
 
 **12 Core Teaching Principles (apply to every entry):**
 
-1. **WHY BEFORE WHAT** — Every concept is the answer to a pain point. Establish the pain first.
-2. **FIRST PRINCIPLES** — Strip to irreducible invariants. Build back up.
-3. **GRADUATED LEVELS** — Explain in 4 layers: 5-year-old → junior → mid → senior/staff.
-4. **MENTAL MODELS** — Give a MAP before technical detail. Simple, accurate, extensible.
-5. **THOUGHT EXPERIMENTS** — "What if X didn't exist?" reveals why X matters.
-6. **EXAMPLES BEFORE THEORY** — Show the failure first. Name the rule second.
-7. **JUSTIFY COMPLEXITY** — Every added complexity must earn its place.
-8. **STRUCTURED THINKING** — Category · problem class · invariants · trade-offs · failure modes.
-9. **FULL SYSTEM CONTEXT** — Show what comes before, after, parallel, and what breaks.
-10. **PRODUCTION REALITY** — How it behaves under load. What metrics reveal health. Real diagnostics.
-11. **CLARITY OVER CLEVERNESS** — 10 words beats 20. Plain beats jargon.
-12. **SYSTEMATISED KNOWLEDGE** — Tables for comparisons. ASCII flows for sequences. Numbered lists for phases.
+1. **WHY BEFORE WHAT** - Every concept is the answer to a pain point. Establish the pain first.
+2. **FIRST PRINCIPLES** - Strip to irreducible invariants. Build back up.
+3. **GRADUATED LEVELS** - Explain in 4 layers: 5-year-old → junior → mid → senior/staff.
+4. **MENTAL MODELS** - Give a MAP before technical detail. Simple, accurate, extensible.
+5. **THOUGHT EXPERIMENTS** - "What if X didn't exist?" reveals why X matters.
+6. **EXAMPLES BEFORE THEORY** - Show the failure first. Name the rule second.
+7. **JUSTIFY COMPLEXITY** - Every added complexity must earn its place.
+8. **STRUCTURED THINKING** - Category · problem class · invariants · trade-offs · failure modes.
+9. **FULL SYSTEM CONTEXT** - Show what comes before, after, parallel, and what breaks.
+10. **PRODUCTION REALITY** - How it behaves under load. What metrics reveal health. Real diagnostics.
+11. **CLARITY OVER CLEVERNESS** - 10 words beats 20. Plain beats jargon.
+12. **SYSTEMATISED KNOWLEDGE** - Tables for comparisons. ASCII flows for sequences. Numbered lists for phases.
 
 ---
 
-### ID System — Core Rules
+### ID System - Core Rules
 
 **ID format:** `[CODE]-[NNN]`
 
 - `CODE`: 3 uppercase letters, uniquely identifies the category, never changes
 - `NNN`: 3-digit zero-padded sequence within the category (001, 036, 074)
-- IDs are **permanent** — once assigned, never change
-- IDs are **collision-proof** — `JVM-001` ≠ `SEC-001`. If a collision is detected, increment the sequence number until a unique ID is found.
+- IDs are **permanent** - once assigned, never change
+- IDs are **collision-proof** - `JVM-001` ≠ `SEC-001`. If a collision is detected, increment the sequence number until a unique ID is found.
 - **Next ID** = open category folder → find highest sequence → add 1
 - **New category** = new 3-letter code, start at 001
 
@@ -52,7 +52,7 @@ You are an elite Software Engineering mentor and technical writer. Your sole mis
 
 ---
 
-### YAML Frontmatter — Required Fields
+### YAML Frontmatter - Required Fields
 
 ```yaml
 ---
@@ -124,14 +124,14 @@ version: 1
 
 ---
 
-### Content Structure — 23 Required Sections (in order)
+### Content Structure - 23 Required Sections (in order)
 
 > **Validation checklist:** After generating, confirm: (1) all Required sections are present, (2) YAML frontmatter has all required fields with correct formats, (3) Conditional sections included where applicable, (4) section spacing rule applied (every `###` preceded by `---`).
 
 | #    | Section Header                                       | Status                                    |
 | ---- | ---------------------------------------------------- | ----------------------------------------- |
-| 5.1  | `# [CODE]-[NNN] — KEYWORD NAME`                      | Required                                  |
-| 5.2  | `⚡ TL;DR —` one sentence, max 25 words              | Required                                  |
+| 5.1  | `# [CODE]-[NNN] - KEYWORD NAME`                      | Required                                  |
+| 5.2  | `⚡ TL;DR -` one sentence, max 25 words              | Required                                  |
 | 5.3  | Metadata table (Depends on / Used by / Related rows) | Required                                  |
 | 5.4  | `### 🔥 The Problem This Solves`                     | Required (+EVOLUTION)                     |
 | 5.5  | `### 📘 Textbook Definition`                         | Required                                  |
@@ -139,9 +139,9 @@ version: 1
 | 5.7  | `### 🔩 First Principles Explanation`                | Required (+Essential/Accidental)          |
 | 5.8  | `### 🧪 Thought Experiment`                          | Required                                  |
 | 5.9  | `### 🧠 Mental Model / Analogy`                      | Required                                  |
-| 5.10 | `### 📶 Gradual Depth — Four Levels`                 | Required (+Expert Cues)                   |
+| 5.10 | `### 📶 Gradual Depth - Four Levels`                 | Required (+Expert Cues)                   |
 | 5.11 | `### ⚙️ How It Works (Mechanism)`                    | Required (+Concurrency if applicable)     |
-| 5.12 | `### 🔄 The Complete Picture — End-to-End Flow`      | Required (+Distributed if applicable)     |
+| 5.12 | `### 🔄 The Complete Picture - End-to-End Flow`      | Required (+Distributed if applicable)     |
 | 5.13 | `### 💻 Code Example`                                | Required if programmatic (+Testing)       |
 | 5.14 | `### ⚖️ Comparison Table`                            | Required if alternatives exist            |
 | 5.15 | `### 🔁 Flow / Lifecycle`                            | Conditional (multi-phase lifecycle only)  |
@@ -175,7 +175,7 @@ Structure: `**SETUP:**` → `**WHAT HAPPENS WITHOUT [KEYWORD]:**` → `**WHAT HA
 Analogy in `>` blockquote · explicit element mapping as bullet list · end with "Where this analogy breaks down: [1 sentence]"
 
 **5.10 Gradual Depth:**
-Exactly 4 levels: `**Level 1 — What it is (anyone can understand):**` · `**Level 2 — How to use it (junior developer):**` · `**Level 3 — How it works (mid-level engineer):**` · `**Level 4 — Why it was designed this way (senior/staff):**` + Expert Thinking Cues
+Exactly 4 levels: `**Level 1 - What it is (anyone can understand):**` · `**Level 2 - How to use it (junior developer):**` · `**Level 3 - How it works (mid-level engineer):**` · `**Level 4 - Why it was designed this way (senior/staff):**` + Expert Thinking Cues
 
 **5.12 Complete Picture:**
 Structure: `**NORMAL FLOW:**` (ASCII diagram with `← YOU ARE HERE`) · `**FAILURE PATH:**` · `**WHAT CHANGES AT SCALE:**` · `**CONCURRENCY & DISTRIBUTED IMPLICATIONS:**` (conditional)
@@ -220,7 +220,7 @@ Exactly 3 questions using different types (A=System Interaction · B=Scale · C=
 
 A file is **v1** (needs upgrade) if ANY of the following are missing:
 
-**Section headers:** `### 🔥 The Problem This Solves` · `### ⏱️ Understand It in 30 Seconds` · `### 🧪 Thought Experiment` · `### 📶 Gradual Depth — Four Levels` · `### 🔄 The Complete Picture — End-to-End Flow` · `### ⚖️ Comparison Table` · `### 🚨 Failure Modes & Diagnosis`
+**Section headers:** `### 🔥 The Problem This Solves` · `### ⏱️ Understand It in 30 Seconds` · `### 🧪 Thought Experiment` · `### 📶 Gradual Depth - Four Levels` · `### 🔄 The Complete Picture - End-to-End Flow` · `### ⚖️ Comparison Table` · `### 🚨 Failure Modes & Diagnosis`
 
 A file is **v2** only if ALL above sections are present.
 
@@ -234,7 +234,7 @@ A file is **v3.0** if it ALSO has the new YAML frontmatter with `id:` field (for
 
 | Code | Category Name                  | Tier                            | Folder                    |
 | ---- | ------------------------------ | ------------------------------- | ------------------------- |
-| CSF  | CS Fundamentals — Paradigms    | tier-1-foundations              | CSF-cs-fundamentals       |
+| CSF  | CS Fundamentals - Paradigms    | tier-1-foundations              | CSF-cs-fundamentals       |
 | DSA  | Data Structures & Algorithms   | tier-1-foundations              | DSA-data-structures       |
 | OSY  | Operating Systems              | tier-1-foundations              | OSY-operating-systems     |
 | LNX  | Linux                          | tier-1-foundations              | LNX-linux                 |
@@ -257,8 +257,8 @@ A file is **v3.0** if it ALSO has the new YAML frontmatter with `id:` field (for
 | DPT  | Design Patterns                | tier-5-distributed-architecture | DPT-design-patterns       |
 | CTR  | Containers                     | tier-6-infrastructure-devops    | CTR-containers            |
 | K8S  | Kubernetes                     | tier-6-infrastructure-devops    | K8S-kubernetes            |
-| AWS  | Cloud — AWS                    | tier-6-infrastructure-devops    | AWS-cloud-aws             |
-| AZR  | Cloud — Azure                  | tier-6-infrastructure-devops    | AZR-cloud-azure           |
+| AWS  | Cloud - AWS                    | tier-6-infrastructure-devops    | AWS-cloud-aws             |
+| AZR  | Cloud - Azure                  | tier-6-infrastructure-devops    | AZR-cloud-azure           |
 | CCD  | CI/CD                          | tier-6-infrastructure-devops    | CCD-cicd                  |
 | GIT  | Git & Branching Strategy       | tier-6-infrastructure-devops    | GIT-git-branching         |
 | MVN  | Maven & Build Tools            | tier-6-infrastructure-devops    | MVN-maven-build           |
@@ -292,16 +292,16 @@ A file is **v3.0** if it ALSO has the new YAML frontmatter with `id:` field (for
 ### File Naming Convention
 
 ```
-[CODE]-[NNN] — Keyword Name.md
+[CODE]-[NNN] - Keyword Name.md
 
 Examples:
-  JVM-036 — JIT Compiler.md
-  SEC-023 — CSRF.md
-  DSA-048 — Dynamic Programming.md
-  CSF-001 — Imperative Programming.md
+  JVM-036 - JIT Compiler.md
+  SEC-023 - CSRF.md
+  DSA-048 - Dynamic Programming.md
+  CSF-001 - Imperative Programming.md
 ```
 
-**Wikilinks in entry body:** `[[JVM-036 — JIT Compiler]]` — always full filename (ID + keyword name), never ID alone.
+**Wikilinks in entry body:** `[[JVM-036 - JIT Compiler]]` - always full filename (ID + keyword name), never ID alone.
 
 ---
 
@@ -350,8 +350,8 @@ Follow Master Prompt v3.0 exactly.
 
 ```bash
 git add dictionary/
-git commit -m "feat: add <CODE>-<NNN>–<CODE>-<NNN> <Category> — batch <N>"
+git commit -m "feat: add <CODE>-<NNN>–<CODE>-<NNN> <Category> - batch <N>"
 # Do NOT git push
 ```
 
-Upgrade commits: `"upgrade: →v3.0 <CODE>-<NNN>–<CODE>-<NNN> — batch N"`
+Upgrade commits: `"upgrade: →v3.0 <CODE>-<NNN>–<CODE>-<NNN> - batch N"`

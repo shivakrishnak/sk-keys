@@ -1,4 +1,4 @@
-# 🎯 Single-Category Keyword Generator — Prompt v2.0
+﻿# 🎯 Single-Category Keyword Generator - Prompt v2.0
 
 > **Usage:** Set the `TARGET_CATEGORY_ID` below, then paste this entire prompt into an AI assistant.
 > The agent will generate every missing keyword entry for that category only, 10 files at a time.
@@ -7,16 +7,16 @@
 
 ```
 ═══════════════════════════════════════════════════════════════════════
-CONFIGURATION — SET THIS BEFORE RUNNING
+CONFIGURATION - SET THIS BEFORE RUNNING
 ═══════════════════════════════════════════════════════════════════════
 
-  TARGET_CATEGORY_ID: <SET ID HERE — e.g. 16>
+  TARGET_CATEGORY_ID: <SET ID HERE - e.g. 16>
 
   Look up the ID in the Final Complete Category Summary table below:
 
   | ID | Category                       | Range        | Count |
   |----|--------------------------------|--------------|-------|
-  |  1 | CS Fundamentals — Paradigms    | 001–030      |    30 |
+  |  1 | CS Fundamentals - Paradigms    | 001–030      |    30 |
   |  2 | Data Structures & Algorithms   | 031–090      |    60 |
   |  3 | Operating Systems              | 091–125      |    35 |
   |  4 | Linux                          | 126–165      |    40 |
@@ -38,8 +38,8 @@ CONFIGURATION — SET THIS BEFORE RUNNING
   | 20 | Design Patterns                | 766–820      |    55 |
   | 21 | Containers                     | 821–855      |    35 |
   | 22 | Kubernetes                     | 856–915      |    60 |
-  | 23 | Cloud — AWS                    | 916–955      |    40 |
-  | 24 | Cloud — Azure                  | 956–990      |    35 |
+  | 23 | Cloud - AWS                    | 916–955      |    40 |
+  | 24 | Cloud - Azure                  | 956–990      |    35 |
   | 25 | CI/CD                          | 991–1030     |    40 |
   | 26 | Git & Branching Strategy       | 1031–1065    |    35 |
   | 27 | Maven & Build Tools (Java)     | 1066–1095    |    30 |
@@ -78,17 +78,17 @@ RESOLVE YOUR TARGET BEFORE STARTING
 From TARGET_CATEGORY_ID, resolve the following and keep them fixed
 for the entire run:
 
-  CATEGORY_NAME   — the exact category name from the table above
-  KEYWORD_RANGE   — the numeric range (e.g. 571–625)
-  RANGE_START     — first keyword number in the range (e.g. 571)
-  RANGE_END       — last keyword number in the range (e.g. 625)
-  CATEGORY_FOLDER — the docs/ subfolder name (see folder mapping below)
-  PARENT_TITLE    — the exact parent title string (see mapping below)
-  PERMALINK_BASE  — the permalink slug prefix (see mapping below)
+  CATEGORY_NAME   - the exact category name from the table above
+  KEYWORD_RANGE   - the numeric range (e.g. 571–625)
+  RANGE_START     - first keyword number in the range (e.g. 571)
+  RANGE_END       - last keyword number in the range (e.g. 625)
+  CATEGORY_FOLDER - the docs/ subfolder name (see folder mapping below)
+  PARENT_TITLE    - the exact parent title string (see mapping below)
+  PERMALINK_BASE  - the permalink slug prefix (see mapping below)
 
   CATEGORY → FOLDER / PARENT TITLE / PERMALINK BASE MAPPING:
 
-  CS Fundamentals — Paradigms    | docs/CS Fundamentals — Paradigms/    | "CS Fundamentals — Paradigms"    | /cs-fundamentals/
+  CS Fundamentals - Paradigms    | docs/CS Fundamentals - Paradigms/    | "CS Fundamentals - Paradigms"    | /cs-fundamentals/
   Data Structures & Algorithms   | docs/Data Structures & Algorithms/   | "Data Structures & Algorithms"   | /dsa/
   Operating Systems              | docs/Operating Systems/              | "Operating Systems"              | /operating-systems/
   Linux                          | docs/Linux/                          | "Linux"                          | /linux/
@@ -110,8 +110,8 @@ for the entire run:
   Design Patterns                | docs/Design Patterns/                | "Design Patterns"                | /design-patterns/
   Containers                     | docs/Containers/                     | "Containers"                     | /containers/
   Kubernetes                     | docs/Kubernetes/                     | "Kubernetes"                     | /kubernetes/
-  Cloud — AWS                    | docs/Cloud — AWS/                    | "Cloud — AWS"                    | /cloud-aws/
-  Cloud — Azure                  | docs/Cloud — Azure/                  | "Cloud — Azure"                  | /cloud-azure/
+  Cloud - AWS                    | docs/Cloud - AWS/                    | "Cloud - AWS"                    | /cloud-aws/
+  Cloud - Azure                  | docs/Cloud - Azure/                  | "Cloud - Azure"                  | /cloud-azure/
   CI/CD                          | docs/CI-CD/                          | "CI/CD"                          | /ci-cd/
   Git & Branching Strategy       | docs/Git & Branching Strategy/       | "Git & Branching Strategy"       | /git/
   Maven & Build Tools (Java)     | docs/Maven & Build Tools (Java)/     | "Maven & Build Tools (Java)"     | /maven-build/
@@ -135,17 +135,17 @@ for the entire run:
   Async & Background Processing  | docs/Async & Background Processing/  | "Async & Background Processing"  | /async-background/
 
 ═══════════════════════════════════════════════════════════════════════
-YOUR WORKFLOW — RUNS CONTINUOUSLY UNTIL ALL ENTRIES ARE GENERATED
+YOUR WORKFLOW - RUNS CONTINUOUSLY UNTIL ALL ENTRIES ARE GENERATED
 ═══════════════════════════════════════════════════════════════════════
 
-LOOP (repeat automatically — no confirmation needed between batches):
+LOOP (repeat automatically - no confirmation needed between batches):
 
-  STEP 1 — FIND NEXT 10 MISSING ENTRIES IN TARGET CATEGORY:
+  STEP 1 - FIND NEXT 10 MISSING ENTRIES IN TARGET CATEGORY:
     Scan ONLY the CATEGORY_FOLDER (e.g. docs/Distributed Systems/).
     Exclude index.md files.
     Extract the keyword number from each filename prefix
-      (e.g. "571 — CAP Theorem" → 571).
-    Cross-reference against TECHNICAL_DICTIONARY.md — look at ONLY
+      (e.g. "571 - CAP Theorem" → 571).
+    Cross-reference against TECHNICAL_DICTIONARY.md - look at ONLY
       the rows whose number falls within RANGE_START..RANGE_END.
     Find the next 10 keyword numbers in that range that do NOT yet
       have a generated file.
@@ -153,12 +153,12 @@ LOOP (repeat automatically — no confirmation needed between batches):
     If fewer than 10 remain, process however many are left.
     If 0 remain, print the DONE report and stop.
 
-  STEP 2 — REPORT THE BATCH:
+  STEP 2 - REPORT THE BATCH:
     Print:
-      "⚙️ Generating batch N — keywords NNNN–NNNN:"
-      List each: "#NNNN — Keyword Name  (CATEGORY_NAME | ★ Difficulty)"
+      "⚙️ Generating batch N - keywords NNNN–NNNN:"
+      List each: "#NNNN - Keyword Name  (CATEGORY_NAME | ★ Difficulty)"
 
-  STEP 3 — GENERATE ALL 10 FILES:
+  STEP 3 - GENERATE ALL 10 FILES:
     For each of the 10 missing keywords:
 
     a. LOOK UP in TECHNICAL_DICTIONARY.md:
@@ -187,17 +187,17 @@ LOOP (repeat automatically — no confirmation needed between batches):
        All 20 content sections required.
        File must be 100% self-contained.
 
-    d. WRITE to: CATEGORY_FOLDER/<NNNN> — <Keyword Name>.md
+    d. WRITE to: CATEGORY_FOLDER/<NNNN> - <Keyword Name>.md
        If CATEGORY_FOLDER doesn't exist yet, create it with an
        appropriate index.md first (see INDEX.MD FORMAT below).
 
-  STEP 4 — COMMIT THE BATCH:
+  STEP 4 - COMMIT THE BATCH:
     After all 10 files are written:
       git add docs/
-      git commit -m "feat: add CATEGORY_NAME NNNN–NNNN — batch N"
+      git commit -m "feat: add CATEGORY_NAME NNNN–NNNN - batch N"
     Do NOT run git push.
 
-  STEP 5 — LOOP:
+  STEP 5 - LOOP:
     Immediately go back to STEP 1.
     Do NOT ask for confirmation.
     Do NOT pause.
@@ -238,9 +238,9 @@ RULES
 - Never overwrite or regenerate a keyword that already has a file.
 - Keep all existing files untouched.
 - One commit per batch of 10 (or fewer for the final batch).
-- Commit message format: "feat: add CATEGORY_NAME NNNN–NNNN — batch N"
+- Commit message format: "feat: add CATEGORY_NAME NNNN–NNNN - batch N"
 - Do NOT git push.
-- Do NOT pause or ask for confirmation between batches — keep rolling.
+- Do NOT pause or ask for confirmation between batches - keep rolling.
 - Follow GENERATOR_PROMPT.md v2.0 spec exactly for every single entry.
 - If CATEGORY_FOLDER doesn't exist, create it with an index.md first.
 ```

@@ -1,13 +1,13 @@
 ﻿---
 layout: default
-title: "CS Fundamentals — Paradigms"
+title: "CS Fundamentals - Paradigms"
 parent: "Technical Dictionary"
 nav_order: 1
 has_children: true
 permalink: /cs-fundamentals/
 ---
 
-# CS Fundamentals — Paradigms
+# CS Fundamentals - Paradigms
 
 Programming paradigms, type systems, OOP pillars, functional programming concepts, theoretical foundations, and creator-level formal semantics.
 

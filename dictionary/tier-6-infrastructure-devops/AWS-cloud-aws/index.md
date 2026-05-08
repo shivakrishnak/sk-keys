@@ -1,13 +1,13 @@
 ﻿---
 layout: default
-title: "Cloud — AWS"
+title: "Cloud - AWS"
 parent: "Technical Dictionary"
 nav_order: 23
 has_children: true
 permalink: /cloud-aws/
 ---
 
-# Cloud — AWS
+# Cloud - AWS
 
 AWS global infrastructure, core services (EC2, S3, RDS, Lambda, EKS), IaC, security, and cost optimization.
 

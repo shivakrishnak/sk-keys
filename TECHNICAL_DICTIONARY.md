@@ -1,4 +1,4 @@
-# 📚 Complete Technical Dictionary — Master Keyword List
+﻿# 📚 Complete Technical Dictionary - Master Keyword List
 
 ---
 
@@ -17,11 +17,11 @@ Organized in learning-dependency order:
 
 ---
 
-### 🔵 TIER 1 — CS & Programming Foundations
+### 🔵 TIER 1 - CS & Programming Foundations
 
 ---
 
-#### 📐 CS Fundamentals — Paradigms & Theory (001–030)
+#### 📐 CS Fundamentals - Paradigms & Theory (001–030)
 
 | #   | Keyword                           | Difficulty |
 | --- | --------------------------------- | ---------- |
@@ -212,7 +212,7 @@ Organized in learning-dependency order:
 | 164 | tmux / screen                      | ★☆☆        |
 | 165 | Linux Performance Tuning           | ★★★        | --- |
 
-### 🔵 TIER 2 — Networking & Protocols
+### 🔵 TIER 2 - Networking & Protocols
 
 ---
 
@@ -328,7 +328,7 @@ Organized in learning-dependency order:
 
 ---
 
-### 🔵 TIER 3 — Java & JVM
+### 🔵 TIER 3 - Java & JVM
 
 ---
 
@@ -478,7 +478,7 @@ Organized in learning-dependency order:
 
 ---
 
-### 🔵 TIER 4 — Spring & Frameworks
+### 🔵 TIER 4 - Spring & Frameworks
 
 ---
 
@@ -540,7 +540,7 @@ Organized in learning-dependency order:
 | 2131 | Micronaut vs Spring Boot                             | ★★★        |
 | 2132 | Quarkus Framework                                    | ★★★        |
 
-### 🔵 TIER 5 — Databases
+### 🔵 TIER 5 - Databases
 
 ---
 
@@ -672,7 +672,7 @@ Organized in learning-dependency order:
 
 ---
 
-### 🔵 TIER 6 — Data Engineering & Big Data
+### 🔵 TIER 6 - Data Engineering & Big Data
 
 ---
 
@@ -772,7 +772,7 @@ Organized in learning-dependency order:
 
 ---
 
-### 🔵 TIER 7 — Distributed Systems
+### 🔵 TIER 7 - Distributed Systems
 
 ---
 
@@ -836,7 +836,7 @@ Organized in learning-dependency order:
 | 624 | Read Repair                      | ★★★        |
 | 625 | Hinted Handoff                   | ★★★        | --- |
 
-### 🔵 TIER 8 — Microservices
+### 🔵 TIER 8 - Microservices
 
 ---
 
@@ -907,7 +907,7 @@ Organized in learning-dependency order:
 
 ---
 
-### 🔵 TIER 9 — System & Software Architecture
+### 🔵 TIER 9 - System & Software Architecture
 
 ---
 
@@ -1017,7 +1017,7 @@ Organized in learning-dependency order:
 
 ---
 
-### 🔵 TIER 10 — Design Patterns
+### 🔵 TIER 10 - Design Patterns
 
 ---
 
@@ -1081,7 +1081,7 @@ Organized in learning-dependency order:
 | 819 | Ambassador Pattern            | ★★★        |
 | 820 | Retry Pattern                 | ★★☆        | --- |
 
-### 🔵 TIER 11 — Infrastructure & DevOps
+### 🔵 TIER 11 - Infrastructure & DevOps
 
 ---
 
@@ -1196,7 +1196,7 @@ Organized in learning-dependency order:
 
 ---
 
-#### ☁️ Cloud — AWS (916–955)
+#### ☁️ Cloud - AWS (916–955)
 
 | #    | Keyword                              | Difficulty |
 | ---- | ------------------------------------ | ---------- |
@@ -1262,7 +1262,7 @@ Organized in learning-dependency order:
 
 ---
 
-#### ☁️ Cloud — Azure (956–990)
+#### ☁️ Cloud - Azure (956–990)
 
 | #   | Keyword                           | Difficulty |
 | --- | --------------------------------- | ---------- |
@@ -1454,7 +1454,7 @@ Organized in learning-dependency order:
 | 1094 | Source vs Binary Distribution                                       | ★★★        |
 | 1095 | Build Performance Optimization                                      | ★★★        | --- |
 
-### 🔵 TIER 12 — Quality & Observability
+### 🔵 TIER 12 - Quality & Observability
 
 ---
 
@@ -1607,7 +1607,7 @@ Organized in learning-dependency order:
 | 2269 | AWS X-Ray (Distributed Tracing) | ★★★        |
 | 2270 | Actionable Alerting Patterns    | ★★★        |
 
-### 🔵 TIER 13 — Frontend
+### 🔵 TIER 13 - Frontend
 
 ---
 
@@ -2042,7 +2042,7 @@ Organized in learning-dependency order:
 
 ---
 
-### 🔵 TIER 14 — AI & LLMs
+### 🔵 TIER 14 - AI & LLMs
 
 ---
 
@@ -2187,7 +2187,7 @@ Organized in learning-dependency order:
 
 ---
 
-### 🔵 TIER 15 — Professional Skills
+### 🔵 TIER 15 - Professional Skills
 
 ---
 
@@ -2286,11 +2286,11 @@ Organized in learning-dependency order:
 
 ---
 
-### 🔵 TIER 16 — Security
+### 🔵 TIER 16 - Security
 
 ---
 
-#### 🔒 Security — Foundations (1771–1782)
+#### 🔒 Security - Foundations (1771–1782)
 
 | #    | Keyword                                                              | Difficulty |
 | ---- | -------------------------------------------------------------------- | ---------- |
@@ -2309,7 +2309,7 @@ Organized in learning-dependency order:
 
 ---
 
-#### 🔒 Security — Identity & Authentication (1783–1806)
+#### 🔒 Security - Identity & Authentication (1783–1806)
 
 | #    | Keyword                                   | Difficulty |
 | ---- | ----------------------------------------- | ---------- |
@@ -2340,7 +2340,7 @@ Organized in learning-dependency order:
 
 ---
 
-#### 🔒 Security — Cryptography (1807–1824)
+#### 🔒 Security - Cryptography (1807–1824)
 
 | #    | Keyword                            | Difficulty |
 | ---- | ---------------------------------- | ---------- |
@@ -2365,7 +2365,7 @@ Organized in learning-dependency order:
 
 ---
 
-#### 🔒 Security — Common Vulnerabilities (1825–1843)
+#### 🔒 Security - Common Vulnerabilities (1825–1843)
 
 | #    | Keyword                            | Difficulty |
 | ---- | ---------------------------------- | ---------- |
@@ -2391,7 +2391,7 @@ Organized in learning-dependency order:
 
 ---
 
-#### 🔒 Security — Attack Types (1844–1853)
+#### 🔒 Security - Attack Types (1844–1853)
 
 | #    | Keyword                        | Difficulty |
 | ---- | ------------------------------ | ---------- |
@@ -2408,7 +2408,7 @@ Organized in learning-dependency order:
 
 ---
 
-#### 🔒 Security — Defensive Practices (1854–1866)
+#### 🔒 Security - Defensive Practices (1854–1866)
 
 | #    | Keyword                                  | Difficulty |
 | ---- | ---------------------------------------- | ---------- |
@@ -2428,7 +2428,7 @@ Organized in learning-dependency order:
 
 ---
 
-#### 🔒 Security — Testing & Operations (1867–1882)
+#### 🔒 Security - Testing & Operations (1867–1882)
 
 | #    | Keyword                                          | Difficulty |
 | ---- | ------------------------------------------------ | ---------- |
@@ -2451,11 +2451,11 @@ Organized in learning-dependency order:
 
 ---
 
-### 🔵 TIER 17 — Async & Background Processing
+### 🔵 TIER 17 - Async & Background Processing
 
 ---
 
-#### ⚡ Async — Foundations (1883–1895)
+#### ⚡ Async - Foundations (1883–1895)
 
 | #    | Keyword                                | Difficulty |
 | ---- | -------------------------------------- | ---------- |
@@ -2475,7 +2475,7 @@ Organized in learning-dependency order:
 
 ---
 
-#### ⚡ Async — Message Reliability (1896–1904)
+#### ⚡ Async - Message Reliability (1896–1904)
 
 | #    | Keyword                                 | Difficulty |
 | ---- | --------------------------------------- | ---------- |
@@ -2491,7 +2491,7 @@ Organized in learning-dependency order:
 
 ---
 
-#### ⚡ Async — Error Handling & Retry (1905–1911)
+#### ⚡ Async - Error Handling & Retry (1905–1911)
 
 | #    | Keyword                         | Difficulty |
 | ---- | ------------------------------- | ---------- |
@@ -2505,7 +2505,7 @@ Organized in learning-dependency order:
 
 ---
 
-#### ⚡ Async — Task Patterns (1912–1924)
+#### ⚡ Async - Task Patterns (1912–1924)
 
 | #    | Keyword                           | Difficulty |
 | ---- | --------------------------------- | ---------- |
@@ -2525,7 +2525,7 @@ Organized in learning-dependency order:
 
 ---
 
-#### ⚡ Async — Brokers & Tools (1925–1942)
+#### ⚡ Async - Brokers & Tools (1925–1942)
 
 | #    | Keyword                                                  | Difficulty |
 | ---- | -------------------------------------------------------- | ---------- |
@@ -2550,7 +2550,7 @@ Organized in learning-dependency order:
 
 ---
 
-#### ⚡ Async — Advanced Patterns (1943–1953)
+#### ⚡ Async - Advanced Patterns (1943–1953)
 
 | #    | Keyword                                   | Difficulty |
 | ---- | ----------------------------------------- | ---------- |
@@ -2568,7 +2568,7 @@ Organized in learning-dependency order:
 
 ---
 
-#### ⚡ Async — Observability & Operations (1954–1960)
+#### ⚡ Async - Observability & Operations (1954–1960)
 
 | #    | Keyword                      | Difficulty |
 | ---- | ---------------------------- | ---------- |
@@ -2582,7 +2582,7 @@ Organized in learning-dependency order:
 
 ---
 
-### 🔵 TIER 18 — Document Generation & Output Management
+### 🔵 TIER 18 - Document Generation & Output Management
 
 ---
 
@@ -2614,7 +2614,7 @@ Organized in learning-dependency order:
 
 ---
 
-### 🔵 TIER 19 — Domain — Financial Services Engineering
+### 🔵 TIER 19 - Domain - Financial Services Engineering
 
 ---
 
@@ -2655,7 +2655,7 @@ Organized in learning-dependency order:
 
 ---
 
-### 🔵 TIER 20 — Frontend — Angular
+### 🔵 TIER 20 - Frontend - Angular
 
 ---
 
@@ -2700,7 +2700,7 @@ Organized in learning-dependency order:
 
 | #         | Category                                | Range        | Count    |
 | --------- | --------------------------------------- | ------------ | -------- |
-| 1         | CS Fundamentals — Paradigms             | 001–030      | 30       |
+| 1         | CS Fundamentals - Paradigms             | 001–030      | 30       |
 | 2         | Data Structures & Algorithms            | 031–090      | 60       |
 | 3         | Operating Systems                       | 091–125      | 35       |
 | 4         | Linux                                   | 126–165      | 40       |
@@ -2722,8 +2722,8 @@ Organized in learning-dependency order:
 | 20        | Design Patterns                         | 766–820      | 55       |
 | 21        | Containers                              | 821–855      | 35       |
 | 22        | Kubernetes                              | 856–915      | 60       |
-| 23        | Cloud — AWS                             | 916–955      | 40       |
-| 24        | Cloud — Azure                           | 956–990      | 35       |
+| 23        | Cloud - AWS                             | 916–955      | 40       |
+| 24        | Cloud - Azure                           | 956–990      | 35       |
 | 25        | CI/CD                                   | 991–1030     | 40       |
 | 26        | Git & Branching Strategy                | 1031–1065    | 35       |
 | 27        | Maven & Build Tools (Java)              | 1066–1095    | 30       |

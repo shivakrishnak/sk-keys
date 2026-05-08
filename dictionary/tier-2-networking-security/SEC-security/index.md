@@ -1,4 +1,4 @@
----
+﻿---
 layout: default
 title: "Security"
 parent: "Technical Dictionary"
@@ -85,7 +85,7 @@ CIA triad, authentication & authorization, cryptography, common vulnerabilities 
 | SEC-068 | XXE (XML External Entity)                                                  | ★★★        |
 | SEC-069 | Insecure Deserialization                                                   | ★★★        |
 | SEC-070 | Broken Access Control                                                      | ★★☆        |
-| SEC-071 | OWASP A05 — Security Misconfiguration (Deep)                               | ★★★        |
+| SEC-071 | OWASP A05 - Security Misconfiguration (Deep)                               | ★★★        |
 | SEC-072 | Cryptographic Failures                                                     | ★★★        |
 | SEC-073 | Vulnerable and Outdated Components                                         | ★★☆        |
 | SEC-074 | Brute-Force Attack                                                         | ★★☆        |

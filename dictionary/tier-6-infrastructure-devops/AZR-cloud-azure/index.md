@@ -1,13 +1,13 @@
 ﻿---
 layout: default
-title: "Cloud — Azure"
+title: "Cloud - Azure"
 parent: "Technical Dictionary"
 nav_order: 24
 has_children: true
 permalink: /cloud-azure/
 ---
 
-# Cloud — Azure
+# Cloud - Azure
 
 Azure global infrastructure, core services, DevOps, security, cost management, and hybrid connectivity.
 

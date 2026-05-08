@@ -1,0 +1,26 @@
+﻿---
+id: NET-003
+title: The Internet History and Architecture
+category: Networking
+tier: tier-2-networking-security
+folder: NET-networking
+difficulty: ★☆☆
+depends_on:
+used_by:
+related:
+tags:
+  - net
+  - foundational
+  - mental-model
+status: draft
+version: 1
+layout: default
+parent: "Networking"
+grand_parent: "Technical Dictionary"
+nav_order: 3
+permalink: /net/the-internet-history-and-architecture/
+---
+
+# NET-003 - The Internet History and Architecture
+
+> Entry stub. Generate full content using Master Prompt v3.0.

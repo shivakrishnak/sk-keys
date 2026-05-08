@@ -74,12 +74,12 @@ Java threading, synchronization, concurrent data structures, executors, virtual 
 | JCC-064 | Condition Interface (Lock Conditions)            | ★★☆        |
 | JCC-065 | Amdahl's Law                                     | ★★★        |
 | JCC-066 | Thread Pinning (Virtual Threads Problem)         | ★★★        |
-| JCC-067 | JMM Happens-Before — Deep Rules                  | ★★★        |
+| JCC-067 | JMM Happens-Before - Deep Rules                  | ★★★        |
 | JCC-068 | Lock-Free Data Structures                        | ★★★        |
 | JCC-069 | Memory Visibility Diagnostics (jstack, JFR)      | ★★★        |
 | JCC-070 | False Sharing (Java Context)                     | ★★★        |
 | JCC-071 | Busy-Wait vs Blocking                            | ★★★        |
-| JCC-072 | JSR 133 — Java Memory Model Specification        | 🔬          |
+| JCC-072 | JSR 133 - Java Memory Model Specification        | 🔬          |
 | JCC-073 | Project Loom Design Rationale                    | 🔬          |
 | JCC-074 | Structured Concurrency Theory                    | 🔬          |
 | JCC-075 | Reactive Streams Specification                   | 🔬          |

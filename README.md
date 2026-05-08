@@ -1,6 +1,6 @@
-# 📚 Technical Dictionary
+﻿# 📚 Technical Dictionary
 
-A software engineering dictionary — **1,770 keywords** across **43 categories** from CS fundamentals to AI & LLMs.
+A software engineering dictionary - **1,770 keywords** across **43 categories** from CS fundamentals to AI & LLMs.
 
 ## Files
 
@@ -16,14 +16,14 @@ A software engineering dictionary — **1,770 keywords** across **43 categories*
 
 ```powershell
 # 1. Create file following the naming convention
-#    docs/<Category>/NNN — Keyword Name.md
+#    docs/<Category>/NNN - Keyword Name.md
 
 # 2. Update navigation frontmatter
 .\Update-MarkdownFrontmatter.ps1
 
 # 3. Push
 git add docs/
-git commit -m "Add NNN — Keyword Name"
+git commit -m "Add NNN - Keyword Name"
 git push origin main
 ```
 
@@ -33,4 +33,4 @@ See `GENERATOR_PROMPT.md` for the full entry format specification.
 
 1. Go to **Settings → Pages**
 2. Select `main` branch, root `/` (not `/docs`)
-3. Save — live at `https://shivakrishnak.github.io/sk-keys/`
+3. Save - live at `https://shivakrishnak.github.io/sk-keys/`
